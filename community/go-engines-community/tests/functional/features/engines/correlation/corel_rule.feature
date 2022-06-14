@@ -75,34 +75,15 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-corel-1"
-                    }
-                  ],
-                  "total": 1
-                },
-                "v": {
-                  "component": "child",
-                  "resource": "test-2"
-                }
-              }
-            ],
-            "total": 1
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-corel-1"
           },
           "v": {
@@ -121,6 +102,48 @@ Feature: correlation feature - corel rule
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-corel-1",
+                  "connector_name": "test-corel-1-name",
+                  "component": "child",
+                  "resource": "test-2"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      }
+    ]
     """
 
   Scenario: given meta alarm rule and events shouldn't create meta alarm without a parent, after parent event metaalarm should contain all children
@@ -214,7 +237,7 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 1 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -244,50 +267,15 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-corel-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-corel-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-corel-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 3
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-corel-2"
           },
           "v": {
@@ -303,6 +291,64 @@ Feature: correlation feature - corel rule
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-corel-2",
+                  "connector_name": "test-corel-2-name",
+                  "component": "child-2",
+                  "resource": "test-3"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-corel-2",
+                  "connector_name": "test-corel-2-name",
+                  "component": "child-2",
+                  "resource": "test-4"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-corel-2",
+                  "connector_name": "test-corel-2-name",
+                  "component": "child-2",
+                  "resource": "test-5"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
     """
 
   Scenario: given meta alarm rule and events shouldn't create meta alarm without children, after children events metaalarm should be based only on first parent
@@ -398,7 +444,7 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 1 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true until response code is 200 and body contains:
     """
     {
       "data": [],
@@ -442,40 +488,15 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                        "name": "test-corel-3"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                        "name": "test-corel-3"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 2
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-corel-3"
           },
           "v": {
@@ -491,6 +512,56 @@ Feature: correlation feature - corel rule
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-corel-3",
+                  "connector_name": "test-corel-3-name",
+                  "component": "child-3",
+                  "resource": "test-4"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-corel-3",
+                  "connector_name": "test-corel-3-name",
+                  "component": "child-3",
+                  "resource": "test-5"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
     """
 
   Scenario: given meta alarm rule and events after time interval should shift child interval
@@ -586,26 +657,15 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "v": {
-                  "component": "child-4",
-                  "resource": "test-2"
-                }
-              }
-            ],
-            "total": 1
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-corel-4"
           },
           "v": {
@@ -624,6 +684,48 @@ Feature: correlation feature - corel rule
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-corel-4",
+                  "connector_name": "test-corel-4-name",
+                  "component": "child-4",
+                  "resource": "test-2"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      }
+    ]
     """
 
   Scenario: given meta alarm rule and events after time interval should shift parent interval
@@ -719,26 +821,15 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "v": {
-                  "component": "child-5",
-                  "resource": "test-3"
-                }
-              }
-            ],
-            "total": 1
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-corel-5"
           },
           "v": {
@@ -757,6 +848,48 @@ Feature: correlation feature - corel rule
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-corel-5",
+                  "connector_name": "test-corel-5-name",
+                  "component": "child-5",
+                  "resource": "test-3"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      }
+    ]
     """
 
   Scenario: given meta alarm rule and events should create 2 meta alarm
@@ -867,34 +1000,15 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=asc
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-corel-6"
-                    }
-                  ],
-                  "total": 1
-                },
-                "v": {
-                  "component": "child-6",
-                  "resource": "test-2"
-                }
-              }
-            ],
-            "total": 1
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-corel-6"
           },
           "v": {
@@ -906,27 +1020,8 @@ Feature: correlation feature - corel rule
           }
         },
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-corel-6"
-                    }
-                  ],
-                  "total": 1
-                },
-                "v": {
-                  "component": "child-6",
-                  "resource": "test-4"
-                }
-              }
-            ],
-            "total": 1
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-corel-6"
           },
           "v": {
@@ -945,6 +1040,79 @@ Feature: correlation feature - corel rule
         "total_count": 2
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 1)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-corel-6",
+                  "connector_name": "test-corel-6-name",
+                  "component": "child-6",
+                  "resource": "test-2"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-corel-6",
+                  "connector_name": "test-corel-6-name",
+                  "component": "child-6",
+                  "resource": "test-4"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      }
+    ]
     """
 
   Scenario: given meta alarm rule and events with different corel_id, should create 2 meta alarm without mixing
@@ -1055,34 +1223,15 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=desc
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-corel-7"
-                    }
-                  ],
-                  "total": 1
-                },
-                "v": {
-                  "component": "child-7",
-                  "resource": "test-2"
-                }
-              }
-            ],
-            "total": 1
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-corel-7"
           },
           "v": {
@@ -1095,27 +1244,8 @@ Feature: correlation feature - corel rule
           }
         },
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-corel-7"
-                    }
-                  ],
-                  "total": 1
-                },
-                "v": {
-                  "component": "child-7",
-                  "resource": "test-4"
-                }
-              }
-            ],
-            "total": 1
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-corel-7"
           },
           "v": {
@@ -1168,18 +1298,15 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=desc
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "total": 2
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-corel-7"
           },
           "v": {
@@ -1189,11 +1316,8 @@ Feature: correlation feature - corel rule
           }
         },
         {
-          "consequences": {
-            "total": 2
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-corel-7"
           },
           "v": {
@@ -1210,4 +1334,93 @@ Feature: correlation feature - corel rule
         "total_count": 2
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 1)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-corel-7-2",
+                  "connector_name": "test-corel-7-2-name",
+                  "component": "child-7",
+                  "resource": "test-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-corel-7-2",
+                  "connector_name": "test-corel-7-2-name",
+                  "component":  "child-7",
+                  "resource": "test-5"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-corel-7-1",
+                  "connector_name": "test-corel-7-1-name",
+                  "component": "child-7",
+                  "resource": "test-4"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-corel-7-1",
+                  "connector_name": "test-corel-7-1-name",
+                  "component":  "child-7",
+                  "resource": "test-6"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
     """

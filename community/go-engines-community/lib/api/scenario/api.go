@@ -3,6 +3,7 @@ package scenario
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -19,6 +20,7 @@ import (
 type api struct {
 	store        Store
 	actionLogger logger.ActionLogger
+	transformer  common.PatternFieldsTransformer
 	logger       zerolog.Logger
 
 	//todo: priority intervals with new requirements are looks weird now, should think about cleaner solution
@@ -34,6 +36,7 @@ type API interface {
 func NewApi(
 	store Store,
 	actionLogger logger.ActionLogger,
+	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
 	intervals action.PriorityIntervals,
 ) API {
@@ -42,6 +45,7 @@ func NewApi(
 		actionLogger:      actionLogger,
 		logger:            logger,
 		priorityIntervals: intervals,
+		transformer:       transformer,
 	}
 }
 
@@ -90,18 +94,29 @@ func (a *api) Get(c *gin.Context) {
 // @Success 201 {object} Scenario
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
+	var err error
 
 	priority := a.priorityIntervals.GetMinimal()
 	request.Priority = &priority
 
-	if err := c.ShouldBind(&request); err != nil {
+	if err = c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
+	ctx := c.Request.Context()
 
-	scenario, err := a.store.Insert(c.Request.Context(), request)
+	err = a.transformEditRequest(ctx, &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	scenario, err := a.store.Insert(ctx, request)
 	if err != nil {
 		panic(err)
 	}
@@ -111,7 +126,7 @@ func (a *api) Create(c *gin.Context) {
 	}
 	a.priorityIntervals.Take(scenario.Priority)
 
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeScenario,
 		ValueID:   scenario.ID,
@@ -148,9 +163,19 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
+	ctx := c.Request.Context()
 
-	newScenario, err := a.store.Update(c.Request.Context(), request)
+	err = a.transformEditRequest(ctx, &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	newScenario, err := a.store.Update(ctx, request)
 	if err != nil {
 		panic(err)
 	}
@@ -162,7 +187,7 @@ func (a *api) Update(c *gin.Context) {
 	a.priorityIntervals.Restore(oldScenario.Priority)
 	a.priorityIntervals.Take(newScenario.Priority)
 
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeScenario,
 		ValueID:   c.Param("id"),
@@ -297,6 +322,19 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
+		err = a.transformEditRequest(ctx, &request.EditRequest)
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
+			a.logger.Err(err).Msg("cannot create scenario")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
+		}
+
 		scenario, err := a.store.Insert(ctx, request)
 		if err != nil {
 			a.logger.Err(err).Msg("cannot create scenario")
@@ -381,6 +419,19 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 		if oldScenario == nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
+			continue
+		}
+
+		err = a.transformEditRequest(ctx, &request.EditRequest)
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
+			a.logger.Err(err).Msg("cannot update scenario")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
@@ -498,4 +549,24 @@ func (a *api) BulkDelete(c *gin.Context) {
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
+func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
+	var err error
+
+	for idx, actionRequest := range request.Actions {
+		actionRequest.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, actionRequest.AlarmPatternFieldsRequest)
+		if err != nil {
+			return err
+		}
+
+		actionRequest.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, actionRequest.EntityPatternFieldsRequest)
+		if err != nil {
+			return err
+		}
+
+		request.Actions[idx] = actionRequest
+	}
+
+	return nil
 }

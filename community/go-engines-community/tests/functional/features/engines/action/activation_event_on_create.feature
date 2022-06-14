@@ -51,11 +51,20 @@ Feature: send activation event on create
     {
       "name": "test-scenario-action-activation-2-name",
       "enabled": true,
-      "priority": 52,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-action-activation-event-2"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-activation-event-2"
+                }
+              }
+            ]
+          ],
           "type":"ack",
           "parameters":{},
           "drop_scenario_if_not_matched": false,
@@ -114,11 +123,20 @@ Feature: send activation event on create
     {
       "name": "test-scenario-action-activation-3-name",
       "enabled": true,
-      "priority": 53,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-action-activation-event-3"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-activation-event-3"
+                }
+              }
+            ]
+          ],
           "type":"snooze",
           "parameters":{
             "duration": {
@@ -181,11 +199,20 @@ Feature: send activation event on create
     {
       "name": "test-scenario-action-activation-4-name",
       "enabled": true,
-      "priority": 54,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-action-activation-event-4"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-activation-event-4"
+                }
+              }
+            ]
+          ],
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-4",
@@ -251,11 +278,20 @@ Feature: send activation event on create
     {
       "name": "test-scenario-action-activation-1-name",
       "enabled": true,
-      "priority": 55,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-action-activation-event-5"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-activation-event-5"
+                }
+              }
+            ]
+          ],
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-5",
@@ -324,11 +360,20 @@ Feature: send activation event on create
     {
       "name": "test-scenario-action-activation-6-name",
       "enabled": true,
-      "priority": 56,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-action-activation-event-6"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-activation-event-6"
+                }
+              }
+            ]
+          ],
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-6",
@@ -393,11 +438,20 @@ Feature: send activation event on create
     {
       "name": "test-scenario-action-activation-7-name",
       "enabled": true,
-      "priority": 57,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-action-activation-event-7"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-activation-event-7"
+                }
+              }
+            ]
+          ],
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-7",
@@ -462,11 +516,20 @@ Feature: send activation event on create
     {
       "name": "test-scenario-action-activation-8-name",
       "enabled": true,
-      "priority": 58,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-action-activation-event-8"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-activation-event-8"
+                }
+              }
+            ]
+          ],
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-8",
