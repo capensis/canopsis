@@ -449,6 +449,10 @@ func (c *Condition) parseValue() {
 	}
 
 	if from, to, err := getTimeIntervalValue(c.Value); err == nil {
+		c.Value = map[string]int64{
+			"from": from,
+			"to":   to,
+		}
 		c.valueTimeIntervalFrom = &from
 		c.valueTimeIntervalTo = &to
 		return

@@ -28,6 +28,26 @@ Feature: Create a instruction
               "type": "eq",
               "value": "test-instruction-to-create-1-pattern"
             }
+          },
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
           }
         ]
       ],
@@ -107,6 +127,26 @@ Feature: Create a instruction
             "cond": {
               "type": "eq",
               "value": "test-instruction-to-create-1-pattern"
+            }
+          },
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
             }
           }
         ]
@@ -293,6 +333,26 @@ Feature: Create a instruction
             "cond": {
               "type": "eq",
               "value": "test-instruction-to-create-1-pattern"
+            }
+          },
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
             }
           }
         ]
@@ -926,6 +986,203 @@ Feature: Create a instruction
     {
       "errors": {
         "entity_pattern": "EntityPattern is invalid entity pattern.",
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-5-pattern"
+            }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ],
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-5-pattern"
+            }
+          },
+          {
+            "field": "v.last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern.",
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-5-pattern"
+            }
+          },
+          {
+            "field": "v.last_update_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-5-pattern"
+            }
+          },
+          {
+            "field": "v.resolved",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-5-pattern"
+            }
+          },
+          {
+            "field": "v.created_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-5-pattern"
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
         "alarm_pattern": "AlarmPattern is invalid alarm pattern."
       }
     }
