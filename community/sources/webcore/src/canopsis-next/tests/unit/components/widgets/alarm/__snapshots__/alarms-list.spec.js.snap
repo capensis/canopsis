@@ -43,6 +43,9 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
         <filters-list-btn-stub
           private="true"
           widgetid="880c5d0c-3f31-477c-8365-2f90389326cc"
+          withalarm="true"
+          withentity="true"
+          withpbehavior="true"
         />
       </div>
     </div>
