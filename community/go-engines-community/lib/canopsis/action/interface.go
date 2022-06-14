@@ -95,6 +95,7 @@ type AdditionalData struct {
 	Author          string                `json:"author"`
 	User            string                `json:"user"`
 	Initiator       string                `json:"initiator"`
+	Output          string                `json:"event_output"`
 }
 
 type Execution struct {
