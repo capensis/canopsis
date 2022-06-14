@@ -30,7 +30,10 @@
             :widget-id="widget._id",
             :addable="hasAccessToAddFilter",
             :editable="hasAccessToEditFilter",
-            private
+            private,
+            with-alarm,
+            with-entity,
+            with-pbehavior
           )
       v-flex
         alarms-list-remediation-instructions-filters(
