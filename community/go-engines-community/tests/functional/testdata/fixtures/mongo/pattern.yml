@@ -354,3 +354,31 @@ pattern:
           cond:
             type: eq
             value: test-pattern-to-entityservice-pattern-1-pattern
+
+  pattern_to_rule_resolve_corporate_update_1:
+    <<: *pattern_entity
+    _id: test-pattern-to-rule-resolve-corporate-update-1
+    title: test-pattern-to-rule-resolve-corporate-update-1-title
+    is_corporate: true
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-rule-resolve-corporate-update-1-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_rule_resolve_corporate_update_2:
+    <<: *pattern_alarm
+    _id: test-pattern-to-rule-resolve-corporate-update-2
+    title: test-pattern-to-rule-resolve-corporate-update-2-title
+    is_corporate: true
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-pattern-to-rule-resolve-corporate-update-2-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
