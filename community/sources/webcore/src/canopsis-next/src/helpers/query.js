@@ -6,7 +6,8 @@ import {
   QUICK_RANGES,
   ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP,
   SORT_ORDERS,
-  ALARMS_OPENED_VALUES, DATETIME_FORMATS,
+  ALARMS_OPENED_VALUES,
+  DATETIME_FORMATS,
 } from '@/constants';
 
 import { getMainFilter } from './filter';
@@ -14,7 +15,7 @@ import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
 } from './filter/remediation-instructions-filter';
-import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from './date/date-intervals';
 
 /**
  * WIDGET CONVERTERS

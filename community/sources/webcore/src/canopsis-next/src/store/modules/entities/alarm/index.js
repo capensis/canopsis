@@ -110,13 +110,6 @@ export default {
       }, { root: true });
     },
 
-    alarmDetails({ dispatch }, { id }) {
-      return dispatch('entities/fetch', {
-        route: `${API_ROUTES.alarmList}/${id}`,
-        schema: alarmSchema,
-      }, { root: true });
-    },
-
     async createAlarmsListExport({ commit }, { widgetId, data = {} }) {
       const exportData = await request.post(API_ROUTES.alarmListExport, data);
 

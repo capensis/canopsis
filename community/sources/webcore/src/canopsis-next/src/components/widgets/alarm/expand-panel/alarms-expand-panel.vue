@@ -1,87 +1,86 @@
 <template lang="pug">
-  div.position-relative
-    v-tabs.expand-panel.secondary.lighten-2(
-      :key="tabsKey",
-      color="secondary lighten-1",
-      slider-color="primary",
-      dark,
-      centered
-    )
-      template(v-if="hasMoreInfos")
-        v-tab(:class="moreInfosTabClass") {{ $t('alarmList.tabs.moreInfos') }}
-        v-tab-item
-          v-layout.pa-3(row)
-            v-flex(:class="cardFlexClass")
-              v-card.tab-item-card
-                v-card-text
-                  alarms-expand-panel-more-infos(
-                    :alarm="alarm",
-                    :template="widget.parameters.moreInfoTemplate"
-                  )
-      v-tab(:class="timeLineTabClass") {{ $t('alarmList.tabs.timeLine') }}
+  v-tabs.expand-panel.secondary.lighten-2(
+    :key="tabsKey",
+    color="secondary lighten-1",
+    slider-color="primary",
+    dark,
+    centered
+  )
+    template(v-if="hasMoreInfos")
+      v-tab(:class="moreInfosTabClass") {{ $t('alarmList.tabs.moreInfos') }}
       v-tab-item
         v-layout.pa-3(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
-              v-progress-linear(
-                :active="pending",
-                :height="3",
-                indeterminate
-              )
               v-card-text
-                time-line(
-                  :steps="steps",
-                  :is-html-enabled="isHtmlEnabled",
-                  @update:page="updateStepsQueryPage"
+                alarms-expand-panel-more-infos(
+                  :alarm="alarm",
+                  :template="widget.parameters.moreInfoTemplate"
                 )
-      template(v-if="hasChildren")
-        v-tab {{ $t('alarmList.tabs.alarmsChildren') }}
-        v-tab-item
-          v-layout.pa-3.secondary.lighten-2(row)
-            v-flex(:class="cardFlexClass")
-              v-card.tab-item-card
-                v-card-text
-                  alarms-expand-panel-children(
-                    :children="children",
-                    :alarm="alarm",
-                    :widget="widget",
-                    :editing="editing",
-                    :pending="pending",
-                    :query.sync="childrenQuery"
-                  )
-      template(v-if="hasServiceDependencies")
-        v-tab {{ $t('alarmList.tabs.trackSource') }}
-        v-tab-item
-          v-layout.pa-3.secondary.lighten-2(row)
-            v-flex(:class="cardFlexClass")
-              v-card.tab-item-card
-                v-card-text
-                  service-dependencies(
-                    :root="dependency",
-                    :columns="widget.parameters.serviceDependenciesColumns",
-                    include-root
-                  )
-      template(v-if="hasImpactsDependencies")
-        v-tab {{ $t('alarmList.tabs.impactChain') }}
-        v-tab-item
-          v-layout.pa-3.secondary.lighten-2(row)
-            v-flex(:class="cardFlexClass")
-              v-card.tab-item-card
-                v-card-text
-                  service-dependencies(
-                    :root="dependency",
-                    :columns="widget.parameters.serviceDependenciesColumns",
-                    include-root,
-                    impact
-                  )
-      template(v-if="hasEntityGantt")
-        v-tab {{ $t('alarmList.tabs.entityGantt') }}
-        v-tab-item(lazy)
-          v-layout.pa-3.secondary.lighten-2(row)
-            v-flex(:class="cardFlexClass")
-              v-card.tab-item-card
-                v-card-text
-                  entity-gantt(:alarm="alarm")
+    v-tab(:class="timeLineTabClass") {{ $t('alarmList.tabs.timeLine') }}
+    v-tab-item
+      v-layout.pa-3(row)
+        v-flex(:class="cardFlexClass")
+          v-card.tab-item-card
+            v-progress-linear(
+              :active="pending",
+              :height="3",
+              indeterminate
+            )
+            v-card-text
+              time-line(
+                :steps="steps",
+                :is-html-enabled="isHtmlEnabled",
+                @update:page="updateStepsQueryPage"
+              )
+    template(v-if="hasChildren")
+      v-tab {{ $t('alarmList.tabs.alarmsChildren') }}
+      v-tab-item
+        v-layout.pa-3.secondary.lighten-2(row)
+          v-flex(:class="cardFlexClass")
+            v-card.tab-item-card
+              v-card-text
+                alarms-expand-panel-children(
+                  :children="children",
+                  :alarm="alarm",
+                  :widget="widget",
+                  :editing="editing",
+                  :pending="pending",
+                  :query.sync="childrenQuery"
+                )
+    template(v-if="hasServiceDependencies")
+      v-tab {{ $t('alarmList.tabs.trackSource') }}
+      v-tab-item
+        v-layout.pa-3.secondary.lighten-2(row)
+          v-flex(:class="cardFlexClass")
+            v-card.tab-item-card
+              v-card-text
+                service-dependencies(
+                  :root="dependency",
+                  :columns="widget.parameters.serviceDependenciesColumns",
+                  include-root
+                )
+    template(v-if="hasImpactsDependencies")
+      v-tab {{ $t('alarmList.tabs.impactChain') }}
+      v-tab-item
+        v-layout.pa-3.secondary.lighten-2(row)
+          v-flex(:class="cardFlexClass")
+            v-card.tab-item-card
+              v-card-text
+                service-dependencies(
+                  :root="dependency",
+                  :columns="widget.parameters.serviceDependenciesColumns",
+                  include-root,
+                  impact
+                )
+    template(v-if="hasEntityGantt")
+      v-tab {{ $t('alarmList.tabs.entityGantt') }}
+      v-tab-item(lazy)
+        v-layout.pa-3.secondary.lighten-2(row)
+          v-flex(:class="cardFlexClass")
+            v-card.tab-item-card
+              v-card-text
+                entity-gantt(:alarm="alarm")
 </template>
 
 <script>

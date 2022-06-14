@@ -78,9 +78,9 @@ export default {
         config: {
           title: this.$t('modals.createFilter.create.title'),
           withTitle: true,
-          withAlarm: this.withAlarm,
-          withEntity: this.withEntity,
-          withPbehavior: this.withPbehavior,
+          withAlarm: this.config.withAlarm,
+          withEntity: this.config.withEntity,
+          withPbehavior: this.config.withPbehavior,
           action: async (newFilter) => {
             await this.createWidgetFilter({
               data: {
@@ -105,9 +105,9 @@ export default {
 
           title: this.$t('modals.createFilter.edit.title'),
           withTitle: true,
-          withAlarm: this.withAlarm,
-          withEntity: this.withEntity,
-          withPbehavior: this.withPbehavior,
+          withAlarm: this.config.withAlarm,
+          withEntity: this.config.withEntity,
+          withPbehavior: this.config.withPbehavior,
           action: async (newFilter) => {
             await this.updateWidgetFilter({
               id: filter._id,

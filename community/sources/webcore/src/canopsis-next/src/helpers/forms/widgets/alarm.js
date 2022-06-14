@@ -16,6 +16,14 @@ import { defaultColumnsToColumns } from '@/helpers/entities';
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
+ * @typedef {Object} AlarmsListDataTableColumn
+ * @property {string} value
+ * @property {string} text
+ * @property {boolean} [isHtml]
+ * @property {boolean} [colorIndicator]
+ */
+
+/**
  * @typedef {Object} WidgetFastAckOutput
  * @property {boolean} enabled
  * @property {string} value
@@ -278,9 +286,10 @@ export const formToAlarmListWidgetParameters = form => ({
 });
 
 /**
- * TODO: Add DOC
- * @param columns
- * @returns {(*&{text: *})[]}
+ * Convert alarms list columns to data table columns
+ *
+ * @param {WidgetColumn[]} [columns = []]
+ * @returns {AlarmsListDataTableColumn[]}
  */
 export const alarmsListColumnsToTableColumns = (columns = []) => columns.map(({ label, ...column }) => ({
   ...column,
