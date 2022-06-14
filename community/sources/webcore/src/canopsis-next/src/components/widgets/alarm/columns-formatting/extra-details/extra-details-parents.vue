@@ -1,14 +1,13 @@
 <template lang="pug">
-  div
-    v-tooltip.c-extra-details(top)
-      template(#activator="{ on, attrs }")
-        v-icon.c-extra-details__badge.brown.darken-1.white--text(v-on="on", v-bind="attrs", small) {{ icon }}
-      div.text-md-center
-        strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
-        v-layout(column)
-          div {{ $tc('alarmList.actions.iconsFields.rule', rules.length) }}&nbsp;:
-          div.rule-name(v-for="rule in rules", :key="rule.id") &nbsp;{{ rule.name }}
-        div {{ $t('alarmList.actions.iconsFields.parents') }} : {{ total }}
+  v-tooltip.c-extra-details(top)
+    template(#activator="{ on, attrs }")
+      v-icon.c-extra-details__badge.brown.darken-1.white--text(v-on="on", v-bind="attrs", small) {{ icon }}
+    div.text-md-center
+      strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
+      v-layout(column)
+        div {{ $tc('alarmList.actions.iconsFields.rule', rules.length) }}&nbsp;:
+        div.rule-name(v-for="rule in rules", :key="rule.id") &nbsp;{{ rule.name }}
+      div {{ $t('alarmList.actions.iconsFields.parents') }} : {{ total }}
 </template>
 
 <script>
