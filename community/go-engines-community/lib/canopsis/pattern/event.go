@@ -135,8 +135,12 @@ func (p Event) Match(event types.Event) (bool, EventRegexMatches, error) {
 	return false, eventRegexMatches, nil
 }
 
-func (p Event) Validate() bool {
+func (p Event) Validate(forbiddenFields []string) bool {
 	emptyEvent := types.Event{}
+	forbiddenFieldsMap := make(map[string]bool, len(forbiddenFields))
+	for _, field := range forbiddenFields {
+		forbiddenFieldsMap[field] = true
+	}
 
 	for _, group := range p {
 		if len(group) == 0 {
@@ -147,6 +151,10 @@ func (p Event) Validate() bool {
 			f := v.Field
 			cond := v.Condition
 			var err error
+
+			if forbiddenFieldsMap[f] {
+				return false
+			}
 
 			if infoName := getEventExtraInfoName(f); infoName != "" {
 				switch v.FieldType {
@@ -182,6 +190,30 @@ func (p Event) Validate() bool {
 	}
 
 	return true
+}
+
+func (p Event) HasField(field string) bool {
+	for _, group := range p {
+		for _, condition := range group {
+			if condition.Field == field {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func (p Event) HasExtraInfosField() bool {
+	for _, group := range p {
+		for _, condition := range group {
+			if infoName := getEventExtraInfoName(condition.Field); infoName != "" {
+				return true
+			}
+		}
+	}
+
+	return false
 }
 
 func getEventStringField(event types.Event, f string) (string, bool) {
