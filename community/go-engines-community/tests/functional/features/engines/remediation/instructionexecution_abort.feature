@@ -530,14 +530,19 @@ Feature: abort a instruction execution
     {
       "name": "test-scenario-remediation-instruction-execution-abort-5-name",
       "enabled": true,
-      "priority": 293,
       "triggers": ["ack"],
       "actions": [
         {
-          "entity_patterns": [
-            {
-              "name": "test-resource-remediation-instruction-execution-abort-5"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-remediation-instruction-execution-abort-5"
+                }
+              }
+            ]
           ],
           "type": "changestate",
           "parameters": {
