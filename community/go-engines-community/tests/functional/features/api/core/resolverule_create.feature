@@ -535,6 +535,334 @@ Feature: Create an resolve rule
       }
     }
     """    
+    
+  Scenario: given create request with unacceptable alarm pattern and entity pattern fields for resolve rules should return error
+    When I am admin
+    When I do POST /api/v4/resolve-rules:
+    """json
+    {
+      "name": "test-resolve-rule-to-create-10-name",
+      "description": "test-resolve-rule-to-create-10-description",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-resolve-rule-to-create-10-pattern"
+            }
+          },
+          {
+            "field": "v.last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/resolve-rules:
+    """json
+    {
+      "name": "test-resolve-rule-to-create-10-name",
+      "description": "test-resolve-rule-to-create-10-description",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-resolve-rule-to-create-10-pattern"
+            }
+          },
+          {
+            "field": "v.last_update_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/resolve-rules:
+    """json
+    {
+      "name": "test-resolve-rule-to-create-10-name",
+      "description": "test-resolve-rule-to-create-10-description",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-resolve-rule-to-create-10-pattern"
+            }
+          },
+          {
+            "field": "v.resolved",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/resolve-rules:
+    """json
+    {
+      "name": "test-resolve-rule-to-create-10-name",
+      "description": "test-resolve-rule-to-create-10-description",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-resolve-rule-to-create-10-pattern"
+            }
+          },
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/resolve-rules:
+    """json
+    {
+      "name": "test-resolve-rule-to-create-10-name",
+      "description": "test-resolve-rule-to-create-10-description",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-resolve-rule-to-create-10-pattern"
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/resolve-rules:
+    """json
+    {
+      "name": "test-resolve-rule-to-create-10-name",
+      "description": "test-resolve-rule-to-create-10-description",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resolve-rule-to-create-10-resource"
+            }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
+      }
+    }
+    """
+
+  Scenario: given create request with unacceptable alarm pattern and entity pattern fields for resolve rules should return error
+    When I am admin
+    When I do POST /api/v4/resolve-rules:
+    """json
+    {
+      "name": "test-resolve-rule-to-create-11-name",
+      "description": "test-resolve-rule-to-create-11-description",
+      "corporate_entity_pattern": "test-pattern-to-instruction-pattern-to-exclude-1",
+      "corporate_alarm_pattern": "test-pattern-to-instruction-pattern-to-exclude-2",
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-resolve-rule-to-create-11-name",
+      "description": "test-resolve-rule-to-create-11-description",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-instruction-pattern-to-exclude-1-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_entity_pattern": "test-pattern-to-instruction-pattern-to-exclude-1",
+      "corporate_entity_pattern_title": "test-pattern-to-instruction-pattern-to-exclude-1-title",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.state.val",
+            "cond": {
+              "type": "eq",
+              "value": 3
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          }
+        ]
+      ],
+      "corporate_alarm_pattern": "test-pattern-to-instruction-pattern-to-exclude-2",
+      "corporate_alarm_pattern_title": "test-pattern-to-instruction-pattern-to-exclude-2-title"
+    }
+    """
 
   Scenario: given create request with missing fields should return bad request
     When I am admin
