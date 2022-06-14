@@ -8,12 +8,21 @@ Feature: no execute action when entity is inactive
     {
       "name": "test-scenario-pbehavior-action-1-name",
       "enabled": true,
-      "priority": 71,
       "triggers": ["stateinc"],
       "disable_during_periods": ["maintenance"],
       "actions": [
         {
-          "entity_patterns": [{"name": "test-resource-pbehavior-action-1"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-pbehavior-action-1"
+                }
+              }
+            ]
+          ],
           "type": "ack",
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false
@@ -147,7 +156,6 @@ Feature: no execute action when entity is inactive
     {
       "name": "test-scenario-pbehavior-action-2-name",
       "enabled": true,
-      "priority": 72,
       "triggers": ["create"],
       "delay": {
         "value": 10,
@@ -155,7 +163,17 @@ Feature: no execute action when entity is inactive
       },
       "actions": [
         {
-          "entity_patterns": [{"name": "test-resource-pbehavior-action-2"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-pbehavior-action-2"
+                }
+              }
+            ]
+          ],
           "type": "ack",
           "parameters": {"output": "test ack"},
           "drop_scenario_if_not_matched": false,
@@ -351,11 +369,20 @@ Feature: no execute action when entity is inactive
     {
       "name": "test-scenario-pbehavior-action-3-name",
       "enabled": true,
-      "priority": 73,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns": [{"name": "test-resource-pbehavior-action-3"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-pbehavior-action-3"
+                }
+              }
+            ]
+          ],
           "parameters": {
             "name": "pbehavior-action-3",
             "tstart": {{ now }},
@@ -459,11 +486,20 @@ Feature: no execute action when entity is inactive
     {
       "name": "test-scenario-pbehavior-action-4-name",
       "enabled": true,
-      "priority": 74,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns": [{"name": "test-resource-pbehavior-action-4"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-pbehavior-action-4"
+                }
+              }
+            ]
+          ],
           "parameters": {
             "name": "pbehavior-action-4",
             "start_on_trigger": true,
@@ -576,7 +612,17 @@ Feature: no execute action when entity is inactive
         {
           "_id": "test-action-pbehavior-action-5",
           "enabled": true,
-          "entity_patterns": [{"name": "test-resource-pbehavior-action-5"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-pbehavior-action-5"
+                }
+              }
+            ]
+          ],
           "parameters": {
             "name": "pbehavior-action-5",
             "tstart": {{ now }},
@@ -695,13 +741,22 @@ Feature: no execute action when entity is inactive
     {
       "name": "test-scenario-pbehavior-action-6-name",
       "enabled": true,
-      "priority": 76,
       "triggers": ["stateinc"],
       "actions": [
         {
           "_id": "test-action-pbehavior-action-6",
           "enabled": true,
-          "entity_patterns": [{"name": "test-resource-pbehavior-action-6"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-pbehavior-action-6"
+                }
+              }
+            ]
+          ],
           "parameters": {
             "name": "pbehavior-action-6",
             "tstart": {{ now }},
