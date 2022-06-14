@@ -152,9 +152,8 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		return nil, err
 	}
 
-	now := types.CpsTime{Time: time.Now()}
 	model := s.transformRequestToDocument(request.EditRequest)
-	model.Updated = now
+	model.Updated = types.CpsTime{Time: time.Now()}
 
 	update := bson.M{"$set": model}
 
