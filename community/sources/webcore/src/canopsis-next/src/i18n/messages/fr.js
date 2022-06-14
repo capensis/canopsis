@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -22,7 +24,7 @@ import {
 
 import featureService from '@/services/features';
 
-export default {
+export default merge({
   common: {
     ok: 'Ok',
     undefined: 'Non défini',
@@ -2280,6 +2282,4 @@ export default {
       junit: 'Script lancé à {launchedAt}',
     },
   },
-
-  ...featureService.get('i18n.fr'),
-};
+}, featureService.get('i18n.fr'));
