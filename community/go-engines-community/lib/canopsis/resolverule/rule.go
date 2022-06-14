@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-const defaultRule = "default-rule"
+const DefaultRule = "default-rule"
 
 type Rule struct {
 	ID                string                       `bson:"_id"`
@@ -27,7 +27,7 @@ type Rule struct {
 
 // Matches returns true if alarm and entity match patterns.
 func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity) (bool, error) {
-	if r.ID == defaultRule {
+	if r.ID == DefaultRule {
 		return true, nil
 	}
 
