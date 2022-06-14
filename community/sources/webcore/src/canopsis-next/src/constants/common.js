@@ -222,7 +222,7 @@ export const WORKFLOW_TYPES = {
   continue: false,
 };
 
-export const PAYLOAD_VARIABLE_REGEXP = /[^"]({{(.){2,}}})[^"]/g;
+export const PAYLOAD_VARIABLE_REGEXP = /({{(.){2,}}})/g;
 
 export const PATTERNS_TYPES = {
   alarm: 'alarm',
