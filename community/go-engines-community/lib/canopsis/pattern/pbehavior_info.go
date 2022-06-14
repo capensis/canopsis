@@ -44,8 +44,12 @@ func (p PbehaviorInfo) Match(pbhInfo types.PbehaviorInfo) (bool, error) {
 	return false, nil
 }
 
-func (p PbehaviorInfo) Validate() bool {
+func (p PbehaviorInfo) Validate(forbiddenFields []string) bool {
 	emptyPbhInfo := types.PbehaviorInfo{}
+	forbiddenFieldsMap := make(map[string]bool, len(forbiddenFields))
+	for _, field := range forbiddenFields {
+		forbiddenFieldsMap[field] = true
+	}
 
 	for _, group := range p {
 		if len(group) == 0 {
@@ -56,6 +60,10 @@ func (p PbehaviorInfo) Validate() bool {
 			f := v.Field
 			cond := v.Condition
 			var err error
+
+			if forbiddenFieldsMap[f] {
+				return false
+			}
 
 			if str, ok := getPbehaviorInfoStringField(emptyPbhInfo, f); ok {
 				_, _, err = cond.MatchString(str)
@@ -98,6 +106,18 @@ func (p PbehaviorInfo) ToMongoQuery(prefix string) (bson.M, error) {
 	}
 
 	return bson.M{"$or": groupQueries}, nil
+}
+
+func (p PbehaviorInfo) HasField(field string) bool {
+	for _, group := range p {
+		for _, condition := range group {
+			if condition.Field == field {
+				return true
+			}
+		}
+	}
+
+	return false
 }
 
 func getPbehaviorInfoStringField(pbhInfo types.PbehaviorInfo, f string) (string, bool) {

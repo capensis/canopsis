@@ -262,6 +262,127 @@ Feature: Create entity service
     }
     """
 
+  Scenario: given invalid create request with invalid entity pattern should return error
+    When I am admin
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "entity_pattern": [[]]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-create-3-pattern"
+            }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-create-3-pattern"
+            }
+          }
+        ],
+        [
+          {
+            "field": "impact",
+            "cond": {
+              "type": "has_one_of",
+              "value": ["test-entityservice-to-create-3-pattern"]
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-create-3-pattern"
+            }
+          }
+        ],
+        [
+          {
+            "field": "depends",
+            "cond": {
+              "type": "has_one_of",
+              "value": ["test-entityservice-to-create-3-pattern"]
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
+      }
+    }
+    """
+
   Scenario: given create request and no auth user should not allow access
     When I do POST /api/v4/entityservices
     Then the response code should be 401

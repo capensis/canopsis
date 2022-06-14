@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -269,7 +270,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 			SliAvailState: sliAvailState,
 			Created:       types.CpsTime{Time: time.Now()},
 		},
-		EntityPatternFields: request.EntityPatternFieldsRequest.ToModel(),
+		EntityPatternFields: request.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection)),
 		OutputTemplate:      request.OutputTemplate,
 	}
 
@@ -299,7 +300,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 		service = nil
 		serviceChanges = ServiceChanges{}
 		oldValues := &entityservice.EntityService{}
-		pattern := request.EntityPatternFieldsRequest.ToModel()
+		pattern := request.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection))
 		update := bson.M{"$set": bson.M{
 			"name":            request.Name,
 			"output_template": request.OutputTemplate,

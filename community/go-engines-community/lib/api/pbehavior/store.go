@@ -315,14 +315,14 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 	if r.Exceptions != nil {
 		set["exceptions"] = r.Exceptions
 	}
-	if r.EntityPattern != nil {
+	if r.CorporatePattern != nil {
+		set["entity_pattern"] = r.CorporatePattern.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
+		set["corporate_entity_pattern"] = r.CorporatePattern.ID
+		set["corporate_entity_pattern_title"] = r.CorporatePattern.Title
+	} else if r.EntityPattern != nil {
 		set["entity_pattern"] = r.EntityPattern
 		unset["corporate_entity_pattern"] = ""
 		unset["corporate_entity_pattern_title"] = ""
-	} else if r.CorporatePattern != nil {
-		set["entity_pattern"] = r.CorporatePattern.EntityPattern
-		set["corporate_entity_pattern"] = r.CorporatePattern.ID
-		set["corporate_entity_pattern_title"] = r.CorporatePattern.Title
 	}
 
 	update := bson.M{"$set": set}
@@ -445,7 +445,7 @@ func (s *store) transformRequestToDocument(r EditRequest) pbehavior.PBehavior {
 		Exdates:    exdates,
 		Exceptions: exceptions,
 
-		EntityPatternFields: r.EntityPatternFieldsRequest.ToModel(),
+		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)),
 	}
 }
 
