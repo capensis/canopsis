@@ -50,16 +50,21 @@ Feature: update meta alarm on action
     {
       "name": "test-scenario-pbehavior-action-correlation-1-name",
       "enabled": true,
-      "priority": 92,
       "triggers": ["comment"],
       "actions": [
         {
           "_id": "test-action-pbehavior-action-correlation-1",
           "enabled": true,
-          "entity_patterns": [
-            {
-              "_id": "{{ .metalarmEntityID }}"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "{{ .metaAlarmResource }}"
+                }
+              }
+            ]
           ],
           "parameters": {
             "name": "test-pbehavior-action-correlation-1",
