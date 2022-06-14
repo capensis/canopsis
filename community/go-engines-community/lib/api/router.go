@@ -977,7 +977,7 @@ func RegisterRoutes(
 			)
 		}
 
-		scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, logger, scenarioPriorityIntervals)
+		scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, common.NewPatternFieldsTransformer(dbClient), logger, scenarioPriorityIntervals)
 		scenarioRouter := protected.Group("/scenarios")
 		{
 			scenarioRouter.POST(

@@ -1,10 +1,12 @@
 package scenario
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -60,10 +62,13 @@ type ActionRequest struct {
 	Type                     string                       `json:"type" binding:"required,oneof=ack ackremove assocticket cancel changestate pbehavior snooze webhook"`
 	Parameters               action.Parameters            `json:"parameters,omitempty"`
 	Comment                  string                       `json:"comment"`
-	AlarmPatterns            oldpattern.AlarmPatternList  `json:"alarm_patterns"`
-	EntityPatterns           oldpattern.EntityPatternList `json:"entity_patterns"`
+	OldAlarmPatterns         oldpattern.AlarmPatternList  `json:"old_alarm_patterns"`
+	OldEntityPatterns        oldpattern.EntityPatternList `json:"old_entity_patterns"`
 	DropScenarioIfNotMatched *bool                        `json:"drop_scenario_if_not_matched" binding:"required"`
 	EmitTrigger              *bool                        `json:"emit_trigger" binding:"required"`
+
+	common.EntityPatternFieldsRequest `bson:",inline"`
+	common.AlarmPatternFieldsRequest  `bson:",inline"`
 }
 
 type Scenario struct {
@@ -84,10 +89,13 @@ type Action struct {
 	Type                     string                       `bson:"type" json:"type"`
 	Comment                  string                       `bson:"comment" json:"comment"`
 	Parameters               Parameters                   `bson:"parameters,omitempty" json:"parameters,omitempty"`
-	AlarmPatterns            oldpattern.AlarmPatternList  `bson:"alarm_patterns" json:"alarm_patterns"`
-	EntityPatterns           oldpattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
+	OldAlarmPatterns         oldpattern.AlarmPatternList  `bson:"old_alarm_patterns,omitempty" json:"old_alarm_patterns,omitempty"`
+	OldEntityPatterns        oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
 	DropScenarioIfNotMatched bool                         `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
 	EmitTrigger              bool                         `bson:"emit_trigger" json:"emit_trigger"`
+
+	savedpattern.EntityPatternFields `bson:",inline"`
+	savedpattern.AlarmPatternFields  `bson:",inline"`
 }
 
 type Parameters struct {

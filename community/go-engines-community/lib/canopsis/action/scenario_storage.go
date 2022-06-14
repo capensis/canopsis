@@ -45,14 +45,22 @@ func (s *scenarioStorage) ReloadScenarios(ctx context.Context) error {
 	for _, scenario := range scenarios {
 		valid := true
 		for i, action := range scenario.Actions {
-			if !action.EntityPatterns.IsValid() {
+			if !action.OldEntityPatterns.IsSet() && !action.OldAlarmPatterns.IsSet() &&
+				len(action.AlarmPattern) == 0 && len(action.EntityPattern) == 0 {
+				s.logger.Warn().Str("scenario", scenario.ID).Int("action number", i).Msg("action doesn't have patterns")
+				valid = false
+
+				break
+			}
+
+			if !action.OldEntityPatterns.IsValid() {
 				s.logger.Warn().Str("scenario", scenario.ID).Int("action number", i).Msg("failed to parse entity patterns")
 				valid = false
 
 				break
 			}
 
-			if !action.AlarmPatterns.IsValid() {
+			if !action.OldAlarmPatterns.IsValid() {
 				s.logger.Warn().Str("scenario", scenario.ID).Int("action number", i).Msg("failed to parse alarm patterns")
 				valid = false
 
@@ -122,11 +130,16 @@ func (s *scenarioStorage) RunDelayedScenarios(
 		if scenario.Delay != nil && scenario.Delay.Value > 0 {
 			// Check if at least on action matches alarm.
 			matched := false
-			for _, action := range scenario.Actions {
-				if action.AlarmPatterns.Matches(&alarm) && action.EntityPatterns.Matches(&entity) {
-					matched = true
+			var err error
+
+			for idx, action := range scenario.Actions {
+				matched, err = action.Match(entity, alarm)
+				if err != nil {
+					s.logger.Err(err).Msgf("match action %d from scenario %s returned error", idx, scenario.ID)
 					break
-				} else if action.DropScenarioIfNotMatched {
+				}
+
+				if matched || action.DropScenarioIfNotMatched {
 					break
 				}
 			}
