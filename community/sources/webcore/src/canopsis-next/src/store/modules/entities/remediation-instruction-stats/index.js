@@ -12,8 +12,8 @@ export default createEntityModule({
   withMeta: true,
 }, {
   actions: {
-    fetchSummaryWithoutStore(context, { id }) {
-      return request.get(`${API_ROUTES.remediation.instructionStats}/${id}/summary`);
+    fetchSummaryWithoutStore(context, { id, params }) {
+      return request.get(`${API_ROUTES.remediation.instructionStats}/${id}/summary`, { params });
     },
 
     fetchChangesWithoutStore(context, { id, params }) {
