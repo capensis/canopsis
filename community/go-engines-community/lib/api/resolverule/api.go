@@ -124,6 +124,11 @@ func (a api) Update(c *gin.Context) {
 
 	rule, err := a.store.Update(ctx, request)
 	if err != nil {
+		if errors.Is(err, ErrDefaultRule) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
+
 		panic(err)
 	}
 
@@ -147,6 +152,11 @@ func (a api) Update(c *gin.Context) {
 func (a api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 	if err != nil {
+		if errors.Is(err, ErrDefaultRule) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
+
 		panic(err)
 	}
 

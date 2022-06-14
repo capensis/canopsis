@@ -140,6 +140,10 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 }
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, error) {
+	if request.ID == resolverule.DefaultRule {
+		return nil, ErrDefaultRule
+	}
+
 	model := resolverule.Rule{}
 	err := s.dbCollection.FindOne(ctx, bson.M{"_id": request.ID}).Decode(&model)
 	if err != nil {
@@ -204,6 +208,10 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+	if id == resolverule.DefaultRule {
+		return false, ErrDefaultRule
+	}
+
 	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
 		return false, err
