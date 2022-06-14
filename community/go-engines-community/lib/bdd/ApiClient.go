@@ -283,6 +283,18 @@ func (a *ApiClient) TheResponseKeyShouldNotExist(path string) error {
 	return nil
 }
 
+/**
+Step example:
+	Then the response key "data.0.created_at" should exist
+*/
+func (a *ApiClient) TheResponseKeyShouldExist(path string) error {
+	if _, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); !ok {
+		return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+	}
+
+	return nil
+}
+
 /*
 Step example:
 	Then the difference between metaalarmLastEventDate createTimestamp is in range -2,2
@@ -716,7 +728,7 @@ Step example:
 	When I do GET /api/v4/entitybasic/{{ .lastResponse._id}}
 */
 func (a *ApiClient) IDoRequest(method, uri string) error {
-	if strings.Contains(uri, "until response") {
+	if strings.Contains(uri, "until") {
 		return fmt.Errorf("step is wrongly matched to IDoRequest")
 	}
 
@@ -759,7 +771,7 @@ func (a *ApiClient) IDoRequestWithBody(method, uri string, doc string) error {
 	if doc == "" {
 		return fmt.Errorf("body is empty")
 	}
-	if strings.Contains(uri, "until response") {
+	if strings.Contains(uri, "until") {
 		return fmt.Errorf("step is wrongly matched to IDoRequestWithBody")
 	}
 

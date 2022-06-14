@@ -32,14 +32,19 @@ Feature: update service when alarm is updated by action
     {
       "name": "test-scenario-action-axe-service-1-name",
       "enabled": true,
-      "priority": 93,
       "triggers": ["cancel"],
       "actions": [
         {
-          "entity_patterns": [
-            {
-              "name": "test-resource-action-axe-service-1"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-axe-service-1"
+                }
+              }
+            ]
           ],
           "type": "changestate",
           "parameters": {

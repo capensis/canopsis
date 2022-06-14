@@ -522,7 +522,8 @@ func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) 
 		return f(ctx)
 	}
 
-	session, err := c.Client.StartSession()
+	opts := options.Session().SetDefaultReadPreference(readpref.Primary())
+	session, err := c.Client.StartSession(opts)
 	if err != nil {
 		return err
 	}
