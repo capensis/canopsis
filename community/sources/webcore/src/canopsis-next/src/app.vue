@@ -49,6 +49,7 @@ export default {
   ],
   data() {
     return {
+      shapes: {},
       pending: true,
     };
   },
@@ -80,6 +81,103 @@ export default {
     ...mapActions({
       fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
     }),
+
+    addRectangle() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: 'rect',
+        width: 100,
+        height: 100,
+        x: 0,
+        y: 0,
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+          fill: 'white',
+        },
+      });
+    },
+
+    addLine() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: 'line',
+        points: [{ x: 50, y: 50 }, { x: 50, y: 150 }],
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+        },
+      });
+    },
+
+    addArrowLine() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: 'arrow-line',
+        points: [{ x: 50, y: 50 }, { x: 50, y: 150 }],
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+        },
+      });
+    },
+
+    addCircle() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: 'circle',
+        x: 50,
+        y: 50,
+        diameter: 100,
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+          fill: 'white',
+        },
+      });
+    },
+
+    addSquare() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: 'square',
+        x: 50,
+        y: 50,
+        size: 100,
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+          fill: 'white',
+        },
+      });
+    },
+
+    addText() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: 'text',
+        x: 50,
+        y: 50,
+        width: 100,
+        height: 100,
+        text: 'Text',
+        style: {
+
+        },
+      });
+    },
 
     showLocalStorageWarningPopupMessage() {
       const text = localStorageService.pop('warningPopup');

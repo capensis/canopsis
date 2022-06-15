@@ -1,5 +1,5 @@
 <template lang="pug">
-  g
+  g(@dblclick="$emit('dblclick', $event)")
     rect(
       :x="rect.x",
       :y="rect.y",
