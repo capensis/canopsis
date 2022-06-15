@@ -6,6 +6,11 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with advanc
 >
   <!---->
   <div
+    class="flex"
+  >
+    <!---->
+  </div>
+  <div
     class="v-tabs"
   >
     <div
@@ -33,6 +38,7 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with advanc
           >
             <a
               class="v-tabs__item"
+              href="#simple"
             >
               Simple editor
             </a>
@@ -42,6 +48,7 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with advanc
           >
             <a
               class="v-tabs__item v-tabs__item--active"
+              href="#advanced"
             >
               Advanced editor
             </a>
@@ -68,6 +75,7 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with advanc
             <c-pattern-groups-field-stub
               attributes=""
               class="mt-2"
+              name="patterns.groups"
               value=""
             />
           </div>
@@ -79,13 +87,11 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with advanc
             class="v-window-item"
             style=""
           >
-            <c-json-field-stub
+            <c-patterns-advanced-editor-field-stub
+              attributes=""
               disabled="true"
-              label="Advanced editor"
-              name="advancedJson"
-              readonly="readonly"
-              rows="10"
-              value="[object Object]"
+              name="patterns.json"
+              value=""
             />
           </div>
         </transition-stub>
@@ -102,11 +108,17 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with custom
 >
   <c-pattern-field-stub
     class="mb-2"
+    disabled="true"
     required="required"
     return-object="return-object"
     type="alarm"
     value="pattern-id"
   />
+  <div
+    class="flex"
+  >
+    <!---->
+  </div>
   <div
     class="v-tabs"
   >
@@ -135,6 +147,7 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with custom
           >
             <a
               class="v-tabs__item v-tabs__item--active"
+              href="#simple"
             >
               Simple editor
             </a>
@@ -144,6 +157,7 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with custom
           >
             <a
               class="v-tabs__item"
+              href="#advanced"
             >
               Advanced editor
             </a>
@@ -170,7 +184,7 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with custom
               attributes="[object Object]"
               class="mt-2"
               disabled="true"
-              name="name"
+              name="name.groups"
               required="true"
               type="alarm"
               value="[object Object]"
@@ -211,6 +225,11 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with defaul
 >
   <!---->
   <div
+    class="flex"
+  >
+    <!---->
+  </div>
+  <div
     class="v-tabs"
   >
     <div
@@ -238,6 +257,7 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with defaul
           >
             <a
               class="v-tabs__item v-tabs__item--active"
+              href="#simple"
             >
               Simple editor
             </a>
@@ -247,6 +267,7 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with defaul
           >
             <a
               class="v-tabs__item"
+              href="#advanced"
             >
               Advanced editor
             </a>
@@ -272,6 +293,7 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with defaul
             <c-pattern-groups-field-stub
               attributes=""
               class="mt-2"
+              name="patterns.groups"
               value=""
             />
           </div>

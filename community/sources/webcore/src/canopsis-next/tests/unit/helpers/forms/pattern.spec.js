@@ -4,7 +4,7 @@ import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
   PATTERN_CONDITIONS,
-  PATTERN_INPUT_TYPES,
+  PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
   PATTERN_RULE_INFOS_FIELDS,
   QUICK_RANGES,
@@ -393,7 +393,7 @@ describe('pattern form converters', () => {
     const value = [Faker.datatype.string()];
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_INPUT_TYPES.array,
+      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.hasEvery, value },
     };
 
@@ -412,7 +412,7 @@ describe('pattern form converters', () => {
     const value = [Faker.datatype.string()];
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_INPUT_TYPES.array,
+      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.hasOneOf, value },
     };
 
@@ -431,7 +431,7 @@ describe('pattern form converters', () => {
     const value = [Faker.datatype.string()];
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_INPUT_TYPES.array,
+      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.hasNot, value },
     };
 
@@ -449,7 +449,7 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `is empty` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_INPUT_TYPES.array,
+      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.isEmpty, value: true },
     };
 
@@ -466,7 +466,7 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `is not empty` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_INPUT_TYPES.array,
+      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.isEmpty, value: false },
     };
 
@@ -607,7 +607,7 @@ describe('pattern form converters', () => {
     const dictionary = Faker.datatype.string();
     const patternRule = {
       field: `${ALARM_PATTERN_FIELDS.infos}.${dictionary}`,
-      field_type: PATTERN_INPUT_TYPES.number,
+      field_type: PATTERN_FIELD_TYPES.number,
       cond: { type: PATTERN_CONDITIONS.equal, value },
     };
 
@@ -629,7 +629,7 @@ describe('pattern form converters', () => {
     const dictionary = Faker.datatype.string();
     const patternRule = {
       field: `${ALARM_PATTERN_FIELDS.infos}.${dictionary}`,
-      field_type: PATTERN_INPUT_TYPES.string,
+      field_type: PATTERN_FIELD_TYPES.string,
       cond: { type: PATTERN_CONDITIONS.equal, value },
     };
 
@@ -651,7 +651,7 @@ describe('pattern form converters', () => {
     const dictionary = Faker.datatype.string();
     const patternRule = {
       field: `${ALARM_PATTERN_FIELDS.infos}.${dictionary}`,
-      field_type: PATTERN_INPUT_TYPES.boolean,
+      field_type: PATTERN_FIELD_TYPES.boolean,
       cond: { type: PATTERN_CONDITIONS.equal, value },
     };
 
@@ -673,7 +673,7 @@ describe('pattern form converters', () => {
     const dictionary = Faker.datatype.string();
     const patternRule = {
       field: `${ALARM_PATTERN_FIELDS.infos}.${dictionary}`,
-      field_type: PATTERN_INPUT_TYPES.array,
+      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.hasNot, value },
     };
 
