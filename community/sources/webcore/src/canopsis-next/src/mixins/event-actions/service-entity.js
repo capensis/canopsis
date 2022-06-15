@@ -7,6 +7,8 @@ import {
   WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
 } from '@/constants';
 
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
+
 /**
  * @typedef {Object} ServiceEvent
  * @property {Object} data
@@ -129,9 +131,7 @@ export default {
         comments: [{
           message: comment,
         }],
-        filter: {
-          _id: { $in: [entity._id] },
-        },
+        entityPattern: createEntityIdPatternByValue(entity._id),
         name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${Date.now()}`,
         tstart: new Date(),
         tstop: new Date(MAX_PBEHAVIOR_DEFAULT_TSTOP * 1000),
