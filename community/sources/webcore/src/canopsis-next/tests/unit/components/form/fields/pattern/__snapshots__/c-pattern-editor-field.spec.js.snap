@@ -6,11 +6,6 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with advanc
 >
   <!---->
   <div
-    class="flex"
-  >
-    <!---->
-  </div>
-  <div
     class="v-tabs"
   >
     <div
@@ -98,7 +93,18 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with advanc
       </div>
     </div>
   </div>
-  <!---->
+  <div
+    class="layout align-center justify-end"
+  >
+    <!---->
+    <!---->
+  </div>
+  <div
+    class="flex"
+  >
+    <!---->
+    <!---->
+  </div>
 </div>
 `;
 
@@ -114,11 +120,6 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with custom
     type="alarm"
     value="pattern-id"
   />
-  <div
-    class="flex"
-  >
-    <!---->
-  </div>
   <div
     class="v-tabs"
   >
@@ -203,10 +204,11 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with custom
     </div>
   </div>
   <div
-    class="layout justify-end"
+    class="layout align-center justify-end"
   >
+    <!---->
     <button
-      class="mx-0 v-btn theme--dark primary"
+      class="mr-0 v-btn theme--light primary"
       type="button"
     >
       <div
@@ -216,6 +218,12 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with custom
       </div>
     </button>
   </div>
+  <div
+    class="flex"
+  >
+    <!---->
+    <!---->
+  </div>
 </div>
 `;
 
@@ -224,11 +232,6 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with defaul
   class="layout column"
 >
   <!---->
-  <div
-    class="flex"
-  >
-    <!---->
-  </div>
   <div
     class="v-tabs"
   >
@@ -309,6 +312,17 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with defaul
       </div>
     </div>
   </div>
-  <!---->
+  <div
+    class="layout align-center justify-end"
+  >
+    <!---->
+    <!---->
+  </div>
+  <div
+    class="flex"
+  >
+    <!---->
+    <!---->
+  </div>
 </div>
 `;

@@ -2,10 +2,9 @@
 
 exports[`alarm-status-rule-patterns-form Renders \`alarm-status-rule-patterns-form\` with custom props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object]"
-  alarm-excluded-attributes="v.last_update_date,v.last_event_date,resolved"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object]"
   disabled="true"
-  entity-excluded-items="last_event_date"
+  entity-attributes="[object Object]"
   some-required="true"
   value="[object Object]"
   with-alarm="with-alarm"
@@ -15,9 +14,8 @@ exports[`alarm-status-rule-patterns-form Renders \`alarm-status-rule-patterns-fo
 
 exports[`alarm-status-rule-patterns-form Renders \`alarm-status-rule-patterns-form\` with default props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object]"
-  alarm-excluded-attributes="v.last_update_date,v.last_event_date,resolved"
-  entity-excluded-items="last_event_date"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object]"
+  entity-attributes="[object Object]"
   value="[object Object]"
   with-alarm="with-alarm"
   with-entity="with-entity"
