@@ -68,6 +68,7 @@ export default {
     by: 'Par',
     date: 'Date',
     comment: 'Commentaire | Commentaires',
+    lastComment: 'Dernier commentaire',
     end: 'Fin',
     start: 'Début',
     message: 'Message',
@@ -245,7 +246,6 @@ export default {
     sourceType: 'Type de Source',
     cycleDependency: 'Dépendance au cycle',
     actions: {
-      close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
       saveChanges: 'Sauvegarder',
@@ -490,8 +490,8 @@ export default {
       },
       iconsFields: {
         ticketNumber: 'Numéro de ticket',
-        causes: 'Causes',
-        consequences: 'Conséquences',
+        parents: 'Causes',
+        children: 'Conséquences',
         rule: 'Règle | Règles',
       },
     },
@@ -542,8 +542,7 @@ export default {
     tabs: {
       moreInfos: 'Plus d\'infos',
       timeLine: 'Chronologie',
-      alarmsConsequences: 'Alarmes liées',
-      alarmsCauses: 'Causes des alarmes',
+      alarmsChildren: 'Alarmes liées',
       trackSource: 'Source de la piste',
       impactChain: 'Chaîne d\'impact',
       entityGantt: 'Diagramme de Gantt',

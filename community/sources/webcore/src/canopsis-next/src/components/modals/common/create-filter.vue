@@ -55,6 +55,10 @@ export default {
     };
   },
   computed: {
+    title() {
+      return this.config.title ?? this.$t('modals.createFilter.create.title');
+    },
+
     patternsFields() {
       const { withAlarm, withEntity, withPbehavior, withEvent } = this.config;
 
@@ -64,10 +68,6 @@ export default {
         withPbehavior && PATTERNS_FIELDS.pbehavior,
         withEvent && PATTERNS_FIELDS.event,
       ].filter(Boolean);
-    },
-
-    title() {
-      return this.config.title ?? this.$t('modals.createFilter.create.title');
     },
   },
   methods: {

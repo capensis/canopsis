@@ -8,7 +8,7 @@ import { ENTITIES_TYPES } from '@/constants';
 import { createEntityModule } from '@/store/plugins/entities';
 import request from '@/services/request';
 
-import serviceEntityModule from './entity';
+import entityModule from './entity';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -25,7 +25,7 @@ export default createEntityModule({
   types,
 }, {
   modules: {
-    serviceEntity: serviceEntityModule,
+    entity: entityModule,
   },
   state: {
     widgets: {},
@@ -86,6 +86,10 @@ export default createEntityModule({
       return request.get(API_ROUTES.serviceImpacts, {
         params: { ...params, _id: id },
       });
+    },
+
+    fetchAlarmsWithoutStore(context, { id, params }) {
+      return request.get(`${API_ROUTES.serviceAlarms}/${id}`, { params });
     },
 
     fetchItemWithoutStore(context, { id, params }) {

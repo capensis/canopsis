@@ -45,9 +45,8 @@
           template(v-if="hasAccessToListFilters")
             field-filters(
               v-model="form.parameters.mainFilter",
-              :entities-type="$constants.ENTITIES_TYPES.alarm",
-              :filters.sync="form.parameters.viewFilters",
-              :condition.sync="form.parameters.mainFilterCondition",
+              :widget-id="widget._id",
+              :filters="form.filters",
               :addable="hasAccessToAddFilter",
               :editable="hasAccessToEditFilter",
               @input="updateMainFilterUpdatedAt"
