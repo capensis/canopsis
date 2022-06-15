@@ -8,7 +8,9 @@
 </template>
 
 <script>
-import { ENTITY_PATTERN_FIELDS, MODALS, PATTERN_CONDITIONS } from '@/constants';
+import { MODALS } from '@/constants';
+
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
@@ -29,13 +31,7 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          entityPattern: [[{
-            field: ENTITY_PATTERN_FIELDS.id,
-            cond: {
-              type: PATTERN_CONDITIONS.equal,
-              value: this.entityId,
-            },
-          }]],
+          entityPattern: createEntityIdPatternByValue(this.entityId),
         },
       });
     },

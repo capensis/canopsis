@@ -14,7 +14,8 @@ import {
   PATTERN_STRING_OPERATORS,
   PATTERN_CONDITIONS,
   ALARM_PATTERN_FIELDS,
-  ENTITY_PATTERN_FIELDS, EVENT_FILTER_PATTERN_FIELDS,
+  ENTITY_PATTERN_FIELDS,
+  EVENT_FILTER_PATTERN_FIELDS,
 } from '@/constants';
 import { isValidDateInterval } from '@/helpers/date/date';
 import { isValidDuration } from '@/helpers/date/duration';
@@ -447,3 +448,17 @@ export const isValidPatternRule = rule => !!rule?.field
   && (!rule.field_type || isValidRuleFieldType(rule.field_type))
   && isValidPatternCondition(rule.cond.type)
   && isValidRuleValue(rule);
+
+/**
+ * Create id pattern rule for entity patterns
+ *
+ * @param {string | string[]} value
+ * @returns {PatternGroups}
+ */
+export const createEntityIdPatternByValue = value => [[{
+  field: ENTITY_PATTERN_FIELDS.id,
+  cond: {
+    type: isArray(value) ? PATTERN_CONDITIONS.isOneOf : PATTERN_CONDITIONS.equal,
+    value,
+  },
+}]];
