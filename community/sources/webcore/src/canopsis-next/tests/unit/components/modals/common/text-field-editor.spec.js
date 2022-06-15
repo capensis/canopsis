@@ -221,7 +221,7 @@ describe('text-field-editor', () => {
   });
 
   test('Errors added after trigger submit button with field error', async () => {
-    const name = Faker.datatype.string();
+    const name = Faker.lorem.word();
     const formErrors = {
       [name]: 'Text error',
     };
@@ -258,8 +258,8 @@ describe('text-field-editor', () => {
   });
 
   test('Errors added after trigger submit button with common error', async () => {
-    const error = Faker.datatype.string();
-    const name = Faker.datatype.string();
+    const error = Faker.lorem.words();
+    const name = Faker.lorem.word();
     const action = jest.fn().mockRejectedValue({ error });
     const wrapper = factory({
       propsData: {
@@ -292,8 +292,8 @@ describe('text-field-editor', () => {
   });
 
   test('Errors added after trigger submit button with error message', async () => {
-    const message = Faker.datatype.string();
-    const name = Faker.datatype.string();
+    const message = Faker.lorem.words();
+    const name = Faker.lorem.word();
     const action = jest.fn().mockRejectedValue({ message });
     const wrapper = factory({
       propsData: {

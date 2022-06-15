@@ -10,8 +10,8 @@ const localVue = createVueInstance();
 
 const stubs = {
   'v-checkbox-functional': true,
-  'alarm-list-row-icon': true,
-  'c-expand-btn': true,
+  'alarms-list-row-icon': true,
+  'alarms-expand-panel-btn': true,
   'alarm-column-value': true,
   'actions-panel': true,
 };
@@ -40,7 +40,7 @@ const snapshotFactory = (options = {}) => mount(AlarmsListRow, {
   ...options,
 });
 
-const selectExpandButton = wrapper => wrapper.find('c-expand-btn-stub');
+const selectExpandButton = wrapper => wrapper.find('alarms-expand-panel-btn-stub');
 const selectTableRow = wrapper => wrapper.find('tr');
 const selectCheckbox = wrapper => wrapper.find('v-checkbox-functional-stub');
 
@@ -134,79 +134,6 @@ describe('alarms-list-row', () => {
     callFeatureSpy.mockClear();
   });
 
-  it('Row expanded after trigger expand button with correlation, resolved and filtered alarms', async () => {
-    const alarm = {
-      _id: 'alarm-id',
-      causes: {},
-      consequences: {},
-      filtered_children: ['test'],
-      v: {
-        resolved: {},
-        status: {},
-      },
-    };
-    const row = {
-      item: alarm,
-      expanded: false,
-    };
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        alarmModule,
-        {
-          ...queryModule,
-          getters: { getQueryById: () => () => ({ correlation: true }) },
-        },
-      ]),
-      propsData: {
-        row,
-        widget: {},
-        columns: [{}, {}],
-        expandable: true,
-      },
-    });
-
-    const expandButton = selectExpandButton(wrapper);
-
-    expandButton.vm.$emit('expand');
-
-    await flushPromises();
-
-    expect(fetchItem).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        id: alarm._id,
-        params: {
-          correlation: true,
-          sort_dir: 'desc',
-          sort_key: 't',
-          limit: 1,
-          with_instructions: true,
-          opened: false,
-          with_causes: true,
-          with_consequences: true,
-          with_steps: true,
-        },
-        dataPreparer: expect.any(Function),
-      },
-      undefined,
-    );
-
-    const [, options] = fetchItem.mock.calls[0];
-
-    const fetchedAlarm = {
-      _id: 'fetched-alarm',
-    };
-
-    expect(options.dataPreparer({ data: [fetchedAlarm] })).toEqual([{
-      ...fetchedAlarm,
-      filtered_children: alarm.filtered_children,
-    }]);
-
-    expect(options.dataPreparer({ data: [] })).toEqual([]);
-
-    expect(row.expanded).toBe(true);
-  });
-
   it('Row expanded after trigger expand button with hidden groups and without filtered alarms', async () => {
     const alarm = {
       _id: 'alarm-id',
@@ -234,91 +161,9 @@ describe('alarms-list-row', () => {
 
     const expandButton = selectExpandButton(wrapper);
 
-    expandButton.vm.$emit('expand');
+    expandButton.vm.$emit('input', true);
 
     await flushPromises();
-
-    expect(fetchItem).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        id: alarm._id,
-        params: {
-          sort_dir: 'desc',
-          sort_key: 't',
-          limit: 1,
-          with_instructions: true,
-          correlation: false,
-          with_steps: true,
-        },
-        dataPreparer: expect.any(Function),
-      },
-      undefined,
-    );
-
-    const [, options] = fetchItem.mock.calls[0];
-
-    const fetchedAlarms = [{
-      _id: 'fetched-alarm-1',
-    }, {
-      _id: 'fetched-alarm-2',
-    }];
-
-    expect(options.dataPreparer({ data: fetchedAlarms })).toEqual(fetchedAlarms);
-
-    expect(options.dataPreparer({})).toEqual([]);
-
-    expect(row.expanded).toBe(true);
-  });
-
-  it('Row expanded after trigger expand button without causes and consequences', async () => {
-    const alarm = {
-      _id: 'alarm-id',
-      v: {
-        status: {},
-      },
-    };
-    const row = {
-      item: alarm,
-      expanded: false,
-    };
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        alarmModule,
-        {
-          ...queryModule,
-          getters: { getQueryById: () => () => ({ correlation: true }) },
-        },
-      ]),
-      propsData: {
-        row,
-        widget: {},
-        columns: [{}, {}],
-        expandable: true,
-      },
-    });
-
-    const expandButton = selectExpandButton(wrapper);
-
-    expandButton.vm.$emit('expand');
-
-    await flushPromises();
-
-    expect(fetchItem).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        id: alarm._id,
-        params: {
-          sort_dir: 'desc',
-          sort_key: 't',
-          limit: 1,
-          with_instructions: true,
-          correlation: true,
-          with_steps: true,
-        },
-        dataPreparer: expect.any(Function),
-      },
-      undefined,
-    );
 
     expect(row.expanded).toBe(true);
   });
@@ -345,11 +190,9 @@ describe('alarms-list-row', () => {
 
     const expandButton = selectExpandButton(wrapper);
 
-    expandButton.vm.$emit('expand');
+    expandButton.vm.$emit('input', false);
 
     await flushPromises();
-
-    expect(fetchItem).not.toHaveBeenCalled();
 
     expect(row.expanded).toBe(false);
   });

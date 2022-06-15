@@ -128,13 +128,6 @@ describe('mass-actions-panel', () => {
       getList: () => () => [alarm, metaAlarm],
     },
   };
-  const fetchAlarmsListWithPreviousParams = jest.fn();
-  const alarmModule = {
-    name: 'alarm',
-    actions: {
-      fetchListWithPreviousParams: fetchAlarmsListWithPreviousParams,
-    },
-  };
   const createEvent = jest.fn();
   const eventModule = {
     name: 'event',
@@ -155,6 +148,12 @@ describe('mass-actions-panel', () => {
     },
     d: 'parent-d',
   };
+
+  const refreshAlarmsList = jest.fn();
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   it('Create pbehavior modal showed after trigger pbehavior add action', () => {
     const wrapper = factory({
@@ -210,10 +209,10 @@ describe('mass-actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         entitiesModule,
-        alarmModule,
       ]),
       propsData: {
         itemsIds,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -244,12 +243,7 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Fast ack event sent after trigger fast ack action', async () => {
@@ -267,7 +261,6 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        alarmModule,
         eventModule,
         {
           ...entitiesModule,
@@ -277,6 +270,7 @@ describe('mass-actions-panel', () => {
         },
       ]),
       propsData: {
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -304,12 +298,7 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Fast ack event sent after trigger fast ack action without parameters', async () => {
@@ -321,7 +310,6 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        alarmModule,
         eventModule,
         {
           ...entitiesModule,
@@ -331,6 +319,7 @@ describe('mass-actions-panel', () => {
         },
       ]),
       propsData: {
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -355,12 +344,7 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Ack remove modal showed after trigger ack remove action', () => {
@@ -373,11 +357,11 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        alarmModule,
         entitiesModule,
       ]),
       propsData: {
         itemsIds,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -409,12 +393,7 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Cancel modal showed after trigger cancel action', () => {
@@ -428,10 +407,10 @@ describe('mass-actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         entitiesModule,
-        alarmModule,
       ]),
       propsData: {
         itemsIds,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -463,12 +442,7 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Associate ticket modal showed after trigger associate ticket action', () => {
@@ -482,10 +456,10 @@ describe('mass-actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         entitiesModule,
-        alarmModule,
       ]),
       propsData: {
         itemsIds,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -515,12 +489,7 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Snooze modal showed after trigger snooze action', () => {
@@ -537,10 +506,10 @@ describe('mass-actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         entitiesModule,
-        alarmModule,
       ]),
       propsData: {
         itemsIds,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -571,12 +540,7 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Group alarm modal showed after trigger group alarm action', () => {
@@ -589,7 +553,6 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        alarmModule,
         {
           ...entitiesModule,
           getters: {
@@ -599,6 +562,7 @@ describe('mass-actions-panel', () => {
       ]),
       propsData: {
         itemsIds,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -630,12 +594,7 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Manual meta alarm group modal showed after trigger manual meta alarm group action', () => {
@@ -648,7 +607,6 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        alarmModule,
         {
           ...entitiesModule,
           getters: {
@@ -658,6 +616,7 @@ describe('mass-actions-panel', () => {
       ]),
       propsData: {
         itemsIds,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -688,12 +647,7 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Renders `mass-actions-panel` with empty items', () => {
