@@ -617,8 +617,6 @@ export default {
       + '  <dd>Pbehavior reason name are "reason_name_1"</dd>'
       + '</dl>',
     tabs: {
-      filter: 'Filter',
-      comments: 'Comments',
       entities: 'Entities',
     },
   },

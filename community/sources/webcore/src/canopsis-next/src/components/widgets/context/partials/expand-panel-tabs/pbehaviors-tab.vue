@@ -141,7 +141,9 @@ export default {
     async fetchList() {
       try {
         this.pending = true;
-        this.pbehaviors = await this.fetchPbehaviorsByEntityIdWithoutStore({ id: this.itemId });
+        this.pbehaviors = await this.fetchPbehaviorsByEntityIdWithoutStore({
+          params: { _id: this.itemId },
+        });
       } catch (err) {
         console.warn(err);
       } finally {
