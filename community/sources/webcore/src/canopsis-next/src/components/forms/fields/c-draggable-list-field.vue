@@ -41,12 +41,27 @@ export default {
       type: String,
       required: false,
     },
+    handle: {
+      type: String,
+      required: false,
+    },
+    ghostClass: {
+      type: String,
+      required: false,
+    },
+    group: {
+      type: Object,
+      required: false,
+    },
   },
   computed: {
     options() {
       return {
         animation: this.animation,
         disabled: this.disabled,
+        handle: this.handle,
+        ghostClass: this.ghostClass,
+        group: this.group,
       };
     },
   },
