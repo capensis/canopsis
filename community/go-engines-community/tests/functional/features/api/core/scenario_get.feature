@@ -253,31 +253,6 @@ Feature: Get a scenario
 
   Scenario: given get request should return scenario with old patterns
     When I am admin
-    When I do GET /api/v4/scenarios/test-scenario-get-backward-compatibility
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-scenario-get-backward-compatibility",
-      "actions": [
-        {
-          "old_alarm_patterns": [
-            {
-              "_id": "test-scenario-get-backward-compatibility-alarm"
-            }
-          ],
-          "old_entity_patterns": [
-            {
-              "_id": "test-scenario-get-backward-compatibility-entity"
-            }
-          ]
-        }
-      ]
-    }
-    """
-
-  Scenario: given get scenario with old patterns
-    When I am admin
     When I do GET /api/v4/scenarios/test-scenario-backward-compatibility-to-get-1
     Then the response code should be 200
     Then the response body should contain:
