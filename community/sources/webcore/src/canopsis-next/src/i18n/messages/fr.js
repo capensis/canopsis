@@ -25,7 +25,7 @@ import {
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
-  USER_METRIC_PARAMETERS,
+  USER_METRIC_PARAMETERS, SCENARIO_TRIGGERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -278,6 +278,85 @@ export default {
       [ENTITIES_STATES.minor]: 'Mineur',
       [ENTITIES_STATES.major]: 'Majeur',
       [ENTITIES_STATES.critical]: 'Critique',
+    },
+    scenarioTriggers: {
+      [SCENARIO_TRIGGERS.create]: {
+        text: 'Création d\'alarme',
+      },
+      [SCENARIO_TRIGGERS.statedec]: {
+        text: 'Diminution de la criticité',
+      },
+      [SCENARIO_TRIGGERS.changestate]: {
+        text: 'Changement et verrouillage de la criticité',
+      },
+      [SCENARIO_TRIGGERS.stateinc]: {
+        text: 'Augmentation de la criticité',
+      },
+      [SCENARIO_TRIGGERS.changestatus]: {
+        text: 'Changement de statut (flapping, bagot, ...)',
+      },
+      [SCENARIO_TRIGGERS.ack]: {
+        text: 'Acquittement d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.ackremove]: {
+        text: 'Suppression de l\'acquittement d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.cancel]: {
+        text: 'Annulation d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.uncancel]: {
+        text: 'Annulation de l\'annulation d\'une alarme',
+        helpText: 'Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it\'s possible to send an uncancel event via API',
+      },
+      [SCENARIO_TRIGGERS.comment]: {
+        text: 'Commentaire sur une alarme',
+      },
+      [SCENARIO_TRIGGERS.done]: {
+        text: 'Alarm is "done"',
+        helpText: 'Probably legacy, because there is no such action in the UI, but it\'s possible to send a done event via API',
+      },
+      [SCENARIO_TRIGGERS.declareticket]: {
+        text: 'Déclaration de ticket depuis l\'interface graphique',
+      },
+      [SCENARIO_TRIGGERS.declareticketwebhook]: {
+        text: 'Déclaration de ticket depuis un webhook',
+      },
+      [SCENARIO_TRIGGERS.assocticket]: {
+        text: 'Association de ticket sur une alarme',
+      },
+      [SCENARIO_TRIGGERS.snooze]: {
+        text: 'Mise en veille d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.unsnooze]: {
+        text: 'Sortie de veille d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.resolve]: {
+        text: 'Résolution d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.activate]: {
+        text: 'Activation d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.pbhenter]: {
+        text: 'Comportement périodique démarré',
+      },
+      [SCENARIO_TRIGGERS.pbhleave]: {
+        text: 'Comportement périodique terminé',
+      },
+      [SCENARIO_TRIGGERS.instructionfail]: {
+        text: 'Consigne manuelle en erreur',
+      },
+      [SCENARIO_TRIGGERS.autoinstructionfail]: {
+        text: 'Consigne automatique en erreur',
+      },
+      [SCENARIO_TRIGGERS.instructionjobfail]: {
+        text: 'Job de remédiation en erreur',
+      },
+      [SCENARIO_TRIGGERS.instructioncomplete]: {
+        text: 'Consigne manuelle terminée',
+      },
+      [SCENARIO_TRIGGERS.autoinstructioncomplete]: {
+        text: 'Consigne automatique terminée',
+      },
     },
   },
   variableTypes: {

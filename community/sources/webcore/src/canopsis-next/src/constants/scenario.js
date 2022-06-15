@@ -32,6 +32,11 @@ export const SCENARIO_TRIGGERS = {
   activate: 'activate',
   pbhenter: 'pbhenter',
   pbhleave: 'pbhleave',
+  instructionfail: 'instructionfail',
+  autoinstructionfail: 'autoinstructionfail',
+  instructionjobfail: 'instructionjobfail',
+  instructioncomplete: 'instructioncomplete',
+  autoinstructioncomplete: 'autoinstructioncomplete',
 };
 
 export const CAT_SCENARIO_TRIGGERS = [

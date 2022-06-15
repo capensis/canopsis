@@ -25,7 +25,7 @@ import {
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
-  USER_METRIC_PARAMETERS,
+  USER_METRIC_PARAMETERS, SCENARIO_TRIGGERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -278,6 +278,85 @@ export default {
       [ENTITIES_STATES.minor]: 'Minor',
       [ENTITIES_STATES.major]: 'Major',
       [ENTITIES_STATES.critical]: 'Critical',
+    },
+    scenarioTriggers: {
+      [SCENARIO_TRIGGERS.create]: {
+        text: 'Alarm creation',
+      },
+      [SCENARIO_TRIGGERS.statedec]: {
+        text: 'Alarm state decrease',
+      },
+      [SCENARIO_TRIGGERS.changestate]: {
+        text: 'Alarm state has been changed by "change state" action',
+      },
+      [SCENARIO_TRIGGERS.stateinc]: {
+        text: 'Alarm state increase',
+      },
+      [SCENARIO_TRIGGERS.changestatus]: {
+        text: 'Alarm status changes eg. flapping',
+      },
+      [SCENARIO_TRIGGERS.ack]: {
+        text: 'Alarm has been acked',
+      },
+      [SCENARIO_TRIGGERS.ackremove]: {
+        text: 'Alarm has been unacked',
+      },
+      [SCENARIO_TRIGGERS.cancel]: {
+        text: 'Alarm has been cancelled',
+      },
+      [SCENARIO_TRIGGERS.uncancel]: {
+        text: 'Alarm has been uncancelled',
+        helpText: 'Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it\'s possible to send an uncancel event via API',
+      },
+      [SCENARIO_TRIGGERS.comment]: {
+        text: 'Alarm has been commented',
+      },
+      [SCENARIO_TRIGGERS.done]: {
+        text: 'Alarm is "done"',
+        helpText: 'Probably legacy, because there is no such action in the UI, but it\'s possible to send a done event via API',
+      },
+      [SCENARIO_TRIGGERS.declareticket]: {
+        text: 'Ticket has been declared by the UI action',
+      },
+      [SCENARIO_TRIGGERS.declareticketwebhook]: {
+        text: 'Ticket has been declared by the webhook',
+      },
+      [SCENARIO_TRIGGERS.assocticket]: {
+        text: 'Ticket has been associated with an alarm',
+      },
+      [SCENARIO_TRIGGERS.snooze]: {
+        text: 'Alarm has been snoozed',
+      },
+      [SCENARIO_TRIGGERS.unsnooze]: {
+        text: 'Alarm has been unsnoozed',
+      },
+      [SCENARIO_TRIGGERS.resolve]: {
+        text: 'Alarm has been resolved',
+      },
+      [SCENARIO_TRIGGERS.activate]: {
+        text: 'Alarm has been activated',
+      },
+      [SCENARIO_TRIGGERS.pbhenter]: {
+        text: 'Alarm enters a periodic behavior',
+      },
+      [SCENARIO_TRIGGERS.pbhleave]: {
+        text: 'Alarm leaves a periodic behavior',
+      },
+      [SCENARIO_TRIGGERS.instructionfail]: {
+        text: 'Manual instruction has failed',
+      },
+      [SCENARIO_TRIGGERS.autoinstructionfail]: {
+        text: 'Auto instruction has failed',
+      },
+      [SCENARIO_TRIGGERS.instructionjobfail]: {
+        text: 'Manual or auto instruction\'s job is failed',
+      },
+      [SCENARIO_TRIGGERS.instructioncomplete]: {
+        text: 'Manual instruction is completed',
+      },
+      [SCENARIO_TRIGGERS.autoinstructioncomplete]: {
+        text: 'Auto instruction is completed',
+      },
     },
   },
   variableTypes: {
