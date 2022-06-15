@@ -107,7 +107,7 @@ Feature: create a PBehavior
                 "description": "Pbh edit 1 State type",
                 "icon_name": "test-to-pbh-edit-1-icon",
                 "name": "Pbh edit 1 State",
-                "priority": 10,
+                "priority": 11,
                 "type": "active"
               }
             }
@@ -124,7 +124,7 @@ Feature: create a PBehavior
             "description": "Pbh edit 1 State type",
             "icon_name": "test-to-pbh-edit-1-icon",
             "name": "Pbh edit 1 State",
-            "priority": 10,
+            "priority": 11,
             "type": "active"
           }
         }
@@ -154,7 +154,7 @@ Feature: create a PBehavior
         "description": "Pbh edit 1 State type",
         "icon_name": "test-to-pbh-edit-1-icon",
         "name": "Pbh edit 1 State",
-        "priority": 10,
+        "priority": 11,
         "type": "active"
       }
     }
