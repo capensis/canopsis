@@ -56,7 +56,7 @@ func GracefullStart(logger zerolog.Logger) error {
 	ready.Abort(ready.Check(ready.CheckRedis, "redis", retryDelay, maxRetry))
 	ready.Abort(ready.Check(ready.CheckMongo, "mongo", retryDelay, maxRetry))
 	ready.Abort(ready.Check(ready.CheckAMQP, "amqp", retryDelay, maxRetry))
-	//ready.Abort(ready.Check(ready.CheckInflux, "influx", retryDelay, maxRetry))
+	ready.Abort(ready.Check(ready.CheckInflux, "influx", retryDelay, maxRetry))
 
 	return nil
 }
