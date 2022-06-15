@@ -23,10 +23,11 @@ type ListRequest struct {
 }
 
 type BaseFilterRequest struct {
-	Search   string `form:"search" json:"search"`
-	Filter   string `form:"filter" json:"filter"`
-	Category string `form:"category" json:"category"`
-	NoEvents bool   `form:"no_events" json:"no_events"`
+	Search   string   `form:"search" json:"search"`
+	Filter   string   `form:"filter" json:"filter"`
+	Category string   `form:"category" json:"category"`
+	Type     []string `form:"type[]" json:"type"`
+	NoEvents bool     `form:"no_events" json:"no_events"`
 }
 
 type ExportRequest struct {
