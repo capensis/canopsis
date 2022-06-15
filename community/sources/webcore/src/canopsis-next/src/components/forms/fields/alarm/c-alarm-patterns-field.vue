@@ -6,7 +6,8 @@
     :type="$constants.PATTERN_TYPES.alarm",
     :required="required",
     :attributes="availableAlarmAttributes",
-    :with-type="withType"
+    :with-type="withType",
+    :check-count-name="checkCountName"
   )
 </template>
 
@@ -51,6 +52,10 @@ export default {
     withType: {
       type: Boolean,
       default: false,
+    },
+    checkCountName: {
+      type: String,
+      required: false,
     },
   },
   computed: {
@@ -288,6 +293,10 @@ export default {
           text: this.$t('common.canceled'),
           value: ALARM_PATTERN_FIELDS.canceled,
           options: this.canceledOptions,
+        },
+        {
+          text: this.$t('common.lastComment'),
+          value: ALARM_PATTERN_FIELDS.lastComment,
         },
       ];
     },
