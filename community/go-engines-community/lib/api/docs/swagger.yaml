@@ -2109,11 +2109,19 @@ paths:
           in: query
           schema:
             type: string
-        - $ref: '#/components/parameters/limit'
         - name: no_events
           in: query
           schema:
             type: boolean
+        - name: type[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - name: paginate
           in: query
