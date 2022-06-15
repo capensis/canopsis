@@ -10,9 +10,6 @@
       @input="updatePattern"
     )
 
-    v-flex
-      v-alert.pre-wrap(v-if="errorMessage", value="true") {{ errorMessage }}
-
     v-tabs(
       v-if="!withType || patterns.id",
       v-model="activeTab",
@@ -43,24 +40,49 @@
           @input="updateGroupsFromPatterns"
         )
 
-    v-layout(v-if="withType && !isCustomPattern", justify-end)
-      v-btn.mx-0(
+    v-layout(align-center, justify-end)
+      div(v-if="checkCountName")
+        span.mr-2(
+          v-show="patternsChecked",
+          :class="{ 'error--text': itemsCount === 0 }"
+        ) {{ $tc('common.itemFound', itemsCount, { count: itemsCount }) }}
+        v-btn.primary.mx-0(
+          :disabled="patternsChecked || hasChildrenError || !patterns.groups.length",
+          :loading="checkPatternsPending",
+          @click="checkPatterns"
+        ) {{ $t('common.checkPattern') }}
+      v-btn.mr-0(
+        v-if="withType && !isCustomPattern",
         color="primary",
-        dark,
         @click="updatePatternToCustom"
       ) {{ $t('common.edit') }}
+
+    v-flex
+      v-alert.pre-wrap(v-if="errorMessage", value="true") {{ errorMessage }}
+      v-alert(
+        v-if="patternsChecked && itemsOverLimit",
+        value="true",
+        type="warning",
+        transition="fade-transition"
+      )
+        span {{ $t('pattern.errors.countOverLimit', { count: itemsCount }) }}
 </template>
 
 <script>
+import { isEqual } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
+
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_EDITOR_TABS } from '@/constants';
 
 import { formGroupsToPatternRules, patternsToGroups, patternToForm } from '@/helpers/forms/pattern';
 
-import { formMixin } from '@/mixins/form';
+import { formMixin, validationChildrenMixin } from '@/mixins/form';
+
+const { mapActions } = createNamespacedHelpers('pattern');
 
 export default {
   inject: ['$validator'],
-  mixins: [formMixin],
+  mixins: [formMixin, validationChildrenMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -82,6 +104,10 @@ export default {
       type: String,
       default: 'patterns',
     },
+    checkCountName: {
+      type: String,
+      required: false,
+    },
     required: {
       type: Boolean,
       default: false,
@@ -97,6 +123,10 @@ export default {
   },
   data() {
     return {
+      checkPatternsPending: false,
+      patternsChecked: false,
+      itemsCount: undefined,
+      itemsOverLimit: false,
       activeTab: PATTERN_EDITOR_TABS.simple,
       patternsJson: [],
     };
@@ -131,6 +161,14 @@ export default {
     },
   },
   watch: {
+    'patterns.groups': {
+      handler(groups, oldGroups) {
+        if (!isEqual(groups, oldGroups)) {
+          this.patternsChecked = false;
+        }
+      },
+    },
+
     activeTab(newTab) {
       if (newTab === PATTERN_EDITOR_TABS.advanced) {
         this.patternsJson = formGroupsToPatternRules(this.patterns.groups);
@@ -149,6 +187,10 @@ export default {
     this.$validator.detach(this.name);
   },
   methods: {
+    ...mapActions({
+      checkPatternsCount: 'checkPatternsCount',
+    }),
+
     updatePattern(pattern) {
       const { groups } = patternToForm(pattern);
 
@@ -167,6 +209,38 @@ export default {
       this.updateField('groups', patternsToGroups(patterns));
 
       this.patternsJson = patterns;
+    },
+
+    async checkPatterns() {
+      this.checkPatternsPending = true;
+
+      const isFormValid = await this.validateChildren();
+
+      if (isFormValid) {
+        try {
+          const { [this.checkCountName]: patternsCount } = await this.checkPatternsCount({
+            data: {
+              [this.checkCountName]: formGroupsToPatternRules(this.patterns.groups),
+            },
+          });
+
+          const { count, over_limit: overLimit } = patternsCount;
+
+          this.itemsCount = count;
+          this.itemsOverLimit = overLimit;
+          this.patternsChecked = true;
+        } catch (err) {
+          const { [this.checkCountName]: error } = err || {};
+
+          if (error) {
+            this.errors.add({ field: this.name, msg: error });
+          }
+
+          this.patternsChecked = false;
+        }
+      }
+
+      this.checkPatternsPending = false;
     },
   },
 };

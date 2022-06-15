@@ -6,6 +6,7 @@
         :required="isPatternRequired",
         :disabled="disabled",
         :name="alarmPatternsFieldName",
+        :check-count-name="$constants.PATTERNS_FIELDS.alarm",
         :attributes="alarmAttributes",
         with-type,
         @input="errors.remove(alarmPatternsFieldName)"
@@ -17,6 +18,7 @@
         :required="isPatternRequired",
         :disabled="disabled",
         :name="entityPatternsFieldName",
+        :check-count-name="$constants.PATTERNS_FIELDS.entity",
         :attributes="entityAttributes",
         with-type,
         @input="errors.remove(entityPatternsFieldName)"
@@ -28,6 +30,7 @@
         :required="isPatternRequired",
         :disabled="disabled",
         :name="entityPbehaviorFieldName",
+        :check-count-name="$constants.PATTERNS_FIELDS.pbehavior",
         with-type,
         @input="errors.remove(entityPbehaviorFieldName)"
       )
@@ -43,6 +46,8 @@
 </template>
 
 <script>
+import { PATTERNS_FIELDS } from '@/constants';
+
 export default {
   inject: ['$validator'],
   model: {
@@ -124,19 +129,19 @@ export default {
     },
 
     alarmPatternsFieldName() {
-      return this.preparePatternsFieldName('alarm_pattern');
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.alarm);
     },
 
     eventPatternsFieldName() {
-      return this.preparePatternsFieldName('event_pattern');
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.event);
     },
 
     entityPatternsFieldName() {
-      return this.preparePatternsFieldName('entity_pattern');
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.entity);
     },
 
     entityPbehaviorFieldName() {
-      return this.preparePatternsFieldName('pbehavior_pattern');
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.pbehavior);
     },
   },
   methods: {
