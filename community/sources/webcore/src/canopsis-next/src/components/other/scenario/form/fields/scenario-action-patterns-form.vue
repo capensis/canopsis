@@ -3,8 +3,7 @@
     v-field="patterns",
     :name="name",
     :alarm-attributes="alarmAttributes",
-    :alarm-excluded-attributes="alarmExcludedAttributes",
-    :entity-excluded-items="entityExcludedItems",
+    :entity-attributes="entityAttributes",
     some-required,
     with-alarm,
     with-entity
@@ -50,22 +49,35 @@ export default {
           value: ALARM_PATTERN_FIELDS.ackAt,
           options: this.intervalOptions,
         },
+        {
+          value: ALARM_PATTERN_FIELDS.lastUpdateDate,
+          options: { disabled: true },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.resolvedAt,
+          options: { disabled: true },
+        },
       ];
     },
 
-    alarmExcludedAttributes() {
+    entityAttributes() {
       return [
-        ALARM_PATTERN_FIELDS.lastUpdateDate,
-        ALARM_PATTERN_FIELDS.lastEventDate,
-        ALARM_PATTERN_FIELDS.resolvedAt,
-      ];
-    },
-
-    entityExcludedItems() {
-      return [
-        ENTITY_PATTERN_FIELDS.lastEventDate,
-        ENTITY_PATTERN_FIELDS.impact,
-        ENTITY_PATTERN_FIELDS.depends,
+        {
+          value: ENTITY_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+        {
+          value: ENTITY_PATTERN_FIELDS.impact,
+          options: { disabled: true },
+        },
+        {
+          value: ENTITY_PATTERN_FIELDS.depends,
+          options: { disabled: true },
+        },
       ];
     },
   },
