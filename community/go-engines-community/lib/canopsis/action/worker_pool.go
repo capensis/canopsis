@@ -24,16 +24,17 @@ const (
 )
 
 type Task struct {
-	Source       string
-	Action       Action
-	Alarm        types.Alarm
-	Entity       types.Entity
-	Step         int
-	ExecutionID  string
-	ScenarioID   string
-	AckResources bool
-	Header       map[string]string
-	Response     map[string]interface{}
+	Source         string
+	Action         Action
+	Alarm          types.Alarm
+	Entity         types.Entity
+	Step           int
+	ExecutionID    string
+	ScenarioID     string
+	AckResources   bool
+	Header         map[string]string
+	Response       map[string]interface{}
+	AdditionalData AdditionalData
 }
 
 type TaskResult struct {
@@ -238,11 +239,12 @@ func (s *pool) getRPCWebhookEvent(task Task) (*types.RPCWebhookEvent, error) {
 	}
 
 	tplData := map[string]interface{}{
-		"Alarm":    task.Alarm,
-		"Entity":   task.Entity,
-		"Children": children,
-		"Response": task.Response,
-		"Header":   task.Header,
+		"Alarm":          task.Alarm,
+		"Entity":         task.Entity,
+		"Children":       children,
+		"Response":       task.Response,
+		"Header":         task.Header,
+		"AdditionalData": task.AdditionalData,
 	}
 	params := make(map[string]interface{}, len(task.Action.Parameters))
 	for k, v := range task.Action.Parameters {

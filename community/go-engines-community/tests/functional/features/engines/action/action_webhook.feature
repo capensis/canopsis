@@ -446,7 +446,7 @@ Feature: execute action on trigger
           "parameters": {
             "request": {
               "method": "GET",
-              "url": "http://api:8082/api/v4/pbehavior-types/test-default-active-type",
+              "url": "{{ .apiURL }}/api/v4/pbehavior-types/test-default-active-type",
               "auth": {
                 "username": "root",
                 "password": "test"
@@ -644,6 +644,97 @@ Feature: execute action on trigger
         "page": 1,
         "page_count": 1,
         "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given scenarios with 2 actions and webhook should be able to use additional data in template
+    Given I am admin
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-action-webhook-6-3-name",
+      "priority": 7000,
+      "enabled": true,
+      "triggers": [
+        "create"
+      ],
+      "actions": [
+        {
+          "alarm_patterns": [
+            {
+              "v": {
+                "resource": "test-resource-action-webhook-6"
+              }
+            }
+          ],
+          "type": "webhook",
+          "parameters": {
+            "author": "test-scenario-action-webhook-6-3-action-1-author",
+            "request": {
+              "method": "POST",
+              "url": "{{ .apiURL }}/api/v4/scenarios",
+              "auth": {
+                "username": "root",
+                "password": "test"
+              },
+              "headers": {
+                "Content-Type": "application/json"
+              },
+              "payload": "{\"name\": \"{{ `{{ $testVar := .AdditionalData.Output }}test-scenario-action-webhook-6-3-action-1 [{{$testVar}}]` }}\", \"priority\":7100, \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-6-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-action-webhook-6",
+      "connector_name" : "test-connector-name-action-webhook-6",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" :  "test-component-action-webhook-6",
+      "resource" : "test-resource-action-webhook-6",
+      "state" : 2,
+      "output" : "noveo alarm",
+      "initiator": "user"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-6-3-action-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-scenario-action-webhook-6-3-action-1 [noveo alarm]",
+          "enabled": true,
+          "triggers": [
+            "create"
+          ],
+          "actions": [
+            {
+              "alarm_patterns": [
+                {
+                  "_id": "test-scenario-action-webhook-6-alarm"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
         "total_count": 1
       }
     }

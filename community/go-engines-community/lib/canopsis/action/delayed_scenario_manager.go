@@ -4,14 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type DelayedScenarioManager interface {
-	AddDelayedScenario(context.Context, types.Alarm, Scenario) error
+	AddDelayedScenario(context.Context, types.Alarm, Scenario, AdditionalData) error
 	PauseDelayedScenarios(context.Context, types.Alarm) error
 	ResumeDelayedScenarios(context.Context, types.Alarm) error
 	Run(context.Context) (<-chan DelayedScenarioTask, error)
@@ -45,9 +46,11 @@ type delayedScenarioManager struct {
 type DelayedScenarioTask struct {
 	Alarm    types.Alarm
 	Scenario Scenario
+
+	AdditionalData AdditionalData
 }
 
-func (m *delayedScenarioManager) AddDelayedScenario(ctx context.Context, alarm types.Alarm, scenario Scenario) error {
+func (m *delayedScenarioManager) AddDelayedScenario(ctx context.Context, alarm types.Alarm, scenario Scenario, additionalData AdditionalData) error {
 	var delay time.Duration
 	if scenario.Delay != nil {
 		delay = time.Duration(scenario.Delay.Seconds) * time.Second
@@ -58,9 +61,10 @@ func (m *delayedScenarioManager) AddDelayedScenario(ctx context.Context, alarm t
 
 	now := time.Now()
 	delayedScenario := DelayedScenario{
-		ScenarioID:    scenario.ID,
-		ExecutionTime: types.CpsTime{Time: now.Add(delay)},
-		AlarmID:       alarm.ID,
+		ScenarioID:     scenario.ID,
+		ExecutionTime:  types.CpsTime{Time: now.Add(delay)},
+		AlarmID:        alarm.ID,
+		AdditionalData: additionalData,
 	}
 	id, err := m.storage.Add(ctx, delayedScenario)
 	if err != nil {
@@ -295,8 +299,9 @@ func (m *delayedScenarioManager) getExpiredTimeoutScenarios(
 		}
 
 		tasks[i] = DelayedScenarioTask{
-			Alarm:    *alarm,
-			Scenario: *scenario,
+			Alarm:          *alarm,
+			Scenario:       *scenario,
+			AdditionalData: delayedScenario.AdditionalData,
 		}
 	}
 
