@@ -4,11 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
-
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
+	"time"
 )
 
 type DelayedScenarioManager interface {
