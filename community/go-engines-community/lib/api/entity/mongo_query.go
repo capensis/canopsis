@@ -195,6 +195,7 @@ func (q *MongoQueryBuilder) handleFilter(r ListRequest) error {
 	entityMatch := make([]bson.M, 0)
 	q.addSearchFilter(r, &entityMatch)
 	q.addCategoryFilter(r, &entityMatch)
+	q.addTypeFilter(r, &entityMatch)
 	q.addNoEventsFilter(r, &entityMatch)
 
 	if len(entityMatch) > 0 {
@@ -290,6 +291,14 @@ func (q *MongoQueryBuilder) addCategoryFilter(r ListRequest, match *[]bson.M) {
 	}
 
 	*match = append(*match, bson.M{"category": bson.M{"$eq": r.Category}})
+}
+
+func (q *MongoQueryBuilder) addTypeFilter(r ListRequest, match *[]bson.M) {
+	if len(r.Type) == 0 {
+		return
+	}
+
+	*match = append(*match, bson.M{"type": bson.M{"$in": r.Type}})
 }
 
 func (q *MongoQueryBuilder) addNoEventsFilter(r ListRequest, match *[]bson.M) {
