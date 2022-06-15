@@ -1,14 +1,12 @@
 <template lang="pug">
   g
-    foreign-object(width="100%", height="100%")
-      div(
-        :contenteditable="editable",
-        :style="`position: absolute; top: ${text.y}px;left: ${text.x}px;`"
-      ) {{ text.text }}
+    component(is="foreignObject", :y="text.y", :x="text.x", :width="text.width", :height="text.height")
+      div(ref="textEditor", :contenteditable="editing") {{ text.text }}
     rect-shape-selection(
       :selected="selected",
       :rect="text",
       @resize="onResize",
+      @dblclick="enableEditingMode",
       @mousedown="$emit('mousedown', $event)",
       @mouseup="$emit('mouseup', $event)"
     )
@@ -42,7 +40,7 @@ export default {
   },
   data() {
     return {
-      editable: false,
+      editing: false,
     };
   },
   methods: {
@@ -59,6 +57,12 @@ export default {
 
     onResize(rect) {
       this.updateModel({ ...this.text, ...rect });
+    },
+
+    enableEditingMode() {
+      this.editing = true;
+
+      this.$refs.textEditor.focus();
     },
   },
 };
