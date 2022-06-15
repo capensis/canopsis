@@ -40,7 +40,9 @@
 </template>
 
 <script>
-import { MODALS, CRUD_ACTIONS, PATTERN_CONDITIONS, ENTITY_PATTERN_FIELDS } from '@/constants';
+import { MODALS, CRUD_ACTIONS } from '@/constants';
+
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
@@ -117,13 +119,7 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          entityPattern: [[{
-            field: ENTITY_PATTERN_FIELDS.id,
-            cond: {
-              type: PATTERN_CONDITIONS.equal,
-              value: this.modal.config.entityId,
-            },
-          }]],
+          entityPattern: createEntityIdPatternByValue(this.modal.config.entityId),
         },
       });
     },
