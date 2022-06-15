@@ -2,6 +2,7 @@ import Faker from 'faker';
 import { Validator } from 'vee-validate';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { createInputStub } from '@unit/stubs/input';
 
 import CArrayMixedField from '@/components/forms/fields/c-array-mixed-field.vue';
 
@@ -25,16 +26,7 @@ const stubs = {
       </button>
     `,
   },
-  'c-mixed-field': {
-    props: ['value'],
-    template: `
-      <input
-        :value="value"
-        class="c-mixed-field"
-        @input="$listeners.input($event.target.value)"
-      />
-    `,
-  },
+  'v-text-field': createInputStub('v-text-field'),
 };
 
 const snapshotStubs = {
@@ -47,6 +39,8 @@ const factory = (options = {}) => shallowMount(CArrayMixedField, {
   stubs,
   ...options,
 });
+
+const selectTextField = wrapper => wrapper.find('input.v-text-field');
 
 describe('c-array-mixed-field', () => {
   it('Empty string added after click on add button', () => {
@@ -77,7 +71,7 @@ describe('c-array-mixed-field', () => {
       },
     });
     const secondFieldElement = wrapper.findAll('v-layout-stub').at(0);
-    const mixedFieldElement = secondFieldElement.find('input.c-mixed-field');
+    const mixedFieldElement = selectTextField(secondFieldElement);
 
     mixedFieldElement.setValue(newFieldValue);
 
@@ -130,7 +124,6 @@ describe('c-array-mixed-field', () => {
           123,
           false,
           null,
-          [null, 'string', 123],
         ],
       },
     });
