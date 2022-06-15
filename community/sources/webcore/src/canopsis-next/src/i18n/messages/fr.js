@@ -307,14 +307,14 @@ export default {
       },
       [SCENARIO_TRIGGERS.uncancel]: {
         text: 'Annulation de l\'annulation d\'une alarme',
-        helpText: 'Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it\'s possible to send an uncancel event via API',
+        helpText: 'L\'annulation ne peut se faire que par un événement posté sur l\'API',
       },
       [SCENARIO_TRIGGERS.comment]: {
         text: 'Commentaire sur une alarme',
       },
       [SCENARIO_TRIGGERS.done]: {
-        text: 'Alarm is "done"',
-        helpText: 'Probably legacy, because there is no such action in the UI, but it\'s possible to send a done event via API',
+        text: 'Alarme en statut "done"',
+        helpText: 'Ne peut s\'obtenir que par un événement posté sur l\'API',
       },
       [SCENARIO_TRIGGERS.declareticket]: {
         text: 'Déclaration de ticket depuis l\'interface graphique',
