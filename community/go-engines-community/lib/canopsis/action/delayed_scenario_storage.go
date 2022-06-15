@@ -12,12 +12,13 @@ import (
 )
 
 type DelayedScenario struct {
-	ID            string        `json:"id"`
-	ScenarioID    string        `json:"scenario_id"`
-	AlarmID       string        `json:"alarm_id"`
-	ExecutionTime types.CpsTime `json:"execution_time"`
-	Paused        bool          `json:"paused"`
-	TimeLeft      time.Duration `json:"time_left"`
+	ID             string         `json:"id"`
+	ScenarioID     string         `json:"scenario_id"`
+	AlarmID        string         `json:"alarm_id"`
+	ExecutionTime  types.CpsTime  `json:"execution_time"`
+	Paused         bool           `json:"paused"`
+	TimeLeft       time.Duration  `json:"time_left"`
+	AdditionalData AdditionalData `json:"additional_data"`
 }
 
 type DelayedScenarioStorage interface {

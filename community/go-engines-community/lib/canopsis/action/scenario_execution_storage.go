@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
-	"strings"
-	"time"
 )
 
 type ScenarioExecutionStorage interface {
