@@ -6,7 +6,8 @@
     :type="$constants.PATTERN_TYPES.pbehavior",
     :required="required",
     :attributes="pbehaviorAttributes",
-    :with-type="withType"
+    :with-type="withType",
+    :check-count-name="checkCountName"
   )
 </template>
 
@@ -44,6 +45,10 @@ export default {
     withType: {
       type: Boolean,
       default: false,
+    },
+    checkCountName: {
+      type: String,
+      required: false,
     },
   },
   data() {

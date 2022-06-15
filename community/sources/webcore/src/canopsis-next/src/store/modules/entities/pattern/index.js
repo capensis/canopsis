@@ -25,5 +25,9 @@ export default createEntityModule({
     bulkRemove(context, { data }) {
       return request.delete(API_ROUTES.bulkPatterns, { data });
     },
+
+    checkPatternsCount(context, { data }) {
+      return request.post(API_ROUTES.patternsCount, data);
+    },
   },
 });

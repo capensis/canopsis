@@ -243,6 +243,9 @@ export default {
     custom: 'Personnalisé',
     eventType: 'Type d\'événement',
     sourceType: 'Type de Source',
+    lastComment: 'Dernier commentaire',
+    checkPattern: 'Motif à carreaux',
+    itemFound: '{count} article trouvé | {count} articles trouvés',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -2693,17 +2696,6 @@ export default {
     },
   },
 
-  entitiesCountAlerts: {
-    filter: {
-      countOverLimit: 'Le filtre que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr ?',
-      countRequestError: 'Le calcul du nombre d\'entités ciblées par le filtre s\'est terminée avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr ?',
-    },
-    patterns: {
-      countOverLimit: 'Le modèle que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr ?',
-      countRequestError: 'Le calcul du nombre d\'entités ciblées par le modèle s\'est terminé avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr ?',
-    },
-  },
-
   userInterface: {
     title: 'Interface utilisateur',
     appTitle: 'Titre de l\'application',
@@ -2798,6 +2790,7 @@ export default {
       ruleRequired: 'Veuillez ajouter au moins une règle',
       groupRequired: 'Veuillez ajouter au moins un groupe',
       invalidPatterns: 'Les modèles ne sont pas valides ou il y a un champ de modèle désactivé',
+      countOverLimit: 'Le modèle que vous avez défini cible {count} éléments. Cela peut affecter les performances, en êtes-vous sûr ?',
     },
   },
 

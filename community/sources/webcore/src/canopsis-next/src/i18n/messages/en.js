@@ -243,6 +243,9 @@ export default {
     custom: 'Custom',
     eventType: 'Event type',
     sourceType: 'Source type',
+    lastComment: 'Last comment',
+    checkPattern: 'Check pattern',
+    itemFound: '{count} item found | {count} items found',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -2693,17 +2696,6 @@ export default {
     },
   },
 
-  entitiesCountAlerts: {
-    filter: {
-      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
-      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
-    },
-    patterns: {
-      countOverLimit: 'The patterns you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
-      countRequestError: 'The request to entities count by the patterns was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
-    },
-  },
-
   userInterface: {
     title: 'User interface',
     appTitle: 'App title',
@@ -2798,6 +2790,7 @@ export default {
       ruleRequired: 'Please add at least one rule',
       groupRequired: 'Please add at least one group',
       invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
+      countOverLimit: 'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
     },
   },
 

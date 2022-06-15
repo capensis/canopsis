@@ -17,6 +17,7 @@ export const entitiesPatternsMixin = {
       updatePattern: 'update',
       removePattern: 'remove',
       bulkRemovePatterns: 'bulkRemove',
+      checkPatternsCount: 'checkPatternsCount',
       fetchPatternsListWithPreviousParams: 'fetchListWithPreviousParams',
       fetchPatternsListWithoutStore: 'fetchListWithoutStore',
     }),
