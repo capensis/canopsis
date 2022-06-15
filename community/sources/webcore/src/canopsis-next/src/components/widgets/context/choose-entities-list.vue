@@ -83,7 +83,7 @@ export default {
       const { data = [], meta } = await this.fetchContextEntitiesWithoutStore({
         params: {
           ...this.getQuery(),
-          filter: { type: { $in: Object.values(BASIC_ENTITY_TYPES) } },
+          type: Object.values(BASIC_ENTITY_TYPES),
         },
       });
 

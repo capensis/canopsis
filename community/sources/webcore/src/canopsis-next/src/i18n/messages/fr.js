@@ -617,8 +617,6 @@ export default {
       + '  <dd>Le nom de la raison du comportement périodique est "reason_name_1"</dd>'
       + '</dl>',
     tabs: {
-      filter: 'Filtre',
-      comments: 'Commentaires',
       entities: 'Entités',
     },
   },
