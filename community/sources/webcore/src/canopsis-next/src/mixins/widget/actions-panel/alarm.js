@@ -6,13 +6,12 @@ import {
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   CRUD_ACTIONS,
   QUICK_RANGES,
-  PATTERN_CONDITIONS,
-  ENTITY_PATTERN_FIELDS,
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
@@ -143,13 +142,7 @@ export const widgetActionsPanelAlarmMixin = {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          entityPattern: [[{
-            field: ENTITY_PATTERN_FIELDS.id,
-            cond: {
-              type: PATTERN_CONDITIONS.equal,
-              value: this.item.entity._id,
-            },
-          }]],
+          entityPattern: createEntityIdPatternByValue(this.item.entity._id),
         },
       });
     },

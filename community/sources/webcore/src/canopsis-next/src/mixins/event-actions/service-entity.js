@@ -5,9 +5,9 @@ import {
   WEATHER_ACK_EVENT_OUTPUT,
   MAX_PBEHAVIOR_DEFAULT_TSTOP,
   WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
-  PATTERN_CONDITIONS,
-  ENTITY_PATTERN_FIELDS,
 } from '@/constants';
+
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 /**
  * @typedef {Object} ServiceEvent
@@ -131,13 +131,7 @@ export default {
         comments: [{
           message: comment,
         }],
-        entityPattern: [[{
-          field: ENTITY_PATTERN_FIELDS.id,
-          cond: {
-            type: PATTERN_CONDITIONS.equal,
-            value: entity._id,
-          },
-        }]],
+        entityPattern: createEntityIdPatternByValue(entity._id),
         name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${Date.now()}`,
         tstart: new Date(),
         tstop: new Date(MAX_PBEHAVIOR_DEFAULT_TSTOP * 1000),
