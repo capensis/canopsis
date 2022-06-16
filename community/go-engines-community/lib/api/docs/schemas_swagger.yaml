@@ -3024,7 +3024,7 @@ definitions:
       name:
         type: string
       pbehavior_info:
-        $ref: '#/definitions/types.PbehaviorInfo'
+        $ref: '#/definitions/entity.PbehaviorInfo'
       pbehaviors:
         items:
           $ref: '#/definitions/alarm.Pbehavior'
@@ -3088,18 +3088,14 @@ definitions:
         type: integer
       linklist:
         items:
-          properties:
-            cat_name:
-              type: string
-            links: {}
-          type: object
+          $ref: '#/definitions/serviceweather.WeatherLink'
         type: array
       name:
         type: string
       output:
         type: string
       pbehavior_info:
-        $ref: '#/definitions/types.PbehaviorInfo'
+        $ref: '#/definitions/entity.PbehaviorInfo'
       pbehaviors:
         items:
           $ref: '#/definitions/alarm.Pbehavior'
@@ -3962,6 +3958,12 @@ definitions:
       title:
         maxLength: 255
         type: string
+      weather_service_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       widget:
         type: string
     required:
@@ -4018,6 +4020,12 @@ definitions:
         type: string
       updated:
         type: integer
+      weather_service_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
     type: object
 info:
   contact: {}
