@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"sort"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -12,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -22,12 +24,15 @@ type Store interface {
 	Insert(ctx context.Context, r CreateRequest) (*Response, error)
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	FindByEntityID(ctx context.Context, entityID string) ([]Response, error)
+	Calendar(ctx context.Context, r CalendarRequest) ([]CalendarResponse, error)
+	CalendarByEntityID(ctx context.Context, r CalendarByEntityIDRequest) ([]CalendarResponse, error)
 	GetOneBy(ctx context.Context, id string) (*Response, error)
 	FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
 	UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	DeleteByName(ctx context.Context, name string) (string, error)
+	ExistEntity(ctx context.Context, entityId string) (bool, error)
 }
 
 type store struct {
@@ -37,6 +42,7 @@ type store struct {
 
 	entityMatcher          pbehavior.EntityMatcher
 	entityTypeResolver     pbehavior.EntityTypeResolver
+	pbhTypeComputer        pbehavior.TypeComputer
 	timezoneConfigProvider config.TimezoneConfigProvider
 	defaultSortBy          string
 
@@ -48,6 +54,7 @@ func NewStore(
 	dbClient mongo.DbClient,
 	entityMatcher pbehavior.EntityMatcher,
 	entityTypeResolver pbehavior.EntityTypeResolver,
+	pbhTypeComputer pbehavior.TypeComputer,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 ) Store {
 	return &store{
@@ -56,6 +63,7 @@ func NewStore(
 		entityCollection:              dbClient.Collection(mongo.EntityMongoCollection),
 		entityMatcher:                 entityMatcher,
 		entityTypeResolver:            entityTypeResolver,
+		pbhTypeComputer:               pbhTypeComputer,
 		timezoneConfigProvider:        timezoneConfigProvider,
 		defaultSortBy:                 "created",
 		entitiesDefaultSearchByFields: []string{"_id", "name", "type"},
@@ -154,6 +162,65 @@ func (s *store) FindByEntityID(ctx context.Context, entityID string) ([]Response
 	if err != nil {
 		return nil, err
 	}
+
+	return res, nil
+}
+
+func (s *store) Calendar(ctx context.Context, r CalendarRequest) ([]CalendarResponse, error) {
+	location := s.timezoneConfigProvider.Get().Location
+	span := timespan.New(r.From.In(location).Time, r.To.In(location).Time)
+	computed, err := s.pbhTypeComputer.Compute(ctx, span)
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]CalendarResponse, 0, len(computed.ComputedPbehaviors))
+	for pbhId, computedPbehavior := range computed.ComputedPbehaviors {
+		for _, computedType := range computedPbehavior.Types {
+			res = append(res, CalendarResponse{
+				ID:    pbhId,
+				Title: computedPbehavior.Name,
+				Color: computedPbehavior.Color,
+				From:  libtypes.CpsTime{Time: computedType.Span.From()},
+				To:    libtypes.CpsTime{Time: computedType.Span.To()},
+				Type:  computed.TypesByID[computedType.ID],
+			})
+		}
+	}
+
+	sort.Slice(res, sortCalendarResponse(res))
+
+	return res, nil
+}
+
+func (s *store) CalendarByEntityID(ctx context.Context, r CalendarByEntityIDRequest) ([]CalendarResponse, error) {
+	pbhIDs, err := s.getMatchedPbhIDs(ctx, r.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	location := s.timezoneConfigProvider.Get().Location
+	span := timespan.New(r.From.In(location).Time, r.To.In(location).Time)
+	computed, err := s.pbhTypeComputer.ComputeByIds(ctx, span, pbhIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]CalendarResponse, 0, len(computed.ComputedPbehaviors))
+	for pbhId, computedPbehavior := range computed.ComputedPbehaviors {
+		for _, computedType := range computedPbehavior.Types {
+			res = append(res, CalendarResponse{
+				ID:    pbhId,
+				Title: computedPbehavior.Name,
+				Color: computedPbehavior.Color,
+				From:  libtypes.CpsTime{Time: computedType.Span.From()},
+				To:    libtypes.CpsTime{Time: computedType.Span.To()},
+				Type:  computed.TypesByID[computedType.ID],
+			})
+		}
+	}
+
+	sort.Slice(res, sortCalendarResponse(res))
 
 	return res, nil
 }
@@ -372,6 +439,18 @@ func (s *store) DeleteByName(ctx context.Context, name string) (string, error) {
 	return pbh.ID, nil
 }
 
+func (s *store) ExistEntity(ctx context.Context, entityId string) (bool, error) {
+	err := s.entitiesCollection.FindOne(ctx, bson.M{"_id": entityId}).Err()
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return true, nil
+}
+
 func (s *store) getMatchedPbhIDs(ctx context.Context, entity libtypes.Entity) ([]string, error) {
 	cursor, err := s.dbCollection.Find(ctx, bson.M{})
 	if err != nil {
@@ -444,6 +523,7 @@ func (s *store) transformRequestToDocument(r EditRequest) pbehavior.PBehavior {
 		Type:       r.Type,
 		Exdates:    exdates,
 		Exceptions: exceptions,
+		Color:      model.Color,
 
 		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)),
 	}
@@ -472,4 +552,41 @@ func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error
 	}
 
 	return nil
+}
+
+func sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {
+	return func(i, j int) bool {
+		dateLeft := utils.DateOf(response[i].From.Time)
+		dateRight := utils.DateOf(response[j].From.Time)
+
+		if dateLeft.Before(dateRight) {
+			return true
+		}
+		if dateLeft.After(dateRight) {
+			return false
+		}
+
+		if response[i].Type.Priority > response[j].Type.Priority {
+			return true
+		}
+		if response[i].Type.Priority < response[j].Type.Priority {
+			return false
+		}
+
+		if response[i].From.Before(response[j].From) {
+			return true
+		}
+		if response[i].From.After(response[j].From) {
+			return false
+		}
+
+		if response[i].To.Before(response[j].To) {
+			return true
+		}
+		if response[i].To.After(response[j].To) {
+			return false
+		}
+
+		return response[i].Title < response[j].Title
+	}
 }

@@ -97,7 +97,7 @@ func newMockModelProvider(ctrl *gomock.Controller, suiteData serviceSuiteDataSet
 		Return(typesByID, nil)
 	mock.
 		EXPECT().
-		GetEnabledPbehaviors(gomock.Any()).
+		GetEnabledPbehaviors(gomock.Any(), gomock.Any()).
 		Return(pbehaviorsByID, nil)
 	mock.
 		EXPECT().

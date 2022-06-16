@@ -1412,3 +1412,21 @@ Feature: update a PBehavior
       ]
     }
     """
+
+  Scenario: given update request with color should update only if color is not empty or is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
+    """json
+    {
+      "color": "#FFFFFF"
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "color": "#FFFFFF"
+    }
+    """

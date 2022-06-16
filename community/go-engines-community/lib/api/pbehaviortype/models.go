@@ -16,7 +16,6 @@ type EditRequest struct {
 	Type        string `json:"type" binding:"required,oneof=active inactive maintenance pause"`
 	Priority    *int   `json:"priority" binding:"required"`
 	IconName    string `json:"icon_name" binding:"required,max=255"`
-	Color       string `json:"color"`
 }
 
 type CreateRequest struct {
@@ -36,7 +35,6 @@ type Type struct {
 	Type        string `bson:"type" json:"type"`
 	Priority    int    `bson:"priority" json:"priority"`
 	IconName    string `bson:"icon_name" json:"icon_name"`
-	Color       string `bson:"color,omitempty" json:"color,omitempty"`
 	Editable    *bool  `bson:"editable,omitempty" json:"editable,omitempty"`
 	Deletable   *bool  `bson:"deletable,omitempty" json:"deletable,omitempty"`
 }

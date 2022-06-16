@@ -48,6 +48,7 @@ Feature: no update service when entity is inactive
       "name": "test-pbehavior-service-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -141,6 +142,7 @@ Feature: no update service when entity is inactive
       "name": "test-pbehavior-service-2",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -290,6 +292,7 @@ Feature: no update service when entity is inactive
       "name": "test-pbehavior-service-3",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2s" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -454,6 +457,7 @@ Feature: no update service when entity is inactive
       "name": "test-pbehavior-service-4-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2s" }},
+      "color": "#FFFFFF",
       "type": "test-inactive-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -477,6 +481,7 @@ Feature: no update service when entity is inactive
       "name": "test-pbehavior-service-4-2",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [

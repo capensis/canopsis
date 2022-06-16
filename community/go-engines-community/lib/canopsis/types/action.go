@@ -10,3 +10,5 @@ const (
 	ActionTypePbehavior   = "pbehavior"
 	ActionTypeWebhook     = "webhook"
 )
+
+const ActionPbehaviorColor = "#808080"

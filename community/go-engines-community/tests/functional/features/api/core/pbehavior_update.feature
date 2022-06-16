@@ -20,6 +20,7 @@ Feature: update a PBehavior
       "name": "test-pbehavior-to-update-1-name",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "entity_pattern": [
@@ -44,6 +45,7 @@ Feature: update a PBehavior
       "_id": "test-pbehavior-to-update-1",
       "author": "root",
       "created": 1592215337,
+      "color": "#FFFFFF",
       "enabled": true,
       "exceptions": [],
       "reason": {
@@ -153,6 +155,7 @@ Feature: update a PBehavior
       "_id": "test-pbehavior-to-update-2",
       "author": "root",
       "created": 1592215337,
+      "color": "#FFFFFF",
       "enabled": true,
       "exceptions": [],
       "reason": {
@@ -195,6 +198,7 @@ Feature: update a PBehavior
       "name": "test-pbehavior-to-update-3-name",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit"
     }
@@ -206,6 +210,7 @@ Feature: update a PBehavior
       "_id": "test-pbehavior-to-update-3",
       "author": "root",
       "created": 1592215337,
+      "color": "#FFFFFF",
       "enabled": true,
       "exceptions": [],
       "reason": {
@@ -345,6 +350,7 @@ Feature: update a PBehavior
       "name": "test-pbehavior-not-exist",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "entity_pattern": [
