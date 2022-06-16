@@ -19,9 +19,11 @@ import (
 
 type API interface {
 	common.BulkCrudAPI
+	Calendar(c *gin.Context)
 	Patch(c *gin.Context)
 	DeleteByName(c *gin.Context)
 	ListByEntityID(c *gin.Context)
+	CalendarByEntityID(c *gin.Context)
 	ListEntities(c *gin.Context)
 }
 
@@ -76,6 +78,25 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+// Calendar
+// @Success 200 {array} CalendarResponse
+func (a *api) Calendar(c *gin.Context) {
+	var r CalendarRequest
+
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+
+		return
+	}
+
+	res, err := a.store.Calendar(c.Request.Context(), r)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
 // ListByEntityID
 // @Success 200 {array} Response
 func (a *api) ListByEntityID(c *gin.Context) {
@@ -86,7 +107,43 @@ func (a *api) ListByEntityID(c *gin.Context) {
 		return
 	}
 
+	exist, err := a.store.ExistEntity(c.Request.Context(), r.ID)
+	if err != nil {
+		panic(err)
+	}
+	if !exist {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
 	res, err := a.store.FindByEntityID(c.Request.Context(), r.ID)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// CalendarByEntityID
+// @Success 200 {array} CalendarResponse
+func (a *api) CalendarByEntityID(c *gin.Context) {
+	var r CalendarByEntityIDRequest
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+
+		return
+	}
+
+	exist, err := a.store.ExistEntity(c.Request.Context(), r.ID)
+	if err != nil {
+		panic(err)
+	}
+	if !exist {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	res, err := a.store.CalendarByEntityID(c.Request.Context(), r)
 	if err != nil {
 		panic(err)
 	}

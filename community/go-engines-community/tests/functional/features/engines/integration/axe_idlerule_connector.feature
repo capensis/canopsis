@@ -140,6 +140,7 @@ Feature: update connector alarm
       "name": "test-pbehavior-axe-idlerule-connector-2",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
