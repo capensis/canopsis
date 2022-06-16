@@ -8,7 +8,7 @@ import (
 func ValidateTimespansRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(TimespansRequest)
 
-	if r.EndAt != nil && r.EndAt.Before(r.StartAt) {
+	if r.EndAt.Unix() > 0 && r.EndAt.Before(r.StartAt) {
 		sl.ReportError(r.EndAt, "EndAt", "EndAt", "gtfield", "StartAt")
 	}
 
@@ -21,13 +21,5 @@ func ValidateTimespansRequest(sl validator.StructLevel) {
 		if err != nil {
 			sl.ReportError(r.RRule, "RRule", "RRule", "rrule", "")
 		}
-	}
-}
-
-func ValidateExdateRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(ExdateRequest)
-
-	if r.End.Before(r.Begin) {
-		sl.ReportError(r.End, "End", "End", "gtfield", "Begin")
 	}
 }

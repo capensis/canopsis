@@ -328,3 +328,10 @@ func (v *Validator) checkExceptions(ctx context.Context, exceptions []string) (b
 
 	return count == int64(len(exceptions)), nil
 }
+
+func (v *Validator) ValidateCalendarRequest(sl validator.StructLevel) {
+	r := sl.Current().Interface().(CalendarRequest)
+	if r.To.Unix() > 0 && r.From.Unix() > 0 && r.To.Before(r.From) {
+		sl.ReportError(r.To, "To", "To", "gtfield", "From")
+	}
+}
