@@ -178,7 +178,8 @@ type Event struct {
 	Initiator string `bson:"initiator" json:"initiator"`
 
 	// Only for EventTypeRunDelayedScenario
-	DelayedScenarioID string `bson:"delayed_scenario_id,omitempty" json:"delayed_scenario_id,omitempty"`
+	DelayedScenarioID   string `bson:"delayed_scenario_id,omitempty" json:"delayed_scenario_id,omitempty"`
+	DelayedScenarioData string `bson:"delayed_scenario_data,omitempty" json:"delayed_scenario_data,omitempty"`
 
 	// AddedToServices contains ids of entity services to which entity has been added as dependency.
 	AddedToServices []string `bson:"added_to_services,omitempty" json:"added_to_services,omitempty"`

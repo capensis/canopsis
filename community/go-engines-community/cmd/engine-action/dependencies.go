@@ -50,7 +50,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	storage := action.NewRedisScenarioExecutionStorage(redis.ScenarioExecutionKey, redisSession, json.NewEncoder(), json.NewDecoder(), logger)
 	actionScenarioStorage := action.NewScenarioStorage(actionAdapter, delayedScenarioManager, logger)
 	actionService := action.NewService(alarmAdapter, scenarioExecChan,
-		delayedScenarioManager, storage, json.NewEncoder(), amqpChannel,
+		delayedScenarioManager, storage, json.NewEncoder(), json.NewDecoder(), amqpChannel,
 		options.FifoAckExchange, options.FifoAckQueue,
 		alarm.NewActivationService(json.NewEncoder(), amqpChannel, canopsis.CheQueueName, logger), logger)
 

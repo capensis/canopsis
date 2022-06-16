@@ -21,6 +21,7 @@ type service struct {
 	delayedScenarioManager  DelayedScenarioManager
 	executionStorage        ScenarioExecutionStorage
 	encoder                 encoding.Encoder
+	decoder                 encoding.Decoder
 	fifoChan                libamqp.Channel
 	fifoExchange, fifoQueue string
 	activationService       libalarm.ActivationService
@@ -34,6 +35,7 @@ func NewService(
 	delayedScenarioManager DelayedScenarioManager,
 	storage ScenarioExecutionStorage,
 	encoder encoding.Encoder,
+	decoder encoding.Decoder,
 	fifoChan libamqp.Channel,
 	fifoExchange string,
 	fifoQueue string,
@@ -47,6 +49,7 @@ func NewService(
 		executionStorage:       storage,
 		fifoChan:               fifoChan,
 		encoder:                encoder,
+		decoder:                decoder,
 		fifoExchange:           fifoExchange,
 		fifoQueue:              fifoQueue,
 		activationService:      activationService,
@@ -146,20 +149,27 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 	}
 
 	if event.EventType == types.EventTypeRunDelayedScenario {
+		additionalData := AdditionalData{}
+		err := s.decoder.Decode([]byte(event.DelayedScenarioData), &additionalData)
+		if err != nil {
+			s.logger.Err(err).Msg("invalid additional data for delayed scenario")
+		}
 		s.scenarioInputChannel <- ExecuteScenariosTask{
 			Alarm:             alarm,
 			Entity:            entity,
 			DelayedScenarioID: event.DelayedScenarioID,
+			AdditionalData:    additionalData,
 		}
 
 		return nil
 	}
 
 	s.scenarioInputChannel <- ExecuteScenariosTask{
-		Triggers:     event.AlarmChange.GetTriggers(),
-		Alarm:        alarm,
-		Entity:       entity,
-		AckResources: event.AckResources,
+		Triggers:       event.AlarmChange.GetTriggers(),
+		Alarm:          alarm,
+		Entity:         entity,
+		AckResources:   event.AckResources,
+		AdditionalData: AdditionalData{Output: event.Output},
 	}
 
 	return nil
@@ -201,6 +211,7 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 			Alarm:                alarm,
 			Entity:               execution.Entity,
 			AbandonedExecutionID: execution.ID,
+			AdditionalData:       execution.AdditionalData,
 		}
 	}
 
