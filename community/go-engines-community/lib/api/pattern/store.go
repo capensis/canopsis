@@ -323,14 +323,45 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 		}
 	}
 
-	if pattern.Type == savedpattern.TypeEntity {
-		collection := mongo.MetaAlarmRulesMongoCollection
-		_, err := s.client.Collection(collection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
+	switch pattern.Type {
+	case savedpattern.TypeEntity:
+		metaAlarmRulesCollection := mongo.MetaAlarmRulesMongoCollection
+		_, err := s.client.Collection(metaAlarmRulesCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
 			"$set": bson.M{
-				"total_entity_pattern":                 pattern.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(collection)),
+				"total_entity_pattern":                 pattern.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(metaAlarmRulesCollection)),
 				"corporate_total_entity_pattern_title": pattern.Title,
 			},
 		})
+		if err != nil {
+			return err
+		}
+
+		//special case for scenario actions
+		_, err = s.client.Collection(mongo.ScenarioMongoCollection).UpdateMany(ctx,
+			bson.M{"actions.corporate_entity_pattern": pattern.ID},
+			bson.M{"$set": bson.M{
+				"actions.$[action].entity_pattern":                 pattern.EntityPattern,
+				"actions.$[action].corporate_entity_pattern_title": pattern.Title,
+			}},
+			options.Update().SetArrayFilters(options.ArrayFilters{
+				Filters: []interface{}{bson.M{"action.corporate_entity_pattern": pattern.ID}},
+			}),
+		)
+		if err != nil {
+			return err
+		}
+	case savedpattern.TypeAlarm:
+		//special case for scenario actions
+		_, err := s.client.Collection(mongo.ScenarioMongoCollection).UpdateMany(ctx,
+			bson.M{"actions.corporate_alarm_pattern": pattern.ID},
+			bson.M{"$set": bson.M{
+				"actions.$[action].alarm_pattern":                 pattern.AlarmPattern,
+				"actions.$[action].corporate_alarm_pattern_title": pattern.Title,
+			}},
+			options.Update().SetArrayFilters(options.ArrayFilters{
+				Filters: []interface{}{bson.M{"action.corporate_alarm_pattern": pattern.ID}},
+			}),
+		)
 		if err != nil {
 			return err
 		}
@@ -356,7 +387,20 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 		return fmt.Errorf("unknown pattern type for deleted pattern id=%s: %q", pattern.ID, pattern.Type)
 	}
 
-	if pattern.Type == savedpattern.TypeEntity {
+	for _, collection := range s.linkedCollections {
+		_, err := s.client.Collection(collection).UpdateMany(ctx, bson.M{f: pattern.ID}, bson.M{
+			"$unset": bson.M{
+				f:            "",
+				f + "_title": "",
+			},
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	switch pattern.Type {
+	case savedpattern.TypeEntity:
 		_, err := s.client.Collection(mongo.MetaAlarmRulesMongoCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
 			"$unset": bson.M{
 				"corporate_total_entity_pattern":       "",
@@ -366,15 +410,33 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 		if err != nil {
 			return err
 		}
-	}
 
-	for _, collection := range s.linkedCollections {
-		_, err := s.client.Collection(collection).UpdateMany(ctx, bson.M{f: pattern.ID}, bson.M{
-			"$unset": bson.M{
-				f:            "",
-				f + "_title": "",
-			},
-		})
+		//special case for scenario actions
+		_, err = s.client.Collection(mongo.ScenarioMongoCollection).UpdateMany(ctx,
+			bson.M{"actions.corporate_entity_pattern": pattern.ID},
+			bson.M{"$unset": bson.M{
+				"actions.$[action].corporate_entity_pattern":       "",
+				"actions.$[action].corporate_entity_pattern_title": "",
+			}},
+			options.Update().SetArrayFilters(options.ArrayFilters{
+				Filters: []interface{}{bson.M{"action.corporate_entity_pattern": pattern.ID}},
+			}),
+		)
+		if err != nil {
+			return err
+		}
+	case savedpattern.TypeAlarm:
+		//special case for scenario actions
+		_, err := s.client.Collection(mongo.ScenarioMongoCollection).UpdateMany(ctx,
+			bson.M{"actions.corporate_alarm_pattern": pattern.ID},
+			bson.M{"$unset": bson.M{
+				"actions.$[action].corporate_alarm_pattern":       "",
+				"actions.$[action].corporate_alarm_pattern_title": "",
+			}},
+			options.Update().SetArrayFilters(options.ArrayFilters{
+				Filters: []interface{}{bson.M{"action.corporate_alarm_pattern": pattern.ID}},
+			}),
+		)
 		if err != nil {
 			return err
 		}
