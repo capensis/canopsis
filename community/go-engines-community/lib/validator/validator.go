@@ -294,6 +294,12 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("pbehavior_pattern", fe.StructField())
 		return t
 	})
+	_ = v.RegisterTranslation("weather_service_pattern", trans, func(ut ut.Translator) error {
+		return ut.Add("weather_service_pattern", "{0} is invalid weather service pattern.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("weather_service_pattern", fe.StructField())
+		return t
+	})
 }
 
 // TranslateError returns custom validation error message.

@@ -80,7 +80,8 @@ Feature: get service entities
           "icon": "maintenance",
           "pbehavior_info": {
             "canonical_type": "maintenance",
-            "name": "test-pbehavior-weather-service-entity-1"
+            "name": "test-pbehavior-weather-service-entity-1",
+            "icon_name": "build"
           },
           "pbehaviors": [
             {
@@ -192,7 +193,8 @@ Feature: get service entities
           "icon": "major",
           "pbehavior_info": {
             "canonical_type": "active",
-            "name": "test-pbehavior-weather-service-entity-2"
+            "name": "test-pbehavior-weather-service-entity-2",
+            "icon_name": "brightness_3"
           },
           "pbehaviors": [
             {
@@ -321,7 +323,8 @@ Feature: get service entities
           "icon": "maintenance",
           "pbehavior_info": {
             "canonical_type": "maintenance",
-            "name": "test-pbehavior-weather-service-entity-3-1"
+            "name": "test-pbehavior-weather-service-entity-3-1",
+            "icon_name": "build"
           },
           "pbehaviors": [
             {
@@ -622,7 +625,8 @@ Feature: get service entities
           "icon": "maintenance",
           "pbehavior_info": {
             "canonical_type": "maintenance",
-            "name": "test-pbehavior-weather-service-entity-6"
+            "name": "test-pbehavior-weather-service-entity-6",
+            "icon_name": "build"
           },
           "pbehaviors": [
             {
