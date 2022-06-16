@@ -1112,6 +1112,27 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 				"$slice": bson.A{bson.M{"$reverseArray": "$pbehavior.comments"}, 1},
 			},
 		}},
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorTypeMongoCollection,
+			"foreignField": "_id",
+			"localField":   "pbehavior.type_",
+			"as":           "pbehavior.type",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior.type", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorReasonMongoCollection,
+			"foreignField": "_id",
+			"localField":   "pbehavior.reason",
+			"as":           "pbehavior.reason",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior.reason", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.RightsMongoCollection,
+			"foreignField": "_id",
+			"localField":   "pbehavior.author",
+			"as":           "pbehavior.author",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior.author", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
 			"pbehavior": bson.M{
 				"$cond": bson.M{
@@ -1121,13 +1142,6 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 				},
 			},
 		}},
-		{"$lookup": bson.M{
-			"from":         mongo.PbehaviorTypeMongoCollection,
-			"foreignField": "_id",
-			"localField":   "pbehavior.type_",
-			"as":           "pbehavior.type",
-		}},
-		{"$unwind": bson.M{"path": "$pbehavior.type", "preserveNullAndEmptyArrays": true}},
 	}
 	if r.OnlyParents {
 		*pipeline = append(*pipeline,
