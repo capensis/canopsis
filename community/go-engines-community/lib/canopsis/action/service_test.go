@@ -52,7 +52,7 @@ func TestService_Process(t *testing.T) {
 	storage := mock_action.NewMockScenarioExecutionStorage(ctrl)
 	activationService := mock_alarm.NewMockActivationService(ctrl)
 	actionService := action.NewService(alarmAdapter, scenarioExecChan, delayedScenarioManager,
-		storage, json.NewEncoder(), amqpChannelMock, canopsis.FIFOAckExchangeName,
+		storage, json.NewEncoder(), json.NewDecoder(), amqpChannelMock, canopsis.FIFOAckExchangeName,
 		canopsis.FIFOAckQueueName, activationService, logger)
 
 	var dataSets = []struct {
@@ -199,12 +199,13 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 			defer close(scenarioExecChan)
 			amqpChannelMock := mock_amqp.NewMockChannel(ctrl)
 			encoderMock := mock_encoding.NewMockEncoder(ctrl)
+			decoderMock := mock_encoding.NewMockDecoder(ctrl)
 			delayedScenarioManager := mock_action.NewMockDelayedScenarioManager(ctrl)
 			alarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 			storage := mock_action.NewMockScenarioExecutionStorage(ctrl)
 			activationService := mock_alarm.NewMockActivationService(ctrl)
 			actionService := action.NewService(alarmAdapter, scenarioExecChan, delayedScenarioManager,
-				storage, encoderMock, amqpChannelMock, canopsis.FIFOAckExchangeName,
+				storage, encoderMock, decoderMock, amqpChannelMock, canopsis.FIFOAckExchangeName,
 				canopsis.FIFOAckQueueName, activationService, logger)
 
 			actionService.ListenScenarioFinish(ctx, scenarioInfoChannel)
@@ -297,6 +298,7 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 	logger := log.NewLogger(true)
 	amqpChannelMock := mock_amqp.NewMockChannel(ctrl)
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
+	decoderMock := mock_encoding.NewMockDecoder(ctrl)
 	delayedScenarioManager := mock_action.NewMockDelayedScenarioManager(ctrl)
 	activationService := mock_alarm.NewMockActivationService(ctrl)
 	alarmAdapter := mock_alarm.NewMockAdapter(ctrl)
@@ -481,7 +483,7 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 			}
 
 			actionService := action.NewService(alarmAdapter, scenarioExecChan, delayedScenarioManager,
-				storage, encoderMock, amqpChannelMock, canopsis.FIFOAckExchangeName,
+				storage, encoderMock, decoderMock, amqpChannelMock, canopsis.FIFOAckExchangeName,
 				canopsis.FIFOAckQueueName, activationService, logger)
 
 			var wg sync.WaitGroup

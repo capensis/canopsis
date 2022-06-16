@@ -114,7 +114,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						return
 					}
 
-					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AckResources)
+					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData)
 					return
 				}
 
@@ -139,16 +139,17 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					}
 
 					e.taskChannel <- Task{
-						Source:       "input listener",
-						Action:       execution.ActionExecutions[step].Action,
-						Alarm:        task.Alarm,
-						Entity:       task.Entity,
-						Step:         step,
-						ExecutionID:  execution.ID,
-						ScenarioID:   execution.ScenarioID,
-						AckResources: execution.AckResources,
-						Header:       execution.Header,
-						Response:     execution.Response,
+						Source:         "input listener",
+						Action:         execution.ActionExecutions[step].Action,
+						Alarm:          task.Alarm,
+						Entity:         task.Entity,
+						Step:           step,
+						ExecutionID:    execution.ID,
+						ScenarioID:     execution.ScenarioID,
+						AckResources:   execution.AckResources,
+						Header:         execution.Header,
+						Response:       execution.Response,
+						AdditionalData: task.AdditionalData,
 					}
 
 					return
@@ -366,7 +367,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 	if scenarioExecution.ActionExecutions[taskRes.Step].Action.EmitTrigger &&
 		taskRes.AlarmChangeType != types.AlarmChangeTypeNone {
 		err := e.processEmittedTrigger(ctx, string(taskRes.AlarmChangeType), taskRes.Alarm,
-			scenarioExecution.Entity, scenarioExecution.AckResources)
+			scenarioExecution.Entity, scenarioExecution.AckResources, scenarioExecution.AdditionalData)
 		if err != nil {
 			e.logger.Err(err).Msg("cannot process emitted trigger")
 			e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, err)
@@ -377,16 +378,17 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 	nextStep := taskRes.Step + 1
 	if len(scenarioExecution.ActionExecutions) > nextStep {
 		nextTask := Task{
-			Source:       "process task func",
-			Action:       scenarioExecution.ActionExecutions[nextStep].Action,
-			Alarm:        taskRes.Alarm,
-			Entity:       scenarioExecution.Entity,
-			Step:         nextStep,
-			ExecutionID:  taskRes.ExecutionID,
-			ScenarioID:   scenarioExecution.ScenarioID,
-			AckResources: scenarioExecution.AckResources,
-			Header:       scenarioExecution.Header,
-			Response:     scenarioExecution.Response,
+			Source:         "process task func",
+			Action:         scenarioExecution.ActionExecutions[nextStep].Action,
+			Alarm:          taskRes.Alarm,
+			Entity:         scenarioExecution.Entity,
+			Step:           nextStep,
+			ExecutionID:    taskRes.ExecutionID,
+			ScenarioID:     scenarioExecution.ScenarioID,
+			AckResources:   scenarioExecution.AckResources,
+			Header:         scenarioExecution.Header,
+			Response:       scenarioExecution.Response,
+			AdditionalData: scenarioExecution.AdditionalData,
 		}
 
 		select {
@@ -402,7 +404,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 }
 
 func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteScenariosTask) (bool, error) {
-	err := e.scenarioStorage.RunDelayedScenarios(ctx, task.Triggers, task.Alarm, task.Entity)
+	err := e.scenarioStorage.RunDelayedScenarios(ctx, task.Triggers, task.Alarm, task.Entity, task.AdditionalData)
 	if err != nil {
 		return false, err
 	}
@@ -422,7 +424,7 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 	}
 
 	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, task.Alarm, task.Entity, task.AckResources)
+		e.startExecution(ctx, scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData)
 	}
 
 	return true, nil
@@ -434,8 +436,9 @@ func (e *redisBasedManager) processEmittedTrigger(
 	alarm types.Alarm,
 	entity types.Entity,
 	ackResource bool,
+	additionalData AdditionalData,
 ) error {
-	err := e.scenarioStorage.RunDelayedScenarios(ctx, []string{trigger}, alarm, entity)
+	err := e.scenarioStorage.RunDelayedScenarios(ctx, []string{trigger}, alarm, entity, additionalData)
 	if err != nil {
 		return err
 	}
@@ -455,15 +458,15 @@ func (e *redisBasedManager) processEmittedTrigger(
 	}
 
 	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, alarm, entity, ackResource)
+		e.startExecution(ctx, scenario, alarm, entity, ackResource, additionalData)
 	}
 
 	return nil
 }
 
 func (e *redisBasedManager) startExecution(ctx context.Context, scenario Scenario,
-	alarm types.Alarm, entity types.Entity, ackResources bool) {
-	e.logger.Debug().Msgf("Execute scenario = %s for alarm = %s", alarm.ID, scenario.ID)
+	alarm types.Alarm, entity types.Entity, ackResources bool, data AdditionalData) {
+	e.logger.Debug().Msgf("Execute scenario = %s for alarm = %s", scenario.ID, alarm.ID)
 	var executions []Execution
 	for _, action := range scenario.Actions {
 		executions = append(
@@ -482,6 +485,7 @@ func (e *redisBasedManager) startExecution(ctx context.Context, scenario Scenari
 		ActionExecutions: executions,
 		LastUpdate:       time.Now().Unix(),
 		AckResources:     ackResources,
+		AdditionalData:   data,
 	})
 	if err != nil {
 		e.logger.Err(err).Msg("cannot save execution")
@@ -493,14 +497,15 @@ func (e *redisBasedManager) startExecution(ctx context.Context, scenario Scenari
 	}
 
 	e.taskChannel <- Task{
-		Source:       "input listener",
-		Action:       scenario.Actions[0],
-		Alarm:        alarm,
-		Entity:       entity,
-		Step:         0,
-		ExecutionID:  executionID,
-		ScenarioID:   scenario.ID,
-		AckResources: ackResources,
+		Source:         "input listener",
+		Action:         scenario.Actions[0],
+		Alarm:          alarm,
+		Entity:         entity,
+		Step:           0,
+		ExecutionID:    executionID,
+		ScenarioID:     scenario.ID,
+		AckResources:   ackResources,
+		AdditionalData: data,
 	}
 
 }
