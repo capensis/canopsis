@@ -172,6 +172,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-create-2",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
@@ -194,6 +195,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-create-2",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type":  {
         "_id": "test-type-to-pbh-edit-1"
       },
@@ -442,6 +444,7 @@ Feature: create a PBehavior
     """json
     {
       "errors": {
+        "color": "Color is missing.",
         "enabled": "Enabled is missing.",
         "name": "Name is missing.",
         "entity_pattern": "EntityPattern is missing.",

@@ -834,6 +834,10 @@ definitions:
         type: string
       separator:
         type: string
+      type:
+        items:
+          type: string
+        type: array
     type: object
   entity.ExportResponse:
     properties:
@@ -2011,9 +2015,9 @@ definitions:
     properties:
       _id:
         type: string
-      corporate_entity_pattern:
-        type: string
       color:
+        type: string
+      corporate_entity_pattern:
         type: string
       enabled:
         type: boolean
@@ -2067,6 +2071,7 @@ definitions:
         type: integer
       type:
         $ref: '#/definitions/pbehavior.Type'
+    type: object
   pbehavior.Comment:
     properties:
       _id:
@@ -2128,9 +2133,9 @@ definitions:
     type: object
   pbehavior.PatchRequest:
     properties:
-      corporate_entity_pattern:
-        type: string
       color:
+        type: string
+      corporate_entity_pattern:
         type: string
       enabled:
         type: boolean
@@ -2249,9 +2254,9 @@ definitions:
     type: object
   pbehavior.UpdateRequest:
     properties:
-      corporate_entity_pattern:
-        type: string
       color:
+        type: string
+      corporate_entity_pattern:
         type: string
       enabled:
         type: boolean

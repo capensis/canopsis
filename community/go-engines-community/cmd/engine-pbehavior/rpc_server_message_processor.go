@@ -150,8 +150,8 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 		Stop:    &stop,
 		Type:    params.Type,
 		Color:   types.ActionPbehaviorColor,
-		Created: now,
-		Updated: now,
+		Created: &now,
+		Updated: &now,
 
 		EntityPatternFields: savedpattern.EntityPatternFields{
 			EntityPattern: pattern.Entity{

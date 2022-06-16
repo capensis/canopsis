@@ -196,7 +196,7 @@ func (s *service) load(ctx context.Context, span timespan.Span) (ComputedEntityT
 		s.logger,
 	)
 	matcher := NewComputedEntityMatcher(s.dbClient)
-	queries := s.getQueries(data.computedPbehaviors)
+	queries := s.getQueries(data.ComputedPbehaviors)
 	err = matcher.LoadAll(ctx, queries)
 	if err != nil {
 		return nil, err

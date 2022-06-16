@@ -91,6 +91,9 @@ func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context, span timespan.
 }
 
 func (p *modelProvider) GetEnabledPbehaviorsByIds(ctx context.Context, ids []string, span timespan.Span) (map[string]PBehavior, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
 	coll := p.dbClient.Collection(mongo.PbehaviorMongoCollection)
 	cursor, err := coll.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{

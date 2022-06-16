@@ -107,16 +107,16 @@ func (a *api) ListByEntityID(c *gin.Context) {
 		return
 	}
 
-	exist, err := a.store.ExistEntity(c.Request.Context(), r.ID)
+	entity, err := a.store.FindEntity(c.Request.Context(), r.ID)
 	if err != nil {
 		panic(err)
 	}
-	if !exist {
+	if entity == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
-	res, err := a.store.FindByEntityID(c.Request.Context(), r.ID)
+	res, err := a.store.FindByEntityID(c.Request.Context(), *entity)
 	if err != nil {
 		panic(err)
 	}
@@ -134,16 +134,16 @@ func (a *api) CalendarByEntityID(c *gin.Context) {
 		return
 	}
 
-	exist, err := a.store.ExistEntity(c.Request.Context(), r.ID)
+	entity, err := a.store.FindEntity(c.Request.Context(), r.ID)
 	if err != nil {
 		panic(err)
 	}
-	if !exist {
+	if entity == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
-	res, err := a.store.CalendarByEntityID(c.Request.Context(), r)
+	res, err := a.store.CalendarByEntityID(c.Request.Context(), *entity, r)
 	if err != nil {
 		panic(err)
 	}

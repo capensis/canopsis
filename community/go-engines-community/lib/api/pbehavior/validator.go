@@ -196,6 +196,16 @@ func (v *Validator) ValidatePatchRequest(ctx context.Context, sl validator.Struc
 			sl.ReportError(r.Exceptions, "Exceptions", "Exceptions", "not_exist", "")
 		}
 	}
+	if r.Color != nil {
+		if *r.Color == "" {
+			sl.ReportError(r.Color, "Color", "Color", "required", "")
+		} else {
+			err := validator.New().Var(*r.Color, "iscolor")
+			if err != nil {
+				sl.ReportError(r.Color, "Color", "Color", "iscolor", "")
+			}
+		}
+	}
 
 	cursor, err := v.dbClient.Collection(mongo.PbehaviorMongoCollection).Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": r.ID}},

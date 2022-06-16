@@ -11,6 +11,7 @@ Feature: update a pbehavior
       "name": "test-pbehavior-to-pattern-1-name",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "corporate_entity_pattern": "test-pattern-to-pbehavior-pattern-1"

@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"golang.org/x/sync/errgroup"
 )
@@ -126,41 +126,53 @@ func (c *typeComputer) Compute(
 	return res, nil
 }
 
-func (c *typeComputer) Recompute(
+func (c *typeComputer) ComputeByIds(
 	ctx context.Context,
 	span timespan.Span,
 	pbehaviorIds []string,
-) (map[string]ComputedPbehavior, error) {
+) (ComputeResult, error) {
+	res := ComputeResult{}
 	pbehaviorsByID, err := c.modelProvider.GetEnabledPbehaviorsByIds(ctx, pbehaviorIds, span)
 	if err != nil {
-		return nil, fmt.Errorf("cannot fetch pbehaviors: %w", err)
+		return res, fmt.Errorf("cannot fetch pbehaviors: %w", err)
 	}
 	if len(pbehaviorsByID) == 0 {
-		return nil, nil
+		return res, nil
 	}
 
 	models := models{}
 	models.typesByID, err = c.modelProvider.GetTypes(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("cannot fetch pbehavior types: %w", err)
+		return res, fmt.Errorf("cannot fetch pbehavior types: %w", err)
 	}
 
 	models.defaultTypes, err = ResolveDefaultTypes(models.typesByID)
 	if err != nil {
-		return nil, fmt.Errorf("cannot fetch default pbehavior types: %w", err)
+		return res, fmt.Errorf("cannot fetch default pbehavior types: %w", err)
 	}
 
 	models.exceptionsByID, err = c.modelProvider.GetExceptions(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("cannot fetch pbehavior exceptions: %w", err)
+		return res, fmt.Errorf("cannot fetch pbehavior exceptions: %w", err)
 	}
 
 	models.reasonsByID, err = c.modelProvider.GetReasons(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("cannot fetch pbehavior reasons: %w", err)
+		return res, fmt.Errorf("cannot fetch pbehavior reasons: %w", err)
 	}
 
-	return c.runWorkers(ctx, span, pbehaviorsByID, models)
+	computedPbehaviors, err := c.runWorkers(ctx, span, pbehaviorsByID, models)
+	if err != nil {
+		return res, err
+	}
+
+	res = ComputeResult{
+		ComputedPbehaviors: computedPbehaviors,
+		TypesByID:          models.typesByID,
+		DefaultActiveType:  models.defaultTypes[TypeActive],
+	}
+
+	return res, nil
 }
 
 // ResolveDefaultTypes finds default types which uses :

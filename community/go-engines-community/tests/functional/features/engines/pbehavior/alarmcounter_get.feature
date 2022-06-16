@@ -36,6 +36,7 @@ Feature: Get alarms counters
       "name": "test-pbehavior-pbehavior-alarm-count-get-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -102,6 +103,7 @@ Feature: Get alarms counters
       "name": "test-pbehavior-pbehavior-alarm-count-get-2",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
