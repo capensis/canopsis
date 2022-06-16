@@ -10,7 +10,6 @@ import (
 	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	pbehaviorlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -106,9 +105,9 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 	for i := range res.Data {
 		if v, ok := pbhs[res.Data[i].PbehaviorID]; ok {
-			res.Data[i].Pbehaviors = []pbehavior.Response{v}
+			res.Data[i].Pbehaviors = []alarmapi.Pbehavior{v}
 		} else {
-			res.Data[i].Pbehaviors = []pbehavior.Response{}
+			res.Data[i].Pbehaviors = []alarmapi.Pbehavior{}
 		}
 	}
 
@@ -205,7 +204,7 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 			res.Data[i].IsGrey = true
 		}
 
-		res.Data[i].Pbehaviors = make([]pbehavior.Response, 0)
+		res.Data[i].Pbehaviors = make([]alarmapi.Pbehavior, 0)
 
 		if res.Data[i].PbehaviorInfo != nil {
 			if v, ok := pbhs[res.Data[i].PbehaviorInfo.ID]; ok {
@@ -222,27 +221,52 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 	return &res, nil
 }
 
-func (s *store) findPbehaviors(ctx context.Context, ids []string) (map[string]pbehavior.Response, error) {
+func (s *store) findPbehaviors(ctx context.Context, ids []string) (map[string]alarmapi.Pbehavior, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
 
 	pipeline := []bson.M{
 		{"$match": bson.M{"_id": bson.M{"$in": ids}}},
+		{"$addFields": bson.M{
+			"comments": bson.M{
+				"$slice": bson.A{bson.M{"$reverseArray": "$comments"}, 1},
+			},
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorTypeMongoCollection,
+			"foreignField": "_id",
+			"localField":   "type_",
+			"as":           "type",
+		}},
+		{"$unwind": bson.M{"path": "$type", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorReasonMongoCollection,
+			"foreignField": "_id",
+			"localField":   "reason",
+			"as":           "reason",
+		}},
+		{"$unwind": bson.M{"path": "$reason", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.RightsMongoCollection,
+			"foreignField": "_id",
+			"localField":   "author",
+			"as":           "author",
+		}},
+		{"$unwind": bson.M{"path": "$author", "preserveNullAndEmptyArrays": true}},
 	}
-	pipeline = append(pipeline, pbehavior.GetNestedObjectsPipeline()...)
 	cursor, err := s.pbehaviorCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
 
-	var pbhs []pbehavior.Response
+	var pbhs []alarmapi.Pbehavior
 	err = cursor.All(ctx, &pbhs)
 	if err != nil {
 		return nil, err
 	}
 
-	pbhsByID := make(map[string]pbehavior.Response, len(pbhs))
+	pbhsByID := make(map[string]alarmapi.Pbehavior, len(pbhs))
 	for _, pbh := range pbhs {
 		pbhsByID[pbh.ID] = pbh
 	}
