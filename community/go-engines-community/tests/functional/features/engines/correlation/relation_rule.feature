@@ -86,48 +86,13 @@ Feature: correlation feature - attribute rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-relation-correlation-1"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-relation-correlation-1"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-relation-correlation-1"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 3
-          },
           "entity": {
             "type": "component",
             "name": "test-relation-correlation-1"
@@ -135,8 +100,8 @@ Feature: correlation feature - attribute rule
           "v": {
             "component": "test-relation-correlation-1"
           },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-relation-correlation-1"
           }
         }
@@ -149,7 +114,65 @@ Feature: correlation feature - attribute rule
       }
     }
     """
-    
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-relation-1",
+                  "connector_name": "test-relation-1-name",
+                  "component":  "test-relation-correlation-1",
+                  "resource": "test-relation-correlation-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-relation-1",
+                  "connector_name": "test-relation-1-name",
+                  "component":  "test-relation-correlation-1",
+                  "resource": "test-relation-correlation-resource-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-relation-1",
+                  "connector_name": "test-relation-1-name",
+                  "component":  "test-relation-correlation-1",
+                  "resource": "test-relation-correlation-resource-3"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
+
   Scenario: given meta alarm rule and events should trigger metaalarm by first resource event
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -220,38 +243,13 @@ Feature: correlation feature - attribute rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-relation-correlation-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-relation-correlation-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 2
-          },
           "entity": {
             "type": "component",
             "name": "test-relation-correlation-2"
@@ -259,8 +257,8 @@ Feature: correlation feature - attribute rule
           "v": {
             "component": "test-relation-correlation-2"
           },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-relation-correlation-2"
           }
         }
@@ -273,3 +271,53 @@ Feature: correlation feature - attribute rule
       }
     }
     """    
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-relation-2",
+                  "connector_name": "test-relation-2-name",
+                  "component":  "test-relation-correlation-2",
+                  "resource": "test-relation-correlation-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-relation-2",
+                  "connector_name": "test-relation-2-name",
+                  "component":  "test-relation-correlation-2",
+                  "resource": "test-relation-correlation-resource-2"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
+    """

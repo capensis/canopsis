@@ -1385,24 +1385,34 @@ paths:
                         "parameters": {
                           "output": "The alarm is acknowledged by scenario"
                         },
-                        "alarm_patterns": [
-                          {
-                            "v": {
-                              "state": {
-                                "val": 3
+                        "alarm_pattern": [
+                          [
+                            {
+                              "field": "v.state.val",
+                              "cond": {
+                                "type": "eq",
+                                "value": 3
                               }
                             }
-                          }
+                          ]
                         ],
-                        "entity_patterns": [
-                          {
-                            "type": "resource",
-                            "infos": {
-                              "group": {
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
+                              "cond": {
+                                "type": "eq",
                                 "value": "g1"
                               }
                             }
-                          }
+                          ]
                         ],
                         "drop_scenario_if_not_matched": false,
                         "emit_trigger": false
@@ -1464,24 +1474,34 @@ paths:
                         "parameters": {
                           "output": "The alarm is acknowledged by scenario"
                         },
-                        "alarm_patterns": [
-                          {
-                            "v": {
-                              "state": {
-                                "val": 3
+                        "alarm_pattern": [
+                          [
+                            {
+                              "field": "v.state.val",
+                              "cond": {
+                                "type": "eq",
+                                "value": 3
                               }
                             }
-                          }
+                          ]
                         ],
-                        "entity_patterns": [
-                          {
-                            "type": "resource",
-                            "infos": {
-                              "group": {
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
+                              "cond": {
+                                "type": "eq",
                                 "value": "g1"
                               }
                             }
-                          }
+                          ]
                         ],
                         "drop_scenario_if_not_matched": false,
                         "emit_trigger": false
@@ -2089,11 +2109,19 @@ paths:
           in: query
           schema:
             type: string
-        - $ref: '#/components/parameters/limit'
         - name: no_events
           in: query
           schema:
             type: boolean
+        - name: type[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - name: paginate
           in: query
@@ -6227,24 +6255,34 @@ paths:
                       "parameters": {
                         "output": "The alarm is acknowledged by scenario"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6266,24 +6304,34 @@ paths:
                       "parameters": {
                         "output": "The alarm is unacknowledged by scenario"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6306,24 +6354,34 @@ paths:
                         "output": "The ticket is added to the alarm by scenario",
                         "ticket": "ENV-116"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6345,24 +6403,34 @@ paths:
                       "parameters": {
                         "output": "The alarm is canceled by scenario"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 1
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 1
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6385,24 +6453,34 @@ paths:
                         "output": "The state of the alarm is changed by scenario",
                         "state": 3
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "status": {
-                              "val": 1
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 1
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6431,24 +6509,34 @@ paths:
                           "unit": "m"
                         }
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6474,24 +6562,34 @@ paths:
                           "unit": "m"
                         }
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6533,24 +6631,34 @@ paths:
                           "unit": "s"
                         }
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6639,24 +6747,34 @@ paths:
                       "parameters": {
                         "output": "The alarm is acknowledged by scenario"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6678,24 +6796,34 @@ paths:
                       "parameters": {
                         "output": "The alarm is unacknowledged by scenario"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6718,24 +6846,34 @@ paths:
                         "output": "The ticket is added to the alarm by scenario",
                         "ticket": "ENV-116"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6757,24 +6895,34 @@ paths:
                       "parameters": {
                         "output": "The alarm is canceled by scenario"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 1
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 1
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6797,24 +6945,34 @@ paths:
                         "output": "The state of the alarm is changed by scenario",
                         "state": 3
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "status": {
-                              "val": 1
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 1
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6843,24 +7001,34 @@ paths:
                           "unit": "m"
                         }
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6886,24 +7054,34 @@ paths:
                           "unit": "m"
                         }
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6945,24 +7123,34 @@ paths:
                           "unit": "s"
                         }
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false

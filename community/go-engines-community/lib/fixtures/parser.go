@@ -179,7 +179,7 @@ func (p *parser) processValue(fieldVal interface{}, index int, doc map[string]in
 
 			return nil, fmt.Errorf("missing %q field", keyCurrent)
 		case keyIndex:
-			return index, nil
+			return index + 1, nil
 		default:
 			newVal, err := callReflectMethod(p.reflectFaker, method, args)
 			if err != nil {
