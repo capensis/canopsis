@@ -22,8 +22,10 @@ Examples:
       "component": "some-component",
       "resource": "some-resource",
       "source_type": "resource",
-      "downtime_id": "some-downtime-id",
+      "downtime_id": 123,
       "pbehavior_name": "downtime",
+      "entry": 1648119485,
+      "timestamp": 1648119485,
       "start": 1648119485,
       "end": 1648119585
     }
@@ -39,8 +41,10 @@ Examples:
       "component": "some-component",
       "resource": "some-resource",
       "source_type": "resource",
-      "downtime_id": "some-downtime-id",
-      "pbehavior_name": "downtime"
+      "downtime_id": 123,
+      "pbehavior_name": "downtime",
+      "entry": 1648119485,
+      "timestamp": 1648119485
     }
     ```
 
