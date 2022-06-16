@@ -1398,8 +1398,14 @@ func (s *store) resolveAliasesInQuery(query interface{}) (newQuery interface{}, 
 			if newKey != key.String() {
 				keys = append(keys, newKey)
 			}
+			var mapVal reflect.Value
+			if newVal == nil {
+				mapVal = reflect.ValueOf(&newVal).Elem()
+			} else {
+				mapVal = reflect.ValueOf(newVal)
+			}
 			val.SetMapIndex(key, reflect.Value{})
-			val.SetMapIndex(reflect.ValueOf(newKey), reflect.ValueOf(newVal))
+			val.SetMapIndex(reflect.ValueOf(newKey), mapVal)
 		}
 	}
 
