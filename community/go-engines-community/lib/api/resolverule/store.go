@@ -143,26 +143,17 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		return nil, ErrDefaultRule
 	}
 
-	originalModel := resolverule.Rule{}
-	err := s.dbCollection.FindOne(ctx, bson.M{"_id": request.ID}).Decode(&originalModel)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, nil
-		}
-		return nil, err
-	}
-
 	model := s.transformRequestToDocument(request.EditRequest)
 	model.Updated = types.CpsTime{Time: time.Now()}
 
 	update := bson.M{"$set": model}
 
 	unset := bson.M{}
-	if len(request.AlarmPattern) > 0 {
+	if len(model.AlarmPattern) > 0 {
 		unset["old_alarm_patterns"] = 1
 	}
 
-	if len(request.EntityPattern) > 0 {
+	if len(model.EntityPattern) > 0 {
 		unset["old_entity_patterns"] = 1
 	}
 
@@ -171,7 +162,16 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	}
 
 	var res *Response
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		originalModel := resolverule.Rule{}
+		err := s.dbCollection.FindOne(ctx, bson.M{"_id": request.ID}).Decode(&originalModel)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+			return err
+		}
+
 		res = nil
 		_, err = s.dbCollection.UpdateOne(
 			ctx,

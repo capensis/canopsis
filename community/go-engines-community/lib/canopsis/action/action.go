@@ -1,6 +1,7 @@
 package action
 
 import (
+	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -69,7 +70,7 @@ func (a Action) Match(entity types.Entity, alarm types.Alarm) (bool, error) {
 	} else {
 		matched, err = a.AlarmPattern.Match(alarm)
 		if err != nil {
-			return false, pattern.AlarmPatternError
+			return false, fmt.Errorf("action has an invalid alarm pattern : %w", err)
 		}
 	}
 
@@ -86,7 +87,7 @@ func (a Action) Match(entity types.Entity, alarm types.Alarm) (bool, error) {
 	} else {
 		matched, _, err = a.EntityPattern.Match(entity)
 		if err != nil {
-			return false, pattern.EntityPatternError
+			return false, fmt.Errorf("action has an invalid entity pattern : %w", err)
 		}
 	}
 

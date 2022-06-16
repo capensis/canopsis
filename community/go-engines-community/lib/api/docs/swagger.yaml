@@ -5873,7 +5873,6 @@ paths:
                 summary: Create a resolve rule
                 description: Create a resolve rule
                 value: {
-                  "_id": "test-resolve-rule",
                   "name": "test-resolve-rule-name",
                   "description": "test-resolve-rule-desc",
                   "entity_pattern": [
@@ -5969,7 +5968,6 @@ paths:
                 summary: Update a resolve rule
                 description: Update a resolve rule
                 value: {
-                  "_id": "test-resolve-rule",
                   "name": "test-resolve-rule-name-updated",
                   "description": "test-resolve-rule-desc-updated",
                   "entity_pattern": [
