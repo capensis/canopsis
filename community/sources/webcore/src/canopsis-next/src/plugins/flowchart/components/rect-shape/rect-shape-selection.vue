@@ -5,9 +5,9 @@
       :y="rect.y",
       :width="rect.width",
       :height="rect.height",
+      :pointer-events="pointerEvents",
       fill="transparent",
       cursor="move",
-      pointer-events="all",
       @mousedown.stop="$listeners.mousedown",
       @mouseup="$listeners.mouseup"
     )
@@ -46,6 +46,10 @@ export default {
     color: {
       type: String,
       default: 'blue',
+    },
+    pointerEvents: {
+      type: String,
+      default: 'all',
     },
     cornerRadius: {
       type: Number,

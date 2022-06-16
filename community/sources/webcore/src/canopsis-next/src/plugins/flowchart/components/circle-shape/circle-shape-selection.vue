@@ -1,10 +1,9 @@
 <template lang="pug">
   g(@dblclick="$emit('dblclick', $event)")
-    rect(
-      :x="square.x",
-      :y="square.y",
-      :width="square.size",
-      :height="square.size",
+    circle(
+      :cx="centerX",
+      :cy="centerY",
+      :r="radius",
       :pointer-events="pointerEvents",
       fill="transparent",
       cursor="move",
@@ -30,7 +29,7 @@ export default {
   inject: ['$mouseMove', '$mouseUp'],
   components: { RectSelection },
   props: {
-    square: {
+    circle: {
       type: Object,
       required: true,
     },
@@ -61,12 +60,24 @@ export default {
     };
   },
   computed: {
+    radius() {
+      return this.circle.diameter / 2;
+    },
+
+    centerX() {
+      return this.circle.x + this.radius;
+    },
+
+    centerY() {
+      return this.circle.y + this.radius;
+    },
+
     rect() {
       return {
-        x: this.square.x,
-        y: this.square.y,
-        width: this.square.size,
-        height: this.square.size,
+        x: this.circle.x,
+        y: this.circle.y,
+        width: this.circle.diameter,
+        height: this.circle.diameter,
       };
     },
   },
@@ -82,27 +93,30 @@ export default {
       this.$mouseUp.unregister(this.finishResize);
     },
 
+    /**
+     * TODO: Should be moved in utils and reused with square
+     */
     onResize({ x: cursorX, y: cursorY }) {
-      const newSquare = {
-        x: this.square.x,
-        y: this.square.y,
-        size: this.square.size,
+      const newCircle = {
+        x: this.circle.x,
+        y: this.circle.y,
+        size: this.circle.diameter,
       };
 
       switch (this.direction) {
         case DIRECTIONS.west:
         case DIRECTIONS.southWest: {
-          const newSize = this.square.size + this.square.x - cursorX;
+          const newSize = this.circle.size + this.circle.x - cursorX;
 
           if (newSize >= 0) {
-            newSquare.size = newSize;
-            newSquare.x = cursorX;
+            newCircle.size = newSize;
+            newCircle.x = cursorX;
           } else {
             const absoluteNewSize = Math.abs(newSize);
 
-            newSquare.x += this.square.size;
-            newSquare.y -= absoluteNewSize;
-            newSquare.size = absoluteNewSize;
+            newCircle.x += this.circle.diameter;
+            newCircle.y -= absoluteNewSize;
+            newCircle.size = absoluteNewSize;
 
             this.direction = DIRECTIONS.northEast;
           }
@@ -111,17 +125,17 @@ export default {
         }
         case DIRECTIONS.east:
         case DIRECTIONS.northEast: {
-          const newSize = cursorX - this.square.x;
+          const newSize = cursorX - this.circle.x;
 
           if (newSize >= 0) {
-            newSquare.y += this.square.size - newSize;
-            newSquare.size = newSize;
+            newCircle.y += this.circle.diameter - newSize;
+            newCircle.size = newSize;
           } else {
             const absoluteNewSize = Math.abs(newSize);
 
-            newSquare.y += this.square.size;
-            newSquare.x -= absoluteNewSize;
-            newSquare.size = absoluteNewSize;
+            newCircle.y += this.circle.diameter;
+            newCircle.x -= absoluteNewSize;
+            newCircle.size = absoluteNewSize;
 
             this.direction = DIRECTIONS.southWest;
           }
@@ -130,16 +144,16 @@ export default {
         }
         case DIRECTIONS.south:
         case DIRECTIONS.southEast: {
-          const newSize = cursorY - this.square.y;
+          const newSize = cursorY - this.circle.y;
 
           if (newSize >= 0) {
-            newSquare.size = newSize;
+            newCircle.size = newSize;
           } else {
             const absoluteNewSize = Math.abs(newSize);
 
-            newSquare.size = absoluteNewSize;
-            newSquare.x -= absoluteNewSize;
-            newSquare.y -= absoluteNewSize;
+            newCircle.size = absoluteNewSize;
+            newCircle.x -= absoluteNewSize;
+            newCircle.y -= absoluteNewSize;
 
             this.direction = DIRECTIONS.northWest;
           }
@@ -148,20 +162,20 @@ export default {
         }
         case DIRECTIONS.north:
         case DIRECTIONS.northWest: {
-          const newSize = this.square.y + this.square.size - cursorY;
+          const newSize = this.circle.y + this.circle.diameter - cursorY;
 
           if (newSize >= 0) {
-            const diffBetweenSizes = this.square.size - newSize;
+            const diffBetweenSizes = this.circle.diameter - newSize;
 
-            newSquare.size = newSize;
-            newSquare.y += diffBetweenSizes;
-            newSquare.x += diffBetweenSizes;
+            newCircle.size = newSize;
+            newCircle.y += diffBetweenSizes;
+            newCircle.x += diffBetweenSizes;
           } else {
             const absoluteNewSize = Math.abs(newSize);
 
-            newSquare.y += this.square.size;
-            newSquare.x += this.square.size;
-            newSquare.size = absoluteNewSize;
+            newCircle.y += this.circle.diameter;
+            newCircle.x += this.circle.diameter;
+            newCircle.size = absoluteNewSize;
 
             this.direction = DIRECTIONS.southEast;
           }
@@ -170,7 +184,7 @@ export default {
         }
       }
 
-      this.$emit('resize', newSquare, this.direction);
+      this.$emit('resize', newCircle, this.direction);
     },
   },
 };
