@@ -1,49 +1,49 @@
 <template lang="pug">
-  g(
-    cursor="move",
-    @mousedown="$emit('mousedown', $event)",
-    @mouseup="$emit('mouseup', $event)",
-    @dblclick.stop="",
-    @click.stop=""
-  )
+  g
     circle(
-      v-bind="shape.style",
+      v-bind="circle.style",
       :cx="centerX",
       :cy="centerY",
       :r="radius",
       pointer-events="all"
     )
-    square-shape-selection(
-      :selected="selected",
-      :square="square",
-      @resize="onResize"
+    text-editor(
+      ref="editor",
+      :value="circle.text",
+      :y="circle.y",
+      :x="circle.x",
+      :width="circle.diameter",
+      :height="circle.diameter",
+      :editable="editing",
+      center,
+      @blur="disableEditingMode"
     )
-      circle(
-        :cx="centerX",
-        :cy="centerY",
-        :r="radius",
-        fill="transparent",
-        cursor="move",
-        pointer-events="all",
-        @mousedown.stop="$listeners.mousedown",
-        @mouseup="$listeners.mouseup"
-      )
+    circle-shape-selection(
+      :selected="selected",
+      :circle="circle",
+      :pointer-events="editing ? 'none' : 'all'",
+      @resize="onResize",
+      @dblclick="enableEditingMode",
+      @mousedown="$emit('mousedown', $event)",
+      @mouseup="$emit('mouseup', $event)"
+    )
 </template>
 
 <script>
 import { formBaseMixin } from '@/mixins/form';
 
-import SquareShapeSelection from '../square-shape/square-shape-selection.vue';
+import CircleShapeSelection from './circle-shape-selection.vue';
+import TextEditor from '../common/text-editor.vue';
 
 export default {
-  components: { SquareShapeSelection },
+  components: { CircleShapeSelection, TextEditor },
   mixins: [formBaseMixin],
   model: {
-    prop: 'shape',
+    prop: 'circle',
     event: 'input',
   },
   props: {
-    shape: {
+    circle: {
       type: Object,
       required: true,
     },
@@ -56,46 +56,58 @@ export default {
       default: 0,
     },
   },
+  data() {
+    return {
+      editing: false,
+    };
+  },
   computed: {
     radius() {
-      return this.shape.diameter / 2;
+      return this.circle.diameter / 2;
     },
 
     centerX() {
-      return this.shape.x + this.radius;
+      return this.circle.x + this.radius;
     },
 
     centerY() {
-      return this.shape.y + this.radius;
-    },
-
-    square() {
-      return {
-        x: this.shape.x,
-        y: this.shape.y,
-        size: this.shape.diameter,
-      };
+      return this.circle.y + this.radius;
     },
   },
   methods: {
     move(newOffset, oldOffset) {
-      const { x, y } = this.shape;
+      const { x, y } = this.circle;
 
       this.updateModel({
-        ...this.shape,
+        ...this.circle,
 
         x: (x - oldOffset.x) + newOffset.x,
         y: (y - oldOffset.y) + newOffset.y,
       });
     },
 
-    onResize(square) {
+    onResize(circle) {
       this.updateModel({
-        ...this.shape,
-        x: square.x,
-        y: square.y,
-        diameter: square.size,
+        ...this.circle,
+        x: circle.x,
+        y: circle.y,
+        diameter: circle.size,
       });
+    },
+
+    enableEditingMode() {
+      this.editing = true;
+
+      this.$refs.editor.focus();
+    },
+
+    disableEditingMode(event) {
+      this.updateModel({
+        ...this.circle,
+        text: event.target.innerHTML,
+      });
+
+      this.editing = false;
     },
   },
 };

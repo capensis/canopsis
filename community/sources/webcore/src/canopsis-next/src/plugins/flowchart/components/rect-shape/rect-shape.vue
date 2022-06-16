@@ -7,10 +7,23 @@
       :width="rect.width",
       :height="rect.height"
     )
+    text-editor(
+      ref="editor",
+      :value="rect.text",
+      :y="rect.y",
+      :x="rect.x",
+      :width="rect.width",
+      :height="rect.height",
+      :editable="editing",
+      center,
+      @blur="disableEditingMode"
+    )
     rect-shape-selection(
       :selected="selected",
       :rect="rect",
+      :pointer-events="editing ? 'none' : 'all'",
       @resize="onResize",
+      @dblclick="enableEditingMode",
       @mousedown="$emit('mousedown', $event)",
       @mouseup="$emit('mouseup', $event)"
     )
@@ -20,9 +33,10 @@
 import { formBaseMixin } from '@/mixins/form';
 
 import RectShapeSelection from './rect-shape-selection.vue';
+import TextEditor from '../common/text-editor.vue';
 
 export default {
-  components: { RectShapeSelection },
+  components: { RectShapeSelection, TextEditor },
   mixins: [formBaseMixin],
   model: {
     prop: 'rect',
@@ -42,6 +56,11 @@ export default {
       default: 0,
     },
   },
+  data() {
+    return {
+      editing: false,
+    };
+  },
   methods: {
     move(newOffset, oldOffset) {
       const { x, y } = this.rect;
@@ -56,6 +75,21 @@ export default {
 
     onResize(rect) {
       this.updateModel({ ...this.rect, ...rect });
+    },
+
+    enableEditingMode() {
+      this.editing = true;
+
+      this.$refs.editor.focus();
+    },
+
+    disableEditingMode(event) {
+      this.updateModel({
+        ...this.rect,
+        text: event.target.innerHTML,
+      });
+
+      this.editing = false;
     },
   },
 };
