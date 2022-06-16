@@ -850,6 +850,20 @@ func getPbehaviorLookup() []bson.M {
 		{"$addFields": bson.M{
 			"pbehavior.last_comment": bson.M{"$arrayElemAt": bson.A{"$pbehavior.comments", -1}},
 		}},
+		{"$lookup": bson.M{
+			"from":         mongo.RightsMongoCollection,
+			"foreignField": "_id",
+			"localField":   "pbehavior.author",
+			"as":           "pbehavior.author",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior.author", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorReasonMongoCollection,
+			"foreignField": "_id",
+			"localField":   "pbehavior.reason",
+			"as":           "pbehavior.reason",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior.reason", "preserveNullAndEmptyArrays": true}},
 	}
 }
 
