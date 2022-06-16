@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 
-	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -15,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
+	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 )
 
 type ListRequest struct {
@@ -73,8 +73,8 @@ type PatchRequest struct {
 	Stop       NullableTime                       `json:"tstop" swaggertype:"integer"`
 	RRule      *string                            `json:"rrule"`
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
-	Exceptions []string                             `json:"exceptions"`
-	Color      *string                          `json:"exceptions"`
+	Exceptions []string                           `json:"exceptions"`
+	Color      *string                            `json:"color"`
 
 	EntityPattern          pattern.Entity             `json:"entity_pattern"`
 	CorporateEntityPattern *string                    `json:"corporate_entity_pattern"`

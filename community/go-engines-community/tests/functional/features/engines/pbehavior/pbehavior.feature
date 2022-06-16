@@ -977,6 +977,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-10",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -1139,6 +1140,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-11",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -1264,6 +1266,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-12",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "corporate_entity_pattern": "{{ .patternID }}"
@@ -1488,6 +1491,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-13",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine"
     }
