@@ -1,6 +1,7 @@
 package resolverule
 
 import (
+	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -48,7 +49,7 @@ func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity) (bool, error) {
 	} else {
 		matched, err = r.AlarmPattern.Match(alarmWithEntity.Alarm)
 		if err != nil {
-			return false, pattern.AlarmPatternError
+			return false, fmt.Errorf("resolve rule has an invalid alarm pattern : %w", err)
 		}
 	}
 
@@ -65,7 +66,7 @@ func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity) (bool, error) {
 	} else {
 		matched, _, err = r.EntityPattern.Match(alarmWithEntity.Entity)
 		if err != nil {
-			return false, pattern.EntityPatternError
+			return false, fmt.Errorf("resolve rule has an invalid entity pattern : %w", err)
 		}
 	}
 

@@ -498,18 +498,18 @@ Feature: Update an resolve rule
   Scenario: given update requests should update resolve rule without changes in old patterns,
             but should unset old patterns if new patterns are present
     When I am admin
-    Then I do PUT /api/v4/resolve-rules/test-resolve-rule-backward-compatibility-to-update:
+    Then I do PUT /api/v4/resolve-rules/test-resolve-rule-backward-compatibility-to-update-1:
     """json
     {
-      "name": "test-resolve-rule-backward-compatibility-to-update-name-updated",
-      "description": "test-resolve-rule-backward-compatibility-to-update-description-updated",
+      "name": "test-resolve-rule-backward-compatibility-to-update-1-name-updated",
+      "description": "test-resolve-rule-backward-compatibility-to-update-1-description-updated",
       "entity_pattern": [
         [
           {
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resolve-rule-backward-compatibility-to-update-resource-updated"
+              "value": "test-resolve-rule-backward-compatibility-to-update-1-resource-updated"
             }
           }
         ]
@@ -530,12 +530,12 @@ Feature: Update an resolve rule
         "name": "root"
       },
       "created": 1619083733,
-      "name": "test-resolve-rule-backward-compatibility-to-update-name-updated",
-      "description": "test-resolve-rule-backward-compatibility-to-update-description-updated",
+      "name": "test-resolve-rule-backward-compatibility-to-update-1-name-updated",
+      "description": "test-resolve-rule-backward-compatibility-to-update-1-description-updated",
       "old_alarm_patterns": [
         {
           "v": {
-            "component": "test-resolve-rule-backward-compatibility-to-update"
+            "component": "test-resolve-rule-backward-compatibility-to-update-1"
           }
         }
       ],
@@ -545,7 +545,7 @@ Feature: Update an resolve rule
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resolve-rule-backward-compatibility-to-update-resource-updated"
+              "value": "test-resolve-rule-backward-compatibility-to-update-1-resource-updated"
             }
           }
         ]
@@ -558,18 +558,18 @@ Feature: Update an resolve rule
       "priority": 5
     }
     """
-    Then I do PUT /api/v4/resolve-rules/test-resolve-rule-backward-compatibility-to-update:
+    Then I do PUT /api/v4/resolve-rules/test-resolve-rule-backward-compatibility-to-update-1:
     """json
     {
-      "name": "test-resolve-rule-backward-compatibility-to-update-name-updated",
-      "description": "test-resolve-rule-backward-compatibility-to-update-description-updated",
+      "name": "test-resolve-rule-backward-compatibility-to-update-1-name-updated",
+      "description": "test-resolve-rule-backward-compatibility-to-update-1-description-updated",
       "entity_pattern": [
         [
           {
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resolve-rule-backward-compatibility-to-update-resource-updated"
+              "value": "test-resolve-rule-backward-compatibility-to-update-1-resource-updated"
             }
           }
         ]
@@ -580,7 +580,7 @@ Feature: Update an resolve rule
             "field": "v.component",
             "cond": {
               "type": "eq",
-              "value": "test-resolve-rule-backward-compatibility-to-update-component-updated"
+              "value": "test-resolve-rule-backward-compatibility-to-update-1-component-updated"
             }
           }
         ]
@@ -601,15 +601,15 @@ Feature: Update an resolve rule
         "name": "root"
       },
       "created": 1619083733,
-      "name": "test-resolve-rule-backward-compatibility-to-update-name-updated",
-      "description": "test-resolve-rule-backward-compatibility-to-update-description-updated",
+      "name": "test-resolve-rule-backward-compatibility-to-update-1-name-updated",
+      "description": "test-resolve-rule-backward-compatibility-to-update-1-description-updated",
       "alarm_pattern": [
         [
           {
             "field": "v.component",
             "cond": {
               "type": "eq",
-              "value": "test-resolve-rule-backward-compatibility-to-update-component-updated"
+              "value": "test-resolve-rule-backward-compatibility-to-update-1-component-updated"
             }
           }
         ]
@@ -620,11 +620,195 @@ Feature: Update an resolve rule
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resolve-rule-backward-compatibility-to-update-resource-updated"
+              "value": "test-resolve-rule-backward-compatibility-to-update-1-resource-updated"
             }
           }
         ]
       ],
+      "old_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """    
+    
+  Scenario: given update request should update resolve rule with old patterns if new patterns are absent
+    When I am admin
+    Then I do PUT /api/v4/resolve-rules/test-resolve-rule-backward-compatibility-to-update-2:
+    """json
+    {
+      "name": "test-resolve-rule-backward-compatibility-to-update-2-name-updated",
+      "description": "test-resolve-rule-backward-compatibility-to-update-2-description-updated",
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-resolve-rule-backward-compatibility-to-update-2-name-updated",
+      "description": "test-resolve-rule-backward-compatibility-to-update-2-description-updated",
+      "old_entity_patterns": [
+        {
+          "name": {
+            "regex_match": "test-resolve-rule-backward-compatibility-to-update-2"
+          }
+        }
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """ 
+    Then I do PUT /api/v4/resolve-rules/test-resolve-rule-backward-compatibility-to-update-3:
+    """json
+    {
+      "name": "test-resolve-rule-backward-compatibility-to-update-3-name-updated",
+      "description": "test-resolve-rule-backward-compatibility-to-update-3-description-updated",
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-resolve-rule-backward-compatibility-to-update-3-name-updated",
+      "description": "test-resolve-rule-backward-compatibility-to-update-3-description-updated",
+      "old_alarm_patterns": [
+        {
+          "v": {
+            "component": "test-resolve-rule-backward-compatibility-to-update-3"
+          }
+        }
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """    
+
+  Scenario: given update requests should update resolve rule without changes in old patterns,
+            but should unset old patterns if new corporate patterns are present
+    When I am admin
+    Then I do PUT /api/v4/resolve-rules/test-resolve-rule-backward-compatibility-to-update-4:
+    """json
+    {
+      "name": "test-resolve-rule-backward-compatibility-to-update-4-name-updated",
+      "description": "test-resolve-rule-backward-compatibility-to-update-4-description-updated",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "created": 1619083733,
+      "name": "test-resolve-rule-backward-compatibility-to-update-4-name-updated",
+      "description": "test-resolve-rule-backward-compatibility-to-update-4-description-updated",
+      "old_alarm_patterns": [
+        {
+          "v": {
+            "component": "test-resolve-rule-backward-compatibility-to-update-4"
+          }
+        }
+      ],
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-2-pattern"
+            }
+          }
+        ]
+      ],
+      "old_entity_patterns": null,
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """
+    Then I do PUT /api/v4/resolve-rules/test-resolve-rule-backward-compatibility-to-update-4:
+    """json
+    {
+      "name": "test-resolve-rule-backward-compatibility-to-update-4-name-updated",
+      "description": "test-resolve-rule-backward-compatibility-to-update-4-description-updated",
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "priority": 5
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "created": 1619083733,
+      "name": "test-resolve-rule-backward-compatibility-to-update-4-name-updated",
+      "description": "test-resolve-rule-backward-compatibility-to-update-4-description-updated",
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-1-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-2-pattern"
+            }
+          }
+        ]
+      ],
+
       "old_entity_patterns": null,
       "old_alarm_patterns": null,
       "duration": {

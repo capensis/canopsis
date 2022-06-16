@@ -294,23 +294,68 @@ resolve_rule:
     priority: 5
     updated: 1619083733    
   resolve_rule_15:
-    _id: test-resolve-rule-backward-compatibility-to-update
+    _id: test-resolve-rule-backward-compatibility-to-update-1
     old_alarm_patterns:
       - v:
-          component: test-resolve-rule-backward-compatibility-to-update
+          component: test-resolve-rule-backward-compatibility-to-update-1
     old_entity_patterns:
       - name:
-          regex_match: test-resolve-rule-backward-compatibility-to-update
+          regex_match: test-resolve-rule-backward-compatibility-to-update-1
     author: root
     created: 1619083733
-    description: test-resolve-rule-backward-compatibility-to-update-description
+    description: test-resolve-rule-backward-compatibility-to-update-1-description
     duration:
       unit: s
       value: 10
-    name: test-resolve-rule-backward-compatibility-to-update-name
+    name: test-resolve-rule-backward-compatibility-to-update-1-name
     priority: 5
     updated: 1619083733
   resolve_rule_16:
+    _id: test-resolve-rule-backward-compatibility-to-update-2
+    old_entity_patterns:
+      - name:
+          regex_match: test-resolve-rule-backward-compatibility-to-update-2
+    author: root
+    created: 1619083733
+    description: test-resolve-rule-backward-compatibility-to-update-2-description
+    duration:
+      unit: s
+      value: 10
+    name: test-resolve-rule-backward-compatibility-to-update-2-name
+    priority: 5
+    updated: 1619083733 
+  resolve_rule_17:
+    _id: test-resolve-rule-backward-compatibility-to-update-3
+    old_alarm_patterns:
+      - v:
+          component: test-resolve-rule-backward-compatibility-to-update-3
+    author: root
+    created: 1619083733
+    description: test-resolve-rule-backward-compatibility-to-update-3-description
+    duration:
+      unit: s
+      value: 10
+    name: test-resolve-rule-backward-compatibility-to-update-3-name
+    priority: 5
+    updated: 1619083733
+  resolve_rule_18:
+    _id: test-resolve-rule-backward-compatibility-to-update-4
+    old_alarm_patterns:
+      - v:
+          component: test-resolve-rule-backward-compatibility-to-update-4
+    old_entity_patterns:
+      - name:
+          regex_match: test-resolve-rule-backward-compatibility-to-update-4
+    author: root
+    created: 1619083733
+    description: test-resolve-rule-backward-compatibility-to-update-4-description
+    duration:
+      unit: s
+      value: 10
+    name: test-resolve-rule-backward-compatibility-to-update-4-name
+    priority: 5
+    updated: 1619083733    
+  resolve_rule_19:
     _id: test-resolve-rule-backward-compatibility-1
     old_alarm_patterns:
       - v:
