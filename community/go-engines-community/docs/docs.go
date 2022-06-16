@@ -9859,7 +9859,8 @@ var doc = `{
                     "type": "string"
                 },
                 "author": {
-                    "type": "string"
+                    "type": "object",
+                    "$ref": "#/definitions/common.User"
                 },
                 "comments": {
                     "type": "object",
@@ -9867,6 +9868,10 @@ var doc = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "reason": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Reason"
                 },
                 "rrule": {
                     "type": "string"
@@ -13660,7 +13665,7 @@ var doc = `{
                 "pbehaviors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehavior.Response"
+                        "$ref": "#/definitions/alarm.Pbehavior"
                     }
                 },
                 "resource": {
@@ -13785,7 +13790,7 @@ var doc = `{
                 "pbehaviors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehavior.Response"
+                        "$ref": "#/definitions/alarm.Pbehavior"
                     }
                 },
                 "resource": {

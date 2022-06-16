@@ -505,12 +505,16 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/common.User'
+        type: object
       comments:
         $ref: '#/definitions/pbehavior.Comments'
         type: object
       name:
         type: string
+      reason:
+        $ref: '#/definitions/pbehavior.Reason'
+        type: object
       rrule:
         type: string
       tstart:
@@ -3091,7 +3095,7 @@ definitions:
         type: object
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.Response'
+          $ref: '#/definitions/alarm.Pbehavior'
         type: array
       resource:
         type: string
@@ -3176,7 +3180,7 @@ definitions:
         type: object
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.Response'
+          $ref: '#/definitions/alarm.Pbehavior'
         type: array
       resource:
         type: string
