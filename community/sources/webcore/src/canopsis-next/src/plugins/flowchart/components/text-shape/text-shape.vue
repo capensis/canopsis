@@ -1,10 +1,20 @@
 <template lang="pug">
   g
-    component(is="foreignObject", :y="text.y", :x="text.x", :width="text.width", :height="text.height")
-      div(ref="textEditor", :contenteditable="editing") {{ text.text }}
+    text-editor(
+      ref="editor",
+      :value="text.text",
+      :y="text.y",
+      :x="text.x",
+      :width="text.width",
+      :height="text.height",
+      :center="text.center",
+      :editable="editing",
+      @blur="disableEditingMode"
+    )
     rect-shape-selection(
       :selected="selected",
       :rect="text",
+      :pointer-events="editing ? 'none' : 'all'",
       @resize="onResize",
       @dblclick="enableEditingMode",
       @mousedown="$emit('mousedown', $event)",
@@ -16,9 +26,10 @@
 import { formBaseMixin } from '@/mixins/form';
 
 import RectShapeSelection from '../rect-shape/rect-shape-selection.vue';
+import TextEditor from '../common/text-editor.vue';
 
 export default {
-  components: { RectShapeSelection },
+  components: { RectShapeSelection, TextEditor },
   mixins: [formBaseMixin],
   model: {
     prop: 'text',
@@ -62,7 +73,11 @@ export default {
     enableEditingMode() {
       this.editing = true;
 
-      this.$refs.textEditor.focus();
+      this.$refs.editor.focus();
+    },
+
+    disableEditingMode() {
+      this.editing = false;
     },
   },
 };

@@ -7,12 +7,25 @@
       :width="square.size",
       :height="square.size"
     )
+    text-editor(
+      ref="editor",
+      :value="square.text",
+      :y="square.y",
+      :x="square.x",
+      :width="square.size",
+      :height="square.size",
+      :editable="editing",
+      center,
+      @blur="disableEditingMode"
+    )
     square-shape-selection(
       :selected="selected",
       :square="square",
+      :pointer-events="editing ? 'none' : 'all'",
+      @resize="onResize",
+      @dblclick="enableEditingMode",
       @mousedown="$emit('mousedown', $event)",
-      @mouseup="$emit('mouseup', $event)",
-      @resize="onResize"
+      @mouseup="$emit('mouseup', $event)"
     )
 </template>
 
@@ -20,9 +33,10 @@
 import { formBaseMixin } from '@/mixins/form';
 
 import SquareShapeSelection from './square-shape-selection.vue';
+import TextEditor from '../common/text-editor.vue';
 
 export default {
-  components: { SquareShapeSelection },
+  components: { SquareShapeSelection, TextEditor },
   mixins: [formBaseMixin],
   model: {
     prop: 'square',
@@ -41,6 +55,11 @@ export default {
       type: Number,
       default: 0,
     },
+  },
+  data() {
+    return {
+      editing: false,
+    };
   },
   methods: {
     move(newOffset, oldOffset) {
@@ -61,6 +80,21 @@ export default {
         y: square.y,
         size: square.size,
       });
+    },
+
+    enableEditingMode() {
+      this.editing = true;
+
+      this.$refs.editor.focus();
+    },
+
+    disableEditingMode(event) {
+      this.updateModel({
+        ...this.square,
+        text: event.target.innerHTML,
+      });
+
+      this.editing = false;
     },
   },
 };
