@@ -228,6 +228,33 @@ Feature: get service entities
       }
     }
     """
+    When I do GET /api/v4/weather-services/test-service-weather-entity-2?sort_by=impact_state&sort=desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-service-weather-entity-2-3/test-component-service-weather-entity-2",
+          "impact_state": 3
+        },
+        {
+          "_id": "test-resource-service-weather-entity-2-2/test-component-service-weather-entity-2",
+          "impact_state": 2
+        },
+        {
+          "_id": "test-resource-service-weather-entity-2-1/test-component-service-weather-entity-2",
+          "impact_state": 1
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
+      }
+    }
+    """
 
   Scenario: given service for one entity and no open alarms should get one entity with ok state
     Given I am admin

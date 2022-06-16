@@ -106,7 +106,6 @@ Feature: get service weather
                 "description": "Engine maintenance",
                 "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -353,7 +352,6 @@ Feature: get service weather
                 "description": "Engine maintenance",
                 "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -757,7 +755,6 @@ Feature: get service weather
                 "description": "Engine maintenance",
                 "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -929,7 +926,6 @@ Feature: get service weather
                 "description": "Engine maintenance",
                 "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -1948,7 +1944,6 @@ Feature: get service weather
                 "description": "Engine maintenance",
                 "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -2107,7 +2102,6 @@ Feature: get service weather
                 "description": "Engine maintenance",
                 "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -2157,7 +2151,6 @@ Feature: get service weather
                 "description": "Engine maintenance",
                 "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -2207,7 +2200,6 @@ Feature: get service weather
                 "description": "Engine maintenance",
                 "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -2257,7 +2249,6 @@ Feature: get service weather
                 "description": "Engine maintenance",
                 "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -2381,7 +2372,6 @@ Feature: get service weather
                 "description": "Engine maintenance",
                 "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -2431,7 +2421,6 @@ Feature: get service weather
                 "description": "Engine maintenance",
                 "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 17,
                 "type": "maintenance"
               }
             }
