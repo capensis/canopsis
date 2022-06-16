@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type MongoQueryBuilder struct {
@@ -31,6 +32,8 @@ type MongoQueryBuilder struct {
 	// lookups is a slice to define lookups' order since following lookups can depend on previous lookups
 	lookups []lookupWithKey
 	sort    bson.M
+
+	computedFields bson.M
 }
 
 type lookupWithKey struct {
@@ -47,14 +50,24 @@ func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
 }
 
 func (q *MongoQueryBuilder) clear() {
-	q.entityMatch = []bson.M{{"$match": bson.M{
-		"type":    types.EntityTypeService,
-		"enabled": true,
-	}}}
+	q.entityMatch = make([]bson.M, 0)
 	q.additionalMatch = make([]bson.M, 0)
 
 	q.lookupsForAdditionalMatch = make(map[string]bool)
 	q.lookupsForSort = make(map[string]bool)
+	q.lookups = make([]lookupWithKey, 0)
+
+	q.sort = bson.M{}
+	q.computedFields = bson.M{}
+}
+
+func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequest) ([]bson.M, error) {
+	q.clear()
+
+	q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{
+		"type":    types.EntityTypeService,
+		"enabled": true,
+	}})
 	q.lookups = []lookupWithKey{
 		{key: "category", pipeline: getCategoryLookup()},
 		{key: "alarm", pipeline: getAlarmLookup()},
@@ -62,25 +75,32 @@ func (q *MongoQueryBuilder) clear() {
 		{key: "alarm_counters", pipeline: getPbehaviorAlarmCountersLookup()},
 		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
 	}
-
-	q.sort = bson.M{}
-}
-
-func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequest) ([]bson.M, error) {
-	q.clear()
-
 	err := q.handleWidgetFilter(ctx, r)
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleFilter(r)
-	if err != nil {
-		return nil, err
+	q.handleFilter(r)
+	q.handleSort(r.SortBy, r.Sort)
+
+	return q.createPaginationAggregationPipeline(r.Query), nil
+}
+
+func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(ids []string, r EntitiesListRequest, now types.CpsTime) ([]bson.M, error) {
+	q.clear()
+
+	q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{
+		"_id":     bson.M{"$in": ids},
+		"enabled": true,
+	}})
+	q.lookups = []lookupWithKey{
+		{key: "category", pipeline: getCategoryLookup()},
+		{key: "alarm", pipeline: getAlarmLookup()},
+		{key: "pbehavior", pipeline: getPbehaviorLookup()},
+		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
+		{key: "stats", pipeline: getEventStatsLookup(now)},
 	}
-	err = q.handleSort(r)
-	if err != nil {
-		return nil, err
-	}
+	q.handleSort(r.SortBy, r.Sort)
+	q.computedFields = getListDependenciesComputedFields()
 
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
@@ -113,6 +133,15 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 		}
 	}
 
+	addFields := bson.M{}
+	for field, v := range q.computedFields {
+		addFields[field] = v
+	}
+
+	if len(addFields) > 0 {
+		afterLimit = append(afterLimit, bson.M{"$addFields": addFields})
+	}
+
 	return beforeLimit, afterLimit
 }
 
@@ -129,14 +158,12 @@ func (q *MongoQueryBuilder) addLookupsToPipeline(lookupsMap, addedLookups map[st
 	}
 }
 
-func (q *MongoQueryBuilder) handleFilter(r ListRequest) error {
+func (q *MongoQueryBuilder) handleFilter(r ListRequest) {
 	entityMatch := make([]bson.M, 0)
 	q.addCategoryFilter(r, &entityMatch)
 	if len(entityMatch) > 0 {
 		q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{"$and": entityMatch}})
 	}
-
-	return nil
 }
 
 func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListRequest) error {
@@ -203,35 +230,33 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 }
 
 func (q *MongoQueryBuilder) addCategoryFilter(r ListRequest, match *[]bson.M) {
-	if r.Category == "" {
-		return
+	if r.Category != "" {
+		*match = append(*match, bson.M{"category": bson.M{"$eq": r.Category}})
 	}
-
-	*match = append(*match, bson.M{"category": bson.M{"$eq": r.Category}})
 }
 
-func (q *MongoQueryBuilder) handleSort(r ListRequest) error {
-	sortBy := r.SortBy
+func (q *MongoQueryBuilder) handleSort(sortBy, sort string) {
 	if sortBy == "" {
 		sortBy = q.defaultSortBy
 	}
 	switch sortBy {
-	case "state", "impact_state":
+	case "state":
+		sortBy = "state.val"
+		q.lookupsForSort["alarm"] = true
+	case "impact_state":
 		q.lookupsForSort["alarm"] = true
 	}
-	sort := 1
-	if r.Sort == common.SortDesc {
-		sort = -1
+	sortDir := 1
+	if sort == common.SortDesc {
+		sortDir = -1
 	}
 
-	sortQuery := bson.D{{Key: sortBy, Value: sort}}
+	sortQuery := bson.D{{Key: sortBy, Value: sortDir}}
 	if sortBy != "name" {
 		sortQuery = append(sortQuery, bson.E{Key: "name", Value: 1})
 	}
 
 	q.sort = bson.M{"$sort": sortQuery}
-
-	return nil
 }
 
 func getCategoryLookup() []bson.M {
@@ -513,6 +538,78 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 			"watched_inactive_count": 0,
 			"watched_pbehavior_type": 0,
 			"alarms_cumulative_data": 0,
+		}},
+	}
+}
+
+func getEventStatsLookup(now types.CpsTime) []bson.M {
+	year, month, day := now.Date()
+	truncatedInLocation := time.Date(year, month, day, 0, 0, 0, 0, now.Location()).Unix()
+
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.EventStatistics,
+			"localField":   "_id",
+			"foreignField": "_id",
+			"as":           "stats",
+		}},
+		{"$unwind": bson.M{"path": "$stats", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			// stats counters with "last_event" prior "truncatedInLocation" represent as 0
+			"stats.ok": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$gt": bson.A{"$stats.last_event", truncatedInLocation}},
+				"then": "$stats.ok",
+				"else": 0,
+			}},
+			"stats.ko": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$gt": bson.A{"$stats.last_event", truncatedInLocation}},
+				"then": "$stats.ko",
+				"else": 0,
+			}},
+		}},
+	}
+}
+
+func getListDependenciesComputedFields() bson.M {
+	defaultVal := types.AlarmStateTitleOK
+	stateVals := []bson.M{
+		{
+			"case": bson.M{"$eq": bson.A{types.AlarmStateMinor, "$state.val"}},
+			"then": types.AlarmStateTitleMinor,
+		},
+		{
+			"case": bson.M{"$eq": bson.A{types.AlarmStateMajor, "$state.val"}},
+			"then": types.AlarmStateTitleMajor,
+		},
+		{
+			"case": bson.M{"$eq": bson.A{types.AlarmStateCritical, "$state.val"}},
+			"then": types.AlarmStateTitleCritical,
+		},
+	}
+
+	return bson.M{
+		"alarm_id":      "$alarm._id",
+		"creation_date": "$alarm.v.creation_date",
+		"display_name":  "$alarm.v.display_name",
+		"ticket":        "$alarm.v.ticket",
+		"is_grey": bson.M{"$and": []bson.M{
+			{"$ifNull": bson.A{"$pbehavior_info", false}},
+			{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
+		}},
+		"icon": bson.M{"$switch": bson.M{
+			"branches": append(
+				// If service is not active return pbehavior type icon.
+				[]bson.M{{
+					"case": bson.M{"$and": []bson.M{
+						{"$ifNull": bson.A{"$pbehavior_info", false}},
+						{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
+					}},
+					"then": "$pbehavior_info.canonical_type",
+				}},
+				// Else return state icon.
+				stateVals...,
+			),
+			"default": defaultVal,
 		}},
 	}
 }
