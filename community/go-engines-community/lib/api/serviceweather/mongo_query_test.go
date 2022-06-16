@@ -136,7 +136,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		WeatherServicePattern: view.WeatherServicePattern{
 			{
 				{
-					Field:     "state",
+					Field:     "state.val",
 					Condition: pattern.NewIntCondition(pattern.ConditionEqual, types.AlarmStateMinor),
 				},
 			},
@@ -165,7 +165,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expected = append(expected, getAlarmLookup()...)
 	expected = append(expected, []bson.M{
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
-			{"state": bson.M{"$eq": types.AlarmStateMinor}},
+			{"state.val": bson.M{"$eq": types.AlarmStateMinor}},
 		}}}}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -318,7 +318,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSortByS
 		SortBy: "state",
 	}
 	expectedDataPipeline := []bson.M{
-		{"$sort": bson.D{{Key: "state", Value: -1}, {Key: "name", Value: 1}}},
+		{"$sort": bson.D{{Key: "state.val", Value: -1}, {Key: "name", Value: 1}}},
 		{"$skip": 0},
 		{"$limit": 10},
 	}
