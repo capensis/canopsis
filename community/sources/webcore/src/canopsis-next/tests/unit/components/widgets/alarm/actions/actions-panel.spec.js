@@ -842,7 +842,7 @@ describe('actions-panel', () => {
       {
         name: MODALS.alarmsList,
         config: {
-          title: expect.any(String),
+          title: `modals.alarmsList.prefixTitle:${JSON.stringify({ prefix: entity._id })}`,
           widget: {
             ...defaultWidget,
             _id: expect.any(String),
