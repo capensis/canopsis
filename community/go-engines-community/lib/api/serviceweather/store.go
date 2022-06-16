@@ -249,12 +249,48 @@ func getFindEntitiesPipeline(location *time.Location) []bson.M {
 			"as":           "category",
 		}},
 		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
-		// Pbehaviors
+		// Pbehavior
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorMongoCollection,
 			"localField":   "pbehavior_info.id",
 			"foreignField": "_id",
-			"as":           "pbehaviors",
+			"as":           "pbehavior",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"pbehavior.last_comment": bson.M{"$arrayElemAt": bson.A{"$pbehavior.comments", -1}},
+		}},
+		{"$project": bson.M{
+			"pbehavior.comments": 0,
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.RightsMongoCollection,
+			"foreignField": "_id",
+			"localField":   "pbehavior.author",
+			"as":           "pbehavior.author",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior.author", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorTypeMongoCollection,
+			"foreignField": "_id",
+			"localField":   "pbehavior.type_",
+			"as":           "pbehavior.type",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior.type", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorReasonMongoCollection,
+			"foreignField": "_id",
+			"localField":   "pbehavior.reason",
+			"as":           "pbehavior.reason",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior.reason", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			// todo keep array for backward compatibility
+			"pbehaviors": bson.M{"$cond": bson.M{
+				"if":   "$pbehavior._id",
+				"then": bson.A{"$pbehavior"},
+				"else": bson.A{},
+			}},
 		}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
