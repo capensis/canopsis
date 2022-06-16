@@ -342,6 +342,7 @@ Feature: run a job
     }
     """
     Then the response code should be 200
+    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-2&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
     """json
     [
