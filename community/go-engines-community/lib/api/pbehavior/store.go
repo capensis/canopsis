@@ -23,16 +23,16 @@ import (
 type Store interface {
 	Insert(ctx context.Context, r CreateRequest) (*Response, error)
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
-	FindByEntityID(ctx context.Context, entityID string) ([]Response, error)
+	FindByEntityID(ctx context.Context, entity libtypes.Entity) ([]Response, error)
 	Calendar(ctx context.Context, r CalendarRequest) ([]CalendarResponse, error)
-	CalendarByEntityID(ctx context.Context, r CalendarByEntityIDRequest) ([]CalendarResponse, error)
+	CalendarByEntityID(ctx context.Context, entity libtypes.Entity, r CalendarByEntityIDRequest) ([]CalendarResponse, error)
 	GetOneBy(ctx context.Context, id string) (*Response, error)
 	FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error)
 	Update(ctx context.Context, r UpdateRequest) (*Response, error)
 	UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	DeleteByName(ctx context.Context, name string) (string, error)
-	ExistEntity(ctx context.Context, entityId string) (bool, error)
+	FindEntity(ctx context.Context, entityId string) (*libtypes.Entity, error)
 }
 
 type store struct {
@@ -129,16 +129,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	return &result, nil
 }
 
-func (s *store) FindByEntityID(ctx context.Context, entityID string) ([]Response, error) {
-	entity := libtypes.Entity{}
-	err := s.entityCollection.FindOne(ctx, bson.M{"_id": entityID}).Decode(&entity)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, nil
-		}
-		return nil, err
-	}
-
+func (s *store) FindByEntityID(ctx context.Context, entity libtypes.Entity) ([]Response, error) {
 	pbhIDs, err := s.getMatchedPbhIDs(ctx, entity)
 	if err != nil {
 		return nil, err
@@ -193,8 +184,8 @@ func (s *store) Calendar(ctx context.Context, r CalendarRequest) ([]CalendarResp
 	return res, nil
 }
 
-func (s *store) CalendarByEntityID(ctx context.Context, r CalendarByEntityIDRequest) ([]CalendarResponse, error) {
-	pbhIDs, err := s.getMatchedPbhIDs(ctx, r.ID)
+func (s *store) CalendarByEntityID(ctx context.Context, entity libtypes.Entity, r CalendarByEntityIDRequest) ([]CalendarResponse, error) {
+	pbhIDs, err := s.getMatchedPbhIDs(ctx, entity)
 	if err != nil {
 		return nil, err
 	}
@@ -382,6 +373,9 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 	if r.Exceptions != nil {
 		set["exceptions"] = r.Exceptions
 	}
+	if r.Color != nil {
+		set["color"] = *r.Color
+	}
 	if r.CorporatePattern != nil {
 		set["entity_pattern"] = r.CorporatePattern.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
 		set["corporate_entity_pattern"] = r.CorporatePattern.ID
@@ -439,16 +433,17 @@ func (s *store) DeleteByName(ctx context.Context, name string) (string, error) {
 	return pbh.ID, nil
 }
 
-func (s *store) ExistEntity(ctx context.Context, entityId string) (bool, error) {
-	err := s.entitiesCollection.FindOne(ctx, bson.M{"_id": entityId}).Err()
+func (s *store) FindEntity(ctx context.Context, entityId string) (*libtypes.Entity, error) {
+	entity := libtypes.Entity{}
+	err := s.entityCollection.FindOne(ctx, bson.M{"_id": entityId}).Decode(&entity)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return false, nil
+			return nil, nil
 		}
-		return false, err
+		return nil, err
 	}
 
-	return true, nil
+	return &entity, nil
 }
 
 func (s *store) getMatchedPbhIDs(ctx context.Context, entity libtypes.Entity) ([]string, error) {
@@ -523,7 +518,7 @@ func (s *store) transformRequestToDocument(r EditRequest) pbehavior.PBehavior {
 		Type:       r.Type,
 		Exdates:    exdates,
 		Exceptions: exceptions,
-		Color:      model.Color,
+		Color:      r.Color,
 
 		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)),
 	}

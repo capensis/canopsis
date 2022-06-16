@@ -154,7 +154,7 @@ func (r *typeResolver) getPbehaviorIntervals(
 						}
 
 						resCh <- ResolveResult{
-							ResolvedType:      &resolvedType,
+							ResolvedType:      resolvedType,
 							ResolvedPbhID:     d.id,
 							ResolvedPbhName:   d.computed.Name,
 							ResolvedPbhReason: d.computed.Reason,
