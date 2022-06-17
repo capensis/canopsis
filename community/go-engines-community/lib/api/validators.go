@@ -30,7 +30,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	libdatastorage "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
+	libidlerule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
@@ -114,7 +116,6 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 		pbhTypeUniqueNameValidator.Validate(ctx, sl)
 		pbhTypeUniquePriorityValidator.Validate(ctx, sl)
 	}, pbehaviortype.UpdateRequest{})
-	v.RegisterStructValidation(pbehaviortype.ValidateEditRequest, pbehaviortype.EditRequest{})
 
 	pbhExceptionUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorExceptionMongoCollection, "ID")
 	pbhExceptionUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorExceptionMongoCollection, "Name")
@@ -134,7 +135,6 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	scenarioExistTypeValidator := common.NewExistFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "Type")
 	scenarioExistIdValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "ID")
 
-	v.RegisterStructValidation(scenario.ValidateEditRequest, scenario.EditRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		scenarioUniqueNameValidator.Validate(ctx, sl)
 		scenarioUniquePriorityValidator.Validate(ctx, sl)
@@ -150,13 +150,10 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	}, scenario.BulkUpdateRequestItem{})
 
 	v.RegisterStructValidation(scenario.ValidateActionRequest, scenario.ActionRequest{})
-	v.RegisterStructValidation(scenario.ValidateChangeStateParametersRequest, scenario.ChangeStateParametersRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		scenario.ValidatePbehaviorParametersRequest(sl)
 		scenarioExistReasonValidator.Validate(ctx, sl)
 		scenarioExistTypeValidator.Validate(ctx, sl)
-	}, scenario.PbehaviorParametersRequest{})
-	v.RegisterStructValidation(scenario.ValidateWebhookRequest, scenario.WebhookRequest{})
+	}, action.Parameters{})
 
 	v.RegisterStructValidation(serviceweather.ValidateRequest, serviceweather.ListRequest{})
 
@@ -247,6 +244,10 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		idleRuleUniqueNameValidator.Validate(ctx, sl)
 	}, idlerule.UpdateRequest{})
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		scenarioExistReasonValidator.Validate(ctx, sl)
+		scenarioExistTypeValidator.Validate(ctx, sl)
+	}, libidlerule.Parameters{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		idleRuleUniqueNameValidator.Validate(ctx, sl)
 	}, idlerule.BulkUpdateRequestItem{})

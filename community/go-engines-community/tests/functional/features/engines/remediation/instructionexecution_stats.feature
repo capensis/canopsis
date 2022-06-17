@@ -120,10 +120,7 @@ Feature: update an instruction statistics
     Then the response code should be 200
     When I save response execution2Time={{ .lastResponse.completed_at }}
     When I wait the end of event processing
-    When I wait 5s
-    When I do GET /api/v4/cat/instruction-stats/{{ .instructionID }}/summary
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/instruction-stats/{{ .instructionID }}/summary until response code is 200 and body contains:
     """json
     {
       "_id": "{{ .instructionID }}",
@@ -352,14 +349,11 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-2"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-stats-update-2-2
     Then the response code should be 200
     When I save response alarm2ID={{ (index .lastResponse.data 0)._id }}
-    When I wait 7s
-    When I do GET /api/v4/cat/instruction-stats/{{ .instructionID }}/summary
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/instruction-stats/{{ .instructionID }}/summary until response code is 200 and body contains:
     """json
     {
       "_id": "{{ .instructionID }}",
@@ -428,76 +422,12 @@ Feature: update an instruction statistics
       "data": [
         {
           "alarm": {
-            "_id": "{{ .alarm2ID }}",
-            "v": {
-              "steps": [
-                {
-                  "_t": "stateinc",
-                  "val": 2
-                },
-                {
-                  "_t": "statusinc",
-                  "val": 1
-                },
-                {
-                  "_t": "autoinstructionstart",
-                  "m": "Instruction test-instruction-to-stats-update-2-name."
-                },
-                {
-                  "_t": "instructionjobstart",
-                  "m": "Instruction test-instruction-to-stats-update-2-name. Job test-job-to-run-auto-instruction-5-name."
-                },
-                {
-                  "_t": "instructionjobcomplete",
-                  "m": "Instruction test-instruction-to-stats-update-2-name. Job test-job-to-run-auto-instruction-5-name."
-                },
-                {
-                  "_t": "autoinstructioncomplete",
-                  "m": "Instruction test-instruction-to-stats-update-2-name."
-                }
-              ]
-            }
+            "_id": "{{ .alarm2ID }}"
           }
         },
         {
           "alarm": {
-            "_id": "{{ .alarm1ID }}",
-            "v": {
-              "steps": [
-                {
-                  "_t": "stateinc",
-                  "val": 1
-                },
-                {
-                  "_t": "statusinc",
-                  "val": 1
-                },
-                {
-                  "_t": "autoinstructionstart",
-                  "m": "Instruction test-instruction-to-stats-update-2-name."
-                },
-                {
-                  "_t": "instructionjobstart",
-                  "m": "Instruction test-instruction-to-stats-update-2-name. Job test-job-to-run-auto-instruction-5-name."
-                },
-                {
-                  "_t": "statedec",
-                  "val": 0
-                },
-                {
-                  "_t": "statusdec",
-                  "val": 0
-                },
-                {
-                  "_t": "instructionjobcomplete",
-                  "m": "Instruction test-instruction-to-stats-update-2-name. Job test-job-to-run-auto-instruction-5-name."
-                },
-                {
-                  "_t": "autoinstructioncomplete",
-                  "m": "Instruction test-instruction-to-stats-update-2-name."
-                }
-              ]
-            }
+            "_id": "{{ .alarm1ID }}"
           }
         },
         {
@@ -512,6 +442,72 @@ Feature: update an instruction statistics
         "total_count": 3
       }
     }
+    """
+    Then the response array key "data.0.alarm.v.steps" should contain:
+    """json
+    [
+      {
+        "_t": "stateinc",
+        "val": 2
+      },
+      {
+        "_t": "statusinc",
+        "val": 1
+      },
+      {
+        "_t": "autoinstructionstart",
+        "m": "Instruction test-instruction-to-stats-update-2-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "m": "Instruction test-instruction-to-stats-update-2-name. Job test-job-to-run-auto-instruction-5-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "m": "Instruction test-instruction-to-stats-update-2-name. Job test-job-to-run-auto-instruction-5-name."
+      },
+      {
+        "_t": "autoinstructioncomplete",
+        "m": "Instruction test-instruction-to-stats-update-2-name."
+      }
+    ]
+    """
+    Then the response array key "data.1.alarm.v.steps" should contain:
+    """json
+    [
+      {
+        "_t": "stateinc",
+        "val": 1
+      },
+      {
+        "_t": "statusinc",
+        "val": 1
+      },
+      {
+        "_t": "autoinstructionstart",
+        "m": "Instruction test-instruction-to-stats-update-2-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "m": "Instruction test-instruction-to-stats-update-2-name. Job test-job-to-run-auto-instruction-5-name."
+      },
+      {
+        "_t": "statedec",
+        "val": 0
+      },
+      {
+        "_t": "statusdec",
+        "val": 0
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "m": "Instruction test-instruction-to-stats-update-2-name. Job test-job-to-run-auto-instruction-5-name."
+      },
+      {
+        "_t": "autoinstructioncomplete",
+        "m": "Instruction test-instruction-to-stats-update-2-name."
+      }
+    ]
     """
     Then the response key "data.0.executed_on" should not be "0"
     When I do GET /api/v4/cat/instructions?search=test-instruction-to-stats-update-2-name&with_month_executions=true

@@ -1,43 +1,44 @@
 <template lang="pug">
-  modal-wrapper(:title-color="color", close)
-    template(slot="title")
-      span {{ service.name }}
-    template(slot="text")
-      v-fade-transition(mode="out-in")
-        service-template(
-          v-if="!pending",
-          :service="service",
-          :service-entities="serviceEntitiesWithKey",
-          :widget-parameters="widgetParameters",
-          :pagination.sync="pagination",
-          :total-items="serviceEntitiesMeta.total_count",
-          :pending="serviceEntitiesPending",
-          @add:action="addActionToQueue",
-          @refresh="fetchList"
+  form(@submit.prevent="submit")
+    modal-wrapper(:title-color="color", close)
+      template(#title="")
+        span {{ service.name }}
+      template(#text="")
+        v-fade-transition(mode="out-in")
+          service-template(
+            v-if="!pending",
+            :service="service",
+            :service-entities="serviceEntitiesWithKey",
+            :widget-parameters="widgetParameters",
+            :pagination.sync="pagination",
+            :total-items="serviceEntitiesMeta.total_count",
+            :pending="serviceEntitiesPending",
+            @add:action="addActionToQueue",
+            @refresh="fetchList"
+          )
+          v-layout(v-else, column)
+            v-flex(xs12)
+              v-layout(justify-center)
+                v-progress-circular(color="primary", indeterminate)
+      template(#actions="")
+        v-alert.ma-0.pa-1.pr-2(
+          :value="!!actionsCount",
+          color="info"
         )
-        v-layout(v-else, column)
-          v-flex(xs12)
-            v-layout(justify-center)
-              v-progress-circular(color="primary", indeterminate)
-    template(slot="actions")
-      v-alert.ma-0.pa-1.pr-2(
-        :value="!!actionsCount",
-        color="info"
-      )
-        v-layout(row, align-center)
-          v-btn.mr-2(icon, small, @click="clearActions")
-            v-icon(color="white", small) close
-          span {{ actionsCount }} {{ $tc('modals.service.actionPending', actionsCount) }}
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-      v-tooltip.mx-2(top)
-        v-btn.secondary(slot="activator", @click="fetchList")
-          v-icon refresh
-        span {{ $t('modals.service.refreshEntities') }}
-      v-btn.primary(
-        :disabled="isDisabled",
-        :loading="submitting",
-        @click="submit"
-      ) {{ $t('common.submit') }}
+          v-layout(row, align-center)
+            v-btn.mr-2(icon, small, @click="clearActions")
+              v-icon(color="white", small) close
+            span {{ actionsCount }} {{ $tc('modals.service.actionPending', actionsCount) }}
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-tooltip.mx-2(top)
+          v-btn.secondary(slot="activator", @click="fetchList")
+            v-icon refresh
+          span {{ $t('modals.service.refreshEntities') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -154,13 +155,13 @@ export default {
     },
 
     async createPbehaviorsWithPopups(pbehaviors) {
-      const response = await this.createPbehaviors(pbehaviors);
+      const response = await this.createPbehaviorsWithComments(pbehaviors);
 
       this.showPbehaviorResponseErrorPopups(response);
     },
 
     async removePbehaviorsWithPopups(pbehaviors) {
-      const response = await this.removePbehaviors(pbehaviors);
+      const response = await this.removePbehaviorsWithPopups(pbehaviors);
 
       this.showPbehaviorResponseErrorPopups(response);
     },

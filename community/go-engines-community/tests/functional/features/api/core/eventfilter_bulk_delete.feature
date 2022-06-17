@@ -78,7 +78,7 @@ Feature: Bulk delete eventfilters
       }
     ]
     """
-    When I do GET /api/v4/eventfilters/test-eventfilter-to-bulk-delete-1
+    When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-bulk-delete-1
     Then the response code should be 404
-    When I do GET /api/v4/eventfilters/test-eventfilter-to-bulk-delete-2
+    When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-bulk-delete-2
     Then the response code should be 404

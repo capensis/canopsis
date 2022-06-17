@@ -36,7 +36,7 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` with date in 
       common.by : cancelled-author
     </div>
     <div>
-      common.date : 08/08/2013 0:00:00
+      common.date : 07/08/2013 19:00:00
     </div>
     <div
       class="c-extra-details__message"
@@ -83,7 +83,7 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` with full can
       common.by : cancelled-author
     </div>
     <div>
-      common.date : 12:00:00
+      common.date : 6:00:00
     </div>
     <div
       class="c-extra-details__message"
@@ -130,7 +130,7 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` without messa
       common.by : cancelled-author
     </div>
     <div>
-      common.date : 12:00:00
+      common.date : 6:00:00
     </div>
     <!---->
   </div>

@@ -4,6 +4,7 @@ package entityservice
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -32,7 +33,6 @@ type Adapter interface {
 	// UpdateBulk bulk update
 	UpdateBulk(ctx context.Context, writeModels []mongodriver.WriteModel) error
 
-	GetOpenAlarmsOfServiceDependencies(ctx context.Context, serviceID string) (mongo.Cursor, error)
 	GetServiceDependencies(ctx context.Context, serviceID string) (mongo.Cursor, error)
 }
 
