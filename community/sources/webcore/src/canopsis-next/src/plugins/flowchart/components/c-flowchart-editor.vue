@@ -14,6 +14,7 @@
       :key="shape.id",
       :is="`${shape.type}-shape`",
       :selected="isSelected(shape)",
+      :readonly="readonly",
       @mousedown="onShapeMouseDown(shape, $event)",
       @mouseup="onShapeMouseUp(shape, $event)"
     )
@@ -31,7 +32,6 @@ import LineShape from './line-shape/line-shape.vue';
 import ArrowLineShape from './arrow-line-shape/arrow-line-shape.vue';
 import CircleShape from './circle-shape/circle-shape.vue';
 import SquareShape from './square-shape/square-shape.vue';
-import TextShape from './text-shape/text-shape.vue';
 
 export default {
   provide() {
@@ -40,7 +40,17 @@ export default {
       $mouseUp: this.$mouseUp,
     };
   },
-  components: { RectShape, LineShape, ArrowLineShape, CircleShape, SquareShape, TextShape },
+  components: {
+    RectShape,
+    LineShape,
+    ArrowLineShape,
+    CircleShape,
+    SquareShape,
+  },
+  model: {
+    event: 'input',
+    prop: 'shapes',
+  },
   props: {
     shapes: {
       type: Object,
@@ -49,6 +59,10 @@ export default {
     gridSize: {
       type: Number,
       default: 5,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -94,6 +108,10 @@ export default {
     document.removeEventListener('keydown', this.onKeyDown);
   },
   methods: {
+    updateShapes(shapes) {
+      this.$emit('input', shapes);
+    },
+
     isSelected(shape) {
       return this.selected.includes(shape.id);
     },
@@ -189,8 +207,14 @@ export default {
     },
 
     handleShapeMove(event) {
-      const newMovingOffsetX = roundByStep(event.offsetX - this.movingStart.x, this.gridSize);
-      const newMovingOffsetY = roundByStep(event.offsetY - this.movingStart.y, this.gridSize);
+      const newMovingOffsetX = roundByStep(
+        event.offsetX - this.movingStart.x,
+        this.gridSize,
+      );
+      const newMovingOffsetY = roundByStep(
+        event.offsetY - this.movingStart.y,
+        this.gridSize,
+      );
       const newMovingOffset = {
         x: newMovingOffsetX,
         y: newMovingOffsetY,
@@ -234,9 +258,9 @@ export default {
       this.moveSelected({ x: -this.gridSize, y: 0 });
     },
 
-    removeSelected() {
+    removeSelectedShapes() {
       if (this.hasSelected) {
-        this.data = omit(this.data, this.selected);
+        this.updateShapes(omit(this.data, this.selected));
         this.clearSelected();
       }
     },
@@ -247,7 +271,7 @@ export default {
         38: this.moveSelectedTop,
         39: this.moveSelectedRight,
         40: this.moveSelectedDown,
-        46: this.removeSelected,
+        46: this.removeSelectedShapes,
       }[event.keyCode];
 
       if (handler) {
