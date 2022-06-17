@@ -19,6 +19,7 @@
       @blur="disableEditingMode"
     )
     square-shape-selection(
+      v-if="!readonly",
       :selected="selected",
       :square="square",
       :pointer-events="editing ? 'none' : 'all'",
@@ -54,6 +55,10 @@ export default {
     cornerOffset: {
       type: Number,
       default: 0,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

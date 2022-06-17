@@ -15,10 +15,11 @@
       :width="rect.width",
       :height="rect.height",
       :editable="editing",
-      center,
+      :center="rect.textCenter",
       @blur="disableEditingMode"
     )
     rect-shape-selection(
+      v-if="!readonly",
       :selected="selected",
       :rect="rect",
       :pointer-events="editing ? 'none' : 'all'",
@@ -54,6 +55,10 @@ export default {
     cornerOffset: {
       type: Number,
       default: 0,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

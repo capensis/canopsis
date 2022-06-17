@@ -16,6 +16,7 @@
       marker-end="url(#arrow-line-triangle)"
     )
     line-shape-selection(
+      v-if="!readonly",
       :selected="selected",
       :line="shape",
       @mousedown="$emit('mousedown', $event)",
@@ -51,6 +52,10 @@ export default {
     cornerOffset: {
       type: Number,
       default: 0,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
