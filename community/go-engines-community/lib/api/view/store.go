@@ -38,7 +38,7 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store) Store {
 	return &store{
-		dbClient:              dbClient,
+		client:                dbClient,
 		collection:            dbClient.Collection(mongo.ViewMongoCollection),
 		tabCollection:         dbClient.Collection(mongo.ViewTabMongoCollection),
 		widgetCollection:      dbClient.Collection(mongo.WidgetMongoCollection),
@@ -53,7 +53,7 @@ func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store) Store {
 }
 
 type store struct {
-	dbClient              mongo.DbClient
+	client                mongo.DbClient
 	collection            mongo.DbCollection
 	tabCollection         mongo.DbCollection
 	widgetCollection      mongo.DbCollection
@@ -135,10 +135,12 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) (*Response, error) {
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
 		count, err := s.collection.CountDocuments(ctx, bson.M{})
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		now := types.CpsTime{Time: time.Now()}
@@ -157,7 +159,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 			Updated:         now,
 		})
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		if withDefaultTab {
@@ -171,30 +173,29 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 				Updated:  now,
 			})
 			if err != nil {
-				return nil, err
+				return err
 			}
 		}
 
-		newView, err := s.GetOneBy(ctx, id)
+		response, err = s.GetOneBy(ctx, id)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		err = s.createPermissions(ctx, r.Author, map[string]string{newView.ID: newView.Title})
-		if err != nil {
-			return nil, err
-		}
-
-		return newView, nil
+		return s.createPermissions(ctx, r.Author, map[string]string{response.ID: response.Title})
 	})
+
+	return response, err
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
 		oldView := view.View{}
 		err := s.collection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&oldView)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		now := types.CpsTime{Time: time.Now()}
@@ -209,91 +210,92 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			"updated":          now,
 		}})
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		if r.Group != oldView.Group {
 			err := s.normalizePositionsOnViewMove(ctx, r.ID, r.Group)
 			if err != nil {
-				return nil, err
+				return err
 			}
 		}
 
-		newView, err := s.GetOneBy(ctx, r.ID)
+		response, err = s.GetOneBy(ctx, r.ID)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		err = s.updatePermissions(ctx, *newView)
-		if err != nil {
-			return nil, err
-		}
-
-		return newView, nil
+		return s.updatePermissions(ctx, *response)
 	})
+
+	return response, err
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+	res := false
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
+		if err != nil || delCount == 0 {
+			return err
+		}
 
-	if delCount == 0 {
-		return false, nil
-	}
+		err = s.deletePermissions(ctx, id)
+		if err != nil {
+			return err
+		}
 
-	err = s.deletePermissions(ctx, id)
-	if err != nil {
-		return false, err
-	}
+		err = s.deleteTabs(ctx, id)
+		if err != nil {
+			return err
+		}
 
-	err = s.deleteTabs(ctx, id)
-	if err != nil {
-		return false, err
-	}
+		res = true
+		return nil
+	})
 
-	return true, nil
+	return res, err
 }
 
 func (s *store) Copy(ctx context.Context, id string, r EditRequest) (*Response, error) {
-	v, err := s.GetOneBy(ctx, id)
-	if err != nil || v == nil {
-		return nil, err
-	}
-
-	newView, err := s.Insert(ctx, r, false)
-	if err != nil {
-		return nil, err
-	}
-
-	cursor, err := s.tabCollection.Find(ctx, bson.M{"view": v.ID})
-	if err != nil {
-		return nil, err
-	}
-	defer cursor.Close(ctx)
-
-	for cursor.Next(ctx) {
-		t := viewtab.Response{}
-		err := cursor.Decode(&t)
-		if err != nil {
-			return nil, err
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		v, err := s.GetOneBy(ctx, id)
+		if err != nil || v == nil {
+			return err
 		}
 
-		_, err = s.tabStore.Copy(ctx, t, viewtab.EditRequest{
-			Title:  t.Title,
-			View:   newView.ID,
-			Author: newView.Author,
-		})
+		newView, err := s.Insert(ctx, r, false)
 		if err != nil {
-			return nil, err
+			return err
 		}
-	}
 
-	return newView, nil
+		err = s.tabStore.CopyForView(ctx, v.ID, newView.ID, r.Author)
+		if err != nil {
+			return err
+		}
+
+		response = newView
+		return nil
+	})
+
+	return response, err
 }
 
 func (s *store) UpdatePositions(ctx context.Context, r EditPositionRequest) (bool, error) {
+	res := false
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		var err error
+		res, err = s.updatePositions(ctx, r)
+		return err
+	})
+
+	return res, err
+}
+
+func (s *store) updatePositions(ctx context.Context, r EditPositionRequest) (bool, error) {
 	groupPositions, viewPositionsByGroup, err := s.findViewPositions(ctx)
 	if err != nil || len(groupPositions) == 0 {
 		return false, err
@@ -305,7 +307,7 @@ func (s *store) UpdatePositions(ctx context.Context, r EditPositionRequest) (boo
 		return false, nil
 	}
 
-	err = s.updatePositions(ctx, newGroupPositions, newViewPositions, changedViewGroup)
+	err = s.writePositions(ctx, newGroupPositions, newViewPositions, changedViewGroup)
 	if err != nil {
 		return false, err
 	}
@@ -338,7 +340,10 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			"widgets.updated": 0,
 			"widgets.created": 0,
 		}},
-		{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
+		{"$sort": bson.D{
+			{Key: "widgets.grid_parameters.desktop.y", Value: 1},
+			{Key: "widgets.grid_parameters.desktop.x", Value: 1},
+		}},
 		{"$group": bson.M{
 			"_id": bson.M{
 				"_id": "$_id",
@@ -403,11 +408,9 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 	}
 	if len(r.Groups) > 0 {
 		groupIds := make([]string, len(r.Groups))
-		viewIds := make([]string, 0, len(r.Groups))
 		viewsByGroup := make(map[string]map[string]bool, len(r.Groups))
 		for i, group := range r.Groups {
 			groupIds[i] = group.ID
-			viewIds = append(viewIds, group.Views...)
 			viewsByGroup[group.ID] = make(map[string]bool, len(group.Views))
 			for _, v := range group.Views {
 				viewsByGroup[group.ID][v] = true
@@ -495,215 +498,218 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 }
 
 func (s *store) Import(ctx context.Context, r ImportRequest, userId string) error {
-	maxViewPosition, err := s.collection.CountDocuments(ctx, bson.M{})
-	if err != nil {
-		return err
-	}
-	maxGroupPosition, err := s.groupCollection.CountDocuments(ctx, bson.M{})
-	if err != nil {
-		return err
-	}
-	groupIds := make([]string, 0, len(r.Items))
-	viewIds := make([]string, 0, len(r.Items))
-
-	for _, g := range r.Items {
-		if g.ID != "" {
-			groupIds = append(groupIds, g.ID)
-		}
-		if g.Views != nil {
-			for _, v := range g.Views {
-				if v.ID != "" {
-					viewIds = append(viewIds, v.ID)
-				}
-			}
-		}
-	}
-
-	existedViewIds := make(map[string]bool)
-	existedGroupIds := make(map[string]bool)
-	if len(viewIds) > 0 {
-		cursor, err := s.collection.Find(ctx, bson.M{"_id": bson.M{"$in": viewIds}})
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		maxViewPosition, err := s.collection.CountDocuments(ctx, bson.M{})
 		if err != nil {
 			return err
 		}
-		defer cursor.Close(ctx)
-		for cursor.Next(ctx) {
-			model := struct {
-				ID string `bson:"_id"`
-			}{}
-			err := cursor.Decode(&model)
-			if err != nil {
-				return err
-			}
-			existedViewIds[model.ID] = true
-		}
-	}
-	if len(groupIds) > 0 {
-		cursor, err := s.groupCollection.Find(ctx, bson.M{"_id": bson.M{"$in": groupIds}})
+		maxGroupPosition, err := s.groupCollection.CountDocuments(ctx, bson.M{})
 		if err != nil {
 			return err
 		}
-		defer cursor.Close(ctx)
-		for cursor.Next(ctx) {
-			model := struct {
-				ID string `bson:"_id"`
-			}{}
-			err := cursor.Decode(&model)
+		groupIds := make([]string, 0, len(r.Items))
+		viewIds := make([]string, 0, len(r.Items))
+
+		for _, g := range r.Items {
+			if g.ID != "" {
+				groupIds = append(groupIds, g.ID)
+			}
+			if g.Views != nil {
+				for _, v := range g.Views {
+					if v.ID != "" {
+						viewIds = append(viewIds, v.ID)
+					}
+				}
+			}
+		}
+
+		existedViewIds := make(map[string]bool)
+		existedGroupIds := make(map[string]bool)
+		if len(viewIds) > 0 {
+			cursor, err := s.collection.Find(ctx, bson.M{"_id": bson.M{"$in": viewIds}})
 			if err != nil {
 				return err
 			}
-			existedGroupIds[model.ID] = true
-		}
-	}
-
-	newGroups := make([]interface{}, 0, len(r.Items))
-	newViews := make([]interface{}, 0, len(r.Items))
-	newTabs := make([]interface{}, 0, len(r.Items))
-	newWidgets := make([]interface{}, 0, len(r.Items))
-	newViewTitles := make(map[string]string, len(r.Items))
-	positionItems := make([]EditPositionItemRequest, 0, len(r.Items))
-	now := types.NewCpsTime()
-	for gi, g := range r.Items {
-		groupId := g.ID
-
-		if g.ID == "" || !existedGroupIds[g.ID] {
-			groupId = utils.NewID()
-			if g.Title == "" {
-				return ValidationError{
-					field: fmt.Sprintf("%d.title", gi),
-					error: fmt.Errorf("value is missing"),
+			defer cursor.Close(ctx)
+			for cursor.Next(ctx) {
+				model := struct {
+					ID string `bson:"_id"`
+				}{}
+				err := cursor.Decode(&model)
+				if err != nil {
+					return err
 				}
+				existedViewIds[model.ID] = true
 			}
-			newGroups = append(newGroups, view.Group{
-				ID:       groupId,
-				Title:    g.Title,
-				Position: maxGroupPosition,
-				Author:   userId,
-				Created:  now,
-				Updated:  now,
-			})
-			maxGroupPosition++
+		}
+		if len(groupIds) > 0 {
+			cursor, err := s.groupCollection.Find(ctx, bson.M{"_id": bson.M{"$in": groupIds}})
+			if err != nil {
+				return err
+			}
+			defer cursor.Close(ctx)
+			for cursor.Next(ctx) {
+				model := struct {
+					ID string `bson:"_id"`
+				}{}
+				err := cursor.Decode(&model)
+				if err != nil {
+					return err
+				}
+				existedGroupIds[model.ID] = true
+			}
 		}
 
-		groupViewIds := make([]string, 0)
+		newGroups := make([]interface{}, 0, len(r.Items))
+		newViews := make([]interface{}, 0, len(r.Items))
+		newTabs := make([]interface{}, 0, len(r.Items))
+		newWidgets := make([]interface{}, 0, len(r.Items))
+		newViewTitles := make(map[string]string, len(r.Items))
+		positionItems := make([]EditPositionItemRequest, 0, len(r.Items))
+		now := types.NewCpsTime()
+		for gi, g := range r.Items {
+			groupId := g.ID
 
-		if g.Views != nil {
-			for vi, v := range g.Views {
-				if v.ID != "" && existedViewIds[v.ID] {
-					groupViewIds = append(groupViewIds, v.ID)
-					continue
-				}
-
-				if v.Title == "" {
+			if g.ID == "" || !existedGroupIds[g.ID] {
+				groupId = utils.NewID()
+				if g.Title == "" {
 					return ValidationError{
-						field: fmt.Sprintf("%d.views.%d.title", gi, vi),
+						field: fmt.Sprintf("%d.title", gi),
 						error: fmt.Errorf("value is missing"),
 					}
 				}
-
-				viewId := utils.NewID()
-				groupViewIds = append(groupViewIds, viewId)
-				newViews = append(newViews, view.View{
-					ID:              viewId,
-					Enabled:         v.Enabled,
-					Title:           v.Title,
-					Description:     v.Description,
-					Position:        maxViewPosition,
-					Group:           groupId,
-					Tags:            v.Tags,
-					PeriodicRefresh: v.PeriodicRefresh,
-					Author:          userId,
-					Created:         now,
-					Updated:         now,
+				newGroups = append(newGroups, view.Group{
+					ID:       groupId,
+					Title:    g.Title,
+					Position: maxGroupPosition,
+					Author:   userId,
+					Created:  now,
+					Updated:  now,
 				})
-				maxViewPosition++
-				newViewTitles[viewId] = v.Title
+				maxGroupPosition++
+			}
 
-				if v.Tabs != nil {
-					for ti, tab := range *v.Tabs {
-						if tab.Title == "" {
-							return ValidationError{
-								field: fmt.Sprintf("%d.views.%d.tabs.%d.title", gi, vi, ti),
-								error: fmt.Errorf("value is missing"),
-							}
+			groupViewIds := make([]string, 0)
+
+			if g.Views != nil {
+				for vi, v := range g.Views {
+					if v.ID != "" && existedViewIds[v.ID] {
+						groupViewIds = append(groupViewIds, v.ID)
+						continue
+					}
+
+					if v.Title == "" {
+						return ValidationError{
+							field: fmt.Sprintf("%d.views.%d.title", gi, vi),
+							error: fmt.Errorf("value is missing"),
 						}
+					}
 
-						tabId := utils.NewID()
-						newTabs = append(newTabs, view.Tab{
-							ID:       tabId,
-							Title:    tab.Title,
-							View:     viewId,
-							Author:   userId,
-							Position: int64(ti),
-							Created:  now,
-							Updated:  now,
-						})
+					viewId := utils.NewID()
+					groupViewIds = append(groupViewIds, viewId)
+					newViews = append(newViews, view.View{
+						ID:              viewId,
+						Enabled:         v.Enabled,
+						Title:           v.Title,
+						Description:     v.Description,
+						Position:        maxViewPosition,
+						Group:           groupId,
+						Tags:            v.Tags,
+						PeriodicRefresh: v.PeriodicRefresh,
+						Author:          userId,
+						Created:         now,
+						Updated:         now,
+					})
+					maxViewPosition++
+					newViewTitles[viewId] = v.Title
 
-						if tab.Widgets != nil {
-							for wi, widget := range *tab.Widgets {
-								if widget.Type == "" {
-									return ValidationError{
-										field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.type", gi, vi, ti, wi),
-										error: fmt.Errorf("value is missing"),
-									}
+					if v.Tabs != nil {
+						for ti, tab := range *v.Tabs {
+							if tab.Title == "" {
+								return ValidationError{
+									field: fmt.Sprintf("%d.views.%d.tabs.%d.title", gi, vi, ti),
+									error: fmt.Errorf("value is missing"),
 								}
+							}
 
-								widgetId := utils.NewID()
-								newWidgets = append(newWidgets, view.Widget{
-									ID:             widgetId,
-									Tab:            tabId,
-									Title:          widget.Title,
-									Type:           widget.Type,
-									GridParameters: widget.GridParameters,
-									Parameters:     widget.Parameters,
-									Author:         userId,
-									Created:        &now,
-									Updated:        &now,
-								})
+							tabId := utils.NewID()
+							newTabs = append(newTabs, view.Tab{
+								ID:       tabId,
+								Title:    tab.Title,
+								View:     viewId,
+								Author:   userId,
+								Position: int64(ti),
+								Created:  now,
+								Updated:  now,
+							})
+
+							if tab.Widgets != nil {
+								for wi, widget := range *tab.Widgets {
+									if widget.Type == "" {
+										return ValidationError{
+											field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.type", gi, vi, ti, wi),
+											error: fmt.Errorf("value is missing"),
+										}
+									}
+
+									widgetId := utils.NewID()
+									newWidgets = append(newWidgets, view.Widget{
+										ID:             widgetId,
+										Tab:            tabId,
+										Title:          widget.Title,
+										Type:           widget.Type,
+										GridParameters: widget.GridParameters,
+										Parameters:     widget.Parameters,
+										Author:         userId,
+										Created:        now,
+										Updated:        now,
+									})
+								}
 							}
 						}
 					}
 				}
 			}
+
+			positionItems = append(positionItems, EditPositionItemRequest{
+				ID:    groupId,
+				Views: groupViewIds,
+			})
 		}
 
-		positionItems = append(positionItems, EditPositionItemRequest{
-			ID:    groupId,
-			Views: groupViewIds,
-		})
-	}
+		if len(newGroups) > 0 {
+			_, err := s.groupCollection.InsertMany(ctx, newGroups)
+			if err != nil {
+				return err
+			}
+		}
+		if len(newViews) > 0 {
+			_, err := s.collection.InsertMany(ctx, newViews)
+			if err != nil {
+				return err
+			}
+		}
+		if len(newTabs) > 0 {
+			_, err := s.tabCollection.InsertMany(ctx, newTabs)
+			if err != nil {
+				return err
+			}
+		}
+		if len(newWidgets) > 0 {
+			_, err := s.widgetCollection.InsertMany(ctx, newWidgets)
+			if err != nil {
+				return err
+			}
+		}
 
-	if len(newGroups) > 0 {
-		_, err := s.groupCollection.InsertMany(ctx, newGroups)
+		err = s.createPermissions(ctx, userId, newViewTitles)
 		if err != nil {
 			return err
 		}
-	}
-	if len(newViews) > 0 {
-		_, err := s.collection.InsertMany(ctx, newViews)
-		if err != nil {
-			return err
-		}
-	}
-	if len(newTabs) > 0 {
-		_, err = s.tabCollection.InsertMany(ctx, newTabs)
-		if err != nil {
-			return err
-		}
-	}
-	if len(newWidgets) > 0 {
-		_, err = s.widgetCollection.InsertMany(ctx, newWidgets)
-		if err != nil {
-			return err
-		}
-	}
 
-	err = s.createPermissions(ctx, userId, newViewTitles)
-	if err != nil {
+		_, err = s.updatePositions(ctx, EditPositionRequest{Items: positionItems})
 		return err
-	}
-
-	_, err = s.UpdatePositions(ctx, EditPositionRequest{Items: positionItems})
+	})
 
 	return err
 }
@@ -818,7 +824,7 @@ func (s *store) normalizePositionsOnViewMove(ctx context.Context, viewID, groupI
 		viewPositions = append(viewPositions, viewPositionsByGroup[id]...)
 	}
 
-	return s.updatePositions(ctx, groupPositions, viewPositions, nil)
+	return s.writePositions(ctx, groupPositions, viewPositions, nil)
 }
 
 func (s *store) findViewPositions(ctx context.Context) ([]string, map[string][]string, error) {
@@ -860,16 +866,13 @@ func (s *store) findViewPositions(ctx context.Context) ([]string, map[string][]s
 	for i, group := range res {
 		groupPositions[i] = group.ID
 		viewPositionsByGroup[group.ID] = make([]string, len(group.Views))
-
-		for j, viewID := range group.Views {
-			viewPositionsByGroup[group.ID][j] = viewID
-		}
+		copy(viewPositionsByGroup[group.ID], group.Views)
 	}
 
 	return groupPositions, viewPositionsByGroup, nil
 }
 
-func (s *store) updatePositions(
+func (s *store) writePositions(
 	ctx context.Context,
 	groups, views []string,
 	changedViewGroup map[string]string,
@@ -913,6 +916,9 @@ func (s *store) updatePositions(
 
 func (s *store) deleteTabs(ctx context.Context, id string) error {
 	tabCursor, err := s.tabCollection.Find(ctx, bson.M{"view": id})
+	if err != nil {
+		return err
+	}
 	tabs := make([]view.Tab, 0)
 	err = tabCursor.All(ctx, &tabs)
 	if err != nil || len(tabs) == 0 {
@@ -930,6 +936,9 @@ func (s *store) deleteTabs(ctx context.Context, id string) error {
 	}
 
 	widgetCursor, err := s.widgetCollection.Find(ctx, bson.M{"tab": bson.M{"$in": tabIds}})
+	if err != nil {
+		return err
+	}
 	widgets := make([]view.Widget, 0)
 	err = widgetCursor.All(ctx, &widgets)
 	if err != nil || len(widgets) == 0 {
@@ -970,7 +979,10 @@ func getNestedObjectsPipeline() []bson.M {
 			"as":           "widgets",
 		}},
 		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
+		{"$sort": bson.D{
+			{Key: "widgets.grid_parameters.desktop.y", Value: 1},
+			{Key: "widgets.grid_parameters.desktop.x", Value: 1},
+		}},
 		{"$group": bson.M{
 			"_id": bson.M{
 				"_id": "$_id",
