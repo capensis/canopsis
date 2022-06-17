@@ -197,7 +197,7 @@ export default {
             actions.unshift(filteredActionsMap.ack);
           }
 
-          if (!this.item.v.ticket) {
+          if (!this.item.v.ticket || this.widget.parameters.isMultiDeclareTicketEnabled) {
             actions.unshift(
               filteredActionsMap.declareTicket,
               filteredActionsMap.associateTicket,
