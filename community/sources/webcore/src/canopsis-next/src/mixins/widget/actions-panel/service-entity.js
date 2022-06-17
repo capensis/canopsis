@@ -131,7 +131,7 @@ export const widgetActionPanelServiceEntityMixin = {
         config: {
           title: this.$t('modals.createDeclareTicket.title'),
           field: {
-            name: 'ticket',
+            name: 'output',
             label: this.$t('common.output'),
             validationRules: 'required',
           },

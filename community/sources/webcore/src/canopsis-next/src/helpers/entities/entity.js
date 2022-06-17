@@ -15,7 +15,8 @@ import {
   createAckEventByEntity,
   createAssociateTicketEventByEntity,
   createCancelEventByEntity,
-  createCommentEventByEntity, createDeclareTicketEventByEntity,
+  createCommentEventByEntity,
+  createDeclareTicketEventByEntity,
   createInvalidateEventByEntity,
   createValidateEventByEntity,
 } from '@/helpers/forms/event';
