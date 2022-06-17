@@ -2,14 +2,15 @@
   div.position-relative
     c-progress-overlay(:pending="pending")
     v-tooltip(v-if="hasPbehaviorListAccess", left)
-      v-btn.pbehavior-modal-btn(
-        slot="activator",
-        small,
-        dark,
-        @click="showPbehaviorsListModal"
-      )
-        v-icon(small) list
-      span {{ $t('modals.service.editPbehaviors') }}
+      template(#activator="{ on }")
+        v-btn.pbehavior-modal-btn(
+          v-on="on",
+          small,
+          dark,
+          @click="showPbehaviorsListModal"
+        )
+          v-icon(small) list
+        span {{ $t('modals.service.editPbehaviors') }}
     v-runtime-template(v-if="compiledTemplate && !pending", :template="compiledTemplate")
     div.float-clear
     c-table-pagination(
