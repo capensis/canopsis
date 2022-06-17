@@ -398,13 +398,15 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/common.User'
       comments:
         items:
           $ref: '#/definitions/pbehavior.Comment'
         type: array
       name:
         type: string
+      reason:
+        $ref: '#/definitions/pbehavior.Reason'
       rrule:
         type: string
       tstart:
@@ -2798,7 +2800,7 @@ definitions:
         $ref: '#/definitions/types.PbehaviorInfo'
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.Response'
+          $ref: '#/definitions/alarm.Pbehavior'
         type: array
       resource:
         type: string
@@ -2873,7 +2875,7 @@ definitions:
         $ref: '#/definitions/types.PbehaviorInfo'
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.Response'
+          $ref: '#/definitions/alarm.Pbehavior'
         type: array
       resource:
         type: string
