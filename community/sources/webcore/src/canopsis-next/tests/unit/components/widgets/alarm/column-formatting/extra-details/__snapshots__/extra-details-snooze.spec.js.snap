@@ -34,10 +34,10 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` with date in prev
       common.by : snooze-author
     </div>
     <div>
-      common.date : 08/08/2013 0:00:00
+      common.date : 07/08/2013 19:00:00
     </div>
     <div>
-      common.end : 08/08/2013 0:00:00
+      common.end : 07/08/2013 19:00:00
     </div>
     <div>
       common.initiator : snooze-initiator
@@ -85,10 +85,10 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` with full snooze 
       common.by : snooze-author
     </div>
     <div>
-      common.date : 12:00:00
+      common.date : 6:00:00
     </div>
     <div>
-      common.end : 12:00:00
+      common.end : 6:00:00
     </div>
     <div>
       common.initiator : snooze-initiator
@@ -136,10 +136,10 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` without initiator
       common.by : snooze-author
     </div>
     <div>
-      common.date : 12:00:00
+      common.date : 6:00:00
     </div>
     <div>
-      common.end : 12:00:00
+      common.end : 6:00:00
     </div>
     <!---->
     <div
@@ -185,10 +185,10 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` without message 2
       common.by : snooze-author
     </div>
     <div>
-      common.date : 12:00:00
+      common.date : 6:00:00
     </div>
     <div>
-      common.end : 12:00:00
+      common.end : 6:00:00
     </div>
     <div>
       common.initiator : snooze-initiator

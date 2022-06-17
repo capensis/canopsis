@@ -96,7 +96,7 @@ define DOCKER_BUILD_ARGS
 endef
 
 .PHONY: docker-check-version docker-images docker-nginx
-docker-images: docker-nginx
+docker-images: docker-nginx docker-nginx-openshift
 
 # We require at least Docker 20.10 for the BuildKit features we use
 docker-check-version:
@@ -111,6 +111,15 @@ docker-nginx: docker-check-version
 		$(if $(DOCKER_NO_CACHE),--no-cache,) \
 		$(DOCKER_BUILD_ARGS) \
 		--file "$(MONOREPO_ROOT)/community/docker/Dockerfile.nginx" \
+		"$(MONOREPO_ROOT)"
+
+docker-nginx-openshift: docker-check-version
+	docker build \
+		-t "$(DOCKER_IMAGE_BASE_PATH)/nginx-openshift:$(DOCKER_TAG)" \
+		$(if $(DOCKER_NO_CACHE),--no-cache,) \
+		$(DOCKER_BUILD_ARGS) \
+		--file "$(MONOREPO_ROOT)/community/docker/Dockerfile.nginx" \
+		--target nginx-openshift \
 		"$(MONOREPO_ROOT)"
 
 #

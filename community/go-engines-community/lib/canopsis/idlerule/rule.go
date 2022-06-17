@@ -1,15 +1,9 @@
-/*
-Package idlerule contains idle rule model and adapter.
-*/
+// Package idlerule contains idle rule model and adapter.
 package idlerule
 
 import (
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"github.com/mitchellh/mapstructure"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
 
 const (
@@ -20,8 +14,8 @@ const (
 )
 
 type Operation struct {
-	Type       string      `bson:"type" json:"type"`
-	Parameters interface{} `bson:"parameters,omitempty" json:"parameters"`
+	Type       string     `bson:"type" json:"type"`
+	Parameters Parameters `bson:"parameters,omitempty" json:"parameters"`
 }
 
 // Rule represents alarm modification condition and operation.
@@ -46,57 +40,23 @@ type Rule struct {
 	Operation      *Operation               `bson:"operation,omitempty" json:"operation,omitempty"`
 }
 
-func (o *Operation) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
-	type Alias Operation
-	var tmp Alias
+type Parameters struct {
+	Output string `json:"output" bson:"output,omitempty" binding:"max=255"`
 
-	err := bson.Unmarshal(b, &tmp)
-	if err != nil {
-		return err
-	}
-
-	*o = Operation(tmp)
-	o.Parameters = bsonDtoMap(o.Parameters)
-
-	switch o.Type {
-	case types.ActionTypeAssocTicket:
-		var params types.OperationAssocTicketParameters
-		err := mapstructure.Decode(o.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		o.Parameters = params
-	case types.ActionTypeChangeState:
-		var params types.OperationChangeStateParameters
-		err := mapstructure.Decode(o.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		o.Parameters = params
-	case types.ActionTypeSnooze:
-		var params types.OperationSnoozeParameters
-		err := mapstructure.Decode(o.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		o.Parameters = params
-	case types.ActionTypePbehavior:
-		var params types.ActionPBehaviorParameters
-		err := mapstructure.Decode(o.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		o.Parameters = params
-	default:
-		var params types.OperationParameters
-		err := mapstructure.Decode(o.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		o.Parameters = params
-	}
-
-	return nil
+	// ChangeState
+	State *types.CpsNumber `json:"state" bson:"state,omitempty"`
+	// AssocTicket
+	Ticket string `json:"ticket" bson:"ticket,omitempty" binding:"max=255" `
+	// Snooze and Pbehavior
+	Duration *types.DurationWithUnit `json:"duration" bson:"duration,omitempty"`
+	// Pbehavior
+	Name           string         `json:"name" bson:"name,omitempty" binding:"max=255"`
+	Reason         string         `json:"reason" bson:"reason,omitempty"`
+	Type           string         `json:"type" bson:"type,omitempty"`
+	RRule          string         `json:"rrule" bson:"rrule,omitempty"`
+	Tstart         *types.CpsTime `json:"tstart" bson:"tstart,omitempty"`
+	Tstop          *types.CpsTime `json:"tstop" bson:"tstop,omitempty"`
+	StartOnTrigger *bool          `json:"start_on_trigger" bson:"start_on_trigger,omitempty"`
 }
 
 // Matches returns true if alarm and entity match time condition and field patterns.
@@ -138,19 +98,4 @@ func (r *Rule) matchesByEntityLastEventDate(entity *types.Entity, now types.CpsT
 	}
 
 	return true
-}
-
-func bsonDtoMap(i interface{}) interface{} {
-	if b, ok := i.(bson.D); ok {
-		m := b.Map()
-		for k := range m {
-			if b, ok := m[k].(bson.D); ok {
-				m[k] = bsonDtoMap(b)
-			}
-		}
-
-		return m
-	}
-
-	return i
 }
