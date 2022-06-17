@@ -1,4 +1,5 @@
 import {
+  DECLARE_TICKET_OUTPUT,
   ENTITIES_STATES,
   EVENT_DEFAULT_ORIGIN,
   EVENT_ENTITY_TYPES,
@@ -204,13 +205,12 @@ export const createAssociateTicketEventByEntity = ({ entity, ticket }) => prepar
  * Create declare ticket event by entity data
  *
  * @param {Entity} entity
- * @param {string} output
  * @return {Event}
  */
-export const createDeclareTicketEventByEntity = ({ entity, output }) => prepareEventByEntity(
+export const createDeclareTicketEventByEntity = ({ entity }) => prepareEventByEntity(
   entity,
   EVENT_ENTITY_TYPES.declareTicket,
-  { output },
+  { output: DECLARE_TICKET_OUTPUT },
 );
 
 /**
