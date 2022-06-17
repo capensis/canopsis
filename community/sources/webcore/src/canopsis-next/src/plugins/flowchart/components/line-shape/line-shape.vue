@@ -2,6 +2,7 @@
   g
     points-line(v-bind="shape.style", :points="shape.points", pointer-events="none")
     line-shape-selection(
+      v-if="!readonly",
       :selected="selected",
       :line="shape",
       @mousedown="$emit('mousedown', $event)",
@@ -36,6 +37,10 @@ export default {
     cornerOffset: {
       type: Number,
       default: 0,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
