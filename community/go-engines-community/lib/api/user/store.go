@@ -3,16 +3,16 @@ package user
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"math"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type Store interface {
@@ -32,7 +32,7 @@ func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
 		collection:            dbClient.Collection(mongo.RightsMongoCollection),
 		userPrefCollection:    dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		passwordEncoder:       passwordEncoder,
-		defaultSearchByFields: []string{"_id", "crecord_name", "firstname", "lastname"},
+		defaultSearchByFields: []string{"_id", "crecord_name", "firstname", "lastname", "role.name"},
 		defaultSortBy:         "name",
 	}
 }
@@ -48,21 +48,26 @@ type store struct {
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{"crecord_type": securitymodel.LineTypeSubject}},
-		{"$addFields": bson.M{
-			"name":  "$crecord_name",
-			"email": "$mail",
-		}},
 	}
+	pipeline = append(pipeline, getRenameFieldsPipeline()...)
+	project := make([]bson.M, 0)
 
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	if len(filter) > 0 || r.Permission != "" || r.SortBy == "role.name" {
+		pipeline = append(pipeline, getRolePipeline()...)
+	} else {
+		project = append(project, getRolePipeline()...)
+	}
+
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	if r.Permission != "" {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{fmt.Sprintf("role.rights.%s", r.Permission): bson.M{"$exists": true}}})
 	}
+
+	project = append(project, getViewPipeline()...)
 
 	sortBy := s.defaultSortBy
 	if r.SortBy != "" {
@@ -73,6 +78,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		r.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, r.Sort),
+		project,
 	))
 
 	if err != nil {
@@ -122,28 +128,44 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r Request) (*User, error) {
-	_, err := s.collection.InsertOne(ctx, r.getInsertBson(s.passwordEncoder))
+	var user *User
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		user = nil
+		_, err := s.collection.InsertOne(ctx, r.getInsertBson(s.passwordEncoder))
+		if err != nil {
+			return err
+		}
+
+		user, err = s.GetOneBy(ctx, r.Name)
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	return s.GetOneBy(ctx, r.Name)
+	return user, nil
 }
 
 func (s *store) Update(ctx context.Context, r Request) (*User, error) {
-	res, err := s.collection.UpdateOne(ctx,
-		bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject},
-		bson.M{"$set": r.getUpdateBson(s.passwordEncoder)},
-	)
+	var user *User
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		user = nil
+		res, err := s.collection.UpdateOne(ctx,
+			bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject},
+			bson.M{"$set": r.getUpdateBson(s.passwordEncoder)},
+		)
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		user, err = s.GetOneBy(ctx, r.ID)
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	if res.MatchedCount == 0 {
-		return nil, nil
-	}
-
-	return s.GetOneBy(ctx, r.ID)
+	return user, nil
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
@@ -239,6 +261,14 @@ func (s *store) BulkDelete(ctx context.Context, ids []string) error {
 }
 
 func getNestedObjectsPipeline() []bson.M {
+	pipeline := getRenameFieldsPipeline()
+	pipeline = append(pipeline, getRolePipeline()...)
+	pipeline = append(pipeline, getViewPipeline()...)
+
+	return pipeline
+}
+
+func getRolePipeline() []bson.M {
 	return []bson.M{
 		{"$graphLookup": bson.M{
 			"from":             mongo.RightsMongoCollection,
@@ -246,6 +276,7 @@ func getNestedObjectsPipeline() []bson.M {
 			"connectFromField": "role",
 			"connectToField":   "_id",
 			"as":               "role",
+			"maxDepth":         0,
 		}},
 		{"$unwind": bson.M{"path": "$role", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
@@ -256,6 +287,11 @@ func getNestedObjectsPipeline() []bson.M {
 				"defaultview": "$role.defaultview",
 			},
 		}},
+	}
+}
+
+func getViewPipeline() []bson.M {
+	return []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.ViewMongoCollection,
 			"localField":   "defaultview",
@@ -270,6 +306,11 @@ func getNestedObjectsPipeline() []bson.M {
 			"as":           "role.defaultview",
 		}},
 		{"$unwind": bson.M{"path": "$role.defaultview", "preserveNullAndEmptyArrays": true}},
+	}
+}
+
+func getRenameFieldsPipeline() []bson.M {
+	return []bson.M{
 		{"$addFields": bson.M{
 			"name":                      "$crecord_name",
 			"email":                     "$mail",

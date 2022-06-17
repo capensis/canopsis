@@ -139,9 +139,9 @@ Feature: get service entities with assigned instructions
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-pbehavior-weather-service-entity-1",
-      "name": "test-pbehavior-weather-service-entity-1",
-      "output_template": "test-pbehavior-weather-service-entity-1",
+      "_id": "test-entity-instruction-weather-services-1",
+      "name": "test-entity-instruction-weather-services-1",
+      "output_template": "test-entity-instruction-weather-services-1",
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
@@ -156,10 +156,10 @@ Feature: get service entities with assigned instructions
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-1?with_instructions=true
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-1?with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -190,7 +190,8 @@ Feature: get service entities with assigned instructions
           ]
         },
         {
-          "_id": "test-alarm-weather-widget-instructions-resource-4/test-alarm-weather-widget-instructions-component-1"
+          "_id": "test-alarm-weather-widget-instructions-resource-4/test-alarm-weather-widget-instructions-component-1",
+          "assigned_instructions": []
         }
       ],
       "meta": {
@@ -202,7 +203,7 @@ Feature: get service entities with assigned instructions
     }
     """
 
-  Scenario: given auto instruction execution should return auto instruction flags in alarm API
+  Scenario: given auto instruction execution should return auto instruction flags in weather API
     When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
@@ -277,7 +278,8 @@ Feature: get service entities with assigned instructions
       "data": [
         {
           "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false
+          "is_all_auto_instructions_completed": false,
+          "is_auto_instruction_failed": false
         }
       ]
     }
@@ -285,9 +287,9 @@ Feature: get service entities with assigned instructions
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-pbehavior-weather-service-entity-2",
-      "name": "test-pbehavior-weather-service-entity-2",
-      "output_template": "test-pbehavior-weather-service-entity-2",
+      "_id": "test-entity-instruction-weather-services-2",
+      "name": "test-entity-instruction-weather-services-2",
+      "output_template": "test-entity-instruction-weather-services-2",
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
@@ -299,16 +301,17 @@ Feature: get service entities with assigned instructions
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-2?with_instructions=true
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-2?with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-5/test-alarm-weather-widget-instructions-component-1",
           "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false
+          "is_all_auto_instructions_completed": false,
+          "is_auto_instruction_failed": false
         }
       ],
       "meta": {
@@ -320,16 +323,17 @@ Feature: get service entities with assigned instructions
     }
     """
     When I wait 6s
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-2?with_instructions=true
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-2?with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-5/test-alarm-weather-widget-instructions-component-1",
           "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false
+          "is_all_auto_instructions_completed": false,
+          "is_auto_instruction_failed": false
         }
       ],
       "meta": {
@@ -340,17 +344,16 @@ Feature: get service entities with assigned instructions
       }
     }
     """
-    When I wait 6s
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-2?with_instructions=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-2?with_instructions=true until response code is 200 and body contains:
+    """json
     {
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-5/test-alarm-weather-widget-instructions-component-1",
           "is_auto_instruction_running": false,
-          "is_all_auto_instructions_completed": true
+          "is_all_auto_instructions_completed": true,
+          "is_auto_instruction_failed": false
         }
       ],
       "meta": {
@@ -362,7 +365,7 @@ Feature: get service entities with assigned instructions
     }
     """
 
-  Scenario: given auto instruction execution should return manual instruction flags in alarm API
+  Scenario: given manual instruction execution should return manual instruction flags in weather API
     When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
@@ -420,9 +423,9 @@ Feature: get service entities with assigned instructions
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-pbehavior-weather-service-entity-3",
-      "name": "test-pbehavior-weather-service-entity-3",
-      "output_template": "test-pbehavior-weather-service-entity-3",
+      "_id": "test-entity-instruction-weather-services-3",
+      "name": "test-entity-instruction-weather-services-3",
+      "output_template": "test-entity-instruction-weather-services-3",
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
@@ -444,13 +447,14 @@ Feature: get service entities with assigned instructions
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
     When I wait the end of event processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-3?with_instructions=true
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-3?with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
+          "is_manual_instruction_running": true,
           "is_manual_instruction_waiting_result": false
         }
       ]
@@ -459,28 +463,186 @@ Feature: get service entities with assigned instructions
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
     When I wait the end of event processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-3?with_instructions=true
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-3?with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
+          "is_manual_instruction_running": false,
           "is_manual_instruction_waiting_result": true
         }
       ]
     }
     """
-    When I wait 4s
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-3?with_instructions=true
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-3?with_instructions=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_manual_instruction_running": false,
+          "is_manual_instruction_waiting_result": false
+        }
+      ]
+    }
+    """
+
+  Scenario: given auto failed instruction execution should return auto instruction flags in weather API
+    When I am admin
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 1,
+      "name": "test-instruction-get-assigned-instruction-in-weather-api-6-name",
+      "entity_patterns": [
+        {
+          "name": "test-alarm-weather-widget-instructions-resource-7"
+        }
+      ],
+      "description": "test-instruction-get-assigned-instruction-in-weather-api-1-1-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 1,
+        "unit": "s"
+      },
+      "jobs": [
+        {
+          "job": "test-job-to-run-auto-instruction-6"
+        }
+      ],
+      "priority": 32
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 1,
+      "name": "test-instruction-get-assigned-instruction-in-weather-api-7-name",
+      "entity_patterns": [
+        {
+          "name": "test-alarm-weather-widget-instructions-resource-7"
+        }
+      ],
+      "description": "test-instruction-get-assigned-instruction-in-weather-api-1-1-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 1,
+        "unit": "s"
+      },
+      "jobs": [
+        {
+          "job": "test-job-to-run-auto-instruction-7"
+        }
+      ],
+      "priority": 33
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector": "test-alarm-weather-widget-instructions-connector-1",
+      "connector_name": "test-alarm-weather-widget-instructions-connectorname-1",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-alarm-weather-widget-instructions-component-1",
+      "resource": "test-alarm-weather-widget-instructions-resource-7",
+      "state": 1,
+      "output": "test-alarm-weather-widget-instructions-output-1"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-alarm-weather-widget-instructions-resource-7&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "is_manual_instruction_waiting_result": false
+          "is_auto_instruction_running": true,
+          "is_all_auto_instructions_completed": false,
+          "is_auto_instruction_failed": false
         }
       ]
+    }
+    """
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-entity-instruction-weather-services-4",
+      "name": "test-entity-instruction-weather-services-4",
+      "output_template": "test-entity-instruction-weather-services-4",
+      "category": "test-category-pbehavior-weather-service-entity",
+      "impact_level": 1,
+      "enabled": true,
+      "sli_avail_state": 1,
+      "entity_patterns": [
+        {"name": "test-alarm-weather-widget-instructions-resource-7"}
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-4?with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-weather-widget-instructions-resource-7/test-alarm-weather-widget-instructions-component-1",
+          "is_auto_instruction_running": true,
+          "is_all_auto_instructions_completed": false,
+          "is_auto_instruction_failed": false
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-4?with_instructions=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-weather-widget-instructions-resource-7/test-alarm-weather-widget-instructions-component-1",
+          "is_auto_instruction_running": true,
+          "is_all_auto_instructions_completed": false,
+          "is_auto_instruction_failed": true
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-4?with_instructions=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-weather-widget-instructions-resource-7/test-alarm-weather-widget-instructions-component-1",
+          "is_auto_instruction_running": false,
+          "is_all_auto_instructions_completed": true,
+          "is_auto_instruction_failed": true
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
     }
     """

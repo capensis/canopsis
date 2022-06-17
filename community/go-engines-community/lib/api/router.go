@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"net/url"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -60,6 +61,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -118,6 +120,7 @@ func RegisterRoutes(
 	router gin.IRouter,
 	security Security,
 	enforcer libsecurity.Enforcer,
+	legacyUrl string,
 	dbClient mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
@@ -251,7 +254,7 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, GetLegacyURL())
+		alarmStore := alarm.NewStore(dbClient, legacyUrl)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider)
 		alarmRouter := protected.Group("/alarms")
 		{
@@ -396,6 +399,10 @@ func RegisterRoutes(
 				middleware.Authorize(authObjPbh, permUpdate, enforcer),
 				middleware.SetAuthor(),
 				pbehaviorApi.Patch)
+			pbehaviorRouter.DELETE(
+				"",
+				middleware.Authorize(authObjPbh, permDelete, enforcer),
+				pbehaviorApi.DeleteByName)
 			pbehaviorRouter.DELETE(
 				"/:id",
 				middleware.Authorize(authObjPbh, permDelete, enforcer),
@@ -588,7 +595,7 @@ func RegisterRoutes(
 		{
 			weatherAPI := serviceweather.NewApi(serviceweather.NewStore(
 				dbClient,
-				GetLegacyURL(),
+				legacyUrl,
 				alarmStore,
 				timezoneConfigProvider,
 			))
@@ -1324,4 +1331,19 @@ func RegisterRoutes(
 			)
 		}
 	}
+}
+
+func GetProxy(
+	legacyUrl *url.URL,
+	security Security,
+	enforcer libsecurity.Enforcer,
+	accessConfig proxy.AccessConfig,
+) []gin.HandlerFunc {
+	authMiddleware := security.GetAuthMiddleware()
+
+	return append(
+		authMiddleware,
+		middleware.ProxyAuthorize(enforcer, accessConfig),
+		ReverseProxyHandler(legacyUrl),
+	)
 }

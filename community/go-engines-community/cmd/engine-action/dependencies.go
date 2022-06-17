@@ -23,6 +23,7 @@ type Options struct {
 	PeriodicalWaitTime       time.Duration
 	WorkerPoolSize           int
 	WithWebhook              bool
+	LastRetryInterval        time.Duration
 }
 
 // DependencyMaker can be created with DependencyMaker{}
@@ -49,10 +50,11 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		action.NewRedisDelayedScenarioStorage(redis.DelayedScenarioKey, actionRedisClient, json.NewEncoder(), json.NewDecoder()),
 		options.PeriodicalWaitTime, logger)
 	scenarioExecChan := make(chan action.ExecuteScenariosTask)
-	storage := action.NewRedisScenarioExecutionStorage(redis.ScenarioExecutionKey, actionRedisClient, json.NewEncoder(), json.NewDecoder(), logger)
+	storage := action.NewRedisScenarioExecutionStorage(redis.ScenarioExecutionKey, actionRedisClient, json.NewEncoder(),
+		json.NewDecoder(), options.LastRetryInterval, logger)
 	actionScenarioStorage := action.NewScenarioStorage(actionAdapter, delayedScenarioManager, logger)
 	actionService := action.NewService(alarmAdapter, scenarioExecChan,
-		delayedScenarioManager, storage, json.NewEncoder(), amqpChannel,
+		delayedScenarioManager, storage, json.NewEncoder(), json.NewDecoder(), amqpChannel,
 		options.FifoAckExchange, options.FifoAckQueue,
 		alarm.NewActivationService(json.NewEncoder(), amqpChannel, canopsis.CheQueueName, logger), logger)
 
