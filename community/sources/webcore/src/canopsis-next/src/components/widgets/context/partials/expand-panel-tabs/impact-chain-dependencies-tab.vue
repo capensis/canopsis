@@ -4,7 +4,8 @@
       service-dependencies.pa-3(
         :root="rootDependency",
         :columns="widget.parameters.serviceDependenciesColumns",
-        impact
+        impact,
+        openable-root
       )
 </template>
 

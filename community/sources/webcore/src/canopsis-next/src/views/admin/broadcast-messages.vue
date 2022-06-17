@@ -50,7 +50,6 @@ export default {
         await action();
 
         this.fetchList();
-        this.fetchActiveBroadcastMessagesList();
 
         this.$popups.success({ text: this.$t('success.default') });
       } catch (err) {

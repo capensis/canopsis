@@ -2,6 +2,10 @@ package entityservice
 
 import (
 	"context"
+	"errors"
+	"reflect"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -10,8 +14,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"reflect"
-	"time"
 )
 
 type Store interface {
@@ -29,6 +31,7 @@ type ServiceChanges struct {
 }
 
 type store struct {
+	dbClient                  mongo.DbClient
 	dbCollection              mongo.DbCollection
 	alarmDbCollection         mongo.DbCollection
 	resolvedAlarmDbCollection mongo.DbCollection
@@ -36,6 +39,7 @@ type store struct {
 
 func NewStore(db mongo.DbClient) Store {
 	return &store{
+		dbClient:                  db,
 		dbCollection:              db.Collection(mongo.EntityMongoCollection),
 		alarmDbCollection:         db.Collection(mongo.AlarmMongoCollection),
 		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
@@ -89,15 +93,23 @@ func (s *store) GetDependencies(ctx context.Context, id string, q pagination.Que
 			"entity": "$$ROOT",
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.AlarmMongoCollection,
-			"localField":   "entity._id",
-			"foreignField": "d",
-			"as":           "alarm",
+			"from": mongo.AlarmMongoCollection,
+			"let":  bson.M{"eid": "$entity._id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$d", "$$eid"}}},
+					// Get only open alarm.
+					{"v.resolved": nil},
+				}}},
+				{"$limit": 1},
+			},
+			"as": "alarm",
 		}},
 		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
-		{"$match": bson.M{"alarm.v.resolved": nil}},
 		{"$addFields": bson.M{
-			"impact_state": bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$entity.impact_level"}},
+			"impact_state": bson.M{"$cond": bson.M{"if": "$alarm.v.state.val", "else": 0,
+				"then": bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$entity.impact_level"}},
+			}},
 		}},
 	}
 	projectPipeline := []bson.M{
@@ -162,17 +174,26 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 			"entity": "$$ROOT",
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.AlarmMongoCollection,
-			"localField":   "entity._id",
-			"foreignField": "d",
-			"as":           "alarm",
+			"from": mongo.AlarmMongoCollection,
+			"let":  bson.M{"eid": "$entity._id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$d", "$$eid"}}},
+					// Get only open alarm.
+					{"v.resolved": nil},
+				}}},
+				{"$limit": 1},
+			},
+			"as": "alarm",
 		}},
 		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
-		{"$match": bson.M{"alarm.v.resolved": nil}},
 		{"$addFields": bson.M{
-			"impact_state": bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$entity.impact_level"}},
+			"impact_state": bson.M{"$cond": bson.M{"if": "$alarm.v.state.val", "else": 0,
+				"then": bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$entity.impact_level"}},
+			}},
 		}},
 	}
+	const entitiesListLimit = 100
 	projectPipeline := []bson.M{
 		// Find category
 		{"$lookup": bson.M{
@@ -194,7 +215,12 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 		}},
 		{"$addFields": bson.M{
 			"has_impacts": bson.M{"$gt": bson.A{bson.M{"$size": "$service_impacts"}, 0}},
+			// entity.impact and entity.depends arrays of the output document are
+			// limited by 100 items each to prevent BSONObjectTooLarge error
+			"entity.impact":  bson.M{"$slice": bson.A{"$entity.impact", entitiesListLimit}},
+			"entity.depends": bson.M{"$slice": bson.A{"$entity.depends", entitiesListLimit}},
 		}},
+		{"$project": bson.M{"service_impacts": 0}},
 	}
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		q,
@@ -244,55 +270,63 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 	}
 
 	entity.ID = request.ID
-	_, err := s.dbCollection.InsertOne(ctx, entity)
+	var response *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err := s.dbCollection.InsertOne(ctx, entity)
+		if err != nil {
+			return err
+		}
+		response, err = s.GetOneBy(ctx, entity.ID)
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	return s.GetOneBy(ctx, entity.ID)
+	return response, nil
 }
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error) {
 	serviceChanges := ServiceChanges{}
-	res := s.dbCollection.FindOneAndUpdate(
-		ctx,
-		bson.M{
-			"_id":  request.ID,
-			"type": types.EntityTypeService,
-		},
-		bson.M{"$set": bson.M{
-			"name":            request.Name,
-			"output_template": request.OutputTemplate,
-			"category":        request.Category,
-			"impact_level":    request.ImpactLevel,
-			"enabled":         request.Enabled,
-			"entity_patterns": request.EntityPatterns,
-			"infos":           transformInfos(request.EditRequest),
-			"sli_avail_state": request.SliAvailState,
-		}},
-		options.FindOneAndUpdate().
-			SetProjection(bson.M{"enabled": 1, "entity_patterns": 1}).
-			SetReturnDocument(options.Before),
-	)
-	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
+	var service *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		service = nil
+		oldValues := &entityservice.EntityService{}
+
+		err := s.dbCollection.FindOneAndUpdate(
+			ctx,
+			bson.M{
+				"_id":  request.ID,
+				"type": types.EntityTypeService,
+			},
+			bson.M{"$set": bson.M{
+				"name":            request.Name,
+				"output_template": request.OutputTemplate,
+				"category":        request.Category,
+				"impact_level":    request.ImpactLevel,
+				"enabled":         request.Enabled,
+				"entity_patterns": request.EntityPatterns,
+				"infos":           transformInfos(request.EditRequest),
+				"sli_avail_state": request.SliAvailState,
+			}},
+			options.FindOneAndUpdate().
+				SetProjection(bson.M{"enabled": 1, "entity_patterns": 1}).
+				SetReturnDocument(options.Before),
+		).Decode(oldValues)
+		if err != nil {
+			return err
+		}
+		serviceChanges.IsToggled = oldValues.Enabled != *request.Enabled
+		serviceChanges.IsPatternChanged = !reflect.DeepEqual(oldValues.EntityPatterns, request.EntityPatterns)
+		service, err = s.GetOneBy(ctx, request.ID)
+		return err
+	})
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, serviceChanges, nil
 		}
 
-		return nil, serviceChanges, err
-	}
-
-	oldValues := &entityservice.EntityService{}
-	err := res.Decode(oldValues)
-	if err != nil {
-		return nil, serviceChanges, err
-	}
-
-	serviceChanges.IsToggled = oldValues.Enabled != *request.Enabled
-	serviceChanges.IsPatternChanged = !reflect.DeepEqual(oldValues.EntityPatterns, request.EntityPatterns)
-
-	service, err := s.GetOneBy(ctx, request.ID)
-	if err != nil {
 		return nil, serviceChanges, err
 	}
 

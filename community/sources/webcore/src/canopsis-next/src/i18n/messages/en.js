@@ -213,6 +213,8 @@ export default {
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
+    template: 'Template',
+    cycleDependency: 'Cycle dependency',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -468,9 +470,11 @@ export default {
     tooltips: {
       priority: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
       hasInstruction: 'There is an instruction for this type of incidents',
+      hasManualInstructionInRunning: 'Manual instruction in progress',
       hasAutoInstructionInRunning: 'Automatic instruction in progress',
       allAutoInstructionExecuted: 'All automatic instructions has been executed',
       awaitingInstructionComplete: 'Awaiting for the instruction to complete',
+      autoInstructionsFailed: 'Automatic instructions failed',
     },
     metrics: {
       [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',
@@ -625,7 +629,6 @@ export default {
       title: 'Info popup',
       fields: {
         column: 'Column',
-        template: 'Template',
       },
     },
     rowGridSize: {
@@ -701,6 +704,7 @@ export default {
     templateEditor: 'Template',
     columns: {
       isHtml: 'Is it HTML?',
+      withTemplate: 'Custom template',
       isState: 'Displayed as severity?',
     },
     liveReporting: {
@@ -759,6 +763,11 @@ export default {
         + '<dd>For example:</dd>\n'
         + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
         + '</dl>',
+    },
+    density: {
+      title: 'Default view',
+      comfort: 'Comfort view',
+      compact: 'Compact view',
     },
   },
   modals: {
@@ -983,7 +992,6 @@ export default {
       title: 'Info popup',
       add: 'Add',
       column: 'Column',
-      template: 'Template',
       addInfoPopup: {
         title: 'Add an info popup',
       },
@@ -1093,7 +1101,8 @@ export default {
       },
     },
     alarmsList: {
-      title: 'Alarms list',
+      title: 'Alarm list',
+      prefixTitle: '{prefix} - alarm list',
     },
     createUser: {
       create: {
@@ -1238,39 +1247,6 @@ export default {
       },
       edit: {
         title: 'Edit SNMP rule',
-      },
-      fields: {
-        oid: {
-          title: 'oid',
-          labels: {
-            module: 'Select a mib module',
-          },
-        },
-        output: {
-          title: 'output',
-        },
-        resource: {
-          title: 'resource',
-        },
-        component: {
-          title: 'component',
-        },
-        connectorName: {
-          title: 'connector_name',
-        },
-        state: {
-          title: 'severity',
-          labels: {
-            toCustom: 'To custom',
-            defineVar: 'Define matching snmp var',
-            writeTemplate: 'Write template',
-          },
-        },
-        moduleMibObjects: {
-          vars: 'Snmp vars match field',
-          regex: 'Regex',
-          formatter: 'Format (capture group with \\x)',
-        },
       },
     },
     selectViewTab: {
@@ -1491,6 +1467,7 @@ export default {
         configuration: 'Configuration',
         jobId: 'Job ID',
         query: 'Query',
+        multipleExecutions: 'Allow parallel execution',
       },
       errors: {
         invalidJSON: 'Invalid JSON',
@@ -1752,6 +1729,9 @@ export default {
     statsWrongEditionError: "Stats widgets are not available with 'core' edition",
     socketConnectionProblem: 'Problem with connection to socket server',
   },
+  warnings: {
+    authTokenExpired: 'Authentication token was expired',
+  },
   calendar: {
     today: 'Today',
     month: 'Month',
@@ -1861,10 +1841,6 @@ export default {
     errors: {
       noValuePaths: 'You have to add at least 1 value path',
     },
-  },
-  snmpRules: {
-    uploadMib: 'Upload MIB',
-    addSnmpRule: 'Add SNMP rule',
   },
   layout: {
     sideBar: {
@@ -2246,6 +2222,7 @@ export default {
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
     closeConfirmationText: 'Would you like to resume this instruction later?',
+    queueNumber: '{number} {name} jobs are in the queue',
     popups: {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
@@ -2329,6 +2306,7 @@ export default {
     addAction: 'Add action',
     emptyActions: 'No actions added yet',
     output: 'Output Action Format',
+    forwardAuthor: 'Forward author to the next step',
     urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
       + '<i>For example:</i>'
       + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
@@ -2763,6 +2741,24 @@ export default {
 
   kpiRatingSettings: {
     helpInformation: 'The list of parameters to use for rating.',
+  },
+
+  snmpRule: {
+    oid: 'oid',
+    module: 'Select a mib module',
+    output: 'output',
+    resource: 'resource',
+    component: 'component',
+    connectorName: 'connector_name',
+    toCustom: 'To custom',
+    defineVar: 'Define matching snmp var',
+    writeTemplate: 'Write template',
+    state: 'severity',
+    moduleMibObjects: 'Snmp vars match field',
+    regex: 'Regex',
+    formatter: 'Format (capture group with \\x)',
+    uploadMib: 'Upload MIB',
+    addSnmpRule: 'Add SNMP rule',
   },
 
   ...featureService.get('i18n.en'),

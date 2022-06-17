@@ -2,12 +2,13 @@ package contextgraph
 
 import (
 	"fmt"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"github.com/streadway/amqp"
-	"time"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type rmqPublisher struct {
@@ -53,7 +54,9 @@ func (p *rmqPublisher) SendImportResultEvent(uuid string, execTime time.Duration
 		State:         state,
 		StateType:     stateType,
 		Output:        output,
-		ExecutionTime: execTime,
+		ExtraInfos: map[string]interface{}{
+			"execution_time": execTime,
+		},
 	})
 }
 

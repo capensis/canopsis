@@ -77,10 +77,9 @@ const (
 	// AlarmStepInstructionAbort are used for manual and auto instruction execution.
 	AlarmStepInstructionAbort = "instructionabort"
 	// Following alarm steps are used for manual instruction execution.
-	AlarmStepAutoInstructionStart          = "autoinstructionstart"
-	AlarmStepAutoInstructionComplete       = "autoinstructioncomplete"
-	AlarmStepAutoInstructionFail           = "autoinstructionfail"
-	AlarmStepAutoInstructionAlreadyRunning = "autoinstructionalreadyrunning"
+	AlarmStepAutoInstructionStart    = "autoinstructionstart"
+	AlarmStepAutoInstructionComplete = "autoinstructioncomplete"
+	AlarmStepAutoInstructionFail     = "autoinstructionfail"
 	// Following alarm steps are used for job execution.
 	AlarmStepInstructionJobStart    = "instructionjobstart"
 	AlarmStepInstructionJobComplete = "instructionjobcomplete"
@@ -237,7 +236,7 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
 }
 
 // Apply actions (ACK, Snooze, AssocTicket, DeclareTicket) from steps to alarm
-func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) error {
+func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket, allowDoubleAck bool) error {
 	ts := NewCpsTime(time.Now().Unix())
 
 	for j := 0; j < len(steps); j++ {
@@ -246,7 +245,7 @@ func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) error {
 		step.Timestamp = ts
 		switch step.Type {
 		case AlarmStepAck:
-			err := a.PartialUpdateAck(ts, step.Author, step.Message, step.UserID, step.Role, step.Initiator)
+			err := a.PartialUpdateAck(ts, step.Author, step.Message, step.UserID, step.Role, step.Initiator, allowDoubleAck)
 			if err != nil {
 				return err
 			}

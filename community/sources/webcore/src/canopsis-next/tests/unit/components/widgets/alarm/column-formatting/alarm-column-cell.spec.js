@@ -1,9 +1,10 @@
 import flushPromises from 'flush-promises';
 
 import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { DATETIME_FORMATS } from '@/constants';
+import { DEFAULT_LOCALE } from '@/config';
 
 import AlarmColumnCell from '@/components/widgets/alarm/columns-formatting/alarm-column-cell.vue';
-import { DATETIME_FORMATS } from '@/constants';
 
 const localVue = createVueInstance();
 
@@ -21,6 +22,11 @@ const stubs = {
 const factory = (options = {}) => shallowMount(AlarmColumnCell, {
   localVue,
   stubs,
+  mocks: {
+    $i18n: {
+      locale: DEFAULT_LOCALE,
+    },
+  },
 
   ...options,
 });
@@ -28,6 +34,11 @@ const factory = (options = {}) => shallowMount(AlarmColumnCell, {
 const snapshotFactory = (options = {}) => mount(AlarmColumnCell, {
   localVue,
   stubs,
+  mocks: {
+    $i18n: {
+      locale: DEFAULT_LOCALE,
+    },
+  },
 
   ...options,
 });
@@ -49,9 +60,6 @@ describe('alarm-column-cell', () => {
     'v.status.t',
     'v.resolved',
     't',
-    'v.active_duration',
-    'v.snooze_duration',
-    'v.pbh_inactive_duration',
   ])('Default filter for date field: "%s" converted value to time', async (field) => {
     const column = {
       value: field,
@@ -63,10 +71,7 @@ describe('alarm-column-cell', () => {
           t: timestamp,
           v: {
             last_update_date: timestamp,
-            active_duration: timestamp,
-            snooze_duration: timestamp,
             creation_date: timestamp,
-            pbh_inactive_duration: timestamp,
             last_event_date: timestamp,
             activation_date: timestamp,
             resolved: timestamp,
@@ -85,12 +90,15 @@ describe('alarm-column-cell', () => {
 
     const ellipsis = selectEllipsis(wrapper);
 
-    expect(ellipsis.attributes('text')).toBe('10/01/2022 5:49:13');
+    expect(ellipsis.attributes('text')).toBe('09/01/2022 23:49:13');
   });
 
   it.each([
     'v.duration',
     'v.current_state_duration',
+    'v.active_duration',
+    'v.snooze_duration',
+    'v.pbh_inactive_duration',
   ])('Default filter for duration field: "%s" converted value to duration', async (field) => {
     const column = {
       value: field,
@@ -100,8 +108,11 @@ describe('alarm-column-cell', () => {
       propsData: {
         alarm: {
           v: {
-            current_state_duration: duration,
             duration,
+            current_state_duration: duration,
+            active_duration: duration,
+            snooze_duration: duration,
+            pbh_inactive_duration: duration,
           },
         },
         widget: {},
@@ -136,7 +147,7 @@ describe('alarm-column-cell', () => {
 
     const ellipsis = selectEllipsis(wrapper);
 
-    expect(ellipsis.attributes('text')).toBe('03/01/1970');
+    expect(ellipsis.attributes('text')).toBe('02/01/1970');
   });
 
   it('Default filter for creation date field converted value to time', async () => {
@@ -158,7 +169,7 @@ describe('alarm-column-cell', () => {
 
     const ellipsis = selectEllipsis(wrapper);
 
-    expect(ellipsis.attributes('text')).toBe('10/01/2022 5:49:13');
+    expect(ellipsis.attributes('text')).toBe('09/01/2022 23:49:13');
   });
 
   it('Renders `alarm-column-cell` with column state', async () => {
@@ -245,6 +256,9 @@ describe('alarm-column-cell', () => {
         widget: {},
         column,
       },
+      listeners: {
+        activate: jest.fn(),
+      },
     });
 
     await flushPromises();
@@ -268,6 +282,9 @@ describe('alarm-column-cell', () => {
           },
         },
         column,
+      },
+      listeners: {
+        activate: jest.fn(),
       },
     });
 

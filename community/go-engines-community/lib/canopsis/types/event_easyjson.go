@@ -7,7 +7,6 @@ import (
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
-	time "time"
 )
 
 // suppress unused package warning
@@ -295,6 +294,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Initiator = string(in.String())
 		case "delayed_scenario_id":
 			out.DelayedScenarioID = string(in.String())
+		case "delayed_scenario_data":
+			out.DelayedScenarioData = string(in.String())
 		case "added_to_services":
 			if in.IsNull() {
 				in.Skip()
@@ -341,8 +342,6 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				in.Delim(']')
 			}
-		case "execution_time":
-			out.ExecutionTime = time.Duration(in.Int64())
 		case "pbh_parameters":
 			out.PbhParameters = string(in.String())
 		case "idle_rule_apply":
@@ -645,6 +644,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.String(string(in.DelayedScenarioID))
 	}
+	if in.DelayedScenarioData != "" {
+		const prefix string = ",\"delayed_scenario_data\":"
+		out.RawString(prefix)
+		out.String(string(in.DelayedScenarioData))
+	}
 	if len(in.AddedToServices) != 0 {
 		const prefix string = ",\"added_to_services\":"
 		out.RawString(prefix)
@@ -672,11 +676,6 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 			out.RawByte(']')
 		}
-	}
-	{
-		const prefix string = ",\"execution_time\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.ExecutionTime))
 	}
 	if in.PbhParameters != "" {
 		const prefix string = ",\"pbh_parameters\":"

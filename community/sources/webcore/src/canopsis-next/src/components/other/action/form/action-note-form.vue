@@ -1,9 +1,8 @@
 <template lang="pug">
-  v-layout(row)
+  v-layout(column)
     v-textarea(v-field="value.output", :label="$t('scenario.output')")
-      v-tooltip(slot="append", left)
-        v-icon(slot="activator") help
-        div(v-html="$t('scenario.outputHelp')")
+      template(#append="")
+        c-help-icon(:text="$t('scenario.outputHelp')", icon="help", color="grey darken-1", left)
 </template>
 
 <script>

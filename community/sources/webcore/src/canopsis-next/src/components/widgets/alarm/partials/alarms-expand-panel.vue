@@ -64,7 +64,8 @@
                 service-dependencies(
                   :root="dependency",
                   :columns="widget.parameters.serviceDependenciesColumns",
-                  include-root
+                  include-root,
+                  openable-root
                 )
     template(v-if="hasImpactsDependencies")
       v-tab {{ $t('alarmList.tabs.impactChain') }}
@@ -77,7 +78,8 @@
                   :root="dependency",
                   :columns="widget.parameters.serviceDependenciesColumns",
                   include-root,
-                  impact
+                  impact,
+                  openable-root
                 )
     template(v-if="hasEntityGantt")
       v-tab {{ $t('alarmList.tabs.entityGantt') }}
@@ -206,10 +208,12 @@ export default {
     },
 
     hasImpactsDependencies() {
+      const { impact } = this.alarm.entity;
+
       return this.hasServiceDependencies
-        ? this.alarm.entity.impact.length > 0
+        ? impact?.length > 0
         // resource and component types having one basic entity into impact
-        : this.alarm.entity.impact.length > 1;
+        : impact?.length > 1;
     },
 
     hasEntityGantt() {

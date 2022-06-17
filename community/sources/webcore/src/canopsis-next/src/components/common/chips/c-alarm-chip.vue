@@ -2,7 +2,7 @@
   div.chip-container
     v-badge(:value="!!badgeValue", color="secondary", overlap)
       template(#badge="")
-        span.caption {{ badgeValue }}
+        span.px-1 {{ badgeValue }}
       span.chip(:style="{ backgroundColor: style.color }") {{ style.text }}
 </template>
 
@@ -58,8 +58,13 @@ export default {
     }
 
     & /deep/ .v-badge--overlap .v-badge__badge {
-      top: -13px;
-      right: -13px;
+      font-size: 10px;
+      border-radius: 5px;
+      min-width: 16px;
+      width: auto;
+      height: 16px;
+      top: -12px;
+      right: -6px;
     }
   }
 </style>

@@ -15,6 +15,13 @@ exports[`alarm-column-value Renders \`alarm-column-value\` with custom props 1`]
 </color-indicator-wrapper-stub>
 `;
 
+exports[`alarm-column-value Renders \`alarm-column-value\` with custom template 1`] = `
+<v-runtime-template-stub
+  template=<div>entity-name === entity-name in the alarm-name</div>
+  templateprops="[object Object]"
+/>
+`;
+
 exports[`alarm-column-value Renders \`alarm-column-value\` with required props 1`] = `
 <color-indicator-wrapper-stub
   alarm="[object Object]"

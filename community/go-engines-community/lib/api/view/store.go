@@ -3,6 +3,8 @@ package view
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
@@ -13,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 const (
@@ -37,6 +38,7 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store) Store {
 	return &store{
+		dbClient:              dbClient,
 		collection:            dbClient.Collection(mongo.ViewMongoCollection),
 		tabCollection:         dbClient.Collection(mongo.ViewTabMongoCollection),
 		widgetCollection:      dbClient.Collection(mongo.WidgetMongoCollection),
@@ -51,6 +53,7 @@ func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store) Store {
 }
 
 type store struct {
+	dbClient              mongo.DbClient
 	collection            mongo.DbCollection
 	tabCollection         mongo.DbCollection
 	widgetCollection      mongo.DbCollection
@@ -132,98 +135,102 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) (*Response, error) {
-	count, err := s.collection.CountDocuments(ctx, bson.M{})
-	if err != nil {
-		return nil, err
-	}
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		count, err := s.collection.CountDocuments(ctx, bson.M{})
+		if err != nil {
+			return nil, err
+		}
 
-	now := types.CpsTime{Time: time.Now()}
-	id := utils.NewID()
-	_, err = s.collection.InsertOne(ctx, view.View{
-		ID:              id,
-		Enabled:         *r.Enabled,
-		Title:           r.Title,
-		Description:     r.Description,
-		Group:           r.Group,
-		Position:        count,
-		Tags:            r.Tags,
-		PeriodicRefresh: r.PeriodicRefresh,
-		Author:          r.Author,
-		Created:         now,
-		Updated:         now,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	if withDefaultTab {
-		_, err := s.tabCollection.InsertOne(ctx, view.Tab{
-			ID:       utils.NewID(),
-			Title:    defaultTabTitle,
-			View:     id,
-			Author:   r.Author,
-			Position: 0,
-			Created:  now,
-			Updated:  now,
+		now := types.CpsTime{Time: time.Now()}
+		id := utils.NewID()
+		_, err = s.collection.InsertOne(ctx, view.View{
+			ID:              id,
+			Enabled:         *r.Enabled,
+			Title:           r.Title,
+			Description:     r.Description,
+			Group:           r.Group,
+			Position:        count,
+			Tags:            r.Tags,
+			PeriodicRefresh: r.PeriodicRefresh,
+			Author:          r.Author,
+			Created:         now,
+			Updated:         now,
 		})
 		if err != nil {
 			return nil, err
 		}
-	}
 
-	newView, err := s.GetOneBy(ctx, id)
-	if err != nil {
-		return nil, err
-	}
+		if withDefaultTab {
+			_, err := s.tabCollection.InsertOne(ctx, view.Tab{
+				ID:       utils.NewID(),
+				Title:    defaultTabTitle,
+				View:     id,
+				Author:   r.Author,
+				Position: 0,
+				Created:  now,
+				Updated:  now,
+			})
+			if err != nil {
+				return nil, err
+			}
+		}
 
-	err = s.createPermissions(ctx, r.Author, map[string]string{newView.ID: newView.Title})
-	if err != nil {
-		return nil, err
-	}
-
-	return newView, nil
-}
-
-func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
-	oldView := view.View{}
-	err := s.collection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&oldView)
-	if err != nil {
-		return nil, err
-	}
-
-	now := types.CpsTime{Time: time.Now()}
-	_, err = s.collection.UpdateOne(ctx, bson.M{"_id": oldView.ID}, bson.M{"$set": bson.M{
-		"enabled":          *r.Enabled,
-		"title":            r.Title,
-		"description":      r.Description,
-		"group_id":         r.Group,
-		"tags":             r.Tags,
-		"periodic_refresh": r.PeriodicRefresh,
-		"author":           r.Author,
-		"updated":          now,
-	}})
-	if err != nil {
-		return nil, err
-	}
-
-	if r.Group != oldView.Group {
-		err := s.normalizePositionsOnViewMove(ctx, r.ID, r.Group)
+		newView, err := s.GetOneBy(ctx, id)
 		if err != nil {
 			return nil, err
 		}
-	}
 
-	newView, err := s.GetOneBy(ctx, r.ID)
-	if err != nil {
-		return nil, err
-	}
+		err = s.createPermissions(ctx, r.Author, map[string]string{newView.ID: newView.Title})
+		if err != nil {
+			return nil, err
+		}
 
-	err = s.updatePermissions(ctx, *newView)
-	if err != nil {
-		return nil, err
-	}
+		return newView, nil
+	})
+}
 
-	return newView, nil
+func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		oldView := view.View{}
+		err := s.collection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&oldView)
+		if err != nil {
+			return nil, err
+		}
+
+		now := types.CpsTime{Time: time.Now()}
+		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": oldView.ID}, bson.M{"$set": bson.M{
+			"enabled":          *r.Enabled,
+			"title":            r.Title,
+			"description":      r.Description,
+			"group_id":         r.Group,
+			"tags":             r.Tags,
+			"periodic_refresh": r.PeriodicRefresh,
+			"author":           r.Author,
+			"updated":          now,
+		}})
+		if err != nil {
+			return nil, err
+		}
+
+		if r.Group != oldView.Group {
+			err := s.normalizePositionsOnViewMove(ctx, r.ID, r.Group)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		newView, err := s.GetOneBy(ctx, r.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		err = s.updatePermissions(ctx, *newView)
+		if err != nil {
+			return nil, err
+		}
+
+		return newView, nil
+	})
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {

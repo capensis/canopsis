@@ -332,7 +332,6 @@ Feature: Bulk update idlerules
           "operation": {
             "type": "snooze",
             "parameters": {
-              "author": "root",
               "output": "test-idle-rule-to-bulk-update-1-operation-output-updated",
               "duration": {
                 "value": 5,
@@ -369,7 +368,6 @@ Feature: Bulk update idlerules
           "operation": {
             "type": "snooze",
             "parameters": {
-              "author": "root",
               "output": "test-idle-rule-to-bulk-update-2-operation-output-updated",
               "duration": {
                 "value": 5,
