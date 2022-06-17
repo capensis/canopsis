@@ -102,6 +102,11 @@
             :title="$t('settings.isSnoozeNoteRequired')"
           )
           v-divider
+          field-switcher(
+            v-model="settings.widget.parameters.isMultiDeclareTicketEnabled",
+            :title="$t('settings.isMultiDeclareTicketEnabled')"
+          )
+          v-divider
           field-enabled-limit(
             v-model="settings.widget.parameters.linksCategoriesAsList",
             :title="$t('settings.linksCategoriesAsList')",
