@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+import { MODALS, EVENT_ENTITY_TYPES, DECLARE_TICKET_OUTPUT } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
@@ -52,7 +52,7 @@ export default {
   methods: {
     async submit() {
       await this.createEvent(EVENT_ENTITY_TYPES.declareTicket, this.items, {
-        output: 'declare ticket',
+        output: DECLARE_TICKET_OUTPUT,
       });
 
       this.$modals.hide();

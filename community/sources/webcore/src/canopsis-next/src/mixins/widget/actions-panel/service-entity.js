@@ -126,23 +126,9 @@ export const widgetActionPanelServiceEntityMixin = {
     },
 
     showCreateDeclareTicketModal(entities) {
-      this.$modals.show({
-        name: MODALS.textFieldEditor,
-        config: {
-          title: this.$t('modals.createDeclareTicket.title'),
-          field: {
-            name: 'output',
-            label: this.$t('common.output'),
-            validationRules: 'required',
-          },
-          action: (output) => {
-            this.addActionToQueue({
-              entities,
-              actionType: WEATHER_ACTIONS_TYPES.declareTicket,
-              payload: { output },
-            });
-          },
-        },
+      this.addActionToQueue({
+        actionType: WEATHER_ACTIONS_TYPES.declareTicket,
+        entities,
       });
     },
 
@@ -164,7 +150,7 @@ export const widgetActionPanelServiceEntityMixin = {
     addValidateActionToQueue(entities) {
       this.addActionToQueue({
         actionType: WEATHER_ACTIONS_TYPES.entityValidate,
-        items: entities,
+        entities,
       });
     },
 

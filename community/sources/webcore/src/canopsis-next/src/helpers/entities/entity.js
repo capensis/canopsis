@@ -191,7 +191,7 @@ export const convertActionToEvents = ({ actionType, entity, payload }) => {
       ];
     case WEATHER_ACTIONS_TYPES.declareTicket:
       return [
-        createDeclareTicketEventByEntity({ entity, output: payload.output }),
+        createDeclareTicketEventByEntity({ entity }),
       ];
   }
 
