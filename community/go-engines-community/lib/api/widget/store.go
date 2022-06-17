@@ -3,8 +3,6 @@ package widget
 import (
 	"context"
 	"errors"
-	"time"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -21,11 +19,13 @@ type Store interface {
 	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	Copy(ctx context.Context, widget Response, r EditRequest) (*Response, error)
+	CopyForTab(ctx context.Context, tabID, newTabID, author string) error
 	UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
+		client:             dbClient,
 		collection:         dbClient.Collection(mongo.WidgetMongoCollection),
 		tabCollection:      dbClient.Collection(mongo.ViewTabMongoCollection),
 		userPrefCollection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
@@ -33,6 +33,7 @@ func NewStore(dbClient mongo.DbClient) Store {
 }
 
 type store struct {
+	client             mongo.DbClient
 	collection         mongo.DbCollection
 	tabCollection      mongo.DbCollection
 	userPrefCollection mongo.DbCollection
@@ -103,18 +104,25 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
-	now := types.CpsTime{Time: time.Now()}
+	now := types.NewCpsTime()
 	widget := transformEditRequestToModel(r)
 	widget.ID = utils.NewID()
-	widget.Created = &now
-	widget.Updated = &now
+	widget.Created = now
+	widget.Updated = now
 
-	_, err := s.collection.InsertOne(ctx, widget)
-	if err != nil {
-		return nil, err
-	}
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err := s.collection.InsertOne(ctx, widget)
+		if err != nil {
+			return err
+		}
 
-	return s.GetOneBy(ctx, widget.ID)
+		response, err = s.GetOneBy(ctx, widget.ID)
+		return err
+	})
+
+	return response, err
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
@@ -123,11 +131,10 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		return nil, err
 	}
 
-	now := types.CpsTime{Time: time.Now()}
+	now := types.NewCpsTime()
 	widget := transformEditRequestToModel(r)
 	widget.ID = oldWidget.ID
-	widget.Created = oldWidget.Created
-	widget.Updated = &now
+	widget.Updated = now
 	// Empty InternalParameters to remove from update query.
 	widget.InternalParameters = view.InternalParameters{}
 	update := bson.M{"$set": widget}
@@ -140,34 +147,86 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		update["$unset"] = bson.M{"internal_parameters": ""}
 	}
 
-	_, err = s.collection.UpdateOne(ctx, bson.M{"_id": widget.ID}, update)
-	if err != nil {
-		return nil, err
-	}
+	var response *Response
+	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": widget.ID}, update)
+		if err != nil {
+			return err
+		}
 
-	return s.GetOneBy(ctx, widget.ID)
+		response, err = s.GetOneBy(ctx, widget.ID)
+		return err
+	})
+
+	return response, err
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+	res := false
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
+		if err != nil || delCount == 0 {
+			return err
+		}
 
-	if delCount == 0 {
-		return false, nil
-	}
+		err = s.deleteUserPreferences(ctx, id)
+		if err != nil {
+			return err
+		}
 
-	err = s.deleteUserPreferences(ctx, id)
-	if err != nil {
-		return false, err
-	}
+		res = true
+		return nil
+	})
 
-	return true, nil
+	return res, err
 }
 
 func (s *store) Copy(ctx context.Context, widget Response, r EditRequest) (*Response, error) {
-	now := types.CpsTime{Time: time.Now()}
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		var err error
+		response, err = s.copy(ctx, widget, r)
+		return err
+	})
+
+	return response, err
+}
+
+func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string) error {
+	cursor, err := s.collection.Find(ctx, bson.M{"tab": tabID})
+	if err != nil {
+		return err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		w := Response{}
+		err := cursor.Decode(&w)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.copy(ctx, w, EditRequest{
+			Tab:            newTabID,
+			Title:          w.Title,
+			Type:           w.Type,
+			GridParameters: w.GridParameters,
+			Parameters:     w.Parameters,
+			Author:         author,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *store) copy(ctx context.Context, widget Response, r EditRequest) (*Response, error) {
+	now := types.NewCpsTime()
 	newWidget := view.Widget{
 		ID:             utils.NewID(),
 		Tab:            r.Tab,
@@ -176,8 +235,8 @@ func (s *store) Copy(ctx context.Context, widget Response, r EditRequest) (*Resp
 		GridParameters: r.GridParameters,
 		Parameters:     r.Parameters,
 		Author:         r.Author,
-		Created:        &now,
-		Updated:        &now,
+		Created:        now,
+		Updated:        now,
 	}
 
 	_, err := s.collection.InsertOne(ctx, newWidget)
@@ -193,47 +252,55 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 	for i, item := range items {
 		ids[i] = item.ID
 	}
-	widgets := make([]view.Widget, 0, len(items))
-	cursor, err := s.collection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
-	if err != nil {
-		return false, err
-	}
 
-	err = cursor.All(ctx, &widgets)
-	if err != nil || len(widgets) != len(items) {
-		return false, err
-	}
-
-	tabId := ""
-	for _, w := range widgets {
-		if tabId == "" {
-			tabId = w.Tab
-		} else if tabId != w.Tab {
-			return false, ValidationErr{error: errors.New("widgets are related to different view tabs")}
+	res := false
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		widgets := make([]view.Widget, 0, len(items))
+		cursor, err := s.collection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
+		if err != nil {
+			return err
 		}
-	}
 
-	count, err := s.collection.CountDocuments(ctx, bson.M{"tab": tabId})
-	if err != nil {
-		return false, err
-	}
-	if count != int64(len(items)) {
-		return false, ValidationErr{error: errors.New("widgets are missing")}
-	}
+		err = cursor.All(ctx, &widgets)
+		if err != nil || len(widgets) != len(items) {
+			return err
+		}
 
-	writeModels := make([]mongodriver.WriteModel, len(widgets))
-	for i, item := range items {
-		writeModels[i] = mongodriver.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": item.ID}).
-			SetUpdate(bson.M{"$set": bson.M{"grid_parameters": item.GridParameters}})
-	}
+		tabId := ""
+		for _, w := range widgets {
+			if tabId == "" {
+				tabId = w.Tab
+			} else if tabId != w.Tab {
+				return ValidationErr{error: errors.New("widgets are related to different view tabs")}
+			}
+		}
 
-	res, err := s.collection.BulkWrite(ctx, writeModels)
-	if err != nil {
-		return false, err
-	}
+		count, err := s.collection.CountDocuments(ctx, bson.M{"tab": tabId})
+		if err != nil {
+			return err
+		}
+		if count != int64(len(items)) {
+			return ValidationErr{error: errors.New("widgets are missing")}
+		}
 
-	return res.MatchedCount > 0, nil
+		writeModels := make([]mongodriver.WriteModel, len(widgets))
+		for i, item := range items {
+			writeModels[i] = mongodriver.NewUpdateOneModel().
+				SetFilter(bson.M{"_id": item.ID}).
+				SetUpdate(bson.M{"$set": bson.M{"grid_parameters": item.GridParameters}})
+		}
+
+		writeRes, err := s.collection.BulkWrite(ctx, writeModels)
+		if err != nil {
+			return err
+		}
+
+		res = writeRes.MatchedCount > 0
+		return nil
+	})
+
+	return res, err
 }
 
 func (s *store) deleteUserPreferences(ctx context.Context, widgetID string) error {

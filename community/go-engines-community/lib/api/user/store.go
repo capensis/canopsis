@@ -29,6 +29,7 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
 	return &store{
+		dbClient:              dbClient,
 		collection:            dbClient.Collection(mongo.RightsMongoCollection),
 		userPrefCollection:    dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		passwordEncoder:       passwordEncoder,
@@ -38,6 +39,7 @@ func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
 }
 
 type store struct {
+	dbClient              mongo.DbClient
 	collection            mongo.DbCollection
 	userPrefCollection    mongo.DbCollection
 	passwordEncoder       password.Encoder
