@@ -580,6 +580,7 @@ export default {
     linksCategoriesAsList: 'Afficher les liens sous forme de liste ?',
     linksCategoriesLimit: 'Nombre d\'éléments de catégorie',
     isMultiAckEnabled: 'Acquittement multiple',
+    isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
     fastAckOutput: 'Commentaire d\'acquittement rapide',
     isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
     isCorrelationEnabled: 'Corrélation activée ?',
