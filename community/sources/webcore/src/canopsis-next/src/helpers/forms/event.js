@@ -201,6 +201,19 @@ export const createAssociateTicketEventByEntity = ({ entity, ticket }) => prepar
 );
 
 /**
+ * Create declare ticket event by entity data
+ *
+ * @param {Entity} entity
+ * @param {string} output
+ * @return {Event}
+ */
+export const createDeclareTicketEventByEntity = ({ entity, output }) => prepareEventByEntity(
+  entity,
+  EVENT_ENTITY_TYPES.declareTicket,
+  { output },
+);
+
+/**
  * Create validate event by entity data
  *
  * @param {Entity} entity

@@ -1945,6 +1945,7 @@ export default {
       [WEATHER_ACTIONS_TYPES.entityAssocTicket]: 'Associer un ticket',
       [WEATHER_ACTIONS_TYPES.entityComment]: 'Commenter l\'alarme',
       [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Exécuter l\'instruction',
+      [WEATHER_ACTIONS_TYPES.declareTicket]: 'Déclarer un incident',
     },
   },
   contextGeneralTable: {

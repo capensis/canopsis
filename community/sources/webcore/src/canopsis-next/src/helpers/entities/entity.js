@@ -15,7 +15,7 @@ import {
   createAckEventByEntity,
   createAssociateTicketEventByEntity,
   createCancelEventByEntity,
-  createCommentEventByEntity,
+  createCommentEventByEntity, createDeclareTicketEventByEntity,
   createInvalidateEventByEntity,
   createValidateEventByEntity,
 } from '@/helpers/forms/event';
@@ -67,6 +67,7 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
     case WEATHER_ACTIONS_TYPES.executeInstruction:
       return !!assignedInstructions?.length;
 
+    case WEATHER_ACTIONS_TYPES.declareTicket:
     case WEATHER_ACTIONS_TYPES.entityAssocTicket:
     default:
       return true;
@@ -87,6 +88,7 @@ export const getAvailableEntityActionsTypes = (
     WEATHER_ACTIONS_TYPES.executeInstruction,
     WEATHER_ACTIONS_TYPES.entityAck,
     WEATHER_ACTIONS_TYPES.entityAssocTicket,
+    WEATHER_ACTIONS_TYPES.declareTicket,
     WEATHER_ACTIONS_TYPES.entityValidate,
     WEATHER_ACTIONS_TYPES.entityInvalidate,
     WEATHER_ACTIONS_TYPES.entityPlay,
@@ -133,6 +135,7 @@ export const getAvailableActionsByEntities = (
     WEATHER_ACTIONS_TYPES.entityComment,
     WEATHER_ACTIONS_TYPES.entityAck,
     WEATHER_ACTIONS_TYPES.entityAssocTicket,
+    WEATHER_ACTIONS_TYPES.declareTicket,
     WEATHER_ACTIONS_TYPES.entityValidate,
     WEATHER_ACTIONS_TYPES.entityInvalidate,
     WEATHER_ACTIONS_TYPES.entityPlay,
@@ -184,6 +187,10 @@ export const convertActionToEvents = ({ actionType, entity, payload }) => {
       return [
         createAckEventByEntity({ entity, output: WEATHER_ACK_EVENT_OUTPUT.ack }),
         createInvalidateEventByEntity({ entity }),
+      ];
+    case WEATHER_ACTIONS_TYPES.declareTicket:
+      return [
+        createDeclareTicketEventByEntity({ entity, output: payload.output }),
       ];
   }
 
