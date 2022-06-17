@@ -245,5 +245,10 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Method: http.MethodGet,
 			Body:   "{\"id\": 1,\"title\": \"test title\"}",
 		},
+		"/webhook/arrays": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"array\":[{\"elem1\":\"test1\",\"elem2\":\"test2\"},{\"elem1\":\"test3\",\"elem2\":\"test4\"}]}",
+		},
 	}
 }
