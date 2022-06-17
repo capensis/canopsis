@@ -9,13 +9,15 @@ import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeStaticAlarms } from '@unit/data/alarm';
 import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
 import {
-  CANOPSIS_EDITION, EXPORT_CSV_DATETIME_FORMATS,
+  CANOPSIS_EDITION,
+  EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_STATUSES,
   FILTER_DEFAULT_VALUES,
   FILTER_MONGO_OPERATORS,
   MODALS,
   QUICK_RANGES,
-  REMEDIATION_INSTRUCTION_TYPES, TIME_UNITS,
+  REMEDIATION_INSTRUCTION_TYPES,
+  TIME_UNITS,
   USERS_PERMISSIONS,
 } from '@/constants';
 
@@ -35,6 +37,7 @@ const stubs = {
   'alarms-list-remediation-instructions-filters': true,
   'c-action-btn': true,
   'c-pagination': true,
+  'c-density-btn-toggle': true,
   'c-table-pagination': true,
   'alarms-expand-panel-tour': true,
   'alarms-list-table': {
@@ -56,6 +59,7 @@ const snapshotStubs = {
   'c-pagination': true,
   'alarms-list-table': true,
   'c-table-pagination': true,
+  'c-density-btn-toggle': true,
   'alarms-expand-panel-tour': true,
 };
 

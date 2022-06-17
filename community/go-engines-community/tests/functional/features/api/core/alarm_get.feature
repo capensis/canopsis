@@ -12,6 +12,23 @@ Feature: Get alarms
       "data": [
         {
           "_id": "test-alarm-get-4",
+          "assigned_instructions": [
+            {
+              "_id": "test-instruction-with-entity-pattern-1",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-1-name"
+            },
+            {
+              "_id": "test-instruction-with-entity-pattern-2",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-2-name"
+            },
+            {
+              "_id": "test-instruction-with-patterns-combined",
+              "execution": null,
+              "name": "test-instruction-with-patterns-combined-name"
+            }
+          ],
           "entity": {
             "_id": "test-alarm-get-resource-4/test-alarm-get-component",
             "category": null,
@@ -91,6 +108,23 @@ Feature: Get alarms
         },
         {
           "_id": "test-alarm-get-3",
+          "assigned_instructions": [
+            {
+              "_id": "test-instruction-with-entity-pattern-1",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-1-name"
+            },
+            {
+              "_id": "test-instruction-with-entity-pattern-2",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-2-name"
+            },
+            {
+              "_id": "test-instruction-with-patterns-combined",
+              "execution": null,
+              "name": "test-instruction-with-patterns-combined-name"
+            }
+          ],
           "entity": {
             "_id": "test-alarm-get-resource-3/test-alarm-get-component",
             "category": null,
@@ -153,6 +187,23 @@ Feature: Get alarms
         },
         {
           "_id": "test-alarm-get-2",
+          "assigned_instructions": [
+            {
+              "_id": "test-instruction-with-entity-pattern-1",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-1-name"
+            },
+            {
+              "_id": "test-instruction-with-entity-pattern-2",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-2-name"
+            },
+            {
+              "_id": "test-instruction-with-patterns-combined",
+              "execution": null,
+              "name": "test-instruction-with-patterns-combined-name"
+            }
+          ],
           "entity": {
             "_id": "test-alarm-get-resource-2/test-alarm-get-component",
             "category": null,
@@ -216,6 +267,23 @@ Feature: Get alarms
         },
         {
           "_id": "test-alarm-get-1",
+          "assigned_instructions": [
+            {
+              "_id": "test-instruction-with-entity-pattern-1",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-1-name"
+            },
+            {
+              "_id": "test-instruction-with-entity-pattern-2",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-2-name"
+            },
+            {
+              "_id": "test-instruction-with-patterns-combined",
+              "execution": null,
+              "name": "test-instruction-with-patterns-combined-name"
+            }
+          ],
           "entity": {
             "_id": "test-alarm-get-resource-1/test-alarm-get-component",
             "category": {
