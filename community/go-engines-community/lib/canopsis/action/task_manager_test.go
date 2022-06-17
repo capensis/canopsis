@@ -96,7 +96,7 @@ func TestTaskManager_Run_GiveTask_ShouldSendResult(t *testing.T) {
 		GetTriggeredScenarios(gomock.Eq(task.Triggers), gomock.Eq(task.Alarm)).
 		Return([]action.Scenario{scenario}, nil)
 	mockScenarioStorage.EXPECT().
-		RunDelayedScenarios(gomock.Any(), gomock.Eq(task.Triggers), gomock.Eq(task.Alarm), gomock.Eq(task.Entity)).
+		RunDelayedScenarios(gomock.Any(), gomock.Eq(task.Triggers), gomock.Eq(task.Alarm), gomock.Eq(task.Entity), gomock.Eq(task.AdditionalData)).
 		Return(nil)
 	logger := zerolog.Logger{}
 	manager := action.NewTaskManager(mockWorkerPool, mockExecutionStorage, mockScenarioStorage, logger)
@@ -251,10 +251,10 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 		GetTriggeredScenarios(gomock.Eq([]string{firstScenario.Actions[0].Type}), gomock.Eq(task.Alarm)).
 		Return([]action.Scenario{secondScenario}, nil)
 	mockScenarioStorage.EXPECT().
-		RunDelayedScenarios(gomock.Any(), gomock.Eq(task.Triggers), gomock.Eq(task.Alarm), gomock.Eq(task.Entity)).
+		RunDelayedScenarios(gomock.Any(), gomock.Eq(task.Triggers), gomock.Eq(task.Alarm), gomock.Eq(task.Entity), gomock.Eq(task.AdditionalData)).
 		Return(nil)
 	mockScenarioStorage.EXPECT().
-		RunDelayedScenarios(gomock.Any(), gomock.Eq([]string{firstScenario.Actions[0].Type}), gomock.Eq(task.Alarm), gomock.Eq(task.Entity)).
+		RunDelayedScenarios(gomock.Any(), gomock.Eq([]string{firstScenario.Actions[0].Type}), gomock.Eq(task.Alarm), gomock.Eq(task.Entity), gomock.Any()).
 		Return(nil)
 	logger := zerolog.Logger{}
 	manager := action.NewTaskManager(mockWorkerPool, mockExecutionStorage, mockScenarioStorage, logger)
@@ -443,11 +443,12 @@ func TestTaskManager_Run_GiveAbandonedTask_ShouldSendResult(t *testing.T) {
 	inputCh := make(chan action.ExecuteScenariosTask)
 	defer close(inputCh)
 	taskResultCh := make(chan action.TaskResult)
-	defer close(taskResultCh)
 	mockWorkerPool := mock_action.NewMockWorkerPool(ctrl)
 	mockWorkerPool.EXPECT().RunWorkers(gomock.Any(), gomock.Any()).
 		Do(func(_ context.Context, taskCh <-chan action.Task) {
 			go func() {
+				defer close(taskResultCh)
+
 				select {
 				case <-ctx.Done():
 				case task := <-taskCh:

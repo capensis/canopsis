@@ -344,6 +344,7 @@ Feature: get service entities with assigned instructions
       }
     }
     """
+    When I wait the end of 2 events processing
     When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-2?with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -453,6 +454,7 @@ Feature: get service entities with assigned instructions
     {
       "data": [
         {
+          "is_manual_instruction_running": true,
           "is_manual_instruction_waiting_result": false
         }
       ]
@@ -468,6 +470,7 @@ Feature: get service entities with assigned instructions
     {
       "data": [
         {
+          "is_manual_instruction_running": false,
           "is_manual_instruction_waiting_result": true
         }
       ]
@@ -478,6 +481,7 @@ Feature: get service entities with assigned instructions
     {
       "data": [
         {
+          "is_manual_instruction_running": false,
           "is_manual_instruction_waiting_result": false
         }
       ]
@@ -603,6 +607,7 @@ Feature: get service entities with assigned instructions
       }
     }
     """
+    When I wait the end of 3 events processing
     When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-4?with_instructions=true until response code is 200 and body contains:
     """json
     {
