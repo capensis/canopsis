@@ -30,13 +30,14 @@ export const widgetActionPanelServiceEntityMixin = {
     actionsMethodsMap() {
       return {
         [WEATHER_ACTIONS_TYPES.entityAck]: this.addAckActionToQueue,
-        [WEATHER_ACTIONS_TYPES.entityAssocTicket]: this.showCreateDeclareTicketModal,
+        [WEATHER_ACTIONS_TYPES.entityAssocTicket]: this.showCreateAssociateTicketModal,
         [WEATHER_ACTIONS_TYPES.entityValidate]: this.addValidateActionToQueue,
         [WEATHER_ACTIONS_TYPES.entityInvalidate]: this.addInvalidateActionToQueue,
         [WEATHER_ACTIONS_TYPES.entityPause]: this.showCreateServicePauseEventModal,
         [WEATHER_ACTIONS_TYPES.entityPlay]: this.addPlayActionToQueue,
         [WEATHER_ACTIONS_TYPES.entityCancel]: this.showCancelModal,
         [WEATHER_ACTIONS_TYPES.entityComment]: this.showCreateCommentEventModal,
+        [WEATHER_ACTIONS_TYPES.declareTicket]: this.showCreateDeclareTicketModal,
       };
     },
   },
@@ -103,11 +104,11 @@ export const widgetActionPanelServiceEntityMixin = {
       });
     },
 
-    showCreateDeclareTicketModal(entities) {
+    showCreateAssociateTicketModal(entities) {
       this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
-          title: this.$t('modals.createDeclareTicket.title'),
+          title: this.$t('modals.createAssociateTicket.title'),
           field: {
             name: 'ticket',
             label: this.$t('modals.createAssociateTicket.fields.ticket'),
@@ -118,6 +119,27 @@ export const widgetActionPanelServiceEntityMixin = {
               entities,
               actionType: WEATHER_ACTIONS_TYPES.entityAssocTicket,
               payload: { ticket },
+            });
+          },
+        },
+      });
+    },
+
+    showCreateDeclareTicketModal(entities) {
+      this.$modals.show({
+        name: MODALS.textFieldEditor,
+        config: {
+          title: this.$t('modals.createDeclareTicket.title'),
+          field: {
+            name: 'ticket',
+            label: this.$t('common.output'),
+            validationRules: 'required',
+          },
+          action: (output) => {
+            this.addActionToQueue({
+              entities,
+              actionType: WEATHER_ACTIONS_TYPES.declareTicket,
+              payload: { output },
             });
           },
         },

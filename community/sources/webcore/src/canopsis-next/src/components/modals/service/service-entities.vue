@@ -31,8 +31,9 @@
             span {{ actionsCount }} {{ $tc('modals.service.actionPending', actionsCount) }}
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-tooltip.mx-2(top)
-          v-btn.secondary(slot="activator", @click="fetchList")
-            v-icon refresh
+          template(#activator="{ on }")
+            v-btn.secondary(v-on="on", @click="fetchList")
+              v-icon refresh
           span {{ $t('modals.service.refreshEntities') }}
         v-btn.primary(
           :disabled="isDisabled",
@@ -161,7 +162,7 @@ export default {
     },
 
     async removePbehaviorsWithPopups(pbehaviors) {
-      const response = await this.removePbehaviorsWithPopups(pbehaviors);
+      const response = await this.removePbehaviors(pbehaviors);
 
       this.showPbehaviorResponseErrorPopups(response);
     },

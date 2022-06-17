@@ -313,6 +313,7 @@ export const WEATHER_ACTIONS_TYPES = {
   entityPlay: 'entityPlay',
   entityCancel: 'entityCancel',
   entityComment: 'entityComment',
+  declareTicket: 'declareTicket',
 
   entityLinks: 'entityLinks',
 
@@ -392,6 +393,7 @@ export const ENTITY_EVENT_BY_ACTION_TYPE = {
   [WEATHER_ACTIONS_TYPES.entityComment]: EVENT_ENTITY_TYPES.comment,
   [WEATHER_ACTIONS_TYPES.pbehaviorList]: EVENT_ENTITY_TYPES.pbehaviorList,
   [WEATHER_ACTIONS_TYPES.executeInstruction]: EVENT_ENTITY_TYPES.executeInstruction,
+  [WEATHER_ACTIONS_TYPES.declareTicket]: EVENT_ENTITY_TYPES.declareTicket,
 };
 
 export const UNKNOWN_VALUE_STYLE = {
