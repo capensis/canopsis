@@ -320,7 +320,7 @@ export default {
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
         widgetId: this.widget._id,
         data: {
-          ...pick(query, ['search', 'category', 'correlation', 'opened']),
+          ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
 
           fields: columns.map(({ label, value }) => ({ label, name: value })),
           filter: JSON.stringify(query.filter),
