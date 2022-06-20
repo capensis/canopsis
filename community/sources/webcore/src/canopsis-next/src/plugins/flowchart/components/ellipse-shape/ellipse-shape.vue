@@ -1,28 +1,28 @@
 <template lang="pug">
   g
-    circle-figure(
-      v-bind="circle.style",
-      :x="circle.x",
-      :y="circle.y",
-      :diameter="circle.diameter",
-      pointer-events="all"
+    ellipse(
+      v-bind="ellipse.style",
+      :cx="centerX",
+      :cy="centerY",
+      :rx="radiusX",
+      :ry="radiusY"
     )
     text-editor(
       ref="editor",
-      :value="circle.text",
-      :y="circle.y",
-      :x="circle.x",
-      :width="circle.diameter",
-      :height="circle.diameter",
+      :value="ellipse.text",
+      :y="ellipse.y",
+      :x="ellipse.x",
+      :width="ellipse.width",
+      :height="ellipse.height",
       :editable="editing",
-      :align-center="circle.alignCenter",
-      :justify-center="circle.justifyCenter",
+      :align-center="ellipse.alignCenter",
+      :justify-center="ellipse.justifyCenter",
       @blur="disableEditingMode"
     )
-    circle-shape-selection(
+    rect-shape-selection(
       v-if="!readonly",
       :selected="selected",
-      :circle="circle",
+      :rect="ellipse",
       :pointer-events="editing ? 'none' : 'all'",
       @resize="onResize",
       @dblclick="enableEditingMode",
@@ -34,19 +34,18 @@
 <script>
 import { formBaseMixin } from '@/mixins/form';
 
-import CircleShapeSelection from './circle-shape-selection.vue';
+import RectShapeSelection from '../rect-shape/rect-shape-selection.vue';
 import TextEditor from '../common/text-editor.vue';
-import CircleFigure from '../common/circle-figure.vue';
 
 export default {
-  components: { CircleFigure, CircleShapeSelection, TextEditor },
+  components: { RectShapeSelection, TextEditor },
   mixins: [formBaseMixin],
   model: {
-    prop: 'circle',
+    prop: 'ellipse',
     event: 'input',
   },
   props: {
-    circle: {
+    ellipse: {
       type: Object,
       required: true,
     },
@@ -69,35 +68,36 @@ export default {
     };
   },
   computed: {
-    radius() {
-      return this.circle.diameter / 2;
+    radiusX() {
+      return this.ellipse.width / 2;
+    },
+
+    radiusY() {
+      return this.ellipse.height / 2;
     },
 
     centerX() {
-      return this.circle.x + this.radius;
+      return this.ellipse.x + this.radiusX;
     },
 
     centerY() {
-      return this.circle.y + this.radius;
+      return this.ellipse.y + this.radiusY;
     },
   },
   methods: {
     move(newOffset, oldOffset) {
-      const { x, y } = this.circle;
+      const { x, y } = this.ellipse;
 
       this.updateModel({
-        ...this.circle,
+        ...this.ellipse,
 
         x: (x - oldOffset.x) + newOffset.x,
         y: (y - oldOffset.y) + newOffset.y,
       });
     },
 
-    onResize(circle) {
-      this.updateModel({
-        ...this.circle,
-        ...circle,
-      });
+    onResize(ellipse) {
+      this.updateModel({ ...this.ellipse, ...ellipse });
     },
 
     enableEditingMode() {
@@ -108,7 +108,7 @@ export default {
 
     disableEditingMode(event) {
       this.updateModel({
-        ...this.circle,
+        ...this.ellipse,
         text: event.target.innerHTML,
       });
 

@@ -15,7 +15,8 @@
       :width="square.size",
       :height="square.size",
       :editable="editing",
-      center,
+      align-center,
+      justify-center,
       @blur="disableEditingMode"
     )
     square-shape-selection(

@@ -1,32 +1,44 @@
 <template lang="pug">
   g
-    slot
-    points-path(
-      v-bind="shape.style",
-      :points="shape.points",
-      :marker-end="markerEnd",
-      :marker-start="markerStart",
-      pointer-events="none"
-    )
-    line-shape-selection(
-      v-if="!readonly",
+    line-shape(
+      v-on="$listeners",
+      v-field="shape",
       :selected="selected",
-      :line="shape",
-      @mousedown="$emit('mousedown', $event)",
-      @mouseup="$emit('mouseup', $event)",
-      @resize="onResize"
+      :corner-offset="cornerOffset",
+      :readonly="readonly",
+      :marker-start="`url(#${shape.id}-start)`",
+      :marker-end="`url(#${shape.id}-end)`"
     )
+      marker(
+        :id="`${shape.id}-end`",
+        refX="20",
+        refY="10",
+        markerWidth="60",
+        markerHeight="60",
+        markerUnits="userSpaceOnUse",
+        orient="auto"
+      )
+        arrow-figure(:fill="shape.style['stroke']")
+      marker(
+        :id="`${shape.id}-start`",
+        refX="20",
+        refY="10",
+        markerWidth="60",
+        markerHeight="60",
+        markerUnits="userSpaceOnUse",
+        orient="auto-start-reverse"
+      )
+        arrow-figure(:fill="shape.style['stroke']")
 </template>
 
 <script>
 import { formBaseMixin } from '@/mixins/form';
 
-import PointsPath from '../common/points-path.vue';
-
-import LineShapeSelection from './line-shape-selection.vue';
+import ArrowFigure from '../common/arrow-figure.vue';
+import LineShape from '../line-shape/line-shape.vue';
 
 export default {
-  components: { PointsPath, LineShapeSelection },
+  components: { LineShape, ArrowFigure },
   mixins: [formBaseMixin],
   model: {
     prop: 'shape',
@@ -48,14 +60,6 @@ export default {
     readonly: {
       type: Boolean,
       default: false,
-    },
-    markerStart: {
-      type: String,
-      required: false,
-    },
-    markerEnd: {
-      type: String,
-      required: false,
     },
   },
   methods: {

@@ -25,7 +25,7 @@ export default {
       const secondPoint = `0 ${this.height}`;
       const thirdPoint = `${this.width} ${halfHeight}`;
 
-      return `M${firstPoint} ${secondPoint} ${thirdPoint} ${firstPoint} Z`;
+      return `M${firstPoint} ${this.width / 4} ${halfHeight} ${secondPoint} ${thirdPoint} ${firstPoint} Z`;
     },
   },
 };

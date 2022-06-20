@@ -1,15 +1,15 @@
 <template lang="pug">
   g
-    points-line(
+    points-path(
       :points="line.points",
       cursor="move",
       stroke-width="10",
-      pointer-events="stroke",
+      :pointer-events="moving ? 'none' : 'stroke'",
       @mousedown.stop="$emit('mousedown', $event)",
       @mouseup="$emit('mouseup', $event)"
     )
     template(v-if="selected")
-      points-line(
+      points-path(
         :points="editedPoints",
         :stroke="color",
         fill="transparent",
@@ -26,6 +26,7 @@
         :r="cornerRadius",
         :opacity="point.ghost ? 0.4 : 1",
         cursor="crosshair",
+        :pointer-events="moving ? 'none' : 'all'",
         @mousedown.stop="onStartMovePoint(index, point)"
       )
 </template>
@@ -33,11 +34,11 @@
 <script>
 import { getPointsWithGhosts } from '../../utils/points';
 
-import PointsLine from '../common/points-line.vue';
+import PointsPath from '../common/points-path.vue';
 
 export default {
   inject: ['$mouseMove', '$mouseUp'],
-  components: { PointsLine },
+  components: { PointsPath },
   props: {
     line: {
       type: Object,
@@ -59,7 +60,8 @@ export default {
   data() {
     return {
       editedPoints: [],
-      movedPointIndex: undefined,
+      moving: undefined,
+      movingPointIndex: undefined,
     };
   },
   computed: {
@@ -77,7 +79,7 @@ export default {
   },
   methods: {
     movePoint({ x, y }) {
-      this.editedPoints.splice(this.movedPointIndex, 1, { x, y });
+      this.editedPoints.splice(this.movingPointIndex, 1, { x, y });
     },
 
     addPointAfterIndex(index, { x, y }) {
@@ -85,11 +87,13 @@ export default {
     },
 
     onStartMovePoint(index, point) {
+      this.moving = true;
+
       if (point.ghost) {
         this.addPointAfterIndex(point.index, point);
       }
 
-      this.movedPointIndex = point.index;
+      this.movingPointIndex = point.index;
 
       this.$mouseMove.register(this.movePoint);
       this.$mouseUp.register(this.finishMovePoints);
@@ -100,6 +104,8 @@ export default {
 
       this.$mouseMove.unregister(this.movePoint);
       this.$mouseUp.unregister(this.onMouseUp);
+
+      this.moving = false;
     },
   },
 };

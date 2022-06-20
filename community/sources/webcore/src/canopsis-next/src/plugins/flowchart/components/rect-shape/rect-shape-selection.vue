@@ -18,14 +18,15 @@
       :color="color",
       :corner-radius="cornerRadius",
       cursor="move",
+      resizable,
       @start:resize="startResize"
     )
 </template>
 
 <script>
-import RectSelection from '../common/rect-selection.vue';
+import { resizeRectangleShapeByDirection } from '../../utils/resize';
 
-import { DIRECTIONS } from '../../constants';
+import RectSelection from '../common/rect-selection.vue';
 
 export default {
   inject: ['$mouseMove', '$mouseUp'],
@@ -73,81 +74,16 @@ export default {
       this.$mouseUp.unregister(this.finishResize);
     },
 
-    onResize({ x: cursorX, y: cursorY }) {
-      const directionArray = this.direction.split('');
-      const newRect = {
-        x: this.rect.x,
-        y: this.rect.y,
-        width: this.rect.width,
-        height: this.rect.height,
-      };
+    onResize(cursor) {
+      const { direction, rect } = resizeRectangleShapeByDirection(
+        this.rect,
+        cursor,
+        this.direction,
+      );
 
-      directionArray.forEach((direction, index) => {
-        switch (direction) {
-          case DIRECTIONS.south: {
-            const newHeight = cursorY - newRect.y;
+      this.direction = direction;
 
-            if (newHeight > 0) {
-              newRect.height = newHeight;
-            } else {
-              newRect.height = Math.abs(newHeight);
-              newRect.y -= newRect.height;
-
-              directionArray[index] = DIRECTIONS.north;
-            }
-
-            break;
-          }
-          case DIRECTIONS.north: {
-            const newHeight = newRect.height + newRect.y - cursorY;
-
-            if (newHeight > 0) {
-              newRect.height = newHeight;
-              newRect.y = cursorY;
-            } else {
-              newRect.height = Math.abs(newHeight);
-              newRect.y = cursorY - newRect.height;
-
-              directionArray[index] = DIRECTIONS.south;
-            }
-
-            break;
-          }
-          case DIRECTIONS.east: {
-            const newWidth = cursorX - newRect.x;
-
-            if (newWidth > 0) {
-              newRect.width = newWidth;
-            } else {
-              newRect.width = Math.abs(newWidth);
-              newRect.x = cursorX;
-
-              directionArray[index] = DIRECTIONS.west;
-            }
-
-            break;
-          }
-          case DIRECTIONS.west: {
-            const newWidth = newRect.width + newRect.x - cursorX;
-
-            if (newWidth > 0) {
-              newRect.width = newWidth;
-              newRect.x = cursorX;
-            } else {
-              newRect.width = Math.abs(newWidth);
-              newRect.x = cursorX - newRect.width;
-
-              directionArray[index] = DIRECTIONS.east;
-            }
-
-            break;
-          }
-        }
-      });
-
-      this.direction = directionArray.join('');
-
-      this.$emit('resize', newRect, this.direction);
+      this.$emit('resize', rect);
     },
   },
 };

@@ -1,28 +1,28 @@
 <template lang="pug">
   g
-    circle-figure(
-      v-bind="circle.style",
-      :x="circle.x",
-      :y="circle.y",
-      :diameter="circle.diameter",
-      pointer-events="all"
+    rhombus-figure(
+      v-bind="rhombus.style",
+      :width="rhombus.width",
+      :height="rhombus.height",
+      :x="rhombus.x",
+      :y="rhombus.y"
     )
     text-editor(
       ref="editor",
-      :value="circle.text",
-      :y="circle.y",
-      :x="circle.x",
-      :width="circle.diameter",
-      :height="circle.diameter",
+      :value="rhombus.text",
+      :y="rhombus.y",
+      :x="rhombus.x",
+      :width="rhombus.width",
+      :height="rhombus.height",
       :editable="editing",
-      :align-center="circle.alignCenter",
-      :justify-center="circle.justifyCenter",
+      :align-center="rhombus.alignCenter",
+      :justify-center="rhombus.justifyCenter",
       @blur="disableEditingMode"
     )
-    circle-shape-selection(
+    rhombus-shape-selection(
       v-if="!readonly",
       :selected="selected",
-      :circle="circle",
+      :rhombus="rhombus",
       :pointer-events="editing ? 'none' : 'all'",
       @resize="onResize",
       @dblclick="enableEditingMode",
@@ -34,19 +34,20 @@
 <script>
 import { formBaseMixin } from '@/mixins/form';
 
-import CircleShapeSelection from './circle-shape-selection.vue';
 import TextEditor from '../common/text-editor.vue';
-import CircleFigure from '../common/circle-figure.vue';
+import RhombusFigure from '../common/rhombus-figure.vue';
+
+import RhombusShapeSelection from './rhombus-shape-selection.vue';
 
 export default {
-  components: { CircleFigure, CircleShapeSelection, TextEditor },
+  components: { RhombusFigure, RhombusShapeSelection, TextEditor },
   mixins: [formBaseMixin],
   model: {
-    prop: 'circle',
+    prop: 'rhombus',
     event: 'input',
   },
   props: {
-    circle: {
+    rhombus: {
       type: Object,
       required: true,
     },
@@ -68,36 +69,20 @@ export default {
       editing: false,
     };
   },
-  computed: {
-    radius() {
-      return this.circle.diameter / 2;
-    },
-
-    centerX() {
-      return this.circle.x + this.radius;
-    },
-
-    centerY() {
-      return this.circle.y + this.radius;
-    },
-  },
   methods: {
     move(newOffset, oldOffset) {
-      const { x, y } = this.circle;
+      const { x, y } = this.rhombus;
 
       this.updateModel({
-        ...this.circle,
+        ...this.rhombus,
 
         x: (x - oldOffset.x) + newOffset.x,
         y: (y - oldOffset.y) + newOffset.y,
       });
     },
 
-    onResize(circle) {
-      this.updateModel({
-        ...this.circle,
-        ...circle,
-      });
+    onResize(rhombus) {
+      this.updateModel({ ...this.rhombus, ...rhombus });
     },
 
     enableEditingMode() {
@@ -108,7 +93,7 @@ export default {
 
     disableEditingMode(event) {
       this.updateModel({
-        ...this.circle,
+        ...this.rhombus,
         text: event.target.innerHTML,
       });
 

@@ -1,8 +1,6 @@
 <template lang="pug">
   component(is="foreignObject", :y="y", :x="x", :width="width", :height="height")
-    div.text-shape-editor(
-      :class="{ 'text-shape-editor--center': center, 'text-shape-editor--unselect': unselect }"
-    )
+    div.text-shape-editor(:class="editorClasses")
       div.text-shape-editor__field(
         ref="textEditor",
         v-html="value",
@@ -51,13 +49,27 @@ export default {
       type: Boolean,
       default: false,
     },
-    center: {
+    alignCenter: {
+      type: Boolean,
+      default: false,
+    },
+    justifyCenter: {
       type: Boolean,
       default: false,
     },
     unselect: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    editorClasses() {
+      return {
+        'text-shape-editor--align-center': this.alignCenter,
+        'text-shape-editor--justify-center': this.justifyCenter,
+        'text-shape-editor--unselect': this.unselect,
+        'text-shape-editor--editable': this.editable,
+      };
     },
   },
   methods: {
@@ -96,9 +108,16 @@ export default {
     }
   }
 
-  &--center {
-    justify-content: center;
+  &--align-center {
     align-items: center;
+  }
+
+  &--justify-center {
+    justify-content: center;
+  }
+
+  &:not(&--editable) {
+    pointer-events: none;
   }
 }
 </style>

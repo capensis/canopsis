@@ -1,5 +1,12 @@
 <template lang="pug">
-  g
+  line-shape(
+    v-on="$listeners",
+    v-field="shape",
+    :selected="selected",
+    :corner-offset="cornerOffset",
+    :readonly="readonly",
+    marker-end="url(#arrow-line-triangle)"
+  )
     marker#arrow-line-triangle(
       refX="20",
       refY="10",
@@ -8,33 +15,17 @@
       markerUnits="userSpaceOnUse",
       orient="auto"
     )
-      arrow(:fill="shape.style['stroke']")
-    points-line(
-      v-bind="shape.style",
-      :points="shape.points",
-      pointer-events="none",
-      marker-end="url(#arrow-line-triangle)"
-    )
-    line-shape-selection(
-      v-if="!readonly",
-      :selected="selected",
-      :line="shape",
-      @mousedown="$emit('mousedown', $event)",
-      @mouseup="$emit('mouseup', $event)",
-      @resize="onResize"
-    )
+      arrow-figure(:fill="shape.style['stroke']")
 </template>
 
 <script>
 import { formBaseMixin } from '@/mixins/form';
 
-import LineShapeSelection from '../line-shape/line-shape-selection.vue';
-
-import Arrow from '../common/arrow.vue';
-import PointsLine from '../common/points-line.vue';
+import ArrowFigure from '../common/arrow-figure.vue';
+import LineShape from '../line-shape/line-shape.vue';
 
 export default {
-  components: { LineShapeSelection, PointsLine, Arrow },
+  components: { LineShape, ArrowFigure },
   mixins: [formBaseMixin],
   model: {
     prop: 'shape',
