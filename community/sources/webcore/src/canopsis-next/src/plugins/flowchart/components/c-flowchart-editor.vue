@@ -37,6 +37,7 @@ import SquareShape from './square-shape/square-shape.vue';
 import ImageShape from './image-shape/image-shape.vue';
 import RhombusShape from './rhombus-shape/rhombus-shape.vue';
 import ParallelogramShape from './parallelogram-shape/parallelogram-shape.vue';
+import StorageShape from './storage-shape/storage-shape.vue';
 
 export default {
   provide() {
@@ -56,6 +57,7 @@ export default {
     ImageShape,
     RhombusShape,
     ParallelogramShape,
+    StorageShape,
   },
   model: {
     event: 'input',

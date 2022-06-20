@@ -1,0 +1,110 @@
+<template lang="pug">
+  g
+    storage-figure(
+      v-bind="storage.style",
+      :width="storage.width",
+      :height="storage.height",
+      :radius="storage.radius",
+      :x="storage.x",
+      :y="storage.y"
+    )
+    text-editor(
+      ref="editor",
+      :value="storage.text",
+      :y="storage.y + diameter",
+      :x="storage.x",
+      :width="storage.width",
+      :height="storage.height - diameter",
+      :editable="editing",
+      :align-center="storage.alignCenter",
+      :justify-center="storage.justifyCenter",
+      @blur="disableEditingMode"
+    )
+    storage-shape-selection(
+      v-if="!readonly",
+      :selected="selected",
+      :storage="storage",
+      :pointer-events="editing ? 'none' : 'all'",
+      @resize="onResize",
+      @dblclick="enableEditingMode",
+      @mousedown="$emit('mousedown', $event)",
+      @mouseup="$emit('mouseup', $event)"
+    )
+</template>
+
+<script>
+import { formBaseMixin } from '@/mixins/form';
+
+import TextEditor from '../common/text-editor.vue';
+import StorageFigure from '../common/storage-figure.vue';
+
+import StorageShapeSelection from './storage-shape-selection.vue';
+
+export default {
+  components: { StorageFigure, StorageShapeSelection, TextEditor },
+  mixins: [formBaseMixin],
+  model: {
+    prop: 'storage',
+    event: 'input',
+  },
+  props: {
+    storage: {
+      type: Object,
+      required: true,
+    },
+    selected: {
+      type: Boolean,
+      default: false,
+    },
+    cornerOffset: {
+      type: Number,
+      default: 0,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      editing: false,
+    };
+  },
+  computed: {
+    diameter() {
+      return this.storage.radius * 2;
+    },
+  },
+  methods: {
+    move(newOffset, oldOffset) {
+      const { x, y } = this.storage;
+
+      this.updateModel({
+        ...this.storage,
+
+        x: (x - oldOffset.x) + newOffset.x,
+        y: (y - oldOffset.y) + newOffset.y,
+      });
+    },
+
+    onResize(storage) {
+      this.updateModel({ ...this.storage, ...storage });
+    },
+
+    enableEditingMode() {
+      this.editing = true;
+
+      this.$refs.editor.focus();
+    },
+
+    disableEditingMode(event) {
+      this.updateModel({
+        ...this.storage,
+        text: event.target.innerHTML,
+      });
+
+      this.editing = false;
+    },
+  },
+};
+</script>
