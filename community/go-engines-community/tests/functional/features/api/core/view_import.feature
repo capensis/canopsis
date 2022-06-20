@@ -325,7 +325,7 @@ Feature: Import views
     """json
     {
       "errors": {
-        "0.views.0.tabs.0.widgets.0.title": "value is missing"
+        "0.views.0.tabs.0.widgets.0.type": "value is missing"
       }
     }
     """
