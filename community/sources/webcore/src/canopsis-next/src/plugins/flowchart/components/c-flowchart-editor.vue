@@ -30,8 +30,13 @@ import { roundByStep } from '../utils/round';
 import RectShape from './rect-shape/rect-shape.vue';
 import LineShape from './line-shape/line-shape.vue';
 import ArrowLineShape from './arrow-line-shape/arrow-line-shape.vue';
+import BidirectionalArrowLineShape from './bidirectional-arrow-line-shape/bidirectional-arrow-line-shape.vue';
 import CircleShape from './circle-shape/circle-shape.vue';
+import EllipseShape from './ellipse-shape/ellipse-shape.vue';
 import SquareShape from './square-shape/square-shape.vue';
+import ImageShape from './image-shape/image-shape.vue';
+import RhombusShape from './rhombus-shape/rhombus-shape.vue';
+import ParallelogramShape from './parallelogram-shape/parallelogram-shape.vue';
 
 export default {
   provide() {
@@ -44,8 +49,13 @@ export default {
     RectShape,
     LineShape,
     ArrowLineShape,
+    BidirectionalArrowLineShape,
     CircleShape,
+    EllipseShape,
     SquareShape,
+    ImageShape,
+    RhombusShape,
+    ParallelogramShape,
   },
   model: {
     event: 'input',

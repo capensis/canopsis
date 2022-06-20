@@ -1,9 +1,11 @@
 <template lang="pug">
-  g
+  g(@dblclick="enableEditingMode")
     rect(
       v-bind="rect.style",
       :x="rect.x",
       :y="rect.y",
+      :rx="rect.rx",
+      :ry="rect.ry",
       :width="rect.width",
       :height="rect.height"
     )
@@ -15,7 +17,8 @@
       :width="rect.width",
       :height="rect.height",
       :editable="editing",
-      :center="rect.textCenter",
+      :align-center="rect.alignCenter",
+      :justify-center="rect.justifyCenter",
       @blur="disableEditingMode"
     )
     rect-shape-selection(
@@ -83,9 +86,11 @@ export default {
     },
 
     enableEditingMode() {
-      this.editing = true;
+      if (!this.readonly) {
+        this.editing = true;
 
-      this.$refs.editor.focus();
+        this.$refs.editor.focus();
+      }
     },
 
     disableEditingMode(event) {

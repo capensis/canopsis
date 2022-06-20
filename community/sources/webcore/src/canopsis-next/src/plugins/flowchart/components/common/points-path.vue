@@ -1,7 +1,7 @@
 <template lang="pug">
   path(
     :d="path",
-    fill="transparent",
+    :fill="fill",
     pointer-events="all",
     v-on="$listeners"
   )

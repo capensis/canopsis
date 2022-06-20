@@ -1,10 +1,10 @@
 <template lang="pug">
   g(@dblclick="$emit('dblclick', $event)")
-    rect(
-      :x="square.x",
-      :y="square.y",
-      :width="square.size",
-      :height="square.size",
+    rhombus-figure(
+      :x="rhombus.x",
+      :y="rhombus.y",
+      :width="rhombus.width",
+      :height="rhombus.height",
       :pointer-events="pointerEvents",
       fill="transparent",
       cursor="move",
@@ -13,7 +13,7 @@
     )
     rect-selection(
       v-if="selected",
-      :rect="rect",
+      :rect="rhombus",
       :padding="padding",
       :color="color",
       :corner-radius="cornerRadius",
@@ -23,15 +23,16 @@
 </template>
 
 <script>
-import { resizeSquareShapeByDirection } from '../../utils/resize';
+import { resizeRectangleShapeByDirection } from '../../utils/resize';
 
 import RectSelection from '../common/rect-selection.vue';
+import RhombusFigure from '../common/rhombus-figure.vue';
 
 export default {
   inject: ['$mouseMove', '$mouseUp'],
-  components: { RectSelection },
+  components: { RhombusFigure, RectSelection },
   props: {
-    square: {
+    rhombus: {
       type: Object,
       required: true,
     },
@@ -61,16 +62,6 @@ export default {
       direction: undefined,
     };
   },
-  computed: {
-    rect() {
-      return {
-        x: this.square.x,
-        y: this.square.y,
-        width: this.square.size,
-        height: this.square.size,
-      };
-    },
-  },
   methods: {
     startResize(direction) {
       this.$mouseMove.register(this.onResize);
@@ -84,14 +75,14 @@ export default {
     },
 
     onResize(cursor) {
-      const { square, direction } = resizeSquareShapeByDirection(
-        this.square,
+      const { rect, direction } = resizeRectangleShapeByDirection(
+        this.rhombus,
         cursor,
         this.direction,
       );
 
       this.direction = direction;
-      this.$emit('resize', square);
+      this.$emit('resize', rect);
     },
   },
 };
