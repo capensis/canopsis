@@ -2,9 +2,8 @@
 
 exports[`idle-rule-patterns-form Renders \`idle-rule-patterns-form\` with custom props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object]"
-  alarm-excluded-attributes="v.last_update_date,v.last_event_date,resolved"
-  entity-excluded-items="last_event_date"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object]"
+  entity-attributes="[object Object]"
   some-required="some-required"
   value="[object Object]"
   with-entity="with-entity"
@@ -13,9 +12,8 @@ exports[`idle-rule-patterns-form Renders \`idle-rule-patterns-form\` with custom
 
 exports[`idle-rule-patterns-form Renders \`idle-rule-patterns-form\` with default props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object]"
-  alarm-excluded-attributes="v.last_update_date,v.last_event_date,resolved"
-  entity-excluded-items="last_event_date"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object]"
+  entity-attributes="[object Object]"
   some-required="some-required"
   value="[object Object]"
   with-alarm="true"
