@@ -149,11 +149,11 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	update := bson.M{"$set": model}
 
 	unset := bson.M{}
-	if len(model.AlarmPattern) > 0 {
+	if request.CorporateAlarmPattern != "" || len(request.AlarmPattern) > 0 {
 		unset["old_alarm_patterns"] = 1
 	}
 
-	if len(model.EntityPattern) > 0 {
+	if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 {
 		unset["old_entity_patterns"] = 1
 	}
 
