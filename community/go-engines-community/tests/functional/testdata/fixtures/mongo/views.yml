@@ -294,3 +294,7 @@ views:
   view_to_entity_get:
     <<: *view
     _id: test-view-to-entity-get
+
+  view_dynamic_infos:
+    <<: *view
+    _id: test-view-dynamic-infos

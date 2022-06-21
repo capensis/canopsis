@@ -3736,50 +3736,6 @@ default_entities:
     measurements: null
     name: test-alarm-time-fields-search-get-component
     type: component
-  default_entities_294:
-    _id: dynamic-info-update-connector/dynamic-info-update-connectorname
-    depends:
-      - dynamic-info-update-component
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact:
-      - dynamic-info-update-resource-1/dynamic-info-update-component
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: dynamic-info-update-connectorname
-    type: connector
-  default_entities_295:
-    _id: dynamic-info-update-component
-    component: dynamic-info-update-component
-    depends:
-      - dynamic-info-update-resource-1/dynamic-info-update-component
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact:
-      - dynamic-info-update-connector/dynamic-info-update-connectorname
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: dynamic-info-update-component
-    type: component
-  default_entities_296:
-    _id: dynamic-info-update-resource-1/dynamic-info-update-component
-    component: dynamic-info-update-component
-    depends:
-      - dynamic-info-update-connector/dynamic-info-update-connectorname
-    enable_history:
-      - 1597030219
-    enabled: true
-    impact:
-      - dynamic-info-update-component
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: dynamic-info-update-resource-1
-    type: resource
   default_entities_297:
     _id: test-connector-entity-api-8/test-connector-name-entity-api-8
     depends:
