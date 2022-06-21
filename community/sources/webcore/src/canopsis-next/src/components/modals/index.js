@@ -317,3 +317,7 @@ export const CreateAlarmStatusRule = () => ({
   component: import(/* webpackChunkName: "AlarmStatusRule" */ './alarm-status-rule/create-alarm-status-rule.vue'),
   loading: LoaderOverlay,
 });
+export const CreateKpiFilter = () => ({
+  component: import(/* webpackChunkName: "KPI" */ './kpi/create-kpi-filter.vue'),
+  loading: LoaderOverlay,
+});

@@ -8,7 +8,7 @@
           v-tabs-items.pt-2(v-model="activeTab")
             v-tab-item(lazy)
               v-flex(xs12, lg10, offset-lg1)
-                c-patterns-field(:value="patterns", disabled, with-entity, with-alarm)
+                kpi-filter-patterns-form(:form="patterns", disabled)
 </template>
 
 <script>
@@ -16,7 +16,10 @@ import { PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/forms/filter';
 
+import KpiFilterPatternsForm from '../form/partials/kpi-filter-patterns-form.vue';
+
 export default {
+  components: { KpiFilterPatternsForm },
   props: {
     filter: {
       type: Object,
@@ -30,7 +33,7 @@ export default {
   },
   computed: {
     patterns() {
-      return filterPatternsToForm(this.filter, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]);
+      return filterPatternsToForm(this.filter, [PATTERNS_FIELDS.entity]);
     },
   },
 };
