@@ -13,7 +13,10 @@
     )
     rect-selection(
       v-if="selected",
-      :rect="rect",
+      :x="rect.x",
+      :y="rect.y",
+      :width="rect.width",
+      :height="rect.height",
       :padding="padding",
       :color="color",
       :corner-radius="cornerRadius",
@@ -21,16 +24,26 @@
       resizable,
       @start:resize="startResize"
     )
+    rect-shape-connectors(
+      v-if="!selected && connection",
+      :x="rect.x",
+      :y="rect.y",
+      :rx="rect.rx",
+      :ry="rect.ry",
+      :width="rect.width",
+      :height="rect.height"
+    )
 </template>
 
 <script>
 import { resizeRectangleShapeByDirection } from '../../utils/resize';
 
 import RectSelection from '../common/rect-selection.vue';
+import RectShapeConnectors from './rect-shape-connectors.vue';
 
 export default {
   inject: ['$mouseMove', '$mouseUp'],
-  components: { RectSelection },
+  components: { RectShapeConnectors, RectSelection },
   props: {
     rect: {
       type: Object,
@@ -60,6 +73,7 @@ export default {
   data() {
     return {
       direction: undefined,
+      connection: false,
     };
   },
   methods: {

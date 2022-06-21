@@ -14,83 +14,35 @@
     template(v-if="resizable")
       // Top left corner
       circle(
-        :cx="leftX",
-        :cy="topY",
+        v-for="circle in resizeCircles",
+        :cx="circle.x",
+        :cy="circle.y",
         :fill="color",
         :r="cornerRadius",
-        cursor="nw-resize",
-        @mousedown.stop="startResize('nw')"
-      )
-      // Top center
-      circle(
-        :cx="centerX",
-        :cy="topY",
-        :fill="color",
-        :r="cornerRadius",
-        cursor="n-resize",
-        @mousedown.stop="startResize('n')"
-      )
-      // Top right corner
-      circle(
-        :cx="rightX",
-        :cy="topY",
-        :fill="color",
-        :r="cornerRadius",
-        cursor="ne-resize",
-        @mousedown.stop="startResize('ne')"
-      )
-      // Right center
-      circle(
-        :cx="rightX",
-        :cy="centerY",
-        :fill="color",
-        :r="cornerRadius",
-        cursor="e-resize",
-        @mousedown.stop="startResize('e')"
-      )
-      // Bottom right corner
-      circle(
-        :cx="rightX",
-        :cy="bottomY",
-        :fill="color",
-        :r="cornerRadius",
-        cursor="se-resize",
-        @mousedown.stop="startResize('se')"
-      )
-      // Bottom center
-      circle(
-        :cx="centerX",
-        :cy="bottomY",
-        :fill="color",
-        :r="cornerRadius",
-        cursor="s-resize",
-        @mousedown.stop="startResize('s')"
-      )
-      // Bottom left corner
-      circle(
-        :cx="leftX",
-        :cy="bottomY",
-        :fill="color",
-        :r="cornerRadius",
-        cursor="sw-resize",
-        @mousedown.stop="startResize('sw')"
-      )
-      // Left center
-      circle(
-        :cx="leftX",
-        :cy="centerY",
-        :fill="color",
-        :r="cornerRadius",
-        cursor="w-resize",
-        @mousedown.stop="startResize('w')"
+        :cursor="`${circle.direction}-resize`",
+        @mousedown.stop="startResize(circle.direction)"
       )
 </template>
 
 <script>
+import { DIRECTIONS } from '@/plugins/flowchart/constants';
+
 export default {
   props: {
-    rect: {
-      type: Object,
+    x: {
+      type: Number,
+      required: true,
+    },
+    y: {
+      type: Number,
+      required: true,
+    },
+    width: {
+      type: Number,
+      required: true,
+    },
+    height: {
+      type: Number,
       required: true,
     },
     padding: {
@@ -112,19 +64,19 @@ export default {
   },
   computed: {
     leftX() {
-      return this.rect.x - this.padding;
+      return this.x - this.padding;
     },
 
     topY() {
-      return this.rect.y - this.padding;
+      return this.y - this.padding;
     },
 
     rightX() {
-      return this.rect.x + this.rect.width + this.padding;
+      return this.x + this.width + this.padding;
     },
 
     bottomY() {
-      return this.rect.y + this.rect.height + this.padding;
+      return this.y + this.height + this.padding;
     },
 
     selectionWidth() {
@@ -141,6 +93,19 @@ export default {
 
     centerY() {
       return this.topY + this.selectionHeight / 2;
+    },
+
+    resizeCircles() {
+      return [
+        { x: this.leftX, y: this.topY, direction: DIRECTIONS.northWest },
+        { x: this.centerX, y: this.topY, direction: DIRECTIONS.north },
+        { x: this.rightX, y: this.topY, direction: DIRECTIONS.northEast },
+        { x: this.rightX, y: this.centerY, direction: DIRECTIONS.east },
+        { x: this.rightX, y: this.bottomY, direction: DIRECTIONS.southEast },
+        { x: this.centerX, y: this.bottomY, direction: DIRECTIONS.south },
+        { x: this.leftX, y: this.bottomY, direction: DIRECTIONS.southWest },
+        { x: this.leftX, y: this.centerY, direction: DIRECTIONS.west },
+      ];
     },
   },
   methods: {
