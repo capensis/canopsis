@@ -186,11 +186,11 @@ export default {
         limit: this.limit,
         page: this.query.page,
         search: this.query.search,
-        filter: { type: { $in: this.entityTypes } },
+        type: this.entityTypes,
       };
 
       if (ids) {
-        params.filter._id = { $in: isArray(ids) ? ids : [ids] };
+        params.filter = { _id: { $in: isArray(ids) ? ids : [ids] } };
       }
 
       return params;

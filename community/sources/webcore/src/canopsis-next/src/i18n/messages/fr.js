@@ -29,7 +29,7 @@ import {
   EVENT_FILTER_TYPES,
   PATTERN_OPERATORS,
   PATTERN_TYPES,
-  PATTERN_INPUT_TYPES,
+  PATTERN_FIELD_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -241,6 +241,8 @@ export default {
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Personnalisé',
+    eventType: 'Type d\'événement',
+    sourceType: 'Type de Source',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -348,6 +350,18 @@ export default {
 
       [PATTERN_OPERATORS.acked]: 'Acquis',
       [PATTERN_OPERATORS.notAcked]: 'Non confirmé',
+    },
+    entityEventTypes: {
+      [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
+      [EVENT_ENTITY_TYPES.ackRemove]: 'Suppression d\'acquittement',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
+      [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
+      [EVENT_ENTITY_TYPES.uncancel]: 'Uncancel',
+      [EVENT_ENTITY_TYPES.changeState]: 'Changer d\'état',
+      [EVENT_ENTITY_TYPES.check]: 'Vérifier',
+      [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
+      [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
     },
   },
   variableTypes: {
@@ -600,8 +614,6 @@ export default {
       + '  <dd>Le nom de la raison du comportement périodique est "reason_name_1"</dd>'
       + '</dl>',
     tabs: {
-      filter: 'Filtre',
-      comments: 'Commentaires',
       entities: 'Entités',
     },
   },
@@ -2355,11 +2367,11 @@ export default {
 
   mixedField: {
     types: {
-      [PATTERN_INPUT_TYPES.string]: '@:variableTypes.string',
-      [PATTERN_INPUT_TYPES.number]: '@:variableTypes.number',
-      [PATTERN_INPUT_TYPES.boolean]: '@:variableTypes.boolean',
-      [PATTERN_INPUT_TYPES.null]: '@:variableTypes.null',
-      [PATTERN_INPUT_TYPES.array]: '@:variableTypes.array',
+      [PATTERN_FIELD_TYPES.string]: '@:variableTypes.string',
+      [PATTERN_FIELD_TYPES.number]: '@:variableTypes.number',
+      [PATTERN_FIELD_TYPES.boolean]: '@:variableTypes.boolean',
+      [PATTERN_FIELD_TYPES.null]: '@:variableTypes.null',
+      [PATTERN_FIELD_TYPES.stringArray]: '@:variableTypes.array',
     },
   },
 
@@ -2765,9 +2777,9 @@ export default {
   },
 
   pattern: {
-    patterns: 'Filtres',
-    myPatterns: 'Mes filtres',
-    corporatePatterns: 'Filtres partagés',
+    patterns: 'Modèles',
+    myPatterns: 'Mes modèles',
+    corporatePatterns: 'Modèles partagés',
     addRule: 'Ajouter une règle',
     addGroup: 'Ajouter un groupe',
     removeRule: 'Supprimer la règle',
@@ -2783,6 +2795,7 @@ export default {
     errors: {
       ruleRequired: 'Veuillez ajouter au moins une règle',
       groupRequired: 'Veuillez ajouter au moins un groupe',
+      invalidPatterns: 'Les modèles ne sont pas valides ou il y a un champ de modèle désactivé',
     },
   },
 
