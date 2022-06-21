@@ -79,4 +79,5 @@ export const MODALS = {
   healthcheckEngine: 'healthcheck-engine',
   healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
   info: 'info',
+  createKpiFilter: 'create-kpi-filter',
 };
