@@ -52,6 +52,7 @@ export const PATTERN_CONDITIONS = {
   less: 'lt',
   regexp: 'regexp',
   hasEvery: 'has_every',
+  isOneOf: 'is_one_of',
   hasOneOf: 'has_one_of',
   hasNot: 'has_not',
   isEmpty: 'is_empty',
