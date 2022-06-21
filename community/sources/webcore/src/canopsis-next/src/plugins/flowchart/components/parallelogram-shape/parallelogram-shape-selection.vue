@@ -13,7 +13,10 @@
     )
     rect-selection(
       v-if="selected",
-      :rect="parallelogram",
+      :x="parallelogram.x",
+      :y="parallelogram.y",
+      :width="parallelogram.width",
+      :height="parallelogram.height",
       :padding="padding",
       :color="color",
       :corner-radius="cornerRadius",

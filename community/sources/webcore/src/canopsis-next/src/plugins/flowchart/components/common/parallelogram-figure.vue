@@ -1,7 +1,7 @@
 <template lang="pug">
-  points-path(
-    :points="parallelogramPoints",
-    v-on="$listeners"
+  path(
+    v-on="$listeners",
+    :d="parallelogramPath"
   )
 </template>
 
@@ -33,14 +33,19 @@ export default {
     },
   },
   computed: {
-    parallelogramPoints() {
+    parallelogramOffset() {
+      return this.offset < this.width ? this.offset : this.width;
+    },
+
+    parallelogramPath() {
       return [
-        { x: this.x + this.offset, y: this.y },
-        { x: this.x + this.width, y: this.y },
-        { x: this.x + this.width - this.offset, y: this.y + this.height },
-        { x: this.x, y: this.y + this.height },
-        { x: this.x + this.offset, y: this.y },
-      ];
+        `M${this.x + this.parallelogramOffset},${this.y}`,
+        `L${this.x + this.width},${this.y}`,
+        `L${this.x + this.width - this.parallelogramOffset},${this.y + this.height}`,
+        `L${this.x},${this.y + this.height}`,
+        `L${this.x + this.parallelogramOffset},${this.y}`,
+        'Z',
+      ].join(' ');
     },
   },
 };

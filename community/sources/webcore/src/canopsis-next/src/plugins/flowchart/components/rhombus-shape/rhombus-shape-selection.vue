@@ -13,7 +13,10 @@
     )
     rect-selection(
       v-if="selected",
-      :rect="rhombus",
+      :x="rhombus.x",
+      :y="rhombus.y",
+      :width="rhombus.width",
+      :height="rhombus.height",
       :padding="padding",
       :color="color",
       :corner-radius="cornerRadius",
