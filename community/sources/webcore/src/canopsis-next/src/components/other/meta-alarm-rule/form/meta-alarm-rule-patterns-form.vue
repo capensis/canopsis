@@ -3,6 +3,7 @@
     v-field="form",
     :disabled="disabled",
     :alarm-attributes="alarmAttributes",
+    :entity-attributes="entityAttributes",
     :with-total-entity="withTotalEntity",
     with-alarm,
     with-entity
@@ -10,7 +11,7 @@
 </template>
 
 <script>
-import { ALARM_PATTERN_FIELDS, QUICK_RANGES } from '@/constants';
+import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, QUICK_RANGES } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -37,6 +38,15 @@ export default {
       return {
         intervalRanges: [QUICK_RANGES.custom],
       };
+    },
+
+    entityAttributes() {
+      return [
+        {
+          value: ENTITY_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+      ];
     },
 
     alarmAttributes() {
