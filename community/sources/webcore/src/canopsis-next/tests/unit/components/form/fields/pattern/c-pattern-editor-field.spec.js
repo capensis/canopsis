@@ -19,7 +19,7 @@ const localVue = createVueInstance();
 const stubs = {
   'c-pattern-field': true,
   'c-pattern-groups-field': true,
-  'c-json-field': true,
+  'c-patterns-advanced-editor-field': true,
 };
 
 const factory = (options = {}) => shallowMount(CPatternsEditorField, {

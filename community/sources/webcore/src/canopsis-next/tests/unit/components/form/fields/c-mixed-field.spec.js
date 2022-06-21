@@ -1,7 +1,7 @@
 import Faker from 'faker';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
-import { PATTERN_INPUT_TYPES } from '@/constants';
+import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import CMixedField from '@/components/forms/fields/c-mixed-field.vue';
 
@@ -44,7 +44,7 @@ describe('c-mixed-field', () => {
 
     const inputTypeField = selectInputTypeField(wrapper);
 
-    inputTypeField.vm.$emit('input', PATTERN_INPUT_TYPES.string);
+    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.string);
 
     const inputEvents = wrapper.emitted('input');
 
@@ -63,7 +63,7 @@ describe('c-mixed-field', () => {
 
     const inputTypeField = selectInputTypeField(wrapper);
 
-    inputTypeField.vm.$emit('input', PATTERN_INPUT_TYPES.number);
+    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.number);
 
     const inputEvents = wrapper.emitted('input');
 
@@ -82,7 +82,7 @@ describe('c-mixed-field', () => {
 
     const inputTypeField = selectInputTypeField(wrapper);
 
-    inputTypeField.vm.$emit('input', PATTERN_INPUT_TYPES.null);
+    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.null);
 
     const inputEvents = wrapper.emitted('input');
 
@@ -101,7 +101,7 @@ describe('c-mixed-field', () => {
 
     const inputTypeField = selectInputTypeField(wrapper);
 
-    inputTypeField.vm.$emit('input', PATTERN_INPUT_TYPES.boolean);
+    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.boolean);
 
     const inputEvents = wrapper.emitted('input');
 
@@ -120,14 +120,14 @@ describe('c-mixed-field', () => {
 
     const inputTypeField = selectInputTypeField(wrapper);
 
-    inputTypeField.vm.$emit('input', PATTERN_INPUT_TYPES.array);
+    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.stringArray);
 
     const inputEvents = wrapper.emitted('input');
 
     expect(inputEvents).toHaveLength(1);
 
     const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([12]);
+    expect(eventData).toEqual(['12']);
   });
 
   it('Value changed on the first field after remove selected type', async () => {
@@ -136,17 +136,17 @@ describe('c-mixed-field', () => {
       propsData: {
         value,
         types: [
-          { value: PATTERN_INPUT_TYPES.string },
-          { value: PATTERN_INPUT_TYPES.boolean },
-          { value: PATTERN_INPUT_TYPES.number },
+          { value: PATTERN_FIELD_TYPES.string },
+          { value: PATTERN_FIELD_TYPES.boolean },
+          { value: PATTERN_FIELD_TYPES.number },
         ],
       },
     });
 
     await wrapper.setProps({
       types: [
-        { value: PATTERN_INPUT_TYPES.string },
-        { value: PATTERN_INPUT_TYPES.boolean },
+        { value: PATTERN_FIELD_TYPES.string },
+        { value: PATTERN_FIELD_TYPES.boolean },
       ],
     });
 
@@ -163,9 +163,9 @@ describe('c-mixed-field', () => {
       propsData: {
         value,
         types: [
-          { value: PATTERN_INPUT_TYPES.string },
-          { value: PATTERN_INPUT_TYPES.boolean },
-          { value: PATTERN_INPUT_TYPES.number },
+          { value: PATTERN_FIELD_TYPES.string },
+          { value: PATTERN_FIELD_TYPES.boolean },
+          { value: PATTERN_FIELD_TYPES.number },
         ],
       },
     });
@@ -201,9 +201,9 @@ describe('c-mixed-field', () => {
         itemText: 'text2',
         itemValue: 'value2',
         types: [
-          { value: PATTERN_INPUT_TYPES.string },
-          { value: PATTERN_INPUT_TYPES.number },
-          { value: PATTERN_INPUT_TYPES.array },
+          { value: PATTERN_FIELD_TYPES.string },
+          { value: PATTERN_FIELD_TYPES.number },
+          { value: PATTERN_FIELD_TYPES.stringArray },
         ],
       },
     });
