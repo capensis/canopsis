@@ -90,6 +90,11 @@
             :title="$t('settings.counters')"
           )
           v-divider
+          field-switcher(
+            v-model="form.parameters.isPriorityEnabled",
+            :title="$t('settings.isPriorityEnabled')"
+          )
+          v-divider
           field-modal-type(v-model="form.parameters.modalType")
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}

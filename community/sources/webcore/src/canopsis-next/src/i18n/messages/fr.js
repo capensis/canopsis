@@ -586,6 +586,7 @@ export default {
     selectAFilter: 'Sélectionner un filtre',
     exportAsCsv: 'Exporter le widget sous forme de fichier csv',
     criticityLevels: 'Niveaux de criticité',
+    isPriorityEnabled: 'Afficher la priorité',
     exportCsv: {
       title: 'Exporter CSV',
       fields: {
