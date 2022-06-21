@@ -15,9 +15,7 @@
       :with-pbehavior="withPbehavior",
       :with-event="withEvent",
       :alarm-attributes="alarmAttributes",
-      :alarm-excluded-attributes="alarmExcludedAttributes",
-      :entity-attributes="entityAttributes",
-      :entity-excluded-items="entityExcludedItems"
+      :entity-attributes="entityAttributes"
     )
 </template>
 
@@ -57,15 +55,7 @@ export default {
       type: Array,
       required: false,
     },
-    alarmExcludedAttributes: {
-      type: Array,
-      required: false,
-    },
     entityAttributes: {
-      type: Array,
-      required: false,
-    },
-    entityExcludedItems: {
       type: Array,
       required: false,
     },

@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { ENTITY_PATTERN_FIELDS, MODALS, PATTERNS_FIELDS } from '@/constants';
+import { MODALS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
@@ -53,15 +53,6 @@ export default {
     };
   },
   computed: {
-    entityAttributes() {
-      return [
-        {
-          value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-      ];
-    },
-
     title() {
       return this.config.title ?? this.$t('modals.createFilter.create.title');
     },
