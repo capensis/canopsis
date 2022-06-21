@@ -11,10 +11,10 @@
     text-editor(
       ref="editor",
       :value="storage.text",
-      :y="storage.y + diameter",
+      :y="storage.y",
       :x="storage.x",
       :width="storage.width",
-      :height="storage.height - diameter",
+      :height="storage.height",
       :editable="editing",
       :align-center="storage.alignCenter",
       :justify-center="storage.justifyCenter",

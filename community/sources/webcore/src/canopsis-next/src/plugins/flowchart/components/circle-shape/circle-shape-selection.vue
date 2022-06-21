@@ -13,7 +13,10 @@
     )
     rect-selection(
       v-if="selected",
-      :rect="rect",
+      :x="circle.x",
+      :y="circle.y",
+      :width="circle.diameter",
+      :height="circle.diameter",
       :padding="padding",
       :color="color",
       :corner-radius="cornerRadius",
@@ -61,16 +64,6 @@ export default {
     return {
       direction: undefined,
     };
-  },
-  computed: {
-    rect() {
-      return {
-        x: this.circle.x,
-        y: this.circle.y,
-        width: this.circle.diameter,
-        height: this.circle.diameter,
-      };
-    },
   },
   methods: {
     startResize(direction) {

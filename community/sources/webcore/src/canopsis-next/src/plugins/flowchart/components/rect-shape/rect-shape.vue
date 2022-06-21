@@ -37,10 +37,11 @@
 import { formBaseMixin } from '@/mixins/form';
 
 import RectShapeSelection from './rect-shape-selection.vue';
+import RectShapeConnectors from './rect-shape-connectors.vue';
 import TextEditor from '../common/text-editor.vue';
 
 export default {
-  components: { RectShapeSelection, TextEditor },
+  components: { RectShapeSelection, RectShapeConnectors, TextEditor },
   mixins: [formBaseMixin],
   model: {
     prop: 'rect',

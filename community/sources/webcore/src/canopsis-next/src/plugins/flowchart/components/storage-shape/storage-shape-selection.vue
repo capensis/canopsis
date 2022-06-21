@@ -14,7 +14,10 @@
     )
     rect-selection(
       v-if="selected",
-      :rect="storage",
+      :x="storage.x",
+      :y="storage.y",
+      :width="storage.width",
+      :height="storage.height",
       :padding="padding",
       :color="color",
       :corner-radius="cornerRadius",

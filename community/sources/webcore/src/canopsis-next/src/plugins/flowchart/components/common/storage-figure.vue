@@ -34,14 +34,18 @@ export default {
       return this.width / 2;
     },
 
+    ellipseRadius() {
+      return this.radius * 2 <= this.height ? this.radius : this.height / 2;
+    },
+
     path() {
       return [
-        `M ${this.x}, ${this.y + this.radius}`,
-        `a ${this.halfWidth},${this.radius} 0 1, 0 ${this.width}, 0`,
-        `a ${this.halfWidth},${this.radius} 0 1, 0 ${-this.width}, 0`,
-        ` L ${this.x} ${this.y + this.height - this.radius}`,
-        `a ${this.halfWidth},${this.radius} 0 1, 0 ${this.width}, 0`,
-        `L ${this.x + this.width} ${this.y + this.radius}`,
+        `M ${this.x},${this.y + this.ellipseRadius}`,
+        `a ${this.halfWidth},${this.ellipseRadius} 0 1, 0 ${this.width}, 0`,
+        `a ${this.halfWidth},${this.ellipseRadius} 0 1, 0 ${-this.width}, 0`,
+        `L ${this.x},${this.y + this.height - this.ellipseRadius}`,
+        `a ${this.halfWidth},${this.ellipseRadius} 0 1, 0 ${this.width}, 0`,
+        `L ${this.x + this.width},${this.y + this.ellipseRadius}`,
       ].join('');
     },
   },
