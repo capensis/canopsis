@@ -8,7 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-const DefaultRule = "default-rule"
+const DefaultRule = "default_rule"
 
 type Rule struct {
 	ID                string                       `bson:"_id,omitempty"`
