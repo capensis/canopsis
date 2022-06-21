@@ -44,6 +44,7 @@ CUSTOM_LDFLAGS=
 # TODO: simplify this after Go 1.18 with https://utcc.utoronto.ca/~cks/space/blog/programming/GoVersionOfYourSource
 LDFLAGS:=-ldflags "\
 	-X '$(LINKPKG).BuildGitCommit=$(GITCOMMIT)' \
+	-linkmode=external \
 	-X '$(LINKPKG).BuildDate=$(SOURCE_DATE_EPOCH)' $(CUSTOM_LDFLAGS)"
 
 # -trimpath makes the log lines shorter and independent from the current machine.
@@ -192,8 +193,27 @@ install: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDIT
 	$(foreach plugin,$(PLUGINS),install -d -m 755 -- "$(DESTDIR)/opt/canopsis/lib/go/plugins/$(dir $(plugin))" && install -c -m 644 -- "$(CURRENT_BUILD_OUTPUT_DIR)/plugins/$(plugin)" "$(DESTDIR)/opt/canopsis/lib/go/plugins/$(dir $(plugin))")
 	# Install configuration files
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/etc"
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/systemd/go-engines-vars.conf" "$(DESTDIR)/opt/canopsis/etc/"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/config/connector-centreon-downtime-adapter"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/config/api/security"
+	install $(COMMUNITY_ROOT_DIR)/config/api/security/* -t "$(DESTDIR)/opt/canopsis/share/config/api/security" 
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/config/mongo"
+	install $(COMMUNITY_ROOT_DIR)/config/mongo/* -t "$(DESTDIR)/opt/canopsis/share/config/mongo" 
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/migrations/mongodb"
+	$(foreach path,$(wildcard $(COMMUNITY_ROOT_DIR)/database/migrations/*),\
+		install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/migrations/mongodb/$(lastword $(subst /, ,$(path)))/";)
+	$(foreach path,$(wildcard $(COMMUNITY_ROOT_DIR)/database/migrations/*),\
+		install -c -m 644 -p -- $(wildcard $(COMMUNITY_ROOT_DIR)/database/migrations/$(lastword $(subst /, ,$(path)))/*) "$(DESTDIR)/opt/canopsis/share/migrations/mongodb/$(lastword $(subst /, ,$(path)))/";)
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/migrations/postgres"
+	install -c -m 644 -p -- $(wildcard $(COMMUNITY_ROOT_DIR)/database/postgres_migrations/*) "$(DESTDIR)/opt/canopsis/share/migrations/postgres/"
 	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml" "$(DESTDIR)/opt/canopsis/etc/"
 	( cd -- "$(DESTDIR)/opt/canopsis/etc" && ln -sf "canopsis-$(CANOPSIS_EDITION).toml" canopsis.toml )
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/cmd/connector-centreon-downtime-adapter/config.yml.example" "$(DESTDIR)/opt/canopsis/share/config/connector-centreon-downtime-adapter/config.yml"
+
+systemd_install:
+	install -d -m 755 -- "$(DESTDIR)/usr/lib/systemd/system"
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/systemd/canopsis-engine-go@.service" "$(DESTDIR)/usr/lib/systemd/system/canopsis-engine-go@.service"
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/systemd/canopsis-service@canopsis-api.service" "$(DESTDIR)/usr/lib/systemd/system/canopsis-service@canopsis-api.service"
 
 #
 # TESTS
