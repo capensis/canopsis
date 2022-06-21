@@ -99,7 +99,7 @@ describe('c-entity-field', () => {
           limit: PAGINATION_LIMIT,
           page: 1,
           search: null,
-          filter: { type: { $in: Object.values(BASIC_ENTITY_TYPES) } },
+          type: Object.values(BASIC_ENTITY_TYPES),
         },
       },
       undefined,
