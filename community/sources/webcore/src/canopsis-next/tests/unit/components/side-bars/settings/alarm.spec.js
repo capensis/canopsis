@@ -12,7 +12,7 @@ import {
   ALARMS_OPENED_VALUES,
   CANOPSIS_EDITION, EXPORT_CSV_DATETIME_FORMATS, EXPORT_CSV_SEPARATORS,
   REMEDIATION_INSTRUCTION_TYPES,
-  SORT_ORDERS,
+  SORT_ORDERS, TIME_UNITS,
   USERS_PERMISSIONS,
 } from '@/constants';
 import ClickOutside from '@/services/click-outside';
@@ -913,6 +913,40 @@ describe('alarm', () => {
 
     await submitWithExpects(wrapper, {
       viewData: getViewRequestWithNewWidgetParameter('sticky_header', stickyHeader),
+      userPreferencesData: userPreferences,
+      queryData: defaultQuery,
+    });
+  });
+
+  /**
+   * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4390
+   */
+  it('Invalid periodic refresh converted to valid object', async () => {
+    const periodicRefresh = {
+      value: 1,
+      unit: {},
+      enabled: false,
+    };
+    const wrapper = factory({
+      store,
+      propsData: {
+        config: {
+          widget: {
+            ...widget,
+            parameters: {
+              ...widget.parameters,
+              periodic_refresh: periodicRefresh,
+            },
+          },
+        },
+      },
+    });
+
+    await submitWithExpects(wrapper, {
+      viewData: getViewRequestWithNewWidgetParameter('periodic_refresh', {
+        ...periodicRefresh,
+        unit: TIME_UNITS.second,
+      }),
       userPreferencesData: userPreferences,
       queryData: defaultQuery,
     });

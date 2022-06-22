@@ -9,13 +9,14 @@ import {
   EXPORT_CSV_SEPARATORS,
   GRID_SIZES,
   SORT_ORDERS,
+  TIME_UNITS,
   WIDGET_TYPES,
 } from '@/constants';
 import { DEFAULT_CATEGORIES_LIMIT, PAGINATION_LIMIT } from '@/config';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
 import { widgetToForm } from '@/helpers/forms/widgets/common';
-import { durationWithEnabledToForm } from '@/helpers/date/duration';
+import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} FastAckOutput
@@ -149,6 +150,23 @@ const widgetSortToForm = (sort = {}) => ({
 });
 
 /**
+ * Convert widget periodic refresh to form duration
+ *
+ * @param {DurationWithEnabled} periodicRefresh
+ * @returns {DurationWithEnabled}
+ */
+export const periodicRefreshToDurationForm = (periodicRefresh = DEFAULT_PERIODIC_REFRESH) => {
+  /*
+  * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4390
+  */
+  const unit = isValidUnit(periodicRefresh.unit)
+    ? periodicRefresh.unit
+    : TIME_UNITS.second;
+
+  return durationWithEnabledToForm({ ...periodicRefresh, unit });
+};
+
+/**
  * Convert alarm list widget parameters to form
  *
  * @param {AlarmListWidgetDefaultParameters} [parameters = {}]
@@ -193,7 +211,7 @@ const alarmListWidgetParametersToForm = (parameters = {}) => ({
   ...parameters,
   ...alarmListWidgetDefaultParametersToForm(parameters),
 
-  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
+  periodic_refresh: periodicRefreshToDurationForm(parameters.periodic_refresh),
   viewFilters: parameters.viewFilters || [],
   mainFilter: parameters.mainFilter || null,
   mainFilterUpdatedAt: parameters.mainFilterUpdatedAt || 0,
