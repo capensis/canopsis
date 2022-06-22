@@ -12,7 +12,6 @@
       @mouseup="$listeners.mouseup"
     )
     rect-selection(
-      v-if="selected",
       :x="rect.x",
       :y="rect.y",
       :width="rect.width",
@@ -20,18 +19,11 @@
       :padding="padding",
       :color="color",
       :corner-radius="cornerRadius",
+      :connectable="connection",
+      :connectors="rect.connectors",
+      :resizable="selected && !connection",
       cursor="move",
-      resizable,
       @start:resize="startResize"
-    )
-    rect-shape-connectors(
-      v-if="!selected && connection",
-      :x="rect.x",
-      :y="rect.y",
-      :rx="rect.rx",
-      :ry="rect.ry",
-      :width="rect.width",
-      :height="rect.height"
     )
 </template>
 
@@ -39,11 +31,10 @@
 import { resizeRectangleShapeByDirection } from '../../utils/resize';
 
 import RectSelection from '../common/rect-selection.vue';
-import RectShapeConnectors from './rect-shape-connectors.vue';
 
 export default {
   inject: ['$mouseMove', '$mouseUp'],
-  components: { RectShapeConnectors, RectSelection },
+  components: { RectSelection },
   props: {
     rect: {
       type: Object,
