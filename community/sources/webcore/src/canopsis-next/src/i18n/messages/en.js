@@ -614,8 +614,6 @@ export default {
       + '  <dd>Pbehavior reason name are "reason_name_1"</dd>'
       + '</dl>',
     tabs: {
-      filter: 'Filter',
-      comments: 'Comments',
       entities: 'Entities',
     },
   },
@@ -2779,9 +2777,9 @@ export default {
   },
 
   pattern: {
-    patterns: 'Filters',
-    myPatterns: 'My filters',
-    corporatePatterns: 'Shared filters',
+    patterns: 'Patterns',
+    myPatterns: 'My patterns',
+    corporatePatterns: 'Shared patterns',
     addRule: 'Add rule',
     addGroup: 'Add group',
     removeRule: 'Remove rule',

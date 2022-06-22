@@ -13,37 +13,31 @@
     @moved="changedEventHandler",
     @resized="changedEventHandler"
   )
-    ds-calendar-event-popover(
-      slot="eventPopover",
-      slot-scope="props",
-      v-bind="props"
-    )
-      pbehavior-create-event(
-        slot-scope="{ calendarEvent, close, edit }",
-        :calendar-event="calendarEvent",
-        :filter="filter",
-        @close="close",
-        @submit="edit",
-        @remove="removePbehavior"
+    template(#eventPopover="props")
+      ds-calendar-event-popover(v-bind="props")
+        template(#default="{ calendarEvent, close, edit }")
+          pbehavior-create-event(
+            :calendar-event="calendarEvent",
+            :entity-pattern="entityPattern",
+            @close="close",
+            @submit="edit",
+            @remove="removePbehavior"
+          )
+    template(#eventCreatePopover="props")
+      ds-calendar-event-popover(v-bind="props")
+        template(#default="{ calendarEvent, close, add }")
+          pbehavior-create-event(
+            :calendar-event="calendarEvent",
+            :entity-pattern="entityPattern",
+            @close="close",
+            @submit="add",
+            @remove="removePbehavior"
+          )
+    template(#menuRight="")
+      pbehavior-planning-calendar-legend(
+        :exception-types="exceptionTypes",
+        :colors-to-types="colorsToTypes"
       )
-    ds-calendar-event-popover(
-      slot="eventCreatePopover",
-      slot-scope="props",
-      v-bind="props"
-    )
-      pbehavior-create-event(
-        slot-scope="{ calendarEvent, close, add }",
-        :calendar-event="calendarEvent",
-        :filter="filter",
-        @close="close",
-        @submit="add",
-        @remove="removePbehavior"
-      )
-    pbehavior-planning-calendar-legend(
-      slot="menuRight",
-      :exception-types="exceptionTypes",
-      :colors-to-types="colorsToTypes"
-    )
 </template>
 
 <script>
@@ -98,8 +92,8 @@ export default {
       type: Object,
       required: true,
     },
-    filter: {
-      type: Object,
+    entityPattern: {
+      type: Array,
       required: false,
     },
     readOnly: {
