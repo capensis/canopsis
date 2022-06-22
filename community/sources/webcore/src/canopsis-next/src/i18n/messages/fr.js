@@ -1216,7 +1216,6 @@ export default {
       steps: {
         infos: {
           title: 'Informations',
-          validationError: 'Toutes les valeurs doivent être saisies',
         },
         patterns: {
           title: 'Modèles',
@@ -1229,10 +1228,6 @@ export default {
     createDynamicInfoInformation: {
       create: {
         title: 'Ajouter une information à la règle d\'information dynamique',
-      },
-      fields: {
-        name: 'Nom',
-        value: 'Valeur',
       },
     },
     dynamicInfoTemplatesList: {
