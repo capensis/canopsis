@@ -15,10 +15,16 @@ Feature: update alarm on idle rule
         "value": 5,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-resource-axe-idlerule-1/test-component-axe-idlerule-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-idlerule-1"
+            }
+          }
+        ]
       ],
       "operation": {
         "type": "assocticket",
@@ -326,10 +332,16 @@ Feature: update alarm on idle rule
         "value": 5,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-resource-axe-idlerule-2/test-component-axe-idlerule-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-idlerule-2"
+            }
+          }
+        ]
       ],
       "operation": {
         "type": "assocticket",
@@ -751,10 +763,16 @@ Feature: update alarm on idle rule
         "value": 5,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-resource-axe-idlerule-3/test-component-axe-idlerule-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-idlerule-3"
+            }
+          }
+        ]
       ]
     }
     """
@@ -1032,10 +1050,16 @@ Feature: update alarm on idle rule
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-component-axe-idlerule-4"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-axe-idlerule-4"
+            }
+          }
+        ]
       ]
     }
     """
@@ -1236,10 +1260,16 @@ Feature: update alarm on idle rule
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-connector-axe-idlerule-5/test-connector-name-axe-idlerule-5"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-name-axe-idlerule-5"
+            }
+          }
+        ]
       ]
     }
     """
@@ -1440,10 +1470,16 @@ Feature: update alarm on idle rule
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-resource-axe-idlerule-6/test-component-axe-idlerule-6"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-idlerule-6"
+            }
+          }
+        ]
       ],
       "operation": {
         "type": "ack",
@@ -1466,10 +1502,16 @@ Feature: update alarm on idle rule
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-resource-axe-idlerule-6/test-component-axe-idlerule-6"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-idlerule-6"
+            }
+          }
+        ]
       ],
       "operation": {
         "type": "assocticket",
@@ -1694,10 +1736,16 @@ Feature: update alarm on idle rule
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-resource-axe-idlerule-7/test-component-axe-idlerule-7"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-idlerule-7"
+            }
+          }
+        ]
       ]
     }
     """
@@ -1714,10 +1762,16 @@ Feature: update alarm on idle rule
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-resource-axe-idlerule-7/test-component-axe-idlerule-7"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-idlerule-7"
+            }
+          }
+        ]
       ]
     }
     """
@@ -1943,10 +1997,16 @@ Feature: update alarm on idle rule
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-resource-axe-idlerule-8/test-component-axe-idlerule-8"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-idlerule-8"
+            }
+          }
+        ]
       ]
     }
     """
@@ -2204,10 +2264,16 @@ Feature: update alarm on idle rule
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-resource-axe-idlerule-9/test-component-axe-idlerule-9"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-idlerule-9"
+            }
+          }
+        ]
       ],
       "operation": {
         "type": "assocticket",
@@ -2231,10 +2297,16 @@ Feature: update alarm on idle rule
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-resource-axe-idlerule-9/test-component-axe-idlerule-9"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-idlerule-9"
+            }
+          }
+        ]
       ]
     }
     """
@@ -2458,10 +2530,16 @@ Feature: update alarm on idle rule
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-resource-axe-idlerule-10/test-component-axe-idlerule-10"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-idlerule-10"
+            }
+          }
+        ]
       ],
       "operation": {
         "type": "ack",
@@ -2484,10 +2562,16 @@ Feature: update alarm on idle rule
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-resource-axe-idlerule-10/test-component-axe-idlerule-10"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-idlerule-10"
+            }
+          }
+        ]
       ]
     }
     """
@@ -2734,10 +2818,16 @@ Feature: update alarm on idle rule
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-component-axe-idlerule-11"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-axe-idlerule-11"
+            }
+          }
+        ]
       ]
     }
     """

@@ -791,15 +791,15 @@ Feature: Create an resolve rule
     }
     """
 
-  Scenario: given create request with unacceptable alarm pattern and entity pattern fields for resolve rules should return error
+  Scenario: given create request with unacceptable corporate alarm pattern and corporate entity pattern fields for resolve rules should exclude invalid patterns
     When I am admin
     When I do POST /api/v4/resolve-rules:
     """json
     {
       "name": "test-resolve-rule-to-create-11-name",
       "description": "test-resolve-rule-to-create-11-description",
-      "corporate_entity_pattern": "test-pattern-to-instruction-pattern-to-exclude-1",
-      "corporate_alarm_pattern": "test-pattern-to-instruction-pattern-to-exclude-2",
+      "corporate_entity_pattern": "test-pattern-to-resolve-rule-pattern-to-exclude-1",
+      "corporate_alarm_pattern": "test-pattern-to-resolve-rule-pattern-to-exclude-2",
       "duration": {
         "value": 10,
         "unit": "s"
@@ -819,13 +819,13 @@ Feature: Create an resolve rule
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-pattern-to-instruction-pattern-to-exclude-1-pattern"
+              "value": "test-pattern-to-resolve-rule-pattern-to-exclude-1-pattern"
             }
           }
         ]
       ],
-      "corporate_entity_pattern": "test-pattern-to-instruction-pattern-to-exclude-1",
-      "corporate_entity_pattern_title": "test-pattern-to-instruction-pattern-to-exclude-1-title",
+      "corporate_entity_pattern": "test-pattern-to-resolve-rule-pattern-to-exclude-1",
+      "corporate_entity_pattern_title": "test-pattern-to-resolve-rule-pattern-to-exclude-1-title",
       "alarm_pattern": [
         [
           {
@@ -859,8 +859,8 @@ Feature: Create an resolve rule
           }
         ]
       ],
-      "corporate_alarm_pattern": "test-pattern-to-instruction-pattern-to-exclude-2",
-      "corporate_alarm_pattern_title": "test-pattern-to-instruction-pattern-to-exclude-2-title"
+      "corporate_alarm_pattern": "test-pattern-to-resolve-rule-pattern-to-exclude-2",
+      "corporate_alarm_pattern_title": "test-pattern-to-resolve-rule-pattern-to-exclude-2-title"
     }
     """
 

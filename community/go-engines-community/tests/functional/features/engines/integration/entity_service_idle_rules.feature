@@ -37,10 +37,16 @@ Feature: entity_service idle_rules integration
         "value": 1,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-idle-since-integration-resource-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-since-integration-resource-1"
+            }
+          }
+        ]
       ]
     }
     """
@@ -148,10 +154,16 @@ Feature: entity_service idle_rules integration
         "value": 1,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-idle-since-integration-2-connectorname"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-since-integration-2-connectorname"
+            }
+          }
+        ]
       ]
     }
     """
@@ -243,10 +255,16 @@ Feature: entity_service idle_rules integration
         "value": 1,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-idle-since-integration-resource-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-since-integration-resource-2"
+            }
+          }
+        ]
       ]
     }
     """
@@ -338,10 +356,16 @@ Feature: entity_service idle_rules integration
         "value": 1,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-idle-since-integration-resource-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-since-integration-resource-3"
+            }
+          }
+        ]
       ]
     }
     """
@@ -361,10 +385,16 @@ Feature: entity_service idle_rules integration
         "value": 1,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-idle-since-integration-resource-4"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-since-integration-resource-4"
+            }
+          }
+        ]
       ]
     }
     """
