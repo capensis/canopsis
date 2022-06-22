@@ -37,11 +37,10 @@
 import { formBaseMixin } from '@/mixins/form';
 
 import RectShapeSelection from './rect-shape-selection.vue';
-import RectShapeConnectors from './rect-shape-connectors.vue';
 import TextEditor from '../common/text-editor.vue';
 
 export default {
-  components: { RectShapeSelection, RectShapeConnectors, TextEditor },
+  components: { RectShapeSelection, TextEditor },
   mixins: [formBaseMixin],
   model: {
     prop: 'rect',
@@ -72,13 +71,19 @@ export default {
   },
   methods: {
     move(newOffset, oldOffset) {
-      const { x, y } = this.rect;
+      const { x, y, connectors } = this.rect;
 
       this.updateModel({
         ...this.rect,
 
         x: (x - oldOffset.x) + newOffset.x,
         y: (y - oldOffset.y) + newOffset.y,
+
+        connectors: connectors.map(connector => ({
+          ...connector,
+          x: (connector.x - oldOffset.x) + newOffset.x,
+          y: (connector.y - oldOffset.y) + newOffset.y,
+        })),
       });
     },
 
