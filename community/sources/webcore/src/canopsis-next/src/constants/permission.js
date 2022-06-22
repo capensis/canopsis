@@ -251,6 +251,9 @@ export const USERS_PERMISSIONS = {
       broadcastMessage: `${USER_PERMISSIONS_PREFIXES.api}_broadcast_message`,
       junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
       notifications: `${USER_PERMISSIONS_PREFIXES.api}_notification`,
+      metrics: `${USER_PERMISSIONS_PREFIXES.api}_metrics`,
+      ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
+      filter: `${USER_PERMISSIONS_PREFIXES.api}_kpi_filter`,
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
@@ -278,9 +281,6 @@ export const USERS_PERMISSIONS = {
       pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
       pbehaviorType: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviortype`,
     },
-    metrics: `${USER_PERMISSIONS_PREFIXES.api}_metrics`,
-    ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
-    filter: `${USER_PERMISSIONS_PREFIXES.api}_filter`,
   },
 };
 
