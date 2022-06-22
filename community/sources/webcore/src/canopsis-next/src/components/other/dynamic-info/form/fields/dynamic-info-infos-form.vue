@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-alert(:value="hasAnyError", type="error") {{ $t('modals.createDynamicInfo.steps.infos.validationError') }}
+    v-alert(:value="hasAnyError", type="error") {{ errorMessages }}
     v-layout(justify-end)
       v-btn.primary(fab, small, flat, @click="showAddInfoModal")
         v-icon add
@@ -10,7 +10,7 @@
       :no-data-text="$t('tables.noData')",
       item-key="key"
     )
-      template(slot="items", slot-scope="{ item }")
+      template(#items="{ item }")
         tr
           td {{ item.name }}
           td {{ item.value }}
@@ -21,8 +21,6 @@
 </template>
 
 <script>
-import { isUndefined } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import { formArrayMixin, formValidationHeaderMixin } from '@/mixins/form';
@@ -39,26 +37,50 @@ export default {
       type: Array,
       required: true,
     },
+    name: {
+      type: String,
+      default: 'infos',
+    },
   },
   computed: {
+    errorMessages() {
+      return this.errors.collect(this.name)?.join('\n');
+    },
+
     headers() {
       return [
-        { text: this.$t('modals.createDynamicInfoInformation.fields.name'), value: 'name' },
-        { text: this.$t('modals.createDynamicInfoInformation.fields.value'), value: 'value' },
+        { text: this.$t('common.name'), value: 'name' },
+        { text: this.$t('common.value'), value: 'value' },
         { text: this.$t('common.actionsLabel'), value: 'actions' },
       ];
     },
   },
+  watch: {
+    form() {
+      this.$validator.validate(this.name);
+    },
+  },
   created() {
-    this.$validator.attach({
-      name: 'values',
-      rules: 'required:true',
-      getter: () => !this.form.some(({ value }) => isUndefined(value)),
-      context: () => this,
-      vm: this,
-    });
+    this.attachRequiredRule();
+  },
+  beforeDestroy() {
+    this.detachRequiredRule();
   },
   methods: {
+    attachRequiredRule() {
+      this.$validator.attach({
+        name: this.name,
+        rules: 'required:true',
+        getter: () => !!this.form.length,
+        context: () => this,
+        vm: this,
+      });
+    },
+
+    detachRequiredRule() {
+      this.$validator.detach(this.name);
+    },
+
     findInfoIndex(info = {}) {
       return this.form.findIndex(({ name }) => name === info.name);
     },
@@ -84,8 +106,6 @@ export default {
             const index = this.findInfoIndex(info);
 
             this.updateItemInArray(index, newInfo);
-
-            this.$nextTick(() => this.$validator.validate('values'));
           },
         },
       });
@@ -95,8 +115,6 @@ export default {
       const index = this.findInfoIndex(info);
 
       this.removeItemFromArray(index);
-
-      this.$nextTick(() => this.$validator.validate('values'));
     },
   },
 };
