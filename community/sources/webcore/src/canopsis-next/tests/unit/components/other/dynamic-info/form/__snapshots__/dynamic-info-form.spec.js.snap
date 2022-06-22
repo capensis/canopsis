@@ -94,6 +94,7 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] =
           <dynamic-info-infos-form-stub
             class="pa-4"
             form="[object Object]"
+            name="infos"
           />
         </div>
       </div>
@@ -214,6 +215,7 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] 
           <dynamic-info-infos-form-stub
             class="pa-4"
             form="[object Object]"
+            name="infos"
           />
         </div>
       </div>
@@ -355,6 +357,7 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with errors 1`] = `
           <dynamic-info-infos-form-stub
             class="pa-4"
             form="[object Object]"
+            name="infos"
           />
         </div>
       </div>
