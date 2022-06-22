@@ -12,9 +12,10 @@ import {
   EVENT_ENTITY_TYPES,
   EVENT_ENTITY_STYLE,
   ALARM_LIST_ACTIONS_TYPES,
-  META_ALARMS_RULE_TYPES,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
+
+import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule';
 
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
@@ -154,7 +155,7 @@ export default {
   },
   computed: {
     isParentAlarmManualMetaAlarm() {
-      return get(this.parentAlarm, 'rule.type') === META_ALARMS_RULE_TYPES.manualgroup;
+      return isManualGroupMetaAlarmRuleType(get(this.parentAlarm, 'rule.type'));
     },
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);

@@ -180,6 +180,7 @@ describe('c-patterns-field', () => {
         withEvent: true,
         withEntity: true,
         withPbehavior: true,
+        withTotalEntity: true,
         required: true,
         someRequired: true,
         name: 'name',
