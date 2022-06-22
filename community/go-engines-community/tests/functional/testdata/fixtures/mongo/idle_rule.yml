@@ -298,7 +298,7 @@ idle_rule:
           value: 3
         output: test-idle-rule-to-backward-compatibility-update-1-operation-output
       type: snooze
-    priority: 4
+    priority: 100
     type: alarm
     updated: 1616567033
   idle_rule_13:
@@ -326,7 +326,7 @@ idle_rule:
           value: 3
         output: test-idle-rule-to-backward-compatibility-update-2-operation-output
       type: snooze
-    priority: 4
+    priority: 101
     type: alarm
     updated: 1616567033
   idle_rule_14:
@@ -341,7 +341,7 @@ idle_rule:
     old_entity_patterns:
       - name: test-idle-rule-to-backward-compatibility-update-3-resource
     name: test-idle-rule-to-backward-compatibility-update-3-name
-    priority: 4
+    priority: 102
     type: entity
     updated: 1616567033
   idle_rule_15:
@@ -356,7 +356,7 @@ idle_rule:
     old_entity_patterns:
       - name: test-idle-rule-to-backward-compatibility-update-4-resource
     name: test-idle-rule-to-backward-compatibility-update-4-name
-    priority: 4
+    priority: 103
     type: entity
     updated: 1616567033
   idle_rule_16:
@@ -384,7 +384,7 @@ idle_rule:
           value: 3
         output: test-idle-rule-to-backward-compatibility-update-5-operation-output
       type: snooze
-    priority: 401
+    priority: 104
     type: alarm
     updated: 1616567033
   idle_rule_17:
