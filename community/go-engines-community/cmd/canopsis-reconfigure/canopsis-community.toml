@@ -215,8 +215,6 @@ TimeToExecute = "Sunday,23"
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
 [Canopsis.import_ctx]
-ThdWarnMinPerImport = "30m"
-ThdCritMinPerImport = "60m"
 FilePattern = "/tmp/import_%s.json"
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.

@@ -45,9 +45,7 @@ type SectionTimezone struct {
 }
 
 type SectionImportCtx struct {
-	ThdWarnMinPerImport string `toml:"ThdWarnMinPerImport"`
-	ThdCritMinPerImport string `toml:"ThdCritMinPerImport"`
-	FilePattern         string `toml:"FilePattern"`
+	FilePattern string `toml:"FilePattern"`
 }
 
 type SectionFile struct {
