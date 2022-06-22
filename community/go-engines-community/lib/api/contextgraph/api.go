@@ -81,7 +81,7 @@ func (a *api) ImportAll(c *gin.Context) {
 		return
 	}
 
-	jobID, err := a.createImportJon(c.Request.Context(), job, raw)
+	jobID, err := a.createImportJob(c.Request.Context(), job, raw)
 	if err != nil {
 		panic(err)
 	}
@@ -123,7 +123,7 @@ func (a *api) ImportPartial(c *gin.Context) {
 		return
 	}
 
-	jobID, err := a.createImportJon(c.Request.Context(), job, raw)
+	jobID, err := a.createImportJob(c.Request.Context(), job, raw)
 	if err != nil {
 		panic(err)
 	}
@@ -131,7 +131,7 @@ func (a *api) ImportPartial(c *gin.Context) {
 	c.JSON(http.StatusOK, ImportResponse{ID: jobID})
 }
 
-func (a *api) createImportJon(ctx context.Context, job ImportJob, raw []byte) (string, error) {
+func (a *api) createImportJob(ctx context.Context, job ImportJob, raw []byte) (string, error) {
 	err := a.reporter.ReportCreate(ctx, &job)
 	if err != nil {
 		return "", err
