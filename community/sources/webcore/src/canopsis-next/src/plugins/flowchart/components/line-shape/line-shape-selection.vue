@@ -10,7 +10,7 @@
     )
     template(v-if="selected")
       points-path(
-        :points="editedPoints",
+        :points="editingPoints",
         :stroke="color",
         fill="transparent",
         stroke-width="1",
@@ -18,21 +18,33 @@
         pointer-events="none"
       )
       circle(
-        v-for="(point, index) in points",
-        :key="index",
+        v-for="(point, index) in editingPoints",
+        :key="`${point._id}`",
         :cx="point.x",
         :cy="point.y",
         :fill="color",
         :r="cornerRadius",
-        :opacity="point.ghost ? 0.4 : 1",
         cursor="crosshair",
         :pointer-events="moving ? 'none' : 'all'",
-        @mousedown.stop="onStartMovePoint(index, point)"
+        @mousedown.stop="onStartMovePoint(index)"
+      )
+      circle(
+        v-for="(point, index) in ghostPoints",
+        :key="`${point._id}_ghost`",
+        :cx="point.x",
+        :cy="point.y",
+        :fill="color",
+        :r="cornerRadius",
+        :opacity="0.4",
+        cursor="crosshair",
+        :pointer-events="moving ? 'none' : 'all'",
+        @mousedown.stop="onStartGhostMovePoint(index, point)"
       )
 </template>
 
 <script>
-import { getPointsWithGhosts } from '../../utils/points';
+import { cloneDeep } from 'lodash';
+import { getGhostPoints } from '../../utils/points';
 
 import PointsPath from '../common/points-path.vue';
 
@@ -59,48 +71,54 @@ export default {
   },
   data() {
     return {
-      editedPoints: [],
+      editingPoints: [],
       moving: undefined,
       movingPointIndex: undefined,
     };
   },
   computed: {
-    points() {
-      return getPointsWithGhosts(this.editedPoints);
+    ghostPoints() {
+      return getGhostPoints(this.editingPoints);
     },
   },
   watch: {
     'line.points': {
       immediate: true,
+      deep: true,
       handler(points) {
-        this.editedPoints = [...points];
+        this.editingPoints = cloneDeep(points);
       },
     },
   },
   methods: {
     movePoint({ x, y }) {
-      this.editedPoints.splice(this.movingPointIndex, 1, { x, y });
+      const point = this.editingPoints[this.movingPointIndex];
+
+      point.x = x;
+      point.y = y;
     },
 
-    addPointAfterIndex(index, { x, y }) {
-      this.editedPoints.splice(index, 0, { x, y });
+    onStartGhostMovePoint(index, point) {
+      const newPointIndex = index + 1;
+
+      this.editingPoints.splice(newPointIndex, 0, point);
+
+      this.onStartMovePoint(newPointIndex);
     },
 
-    onStartMovePoint(index, point) {
+    onStartMovePoint(index) {
       this.moving = true;
 
-      if (point.ghost) {
-        this.addPointAfterIndex(point.index, point);
-      }
-
-      this.movingPointIndex = point.index;
+      this.movingPointIndex = index;
 
       this.$mouseMove.register(this.movePoint);
       this.$mouseUp.register(this.finishMovePoints);
+
+      this.$emit('edit:point', this.editingPoints[this.movingPointIndex]);
     },
 
     finishMovePoints() {
-      this.$emit('resize', { points: this.editedPoints });
+      this.$emit('resize', { points: this.editingPoints });
 
       this.$mouseMove.unregister(this.movePoint);
       this.$mouseUp.unregister(this.onMouseUp);

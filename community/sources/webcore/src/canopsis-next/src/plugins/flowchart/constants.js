@@ -8,3 +8,10 @@ export const DIRECTIONS = {
   southWest: 'sw',
   west: 'w',
 };
+
+export const CONNECTOR_SIDES = {
+  top: 'top',
+  right: 'right',
+  bottom: 'bottom',
+  left: 'left',
+};

@@ -1,5 +1,6 @@
 <template lang="pug">
   line-shape(
+    ref="line",
     v-on="$listeners",
     v-field="shape",
     :selected="selected",
@@ -63,23 +64,7 @@ export default {
   },
   methods: {
     move(newOffset, oldOffset) {
-      const { points } = this.shape;
-
-      this.updateModel({
-        ...this.shape,
-
-        points: points.map(({ x, y }) => ({
-          x: (x - oldOffset.x) + newOffset.x,
-          y: (y - oldOffset.y) + newOffset.y,
-        })),
-      });
-    },
-
-    onResize(line) {
-      this.updateModel({
-        ...this.shape,
-        ...line,
-      });
+      this.$refs.line.move(newOffset, oldOffset);
     },
   },
 };

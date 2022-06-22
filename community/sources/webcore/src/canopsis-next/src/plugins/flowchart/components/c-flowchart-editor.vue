@@ -8,15 +8,21 @@
     @mousedown="onContainerMouseDown"
   )
     component(
-      v-for="shape in shapes",
-      v-model="shapes[shape.id]",
+      v-for="shape in data",
+      v-model="data[shape.id]",
       :ref="`shape_${shape.id}`",
       :key="shape.id",
       :is="`${shape.type}-shape`",
       :selected="isSelected(shape)",
       :readonly="readonly",
+      :connecting="editing",
       @mousedown="onShapeMouseDown(shape, $event)",
-      @mouseup="onShapeMouseUp(shape, $event)"
+      @mouseup="onShapeMouseUp(shape, $event)",
+      @connecting="onConnectMove($event)",
+      @connected="onConnectFinish(shape, $event)",
+      @unconnect="onUnconnect(shape)",
+      @edit:point="startEditPoint(shape, $event)",
+      @input="updateConnections"
     )
 </template>
 
@@ -38,6 +44,7 @@ import ImageShape from './image-shape/image-shape.vue';
 import RhombusShape from './rhombus-shape/rhombus-shape.vue';
 import ParallelogramShape from './parallelogram-shape/parallelogram-shape.vue';
 import StorageShape from './storage-shape/storage-shape.vue';
+import { calculateConnectorPointBySide } from '@/plugins/flowchart/utils/connectors';
 
 export default {
   provide() {
@@ -81,11 +88,17 @@ export default {
     return {
       data: {},
       selected: [],
-      moving: false,
+
       cursor: {
         x: 0,
         y: 0,
       },
+
+      editing: false,
+      editingShape: false,
+      editingPoint: false,
+
+      moving: false,
       movingStart: {
         x: 0,
         y: 0,
@@ -193,12 +206,62 @@ export default {
       }
     },
 
+    startEditPoint(shape, point) {
+      this.editing = true;
+      this.editingShape = shape;
+      this.editingPoint = point;
+    },
+
+    onConnectMove({ x, y }) {
+      this.$mouseMove.notify({ x, y });
+    },
+
+    onConnectFinish(shape, { side, offset }) {
+      const connectingShape = this.data[shape.id];
+
+      connectingShape.connections.push({
+        shapeId: this.editingShape.id,
+        pointId: this.editingPoint._id,
+        offset,
+        side,
+      });
+    },
+
+    onUnconnect(shape) {
+      const connectingShape = this.data[shape.id];
+
+      connectingShape.connections = connectingShape.connections.filter(
+        connection => connection.shapeId !== this.editingShape.id
+        || connection.pointId !== this.editingPoint._id,
+      );
+    },
+
+    updateConnections(shape) {
+      if (shape.connections?.length) {
+        shape.connections.forEach(({ shapeId, pointId, offset, side }) => {
+          const updatableShape = this.data[shapeId];
+          const point = updatableShape.points.find(({ _id: id }) => id === pointId);
+
+          const { x, y } = calculateConnectorPointBySide(shape, side, offset);
+
+          point.x = x;
+          point.y = y;
+        });
+      }
+    },
+
     onContainerMouseUp() {
       if (this.moving) {
         this.moving = false;
         this.movingStart = { x: 0, y: 0 };
         this.movingOffset = { x: 0, y: 0 };
         return;
+      }
+
+      if (this.editing) {
+        this.editing = false;
+        this.editingShape = undefined;
+        this.editingPoint = undefined;
       }
 
       this.$mouseUp.notify();

@@ -14,7 +14,8 @@
       :line="shape",
       @mousedown="$emit('mousedown', $event)",
       @mouseup="$emit('mouseup', $event)",
-      @resize="onResize"
+      @resize="onResize",
+      @edit:point="$emit('edit:point', $event)"
     )
 </template>
 
@@ -65,9 +66,10 @@ export default {
       this.updateModel({
         ...this.shape,
 
-        points: points.map(({ x, y }) => ({
-          x: (x - oldOffset.x) + newOffset.x,
-          y: (y - oldOffset.y) + newOffset.y,
+        points: points.map(point => ({
+          ...point,
+          x: (point.x - oldOffset.x) + newOffset.x,
+          y: (point.y - oldOffset.y) + newOffset.y,
         })),
       });
     },

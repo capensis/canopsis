@@ -1,22 +1,43 @@
+import uid from '@/helpers/uid';
+
+/**
+ * @typedef {Object} Point
+ * @property {number} x
+ * @property {number} y
+ * @property {string} _id
+ */
+
+/**
+ * Generate point
+ *
+ * @param {number} x
+ * @param {number} y
+ * @returns {Point}
+ */
+export const generatePoint = ({
+  x,
+  y,
+}) => ({
+  x,
+  y,
+  _id: uid(),
+});
+
 /**
  * Calculate points with ghosts points
  *
- * @param {Array} points
- * @returns {Array}
+ * @param {Point[]} points
+ * @returns {Point[]}
  */
-export const getPointsWithGhosts = points => points.reduce((acc, point, index) => {
+export const getGhostPoints = points => points.reduce((acc, point, index) => {
   const nextIndex = index + 1;
   const nextPoint = points[nextIndex];
 
-  acc.push({ ...point, index });
-
   if (nextPoint) {
-    acc.push({
+    acc.push(generatePoint({
       x: (point.x + nextPoint.x) / 2,
       y: (point.y + nextPoint.y) / 2,
-      ghost: true,
-      index: nextIndex,
-    });
+    }));
   }
 
   return acc;

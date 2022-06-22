@@ -1,35 +1,25 @@
 <template lang="pug">
   g
-    template(v-if="resizable")
-      rect(
-        :x="leftX",
-        :y="topY",
-        :width="selectionWidth",
-        :height="selectionHeight",
-        :stroke="color",
-        fill="transparent",
-        stroke-width="1",
-        stroke-dasharray="4 4",
-        pointer-events="none"
-      )
-      circle(
-        v-for="circle in resizeCircles",
-        :cx="circle.x",
-        :cy="circle.y",
-        :fill="color",
-        :r="cornerRadius",
-        :cursor="`${circle.direction}-resize`",
-        @mousedown.stop="startResize(circle.direction)"
-      )
-    template(v-if="connectable")
-      circle(
-        v-for="connector in connectors",
-        :key="connector._id",
-        :cx="connector.x",
-        :cy="connector.y",
-        :fill="color",
-        :r="cornerRadius"
-      )
+    rect(
+      :x="leftX",
+      :y="topY",
+      :width="selectionWidth",
+      :height="selectionHeight",
+      :stroke="color",
+      fill="transparent",
+      stroke-width="1",
+      stroke-dasharray="4 4",
+      pointer-events="none"
+    )
+    circle(
+      v-for="circle in resizeCircles",
+      :cx="circle.x",
+      :cy="circle.y",
+      :fill="color",
+      :r="cornerRadius",
+      :cursor="`${circle.direction}-resize`",
+      @mousedown.stop="startResize(circle.direction)"
+    )
 </template>
 
 <script>
@@ -64,18 +54,6 @@ export default {
     cornerRadius: {
       type: Number,
       default: 4,
-    },
-    resizable: {
-      type: Boolean,
-      default: false,
-    },
-    connectable: {
-      type: Boolean,
-      default: false,
-    },
-    connectors: {
-      type: Array,
-      default: () => [],
     },
   },
   computed: {

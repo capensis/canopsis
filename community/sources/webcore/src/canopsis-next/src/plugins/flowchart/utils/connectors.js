@@ -1,82 +1,24 @@
-import { range } from 'lodash';
+import { CONNECTOR_SIDES } from '@/plugins/flowchart/constants';
 
-import uid from '@/helpers/uid';
+export const calculateConnectorPointBySide = (rect, side, { x: percentX, y: percentY }) => {
+  const { x, y, width, height } = rect;
+  const isTop = side === CONNECTOR_SIDES.top;
 
-/**
- * @typedef {Object} ConnectorPoint
- * @property {number} x
- * @property {number} y
- * @property {string} _id
- */
+  if (isTop || side === CONNECTOR_SIDES.bottom) {
+    const resultX = x + width * percentX;
 
-/**
- * Generate connector
- *
- * @param {number} x
- * @param {number} y
- * @returns {ConnectorPoint}
- */
-export const generateConnectorPoint = (x, y) => ({
-  x,
-  y,
-  _id: uid(),
-});
+    if (isTop) {
+      return { x: resultX, y };
+    }
 
-/**
- * Generate connector points by rectangle
- *
- * @param {Rect} rect
- * @param {number} count
- * @returns {ConnectorPoint[]}
- */
-export const generateConnectorsByRect = (rect, count) => {
-  const { width, height, rx, ry, x, y } = rect;
-  const sideConnectorsCount = Math.round(count / 4);
-  const sideSpacesCount = sideConnectorsCount + 1;
-  const startX = x + rx;
-  const startY = x + ry;
-
-  const widthConnectorOffset = (width - rx * 2) / (sideSpacesCount);
-  const heightConnectorOffset = (height - ry * 2) / (sideSpacesCount);
-
-  const sideConnectors = range(1, sideConnectorsCount + 1);
-
-  const topConnectors = sideConnectors.map(index => generateConnectorPoint(
-    startX + widthConnectorOffset * index,
-    y,
-  ));
-
-  const rightConnectors = sideConnectors.map(index => generateConnectorPoint(
-    x + width,
-    startY + heightConnectorOffset * index,
-  ));
-
-  const bottomConnectors = sideConnectors.map(index => generateConnectorPoint(
-    startX + widthConnectorOffset * index,
-    y + height,
-  ));
-
-  const leftConnectors = sideConnectors.map(index => generateConnectorPoint(
-    x,
-    startY + heightConnectorOffset * index,
-  ));
-
-  const connectors = [
-    ...topConnectors,
-    ...rightConnectors,
-    ...bottomConnectors,
-    ...leftConnectors,
-  ];
-
-  if (!rx && !ry) {
-    /* Angles connectors */
-    connectors.push(
-      generateConnectorPoint(x, y),
-      generateConnectorPoint(x + width, y),
-      generateConnectorPoint(x + width, y + height),
-      generateConnectorPoint(x, y + height),
-    );
+    return { x: resultX, y: y + height };
   }
 
-  return connectors;
+  const resultY = y + height * percentY;
+
+  if (side === CONNECTOR_SIDES.left) {
+    return { x, y: resultY };
+  }
+
+  return { x: x + width, y: resultY };
 };
