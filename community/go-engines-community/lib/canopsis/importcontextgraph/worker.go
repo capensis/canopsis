@@ -145,7 +145,7 @@ func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stat
 					if connector.ID == "" {
 						continue
 					}
-					event.Connector = strings.ReplaceAll(connector.ID, "/"+connector.Name, "")
+					event.Connector = strings.TrimSuffix(connector.ID, "/"+connector.Name)
 					event.ConnectorName = connector.Name
 				}
 			case types.SourceTypeResource:
@@ -173,10 +173,10 @@ func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stat
 						continue
 					}
 
-					event.Connector = strings.ReplaceAll(connector.ID, "/"+connector.Name, "")
+					event.Connector = strings.TrimSuffix(connector.ID, "/"+connector.Name)
 					event.ConnectorName = connector.Name
 					event.Component = component.Name
-					event.Resource = strings.ReplaceAll(event.Resource, "/"+component.Name, "")
+					event.Resource = strings.TrimSuffix(event.Resource, "/"+component.Name)
 				}
 			}
 
@@ -488,7 +488,7 @@ func (w *worker) parseEntities(
 					switch *ci.Type {
 					case types.EntityTypeConnector:
 						if name != "" {
-							event.Connector = strings.ReplaceAll(ci.ID, "/"+name, "")
+							event.Connector = strings.TrimSuffix(ci.ID, "/"+name)
 							event.ConnectorName = name
 							event.SourceType = types.SourceTypeConnector
 							basicEntityEvents = append(basicEntityEvents, event)
