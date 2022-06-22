@@ -24,12 +24,16 @@
     rect-shape-selection(
       v-if="!readonly",
       :selected="selected",
+      :connecting="connecting",
       :rect="rect",
       :pointer-events="editing ? 'none' : 'all'",
       @resize="onResize",
       @dblclick="enableEditingMode",
       @mousedown="$emit('mousedown', $event)",
-      @mouseup="$emit('mouseup', $event)"
+      @mouseup="$emit('mouseup', $event)",
+      @connected="$emit('connected', $event)",
+      @connecting="$emit('connecting', $event)",
+      @unconnect="$emit('unconnect')"
     )
 </template>
 
@@ -63,6 +67,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    connecting: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -71,19 +79,13 @@ export default {
   },
   methods: {
     move(newOffset, oldOffset) {
-      const { x, y, connectors } = this.rect;
+      const { x, y } = this.rect;
 
       this.updateModel({
         ...this.rect,
 
         x: (x - oldOffset.x) + newOffset.x,
         y: (y - oldOffset.y) + newOffset.y,
-
-        connectors: connectors.map(connector => ({
-          ...connector,
-          x: (connector.x - oldOffset.x) + newOffset.x,
-          y: (connector.y - oldOffset.y) + newOffset.y,
-        })),
       });
     },
 
