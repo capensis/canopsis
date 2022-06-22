@@ -10,9 +10,12 @@ import { mockDateNow } from '@unit/utils/mock-hooks';
 import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
 import {
   ALARMS_OPENED_VALUES,
-  CANOPSIS_EDITION, EXPORT_CSV_DATETIME_FORMATS, EXPORT_CSV_SEPARATORS,
+  CANOPSIS_EDITION,
+  EXPORT_CSV_DATETIME_FORMATS,
+  EXPORT_CSV_SEPARATORS,
   REMEDIATION_INSTRUCTION_TYPES,
-  SORT_ORDERS, TIME_UNITS,
+  SORT_ORDERS,
+  TIME_UNITS,
   USERS_PERMISSIONS,
 } from '@/constants';
 import ClickOutside from '@/services/click-outside';
