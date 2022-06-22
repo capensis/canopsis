@@ -63,6 +63,14 @@ func (r *mongoReporter) GetStatus(ctx context.Context, id string) (ImportJob, er
 	return status, err
 }
 
+func (r *mongoReporter) Clean(ctx context.Context, interval time.Duration) error {
+	_, err := r.collection.DeleteMany(ctx, bson.M{"$or": []bson.M{
+		{"creation": bson.M{"$lt": time.Now().Add(-interval)}},
+		{"creation": bson.M{"$type": "string"}},
+	}})
+	return err
+}
+
 func (r *mongoReporter) create(ctx context.Context, job *ImportJob) error {
 	job.ID = utils.NewID()
 
