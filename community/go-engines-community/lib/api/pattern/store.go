@@ -66,6 +66,7 @@ func NewStore(
 			mongo.PbehaviorMongoCollection,
 			mongo.EntityMongoCollection,
 			mongo.ResolveRuleMongoCollection,
+			mongo.IdleRuleMongoCollection,
 		},
 
 		pbhComputeChan: pbhComputeChan,
