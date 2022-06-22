@@ -36,14 +36,14 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               
             </th>
             <th
-              aria-label="Title: Not sorted. Activate to sort ascending."
+              aria-label="Name: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
               role="columnheader"
               scope="col"
               tabindex="0"
             >
-              Title
+              Name
               <i
                 aria-hidden="true"
                 class="v-icon material-icons theme--light"
@@ -681,14 +681,14 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               
             </th>
             <th
-              aria-label="Title: Sorted ascending. Activate to sort descending."
+              aria-label="Name: Sorted ascending. Activate to sort descending."
               aria-sort="ascending"
               class="column active asc sortable text-xs-left"
               role="columnheader"
               scope="col"
               tabindex="0"
             >
-              Title
+              Name
               <i
                 aria-hidden="true"
                 class="v-icon material-icons theme--light"
@@ -803,14 +803,14 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               
             </th>
             <th
-              aria-label="Title: Not sorted. Activate to sort ascending."
+              aria-label="Name: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
               role="columnheader"
               scope="col"
               tabindex="0"
             >
-              Title
+              Name
               <i
                 aria-hidden="true"
                 class="v-icon material-icons theme--light"
