@@ -2,6 +2,7 @@ package action
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -52,44 +53,7 @@ type Action struct {
 }
 
 func (a Action) Match(entity types.Entity, alarm types.Alarm) (bool, error) {
-	if !a.OldAlarmPatterns.IsSet() && !a.OldEntityPatterns.IsSet() && len(a.EntityPattern) == 0 && len(a.AlarmPattern) == 0 {
-		return false, nil
-	}
-
-	var matched bool
-	var err error
-
-	if a.OldAlarmPatterns.IsSet() {
-		if !a.OldAlarmPatterns.IsValid() {
-			return false, InvalidOldAlarmPattern
-		}
-
-		matched = a.OldAlarmPatterns.Matches(&alarm)
-	} else {
-		matched, err = a.AlarmPattern.Match(alarm)
-		if err != nil {
-			return false, AlarmPatternError
-		}
-	}
-
-	if !matched {
-		return false, nil
-	}
-
-	if a.OldEntityPatterns.IsSet() {
-		if !a.OldEntityPatterns.IsValid() {
-			return false, InvalidOldEntityPattern
-		}
-
-		matched = a.OldEntityPatterns.Matches(&entity)
-	} else {
-		matched, _, err = a.EntityPattern.Match(entity)
-		if err != nil {
-			return false, EntityPatternError
-		}
-	}
-
-	return matched, nil
+	return pattern.Match(entity, alarm, a.EntityPattern, a.AlarmPattern, a.OldEntityPatterns, a.OldAlarmPatterns)
 }
 
 type Parameters struct {

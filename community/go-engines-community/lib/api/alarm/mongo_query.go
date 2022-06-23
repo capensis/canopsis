@@ -11,6 +11,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -1000,38 +1001,27 @@ func getIsMetaAlarmField() bson.M {
 }
 
 func getInstructionQuery(instruction Instruction) (bson.M, error) {
-	var and []bson.M
-
-	if len(instruction.AlarmPattern) == 0 && len(instruction.EntityPattern) == 0 &&
-		(!instruction.OldAlarmPatterns.IsSet() || !instruction.OldAlarmPatterns.IsValid()) &&
-		(!instruction.OldEntityPatterns.IsSet() || !instruction.OldEntityPatterns.IsValid()) {
-		return nil, nil
-	}
-
-	alarmPatternQuery, err := instruction.AlarmPattern.ToMongoQuery("")
+	alarmPatternQuery, err := pattern.AlarmPatternToMongoQuery("", instruction.AlarmPattern, instruction.OldAlarmPatterns)
 	if err != nil {
 		return nil, fmt.Errorf("invalid alarm pattern in instruction id=%q: %w", instruction.ID, err)
 	}
-	if len(alarmPatternQuery) > 0 {
-		and = append(and, alarmPatternQuery)
-	} else {
-		oldAlarmPatternQuery := instruction.OldAlarmPatterns.AsMongoDriverQuery()
-		if len(oldAlarmPatternQuery) > 0 {
-			and = append(and, oldAlarmPatternQuery)
-		}
+
+	entityPatternQuery, err := pattern.EntityPatternToMongoQuery("entity", instruction.EntityPattern, instruction.OldEntityPatterns)
+	if err != nil {
+		return nil, fmt.Errorf("invalid entity pattern in instruction id=%q: %w", instruction.ID, err)
 	}
 
-	entityPatternQuery, err := instruction.EntityPattern.ToMongoQuery("entity")
-	if err != nil {
-		return nil, fmt.Errorf("invalid entuty pattern in instruction id=%q: %w", instruction.ID, err)
+	if len(alarmPatternQuery) == 0 && len(entityPatternQuery) == 0 {
+		return nil, nil
 	}
+
+	var and []bson.M
+	if len(alarmPatternQuery) > 0 {
+		and = append(and, alarmPatternQuery)
+	}
+
 	if len(entityPatternQuery) > 0 {
 		and = append(and, entityPatternQuery)
-	} else {
-		oldEntityPatternQuery := instruction.OldEntityPatterns.AsMongoDriverQuery()
-		if len(oldEntityPatternQuery) > 0 {
-			and = append(and, getEntityPatternsForEntity(oldEntityPatternQuery))
-		}
 	}
 
 	if len(instruction.ActiveOnPbh) > 0 {
@@ -1043,34 +1033,4 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 	}
 
 	return bson.M{"$and": and}, nil
-}
-
-func getEntityPatternsForEntity(patternBson bson.M) bson.M {
-	newBson := make(bson.M)
-	patternListInterface, ok := patternBson["$or"]
-	if ok {
-		patternList := patternListInterface.([]bson.M)
-		newPatternsList := make([]bson.M, len(patternList))
-		for i, pattern := range patternList {
-			newPattern := make(bson.M)
-			for k, vv := range pattern {
-				newPattern["entity."+k] = vv
-			}
-
-			newPatternsList[i] = newPattern
-		}
-
-		// Just in case when an entity pattern's function AsMongoDriverQuery returns an empty bson array
-		// that might happen if the pattern has bad format in mongo, but after unmarshalling it has isSet = true
-		// since it's not possible for $or has empty array we just fill it with an empty bson
-		if len(newPatternsList) == 0 {
-			newPatternsList = append(newPatternsList, bson.M{})
-		}
-
-		newBson["$or"] = newPatternsList
-	} else {
-		return patternBson
-	}
-
-	return newBson
 }

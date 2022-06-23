@@ -237,6 +237,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		&rpcMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			ServiceRpc:               serviceRpcClient,
+			RMQChannel:               amqpChannel,
 			PbhRpc:                   pbhRpcClient,
 			RemediationRpc:           remediationRpcClient,
 			MetaAlarmEventProcessor:  metaAlarmEventProcessor,
