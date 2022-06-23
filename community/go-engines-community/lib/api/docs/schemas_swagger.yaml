@@ -2545,18 +2545,34 @@ definitions:
     properties:
       _id:
         type: string
-      alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
       description:
         maxLength: 255
         type: string
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       name:
         maxLength: 255
         type: string
+      old_alarm_patterns:
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       priority:
         type: integer
     required:
@@ -2568,20 +2584,40 @@ definitions:
     properties:
       _id:
         type: string
-      alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       author:
         $ref: '#/definitions/common.User'
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
       created:
         type: integer
       description:
         type: string
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       name:
         type: string
+      old_alarm_patterns:
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       priority:
         type: integer
       updated:
@@ -2589,18 +2625,34 @@ definitions:
     type: object
   resolverule.UpdateRequest:
     properties:
-      alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
       description:
         maxLength: 255
         type: string
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       name:
         maxLength: 255
         type: string
+      old_alarm_patterns:
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       priority:
         type: integer
     required:
@@ -3026,10 +3078,10 @@ definitions:
       name:
         type: string
       pbehavior_info:
-        $ref: '#/definitions/types.PbehaviorInfo'
+        $ref: '#/definitions/entity.PbehaviorInfo'
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.Response'
+          $ref: '#/definitions/alarm.Pbehavior'
         type: array
       resource:
         type: string
@@ -3090,21 +3142,17 @@ definitions:
         type: integer
       linklist:
         items:
-          properties:
-            cat_name:
-              type: string
-            links: {}
-          type: object
+          $ref: '#/definitions/serviceweather.WeatherLink'
         type: array
       name:
         type: string
       output:
         type: string
       pbehavior_info:
-        $ref: '#/definitions/types.PbehaviorInfo'
+        $ref: '#/definitions/entity.PbehaviorInfo'
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.Response'
+          $ref: '#/definitions/alarm.Pbehavior'
         type: array
       resource:
         type: string
@@ -3964,6 +4012,12 @@ definitions:
       title:
         maxLength: 255
         type: string
+      weather_service_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       widget:
         type: string
     required:
@@ -4020,6 +4074,12 @@ definitions:
         type: string
       updated:
         type: integer
+      weather_service_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
     type: object
 info:
   contact: {}
