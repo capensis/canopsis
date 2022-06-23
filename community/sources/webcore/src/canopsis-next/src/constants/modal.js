@@ -78,6 +78,6 @@ export const MODALS = {
   createAlarmStatusRule: 'create-alarm-status-rule',
   healthcheckEngine: 'healthcheck-engine',
   healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
-  patterns: 'patterns',
   info: 'info',
+  createKpiFilter: 'create-kpi-filter',
 };

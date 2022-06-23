@@ -86,15 +86,8 @@ export default {
 
     showCreateFilterModal() {
       this.$modals.show({
-        name: MODALS.patterns,
+        name: MODALS.createKpiFilter,
         config: {
-          title: this.$t('modals.createFilter.create.title'),
-          name: true,
-          entity: true,
-          patterns: {
-            name: '',
-            entity_patterns: [],
-          },
           action: async (data) => {
             await this.createFilter({ data });
 
