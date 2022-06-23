@@ -5,10 +5,10 @@
         v-field="value.alarm_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
-        :name="alarmPatternsFieldName",
+        :name="alarmFieldName",
         :attributes="alarmAttributes",
         with-type,
-        @input="errors.remove(alarmPatternsFieldName)"
+        @input="errors.remove(alarmFieldName)"
       )
 
     c-pattern-panel.mb-2(v-if="withEntity", :title="$t('common.entityPatterns')")
@@ -16,10 +16,10 @@
         v-field="value.entity_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
-        :name="entityPatternsFieldName",
+        :name="entityFieldName",
         :attributes="entityAttributes",
         with-type,
-        @input="errors.remove(entityPatternsFieldName)"
+        @input="errors.remove(entityFieldName)"
       )
 
     c-pattern-panel.mb-2(v-if="withPbehavior", :title="$t('common.pbehaviorPatterns')")
@@ -27,9 +27,9 @@
         v-field="value.pbehavior_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
-        :name="entityPbehaviorFieldName",
+        :name="pbehaviorFieldName",
         with-type,
-        @input="errors.remove(entityPbehaviorFieldName)"
+        @input="errors.remove(pbehaviorFieldName)"
       )
 
     c-pattern-panel(v-if="withEvent", :title="$t('common.eventPatterns')")
@@ -37,8 +37,18 @@
         v-field="value.event_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
-        :name="eventPatternsFieldName",
-        @input="errors.remove(eventPatternsFieldName)"
+        :name="eventFieldName",
+        @input="errors.remove(eventFieldName)"
+      )
+
+    c-pattern-panel(v-if="withTotalEntity", :title="$t('common.totalEntityPatterns')")
+      c-entity-patterns-field(
+        v-field="value.total_entity_pattern",
+        :required="isPatternRequired",
+        :disabled="disabled",
+        :name="totalEntityFieldName",
+        with-type,
+        @input="errors.remove(totalEntityFieldName)"
       )
 </template>
 
@@ -82,7 +92,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    totalEntity: {
+    withTotalEntity: {
       type: Boolean,
       default: false,
     },
@@ -123,20 +133,24 @@ export default {
       return this.someRequired ? !this.hasPatterns : this.required;
     },
 
-    alarmPatternsFieldName() {
+    alarmFieldName() {
       return this.preparePatternsFieldName('alarm_pattern');
     },
 
-    eventPatternsFieldName() {
+    eventFieldName() {
       return this.preparePatternsFieldName('event_pattern');
     },
 
-    entityPatternsFieldName() {
+    entityFieldName() {
       return this.preparePatternsFieldName('entity_pattern');
     },
 
-    entityPbehaviorFieldName() {
+    pbehaviorFieldName() {
       return this.preparePatternsFieldName('pbehavior_pattern');
+    },
+
+    totalEntityFieldName() {
+      return this.preparePatternsFieldName('total_entity_pattern');
     },
   },
   methods: {

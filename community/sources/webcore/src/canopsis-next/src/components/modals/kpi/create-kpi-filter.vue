@@ -1,20 +1,12 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(#title)
+      template(#title="")
         span {{ title }}
-      template(#text)
-        patterns-form(
-          v-model="form",
-          :name="config.name",
-          :entity="config.entity",
-          :alarm="config.alarm",
-          :event="config.event",
-          :total-entity="config.totalEntity"
-        )
-      template(#actions)
+      template(#text="")
+        kpi-filter-form(v-model="form")
+      template(#actions="")
         v-btn(
-          :disabled="submitting",
           depressed,
           flat,
           @click="$modals.hide"
@@ -27,49 +19,54 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import { MODALS, PATTERNS_FIELDS } from '@/constants';
 
-import { MODALS } from '@/constants';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import PatternsForm from '@/components/forms/patterns-form.vue';
+import KpiFilterForm from '@/components/other/kpi/filters/form/kpi-filter-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.patterns,
+  name: MODALS.createKpiFilter,
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    PatternsForm,
-    ModalWrapper,
-  },
+  components: { KpiFilterForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
   data() {
+    const { filter = {} } = this.modal.config;
+
     return {
-      form: this.modal.config.patterns ? cloneDeep(this.modal.config.patterns) : {},
+      form: {
+        name: filter.name,
+        patterns: filterPatternsToForm(filter, [PATTERNS_FIELDS.entity]),
+      },
     };
   },
   computed: {
     title() {
-      return this.config.title || this.$tc('common.pattern', 2);
+      return this.config.title ?? this.$t('modals.createFilter.create.title');
     },
   },
   methods: {
     async submit() {
-      const isFormValid = await this.$validator.validateAll();
+      const isFormValid = await this.$validator.validate();
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          await this.config.action({
+            name: this.form.name,
+            ...formFilterToPatterns(this.form.patterns, [PATTERNS_FIELDS.entity]),
+          });
         }
 
         this.$modals.hide();

@@ -8,12 +8,18 @@ import { addKeyInEntities, removeKeyFromEntities } from '../entities';
  * @typedef {Object} FilterPatterns
  * @property {PatternGroups} [alarm_pattern]
  * @property {string} [corporate_alarm_pattern]
+ *
  * @property {PatternGroups} [entity_pattern]
  * @property {string} [corporate_entity_pattern]
+ *
  * @property {PatternGroups} [pbehavior_pattern]
  * @property {string} [corporate_pbehavior_pattern]
+ *
  * @property {PatternGroups} [event_pattern]
  * @property {string} [corporate_event_pattern]
+ *
+ * @property {PatternGroups} [total_entity_pattern]
+ * @property {string} [corporate_total_entity_pattern]
  * @property {Object} [old_mongo_query]
  */
 
