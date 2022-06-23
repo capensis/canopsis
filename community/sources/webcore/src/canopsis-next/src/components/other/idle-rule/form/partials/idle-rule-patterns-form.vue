@@ -4,30 +4,21 @@
     :with-alarm="!isEntityType",
     :alarm-attributes="alarmAttributes",
     :entity-attributes="entityAttributes",
+    :disabled="disabled",
     some-required,
     with-entity
   )
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, QUICK_RANGES } from '@/constants';
 
-import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, PATTERNS_TYPES, QUICK_RANGES } from '@/constants';
-
-import { formValidationHeaderMixin, validationErrorsMixinCreator } from '@/mixins/form';
-
-const { mapActions } = createNamespacedHelpers('idleRules');
+import { formValidationHeaderMixin } from '@/mixins/form';
 
 export default {
-  provide() {
-    return {
-      $checkEntitiesCountForPatternsByType: this.checkEntitiesCountForPatternsByType,
-    };
-  },
   inject: ['$validator'],
   mixins: [
     formValidationHeaderMixin,
-    validationErrorsMixinCreator(),
   ],
   model: {
     prop: 'form',
@@ -39,6 +30,10 @@ export default {
       default: () => ({}),
     },
     isEntityType: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },
@@ -71,49 +66,9 @@ export default {
       return [
         {
           value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: {
-            disabled: true,
-          },
+          options: { disabled: true },
         },
       ];
-    },
-  },
-  methods: {
-    ...mapActions({
-      fetchIdleRuleEntitiesCountWithoutStore: 'fetchEntitiesCountWithoutStore',
-    }),
-
-    setFormErrors(err) {
-      const existFieldErrors = this.getExistsFieldsErrors(err);
-
-      if (existFieldErrors.length) {
-        this.addExistsFieldsErrors(existFieldErrors);
-
-        return {
-          over_limit: false,
-          total_count: 0,
-        };
-      }
-
-      throw err;
-    },
-
-    async checkEntitiesCountForPatternsByType(type, patterns) {
-      const requestKey = `${type}_patterns`;
-      const responseKey = type === PATTERNS_TYPES.alarm ? 'total_count_alarms' : 'total_count_entities';
-
-      try {
-        const response = await this.fetchIdleRuleEntitiesCountWithoutStore({
-          data: { [requestKey]: patterns },
-        });
-
-        return {
-          over_limit: response.over_limit,
-          total_count: response[responseKey],
-        };
-      } catch (err) {
-        return this.setFormErrors(err);
-      }
     },
   },
 };
