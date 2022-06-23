@@ -172,6 +172,11 @@ func (a *api) Create(c *gin.Context) {
 
 	err = a.store.Insert(c.Request.Context(), model)
 	if err != nil {
+		validationErr := common.ValidationError{}
+		if errors.As(err, &validationErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
+			return
+		}
 		panic(err)
 	}
 
@@ -218,6 +223,11 @@ func (a *api) Update(c *gin.Context) {
 
 	ok, err := a.store.Update(c.Request.Context(), model)
 	if err != nil {
+		validationErr := common.ValidationError{}
+		if errors.As(err, &validationErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
+			return
+		}
 		panic(err)
 	}
 
