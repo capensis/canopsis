@@ -5876,6 +5876,41 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/resolverule.CreateRequest'
+            examples:
+              create:
+                summary: Create a resolve rule
+                description: Create a resolve rule
+                value: {
+                  "name": "test-resolve-rule-name",
+                  "description": "test-resolve-rule-desc",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-resource-name"
+                        }
+                      }
+                    ]
+                  ],
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-component"
+                        }
+                      }
+                    ]
+                  ],
+                  "duration": {
+                    "value": 2,
+                    "unit": "s"
+                  },
+                  "priority": 10
+                }
         required: true
       responses:
         201:
@@ -5936,6 +5971,41 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/resolverule.UpdateRequest'
+            examples:
+              update:
+                summary: Update a resolve rule
+                description: Update a resolve rule
+                value: {
+                  "name": "test-resolve-rule-name-updated",
+                  "description": "test-resolve-rule-desc-updated",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-resource-name-updated"
+                        }
+                      }
+                    ]
+                  ],
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-component-updated"
+                        }
+                      }
+                    ]
+                  ],
+                  "duration": {
+                    "value": 2,
+                    "unit": "s"
+                  },
+                  "priority": 10
+                }
         required: true
       responses:
         200:
