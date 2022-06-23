@@ -2547,6 +2547,33 @@ definitions:
       priority:
         type: integer
       triggers:
+        description: |-
+          Possible trigger values.
+            * `create` - Alarm creation
+            * `statedec` - Alarm state decrease
+            * `changestate` - Alarm state has been changed by "change state" action
+            * `stateinc` - Alarm state increase
+            * `changestatus` - Alarm status changes eg. flapping
+            * `ack` - Alarm has been acked
+            * `ackremove` - Alarm has been unacked
+            * `cancel` - Alarm has been cancelled
+            * `uncancel` - Alarm has been uncancelled
+            * `comment` - Alarm has been commented
+            * `done` - Alarm is "done"
+            * `declareticket` - Ticket has been declared by the UI action
+            * `declareticketwebhook` - Ticket has been declared by the webhook
+            * `assocticket` - Ticket has been associated with an alarm
+            * `snooze` - Alarm has been snoozed
+            * `unsnooze` - Alarm has been unsnoozed
+            * `pbhenter` - Alarm enters a periodic behavior
+            * `activate` - Alarm has been activated
+            * `resolve` - Alarm has been resolved
+            * `pbhleave` - Alarm leaves a periodic behavior
+            * `instructionfail` - Manual instruction has failed
+            * `autoinstructionfail` - Auto instruction has failed
+            * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructioncomplete` - Manual instruction is completed
+            * `autoinstructioncomplete` - Auto instruction is completed
         items:
           type: string
         type: array
@@ -2612,6 +2639,33 @@ definitions:
       priority:
         type: integer
       triggers:
+        description: |-
+          Possible trigger values.
+            * `create` - Alarm creation
+            * `statedec` - Alarm state decrease
+            * `changestate` - Alarm state has been changed by "change state" action
+            * `stateinc` - Alarm state increase
+            * `changestatus` - Alarm status changes eg. flapping
+            * `ack` - Alarm has been acked
+            * `ackremove` - Alarm has been unacked
+            * `cancel` - Alarm has been cancelled
+            * `uncancel` - Alarm has been uncancelled
+            * `comment` - Alarm has been commented
+            * `done` - Alarm is "done"
+            * `declareticket` - Ticket has been declared by the UI action
+            * `declareticketwebhook` - Ticket has been declared by the webhook
+            * `assocticket` - Ticket has been associated with an alarm
+            * `snooze` - Alarm has been snoozed
+            * `unsnooze` - Alarm has been unsnoozed
+            * `pbhenter` - Alarm enters a periodic behavior
+            * `activate` - Alarm has been activated
+            * `resolve` - Alarm has been resolved
+            * `pbhleave` - Alarm leaves a periodic behavior
+            * `instructionfail` - Manual instruction has failed
+            * `autoinstructionfail` - Auto instruction has failed
+            * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructioncomplete` - Manual instruction is completed
+            * `autoinstructioncomplete` - Auto instruction is completed
         items:
           type: string
         type: array
@@ -2645,6 +2699,33 @@ definitions:
       priority:
         type: integer
       triggers:
+        description: |-
+          Possible trigger values.
+            * `create` - Alarm creation
+            * `statedec` - Alarm state decrease
+            * `changestate` - Alarm state has been changed by "change state" action
+            * `stateinc` - Alarm state increase
+            * `changestatus` - Alarm status changes eg. flapping
+            * `ack` - Alarm has been acked
+            * `ackremove` - Alarm has been unacked
+            * `cancel` - Alarm has been cancelled
+            * `uncancel` - Alarm has been uncancelled
+            * `comment` - Alarm has been commented
+            * `done` - Alarm is "done"
+            * `declareticket` - Ticket has been declared by the UI action
+            * `declareticketwebhook` - Ticket has been declared by the webhook
+            * `assocticket` - Ticket has been associated with an alarm
+            * `snooze` - Alarm has been snoozed
+            * `unsnooze` - Alarm has been unsnoozed
+            * `pbhenter` - Alarm enters a periodic behavior
+            * `activate` - Alarm has been activated
+            * `resolve` - Alarm has been resolved
+            * `pbhleave` - Alarm leaves a periodic behavior
+            * `instructionfail` - Manual instruction has failed
+            * `autoinstructionfail` - Auto instruction has failed
+            * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructioncomplete` - Manual instruction is completed
+            * `autoinstructioncomplete` - Auto instruction is completed
         items:
           type: string
         type: array
