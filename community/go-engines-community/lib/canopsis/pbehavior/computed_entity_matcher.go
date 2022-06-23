@@ -165,7 +165,7 @@ func (m *computedEntityMatcher) GetComputedEntityIDs(ctx context.Context) ([]str
 		for _, key := range keys {
 			if !processedKeys[key] {
 				processedKeys[key] = true
-				entityIDs = append(entityIDs, strings.ReplaceAll(key, m.key, ""))
+				entityIDs = append(entityIDs, strings.TrimPrefix(key, m.key))
 			}
 		}
 
