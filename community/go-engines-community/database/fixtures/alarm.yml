@@ -10,6 +10,7 @@ template:
 resolve_rule:
   default_resolve_rule:
     <<: *resolve_rule
+    _id: "default_rule"
     name: Default rule
     duration:
       value: 1
