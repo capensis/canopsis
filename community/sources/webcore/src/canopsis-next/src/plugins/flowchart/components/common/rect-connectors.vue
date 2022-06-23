@@ -1,26 +1,25 @@
 <template lang="pug">
   g
-    rect(
-      v-for="connectorRect in connectorRects",
-      :key="connectorRect.side",
-      :x="connectorRect.x",
-      :y="connectorRect.y",
-      :width="connectorRect.width",
-      :height="connectorRect.height",
-      :fill="color",
-      :opacity="activeSide === connectorRect.side ? 1 : 0",
-      @mouseenter="onMouseEnter(connectorRect.side)",
+    points-path(
+      v-for="connectorTriangle in connectorTriangles",
+      :key="connectorTriangle.side",
+      :points="connectorTriangle.points",
+      @mouseenter="onMouseEnter(connectorTriangle.side)",
       @mouseleave="onMouseLeave",
-      @mouseup="onConnectFinish(connectorRect)",
-      @mousemove.stop.passive="onConnectorMove"
+      @mouseup="onConnectFinish(connectorTriangle)",
+      @mousemove.stop=""
     )
 </template>
 
 <script>
 import { CONNECTOR_SIDES } from '@/plugins/flowchart/constants';
+
 import { calculateConnectorPointBySide } from '@/plugins/flowchart/utils/connectors';
 
+import PointsPath from '@/plugins/flowchart/components/common/points-path.vue';
+
 export default {
+  components: { PointsPath },
   props: {
     x: {
       type: Number,
@@ -38,53 +37,105 @@ export default {
       type: Number,
       required: true,
     },
-    color: {
-      type: String,
-      default: 'blue',
-    },
-    size: {
-      type: Number,
-      default: 5,
-    },
   },
   data() {
     return {
       activeSide: undefined,
-      offset: {
-        x: 0.5,
-        y: 0.5,
-      },
     };
   },
   computed: {
-    connectorRects() {
+    rightX() {
+      return this.x + this.width;
+    },
+
+    bottomY() {
+      return this.y + this.height;
+    },
+
+    selectionWidth() {
+      return this.rightX - this.x;
+    },
+
+    selectionHeight() {
+      return this.bottomY - this.y;
+    },
+
+    centerX() {
+      return this.x + this.width / 2;
+    },
+
+    centerY() {
+      return this.y + this.height / 2;
+    },
+
+    centerPoint() {
+      return { x: this.centerX, y: this.centerY };
+    },
+
+    topLeftPoint() {
+      return { x: this.x, y: this.y };
+    },
+
+    topRightPoint() {
+      return { x: this.rightX, y: this.y };
+    },
+
+    bottomRightPoint() {
+      return { x: this.rightX, y: this.bottomY };
+    },
+
+    bottomLeftPoint() {
+      return { x: this.x, y: this.bottomY };
+    },
+
+    topTrianglePoints() {
+      return [
+        this.topLeftPoint,
+        this.topRightPoint,
+        this.centerPoint,
+      ];
+    },
+
+    rightTrianglePoints() {
+      return [
+        this.topRightPoint,
+        this.bottomRightPoint,
+        this.centerPoint,
+      ];
+    },
+
+    bottomTrianglePoints() {
+      return [
+        this.bottomRightPoint,
+        this.bottomLeftPoint,
+        this.centerPoint,
+      ];
+    },
+
+    leftTrianglePoints() {
+      return [
+        this.bottomLeftPoint,
+        this.topLeftPoint,
+        this.centerPoint,
+      ];
+    },
+
+    connectorTriangles() {
       return [
         {
-          x: this.x,
-          y: this.y - this.size,
-          width: this.width,
-          height: this.size,
+          points: this.topTrianglePoints,
           side: CONNECTOR_SIDES.top,
         },
         {
-          x: this.x + this.width,
-          y: this.y,
-          width: this.size,
-          height: this.height,
+          points: this.rightTrianglePoints,
           side: CONNECTOR_SIDES.right,
         },
         {
-          x: this.x,
-          y: this.y + this.height,
-          width: this.width,
-          height: this.size,
+          points: this.bottomTrianglePoints,
           side: CONNECTOR_SIDES.bottom,
         },
         {
-          x: this.x - this.size,
-          y: this.y,
-          width: this.size,
-          height: this.height,
+          points: this.leftTrianglePoints,
           side: CONNECTOR_SIDES.left,
         },
       ];
@@ -93,6 +144,13 @@ export default {
   methods: {
     onMouseEnter(side) {
       this.activeSide = side;
+
+      const point = calculateConnectorPointBySide(
+        { x: this.x, y: this.y, width: this.width, height: this.height },
+        side,
+      );
+
+      this.$emit('connecting', point);
     },
 
     onMouseLeave() {
@@ -102,29 +160,7 @@ export default {
     },
 
     onConnectFinish() {
-      this.$emit('connected', {
-        side: this.activeSide,
-        offset: this.offset,
-      });
-    },
-
-    onConnectorMove(event) {
-      const { x, y } = event.target.getBoundingClientRect();
-      const relativeX = event.clientX - x;
-      const relativeY = event.clientY - y;
-
-      this.offset = {
-        x: relativeX && relativeX / this.width,
-        y: relativeY && relativeY / this.height,
-      };
-
-      const point = calculateConnectorPointBySide(
-        { x: this.x, y: this.y, width: this.width, height: this.height },
-        this.activeSide,
-        this.offset,
-      );
-
-      this.$emit('connecting', point);
+      this.$emit('connected', { side: this.activeSide });
     },
   },
 };

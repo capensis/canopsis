@@ -22,12 +22,16 @@
     rect-shape-selection(
       v-if="!readonly",
       :selected="selected",
+      :connecting="connecting",
       :rect="ellipse",
       :pointer-events="editing ? 'none' : 'all'",
       @resize="onResize",
       @dblclick="enableEditingMode",
-      @mousedown="$emit('mousedown', $event)",
-      @mouseup="$emit('mouseup', $event)"
+      @mousedown="$listeners.mousedown",
+      @mouseup="$listeners.mouseup",
+      @connected="$listeners.connected",
+      @connecting="$listeners.connecting",
+      @unconnect="$listeners.unconnect"
     )
 </template>
 
@@ -58,6 +62,10 @@ export default {
       default: 0,
     },
     readonly: {
+      type: Boolean,
+      default: false,
+    },
+    connecting: {
       type: Boolean,
       default: false,
     },

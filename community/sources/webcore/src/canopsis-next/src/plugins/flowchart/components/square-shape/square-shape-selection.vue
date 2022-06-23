@@ -23,16 +23,29 @@
       resizable,
       @start:resize="startResize"
     )
+    rect-connectors(
+      v-if="connecting",
+      :x="square.x",
+      :y="square.y",
+      :width="square.size",
+      :height="square.size",
+      :padding="padding",
+      :color="color",
+      @connected="$listeners.connected",
+      @connecting="$listeners.connecting",
+      @unconnect="$listeners.unconnect"
+    )
 </template>
 
 <script>
 import { resizeSquareShapeByDirection } from '../../utils/resize';
 
 import RectSelection from '../common/rect-selection.vue';
+import RectConnectors from '../common/rect-connectors.vue';
 
 export default {
   inject: ['$mouseMove', '$mouseUp'],
-  components: { RectSelection },
+  components: { RectSelection, RectConnectors },
   props: {
     square: {
       type: Object,
@@ -57,6 +70,10 @@ export default {
     cornerRadius: {
       type: Number,
       default: 4,
+    },
+    connecting: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

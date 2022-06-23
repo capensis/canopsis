@@ -23,6 +23,18 @@
       resizable,
       @start:resize="startResize"
     )
+    rect-connectors(
+      v-if="connecting",
+      :x="parallelogram.x",
+      :y="parallelogram.y",
+      :width="parallelogram.width",
+      :height="parallelogram.height",
+      :padding="padding",
+      :color="color",
+      @connected="$listeners.connected",
+      @connecting="$listeners.connecting",
+      @unconnect="$listeners.unconnect"
+    )
 </template>
 
 <script>
@@ -30,10 +42,11 @@ import { resizeRectangleShapeByDirection } from '../../utils/resize';
 
 import RectSelection from '../common/rect-selection.vue';
 import ParallelogramFigure from '../common/parallelogram-figure.vue';
+import RectConnectors from '../common/rect-connectors.vue';
 
 export default {
   inject: ['$mouseMove', '$mouseUp'],
-  components: { ParallelogramFigure, RectSelection },
+  components: { ParallelogramFigure, RectSelection, RectConnectors },
   props: {
     parallelogram: {
       type: Object,
@@ -58,6 +71,10 @@ export default {
     cornerRadius: {
       type: Number,
       default: 4,
+    },
+    connecting: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

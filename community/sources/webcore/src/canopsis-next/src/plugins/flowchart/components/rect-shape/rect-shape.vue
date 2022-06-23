@@ -29,11 +29,11 @@
       :pointer-events="editing ? 'none' : 'all'",
       @resize="onResize",
       @dblclick="enableEditingMode",
-      @mousedown="$emit('mousedown', $event)",
-      @mouseup="$emit('mouseup', $event)",
-      @connected="$emit('connected', $event)",
-      @connecting="$emit('connecting', $event)",
-      @unconnect="$emit('unconnect')"
+      @mousedown="$listeners.mousedown",
+      @mouseup="$listeners.mouseup",
+      @connected="$listeners.connected",
+      @connecting="$listeners.connecting",
+      @unconnect="$listeners.unconnect"
     )
 </template>
 

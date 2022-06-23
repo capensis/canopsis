@@ -23,6 +23,18 @@
       resizable,
       @start:resize="startResize"
     )
+    rect-connectors(
+      v-if="connecting",
+      :x="circle.x",
+      :y="circle.y",
+      :width="circle.diameter",
+      :height="circle.diameter",
+      :padding="padding",
+      :color="color",
+      @connected="$listeners.connected",
+      @connecting="$listeners.connecting",
+      @unconnect="$listeners.unconnect"
+    )
 </template>
 
 <script>
@@ -30,10 +42,11 @@ import { resizeSquareShapeByDirection } from '../../utils/resize';
 
 import RectSelection from '../common/rect-selection.vue';
 import CircleFigure from '../common/circle-figure.vue';
+import RectConnectors from '../common/rect-connectors.vue';
 
 export default {
   inject: ['$mouseMove', '$mouseUp'],
-  components: { CircleFigure, RectSelection },
+  components: { RectConnectors, CircleFigure, RectSelection },
   props: {
     circle: {
       type: Object,
@@ -58,6 +71,10 @@ export default {
     cornerRadius: {
       type: Number,
       default: 4,
+    },
+    connecting: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
