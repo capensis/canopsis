@@ -666,3 +666,83 @@ widget_filters:
     alarm_pattern:
     entity_pattern:
     pbehavior_pattern:
+
+  filter_dynamic_infos_1:
+    <<: *filter
+    _id: test-widgetfilter-dynamic-infos-1
+    widget: test-widget-dynamic-infos
+    alarm_pattern:
+      - - field: v.infos.test-dynamicinfos-infos-1-name
+          cond:
+            type: exist
+            value: true
+        - field: v.resource
+          cond:
+            type: eq
+            value: test-resource-dynamicinfos-1
+    entity_pattern:
+    pbehavior_pattern:
+
+  filter_dynamic_infos_3:
+    <<: *filter
+    _id: test-widgetfilter-dynamic-infos-3
+    widget: test-widget-dynamic-infos
+    alarm_pattern:
+      - - field: v.infos.test-dynamicinfos-infos-3-name
+          cond:
+            type: exist
+            value: false
+        - field: v.resource
+          cond:
+            type: eq
+            value: test-resource-dynamicinfos-3
+    entity_pattern:
+    pbehavior_pattern:
+
+  filter_dynamic_infos_5:
+    <<: *filter
+    _id: test-widgetfilter-dynamic-infos-5
+    widget: test-widget-dynamic-infos
+    alarm_pattern:
+      - - field: v.infos.test-dynamicinfos-infos-5-name
+          cond:
+            type: exist
+            value: false
+        - field: v.resource
+          cond:
+            type: eq
+            value: test-resource-dynamicinfos-5
+    entity_pattern:
+    pbehavior_pattern:
+
+  filter_dynamic_infos_6:
+    <<: *filter
+    _id: test-widgetfilter-dynamic-infos-6
+    widget: test-widget-dynamic-infos
+    alarm_pattern:
+      - - field: v.infos.test-dynamicinfos-infos-6-name
+          cond:
+            type: exist
+            value: false
+        - field: v.resource
+          cond:
+            type: eq
+            value: test-resource-dynamicinfos-6
+    entity_pattern:
+    pbehavior_pattern:
+
+  filter_dynamic_infos_7:
+    <<: *filter
+    _id: test-widgetfilter-dynamic-infos-7
+    widget: test-widget-dynamic-infos
+    alarm_pattern:
+      - - field: v.infos.test-dynamicinfos-infos-7-name
+          cond:
+            type: exist
+            value: false
+        - field: v.resource
+          cond:
+            type: eq
+            value: test-resource-dynamicinfos-7
+    entity_pattern:
+    pbehavior_pattern:

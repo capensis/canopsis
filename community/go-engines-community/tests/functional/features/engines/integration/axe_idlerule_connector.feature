@@ -575,10 +575,16 @@ Feature: update connector alarm
       "name": "test-dynamicinfos-axe-idlerule-connector-5-name",
       "description": "test-dynamicinfos-axe-idlerule-connector-5-description",
       "disable_during_periods": [],
-      "entity_patterns": [
-        {
-          "_id": "test-connector-axe-idlerule-connector-5/test-connector-name-axe-idlerule-connector-5"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "_id",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-axe-idlerule-connector-5/test-connector-name-axe-idlerule-connector-5"
+            }
+          }
+        ]
       ],
       "infos": [
         {"name":"test-info-axe-idlerule-connector-5-name", "value":"test-info-axe-idlerule-connector-5-value"}

@@ -834,6 +834,10 @@ definitions:
         type: string
       separator:
         type: string
+      type:
+        items:
+          type: string
+        type: array
     type: object
   entity.ExportResponse:
     properties:
