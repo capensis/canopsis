@@ -2,41 +2,67 @@ package contextgraph
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"time"
 )
 
 const (
+	defaultThdWarnMinPerImport = 30 * time.Minute
+	defaultThdCritMinPerImport = 60 * time.Minute
+
 	queueCheckTickInterval  = time.Second
 	reportCleanTickInterval = time.Hour
 	reportCleanInterval     = 24 * time.Hour
 )
 
 type worker struct {
-	importQueue JobQueue
-	reporter    StatusReporter
-	logger      zerolog.Logger
-	filePattern string
-	worker      importcontextgraph.Worker
+	importQueue         JobQueue
+	reporter            StatusReporter
+	publisher           EventPublisher
+	logger              zerolog.Logger
+	filePattern         string
+	thdWarnMinPerImport time.Duration
+	thdCritMinPerImport time.Duration
+	worker              importcontextgraph.Worker
 }
 
 func NewImportWorker(
 	conf config.CanopsisConf,
+	publisher EventPublisher,
 	reporter StatusReporter,
 	queue JobQueue,
 	importWorker importcontextgraph.Worker,
 	logger zerolog.Logger,
 ) ImportWorker {
-	return &worker{
+	w := &worker{
 		importQueue: queue,
+		publisher:   publisher,
 		reporter:    reporter,
 		filePattern: conf.ImportCtx.FilePattern,
 		worker:      importWorker,
-		logger:      logger,
 	}
+
+	thdWarnMinPerImport, err := time.ParseDuration(conf.ImportCtx.ThdWarnMinPerImport)
+	if err != nil {
+		logger.Warn().Err(err).Msg("Can't parse thdWarnMinPerImport value, use default")
+		thdWarnMinPerImport = defaultThdWarnMinPerImport
+	}
+
+	thdCritMinPerImport, err := time.ParseDuration(conf.ImportCtx.ThdCritMinPerImport)
+	if err != nil {
+		logger.Warn().Err(err).Msg("Can't parse thdCritMinPerImport value, use default")
+		thdCritMinPerImport = defaultThdCritMinPerImport
+	}
+
+	w.thdWarnMinPerImport = thdWarnMinPerImport
+	w.thdCritMinPerImport = thdCritMinPerImport
+
+	return w
 }
 
 func (w *worker) Run(ctx context.Context) {
@@ -64,6 +90,11 @@ func (w *worker) Run(ctx context.Context) {
 			if err != nil {
 				w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
 
+				err = w.publisher.SendImportResultEvent(job.ID, 0, types.AlarmStateCritical)
+				if err != nil {
+					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send import result event")
+				}
+
 				continue
 			}
 
@@ -71,8 +102,14 @@ func (w *worker) Run(ctx context.Context) {
 			stats, err := w.doJob(ctx, job)
 			stats.ExecTime = time.Since(startTime)
 
+			resultState := types.AlarmStateOK
 			if err != nil {
 				w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Error during the import.")
+
+				resultState = types.AlarmStateCritical
+				if errors.Is(err, importcontextgraph.ErrNotImplemented) {
+					resultState = types.AlarmStateMinor
+				}
 
 				err = w.reporter.ReportError(ctx, job, stats.ExecTime, err)
 				if err != nil {
@@ -84,6 +121,27 @@ func (w *worker) Run(ctx context.Context) {
 				err = w.reporter.ReportDone(ctx, job, stats)
 				if err != nil {
 					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
+				}
+			}
+
+			perfDataState := types.AlarmStateOK
+			if stats.ExecTime > w.thdCritMinPerImport {
+				perfDataState = types.AlarmStateMajor
+			} else if stats.ExecTime > w.thdWarnMinPerImport {
+				perfDataState = types.AlarmStateMinor
+			}
+
+			if perfDataState != types.AlarmStateOK {
+				err = w.publisher.SendPerfDataEvent(job.ID, stats, types.CpsNumber(perfDataState))
+				if err != nil {
+					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send perf data")
+				}
+			}
+
+			if resultState != types.AlarmStateOK {
+				err = w.publisher.SendImportResultEvent(job.ID, stats.ExecTime, types.CpsNumber(resultState))
+				if err != nil {
+					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send import result event")
 				}
 			}
 		}
