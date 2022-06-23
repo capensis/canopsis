@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { IDLE_RULE_TYPES } from '@/constants';
+import { isIdleRuleEntityType } from '@/helpers/forms/idle-rule';
 
 import IdleRuleGeneralForm from './partials/idle-rule-general-form.vue';
 import IdleRulePatternsForm from './partials/idle-rule-patterns-form.vue';
@@ -48,7 +48,7 @@ export default {
   },
   computed: {
     isEntityType() {
-      return this.form.type === IDLE_RULE_TYPES.entity;
+      return isIdleRuleEntityType(this.form.type);
     },
   },
   mounted() {
