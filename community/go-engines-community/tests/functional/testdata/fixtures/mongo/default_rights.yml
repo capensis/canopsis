@@ -970,6 +970,11 @@ default_rights:
     _id: test-view-dynamic-infos
     crecord_name: <Current()._id>
 
+  permission_view_to_weather_get:
+    <<: *permission_rw
+    _id: test-view-to-weather-get
+    crecord_name: <Current()._id>
+
   role_admin:
     <<: *role
     _id: admin
@@ -1198,6 +1203,9 @@ default_rights:
         checksum: 6
         crecord_type: right
       "@permission_view_dynamic_infos":
+        checksum: 6
+        crecord_type: right
+      "@permission_view_to_weather_get":
         checksum: 6
         crecord_type: right
 
