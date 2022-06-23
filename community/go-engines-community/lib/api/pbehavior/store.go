@@ -87,27 +87,39 @@ func (s *store) Insert(ctx context.Context, model *Response) error {
 	doc.Created = now
 	doc.Updated = now
 
-	// If model.Stop is nil, insert to mongo using map so that
-	// tstop field can be cleared
-	if model.Stop == nil {
-		m := make(map[string]interface{})
-		var p []byte
-
-		p, err = bson.Marshal(doc)
-		if err != nil {
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		err := s.dbCollection.FindOne(ctx, bson.M{"name": doc.Name}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
-
-		err = bson.Unmarshal(p, &m)
-		if err != nil {
-			return err
+		if err == nil {
+			return common.NewValidationError("name", errors.New("Name already exists."))
 		}
 
-		delete(m, "tstop")
-		_, err = s.dbCollection.InsertOne(ctx, m)
-	} else {
-		_, err = s.dbCollection.InsertOne(ctx, doc)
-	}
+		// If model.Stop is nil, insert to mongo using map so that
+		// tstop field can be cleared
+		if model.Stop == nil {
+			m := make(map[string]interface{})
+			var p []byte
+
+			p, err = bson.Marshal(doc)
+			if err != nil {
+				return err
+			}
+
+			err = bson.Unmarshal(p, &m)
+			if err != nil {
+				return err
+			}
+
+			delete(m, "tstop")
+			_, err = s.dbCollection.InsertOne(ctx, m)
+		} else {
+			_, err = s.dbCollection.InsertOne(ctx, doc)
+		}
+
+		return err
+	})
 
 	return err
 }
@@ -296,60 +308,74 @@ func (s *store) Update(ctx context.Context, model *Response) (bool, error) {
 		return true, nil
 	}
 
-	prevDoc := pbehavior.PBehavior{}
-	err := s.dbCollection.FindOne(ctx, bson.M{"_id": model.ID}).Decode(&prevDoc)
-	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return false, nil
-		}
-
-		return false, err
-	}
-
 	now := libtypes.NewCpsTime(time.Now().Unix())
 	doc, err := s.transformModelToDocument(*model)
 	if err != nil {
 		return false, err
 	}
 
-	created := prevDoc.Created
-	model.Comments = prevDoc.Comments
-	model.LastAlarmDate = prevDoc.LastAlarmDate
-	model.Created = &created
-	model.Updated = &now
-	doc.Updated = now
-
-	// If model.Stop is nil, insert to mongo using map so that
-	// tstop field can be cleared
-	var update interface{}
-
-	if model.Stop == nil {
-		m := make(map[string]interface{})
-		p, err := bson.Marshal(doc)
+	res := false
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		err := s.dbCollection.FindOne(ctx, bson.M{"name": model.Name, "_id": bson.M{"$ne": model.ID}}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+		if err == nil {
+			return common.NewValidationError("name", errors.New("Name already exists."))
+		}
+		prevDoc := pbehavior.PBehavior{}
+		err = s.dbCollection.FindOne(ctx, bson.M{"_id": model.ID}).Decode(&prevDoc)
 		if err != nil {
-			return false, err
+			if err == mongodriver.ErrNoDocuments {
+				return nil
+			}
+
+			return err
 		}
 
-		err = bson.Unmarshal(p, &m)
+		created := prevDoc.Created
+		model.Comments = prevDoc.Comments
+		model.LastAlarmDate = prevDoc.LastAlarmDate
+		model.Created = &created
+		model.Updated = &now
+		doc.Updated = now
+
+		// If model.Stop is nil, insert to mongo using map so that
+		// tstop field can be cleared
+		var update interface{}
+
+		if model.Stop == nil {
+			m := make(map[string]interface{})
+			p, err := bson.Marshal(doc)
+			if err != nil {
+				return err
+			}
+
+			err = bson.Unmarshal(p, &m)
+			if err != nil {
+				return err
+			}
+
+			delete(m, "tstop")
+			update = bson.M{
+				"$set":   m,
+				"$unset": bson.M{"tstop": 1},
+			}
+		} else {
+			update = bson.M{"$set": doc}
+		}
+
+		updateResult, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
 		if err != nil {
-			return false, err
+			return err
 		}
 
-		delete(m, "tstop")
-		update = bson.M{
-			"$set":   m,
-			"$unset": bson.M{"tstop": 1},
-		}
-	} else {
-		update = bson.M{"$set": doc}
-	}
+		res = updateResult.MatchedCount > 0
+		return nil
+	})
 
-	result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
-	if err != nil {
-		return false, err
-	}
-
-	return result.MatchedCount > 0, nil
+	return res, err
 }
 
 func (s *store) UpdateByFilter(ctx context.Context, model *Response, filters bson.M) (bool, error) {
