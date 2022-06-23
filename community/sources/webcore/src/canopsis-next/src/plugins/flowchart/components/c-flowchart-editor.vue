@@ -216,15 +216,18 @@ export default {
       this.$mouseMove.notify({ x, y });
     },
 
-    onConnectFinish(shape, { side, offset }) {
+    onConnectFinish(shape, { side }) {
       const connectingShape = this.data[shape.id];
 
       connectingShape.connections.push({
         shapeId: this.editingShape.id,
         pointId: this.editingPoint._id,
-        offset,
         side,
       });
+
+      const editingShape = this.data[this.editingShape.id];
+
+      editingShape.connectedTo.push(connectingShape.id);
     },
 
     onUnconnect(shape) {
@@ -234,15 +237,19 @@ export default {
         connection => connection.shapeId !== this.editingShape.id
         || connection.pointId !== this.editingPoint._id,
       );
+
+      const editingShape = this.data[this.editingShape.id];
+
+      editingShape.connectedTo = [];
     },
 
     updateConnections(shape) {
       if (shape.connections?.length) {
-        shape.connections.forEach(({ shapeId, pointId, offset, side }) => {
+        shape.connections.forEach(({ shapeId, pointId, side }) => {
           const updatableShape = this.data[shapeId];
           const point = updatableShape.points.find(({ _id: id }) => id === pointId);
 
-          const { x, y } = calculateConnectorPointBySide(shape, side, offset);
+          const { x, y } = calculateConnectorPointBySide(shape, side);
 
           point.x = x;
           point.y = y;
@@ -277,6 +284,20 @@ export default {
 
         if (shapeComponent.move) {
           shapeComponent.move(newOffset, oldOffset);
+
+          const shape = this.data[id];
+
+          if (shape.connectedTo) {
+            shape.connectedTo.forEach((shapeId) => {
+              const connectedShape = this.data[shapeId];
+
+              connectedShape.connections = connectedShape.connections.filter(
+                connection => connection.shapeId !== id,
+              );
+            });
+
+            this.data[id].connectedTo = [];
+          }
         }
       });
     },
