@@ -267,14 +267,18 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 
 	v.RegisterStructValidation(datastorage.ValidateConfig, libdatastorage.Config{})
 
+	resolveRuleValidator := resolverule.NewValidator(client)
 	resolveRuleIdUniqueValidator := common.NewUniqueFieldValidator(client, mongo.ResolveRuleMongoCollection, "ID")
 	resolveRuleNameUniqueValidator := common.NewUniqueFieldValidator(client, mongo.ResolveRuleMongoCollection, "Name")
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		resolveRuleIdUniqueValidator.Validate(ctx, sl)
 		resolveRuleNameUniqueValidator.Validate(ctx, sl)
+		resolveRuleValidator.ValidateCreateRequest(ctx, sl)
 	}, resolverule.CreateRequest{})
-	v.RegisterStructValidationCtx(resolveRuleNameUniqueValidator.Validate, resolverule.UpdateRequest{})
-	v.RegisterStructValidation(resolverule.ValidateEditRequest, resolverule.EditRequest{})
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		resolveRuleNameUniqueValidator.Validate(ctx, sl)
+		resolveRuleValidator.ValidateUpdateRequest(ctx, sl)
+	}, resolverule.UpdateRequest{})
 
 	flappingRuleIdUniqueValidator := common.NewUniqueFieldValidator(client, mongo.FlappingRuleMongoCollection, "ID")
 	flappingRuleNameUniqueValidator := common.NewUniqueFieldValidator(client, mongo.FlappingRuleMongoCollection, "Name")

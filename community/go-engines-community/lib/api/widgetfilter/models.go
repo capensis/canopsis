@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 )
@@ -27,6 +28,8 @@ type EditRequest struct {
 	common.AlarmPatternFieldsRequest
 	common.EntityPatternFieldsRequest
 	common.PbehaviorPatternFieldsRequest
+
+	WeatherServicePattern view.WeatherServicePattern `json:"weather_service_pattern"`
 }
 
 type Response struct {
@@ -43,6 +46,8 @@ type Response struct {
 	savedpattern.AlarmPatternFields     `bson:",inline"`
 	savedpattern.EntityPatternFields    `bson:",inline"`
 	savedpattern.PbehaviorPatternFields `bson:",inline"`
+
+	WeatherServicePattern view.WeatherServicePattern `bson:"weather_service_pattern" json:"weather_service_pattern,omitempty"`
 }
 
 type OldMongoQuery map[string]interface{}

@@ -114,6 +114,8 @@ const (
 
 	// EventTypeNoEvents is used to create alarm for entity by idle rule.
 	EventTypeNoEvents = "noevents"
+	// EventTypeTrigger is used in axe rpc to send autoinstruction triggers
+	EventTypeTrigger = "trigger"
 )
 
 const (
@@ -641,7 +643,8 @@ func isValidEventType(t string) bool {
 		EventTypeStateIncrease,
 		EventTypeStateDecrease,
 		EventTypeStatusIncrease,
-		EventTypeStatusDecrease:
+		EventTypeStatusDecrease,
+		EventTypeTrigger:
 		return true
 	}
 
