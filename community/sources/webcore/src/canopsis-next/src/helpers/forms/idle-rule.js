@@ -37,6 +37,14 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filt
  */
 
 /**
+ * Check is idle rule entity type
+ *
+ * @param {IdleRuleType} type
+ * @returns {boolean}
+ */
+export const isIdleRuleEntityType = type => type === IDLE_RULE_TYPES.entity;
+
+/**
  * Convert idle rule object to form compatible object
  *
  * @param {IdleRule} [idleRule = {}]

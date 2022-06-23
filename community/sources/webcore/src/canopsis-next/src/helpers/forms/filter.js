@@ -82,12 +82,12 @@ export const filterToForm = (filter = {}) => ({
 /**
  * Convert patterns form to patterns
  *
- * @param {FilterPatternsForm} form
+ * @param {FilterPatternsForm} [form = {}]
  * @param {PatternsFields} [fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity]]
  * @return {{}}
  */
 export const formFilterToPatterns = (
-  form,
+  form = {},
   fields = [
     PATTERNS_FIELDS.alarm,
     PATTERNS_FIELDS.entity,
