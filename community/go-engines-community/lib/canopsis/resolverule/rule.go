@@ -1,7 +1,6 @@
 package resolverule
 
 import (
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -32,43 +31,5 @@ func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity) (bool, error) {
 		return true, nil
 	}
 
-	if !r.OldAlarmPatterns.IsSet() && !r.OldEntityPatterns.IsSet() &&
-		len(r.EntityPattern) == 0 && len(r.AlarmPattern) == 0 {
-		return false, nil
-	}
-
-	var matched bool
-	var err error
-
-	if r.OldAlarmPatterns.IsSet() {
-		if !r.OldAlarmPatterns.IsValid() {
-			return false, pattern.InvalidOldAlarmPattern
-		}
-
-		matched = r.OldAlarmPatterns.Matches(&alarmWithEntity.Alarm)
-	} else {
-		matched, err = r.AlarmPattern.Match(alarmWithEntity.Alarm)
-		if err != nil {
-			return false, fmt.Errorf("resolve rule has an invalid alarm pattern : %w", err)
-		}
-	}
-
-	if !matched {
-		return false, nil
-	}
-
-	if r.OldEntityPatterns.IsSet() {
-		if !r.OldEntityPatterns.IsValid() {
-			return false, pattern.InvalidOldEntityPattern
-		}
-
-		matched = r.OldEntityPatterns.Matches(&alarmWithEntity.Entity)
-	} else {
-		matched, _, err = r.EntityPattern.Match(alarmWithEntity.Entity)
-		if err != nil {
-			return false, fmt.Errorf("resolve rule has an invalid entity pattern : %w", err)
-		}
-	}
-
-	return matched, nil
+	return pattern.Match(alarmWithEntity.Entity, alarmWithEntity.Alarm, r.EntityPattern, r.AlarmPattern, r.OldEntityPatterns, r.OldAlarmPatterns)
 }
