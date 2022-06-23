@@ -1,0 +1,100 @@
+<template lang="pug">
+  g
+    image(
+      v-bind="rect.style",
+      :href="rect.src",
+      :x="rect.x",
+      :y="rect.y",
+      :width="rect.width",
+      :height="rect.height"
+    )
+    text-editor(
+      ref="editor",
+      :value="rect.text",
+      :y="rect.y + rect.height",
+      :x="rect.x",
+      :width="rect.width",
+      :height="25",
+      :editable="editing",
+      :align-center="rect.alignCenter",
+      :justify-center="rect.justifyCenter",
+      @blur="disableEditingMode"
+    )
+    rect-shape-selection(
+      v-if="!readonly",
+      :selected="selected",
+      :connecting="connecting",
+      :rect="rect",
+      :pointer-events="editing ? 'none' : 'all'",
+      @resize="onResize",
+      @dblclick="enableEditingMode",
+      @mousedown="$listeners.mousedown",
+      @mouseup="$listeners.mouseup",
+      @connected="$listeners.connected",
+      @connecting="$listeners.connecting",
+      @unconnect="$listeners.unconnect"
+    )
+</template>
+
+<script>
+import { formBaseMixin } from '@/mixins/form';
+
+import RectShapeSelection from '../rect-shape/rect-shape-selection.vue';
+import TextEditor from '../common/text-editor.vue';
+
+export default {
+  components: { RectShapeSelection, TextEditor },
+  mixins: [formBaseMixin],
+  model: {
+    prop: 'rect',
+    event: 'input',
+  },
+  props: {
+    rect: {
+      type: Object,
+      required: true,
+    },
+    selected: {
+      type: Boolean,
+      default: false,
+    },
+    cornerOffset: {
+      type: Number,
+      default: 0,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+    connecting: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      editing: false,
+    };
+  },
+  methods: {
+    onResize(rect) {
+      this.updateModel({ ...this.rect, ...rect });
+    },
+
+    enableEditingMode() {
+      this.editing = true;
+
+      this.$refs.editor.focus();
+    },
+
+    disableEditingMode(event) {
+      this.updateModel({
+        ...this.rect,
+        text: event.target.innerHTML,
+      });
+
+      this.editing = false;
+    },
+  },
+};
+</script>
