@@ -65,6 +65,8 @@ func NewStore(
 			mongo.InstructionMongoCollection,
 			mongo.PbehaviorMongoCollection,
 			mongo.EntityMongoCollection,
+			mongo.ResolveRuleMongoCollection,
+			mongo.DynamicInfosRulesMongoCollection,
 			mongo.KpiFilterMongoCollection,
 		},
 
