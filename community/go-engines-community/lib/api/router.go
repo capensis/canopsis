@@ -1366,7 +1366,11 @@ func RegisterRoutes(
 
 		resolveRuleRouter := protected.Group("/resolve-rules")
 		{
-			resolveRuleAPI := resolverule.NewApi(resolverule.NewStore(dbClient), actionLogger)
+			resolveRuleAPI := resolverule.NewApi(
+				resolverule.NewStore(dbClient),
+				common.NewPatternFieldsTransformer(dbClient),
+				actionLogger,
+			)
 			resolveRuleRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionCreate, enforcer),

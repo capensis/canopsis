@@ -332,6 +332,11 @@ widgets:
     _id: test-widget-to-entity-get
     tab: test-tab-to-entity-get
 
+  widget_to_dynamic_infos:
+    <<: *widget
+    _id: test-widget-dynamic-infos
+    tab: test-tab-dynamic-infos
+
   widget_to_weather_get:
     <<: *widget
     _id: test-widget-to-weather-get

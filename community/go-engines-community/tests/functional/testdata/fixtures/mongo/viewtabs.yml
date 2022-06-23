@@ -255,6 +255,11 @@ viewtabs:
     _id: test-tab-to-entity-get
     view: test-view-to-entity-get
 
+  tab_dynamic_infos:
+    <<: *tab
+    _id: test-tab-dynamic-infos
+    view: test-view-dynamic-infos
+
   tab_to_weather_get:
     <<: *tab
     _id: test-tab-to-weather-get
