@@ -3,8 +3,14 @@ package contextgraph
 import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"time"
 )
+
+type EventPublisher interface {
+	SendImportResultEvent(uuid string, execTime time.Duration, state types.CpsNumber) error
+	SendPerfDataEvent(uuid string, stats importcontextgraph.Stats, state types.CpsNumber) error
+}
 
 type StatusReporter interface {
 	GetStatus(ctx context.Context, id string) (ImportJob, error)
