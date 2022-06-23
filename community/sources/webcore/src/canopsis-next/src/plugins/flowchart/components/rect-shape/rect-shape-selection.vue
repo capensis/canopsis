@@ -31,9 +31,9 @@
       :height="rect.height",
       :padding="padding",
       :color="color",
-      @connected="$emit('connected', $event)",
-      @connecting="$emit('connecting', $event)",
-      @unconnect="$emit('unconnect')"
+      @connected="$listeners.connected",
+      @connecting="$listeners.connecting",
+      @unconnect="$listeners.unconnect"
     )
 </template>
 

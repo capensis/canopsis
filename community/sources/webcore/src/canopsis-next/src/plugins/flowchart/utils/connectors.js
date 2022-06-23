@@ -1,7 +1,13 @@
 import { CONNECTOR_SIDES } from '@/plugins/flowchart/constants';
 
-export const calculateConnectorPointBySide = (rect, side, { x: percentX, y: percentY }) => {
-  const { x, y, width, height } = rect;
+export const calculateConnectorPointBySide = (
+  shape,
+  side,
+  { x: percentX = 0.5, y: percentY = 0.5 } = {},
+) => {
+  const { x, y } = shape;
+  const width = shape.width ?? shape.diameter ?? shape.size;
+  const height = shape.height ?? shape.diameter ?? shape.size;
   const isTop = side === CONNECTOR_SIDES.top;
 
   if (isTop || side === CONNECTOR_SIDES.bottom) {
