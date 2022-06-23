@@ -298,3 +298,7 @@ views:
   view_dynamic_infos:
     <<: *view
     _id: test-view-dynamic-infos
+
+  view_to_weather_get:
+    <<: *view
+    _id: test-view-to-weather-get

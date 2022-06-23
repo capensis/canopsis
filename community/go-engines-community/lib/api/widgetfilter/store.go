@@ -301,5 +301,7 @@ func transformEditRequestToModel(request EditRequest) view.WidgetFilter {
 		AlarmPatternFields:     request.AlarmPatternFieldsRequest.ToModel(),
 		EntityPatternFields:    request.EntityPatternFieldsRequest.ToModel(),
 		PbehaviorPatternFields: request.PbehaviorPatternFieldsRequest.ToModel(),
+
+		WeatherServicePattern: request.WeatherServicePattern,
 	}
 }
