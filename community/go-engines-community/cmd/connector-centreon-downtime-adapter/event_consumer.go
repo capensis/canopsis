@@ -8,6 +8,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 	"github.com/valyala/fastjson"
+	"golang.org/x/sync/errgroup"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
@@ -29,6 +30,8 @@ const (
 
 	httpRetryCount    = 3
 	httpRetryInterval = 500 * time.Millisecond
+
+	workersCount = 20
 )
 
 type eventConsumer struct {
@@ -89,31 +92,38 @@ func (c *eventConsumer) Start(ctx context.Context) error {
 		return fmt.Errorf("cannot consume from rmq channel: %w", err)
 	}
 
-	for {
-		select {
-		case <-ctx.Done():
-			return nil
-		case msg, ok := <-msgs:
-			if !ok {
-				return nil
-			}
+	g, ctx := errgroup.WithContext(ctx)
+	for i := 0; i < workersCount; i++ {
+		g.Go(func() error {
+			for {
+				select {
+				case <-ctx.Done():
+					return nil
+				case msg, ok := <-msgs:
+					if !ok {
+						return nil
+					}
 
-			err := c.processMsg(ctx, msg)
-			if err != nil {
-				nackErr := c.amqpCh.Nack(msg.DeliveryTag, false, true)
-				if nackErr != nil {
-					c.logger.Err(nackErr).Msg("cannot nack amqp delivery")
+					err := c.processMsg(ctx, msg)
+					if err != nil {
+						nackErr := c.amqpCh.Nack(msg.DeliveryTag, false, true)
+						if nackErr != nil {
+							c.logger.Err(nackErr).Msg("cannot nack amqp delivery")
+						}
+
+						return err
+					}
+
+					err = c.amqpCh.Ack(msg.DeliveryTag, false)
+					if err != nil {
+						c.logger.Err(err).Msg("cannot ack amqp delivery")
+					}
 				}
-
-				return err
 			}
-
-			err = c.amqpCh.Ack(msg.DeliveryTag, false)
-			if err != nil {
-				c.logger.Err(err).Msg("cannot ack amqp delivery")
-			}
-		}
+		})
 	}
+
+	return g.Wait()
 }
 
 func (c *eventConsumer) processMsg(ctx context.Context, msg amqp.Delivery) error {
@@ -181,7 +191,17 @@ func (c *eventConsumer) processMsg(ctx context.Context, msg amqp.Delivery) error
 		defer response.Body.Close()
 
 		if response.StatusCode != http.StatusCreated {
-			b, _ := ioutil.ReadAll(response.Body)
+			b, err := ioutil.ReadAll(response.Body)
+			if err == nil && response.StatusCode == http.StatusBadRequest {
+				responseBody, err := fastjson.ParseBytes(b)
+				if err == nil {
+					valErr := string(responseBody.GetStringBytes("errors", "name"))
+					if strings.Contains(valErr, "Name already exists") {
+						c.logger.Debug().Msg("pbehavior already created")
+						return nil
+					}
+				}
+			}
 
 			c.logger.Error().
 				Int("response_code", response.StatusCode).
@@ -237,7 +257,8 @@ func (c *eventConsumer) doRequest(request *http.Request, logMsg string) (*http.R
 		if err == nil {
 			retry := response.StatusCode != http.StatusOK &&
 				response.StatusCode != http.StatusCreated &&
-				response.StatusCode != http.StatusNoContent
+				response.StatusCode != http.StatusNoContent &&
+				response.StatusCode != http.StatusBadRequest
 
 			if c.logger.GetLevel() == zerolog.DebugLevel {
 				resDump, _ = httputil.DumpResponse(response, true)
