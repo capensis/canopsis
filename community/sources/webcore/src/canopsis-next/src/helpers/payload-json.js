@@ -20,16 +20,15 @@ export const convertPayloadToJson = (payload, indents = 4) => {
   const match = preparedPayload.matchAll(new RegExp(PAYLOAD_VARIABLE_REGEXP));
 
   if (match) {
-    /**
-     * Removing first and last symbol
-     *
-     * Example:
-     * - in: ":{{ .Alarm.Id }},"
-     * - out: "{{ .Alarm.Id }}"
-     */
-    const jsonVariables = Array.from(match).map((group = []) => group[1]);
+    const arrayMatch = Array.from(match);
+    const jsonVariables = arrayMatch.map((group = []) => group[0]);
     // Preparing temp variable for replace variables
-    const jsonHoles = jsonVariables.map(() => `"${uid('hole_')}"`);
+    const jsonHoles = arrayMatch.map(({ index }) => {
+      const previousSymbol = preparedPayload[index - 1];
+      const hole = uid('hole_');
+
+      return previousSymbol === '"' ? hole : `"${hole}"`;
+    });
 
     // Replacing all variable on temp variable for validation
     const template = jsonVariables.reduce(

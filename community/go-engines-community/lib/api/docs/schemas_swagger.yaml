@@ -834,6 +834,10 @@ definitions:
         type: string
       separator:
         type: string
+      type:
+        items:
+          type: string
+        type: array
     type: object
   entity.ExportResponse:
     properties:
@@ -3122,10 +3126,10 @@ definitions:
       name:
         type: string
       pbehavior_info:
-        $ref: '#/definitions/types.PbehaviorInfo'
+        $ref: '#/definitions/entity.PbehaviorInfo'
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.Response'
+          $ref: '#/definitions/alarm.Pbehavior'
         type: array
       resource:
         type: string
@@ -3186,21 +3190,17 @@ definitions:
         type: integer
       linklist:
         items:
-          properties:
-            cat_name:
-              type: string
-            links: {}
-          type: object
+          $ref: '#/definitions/serviceweather.WeatherLink'
         type: array
       name:
         type: string
       output:
         type: string
       pbehavior_info:
-        $ref: '#/definitions/types.PbehaviorInfo'
+        $ref: '#/definitions/entity.PbehaviorInfo'
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.Response'
+          $ref: '#/definitions/alarm.Pbehavior'
         type: array
       resource:
         type: string
@@ -4060,6 +4060,12 @@ definitions:
       title:
         maxLength: 255
         type: string
+      weather_service_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       widget:
         type: string
     required:
@@ -4116,6 +4122,12 @@ definitions:
         type: string
       updated:
         type: integer
+      weather_service_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
     type: object
 info:
   contact: {}

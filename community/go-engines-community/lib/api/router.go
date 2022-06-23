@@ -623,6 +623,7 @@ func RegisterRoutes(
 				legacyUrl,
 				alarmStore,
 				timezoneConfigProvider,
+				logger,
 			))
 			weatherRouter.GET(
 				"",

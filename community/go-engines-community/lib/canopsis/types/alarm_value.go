@@ -123,12 +123,17 @@ type AlarmSteps []AlarmStep
 
 // Add handle adding a step to the list
 func (s *AlarmSteps) Add(step AlarmStep) error {
-	if len(*s) >= AlarmStepsHardLimit {
-		return fmt.Errorf("max number of steps reached: %v", AlarmStepsHardLimit)
+	if len(*s) < AlarmStepsHardLimit ||
+		step.Type == AlarmStepStateDecrease && step.Value == AlarmStateOK ||
+		step.Type == AlarmStepStatusDecrease && step.Value == AlarmStateOK ||
+		step.Type == AlarmStepCancel ||
+		step.Type == AlarmStepStatusIncrease && step.Value == AlarmStatusCancelled {
+
+		*s = append(*s, step)
+		return nil
 	}
 
-	*s = append(*s, step)
-	return nil
+	return fmt.Errorf("max number of steps reached: %v", AlarmStepsHardLimit)
 }
 
 // Crop steps by replacing stateinc and statedec steps after the current status with a statecounter step

@@ -253,6 +253,30 @@ Feature: Get entities
     }
     """
 
+  Scenario: given get type request should return entities which are matched to the types
+    When I am admin
+    When I do GET /api/v4/entities?search=to-entity-get&type[]=component&type[]=connector
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-component-to-entity-get"
+        },
+        {
+          "_id": "test-connector-to-entity-get/test-connector-name-to-entity-get"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+
   Scenario: given get filter request should return entities which are matched to the filter
     When I am admin
     When I do GET /api/v4/entities?filter=test-widgetfilter-to-entity-get-1

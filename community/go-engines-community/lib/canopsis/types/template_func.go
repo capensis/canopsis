@@ -131,15 +131,15 @@ func GetTemplateFunc(cfgTimezone *config.TimezoneConfig) template.FuncMap {
 					log.Print("localtime : invalid timezone")
 					return ""
 				}
-			} else {
-				if cfgTimezone == nil {
-					return value.Format(format)
-				}
+			} else if cfgTimezone != nil {
 				loc = cfgTimezone.Location
 			}
 
-			intz := value.In(loc)
-			return intz.Format(format)
+			if loc == nil {
+				return value.Format(format)
+			}
+
+			return value.In(loc).Format(format)
 		},
 	}
 }

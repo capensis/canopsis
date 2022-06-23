@@ -1,12 +1,13 @@
 <template lang="pug">
   modal-wrapper(close)
-    template(slot="title")
+    template(#title="")
       span {{ title }}
-    template(slot="text")
+    template(#text="")
       service-dependencies-table(
         :root="config.root",
         :columns="config.columns",
         :impact="config.impact",
+        :openable-root="config.openableRoot",
         include-root
       )
 </template>

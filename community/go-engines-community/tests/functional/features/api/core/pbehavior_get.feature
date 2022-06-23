@@ -45,7 +45,7 @@ Feature: get a PBehavior
                     "description": "Pbh edit 1 State type",
                     "icon_name": "test-to-pbh-edit-1-icon",
                     "name": "Pbh edit 1 State",
-                    "priority": 10,
+                    "priority": 11,
                     "type": "active"
                   }
                 }
@@ -61,7 +61,7 @@ Feature: get a PBehavior
                 "description": "Pbh edit 1 State type",
                 "icon_name": "test-to-pbh-edit-1-icon",
                 "name": "Pbh edit 1 State",
-                "priority": 10,
+                "priority": 11,
                 "type": "active"
               }
             }
@@ -91,7 +91,7 @@ Feature: get a PBehavior
             "description": "Pbh edit 1 State type",
             "icon_name": "test-to-pbh-edit-1-icon",
             "name": "Pbh edit 1 State",
-            "priority": 10,
+            "priority": 11,
             "type": "active"
           },
           "last_alarm_date": null
@@ -126,7 +126,7 @@ Feature: get a PBehavior
             "description": "Pbh edit 2 State type",
             "icon_name": "test-to-pbh-edit-2-icon",
             "name": "Pbh edit 2 State",
-            "priority": 11,
+            "priority": 12,
             "type": "pause"
           },
           "last_alarm_date": null
@@ -317,7 +317,7 @@ Feature: get a PBehavior
                 "description": "Pbh edit 1 State type",
                 "icon_name": "test-to-pbh-edit-1-icon",
                 "name": "Pbh edit 1 State",
-                "priority": 10,
+                "priority": 11,
                 "type": "active"
               }
             }
@@ -333,7 +333,7 @@ Feature: get a PBehavior
             "description": "Pbh edit 1 State type",
             "icon_name": "test-to-pbh-edit-1-icon",
             "name": "Pbh edit 1 State",
-            "priority": 10,
+            "priority": 11,
             "type": "active"
           }
         }
@@ -363,7 +363,7 @@ Feature: get a PBehavior
         "description": "Pbh edit 1 State type",
         "icon_name": "test-to-pbh-edit-1-icon",
         "name": "Pbh edit 1 State",
-        "priority": 10,
+        "priority": 11,
         "type": "active"
       },
       "last_alarm_date": null
