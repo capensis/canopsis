@@ -1,32 +1,32 @@
 <template lang="pug">
   g
     image(
-      v-bind="rect.style",
-      :href="rect.src",
-      :x="rect.x",
-      :y="rect.y",
-      :width="rect.width",
-      :height="rect.height"
+      v-bind="shape.style",
+      :href="shape.src",
+      :x="shape.x",
+      :y="shape.y",
+      :width="shape.width",
+      :height="shape.height"
     )
     text-editor(
       ref="editor",
-      :value="rect.text",
-      :y="rect.y + rect.height",
-      :x="rect.x",
-      :width="rect.width",
+      :value="shape.text",
+      :y="shape.y + shape.height",
+      :x="shape.x",
+      :width="shape.width",
       :height="25",
       :editable="editing",
-      :align-center="rect.alignCenter",
-      :justify-center="rect.justifyCenter",
+      :align-center="shape.alignCenter",
+      :justify-center="shape.justifyCenter",
       @blur="disableEditingMode"
     )
     rect-shape-selection(
       v-if="!readonly",
       :selected="selected",
       :connecting="connecting",
-      :rect="rect",
+      :rect="shape",
       :pointer-events="editing ? 'none' : 'all'",
-      @resize="onResize",
+      @update="$listeners.update",
       @dblclick="enableEditingMode",
       @mousedown="$listeners.mousedown",
       @mouseup="$listeners.mouseup",
@@ -37,20 +37,13 @@
 </template>
 
 <script>
-import { formBaseMixin } from '@/mixins/form';
-
 import RectShapeSelection from '../rect-shape/rect-shape-selection.vue';
 import TextEditor from '../common/text-editor.vue';
 
 export default {
   components: { RectShapeSelection, TextEditor },
-  mixins: [formBaseMixin],
-  model: {
-    prop: 'rect',
-    event: 'input',
-  },
   props: {
-    rect: {
+    shape: {
       type: Object,
       required: true,
     },
@@ -77,10 +70,6 @@ export default {
     };
   },
   methods: {
-    onResize(rect) {
-      this.updateModel({ ...this.rect, ...rect });
-    },
-
     enableEditingMode() {
       this.editing = true;
 
@@ -88,8 +77,7 @@ export default {
     },
 
     disableEditingMode(event) {
-      this.updateModel({
-        ...this.rect,
+      this.$emit('update', {
         text: event.target.innerHTML,
       });
 

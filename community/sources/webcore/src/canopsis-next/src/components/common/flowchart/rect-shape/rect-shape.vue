@@ -1,33 +1,33 @@
 <template lang="pug">
   g(@dblclick="enableEditingMode")
     rect(
-      v-bind="rect.style",
-      :x="rect.x",
-      :y="rect.y",
-      :rx="rect.rx",
-      :ry="rect.ry",
-      :width="rect.width",
-      :height="rect.height"
+      v-bind="shape.style",
+      :x="shape.x",
+      :y="shape.y",
+      :rx="shape.rx",
+      :ry="shape.ry",
+      :width="shape.width",
+      :height="shape.height"
     )
     text-editor(
       ref="editor",
-      :value="rect.text",
-      :y="rect.y",
-      :x="rect.x",
-      :width="rect.width",
-      :height="rect.height",
+      :value="shape.text",
+      :y="shape.y",
+      :x="shape.x",
+      :width="shape.width",
+      :height="shape.height",
       :editable="editing",
-      :align-center="rect.alignCenter",
-      :justify-center="rect.justifyCenter",
+      :align-center="shape.alignCenter",
+      :justify-center="shape.justifyCenter",
       @blur="disableEditingMode"
     )
     rect-shape-selection(
       v-if="!readonly",
       :selected="selected",
       :connecting="connecting",
-      :rect="rect",
+      :rect="shape",
       :pointer-events="editing ? 'none' : 'all'",
-      @resize="onResize",
+      @update="$listeners.update",
       @dblclick="enableEditingMode",
       @mousedown="$listeners.mousedown",
       @mouseup="$listeners.mouseup",
@@ -38,20 +38,13 @@
 </template>
 
 <script>
-import { formBaseMixin } from '@/mixins/form';
-
-import RectShapeSelection from '../rect-shape/rect-shape-selection.vue';
+import RectShapeSelection from './rect-shape-selection.vue';
 import TextEditor from '../common/text-editor.vue';
 
 export default {
   components: { RectShapeSelection, TextEditor },
-  mixins: [formBaseMixin],
-  model: {
-    prop: 'rect',
-    event: 'input',
-  },
   props: {
-    rect: {
+    shape: {
       type: Object,
       required: true,
     },
@@ -78,10 +71,6 @@ export default {
     };
   },
   methods: {
-    onResize(rect) {
-      this.updateModel({ ...this.rect, ...rect });
-    },
-
     enableEditingMode() {
       if (!this.readonly) {
         this.editing = true;
@@ -91,8 +80,7 @@ export default {
     },
 
     disableEditingMode(event) {
-      this.updateModel({
-        ...this.rect,
+      this.$emit('update', {
         text: event.target.innerHTML,
       });
 

@@ -1,31 +1,31 @@
 <template lang="pug">
   g
     circle-figure(
-      v-bind="circle.style",
-      :x="circle.x",
-      :y="circle.y",
-      :diameter="circle.diameter",
+      v-bind="shape.style",
+      :x="shape.x",
+      :y="shape.y",
+      :diameter="shape.diameter",
       pointer-events="all"
     )
     text-editor(
       ref="editor",
-      :value="circle.text",
-      :y="circle.y",
-      :x="circle.x",
-      :width="circle.diameter",
-      :height="circle.diameter",
+      :value="shape.text",
+      :y="shape.y",
+      :x="shape.x",
+      :width="shape.diameter",
+      :height="shape.diameter",
       :editable="editing",
-      :align-center="circle.alignCenter",
-      :justify-center="circle.justifyCenter",
+      :align-center="shape.alignCenter",
+      :justify-center="shape.justifyCenter",
       @blur="disableEditingMode"
     )
     circle-shape-selection(
       v-if="!readonly",
       :selected="selected",
       :connecting="connecting",
-      :circle="circle",
+      :circle="shape",
       :pointer-events="editing ? 'none' : 'all'",
-      @resize="onResize",
+      @update="$listeners.update",
       @dblclick="enableEditingMode",
       @mousedown="$listeners.mousedown",
       @mouseup="$listeners.mouseup",
@@ -36,21 +36,15 @@
 </template>
 
 <script>
-import { formBaseMixin } from '@/mixins/form';
-
-import CircleShapeSelection from '../circle-shape/circle-shape-selection.vue';
 import TextEditor from '../common/text-editor.vue';
 import CircleFigure from '../common/circle-figure.vue';
 
+import CircleShapeSelection from './circle-shape-selection.vue';
+
 export default {
   components: { CircleFigure, CircleShapeSelection, TextEditor },
-  mixins: [formBaseMixin],
-  model: {
-    prop: 'circle',
-    event: 'input',
-  },
   props: {
-    circle: {
+    shape: {
       type: Object,
       required: true,
     },
@@ -78,25 +72,18 @@ export default {
   },
   computed: {
     radius() {
-      return this.circle.diameter / 2;
+      return this.shape.diameter / 2;
     },
 
     centerX() {
-      return this.circle.x + this.radius;
+      return this.shape.x + this.radius;
     },
 
     centerY() {
-      return this.circle.y + this.radius;
+      return this.shape.y + this.radius;
     },
   },
   methods: {
-    onResize(circle) {
-      this.updateModel({
-        ...this.circle,
-        ...circle,
-      });
-    },
-
     enableEditingMode() {
       this.editing = true;
 
@@ -104,8 +91,7 @@ export default {
     },
 
     disableEditingMode(event) {
-      this.updateModel({
-        ...this.circle,
+      this.$emit('update', {
         text: event.target.innerHTML,
       });
 

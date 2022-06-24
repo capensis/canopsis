@@ -1,19 +1,19 @@
 <template lang="pug">
   g
     rect(
-      v-bind="square.style",
-      :x="square.x",
-      :y="square.y",
-      :width="square.size",
-      :height="square.size"
+      v-bind="shape.style",
+      :x="shape.x",
+      :y="shape.y",
+      :width="shape.size",
+      :height="shape.size"
     )
     text-editor(
       ref="editor",
-      :value="square.text",
-      :y="square.y",
-      :x="square.x",
-      :width="square.size",
-      :height="square.size",
+      :value="shape.text",
+      :y="shape.y",
+      :x="shape.x",
+      :width="shape.size",
+      :height="shape.size",
       :editable="editing",
       align-center,
       justify-center,
@@ -23,9 +23,9 @@
       v-if="!readonly",
       :selected="selected",
       :connecting="connecting",
-      :square="square",
+      :square="shape",
       :pointer-events="editing ? 'none' : 'all'",
-      @resize="onResize",
+      @update="$listeners.update",
       @dblclick="enableEditingMode",
       @mousedown="$listeners.mousedown",
       @mouseup="$listeners.mouseup",
@@ -36,20 +36,14 @@
 </template>
 
 <script>
-import { formBaseMixin } from '@/mixins/form';
-
-import SquareShapeSelection from '../square-shape/square-shape-selection.vue';
 import TextEditor from '../common/text-editor.vue';
+
+import SquareShapeSelection from './square-shape-selection.vue';
 
 export default {
   components: { SquareShapeSelection, TextEditor },
-  mixins: [formBaseMixin],
-  model: {
-    prop: 'square',
-    event: 'input',
-  },
   props: {
-    square: {
+    shape: {
       type: Object,
       required: true,
     },
@@ -76,15 +70,6 @@ export default {
     };
   },
   methods: {
-    onResize(square) {
-      this.updateModel({
-        ...this.square,
-        x: square.x,
-        y: square.y,
-        size: square.size,
-      });
-    },
-
     enableEditingMode() {
       this.editing = true;
 
@@ -92,8 +77,7 @@ export default {
     },
 
     disableEditingMode(event) {
-      this.updateModel({
-        ...this.square,
+      this.$emit('update', {
         text: event.target.innerHTML,
       });
 

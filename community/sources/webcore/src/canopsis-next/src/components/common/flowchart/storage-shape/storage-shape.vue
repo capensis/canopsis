@@ -1,32 +1,32 @@
 <template lang="pug">
   g
     storage-figure(
-      v-bind="storage.style",
-      :width="storage.width",
-      :height="storage.height",
-      :radius="storage.radius",
-      :x="storage.x",
-      :y="storage.y"
+      v-bind="shape.style",
+      :width="shape.width",
+      :height="shape.height",
+      :radius="shape.radius",
+      :x="shape.x",
+      :y="shape.y"
     )
     text-editor(
       ref="editor",
-      :value="storage.text",
-      :y="storage.y",
-      :x="storage.x",
-      :width="storage.width",
-      :height="storage.height",
+      :value="shape.text",
+      :y="shape.y",
+      :x="shape.x",
+      :width="shape.width",
+      :height="shape.height",
       :editable="editing",
-      :align-center="storage.alignCenter",
-      :justify-center="storage.justifyCenter",
+      :align-center="shape.alignCenter",
+      :justify-center="shape.justifyCenter",
       @blur="disableEditingMode"
     )
     storage-shape-selection(
       v-if="!readonly",
       :selected="selected",
       :connecting="connecting",
-      :storage="storage",
+      :storage="shape",
       :pointer-events="editing ? 'none' : 'all'",
-      @resize="onResize",
+      @update="$listeners.update",
       @dblclick="enableEditingMode",
       @mousedown="$listeners.mousedown",
       @mouseup="$listeners.mouseup",
@@ -37,22 +37,15 @@
 </template>
 
 <script>
-import { formBaseMixin } from '@/mixins/form';
-
 import TextEditor from '../common/text-editor.vue';
 import StorageFigure from '../common/storage-figure.vue';
 
-import StorageShapeSelection from '../storage-shape/storage-shape-selection.vue';
+import StorageShapeSelection from './storage-shape-selection.vue';
 
 export default {
   components: { StorageFigure, StorageShapeSelection, TextEditor },
-  mixins: [formBaseMixin],
-  model: {
-    prop: 'storage',
-    event: 'input',
-  },
   props: {
-    storage: {
+    shape: {
       type: Object,
       required: true,
     },
@@ -80,14 +73,10 @@ export default {
   },
   computed: {
     diameter() {
-      return this.storage.radius * 2;
+      return this.shape.radius * 2;
     },
   },
   methods: {
-    onResize(storage) {
-      this.updateModel({ ...this.storage, ...storage });
-    },
-
     enableEditingMode() {
       this.editing = true;
 
@@ -95,8 +84,7 @@ export default {
     },
 
     disableEditingMode(event) {
-      this.updateModel({
-        ...this.storage,
+      this.$emit('update', {
         text: event.target.innerHTML,
       });
 
