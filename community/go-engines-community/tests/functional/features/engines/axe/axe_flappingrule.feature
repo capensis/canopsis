@@ -9,10 +9,16 @@ Feature: update alarm status on flapping rule
       "_id": "test-flapping-rule-axe-flappingrule-1",
       "name": "test-flapping-rule-axe-flappingrule-1-name",
       "description": "test-flapping-rule-axe-flappingrule-1-desc",
-      "entity_patterns":[
-        {
-          "name": "test-resource-axe-flappingrule-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-flappingrule-1"
+            }
+          }
+        ]
       ],
       "freq_limit": 2,
       "duration": {
@@ -94,7 +100,7 @@ Feature: update alarm status on flapping rule
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-flappingrule-1"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-flappingrule-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -111,8 +117,38 @@ Feature: update alarm status on flapping rule
             },
             "status": {
               "val": 3
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 1
@@ -141,20 +177,20 @@ Feature: update alarm status on flapping rule
                 "_t": "statusinc",
                 "val": 3
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 7
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-flappingrule-1"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-flappingrule-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -171,8 +207,38 @@ Feature: update alarm status on flapping rule
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 1
@@ -205,15 +271,15 @@ Feature: update alarm status on flapping rule
                 "_t": "statusdec",
                 "val": 1
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 8
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """

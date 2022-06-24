@@ -68,6 +68,7 @@ func NewStore(
 			mongo.ResolveRuleMongoCollection,
 			mongo.IdleRuleMongoCollection,
 			mongo.DynamicInfosRulesMongoCollection,
+			mongo.FlappingRuleMongoCollection,
 		},
 
 		pbhComputeChan: pbhComputeChan,
