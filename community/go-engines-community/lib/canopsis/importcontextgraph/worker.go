@@ -19,6 +19,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+const (
+	defaultConnector     = "taskhandler"
+	defaultConnectorName = "task_importctx"
+)
+
 type worker struct {
 	entityCollection        libmongo.DbCollection
 	categoryCollection      libmongo.DbCollection
@@ -131,58 +136,15 @@ func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stat
 			}
 		}
 		for _, event := range res.basicEntityEvents {
-			switch event.SourceType {
-			case types.SourceTypeComponent:
-				if event.Connector == "" {
-					connector := types.Entity{}
-					err := w.entityCollection.FindOne(ctx, bson.M{
-						"type":    types.EntityTypeConnector,
-						"depends": event.Component,
-					}).Decode(&connector)
-					if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
-						return stats, err
-					}
-					if connector.ID == "" {
-						continue
-					}
-					event.Connector = strings.TrimSuffix(connector.ID, "/"+connector.Name)
-					event.ConnectorName = connector.Name
-				}
-			case types.SourceTypeResource:
-				if event.Connector == "" {
-					connector := types.Entity{}
-					err := w.entityCollection.FindOne(ctx, bson.M{
-						"type":   types.EntityTypeConnector,
-						"impact": event.Resource,
-					}).Decode(&connector)
-					if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
-						return stats, err
-					}
-					if connector.ID == "" {
-						continue
-					}
-					component := types.Entity{}
-					err = w.entityCollection.FindOne(ctx, bson.M{
-						"type":    types.EntityTypeComponent,
-						"depends": event.Resource,
-					}).Decode(&component)
-					if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
-						return stats, err
-					}
-					if component.ID == "" {
-						continue
-					}
-
-					event.Connector = strings.TrimSuffix(connector.ID, "/"+connector.Name)
-					event.ConnectorName = connector.Name
-					event.Component = component.Name
-					event.Resource = strings.TrimSuffix(event.Resource, "/"+component.Name)
-				}
-			}
-
-			err := w.publisher.SendEvent(event)
+			fixedEvent, err := w.fillEventAfterLinksUpdate(ctx, event)
 			if err != nil {
 				return stats, err
+			}
+			if fixedEvent.EventType != "" {
+				err = w.publisher.SendEvent(fixedEvent)
+				if err != nil {
+					return stats, err
+				}
 			}
 		}
 	} else {
@@ -445,63 +407,16 @@ func (w *worker) parseEntities(
 		}
 
 		if withEvents && eventType != "" {
-			event := types.Event{
-				EventType: eventType,
-				Timestamp: now,
-				Author:    canopsis.DefaultEventAuthor,
-			}
-
 			switch *ci.Type {
 			case types.EntityTypeService:
-				event.Connector = types.ConnectorEngineService
-				event.ConnectorName = types.ConnectorEngineService
-				event.Component = ci.ID
-				event.SourceType = types.SourceTypeService
-				serviceEvents = append(serviceEvents, event)
+				serviceEvents = append(serviceEvents, w.createServiceEvent(ci, eventType, now))
 			default:
-				alarm := types.Alarm{}
-				findOptions := options.FindOne().SetSort(bson.M{"t": -1}).SetProjection(bson.M{"v.steps": 0})
-				err := w.alarmCollection.FindOne(ctx, bson.M{"d": ci.ID}, findOptions).Decode(&alarm)
-				if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
-					return res, fmt.Errorf("failed to fetch an alarm: %w", err)
+				event, err := w.createBasicEntityEvent(ctx, ci, oldEntity, eventType, now)
+				if err != nil {
+					return res, err
 				}
-				if alarm.ID == "" {
-					err := w.alarmResolvedCollection.FindOne(ctx, bson.M{"d": ci.ID}, findOptions).Decode(&alarm)
-					if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
-						return res, fmt.Errorf("failed to fetch an alarm: %w", err)
-					}
-				}
-				if alarm.ID != "" {
-					event.Connector = alarm.Value.Connector
-					event.ConnectorName = alarm.Value.ConnectorName
-					event.Component = alarm.Value.Component
-					event.Resource = alarm.Value.Resource
-					event.SourceType = event.DetectSourceType()
+				if event.EventType != "" {
 					basicEntityEvents = append(basicEntityEvents, event)
-				} else {
-					name := ""
-					if ci.Name != nil {
-						name = *ci.Name
-					} else if oldEntity.Name != nil {
-						name = *oldEntity.Name
-					}
-					switch *ci.Type {
-					case types.EntityTypeConnector:
-						if name != "" {
-							event.Connector = strings.TrimSuffix(ci.ID, "/"+name)
-							event.ConnectorName = name
-							event.SourceType = types.SourceTypeConnector
-							basicEntityEvents = append(basicEntityEvents, event)
-						}
-					case types.EntityTypeComponent:
-						event.Component = ci.ID
-						event.SourceType = types.SourceTypeComponent
-						basicEntityEvents = append(basicEntityEvents, event)
-					case types.EntityTypeResource:
-						event.Resource = ci.ID // use id to retrieve component and connector after links parsing
-						event.SourceType = types.SourceTypeResource
-						basicEntityEvents = append(basicEntityEvents, event)
-					}
 				}
 			}
 		}
@@ -811,4 +726,132 @@ func (w *worker) updateComponentInfosOnLinkDelete(link Link) mongo.WriteModel {
 	return mongo.NewUpdateManyModel().
 		SetFilter(bson.M{"_id": bson.M{"$in": link.From}, "type": types.EntityTypeResource}).
 		SetUpdate(bson.M{"$unset": bson.M{"component_infos": "", "component": ""}})
+}
+
+func (w *worker) createServiceEvent(ci ConfigurationItem, eventType string, now types.CpsTime) types.Event {
+	return types.Event{
+		EventType:     eventType,
+		Timestamp:     now,
+		Author:        canopsis.DefaultEventAuthor,
+		Connector:     types.ConnectorEngineService,
+		ConnectorName: types.ConnectorEngineService,
+		Component:     ci.ID,
+		SourceType:    types.SourceTypeService,
+	}
+}
+
+func (w *worker) createBasicEntityEvent(ctx context.Context, ci, oldEntity ConfigurationItem, eventType string, now types.CpsTime) (types.Event, error) {
+	event := types.Event{
+		EventType: eventType,
+		Timestamp: now,
+		Author:    canopsis.DefaultEventAuthor,
+	}
+
+	alarm := types.Alarm{}
+	findOptions := options.FindOne().SetSort(bson.M{"t": -1}).SetProjection(bson.M{"v.steps": 0})
+	err := w.alarmCollection.FindOne(ctx, bson.M{"d": ci.ID}, findOptions).Decode(&alarm)
+	if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+		return event, fmt.Errorf("failed to fetch an alarm: %w", err)
+	}
+	if alarm.ID == "" {
+		err := w.alarmResolvedCollection.FindOne(ctx, bson.M{"d": ci.ID}, findOptions).Decode(&alarm)
+		if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+			return event, fmt.Errorf("failed to fetch an alarm: %w", err)
+		}
+	}
+	if alarm.ID != "" {
+		event.Connector = alarm.Value.Connector
+		event.ConnectorName = alarm.Value.ConnectorName
+		event.Component = alarm.Value.Component
+		event.Resource = alarm.Value.Resource
+		event.SourceType = event.DetectSourceType()
+	} else {
+		name := ""
+		if ci.Name != nil {
+			name = *ci.Name
+		} else if oldEntity.Name != nil {
+			name = *oldEntity.Name
+		}
+		switch *ci.Type {
+		case types.EntityTypeConnector:
+			if name == "" {
+				return types.Event{}, nil
+			}
+
+			event.Connector = strings.TrimSuffix(ci.ID, "/"+name)
+			event.ConnectorName = name
+			event.SourceType = types.SourceTypeConnector
+		case types.EntityTypeComponent:
+			event.Component = ci.ID
+			event.SourceType = types.SourceTypeComponent
+		case types.EntityTypeResource:
+			event.Resource = ci.ID // use id to retrieve component and connector after links parsing
+			event.SourceType = types.SourceTypeResource
+		}
+	}
+
+	return event, nil
+}
+
+func (w *worker) fillEventAfterLinksUpdate(ctx context.Context, event types.Event) (types.Event, error) {
+	switch event.SourceType {
+	case types.SourceTypeComponent:
+		if event.Connector == "" {
+			connector := types.Entity{}
+			err := w.entityCollection.FindOne(ctx, bson.M{
+				"type":    types.EntityTypeConnector,
+				"depends": event.Component,
+			}, options.FindOne().SetProjection(bson.M{"impact": 0, "depends": 0})).Decode(&connector)
+			if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+				return types.Event{}, err
+			}
+			if connector.ID == "" {
+				event.Connector = defaultConnector
+				event.ConnectorName = defaultConnectorName
+			} else {
+				event.Connector = strings.TrimSuffix(connector.ID, "/"+connector.Name)
+				event.ConnectorName = connector.Name
+			}
+		}
+	case types.SourceTypeResource:
+		if event.Connector == "" {
+			connector := types.Entity{}
+			err := w.entityCollection.FindOne(ctx, bson.M{
+				"type":   types.EntityTypeConnector,
+				"impact": event.Resource,
+			}, options.FindOne().SetProjection(bson.M{"impact": 0, "depends": 0})).Decode(&connector)
+			if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+				return types.Event{}, err
+			}
+			component := types.Entity{}
+			err = w.entityCollection.FindOne(ctx, bson.M{
+				"type":    types.EntityTypeComponent,
+				"depends": event.Resource,
+			}, options.FindOne().SetProjection(bson.M{"impact": 0, "depends": 0})).Decode(&component)
+			if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+				return types.Event{}, err
+			}
+
+			if connector.ID == "" {
+				event.Connector = defaultConnector
+				event.ConnectorName = defaultConnectorName
+			} else {
+				event.Connector = strings.TrimSuffix(connector.ID, "/"+connector.Name)
+				event.ConnectorName = connector.Name
+			}
+			if component.ID == "" {
+				idParts := strings.Split(event.Resource, "/")
+				if len(idParts) != 2 {
+					return types.Event{}, nil
+				}
+				event.Resource = idParts[0]
+				event.Component = idParts[1]
+			} else {
+				event.Component = component.Name
+				event.Resource = strings.TrimSuffix(event.Resource, "/"+component.Name)
+			}
+		}
+	}
+
+	return event, nil
 }
