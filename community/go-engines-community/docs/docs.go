@@ -2343,6 +2343,62 @@ var doc = `{
                 }
             }
         },
+        "/contextgraph/import-partial": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create import task",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "contextgraph-import"
+                ],
+                "summary": "Create import task",
+                "operationId": "contextgraph-import-create-import-partial",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "source",
+                        "name": "source",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/contextgraph.ImportRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/contextgraph.ImportResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/contextgraph/import/status/{id}": {
             "get": {
                 "security": [
@@ -9859,7 +9915,8 @@ var doc = `{
                     "type": "string"
                 },
                 "author": {
-                    "type": "string"
+                    "type": "object",
+                    "$ref": "#/definitions/common.User"
                 },
                 "comments": {
                     "type": "object",
@@ -9867,6 +9924,10 @@ var doc = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "reason": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Reason"
                 },
                 "rrule": {
                     "type": "string"
@@ -11970,9 +12031,6 @@ var doc = `{
                 "action": {
                     "type": "string"
                 },
-                "action_properties": {
-                    "type": "object"
-                },
                 "category": {
                     "type": "string"
                 },
@@ -13660,7 +13718,7 @@ var doc = `{
                 "pbehaviors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehavior.Response"
+                        "$ref": "#/definitions/alarm.Pbehavior"
                     }
                 },
                 "resource": {
@@ -13785,7 +13843,7 @@ var doc = `{
                 "pbehaviors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pbehavior.Response"
+                        "$ref": "#/definitions/alarm.Pbehavior"
                     }
                 },
                 "resource": {
