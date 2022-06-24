@@ -1441,6 +1441,7 @@ instruction:
 
   instruction_alarm_correlation_instruction_get_1_1:
     <<: *instruction_manual
+    enabled: false
     _id: test-instruction-to-alarm-correlation-instruction-get-1-1
     entity_pattern:
       - - field: name
@@ -1451,6 +1452,7 @@ instruction:
 
   instruction_alarm_correlation_instruction_get_1_2:
     <<: *instruction_auto
+    enabled: false
     entity_pattern:
       - - field: name
           cond:
