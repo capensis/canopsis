@@ -314,7 +314,11 @@ func (w *worker) parseEntities(
 				case types.EntityTypeService:
 					eventType = types.EventTypeRecomputeEntityService
 				default:
-					eventType = types.EventTypeEntityUpdated
+					if *oldEntity.Enabled && *ci.Enabled {
+						eventType = types.EventTypeEntityUpdated
+					} else {
+						eventType = types.EventTypeEntityToggled
+					}
 				}
 			}
 		case ActionUpdate:
@@ -338,7 +342,11 @@ func (w *worker) parseEntities(
 				case types.EntityTypeService:
 					eventType = types.EventTypeRecomputeEntityService
 				default:
-					eventType = types.EventTypeEntityUpdated
+					if *oldEntity.Enabled && *ci.Enabled {
+						eventType = types.EventTypeEntityUpdated
+					} else {
+						eventType = types.EventTypeEntityToggled
+					}
 				}
 			}
 		case ActionDelete:
@@ -379,7 +387,7 @@ func (w *worker) parseEntities(
 			case types.EntityTypeService:
 				eventType = types.EventTypeRecomputeEntityService
 			default:
-				eventType = types.EventTypeEntityUpdated
+				eventType = types.EventTypeEntityToggled
 			}
 		case ActionDisable:
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Decode(&oldEntity)
@@ -400,7 +408,7 @@ func (w *worker) parseEntities(
 			case types.EntityTypeService:
 				eventType = types.EventTypeRecomputeEntityService
 			default:
-				eventType = types.EventTypeEntityUpdated
+				eventType = types.EventTypeEntityToggled
 			}
 		default:
 			return res, fmt.Errorf("the action %s is not recognized", ci.Action)
