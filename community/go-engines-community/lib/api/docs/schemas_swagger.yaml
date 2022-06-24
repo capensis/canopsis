@@ -1480,15 +1480,27 @@ definitions:
     properties:
       _id:
         type: string
-      alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
       description:
         maxLength: 255
         type: string
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       freq_limit:
         type: integer
       name:
@@ -1506,22 +1518,42 @@ definitions:
     properties:
       _id:
         type: string
-      alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       author:
         $ref: '#/definitions/common.User'
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
       created:
         type: integer
       description:
         type: string
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       freq_limit:
         type: integer
       name:
         type: string
+      old_alarm_patterns:
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       priority:
         type: integer
       updated:
@@ -1529,15 +1561,27 @@ definitions:
     type: object
   flappingrule.UpdateRequest:
     properties:
-      alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
       description:
         maxLength: 255
         type: string
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       freq_limit:
         type: integer
       name:
