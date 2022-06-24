@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
+import { entitiesPbehaviorCommentMixin } from '@/mixins/entities/pbehavior/comment';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('pbehavior');
 
@@ -26,26 +26,30 @@ export const entitiesPbehaviorMixin = {
       fetchPbehaviorsByEntityIdWithoutStore: 'fetchListByEntityIdWithoutStore',
     }),
 
-    async createPbehaviors(pbehaviors) {
-      return Promise.all(pbehaviors.map(async (data) => {
-        const pbehavior = await this.createPbehavior({ data });
+    async createPbehaviorWithComments({ data }) {
+      const pbehavior = await this.createPbehavior({ data });
 
-        await this.updateSeveralPbehaviorComments({ comments: data.comments, pbehavior });
-      }));
+      await this.updateSeveralPbehaviorComments({ comments: data.comments, pbehavior });
+
+      return pbehavior;
+    },
+
+    createPbehaviorsWithComments(pbehaviors) {
+      return Promise.all(pbehaviors.map(data => this.createPbehaviorWithComments({ data })));
+    },
+
+    updatePbehaviorsWithComments(pbehaviors) {
+      return Promise.all(pbehaviors.map(data => Promise.all([
+        this.updatePbehavior({ id: data._id, data }),
+        this.updateSeveralPbehaviorComments({
+          pbehavior: this.getPbehavior(data._id),
+          comments: data.comments,
+        }),
+      ])));
     },
 
     removePbehaviors(pbehaviors) {
       return Promise.all(pbehaviors.map(({ _id }) => this.removePbehavior({ id: _id })));
-    },
-
-    updatePbehaviors(pbehaviors) {
-      return Promise.all(pbehaviors.map(pbehavior => Promise.all([
-        this.updatePbehavior({ data: pbehavior, id: pbehavior._id }),
-        this.updateSeveralPbehaviorComments({
-          pbehavior: this.getPbehavior(pbehavior._id),
-          comments: pbehavior.comments,
-        }),
-      ])));
     },
   },
 };

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"runtime/debug"
+	"sync"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -30,6 +31,7 @@ type engine struct {
 	deferFunc         func(ctx context.Context)
 	consumers         []Consumer
 	periodicalWorkers map[string]PeriodicalWorker
+	routines          []Routine
 	logger            zerolog.Logger
 }
 
@@ -45,10 +47,15 @@ func (e *engine) AddPeriodicalWorker(name string, worker PeriodicalWorker) {
 	e.periodicalWorkers[name] = worker
 }
 
+func (e *engine) AddRoutine(v Routine) {
+	e.routines = append(e.routines, v)
+}
+
 func (e *engine) Run(ctx context.Context) error {
 	e.logger.Info().
 		Int("consumers", len(e.consumers)).
 		Int("periodical workers", len(e.periodicalWorkers)).
+		Int("routines", len(e.routines)).
 		Msg("engine started")
 	defer e.logger.Info().Msg("engine stopped")
 	defer func() {
@@ -102,6 +109,13 @@ func (e *engine) Run(ctx context.Context) error {
 		})
 	}
 
+	for _, r := range e.routines {
+		routine := r
+		g.Go(func() error {
+			return routine(ctx)
+		})
+	}
+
 	return g.Wait()
 }
 
@@ -109,7 +123,81 @@ func (e *engine) runPeriodicalWorker(
 	ctx context.Context,
 	name string,
 	worker PeriodicalWorker,
-) (resErr error) {
+) error {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	ch := make(chan bool)
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+
+	go func() {
+		defer close(ch)
+		defer wg.Done()
+
+		var start time.Time
+		skip := false
+
+		interval := worker.GetInterval()
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				select {
+				case ch <- skip:
+					skip = false
+					start = time.Now()
+				default:
+					skip = true
+					e.logger.Error().
+						Str("worker", name).
+						Time("start", start).
+						Str("spent time", time.Since(start).String()).
+						Msg("previous run still in progress, skip periodical worker")
+				}
+
+				newInterval := worker.GetInterval()
+				if newInterval != interval {
+					ticker.Stop()
+					interval = newInterval
+					ticker = time.NewTicker(interval)
+				}
+			}
+		}
+	}()
+
+	var start time.Time
+	var d time.Duration
+
+	for prevSkip := range ch {
+		if prevSkip {
+			e.logger.Info().
+				Str("worker", name).
+				Time("start", start).
+				Str("spent time", d.String()).
+				Msg("periodical worker continues to work properly")
+		}
+
+		start = time.Now()
+		err := e.doPeriodicalWork(ctx, name, worker)
+		if err != nil {
+			cancel()
+			wg.Wait()
+			return err
+		}
+
+		d = time.Since(start)
+	}
+
+	wg.Wait()
+	return nil
+}
+
+func (e *engine) doPeriodicalWork(ctx context.Context, name string, worker PeriodicalWorker) (resErr error) {
 	defer func() {
 		if r := recover(); r != nil {
 			var err error
@@ -123,67 +211,7 @@ func (e *engine) runPeriodicalWorker(
 		}
 	}()
 
-	interval := worker.GetInterval()
-	ticker := time.NewTicker(interval)
-	defer ticker.Stop()
+	worker.Work(ctx)
 
-	var start time.Time
-	done := make(chan time.Duration, 1)
-	defer close(done)
-
-	var skip, prevSkip bool
-
-	for {
-		select {
-		case <-ticker.C:
-			prevSkip = skip
-			skip = false
-			var d time.Duration
-
-			if !start.IsZero() {
-				select {
-				case d = <-done:
-				default:
-					skip = true
-					e.logger.Error().
-						Str("worker", name).
-						Time("start", start).
-						Str("spent time", time.Since(start).String()).
-						Msg("previous run still in progress, skip periodical worker")
-				}
-			}
-
-			if !skip {
-				if prevSkip {
-					e.logger.Info().
-						Str("worker", name).
-						Time("start", start).
-						Str("spent time", d.String()).
-						Msg("periodical worker continues to work properly")
-				}
-
-				start = time.Now()
-				go func() {
-					worker.Work(ctx)
-
-					select {
-					case <-ctx.Done():
-						return
-					default:
-					}
-
-					done <- time.Since(start)
-				}()
-			}
-
-			newInterval := worker.GetInterval()
-			if newInterval != interval {
-				ticker.Stop()
-				interval = newInterval
-				ticker = time.NewTicker(interval)
-			}
-		case <-ctx.Done():
-			return nil
-		}
-	}
+	return nil
 }

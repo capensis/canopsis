@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with advanced tab 1`] = `
+exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with advanced tab 1`] = `
 <div
   class="layout column"
 >
@@ -87,7 +87,7 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with advanc
             class="v-window-item"
             style=""
           >
-            <c-patterns-advanced-editor-field-stub
+            <c-pattern-advanced-editor-field-stub
               attributes=""
               disabled="true"
               name="patterns.json"
@@ -102,7 +102,7 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with advanc
 </div>
 `;
 
-exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with custom props 1`] = `
+exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with custom props 1`] = `
 <div
   class="layout column"
 >
@@ -219,7 +219,7 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with custom
 </div>
 `;
 
-exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with default props 1`] = `
+exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with default props 1`] = `
 <div
   class="layout column"
 >

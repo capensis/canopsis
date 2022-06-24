@@ -1,32 +1,32 @@
 <template lang="pug">
-  div
-    v-layout(row)
-      v-combobox(
-        v-model="form.metaAlarm",
-        v-validate="'required'",
-        :items="manualMetaAlarms",
-        :label="$t('modals.createManualMetaAlarm.fields.metaAlarm')",
-        :error-messages="errors.collect('manualMetaAlarm')",
-        :loading="pending",
-        item-value="entity._id",
-        item-text="v.display_name",
-        name="manualMetaAlarm",
-        return-object,
-        blur-on-create
-      )
-        template(slot="no-data")
-          v-list-tile
-            v-list-tile-content
-              v-list-tile-title(v-html="$t('modals.createManualMetaAlarm.noData')")
-    v-layout(row)
-      v-text-field(
-        v-model="form.output",
-        :label="$t('modals.createManualMetaAlarm.fields.output')"
-      )
+  v-layout(column)
+    v-combobox(
+      v-field="form.metaAlarm",
+      v-validate="'required'",
+      :items="manualMetaAlarms",
+      :label="$t('modals.createManualMetaAlarm.fields.metaAlarm')",
+      :error-messages="errors.collect('manualMetaAlarm')",
+      :loading="pending",
+      item-value="entity._id",
+      item-text="v.display_name",
+      name="manualMetaAlarm",
+      return-object,
+      blur-on-create
+    )
+      template(#no-data="")
+        v-list-tile
+          v-list-tile-content
+            v-list-tile-title(v-html="$t('modals.createManualMetaAlarm.noData')")
+    v-text-field(
+      v-field="form.output",
+      :label="$t('common.note')"
+    )
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+
+import { MAX_LIMIT } from '@/constants';
 
 const { mapActions } = createNamespacedHelpers('alarm');
 
@@ -67,7 +67,7 @@ export default {
         /**
          * We need this option for fetching of every items
          */
-        limit: 10000,
+        limit: MAX_LIMIT,
       };
 
       const { data = [] } = await this.fetchAlarmsListWithoutStore({ params });

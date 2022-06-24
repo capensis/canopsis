@@ -9,7 +9,7 @@
         )
         v-menu(v-if="dropDownActions.length", bottom, left, @click.native.stop="")
           template(#activator="{ on }")
-            v-btn(v-on="on", icon)
+            v-btn.mr-0(v-on="on", icon)
               v-icon more_vert
           v-list
             actions-panel-item(

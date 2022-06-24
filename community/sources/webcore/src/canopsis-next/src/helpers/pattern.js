@@ -1,4 +1,4 @@
-import { isNil, isArray, isBoolean, isEmpty, isNan, isNull, isNumber, isObject, isString, isUndefined } from 'lodash';
+import { isNil, isArray, isBoolean, isEmpty, isNan, isNull, isNumber, isString, isUndefined } from 'lodash';
 
 import {
   PATTERN_FIELD_TYPES,
@@ -373,28 +373,22 @@ export const isExtraInfosPatternRuleField = value => value?.startsWith(EVENT_FIL
 export const isValidRuleValueWithoutFieldType = (rule) => {
   const { field, cond } = rule;
 
-  if (isObject(cond.value)) {
-    switch (cond.type) {
-      case PATTERN_CONDITIONS.absoluteTime:
-        return isDatePatternRuleField(field) && isValidDateInterval(cond?.value);
-      case PATTERN_CONDITIONS.greater:
-      case PATTERN_CONDITIONS.less:
-        return isDurationPatternRuleField(field) && isValidDuration(cond?.value);
+  if (isDatePatternRuleField(field)) {
+    if (cond.type === PATTERN_CONDITIONS.absoluteTime) {
+      return isValidDateInterval(cond?.value);
     }
 
-    return false;
-  }
-
-  if (isNumber(cond.value)) {
-    if (isDatePatternRuleField(field) && cond.type === PATTERN_CONDITIONS.relativeTime) {
+    if (cond.type === PATTERN_CONDITIONS.relativeTime) {
       return isNumber(cond.value) && cond.value >= 0;
     }
-
-    return isNumberPatternRuleField(field);
   }
 
-  if (isArray(cond.value)) {
-    return false;
+  if (isDurationPatternRuleField(field)) {
+    return isValidDuration(cond?.value);
+  }
+
+  if (isNumberPatternRuleField(field)) {
+    return isNumber(cond.value);
   }
 
   if (isBoolean(cond.value)) {

@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-pattern-panel Renders \`c-pattern-panel\` with default props 1`] = `
+<div
+  class="c-collapse-panel"
+  color="grey"
+>
+  <span
+    class="white--text"
+  >
+    Custom title
+  </span>
+   
+  <div
+    class="v-card v-sheet theme--light"
+  >
+    <div
+      class="v-card__text"
+    />
+  </div>
+</div>
+`;
+
+exports[`c-pattern-panel Renders \`c-pattern-panel\` with errors 1`] = `
+<div
+  class="c-collapse-panel"
+  color="grey"
+  error="true"
+>
+  <span
+    class="white--text"
+  >
+    Custom title with errors
+  </span>
+   
+  <div
+    class="v-card v-sheet theme--light"
+  >
+    <div
+      class="v-card__text"
+    />
+  </div>
+</div>
+`;

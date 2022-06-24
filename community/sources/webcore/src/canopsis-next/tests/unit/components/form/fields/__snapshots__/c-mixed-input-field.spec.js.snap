@@ -195,7 +195,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type corr
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type correctly 2`] = `undefined`;
 
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type correctly 3`] = `
-<c-array-mixed-field-stub
+<c-array-text-field-stub
   class="c-mixed-input-field"
   name="mixedFieldName"
   values="0,1,,false,"

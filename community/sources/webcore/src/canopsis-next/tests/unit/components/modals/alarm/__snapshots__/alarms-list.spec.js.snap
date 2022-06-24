@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarms-list Renders \`alarms-list\` 1`] = `
+<div
+  class="modal-wrapper"
+  close="close"
+>
+  <div
+    class="title"
+  >
+    <span>
+      Alarm list
+    </span>
+  </div>
+   
+  <div
+    class="text"
+  >
+    <alarms-list-widget-stub
+      localwidget="true"
+      tabid=""
+      widget="[object Object]"
+    />
+  </div>
+   
+  <div
+    class="actions"
+  />
+</div>
+`;

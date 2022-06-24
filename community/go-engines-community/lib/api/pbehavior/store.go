@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -15,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -29,6 +29,7 @@ type Store interface {
 	Update(ctx context.Context, model *Response) (bool, error)
 	UpdateByFilter(ctx context.Context, model *Response, filters bson.M) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
+	DeleteByName(ctx context.Context, name string) (string, error)
 	Count(context.Context, Filter, int) (*CountFilterResult, error)
 }
 
@@ -380,23 +381,33 @@ func (s *store) UpdateByFilter(ctx context.Context, model *Response, filters bso
 		update = bson.M{"$set": doc}
 	}
 
-	result, err := s.dbCollection.UpdateOne(
-		ctx,
-		filters,
-		update,
-	)
+	var updatedModel *Response
+	updated := false
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		updatedModel = nil
+		updated = false
+		result, err := s.dbCollection.UpdateOne(
+			ctx,
+			filters,
+			update,
+		)
+		if err != nil {
+			return err
+		}
+		updated = result.MatchedCount > 0
+
+		updatedModel, err = s.GetOneBy(ctx, bson.M{"_id": model.ID})
+		return err
+	})
 	if err != nil {
 		return false, err
 	}
 
-	updatedModel, err := s.GetOneBy(ctx, bson.M{"_id": model.ID})
-	if err != nil {
-		return false, err
+	if updatedModel != nil {
+		*model = *updatedModel
 	}
 
-	*model = *updatedModel
-
-	return result.MatchedCount > 0, nil
+	return updated, nil
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
@@ -406,6 +417,24 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 
 	return deleted > 0, nil
+}
+
+func (s *store) DeleteByName(ctx context.Context, name string) (string, error) {
+	pbh := pbehavior.PBehavior{}
+	err := s.dbCollection.FindOne(ctx, bson.M{"name": name}).Decode(&pbh)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return "", nil
+		}
+		return "", err
+	}
+
+	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": pbh.ID})
+	if err != nil || deleted == 0 {
+		return "", err
+	}
+
+	return pbh.ID, nil
 }
 
 func (s *store) transformModelToDocument(model Response) (pbehavior.PBehavior, error) {

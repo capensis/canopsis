@@ -463,8 +463,8 @@ export const isValidTimeUnit = unit => Object.values(TIME_UNITS).includes(unit);
  * @return {boolean}
  */
 export const isValidDateInterval = value => value
-  && isNumber(value.from)
-  && isNumber(value.to)
+  && isNumber(value?.from)
+  && isNumber(value?.to)
   && value.from < value.to;
 
 export default convertDateToMoment;
