@@ -243,6 +243,7 @@ export default {
     custom: 'Custom',
     eventType: 'Event type',
     sourceType: 'Source type',
+    cycleDependency: 'Cycle dependency',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -554,9 +555,11 @@ export default {
     tooltips: {
       priority: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
       hasInstruction: 'There is an instruction for this type of incidents',
+      hasManualInstructionInRunning: 'Manual instruction in progress',
       hasAutoInstructionInRunning: 'Automatic instruction in progress',
       allAutoInstructionExecuted: 'All automatic instructions has been executed',
       awaitingInstructionComplete: 'Awaiting for the instruction to complete',
+      autoInstructionsFailed: 'Automatic instructions failed',
     },
     metrics: {
       [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',
@@ -795,6 +798,11 @@ export default {
         + '<dd>For example:</dd>\n'
         + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
         + '</dl>',
+    },
+    density: {
+      title: 'Default view',
+      comfort: 'Comfort view',
+      compact: 'Compact view',
     },
   },
   modals: {
@@ -1112,7 +1120,8 @@ export default {
       },
     },
     alarmsList: {
-      title: 'Alarms list',
+      title: 'Alarm list',
+      prefixTitle: '{prefix} - alarm list',
     },
     createUser: {
       create: {
@@ -1269,9 +1278,6 @@ export default {
     },
     createCommentEvent: {
       title: 'Add comment',
-      fields: {
-        comment: 'Comment',
-      },
     },
     createPlaylist: {
       create: {
@@ -1346,7 +1352,6 @@ export default {
       noData: 'No meta alarm corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
         metaAlarm: 'Manual meta alarm',
-        output: 'Note',
       },
     },
     createRemediationInstruction: {
@@ -1398,6 +1403,7 @@ export default {
         configuration: 'Configuration',
         jobId: 'Job ID',
         query: 'Query',
+        multipleExecutions: 'Allow parallel execution',
       },
       errors: {
         invalidJSON: 'Invalid JSON',
@@ -2244,6 +2250,7 @@ export default {
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
     closeConfirmationText: 'Would you like to resume this instruction later?',
+    queueNumber: '{number} {name} jobs are in the queue',
     popups: {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
@@ -2325,6 +2332,7 @@ export default {
     addAction: 'Add action',
     emptyActions: 'No actions added yet',
     output: 'Output Action Format',
+    forwardAuthor: 'Forward author to the next step',
     urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
       + '<i>For example:</i>'
       + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'

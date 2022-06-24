@@ -50,6 +50,7 @@ const stubs = {
   'field-switcher': createInputStub('field-switcher'),
   'field-fast-ack-output': createInputStub('field-fast-ack-output'),
   'field-enabled-limit': createInputStub('field-enabled-limit'),
+  'field-density': createInputStub('field-density'),
   'export-csv-form': createInputStub('export-csv-form'),
   'v-btn': createButtonStub('v-btn'),
 };
@@ -70,6 +71,7 @@ const snapshotStubs = {
   'field-switcher': true,
   'field-fast-ack-output': true,
   'field-enabled-limit': true,
+  'field-density': true,
   'export-csv-form': true,
 };
 

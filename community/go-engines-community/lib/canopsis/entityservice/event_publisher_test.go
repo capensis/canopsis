@@ -8,9 +8,10 @@ import (
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
+	mock_entity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/entity"
 	"github.com/golang/mock/gomock"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 	"testing"
 	"time"
 )
@@ -64,6 +65,7 @@ func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T)
 			mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 			mockAlarmAdapter.EXPECT().GetAlarmsByID(gomock.Any(), gomock.Eq(data.Message.ID)).
 				Return([]types.Alarm{data.Alarm}, nil)
+			mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 			mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 			mockEncoder.EXPECT().Encode(gomock.Any()).Do(func(event types.Event) {
 				if event.EventType != data.ExpectedEventType {
@@ -91,7 +93,7 @@ func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T)
 				})).
 				Return(nil)
 
-			eventPublisher := entityservice.NewEventPublisher(mockAlarmAdapter, mockPublisher, mockEncoder,
+			eventPublisher := entityservice.NewEventPublisher(mockAlarmAdapter, mockEntityAdapter, mockPublisher, mockEncoder,
 				contentType, exchange, routingKey, logger)
 
 			ctx, cancel := context.WithCancel(context.Background())
@@ -117,23 +119,23 @@ func TestEventPublisher_Publish_GivenChangedService_ShouldSendEvent(t *testing.T
 	}{
 		"given updated service should send entityupdated event": {
 			Message: entityservice.ChangeEntityMessage{
-				ID:        "test-service",
-				IsService: true,
+				ID:         "test-service",
+				EntityType: types.EntityTypeService,
 			},
 			ExpectedEventType: types.EventTypeEntityUpdated,
 		},
 		"given toggled service should send recomputeentityservice event": {
 			Message: entityservice.ChangeEntityMessage{
-				ID:        "test-service",
-				IsService: true,
-				IsToggled: true,
+				ID:         "test-service",
+				EntityType: types.EntityTypeService,
+				IsToggled:  true,
 			},
 			ExpectedEventType: types.EventTypeRecomputeEntityService,
 		},
 		"given updated service pattern should send recomputeentityservice event": {
 			Message: entityservice.ChangeEntityMessage{
 				ID:                      "test-service",
-				IsService:               true,
+				EntityType:              types.EntityTypeService,
 				IsServicePatternChanged: true,
 			},
 			ExpectedEventType: types.EventTypeRecomputeEntityService,
@@ -150,6 +152,7 @@ func TestEventPublisher_Publish_GivenChangedService_ShouldSendEvent(t *testing.T
 			logger := zerolog.Logger{}
 			body := []byte("test-body")
 			mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
+			mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 			mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 			mockEncoder.EXPECT().Encode(gomock.Any()).Do(func(event types.Event) {
 				if event.EventType != data.ExpectedEventType {
@@ -171,7 +174,7 @@ func TestEventPublisher_Publish_GivenChangedService_ShouldSendEvent(t *testing.T
 				})).
 				Return(nil)
 
-			eventPublisher := entityservice.NewEventPublisher(mockAlarmAdapter, mockPublisher, mockEncoder,
+			eventPublisher := entityservice.NewEventPublisher(mockAlarmAdapter, mockEntityAdapter, mockPublisher, mockEncoder,
 				contentType, exchange, routingKey, logger)
 
 			ctx, cancel := context.WithCancel(context.Background())

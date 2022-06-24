@@ -35,7 +35,7 @@ Feature: update service when alarm is updated by action pbehavior
           "parameters": {
             "name": "test-pbehavior-action-axe-pbehavior-service-1",
             "tstart": {{ now }},
-            "tstop": {{ nowAdd "10m" }},
+            "tstop": {{ nowAdd "1h" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },

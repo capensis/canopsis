@@ -444,6 +444,8 @@ export const CONTEXT_COLUMNS_WITH_SORTABLE = [ // TODO: We should receive it fro
   'impact_level',
   'category.name',
   'idle_since',
+  'enabled',
+  'last_event_date',
 ];
 
 export const ENTITY_PATTERN_FIELDS = {
