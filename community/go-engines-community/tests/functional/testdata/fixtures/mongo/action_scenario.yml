@@ -1,7 +1,14 @@
 template:
   - &scenario {
     _id: <UUID()>,
-    actions:[
+    name: <Word()>,
+    priority: <Index()>,
+    enabled: true,
+    author: root,
+    triggers: [ create ],
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    actions: [
       {
         drop_scenario_if_not_matched: false,
         emit_trigger: false,
@@ -29,335 +36,166 @@ template:
           ]
         ]
       }
-    ],
-    author: root,
-    enabled: true,
-    name: <Word()>,
-    triggers: [create],
-    created: <NowUnix()>,
-    updated: <Current().created>
+    ]
   }
 
 action_scenario:
-  action_scenario_1:
+  scenario_to_check_unique_name:
     <<: *scenario
-    _id: test-scenario-to-check-unique-name
-    actions:
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-check-unique-name-alarm
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      type: ack
     name: test-scenario-to-check-unique-name-name
-    priority: 1
-  action_scenario_2:
+
+  scenario_to_check_unique_priority:
     <<: *scenario
-    _id: test-scenario-to-check-unique-priority
-    actions:
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-check-unique-priority-alarm
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      type: ack
-    name: test-scenario-to-check-unique-priority-name
-    priority: 2
-  action_scenario_3:
+
+  scenario_to_delete:
+    <<: *scenario
     _id: test-scenario-to-delete
-    actions:
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-delete-alarm-alarm
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      type: ack
-    name: test-scenario-to-delete-name
-    priority: 3
-  action_scenario_4:
+
+  scenario_to_get_1:
     <<: *scenario
     _id: test-scenario-to-get-1
     actions:
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-get-1-action-1-alarm
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      parameters:
-        author: test-scenario-to-get-1-action-1-author
-        output: test-scenario-to-get-1-action-1-output
-      comment: test-scenario-to-get-1-action-1-comment
-      type: ack
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-get-1-action-2-alarm
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      parameters:
-        author: test-scenario-to-get-1-action-2-author
-        duration:
-          unit: s
-          value: 3
-        name: test-scenario-to-get-1-action-2-name
-        reason: test-reason-to-edit-scenario
-        rrule: FREQ=DAILY
-        start_on_trigger: true
-        tstart: null
-        tstop: null
-        type: test-type-to-edit-scenario
-      comment: test-scenario-to-get-1-action-2-comment
-      type: pbehavior
+      - alarm_pattern:
+          - - field: v.component
+              cond:
+                type: eq
+                value: test-scenario-to-get-1-action-1-alarm
+        drop_scenario_if_not_matched: false
+        emit_trigger: false
+        parameters:
+          author: test-scenario-to-get-1-action-1-author
+          output: test-scenario-to-get-1-action-1-output
+        comment: test-scenario-to-get-1-action-1-comment
+        type: ack
+      - alarm_pattern:
+          - - field: v.component
+              cond:
+                type: eq
+                value: test-scenario-to-get-1-action-2-alarm
+        drop_scenario_if_not_matched: false
+        emit_trigger: false
+        parameters:
+          author: test-scenario-to-get-1-action-2-author
+          duration:
+            unit: s
+            value: 3
+          name: test-scenario-to-get-1-action-2-name
+          reason: test-reason-to-edit-scenario
+          rrule: FREQ=DAILY
+          start_on_trigger: true
+          tstart: null
+          tstop: null
+          type: test-type-to-edit-scenario
+        comment: test-scenario-to-get-1-action-2-comment
+        type: pbehavior
     name: test-scenario-to-get-1-name
-    priority: 4
-  action_scenario_5:
+
+  scenario_to_get_2:
     <<: *scenario
     _id: test-scenario-to-get-2
     actions:
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-get-2-action-1-alarm
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      parameters:
-        author: test-scenario-to-get-2-action-1-author
-        output: test-scenario-to-get-2-action-1-output
-      type: ack
+      - alarm_pattern:
+          - - field: v.component
+              cond:
+                type: eq
+                value: test-scenario-to-get-2-action-1-alarm
+        drop_scenario_if_not_matched: false
+        emit_trigger: false
+        parameters:
+          author: test-scenario-to-get-2-action-1-author
+          output: test-scenario-to-get-2-action-1-output
+        type: ack
     delay:
       unit: s
       value: 10
     name: test-scenario-to-get-2-name
-    priority: 5
-  action_scenario_6:
+
+  scenario_to_update_1:
     <<: *scenario
-    _id: test-scenario-get-backward-compatibility
+    _id: test-scenario-to-update-1
+
+  scenario_to_bulk_update_1:
+    <<: *scenario
+    _id: test-scenario-to-bulk-update-1
+
+  scenario_to_bulk_update_2:
+    <<: *scenario
+    _id: test-scenario-to-bulk-update-2
+
+  scenario_to_bulk_delete_1:
+    <<: *scenario
+    _id: test-scenario-to-bulk-delete-1
+
+  scenario_to_bulk_delete_2:
+    <<: *scenario
+    _id: test-scenario-to-bulk-delete-2
+
+  scenario_to_delete_reason:
+    <<: *scenario
     actions:
-      - old_alarm_patterns:
-          - _id: test-scenario-get-backward-compatibility-alarm
-        old_entity_patterns:
-          - _id: test-scenario-get-backward-compatibility-entity
+      - alarm_pattern:
+          - - field: v.component
+              cond:
+                type: eq
+                value: test-scenario-to-delete-reason-alarm
         drop_scenario_if_not_matched: false
         emit_trigger: false
         parameters:
-          author: test-scenario-get-backward-compatibility-author
-          output: test-scenario-get-backward-compatibility-output
-        type: ack
-    delay:
-      unit: s
-      value: 10
-    name: test-scenario-get-backward-compatibility-name
-    priority: 6
-  action_scenario_7:
+          author: root
+          name: test
+          reason: test-reason-to-delete-linked-to-action
+          tstart: 1591172881
+          tstop: 1591536400
+          type: test-type-to-pbh-edit-1
+        type: pbehavior
+
+  scenario_to_delete_type:
     <<: *scenario
-    _id: test-scenario-to-update-1
-    actions:
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-update-1-alarm
-      comment: should be updated
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      type: ack
-    name: test-scenario-to-update-1-name
-    priority: 7
-  action_scenario_8:
-    <<: *scenario
-    _id: test-scenario-to-bulk-update-1
-    actions:
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-bulk-update-1-alarm
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      type: ack
-    name: test-scenario-to-bulk-update-1-name
-    priority: 8
-  action_scenario_9:
-    <<: *scenario
-    _id: test-scenario-to-bulk-update-2
-    actions:
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-bulk-update-2-alarm
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      type: ack
-    name: test-scenario-to-bulk-update-2-name
-    priority: 9
-  action_scenario_10:
-    <<: *scenario
-    _id: test-scenario-to-bulk-delete-1
-    actions:
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-bulk-delete-1-alarm
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      type: ack
-    name: test-scenario-to-bulk-delete-1-name
-    priority: 10
-  action_scenario_11:
-    <<: *scenario
-    _id: test-scenario-to-bulk-delete-2
-    actions:
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-bulk-delete-2-alarm
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      type: ack
-    name: test-scenario-to-bulk-delete-2-name
-    priority: 11
-  action_scenario_12:
-    <<: *scenario
-    _id: test-scenario-to-delete-reason
-    actions:
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-delete-reason-alarm
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      parameters:
-        author: root
-        name: test
-        reason: test-reason-to-delete-linked-to-action
-        tstart: 1591172881
-        tstop: 1591536400
-        type: test-type-to-pbh-edit-1
-      type: pbehavior
-    name: est-scenario-to-delete-reason-name
-    priority: 12
-  action_scenario_13:
-    <<: *scenario
-    _id: test-scenario-to-delete-type
-    actions:
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-delete-type-alarm
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      parameters:
-        author: root
-        name: test
-        reason: test-reason-1
-        tstart: 1591172881
-        tstop: 1591536400
-        type: test-type-to-delete-linked-to-action
-      type: pbehavior
-    name: test-scenario-to-delete-type-name
-    priority: 13
-  action_scenario_14:
-    <<: *scenario
-    _id: test-scenario-to-check-id
-    actions:
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-check-id-alarm
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      type: ack
-    name: test-scenario-to-check-id-name
-    priority: 14
-  action_scenario_15:
-    <<: *scenario
-    _id: test-scenario-to-test-get-pbh-reasons
-    actions:
-    - alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-scenario-to-test-get-pbh-reasons-1-alarm
-      drop_scenario_if_not_matched: false
-      emit_trigger: false
-      parameters:
-        author: root
-        name: test
-        reason: test-reason-to-get-3
-        tstart: 1591172881
-        tstop: 1591536400
-        type: test-type-to-delete-linked-to-action
-      type: pbehavior
-    name: test-scenario-to-test-get-pbh-reasons
-    priority: 15
-  action_scenario_16:
-    _id: test-scenario-metrics-axe-12-1
-    actions:
-    - drop_scenario_if_not_matched: false
-      emit_trigger: false
-      entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resource-metrics-axe-12-2
-      parameters:
-        author: test-author-metrics-axe-12
-        output: test-scenario-metrics-axe-12-output
-        ticket: test-scenario-metrics-axe-12-ticket
-      type: assocticket
-    name: test-scenario-metrics-axe-12-1-name
-    priority: 16
-  action_scenario_17:
-    _id: test-scenario-metrics-axe-12-2
-    actions:
-    - drop_scenario_if_not_matched: false
-      emit_trigger: false
-      entity_pattern:
-        - - field: name
-            cond:
-              type: eq
-              value: test-resource-metrics-axe-12-3
-      parameters:
-        declare_ticket:
-          ticket_id: ticket_id
-        request:
-          method: POST
-          url: http://localhost:3000/webhook/ticket
-      type: webhook
-    name: test-scenario-metrics-axe-12-2-name
-    priority: 17
-  action_scenario_18:
-    <<: *scenario
-    _id: test-scenario-to-update-2
     actions:
       - alarm_pattern:
-        - - field: v.component
-            cond:
-              type: eq
-              value: test-scenario-to-update-2-alarm
-        comment: should be updated
+          - - field: v.component
+              cond:
+                type: eq
+                value: test-scenario-to-delete-type-alarm
         drop_scenario_if_not_matched: false
         emit_trigger: false
-        type: ack
-    name: test-scenario-to-update-2-name
-    priority: 18
-  action_scenario_19:
+        parameters:
+          author: root
+          name: test
+          reason: test-reason-1
+          tstart: 1591172881
+          tstop: 1591536400
+          type: test-type-to-delete-linked-to-action
+        type: pbehavior
+
+  scenario_to_check_id:
+    <<: *scenario
+    _id: test-scenario-to-check-id
+
+  scenario_to_get_pbh_reason:
+    <<: *scenario
+    actions:
+      - alarm_pattern:
+          - - field: v.component
+              cond:
+                type: eq
+                value: test-scenario-to-test-get-pbh-reasons-1-alarm
+        drop_scenario_if_not_matched: false
+        emit_trigger: false
+        parameters:
+          author: root
+          name: test
+          reason: test-reason-to-get-3
+          tstart: 1591172881
+          tstop: 1591536400
+          type: test-type-to-delete-linked-to-action
+        type: pbehavior
+
+  scenario_to_update_2:
+    <<: *scenario
+    _id: test-scenario-to-update-2
+
+  scenario_to_update_3:
     <<: *scenario
     _id: test-scenario-to-update-3
     actions:
@@ -377,23 +215,13 @@ action_scenario:
         drop_scenario_if_not_matched: false
         emit_trigger: false
         type: ack
-    name: test-scenario-to-update-3-name
-    priority: 19
-  action_scenario_20:
+
+  scenario_to_bulk_update_3:
     <<: *scenario
     _id: test-scenario-to-bulk-update-3
-    actions:
-      - alarm_pattern:
-        - - field: v.component
-            cond:
-              type: eq
-              value: test-scenario-to-bulk-update-3-alarm
-        drop_scenario_if_not_matched: false
-        emit_trigger: false
-        type: ack
-    name: test-scenario-to-bulk-update-3-name
-    priority: 20
-  action_scenario_21:
+
+  scenario_backward_compatibility_to_get_1:
+    <<: *scenario
     _id: test-scenario-backward-compatibility-to-get-1
     actions:
       - old_alarm_patterns:
@@ -410,12 +238,12 @@ action_scenario:
     created: 1605263993
     enabled: true
     name: test-scenario-backward-compatibility-to-get-1
-    priority: 21
     triggers:
       - create
     updated: 1605263993
-    
-  action_scenario_22:
+
+  scenario_backward_compatibility_actions_1:
+    <<: *scenario
     _id: test-scenario-backward-compatibility-actions-1
     actions:
       - old_alarm_patterns:
@@ -444,11 +272,41 @@ action_scenario:
         parameters:
           state: 3
         type: changestate
-    author: test-scenario-backward-compatibility-actions-1-author
-    created: 1605263993
-    enabled: true
-    name: test-scenario-backward-compatibility-actions-1
-    priority: 22
     triggers:
       - create
-    updated: 1605263993
+
+  scenario_metrics_axe_12_1:
+    <<: *scenario
+    _id: test-scenario-metrics-axe-12-1
+    actions:
+      - drop_scenario_if_not_matched: false
+        emit_trigger: false
+        entity_pattern:
+          - - field: name
+              cond:
+                type: eq
+                value: test-resource-metrics-axe-12-2
+        parameters:
+          author: test-author-metrics-axe-12
+          output: test-scenario-metrics-axe-12-output
+          ticket: test-scenario-metrics-axe-12-ticket
+        type: assocticket
+
+  scenario_metrics_axe_12_2:
+    <<: *scenario
+    _id: test-scenario-metrics-axe-12-2
+    actions:
+      - drop_scenario_if_not_matched: false
+        emit_trigger: false
+        entity_pattern:
+          - - field: name
+              cond:
+                type: eq
+                value: test-resource-metrics-axe-12-3
+        parameters:
+          declare_ticket:
+            ticket_id: ticket_id
+          request:
+            method: POST
+            url: http://localhost:3000/webhook/ticket
+        type: webhook

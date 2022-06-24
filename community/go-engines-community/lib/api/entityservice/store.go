@@ -314,7 +314,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 			"corporate_entity_pattern":       pattern.CorporateEntityPattern,
 			"corporate_entity_pattern_title": pattern.CorporateEntityPatternTitle,
 		}}
-		if len(request.EntityPattern) > 0 {
+		if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 {
 			update["$unset"] = bson.M{"old_entity_patterns": ""}
 		}
 		err := s.dbCollection.FindOneAndUpdate(
