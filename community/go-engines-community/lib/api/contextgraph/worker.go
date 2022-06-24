@@ -12,8 +12,12 @@ import (
 )
 
 const (
-	DefaultThdWarnMinPerImport = 30 * time.Minute
-	DefaultThdCritMinPerImport = 60 * time.Minute
+	defaultThdWarnMinPerImport = 30 * time.Minute
+	defaultThdCritMinPerImport = 60 * time.Minute
+
+	queueCheckTickInterval  = time.Second
+	reportCleanTickInterval = time.Hour
+	reportCleanInterval     = 24 * time.Hour
 )
 
 type worker struct {
@@ -46,13 +50,13 @@ func NewImportWorker(
 	thdWarnMinPerImport, err := time.ParseDuration(conf.ImportCtx.ThdWarnMinPerImport)
 	if err != nil {
 		logger.Warn().Err(err).Msg("Can't parse thdWarnMinPerImport value, use default")
-		thdWarnMinPerImport = DefaultThdWarnMinPerImport
+		thdWarnMinPerImport = defaultThdWarnMinPerImport
 	}
 
 	thdCritMinPerImport, err := time.ParseDuration(conf.ImportCtx.ThdCritMinPerImport)
 	if err != nil {
 		logger.Warn().Err(err).Msg("Can't parse thdCritMinPerImport value, use default")
-		thdCritMinPerImport = DefaultThdCritMinPerImport
+		thdCritMinPerImport = defaultThdCritMinPerImport
 	}
 
 	w.thdWarnMinPerImport = thdWarnMinPerImport
@@ -62,13 +66,20 @@ func NewImportWorker(
 }
 
 func (w *worker) Run(ctx context.Context) {
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(queueCheckTickInterval)
 	defer ticker.Stop()
+	cleanTicker := time.NewTicker(reportCleanTickInterval)
+	defer cleanTicker.Stop()
 
 	for {
 		select {
 		case <-ctx.Done():
 			return
+		case <-cleanTicker.C:
+			err := w.reporter.Clean(ctx, reportCleanInterval)
+			if err != nil {
+				w.logger.Err(err).Msg("Import-ctx: Failed to clean import reports")
+			}
 		case <-ticker.C:
 			job := w.importQueue.Pop()
 			if job.ID == "" {
@@ -120,14 +131,18 @@ func (w *worker) Run(ctx context.Context) {
 				perfDataState = types.AlarmStateMinor
 			}
 
-			err = w.publisher.SendPerfDataEvent(job.ID, stats, types.CpsNumber(perfDataState))
-			if err != nil {
-				w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send perf data")
+			if perfDataState != types.AlarmStateOK {
+				err = w.publisher.SendPerfDataEvent(job.ID, stats, types.CpsNumber(perfDataState))
+				if err != nil {
+					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send perf data")
+				}
 			}
 
-			err = w.publisher.SendImportResultEvent(job.ID, stats.ExecTime, types.CpsNumber(resultState))
-			if err != nil {
-				w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send import result event")
+			if resultState != types.AlarmStateOK {
+				err = w.publisher.SendImportResultEvent(job.ID, stats.ExecTime, types.CpsNumber(resultState))
+				if err != nil {
+					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send import result event")
+				}
 			}
 		}
 	}
@@ -136,5 +151,8 @@ func (w *worker) Run(ctx context.Context) {
 func (w *worker) doJob(ctx context.Context, job ImportJob) (importcontextgraph.Stats, error) {
 	w.logger.Info().Str("job_id", job.ID).Msg("Import-ctx: Processing import")
 	filename := fmt.Sprintf(w.filePattern, job.ID)
+	if job.IsPartial {
+		return w.worker.WorkPartial(ctx, filename, job.Source)
+	}
 	return w.worker.Work(ctx, filename, job.Source)
 }
