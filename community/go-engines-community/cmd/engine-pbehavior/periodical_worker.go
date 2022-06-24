@@ -212,7 +212,7 @@ func (w *periodicalWorker) publishToFifoChan(idTitle string, msgs <-chan Publish
 	for ms := range msgs {
 		err := w.publishToEngineFIFO(ms.event)
 		if err != nil {
-			w.Logger.Err(err).Str("entity", ms.id).Msgf("failed to send %s event", ms.event.EventType)
+			w.Logger.Err(err).Str(idTitle, ms.id).Msgf("failed to send %s event", ms.event.EventType)
 		} else {
 			w.Logger.Debug().
 				Str("resolve pbehavior", ms.pbhID).
