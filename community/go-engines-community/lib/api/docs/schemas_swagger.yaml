@@ -1564,8 +1564,16 @@ definitions:
         type: string
       alarm_condition:
         type: string
-      alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
       description:
         maxLength: 255
         type: string
@@ -1577,8 +1585,12 @@ definitions:
         $ref: '#/definitions/types.DurationWithUnit'
       enabled:
         type: boolean
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       name:
         maxLength: 255
         type: string
@@ -1602,8 +1614,16 @@ definitions:
         type: string
       alarm_condition:
         type: string
-      alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
       description:
         maxLength: 255
         type: string
@@ -1615,8 +1635,12 @@ definitions:
         $ref: '#/definitions/types.DurationWithUnit'
       enabled:
         type: boolean
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       name:
         maxLength: 255
         type: string
@@ -1637,8 +1661,16 @@ definitions:
     properties:
       alarm_condition:
         type: string
-      alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
       description:
         maxLength: 255
         type: string
@@ -1650,8 +1682,12 @@ definitions:
         $ref: '#/definitions/types.DurationWithUnit'
       enabled:
         type: boolean
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       name:
         maxLength: 255
         type: string
@@ -1720,10 +1756,21 @@ definitions:
         type: string
       alarm_condition:
         type: string
-      alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
-        description: Only for Alarm rules
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       author:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
         type: string
       created:
         type: integer
@@ -1740,10 +1787,19 @@ definitions:
         $ref: '#/definitions/types.DurationWithUnit'
       enabled:
         type: boolean
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       name:
         type: string
+      old_alarm_patterns:
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
+        description: Only for Alarm rules
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       operation:
         $ref: '#/definitions/idlerule.Operation'
       priority:
@@ -2569,10 +2625,6 @@ definitions:
       name:
         maxLength: 255
         type: string
-      old_alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       priority:
         type: integer
     required:
@@ -2649,10 +2701,6 @@ definitions:
       name:
         maxLength: 255
         type: string
-      old_alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       priority:
         type: integer
     required:

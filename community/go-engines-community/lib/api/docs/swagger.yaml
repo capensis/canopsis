@@ -3867,6 +3867,81 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/idlerule.EditRequest'
+            examples:
+              alarm:
+                summary: Alarm rule
+                description: Create an alarm rule.
+                value: {
+                  "name": "test-idle-rule-name",
+                  "description": "test-idle-rule-description",
+                  "type": "alarm",
+                  "alarm_condition": "last_event",
+                  "enabled": true,
+                  "priority": 20,
+                  "duration": {
+                    "value": 3,
+                    "unit": "s"
+                  },
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-idle-rule-alarm"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-idle-rule-resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "operation": {
+                    "type": "snooze",
+                    "parameters": {
+                      "output": "test-idle-rule-operation-output",
+                      "duration": {
+                        "value": 3,
+                        "unit": "s"
+                      }
+                    }
+                  },
+                  "disable_during_periods": ["pause"]
+                }  
+              entity:
+                summary: Entity rule
+                description: Create an entity rule.
+                value: {
+                  "name": "test-idle-rule-name",
+                  "description": "test-idle-rule-description",
+                  "type": "entity",
+                  "enabled": true,
+                  "priority": 21,
+                  "duration": {
+                    "value": 3,
+                    "unit": "s"
+                  },
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-idle-rule-resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "disable_during_periods": ["pause"]
+                }         
         required: true
       responses:
         201:
@@ -3933,6 +4008,81 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/idlerule.EditRequest'
+            examples:
+              alarm:
+                summary: Alarm rule
+                description: Update an alarm rule.
+                value: {
+                  "name": "test-idle-rule-name",
+                  "description": "test-idle-rule-description",
+                  "type": "alarm",
+                  "alarm_condition": "last_event",
+                  "enabled": true,
+                  "priority": 20,
+                  "duration": {
+                    "value": 3,
+                    "unit": "s"
+                  },
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-idle-rule-alarm"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-idle-rule-resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "operation": {
+                    "type": "snooze",
+                    "parameters": {
+                      "output": "test-idle-rule-operation-output",
+                      "duration": {
+                        "value": 3,
+                        "unit": "s"
+                      }
+                    }
+                  },
+                  "disable_during_periods": ["pause"]
+                }
+              entity:
+                summary: Entity rule
+                description: Update an entity rule.
+                value: {
+                  "name": "test-idle-rule-name",
+                  "description": "test-idle-rule-description",
+                  "type": "entity",
+                  "enabled": true,
+                  "priority": 21,
+                  "duration": {
+                    "value": 3,
+                    "unit": "s"
+                  },
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-idle-rule-resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "disable_during_periods": ["pause"]
+                }
         required: true
       responses:
         200:
