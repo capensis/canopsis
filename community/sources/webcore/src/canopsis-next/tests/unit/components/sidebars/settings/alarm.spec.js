@@ -142,6 +142,7 @@ describe('alarm', () => {
   const widget = {
     ...generateDefaultAlarmListWidget(),
 
+    _id: '3f8dba7c-f39e-42ae-912c-e78cb39669c5',
     tab: Faker.datatype.string(),
   };
 

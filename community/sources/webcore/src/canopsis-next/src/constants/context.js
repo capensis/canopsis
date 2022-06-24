@@ -233,10 +233,10 @@ export const EVENT_ENTITY_STYLE = {
     color: COLORS.entitiesEvents.pbhleave,
     icon: 'play_arrow',
   },
-  groupConsequences: {
+  groupChildren: {
     icon: 'center_focus_strong',
   },
-  groupCauses: {
+  groupParents: {
     icon: 'center_focus_weak',
   },
   [EVENT_ENTITY_TYPES.comment]: {
