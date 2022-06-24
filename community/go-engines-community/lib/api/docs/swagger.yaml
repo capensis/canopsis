@@ -3716,6 +3716,42 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/flappingrule.CreateRequest'
+            examples:
+              create:
+                summary: Create flapping rule
+                description: Create flapping rule
+                value: {
+                  "name": "test-flapping-rule-name",
+                  "description": "test-flapping-rule-description",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-flapping-rule-pattern"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-flapping-rule-resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "duration": {
+                    "value": 10,
+                    "unit": "s"
+                  },
+                  "freq_limit": 3,
+                  "priority": 5
+                }
         required: true
       responses:
         201:
@@ -3776,6 +3812,42 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/flappingrule.UpdateRequest'
+            examples:
+              update:
+                summary: Update flapping rule
+                description: Update flapping rule
+                value: {
+                  "name": "test-flapping-rule-name",
+                  "description": "test-flapping-rule-description",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-flapping-rule-pattern"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-flapping-rule-resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "duration": {
+                    "value": 10,
+                    "unit": "s"
+                  },
+                  "freq_limit": 3,
+                  "priority": 5
+                }
         required: true
       responses:
         200:
