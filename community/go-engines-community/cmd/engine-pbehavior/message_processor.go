@@ -112,7 +112,8 @@ func (p *messageProcessor) processEvent(ctx context.Context, event types.Event, 
 	if err == nil {
 		if p.FeatureResolveDeadlineDisabled {
 			if resolveDuration := time.Since(now); resolveDuration > resolveTimeout {
-				p.Logger.Warn().Dur("duration", resolveDuration).Str("entity", event.Entity.ID).Str("pbh", resolveResult.ResolvedPbhID).Msg("resolved")
+				p.Logger.Warn().Dur("duration", resolveDuration).Str("entity", event.Entity.ID).
+					Str("pbh", resolveResult.ResolvedPbhID).Msg("resolve of pbehavior interval tooks too much time")
 			}
 		}
 		if !p.resolveDeadlineExceededAt.IsZero() {
