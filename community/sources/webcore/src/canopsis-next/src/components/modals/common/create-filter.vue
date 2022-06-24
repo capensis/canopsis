@@ -50,6 +50,10 @@ export default {
     };
   },
   computed: {
+    title() {
+      return this.config.title ?? this.$t('modals.createFilter.create.title');
+    },
+
     patternsProps() {
       return omit(this.config, ['title', 'action']);
     },
@@ -63,10 +67,6 @@ export default {
         withPbehavior && PATTERNS_FIELDS.pbehavior,
         withEvent && PATTERNS_FIELDS.event,
       ].filter(Boolean);
-    },
-
-    title() {
-      return this.config.title ?? this.$t('modals.createFilter.create.title');
     },
   },
   methods: {

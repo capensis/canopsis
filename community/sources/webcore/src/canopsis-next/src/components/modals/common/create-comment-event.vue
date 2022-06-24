@@ -63,6 +63,10 @@ export default {
       if (isFormValid) {
         await this.config.action({ ...this.form });
 
+        if (this.config && this.config.afterSubmit) {
+          await this.config.afterSubmit();
+        }
+
         this.$modals.hide();
       }
     },

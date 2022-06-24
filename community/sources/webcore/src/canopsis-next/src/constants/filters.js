@@ -82,7 +82,7 @@ export const PATTERN_FIELD_TYPES = {
 };
 
 export const FILTER_DEFAULT_VALUES = {
-  condition: FILTER_MONGO_OPERATORS.and,
+  condition: FILTER_MONGO_OPERATORS.and, // TODO: remove if we don't need it
   rule: {
     field: '',
     operator: '',
