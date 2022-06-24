@@ -298,6 +298,11 @@ func getAlarmLookup() []bson.M {
 			"snooze":           "$alarm.v.snooze",
 			"ack":              "$alarm.v.ack",
 			"impact_state":     bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$impact_level"}},
+			// For dependencies query
+			"alarm_id":      "$alarm._id",
+			"creation_date": "$alarm.v.creation_date",
+			"display_name":  "$alarm.v.display_name",
+			"ticket":        "$alarm.v.ticket",
 		}},
 		{"$project": bson.M{"alarm": 0}},
 	}
@@ -588,10 +593,6 @@ func getListDependenciesComputedFields() bson.M {
 	}
 
 	return bson.M{
-		"alarm_id":      "$alarm._id",
-		"creation_date": "$alarm.v.creation_date",
-		"display_name":  "$alarm.v.display_name",
-		"ticket":        "$alarm.v.ticket",
 		"is_grey": bson.M{"$and": []bson.M{
 			{"$ifNull": bson.A{"$pbehavior_info", false}},
 			{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
