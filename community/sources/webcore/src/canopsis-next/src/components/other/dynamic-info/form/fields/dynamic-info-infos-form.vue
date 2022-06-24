@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-alert(:value="hasAnyError", type="error") {{ errorMessages }}
+    v-alert(:value="errors.has(name)", type="error") {{ errorMessages }}
     v-layout(justify-end)
       v-btn.primary(fab, small, flat, @click="showAddInfoModal")
         v-icon add
@@ -44,7 +44,15 @@ export default {
   },
   computed: {
     errorMessages() {
-      return this.errors.collect(this.name)?.join('\n');
+      return this.errors.collect(this.name, undefined, false)
+        ?.map(({ rule, msg }) => {
+          const customMessage = {
+            required: this.$t('modals.createDynamicInfo.errors.emptyInfos'),
+          }[rule];
+
+          return customMessage || msg;
+        })
+        .join('\n');
     },
 
     headers() {
@@ -64,7 +72,7 @@ export default {
     this.attachRequiredRule();
   },
   beforeDestroy() {
-    this.detachRequiredRule();
+    this.detachRules();
   },
   methods: {
     attachRequiredRule() {
@@ -77,7 +85,7 @@ export default {
       });
     },
 
-    detachRequiredRule() {
+    detachRules() {
       this.$validator.detach(this.name);
     },
 
