@@ -108,13 +108,13 @@ func (p *messageProcessor) processEvent(ctx context.Context, event types.Event, 
 	}
 	now := time.Now().In(p.TimezoneConfigProvider.Get().Location)
 
-	resolveStart := time.Now()
 	resolveResult, err := p.PbhService.Resolve(ctx, *event.Entity, now)
-	resolveDuration := time.Since(resolveStart)
-	if p.FeatureResolveDeadlineDisabled && resolveDuration > resolveTimeout {
-		p.Logger.Warn().Dur("duration", resolveDuration).Str("entity", event.Entity.ID).Msg("resolved")
-	}
 	if err == nil {
+		if p.FeatureResolveDeadlineDisabled {
+			if resolveDuration := time.Since(now); resolveDuration > resolveTimeout {
+				p.Logger.Warn().Dur("duration", resolveDuration).Str("entity", event.Entity.ID).Str("pbh", resolveResult.ResolvedPbhID).Msg("resolved")
+			}
+		}
 		if !p.resolveDeadlineExceededAt.IsZero() {
 			p.resolveDeadlineExceededAt = time.Time{}
 			p.Logger.Info().Msg("entity resolving has been fixed")
