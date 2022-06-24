@@ -2,7 +2,6 @@
 package idlerule
 
 import (
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -67,54 +66,16 @@ type Parameters struct {
 
 // Matches returns true if alarm and entity match time condition and field patterns.
 func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity, now types.CpsTime) (bool, error) {
-	if !r.OldAlarmPatterns.IsSet() && !r.OldEntityPatterns.IsSet() &&
-		len(r.EntityPattern) == 0 && len(r.AlarmPattern) == 0 {
-		return false, nil
-	}
-
 	alarm := alarmWithEntity.Alarm
 	entity := alarmWithEntity.Entity
 
-	var matched bool
-	var err error
-
-	if r.Type != RuleTypeEntity {
-		if r.OldAlarmPatterns.IsSet() {
-			if !r.OldAlarmPatterns.IsValid() {
-				return false, pattern.InvalidOldAlarmPattern
-			}
-
-			matched = r.OldAlarmPatterns.Matches(&alarm)
-		} else {
-			matched, err = r.AlarmPattern.Match(alarm)
-			if err != nil {
-				return false, fmt.Errorf("idle rule has an invalid alarm pattern : %w", err)
-			}
-		}
-
-		if !matched {
-			return false, nil
-		}
+	matched, err := pattern.Match(alarmWithEntity.Entity, alarmWithEntity.Alarm, r.EntityPattern, r.AlarmPattern, r.OldEntityPatterns, r.OldAlarmPatterns)
+	if err != nil {
+		return false, err
 	}
 
-	if r.OldEntityPatterns.IsSet() {
-		if !r.OldEntityPatterns.IsValid() {
-			return false, pattern.InvalidOldEntityPattern
-		}
-
-		matched = r.OldEntityPatterns.Matches(&entity)
-	} else {
-		matched, _, err = r.EntityPattern.Match(entity)
-		if err != nil {
-			return false, fmt.Errorf("idle rule has an invalid entity pattern : %w", err)
-		}
-	}
-
-	if !matched {
-		return false, nil
-	}
-
-	return r.matchesByAlarmLastEventDate(alarm, now) &&
+	return matched &&
+		r.matchesByAlarmLastEventDate(alarm, now) &&
 		r.matchesByAlarmLastUpdateDate(alarm, now) &&
 		r.matchesByEntityLastEventDate(entity, now), nil
 }
