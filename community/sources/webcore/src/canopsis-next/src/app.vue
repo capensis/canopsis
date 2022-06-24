@@ -3,8 +3,34 @@
     v-layout(v-if="!pending")
       the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
-        active-broadcast-message
-        router-view(:key="routeViewKey")
+        v-layout(row, wrap)
+          v-btn.primary(@click="addRectangle") Add rect
+          v-btn.primary(@click="addRoundedRectangle") Add rounded rect
+          v-btn.primary(@click="addSquare") Add square
+          v-divider(vertical)
+          v-btn.primary(@click="addRhombus") Add rhombus
+          v-btn.primary(@click="addParallelogram") Add parallelogram
+          v-divider(vertical)
+          v-btn.primary(@click="addCircle") Add circle
+          v-btn.primary(@click="addEllipse") Add oval
+          v-divider(vertical)
+          v-btn.primary(@click="addLine") Add line
+          v-btn.primary(@click="addArrowLine") Add arrow line
+          v-btn.primary(@click="addBidirectionalArrowLine") Add bidirectional arrow line
+          v-divider(vertical)
+          v-btn.primary(@click="addText") Add text
+          v-btn.primary(@click="addTextbox") Add textbox
+          v-divider(vertical)
+          v-btn.primary(@click="addStorage") Add storage
+          v-divider(vertical)
+          file-selector(
+            ref="fileSelector",
+            hide-details,
+            @change="addImage"
+          )
+            template(#activator="{ on }")
+              v-btn.primary(v-on="on") Add Image
+        flowchart-editor(v-model="shapes")
     the-sidebar
     the-modals
     the-popups
@@ -15,7 +41,7 @@ import { isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
-import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES } from '@/constants';
+import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES, SHAPES } from '@/constants';
 
 import { reloadPageWithTrailingSlashes } from '@/helpers/url';
 import { convertDateToString } from '@/helpers/date/date';
@@ -33,11 +59,17 @@ import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
 
 import '@/assets/styles/main.scss';
+import FlowchartEditor from '@/components/common/flowchart/c-flowchart-editor.vue';
+import FileSelector from '@/components/forms/fields/file-selector.vue';
+import { getFileDataUrlContent } from '@/helpers/file/file-select';
+import { generatePoint } from '@/helpers/flowchart/points';
 
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
 export default {
   components: {
+    FileSelector,
+    FlowchartEditor,
     TheNavigation,
     ActiveBroadcastMessage,
   },
@@ -49,6 +81,7 @@ export default {
   ],
   data() {
     return {
+      shapes: {},
       pending: true,
     };
   },
@@ -80,6 +113,311 @@ export default {
     ...mapActions({
       fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
     }),
+
+    addRectangle() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: SHAPES.rect,
+        width: 100,
+        height: 100,
+        x: 0,
+        y: 0,
+        text: '',
+        alignCenter: true,
+        justifyCenter: true,
+        connections: [],
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+          fill: 'white',
+        },
+      });
+    },
+
+    addRoundedRectangle() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: SHAPES.rect,
+        width: 100,
+        height: 100,
+        x: 0,
+        y: 0,
+        rx: 20,
+        ry: 20,
+        text: '',
+        alignCenter: true,
+        justifyCenter: true,
+        connections: [],
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+          fill: 'white',
+        },
+      });
+    },
+
+    addLine() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: SHAPES.line,
+        points: [
+          generatePoint({
+            x: 50,
+            y: 50,
+          }),
+          generatePoint({
+            x: 50,
+            y: 150,
+          }),
+        ],
+        connectedTo: [],
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+        },
+      });
+    },
+
+    addArrowLine() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: SHAPES.arrowLine,
+        points: [
+          generatePoint({
+            x: 50,
+            y: 50,
+          }),
+          generatePoint({
+            x: 50,
+            y: 150,
+          }),
+        ],
+        connectedTo: [],
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+        },
+      });
+    },
+
+    addBidirectionalArrowLine() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: SHAPES.bidirectionalArrowLine,
+        points: [
+          generatePoint({
+            x: 50,
+            y: 50,
+          }),
+          generatePoint({
+            x: 50,
+            y: 150,
+          }),
+        ],
+        connectedTo: [],
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+        },
+      });
+    },
+
+    addCircle() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: SHAPES.circle,
+        x: 50,
+        y: 50,
+        diameter: 100,
+        text: '',
+        alignCenter: true,
+        justifyCenter: true,
+        connections: [],
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+          fill: 'white',
+        },
+      });
+    },
+
+    addEllipse() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: SHAPES.ellipse,
+        x: 50,
+        y: 50,
+        width: 100,
+        height: 100,
+        text: '',
+        alignCenter: true,
+        justifyCenter: true,
+        connections: [],
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+          fill: 'white',
+        },
+      });
+    },
+
+    addRhombus() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: SHAPES.rhombus,
+        x: 50,
+        y: 50,
+        width: 100,
+        height: 100,
+        text: '',
+        alignCenter: true,
+        justifyCenter: true,
+        connections: [],
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+          fill: 'white',
+        },
+      });
+    },
+
+    addParallelogram() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: SHAPES.parallelogram,
+        x: 50,
+        y: 50,
+        width: 100,
+        height: 100,
+        offset: 50,
+        text: '',
+        alignCenter: true,
+        justifyCenter: true,
+        connections: [],
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+          fill: 'white',
+        },
+      });
+    },
+
+    addSquare() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: SHAPES.square,
+        x: 50,
+        y: 50,
+        size: 100,
+        text: '',
+        connections: [],
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+          fill: 'white',
+        },
+      });
+    },
+
+    addText() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: SHAPES.rect,
+        x: 50,
+        y: 50,
+        width: 100,
+        height: 100,
+        text: 'Text',
+        alignCenter: true,
+        justifyCenter: true,
+        connections: [],
+        style: {
+          fill: 'transparent',
+        },
+      });
+    },
+
+    addTextbox() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: SHAPES.rect,
+        x: 50,
+        y: 50,
+        width: 120,
+        height: 100,
+        text: '<h1>Heading</h1><p>Paragraph</p>',
+        connections: [],
+        style: {
+          fill: 'transparent',
+        },
+      });
+    },
+
+    addStorage() {
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: SHAPES.storage,
+        x: 50,
+        y: 50,
+        width: 120,
+        height: 100,
+        radius: 20,
+        text: 'Storage',
+        alignCenter: true,
+        justifyCenter: true,
+        connections: [],
+        style: {
+          stroke: 'black',
+          'stroke-width': 1,
+          fill: 'grey',
+        },
+      });
+    },
+
+    async addImage([file]) {
+      const url = await getFileDataUrlContent(file);
+      const id = Date.now();
+
+      this.$set(this.shapes, id, {
+        id,
+        type: SHAPES.image,
+        x: 50,
+        y: 50,
+        width: 120,
+        height: 100,
+        src: url,
+        text: file.name,
+        justifyCenter: true,
+        connections: [],
+        style: {},
+      });
+    },
 
     showLocalStorageWarningPopupMessage() {
       const text = localStorageService.pop('warningPopup');

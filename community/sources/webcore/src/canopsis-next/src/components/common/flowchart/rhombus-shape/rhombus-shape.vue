@@ -1,31 +1,31 @@
 <template lang="pug">
   g
     rhombus-figure(
-      v-bind="rhombus.style",
-      :width="rhombus.width",
-      :height="rhombus.height",
-      :x="rhombus.x",
-      :y="rhombus.y"
+      v-bind="shape.style",
+      :width="shape.width",
+      :height="shape.height",
+      :x="shape.x",
+      :y="shape.y"
     )
     text-editor(
       ref="editor",
-      :value="rhombus.text",
-      :y="rhombus.y",
-      :x="rhombus.x",
-      :width="rhombus.width",
-      :height="rhombus.height",
+      :value="shape.text",
+      :y="shape.y",
+      :x="shape.x",
+      :width="shape.width",
+      :height="shape.height",
       :editable="editing",
-      :align-center="rhombus.alignCenter",
-      :justify-center="rhombus.justifyCenter",
+      :align-center="shape.alignCenter",
+      :justify-center="shape.justifyCenter",
       @blur="disableEditingMode"
     )
     rhombus-shape-selection(
       v-if="!readonly",
       :selected="selected",
       :connecting="connecting",
-      :rhombus="rhombus",
+      :rhombus="shape",
       :pointer-events="editing ? 'none' : 'all'",
-      @resize="onResize",
+      @update="$listeners.update",
       @dblclick="enableEditingMode",
       @mousedown="$listeners.mousedown",
       @mouseup="$listeners.mouseup",
@@ -36,22 +36,15 @@
 </template>
 
 <script>
-import { formBaseMixin } from '@/mixins/form';
-
 import TextEditor from '../common/text-editor.vue';
 import RhombusFigure from '../common/rhombus-figure.vue';
 
-import RhombusShapeSelection from '../rhombus-shape/rhombus-shape-selection.vue';
+import RhombusShapeSelection from './rhombus-shape-selection.vue';
 
 export default {
   components: { RhombusFigure, RhombusShapeSelection, TextEditor },
-  mixins: [formBaseMixin],
-  model: {
-    prop: 'rhombus',
-    event: 'input',
-  },
   props: {
-    rhombus: {
+    shape: {
       type: Object,
       required: true,
     },
@@ -78,10 +71,6 @@ export default {
     };
   },
   methods: {
-    onResize(rhombus) {
-      this.updateModel({ ...this.rhombus, ...rhombus });
-    },
-
     enableEditingMode() {
       this.editing = true;
 
@@ -89,8 +78,7 @@ export default {
     },
 
     disableEditingMode(event) {
-      this.updateModel({
-        ...this.rhombus,
+      this.$emit('update', {
         text: event.target.innerHTML,
       });
 

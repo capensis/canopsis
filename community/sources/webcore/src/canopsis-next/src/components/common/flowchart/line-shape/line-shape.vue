@@ -12,27 +12,20 @@
       v-if="!readonly",
       :selected="selected",
       :line="shape",
-      @mousedown="$emit('mousedown', $event)",
-      @mouseup="$emit('mouseup', $event)",
-      @resize="onResize",
-      @edit:point="$emit('edit:point', $event)"
+      @mousedown="$listeners.mousedown",
+      @mouseup="$listeners.mouseup",
+      @update="$listeners.update",
+      @edit:point="$listeners['edit:point']"
     )
 </template>
 
 <script>
-import { formBaseMixin } from '@/mixins/form';
-
 import PointsPath from '../common/points-path.vue';
 
-import LineShapeSelection from '../line-shape/line-shape-selection.vue';
+import LineShapeSelection from './line-shape-selection.vue';
 
 export default {
   components: { PointsPath, LineShapeSelection },
-  mixins: [formBaseMixin],
-  model: {
-    prop: 'shape',
-    event: 'input',
-  },
   props: {
     shape: {
       type: Object,
@@ -57,14 +50,6 @@ export default {
     markerEnd: {
       type: String,
       required: false,
-    },
-  },
-  methods: {
-    onResize(line) {
-      this.updateModel({
-        ...this.shape,
-        ...line,
-      });
     },
   },
 };

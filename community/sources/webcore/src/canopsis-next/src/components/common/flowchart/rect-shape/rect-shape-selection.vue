@@ -102,7 +102,7 @@ export default {
 
       this.direction = direction;
 
-      this.$emit('resize', rect);
+      this.$emit('update', rect);
     },
   },
 };

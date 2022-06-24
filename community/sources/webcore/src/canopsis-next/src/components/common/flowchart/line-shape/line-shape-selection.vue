@@ -36,14 +36,15 @@
         :fill="color",
         :r="cornerRadius",
         :opacity="0.4",
-        cursor="crosshair",
         :pointer-events="moving ? 'none' : 'all'",
+        cursor="crosshair",
         @mousedown.stop="onStartGhostMovePoint(index, point)"
       )
 </template>
 
 <script>
 import { cloneDeep } from 'lodash';
+
 import { getGhostPoints } from '@/helpers/flowchart/points';
 
 import PointsPath from '../common/points-path.vue';
@@ -118,7 +119,7 @@ export default {
     },
 
     finishMovePoints() {
-      this.$emit('resize', { points: this.editingPoints });
+      this.$emit('update', { points: this.editingPoints });
 
       this.$mouseMove.unregister(this.movePoint);
       this.$mouseUp.unregister(this.onMouseUp);

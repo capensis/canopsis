@@ -106,7 +106,7 @@ export default {
       );
 
       this.direction = direction;
-      this.$emit('resize', {
+      this.$emit('update', {
         diameter: square.size,
         x: square.x,
         y: square.y,

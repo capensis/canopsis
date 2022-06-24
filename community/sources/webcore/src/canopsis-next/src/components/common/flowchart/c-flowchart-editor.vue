@@ -9,7 +9,7 @@
   )
     component(
       v-for="shape in data",
-      v-model="data[shape.id]",
+      :shape="shape",
       :key="shape.id",
       :is="`${shape.type}-shape`",
       :selected="isSelected(shape)",
@@ -20,7 +20,8 @@
       @connecting="onConnectMove($event)",
       @connected="onConnectFinish(shape, $event)",
       @unconnect="onUnconnect(shape)",
-      @edit:point="startEditPoint(shape, $event)"
+      @edit:point="startEditPoint(shape, $event)",
+      @update="updateShape(shape, $event)"
     )
 </template>
 
@@ -133,6 +134,10 @@ export default {
     document.removeEventListener('keydown', this.onKeyDown);
   },
   methods: {
+    updateShape(shape, data) {
+      Object.assign(this.data[shape.id], data);
+    },
+
     updateShapes(shapes) {
       this.$emit('input', shapes);
     },
