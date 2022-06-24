@@ -1212,6 +1212,7 @@ export default {
       },
       errors: {
         invalid: 'Invalide',
+        emptyInfos: 'Au moins une information doit être ajoutée.',
       },
       steps: {
         infos: {
