@@ -60,7 +60,7 @@ type Condition struct {
 	valueRegexp           utils.RegexExpression
 	valueInt              *int64
 	valueBool             *bool
-	valueStrArray         *[]string
+	valueStrArray         []string
 	valueTimeIntervalFrom *int64
 	valueTimeIntervalTo   *int64
 	valueDuration         *int64
@@ -111,7 +111,7 @@ func NewStringArrayCondition(t string, a []string) Condition {
 	return Condition{
 		Type:          t,
 		Value:         a,
-		valueStrArray: &a,
+		valueStrArray: a,
 	}
 }
 
@@ -156,10 +156,10 @@ func (c Condition) MatchString(value string) (bool, RegexMatches, error) {
 
 		return value != *c.valueStr, nil, nil
 	case ConditionIsOneOf:
-		if c.valueStrArray == nil || len(*c.valueStrArray) == 0 {
+		if len(c.valueStrArray) == 0 {
 			return false, nil, ErrWrongConditionValue
 		}
-		for _, item := range *c.valueStrArray {
+		for _, item := range c.valueStrArray {
 			if item == value {
 				return true, nil, nil
 			}
@@ -167,11 +167,11 @@ func (c Condition) MatchString(value string) (bool, RegexMatches, error) {
 
 		return false, nil, nil
 	case ConditionIsNotOneOf:
-		if c.valueStrArray == nil || len(*c.valueStrArray) == 0 {
+		if len(c.valueStrArray) == 0 {
 			return false, nil, ErrWrongConditionValue
 		}
 
-		for _, item := range *c.valueStrArray {
+		for _, item := range c.valueStrArray {
 			if item == value {
 				return false, nil, nil
 			}
@@ -245,7 +245,7 @@ func (c Condition) MatchStringArray(value []string) (bool, error) {
 		return *c.valueBool == (len(value) == 0), nil
 	}
 
-	if c.valueStrArray == nil || len(*c.valueStrArray) == 0 {
+	if len(c.valueStrArray) == 0 {
 		return false, ErrWrongConditionValue
 	}
 
@@ -256,7 +256,7 @@ func (c Condition) MatchStringArray(value []string) (bool, error) {
 
 	switch c.Type {
 	case ConditionHasEvery:
-		for _, v := range *c.valueStrArray {
+		for _, v := range c.valueStrArray {
 			_, exists := valueMap[v]
 			if !exists {
 				return false, nil
@@ -265,7 +265,7 @@ func (c Condition) MatchStringArray(value []string) (bool, error) {
 
 		return true, nil
 	case ConditionHasOneOf:
-		for _, v := range *c.valueStrArray {
+		for _, v := range c.valueStrArray {
 			_, exists := valueMap[v]
 			if exists {
 				return true, nil
@@ -274,7 +274,7 @@ func (c Condition) MatchStringArray(value []string) (bool, error) {
 
 		return false, nil
 	case ConditionHasNot:
-		for _, v := range *c.valueStrArray {
+		for _, v := range c.valueStrArray {
 			_, exists := valueMap[v]
 			if exists {
 				return false, nil
@@ -443,21 +443,21 @@ func (c Condition) ToSql(f string) (string, error) {
 
 		return "", ErrWrongConditionValue
 	case ConditionIsOneOf:
-		if c.valueStrArray == nil || len(*c.valueStrArray) == 0 {
+		if len(c.valueStrArray) == 0 {
 			return "", ErrWrongConditionValue
 		}
-		values := make([]string, len(*c.valueStrArray))
-		for i, s := range *c.valueStrArray {
+		values := make([]string, len(c.valueStrArray))
+		for i, s := range c.valueStrArray {
 			values[i] = sqlQuoteString(s)
 		}
 
 		return fmt.Sprintf("%s = ANY (ARRAY [%s])", f, strings.Join(values, ",")), nil
 	case ConditionIsNotOneOf:
-		if c.valueStrArray == nil || len(*c.valueStrArray) == 0 {
+		if len(c.valueStrArray) == 0 {
 			return "", ErrWrongConditionValue
 		}
-		values := make([]string, len(*c.valueStrArray))
-		for i, s := range *c.valueStrArray {
+		values := make([]string, len(c.valueStrArray))
+		for i, s := range c.valueStrArray {
 			values[i] = sqlQuoteString(s)
 		}
 
@@ -541,29 +541,29 @@ func (c Condition) ToSqlJson(field, key, keyType string) (string, error) {
 		}
 		return "", ErrWrongConditionValue
 	case ConditionHasEvery:
-		if c.valueStrArray == nil || len(*c.valueStrArray) == 0 {
+		if len(c.valueStrArray) == 0 {
 			return "", ErrWrongConditionValue
 		}
-		values := make([]string, len(*c.valueStrArray))
-		for i, s := range *c.valueStrArray {
+		values := make([]string, len(c.valueStrArray))
+		for i, s := range c.valueStrArray {
 			values[i] = sqlQuoteString(s)
 		}
 		return fmt.Sprintf("(%s ?& ARRAY [%s])", cast, strings.Join(values, ",")), nil
 	case ConditionHasOneOf:
-		if c.valueStrArray == nil || len(*c.valueStrArray) == 0 {
+		if len(c.valueStrArray) == 0 {
 			return "", ErrWrongConditionValue
 		}
-		values := make([]string, len(*c.valueStrArray))
-		for i, s := range *c.valueStrArray {
+		values := make([]string, len(c.valueStrArray))
+		for i, s := range c.valueStrArray {
 			values[i] = sqlQuoteString(s)
 		}
 		return fmt.Sprintf("(%s ?| ARRAY [%s])", cast, strings.Join(values, ",")), nil
 	case ConditionHasNot:
-		if c.valueStrArray == nil || len(*c.valueStrArray) == 0 {
+		if len(c.valueStrArray) == 0 {
 			return "", ErrWrongConditionValue
 		}
-		values := make([]string, len(*c.valueStrArray))
-		for i, s := range *c.valueStrArray {
+		values := make([]string, len(c.valueStrArray))
+		for i, s := range c.valueStrArray {
 			values[i] = sqlQuoteString(s)
 		}
 		return fmt.Sprintf("(%s AND NOT (%s ?| ARRAY [%s]))", checkType, operand, strings.Join(values, ",")), nil
@@ -588,21 +588,21 @@ func (c Condition) ToSqlJson(field, key, keyType string) (string, error) {
 
 		return fmt.Sprintf("NOT (%s ? %s)", field, sqlQuoteString(key)), nil
 	case ConditionIsOneOf:
-		if c.valueStrArray == nil || len(*c.valueStrArray) == 0 {
+		if len(c.valueStrArray) == 0 {
 			return "", ErrWrongConditionValue
 		}
-		values := make([]string, len(*c.valueStrArray))
-		for i, s := range *c.valueStrArray {
+		values := make([]string, len(c.valueStrArray))
+		for i, s := range c.valueStrArray {
 			values[i] = sqlQuoteString(s)
 		}
 
 		return fmt.Sprintf("(%s = ANY (ARRAY [%s]))", cast, strings.Join(values, ",")), nil
 	case ConditionIsNotOneOf:
-		if c.valueStrArray == nil || len(*c.valueStrArray) == 0 {
+		if len(c.valueStrArray) == 0 {
 			return "", ErrWrongConditionValue
 		}
-		values := make([]string, len(*c.valueStrArray))
-		for i, s := range *c.valueStrArray {
+		values := make([]string, len(c.valueStrArray))
+		for i, s := range c.valueStrArray {
 			values[i] = sqlQuoteString(s)
 		}
 
@@ -665,7 +665,7 @@ func (c *Condition) parseValue() {
 	}
 
 	if a, err := getStringArrayValue(c.Value); err == nil {
-		c.valueStrArray = &a
+		c.valueStrArray = a
 		return
 	}
 
