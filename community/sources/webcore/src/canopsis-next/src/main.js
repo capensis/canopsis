@@ -448,6 +448,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.createIdleRule]: { maxWidth: 1280 },
     [MODALS.createScenario]: { maxWidth: 1280 },
     [MODALS.createKpiFilter]: { maxWidth: 1280 },
+    [MODALS.createDynamicInfo]: { maxWidth: 1280 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

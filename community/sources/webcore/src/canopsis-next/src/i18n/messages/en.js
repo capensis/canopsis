@@ -1216,7 +1216,6 @@ export default {
       steps: {
         infos: {
           title: 'Informations',
-          validationError: 'Every value must be filled',
         },
         patterns: {
           title: 'Patterns',
@@ -1229,10 +1228,6 @@ export default {
     createDynamicInfoInformation: {
       create: {
         title: 'Add an information to the dynamic information rule',
-      },
-      fields: {
-        name: 'Name',
-        value: 'Value',
       },
     },
     dynamicInfoTemplatesList: {
