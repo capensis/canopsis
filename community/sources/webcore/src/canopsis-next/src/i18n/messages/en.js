@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -30,7 +32,7 @@ import {
 
 import featureService from '@/services/features';
 
-export default {
+export default merge({
   common: {
     ok: 'Ok',
     undefined: 'Not defined',
@@ -2754,6 +2756,4 @@ export default {
     uploadMib: 'Upload MIB',
     addSnmpRule: 'Add SNMP rule',
   },
-
-  ...featureService.get('i18n.en'),
-};
+}, featureService.get('i18n.en'));

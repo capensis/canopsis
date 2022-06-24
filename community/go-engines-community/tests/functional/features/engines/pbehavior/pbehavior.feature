@@ -90,6 +90,15 @@ Feature: update alarm on pbehavior
           },
           "pbehavior": {
             "name": "test-pbehavior-1",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "reason": {
+              "_id": "test-reason-to-engine",
+              "name": "Test Engine",
+              "description": "Test Engine"
+            },
             "type": {
               "_id": "test-maintenance-type-to-engine",
               "icon_name": "test-maintenance-to-engine-icon",
@@ -691,6 +700,15 @@ Feature: update alarm on pbehavior
           },
           "pbehavior": {
             "name": "test-pbehavior-9",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "reason": {
+              "_id": "test-reason-to-engine",
+              "name": "Test Engine",
+              "description": "Test Engine"
+            },
             "type": {
               "_id": "test-maintenance-type-to-engine",
               "icon_name": "test-maintenance-to-engine-icon",
