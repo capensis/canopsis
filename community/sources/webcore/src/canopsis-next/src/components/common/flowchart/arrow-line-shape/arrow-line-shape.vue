@@ -1,11 +1,12 @@
 <template lang="pug">
   line-shape(
     v-on="$listeners",
-    v-field="shape",
+    :shape="shape",
     :selected="selected",
     :corner-offset="cornerOffset",
     :readonly="readonly",
     marker-end="url(#arrow-line-triangle)",
+    @update="$listeners.update",
     @edit:point="$emit('edit:point', $event)"
   )
     marker#arrow-line-triangle(
@@ -20,18 +21,11 @@
 </template>
 
 <script>
-import { formBaseMixin } from '@/mixins/form';
-
 import ArrowFigure from '../common/arrow-figure.vue';
 import LineShape from '../line-shape/line-shape.vue';
 
 export default {
   components: { LineShape, ArrowFigure },
-  mixins: [formBaseMixin],
-  model: {
-    prop: 'shape',
-    event: 'input',
-  },
   props: {
     shape: {
       type: Object,

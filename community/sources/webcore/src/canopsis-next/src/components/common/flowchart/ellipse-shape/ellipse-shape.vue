@@ -1,7 +1,7 @@
 <template lang="pug">
   g
     ellipse(
-      v-bind="ellipse.style",
+      v-bind="shape.style",
       :cx="centerX",
       :cy="centerY",
       :rx="radiusX",
@@ -9,23 +9,23 @@
     )
     text-editor(
       ref="editor",
-      :value="ellipse.text",
-      :y="ellipse.y",
-      :x="ellipse.x",
-      :width="ellipse.width",
-      :height="ellipse.height",
+      :value="shape.text",
+      :y="shape.y",
+      :x="shape.x",
+      :width="shape.width",
+      :height="shape.height",
       :editable="editing",
-      :align-center="ellipse.alignCenter",
-      :justify-center="ellipse.justifyCenter",
+      :align-center="shape.alignCenter",
+      :justify-center="shape.justifyCenter",
       @blur="disableEditingMode"
     )
     rect-shape-selection(
       v-if="!readonly",
       :selected="selected",
       :connecting="connecting",
-      :rect="ellipse",
+      :rect="shape",
       :pointer-events="editing ? 'none' : 'all'",
-      @resize="onResize",
+      @update="$listeners.update",
       @dblclick="enableEditingMode",
       @mousedown="$listeners.mousedown",
       @mouseup="$listeners.mouseup",
@@ -36,20 +36,13 @@
 </template>
 
 <script>
-import { formBaseMixin } from '@/mixins/form';
-
 import RectShapeSelection from '../rect-shape/rect-shape-selection.vue';
 import TextEditor from '../common/text-editor.vue';
 
 export default {
   components: { RectShapeSelection, TextEditor },
-  mixins: [formBaseMixin],
-  model: {
-    prop: 'ellipse',
-    event: 'input',
-  },
   props: {
-    ellipse: {
+    shape: {
       type: Object,
       required: true,
     },
@@ -77,26 +70,22 @@ export default {
   },
   computed: {
     radiusX() {
-      return this.ellipse.width / 2;
+      return this.shape.width / 2;
     },
 
     radiusY() {
-      return this.ellipse.height / 2;
+      return this.shape.height / 2;
     },
 
     centerX() {
-      return this.ellipse.x + this.radiusX;
+      return this.shape.x + this.radiusX;
     },
 
     centerY() {
-      return this.ellipse.y + this.radiusY;
+      return this.shape.y + this.radiusY;
     },
   },
   methods: {
-    onResize(ellipse) {
-      this.updateModel({ ...this.ellipse, ...ellipse });
-    },
-
     enableEditingMode() {
       this.editing = true;
 
@@ -104,8 +93,7 @@ export default {
     },
 
     disableEditingMode(event) {
-      this.updateModel({
-        ...this.ellipse,
+      this.$emit('update', {
         text: event.target.innerHTML,
       });
 
