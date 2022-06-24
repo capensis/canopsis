@@ -26,12 +26,24 @@ const factory = (options = {}) => shallowMount(CPatternsEditorField, {
   localVue,
   stubs,
 
+  parentComponent: {
+    $_veeValidate: {
+      validator: 'new',
+    },
+  },
+
   ...options,
 });
 
 const snapshotFactory = (options = {}) => mount(CPatternsEditorField, {
   localVue,
   stubs,
+
+  parentComponent: {
+    $_veeValidate: {
+      validator: 'new',
+    },
+  },
 
   ...options,
 });
@@ -186,7 +198,9 @@ describe('c-patterns-editor-field', () => {
       propsData: {
         patterns: {
           id: 'pattern-id',
-          groups: [{}],
+          groups: [{
+            rules: [],
+          }],
         },
         attributes: [
           { value: 'attribute-1', text: 'Attribute 1' },
