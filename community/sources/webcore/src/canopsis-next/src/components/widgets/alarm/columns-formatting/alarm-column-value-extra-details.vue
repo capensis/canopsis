@@ -22,14 +22,15 @@
       :pbehavior="alarm.pbehavior",
       :pbehavior-info="alarm.v.pbehavior_info"
     )
-    extra-details-causes(
-      v-if="alarm.causes",
-      :causes="alarm.causes"
+    extra-details-parents(
+      v-if="alarm.parents",
+      :rules="alarm.meta_alarm_rules",
+      :total="alarm.parents"
     )
-    extra-details-consequences(
-      v-if="alarm.consequences",
-      :consequences="alarm.consequences",
-      :rule="alarm.rule"
+    extra-details-children(
+      v-if="alarm.children",
+      :total="alarm.children",
+      :rule="alarm.meta_alarm_rule"
     )
 </template>
 
@@ -40,8 +41,8 @@ import ExtraDetailsTicket from './extra-details/extra-details-ticket.vue';
 import ExtraDetailsCanceled from './extra-details/extra-details-canceled.vue';
 import ExtraDetailsSnooze from './extra-details/extra-details-snooze.vue';
 import ExtraDetailsPbehavior from './extra-details/extra-details-pbehavior.vue';
-import ExtraDetailsCauses from './extra-details/extra-details-causes.vue';
-import ExtraDetailsConsequences from './extra-details/extra-details-consequences.vue';
+import ExtraDetailsParents from './extra-details/extra-details-parents.vue';
+import ExtraDetailsChildren from './extra-details/extra-details-children.vue';
 
 /**
  * Component for the 'extra-details' column of the alarms list
@@ -58,8 +59,8 @@ export default {
     ExtraDetailsCanceled,
     ExtraDetailsSnooze,
     ExtraDetailsPbehavior,
-    ExtraDetailsCauses,
-    ExtraDetailsConsequences,
+    ExtraDetailsParents,
+    ExtraDetailsChildren,
   },
   props: {
     alarm: {

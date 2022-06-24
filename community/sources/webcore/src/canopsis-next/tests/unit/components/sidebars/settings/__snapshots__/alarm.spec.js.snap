@@ -112,10 +112,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
             />
             <field-filters-stub
               addable="true"
-              condition="$and"
               editable="true"
-              entitiestype="alarm"
               filters=""
+              widgetid="3f8dba7c-f39e-42ae-912c-e78cb39669c5"
             />
             <hr
               class="v-divider theme--light"

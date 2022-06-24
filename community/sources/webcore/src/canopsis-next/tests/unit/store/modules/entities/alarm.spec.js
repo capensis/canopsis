@@ -63,7 +63,7 @@ describe('Entities alarm module', () => {
 
     expect(state).toEqual({
       widgets: {
-        [widgetId]: { fetchingParams: params, pending: true },
+        [widgetId]: { pending: true },
       },
     });
   });
@@ -259,28 +259,6 @@ describe('Entities alarm module', () => {
     expect(result).toEqual(mockData.alarmsResponse);
   });
 
-  it('Fetch alarm list with previous parameters. Action: fetchListWithPreviousParams', async () => {
-    const { widgetId, params, alarmsResponse } = mockData;
-    const dispatch = jest.fn(() => alarmsResponse);
-    const state = {
-      widgets: {
-        [widgetId]: { fetchingParams: params },
-      },
-    };
-
-    const data = await actions.fetchListWithPreviousParams(
-      { state, dispatch },
-      { widgetId },
-    );
-
-    expect(data).toEqual(alarmsResponse);
-    expect(dispatch).toHaveBeenCalledWith('fetchList', {
-      widgetId,
-      params,
-      withoutPending: true,
-    });
-  });
-
   it('Fetch alarm by id. Action: fetchItem', async () => {
     const dispatch = jest.fn();
     const { alarmId, params } = mockData;
@@ -292,26 +270,6 @@ describe('Entities alarm module', () => {
 
     expect(data).toBeUndefined();
     expect(dispatch).toHaveBeenCalled();
-  });
-
-  it('Fetch alarm by id with error. Action: fetchItem', async () => {
-    const originalError = console.error;
-    console.error = jest.fn();
-
-    const error = new Error();
-    const dispatch = jest.fn(() => Promise.reject(error));
-    const { alarmId, params } = mockData;
-
-    const data = await actions.fetchItem(
-      { dispatch },
-      { id: alarmId, params },
-    );
-
-    expect(data).toBeUndefined();
-    expect(dispatch).toHaveBeenCalled();
-    expect(console.error).toHaveBeenCalledWith(error);
-
-    console.error = originalError;
   });
 
   it('Create export alarms session. Action: createAlarmsListExport', async () => {

@@ -3,50 +3,40 @@
     template(#activator="")
       v-list-tile {{ $t('settings.filters') }}
     v-container
-      filter-selector(
-        v-field="value",
-        :label="$t('filterSelector.defaultFilter')",
-        :entities-type="entitiesType",
-        :filters="filters",
-        :condition="condition",
-        :hide-select="hideSelect",
-        :has-access-to-add-filter="addable",
-        :has-access-to-edit-filter="editable",
-        hide-select-icon,
-        long,
-        @update:condition="$emit('update:condition', $event)",
-        @update:filters="updateFilters"
-      )
+      v-layout(column)
+        filter-selector(
+          v-field="value",
+          :label="$t('filterSelector.defaultFilter')",
+          :filters="filters"
+        )
+        filters-list(
+          :filters="filters",
+          :addable="addable",
+          :editable="editable"
+        )
 </template>
 
 <script>
-import { isUndefined } from 'lodash';
-
-import { FILTER_DEFAULT_VALUES, ENTITIES_TYPES } from '@/constants';
-
 import { authMixin } from '@/mixins/auth';
 
-import FilterSelector from '@/components/forms/filters/filter-selector.vue';
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FiltersList from '@/components/other/filter/filters-list.vue';
 
 export default {
-  components: { FilterSelector },
+  components: { FilterSelector, FiltersList },
   mixins: [authMixin],
   props: {
+    widgetId: {
+      type: String,
+      required: false,
+    },
     filters: {
       type: Array,
       default: () => [],
     },
     value: {
-      type: [Object, Array],
-      default: null,
-    },
-    condition: {
       type: String,
-      default: FILTER_DEFAULT_VALUES.condition,
-    },
-    hideSelect: {
-      type: Boolean,
-      default: false,
+      default: null,
     },
     addable: {
       type: Boolean,
@@ -56,19 +46,17 @@ export default {
       type: Boolean,
       default: false,
     },
-    entitiesType: {
-      type: String,
-      default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
+    withAlarm: {
+      type: Boolean,
+      default: false,
     },
-  },
-  methods: {
-    updateFilters(filters, value) {
-      this.$emit('update:filters', filters);
-
-      if (!isUndefined(value)) {
-        this.$emit('input', value);
-      }
+    withEntity: {
+      type: Boolean,
+      default: false,
+    },
+    withPbehavior: {
+      type: Boolean,
+      default: false,
     },
   },
 };

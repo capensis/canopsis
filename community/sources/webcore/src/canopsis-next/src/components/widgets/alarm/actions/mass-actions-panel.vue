@@ -40,6 +40,10 @@ export default {
       type: Object,
       required: true,
     },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
+    },
   },
   computed: {
     ...entitiesMapGetters({
@@ -121,7 +125,7 @@ export default {
     },
 
     hasMetaAlarm() {
-      return this.items.some(item => item.metaalarm);
+      return this.items.some(item => item.is_meta_alarm);
     },
 
     modalConfig() {
@@ -141,7 +145,7 @@ export default {
     afterSubmit() {
       this.clearItems();
 
-      return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
+      return this.refreshAlarmsList();
     },
 
     showAddPbehaviorModal() {

@@ -1,8 +1,6 @@
-import { formGroupsToPatternRules, patternToForm } from '@/helpers/forms/pattern';
-
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERNS_FIELDS } from '@/constants';
 
-import { addKeyInEntities, removeKeyFromEntities } from '../entities';
+import { formGroupsToPatternRules, patternToForm } from '@/helpers/forms/pattern';
 
 /**
  * @typedef {Object} FilterPatterns
@@ -125,19 +123,3 @@ export const formToFilter = (form, fields) => ({
   is_private: form.is_private,
   ...formFilterToPatterns(form, fields),
 });
-
-/**
- * Convert filters to filters form
- *
- * @param {Array} [filters = []]
- * @returns {Array}
- */
-export const filtersToForm = (filters = []) => addKeyInEntities(filters);
-
-/**
- * Convert filters form to filters object
- *
- * @param {Array} [filters = []]
- * @returns {Array}
- */
-export const formToFilters = (filters = []) => removeKeyFromEntities(filters);

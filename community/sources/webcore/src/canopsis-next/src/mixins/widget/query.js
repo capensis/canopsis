@@ -81,7 +81,7 @@ export const queryWidgetMixin = {
     },
   },
   methods: {
-    getQuery() {
+    getQuery() { // TODO: use convertAlarmsListQueryToRequest here
       const query = omit(this.query, [
         'tstart',
         'tstop',
@@ -111,8 +111,8 @@ export const queryWidgetMixin = {
       }
 
       if (sortKey) {
-        query.sort_key = sortKey;
-        query.sort_dir = sortDir.toLowerCase();
+        query.sort_by = sortKey;
+        query.sort = sortDir.toLowerCase();
       }
 
       if (category) {
