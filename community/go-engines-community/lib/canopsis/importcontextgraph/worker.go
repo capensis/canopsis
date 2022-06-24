@@ -37,6 +37,8 @@ type worker struct {
 type parseResult struct {
 	writeModels []mongo.WriteModel
 
+	updatedIds        []string
+	removedIds        []string
 	serviceEvents     []types.Event
 	basicEntityEvents []types.Event
 }
@@ -46,6 +48,8 @@ type parseEntityResult struct {
 
 	componentInfos map[string]map[string]interface{}
 
+	updatedIds        []string
+	removedIds        []string
 	serviceEvents     []types.Event
 	basicEntityEvents []types.Event
 }
@@ -154,7 +158,12 @@ func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stat
 		}
 	}
 
-	w.metricMetaUpdater.UpdateAll(ctx)
+	if len(res.updatedIds) > 0 {
+		w.metricMetaUpdater.UpdateById(ctx, res.updatedIds...)
+	}
+	if len(res.removedIds) > 0 {
+		w.metricMetaUpdater.DeleteById(ctx, res.removedIds...)
+	}
 
 	return stats, nil
 }
@@ -232,6 +241,8 @@ func (w *worker) parseFile(ctx context.Context, filename, source string, withEve
 	}
 
 	res.writeModels = writeModels
+	res.updatedIds = entityParseRes.updatedIds
+	res.removedIds = entityParseRes.removedIds
 	res.serviceEvents = entityParseRes.serviceEvents
 	res.basicEntityEvents = entityParseRes.basicEntityEvents
 
@@ -246,6 +257,8 @@ func (w *worker) parseEntities(
 ) (parseEntityResult, error) {
 	res := parseEntityResult{}
 	writeModels := make([]mongo.WriteModel, 0)
+	updatedIds := make([]string, 0)
+	removedIds := make([]string, 0)
 	serviceEvents := make([]types.Event, 0)
 	basicEntityEvents := make([]types.Event, 0)
 	now := types.NewCpsTime()
@@ -272,6 +285,7 @@ func (w *worker) parseEntities(
 
 		switch ci.Action {
 		case ActionCreate:
+			updatedIds = append(updatedIds, ci.ID)
 			writeModels = append(writeModels, w.createEntity(ci))
 			if ci.Type != nil && *ci.Type == types.EntityTypeComponent {
 				componentInfos[ci.ID] = ci.Infos
@@ -285,6 +299,7 @@ func (w *worker) parseEntities(
 				}
 			}
 		case ActionSet:
+			updatedIds = append(updatedIds, ci.ID)
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Decode(&oldEntity)
 			if err != nil && err != mongo.ErrNoDocuments {
 				return res, err
@@ -322,6 +337,7 @@ func (w *worker) parseEntities(
 				}
 			}
 		case ActionUpdate:
+			updatedIds = append(updatedIds, ci.ID)
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Decode(&oldEntity)
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
@@ -350,6 +366,7 @@ func (w *worker) parseEntities(
 				}
 			}
 		case ActionDelete:
+			removedIds = append(removedIds, ci.ID)
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Decode(&oldEntity)
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
@@ -369,6 +386,7 @@ func (w *worker) parseEntities(
 				eventType = types.EventTypeRecomputeEntityService
 			}
 		case ActionEnable:
+			updatedIds = append(updatedIds, ci.ID)
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Decode(&oldEntity)
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
@@ -390,6 +408,7 @@ func (w *worker) parseEntities(
 				eventType = types.EventTypeEntityToggled
 			}
 		case ActionDisable:
+			updatedIds = append(updatedIds, ci.ID)
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Decode(&oldEntity)
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
@@ -430,6 +449,8 @@ func (w *worker) parseEntities(
 		}
 	}
 
+	res.updatedIds = updatedIds
+	res.removedIds = removedIds
 	res.writeModels = writeModels
 	res.componentInfos = componentInfos
 	res.serviceEvents = serviceEvents
