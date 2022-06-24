@@ -18,6 +18,7 @@ type StatusReporter interface {
 	ReportOngoing(ctx context.Context, job ImportJob) error
 	ReportDone(ctx context.Context, job ImportJob, stats importcontextgraph.Stats) error
 	ReportError(ctx context.Context, job ImportJob, execDuration time.Duration, err error) error
+	Clean(ctx context.Context, interval time.Duration) error
 }
 
 type ImportWorker interface {
