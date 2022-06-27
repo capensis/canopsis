@@ -19,7 +19,7 @@ Feature: Update a scenario
       "name": "test-scenario-to-update-1-name",
       "enabled": true,
       "triggers": ["create","pbhenter"],
-      "priority": 7,
+      "priority": 6,
       "actions": [
         {
           "alarm_pattern": [
@@ -57,7 +57,7 @@ Feature: Update a scenario
       "author": "root",
       "enabled": true,
       "delay": null,
-      "priority": 7,
+      "priority": 6,
       "disable_during_periods": null,
       "triggers": ["create","pbhenter"],
       "actions": [
@@ -98,7 +98,7 @@ Feature: Update a scenario
     {
       "name": "test-scenario-to-check-unique-name-name",
       "enabled": true,
-      "priority": 7,
+      "priority": 6,
       "triggers": ["create","pbhenter"],
       "actions": [
         {
@@ -228,7 +228,7 @@ Feature: Update a scenario
       "_id": "change-id",
       "name": "my_scenario-name-new",
       "enabled": true,
-      "priority": 14,
+      "priority": 13,
       "triggers": ["create"],
       "actions": [
         {
@@ -284,7 +284,7 @@ Feature: Update a scenario
     {
       "name": "test-scenario-to-update-2-name",
       "enabled": true,
-      "priority": 18,
+      "priority": 15,
       "triggers": ["create"],
       "delay": {
         "value": 3,

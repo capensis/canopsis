@@ -1441,6 +1441,7 @@ instruction:
 
   instruction_alarm_correlation_instruction_get_1_1:
     <<: *instruction_manual
+    enabled: false
     _id: test-instruction-to-alarm-correlation-instruction-get-1-1
     entity_pattern:
       - - field: name
@@ -1451,9 +1452,163 @@ instruction:
 
   instruction_alarm_correlation_instruction_get_1_2:
     <<: *instruction_auto
+    enabled: false
     entity_pattern:
       - - field: name
           cond:
             type: regexp
             value: test-resource-to-alarm-correlation-get-5-3
     alarm_pattern:
+
+  instruction_action_remediation_triggers_1:
+    <<: *instruction_manual
+    _id: test-instruction-action-remediation-triggers-1
+    name: test-instruction-action-remediation-triggers-1-name
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: eq
+            value: test-resource-action-remediation-triggers-1/test-component-action-remediation-triggers-1
+    alarm_pattern:
+    timeout_after_execution:
+      value: 10
+      unit: s
+    steps:
+      - _id: test-instruction-action-remediation-triggers-1-step-1
+        endpoint: test-instruction-action-remediation-triggers-1-step-1-endpoint
+        name: test-instruction-action-remediation-triggers-1-step-1-name
+        operations:
+          - _id: test-instruction-action-remediation-triggers-1-step-1-operation-1
+            description: test-instruction-action-remediation-triggers-1-step-1-operation-1-description
+            name: test-instruction-action-remediation-triggers-1-step-1-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
+      - _id: test-instruction-action-remediation-triggers-1-step-2
+        endpoint: test-instruction-action-remediation-triggers-1-step-2-endpoint
+        name: test-instruction-action-remediation-triggers-1-step-2-name
+        operations:
+          - _id: test-instruction-action-remediation-triggers-1-step-2-operation-1
+            description: test-instruction-action-remediation-triggers-1-step-2-operation-1-description
+            name: test-instruction-action-remediation-triggers-1-step-2-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
+
+  instruction_action_remediation_triggers_2:
+    <<: *instruction_auto
+    _id: test-instruction-action-remediation-triggers-2
+    name: test-instruction-action-remediation-triggers-2-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-action-remediation-triggers-2
+    alarm_pattern:
+    timeout_after_execution:
+      value: 2
+      unit: s
+    jobs:
+      - job: test-job-action-remediation-triggers-1
+        stop_on_fail: false
+
+  instruction_action_remediation_triggers_3:
+    <<: *instruction_auto
+    _id: test-instruction-action-remediation-triggers-3
+    name: test-instruction-action-remediation-triggers-3-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-action-remediation-triggers-3
+    alarm_pattern:
+    timeout_after_execution:
+      value: 2
+      unit: s
+    jobs:
+      - job: test-job-action-remediation-triggers-1
+        stop_on_fail: false
+
+  instruction_action_remediation_triggers_4:
+    <<: *instruction_manual
+    _id: test-instruction-action-remediation-triggers-4
+    name: test-instruction-action-remediation-triggers-4-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-action-remediation-triggers-4
+    alarm_pattern:
+    timeout_after_execution:
+      value: 2
+      unit: s
+    steps:
+      - _id: test-instruction-action-remediation-triggers-4-step-1
+        endpoint: test-instruction-action-remediation-triggers-4-step-1-endpoint
+        name: test-instruction-action-remediation-triggers-4-step-1-name
+        operations:
+          - _id: test-instruction-action-remediation-triggers-4-step-1-operation-1
+            description: test-instruction-action-remediation-triggers-4-step-1-operation-1-description
+            name: test-instruction-action-remediation-triggers-4-step-1-operation-1-name
+            jobs:
+              - test-job-action-remediation-triggers-2
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
+
+  instruction_action_remediation_triggers_5:
+    <<: *instruction_manual
+    _id: test-instruction-action-remediation-triggers-5
+    name: test-instruction-action-remediation-triggers-5-name
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: eq
+            value: test-resource-action-remediation-triggers-5/test-component-action-remediation-triggers-5
+    alarm_pattern:
+    timeout_after_execution:
+      value: 10
+      unit: s
+    steps:
+      - _id: test-instruction-action-remediation-triggers-5-step-1
+        endpoint: test-instruction-action-remediation-triggers-5-step-1-endpoint
+        name: test-instruction-action-remediation-triggers-5-step-1-name
+        operations:
+          - _id: test-instruction-action-remediation-triggers-5-step-1-operation-1
+            description: test-instruction-action-remediation-triggers-5-step-1-operation-1-description
+            name: test-instruction-action-remediation-triggers-5-step-1-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
+      - _id: test-instruction-action-remediation-triggers-5-step-2
+        endpoint: test-instruction-action-remediation-triggers-5-step-2-endpoint
+        name: test-instruction-action-remediation-triggers-5-step-2-name
+        operations:
+          - _id: test-instruction-action-remediation-triggers-5-step-2-operation-1
+            description: test-instruction-action-remediation-triggers-5-step-2-operation-1-description
+            name: test-instruction-action-remediation-triggers-5-step-2-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
+
+  instruction_action_remediation_triggers_6:
+    <<: *instruction_auto
+    _id: test-instruction-action-remediation-triggers-6
+    name: test-instruction-action-remediation-triggers-6-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-action-remediation-triggers-6
+    alarm_pattern:
+    timeout_after_execution:
+      value: 2
+      unit: s
+    jobs:
+      - job: test-job-action-remediation-triggers-3
+        stop_on_fail: false

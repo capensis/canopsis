@@ -143,10 +143,14 @@ pbehavior_type:
   type_active_type_to_engine:
     <<: *type_active
     _id: test-active-type-to-engine
+    name: Engine active
+    description: Engine active
 
   type_inactive_type_to_engine:
     <<: *type_inactive
     _id: test-inactive-type-to-engine
+    name: Engine inactive
+    description: Engine inactive
 
   type_to_pbh_edit_3:
     <<: *type_pause
@@ -201,5 +205,4 @@ pbehavior_type:
     <<: *type_pause
     _id: test-pause-type-to-engine
     description: Engine pause
-    icon_name: test-pause-to-engine-icon
     name: Engine pause

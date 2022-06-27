@@ -83,7 +83,7 @@ const (
 
 	UserPreferencesMongoCollection = "userpreferences"
 
-	FilterMongoCollection = "filter"
+	KpiFilterMongoCollection = "kpi_filter"
 
 	PatternMongoCollection = "pattern"
 )

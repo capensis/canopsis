@@ -312,7 +312,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		unset["tstop"] = ""
 	}
 
-	if len(doc.EntityPattern) > 0 {
+	if r.CorporateEntityPattern != "" || len(r.EntityPattern) > 0 {
 		unset["old_mongo_query"] = ""
 	}
 

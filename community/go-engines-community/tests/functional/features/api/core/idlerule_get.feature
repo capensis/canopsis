@@ -6,20 +6,38 @@ Feature: Get a idle rule
     When I am admin
     When I do GET /api/v4/idle-rules?search=test-idle-rule-to-get
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
         {
           "_id": "test-idle-rule-to-get-1",
           "alarm_condition": "last_event",
-          "alarm_patterns": [
-            {
-              "_id": "test-idle-rule-to-get-1-alarm"
-            }
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-get-1-alarm"
+                }
+              }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-get-1-resource"
+                }
+              }
+            ]
           ],
           "author": "test-idle-rule-to-get-1-author",
-          "created": 1616567033,
           "description": "test-idle-rule-to-get-1-description",
           "disable_during_periods": [
             "pause"
@@ -29,11 +47,6 @@ Feature: Get a idle rule
             "unit": "s"
           },
           "enabled": true,
-          "entity_patterns": [
-            {
-              "name": "test-idle-rule-to-get-1-resource"
-            }
-          ],
           "name": "test-idle-rule-to-get-1-name",
           "operation": {
             "parameters": {
@@ -45,31 +58,33 @@ Feature: Get a idle rule
             },
             "type": "snooze"
           },
-          "priority": 1,
-          "type": "alarm",
-          "updated": 1616567033
+          "type": "alarm"
         },
         {
           "_id": "test-idle-rule-to-get-2",
-          "alarm_patterns": null,
           "author": "test-idle-rule-to-get-2-author",
-          "created": 1616567033,
           "description": "test-idle-rule-to-get-2-description",
           "disable_during_periods": null,
           "duration": {
-            "value": 5,
+            "value": 3,
             "unit": "s"
           },
           "enabled": true,
-          "entity_patterns": [
-            {
-              "name": "test-idle-rule-to-get-2-resource"
-            }
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-get-2-resource"
+                }
+              }
+            ]
           ],
           "name": "test-idle-rule-to-get-2-name",
-          "priority": 2,
-          "type": "entity",
-          "updated": 1616567033
+          "type": "entity"
         }
       ],
       "meta": {
@@ -83,7 +98,7 @@ Feature: Get a idle rule
 
   Scenario: given sort request should return sorted idle rules
     When I am admin
-    When I do GET /api/v4/idle-rules?search=test-idle-rule-to-get&sort_by=duration&sort=desc
+    When I do GET /api/v4/idle-rules?search=test-idle-rule-to-get&sort_by=name&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -118,18 +133,36 @@ Feature: Get a idle rule
     When I am admin
     When I do GET /api/v4/idle-rules/test-idle-rule-to-get-1
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "_id": "test-idle-rule-to-get-1",
       "alarm_condition": "last_event",
-      "alarm_patterns": [
-        {
-          "_id": "test-idle-rule-to-get-1-alarm"
-        }
+      "old_alarm_patterns": null,
+      "old_entity_patterns": null,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-rule-to-get-1-alarm"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-rule-to-get-1-resource"
+            }
+          }
+        ]
       ],
       "author": "test-idle-rule-to-get-1-author",
-      "created": 1616567033,
       "description": "test-idle-rule-to-get-1-description",
       "disable_during_periods": [
         "pause"
@@ -139,11 +172,6 @@ Feature: Get a idle rule
         "unit": "s"
       },
       "enabled": true,
-      "entity_patterns": [
-        {
-          "name": "test-idle-rule-to-get-1-resource"
-        }
-      ],
       "name": "test-idle-rule-to-get-1-name",
       "operation": {
         "parameters": {
@@ -155,9 +183,7 @@ Feature: Get a idle rule
         },
         "type": "snooze"
       },
-      "priority": 1,
-      "type": "alarm",
-      "updated": 1616567033
+      "type": "alarm"
     }
     """
 
