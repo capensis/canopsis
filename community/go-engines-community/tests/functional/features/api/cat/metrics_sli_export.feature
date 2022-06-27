@@ -4,7 +4,7 @@ Feature: Export SLI metrics
 
   Scenario: given export request should return metrics
     When I am admin
-    When I do POST /api/v4/cat/metrics-export/sli?sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
+    When I do POST /api/v4/cat/metrics-export/sli?sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-kpi-filter-to-sli-metrics-get
     Then the response code should be 200
     When I save response exportID={{ .lastResponse._id }}
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
@@ -25,7 +25,7 @@ Feature: Export SLI metrics
     0,0,{{ parseTime "24-11-2021 00:00" }},86400
 
     """
-    When I do POST /api/v4/cat/metrics-export/sli?in_percents=true&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
+    When I do POST /api/v4/cat/metrics-export/sli?in_percents=true&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-kpi-filter-to-sli-metrics-get
     Then the response code should be 200
     When I save response exportID={{ .lastResponse._id }}
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
@@ -49,7 +49,7 @@ Feature: Export SLI metrics
 
   Scenario: given export request with empty interval should return metrics with zeros
     When I am admin
-    When I do POST /api/v4/cat/metrics-export/sli?sampling=day&from={{ parseTime "06-09-2020 00:00" }}&to={{ parseTime "08-09-2020 00:00" }}&filter=test-filter-to-sli-metrics-get
+    When I do POST /api/v4/cat/metrics-export/sli?sampling=day&from={{ parseTime "06-09-2020 00:00" }}&to={{ parseTime "08-09-2020 00:00" }}&filter=test-kpi-filter-to-sli-metrics-get
     Then the response code should be 200
     When I save response exportID={{ .lastResponse._id }}
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
@@ -67,7 +67,7 @@ Feature: Export SLI metrics
 
   Scenario: given export request with filter by entity infos should return metrics
     When I am admin
-    When I do POST /api/v4/cat/metrics-export/sli?sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get-by-entity-infos
+    When I do POST /api/v4/cat/metrics-export/sli?sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-kpi-filter-to-sli-metrics-get-by-entity-infos
     Then the response code should be 200
     When I save response exportID={{ .lastResponse._id }}
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:

@@ -198,7 +198,7 @@ Feature: update an instruction statistics
       "output": "test-output-to-alarm-instruction-get-4"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 4 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-4&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
@@ -211,9 +211,9 @@ Feature: update an instruction statistics
           },
           "assigned_instructions": [
             {
-                "_id": "test-instruction-to-alarm-instruction-get-4-1",
-                "name": "test-instruction-to-alarm-instruction-get-4-1-name",
-                "execution": null
+              "_id": "test-instruction-to-alarm-instruction-get-4-1",
+              "name": "test-instruction-to-alarm-instruction-get-4-1-name",
+              "execution": null
             }
           ]
         }
@@ -374,7 +374,7 @@ Feature: update an instruction statistics
       }
     ]
     """
-    When I wait the end of 4 events processing
+    When I wait the end of 10 events processing
     When I do GET /api/v4/alarms?include_instruction_types[]=0&include_instruction_types[]=1&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -651,7 +651,7 @@ Feature: update an instruction statistics
       }
     ]
     """
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-7&with_instructions=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -664,9 +664,9 @@ Feature: update an instruction statistics
           },
           "assigned_instructions": [
             {
-                "_id": "test-instruction-to-alarm-instruction-get-7-1",
-                "name": "test-instruction-to-alarm-instruction-get-7-1-name",
-                "execution": null
+              "_id": "test-instruction-to-alarm-instruction-get-7-1",
+              "name": "test-instruction-to-alarm-instruction-get-7-1-name",
+              "execution": null
             }
           ]
         },
@@ -676,9 +676,9 @@ Feature: update an instruction statistics
           },
           "assigned_instructions": [
             {
-                "_id": "test-instruction-to-alarm-instruction-get-7-2",
-                "name": "test-instruction-to-alarm-instruction-get-7-2-name",
-                "execution": null
+              "_id": "test-instruction-to-alarm-instruction-get-7-2",
+              "name": "test-instruction-to-alarm-instruction-get-7-2-name",
+              "execution": null
             }
           ]
         }

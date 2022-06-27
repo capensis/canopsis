@@ -314,7 +314,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 			"corporate_entity_pattern":       pattern.CorporateEntityPattern,
 			"corporate_entity_pattern_title": pattern.CorporateEntityPatternTitle,
 		}}
-		if len(request.EntityPattern) > 0 {
+		if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 {
 			update["$unset"] = bson.M{"old_entity_patterns": ""}
 		}
 		err := s.dbCollection.FindOneAndUpdate(
@@ -364,8 +364,12 @@ func (s *store) Delete(ctx context.Context, id string) (bool, *types.Alarm, erro
 		// Delete open alarm.
 		alarm = &types.Alarm{}
 		err = s.alarmDbCollection.FindOneAndDelete(ctx, bson.M{"d": id, "v.resolved": nil}).Decode(alarm)
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return err
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				alarm = nil
+			} else {
+				return err
+			}
 		}
 		// Delete resolved alarms.
 		_, err = s.alarmDbCollection.DeleteMany(ctx, bson.M{"d": id})

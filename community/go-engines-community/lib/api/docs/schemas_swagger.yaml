@@ -450,11 +450,13 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/common.User'
       last_comment:
         $ref: '#/definitions/pbehavior.Comment'
       name:
         type: string
+      reason:
+        $ref: '#/definitions/pbehavior.Reason'
       rrule:
         type: string
       tstart:
@@ -1866,7 +1868,6 @@ definitions:
         - enable
         - disable
         type: string
-      action_properties: {}
       category:
         type: string
       enabled:

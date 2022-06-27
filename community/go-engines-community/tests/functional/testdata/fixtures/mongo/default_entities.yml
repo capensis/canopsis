@@ -471,6 +471,16 @@ default_entities:
     component: test-component-to-entity-get
     impact_level: 1
 
+  resource_to_stats_executions_get_with_resolved_alarms_1:
+    <<: *resource
+    _id: test-resource-to-stats-executions-get-with-resolved-alarms-1/test-component-default
+    name: test-resource-to-stats-executions-get-with-resolved-alarms-1
+
+  resource_to_stats_executions_get_with_resolved_alarms_resolved:
+    <<: *resource
+    _id: test-resource-to-stats-executions-get-with-resolved-alarms-resolved/test-component-default
+    name: test-resource-to-stats-executions-get-with-resolved-alarms-resolved
+
   default_entities_17:
     _id: test-alarm-pbehavior-get-resource/test-alarm-pbehavior-get-component
     depends: [ ]

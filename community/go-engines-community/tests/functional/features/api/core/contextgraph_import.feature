@@ -10,6 +10,15 @@ Feature: Import entities
     When I do PUT /api/v4/contextgraph/import
     Then the response code should be 403
 
+  Scenario: import unauthorized
+    When I do PUT /api/v4/contextgraph/import-partial
+    Then the response code should be 401
+
+  Scenario: import without permissions
+    When I am noperms
+    When I do PUT /api/v4/contextgraph/import-partial
+    Then the response code should be 403
+
   Scenario: import with action create
     When I am admin
     When I do PUT /api/v4/contextgraph/import?source=test-import-source:
