@@ -1,6 +1,6 @@
 import { omit, isEmpty } from 'lodash';
 
-import { ENTITIES_STATES, ACTION_TYPES, PATTERNS_FIELDS } from '@/constants';
+import { ENTITIES_STATES, ACTION_TYPES, PATTERNS_FIELDS, OLD_PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
@@ -275,7 +275,11 @@ export const actionToForm = (action = {}, timezone = getLocaleTimezone()) => ({
   drop_scenario_if_not_matched: !!action.drop_scenario_if_not_matched,
   emit_trigger: !!action.emit_trigger,
   comment: action.comment ?? '',
-  patterns: filterPatternsToForm(action, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+  patterns: filterPatternsToForm(
+    action,
+    [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
+    [OLD_PATTERNS_FIELDS.oldAlarmPatterns, OLD_PATTERNS_FIELDS.oldEntityPatterns],
+  ),
 });
 
 /**

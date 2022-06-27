@@ -47,15 +47,22 @@ import { addKeyInEntities, removeKeyFromEntities } from '../entities';
  *
  * @param {Filter} filter
  * @param {PatternsFields} [fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity]]
+ * @param {string[]} [oldFields = []]
  * @return {FilterPatterns}
  */
 export const filterPatternsToForm = (
   filter = {},
   fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity],
-) => fields.reduce((acc, field) => {
-  const { [`corporate_${field}`]: id, [field]: pattern } = filter;
+  oldFields = [],
+) => fields.reduce((acc, field, index) => {
+  const oldField = oldFields[index];
+  const {
+    [`corporate_${field}`]: id,
+    [field]: pattern,
+    [oldField]: oldPattern,
+  } = filter;
 
-  acc[field] = patternToForm({ [field]: pattern, id });
+  acc[field] = patternToForm({ [field]: pattern, old_patterns: oldPattern, id });
 
   return acc;
 }, {});

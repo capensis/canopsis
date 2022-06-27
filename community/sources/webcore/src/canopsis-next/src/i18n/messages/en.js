@@ -2779,6 +2779,7 @@ export default {
     simpleEditor: 'Simple editor',
     noData: 'No pattern set. Click \'@:pattern.addGroup\' button to start adding fields to the pattern',
     noDataDisabled: 'No pattern set.',
+    discard: 'Discard pattern',
     types: {
       [PATTERN_TYPES.alarm]: 'Alarm pattern',
       [PATTERN_TYPES.entity]: 'Entity pattern',
@@ -2789,6 +2790,7 @@ export default {
       groupRequired: 'Please add at least one group',
       invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
       countOverLimit: 'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
+      oldPattern: 'The current filter pattern is defined in old format. Please use the Advanced editor to view it. Filters in old format will be deprecated soon. Please create new patterns in our updated interface.',
     },
   },
 
