@@ -973,25 +973,36 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget: {
-            ...widget,
-            parameters: {
-              ...widget.parameters,
-              periodic_refresh: periodicRefresh,
+        sidebar: {
+          ...sidebar,
+
+          config: {
+            widget: {
+              ...widget,
+              parameters: {
+                ...widget.parameters,
+                periodic_refresh: periodicRefresh,
+              },
             },
           },
         },
       },
+      mocks: {
+        $sidebar,
+      },
     });
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('periodic_refresh', {
-        ...periodicRefresh,
-        unit: TIME_UNITS.second,
-      }),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'periodic_refresh', {
+          ...periodicRefresh,
+          unit: TIME_UNITS.second,
+        }),
+      },
     });
   });
 
