@@ -616,8 +616,6 @@ export default {
       + '  <dd>Le nom de la raison du comportement périodique est "reason_name_1"</dd>'
       + '</dl>',
     tabs: {
-      filter: 'Filtre',
-      comments: 'Commentaires',
       entities: 'Entités',
     },
   },
@@ -1222,11 +1220,11 @@ export default {
       },
       errors: {
         invalid: 'Invalide',
+        emptyInfos: 'Au moins une information doit être ajoutée.',
       },
       steps: {
         infos: {
           title: 'Informations',
-          validationError: 'Toutes les valeurs doivent être saisies',
         },
         patterns: {
           title: 'Modèles',
@@ -1239,10 +1237,6 @@ export default {
     createDynamicInfoInformation: {
       create: {
         title: 'Ajouter une information à la règle d\'information dynamique',
-      },
-      fields: {
-        name: 'Nom',
-        value: 'Valeur',
       },
     },
     dynamicInfoTemplatesList: {

@@ -6,12 +6,18 @@ import { formGroupsToPatternRules, patternToForm } from '@/helpers/forms/pattern
  * @typedef {Object} FilterPatterns
  * @property {PatternGroups} [alarm_pattern]
  * @property {string} [corporate_alarm_pattern]
+ *
  * @property {PatternGroups} [entity_pattern]
  * @property {string} [corporate_entity_pattern]
+ *
  * @property {PatternGroups} [pbehavior_pattern]
  * @property {string} [corporate_pbehavior_pattern]
+ *
  * @property {PatternGroups} [event_pattern]
  * @property {string} [corporate_event_pattern]
+ *
+ * @property {PatternGroups} [total_entity_pattern]
+ * @property {string} [corporate_total_entity_pattern]
  * @property {Object} [old_mongo_query]
  */
 
@@ -74,12 +80,12 @@ export const filterToForm = (filter = {}) => ({
 /**
  * Convert patterns form to patterns
  *
- * @param {FilterPatternsForm} form
+ * @param {FilterPatternsForm} [form = {}]
  * @param {PatternsFields} [fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity]]
  * @return {{}}
  */
 export const formFilterToPatterns = (
-  form,
+  form = {},
   fields = [
     PATTERNS_FIELDS.alarm,
     PATTERNS_FIELDS.entity,

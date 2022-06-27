@@ -4,12 +4,14 @@ import { PBEHAVIOR_TYPE_TYPES } from './pbehavior';
 
 export const EVENT_ENTITY_TYPES = {
   ack: 'ack',
+  check: 'check',
   fastAck: 'fastAck',
   ackRemove: 'ackremove',
   pbehaviorAdd: 'pbehaviorAdd',
   pbehaviorList: 'pbehaviorList',
   assocTicket: 'assocticket',
   cancel: 'cancel',
+  uncancel: 'uncancel',
   delete: 'delete',
   changeState: 'changestate',
   declareTicket: 'declareticket',
