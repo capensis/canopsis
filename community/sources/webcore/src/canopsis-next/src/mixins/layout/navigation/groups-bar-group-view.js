@@ -1,5 +1,3 @@
-import { omit } from 'lodash';
-
 import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
@@ -60,8 +58,9 @@ export default {
         name: MODALS.createView,
         config: {
           title: this.$t('modals.view.duplicate.title', { viewTitle: this.view.title }),
+          duplicate: true,
           view: {
-            ...omit(this.view, ['_id', 'name', 'title']),
+            ...this.view,
 
             name: '',
             title: '',

@@ -1139,6 +1139,7 @@ func (a *ApiClient) getRequestBody(body string) (io.Reader, error) {
 // executeTemplate executes provided template with last response data and time functions.
 func (a *ApiClient) executeTemplate(tpl string) (*bytes.Buffer, error) {
 	t, err := template.New("tpl").
+		Option("missingkey=error").
 		Funcs(template.FuncMap{
 			"now": func() int64 {
 				return time.Now().Unix()
