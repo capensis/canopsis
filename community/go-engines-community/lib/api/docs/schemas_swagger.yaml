@@ -3580,10 +3580,6 @@ definitions:
         type: string
       periodic_refresh:
         $ref: '#/definitions/types.DurationWithEnabled'
-      tabs:
-        items:
-          $ref: '#/definitions/view.TabRequest'
-        type: array
       tags:
         items:
           type: string
@@ -3596,76 +3592,94 @@ definitions:
     - group
     - title
     type: object
-  view.Tab:
+  view.ExportRequest:
     properties:
-      _id:
-        type: string
-      title:
-        type: string
-      widgets:
+      groups:
         items:
-          $ref: '#/definitions/view.Widget'
+          properties:
+            _id:
+              type: string
+            views:
+              items:
+                type: string
+              type: array
+          required:
+          - _id
+          type: object
+        type: array
+      views:
+        items:
+          type: string
         type: array
     type: object
-  view.TabRequest:
+  view.ExportResponse:
     properties:
-      _id:
-        maxLength: 255
-        type: string
-      title:
-        maxLength: 255
-        type: string
-      widgets:
+      groups:
         items:
-          $ref: '#/definitions/view.WidgetRequest'
+          $ref: '#/definitions/view.ExportViewGroupResponse'
         type: array
-    required:
-    - _id
-    - title
+      views:
+        items:
+          $ref: '#/definitions/view.Response'
+        type: array
     type: object
-  view.Widget:
+  view.ExportViewGroupResponse:
     properties:
       _id:
         type: string
-      grid_parameters:
-        additionalProperties: true
-        type: object
-      parameters:
-        additionalProperties: true
-        type: object
+      author:
+        type: string
+      created:
+        type: integer
       title:
         type: string
-      type:
-        type: string
+      updated:
+        type: integer
+      views:
+        items:
+          $ref: '#/definitions/view.Response'
+        type: array
     type: object
-  view.WidgetRequest:
+  view.ImportItemRequest:
     properties:
       _id:
-        maxLength: 255
         type: string
-      grid_parameters:
-        additionalProperties: true
-        type: object
-      parameters: {}
+      author:
+        type: string
+      created:
+        type: integer
       title:
-        maxLength: 255
         type: string
-      type:
-        maxLength: 255
-        type: string
-    required:
-    - _id
-    - type
+      updated:
+        type: integer
+      views:
+        items:
+          $ref: '#/definitions/view.Response'
+        type: array
     type: object
-  viewgroup.EditRequest:
+  view.Parameters:
     properties:
-      title:
-        maxLength: 255
+      directory:
         type: string
-    required:
-    - title
+      is_api:
+        description: Junit
+        type: boolean
+      report_fileregexp:
+        type: string
+      screenshot_directories:
+        items:
+          type: string
+        type: array
+      screenshot_filemask:
+        type: string
+      video_directories:
+        items:
+          type: string
+        type: array
+      video_filemask:
+        type: string
     type: object
-  viewgroup.View:
+  view.Response:
     properties:
       _id:
         type: string
@@ -3678,12 +3692,12 @@ definitions:
       enabled:
         type: boolean
       group:
-        $ref: '#/definitions/viewgroup.ViewGroup'
+        $ref: '#/definitions/view.ViewGroup'
       periodic_refresh:
         $ref: '#/definitions/types.DurationWithEnabled'
       tabs:
         items:
-          $ref: '#/definitions/view.Tab'
+          $ref: '#/definitions/viewtab.Response'
         type: array
       tags:
         items:
@@ -3693,6 +3707,27 @@ definitions:
         type: string
       updated:
         type: integer
+    type: object
+  view.ViewGroup:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      title:
+        type: string
+      updated:
+        type: integer
+    type: object
+  viewgroup.EditRequest:
+    properties:
+      title:
+        maxLength: 255
+        type: string
+    required:
+    - title
     type: object
   viewgroup.ViewGroup:
     properties:
@@ -3710,8 +3745,83 @@ definitions:
         type: integer
       views:
         items:
-          $ref: '#/definitions/viewgroup.View'
+          $ref: '#/definitions/view.Response'
         type: array
+    type: object
+  viewtab.EditRequest:
+    properties:
+      title:
+        maxLength: 255
+        type: string
+      view:
+        type: string
+    required:
+    - title
+    - view
+    type: object
+  viewtab.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        $ref: '#/definitions/types.CpsTime'
+      title:
+        type: string
+      updated:
+        $ref: '#/definitions/types.CpsTime'
+      widgets:
+        items:
+          $ref: '#/definitions/widget.Response'
+        type: array
+    type: object
+  widget.EditGridPositionItemRequest:
+    properties:
+      _id:
+        type: string
+      grid_parameters:
+        additionalProperties: true
+        type: object
+    type: object
+  widget.EditRequest:
+    properties:
+      grid_parameters:
+        additionalProperties: true
+        type: object
+      parameters:
+        $ref: '#/definitions/view.Parameters'
+      tab:
+        type: string
+      title:
+        maxLength: 255
+        type: string
+      type:
+        maxLength: 255
+        type: string
+    required:
+    - tab
+    - type
+    type: object
+  widget.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      grid_parameters:
+        additionalProperties: true
+        type: object
+      parameters:
+        $ref: '#/definitions/view.Parameters'
+      title:
+        type: string
+      type:
+        type: string
+      updated:
+        type: integer
     type: object
 info:
   contact: {}

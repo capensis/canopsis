@@ -26,16 +26,16 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
-		dbCollection:          dbClient.Collection(mongo.PlaylistMongoCollection),
-		aclDbCollection:       dbClient.Collection(mongo.RightsMongoCollection),
+		collection:            dbClient.Collection(mongo.PlaylistMongoCollection),
+		aclCollection:         dbClient.Collection(mongo.RightsMongoCollection),
 		defaultSearchByFields: []string{"_id", "name", "author"},
 		defaultSortBy:         "name",
 	}
 }
 
 type store struct {
-	dbCollection          mongo.DbCollection
-	aclDbCollection       mongo.DbCollection
+	collection            mongo.DbCollection
+	aclCollection         mongo.DbCollection
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
@@ -60,7 +60,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		sortBy = "interval.value"
 	}
 
-	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, r.Sort),
@@ -87,7 +87,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 func (s *store) GetById(ctx context.Context, id string) (*Playlist, error) {
 	playlist := &Playlist{}
 
-	if err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&playlist); err != nil {
+	if err := s.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&playlist); err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, nil
 		}
@@ -113,7 +113,7 @@ func (s *store) Insert(ctx context.Context, userID string, r EditRequest) (*Play
 		Updated:    now,
 	}
 
-	_, err := s.dbCollection.InsertOne(ctx, model)
+	_, err := s.collection.InsertOne(ctx, model)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +143,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Playlist, error) {
 		Created:    prevModel.Created,
 		Updated:    now,
 	}
-	_, err = s.dbCollection.UpdateOne(
+	_, err = s.collection.UpdateOne(
 		ctx,
 		bson.M{"_id": r.ID},
 		bson.M{"$set": model},
@@ -163,7 +163,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Playlist, error) {
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+	deleted, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
 		return false, err
 	}
@@ -182,7 +182,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 
 func (s *store) createPermission(ctx context.Context, userID, playlistID, playlistName string) error {
 
-	_, err := s.aclDbCollection.InsertOne(ctx, bson.M{
+	_, err := s.aclCollection.InsertOne(ctx, bson.M{
 		"_id":          playlistID,
 		"crecord_name": playlistID,
 		"crecord_type": securitymodel.LineTypeObject,
@@ -193,7 +193,7 @@ func (s *store) createPermission(ctx context.Context, userID, playlistID, playli
 		return err
 	}
 
-	res := s.aclDbCollection.FindOne(ctx, bson.M{
+	res := s.aclCollection.FindOne(ctx, bson.M{
 		"_id":          userID,
 		"crecord_type": securitymodel.LineTypeSubject,
 	})
@@ -209,7 +209,7 @@ func (s *store) createPermission(ctx context.Context, userID, playlistID, playli
 		return err
 	}
 
-	_, err = s.aclDbCollection.UpdateOne(ctx,
+	_, err = s.aclCollection.UpdateOne(ctx,
 		bson.M{
 			"_id":          user.Role,
 			"crecord_type": securitymodel.LineTypeRole,
@@ -233,7 +233,7 @@ func (s *store) createPermission(ctx context.Context, userID, playlistID, playli
 
 func (s *store) updatePermission(ctx context.Context, playlistID, playlistName string) error {
 
-	_, err := s.aclDbCollection.UpdateOne(ctx,
+	_, err := s.aclCollection.UpdateOne(ctx,
 		bson.M{
 			"_id":          playlistID,
 			"crecord_type": securitymodel.LineTypeObject,
@@ -250,7 +250,7 @@ func (s *store) updatePermission(ctx context.Context, playlistID, playlistName s
 
 func (s *store) deletePermission(ctx context.Context, playlistID string) error {
 
-	_, err := s.aclDbCollection.UpdateMany(ctx,
+	_, err := s.aclCollection.UpdateMany(ctx,
 		bson.M{
 			"crecord_type":         securitymodel.LineTypeRole,
 			"rights." + playlistID: bson.M{"$exists": true},
@@ -263,7 +263,7 @@ func (s *store) deletePermission(ctx context.Context, playlistID string) error {
 		return err
 	}
 
-	_, err = s.aclDbCollection.DeleteOne(ctx, bson.M{
+	_, err = s.aclCollection.DeleteOne(ctx, bson.M{
 		"_id":          playlistID,
 		"crecord_type": securitymodel.LineTypeObject,
 	})

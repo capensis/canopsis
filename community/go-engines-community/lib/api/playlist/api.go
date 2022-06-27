@@ -7,21 +7,30 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type api struct {
 	store        Store
+	tabStore     viewtab.Store
+	enforcer     security.Enforcer
 	actionLogger logger.ActionLogger
 }
 
 func NewApi(
 	store Store,
+	tabStore viewtab.Store,
+	enforcer security.Enforcer,
 	actionLogger logger.ActionLogger,
 ) common.CrudAPI {
 	return &api{
 		store:        store,
+		tabStore:     tabStore,
+		enforcer:     enforcer,
 		actionLogger: actionLogger,
 	}
 }
@@ -81,14 +90,22 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userId := c.MustGet(auth.UserKey).(string)
+	ok, err := a.checkAccess(c.Request.Context(), request.TabsList, userId)
+	if err != nil {
+		panic(err)
+	}
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		return
+	}
 
-	playlist, err := a.store.Insert(c.Request.Context(), userID, request)
+	playlist, err := a.store.Insert(c.Request.Context(), userId, request)
 	if err != nil {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(context.Background(), userID, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypePlayList,
 		ValueID:   playlist.ID,
@@ -110,6 +127,16 @@ func (a *api) Update(c *gin.Context) {
 
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	userId := c.MustGet(auth.UserKey).(string)
+	ok, err := a.checkAccess(c.Request.Context(), request.TabsList, userId)
+	if err != nil {
+		panic(err)
+	}
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
 		return
 	}
 
@@ -157,4 +184,20 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+func (a *api) checkAccess(ctx context.Context, tabIds []string, userId string) (bool, error) {
+	tabs, err := a.tabStore.Find(ctx, tabIds)
+	if err != nil || len(tabs) != len(tabIds) {
+		return false, err
+	}
+
+	for _, tab := range tabs {
+		ok, err := a.enforcer.Enforce(userId, tab.View, model.PermissionRead)
+		if err != nil || !ok {
+			return false, err
+		}
+	}
+
+	return true, nil
 }
