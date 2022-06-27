@@ -78,6 +78,10 @@ func (w *periodicalWorker) processAlarms(
 
 	defer cursor.Close(ctx)
 
+	ech := make(chan PublishEventMsg, 1)
+	defer close(ech)
+	go w.publishToFifoChan("alarm", ech)
+
 	processedEntityIds := make([]string, 0)
 	for cursor.Next(ctx) {
 		var alarmWithEntity types.AlarmWithEntity
@@ -108,17 +112,12 @@ func (w *periodicalWorker) processAlarms(
 
 		event := w.EventManager.GetEvent(resolveResult, alarm, now)
 		if event.EventType != "" {
-			err := w.publishToEngineFIFO(event)
-			if err != nil {
-				w.Logger.Err(err).Str("alarm", alarm.ID).Msgf("failed to send %s event", event.EventType)
-				return processedEntityIds
+			ech <- PublishEventMsg{
+				event:   event,
+				id:      alarm.ID,
+				pbhID:   resolveResult.ResolvedPbhID,
+				pbhType: resolveResult.ResolvedType,
 			}
-
-			w.Logger.Debug().
-				Str("resolve pbehavior", resolveResult.ResolvedPbhID).
-				Str("resolve type", fmt.Sprintf("%+v", resolveResult.ResolvedType)).
-				Str("alarm", alarm.ID).
-				Msgf("send %s event", event.EventType)
 		}
 	}
 
@@ -141,6 +140,11 @@ func (w *periodicalWorker) processEntities(
 	defer cursor.Close(ctx)
 
 	eventGenerator := libevent.NewGenerator(w.EntityAdapter)
+
+	ech := make(chan PublishEventMsg, 1)
+	defer close(ech)
+
+	go w.publishToFifoChan("entity", ech)
 
 	for cursor.Next(ctx) {
 		var entity types.Entity
@@ -194,17 +198,34 @@ func (w *periodicalWorker) processEntities(
 		event.Output = output
 		event.Timestamp = types.CpsTime{Time: now}
 		event.PbehaviorInfo = pbehavior.NewPBehaviorInfo(event.Timestamp, resolveResult)
-		err = w.publishToEngineFIFO(event)
-		if err != nil {
-			w.Logger.Err(err).Str("entity", entity.ID).Msgf("failed to send %s event", eventType)
-			return
-		}
 
-		w.Logger.Debug().
-			Str("resolve pbehavior", resolveResult.ResolvedPbhID).
-			Str("resolve type", fmt.Sprintf("%+v", resolveResult.ResolvedType)).
-			Str("entity", entity.ID).
-			Msgf("send %s event", eventType)
+		ech <- PublishEventMsg{
+			event:   event,
+			id:      entity.ID,
+			pbhID:   resolveResult.ResolvedPbhID,
+			pbhType: resolveResult.ResolvedType,
+		}
+	}
+}
+
+type PublishEventMsg struct {
+	event     types.Event
+	pbhType   pbehavior.Type
+	id, pbhID string
+}
+
+func (w *periodicalWorker) publishToFifoChan(idTitle string, msgs <-chan PublishEventMsg) {
+	for ms := range msgs {
+		err := w.publishToEngineFIFO(ms.event)
+		if err != nil {
+			w.Logger.Err(err).Str(idTitle, ms.id).Msgf("failed to send %s event", ms.event.EventType)
+		} else {
+			w.Logger.Debug().
+				Str("resolve pbehavior", ms.pbhID).
+				Str("resolve type", fmt.Sprintf("%+v", ms.pbhType)).
+				Str(idTitle, ms.id).
+				Msgf("send %s event", ms.event.EventType)
+		}
 	}
 }
 
