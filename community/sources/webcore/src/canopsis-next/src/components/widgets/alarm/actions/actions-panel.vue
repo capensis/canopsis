@@ -12,11 +12,11 @@ import {
   EVENT_ENTITY_TYPES,
   EVENT_ENTITY_STYLE,
   ALARM_LIST_ACTIONS_TYPES,
-  META_ALARMS_RULE_TYPES,
-  REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 
-import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule';
+
+import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 
 import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
@@ -55,6 +55,10 @@ export default {
     isResolvedAlarm: {
       type: Boolean,
       default: false,
+    },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
     },
   },
   data() {
@@ -154,7 +158,7 @@ export default {
   },
   computed: {
     isParentAlarmManualMetaAlarm() {
-      return get(this.parentAlarm, 'rule.type') === META_ALARMS_RULE_TYPES.manualgroup;
+      return isManualGroupMetaAlarmRuleType(get(this.parentAlarm, 'rule.type'));
     },
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
@@ -163,7 +167,7 @@ export default {
       return {
         itemsType: ENTITIES_TYPES.alarm,
         itemsIds: [this.item._id],
-        afterSubmit: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
+        afterSubmit: this.refreshAlarmsList,
       };
     },
     resolvedActions() {
@@ -217,6 +221,11 @@ export default {
        * Add actions for available instructions
        */
       if (assignedInstructions.length && filteredActionsMap.executeInstruction) {
+        const pausedInstruction = this.item.assigned_instructions.find(instruction => instruction.execution);
+        const hasRunningInstruction = this.item.is_auto_instruction_running
+          || this.item.is_manual_instruction_running
+          || this.item.is_manual_instruction_waiting_result;
+
         assignedInstructions.forEach((instruction) => {
           const { execution } = instruction;
           const titlePrefix = execution ? 'resume' : 'execute';
@@ -224,7 +233,7 @@ export default {
           const action = {
             ...filteredActionsMap.executeInstruction,
 
-            disabled: get(execution, 'status') === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running,
+            disabled: hasRunningInstruction || (pausedInstruction && pausedInstruction._id !== instruction._id),
             title: this.$t(`alarmList.actions.titles.${titlePrefix}Instruction`, {
               instructionName: instruction.name,
             }),
@@ -261,7 +270,7 @@ export default {
   },
   methods: {
     showExecuteInstructionModal(assignedInstruction) {
-      const refreshAlarm = () => this.refreshAlarmById(this.item._id);
+      const refreshAlarm = () => this.refreshAlarmsList();
 
       this.$modals.show({
         id: `${this.item._id}${assignedInstruction._id}`,

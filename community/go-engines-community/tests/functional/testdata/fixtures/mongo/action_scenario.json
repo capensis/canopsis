@@ -82,7 +82,8 @@
           }
         ],
         "drop_scenario_if_not_matched": false,
-        "emit_trigger": false
+        "emit_trigger": false,
+        "comment": "test-scenario-to-get-1-action-1-comment"
       },
       {
         "type": "pbehavior",
@@ -106,7 +107,8 @@
           }
         ],
         "drop_scenario_if_not_matched": false,
-        "emit_trigger": false
+        "emit_trigger": false,
+        "comment": "test-scenario-to-get-1-action-2-comment"
       }
     ],
     "triggers": ["create"],

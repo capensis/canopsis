@@ -82,7 +82,7 @@ export const PATTERN_FIELD_TYPES = {
 };
 
 export const FILTER_DEFAULT_VALUES = {
-  condition: FILTER_MONGO_OPERATORS.and,
+  condition: FILTER_MONGO_OPERATORS.and, // TODO: remove if we don't need it
   rule: {
     field: '',
     operator: '',
@@ -203,6 +203,7 @@ export const PATTERNS_FIELDS = {
   entity: 'entity_pattern',
   pbehavior: 'pbehavior_pattern',
   event: 'event_pattern',
+  totalEntity: 'total_entity_pattern',
 };
 
 export const OLD_PATTERNS_FIELDS = {

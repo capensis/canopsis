@@ -233,10 +233,10 @@ export const EVENT_ENTITY_STYLE = {
     color: COLORS.entitiesEvents.pbhleave,
     icon: 'play_arrow',
   },
-  groupConsequences: {
+  groupChildren: {
     icon: 'center_focus_strong',
   },
-  groupCauses: {
+  groupParents: {
     icon: 'center_focus_weak',
   },
   [EVENT_ENTITY_TYPES.comment]: {
@@ -444,6 +444,8 @@ export const CONTEXT_COLUMNS_WITH_SORTABLE = [ // TODO: We should receive it fro
   'impact_level',
   'category.name',
   'idle_since',
+  'enabled',
+  'last_event_date',
 ];
 
 export const ENTITY_PATTERN_FIELDS = {
