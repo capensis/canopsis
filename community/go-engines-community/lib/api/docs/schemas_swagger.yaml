@@ -3989,6 +3989,10 @@ definitions:
     type: object
   widget.EditRequest:
     properties:
+      filters:
+        items:
+          $ref: '#/definitions/widget.FilterRequest'
+        type: array
       grid_parameters:
         additionalProperties: true
         type: object
@@ -4005,6 +4009,46 @@ definitions:
     required:
     - tab
     - type
+    type: object
+  widget.FilterRequest:
+    properties:
+      _id:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_pbehavior_pattern:
+        type: string
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      title:
+        maxLength: 255
+        type: string
+      weather_service_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+    required:
+    - title
     type: object
   widget.Response:
     properties:

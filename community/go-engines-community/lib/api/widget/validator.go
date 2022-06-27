@@ -1,19 +1,42 @@
 package widget
 
 import (
+	"context"
 	"regexp"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/filemask"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 )
 
-func ValidateEditRequest(sl validator.StructLevel) {
+type Validator interface {
+	ValidateEditRequest(sl validator.StructLevel)
+	ValidateFilterRequest(ctx context.Context, sl validator.StructLevel)
+}
+
+func NewValidator(dbClient mongo.DbClient) Validator {
+	return &baseValidator{
+		filterValidator: widgetfilter.NewValidator(dbClient),
+	}
+}
+
+type baseValidator struct {
+	filterValidator *widgetfilter.Validator
+}
+
+func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(EditRequest)
 
 	if r.Type == view.WidgetTypeJunit {
 		validateJunitParametersRequest(sl, r.Parameters)
 	}
+}
+
+func (v *baseValidator) ValidateFilterRequest(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(FilterRequest)
+	v.filterValidator.ValidatePatterns(ctx, sl, r.BaseEditRequest, r.ID)
 }
 
 func validateJunitParametersRequest(sl validator.StructLevel, r view.Parameters) {
