@@ -10,12 +10,15 @@ import {
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   ENTITIES_STATUSES,
   ENTITIES_TYPES,
+  ENTITY_PATTERN_FIELDS,
   EVENT_DEFAULT_ORIGIN,
   EVENT_ENTITY_TYPES,
   EVENT_INITIATORS,
   META_ALARMS_RULE_TYPES,
   MODALS,
+  PATTERN_CONDITIONS,
 } from '@/constants';
+
 import MassActionsPanel from '@/components/widgets/alarm/actions/mass-actions-panel.vue';
 
 const localVue = createVueInstance();
@@ -178,9 +181,13 @@ describe('mass-actions-panel', () => {
       {
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: [alarm.entity._id, metaAlarm.entity._id] },
-          },
+          entityPattern: [[{
+            field: ENTITY_PATTERN_FIELDS.id,
+            cond: {
+              type: PATTERN_CONDITIONS.isOneOf,
+              value: [alarm.entity._id, metaAlarm.entity._id],
+            },
+          }]],
           afterSubmit: expect.any(Function),
         },
       },

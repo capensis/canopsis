@@ -1,18 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(#title)
+      template(#title="")
         span {{ title }}
-      template(#text)
-        patterns-form(
-          v-model="form",
-          :name="config.name",
-          :entity="config.entity",
-          :alarm="config.alarm",
-          :event="config.event",
-          :total-entity="config.totalEntity"
-        )
-      template(#actions)
+      template(#text="")
+        pbehavior-patterns-form(v-model="form")
+      template(#actions="")
         v-btn(
           :disabled="submitting",
           depressed,
@@ -28,25 +21,24 @@
 
 <script>
 import { cloneDeep } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import PatternsForm from '@/components/forms/patterns-form.vue';
+import PbehaviorPatternsForm from '@/components/other/pbehavior/calendar/partials/pbehavior-patterns-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.patterns,
+  name: MODALS.pbehaviorPatterns,
   $_veeValidate: {
     validator: 'new',
   },
   components: {
-    PatternsForm,
     ModalWrapper,
+    PbehaviorPatternsForm,
   },
   mixins: [
     modalInnerMixin,
@@ -54,13 +46,15 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
+    const { patterns } = this.modal.config;
+
     return {
-      form: this.modal.config.patterns ? cloneDeep(this.modal.config.patterns) : {},
+      form: cloneDeep(patterns),
     };
   },
   computed: {
     title() {
-      return this.config.title || this.$tc('common.pattern', 2);
+      return this.config.title ?? this.$t('modals.patterns.title');
     },
   },
   methods: {
@@ -69,7 +63,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          await this.config.action(this.form.patterns);
         }
 
         this.$modals.hide();

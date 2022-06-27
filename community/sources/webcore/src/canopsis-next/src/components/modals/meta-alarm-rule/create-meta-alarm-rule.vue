@@ -1,14 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
-        meta-alarm-rule-form(
-          v-model="form",
-          :is-disabled-id-field="isDisabledIdField"
-        )
-      template(slot="actions")
+      template(#text="")
+        meta-alarm-rule-form(v-model="form", :is-disabled-id-field="config.isDisabledIdField")
+      template(#actions="")
         v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
@@ -51,11 +48,7 @@ export default {
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.metaAlarmRule.create.title');
-    },
-
-    isDisabledIdField() {
-      return this.config.isDisabledIdField;
+      return this.config.title ?? this.$t('modals.metaAlarmRule.create.title');
     },
   },
   methods: {

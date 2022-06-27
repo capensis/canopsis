@@ -39,7 +39,6 @@ export default {
   methods: {
     fetchList() {
       const params = this.getQuery();
-      params.with_flags = true;
 
       this.fetchPbehaviorTypesList({ params });
     },

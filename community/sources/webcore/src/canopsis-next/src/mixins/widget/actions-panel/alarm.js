@@ -11,15 +11,13 @@ import {
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 
-/**
- * @mixin Mixin for the alarms list actions panel, show modal of the action
- */
 export const widgetActionsPanelAlarmMixin = {
   mixins: [
     authMixin,
@@ -150,9 +148,7 @@ export const widgetActionsPanelAlarmMixin = {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: [this.item.entity._id] },
-          },
+          entityPattern: createEntityIdPatternByValue(this.item.entity._id),
         },
       });
     },

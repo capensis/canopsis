@@ -7,6 +7,13 @@
     :disabled="disabled",
     :name="name"
   )
+    template(v-if="helpText", #append="")
+      c-help-icon(
+        :text="helpText",
+        icon="help",
+        color="grey darken-1",
+        left
+      )
 </template>
 
 <script>
@@ -36,6 +43,10 @@ export default {
     required: {
       type: Boolean,
       default: false,
+    },
+    helpText: {
+      type: String,
+      default: '',
     },
   },
   computed: {

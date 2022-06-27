@@ -616,8 +616,6 @@ export default {
       + '  <dd>Pbehavior reason name are "reason_name_1"</dd>'
       + '</dl>',
     tabs: {
-      filter: 'Filter',
-      comments: 'Comments',
       entities: 'Entities',
     },
   },
@@ -1222,11 +1220,11 @@ export default {
       },
       errors: {
         invalid: 'Invalid',
+        emptyInfos: 'At least one info must be added.',
       },
       steps: {
         infos: {
           title: 'Informations',
-          validationError: 'Every value must be filled',
         },
         patterns: {
           title: 'Patterns',
@@ -1239,10 +1237,6 @@ export default {
     createDynamicInfoInformation: {
       create: {
         title: 'Add an information to the dynamic information rule',
-      },
-      fields: {
-        name: 'Name',
-        value: 'Value',
       },
     },
     dynamicInfoTemplatesList: {

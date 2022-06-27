@@ -49,6 +49,16 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       required="true"
     />
   </c-pattern-panel-stub>
+  <c-pattern-panel-stub
+    title="Total entity patterns"
+  >
+    <c-entity-patterns-field-stub
+      disabled="true"
+      name="name.total_entity_pattern"
+      required="true"
+      with-type="with-type"
+    />
+  </c-pattern-panel-stub>
 </div>
 `;
 
@@ -56,6 +66,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = 
 <div
   class="layout column"
 >
+  <!---->
   <!---->
   <!---->
   <!---->
