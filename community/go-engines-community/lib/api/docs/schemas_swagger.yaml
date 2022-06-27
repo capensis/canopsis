@@ -1824,7 +1824,6 @@ definitions:
         - enable
         - disable
         type: string
-      action_properties: {}
       category:
         type: string
       enabled:

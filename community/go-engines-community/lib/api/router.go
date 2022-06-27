@@ -1026,7 +1026,12 @@ func RegisterRoutes(
 			contextGraphRouter.PUT(
 				"import",
 				middleware.Authorize(authObjContextGraph, permCreate, enforcer),
-				contextGraphAPI.Import,
+				contextGraphAPI.ImportAll,
+			)
+			contextGraphRouter.PUT(
+				"import-partial",
+				middleware.Authorize(authObjContextGraph, permCreate, enforcer),
+				contextGraphAPI.ImportPartial,
 			)
 			contextGraphRouter.GET(
 				"import/status/:id",
