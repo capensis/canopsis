@@ -98,6 +98,12 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
             <hr
               class="v-divider theme--light"
             />
+            <field-density-stub
+              name="dense"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
             <field-opened-resolved-filter-stub
               value="true"
             />
@@ -106,10 +112,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
             />
             <field-filters-stub
               addable="true"
-              condition="$and"
               editable="true"
-              entitiestype="alarm"
               filters=""
+              widgetid="3f8dba7c-f39e-42ae-912c-e78cb39669c5"
             />
             <hr
               class="v-divider theme--light"
@@ -195,22 +200,23 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
                   <div
                     class="v-list grey lighten-4 px-2 py-0 theme--light"
                     role="list"
-                  />
-                  <field-switcher-stub
-                    title="Note field required when ack?"
-                  />
-                  <hr
-                    class="v-divider theme--light"
-                  />
-                  <field-switcher-stub
-                    title="Multiple ack"
-                  />
-                  <hr
-                    class="v-divider theme--light"
-                  />
-                  <field-fast-ack-output-stub
-                    value="[object Object]"
-                  />
+                  >
+                    <field-switcher-stub
+                      title="Note field required when ack?"
+                    />
+                    <hr
+                      class="v-divider theme--light"
+                    />
+                    <field-switcher-stub
+                      title="Multiple ack"
+                    />
+                    <hr
+                      class="v-divider theme--light"
+                    />
+                    <field-fast-ack-output-stub
+                      value="[object Object]"
+                    />
+                  </div>
                 </div>
               </transition-stub>
             </div>
@@ -360,6 +366,12 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
             <hr
               class="v-divider theme--light"
             />
+            <field-density-stub
+              name="dense"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
             <field-opened-resolved-filter-stub
               value="true"
             />
@@ -442,24 +454,25 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
                   <div
                     class="v-list grey lighten-4 px-2 py-0 theme--light"
                     role="list"
-                  />
-                  <field-switcher-stub
-                    title="Note field required when ack?"
-                    value="true"
-                  />
-                  <hr
-                    class="v-divider theme--light"
-                  />
-                  <field-switcher-stub
-                    title="Multiple ack"
-                    value="true"
-                  />
-                  <hr
-                    class="v-divider theme--light"
-                  />
-                  <field-fast-ack-output-stub
-                    value="[object Object]"
-                  />
+                  >
+                    <field-switcher-stub
+                      title="Note field required when ack?"
+                      value="true"
+                    />
+                    <hr
+                      class="v-divider theme--light"
+                    />
+                    <field-switcher-stub
+                      title="Multiple ack"
+                      value="true"
+                    />
+                    <hr
+                      class="v-divider theme--light"
+                    />
+                    <field-fast-ack-output-stub
+                      value="[object Object]"
+                    />
+                  </div>
                 </div>
               </transition-stub>
             </div>
@@ -611,6 +624,12 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
             <hr
               class="v-divider theme--light"
             />
+            <field-density-stub
+              name="dense"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
             <field-opened-resolved-filter-stub
               value="true"
             />
@@ -692,22 +711,23 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
                   <div
                     class="v-list grey lighten-4 px-2 py-0 theme--light"
                     role="list"
-                  />
-                  <field-switcher-stub
-                    title="Note field required when ack?"
-                  />
-                  <hr
-                    class="v-divider theme--light"
-                  />
-                  <field-switcher-stub
-                    title="Multiple ack"
-                  />
-                  <hr
-                    class="v-divider theme--light"
-                  />
-                  <field-fast-ack-output-stub
-                    value="[object Object]"
-                  />
+                  >
+                    <field-switcher-stub
+                      title="Note field required when ack?"
+                    />
+                    <hr
+                      class="v-divider theme--light"
+                    />
+                    <field-switcher-stub
+                      title="Multiple ack"
+                    />
+                    <hr
+                      class="v-divider theme--light"
+                    />
+                    <field-fast-ack-output-stub
+                      value="[object Object]"
+                    />
+                  </div>
                 </div>
               </transition-stub>
             </div>

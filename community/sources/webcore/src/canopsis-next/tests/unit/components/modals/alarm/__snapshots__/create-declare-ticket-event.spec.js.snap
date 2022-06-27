@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`create-declare-ticket-event Renders \`create-declare-ticket-event\` 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Declare ticket
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <div
+        class="container"
+      >
+        <div
+          class="layout row"
+        >
+          <div
+            class="flex text-xs-center"
+          >
+            <alarm-general-table-stub
+              items="[object Object]"
+            />
+          </div>
+        </div>
+        <div
+          class="layout row"
+        >
+          <hr
+            class="my-3 v-divider theme--light"
+          />
+        </div>
+      </div>
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Report an incident
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;

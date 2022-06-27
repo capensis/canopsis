@@ -1,16 +1,17 @@
 <template lang="pug">
-  c-patterns-editor-field(
+  c-pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
     :name="name",
     :type="$constants.PATTERN_TYPES.entity",
     :required="required",
-    :attributes="entityAttributes",
+    :attributes="availableEntityAttributes",
     :with-type="withType"
   )
 </template>
 
 <script>
+import { keyBy, merge } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -33,6 +34,10 @@ export default {
     patterns: {
       type: Object,
       required: true,
+    },
+    attributes: {
+      type: Array,
+      default: () => [],
     },
     disabled: {
       type: Boolean,
@@ -186,6 +191,24 @@ export default {
           options: this.dateOptions,
         },
       ];
+    },
+
+    availableAttributesByValue() {
+      return keyBy(this.entityAttributes, 'value');
+    },
+
+    externalAttributesByValue() {
+      return keyBy(this.attributes, 'value');
+    },
+
+    availableEntityAttributes() {
+      const mergedAttributes = merge(
+        {},
+        this.availableAttributesByValue,
+        this.externalAttributesByValue,
+      );
+
+      return Object.values(mergedAttributes);
     },
   },
   mounted() {

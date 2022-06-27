@@ -1,30 +1,29 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createDynamicInfoInformation.create.title') }}
-      template(slot="text")
+      template(#text="")
         div
           v-text-field(
             v-model="form.name",
             v-validate="nameRules",
-            :label="$t('modals.createDynamicInfoInformation.fields.name')",
+            :label="$t('common.name')",
             :error-messages="errors.collect('name')",
             name="name"
           )
           c-mixed-field(
             v-model="form.value",
-            :label="$t('modals.createDynamicInfoInformation.fields.value')",
-            name="value"
+            :label="$t('common.value')",
+            name="value",
+            required
           )
-      template(slot="actions")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
-import { get } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -48,12 +47,12 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
-    const { info } = this.modal.config;
+    const { info = {} } = this.modal.config;
 
     return {
       form: {
-        name: get(info, 'name', ''),
-        value: get(info, 'value', ''),
+        name: info.name ?? '',
+        value: info.value ?? '',
       },
     };
   },
