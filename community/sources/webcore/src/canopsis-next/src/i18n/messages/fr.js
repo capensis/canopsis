@@ -2779,6 +2779,7 @@ export default {
     simpleEditor: 'Éditeur simple',
     noData: 'Aucun modèle. Cliquez sur \'@:pattern.addGroup\' pour ajouter des champs au modèle',
     noDataDisabled: 'Aucun modèle.',
+    discard: 'Jeter le motif',
     types: {
       [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
       [PATTERN_TYPES.entity]: 'Modèle d\'entité',
@@ -2789,6 +2790,7 @@ export default {
       groupRequired: 'Veuillez ajouter au moins un groupe',
       invalidPatterns: 'Les modèles ne sont pas valides ou il y a un champ de modèle désactivé',
       countOverLimit: 'Le modèle que vous avez défini cible {count} éléments. Cela peut affecter les performances, en êtes-vous sûr ?',
+      oldPattern: 'Le modèle de filtre actuel est défini dans l\'ancien format. Veuillez utiliser l\'éditeur avancé pour l\'afficher. Les filtres dans l\'ancien format seront bientôt obsolètes. Veuillez créer de nouveaux modèles dans notre interface mise à jour.',
     },
   },
 

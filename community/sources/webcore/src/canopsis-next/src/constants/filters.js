@@ -204,3 +204,10 @@ export const PATTERNS_FIELDS = {
   pbehavior: 'pbehavior_pattern',
   event: 'event_pattern',
 };
+
+export const OLD_PATTERNS_FIELDS = {
+  oldAlarmPatterns: 'old_alarm_patterns',
+  oldEntityPatterns: 'old_entity_patterns',
+  oldPatterns: 'old_patterns',
+  oldMongoQuery: 'old_mongo_query',
+};

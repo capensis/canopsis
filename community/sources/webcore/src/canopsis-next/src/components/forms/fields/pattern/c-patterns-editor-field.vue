@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     c-pattern-field.mb-2(
-      v-if="withType",
+      v-if="!patterns.old_patterns && withType",
       :value="patterns.id",
       :type="type",
       :disabled="disabled",
@@ -21,7 +21,14 @@
         :href="`#${$constants.PATTERN_EDITOR_TABS.simple}`"
       ) {{ $t('pattern.simpleEditor') }}
       v-tab-item(:value="$constants.PATTERN_EDITOR_TABS.simple")
+        v-layout(v-if="patterns.old_patterns", justify-center, wrap)
+          v-flex.pt-2(xs8)
+            div.error--text.text-xs-center {{ $t('pattern.errors.oldPattern') }}
+          v-flex.pt-2(v-if="!disabled", xs12)
+            v-layout(justify-center)
+              v-btn(color="primary", @click="discardPattern") {{ $t('pattern.discard') }}
         c-pattern-groups-field.mt-2(
+          v-else,
           v-field="patterns.groups",
           :disabled="formDisabled",
           :name="patternGroupsFieldName",
@@ -32,7 +39,15 @@
 
       v-tab(:href="`#${$constants.PATTERN_EDITOR_TABS.advanced}`") {{ $t('pattern.advancedEditor') }}
       v-tab-item(:value="$constants.PATTERN_EDITOR_TABS.advanced", lazy)
+        c-json-field(
+          v-if="patterns.old_patterns",
+          :value="patterns.old_patterns",
+          :label="$t('pattern.advancedEditor')",
+          readonly,
+          rows="10"
+        )
         c-patterns-advanced-editor-field(
+          v-else,
           :value="patternsJson",
           :disabled="disabled || !isCustomPattern",
           :attributes="attributes",
@@ -40,32 +55,33 @@
           @input="updateGroupsFromPatterns"
         )
 
-    v-layout(align-center, justify-end)
-      div(v-if="checkCountName")
-        span.mr-2(
-          v-show="patternsChecked",
-          :class="{ 'error--text': itemsCount === 0 }"
-        ) {{ $tc('common.itemFound', itemsCount, { count: itemsCount }) }}
-        v-btn.primary.mx-0(
-          :disabled="patternsChecked || hasChildrenError || !patterns.groups.length",
-          :loading="checkPatternsPending",
-          @click="checkPatterns"
-        ) {{ $t('common.checkPattern') }}
-      v-btn.mr-0(
-        v-if="withType && !isCustomPattern",
-        color="primary",
-        @click="updatePatternToCustom"
-      ) {{ $t('common.edit') }}
+    template(v-if="!patterns.old_patterns")
+      v-layout(align-center, justify-end)
+        div(v-if="checkCountName")
+          span.mr-2(
+            v-show="patternsChecked",
+            :class="{ 'error--text': itemsCount === 0 }"
+          ) {{ $tc('common.itemFound', itemsCount, { count: itemsCount }) }}
+          v-btn.primary.mx-0(
+            :disabled="patternsChecked || hasChildrenError || !patterns.groups.length",
+            :loading="checkPatternsPending",
+            @click="checkPatterns"
+          ) {{ $t('common.checkPattern') }}
+        v-btn.mr-0(
+          v-if="withType && !isCustomPattern",
+          color="primary",
+          @click="updatePatternToCustom"
+        ) {{ $t('common.edit') }}
 
-    v-flex
-      v-alert.pre-wrap(v-if="errorMessage", value="true") {{ errorMessage }}
-      v-alert(
-        v-if="patternsChecked && itemsOverLimit",
-        value="true",
-        type="warning",
-        transition="fade-transition"
-      )
-        span {{ $t('pattern.errors.countOverLimit', { count: itemsCount }) }}
+      v-flex
+        v-alert.pre-wrap(v-if="errorMessage", value="true") {{ errorMessage }}
+        v-alert(
+          v-if="patternsChecked && itemsOverLimit",
+          value="true",
+          type="warning",
+          transition="fade-transition"
+        )
+          span {{ $t('pattern.errors.countOverLimit', { count: itemsCount }) }}
 </template>
 
 <script>
@@ -190,6 +206,10 @@ export default {
     ...mapActions({
       checkPatternsCount: 'checkPatternsCount',
     }),
+
+    discardPattern() {
+      this.updateModel(patternToForm({ id: PATTERN_CUSTOM_ITEM_VALUE }));
+    },
 
     updatePattern(pattern) {
       const { groups } = patternToForm(pattern);
