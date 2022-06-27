@@ -87,7 +87,7 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 4 events processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-metrics-axe-2-1"}]}&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
     """json
     [
@@ -101,6 +101,7 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
+    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-metrics-axe-2-2"}]}&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
     """json
     [
