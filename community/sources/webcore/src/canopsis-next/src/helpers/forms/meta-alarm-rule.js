@@ -3,7 +3,7 @@ import { omit, pick, isNumber } from 'lodash';
 import {
   DEFAULT_TIME_INTERVAL,
   META_ALARMS_RULE_TYPES,
-  META_ALARMS_THRESHOLD_TYPES,
+  META_ALARMS_THRESHOLD_TYPES, OLD_PATTERNS_FIELDS,
   PATTERNS_FIELDS,
 } from '@/constants';
 
@@ -191,6 +191,7 @@ export const isMetaAlarmRuleTypeHasTotalEntityPatterns = type => isComplexMetaAl
 export const metaAlarmFilterPatternsToForm = rule => filterPatternsToForm(
   rule,
   [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.event, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.totalEntity],
+  [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.event, OLD_PATTERNS_FIELDS.entity, OLD_PATTERNS_FIELDS.totalEntity],
 );
 
 /**

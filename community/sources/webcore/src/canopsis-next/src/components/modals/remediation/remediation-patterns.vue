@@ -61,7 +61,7 @@ export default {
         ...filterPatternsToForm(
           instruction,
           [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-          [OLD_PATTERNS_FIELDS.oldAlarmPatterns, OLD_PATTERNS_FIELDS.oldEntityPatterns],
+          [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
         ),
         active_on_pbh: instruction?.active_on_pbh ?? [],
         disabled_on_pbh: instruction?.disabled_on_pbh ?? [],

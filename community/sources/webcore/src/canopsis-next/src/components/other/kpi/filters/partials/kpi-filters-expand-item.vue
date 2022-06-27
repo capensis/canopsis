@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { PATTERNS_FIELDS } from '@/constants';
+import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/forms/filter';
 
@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     patterns() {
-      return filterPatternsToForm(this.filter, [PATTERNS_FIELDS.entity]);
+      return filterPatternsToForm(this.filter, [PATTERNS_FIELDS.entity], [OLD_PATTERNS_FIELDS.entity]);
     },
   },
 };
