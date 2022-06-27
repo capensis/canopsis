@@ -8,7 +8,7 @@
           v-tabs-items.pt-2(v-model="activeTab")
             v-tab-item(lazy)
               v-flex(xs12, lg10, offset-lg1)
-                kpi-filter-patterns-form(:form="patterns", disabled)
+                kpi-filter-patterns-form(:form="patterns", readonly)
 </template>
 
 <script>

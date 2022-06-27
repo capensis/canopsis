@@ -186,6 +186,7 @@ exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with custom p
               class="mt-2"
               disabled="true"
               name="name.groups"
+              readonly="true"
               required="true"
               type="alarm"
               value="[object Object]"
@@ -203,27 +204,7 @@ exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with custom p
       </div>
     </div>
   </div>
-  <div
-    class="layout align-center justify-end"
-  >
-    <!---->
-    <button
-      class="mr-0 v-btn theme--light primary"
-      type="button"
-    >
-      <div
-        class="v-btn__content"
-      >
-        Edit
-      </div>
-    </button>
-  </div>
-  <div
-    class="flex"
-  >
-    <!---->
-    <!---->
-  </div>
+  <!---->
 </div>
 `;
 
