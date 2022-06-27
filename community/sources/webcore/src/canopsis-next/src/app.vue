@@ -118,7 +118,7 @@ export default {
       const id = Date.now();
 
       this.$set(this.shapes, id, {
-        id,
+        _id: id,
         type: SHAPES.rect,
         width: 100,
         height: 100,
@@ -140,7 +140,7 @@ export default {
       const id = Date.now();
 
       this.$set(this.shapes, id, {
-        id,
+        _id: id,
         type: SHAPES.rect,
         width: 100,
         height: 100,
@@ -164,7 +164,7 @@ export default {
       const id = Date.now();
 
       this.$set(this.shapes, id, {
-        id,
+        _id: id,
         type: SHAPES.line,
         points: [
           generatePoint({
@@ -188,7 +188,7 @@ export default {
       const id = Date.now();
 
       this.$set(this.shapes, id, {
-        id,
+        _id: id,
         type: SHAPES.arrowLine,
         points: [
           generatePoint({
@@ -212,7 +212,7 @@ export default {
       const id = Date.now();
 
       this.$set(this.shapes, id, {
-        id,
+        _id: id,
         type: SHAPES.bidirectionalArrowLine,
         points: [
           generatePoint({
@@ -236,7 +236,7 @@ export default {
       const id = Date.now();
 
       this.$set(this.shapes, id, {
-        id,
+        _id: id,
         type: SHAPES.circle,
         x: 50,
         y: 50,
@@ -257,7 +257,7 @@ export default {
       const id = Date.now();
 
       this.$set(this.shapes, id, {
-        id,
+        _id: id,
         type: SHAPES.ellipse,
         x: 50,
         y: 50,
@@ -279,7 +279,7 @@ export default {
       const id = Date.now();
 
       this.$set(this.shapes, id, {
-        id,
+        _id: id,
         type: SHAPES.rhombus,
         x: 50,
         y: 50,
@@ -301,7 +301,7 @@ export default {
       const id = Date.now();
 
       this.$set(this.shapes, id, {
-        id,
+        _id: id,
         type: SHAPES.parallelogram,
         x: 50,
         y: 50,
@@ -324,13 +324,15 @@ export default {
       const id = Date.now();
 
       this.$set(this.shapes, id, {
-        id,
-        type: SHAPES.square,
+        _id: id,
+        type: SHAPES.rect,
         x: 50,
         y: 50,
-        size: 100,
+        width: 100,
+        height: 100,
         text: '',
         connections: [],
+        aspectRatio: true,
         style: {
           stroke: 'black',
           'stroke-width': 1,
@@ -343,7 +345,7 @@ export default {
       const id = Date.now();
 
       this.$set(this.shapes, id, {
-        id,
+        _id: id,
         type: SHAPES.rect,
         x: 50,
         y: 50,
@@ -363,7 +365,7 @@ export default {
       const id = Date.now();
 
       this.$set(this.shapes, id, {
-        id,
+        _id: id,
         type: SHAPES.rect,
         x: 50,
         y: 50,
@@ -381,7 +383,7 @@ export default {
       const id = Date.now();
 
       this.$set(this.shapes, id, {
-        id,
+        _id: id,
         type: SHAPES.storage,
         x: 50,
         y: 50,
@@ -405,7 +407,7 @@ export default {
       const id = Date.now();
 
       this.$set(this.shapes, id, {
-        id,
+        _id: id,
         type: SHAPES.image,
         x: 50,
         y: 50,

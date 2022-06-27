@@ -1,5 +1,5 @@
 <template lang="pug">
-  g(@dblclick="enableEditingMode")
+  g
     rect(
       v-bind="shape.style",
       :x="shape.x",
