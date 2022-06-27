@@ -71,7 +71,7 @@ export const idleRuleToForm = (idleRule = {}) => ({
   patterns: filterPatternsToForm(
     idleRule,
     [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm],
-    [OLD_PATTERNS_FIELDS.oldEntityPatterns, OLD_PATTERNS_FIELDS.oldAlarmPatterns],
+    [OLD_PATTERNS_FIELDS.entity, OLD_PATTERNS_FIELDS.alarm],
   ),
 });
 
