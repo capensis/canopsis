@@ -5,6 +5,7 @@ exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with cu
   disabled="true"
   ellipsis="ellipsis"
   error-messages=""
+  item-disabled="options.disabled"
   items="[object Object]"
   label="Custom label"
   name="custom_filter_attribute_name"
@@ -18,6 +19,7 @@ exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with de
 <c-select-field-stub
   ellipsis="ellipsis"
   error-messages=""
+  item-disabled="options.disabled"
   items=""
   label="Search by"
   name="attribute"

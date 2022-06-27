@@ -253,7 +253,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with extra infos 
           items=""
           name="rule"
           required="required"
-          value="extra_infos"
+          value="extra"
         />
       </div>
       <div

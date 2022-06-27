@@ -5,6 +5,11 @@ exports[`c-pattern-groups-field Renders \`c-pattern-groups-field\` with custom p
   class="layout column"
 >
   <div
+    class="flex xs12"
+  >
+    <!---->
+  </div>
+  <div
     class="layout wrap row"
   >
     <div
@@ -94,6 +99,23 @@ exports[`c-pattern-groups-field Renders \`c-pattern-groups-field\` with default 
   class="layout column"
 >
   <div
+    class="flex xs12"
+  >
+    <div
+      class="v-alert info"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light v-alert__icon"
+      >
+        info
+      </i>
+      <div>
+        No pattern set. Click 'Add group' button to start adding fields to the pattern
+      </div>
+    </div>
+  </div>
+  <div
     class="layout row align-center"
   >
     <button
@@ -120,6 +142,23 @@ exports[`c-pattern-groups-field Renders \`c-pattern-groups-field\` with errors 1
 <div
   class="layout column"
 >
+  <div
+    class="flex xs12"
+  >
+    <div
+      class="v-alert info"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light v-alert__icon"
+      >
+        info
+      </i>
+      <div>
+        No pattern set. Click 'Add group' button to start adding fields to the pattern
+      </div>
+    </div>
+  </div>
   <div
     class="layout row align-center"
   >

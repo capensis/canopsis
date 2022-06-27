@@ -23,7 +23,7 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-1",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -82,6 +82,8 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-1. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
@@ -153,7 +155,7 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-2",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -198,6 +200,8 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-2. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
@@ -235,7 +239,7 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-3",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -322,7 +326,7 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-5",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -369,7 +373,7 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-6",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -407,10 +411,14 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-6. Type: Engine maintenance. Reason: Test Engine."
               },
               {
                 "_t": "pbhleave",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-6. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
@@ -448,7 +456,7 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-7",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -503,10 +511,14 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-7. Type: Engine maintenance. Reason: Test Engine."
               },
               {
                 "_t": "pbhleave",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-7. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
@@ -544,7 +556,7 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-8",
       "tstart": {{ nowAdd "2s" }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -671,6 +683,8 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-9. Type: Engine maintenance. Reason: Test Engine."
               }
             ]

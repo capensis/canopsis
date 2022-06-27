@@ -1,0 +1,269 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`idle-rule-form Renders \`idle-rule-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <c-enabled-field-stub
+    value="true"
+  />
+  <div
+    class="v-tabs"
+  >
+    <div
+      class="v-tabs__bar theme--light transparent"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+      <div
+        class="v-tabs__wrapper"
+      >
+        <div
+          class="v-tabs__container v-tabs__container--centered v-tabs__container--fixed-tabs"
+        >
+          <div
+            class="v-tabs__slider-wrapper"
+            style="transition: none;"
+          >
+            <div
+              class="v-tabs__slider primary"
+            />
+          </div>
+          <div
+            class="v-tabs__div"
+          >
+            <a
+              class="v-tabs__item v-tabs__item--active"
+            >
+              General
+            </a>
+          </div>
+          <div
+            class="v-tabs__div"
+          >
+            <a
+              class="v-tabs__item"
+            >
+              Pattern
+            </a>
+          </div>
+        </div>
+      </div>
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-window"
+    >
+      <div
+        class="v-window__container"
+      >
+        <transition-stub
+          name=""
+        >
+          <div
+            class="v-window-item"
+          >
+            <idle-rule-general-form-stub
+              form="[object Object]"
+              isentitytype="true"
+            />
+          </div>
+        </transition-stub>
+        <transition-stub
+          name=""
+        >
+          <div
+            class="v-window-item"
+            style="display: none;"
+          >
+            <idle-rule-patterns-form-stub
+              class="mt-2"
+              form="[object Object]"
+              isentitytype="true"
+            />
+          </div>
+        </transition-stub>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`idle-rule-form Renders \`idle-rule-form\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <c-enabled-field-stub />
+  <div
+    class="v-tabs"
+  >
+    <div
+      class="v-tabs__bar theme--light transparent"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+      <div
+        class="v-tabs__wrapper"
+      >
+        <div
+          class="v-tabs__container v-tabs__container--centered v-tabs__container--fixed-tabs"
+        >
+          <div
+            class="v-tabs__slider-wrapper"
+            style="transition: none;"
+          >
+            <div
+              class="v-tabs__slider primary"
+            />
+          </div>
+          <div
+            class="v-tabs__div"
+          >
+            <a
+              class="v-tabs__item v-tabs__item--active"
+            >
+              General
+            </a>
+          </div>
+          <div
+            class="v-tabs__div"
+          >
+            <a
+              class="v-tabs__item"
+            >
+              Pattern
+            </a>
+          </div>
+        </div>
+      </div>
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-window"
+    >
+      <div
+        class="v-window__container"
+      >
+        <transition-stub
+          name=""
+        >
+          <div
+            class="v-window-item"
+          >
+            <idle-rule-general-form-stub
+              form="[object Object]"
+            />
+          </div>
+        </transition-stub>
+        <transition-stub
+          name=""
+        >
+          <div
+            class="v-window-item"
+            style="display: none;"
+          >
+            <idle-rule-patterns-form-stub
+              class="mt-2"
+              form="[object Object]"
+            />
+          </div>
+        </transition-stub>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`idle-rule-form Renders \`idle-rule-form\` with errors 1`] = `
+<div
+  class="layout column"
+>
+  <c-enabled-field-stub />
+  <div
+    class="v-tabs"
+  >
+    <div
+      class="v-tabs__bar theme--light transparent"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+      <div
+        class="v-tabs__wrapper"
+      >
+        <div
+          class="v-tabs__container v-tabs__container--centered v-tabs__container--fixed-tabs"
+        >
+          <div
+            class="v-tabs__slider-wrapper"
+            style="transition: none;"
+          >
+            <div
+              class="v-tabs__slider primary"
+            />
+          </div>
+          <div
+            class="v-tabs__div error--text"
+          >
+            <a
+              class="v-tabs__item v-tabs__item--active"
+            >
+              General
+            </a>
+          </div>
+          <div
+            class="v-tabs__div error--text"
+          >
+            <a
+              class="v-tabs__item"
+            >
+              Pattern
+            </a>
+          </div>
+        </div>
+      </div>
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-window"
+    >
+      <div
+        class="v-window__container"
+      >
+        <transition-stub
+          name="v-window-x-transition"
+        >
+          <div
+            class="v-window-item"
+          >
+            <idle-rule-general-form-stub
+              form="[object Object]"
+            />
+          </div>
+        </transition-stub>
+        <transition-stub
+          name="v-window-x-transition"
+        >
+          <div
+            class="v-window-item"
+            style="display: none;"
+          >
+            <idle-rule-patterns-form-stub
+              class="mt-2"
+              form="[object Object]"
+            />
+          </div>
+        </transition-stub>
+      </div>
+    </div>
+  </div>
+</div>
+`;

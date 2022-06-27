@@ -5,7 +5,7 @@ Feature: Update a scenario
   Scenario: given update request should update exception
     When I am admin
     When I do PUT /api/v4/scenarios/test-scenario-to-update-1:
-    """
+    """json
     {
       "name": "test-scenario-to-update-1-name",
       "enabled": true,
@@ -35,7 +35,7 @@ Feature: Update a scenario
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-scenario-to-update-1",
       "name": "test-scenario-to-update-1-name",
@@ -55,8 +55,6 @@ Feature: Update a scenario
           "entity_patterns": null,
           "type": "snooze",
           "parameters": {
-            "author": "root",
-            "user": "root",
             "output": "test snooze updated",
             "duration": {
               "value": 3,
@@ -75,7 +73,7 @@ Feature: Update a scenario
   Scenario: given update request with already exists name should return error
     When I am admin
     When I do PUT /api/v4/scenarios/test-scenario-to-update-1:
-    """
+    """json
     {
       "name": "test-scenario-to-check-unique-name-name",
       "enabled": true,
@@ -104,7 +102,7 @@ Feature: Update a scenario
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "name": "Name already exists."
@@ -115,7 +113,7 @@ Feature: Update a scenario
   Scenario: given update request with already exists priority should return error
     When I am admin
     When I do PUT /api/v4/scenarios/test-scenario-to-update-1:
-    """
+    """json
     {
       "name": "test-scenario-to-update-1-name",
       "enabled": true,
@@ -144,7 +142,7 @@ Feature: Update a scenario
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "priority": "Priority already exists."
@@ -164,7 +162,7 @@ Feature: Update a scenario
   Scenario: given no exist scenario id should return error
     When I am admin
     When I do PUT /api/v4/scenarios/notexist:
-    """
+    """json
     {
       "name": "test-scenario-to-update-notexist-name",
       "enabled": true,
@@ -196,7 +194,7 @@ Feature: Update a scenario
   Scenario: given create request with custom_id shouldn't update id
     When I am admin
     When I do PUT /api/v4/scenarios/test-scenario-to-check-id:
-    """
+    """json
     {
       "_id": "change-id",
       "name": "my_scenario-name-new",
@@ -231,7 +229,7 @@ Feature: Update a scenario
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-scenario-to-check-id",
       "name": "my_scenario-name-new"

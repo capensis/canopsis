@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-patterns-editor-field(
+  c-pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
     :name="name",

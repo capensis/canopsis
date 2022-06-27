@@ -3,7 +3,7 @@
 exports[`patterns Renders \`patterns\` corporate tab with permissions 1`] = `
 <div>
   <c-page-header-stub>
-    Filters
+    Patterns
   </c-page-header-stub>
   <div
     class="layout row wrap"
@@ -44,7 +44,7 @@ exports[`patterns Renders \`patterns\` corporate tab with permissions 1`] = `
                     class="v-tabs__item"
                     href="#patterns"
                   >
-                    My filters
+                    My patterns
                   </a>
                 </div>
                 <div
@@ -54,7 +54,7 @@ exports[`patterns Renders \`patterns\` corporate tab with permissions 1`] = `
                     class="v-tabs__item v-tabs__item--active"
                     href="#corporatePatterns"
                   >
-                    Shared filters
+                    Shared patterns
                   </a>
                 </div>
               </div>
@@ -177,7 +177,7 @@ exports[`patterns Renders \`patterns\` corporate tab with permissions 1`] = `
 exports[`patterns Renders \`patterns\` with permissions 1`] = `
 <div>
   <c-page-header-stub>
-    Filters
+    Patterns
   </c-page-header-stub>
   <div
     class="layout row wrap"
@@ -218,7 +218,7 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
                     class="v-tabs__item v-tabs__item--active"
                     href="#patterns"
                   >
-                    My filters
+                    My patterns
                   </a>
                 </div>
                 <div
@@ -228,7 +228,7 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
                     class="v-tabs__item"
                     href="#corporatePatterns"
                   >
-                    Shared filters
+                    Shared patterns
                   </a>
                 </div>
               </div>
@@ -348,7 +348,7 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
 exports[`patterns Renders \`patterns\` without permissions 1`] = `
 <div>
   <c-page-header-stub>
-    Filters
+    Patterns
   </c-page-header-stub>
   <div
     class="layout row wrap"

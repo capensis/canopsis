@@ -1,6 +1,6 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
-import { PATTERN_INPUT_TYPES } from '@/constants';
+import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import CInputTypeField from '@/components/forms/fields/c-input-type-field.vue';
 
@@ -29,20 +29,20 @@ describe('c-input-type-field', () => {
   it('Input type changed after trigger select field', () => {
     const wrapper = factory({
       propsData: {
-        value: PATTERN_INPUT_TYPES.string,
+        value: PATTERN_FIELD_TYPES.string,
       },
     });
 
     const textField = selectTextField(wrapper);
 
-    textField.vm.$emit('input', PATTERN_INPUT_TYPES.number);
+    textField.vm.$emit('input', PATTERN_FIELD_TYPES.number);
 
     const inputEvents = wrapper.emitted('input');
 
     expect(inputEvents).toHaveLength(1);
 
     const [eventData] = inputEvents[0];
-    expect(eventData).toBe(PATTERN_INPUT_TYPES.number);
+    expect(eventData).toBe(PATTERN_FIELD_TYPES.number);
   });
 
   it('Renders `c-input-type-field` with default props', () => {
@@ -55,18 +55,18 @@ describe('c-input-type-field', () => {
   it('Renders `c-input-type-field` with default custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: PATTERN_INPUT_TYPES.number,
+        value: PATTERN_FIELD_TYPES.number,
         label: 'Custom label',
         name: 'name',
         disabled: true,
         flat: true,
         errorMessages: ['Message'],
         types: [
-          { value: PATTERN_INPUT_TYPES.number },
-          { value: PATTERN_INPUT_TYPES.string },
-          { value: PATTERN_INPUT_TYPES.array },
-          { value: PATTERN_INPUT_TYPES.null },
-          { text: 'Custom boolean', value: PATTERN_INPUT_TYPES.boolean },
+          { value: PATTERN_FIELD_TYPES.number },
+          { value: PATTERN_FIELD_TYPES.string },
+          { value: PATTERN_FIELD_TYPES.stringArray },
+          { value: PATTERN_FIELD_TYPES.null },
+          { text: 'Custom boolean', value: PATTERN_FIELD_TYPES.boolean },
         ],
       },
     });

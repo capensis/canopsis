@@ -1,6 +1,6 @@
 # Méthodes d'authentification avancées (LDAP, CAS, SAML2)
 
-## Authentification LDAP
+## Authentification LDAP ( édition community )
 
 La configuration LDAP par l'interface web n'est pas prise en charge pour le moment.
 
@@ -94,7 +94,7 @@ systemctl restart canopsis-service@canopsis-api canopsis-service@canopsis-oldapi
 
 À ce stade, vous êtes en mesure de vous authentifier sur l'interface de Canopsis. Le profil d'affectation sera celui spécifié dans la configuration.
 
-## Authentification CAS
+## Authentification CAS ( édition community )
 
 La configuration de CAS par l'interface web n'est pas prise en charge pour le moment.
 
@@ -161,235 +161,123 @@ systemctl restart canopsis-service@canopsis-api canopsis-service@canopsis-oldapi
 À ce stade, vous êtes en mesure de vous authentifier sur l'interface de Canopsis.
 Le profil d'affectation sera celui spécifié dans la configuration.
 
-## Authentification SAML2
 
-Intégration de l’authentification avec SAML2
 
-Nécessite l’installation de la brique Pro.
+## Authentification SAMLV2 ( édition community )
 
-### Paramétrage IdP
+Intégration de l’authentification avec le protocole SAMLV2
 
-*  ACS Consumer URL : `http[s]://canopsis.fqdn.tld/auth/saml2/acs/`
-*  Single Logout URL : `http[s]://canopsis.fqdn.tld/auth/saml2/sls/`
-*  Audience : `http[s]://canopsis.fqdn.tld/auth/saml2/metadata/`
-*  Recipient : `http[s]://canopsis.fqdn.tld/auth/saml2/acs/`
-*  RelayState : `http[s]://canopsis.fqdn.tld/`
+### Configuration et Paramétrage en lien avec l'Identity Provider (IDP )
 
-L’IdP doit impérativement fournir dans les réponses d’authentification une valeur normalisée `NameID`. Il suffit de créer un *mapping* entre ce champ normalisé et une information unique dans le backend utilisé par l’IdP. Dans le cas contraire, l’authentification côté Canopsis **ne pourra pas fonctionner**.
+Le fichier de configuration à utiliser est le fichier `/opt/canopsis/share/config/api/security/config.yml`  utilisé par le service `api` de Canopsis. Dans le cadre d'une configuration SAMLV2, voici un exemple de fichier qui pourra être présenté en volume au conteneur Docker `api` ou directement sur le filesystem d'une installation via paquets.
 
-Exemple de configuration OneLogin :
+```yaml
+security:
+  # auth_providers defines enabled authentication methods.
+  # Possible values:
+  # - basic Auth by username-password.
+  # - apikey Auth by token.
+  # - ldap Auth using LDAP service. Define LDAP config in object collection by cservice.ldapconfig id.
+  # - cas Auth using CAS service. Define CAS config in object collection by cservice.casconfig id.
+  # - saml Auth using SAML service. Define SAML config below(commented saml section)
+  auth_providers:
+    - basic
+    - apikey
+    - saml
 
-![saml2_onelogin_conf](img/saml2_onelogin_conf.png)
-
-### Création du paramétrage - Côté Canopsis
-
-**Travaillez dans un dossier temporaire accessible par l’utilisateur `canopsis`, par exemple `/opt/canopsis/tmp/saml2_setup`.**
-
-Vous pouvez suivre cette documentation : <https://github.com/onelogin/python-saml#knowing-the-toolkit>.
-
-En particulier la génération des clefs et des paramètres :
-
-```sh
-mkdir certs
-openssl req -new -x509 -days 3652 -nodes -out certs/sp.crt -keyout certs/sp.key
+  saml:
+    x509_cert: /certs/saml.cert
+    x509_key:  /certs/saml.key
+    idp_metadata_url: <http(s)://IDP_METADATA_URL>
+  # idp_metadata_xml: </path/to/xml>
+    idp_attributes_map:
+       email: email
+       name: uid
+       firstname: uid
+       lastname: uid
+    canopsis_saml_url: http(s)://<IP_MACHINE>/api/v4/saml
+    default_role: "admin"
+    insecure_skip_verify: false
+    canopsis_sso_binding: redirect
+    canopsis_acs_binding: redirect
+    sign_auth_request: false
+    name_id_format: urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
+    skip_signature_validation: true
+    acs_index: 1
+    auto_user_registration: true
+session:
+  # stats_frame uses for session stats. Session stats are accumulated during frame period.
+  # New stats row will be created if duration between stats requests are more then frame.
+  stats_frame: 5m
 ```
 
-Écrire dans le fichier `settings.json` :
 
-```json
-{
-    "strict": true,
-    "debug": false,
-    "sp": {
-        "entityId": "CANOPSIS_BASE_URL/auth/saml2/metadata/",
-        "assertionConsumerService": {
-            "url": "CANOPSIS_BASE_URL/auth/saml2/acs/",
-            "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
-        },
-        "singleLogoutService": {
-            "url": "CANOPSIS_BASE_URL/auth/saml2/sls/",
-            "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-        },
-        "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
-        "x509cert": "",
-        "privateKey": ""
-    },
-    "idp": {
-        "entityId": "https://app.onelogin.com/saml/metadata/appid",
-        "singleSignOnService": {
-            "url": "https://domain.onelogin.com/trust/saml2/http-post/sso/appid",
-            "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-        },
-        "singleLogoutService": {
-            "url": "https://domain.onelogin.com/trust/saml2/http-redirect/slo/appid",
-            "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-        },
-        "x509cert": "CONTENU_CERTIFICAT_X509_IDP"
-    }
-}
+
+La paire de certificats relatifs aux directives `x509_cert` et `x509_key` doit être générée en amont.
+
+Exemple pour des certificats auto-signés :
+
+```shell
+$ openssl req -x509 -newkey rsa:2048 -keyout saml.key -out saml.cert -days 365 -nodes -subj "/CN=canopsis-saml.example.com"
 ```
 
-En prenant ici pour exemple la configuration OneLogin :
+Les options suivantes doivent ensuite être adaptées au contexte de l'IDP
 
-![saml2_onelogin_settings](img/saml2_onelogin_settings.png)
-
-Remplacer les occurrences des paramètres suivants :
-
-*  Les URL `https://domain.onelogin.com...` sont à remplacer intégralement par les données de configuration de L'IdP sur lequel vous allez vous brancher ;
-*  `CANOPSIS_BASE_URL` ; exemple : `https://canopsis.domain.tld/` **ATTENTION** Il faut **OBLIGATOIREMENT** que cette URL soit un `FQDN` ;
-*  `CONTENU_CERTIFICAT_X509_IDP` avec le contenu au format PEM du certificat public de l’IdP.
-
-Exemple de certificat fourni par l’IdP OneLogin :
-
-![saml2_onelogin_x509_pem](img/saml2_onelogin_x509_pem.png)
-
-Pour le certificat de l’IdP, téléchargez le, puis :
-
-```sh
-cat idp_cert.pem | grep -v "BEGIN CERTIFICATE" | grep -v "END CERTIFICATE" | tr '\n' ' ' | sed -e 's/ //g'
-```
-
-Écrire dans le fichier `advanced_settings.json` :
-
-```json
-{
-    "security": {
-        "nameIdEncrypted": false,
-        "authnRequestsSigned": false,
-        "logoutRequestSigned": false,
-        "logoutResponseSigned": false,
-        "signMetadata": false,
-        "wantMessagesSigned": false,
-        "wantAssertionsSigned": false,
-        "wXoantNameId" : true,
-        "wantNameIdEncrypted": false,
-        "wantAssertionsEncrypted": false,
-        "signatureAlgorithm": "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
-        "digestAlgorithm": "http://www.w3.org/2000/09/xmldsig#sha1"
-    },
-    "contactPerson": {
-        "technical": {
-            "givenName": "technical_name",
-            "emailAddress": "technical@example.com"
-        },
-        "support": {
-            "givenName": "support_name",
-            "emailAddress": "support@example.com"
-        }
-    },
-    "organization": {
-        "en-US": {
-            "name": "sp_test",
-            "displayname": "SP test",
-            "url": "http://sp.example.com"
-        }
-    }
-}
-```
-
-Ces fichiers de configuration sont à adapter, il n’existe pas de configuration générique, cela dépend des paramètres de sécurité de l’IdP.
-
-Créer le fichier de configuration de la correspondance Utilisateur Canopsis <-> Utilisateur IdP :
-
-```json
-{
-        "userid": null,
-        "firstname": null,
-        "lastname": null,
-        "mail": null
-}
-```
-
-Dans le cas où toutes les valeurs sont à `null`, des paramètres par défaut seront appliqués.
-
-Si vous voulez paramétrer vous-même la correspondance, mettez simplement une chaîne de caractères contenant le nom de l’attribut fourni par l’IdP. Exemple avec OneLogin :
-
-```json
-{
-        "userid": "User.email",
-        "firstname": "User.FirstName",
-        "lastname": "User.LastName",
-        "mail": "User.email"
-}
-```
-
-### Intégration des paramètres en base
-
-Créer cette structure :
-
-```
-saml2_setup/
-    certs/
-        sp.crt
-        sp.key
-    settings.json
-    advanced_settings.json
-    canopsis_user.json
-    conf_path
-    secret_key
-```
-
-Le fichier `conf_path` devra contenir le chemin de destination de la configuration SAML2 lorsqu’elle sera utilisée par le webserver de Canopsis. Exemple : `/opt/canopsis/tmp/saml2`.
-
-Le fichier `secret_key` permettra de déchiffrer les données SAML2 en cas de chiffrement. Si vous n’activez pas le chiffrement, créez quand même ce fichier.
-
-Ensuite, dans l’environnement Canopsis, exécutez ceci dans un shell :
-
-```sh
-python -c 'from canopsis_cat.saml2 import SAML2Conf; SAML2Conf.insert_conf("/opt/canopsis/tmp/saml2_setup", SAML2Conf.provide_default_collection())'
-```
-
-Vous pouvez relancer cette commande autant de fois que nécessaire : la configuration en place sera tout simplement écrasée intégralement.
-
-Donc si vous voulez apporter une modification de la configuration, pas besoin de passer par la base de données : modifiez les fichiers "source" sur disque, exécutez la commande ; c’est fini.
+| Directive                   | Définition                                                   |
+| --------------------------- | ------------------------------------------------------------ |
+| `idp_metadata_url`          | URL permettant de récupérer les Metadatas XML de l'IDP ( si les metadatas XML sont fournies via un service accessible ) |
+| `idp_metadata_xml`          | Fichier XML contenant les Metadatas XML de l'IDP ( si les metadatas XML ne sont pas fournies via un service accessible ) |
+| `idp_attributes_map`        | Tableau de correspondance entre les attributs utilisateurs de Canopsis ( colonne de gauche ) et les attributs fournis par l'IDP ( colonne de droite ) |
+| `canopsis_saml_url`         | URL du service SAML fourni par Canopsis qui sera configuré côté IDP |
+| `insecure_skip_verify`      | Permet de bypasser la vérification du certification de l'IDP si configuré à `true` |
+| `canopsis_sso_binding`      | Type de binding HTTP pour le service SSO parmi `redirect` ou `post` |
+| `canopsis_acs_binding`      | Type de binding HTTP pour le service ACS parmi `redirect` ou `post` |
+| `sign_auth_request`         | Permet de signer les requêtes authentification si positionné à `true` |
+| `name_id_format`            | Format du `NameIDPolicy`                                     |
+| `skip_signature_validation` | Permet de bypasser la validation de la signature de l'idp lors du décodage des réponses envoyées par l'idp si positionné à `true` |
+| `acs_index`                 | Valeur entière à utiliser lorsque l'on configure le service ACS Index dans les Metadata XML |
+| `auto_user_registration`    | Permet de créer automatiquement les utilisateurs dans Canopsis ( s'ils n'existent pas déjà ) si cette valeur est mise à `true`|
+| `default_role`              | Rôle Canopsis par défaut à attribuer pour l'utilisateur à sa création |
 
 ### Activation de l’authentification SAML2
 
-Éditer le fichier de configuration Canopsis `/opt/canopsis/etc/webserver.conf` :
+Redémarrer le service `api` de Canopsis
 
-```ini
-[webservices]
-; version pré-monopackage < 2.5.0
-saml2 = 1
-; version monopackage >= 2.5.0
-canopsis_cat.webcore.services.saml2 = 1
+* Installation via Docker Compose
+
+```shell
+docker-compose restart api
 ```
 
-Puis exécutez :
+* Installation Paquets
 
 ```sh
-systemctl restart canopsis-webserver
+systemctl restart canopsis-service@canopsis-api.service
 ```
 
-### Tests et log
+### Test de connexion
 
-Le fichier de log `/opt/canopsis/var/log/saml2.log` contiendra les erreurs SAML2, s’il y en a.
+La mire de connexion de Canopsis doit maintenant proposer un nouveau menu de login SAML qui devra vous rediriger vers l'IDP configuré.
 
-Pour tester l’authentification :
+![saml2_login](img/saml2_login.png)
 
-*  Rendez-vous sur la page de login de Canopsis ;
-*  Entrez un utilisateur autre que ceux présents dans Canopsis, et n’importe quoi en mot de passe (changements à venir) ;
-*  Vous devez être redirigé vers la page de login de l’IdP SAML2 ;
-*  Une fois authentifié via l’IdP, vous devez être redirigé vers Canopsis sans erreur.
+Pour tester l’authentification, il faudra vous authentifier avec un compte valide de votre IDP et ainsi arriver dans Canopsis sans erreur.
 
 ### Troubleshooting
 
-Observer les logs `/opt/canopsis/var/log/saml2.log` et `/opt/canopsis/var/log/webserver.log`.
+Observer les logs du service `api` et vérifier la non présence de pattern de type `ERR`
 
-#### FQDN
+Redémarrer le service `api` de Canopsis
 
-```
-OneLogin_Saml2_Error: Invalid dict settings at the file: sp_acs_url_invalid,sp_sls_url_invalid
-```
+* Installation via Docker Compose
 
-Vérifier que les URL `sp` sont toutes des FQDN.
-
-#### Désynchro de configuration
-
-```
-[2018-03-01 10:47:30,220] [ERROR] [saml2] SAML Authentication errors: ['invalid_response'] | The response was received at http://canopsis.local:8082/auth/saml2/acs/ instead of http://canopsis:8082/auth/saml2/acs/
+```shell
+$ docker-compose logs -f api
 ```
 
-Ici, l’IdP est mal configurée. Assurez-vous que la configuration active dans le webserver soit conforme à ce qu’attend l’IdP et inversement.
+* Installation Paquets
 
-Redémarrer le webserver si besoin afin d’être certain de la configuration actuellement utilisée.
+```sh
+$ journactl -fu canopsis-service@canopsis-api.service
+```
+

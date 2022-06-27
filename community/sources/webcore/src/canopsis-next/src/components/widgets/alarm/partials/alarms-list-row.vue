@@ -14,51 +14,50 @@
             hide-details
           )
         v-layout(v-if="hasAlarmInstruction", align-center)
-          alarm-list-row-icon(:alarm="alarm")
+          alarms-list-row-icon(:alarm="alarm")
         v-layout(v-if="expandable", :class="{ 'ml-3': !hasAlarmInstruction }", align-center)
-          c-expand-btn(
-            :class="expandButtonClass",
-            :expanded="row.expanded",
-            @expand="showExpandPanel"
+          alarms-expand-panel-btn(
+            v-model="row.expanded",
+            :alarm="alarm",
+            :widget="widget",
+            :is-tour-enabled="isTourEnabled"
           )
     td(v-for="column in columns")
       alarm-column-value(
         :alarm="alarm",
         :widget="widget",
         :column="column",
-        :columns-filters="columnsFilters"
+        :columns-filters="columnsFilters",
+        @activate="activateRow"
       )
     td
       actions-panel(
         :item="alarm",
         :widget="widget",
         :is-resolved-alarm="isResolvedAlarm",
-        :parent-alarm="parentAlarm"
+        :parent-alarm="parentAlarm",
+        :refresh-alarms-list="refreshAlarmsList"
       )
 </template>
 
 <script>
-import { TOURS } from '@/constants';
-
 import featuresService from '@/services/features';
 
 import { isResolvedAlarm } from '@/helpers/entities';
-import { getStepClass } from '@/helpers/tour';
-
-import { widgetExpandPanelAlarmMixin } from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 import ActionsPanel from '../actions/actions-panel.vue';
 import AlarmColumnValue from '../columns-formatting/alarm-column-value.vue';
-import AlarmListRowIcon from './alarms-list-row-icon.vue';
+import AlarmsExpandPanelBtn from '../expand-panel/alarms-expand-panel-btn.vue';
+import AlarmsListRowIcon from './alarms-list-row-icon.vue';
 
 export default {
   inject: ['$system'],
   components: {
     ActionsPanel,
     AlarmColumnValue,
-    AlarmListRowIcon,
+    AlarmsExpandPanelBtn,
+    AlarmsListRowIcon,
   },
-  mixins: [widgetExpandPanelAlarmMixin],
   model: {
     prop: 'selected',
     event: 'input',
@@ -100,6 +99,15 @@ export default {
       type: Object,
       default: null,
     },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
+    },
+  },
+  data() {
+    return {
+      active: false,
+    };
   },
   computed: {
     ...featuresService.get('components.alarmListRow.computed', {}),
@@ -113,7 +121,7 @@ export default {
     },
 
     hasAlarmInstruction() {
-      const { children_instructions: childrenInstructions = false } = this.parentAlarm || {};
+      const { children_instructions: parentAlarmChildrenInstructions = false } = this.parentAlarm || {};
       const {
         assigned_instructions: assignedInstructions = [],
         is_auto_instruction_running: isAutoInstructionRunning = false,
@@ -121,23 +129,20 @@ export default {
         is_all_auto_instructions_completed: isAutoInstructionCompleted = false,
       } = this.alarm;
 
-      return assignedInstructions.length
+      const hasAssignedInstructions = !!assignedInstructions.length;
+
+      if (parentAlarmChildrenInstructions && hasAssignedInstructions) {
+        return true;
+      }
+
+      return hasAssignedInstructions
           || isAutoInstructionRunning
           || isAutoInstructionCompleted
-          || isManualInstructionWaitingResult
-          || childrenInstructions;
+          || isManualInstructionWaitingResult;
     },
 
     isResolvedAlarm() {
       return isResolvedAlarm(this.alarm);
-    },
-
-    expandButtonClass() {
-      if (this.isTourEnabled) {
-        return getStepClass(TOURS.alarmsExpandPanel, 1);
-      }
-
-      return '';
     },
 
     isNotFiltered() {
@@ -155,7 +160,7 @@ export default {
     },
 
     classes() {
-      const classes = { 'not-filtered': this.isNotFiltered };
+      const classes = { 'not-filtered': this.isNotFiltered, 'grey lighten-3': this.active };
 
       if (featuresService.has('components.alarmListRow.computed.classes')) {
         return featuresService.call('components.alarmListRow.computed.classes', this, classes);
@@ -165,12 +170,8 @@ export default {
     },
   },
   methods: {
-    async showExpandPanel() {
-      if (!this.row.expanded) {
-        await this.fetchAlarmItemWithGroupsAndSteps(this.alarm);
-      }
-
-      this.row.expanded = !this.row.expanded;
+    activateRow(value) {
+      this.active = value;
     },
   },
 };

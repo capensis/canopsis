@@ -5,7 +5,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import {
   ALARM_PATTERN_FIELDS,
   EVENT_FILTER_PATTERN_FIELDS,
-  PATTERN_INPUT_TYPES,
+  PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
   PATTERN_RULE_INFOS_FIELDS,
   PATTERN_RULE_TYPES,
@@ -151,7 +151,7 @@ describe('c-pattern-rule-field', () => {
 
     const inputTypeField = selectInputTypeField(wrapper);
 
-    inputTypeField.vm.$emit('input', PATTERN_INPUT_TYPES.string);
+    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.string);
 
     expect(wrapper).toEmit('input', {
       ...rule,
@@ -322,8 +322,8 @@ describe('c-pattern-rule-field', () => {
         infos: ['Infos 1', 'Infos 2'],
         operators: [PATTERN_OPERATORS.notEqual, PATTERN_OPERATORS.equal],
         inputTypes: [
-          { value: PATTERN_INPUT_TYPES.string },
-          { value: PATTERN_INPUT_TYPES.array },
+          { value: PATTERN_FIELD_TYPES.string },
+          { value: PATTERN_FIELD_TYPES.stringArray },
         ],
         intervalRanges: [QUICK_RANGES.last15Minutes, QUICK_RANGES.custom],
         valueField: {

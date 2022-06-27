@@ -7,6 +7,7 @@
     :error-messages="errors.collect(name)",
     :label="label || $tc('common.searchBy')",
     :name="name",
+    item-disabled="options.disabled",
     ellipsis
   )
 </template>

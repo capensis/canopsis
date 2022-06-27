@@ -52,6 +52,7 @@ export const PATTERN_CONDITIONS = {
   less: 'lt',
   regexp: 'regexp',
   hasEvery: 'has_every',
+  isOneOf: 'is_one_of',
   hasOneOf: 'has_one_of',
   hasNot: 'has_not',
   isEmpty: 'is_empty',
@@ -72,21 +73,21 @@ export const FILTER_MONGO_OPERATORS = {
   less: '$lt',
 };
 
-export const PATTERN_INPUT_TYPES = {
+export const PATTERN_FIELD_TYPES = {
   string: 'string',
   number: 'int',
   boolean: 'bool',
   null: 'null',
-  array: 'string_array',
+  stringArray: 'string_array',
 };
 
 export const FILTER_DEFAULT_VALUES = {
-  condition: FILTER_MONGO_OPERATORS.and,
+  condition: FILTER_MONGO_OPERATORS.and, // TODO: remove if we don't need it
   rule: {
     field: '',
     operator: '',
     input: '',
-    inputType: PATTERN_INPUT_TYPES.string,
+    inputType: PATTERN_FIELD_TYPES.string,
   },
   group: {
     condition: FILTER_MONGO_OPERATORS.and,
@@ -192,9 +193,15 @@ export const PATTERN_TABS = {
   corporatePatterns: 'corporatePatterns',
 };
 
+export const PATTERN_EDITOR_TABS = {
+  simple: 'simple',
+  advanced: 'advanced',
+};
+
 export const PATTERNS_FIELDS = {
   alarm: 'alarm_pattern',
   entity: 'entity_pattern',
   pbehavior: 'pbehavior_pattern',
   event: 'event_pattern',
+  totalEntity: 'total_entity_pattern',
 };

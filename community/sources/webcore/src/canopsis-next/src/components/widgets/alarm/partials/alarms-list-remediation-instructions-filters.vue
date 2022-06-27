@@ -19,7 +19,7 @@
           small,
           @click="showCreateFilterModal"
         )
-          v-icon(:color="buttonIconColor") adjust
+          v-icon(:color="buttonIconColor") assignment
       span {{ $t('remediationInstructionsFilters.button') }}
 </template>
 

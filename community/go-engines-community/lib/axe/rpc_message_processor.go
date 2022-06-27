@@ -10,8 +10,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 	"time"
 )
 
@@ -46,45 +46,45 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	}
 
 	operationType := event.EventType
-	op := types.Operation{
-		Type:       operationType,
-		Parameters: event.Parameters,
-	}
 
 	if operationType == types.ActionTypePbehavior {
-		if params, ok := event.Parameters.(types.ActionPBehaviorParameters); ok {
-			body, err := p.Encoder.Encode(types.RPCPBehaviorEvent{
-				Alarm:  alarm,
-				Entity: event.Entity,
-				Params: params,
-			})
-			if err != nil {
-				p.logError(err, "RPC Message Processor: failed to encode rpc call to pbehavior", msg)
+		body, err := p.Encoder.Encode(types.RPCPBehaviorEvent{
+			Alarm:  alarm,
+			Entity: event.Entity,
+			Params: types.RPCPBehaviorParameters{
+				Author:         event.Parameters.Author,
+				UserID:         event.Parameters.User,
+				Name:           event.Parameters.Name,
+				Reason:         event.Parameters.Reason,
+				Type:           event.Parameters.Type,
+				RRule:          event.Parameters.RRule,
+				Tstart:         event.Parameters.Tstart,
+				Tstop:          event.Parameters.Tstop,
+				StartOnTrigger: event.Parameters.StartOnTrigger,
+				Duration:       event.Parameters.Duration,
+			},
+		})
+		if err != nil {
+			p.logError(err, "RPC Message Processor: failed to encode rpc call to pbehavior", msg)
 
-				return p.getErrRpcEvent(fmt.Errorf("cannot encode rpc event : %v", err), alarm), nil
-			}
-
-			err = p.PbhRpc.Call(engine.RPCMessage{
-				CorrelationID: fmt.Sprintf("%s**%s", d.CorrelationId, d.ReplyTo),
-				Body:          body,
-			})
-			if err != nil {
-				if engine.IsConnectionError(err) {
-					return nil, err
-				}
-
-				p.logError(err, "RPC Message Processor: failed to send rpc call to pbehavior", msg)
-
-				return p.getErrRpcEvent(fmt.Errorf("failed to send rpc call to pbehavior : %v", err), alarm), nil
-			}
-
-			return nil, nil
+			return p.getErrRpcEvent(fmt.Errorf("cannot encode rpc event : %v", err), alarm), nil
 		}
 
-		err := errors.New("invalid pbh parameters")
-		p.logError(err, "RPC Message Processor: invalid event", msg)
+		err = p.PbhRpc.Call(engine.RPCMessage{
+			CorrelationID: fmt.Sprintf("%s**%s", d.CorrelationId, d.ReplyTo),
+			Body:          body,
+		})
+		if err != nil {
+			if engine.IsConnectionError(err) {
+				return nil, err
+			}
 
-		return p.getErrRpcEvent(err, alarm), nil
+			p.logError(err, "RPC Message Processor: failed to send rpc call to pbehavior", msg)
+
+			return p.getErrRpcEvent(fmt.Errorf("failed to send rpc call to pbehavior : %v", err), alarm), nil
+		}
+
+		return nil, nil
 	}
 
 	alarmChange := types.AlarmChange{
@@ -95,6 +95,19 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		PreviousStatusChange:            alarm.Value.Status.Timestamp,
 		PreviousPbehaviorTypeID:         alarm.Value.PbehaviorInfo.TypeID,
 		PreviousPbehaviorCannonicalType: alarm.Value.PbehaviorInfo.CanonicalType,
+	}
+
+	op := types.Operation{
+		Type: operationType,
+		Parameters: types.OperationParameters{
+			Output:    event.Parameters.Output,
+			Author:    event.Parameters.Author,
+			User:      event.Parameters.User,
+			Ticket:    event.Parameters.Ticket,
+			Duration:  event.Parameters.Duration,
+			State:     event.Parameters.State,
+			Execution: event.Parameters.Execution,
+		},
 	}
 	alarmChangeType, err := p.Executor.Exec(ctx, op, alarm, event.Entity,
 		types.CpsTime{Time: time.Now()}, "", "", types.InitiatorSystem)

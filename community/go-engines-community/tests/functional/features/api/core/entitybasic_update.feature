@@ -54,7 +54,7 @@ Feature: Update entity basic
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "_id": "test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name",
@@ -65,25 +65,9 @@ Feature: Update entity basic
         "name": "test-category-to-entitybasic-edit-name",
         "updated": 1592215337
       },
-      "changeable_depends": [
-        "test-entitybasic-to-update-component-1",
-        "test-entitybasic-to-update-component-3"
-      ],
-      "changeable_impact": [
-        "test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1",
-        "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
-      ],
-      "depends": [
-        "test-entitybasic-to-update-component-1",
-        "test-entitybasic-to-update-component-3"
-      ],
       "description": "test-entitybasic-to-update-connector-description-updated",
       "enable_history": [],
       "enabled": true,
-      "impact": [
-        "test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1",
-        "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
-      ],
       "impact_level": 3,
       "infos": {
         "test-entitybasic-to-update-info-1-name": {
@@ -125,6 +109,34 @@ Feature: Update entity basic
       "ko_events": 0,
       "state": 0
     }
+    """
+    Then the response array key "changeable_depends" should contain:
+    """json
+    [
+      "test-entitybasic-to-update-component-1",
+      "test-entitybasic-to-update-component-3"
+    ]
+    """
+    Then the response array key "changeable_impact" should contain:
+    """json
+    [
+      "test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1",
+      "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
+    ]
+    """
+    Then the response array key "depends" should contain:
+    """json
+    [
+      "test-entitybasic-to-update-component-1",
+      "test-entitybasic-to-update-component-3"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1",
+      "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
+    ]
     """
     When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-update-component-2
     Then the response code should be 200
