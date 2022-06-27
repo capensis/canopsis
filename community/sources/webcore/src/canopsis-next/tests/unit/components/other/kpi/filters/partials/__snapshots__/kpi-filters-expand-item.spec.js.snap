@@ -67,8 +67,8 @@ exports[`kpi-filters-expand-item Renders \`kpi-filters-expand-item\` with filter
                   class="flex xs12 lg10 offset-lg1"
                 >
                   <c-patterns-field-stub
-                    disabled="true"
                     entity-attributes="[object Object],[object Object],[object Object]"
+                    readonly="true"
                     required="required"
                     value="[object Object]"
                     with-entity="with-entity"

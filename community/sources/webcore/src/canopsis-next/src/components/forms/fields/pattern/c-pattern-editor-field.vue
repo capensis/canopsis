@@ -4,7 +4,7 @@
       v-if="!patterns.old_mongo_query && withType",
       :value="patterns.id",
       :type="type",
-      :disabled="disabled",
+      :disabled="disabled || readonly",
       return-object,
       required,
       @input="updatePattern"
@@ -24,13 +24,14 @@
         v-layout(v-if="patterns.old_mongo_query", justify-center, wrap)
           v-flex.pt-2(xs8)
             div.error--text.text-xs-center {{ $t('pattern.errors.oldPattern') }}
-          v-flex.pt-2(v-if="!disabled", xs12)
+          v-flex.pt-2(v-if="!readonly || !disabled", xs12)
             v-layout(justify-center)
               v-btn(color="primary", @click="discardPattern") {{ $t('pattern.discard') }}
         c-pattern-groups-field.mt-2(
           v-else,
           v-field="patterns.groups",
           :disabled="formDisabled",
+          :readonly="readonly",
           :name="patternGroupsFieldName",
           :type="type",
           :required="required",
@@ -49,13 +50,13 @@
         c-pattern-advanced-editor-field(
           v-else,
           :value="patternsJson",
-          :disabled="disabled || !isCustomPattern",
+          :disabled="readonly || disabled || !isCustomPattern",
           :attributes="attributes",
           :name="patternJsonFieldName",
           @input="updateGroupsFromPatterns"
         )
 
-    template(v-if="!patterns.old_mongo_query")
+    template(v-if="!readonly && !patterns.old_mongo_query")
       v-layout(align-center, justify-end)
         div(v-if="checkCountName")
           span.mr-2(
@@ -63,12 +64,13 @@
             :class="{ 'error--text': itemsCount === 0 }"
           ) {{ $tc('common.itemFound', itemsCount, { count: itemsCount }) }}
           v-btn.primary.mx-0(
-            :disabled="patternsChecked || hasChildrenError || !patterns.groups.length",
+            :disabled="disabled || patternsChecked || hasChildrenError || !patterns.groups.length",
             :loading="checkPatternsPending",
             @click="checkPatterns"
           ) {{ $t('common.checkPattern') }}
         v-btn.mr-0(
           v-if="withType && !isCustomPattern",
+          :disabled="disabled",
           color="primary",
           @click="updatePatternToCustom"
         ) {{ $t('common.edit') }}
@@ -133,6 +135,10 @@ export default {
       required: false,
     },
     withType: {
+      type: Boolean,
+      default: false,
+    },
+    readonly: {
       type: Boolean,
       default: false,
     },

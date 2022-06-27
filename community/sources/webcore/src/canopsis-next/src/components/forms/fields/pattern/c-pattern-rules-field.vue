@@ -11,12 +11,12 @@
         )
       c-action-btn(
         :tooltip="$t('pattern.removeRule')",
-        :disabled="disabled",
+        :disabled="readonly || disabled",
         type="delete",
         color="black",
         @click="removeItemFromArray(index)"
       )
-    v-layout(row, align-center)
+    v-layout(v-if="!readonly", row, align-center)
       v-btn.mx-0(
         :disabled="disabled",
         color="primary",
@@ -56,6 +56,10 @@ export default {
       type: String,
       default: 'rules',
     },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     rulesMap() {
@@ -76,7 +80,7 @@ export default {
 
       return {
         ...props,
-        disabled: disabled || this.disabled,
+        disabled: disabled || this.readonly || this.disabled,
         type,
         operators: operators ?? getOperatorsByRule(rule, type),
       };

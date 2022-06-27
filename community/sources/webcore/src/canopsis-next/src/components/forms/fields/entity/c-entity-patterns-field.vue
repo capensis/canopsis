@@ -2,6 +2,7 @@
   c-pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
+    :readonly="readonly",
     :name="name",
     :type="$constants.PATTERN_TYPES.entity",
     :required="required",
@@ -59,6 +60,10 @@ export default {
     checkCountName: {
       type: String,
       required: false,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

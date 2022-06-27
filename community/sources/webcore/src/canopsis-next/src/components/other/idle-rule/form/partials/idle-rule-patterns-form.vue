@@ -4,7 +4,7 @@
     :with-alarm="!isEntityType",
     :alarm-attributes="alarmAttributes",
     :entity-attributes="entityAttributes",
-    :disabled="disabled",
+    :readonly="readonly",
     some-required,
     with-entity
   )
@@ -33,7 +33,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    disabled: {
+    readonly: {
       type: Boolean,
       default: false,
     },
