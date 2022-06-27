@@ -1,6 +1,7 @@
 package contextgraph
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -14,7 +15,8 @@ import (
 )
 
 type API interface {
-	Import(c *gin.Context)
+	ImportAll(c *gin.Context)
+	ImportPartial(c *gin.Context)
 	Status(c *gin.Context)
 }
 
@@ -46,10 +48,10 @@ func NewApi(
 	return a
 }
 
-// Import
+// ImportAll
 // @Param body body ImportRequest true "body"
 // @Success 200 {object} ImportResponse
-func (a *api) Import(c *gin.Context) {
+func (a *api) ImportAll(c *gin.Context) {
 	query := ImportQuery{}
 	if err := c.BindQuery(&query); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
@@ -62,10 +64,35 @@ func (a *api) Import(c *gin.Context) {
 		Source:   query.Source,
 	}
 
-	err := a.reporter.ReportCreate(c.Request.Context(), &job)
+	raw, err := c.GetRawData()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
+	}
+
+	jobID, err := a.createImportJob(c.Request.Context(), job, raw)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, ImportResponse{ID: jobID})
+}
+
+// ImportPartial
+// @Param body body ImportRequest true "body"
+// @Success 200 {object} ImportResponse
+func (a *api) ImportPartial(c *gin.Context) {
+	query := ImportQuery{}
+	if err := c.BindQuery(&query); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+		return
+	}
+
+	job := ImportJob{
+		Creation:  time.Now(),
+		Status:    statusPending,
+		Source:    query.Source,
+		IsPartial: true,
 	}
 
 	raw, err := c.GetRawData()
@@ -74,15 +101,27 @@ func (a *api) Import(c *gin.Context) {
 		return
 	}
 
+	jobID, err := a.createImportJob(c.Request.Context(), job, raw)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, ImportResponse{ID: jobID})
+}
+
+func (a *api) createImportJob(ctx context.Context, job ImportJob, raw []byte) (string, error) {
+	err := a.reporter.ReportCreate(ctx, &job)
+	if err != nil {
+		return "", err
+	}
+
 	err = ioutil.WriteFile(fmt.Sprintf(a.filePattern, job.ID), raw, os.ModePerm)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
+		return "", err
 	}
 
 	a.jobQueue.Push(job)
-
-	c.JSON(http.StatusOK, ImportResponse{ID: job.ID})
+	return job.ID, nil
 }
 
 // Status

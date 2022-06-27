@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -134,16 +135,18 @@ func (c *eventConsumer) processMsg(ctx context.Context, msg amqp.Delivery) error
 	}
 
 	action := string(event.GetStringBytes("action"))
-	connector := string(event.GetStringBytes("connector"))
-	connectorName := string(event.GetStringBytes("connector_name"))
 	component := string(event.GetStringBytes("component"))
 	resource := string(event.GetStringBytes("resource"))
-	pbhName := string(event.GetStringBytes("pbehavior_name"))
-	downtimeId := string(event.GetStringBytes("downtime_id"))
 	start := event.GetInt("start")
 	end := event.GetInt("end")
 
-	uniquePbhName := fmt.Sprintf("%s/%s %s %s", connector, connectorName, pbhName, downtimeId)
+	uniquePbhName := strings.Join([]string{
+		string(event.GetStringBytes("connector")),
+		string(event.GetStringBytes("pbehavior_name")),
+		event.Get("downtime_id").String(),
+		event.Get("entry").String(),
+		event.Get("timestamp").String(),
+	}, "-")
 
 	switch action {
 	case ActionCreate:
