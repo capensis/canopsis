@@ -341,7 +341,22 @@ Feature: get service weather
           },
           "pbehaviors": [
             {
-              "name": "test-pbehavior-weather-service-4"
+              "name": "test-pbehavior-weather-service-4",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "reason": {
+                "_id": "test-reason-to-engine",
+                "name": "Test Engine",
+                "description": "Test Engine"
+              },
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "icon_name": "test-maintenance-to-engine-icon",
+                "name": "Engine maintenance",
+                "type": "maintenance"
+              }
             }
           ]
         }
@@ -426,7 +441,22 @@ Feature: get service weather
           },
           "pbehaviors": [
             {
-              "name": "test-pbehavior-weather-service-5"
+              "name": "test-pbehavior-weather-service-5",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "reason": {
+                "_id": "test-reason-to-engine",
+                "name": "Test Engine",
+                "description": "Test Engine"
+              },
+              "type": {
+                "_id": "test-active-type-to-engine",
+                "icon_name": "test-active-to-engine-icon",
+                "name": "Engine active",
+                "type": "active"
+              }
             }
           ]
         }
@@ -545,7 +575,22 @@ Feature: get service weather
           },
           "pbehaviors": [
             {
-              "name": "test-pbehavior-weather-service-6-1"
+              "name": "test-pbehavior-weather-service-6-1",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "reason": {
+                "_id": "test-reason-to-engine",
+                "name": "Test Engine",
+                "description": "Test Engine"
+              },
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "icon_name": "test-maintenance-to-engine-icon",
+                "name": "Engine maintenance",
+                "type": "maintenance"
+              }
             }
           ]
         }
@@ -680,7 +725,22 @@ Feature: get service weather
           },
           "pbehaviors": [
             {
-              "name": "test-pbehavior-weather-service-7-1"
+              "name": "test-pbehavior-weather-service-7-1",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "reason": {
+                "_id": "test-reason-to-engine",
+                "name": "Test Engine",
+                "description": "Test Engine"
+              },
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "icon_name": "test-maintenance-to-engine-icon",
+                "name": "Engine maintenance",
+                "type": "maintenance"
+              }
             }
           ]
         }
@@ -1087,7 +1147,22 @@ Feature: get service weather
           },
           "pbehaviors": [
             {
-              "name": "test-pbehavior-weather-service-16"
+              "name": "test-pbehavior-weather-service-16",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "reason": {
+                "_id": "test-reason-to-engine",
+                "name": "Test Engine",
+                "description": "Test Engine"
+              },
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "icon_name": "test-maintenance-to-engine-icon",
+                "name": "Engine maintenance",
+                "type": "maintenance"
+              }
             }
           ]
         }
