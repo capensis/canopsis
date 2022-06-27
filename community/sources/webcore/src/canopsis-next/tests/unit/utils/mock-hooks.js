@@ -104,3 +104,32 @@ export const mockSidebar = () => {
 
   return sidebar;
 };
+
+/**
+ * Mock for XMLHttpRequest. Clear yourself after all tests.
+ */
+export const mockXMLHttpRequest = () => {
+  const request = {
+    send: jest.fn(),
+    open: jest.fn(),
+    status: undefined,
+    responseText: undefined,
+    upload: {
+      addEventListener: jest.fn(),
+    },
+  };
+  const xmlHttpRequestSpy = jest.spyOn(global, 'XMLHttpRequest').mockReturnValue(request);
+
+  afterEach(() => {
+    request.send.mockReset();
+    request.open.mockReset();
+    request.upload.addEventListener.mockReset();
+    request.status = undefined;
+    request.responseText = undefined;
+  });
+  afterAll(() => {
+    xmlHttpRequestSpy.mockRestore();
+  });
+
+  return request;
+};

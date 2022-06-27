@@ -29,7 +29,7 @@ export const widgetPeriodicRefreshMixin = {
             }
 
             this.periodicRefreshInterval = setInterval(() => {
-              this.fetchList({ isPeriodicRefresh: true });
+              this.fetchList();
             }, periodicRefreshSeconds * 1000);
           }
         } else {

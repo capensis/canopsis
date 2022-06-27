@@ -3,11 +3,15 @@ package entityservice_test
 import (
 	"context"
 	"fmt"
+	"reflect"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-redis/redis/v8"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
+	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
 	mock_entity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/entity"
 	mock_entityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/entityservice"
@@ -17,8 +21,6 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
-	"reflect"
-	"testing"
 )
 
 func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
@@ -103,6 +105,7 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 		mockEncoder,
 		mockAdapter,
 		mockEntityAdapter,
+		mock_alarm.NewMockAdapter(ctrl),
 		mockCountersCache,
 		mockStorage,
 		mockLockClient,
@@ -216,6 +219,7 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 		mockEncoder,
 		mockAdapter,
 		mockEntityAdapter,
+		mock_alarm.NewMockAdapter(ctrl),
 		mockCountersCache,
 		mockStorage,
 		mockLockClient,
@@ -298,6 +302,7 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 		mockEncoder,
 		mockAdapter,
 		mockEntityAdapter,
+		mock_alarm.NewMockAdapter(ctrl),
 		mockCountersCache,
 		mockStorage,
 		mockLockClient,
@@ -326,9 +331,12 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 		EntityPatterns: pattern.EntityPatternList{},
 		OutputTemplate: "test-output",
 	}
+	entity := types.Entity{
+		ID: "test-entity",
+	}
 	alarm := types.Alarm{
 		ID:       "test-alarm",
-		EntityID: "test-entity",
+		EntityID: entity.ID,
 		Value: types.AlarmValue{
 			State: &types.AlarmStep{Value: types.AlarmStateCritical},
 		},
@@ -361,23 +369,18 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 	mockEncoder.EXPECT().Encode(gomock.Any()).Return(eventBody, nil)
 	mockAdapter := mock_entityservice.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
-	mockCursor := mock_mongo.NewMockCursor(ctrl)
-	mockAdapter.EXPECT().
-		GetOpenAlarmsOfServiceDependencies(gomock.Any(), gomock.Eq(serviceID)).
-		Return(mockCursor, nil)
+	mockEntityCursor := mock_mongo.NewMockCursor(ctrl)
 	gomock.InOrder(
-		mockCursor.EXPECT().Next(gomock.Any()).Return(true),
-		mockCursor.EXPECT().Next(gomock.Any()).Return(false),
+		mockEntityCursor.EXPECT().Next(gomock.Any()).Return(true),
+		mockEntityCursor.EXPECT().Next(gomock.Any()).Return(false),
 	)
-	mockCursor.EXPECT().
+
+	mockEntityCursor.EXPECT().
 		Decode(gomock.Any()).
-		Do(func(v *types.Alarm) {
-			*v = alarm
+		Do(func(v *types.Entity) {
+			*v = entity
 		}).
 		Return(nil)
-	mockCursor.EXPECT().Close(gomock.Any())
-	mockEntityCursor := mock_mongo.NewMockCursor(ctrl)
-	mockEntityCursor.EXPECT().Next(gomock.Any()).Return(false)
 	mockEntityCursor.EXPECT().Close(gomock.Any())
 	mockAdapter.EXPECT().GetServiceDependencies(gomock.Any(), gomock.Eq(serviceID)).Return(mockEntityCursor, nil)
 	mockAdapter.EXPECT().UpdateCounters(gomock.Any(), gomock.Eq(serviceID), gomock.Eq(newServiceCounters)).Return(nil)
@@ -412,6 +415,21 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 	mockServiceLock.EXPECT().Release(gomock.Any()).Return(nil).Times(2)
 	mockServiceUpdateLock.EXPECT().Release(gomock.Any()).Return(nil)
 
+	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
+	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByIDs(gomock.Any(), gomock.All(
+		gomock.Len(1),
+		gomock.AssignableToTypeOf([]string{}),
+	), gomock.All(
+		gomock.AssignableToTypeOf(&[]types.Alarm{}),
+		gomock.Not(gomock.Nil()),
+	)).Do(func(_ context.Context, ids []string, alarms *[]types.Alarm) {
+		if !reflect.DeepEqual(ids, []string{entity.ID}) {
+			t.Errorf("expected %v but got %v", []string{entity.ID}, ids)
+		}
+
+		*alarms = []types.Alarm{alarm}
+	}).Return(nil)
+
 	service := entityservice.NewService(
 		mockAmqpPublisher,
 		pubExchangeName,
@@ -419,6 +437,7 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 		mockEncoder,
 		mockAdapter,
 		mockEntityAdapter,
+		mockAlarmAdapter,
 		mockCountersCache,
 		mockStorage,
 		mockLockClient,

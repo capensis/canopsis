@@ -16,6 +16,7 @@ const localVue = createVueInstance();
 
 const stubs = {
   'c-collapse-panel': true,
+  'c-pattern-panel': true,
   'c-alarm-patterns-field': true,
   'c-entity-patterns-field': true,
   'c-pbehavior-patterns-field': true,
@@ -179,6 +180,7 @@ describe('c-patterns-field', () => {
         withEvent: true,
         withEntity: true,
         withPbehavior: true,
+        withTotalEntity: true,
         required: true,
         someRequired: true,
         name: 'name',
