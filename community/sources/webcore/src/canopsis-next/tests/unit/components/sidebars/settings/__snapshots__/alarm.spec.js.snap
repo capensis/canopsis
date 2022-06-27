@@ -1,0 +1,1279 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
+<div>
+  <div
+    class="v-list pt-0 theme--light"
+    role="list"
+  >
+    <field-title-stub
+      title="common.title"
+      value=""
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-periodic-refresh-stub
+      value="[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <div
+      class="v-list__group"
+    >
+      <div
+        class="v-list__group__header"
+      >
+        <div
+          role="listitem"
+        >
+          <div
+            class="v-list__tile theme--light"
+          >
+            settings.advancedSettings
+          </div>
+        </div>
+        <div
+          class="v-list__group__header__append-icon"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            keyboard_arrow_down
+          </i>
+        </div>
+      </div>
+      <transition-stub
+        mode="in-out"
+        name="expand-transition"
+      >
+        <div
+          class="v-list__group__items"
+          style="display: none;"
+        >
+          <div
+            class="v-list grey lighten-4 px-2 py-0 theme--light"
+            role="list"
+          >
+            <field-default-sort-column-stub
+              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+              columnslabel="settings.columnName"
+              value="[object Object]"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-columns-stub
+              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+              label="settings.columnNames"
+              withcolorindicator="true"
+              withhtml="true"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-columns-stub
+              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+              label="settings.groupColumnNames"
+              withcolorindicator="true"
+              withhtml="true"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-columns-stub
+              columns="[object Object],[object Object]"
+              label="settings.trackColumnNames"
+              withcolorindicator="true"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-default-elements-per-page-stub
+              value="10"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <div
+              class="v-list__group"
+            >
+              <div
+                class="v-list__group__header"
+              >
+                <div
+                  role="listitem"
+                >
+                  <div
+                    class="v-list__tile theme--light"
+                  >
+                    <div>
+                      settings.density.title
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="v-list__group__header__append-icon"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                  >
+                    keyboard_arrow_down
+                  </i>
+                </div>
+              </div>
+              <transition-stub
+                mode="in-out"
+                name="expand-transition"
+              >
+                <div
+                  class="v-list__group__items"
+                  style="display: none;"
+                >
+                  <div
+                    class="container"
+                  >
+                    <div
+                      class="v-input density-radio-group v-input--selection-controls v-input--radio-group v-input--radio-group--column theme--light"
+                    >
+                      <div
+                        class="v-input__control"
+                      >
+                        <div
+                          class="v-input__slot"
+                          style="height: auto;"
+                        >
+                          <div
+                            class="v-input--radio-group__input"
+                            role="radiogroup"
+                          >
+                            <div
+                              class="layout mb-3 row"
+                            >
+                              <div
+                                class="flex xs6"
+                              >
+                                <div
+                                  class="v-radio theme--light primary--text"
+                                >
+                                  <div
+                                    class="v-input--selection-controls__input"
+                                  >
+                                    <input
+                                      aria-checked="true"
+                                      aria-label="settings.density.comfort"
+                                      name="dense"
+                                      role="radio"
+                                      type="radio"
+                                      value="false"
+                                    />
+                                    <div
+                                      class="v-input--selection-controls__ripple primary--text"
+                                    />
+                                    <i
+                                      aria-hidden="true"
+                                      class="v-icon material-icons theme--light primary--text"
+                                    >
+                                      radio_button_checked
+                                    </i>
+                                  </div>
+                                  <label
+                                    aria-hidden="true"
+                                    class="v-label theme--light"
+                                    style="left: 0px; position: relative;"
+                                  >
+                                    settings.density.comfort
+                                  </label>
+                                </div>
+                              </div>
+                              <div
+                                class="flex xs6"
+                              >
+                                <i
+                                  aria-hidden="true"
+                                  class="v-icon density-icon material-icons theme--light"
+                                >
+                                  $vuetify.icons.density_medium
+                                </i>
+                              </div>
+                            </div>
+                            <div
+                              class="layout row"
+                            >
+                              <div
+                                class="flex xs6"
+                              >
+                                <div
+                                  class="v-radio theme--light"
+                                >
+                                  <div
+                                    class="v-input--selection-controls__input"
+                                  >
+                                    <input
+                                      aria-checked="false"
+                                      aria-label="settings.density.compact"
+                                      name="dense"
+                                      role="radio"
+                                      type="radio"
+                                      value="true"
+                                    />
+                                    <div
+                                      class="v-input--selection-controls__ripple"
+                                    />
+                                    <i
+                                      aria-hidden="true"
+                                      class="v-icon material-icons theme--light"
+                                    >
+                                      radio_button_unchecked
+                                    </i>
+                                  </div>
+                                  <label
+                                    aria-hidden="true"
+                                    class="v-label theme--light"
+                                    style="left: 0px; position: relative;"
+                                  >
+                                    settings.density.compact
+                                  </label>
+                                </div>
+                              </div>
+                              <div
+                                class="flex xs6"
+                              >
+                                <i
+                                  aria-hidden="true"
+                                  class="v-icon density-icon material-icons theme--light"
+                                >
+                                  $vuetify.icons.density_small
+                                </i>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          class="v-messages theme--light"
+                        >
+                          <transition-group-stub
+                            class="v-messages__wrapper"
+                            name="message-transition"
+                            tag="div"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </transition-stub>
+            </div>
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-opened-resolved-filter-stub
+              value="true"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-filters-stub
+              addable="true"
+              condition="$and"
+              editable="true"
+              entitiestype="alarm"
+              filters=""
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-remediation-instructions-filters-stub
+              addable="true"
+              editable="true"
+              filters=""
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-live-reporting-stub
+              value="[object Object]"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-info-popup-stub
+              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+              popups=""
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-text-editor-stub
+              title="settings.moreInfosModal"
+              value=""
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-grid-range-size-stub
+              max="12"
+              min="0"
+              step="1"
+              title="settings.expandGridRangeSize"
+              value="0,12"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-switcher-stub
+              title="settings.isHtmlEnabledOnTimeLine"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <div
+              class="v-list__group"
+            >
+              <div
+                class="v-list__group__header"
+              >
+                <div
+                  role="listitem"
+                >
+                  <div
+                    class="v-list__tile theme--light"
+                  >
+                    Ack
+                  </div>
+                </div>
+                <div
+                  class="v-list__group__header__append-icon"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                  >
+                    keyboard_arrow_down
+                  </i>
+                </div>
+              </div>
+              <transition-stub
+                mode="in-out"
+                name="expand-transition"
+              >
+                <div
+                  class="v-list__group__items"
+                  style="display: none;"
+                >
+                  <div
+                    class="v-list grey lighten-4 px-2 py-0 theme--light"
+                    role="list"
+                  >
+                    <field-switcher-stub
+                      title="settings.isAckNoteRequired"
+                    />
+                    <hr
+                      class="v-divider theme--light"
+                    />
+                    <field-switcher-stub
+                      title="settings.isMultiAckEnabled"
+                    />
+                    <hr
+                      class="v-divider theme--light"
+                    />
+                    <field-fast-ack-output-stub
+                      value="[object Object]"
+                    />
+                  </div>
+                </div>
+              </transition-stub>
+            </div>
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-switcher-stub
+              title="settings.isSnoozeNoteRequired"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-enabled-limit-stub
+              label="settings.linksCategoriesLimit"
+              title="settings.linksCategoriesAsList"
+              value="[object Object]"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <export-csv-form-stub
+              datetimeformat="true"
+              form="[object Object]"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-switcher-stub
+              title="settings.stickyHeader"
+            />
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+    <hr
+      class="v-divider theme--light"
+    />
+  </div>
+  <button
+    class="primary v-btn theme--light"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      common.save
+    </div>
+  </button>
+</div>
+`;
+
+exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
+<div>
+  <div
+    class="v-list pt-0 theme--light"
+    role="list"
+  >
+    <field-title-stub
+      title="common.title"
+      value="Alarms list"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-periodic-refresh-stub
+      value="[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <div
+      class="v-list__group"
+    >
+      <div
+        class="v-list__group__header"
+      >
+        <div
+          role="listitem"
+        >
+          <div
+            class="v-list__tile theme--light"
+          >
+            settings.advancedSettings
+          </div>
+        </div>
+        <div
+          class="v-list__group__header__append-icon"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            keyboard_arrow_down
+          </i>
+        </div>
+      </div>
+      <transition-stub
+        mode="in-out"
+        name="expand-transition"
+      >
+        <div
+          class="v-list__group__items"
+          style="display: none;"
+        >
+          <div
+            class="v-list grey lighten-4 px-2 py-0 theme--light"
+            role="list"
+          >
+            <field-default-sort-column-stub
+              columns="[object Object]"
+              columnslabel="settings.columnName"
+              value="[object Object]"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-columns-stub
+              columns="[object Object]"
+              label="settings.columnNames"
+              withcolorindicator="true"
+              withhtml="true"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-columns-stub
+              columns="[object Object]"
+              label="settings.groupColumnNames"
+              withcolorindicator="true"
+              withhtml="true"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-columns-stub
+              columns="[object Object]"
+              label="settings.trackColumnNames"
+              withcolorindicator="true"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-default-elements-per-page-stub
+              value="12"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <div
+              class="v-list__group"
+            >
+              <div
+                class="v-list__group__header"
+              >
+                <div
+                  role="listitem"
+                >
+                  <div
+                    class="v-list__tile theme--light"
+                  >
+                    <div>
+                      settings.density.title
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="v-list__group__header__append-icon"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                  >
+                    keyboard_arrow_down
+                  </i>
+                </div>
+              </div>
+              <transition-stub
+                mode="in-out"
+                name="expand-transition"
+              >
+                <div
+                  class="v-list__group__items"
+                  style="display: none;"
+                >
+                  <div
+                    class="container"
+                  >
+                    <div
+                      class="v-input density-radio-group v-input--selection-controls v-input--radio-group v-input--radio-group--column theme--light"
+                    >
+                      <div
+                        class="v-input__control"
+                      >
+                        <div
+                          class="v-input__slot"
+                          style="height: auto;"
+                        >
+                          <div
+                            class="v-input--radio-group__input"
+                            role="radiogroup"
+                          >
+                            <div
+                              class="layout mb-3 row"
+                            >
+                              <div
+                                class="flex xs6"
+                              >
+                                <div
+                                  class="v-radio theme--light primary--text"
+                                >
+                                  <div
+                                    class="v-input--selection-controls__input"
+                                  >
+                                    <input
+                                      aria-checked="true"
+                                      aria-label="settings.density.comfort"
+                                      name="dense"
+                                      role="radio"
+                                      type="radio"
+                                      value="false"
+                                    />
+                                    <div
+                                      class="v-input--selection-controls__ripple primary--text"
+                                    />
+                                    <i
+                                      aria-hidden="true"
+                                      class="v-icon material-icons theme--light primary--text"
+                                    >
+                                      radio_button_checked
+                                    </i>
+                                  </div>
+                                  <label
+                                    aria-hidden="true"
+                                    class="v-label theme--light"
+                                    style="left: 0px; position: relative;"
+                                  >
+                                    settings.density.comfort
+                                  </label>
+                                </div>
+                              </div>
+                              <div
+                                class="flex xs6"
+                              >
+                                <i
+                                  aria-hidden="true"
+                                  class="v-icon density-icon material-icons theme--light"
+                                >
+                                  $vuetify.icons.density_medium
+                                </i>
+                              </div>
+                            </div>
+                            <div
+                              class="layout row"
+                            >
+                              <div
+                                class="flex xs6"
+                              >
+                                <div
+                                  class="v-radio theme--light"
+                                >
+                                  <div
+                                    class="v-input--selection-controls__input"
+                                  >
+                                    <input
+                                      aria-checked="false"
+                                      aria-label="settings.density.compact"
+                                      name="dense"
+                                      role="radio"
+                                      type="radio"
+                                      value="true"
+                                    />
+                                    <div
+                                      class="v-input--selection-controls__ripple"
+                                    />
+                                    <i
+                                      aria-hidden="true"
+                                      class="v-icon material-icons theme--light"
+                                    >
+                                      radio_button_unchecked
+                                    </i>
+                                  </div>
+                                  <label
+                                    aria-hidden="true"
+                                    class="v-label theme--light"
+                                    style="left: 0px; position: relative;"
+                                  >
+                                    settings.density.compact
+                                  </label>
+                                </div>
+                              </div>
+                              <div
+                                class="flex xs6"
+                              >
+                                <i
+                                  aria-hidden="true"
+                                  class="v-icon density-icon material-icons theme--light"
+                                >
+                                  $vuetify.icons.density_small
+                                </i>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          class="v-messages theme--light"
+                        >
+                          <transition-group-stub
+                            class="v-messages__wrapper"
+                            name="message-transition"
+                            tag="div"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </transition-stub>
+            </div>
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-opened-resolved-filter-stub
+              value="true"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <!---->
+            <!---->
+            <field-live-reporting-stub
+              value="[object Object]"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-info-popup-stub
+              columns="[object Object]"
+              popups=""
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-text-editor-stub
+              title="settings.moreInfosModal"
+              value="More info template"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-grid-range-size-stub
+              max="12"
+              min="0"
+              step="1"
+              title="settings.expandGridRangeSize"
+              value="1,11"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-switcher-stub
+              title="settings.isHtmlEnabledOnTimeLine"
+              value="true"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <div
+              class="v-list__group"
+            >
+              <div
+                class="v-list__group__header"
+              >
+                <div
+                  role="listitem"
+                >
+                  <div
+                    class="v-list__tile theme--light"
+                  >
+                    Ack
+                  </div>
+                </div>
+                <div
+                  class="v-list__group__header__append-icon"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                  >
+                    keyboard_arrow_down
+                  </i>
+                </div>
+              </div>
+              <transition-stub
+                mode="in-out"
+                name="expand-transition"
+              >
+                <div
+                  class="v-list__group__items"
+                  style="display: none;"
+                >
+                  <div
+                    class="v-list grey lighten-4 px-2 py-0 theme--light"
+                    role="list"
+                  >
+                    <field-switcher-stub
+                      title="settings.isAckNoteRequired"
+                      value="true"
+                    />
+                    <hr
+                      class="v-divider theme--light"
+                    />
+                    <field-switcher-stub
+                      title="settings.isMultiAckEnabled"
+                      value="true"
+                    />
+                    <hr
+                      class="v-divider theme--light"
+                    />
+                    <field-fast-ack-output-stub
+                      value="[object Object]"
+                    />
+                  </div>
+                </div>
+              </transition-stub>
+            </div>
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-switcher-stub
+              title="settings.isSnoozeNoteRequired"
+              value="true"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-enabled-limit-stub
+              label="settings.linksCategoriesLimit"
+              title="settings.linksCategoriesAsList"
+              value="[object Object]"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <export-csv-form-stub
+              datetimeformat="true"
+              form="[object Object]"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-switcher-stub
+              title="settings.stickyHeader"
+              value="true"
+            />
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+    <hr
+      class="v-divider theme--light"
+    />
+  </div>
+  <button
+    class="primary v-btn theme--light"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      common.save
+    </div>
+  </button>
+</div>
+`;
+
+exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
+<div>
+  <div
+    class="v-list pt-0 theme--light"
+    role="list"
+  >
+    <field-title-stub
+      title="common.title"
+      value=""
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-periodic-refresh-stub
+      value="[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <div
+      class="v-list__group"
+    >
+      <div
+        class="v-list__group__header"
+      >
+        <div
+          role="listitem"
+        >
+          <div
+            class="v-list__tile theme--light"
+          >
+            settings.advancedSettings
+          </div>
+        </div>
+        <div
+          class="v-list__group__header__append-icon"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            keyboard_arrow_down
+          </i>
+        </div>
+      </div>
+      <transition-stub
+        mode="in-out"
+        name="expand-transition"
+      >
+        <div
+          class="v-list__group__items"
+          style="display: none;"
+        >
+          <div
+            class="v-list grey lighten-4 px-2 py-0 theme--light"
+            role="list"
+          >
+            <field-default-sort-column-stub
+              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+              columnslabel="settings.columnName"
+              value="[object Object]"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-columns-stub
+              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+              label="settings.columnNames"
+              withcolorindicator="true"
+              withhtml="true"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-columns-stub
+              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+              label="settings.groupColumnNames"
+              withcolorindicator="true"
+              withhtml="true"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-columns-stub
+              columns="[object Object],[object Object]"
+              label="settings.trackColumnNames"
+              withcolorindicator="true"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-default-elements-per-page-stub
+              value="10"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <div
+              class="v-list__group"
+            >
+              <div
+                class="v-list__group__header"
+              >
+                <div
+                  role="listitem"
+                >
+                  <div
+                    class="v-list__tile theme--light"
+                  >
+                    <div>
+                      settings.density.title
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="v-list__group__header__append-icon"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                  >
+                    keyboard_arrow_down
+                  </i>
+                </div>
+              </div>
+              <transition-stub
+                mode="in-out"
+                name="expand-transition"
+              >
+                <div
+                  class="v-list__group__items"
+                  style="display: none;"
+                >
+                  <div
+                    class="container"
+                  >
+                    <div
+                      class="v-input density-radio-group v-input--selection-controls v-input--radio-group v-input--radio-group--column theme--light"
+                    >
+                      <div
+                        class="v-input__control"
+                      >
+                        <div
+                          class="v-input__slot"
+                          style="height: auto;"
+                        >
+                          <div
+                            class="v-input--radio-group__input"
+                            role="radiogroup"
+                          >
+                            <div
+                              class="layout mb-3 row"
+                            >
+                              <div
+                                class="flex xs6"
+                              >
+                                <div
+                                  class="v-radio theme--light primary--text"
+                                >
+                                  <div
+                                    class="v-input--selection-controls__input"
+                                  >
+                                    <input
+                                      aria-checked="true"
+                                      aria-label="settings.density.comfort"
+                                      name="dense"
+                                      role="radio"
+                                      type="radio"
+                                      value="false"
+                                    />
+                                    <div
+                                      class="v-input--selection-controls__ripple primary--text"
+                                    />
+                                    <i
+                                      aria-hidden="true"
+                                      class="v-icon material-icons theme--light primary--text"
+                                    >
+                                      radio_button_checked
+                                    </i>
+                                  </div>
+                                  <label
+                                    aria-hidden="true"
+                                    class="v-label theme--light"
+                                    style="left: 0px; position: relative;"
+                                  >
+                                    settings.density.comfort
+                                  </label>
+                                </div>
+                              </div>
+                              <div
+                                class="flex xs6"
+                              >
+                                <i
+                                  aria-hidden="true"
+                                  class="v-icon density-icon material-icons theme--light"
+                                >
+                                  $vuetify.icons.density_medium
+                                </i>
+                              </div>
+                            </div>
+                            <div
+                              class="layout row"
+                            >
+                              <div
+                                class="flex xs6"
+                              >
+                                <div
+                                  class="v-radio theme--light"
+                                >
+                                  <div
+                                    class="v-input--selection-controls__input"
+                                  >
+                                    <input
+                                      aria-checked="false"
+                                      aria-label="settings.density.compact"
+                                      name="dense"
+                                      role="radio"
+                                      type="radio"
+                                      value="true"
+                                    />
+                                    <div
+                                      class="v-input--selection-controls__ripple"
+                                    />
+                                    <i
+                                      aria-hidden="true"
+                                      class="v-icon material-icons theme--light"
+                                    >
+                                      radio_button_unchecked
+                                    </i>
+                                  </div>
+                                  <label
+                                    aria-hidden="true"
+                                    class="v-label theme--light"
+                                    style="left: 0px; position: relative;"
+                                  >
+                                    settings.density.compact
+                                  </label>
+                                </div>
+                              </div>
+                              <div
+                                class="flex xs6"
+                              >
+                                <i
+                                  aria-hidden="true"
+                                  class="v-icon density-icon material-icons theme--light"
+                                >
+                                  $vuetify.icons.density_small
+                                </i>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          class="v-messages theme--light"
+                        >
+                          <transition-group-stub
+                            class="v-messages__wrapper"
+                            name="message-transition"
+                            tag="div"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </transition-stub>
+            </div>
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-opened-resolved-filter-stub
+              value="true"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <!---->
+            <!---->
+            <field-live-reporting-stub
+              value="[object Object]"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-info-popup-stub
+              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+              popups=""
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-text-editor-stub
+              title="settings.moreInfosModal"
+              value=""
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-grid-range-size-stub
+              max="12"
+              min="0"
+              step="1"
+              title="settings.expandGridRangeSize"
+              value="0,12"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-switcher-stub
+              title="settings.isHtmlEnabledOnTimeLine"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <div
+              class="v-list__group"
+            >
+              <div
+                class="v-list__group__header"
+              >
+                <div
+                  role="listitem"
+                >
+                  <div
+                    class="v-list__tile theme--light"
+                  >
+                    Ack
+                  </div>
+                </div>
+                <div
+                  class="v-list__group__header__append-icon"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                  >
+                    keyboard_arrow_down
+                  </i>
+                </div>
+              </div>
+              <transition-stub
+                mode="in-out"
+                name="expand-transition"
+              >
+                <div
+                  class="v-list__group__items"
+                  style="display: none;"
+                >
+                  <div
+                    class="v-list grey lighten-4 px-2 py-0 theme--light"
+                    role="list"
+                  >
+                    <field-switcher-stub
+                      title="settings.isAckNoteRequired"
+                    />
+                    <hr
+                      class="v-divider theme--light"
+                    />
+                    <field-switcher-stub
+                      title="settings.isMultiAckEnabled"
+                    />
+                    <hr
+                      class="v-divider theme--light"
+                    />
+                    <field-fast-ack-output-stub
+                      value="[object Object]"
+                    />
+                  </div>
+                </div>
+              </transition-stub>
+            </div>
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-switcher-stub
+              title="settings.isSnoozeNoteRequired"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-enabled-limit-stub
+              label="settings.linksCategoriesLimit"
+              title="settings.linksCategoriesAsList"
+              value="[object Object]"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <export-csv-form-stub
+              datetimeformat="true"
+              form="[object Object]"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-switcher-stub
+              title="settings.stickyHeader"
+            />
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+    <hr
+      class="v-divider theme--light"
+    />
+  </div>
+  <button
+    class="primary v-btn theme--light"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      common.save
+    </div>
+  </button>
+</div>
+`;
