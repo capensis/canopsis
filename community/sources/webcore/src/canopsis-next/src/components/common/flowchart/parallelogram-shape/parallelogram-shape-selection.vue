@@ -21,7 +21,7 @@
       :color="color",
       :corner-radius="cornerRadius",
       resizable,
-      @start:resize="startResize"
+      @update="$listeners.update"
     )
     rect-connectors(
       v-if="connecting",
@@ -38,14 +38,11 @@
 </template>
 
 <script>
-import { resizeRectangleShapeByDirection } from '@/helpers/flowchart/resize';
-
 import RectSelection from '../common/rect-selection.vue';
 import ParallelogramFigure from '../common/parallelogram-figure.vue';
 import RectConnectors from '../common/rect-connectors.vue';
 
 export default {
-  inject: ['$mouseMove', '$mouseUp'],
   components: { ParallelogramFigure, RectSelection, RectConnectors },
   props: {
     parallelogram: {
@@ -75,34 +72,6 @@ export default {
     connecting: {
       type: Boolean,
       default: false,
-    },
-  },
-  data() {
-    return {
-      direction: undefined,
-    };
-  },
-  methods: {
-    startResize(direction) {
-      this.$mouseMove.register(this.onResize);
-      this.$mouseUp.register(this.finishResize);
-      this.direction = direction;
-    },
-
-    finishResize() {
-      this.$mouseMove.unregister(this.onResize);
-      this.$mouseUp.unregister(this.finishResize);
-    },
-
-    onResize(cursor) {
-      const { rect, direction } = resizeRectangleShapeByDirection(
-        this.parallelogram,
-        cursor,
-        this.direction,
-      );
-
-      this.direction = direction;
-      this.$emit('update', rect);
     },
   },
 };

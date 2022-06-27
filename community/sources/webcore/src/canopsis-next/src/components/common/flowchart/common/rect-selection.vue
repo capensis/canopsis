@@ -25,7 +25,10 @@
 <script>
 import { DIRECTIONS } from '@/constants';
 
+import { resizeRectangleShape } from '@/helpers/flowchart/resize';
+
 export default {
+  inject: ['$mouseMove', '$mouseUp'],
   props: {
     x: {
       type: Number,
@@ -55,6 +58,16 @@ export default {
       type: Number,
       default: 4,
     },
+    aspectRatio: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      direction: undefined,
+      ratio: undefined,
+    };
   },
   computed: {
     leftX() {
@@ -104,7 +117,36 @@ export default {
   },
   methods: {
     startResize(direction) {
-      this.$emit('start:resize', direction);
+      this.$mouseMove.register(this.onResize);
+      this.$mouseUp.register(this.finishResize);
+
+      this.direction = direction;
+      this.ratio = this.width !== 0 ? this.height / this.width : 0;
+    },
+
+    finishResize() {
+      this.$mouseMove.unregister(this.onResize);
+      this.$mouseUp.unregister(this.finishResize);
+    },
+
+    onResize(cursor) {
+      const { direction, rect } = resizeRectangleShape({
+        rect: {
+          x: this.x,
+          y: this.y,
+          width: this.width,
+          height: this.height,
+        },
+        cursorX: cursor.x,
+        cursorY: cursor.y,
+        direction: this.direction,
+        ratio: this.ratio,
+        aspectRatio: this.aspectRatio || cursor.shift,
+      });
+
+      this.direction = direction;
+
+      this.$emit('update', rect);
     },
   },
 };
