@@ -4,7 +4,7 @@
       template(#title="")
         span {{ title }}
       template(#text="")
-        pbehavior-patterns-form(v-model="form.patterns")
+        pbehavior-patterns-form(v-model="form")
       template(#actions="")
         v-btn(
           :disabled="submitting",
@@ -49,9 +49,7 @@ export default {
     const { patterns } = this.modal.config;
 
     return {
-      form: {
-        patterns: cloneDeep(patterns),
-      },
+      form: cloneDeep(patterns),
     };
   },
   computed: {

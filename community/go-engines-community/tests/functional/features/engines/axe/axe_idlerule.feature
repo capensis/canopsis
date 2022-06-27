@@ -4,7 +4,7 @@ Feature: update alarm on idle rule
   Scenario: given idle rule and no events for alarm should update alarm
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-1-name",
       "type": "alarm",
@@ -32,7 +32,7 @@ Feature: update alarm on idle rule
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-1",
@@ -47,7 +47,7 @@ Feature: update alarm on idle rule
     When I wait the end of event processing
     When I wait 3s
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-1",
@@ -64,7 +64,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-1/test-component-axe-idlerule-1"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -104,7 +104,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-1/test-component-axe-idlerule-1"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -121,7 +121,7 @@ Feature: update alarm on idle rule
             },
             "ticket": {
               "_t": "assocticket",
-              "a": "root",
+              "a": "system",
               "m": "test-idlerule-axe-idlerule-1-ticket"
             },
             "steps": [
@@ -135,8 +135,8 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "root",
-                "user_id": "root",
+                "a": "system",
+                "user_id": "",
                 "m": "test-idlerule-axe-idlerule-1-ticket"
               }
             ]
@@ -152,7 +152,7 @@ Feature: update alarm on idle rule
     }
     """
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-1",
@@ -168,7 +168,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-1/test-component-axe-idlerule-1"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -185,8 +185,7 @@ Feature: update alarm on idle rule
             },
             "ticket": {
               "_t": "assocticket",
-              "a": "root",
-              "user_id": "root",
+              "a": "system",
               "m": "test-idlerule-axe-idlerule-1-ticket"
             },
             "steps": [
@@ -200,14 +199,14 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "root",
-                "user_id": "root",
+                "a": "system",
+                "user_id": "",
                 "m": "test-idlerule-axe-idlerule-1-ticket"
               },
               {
                 "_t": "assocticket",
-                "a": "root",
-                "user_id": "root",
+                "a": "system",
+                "user_id": "",
                 "m": "test-idlerule-axe-idlerule-1-ticket"
               }
             ]
@@ -226,7 +225,7 @@ Feature: update alarm on idle rule
   Scenario: given idle rule and no update for alarm should update alarm
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-2-name",
       "type": "alarm",
@@ -254,7 +253,7 @@ Feature: update alarm on idle rule
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-2",
@@ -269,7 +268,7 @@ Feature: update alarm on idle rule
     When I wait the end of event processing
     When I wait 3s
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-2",
@@ -286,7 +285,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-2/test-component-axe-idlerule-2"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -330,7 +329,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-2/test-component-axe-idlerule-2"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -347,8 +346,7 @@ Feature: update alarm on idle rule
             },
             "ticket": {
               "_t": "assocticket",
-              "a": "root",
-              "user_id": "root",
+              "a": "system",
               "m": "test-idlerule-axe-idlerule-2-ticket"
             },
             "steps": [
@@ -366,8 +364,8 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "root",
-                "user_id": "root",
+                "a": "system",
+                "user_id": "",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
             ]
@@ -383,7 +381,7 @@ Feature: update alarm on idle rule
     }
     """
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-2",
@@ -400,7 +398,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-2/test-component-axe-idlerule-2"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -417,8 +415,7 @@ Feature: update alarm on idle rule
             },
             "ticket": {
               "_t": "assocticket",
-              "a": "root",
-              "user_id": "root",
+              "a": "system",
               "m": "test-idlerule-axe-idlerule-2-ticket"
             },
             "steps": [
@@ -436,8 +433,8 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "root",
-                "user_id": "root",
+                "a": "system",
+                "user_id": "",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
             ]
@@ -453,7 +450,7 @@ Feature: update alarm on idle rule
     }
     """
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-2",
@@ -469,7 +466,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-2/test-component-axe-idlerule-2"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -486,8 +483,7 @@ Feature: update alarm on idle rule
             },
             "ticket": {
               "_t": "assocticket",
-              "a": "root",
-              "user_id": "root",
+              "a": "system",
               "m": "test-idlerule-axe-idlerule-2-ticket"
             },
             "steps": [
@@ -505,8 +501,8 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "root",
-                "user_id": "root",
+                "a": "system",
+                "user_id": "",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               },
               {
@@ -515,8 +511,8 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "root",
-                "user_id": "root",
+                "a": "system",
+                "user_id": "",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
             ]
@@ -535,7 +531,7 @@ Feature: update alarm on idle rule
   Scenario: given idle rule and no events for resource should create alarm
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-3-name",
       "type": "entity",
@@ -556,7 +552,7 @@ Feature: update alarm on idle rule
     Then I save response ruleID={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-3",
@@ -571,7 +567,7 @@ Feature: update alarm on idle rule
     When I wait the end of event processing
     When I wait 3s
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-3",
@@ -588,7 +584,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-3/test-component-axe-idlerule-3"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -603,7 +599,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-3/test-component-axe-idlerule-3"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -614,25 +610,29 @@ Feature: update alarm on idle rule
             "resource": "test-resource-axe-idlerule-3",
             "state": {
               "val": 3,
-              "a": "root",
+              "a": "system",
+              "user_id": "",
               "m": "Idle rule test-idlerule-axe-idlerule-3-name"
             },
             "status": {
               "val": 5,
-              "a": "root",
+              "a": "system",
+              "user_id": "",
               "m": "Idle rule test-idlerule-axe-idlerule-3-name"
             },
             "steps": [
               {
                 "_t": "stateinc",
                 "val": 3,
-                "a": "root",
+                "a": "system",
+                "user_id": "",
                 "m": "Idle rule test-idlerule-axe-idlerule-3-name"
               },
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "root",
+                "a": "system",
+                "user_id": "",
                 "m": "Idle rule test-idlerule-axe-idlerule-3-name"
               }
             ]
@@ -648,7 +648,7 @@ Feature: update alarm on idle rule
     }
     """
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-3",
@@ -664,7 +664,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-3/test-component-axe-idlerule-3"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -712,7 +712,7 @@ Feature: update alarm on idle rule
   Scenario: given idle rule and no events for component should create alarm
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-4-name",
       "type": "entity",
@@ -733,7 +733,7 @@ Feature: update alarm on idle rule
     Then I save response ruleID={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-4",
@@ -748,7 +748,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-component-axe-idlerule-4"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -758,25 +758,25 @@ Feature: update alarm on idle rule
             "connector_name": "test-connector-name-axe-idlerule-4",
             "state": {
               "val": 3,
-              "a": "root",
+              "a": "system",
               "m": "Idle rule test-idlerule-axe-idlerule-4-name"
             },
             "status": {
               "val": 5,
-              "a": "root",
+              "a": "system",
               "m": "Idle rule test-idlerule-axe-idlerule-4-name"
             },
             "steps": [
               {
                 "_t": "stateinc",
                 "val": 3,
-                "a": "root",
+                "a": "system",
                 "m": "Idle rule test-idlerule-axe-idlerule-4-name"
               },
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "root",
+                "a": "system",
                 "m": "Idle rule test-idlerule-axe-idlerule-4-name"
               }
             ]
@@ -792,7 +792,7 @@ Feature: update alarm on idle rule
     }
     """
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-4",
@@ -807,7 +807,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-component-axe-idlerule-4"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -856,7 +856,7 @@ Feature: update alarm on idle rule
   Scenario: given idle rule and no events for connector should create alarm
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-5-name",
       "type": "entity",
@@ -877,7 +877,7 @@ Feature: update alarm on idle rule
     Then I save response ruleID={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-5",
@@ -892,7 +892,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-connector-axe-idlerule-5/test-connector-name-axe-idlerule-5"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -901,25 +901,25 @@ Feature: update alarm on idle rule
             "connector_name": "test-connector-name-axe-idlerule-5",
             "state": {
               "val": 3,
-              "a": "root",
+              "a": "system",
               "m": "Idle rule test-idlerule-axe-idlerule-5-name"
             },
             "status": {
               "val": 5,
-              "a": "root",
+              "a": "system",
               "m": "Idle rule test-idlerule-axe-idlerule-5-name"
             },
             "steps": [
               {
                 "_t": "stateinc",
                 "val": 3,
-                "a": "root",
+                "a": "system",
                 "m": "Idle rule test-idlerule-axe-idlerule-5-name"
               },
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "root",
+                "a": "system",
                 "m": "Idle rule test-idlerule-axe-idlerule-5-name"
               }
             ]
@@ -936,7 +936,7 @@ Feature: update alarm on idle rule
     """
     When I wait 1s
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-5",
@@ -951,7 +951,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-connector-axe-idlerule-5/test-connector-name-axe-idlerule-5"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -999,7 +999,7 @@ Feature: update alarm on idle rule
   Scenario: given idle rule and no events for alarm should apply most priority rule only once
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-6-1-name",
       "type": "alarm",
@@ -1025,7 +1025,7 @@ Feature: update alarm on idle rule
     """
     Then the response code should be 201
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-6-2-name",
       "type": "alarm",
@@ -1053,7 +1053,7 @@ Feature: update alarm on idle rule
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-6",
@@ -1069,7 +1069,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-6/test-component-axe-idlerule-6"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1086,8 +1086,7 @@ Feature: update alarm on idle rule
             },
             "ticket": {
               "_t": "assocticket",
-              "a": "root",
-              "user_id": "root",
+              "a": "system",
               "m": "test-idlerule-axe-idlerule-6-2-ticket"
             },
             "steps": [
@@ -1101,8 +1100,8 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "root",
-                "user_id": "root",
+                "a": "system",
+                "user_id": "",
                 "m": "test-idlerule-axe-idlerule-6-2-ticket"
               }
             ]
@@ -1121,7 +1120,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-6/test-component-axe-idlerule-6"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1153,7 +1152,7 @@ Feature: update alarm on idle rule
     }
     """
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-6",
@@ -1169,7 +1168,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-6/test-component-axe-idlerule-6"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1207,7 +1206,7 @@ Feature: update alarm on idle rule
   Scenario: given idle rule and no events for resource should apply most priority rule only once
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-7-1-name",
       "type": "entity",
@@ -1227,7 +1226,7 @@ Feature: update alarm on idle rule
     Then the response code should be 201
     Then I save response rule1ID={{ .lastResponse._id }}
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-7-2-name",
       "type": "entity",
@@ -1248,7 +1247,7 @@ Feature: update alarm on idle rule
     Then I save response rule2ID={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-7",
@@ -1264,7 +1263,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-7/test-component-axe-idlerule-7"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1287,7 +1286,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "root"
+                "a": "system"
               }
             ]
           }
@@ -1305,7 +1304,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-7/test-component-axe-idlerule-7"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1336,7 +1335,7 @@ Feature: update alarm on idle rule
     }
     """
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-7",
@@ -1352,7 +1351,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-7/test-component-axe-idlerule-7"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1369,7 +1368,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "root"
+                "a": "system"
               },
               {
                 "_t": "statedec",
@@ -1386,7 +1385,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "root"
+                "a": "system"
               }
             ]
           }
@@ -1408,7 +1407,7 @@ Feature: update alarm on idle rule
   Scenario: given idle rule and no events for resource should update existed alarm
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-8-name",
       "type": "entity",
@@ -1429,7 +1428,7 @@ Feature: update alarm on idle rule
     Then I save response ruleID={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-8",
@@ -1445,7 +1444,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-8/test-component-axe-idlerule-8"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1474,12 +1473,12 @@ Feature: update alarm on idle rule
               {
                 "_t": "stateinc",
                 "val": 3,
-                "a": "root"
+                "a": "system"
               },
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "root"
+                "a": "system"
               }
             ]
           }
@@ -1494,7 +1493,7 @@ Feature: update alarm on idle rule
     }
     """
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-8",
@@ -1510,7 +1509,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-8/test-component-axe-idlerule-8"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1568,7 +1567,7 @@ Feature: update alarm on idle rule
   Scenario: given idle rule and no events for alarm and entity should apply most priority alarm rule
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-9-1-name",
       "type": "alarm",
@@ -1596,7 +1595,7 @@ Feature: update alarm on idle rule
     Then the response code should be 201
     Then I save response rule1ID={{ .lastResponse._id }}
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-9-2-name",
       "type": "entity",
@@ -1617,7 +1616,7 @@ Feature: update alarm on idle rule
     Then I save response rule2ID={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-9",
@@ -1633,7 +1632,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-9/test-component-axe-idlerule-9"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1650,8 +1649,7 @@ Feature: update alarm on idle rule
             },
             "ticket": {
               "_t": "assocticket",
-              "a": "root",
-              "user_id": "root",
+              "a": "system",
               "m": "test-idlerule-axe-idlerule-9-1-ticket"
             },
             "steps": [
@@ -1665,8 +1663,8 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "root",
-                "user_id": "root",
+                "a": "system",
+                "user_id": "",
                 "m": "test-idlerule-axe-idlerule-9-1-ticket"
               }
             ]
@@ -1685,7 +1683,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-9/test-component-axe-idlerule-9"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1717,7 +1715,7 @@ Feature: update alarm on idle rule
     }
     """
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-9",
@@ -1733,7 +1731,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-9/test-component-axe-idlerule-9"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1775,7 +1773,7 @@ Feature: update alarm on idle rule
   Scenario: given idle rule and no events for alarm and entity should apply most priority entity rule
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-10-1-name",
       "type": "alarm",
@@ -1802,7 +1800,7 @@ Feature: update alarm on idle rule
     Then the response code should be 201
     Then I save response rule1ID={{ .lastResponse._id }}
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-10-2-name",
       "type": "entity",
@@ -1823,7 +1821,7 @@ Feature: update alarm on idle rule
     Then I save response rule2ID={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-10",
@@ -1839,7 +1837,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-10/test-component-axe-idlerule-10"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1887,7 +1885,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-10/test-component-axe-idlerule-10"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1926,7 +1924,7 @@ Feature: update alarm on idle rule
     }
     """
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-10",
@@ -1942,7 +1940,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-axe-idlerule-10/test-component-axe-idlerule-10"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2004,7 +2002,7 @@ Feature: update alarm on idle rule
   Scenario: given idle rule and no events for component which is created by resource event should create alarm
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-11-name",
       "type": "entity",
@@ -2025,7 +2023,7 @@ Feature: update alarm on idle rule
     Then I save response ruleID={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-11",
@@ -2041,7 +2039,7 @@ Feature: update alarm on idle rule
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-component-axe-idlerule-11"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {

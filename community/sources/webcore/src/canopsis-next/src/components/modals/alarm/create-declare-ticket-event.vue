@@ -1,18 +1,17 @@
 <template lang="pug">
-  v-form(data-test="createDeclareTicketEventModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createDeclareTicket.title') }}
-      template(slot="text")
+      template(#text="")
         v-container
           v-layout(row)
             v-flex.text-xs-center
               alarm-general-table(:items="items")
           v-layout(row)
             v-divider.my-3
-      template(slot="actions")
+      template(#actions="")
         v-btn(
-          data-test="declareTicketEventCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
@@ -20,7 +19,6 @@
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
-          data-test="declareTicketEventSubmitButton",
           type="submit"
         ) {{ $t('common.actions.reportIncident') }}
 </template>

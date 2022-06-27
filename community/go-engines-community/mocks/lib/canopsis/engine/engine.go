@@ -11,7 +11,7 @@ import (
 
 	engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	gomock "github.com/golang/mock/gomock"
-	amqp "github.com/streadway/amqp"
+	amqp091 "github.com/rabbitmq/amqp091-go"
 )
 
 // MockEngine is a mock of Engine interface.
@@ -59,6 +59,18 @@ func (m *MockEngine) AddPeriodicalWorker(arg0 string, arg1 engine.PeriodicalWork
 func (mr *MockEngineMockRecorder) AddPeriodicalWorker(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddPeriodicalWorker", reflect.TypeOf((*MockEngine)(nil).AddPeriodicalWorker), arg0, arg1)
+}
+
+// AddRoutine mocks base method.
+func (m *MockEngine) AddRoutine(arg0 engine.Routine) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "AddRoutine", arg0)
+}
+
+// AddRoutine indicates an expected call of AddRoutine.
+func (mr *MockEngineMockRecorder) AddRoutine(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddRoutine", reflect.TypeOf((*MockEngine)(nil).AddRoutine), arg0)
 }
 
 // Run mocks base method.
@@ -136,7 +148,7 @@ func (m *MockMessageProcessor) EXPECT() *MockMessageProcessorMockRecorder {
 }
 
 // Process mocks base method.
-func (m *MockMessageProcessor) Process(arg0 context.Context, arg1 amqp.Delivery) ([]byte, error) {
+func (m *MockMessageProcessor) Process(arg0 context.Context, arg1 amqp091.Delivery) ([]byte, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Process", arg0, arg1)
 	ret0, _ := ret[0].([]byte)
