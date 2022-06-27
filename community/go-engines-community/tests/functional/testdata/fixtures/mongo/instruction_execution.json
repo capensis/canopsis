@@ -10,10 +10,7 @@
         "operation_history": [
           {
             "operation": "test-instruction-execution-running-step-1-operation-1",
-            "started_at": 1597905434,
-            "job_history": [
-              "test-job-execution-to-get"
-            ]
+            "started_at": 1597905434
           }
         ]
       }
@@ -30,8 +27,7 @@
         "operation_history": [
           {
             "operation": "test-instruction-cancel-execution-running-1-step-1-operation-1",
-            "started_at": 1597905434,
-            "job_history": []
+            "started_at": 1597905434
           }
         ]
       }
@@ -48,8 +44,7 @@
         "operation_history": [
           {
             "operation": "test-instruction-to-update-w-approval-should-cancel-execution-running-1-step-1-operation-1",
-            "started_at": 1597905434,
-            "job_history": []
+            "started_at": 1597905434
           }
         ]
       }
@@ -67,8 +62,7 @@
         "operation_history": [
           {
             "operation": "test-instruction-delete-execution-running-step-1-operation-1",
-            "started_at": 1597905434,
-            "job_history": []
+            "started_at": 1597905434
           }
         ]
       }
@@ -87,14 +81,12 @@
             "operation": "test-instruction-execution-resume-1-step-1-operation-1",
             "description": "test-instruction-execution-resume-1-step-1-operation-1-description",
             "started_at": 1597905434,
-            "completed_at": 1597905437,
-            "job_history": []
+            "completed_at": 1597905437
           },
           {
             "operation": "test-instruction-execution-resume-1-step-1-operation-2",
             "description": "test-instruction-execution-resume-1-step-1-operation-2-description",
-            "started_at": 1597905437,
-            "job_history": []
+            "started_at": 1597905437
           }
         ]
       }

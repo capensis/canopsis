@@ -1235,10 +1235,7 @@ Feature: Import entities
       "status": "done"
     }
     """
-    When I wait 2s
-    When I do GET /api/v4/entitybasics?_id=SC004C
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/entitybasics?_id=SC004C until response code is 200 and body contains:
     """json
     {
         "_id": "SC004C",

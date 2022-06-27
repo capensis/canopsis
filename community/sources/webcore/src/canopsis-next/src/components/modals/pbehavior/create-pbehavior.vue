@@ -1,11 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
-        pbehavior-form(v-model="form", :no-filter="noFilter")
-      template(slot="actions")
+      template(#text="")
+        pbehavior-form(v-model="form", :no-pattern="noPattern")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
@@ -52,8 +52,8 @@ export default {
       return this.config.title || this.$t('modals.createPbehavior.create.title');
     },
 
-    noFilter() {
-      return !!this.config.noFilter;
+    noPattern() {
+      return !!this.config.noPattern;
     },
   },
   methods: {

@@ -7,7 +7,6 @@
           :rule="rule",
           :name="rule.key",
           :attributes="attributes",
-          :disabled="disabled",
           @input="updateRule(index, $event)"
         )
       c-action-btn(
@@ -73,10 +72,11 @@ export default {
     },
 
     getRuleProps(rule) {
-      const { operators, type, ...props } = this.getOptionsByRule(rule);
+      const { operators, type, disabled, ...props } = this.getOptionsByRule(rule);
 
       return {
         ...props,
+        disabled: disabled || this.disabled,
         type,
         operators: operators ?? getOperatorsByRule(rule, type),
       };
@@ -106,7 +106,7 @@ export default {
     addFilterRule() {
       const [firstAttribute] = this.attributes;
 
-      this.addItemIntoArray(patternRuleToForm({ attribute: firstAttribute?.value }));
+      this.addItemIntoArray(patternRuleToForm({ field: firstAttribute?.value }));
     },
   },
 };

@@ -125,14 +125,14 @@ export default {
         'v.duration': convertDurationToString,
         'v.current_state_duration': convertDurationToString,
         t: convertDateToStringWithFormatForToday,
-        'v.active_duration': convertDateToStringWithFormatForToday,
-        'v.snooze_duration': convertDateToStringWithFormatForToday,
-        'v.pbh_inactive_duration': convertDateToStringWithFormatForToday,
+        'v.active_duration': convertDurationToString,
+        'v.snooze_duration': convertDurationToString,
+        'v.pbh_inactive_duration': convertDurationToString,
 
         ...this.columnsFiltersMap,
       };
 
-      return PROPERTIES_FILTERS_MAP[this.column.value];
+      return this.$i18n.locale && PROPERTIES_FILTERS_MAP[this.column.value];
     },
 
     component() {
@@ -171,6 +171,9 @@ export default {
             asList: get(this.widget.parameters, 'linksCategoriesAsList.enabled', false),
             limit: get(this.widget.parameters, 'linksCategoriesAsList.limit'),
             links: this.alarm.links ?? {},
+          },
+          on: {
+            activate: this.$listeners.activate,
           },
         },
         [ALARM_ENTITY_FIELDS.extraDetails]: {

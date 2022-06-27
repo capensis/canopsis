@@ -11,6 +11,8 @@ func ValidateConfig(sl validator.StructLevel) {
 	now := types.NewCpsTime()
 
 	if r.Remediation.AccumulateAfter != nil && r.Remediation.DeleteAfter != nil &&
+		r.Remediation.AccumulateAfter.Enabled != nil && *r.Remediation.AccumulateAfter.Enabled &&
+		r.Remediation.DeleteAfter.Enabled != nil && *r.Remediation.DeleteAfter.Enabled &&
 		r.Remediation.AccumulateAfter.Value > 0 && r.Remediation.DeleteAfter.Value > 0 {
 		accumulateAt := r.Remediation.AccumulateAfter.AddTo(now)
 		deleteAt := r.Remediation.DeleteAfter.AddTo(now)
@@ -21,6 +23,8 @@ func ValidateConfig(sl validator.StructLevel) {
 	}
 
 	if r.Alarm.ArchiveAfter != nil && r.Alarm.DeleteAfter != nil &&
+		r.Alarm.ArchiveAfter.Enabled != nil && *r.Alarm.ArchiveAfter.Enabled &&
+		r.Alarm.DeleteAfter.Enabled != nil && *r.Alarm.DeleteAfter.Enabled &&
 		r.Alarm.ArchiveAfter.Value > 0 && r.Alarm.DeleteAfter.Value > 0 {
 		archiveAt := r.Alarm.ArchiveAfter.AddTo(now)
 		deleteAt := r.Alarm.DeleteAfter.AddTo(now)
@@ -30,7 +34,8 @@ func ValidateConfig(sl validator.StructLevel) {
 		}
 	}
 
-	if r.Alarm.ArchiveAfter == nil && r.Alarm.DeleteAfter != nil {
-		sl.ReportError(r.Remediation.DeleteAfter, "Alarm.ArchiveAfter", "ArchiveAfter", "required_if", "DeleteAfter")
+	if r.Alarm.DeleteAfter != nil && r.Alarm.DeleteAfter.Enabled != nil && *r.Alarm.DeleteAfter.Enabled && r.Alarm.DeleteAfter.Value > 0 &&
+		(r.Alarm.ArchiveAfter == nil || r.Alarm.ArchiveAfter.Enabled == nil || !*r.Alarm.ArchiveAfter.Enabled || r.Alarm.ArchiveAfter.Value == 0) {
+		sl.ReportError(r.Alarm.ArchiveAfter, "Alarm.ArchiveAfter", "ArchiveAfter", "required_if", "DeleteAfter")
 	}
 }

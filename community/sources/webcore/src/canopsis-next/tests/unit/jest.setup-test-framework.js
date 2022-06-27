@@ -12,13 +12,27 @@ global.IntersectionObserver = jest.fn(() => ({
   unobserve: jest.fn(),
 }));
 
+Object.defineProperty(HTMLElement.prototype, 'innerText', {
+  set(value) {
+    this.textContent = value;
+  },
+  get() {
+    return this.textContent;
+  },
+});
+
 expect.extend({
   toMatchImageSnapshot,
   toMatchCanvasSnapshot(canvas, options, ...args) {
     const img = canvas.toDataURL();
     const data = img.replace(/^data:image\/(png|jpg);base64,/, '');
     const newOptions = {
-      failureThreshold: 0.02,
+      comparisonMethod: 'ssim',
+      diffDirection: 'vertical',
+      customDiffConfig: {
+        ssim: 'fast',
+      },
+      failureThreshold: 0.05,
       failureThresholdType: 'percent',
       customSnapshotIdentifier: ({ currentTestName, counter }) => (
         kebabCase(`${currentTestName.replace(/(.*\sRenders\s)|(.$)/g, '')}-${counter}`)
@@ -38,5 +52,35 @@ expect.extend({
     const menu = wrapper.findMenu();
 
     return toMatchSnapshot.call(this, menu.element);
+  },
+  toEmit(wrapper, event, ...data) {
+    const emittedEvents = wrapper.emitted(event);
+
+    if (this.isNot) {
+      try {
+        expect(emittedEvents).not.toBeTruthy();
+      } catch (err) {
+        return err.matcherResult;
+      }
+    }
+
+    try {
+      expect(emittedEvents).toHaveLength(data.length);
+    } catch (err) {
+      return {
+        pass: false,
+        message: () => `Event '${event}' not emitted`,
+      };
+    }
+
+    try {
+      expect(
+        emittedEvents.map(events => events[0]),
+      ).toEqual(data);
+    } catch (err) {
+      return err.matcherResult;
+    }
+
+    return { pass: true };
   },
 });

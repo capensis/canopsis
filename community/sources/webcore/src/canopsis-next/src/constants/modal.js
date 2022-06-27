@@ -64,6 +64,7 @@ export const MODALS = {
   createRemediationInstructionsFilter: 'create-remediation-instructions-filter',
   executeRemediationInstruction: 'execute-remediation-instruction',
   remediationPatterns: 'remediation-patterns',
+  pbehaviorPatterns: 'pbehavior-patterns',
   remediationInstructionApproval: 'remediation-instruction-approval',
   imageViewer: 'image-viewer',
   imagesViewer: 'images-viewer',
@@ -75,6 +76,6 @@ export const MODALS = {
   createAlarmStatusRule: 'create-alarm-status-rule',
   healthcheckEngine: 'healthcheck-engine',
   healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
-  patterns: 'patterns',
   info: 'info',
+  createKpiFilter: 'create-kpi-filter',
 };

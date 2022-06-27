@@ -50,19 +50,11 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
         rrule
       </div>
       <div>
-        Comments:
+        Last comment:
         <div
           class="ml-2"
         >
           - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        Comments:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
         </div>
       </div>
       <hr
@@ -121,19 +113,11 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
         rrule
       </div>
       <div>
-        Comments:
+        Last comment:
         <div
           class="ml-2"
         >
           - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        Comments:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
         </div>
       </div>
       <hr
@@ -193,6 +177,14 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
       <div>
         rrule
       </div>
+      <div>
+        Last comment:
+        <div
+          class="ml-2"
+        >
+          - pbehavior-comment-1-author: pbehavior-comment-1-message
+        </div>
+      </div>
       <hr
         class="v-divider theme--light"
       />
@@ -249,19 +241,11 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
         rrule
       </div>
       <div>
-        Comments:
+        Last comment:
         <div
           class="ml-2"
         >
           - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        Comments:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
         </div>
       </div>
       <hr
@@ -320,19 +304,11 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
       </div>
       <!---->
       <div>
-        Comments:
+        Last comment:
         <div
           class="ml-2"
         >
           - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        Comments:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
         </div>
       </div>
       <hr
@@ -394,19 +370,11 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
         rrule
       </div>
       <div>
-        Comments:
+        Last comment:
         <div
           class="ml-2"
         >
           - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        Comments:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
         </div>
       </div>
       <hr

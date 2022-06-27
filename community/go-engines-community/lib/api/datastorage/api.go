@@ -23,16 +23,8 @@ type api struct {
 	store Store
 }
 
-// Get conf
-// @Summary Get conf
-// @Description Get conf
-// @Tags datastorage
-// @ID datastorage-get
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// Get
 // @Success 200 {object} DataStorage
-// @Router /data-storage [get]
 func (a *api) Get(c *gin.Context) {
 	data, err := a.store.Get(c.Request.Context())
 	if err != nil {
@@ -42,17 +34,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, data)
 }
 
-// Update conf
-// @Summary Update conf
-// @Description Update conf
-// @Tags datastorage
-// @ID datastorage-update
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// Update
 // @Param body body datastorage.Config true "body"
 // @Success 200 {object} DataStorage
-// @Router /data-storage [put]
 func (a *api) Update(c *gin.Context) {
 	conf := datastorage.Config{}
 	if err := c.ShouldBind(&conf); err != nil {

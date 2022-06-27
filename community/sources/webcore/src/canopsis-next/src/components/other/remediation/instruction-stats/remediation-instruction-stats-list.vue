@@ -12,52 +12,49 @@
       advanced-pagination,
       @update:pagination="$emit('update:pagination', $event)"
     )
-      template(slot="toolbar", slot-scope="props")
+      template(#toolbar="")
         v-layout(align-center)
           c-quick-date-interval-field(
             :interval="pagination.interval",
             :accumulated-before="accumulatedBefore",
             @input="updateInterval"
           )
-      template(slot="headerCell", slot-scope="props")
-        span.c-table-header__text--multiline {{ props.header.text }}
-      template(slot="type", slot-scope="props")
-        | {{ $t(`remediationInstructions.types.${props.item.type}`) }}
-      template(slot="last_executed_on", slot-scope="props")
-        | {{ props.item.last_executed_on | date }}
-      template(slot="last_modified", slot-scope="props")
-        | {{ props.item.last_modified | date }}
-      template(slot="avg_complete_time", slot-scope="props")
-        | {{ props.item.avg_complete_time | duration }}
-      template(slot="alarm_states", slot-scope="props")
-        affect-alarm-states(:alarm-states="props.item.alarm_states")
-      template(slot="ok_alarm_states", slot-scope="props")
-        span.c-state-count-changes-chip.primary {{ props.item.ok_alarm_states }}
-      template(slot="rating", slot-scope="props")
-        rating-field(:value="props.item.rating", readonly)
-      template(slot="actions", slot-scope="props")
+      template(#headerCell="{ header }")
+        span.c-table-header__text--multiline {{ header.text }}
+      template(#type="{ item }") {{ $t(`remediationInstructions.types.${item.type}`) }}
+      template(#last_executed_on="{ item }") {{ item.last_executed_on | date }}
+      template(#last_modified="{ item }") {{ item.last_modified | date }}
+      template(#avg_complete_time="{ item }") {{ item.avg_complete_time | duration }}
+      template(#alarm_states="{ item }")
+        affect-alarm-states(:alarm-states="item.alarm_states")
+      template(#ok_alarm_states="{ item }")
+        span.c-state-count-changes-chip.primary {{ item.ok_alarm_states }}
+      template(#rating="{ item }")
+        rating-field(:value="item.rating", readonly)
+      template(#actions="{ item }")
         v-layout(row, justify-end)
           c-action-btn(
-            v-if="props.item.rate_notify",
+            v-if="item.rate_notify",
             :tooltip="$t('remediationInstructionStats.actions.needRate')",
             icon="notification_important",
             color="error",
-            @click="$emit('rate', props.item)"
+            @click="$emit('rate', item)"
           )
           c-action-btn(
             :tooltip="$t('remediationInstructionStats.actions.rate')",
-            :disabled="!props.item.ratable",
+            :disabled="!item.ratable",
             icon="thumbs_up_down",
-            @click="$emit('rate', props.item)"
+            @click="$emit('rate', item)"
           )
-      template(slot="expand", slot-scope="props")
-        remediation-instruction-stats-list-expand-panel(:remediation-instruction-stats-id="props.item._id")
+      template(#expand="{ item }")
+        remediation-instruction-stats-list-expand-panel(
+          :interval="interval",
+          :remediation-instruction-stats-id="item._id"
+        )
 </template>
 
 <script>
-import {
-  permissionsTechnicalRemediationInstructionMixin,
-} from '@/mixins/permissions/technical/remediation-instruction';
+import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
 
 import RatingField from '@/components/forms/fields/rating-field.vue';
 
@@ -89,6 +86,10 @@ export default {
       required: false,
     },
     pagination: {
+      type: Object,
+      required: true,
+    },
+    interval: {
       type: Object,
       required: true,
     },
