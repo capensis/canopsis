@@ -265,6 +265,7 @@ describe('c-pattern-editor-field', () => {
         required: true,
         type: PATTERN_TYPES.alarm,
         withType: true,
+        readonly: true,
       },
     });
 
