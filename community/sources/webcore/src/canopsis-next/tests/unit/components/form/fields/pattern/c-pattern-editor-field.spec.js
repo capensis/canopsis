@@ -12,19 +12,25 @@ import {
   TIME_UNITS,
 } from '@/constants';
 
-import CPatternsEditorField from '@/components/forms/fields/pattern/c-patterns-editor-field.vue';
+import CPatternsEditorField from '@/components/forms/fields/pattern/c-pattern-editor-field.vue';
 
 const localVue = createVueInstance();
 
 const stubs = {
   'c-pattern-field': true,
   'c-pattern-groups-field': true,
-  'c-json-field': true,
+  'c-pattern-advanced-editor-field': true,
 };
 
 const factory = (options = {}) => shallowMount(CPatternsEditorField, {
   localVue,
   stubs,
+
+  parentComponent: {
+    $_veeValidate: {
+      validator: 'new',
+    },
+  },
 
   ...options,
 });
@@ -33,15 +39,22 @@ const snapshotFactory = (options = {}) => mount(CPatternsEditorField, {
   localVue,
   stubs,
 
+  parentComponent: {
+    $_veeValidate: {
+      validator: 'new',
+    },
+  },
+
   ...options,
 });
 
 const selectTabItems = wrapper => wrapper.findAll('a.v-tabs__item');
-const selectAdvancedTabItems = wrapper => selectTabItems(wrapper).at(1);
+const selectAdvancedTab = wrapper => selectTabItems(wrapper).at(1);
 const selectPatternField = wrapper => wrapper.find('c-pattern-field-stub');
 const selectEditButton = wrapper => wrapper.find('v-btn-stub');
+const selectPatternAdvancedEditorField = wrapper => wrapper.find('c-pattern-advanced-editor-field-stub');
 
-describe('c-patterns-editor-field', () => {
+describe('c-pattern-editor-field', () => {
   test('Pattern id changed to custom after trigger input event on the pattern field', () => {
     const wrapper = factory({
       propsData: {
@@ -167,7 +180,61 @@ describe('c-patterns-editor-field', () => {
     });
   });
 
-  test('Renders `c-patterns-editor-field` with default props', () => {
+  test('Pattern changed to custom after click on the edit button', async () => {
+    const patterns = {
+      id: Faker.datatype.string(),
+      groups: [],
+    };
+    const wrapper = factory({
+      propsData: {
+        patterns,
+        attributes: [],
+        withType: true,
+      },
+    });
+
+    const advancedEditor = selectPatternAdvancedEditorField(wrapper);
+
+    const patternRule = {
+      field: ALARM_PATTERN_FIELDS.displayName,
+      cond: {
+        type: PATTERN_CONDITIONS.equal,
+        value: Faker.datatype.string(),
+      },
+    };
+
+    advancedEditor.vm.$emit('input', [[
+      patternRule,
+    ]]);
+
+    expect(wrapper).toEmit('input', {
+      ...patterns,
+      groups: [{
+        key: expect.any(String),
+        rules: [
+          {
+            key: expect.any(String),
+            attribute: patternRule.field,
+            duration: {
+              unit: TIME_UNITS.second,
+              value: 1,
+            },
+            dictionary: '',
+            field: '',
+            operator: PATTERN_OPERATORS.equal,
+            range: {
+              from: 0,
+              to: 0,
+              type: QUICK_RANGES.last1Hour.value,
+            },
+            value: patternRule.cond.value,
+          },
+        ],
+      }],
+    });
+  });
+
+  test('Renders `c-pattern-editor-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns: {
@@ -181,12 +248,14 @@ describe('c-patterns-editor-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-patterns-editor-field` with custom props', () => {
+  test('Renders `c-pattern-editor-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns: {
           id: 'pattern-id',
-          groups: [{}],
+          groups: [{
+            rules: [],
+          }],
         },
         attributes: [
           { value: 'attribute-1', text: 'Attribute 1' },
@@ -202,7 +271,7 @@ describe('c-patterns-editor-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-patterns-editor-field` with advanced tab', async () => {
+  test('Renders `c-pattern-editor-field` with advanced tab', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns: {
@@ -213,7 +282,7 @@ describe('c-patterns-editor-field', () => {
       },
     });
 
-    const advancedTab = selectAdvancedTabItems(wrapper);
+    const advancedTab = selectAdvancedTab(wrapper);
 
     await advancedTab.trigger('click');
 

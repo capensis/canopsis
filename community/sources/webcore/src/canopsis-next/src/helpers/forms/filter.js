@@ -1,19 +1,23 @@
-import { formGroupsToPatternRules, patternToForm } from '@/helpers/forms/pattern';
-
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERNS_FIELDS } from '@/constants';
 
-import { addKeyInEntities, removeKeyFromEntities } from '../entities';
+import { formGroupsToPatternRules, patternToForm } from '@/helpers/forms/pattern';
 
 /**
  * @typedef {Object} FilterPatterns
  * @property {PatternGroups} [alarm_pattern]
  * @property {string} [corporate_alarm_pattern]
+ *
  * @property {PatternGroups} [entity_pattern]
  * @property {string} [corporate_entity_pattern]
+ *
  * @property {PatternGroups} [pbehavior_pattern]
  * @property {string} [corporate_pbehavior_pattern]
+ *
  * @property {PatternGroups} [event_pattern]
  * @property {string} [corporate_event_pattern]
+ *
+ * @property {PatternGroups} [total_entity_pattern]
+ * @property {string} [corporate_total_entity_pattern]
  * @property {Object} [old_mongo_query]
  */
 
@@ -32,36 +36,33 @@ import { addKeyInEntities, removeKeyFromEntities } from '../entities';
  */
 
 /**
- * @typedef {Filter} FilterForm
+ * @typedef {Object} FilterPatternsForm
  * @property {PatternGroupsForm} [alarm_pattern]
  * @property {PatternGroupsForm} [entity_pattern]
  * @property {PatternGroupsForm} [pbehavior_pattern]
  */
 
 /**
+ * @typedef {Filter & FilterPatternsForm} FilterForm
+ */
+
+/**
  * Convert filter patterns to form
  *
  * @param {Filter} filter
+ * @param {PatternsFields} [fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity]]
  * @return {FilterPatterns}
  */
-export const filterPatternsToForm = (filter = {}) => {
-  const {
-    alarm_pattern: alarmPattern,
-    entity_pattern: entityPattern,
-    pbehavior_pattern: pbehaviorPattern,
-    corporate_alarm_pattern: corporateAlarmPattern,
-    corporate_entity_pattern: corporateEntityPattern,
-    corporate_pbehavior_pattern: corporatePbehaviorPattern,
-    event_pattern: eventPattern,
-  } = filter;
+export const filterPatternsToForm = (
+  filter = {},
+  fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity],
+) => fields.reduce((acc, field) => {
+  const { [`corporate_${field}`]: id, [field]: pattern } = filter;
 
-  return ({
-    alarm_pattern: patternToForm({ alarm_pattern: alarmPattern, id: corporateAlarmPattern }),
-    entity_pattern: patternToForm({ entity_pattern: entityPattern, id: corporateEntityPattern }),
-    pbehavior_pattern: patternToForm({ pbehavior_pattern: pbehaviorPattern, id: corporatePbehaviorPattern }),
-    event_pattern: patternToForm({ event_pattern: eventPattern }),
-  });
-};
+  acc[field] = patternToForm({ [field]: pattern, id });
+
+  return acc;
+}, {});
 
 /**
  * Convert filter object to filter form
@@ -79,12 +80,12 @@ export const filterToForm = (filter = {}) => ({
 /**
  * Convert patterns form to patterns
  *
- * @param {FilterPatterns} form
- * @param {PatternsFields} fields
+ * @param {FilterPatternsForm} [form = {}]
+ * @param {PatternsFields} [fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity]]
  * @return {{}}
  */
 export const formFilterToPatterns = (
-  form,
+  form = {},
   fields = [
     PATTERNS_FIELDS.alarm,
     PATTERNS_FIELDS.entity,
@@ -122,19 +123,3 @@ export const formToFilter = (form, fields) => ({
   is_private: form.is_private,
   ...formFilterToPatterns(form, fields),
 });
-
-/**
- * Convert filters to filters form
- *
- * @param {Array} [filters = []]
- * @returns {Array}
- */
-export const filtersToForm = (filters = []) => addKeyInEntities(filters);
-
-/**
- * Convert filters form to filters object
- *
- * @param {Array} [filters = []]
- * @returns {Array}
- */
-export const formToFilters = (filters = []) => removeKeyFromEntities(filters);

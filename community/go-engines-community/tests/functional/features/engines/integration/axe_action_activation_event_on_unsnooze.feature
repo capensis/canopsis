@@ -41,9 +41,7 @@ Feature: send activation event on unsnooze
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
-    When I wait 3s
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-axe-action-activation-event"},{"v.activation_date":{"$exists":true}},{"$expr":{"$ne":["$v.activation_date","$v.creation_date"]}}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:

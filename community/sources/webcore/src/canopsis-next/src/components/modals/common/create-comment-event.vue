@@ -1,18 +1,17 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createCommentEvent.title') }}
-      template(slot="text")
-        v-layout(row)
-          v-text-field(
-            v-model="form.output",
-            v-validate="'required'",
-            :label="$t('modals.createCommentEvent.fields.comment')",
-            :error-messages="errors.collect('comment')",
-            name="comment"
-          )
-      template(slot="actions")
+      template(#text="")
+        v-text-field(
+          v-model="form.output",
+          v-validate="'required'",
+          :label="$tc('common.comment')",
+          :error-messages="errors.collect('comment')",
+          name="comment"
+        )
+      template(#actions="")
         v-btn(
           depressed,
           flat,
@@ -29,8 +28,6 @@
 import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -49,8 +46,6 @@ export default {
   components: { AlarmGeneralTable, ModalWrapper },
   mixins: [
     modalInnerMixin,
-    modalInnerItemsMixin,
-    eventActionsAlarmMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
@@ -67,6 +62,10 @@ export default {
 
       if (isFormValid) {
         await this.config.action({ ...this.form });
+
+        if (this.config && this.config.afterSubmit) {
+          await this.config.afterSubmit();
+        }
 
         this.$modals.hide();
       }
