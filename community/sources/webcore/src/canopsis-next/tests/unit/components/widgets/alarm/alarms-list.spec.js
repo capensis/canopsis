@@ -93,6 +93,9 @@ describe('alarms-list', () => {
   const $modals = mockModals();
 
   const nowTimestamp = 1386435600000;
+  const nowUnix = 1386435600;
+  const nowSubtractOneYearUnix = 1354899600;
+
   mockDateNow(nowTimestamp);
 
   const totalItems = 10;
@@ -1045,9 +1048,10 @@ describe('alarms-list', () => {
 
   it('Widget exported after trigger export button', async () => {
     const nowDate = new Date(nowTimestamp);
+    const OriginalDate = Date;
     const dateSpy = jest
       .spyOn(global, 'Date')
-      .mockImplementation(() => nowDate);
+      .mockImplementation(() => new OriginalDate(nowTimestamp));
     jest.useFakeTimers('legacy');
 
     const wrapper = factory({
@@ -1089,6 +1093,8 @@ describe('alarms-list', () => {
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
+          tstart: nowSubtractOneYearUnix,
+          tstop: nowUnix,
           fields: widget.parameters.widgetExportColumns.map(({ label, value }) => ({
             label,
             name: value,
@@ -1184,6 +1190,8 @@ describe('alarms-list', () => {
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
+          tstart: nowSubtractOneYearUnix,
+          tstop: nowUnix,
           fields: widget.parameters.widgetExportColumns.map(({ label, value }) => ({
             label,
             name: value,
@@ -1245,6 +1253,8 @@ describe('alarms-list', () => {
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
+          tstart: nowSubtractOneYearUnix,
+          tstop: nowUnix,
           fields: widget.parameters.widgetColumns.map(({ label, value }) => ({
             label,
             name: value,

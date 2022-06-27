@@ -133,6 +133,7 @@ export default {
         name: MODALS.alarmsList,
         config: {
           widget,
+          title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.counter.filter?.title }),
         },
       });
     },

@@ -35,6 +35,7 @@ type Task struct {
 	AckResources   bool
 	Header         map[string]string
 	Response       map[string]interface{}
+	ResponseMap    map[string]interface{}
 	AdditionalData AdditionalData
 }
 
@@ -263,6 +264,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 		"Entity":         task.Entity,
 		"Children":       children,
 		"Response":       task.Response,
+		"ResponseMap":    task.ResponseMap,
 		"Header":         task.Header,
 		"AdditionalData": additionalData,
 	}
