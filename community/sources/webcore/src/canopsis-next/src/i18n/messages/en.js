@@ -29,7 +29,7 @@ import {
   EVENT_FILTER_TYPES,
   PATTERN_OPERATORS,
   PATTERN_TYPES,
-  PATTERN_INPUT_TYPES,
+  PATTERN_FIELD_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -68,6 +68,7 @@ export default {
     by: 'By',
     date: 'Date',
     comment: 'Comment | Comments',
+    lastComment: 'Last comment',
     start: 'Start',
     end: 'End',
     message: 'Message',
@@ -241,8 +242,10 @@ export default {
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Custom',
+    eventType: 'Event type',
+    sourceType: 'Source type',
+    cycleDependency: 'Cycle dependency',
     actions: {
-      close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
       saveChanges: 'Save changes',
@@ -348,6 +351,18 @@ export default {
 
       [PATTERN_OPERATORS.acked]: 'Acked',
       [PATTERN_OPERATORS.notAcked]: 'Not acked',
+    },
+    entityEventTypes: {
+      [EVENT_ENTITY_TYPES.ack]: 'Ack',
+      [EVENT_ENTITY_TYPES.ackRemove]: 'Ack remove',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Declare ticket',
+      [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
+      [EVENT_ENTITY_TYPES.uncancel]: 'Uncancel',
+      [EVENT_ENTITY_TYPES.changeState]: 'Change state',
+      [EVENT_ENTITY_TYPES.check]: 'Check',
+      [EVENT_ENTITY_TYPES.comment]: 'Comment',
+      [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
     },
   },
   variableTypes: {
@@ -475,8 +490,8 @@ export default {
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
-        causes: 'Causes',
-        consequences: 'Consequences',
+        parents: 'Causes',
+        children: 'Consequences',
         rule: 'Rule | Rules',
       },
     },
@@ -527,8 +542,7 @@ export default {
     tabs: {
       moreInfos: 'More infos',
       timeLine: 'Timeline',
-      alarmsConsequences: 'Alarms consequences',
-      alarmsCauses: 'Alarms causes',
+      alarmsChildren: 'Alarms consequences',
       trackSource: 'Track source',
       impactChain: 'Impact chain',
       entityGantt: 'Gantt chart',
@@ -540,9 +554,11 @@ export default {
     tooltips: {
       priority: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
       hasInstruction: 'There is an instruction for this type of incidents',
+      hasManualInstructionInRunning: 'Manual instruction in progress',
       hasAutoInstructionInRunning: 'Automatic instruction in progress',
       allAutoInstructionExecuted: 'All automatic instructions has been executed',
       awaitingInstructionComplete: 'Awaiting for the instruction to complete',
+      autoInstructionsFailed: 'Automatic instructions failed',
     },
     metrics: {
       [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',
@@ -600,8 +616,6 @@ export default {
       + '  <dd>Pbehavior reason name are "reason_name_1"</dd>'
       + '</dl>',
     tabs: {
-      filter: 'Filter',
-      comments: 'Comments',
       entities: 'Entities',
     },
   },
@@ -783,6 +797,11 @@ export default {
         + '<dd>For example:</dd>\n'
         + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
         + '</dl>',
+    },
+    density: {
+      title: 'Default view',
+      comfort: 'Comfort view',
+      compact: 'Compact view',
     },
   },
   modals: {
@@ -1100,7 +1119,8 @@ export default {
       },
     },
     alarmsList: {
-      title: 'Alarms list',
+      title: 'Alarm list',
+      prefixTitle: '{prefix} - alarm list',
     },
     createUser: {
       create: {
@@ -1200,11 +1220,11 @@ export default {
       },
       errors: {
         invalid: 'Invalid',
+        emptyInfos: 'At least one info must be added.',
       },
       steps: {
         infos: {
           title: 'Informations',
-          validationError: 'Every value must be filled',
         },
         patterns: {
           title: 'Patterns',
@@ -1217,10 +1237,6 @@ export default {
     createDynamicInfoInformation: {
       create: {
         title: 'Add an information to the dynamic information rule',
-      },
-      fields: {
-        name: 'Name',
-        value: 'Value',
       },
     },
     dynamicInfoTemplatesList: {
@@ -1261,9 +1277,6 @@ export default {
     },
     createCommentEvent: {
       title: 'Add comment',
-      fields: {
-        comment: 'Comment',
-      },
     },
     createPlaylist: {
       create: {
@@ -1338,7 +1351,6 @@ export default {
       noData: 'No meta alarm corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
         metaAlarm: 'Manual meta alarm',
-        output: 'Note',
       },
     },
     createRemediationInstruction: {
@@ -1390,6 +1402,7 @@ export default {
         configuration: 'Configuration',
         jobId: 'Job ID',
         query: 'Query',
+        multipleExecutions: 'Allow parallel execution',
       },
       errors: {
         invalidJSON: 'Invalid JSON',
@@ -1897,10 +1910,6 @@ export default {
     copyWidgetId: 'Copy widget ID',
     autoHeightButton: 'If this button is selected, height will be automatically calculated.',
   },
-  patternsList: {
-    noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',
-    noDataDisabled: 'No pattern set.',
-  },
   validation: {
     messages: {
       _default: 'The value is not valid',
@@ -2240,6 +2249,7 @@ export default {
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
     closeConfirmationText: 'Would you like to resume this instruction later?',
+    queueNumber: '{number} {name} jobs are in the queue',
     popups: {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
@@ -2321,6 +2331,7 @@ export default {
     addAction: 'Add action',
     emptyActions: 'No actions added yet',
     output: 'Output Action Format',
+    forwardAuthor: 'Forward author to the next step',
     urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
       + '<i>For example:</i>'
       + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
@@ -2359,11 +2370,11 @@ export default {
 
   mixedField: {
     types: {
-      [PATTERN_INPUT_TYPES.string]: '@:variableTypes.string',
-      [PATTERN_INPUT_TYPES.number]: '@:variableTypes.number',
-      [PATTERN_INPUT_TYPES.boolean]: '@:variableTypes.boolean',
-      [PATTERN_INPUT_TYPES.null]: '@:variableTypes.null',
-      [PATTERN_INPUT_TYPES.array]: '@:variableTypes.array',
+      [PATTERN_FIELD_TYPES.string]: '@:variableTypes.string',
+      [PATTERN_FIELD_TYPES.number]: '@:variableTypes.number',
+      [PATTERN_FIELD_TYPES.boolean]: '@:variableTypes.boolean',
+      [PATTERN_FIELD_TYPES.null]: '@:variableTypes.null',
+      [PATTERN_FIELD_TYPES.stringArray]: '@:variableTypes.array',
     },
   },
 
@@ -2769,14 +2780,16 @@ export default {
   },
 
   pattern: {
-    patterns: 'Filters',
-    myPatterns: 'My filters',
-    corporatePatterns: 'Shared filters',
+    patterns: 'Patterns',
+    myPatterns: 'My patterns',
+    corporatePatterns: 'Shared patterns',
     addRule: 'Add rule',
     addGroup: 'Add group',
     removeRule: 'Remove rule',
     advancedEditor: 'Advanced editor',
     simpleEditor: 'Simple editor',
+    noData: 'No pattern set. Click \'@:pattern.addGroup\' button to start adding fields to the pattern',
+    noDataDisabled: 'No pattern set.',
     types: {
       [PATTERN_TYPES.alarm]: 'Alarm pattern',
       [PATTERN_TYPES.entity]: 'Entity pattern',
@@ -2785,6 +2798,7 @@ export default {
     errors: {
       ruleRequired: 'Please add at least one rule',
       groupRequired: 'Please add at least one group',
+      invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
     },
   },
 

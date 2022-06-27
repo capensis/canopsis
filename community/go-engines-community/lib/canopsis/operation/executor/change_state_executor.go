@@ -42,9 +42,8 @@ func (e *changeStateExecutor) Exec(
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	var params types.OperationChangeStateParameters
-	var ok bool
-	if params, ok = operation.Parameters.(types.OperationChangeStateParameters); !ok {
+	params := operation.Parameters
+	if params.State == nil {
 		return "", fmt.Errorf("invalid parameters")
 	}
 
@@ -57,7 +56,7 @@ func (e *changeStateExecutor) Exec(
 		return "", fmt.Errorf("cannot change ok state")
 	}
 
-	if currentState == params.State && alarm.IsStateLocked() {
+	if currentState == *params.State && alarm.IsStateLocked() {
 		return "", nil
 	}
 
@@ -65,7 +64,7 @@ func (e *changeStateExecutor) Exec(
 	output := utils.TruncateString(params.Output, conf.OutputLength)
 
 	newStep := types.NewAlarmStep(types.AlarmStepChangeState, time, params.Author, output, userID, role, initiator)
-	newStep.Value = params.State
+	newStep.Value = *params.State
 	alarm.Value.State = &newStep
 
 	err := alarm.Value.Steps.Add(newStep)

@@ -181,16 +181,16 @@ export default {
       this.isFocused = false;
     },
 
-    getParams(ids) {
+    getQuery(ids) {
       const params = {
         limit: this.limit,
         page: this.query.page,
         search: this.query.search,
-        filter: { type: { $in: this.entityTypes } },
+        type: this.entityTypes,
       };
 
       if (ids) {
-        params.filter._id = { $in: isArray(ids) ? ids : [ids] };
+        params.filter = { _id: { $in: isArray(ids) ? ids : [ids] } };
       }
 
       return params;
@@ -200,7 +200,7 @@ export default {
       this.entitiesPending = true;
 
       const { data: entities, meta } = await this.fetchContextEntitiesListWithoutStore({
-        params: this.getParams(ids),
+        params: this.getQuery(ids),
       });
 
       this.pageCount = meta.page_count;

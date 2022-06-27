@@ -9,35 +9,47 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
     class="modal-wrapper"
     close="close"
   >
-    <span>
-      Filters
-    </span>
-     
-    <remediation-instructions-filter-form-stub
-      filters=""
-      form="[object Object]"
-    />
-     
-    <button
-      class="v-btn v-btn--flat theme--light"
-      type="button"
+    <div
+      class="title"
     >
-      <div
-        class="v-btn__content"
-      >
-        Cancel
-      </div>
-    </button>
-    <button
-      class="primary v-btn theme--light"
-      type="submit"
+      <span>
+        Filters
+      </span>
+    </div>
+     
+    <div
+      class="text"
     >
-      <div
-        class="v-btn__content"
+      <remediation-instructions-filter-form-stub
+        filters=""
+        form="[object Object]"
+      />
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
       >
-        Submit
-      </div>
-    </button>
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
   </div>
 </form>
 `;
@@ -51,35 +63,47 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
     class="modal-wrapper"
     close="close"
   >
-    <span>
-      Filters
-    </span>
-     
-    <remediation-instructions-filter-form-stub
-      filters=""
-      form="[object Object]"
-    />
-     
-    <button
-      class="v-btn v-btn--flat theme--light"
-      type="button"
+    <div
+      class="title"
     >
-      <div
-        class="v-btn__content"
-      >
-        Cancel
-      </div>
-    </button>
-    <button
-      class="primary v-btn theme--light"
-      type="submit"
+      <span>
+        Filters
+      </span>
+    </div>
+     
+    <div
+      class="text"
     >
-      <div
-        class="v-btn__content"
+      <remediation-instructions-filter-form-stub
+        filters=""
+        form="[object Object]"
+      />
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
       >
-        Submit
-      </div>
-    </button>
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
   </div>
 </form>
 `;
@@ -93,35 +117,47 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
     class="modal-wrapper"
     close="close"
   >
-    <span>
-      Filters
-    </span>
-     
-    <remediation-instructions-filter-form-stub
-      filters=""
-      form="[object Object]"
-    />
-     
-    <button
-      class="v-btn v-btn--flat theme--light"
-      type="button"
+    <div
+      class="title"
     >
-      <div
-        class="v-btn__content"
-      >
-        Cancel
-      </div>
-    </button>
-    <button
-      class="primary v-btn theme--light"
-      type="submit"
+      <span>
+        Filters
+      </span>
+    </div>
+     
+    <div
+      class="text"
     >
-      <div
-        class="v-btn__content"
+      <remediation-instructions-filter-form-stub
+        filters=""
+        form="[object Object]"
+      />
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
       >
-        Submit
-      </div>
-    </button>
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
   </div>
 </form>
 `;

@@ -233,6 +233,7 @@ export const entitiesModule = {
      * @property {Object} params - Request query params
      * @property {function} dataPreparer - Response data preparer before normalizing
      * @property {string} mutationType - Mutation type after normalization
+     * @property {function} afterCommit - Response data preparer before normalizing
      */
 
     /**
@@ -262,6 +263,7 @@ export const entitiesModule = {
         params = {},
         dataPreparer = d => d,
         mutationType = internalTypes.ENTITIES_UPDATE,
+        afterCommit,
       },
     ) {
       let data;
@@ -287,6 +289,10 @@ export const entitiesModule = {
 
       const normalizedData = normalize(dataPreparer(data), schema);
       commit(mutationType, normalizedData.entities);
+
+      if (afterCommit) {
+        afterCommit({ data, normalizedData });
+      }
 
       return { data, normalizedData };
     },

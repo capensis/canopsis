@@ -80,6 +80,7 @@ type BasePool interface {
 	SendBatch(ctx context.Context, b *pgx.Batch) pgx.BatchResults
 	Begin(ctx context.Context) (pgx.Tx, error)
 	Close()
+	Stat() *pgxpool.Stat
 }
 
 type Pool interface {
@@ -90,6 +91,7 @@ type Pool interface {
 	Close()
 	WithTransaction(ctx context.Context, f func(context.Context, pgx.Tx) error) error
 	SetRetry(count int, timeout time.Duration)
+	Stat() *pgxpool.Stat
 }
 
 type poolWithRetries struct {
@@ -156,6 +158,10 @@ func (p *poolWithRetries) SendBatch(ctx context.Context, b *pgx.Batch) error {
 
 func (p *poolWithRetries) Close() {
 	p.pgxPool.Close()
+}
+
+func (p *poolWithRetries) Stat() *pgxpool.Stat {
+	return p.pgxPool.Stat()
 }
 
 func (p *poolWithRetries) WithTransaction(ctx context.Context, f func(context.Context, pgx.Tx) error) error {

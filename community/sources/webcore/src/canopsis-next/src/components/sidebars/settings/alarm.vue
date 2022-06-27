@@ -38,14 +38,15 @@
           v-divider
           field-default-elements-per-page(v-model="form.parameters.itemsPerPage")
           v-divider
+          field-density(v-model="form.parameters.dense")
+          v-divider
           field-opened-resolved-filter(v-model="form.parameters.opened")
           v-divider
           template(v-if="hasAccessToListFilters")
             field-filters(
               v-model="form.parameters.mainFilter",
-              :entities-type="$constants.ENTITIES_TYPES.alarm",
-              :filters.sync="form.parameters.viewFilters",
-              :condition.sync="form.parameters.mainFilterCondition",
+              :widget-id="widget._id",
+              :filters="form.filters",
               :addable="hasAccessToAddFilter",
               :editable="hasAccessToEditFilter",
               @input="updateMainFilterUpdatedAt"
@@ -84,17 +85,17 @@
             template(#activator="")
               v-list-tile Ack
             v-list.grey.lighten-4.px-2.py-0(expand)
-            field-switcher(
-              v-model="form.parameters.isAckNoteRequired",
-              :title="$t('settings.isAckNoteRequired')"
-            )
-            v-divider
-            field-switcher(
-              v-model="form.parameters.isMultiAckEnabled",
-              :title="$t('settings.isMultiAckEnabled')"
-            )
-            v-divider
-            field-fast-ack-output(v-model="form.parameters.fastAckOutput")
+              field-switcher(
+                v-model="form.parameters.isAckNoteRequired",
+                :title="$t('settings.isAckNoteRequired')"
+              )
+              v-divider
+              field-switcher(
+                v-model="form.parameters.isMultiAckEnabled",
+                :title="$t('settings.isMultiAckEnabled')"
+              )
+              v-divider
+              field-fast-ack-output(v-model="form.parameters.fastAckOutput")
           v-divider
           field-switcher(
             v-model="form.parameters.isSnoozeNoteRequired",
@@ -125,22 +126,23 @@ import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widget
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
-import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
-import FieldDefaultSortColumn from '@/components/sidebars/settings/fields/common/default-sort-column.vue';
-import FieldColumns from '@/components/sidebars/settings/fields/common/columns.vue';
-import FieldLiveReporting from '@/components/sidebars/settings/fields/common/live-reporting.vue';
-import FieldPeriodicRefresh from '@/components/sidebars/settings/fields/common/periodic-refresh.vue';
-import FieldDefaultElementsPerPage from '@/components/sidebars/settings/fields/common/default-elements-per-page.vue';
-import FieldFilters from '@/components/sidebars/settings/fields/common/filters.vue';
-import FieldTextEditor from '@/components/sidebars/settings/fields/common/text-editor.vue';
-import FieldSwitcher from '@/components/sidebars/settings/fields/common/switcher.vue';
-import FieldFastAckOutput from '@/components/sidebars/settings/fields/alarm/fast-ack-output.vue';
-import FieldGridRangeSize from '@/components/sidebars/settings/fields/common/grid-range-size.vue';
-import FieldRemediationInstructionsFilters from '@/components/sidebars/settings/fields/common/remediation-instructions-filters.vue';
-import FieldOpenedResolvedFilter from '@/components/sidebars/settings/fields/alarm/opened-resolved-filter.vue';
-import FieldInfoPopup from '@/components/sidebars/settings/fields/alarm/info-popup.vue';
-import FieldEnabledLimit from '@/components/sidebars/settings/fields/common/enabled-limit.vue';
-import ExportCsvForm from '@/components/sidebars/settings/forms/export-csv.vue';
+import FieldTitle from './fields/common/title.vue';
+import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
+import FieldColumns from './fields/common/columns.vue';
+import FieldLiveReporting from './fields/common/live-reporting.vue';
+import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
+import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
+import FieldFilters from './fields/common/filters.vue';
+import FieldTextEditor from './fields/common/text-editor.vue';
+import FieldSwitcher from './fields/common/switcher.vue';
+import FieldFastAckOutput from './fields/alarm/fast-ack-output.vue';
+import FieldGridRangeSize from './fields/common/grid-range-size.vue';
+import FieldRemediationInstructionsFilters from './fields/common/remediation-instructions-filters.vue';
+import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
+import FieldInfoPopup from './fields/alarm/info-popup.vue';
+import FieldEnabledLimit from './fields/common/enabled-limit.vue';
+import FieldDensity from './fields/common/density.vue';
+import ExportCsvForm from './forms/export-csv.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -163,6 +165,7 @@ export default {
     FieldRemediationInstructionsFilters,
     FieldInfoPopup,
     FieldEnabledLimit,
+    FieldDensity,
     ExportCsvForm,
   },
   mixins: [
