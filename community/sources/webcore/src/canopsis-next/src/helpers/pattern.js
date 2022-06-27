@@ -298,6 +298,7 @@ export const isArrayCondition = condition => [
   PATTERN_CONDITIONS.isEmpty,
   PATTERN_CONDITIONS.hasNot,
   PATTERN_CONDITIONS.hasOneOf,
+  PATTERN_CONDITIONS.isOneOf,
   PATTERN_CONDITIONS.hasEvery,
 ].includes(condition);
 
@@ -441,3 +442,17 @@ export const isValidPatternRule = rule => !!rule?.field
   && (!rule.field_type || isValidRuleFieldType(rule.field_type))
   && isValidPatternCondition(rule.cond.type)
   && isValidRuleValue(rule);
+
+/**
+ * Create id pattern rule for entity patterns
+ *
+ * @param {string | string[]} value
+ * @returns {PatternGroups}
+ */
+export const createEntityIdPatternByValue = value => [[{
+  field: ENTITY_PATTERN_FIELDS.id,
+  cond: {
+    type: isArray(value) ? PATTERN_CONDITIONS.isOneOf : PATTERN_CONDITIONS.equal,
+    value,
+  },
+}]];

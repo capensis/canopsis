@@ -1,18 +1,15 @@
 <template lang="pug">
-  v-card
+  v-card.scenario-action-field
     v-card-text
       v-layout(row, align-center)
-        v-flex(xs2)
-          v-layout
-            c-draggable-step-number(
-              :color="hasChildrenError ? 'error' : 'primary'",
-              drag-class="action-drag-handler"
-            ) {{ actionNumber }}
-            c-expand-btn(v-model="expanded")
-        v-flex.px-2(xs9)
-          c-action-type-field(v-field="action.type", :name="`${name}.type`")
-        v-flex(xs1)
-          c-action-btn(type="delete", @click="removeAction")
+        v-layout.scenario-action-field__actions
+          c-draggable-step-number(
+            :color="hasChildrenError ? 'error' : 'primary'",
+            drag-class="action-drag-handler"
+          ) {{ actionNumber }}
+          c-expand-btn(v-model="expanded")
+        c-action-type-field.px-2(v-field="action.type", :name="`${name}.type`")
+        c-action-btn(type="delete", @click="removeAction")
       v-expand-transition(mode="out-in")
         v-layout(v-show="expanded", column)
           c-enabled-field(v-field="action.emit_trigger", :label="$t('scenario.emitTrigger')")
@@ -37,7 +34,7 @@
                 :type="action.type"
               )
             v-tab-item
-              scenario-action-patterns-form(
+              scenario-action-patterns-form.mt-4(
                 ref="patterns",
                 v-model="action.patterns",
                 :name="name"
@@ -129,3 +126,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.scenario-action-field {
+  &__actions {
+    max-width: 100px;
+  }
+}
+</style>

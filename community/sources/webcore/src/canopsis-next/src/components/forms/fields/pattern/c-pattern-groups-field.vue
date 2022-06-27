@@ -65,6 +65,11 @@ export default {
     },
   },
   watch: {
+    groups() {
+      if (this.required) {
+        this.$validator.validate(this.name);
+      }
+    },
     required: {
       immediate: true,
       handler(value) {

@@ -5,7 +5,15 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, ALARM_LIST_ACTIONS_TYPES } from '@/constants';
+import {
+  MODALS,
+  ENTITIES_TYPES,
+  EVENT_ENTITY_TYPES,
+  EVENT_ENTITY_STYLE,
+  ALARM_LIST_ACTIONS_TYPES,
+} from '@/constants';
+
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 
@@ -144,9 +152,7 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: this.items.map(item => item.entity._id) },
-          },
+          entityPattern: createEntityIdPatternByValue(this.items.map(item => item.entity._id)),
           afterSubmit: this.clearItems,
         },
       });

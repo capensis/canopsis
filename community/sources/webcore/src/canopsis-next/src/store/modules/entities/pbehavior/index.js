@@ -89,12 +89,12 @@ export default {
       return request.get(API_ROUTES.pbehavior.pbehaviors, { params });
     },
 
-    async fetchListByEntityId({ commit, dispatch }, { id }) {
+    async fetchListByEntityId({ commit, dispatch }, { params }) {
       try {
         const { normalizedData } = await dispatch('entities/fetch', {
           route: API_ROUTES.pbehavior.pbehaviorById,
           schema: [schemas.pbehavior],
-          params: { _id: id },
+          params,
         }, { root: true });
 
         commit(types.FETCH_BY_ID_COMPLETED, { allIds: normalizedData.result });
@@ -105,8 +105,8 @@ export default {
       }
     },
 
-    fetchListByEntityIdWithoutStore(context, { id }) {
-      return request.get(API_ROUTES.pbehavior.pbehaviorById, { params: { id } });
+    fetchListByEntityIdWithoutStore(context, { params }) {
+      return request.get(API_ROUTES.pbehavior.pbehaviorById, { params });
     },
 
     async create({ dispatch }, { data }) {
