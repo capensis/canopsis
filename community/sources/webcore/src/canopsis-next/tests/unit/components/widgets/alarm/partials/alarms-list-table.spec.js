@@ -6,10 +6,7 @@ import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 
-import {
-  alarmListWidgetToForm,
-  formToAlarmListWidget,
-} from '@/helpers/forms/widgets/alarm';
+import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 
 import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
 
@@ -123,7 +120,7 @@ describe('alarms-list-table', () => {
     associativeTableModule,
   ]);
 
-  const defaultWidget = formToAlarmListWidget(alarmListWidgetToForm());
+  const defaultWidget = generateDefaultAlarmListWidget();
 
   afterEach(() => {
     jest.clearAllMocks();

@@ -50,7 +50,7 @@ export default ({
     /**
      *
      * @param {ActionContext} context
-     * @param {Object} [params={}] - Query params of request
+     * @param {Object} [params] - Query params of request
      * @returns {Promise.<void>}
      */
     async fetchList({ commit, dispatch }, { params } = {}) {
