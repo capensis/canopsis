@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`text Renders \`text\` widget settings with custom props 1`] = `
+<div>
+  <div
+    class="v-list pt-0 theme--light"
+    role="list"
+  >
+    <field-title-stub
+      title="common.title"
+      value="Text widget"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-text-editor-stub
+      title="settings.templateEditor"
+      value=<p>1</p>
+<p>2</p>
+<p>3<br></p>
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+  </div>
+  <button
+    class="primary v-btn theme--light"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      common.save
+    </div>
+  </button>
+</div>
+`;
+
+exports[`text Renders \`text\` widget settings with default props 1`] = `
+<div>
+  <div
+    class="v-list pt-0 theme--light"
+    role="list"
+  >
+    <field-title-stub
+      title="common.title"
+      value=""
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-text-editor-stub
+      title="settings.templateEditor"
+      value=""
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+  </div>
+  <button
+    class="primary v-btn theme--light"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      common.save
+    </div>
+  </button>
+</div>
+`;

@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -31,7 +33,7 @@ import {
 
 import featureService from '@/services/features';
 
-export default {
+export default merge({
   common: {
     ok: 'Ok',
     undefined: 'Not defined',
@@ -531,12 +533,7 @@ export default {
       [SIDE_BARS.alarmSettings]: 'Alarm list settings',
       [SIDE_BARS.contextSettings]: 'Context table settings',
       [SIDE_BARS.serviceWeatherSettings]: 'Service weather settings',
-      [SIDE_BARS.statsHistogramSettings]: 'Histogram settings',
-      [SIDE_BARS.statsCurvesSettings]: 'Curve settings',
-      [SIDE_BARS.statsTableSettings]: 'Stats table settings',
       [SIDE_BARS.statsCalendarSettings]: 'Stats calendar settings',
-      [SIDE_BARS.statsNumberSettings]: 'Stats number settings',
-      [SIDE_BARS.statsParetoSettings]: 'Stats Pareto diagram settings',
       [SIDE_BARS.textSettings]: 'Text settings',
       [SIDE_BARS.counterSettings]: 'Counter settings',
       [SIDE_BARS.testingWeatherSettings]: 'Testing weather',
@@ -576,13 +573,6 @@ export default {
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
-    statName: 'Stat name',
-    stats: 'Stats',
-    statsSelect: {
-      title: 'Stats select',
-      required: 'Select at least 1 stat',
-      draggable: 'Try dragging an item',
-    },
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
     exportAsCsv: 'Export widget as csv file',
@@ -602,17 +592,6 @@ export default {
         [STATS_CRITICITY.major]: 'major',
         [STATS_CRITICITY.critical]: 'critical',
       },
-    },
-    statsDateInterval: {
-      monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
-    },
-    statsNumbers: {
-      title: 'Stats numbers',
-      yesNoMode: 'Yes/No mode',
-      defaultStat: 'Default: Alarms created',
-      sortOrder: 'Sort order',
-      displayMode: 'Display Mode',
-      selectAColor: 'Select a color',
     },
     infoPopup: {
       title: 'Info popup',
@@ -653,31 +632,6 @@ export default {
         [ENTITY_TYPES.resource]: 'Resource',
         [ENTITY_TYPES.service]: 'Service',
       },
-    },
-    statSelector: {
-      error: {
-        alreadyExist: 'Stat with this name already exists',
-      },
-    },
-    statsGroups: {
-      title: 'Stats groups',
-      manageGroups: 'Add a group',
-      required: 'Create at least 1 group',
-    },
-    statsColor: {
-      title: 'Stats color',
-      pickColor: 'Pick a color',
-    },
-    statsAnnotationLine: {
-      title: 'Annotation line',
-      enabled: 'Is enabled?',
-      value: 'Value',
-      label: 'Label',
-      pickLineColor: 'Pick line color',
-      pickLabelColor: 'Pick label color',
-    },
-    statsPointsStyles: {
-      title: 'Points style',
     },
     considerPbehaviors: {
       title: 'Consider pbehaviors',
@@ -809,9 +763,6 @@ export default {
       },
     },
     view: {
-      select: {
-        title: 'Select a view',
-      },
       create: {
         title: 'Create a view',
       },
@@ -831,11 +782,13 @@ export default {
       success: {
         create: 'New view created!',
         edit: 'View successfully edited!',
+        duplicate: 'View successfully duplicated!',
         delete: 'View successfully deleted!',
       },
       fail: {
         create: 'View creation failed...',
         edit: 'View edition failed...',
+        duplicate: 'View duplication failed...',
         delete: 'View deletion failed...',
       },
     },
@@ -1033,23 +986,8 @@ export default {
         [WIDGET_TYPES.serviceWeather]: {
           title: 'Service weather',
         },
-        [WIDGET_TYPES.statsHistogram]: {
-          title: 'Stats histogram',
-        },
-        [WIDGET_TYPES.statsCurves]: {
-          title: 'Stats curves',
-        },
-        [WIDGET_TYPES.statsTable]: {
-          title: 'Stats table',
-        },
         [WIDGET_TYPES.statsCalendar]: {
           title: 'Stats calendar',
-        },
-        [WIDGET_TYPES.statsNumber]: {
-          title: 'Stats number',
-        },
-        [WIDGET_TYPES.statsPareto]: {
-          title: 'Pareto diagram',
         },
         [WIDGET_TYPES.text]: {
           title: 'Text',
@@ -1217,19 +1155,6 @@ export default {
         title: 'Title',
       },
     },
-    statsDateInterval: {
-      title: 'Stats - Date interval',
-      fields: {
-        periodValue: 'Period value',
-        periodUnit: 'Period unit',
-      },
-      errors: {
-        endDateLessOrEqualStartDate: 'End date should be after start date',
-      },
-      info: {
-        monthPeriodUnit: 'Stats response will be between {start} - {stop}',
-      },
-    },
     createSnmpRule: {
       create: {
         title: 'Create SNMP rule',
@@ -1237,6 +1162,9 @@ export default {
       edit: {
         title: 'Edit SNMP rule',
       },
+    },
+    selectView: {
+      title: 'Select view',
     },
     selectViewTab: {
       title: 'Select tab',
@@ -1717,6 +1645,8 @@ export default {
     statsRequestProblem: 'An error occurred while retrieving stats data',
     statsWrongEditionError: "Stats widgets are not available with 'core' edition",
     socketConnectionProblem: 'Problem with connection to socket server',
+    endDateLessOrEqualStartDate: 'End date should be after start date',
+    unknownWidgetType: 'Unknown widget type: {type}',
   },
   warnings: {
     authTokenExpired: 'Authentication token was expired',
@@ -2763,6 +2693,4 @@ export default {
     uploadMib: 'Upload MIB',
     addSnmpRule: 'Add SNMP rule',
   },
-
-  ...featureService.get('i18n.en'),
-};
+}, featureService.get('i18n.en'));
