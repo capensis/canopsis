@@ -14,11 +14,38 @@ type FilteredQuery struct {
 }
 
 type EditRequest struct {
-	Name                 string                  `json:"name" binding:"required,max=255"`
-	Author               string                  `json:"author" binding:"required,max=255"`
-	Enabled              *bool                   `json:"enabled" binding:"required"`
-	Priority             *int                    `json:"priority" binding:"gt=0"`
-	Triggers             []string                `json:"triggers" binding:"required,notblank,dive,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment done declareticket declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave"`
+	Name     string `json:"name" binding:"required,max=255"`
+	Author   string `json:"author" binding:"required,max=255"`
+	Enabled  *bool  `json:"enabled" binding:"required"`
+	Priority *int   `json:"priority" binding:"gt=0"`
+
+	// Possible trigger values.
+	//   * `create` - Alarm creation
+	//   * `statedec` - Alarm state decrease
+	//   * `changestate` - Alarm state has been changed by "change state" action
+	//   * `stateinc` - Alarm state increase
+	//   * `changestatus` - Alarm status changes eg. flapping
+	//   * `ack` - Alarm has been acked
+	//   * `ackremove` - Alarm has been unacked
+	//   * `cancel` - Alarm has been cancelled
+	//   * `uncancel` - Alarm has been uncancelled
+	//   * `comment` - Alarm has been commented
+	//   * `done` - Alarm is "done"
+	//   * `declareticket` - Ticket has been declared by the UI action
+	//   * `declareticketwebhook` - Ticket has been declared by the webhook
+	//   * `assocticket` - Ticket has been associated with an alarm
+	//   * `snooze` - Alarm has been snoozed
+	//   * `unsnooze` - Alarm has been unsnoozed
+	//   * `pbhenter` - Alarm enters a periodic behavior
+	//   * `activate` - Alarm has been activated
+	//   * `resolve` - Alarm has been resolved
+	//   * `pbhleave` - Alarm leaves a periodic behavior
+	//   * `instructionfail` - Manual instruction has failed
+	//   * `autoinstructionfail` - Auto instruction has failed
+	//   * `instructionjobfail` - Manual or auto instruction's job is failed
+	//   * `instructioncomplete` - Manual instruction is completed
+	//   * `autoinstructioncomplete` - Auto instruction is completed
+	Triggers             []string                `json:"triggers" binding:"required,notblank,dive,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment done declareticket declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructioncomplete autoinstructioncomplete"`
 	DisableDuringPeriods []string                `json:"disable_during_periods" binding:"dive,oneof=maintenance pause inactive"`
 	Delay                *types.DurationWithUnit `json:"delay"`
 	Actions              []ActionRequest         `json:"actions" binding:"required,notblank,dive"`

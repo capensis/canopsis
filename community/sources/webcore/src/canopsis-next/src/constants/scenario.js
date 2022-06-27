@@ -32,9 +32,19 @@ export const SCENARIO_TRIGGERS = {
   activate: 'activate',
   pbhenter: 'pbhenter',
   pbhleave: 'pbhleave',
+  instructionfail: 'instructionfail',
+  autoinstructionfail: 'autoinstructionfail',
+  instructionjobfail: 'instructionjobfail',
+  instructioncomplete: 'instructioncomplete',
+  autoinstructioncomplete: 'autoinstructioncomplete',
 };
 
 export const CAT_SCENARIO_TRIGGERS = [
   SCENARIO_TRIGGERS.declareticket,
   SCENARIO_TRIGGERS.declareticketwebhook,
+  SCENARIO_TRIGGERS.instructionfail,
+  SCENARIO_TRIGGERS.autoinstructionfail,
+  SCENARIO_TRIGGERS.instructionjobfail,
+  SCENARIO_TRIGGERS.instructioncomplete,
+  SCENARIO_TRIGGERS.autoinstructioncomplete,
 ];

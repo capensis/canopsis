@@ -398,13 +398,15 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/common.User'
       comments:
         items:
           $ref: '#/definitions/pbehavior.Comment'
         type: array
       name:
         type: string
+      reason:
+        $ref: '#/definitions/pbehavior.Reason'
       rrule:
         type: string
       tstart:
@@ -1676,7 +1678,6 @@ definitions:
         - enable
         - disable
         type: string
-      action_properties: {}
       category:
         type: string
       enabled:
@@ -2545,6 +2546,33 @@ definitions:
       priority:
         type: integer
       triggers:
+        description: |-
+          Possible trigger values.
+            * `create` - Alarm creation
+            * `statedec` - Alarm state decrease
+            * `changestate` - Alarm state has been changed by "change state" action
+            * `stateinc` - Alarm state increase
+            * `changestatus` - Alarm status changes eg. flapping
+            * `ack` - Alarm has been acked
+            * `ackremove` - Alarm has been unacked
+            * `cancel` - Alarm has been cancelled
+            * `uncancel` - Alarm has been uncancelled
+            * `comment` - Alarm has been commented
+            * `done` - Alarm is "done"
+            * `declareticket` - Ticket has been declared by the UI action
+            * `declareticketwebhook` - Ticket has been declared by the webhook
+            * `assocticket` - Ticket has been associated with an alarm
+            * `snooze` - Alarm has been snoozed
+            * `unsnooze` - Alarm has been unsnoozed
+            * `pbhenter` - Alarm enters a periodic behavior
+            * `activate` - Alarm has been activated
+            * `resolve` - Alarm has been resolved
+            * `pbhleave` - Alarm leaves a periodic behavior
+            * `instructionfail` - Manual instruction has failed
+            * `autoinstructionfail` - Auto instruction has failed
+            * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructioncomplete` - Manual instruction is completed
+            * `autoinstructioncomplete` - Auto instruction is completed
         items:
           type: string
         type: array
@@ -2610,6 +2638,33 @@ definitions:
       priority:
         type: integer
       triggers:
+        description: |-
+          Possible trigger values.
+            * `create` - Alarm creation
+            * `statedec` - Alarm state decrease
+            * `changestate` - Alarm state has been changed by "change state" action
+            * `stateinc` - Alarm state increase
+            * `changestatus` - Alarm status changes eg. flapping
+            * `ack` - Alarm has been acked
+            * `ackremove` - Alarm has been unacked
+            * `cancel` - Alarm has been cancelled
+            * `uncancel` - Alarm has been uncancelled
+            * `comment` - Alarm has been commented
+            * `done` - Alarm is "done"
+            * `declareticket` - Ticket has been declared by the UI action
+            * `declareticketwebhook` - Ticket has been declared by the webhook
+            * `assocticket` - Ticket has been associated with an alarm
+            * `snooze` - Alarm has been snoozed
+            * `unsnooze` - Alarm has been unsnoozed
+            * `pbhenter` - Alarm enters a periodic behavior
+            * `activate` - Alarm has been activated
+            * `resolve` - Alarm has been resolved
+            * `pbhleave` - Alarm leaves a periodic behavior
+            * `instructionfail` - Manual instruction has failed
+            * `autoinstructionfail` - Auto instruction has failed
+            * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructioncomplete` - Manual instruction is completed
+            * `autoinstructioncomplete` - Auto instruction is completed
         items:
           type: string
         type: array
@@ -2643,6 +2698,33 @@ definitions:
       priority:
         type: integer
       triggers:
+        description: |-
+          Possible trigger values.
+            * `create` - Alarm creation
+            * `statedec` - Alarm state decrease
+            * `changestate` - Alarm state has been changed by "change state" action
+            * `stateinc` - Alarm state increase
+            * `changestatus` - Alarm status changes eg. flapping
+            * `ack` - Alarm has been acked
+            * `ackremove` - Alarm has been unacked
+            * `cancel` - Alarm has been cancelled
+            * `uncancel` - Alarm has been uncancelled
+            * `comment` - Alarm has been commented
+            * `done` - Alarm is "done"
+            * `declareticket` - Ticket has been declared by the UI action
+            * `declareticketwebhook` - Ticket has been declared by the webhook
+            * `assocticket` - Ticket has been associated with an alarm
+            * `snooze` - Alarm has been snoozed
+            * `unsnooze` - Alarm has been unsnoozed
+            * `pbhenter` - Alarm enters a periodic behavior
+            * `activate` - Alarm has been activated
+            * `resolve` - Alarm has been resolved
+            * `pbhleave` - Alarm leaves a periodic behavior
+            * `instructionfail` - Manual instruction has failed
+            * `autoinstructionfail` - Auto instruction has failed
+            * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructioncomplete` - Manual instruction is completed
+            * `autoinstructioncomplete` - Auto instruction is completed
         items:
           type: string
         type: array
@@ -2798,7 +2880,7 @@ definitions:
         $ref: '#/definitions/types.PbehaviorInfo'
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.Response'
+          $ref: '#/definitions/alarm.Pbehavior'
         type: array
       resource:
         type: string
@@ -2873,7 +2955,7 @@ definitions:
         $ref: '#/definitions/types.PbehaviorInfo'
       pbehaviors:
         items:
-          $ref: '#/definitions/pbehavior.Response'
+          $ref: '#/definitions/alarm.Pbehavior'
         type: array
       resource:
         type: string
