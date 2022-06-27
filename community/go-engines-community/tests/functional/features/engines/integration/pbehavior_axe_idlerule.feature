@@ -15,10 +15,16 @@ Feature: update alarm on idle rule
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-            "name": "test-resource-pbehavior-axe-idlerule-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-axe-idlerule-1"
+            }
+          }
+        ]
       ],
       "operation": {
         "type": "pbehavior",
@@ -179,10 +185,16 @@ Feature: update alarm on idle rule
         "value": 1,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-resource-pbehavior-axe-idlerule-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-axe-idlerule-2"
+            }
+          }
+        ]
       ],
       "operation": {
         "type": "ack",
@@ -451,10 +463,16 @@ Feature: update alarm on idle rule
         "value": 1,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-resource-pbehavior-axe-idlerule-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-axe-idlerule-3"
+            }
+          }
+        ]
       ],
       "disable_during_periods": ["maintenance"]
     }
@@ -595,10 +613,16 @@ Feature: update alarm on idle rule
         "value": 1,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-resource-pbehavior-axe-idlerule-4"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-axe-idlerule-4"
+            }
+          }
+        ]
       ],
       "disable_during_periods": ["maintenance"]
     }

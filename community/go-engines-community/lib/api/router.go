@@ -635,6 +635,7 @@ func RegisterRoutes(
 				legacyUrl,
 				alarmStore,
 				timezoneConfigProvider,
+				logger,
 			))
 			weatherRouter.GET(
 				"",
@@ -1037,7 +1038,12 @@ func RegisterRoutes(
 			contextGraphRouter.PUT(
 				"import",
 				middleware.Authorize(authObjContextGraph, permCreate, enforcer),
-				contextGraphAPI.Import,
+				contextGraphAPI.ImportAll,
+			)
+			contextGraphRouter.PUT(
+				"import-partial",
+				middleware.Authorize(authObjContextGraph, permCreate, enforcer),
+				contextGraphAPI.ImportPartial,
 			)
 			contextGraphRouter.GET(
 				"import/status/:id",
@@ -1114,7 +1120,7 @@ func RegisterRoutes(
 			)
 		}
 
-		idleRuleAPI := idlerule.NewApi(idlerule.NewStore(dbClient), actionLogger, logger)
+		idleRuleAPI := idlerule.NewApi(idlerule.NewStore(dbClient), common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
 		idleRuleRouter := protected.Group("/idle-rules")
 		{
 			idleRuleRouter.POST(
@@ -1377,7 +1383,11 @@ func RegisterRoutes(
 
 		resolveRuleRouter := protected.Group("/resolve-rules")
 		{
-			resolveRuleAPI := resolverule.NewApi(resolverule.NewStore(dbClient), actionLogger)
+			resolveRuleAPI := resolverule.NewApi(
+				resolverule.NewStore(dbClient),
+				common.NewPatternFieldsTransformer(dbClient),
+				actionLogger,
+			)
 			resolveRuleRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionCreate, enforcer),

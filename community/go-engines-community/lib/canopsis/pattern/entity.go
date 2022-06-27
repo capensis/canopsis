@@ -418,6 +418,59 @@ func (p Entity) getGroupMongoQueries(prefix string) ([]bson.M, error) {
 	return groupQueries, nil
 }
 
+func (p Entity) ToSql(prefix string) (string, error) {
+	if len(p) == 0 {
+		return "", nil
+	}
+
+	if prefix != "" {
+		prefix += "."
+	}
+
+	groupQueries := make([]string, len(p))
+	var err error
+
+	fieldMap := map[string]string{"_id": "custom_id"}
+
+	for i, group := range p {
+		condQueries := make([]string, len(group))
+		for j, cond := range group {
+			f := cond.Field
+			if v, ok := fieldMap[f]; ok {
+				f = v
+			}
+
+			if infoName := getEntityInfoName(f); infoName != "" {
+				condQueries[j], err = cond.Condition.ToSqlJson("infos", infoName, cond.FieldType)
+				if err != nil {
+					return "", err
+				}
+
+				continue
+			}
+
+			if infoName := getEntityComponentInfoName(f); infoName != "" {
+				condQueries[j], err = cond.Condition.ToSqlJson("component_infos", infoName, cond.FieldType)
+				if err != nil {
+					return "", err
+				}
+
+				continue
+			}
+
+			f = prefix + f
+			condQueries[j], err = cond.Condition.ToSql(f)
+			if err != nil {
+				return "", err
+			}
+		}
+
+		groupQueries[i] = fmt.Sprintf("(%s)", strings.Join(condQueries, " AND "))
+	}
+
+	return strings.Join(groupQueries, " OR "), nil
+}
+
 func getEntityStringField(entity types.Entity, f string) (string, bool) {
 	switch f {
 	case "_id":

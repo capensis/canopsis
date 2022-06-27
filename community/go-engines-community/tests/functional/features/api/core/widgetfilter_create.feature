@@ -317,7 +317,8 @@ Feature: Create a widget filter
         "entity_pattern": "EntityPattern is missing.",
         "corporate_entity_pattern": "CorporateEntityPattern is missing.",
         "pbehavior_pattern": "PbehaviorPattern is missing.",
-        "corporate_pbehavior_pattern": "CorporatePbehaviorPattern is missing."
+        "corporate_pbehavior_pattern": "CorporatePbehaviorPattern is missing.",
+        "weather_service_pattern": "WeatherServicePattern is missing."
       }
     }
     """

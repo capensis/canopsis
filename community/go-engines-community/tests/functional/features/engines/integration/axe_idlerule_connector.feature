@@ -14,10 +14,16 @@ Feature: update connector alarm
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-connector-axe-idlerule-connector-1/test-connector-name-axe-idlerule-connector-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-name-axe-idlerule-connector-1"
+            }
+          }
+        ]
       ]
     }
     """
@@ -124,10 +130,16 @@ Feature: update connector alarm
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-connector-axe-idlerule-connector-2/test-connector-name-axe-idlerule-connector-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-name-axe-idlerule-connector-2"
+            }
+          }
+        ]
       ]
     }
     """
@@ -261,10 +273,16 @@ Feature: update connector alarm
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-connector-axe-idlerule-connector-3/test-connector-name-axe-idlerule-connector-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-name-axe-idlerule-connector-3"
+            }
+          }
+        ]
       ]
     }
     """
@@ -423,10 +441,16 @@ Feature: update connector alarm
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-connector-axe-idlerule-connector-4/test-connector-name-axe-idlerule-connector-4"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-name-axe-idlerule-connector-4"
+            }
+          }
+        ]
       ]
     }
     """
@@ -561,10 +585,16 @@ Feature: update connector alarm
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-connector-axe-idlerule-connector-5/test-connector-name-axe-idlerule-connector-5"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-name-axe-idlerule-connector-5"
+            }
+          }
+        ]
       ]
     }
     """
@@ -576,10 +606,16 @@ Feature: update connector alarm
       "name": "test-dynamicinfos-axe-idlerule-connector-5-name",
       "description": "test-dynamicinfos-axe-idlerule-connector-5-description",
       "disable_during_periods": [],
-      "entity_patterns": [
-        {
-          "_id": "test-connector-axe-idlerule-connector-5/test-connector-name-axe-idlerule-connector-5"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "_id",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-axe-idlerule-connector-5/test-connector-name-axe-idlerule-connector-5"
+            }
+          }
+        ]
       ],
       "infos": [
         {"name":"test-info-axe-idlerule-connector-5-name", "value":"test-info-axe-idlerule-connector-5-value"}
@@ -647,10 +683,16 @@ Feature: update connector alarm
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-connector-axe-idlerule-connector-6/test-connector-name-axe-idlerule-connector-6"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-name-axe-idlerule-connector-6"
+            }
+          }
+        ]
       ]
     }
     """
@@ -772,10 +814,16 @@ Feature: update connector alarm
         "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "_id": "test-connector-axe-idlerule-connector-7/test-connector-name-axe-idlerule-connector-7"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-name-axe-idlerule-connector-7"
+            }
+          }
+        ]
       ]
     }
     """

@@ -11,7 +11,6 @@ Feature: Bulk update a scenario
     When I do PUT /api/v4/bulk/scenarios
     Then the response code should be 403
 
-
   Scenario: given bulk update request should return multi status and should be handled independently
     When I am admin
     When I do PUT /api/v4/bulk/scenarios:
@@ -21,7 +20,7 @@ Feature: Bulk update a scenario
         "_id": "test-scenario-to-bulk-update-1",
         "name": "test-scenario-to-bulk-update-1-name",
         "enabled": true,
-        "priority": 8,
+        "priority": 7,
         "triggers": ["create","pbhenter"],
         "actions": [
           {
@@ -53,7 +52,7 @@ Feature: Bulk update a scenario
         "_id": "test-scenario-to-bulk-update-1",
         "name": "test-scenario-to-bulk-update-1-name-twice",
         "enabled": true,
-        "priority": 8,
+        "priority": 7,
         "triggers": ["create","pbhenter"],
         "actions": [
           {
@@ -350,7 +349,7 @@ Feature: Bulk update a scenario
         "_id": "test-scenario-to-bulk-update-2",
         "name": "test-scenario-to-bulk-update-2-name",
         "enabled": true,
-        "priority": 9,
+        "priority": 8,
         "triggers": ["create","pbhenter"],
         "actions": [
           {
@@ -382,7 +381,7 @@ Feature: Bulk update a scenario
         "_id": "test-scenario-to-bulk-update-3",
         "name": "test-scenario-to-bulk-update-3-name",
         "enabled": true,
-        "priority": 20,
+        "priority": 17,
         "triggers": ["create"],
         "delay": {
           "value": 3,
@@ -561,7 +560,7 @@ Feature: Bulk update a scenario
           "_id": "test-scenario-to-bulk-update-1",
           "name": "test-scenario-to-bulk-update-1-name",
           "enabled": true,
-          "priority": 8,
+          "priority": 7,
           "triggers": ["create","pbhenter"],
           "actions": [
             {
@@ -597,7 +596,7 @@ Feature: Bulk update a scenario
           "_id": "test-scenario-to-bulk-update-1",
           "name": "test-scenario-to-bulk-update-1-name-twice",
           "enabled": true,
-          "priority": 8,
+          "priority": 7,
           "triggers": ["create","pbhenter"],
           "actions": [
             {
@@ -974,7 +973,7 @@ Feature: Bulk update a scenario
           "_id": "test-scenario-to-bulk-update-2",
           "name": "test-scenario-to-bulk-update-2-name",
           "enabled": true,
-          "priority": 9,
+          "priority": 8,
           "triggers": ["create","pbhenter"],
           "actions": [
             {
@@ -1010,7 +1009,7 @@ Feature: Bulk update a scenario
           "_id": "test-scenario-to-bulk-update-3",
           "name": "test-scenario-to-bulk-update-3-name",
           "enabled": true,
-          "priority": 20,
+          "priority": 17,
           "triggers": ["create"],
           "delay": {
             "value": 3,
@@ -1199,7 +1198,7 @@ Feature: Bulk update a scenario
           "name": "test-scenario-to-bulk-update-1-name-twice",
           "author": "root",
           "enabled": true,
-          "priority": 8,
+          "priority": 7,
           "delay": null,
           "disable_during_periods": null,
           "triggers": ["create","pbhenter"],
@@ -1236,7 +1235,7 @@ Feature: Bulk update a scenario
           "name": "test-scenario-to-bulk-update-2-name",
           "author": "root",
           "enabled": true,
-          "priority": 9,
+          "priority": 8,
           "delay": null,
           "disable_during_periods": null,
           "triggers": ["create","pbhenter"],

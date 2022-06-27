@@ -186,3 +186,22 @@ job:
     <<: *job_dummy_long_succeeded
     _id: test-job-metrics-axe
     config: test-job-config-metrics-axe
+
+  job_action_remediation_triggers_1:
+    <<: *job_dummy_failed
+    _id: test-job-action-remediation-triggers-1
+    name: test-job-action-remediation-triggers-1-name
+    payload: '{"test-job-action-remediation-triggers-1-key": "test-job-action-remediation-triggers-1-val"}'
+
+  job_action_remediation_triggers_2:
+    <<: *job_dummy_failed
+    _id: test-job-action-remediation-triggers-2
+    name: test-job-action-remediation-triggers-2-name
+    config: test-job-config-to-run-manual-job
+    payload: '{"test-job-action-remediation-triggers-2-key": "test-job-action-remediation-triggers-2-val"}'
+
+  job_action_remediation_triggers_3:
+    <<: *job_dummy_succeeded
+    _id: test-job-action-remediation-triggers-3
+    name: test-job-action-remediation-triggers-3-name
+    payload: '{"test-job-action-remediation-triggers-3-key": "test-job-action-remediation-triggers-3-val"}'

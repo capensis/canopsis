@@ -3,35 +3,41 @@ Feature: Entities and users should be synchronized in metrics db
 
   Scenario: given updated entity should get metrics by updated entity
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-api-1-1-name",
-      "entity_patterns": [
-        {
-          "infos": {
-            "client": {
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.client",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
               "value": "test-client-metrics-api-1"
             }
           }
-        }
+        ]
       ]
     }
     """
     Then the response code should be 201
     When I save response filter1ID={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-api-1-2-name",
-      "entity_patterns": [
-        {
-          "infos": {
-            "client": {
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.client",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
               "value": "test-client-metrics-api-1-updated"
             }
           }
-        }
+        ]
       ]
     }
     """
@@ -130,14 +136,20 @@ Feature: Entities and users should be synchronized in metrics db
     """
     Then the response code should be 201
     When I save response userID={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-api-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-api-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-api-2"
+            }
+          }
+        ]
       ]
     }
     """
@@ -217,14 +229,20 @@ Feature: Entities and users should be synchronized in metrics db
     """
     Then the response code should be 201
     When I save response userID={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-api-3-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-api-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-api-3"
+            }
+          }
+        ]
       ]
     }
     """
@@ -279,14 +297,20 @@ Feature: Entities and users should be synchronized in metrics db
 
   Scenario: given created service should get metrics by created entity
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-api-4-name",
-      "entity_patterns": [
-        {
-          "name": "test-entityservice-metrics-api-4-name"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-metrics-api-4-name"
+            }
+          }
+        ]
       ]
     }
     """
@@ -348,27 +372,39 @@ Feature: Entities and users should be synchronized in metrics db
 
   Scenario: given updated service should get metrics by updated entity
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-api-5-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-entityservice-metrics-api-5-name"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-metrics-api-5-name"
+            }
+          }
+        ]
       ]
     }
     """
     Then the response code should be 201
     When I save response filter1ID={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-api-5-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-entityservice-metrics-api-5-name-updated"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-metrics-api-5-name-updated"
+            }
+          }
+        ]
       ]
     }
     """
@@ -485,14 +521,20 @@ Feature: Entities and users should be synchronized in metrics db
 
   Scenario: given deleted service should get metrics by deleted entity
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-api-6-name",
-      "entity_patterns": [
-        {
-          "name": "test-entityservice-metrics-api-6-name"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-metrics-api-6-name"
+            }
+          }
+        ]
       ]
     }
     """
@@ -554,7 +596,7 @@ Feature: Entities and users should be synchronized in metrics db
     When I do DELETE /api/v4/entityservices/{{ .serviceID }}
     Then the response code should be 204
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} untile the response code should be 200 and the response body should contain:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [

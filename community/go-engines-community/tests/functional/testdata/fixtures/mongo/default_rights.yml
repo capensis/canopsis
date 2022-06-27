@@ -242,11 +242,11 @@ default_rights:
     _id: api_rating_settings
     crecord_name: <Current()._id>
     desc: Rating settings
-  permission_api_filter:
+  permission_api_kpi_filter:
     <<: *permission_crud
-    _id: api_filter
+    _id: api_kpi_filter
     crecord_name: <Current()._id>
-    desc: Filters
+    desc: KPI filters
   permission_api_snmprule:
     <<: *permission_crud
     _id: api_snmprule
@@ -965,6 +965,16 @@ default_rights:
     _id: test-view-to-entity-get
     crecord_name: <Current()._id>
 
+  permission_view_dynamic_infos:
+    <<: *permission_rw
+    _id: test-view-dynamic-infos
+    crecord_name: <Current()._id>
+
+  permission_view_to_weather_get:
+    <<: *permission_rw
+    _id: test-view-to-weather-get
+    crecord_name: <Current()._id>
+
   role_admin:
     <<: *role
     _id: admin
@@ -1093,7 +1103,7 @@ default_rights:
       "@permission_api_rating_settings":
         checksum: 15
         crecord_type: right
-      "@permission_api_filter":
+      "@permission_api_kpi_filter":
         checksum: 15
         crecord_type: right
       "@permission_api_snmprule":
@@ -1190,6 +1200,12 @@ default_rights:
         checksum: 6
         crecord_type: right
       "@permission_view_to_entity_get":
+        checksum: 6
+        crecord_type: right
+      "@permission_view_dynamic_infos":
+        checksum: 6
+        crecord_type: right
+      "@permission_view_to_weather_get":
         checksum: 6
         crecord_type: right
 

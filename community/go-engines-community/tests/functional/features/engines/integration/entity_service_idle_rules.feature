@@ -37,10 +37,16 @@ Feature: entity_service idle_rules integration
         "value": 1,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-idle-since-integration-resource-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-since-integration-resource-1"
+            }
+          }
+        ]
       ]
     }
     """
@@ -50,7 +56,27 @@ Feature: entity_service idle_rules integration
     When I save response idleSince={{ (index .lastResponse.data 0).idle_since }}
     When I wait the next periodical process
     When I wait the next periodical process
-    When I do GET /api/v4/weather-services?filter={"name":"test-entityservice-idle-since-integration"}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-entityservice-idle-since-integration-1",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-idle-since-integration"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -148,10 +174,16 @@ Feature: entity_service idle_rules integration
         "value": 1,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-idle-since-integration-2-connectorname"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-since-integration-2-connectorname"
+            }
+          }
+        ]
       ]
     }
     """
@@ -161,7 +193,27 @@ Feature: entity_service idle_rules integration
     When I save response idleSince={{ (index .lastResponse.data 0).idle_since }}
     When I wait the next periodical process
     When I wait the next periodical process
-    When I do GET /api/v4/weather-services?filter={"name":"test-entityservice-idle-since-integration-2"}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-entityservice-idle-since-integration-2",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-idle-since-integration-2"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -243,10 +295,16 @@ Feature: entity_service idle_rules integration
         "value": 1,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-idle-since-integration-resource-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-since-integration-resource-2"
+            }
+          }
+        ]
       ]
     }
     """
@@ -256,7 +314,27 @@ Feature: entity_service idle_rules integration
     When I save response idleSince={{ (index .lastResponse.data 0).idle_since }}
     When I wait the next periodical process
     When I wait the next periodical process
-    When I do GET /api/v4/weather-services?filter={"name":"test-entityservice-idle-since-integration-4"}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-entityservice-idle-since-integration-3",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-idle-since-integration-4"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -338,10 +416,16 @@ Feature: entity_service idle_rules integration
         "value": 1,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-idle-since-integration-resource-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-since-integration-resource-3"
+            }
+          }
+        ]
       ]
     }
     """
@@ -361,10 +445,16 @@ Feature: entity_service idle_rules integration
         "value": 1,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-idle-since-integration-resource-4"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-since-integration-resource-4"
+            }
+          }
+        ]
       ]
     }
     """
@@ -377,7 +467,28 @@ Feature: entity_service idle_rules integration
     When I save response idleSinceSecond={{ (index .lastResponse.data 3).idle_since }}
     When I wait the next periodical process
     When I wait the next periodical process
-    When I do GET /api/v4/weather-services?filter={"name":"test-entityservice-idle-since-integration-5"}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-entityservice-idle-since-integration-5",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-idle-since-integration-5"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -412,7 +523,7 @@ Feature: entity_service idle_rules integration
     When I wait the end of 2 events processing
     When I wait the next periodical process
     When I wait the next periodical process
-    When I do GET /api/v4/weather-services?filter={"name":"test-entityservice-idle-since-integration-5"}
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
     Then the response code should be 200
     Then the response body should contain:
     """json

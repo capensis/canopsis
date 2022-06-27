@@ -27,7 +27,7 @@ func TestEntity_Match(t *testing.T) {
 }
 
 func TestEntity_ToMongoQuery(t *testing.T) {
-	dataSets := getEntityMongoQueryDataSets()
+	dataSets := getEntityToMongoQueryDataSets()
 
 	for name, data := range dataSets {
 		t.Run(name, func(t *testing.T) {
@@ -37,6 +37,22 @@ func TestEntity_ToMongoQuery(t *testing.T) {
 			}
 			if diff := pretty.Compare(query, data.mongoQueryResult); diff != "" {
 				t.Errorf("unexpected result %s", diff)
+			}
+		})
+	}
+}
+
+func TestEntity_ToSql(t *testing.T) {
+	dataSets := getEntityToSqlDataSets()
+
+	for name, data := range dataSets {
+		t.Run(name, func(t *testing.T) {
+			sql, err := data.pattern.ToSql("entity")
+			if !errors.Is(err, data.sqlErr) {
+				t.Errorf("expected error %v but got %v", data.sqlErr, err)
+			}
+			if sql != data.sqlResult {
+				t.Errorf("expected\n%s\nbut got\n%s", sql, data.sqlResult)
 			}
 		})
 	}
@@ -657,7 +673,7 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 	}
 }
 
-func getEntityMongoQueryDataSets() map[string]entityDataSet {
+func getEntityToMongoQueryDataSets() map[string]entityDataSet {
 	return map[string]entityDataSet{
 		"given one condition": {
 			pattern: pattern.Entity{
@@ -770,11 +786,99 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 	}
 }
 
+func getEntityToSqlDataSets() map[string]entityDataSet {
+	return map[string]entityDataSet{
+		"given one condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+					},
+				},
+			},
+			sqlResult: "(entity.name = 'test name')",
+		},
+		"given multiple conditions": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+					},
+					{
+						Field:     "category",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test category"),
+					},
+				},
+			},
+			sqlResult: "(entity.name = 'test name' AND entity.category = 'test category')",
+		},
+		"given multiple groups": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+					},
+				},
+				{
+					{
+						Field:     "category",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test category"),
+					},
+				},
+			},
+			sqlResult: "(entity.name = 'test name') OR (entity.category = 'test category')",
+		},
+		"given invalid condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionIsNotOneOf, "test name"),
+					},
+				},
+			},
+			sqlErr: pattern.ErrWrongConditionValue,
+		},
+		"given infos condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.info_name",
+						FieldType: pattern.FieldTypeInt,
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
+					},
+				},
+			},
+			sqlResult: `((jsonb_typeof(infos->'info_name') = 'number' AND (CASE WHEN jsonb_typeof(infos->'info_name') = 'number' THEN (infos->'info_name')::numeric END) = 3))`,
+		},
+		"given component infos condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						FieldType: pattern.FieldTypeInt,
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
+					},
+				},
+			},
+			sqlResult: `((jsonb_typeof(component_infos->'info_name') = 'number' AND (CASE WHEN jsonb_typeof(component_infos->'info_name') = 'number' THEN (component_infos->'info_name')::numeric END) = 3))`,
+		},
+	}
+}
+
 type entityDataSet struct {
-	pattern          pattern.Entity
-	entity           types.Entity
-	matchErr         error
-	matchResult      bool
+	pattern pattern.Entity
+	entity  types.Entity
+
+	matchErr    error
+	matchResult bool
+
 	mongoQueryErr    error
 	mongoQueryResult bson.M
+
+	sqlErr    error
+	sqlResult string
 }

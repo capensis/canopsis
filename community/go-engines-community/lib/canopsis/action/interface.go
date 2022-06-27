@@ -69,6 +69,8 @@ type ScenarioExecution struct {
 	Tries            int64                  `json:"t"`
 	Header           map[string]string      `json:"h,omitempty"`
 	Response         map[string]interface{} `json:"r,omitempty"`
+	ResponseMap      map[string]interface{} `json:"rm,omitempty"`
+	ResponseCount    int                    `json:"rc"`
 	AdditionalData   AdditionalData         `json:"ad"`
 }
 

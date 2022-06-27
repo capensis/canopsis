@@ -415,7 +415,7 @@ Feature: Get alarms
       }
     ]
     """
-    When I wait the end of 3 events processing
+    When I wait the end of 5 events processing
     When I send an event:
     """json
     [

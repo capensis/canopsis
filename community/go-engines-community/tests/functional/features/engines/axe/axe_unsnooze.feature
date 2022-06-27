@@ -39,7 +39,7 @@ Feature: unsnooze alarm
     """
     When I save response snoozeEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-unsnooze-1"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-unsnooze-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -57,8 +57,39 @@ Feature: unsnooze alarm
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "data.0.v.snooze" should not exist
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -74,19 +105,18 @@ Feature: unsnooze alarm
                 "t": {{ .snoozeEventTimestamp }},
                 "val": {{ .snoozeEventTimestamp | sumTime 3 }}
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
-    Then the response key "data.0.v.snooze" should not exist
 
   Scenario: given unsnooze event should update alarm snooze duration
     Given I am admin
@@ -118,7 +148,7 @@ Feature: unsnooze alarm
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-unsnooze-2"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-unsnooze-2
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -133,6 +163,6 @@ Feature: unsnooze alarm
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-unsnooze-2"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-unsnooze-2
     Then the response code should be 200
     Then the response key "data.0.v.snooze_duration" should not be "0"

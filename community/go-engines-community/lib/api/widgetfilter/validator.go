@@ -24,7 +24,8 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 
 	if len(r.AlarmPattern) == 0 && r.CorporateAlarmPattern == "" &&
 		len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" &&
-		len(r.PbehaviorPattern) == 0 && r.CorporatePbehaviorPattern == "" {
+		len(r.PbehaviorPattern) == 0 && r.CorporatePbehaviorPattern == "" &&
+		len(r.WeatherServicePattern) == 0 {
 
 		if r.ID != "" {
 			err := v.collection.FindOne(ctx, bson.M{"_id": r.ID, "old_mongo_query": bson.M{"$ne": nil}}).Err()
@@ -41,5 +42,11 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 		sl.ReportError(r.CorporateEntityPattern, "CorporateEntityPattern", "CorporateEntityPattern", "required", "")
 		sl.ReportError(r.PbehaviorPattern, "PbehaviorPattern", "PbehaviorPattern", "required", "")
 		sl.ReportError(r.CorporatePbehaviorPattern, "CorporatePbehaviorPattern", "CorporatePbehaviorPattern", "required", "")
+
+		sl.ReportError(r.WeatherServicePattern, "WeatherServicePattern", "WeatherServicePattern", "required", "")
+	}
+
+	if !r.WeatherServicePattern.Validate() {
+		sl.ReportError(r.WeatherServicePattern, "WeatherServicePattern", "WeatherServicePattern", "weather_service_pattern", "")
 	}
 }

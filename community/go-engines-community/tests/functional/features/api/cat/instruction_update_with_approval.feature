@@ -1778,7 +1778,7 @@ Feature: instruction approval update
           "value": 2,
           "unit": "s"
         },
-        "priority": 17,
+        "priority": 18,
         "jobs": [
           {
             "job": {

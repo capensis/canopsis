@@ -169,11 +169,30 @@ func (s *baseService) applyRules(
 	for _, rule := range rules {
 		switch rule.Type {
 		case idlerule.RuleTypeAlarm:
-			if alarm != nil && rule.Matches(alarm, &entity, now) && !alarm.Value.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
+			if alarm == nil {
+				continue
+			}
+
+			matched, err := rule.Matches(types.AlarmWithEntity{
+				Alarm:  *alarm,
+				Entity: entity,
+			}, now)
+			if err != nil {
+				s.logger.Error().Err(err).Str("idle rule", rule.ID).Msg("match idle rule returned error, skip")
+				continue
+			}
+
+			if matched && !alarm.Value.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
 				return s.applyAlarmRule(ctx, rule, *alarm, entity, now)
 			}
 		case idlerule.RuleTypeEntity:
-			if !rule.Matches(nil, &entity, now) || entity.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
+			matched, err := rule.Matches(types.AlarmWithEntity{Entity: entity}, now)
+			if err != nil {
+				s.logger.Error().Err(err).Str("idle rule", rule.ID).Msg("match idle rule returned error, skip")
+				continue
+			}
+
+			if !matched || entity.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
 				continue
 			}
 

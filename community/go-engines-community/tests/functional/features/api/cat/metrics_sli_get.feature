@@ -4,7 +4,7 @@ Feature: Get SLI metrics
 
   Scenario: given get hour request should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/sli?sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
+    When I do GET /api/v4/cat/metrics/sli?sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-kpi-filter-to-sli-metrics-get
     Then the response code should be 200
     Then the response body should be:
     """json
@@ -160,7 +160,7 @@ Feature: Get SLI metrics
       }
     }
     """
-    When I do GET /api/v4/cat/metrics/sli?in_percents=true&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
+    When I do GET /api/v4/cat/metrics/sli?in_percents=true&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-kpi-filter-to-sli-metrics-get
     Then the response code should be 200
     Then the response body should be:
     """json
@@ -319,7 +319,7 @@ Feature: Get SLI metrics
 
   Scenario: given get day request should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/sli?sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
+    When I do GET /api/v4/cat/metrics/sli?sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-kpi-filter-to-sli-metrics-get
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -358,7 +358,7 @@ Feature: Get SLI metrics
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/sli?in_percents=true&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
+    When I do GET /api/v4/cat/metrics/sli?in_percents=true&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-kpi-filter-to-sli-metrics-get
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -400,7 +400,7 @@ Feature: Get SLI metrics
 
   Scenario: given get week request should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/sli?sampling=week&from={{ parseTime "06-09-2021 00:00" }}&to={{ parseTime "10-10-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
+    When I do GET /api/v4/cat/metrics/sli?sampling=week&from={{ parseTime "06-09-2021 00:00" }}&to={{ parseTime "10-10-2021 00:00" }}&filter=test-kpi-filter-to-sli-metrics-get
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -439,7 +439,7 @@ Feature: Get SLI metrics
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/sli?in_percents=true&sampling=week&from={{ parseTime "06-09-2021 00:00" }}&to={{ parseTime "10-10-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
+    When I do GET /api/v4/cat/metrics/sli?in_percents=true&sampling=week&from={{ parseTime "06-09-2021 00:00" }}&to={{ parseTime "10-10-2021 00:00" }}&filter=test-kpi-filter-to-sli-metrics-get
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -481,7 +481,7 @@ Feature: Get SLI metrics
 
   Scenario: given get month request should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/sli?sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
+    When I do GET /api/v4/cat/metrics/sli?sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-kpi-filter-to-sli-metrics-get
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -520,7 +520,7 @@ Feature: Get SLI metrics
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/sli?in_percents=true&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-filter-to-sli-metrics-get
+    When I do GET /api/v4/cat/metrics/sli?in_percents=true&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-kpi-filter-to-sli-metrics-get
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -562,7 +562,7 @@ Feature: Get SLI metrics
 
   Scenario: given get request with empty interval should return metrics with zeros
     When I am admin
-    When I do GET /api/v4/cat/metrics/sli?sampling=day&from={{ parseTime "06-09-2020 00:00" }}&to={{ parseTime "08-09-2020 00:00" }}&filter=test-filter-to-sli-metrics-get
+    When I do GET /api/v4/cat/metrics/sli?sampling=day&from={{ parseTime "06-09-2020 00:00" }}&to={{ parseTime "08-09-2020 00:00" }}&filter=test-kpi-filter-to-sli-metrics-get
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -573,7 +573,7 @@ Feature: Get SLI metrics
 
   Scenario: given get request with filter by entity infos should return metrics
     When I am admin
-    When I do GET /api/v4/cat/metrics/sli?sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-filter-to-sli-metrics-get-by-entity-infos
+    When I do GET /api/v4/cat/metrics/sli?sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-kpi-filter-to-sli-metrics-get-by-entity-infos
     Then the response code should be 200
     Then the response body should contain:
     """json

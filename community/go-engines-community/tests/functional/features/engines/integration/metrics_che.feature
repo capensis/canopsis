@@ -3,35 +3,41 @@ Feature: Entities should be synchronized in metrics db
 
   Scenario: given updated entity should get metrics by updated entity
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-che-1-1-name",
-      "entity_patterns": [
-        {
-          "infos": {
-            "client": {
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.client",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
               "value": "test-client-metrics-che-1"
             }
           }
-        }
+        ]
       ]
     }
     """
     Then the response code should be 201
     When I save response filter1ID={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-che-1-2-name",
-      "entity_patterns": [
-        {
-          "infos": {
-            "client": {
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.client",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
               "value": "test-client-metrics-che-1-updated"
             }
           }
-        }
+        ]
       ]
     }
     """
@@ -116,35 +122,41 @@ Feature: Entities should be synchronized in metrics db
 
   Scenario: given updated component should get metrics by updated resource
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-che-2-1-name",
-      "entity_patterns": [
-        {
-          "component_infos": {
-            "client": {
+      "entity_pattern": [
+        [
+          {
+            "field": "component_infos.client",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
               "value": "test-client-metrics-che-2"
             }
           }
-        }
+        ]
       ]
     }
     """
     Then the response code should be 201
     When I save response filter1ID={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-che-2-2-name",
-      "entity_patterns": [
-        {
-          "component_infos": {
-            "client": {
+      "entity_pattern": [
+        [
+          {
+            "field": "component_infos.client",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
               "value": "test-client-metrics-che-2-updated"
             }
           }
-        }
+        ]
       ]
     }
     """

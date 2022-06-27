@@ -332,7 +332,7 @@ pattern:
     author: root
     created: 1605263992
     updated: 1605263992
-    
+
   pattern_to_scenario_corporate_update_1:
     <<: *pattern_entity
     _id: test-pattern-to-scenario-corporate-update-1
@@ -426,6 +426,12 @@ pattern:
             type: has_one_of
             value:
               - test-pattern-to-entityservice-pattern-1-pattern
+        - field: last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
 
   pattern_to_instruction_pattern_1:
     <<: *pattern_entity
@@ -496,3 +502,296 @@ pattern:
             value:
               from: 1605263992
               to: 1605264992
+
+  pattern_to_rule_resolve_corporate_update_1:
+    <<: *pattern_entity
+    _id: test-pattern-to-rule-resolve-corporate-update-1
+    title: test-pattern-to-rule-resolve-corporate-update-1-title
+    is_corporate: true
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-rule-resolve-corporate-update-1-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_rule_resolve_corporate_update_2:
+    <<: *pattern_alarm
+    _id: test-pattern-to-rule-resolve-corporate-update-2
+    title: test-pattern-to-rule-resolve-corporate-update-2-title
+    is_corporate: true
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-pattern-to-rule-resolve-corporate-update-2-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_rule_resolve_corporate_update_to_exclude_1:
+    <<: *pattern_entity
+    _id: test-pattern-to-resolve-rule-pattern-to-exclude-1
+    is_corporate: true
+    title: test-pattern-to-resolve-rule-pattern-to-exclude-1-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-resolve-rule-pattern-to-exclude-1-pattern
+        - field: last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+
+  pattern_to_rule_resolve_corporate_update_to_exclude_2:
+    <<: *pattern_alarm
+    _id: test-pattern-to-resolve-rule-pattern-to-exclude-2
+    is_corporate: true
+    title: test-pattern-to-resolve-rule-pattern-to-exclude-2-title
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 3
+        - field: v.last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.last_update_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.resolved
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.ack.t
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
+        - field: v.ack.t
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
+
+  pattern_to_rule_idle_corporate_update_1:
+    <<: *pattern_alarm
+    _id: test-pattern-to-rule-idle-corporate-update-1
+    title: test-pattern-to-rule-idle-corporate-update-1-title
+    is_corporate: true
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-pattern-to-rule-idle-corporate-update-1-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_rule_idle_corporate_update_2:
+    <<: *pattern_entity
+    _id: test-pattern-to-rule-idle-corporate-update-2
+    title: test-pattern-to-rule-idle-corporate-update-2-title
+    is_corporate: true
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-rule-idle-corporate-update-2-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_rule_idle_corporate_update_to_exclude_1:
+    <<: *pattern_entity
+    _id: test-pattern-to-idle-rule-pattern-to-exclude-1
+    is_corporate: true
+    title: test-pattern-to-idle-rule-pattern-to-exclude-1-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-idle-rule-pattern-to-exclude-1-pattern
+        - field: last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+
+  pattern_to_rule_idle_corporate_update_to_exclude_2:
+    <<: *pattern_alarm
+    _id: test-pattern-to-idle-rule-pattern-to-exclude-2
+    is_corporate: true
+    title: test-pattern-to-idle-rule-pattern-to-exclude-2-title
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 3
+        - field: v.last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.last_update_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.resolved
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.ack.t
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
+        - field: v.ack.t
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
+
+  pattern_to_dynamic_infos_pattern_1:
+    <<: *pattern_entity
+    _id: test-pattern-to-dynamic-infos-pattern-1
+    is_corporate: true
+    title: test-pattern-to-dynamic-infos-pattern-1-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-dynamic-infos-pattern-1-pattern
+        - field: last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+
+  pattern_to_dynamic_infos_pattern_2:
+    <<: *pattern_alarm
+    _id: test-pattern-to-dynamic-infos-pattern-2
+    is_corporate: true
+    title: test-pattern-to-dynamic-infos-pattern-2-title
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 3
+        - field: v.last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.last_update_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.resolved
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.ack.t
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
+        - field: v.ack.t
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
+
+  pattern_to_kpi_filter_pattern_1:
+    <<: *pattern_entity
+    _id: test-pattern-to-kpi-filter-pattern-1
+    is_corporate: true
+    title: test-pattern-to-kpi-filter-pattern-1-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-kpi-filter-pattern-1-pattern
+      - - field: impact
+          cond:
+            type: has_one_of
+            value:
+              - test-pattern-to-kpi-filter-pattern-1-pattern
+        - field: depends
+          cond:
+            type: has_one_of
+            value:
+              - test-pattern-to-kpi-filter-pattern-1-pattern
+        - field: last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m

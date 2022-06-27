@@ -304,7 +304,7 @@ Feature: get a instruction
               }
             }
           ],
-          "priority": 1,
+          "priority": 2,
           "timeout_after_execution": {
             "value": 2,
             "unit": "s"
@@ -362,7 +362,7 @@ Feature: get a instruction
               }
             }
           ],
-          "priority": 2,
+          "priority": 3,
           "timeout_after_execution": {
             "value": 2,
             "unit": "s"

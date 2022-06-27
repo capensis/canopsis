@@ -3,6 +3,7 @@ package idlerule
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -17,17 +18,20 @@ import (
 
 type api struct {
 	store        Store
+	transformer  common.PatternFieldsTransformer
 	actionLogger logger.ActionLogger
 	logger       zerolog.Logger
 }
 
 func NewApi(
 	store Store,
+	transformer common.PatternFieldsTransformer,
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) common.BulkCrudAPI {
 	return &api{
 		store:        store,
+		transformer:  transformer,
 		actionLogger: actionLogger,
 		logger:       logger,
 	}
@@ -83,8 +87,19 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	rule, err := a.store.Insert(c.Request.Context(), request)
+	ctx := c.Request.Context()
+
+	err := a.transformEditRequest(ctx, &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	rule, err := a.store.Insert(ctx, request)
 	if err != nil {
 		panic(err)
 	}
@@ -92,7 +107,7 @@ func (a *api) Create(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeIdleRule,
 		ValueID:   rule.ID,
@@ -117,8 +132,19 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	rule, err := a.store.Update(c.Request.Context(), request)
+	ctx := c.Request.Context()
+
+	err := a.transformEditRequest(ctx, &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	rule, err := a.store.Update(ctx, request)
 	if err != nil {
 		panic(err)
 	}
@@ -128,7 +154,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeIdleRule,
 		ValueID:   c.Param("id"),
@@ -212,6 +238,19 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
+		err = a.transformEditRequest(ctx, &request.EditRequest)
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
+			a.logger.Err(err).Msg("cannot create idle rule")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
+		}
+
 		rule, err := a.store.Insert(ctx, request)
 		if err != nil {
 			a.logger.Err(err).Msg("cannot create idle rule")
@@ -278,6 +317,19 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		err = binding.Validator.ValidateStruct(request)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		err = a.transformEditRequest(ctx, &request.EditRequest)
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
+			a.logger.Err(err).Msg("cannot update idle rule")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
@@ -380,4 +432,18 @@ func (a *api) BulkDelete(c *gin.Context) {
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
+func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
+	var err error
+	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, request.AlarmPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

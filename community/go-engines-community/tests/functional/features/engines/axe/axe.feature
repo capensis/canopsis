@@ -22,7 +22,7 @@ Feature: create and update alarm by main event stream
     When I save response eventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I save response createTimestamp={{ now }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-1"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -62,22 +62,6 @@ Feature: create and update alarm by main event stream
               "t": {{ .eventTimestamp }},
               "val": 1
             },
-            "steps": [
-              {
-                "_t": "stateinc",
-                "a": "test-connector-axe-1.test-connector-name-axe-1",
-                "m": "test-output-axe-1",
-                "t": {{ .eventTimestamp }},
-                "val": 2
-              },
-              {
-                "_t": "statusinc",
-                "a": "test-connector-axe-1.test-connector-name-axe-1",
-                "m": "test-output-axe-1",
-                "t": {{ .eventTimestamp }},
-                "val": 1
-              }
-            ],
             "tags": [],
             "total_state_changes": 1
           }
@@ -97,6 +81,52 @@ Feature: create and update alarm by main event stream
     Then the difference between alarmTimestamp createTimestamp is in range -2,2
     Then the difference between alarmCreationDate createTimestamp is in range -2,2
     Then the difference between alarmLastEventDate createTimestamp is in range -2,2
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "a": "test-connector-axe-1.test-connector-name-axe-1",
+                "m": "test-output-axe-1",
+                "t": {{ .eventTimestamp }},
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "a": "test-connector-axe-1.test-connector-name-axe-1",
+                "m": "test-output-axe-1",
+                "t": {{ .eventTimestamp }},
+                "val": 1
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
+    """
 
   Scenario: given check event should update alarm
     Given I am admin
@@ -137,7 +167,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response secondEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-2"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-2
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -177,7 +207,44 @@ Feature: create and update alarm by main event stream
               "t": {{ .firstEventTimestamp }},
               "val": 1
             },
-            "steps": [
+            "tags": [],
+            "state_changes_since_status_update": 1,
+            "total_state_changes": 2
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response alarmTimestamp={{ (index .lastResponse.data 0).t }}
+    When I save response alarmCreationDate={{ (index .lastResponse.data 0).v.creation_date }}
+    Then the difference between alarmTimestamp createTimestamp is in range -2,2
+    Then the difference between alarmCreationDate createTimestamp is in range -2,2
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "a": "test-connector-axe-2.test-connector-name-axe-2",
@@ -200,24 +267,17 @@ Feature: create and update alarm by main event stream
                 "val": 3
               }
             ],
-            "tags": [],
-            "state_changes_since_status_update": 1,
-            "total_state_changes": 2
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
-    When I save response alarmTimestamp={{ (index .lastResponse.data 0).t }}
-    When I save response alarmCreationDate={{ (index .lastResponse.data 0).v.creation_date }}
-    Then the difference between alarmTimestamp createTimestamp is in range -2,2
-    Then the difference between alarmCreationDate createTimestamp is in range -2,2
 
   Scenario: given ack event should update alarm
     Given I am admin
@@ -257,7 +317,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response ackEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-3"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-3
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -283,8 +343,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -300,17 +390,17 @@ Feature: create and update alarm by main event stream
                 "t": {{ .ackEventTimestamp }},
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given remove ack event should update alarm
@@ -369,7 +459,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response ackRemoveEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-4"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-4
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -387,8 +477,39 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "data.0.v.ack" should not exist
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -413,19 +534,18 @@ Feature: create and update alarm by main event stream
                 "t": {{ .ackRemoveEventTimestamp }},
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
-    Then the response key "data.0.v.ack" should not exist
 
   Scenario: given cancel event should update alarm
     Given I am admin
@@ -464,7 +584,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response cancelEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-5"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-5
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -494,8 +614,38 @@ Feature: create and update alarm by main event stream
               "m": "test-output-axe-5",
               "t": {{ .cancelEventTimestamp }},
               "val": 4
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -518,17 +668,17 @@ Feature: create and update alarm by main event stream
                 "t": {{ .cancelEventTimestamp }},
                 "val": 4
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given uncancel event should update alarm
@@ -586,7 +736,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response uncancelEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-6"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-6
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -608,8 +758,39 @@ Feature: create and update alarm by main event stream
               "m": "test-output-axe-6",
               "t": {{ .uncancelEventTimestamp }},
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "data.0.v.canceled" should not exist
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -648,19 +829,18 @@ Feature: create and update alarm by main event stream
                 "t": {{ .uncancelEventTimestamp }},
                 "val": 1
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 6
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
-    Then the response key "data.0.v.canceled" should not exist
 
   Scenario: given comment event should update alarm
     Given I am admin
@@ -700,7 +880,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response commentEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-7"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-7
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -712,7 +892,7 @@ Feature: create and update alarm by main event stream
             "connector": "test-connector-axe-7",
             "connector_name": "test-connector-name-axe-7",
             "last_update_date": {{ .checkEventTimestamp }},
-            "lastComment": {
+            "last_comment": {
               "_t": "comment",
               "a": "test-author-axe-7",
               "user_id": "test-author-id-7",
@@ -726,8 +906,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -743,17 +953,17 @@ Feature: create and update alarm by main event stream
                 "t": {{ .commentEventTimestamp }},
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given done event should update alarm
@@ -794,7 +1004,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response doneEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-8"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-8
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -820,8 +1030,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -838,17 +1078,17 @@ Feature: create and update alarm by main event stream
                 "t": {{ .doneEventTimestamp }},
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given assoc ticket event should update alarm
@@ -890,7 +1130,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response ticketEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-9"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-9
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -915,8 +1155,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -933,17 +1203,17 @@ Feature: create and update alarm by main event stream
                 "t": {{ .ticketEventTimestamp }},
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given change state event should update alarm
@@ -985,7 +1255,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response changeStateEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-10"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-10
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1008,8 +1278,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -1026,17 +1326,17 @@ Feature: create and update alarm by main event stream
                 "t": {{ .changeStateEventTimestamp }},
                 "val": 3
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
     When I send an event:
     """json
@@ -1054,7 +1354,7 @@ Feature: create and update alarm by main event stream
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-10"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-10
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1072,8 +1372,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -1086,17 +1416,17 @@ Feature: create and update alarm by main event stream
                 "_t": "changestate",
                 "val": 3
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given snooze event should update alarm
@@ -1138,7 +1468,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response snoozeEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-11"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-11
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1164,8 +1494,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -1182,17 +1542,17 @@ Feature: create and update alarm by main event stream
                 "t": {{ .snoozeEventTimestamp }},
                 "val": {{ .snoozeEventTimestamp | sumTime 3600 }}
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given unsnooze event should update alarm
@@ -1251,7 +1611,7 @@ Feature: create and update alarm by main event stream
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-12"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-12
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1269,8 +1629,39 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "data.0.v.snooze" should not exist
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -1287,19 +1678,18 @@ Feature: create and update alarm by main event stream
                 "t": {{ .snoozeEventTimestamp }},
                 "val": {{ .snoozeEventTimestamp | sumTime 3600 }}
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
-    Then the response key "data.0.v.snooze" should not exist
 
   Scenario: given resolve done event should update alarm
     Given I am admin
@@ -1355,7 +1745,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response resolveTimestamp={{ now }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-13"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-13
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1373,8 +1763,40 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response alarmResolve={{ (index .lastResponse.data 0).v.resolved }}
+    Then the difference between alarmResolve resolveTimestamp is in range -2,2
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -1390,20 +1812,18 @@ Feature: create and update alarm by main event stream
                 "t": {{ .doneEventTimestamp }},
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
-    When I save response alarmResolve={{ (index .lastResponse.data 0).v.resolved }}
-    Then the difference between alarmResolve resolveTimestamp is in range -2,2
 
   Scenario: given resolve cancel event should update alarm
     Given I am admin
@@ -1458,7 +1878,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response resolveTimestamp={{ now }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-14"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-14
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1476,8 +1896,40 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 4
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response alarmResolve={{ (index .lastResponse.data 0).v.resolved }}
+    Then the difference between alarmResolve resolveTimestamp is in range -2,2
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -1500,20 +1952,18 @@ Feature: create and update alarm by main event stream
                 "t": {{ .cancelEventTimestamp }},
                 "val": 4
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
-    When I save response alarmResolve={{ (index .lastResponse.data 0).v.resolved }}
-    Then the difference between alarmResolve resolveTimestamp is in range -2,2
 
   Scenario: given resolve close event should update alarm
     Given I am admin
@@ -1570,7 +2020,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response resolveTimestamp={{ now }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-15"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-15
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1588,8 +2038,40 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 0
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response alarmResolve={{ (index .lastResponse.data 0).v.resolved }}
+    Then the difference between alarmResolve resolveTimestamp is in range -2,2
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -1612,20 +2094,18 @@ Feature: create and update alarm by main event stream
                 "t": {{ .closeEventTimestamp }},
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
-    When I save response alarmResolve={{ (index .lastResponse.data 0).v.resolved }}
-    Then the difference between alarmResolve resolveTimestamp is in range -2,2
 
   Scenario: given ack resources event should update resource alarms
     Given I am admin
@@ -1680,7 +2160,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response ackEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-17"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-17
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1705,8 +2185,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -1722,17 +2232,17 @@ Feature: create and update alarm by main event stream
                 "t": {{ .ackEventTimestamp }},
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given change state event should not update alarm state anymore
@@ -1787,7 +2297,7 @@ Feature: create and update alarm by main event stream
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-18"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-18
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1807,8 +2317,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 1
@@ -1823,17 +2363,17 @@ Feature: create and update alarm by main event stream
                 "m": "test-output-axe-18",
                 "val": 2
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given changestate with same state as already existed one should not update alarm state anymore
@@ -1872,7 +2412,7 @@ Feature: create and update alarm by main event stream
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-20"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-20
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1892,8 +2432,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -1908,17 +2478,17 @@ Feature: create and update alarm by main event stream
                 "m": "test-output-axe-20",
                 "val": 2
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
     When I send an event:
     """json
@@ -1936,7 +2506,7 @@ Feature: create and update alarm by main event stream
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-20"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-20
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1956,8 +2526,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -1972,17 +2572,17 @@ Feature: create and update alarm by main event stream
                 "m": "test-output-axe-20",
                 "val": 2
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given change state event should resolve alarm anyway
@@ -2037,7 +2637,7 @@ Feature: create and update alarm by main event stream
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-19"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-19
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -2054,8 +2654,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 0
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 1
@@ -2078,17 +2708,17 @@ Feature: create and update alarm by main event stream
                 "_t": "statusdec",
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 5
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given double ack events should update alarm with double ack
@@ -2125,7 +2755,7 @@ Feature: create and update alarm by main event stream
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-21"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-21
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -2149,8 +2779,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -2165,17 +2825,17 @@ Feature: create and update alarm by main event stream
                 "m": "test-output-axe-21",
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
     When I send an event:
     """json
@@ -2193,7 +2853,7 @@ Feature: create and update alarm by main event stream
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-21"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-21
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -2217,8 +2877,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -2239,15 +2929,15 @@ Feature: create and update alarm by main event stream
                 "m": "new-test-output-axe-21",
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """

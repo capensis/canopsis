@@ -356,6 +356,38 @@ func (a *ApiClient) TheResponseKeyShouldBeGreaterOrEqualThan(path string, value 
 	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
 }
 
+/**
+Step example:
+	Then the response key "data.0.duration" should be greater than 3
+*/
+func (a *ApiClient) TheResponseKeyShouldBeGreaterThan(path string, value float64) error {
+	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
+		var fieldVal float64
+		switch v := nestedVal.(type) {
+		case int:
+			fieldVal = float64(v)
+		case int32:
+			fieldVal = float64(v)
+		case int64:
+			fieldVal = float64(v)
+		case float32:
+			fieldVal = float64(v)
+		case float64:
+			fieldVal = v
+		default:
+			return fmt.Errorf("%v is not number", nestedVal)
+		}
+
+		if fieldVal > value {
+			return nil
+		}
+
+		return fmt.Errorf("%v is lesser or equal then %v", fieldVal, value)
+	}
+
+	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+}
+
 // TheResponseArrayKeyShouldContain
 // Step example:
 //   Then the response array key "data.0.v.steps" should contain:

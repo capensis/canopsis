@@ -131,27 +131,41 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 }
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
-	prevRule, err := s.GetOneBy(ctx, r.ID)
-	if err != nil || prevRule == nil {
-		return nil, err
+	model := transformRequestToModel(r.EditRequest)
+	model.ID = r.ID
+	model.Updated = types.CpsTime{Time: time.Now()}
+
+	update := bson.M{"$set": model}
+
+	unset := bson.M{}
+	// check for type entity in case if we update an old alarm idle rule with old alarm patterns
+	if r.CorporateAlarmPattern != "" || len(r.AlarmPattern) > 0 || model.Type == idlerule.RuleTypeEntity {
+		unset["old_alarm_patterns"] = 1
 	}
 
-	now := types.CpsTime{Time: time.Now()}
-	rule := transformRequestToModel(r.EditRequest)
-	rule.ID = r.ID
-	rule.Created = prevRule.Created
-	rule.Updated = now
+	if r.CorporateEntityPattern != "" || len(r.EntityPattern) > 0 {
+		unset["old_entity_patterns"] = 1
+	}
+
+	if len(unset) > 0 {
+		update["$unset"] = unset
+	}
 
 	var idleRule *Rule
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		prevRule, err := s.GetOneBy(ctx, r.ID)
+		if err != nil || prevRule == nil {
+			return err
+		}
+
 		idleRule = nil
-		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": rule.ID}, bson.M{"$set": rule})
+		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
 		if err != nil {
 			return err
 		}
 
-		if prevRule.Priority != rule.Priority {
-			err := s.updateFollowingPriorities(ctx, rule.ID, rule.Priority)
+		if prevRule.Priority != model.Priority {
+			err := s.updateFollowingPriorities(ctx, model.ID, model.Priority)
 			if err != nil {
 				return err
 			}
@@ -230,11 +244,16 @@ func transformRequestToModel(r EditRequest) idlerule.Rule {
 		Type:                 r.Type,
 		Priority:             *r.Priority,
 		Duration:             r.Duration,
-		EntityPatterns:       r.EntityPatterns,
 		DisableDuringPeriods: r.DisableDuringPeriods,
-		AlarmPatterns:        r.AlarmPatterns,
 		AlarmCondition:       r.AlarmCondition,
 		Operation:            operation,
+		AlarmPatternFields: r.AlarmPatternFieldsRequest.ToModelWithoutFields(
+			common.GetForbiddenFieldsInAlarmPattern(mongo.IdleRuleMongoCollection),
+			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.IdleRuleMongoCollection),
+		),
+		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(
+			common.GetForbiddenFieldsInEntityPattern(mongo.IdleRuleMongoCollection),
+		),
 	}
 }
 
