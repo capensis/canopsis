@@ -38,7 +38,7 @@
                   :default-query-id="causesKey",
                   :tab-id="causesKey",
                   :alarm="alarm",
-                  :is-editing-mode="isEditingMode"
+                  :editing="editing"
                 )
     template(v-if="hasConsequences")
       v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
@@ -52,7 +52,7 @@
                   :default-query-id="consequencesKey",
                   :tab-id="consequencesKey",
                   :alarm="alarm",
-                  :is-editing-mode="isEditingMode"
+                  :editing="editing"
                 )
     template(v-if="hasServiceDependencies")
       v-tab {{ $t('alarmList.tabs.trackSource') }}
@@ -131,7 +131,7 @@ export default {
       type: Object,
       required: true,
     },
-    isEditingMode: {
+    editing: {
       type: Boolean,
       default: false,
     },
