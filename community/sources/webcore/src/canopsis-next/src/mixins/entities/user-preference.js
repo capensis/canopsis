@@ -23,6 +23,7 @@ export const entitiesUserPreferenceMixin = {
       fetchUserPreferenceItem: 'fetchItem',
       fetchUserPreferenceWithoutStore: 'fetchItemWithoutStore',
       updateUserPreference: 'update',
+      updateLocalUserPreference: 'updateLocal',
     }),
 
     fetchUserPreference(data) {
@@ -34,11 +35,11 @@ export const entitiesUserPreferenceMixin = {
     },
 
     updateContentInUserPreference(content = {}) {
-      if (this.localWidget) {
-        return Promise.resolve();
-      }
+      const method = this.localWidget
+        ? this.updateLocalUserPreference
+        : this.updateUserPreference;
 
-      return this.updateUserPreference({
+      return method({
         data: {
           ...this.userPreference,
 

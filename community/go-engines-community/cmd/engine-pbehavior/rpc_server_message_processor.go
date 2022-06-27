@@ -12,8 +12,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
@@ -55,6 +55,8 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 
 	if pbhEvent == nil {
 		pbhEvent = &types.Event{}
+	} else {
+		pbhEvent.Entity = event.Entity
 	}
 
 	return p.getRpcEvent(types.RPCPBehaviorResultEvent{
@@ -115,8 +117,6 @@ func (p *createPbehaviorMessageProcessor) Process(
 	if pbhEvent.EventType == "" {
 		return nil, nil
 	}
-
-	pbhEvent.Entity = entity
 
 	return &pbhEvent, nil
 }

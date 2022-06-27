@@ -130,6 +130,12 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		changeType, err := s.processMetaAlarmCreateEvent(ctx, event)
 		alarmChange.Type = changeType
 		return alarmChange, err
+	case types.EventTypeTrigger:
+		if event.AlarmChange == nil || event.Alarm == nil {
+			return types.NewAlarmChange(), nil
+		}
+
+		return *event.AlarmChange, nil
 	}
 
 	if event.Alarm == nil {
@@ -137,6 +143,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 		return alarmChange, err
 	}
+
 	entityOldIdleSince, entityOldLastIdleRuleApply := event.Entity.IdleSince, event.Entity.LastIdleRuleApply
 
 	operation := s.createOperationFromEvent(event)
@@ -146,7 +153,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	mustUpdateIdleFields := entityOldIdleSince != event.Entity.IdleSince ||
-		entityOldLastIdleRuleApply == event.Entity.LastIdleRuleApply
+		entityOldLastIdleRuleApply != event.Entity.LastIdleRuleApply
 
 	if changeType == types.AlarmChangeTypeResolve {
 		err := s.adapter.CopyAlarmToResolvedCollection(ctx, *event.Alarm)
@@ -608,6 +615,7 @@ func (s *eventProcessor) processMetaAlarmCreateEvent(ctx context.Context, event 
 func (s *eventProcessor) processMetaAlarmChildren(ctx context.Context, event *types.Event, changeType types.AlarmChangeType, operation types.Operation) error {
 	if !event.Alarm.IsMetaAlarm() ||
 		changeType != types.AlarmChangeTypeAck &&
+			changeType != types.AlarmChangeTypeDoubleAck &&
 			changeType != types.AlarmChangeTypeAckremove &&
 			changeType != types.AlarmChangeTypeAssocTicket &&
 			changeType != types.AlarmChangeTypeCancel &&
