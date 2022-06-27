@@ -98,6 +98,15 @@ Feature: update alarm on pbehavior
             "last_comment": {
               "message": "Second comment"
             },
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "reason": {
+              "_id": "test-reason-to-engine",
+              "name": "Test Engine",
+              "description": "Test Engine"
+            },
             "type": {
               "_id": "test-maintenance-type-to-engine",
               "icon_name": "build",
@@ -869,6 +878,15 @@ Feature: update alarm on pbehavior
           "pbehavior": {
             "name": "test-pbehavior-9",
             "last_comment": null,
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "reason": {
+              "_id": "test-reason-to-engine",
+              "name": "Test Engine",
+              "description": "Test Engine"
+            },
             "type": {
               "_id": "test-maintenance-type-to-engine",
               "icon_name": "build",
@@ -1031,6 +1049,15 @@ Feature: update alarm on pbehavior
           },
           "pbehavior": {
             "name": "test-pbehavior-10",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "reason": {
+              "_id": "test-reason-to-engine",
+              "name": "Test Engine",
+              "description": "Test Engine"
+            },
             "type": {
               "_id": "test-maintenance-type-to-engine",
               "icon_name": "build",
@@ -1379,6 +1406,15 @@ Feature: update alarm on pbehavior
           },
           "pbehavior": {
             "name": "test-pbehavior-12",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "reason": {
+              "_id": "test-reason-to-engine",
+              "name": "Test Engine",
+              "description": "Test Engine"
+            },
             "type": {
               "_id": "test-maintenance-type-to-engine",
               "icon_name": "build",
