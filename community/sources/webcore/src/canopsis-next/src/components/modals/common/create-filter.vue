@@ -4,14 +4,7 @@
       template(#title="")
         span {{ title }}
       template(#text="")
-        patterns-form(
-          v-model="form",
-          :with-title="config.withTitle",
-          :with-entity="config.withEntity",
-          :with-pbehavior="config.withPbehavior",
-          :with-alarm="config.withAlarm",
-          :with-event="config.withEvent"
-        )
+        patterns-form(v-model="form", v-bind="patternsProps")
       template(#actions="")
         v-btn(
           depressed,
@@ -26,6 +19,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import { MODALS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterToForm, formToFilter } from '@/helpers/forms/filter';
@@ -55,6 +50,14 @@ export default {
     };
   },
   computed: {
+    title() {
+      return this.config.title ?? this.$t('modals.createFilter.create.title');
+    },
+
+    patternsProps() {
+      return omit(this.config, ['title', 'action']);
+    },
+
     patternsFields() {
       const { withAlarm, withEntity, withPbehavior, withEvent } = this.config;
 
@@ -64,10 +67,6 @@ export default {
         withPbehavior && PATTERNS_FIELDS.pbehavior,
         withEvent && PATTERNS_FIELDS.event,
       ].filter(Boolean);
-    },
-
-    title() {
-      return this.config.title ?? this.$t('modals.createFilter.create.title');
     },
   },
   methods: {

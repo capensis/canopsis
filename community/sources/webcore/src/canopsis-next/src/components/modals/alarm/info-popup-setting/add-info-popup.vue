@@ -1,28 +1,24 @@
 <template lang="pug">
-  v-form(data-test="addInfoPopupModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.infoPopupSetting.addInfoPopup.title') }}
-      template(slot="text")
+      template(#text="")
         info-popup-form(v-model="form", :columns="config.columns")
-      template(slot="actions")
+      template(#actions="")
         v-btn(
           flat,
           depressed,
-          data-test="addInfoCancelButton",
           @click="$modals.hide"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
-          type="submit",
-          data-test="addInfoSubmitButton"
+          type="submit"
         ) {{ $t('common.submit') }}
 </template>
 
 <script>
-import { find } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -45,26 +41,15 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
-    const [selectedColumn = {}] = this.modal.config.columns || [];
+    const { popup = {}, columns = [] } = this.modal.config;
+    const [firstColumn] = columns;
 
     return {
       form: {
-        selectedColumn,
-        template: '',
+        column: popup?.column ?? firstColumn?.value,
+        template: popup.template ?? '',
       },
     };
-  },
-  mounted() {
-    if (this.config) {
-      [this.form.selectedColumn] = this.config.columns;
-
-      if (this.config.popup) {
-        const { template, column } = this.config.popup;
-
-        this.form.template = template;
-        this.form.selectedColumn = find(this.config.columns, { value: column });
-      }
-    }
   },
   methods: {
     async submit() {
@@ -72,7 +57,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action({ column: this.form.selectedColumn.value, template: this.form.template });
+          await this.config.action(this.form);
         }
 
         this.$modals.hide();

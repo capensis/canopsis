@@ -15,7 +15,7 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
 </div>
 `;
 
-exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-details\` with full alarm 1`] = `
+exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-details\` with full alarm (only children) 1`] = `
 <div
   class="layout"
 >
@@ -38,12 +38,38 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
     pbehavior="[object Object]"
     pbehaviorinfo="[object Object]"
   />
-  <extra-details-causes-stub
-    causes="[object Object]"
-  />
-  <extra-details-consequences-stub
-    consequences="[object Object]"
+  <!---->
+  <extra-details-children-stub
     rule="[object Object]"
+    total="3"
   />
+</div>
+`;
+
+exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-details\` with full alarm (only parent) 1`] = `
+<div
+  class="layout"
+>
+  <extra-details-ack-stub
+    ack="[object Object]"
+  />
+  <extra-details-last-comment-stub
+    lastcomment="[object Object]"
+  />
+  <extra-details-ticket-stub
+    ticket="[object Object]"
+  />
+  <extra-details-canceled-stub
+    canceled="[object Object]"
+  />
+  <extra-details-snooze-stub
+    snooze="[object Object]"
+  />
+  <extra-details-pbehavior-stub
+    pbehavior="[object Object]"
+    pbehaviorinfo="[object Object]"
+  />
+  <!---->
+  <!---->
 </div>
 `;

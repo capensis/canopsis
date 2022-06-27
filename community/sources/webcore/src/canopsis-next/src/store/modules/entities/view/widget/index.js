@@ -3,6 +3,8 @@ import { ENTITIES_TYPES } from '@/constants';
 
 import request from '@/services/request';
 
+import { widgetSchema } from '@/store/schemas';
+
 export default {
   namespaced: true,
   getters: {
@@ -12,6 +14,17 @@ export default {
     ),
   },
   actions: {
+    fetchItem({ dispatch }, { id }) {
+      return dispatch('entities/fetch', {
+        route: `${API_ROUTES.widget.list}/${id}`,
+        schema: widgetSchema,
+      }, { root: true });
+    },
+
+    fetchItemWithoutStore(context, { id }) {
+      return request.get(`${API_ROUTES.widget.list}/${id}`);
+    },
+
     create(context, { data } = {}) {
       return request.post(API_ROUTES.widget.list, data);
     },
@@ -36,6 +49,10 @@ export default {
       return request.put(API_ROUTES.widget.gridPositions, data);
     },
 
+    fetchWidgetFilters(context, { params } = {}) {
+      return request.get(API_ROUTES.widget.filters, { params });
+    },
+
     createWidgetFilter(context, { data } = {}) {
       return request.post(API_ROUTES.widget.filters, data);
     },
@@ -49,7 +66,7 @@ export default {
     },
 
     fetchWidgetFilter(context, { id, data } = {}) {
-      return request.delete(`${API_ROUTES.widget.filters}/${id}`, data);
+      return request.get(`${API_ROUTES.widget.filters}/${id}`, data);
     },
   },
 };

@@ -1,5 +1,10 @@
 <template lang="pug">
-  v-btn.ma-0(icon, small, @click="$emit('expand', !expanded)")
+  v-btn.ma-0(
+    :loading="loading",
+    icon,
+    small,
+    @click="$emit('expand', !expanded)"
+  )
     v-icon(:color="color") {{ expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
 </template>
 
@@ -17,6 +22,10 @@ export default {
     color: {
       type: String,
       required: false,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
 };

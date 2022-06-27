@@ -6,7 +6,7 @@ const { mapActions } = createNamespacedHelpers('pbehavior/comment');
 /**
  * @mixin
  */
-export default {
+export const entitiesPbehaviorCommentMixin = {
   methods: {
     ...mapActions({
       createPbehaviorComment: 'create',

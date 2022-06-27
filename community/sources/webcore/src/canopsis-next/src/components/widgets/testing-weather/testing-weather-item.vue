@@ -89,9 +89,10 @@ export default {
       };
 
       this.$modals.show({
-        name: MODALS.alarmsList,
+        name: MODALS.alarmsList, // TODO: do it like on service
         config: {
           widget,
+          title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.testSuite.name }),
         },
       });
     },

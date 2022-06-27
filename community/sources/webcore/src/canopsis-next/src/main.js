@@ -105,7 +105,7 @@ import CRetryField from '@/components/forms/fields/c-retry-field.vue';
 import CMixedField from '@/components/forms/fields/c-mixed-field.vue';
 import CMixedInputField from '@/components/forms/fields/c-mixed-input-field.vue';
 import CInputTypeField from '@/components/forms/fields/c-input-type-field.vue';
-import CArrayMixedField from '@/components/forms/fields/c-array-mixed-field.vue';
+import CArrayTextField from '@/components/forms/fields/c-array-text-field.vue';
 import CColorPickerField from '@/components/forms/fields/color/c-color-picker-field.vue';
 import CEntityTypeField from '@/components/forms/fields/entity/c-entity-type-field.vue';
 import CImpactLevelField from '@/components/forms/fields/entity/c-impact-level-field.vue';
@@ -164,8 +164,8 @@ import CPatternRuleField from '@/components/forms/fields/pattern/c-pattern-rule-
 import CPatternRulesField from '@/components/forms/fields/pattern/c-pattern-rules-field.vue';
 import CPatternGroupField from '@/components/forms/fields/pattern/c-pattern-group-field.vue';
 import CPatternGroupsField from '@/components/forms/fields/pattern/c-pattern-groups-field.vue';
-import CPatternsEditorField from '@/components/forms/fields/pattern/c-patterns-editor-field.vue';
-import CPatternsAdvancedEditorField from '@/components/forms/fields/pattern/c-patterns-advanced-editor-field.vue';
+import CPatternEditorField from '@/components/forms/fields/pattern/c-pattern-editor-field.vue';
+import CPatternAdvancedEditorField from '@/components/forms/fields/pattern/c-pattern-advanced-editor-field.vue';
 import CEntityPatternsField from '@/components/forms/fields/entity/c-entity-patterns-field.vue';
 import CAlarmPatternsField from '@/components/forms/fields/alarm/c-alarm-patterns-field.vue';
 import CPatternPanel from '@/components/forms/fields/pattern/c-pattern-panel.vue';
@@ -184,6 +184,13 @@ import EngineeringIcon from '@/components/icons/engineering.vue';
 import InsightsIcon from '@/components/icons/insights.vue';
 import MiscellaneousServicesIcon from '@/components/icons/miscellaneous_services.vue';
 import PublishedWithChangesIcon from '@/components/icons/published_with_changes.vue';
+import DensityMediumIcon from '@/components/icons/density_medium.vue';
+import DensitySmallIcon from '@/components/icons/density_small.vue';
+
+/**
+ * Groups
+ */
+import CDensityBtnToggle from '@/components/common/groups/c-density-btn-toggle.vue';
 
 import * as modalsComponents from '@/components/modals';
 import * as sidebarsComponents from '@/components/sidebars';
@@ -221,6 +228,12 @@ Vue.use(Vuetify, {
     },
     published_with_changes: {
       component: PublishedWithChangesIcon,
+    },
+    density_medium: {
+      component: DensityMediumIcon,
+    },
+    density_small: {
+      component: DensitySmallIcon,
     },
   },
 });
@@ -303,6 +316,7 @@ Vue.component('c-fab-btn', CFabBtn);
 Vue.component('c-refresh-btn', CRefreshBtn);
 Vue.component('c-download-btn', CDownloadBtn);
 Vue.component('c-copy-btn', CCopyBtn);
+Vue.component('c-density-btn-toggle', CDensityBtnToggle);
 Vue.component('c-empty-data-table-columns', CEmptyDataTableColumns);
 Vue.component('c-enabled', CEnabled);
 Vue.component('c-ellipsis', CEllipsis);
@@ -327,7 +341,7 @@ Vue.component('c-retry-field', CRetryField);
 Vue.component('c-mixed-field', CMixedField);
 Vue.component('c-mixed-input-field', CMixedInputField);
 Vue.component('c-input-type-field', CInputTypeField);
-Vue.component('c-array-mixed-field', CArrayMixedField);
+Vue.component('c-array-text-field', CArrayTextField);
 Vue.component('c-color-picker-field', CColorPickerField);
 Vue.component('c-entity-type-field', CEntityTypeField);
 Vue.component('c-impact-level-field', CImpactLevelField);
@@ -388,8 +402,8 @@ Vue.component('c-pattern-rule-field', CPatternRuleField);
 Vue.component('c-pattern-rules-field', CPatternRulesField);
 Vue.component('c-pattern-group-field', CPatternGroupField);
 Vue.component('c-pattern-groups-field', CPatternGroupsField);
-Vue.component('c-patterns-editor-field', CPatternsEditorField);
-Vue.component('c-patterns-advanced-editor-field', CPatternsAdvancedEditorField);
+Vue.component('c-pattern-editor-field', CPatternEditorField);
+Vue.component('c-pattern-advanced-editor-field', CPatternAdvancedEditorField);
 Vue.component('c-pattern-field', CPatternField);
 Vue.component('c-pattern-operator-information', CPatternOperatorInformation);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
@@ -421,7 +435,7 @@ Vue.use(ModalsPlugin, {
   dialogPropsMap: {
     [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
     [MODALS.createWidget]: { maxWidth: 500, lazy: true },
-    [MODALS.alarmsList]: { fullscreen: true, lazy: true },
+    [MODALS.alarmsList]: { maxWidth: '95%', lazy: true },
     [MODALS.createFilter]: { maxWidth: 1100, lazy: true },
     [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
     [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
@@ -438,7 +452,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.imageViewer]: { maxWidth: '90%', contentClass: 'v-dialog__image-viewer' },
     [MODALS.imagesViewer]: { maxWidth: '100%', contentClass: 'v-dialog__images-viewer' },
     [MODALS.rate]: { maxWidth: 500 },
-    [MODALS.createMetaAlarmRule]: { maxWidth: 920, lazy: true },
+    [MODALS.createMetaAlarmRule]: { maxWidth: 1280, lazy: true },
     [MODALS.createEventFilter]: { maxWidth: 1280 },
     [MODALS.createEventFilterAction]: { maxWidth: 920 },
     [MODALS.testSuite]: { maxWidth: 920 },
@@ -447,6 +461,8 @@ Vue.use(ModalsPlugin, {
     [MODALS.pbehaviorPatterns]: { maxWidth: 1280 },
     [MODALS.createIdleRule]: { maxWidth: 1280 },
     [MODALS.createScenario]: { maxWidth: 1280 },
+    [MODALS.createKpiFilter]: { maxWidth: 1280 },
+    [MODALS.createDynamicInfo]: { maxWidth: 1280 },
     [MODALS.createAlarmStatusRule]: { maxWidth: 1280 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),

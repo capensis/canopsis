@@ -163,9 +163,9 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 	project := s.getProject(r.ListRequest, entitiesToProject)
 	project = s.insertDeferred(r.FilterRequest, &pipeline, project)
 	if s.isSortByDuration(sort) {
-		pipeline = append(pipeline, s.getDurationFields())
+		pipeline = append(pipeline, s.getDurationFields()...)
 	} else {
-		project = append(project, s.getDurationFields())
+		project = append(project, s.getDurationFields()...)
 	}
 	cursor, err := collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
@@ -622,6 +622,13 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 			"manual_running": bson.M{"$gt": bson.A{
 				bson.M{"$size": bson.M{"$filter": bson.M{
 					"input": "$manual_statuses",
+					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusRunning}},
+				}}},
+				0,
+			}},
+			"manual_waiting_result": bson.M{"$gt": bson.A{
+				bson.M{"$size": bson.M{"$filter": bson.M{
+					"input": "$manual_statuses",
 					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusWaitResult}},
 				}}},
 				0,
@@ -692,7 +699,8 @@ func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationRes
 		result.Data[i].IsAutoInstructionRunning = statusesByAlarm[v.ID].AutoRunning
 		result.Data[i].IsAllAutoInstructionsCompleted = statusesByAlarm[v.ID].AutoAllCompleted
 		result.Data[i].IsAutoInstructionFailed = statusesByAlarm[v.ID].AutoFailed
-		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualRunning
+		result.Data[i].IsManualInstructionRunning = statusesByAlarm[v.ID].ManualRunning
+		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualWaitingResult
 	}
 
 	return nil
@@ -721,14 +729,14 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 	if result == nil || len(result.Data) == 0 {
 		return nil
 	}
-
-	maxItems := len(result.Data)
-	if maxItems > 100 {
-		maxItems = 100
+	// Do not fetch links for long page.
+	if len(result.Data) > 100 {
+		return nil
 	}
-	linksEntities := make([]AlarmEntity, 0, maxItems)
-	alarmIndexes := make(map[string]int, maxItems)
-	childIndexes := make(map[string][][]int, maxItems)
+
+	linksEntities := make([]AlarmEntity, 0, len(result.Data))
+	alarmIndexes := make(map[string]int, len(result.Data))
+	childIndexes := make(map[string][][]int)
 
 	for i, item := range result.Data {
 		linksEntities = append(linksEntities, AlarmEntity{
@@ -736,9 +744,6 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 			EntityID: item.Entity.ID,
 		})
 		alarmIndexes[item.ID] = i
-		if len(linksEntities) == maxItems {
-			break
-		}
 
 		if item.Children != nil {
 			for j, child := range item.Children.Data {
@@ -752,10 +757,6 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 					AlarmID:  child.ID,
 					EntityID: child.Entity.ID,
 				})
-
-				if len(linksEntities) == maxItems {
-					break
-				}
 			}
 		}
 	}
@@ -1141,10 +1142,19 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 	}
 }
 
+// when one of sort_by attributes is an entity's field then entities $lookup should be kept until $sort stage
 func (s *store) resetEntities(r ListRequest, pipeline *[]bson.M) bool {
-	if strings.HasPrefix(r.SortBy, "entity.") || strings.HasPrefix(r.SortBy, "infos.") {
+	if len(r.MultiSort) != 0 {
+		for _, multiSortValue := range r.MultiSort {
+			multiSortData := strings.Split(multiSortValue, ",")
+			if strings.HasPrefix(multiSortData[0], "entity.") || strings.HasPrefix(multiSortData[0], "infos.") {
+				return false
+			}
+		}
+	} else if strings.HasPrefix(r.SortBy, "entity.") || strings.HasPrefix(r.SortBy, "infos.") {
 		return false
 	}
+
 	*pipeline = append(*pipeline, bson.M{"$project": bson.M{"entity": 0}})
 	return true
 }
@@ -1420,37 +1430,62 @@ func (s *store) resolveAlias(v string) string {
 	return v
 }
 
-func (s *store) getDurationFields() bson.M {
+func (s *store) getDurationFields() []bson.M {
 	now := time.Now().Unix()
 
-	return bson.M{"$addFields": bson.M{
-		"v.duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			"$v.creation_date",
-		}},
-		"v.current_state_duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			"$v.state.t",
-		}},
-		"v.active_duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			bson.M{"$sum": bson.A{
+	return []bson.M{
+		{"$addFields": bson.M{
+			"v.duration": bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
 				"$v.creation_date",
-				"$v.snooze_duration",
-				"$v.pbh_inactive_duration",
+			}},
+			"v.current_state_duration": bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
+				"$v.state.t",
+			}},
+			"v.active_duration": bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
+				bson.M{"$sum": bson.A{
+					"$v.creation_date",
+					"$v.snooze_duration",
+					"$v.pbh_inactive_duration",
+				}},
 			}},
 		}},
-	}}
+		{"$addFields": bson.M{
+			"v.duration": bson.M{
+				"$cond": bson.M{
+					"if":   bson.M{"$lt": bson.A{"$v.duration", 0}},
+					"then": 0,
+					"else": "$v.duration",
+				},
+			},
+			"v.current_state_duration": bson.M{
+				"$cond": bson.M{
+					"if":   bson.M{"$lt": bson.A{"$v.current_state_duration", 0}},
+					"then": 0,
+					"else": "$v.current_state_duration",
+				},
+			},
+			"v.active_duration": bson.M{
+				"$cond": bson.M{
+					"if":   bson.M{"$lt": bson.A{"$v.active_duration", 0}},
+					"then": 0,
+					"else": "$v.active_duration",
+				},
+			},
+		}},
+	}
 }

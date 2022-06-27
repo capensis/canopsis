@@ -7,14 +7,13 @@
     :total-items="totalItems",
     advanced-pagination
   )
-    template(slot="executed_on", slot-scope="props")
-      span.c-nowrap {{ props.item.executed_on | date }}
-    template(slot="alarm._id", slot-scope="props")
-      span {{ props.item.alarm | get('v.display_name') }}
-    template(slot="timeline", slot-scope="props")
-      span.grey--text.text--darken-2(v-if="!props.item.alarm")
-        | {{ $t('remediationInstructionStats.instructionChanged') }}
-      alarm-horizontal-time-line.my-2(v-else, :alarm="props.item.alarm")
+    template(#executed_on="{ item }")
+      span.c-nowrap {{ item.executed_on | date }}
+    template(#alarm._id="{ item }")
+      span {{ item.alarm | get('v.display_name') }}
+    template(#timeline="{ item }")
+      span.grey--text.text--darken-2(v-if="!item.alarm") {{ $t('remediationInstructionStats.instructionChanged') }}
+      alarm-horizontal-time-line.my-2(v-else, :alarm="item.alarm")
 </template>
 
 <script>
@@ -30,6 +29,10 @@ export default {
     remediationInstruction: {
       type: Object,
       default: () => ({}),
+    },
+    interval: {
+      type: Object,
+      required: true,
     },
   },
   data() {
@@ -59,6 +62,9 @@ export default {
       ];
     },
   },
+  watch: {
+    interval: 'fetchList',
+  },
   mounted() {
     this.fetchList();
   },
@@ -66,12 +72,17 @@ export default {
     async fetchList() {
       this.pending = true;
 
+      const params = this.getQuery();
+
+      params.from = this.interval.from;
+      params.to = this.interval.to;
+
       const {
         data: remediationInstructionExecutions,
         meta,
       } = await this.fetchRemediationInstructionStatsExecutionsListWithoutStore({
+        params,
         id: this.remediationInstruction._id,
-        params: this.getQuery(),
       });
 
       this.remediationInstructionExecutions = remediationInstructionExecutions;

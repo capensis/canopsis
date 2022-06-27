@@ -200,4 +200,4 @@ export const convertDurationToString = (duration, format = DEFAULT_DURATION_FORM
  * @param {Duration | *} duration
  * @return {boolean}
  */
-export const isValidDuration = duration => isNumber(duration.value) && isValidTimeUnit(duration.unit);
+export const isValidDuration = duration => isNumber(duration?.value) && isValidTimeUnit(duration.unit);

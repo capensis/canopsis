@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
@@ -368,7 +367,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 	if scenarioExecution.ActionExecutions[taskRes.Step].Action.EmitTrigger &&
 		taskRes.AlarmChangeType != types.AlarmChangeTypeNone {
 		err := e.processEmittedTrigger(ctx, string(taskRes.AlarmChangeType), taskRes.Alarm,
-			scenarioExecution.Entity, scenarioExecution.AckResources)
+			scenarioExecution.Entity, scenarioExecution.AckResources, scenarioExecution.AdditionalData)
 		if err != nil {
 			e.logger.Err(err).Msg("cannot process emitted trigger")
 			e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, err)
@@ -378,22 +377,20 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 
 	nextStep := taskRes.Step + 1
 	if len(scenarioExecution.ActionExecutions) > nextStep {
+		additionalData := scenarioExecution.AdditionalData
+		additionalData.AlarmChangeType = taskRes.AlarmChangeType
 		nextTask := Task{
-			Source:       "process task func",
-			Action:       scenarioExecution.ActionExecutions[nextStep].Action,
-			Alarm:        taskRes.Alarm,
-			Entity:       scenarioExecution.Entity,
-			Step:         nextStep,
-			ExecutionID:  taskRes.ExecutionID,
-			ScenarioID:   scenarioExecution.ScenarioID,
-			AckResources: scenarioExecution.AckResources,
-			Header:       scenarioExecution.Header,
-			Response:     scenarioExecution.Response,
-			AdditionalData: AdditionalData{
-				AlarmChangeType: taskRes.AlarmChangeType,
-				Author:          canopsis.DefaultEventAuthor,
-				Initiator:       scenarioExecution.AdditionalData.Initiator,
-			},
+			Source:         "process task func",
+			Action:         scenarioExecution.ActionExecutions[nextStep].Action,
+			Alarm:          taskRes.Alarm,
+			Entity:         scenarioExecution.Entity,
+			Step:           nextStep,
+			ExecutionID:    taskRes.ExecutionID,
+			ScenarioID:     scenarioExecution.ScenarioID,
+			AckResources:   scenarioExecution.AckResources,
+			Header:         scenarioExecution.Header,
+			Response:       scenarioExecution.Response,
+			AdditionalData: additionalData,
 		}
 
 		select {
@@ -409,7 +406,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 }
 
 func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteScenariosTask) (bool, error) {
-	err := e.scenarioStorage.RunDelayedScenarios(ctx, task.Triggers, task.Alarm, task.Entity)
+	err := e.scenarioStorage.RunDelayedScenarios(ctx, task.Triggers, task.Alarm, task.Entity, task.AdditionalData)
 	if err != nil {
 		return false, err
 	}
@@ -441,8 +438,10 @@ func (e *redisBasedManager) processEmittedTrigger(
 	alarm types.Alarm,
 	entity types.Entity,
 	ackResource bool,
+	additionalData AdditionalData,
 ) error {
-	err := e.scenarioStorage.RunDelayedScenarios(ctx, []string{trigger}, alarm, entity)
+	additionalData.AlarmChangeType = types.AlarmChangeType(trigger)
+	err := e.scenarioStorage.RunDelayedScenarios(ctx, []string{trigger}, alarm, entity, additionalData)
 	if err != nil {
 		return err
 	}
@@ -462,11 +461,7 @@ func (e *redisBasedManager) processEmittedTrigger(
 	}
 
 	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, alarm, entity, ackResource, AdditionalData{
-			AlarmChangeType: types.AlarmChangeType(trigger),
-			Author:          canopsis.DefaultEventAuthor,
-			Initiator:       types.InitiatorSystem,
-		})
+		e.startExecution(ctx, scenario, alarm, entity, ackResource, additionalData)
 	}
 
 	return nil

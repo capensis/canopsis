@@ -23,23 +23,8 @@ func NewApi(
 	}
 }
 
-// Find all permissions
-// @Summary Find permissions
-// @Description Get paginated list of permissions
-// @Tags permissions
-// @ID permissions-find-all
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
-// @Param search query string false "search query"
-// @Param sort query string false "sort query"
-// @Param sort_by query string false "sort query"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Permission}
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /permissions [get]
 func (a *api) List(c *gin.Context) {
 	var query ListRequest
 	query.Query = pagination.GetDefaultQuery()

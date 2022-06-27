@@ -22,19 +22,9 @@ type api struct {
 	actionLogger     logger.ActionLogger
 }
 
-// Create broadcast-message
-// @Summary Create broadcast-message
-// @Description Create broadcast-message
-// @Tags broadcast-messages
-// @ID broadcast-messages-create
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// Create
 // @Param body body BroadcastMessage true "body"
 // @Success 201 {object} BroadcastMessage
-// @Failure 400 {object} common.ErrorResponse
-// @Router /broadcast-message [post]
 func (a api) Create(c *gin.Context) {
 	request := BroadcastMessage{}
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -61,21 +51,8 @@ func (a api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, request)
 }
 
-// Find all broadcast-message
-// @Summary Find all broadcast-message
-// @Description Get paginated list of broadcast-message
-// @Tags broadcast-messages
-// @ID broadcast-messages-find-all
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
-// @Param search query string false "search query"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]BroadcastMessage}
-// @Failure 400 {object} common.ErrorResponse
-// @Router /broadcast-message [get]
 func (a api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
@@ -99,18 +76,8 @@ func (a api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Get broadcast-message by id
-// @Summary Get broadcast-message by id
-// @Description Get broadcast-message by id
-// @Tags broadcast-messages
-// @ID broadcast-messages-get-by-id
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "broadcast-message id"
+// Get
 // @Success 200 {object} BroadcastMessage
-// @Failure 404 {object} common.ErrorResponse
-// @Router /broadcast-message/{id} [get]
 func (a api) Get(c *gin.Context) {
 	bm, err := a.store.GetById(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -125,21 +92,9 @@ func (a api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, bm)
 }
 
-// Update broadcast-message by id
-// @Summary Update broadcast-message by id
-// @Description Update broadcast-message by id
-// @Tags broadcast-messages
-// @ID broadcast-messages-update-by-id
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "broadcast-message id"
+// Update
 // @Param body body Payload true "body"
 // @Success 200 {object} BroadcastMessage
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /broadcast-message/{id} [put]
 func (a api) Update(c *gin.Context) {
 	var request Payload
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -172,17 +127,6 @@ func (a api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, data)
 }
 
-// Delete broadcast-message by id
-// @Summary Delete broadcast-message by id
-// @Description Delete broadcast-message by id
-// @Tags broadcast-messages
-// @ID broadcast-messages-delete-by-id
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "broadcast-message id"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /broadcast-message/{id} [delete]
 func (a api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -208,13 +152,8 @@ func (a api) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-// Get all active broadcast-message
-// @Summary Get all active broadcast-message
-// @Description Get all active broadcast-message
-// @Tags broadcast-messages
-// @ID broadcast-messages-get-active
-// @Success 200 {object} []BroadcastMessage
-// @Router /active-broadcast-message [get]
+// GetActive
+// @Success 200 {array} BroadcastMessage
 func (a api) GetActive(c *gin.Context) {
 	actives, err := a.store.GetActive(c.Request.Context())
 	if err != nil {

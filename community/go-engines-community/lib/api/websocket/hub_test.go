@@ -24,8 +24,7 @@ func TestHub_Send_GivenNotJoinedToRoomConnection_ShouldNotSendMessageToConnectio
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	done := make(chan bool)
-	defer close(done)
+	done := make(chan struct{})
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
@@ -39,11 +38,15 @@ func TestHub_Send_GivenNotJoinedToRoomConnection_ShouldNotSendMessageToConnectio
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *libwebsocket.RMessage) error {
 		hub.Send(room, msgBody)
-		done <- true
+		cancel()
 		return &websocket.CloseError{Code: websocket.CloseNormalClosure}
 	})
+	mockConnection.EXPECT().WriteControl(gomock.Eq(websocket.CloseMessage), gomock.Any(), gomock.Any()).MaxTimes(1)
 
-	go hub.Start(ctx)
+	go func() {
+		hub.Start(ctx)
+		close(done)
+	}()
 
 	err := hub.Connect(w, r)
 	if err != nil {
@@ -59,8 +62,7 @@ func TestHub_Send_GivenJoinedToRoomConnection_ShouldSendMessageToConnection(t *t
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	done := make(chan bool)
-	defer close(done)
+	done := make(chan struct{})
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
@@ -83,7 +85,7 @@ func TestHub_Send_GivenJoinedToRoomConnection_ShouldSendMessageToConnection(t *t
 			return nil
 		default:
 			hub.Send(room, msgBody)
-			done <- true
+			cancel()
 			return &websocket.CloseError{Code: websocket.CloseNormalClosure}
 		}
 	}).Times(2)
@@ -92,8 +94,12 @@ func TestHub_Send_GivenJoinedToRoomConnection_ShouldSendMessageToConnection(t *t
 		Room: room,
 		Msg:  msgBody,
 	})).Return(nil)
+	mockConnection.EXPECT().WriteControl(gomock.Eq(websocket.CloseMessage), gomock.Any(), gomock.Any()).MaxTimes(1)
 
-	go hub.Start(ctx)
+	go func() {
+		hub.Start(ctx)
+		close(done)
+	}()
 
 	err := hub.Connect(w, r)
 	if err != nil {
@@ -109,8 +115,7 @@ func TestHub_Send_GivenLeftRoomConnection_ShouldNotSendMessageToConnection(t *te
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	done := make(chan bool)
-	defer close(done)
+	done := make(chan struct{})
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
@@ -137,7 +142,7 @@ func TestHub_Send_GivenLeftRoomConnection_ShouldNotSendMessageToConnection(t *te
 			return nil
 		default:
 			hub.Send(room, msgBody)
-			done <- true
+			cancel()
 			return &websocket.CloseError{Code: websocket.CloseNormalClosure}
 		}
 	}).Times(3)
@@ -146,8 +151,12 @@ func TestHub_Send_GivenLeftRoomConnection_ShouldNotSendMessageToConnection(t *te
 		Room: room,
 		Msg:  msgBody,
 	})).Return(nil)
+	mockConnection.EXPECT().WriteControl(gomock.Eq(websocket.CloseMessage), gomock.Any(), gomock.Any()).MaxTimes(1)
 
-	go hub.Start(ctx)
+	go func() {
+		hub.Start(ctx)
+		close(done)
+	}()
 
 	err := hub.Connect(w, r)
 	if err != nil {
@@ -163,8 +172,7 @@ func TestHub_Send_GivenDisconnectedConnection_ShouldNotSendMessageToConnection(t
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	done := make(chan bool)
-	defer close(done)
+	done := make(chan struct{})
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
@@ -191,7 +199,7 @@ func TestHub_Send_GivenDisconnectedConnection_ShouldNotSendMessageToConnection(t
 			go func() {
 				time.Sleep(waitTimeout / 2)
 				hub.Send(room, msgBody)
-				done <- true
+				cancel()
 			}()
 
 			return &websocket.CloseError{Code: websocket.CloseNormalClosure}
@@ -202,8 +210,12 @@ func TestHub_Send_GivenDisconnectedConnection_ShouldNotSendMessageToConnection(t
 		Room: room,
 		Msg:  msgBody,
 	})).Return(nil)
+	mockConnection.EXPECT().WriteControl(gomock.Eq(websocket.CloseMessage), gomock.Any(), gomock.Any()).MaxTimes(1)
 
-	go hub.Start(ctx)
+	go func() {
+		hub.Start(ctx)
+		close(done)
+	}()
 
 	err := hub.Connect(w, r)
 	if err != nil {
@@ -219,8 +231,7 @@ func TestHub_Send_GivenErrOnWriteMessage_ShouldCloseConnection(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	done := make(chan bool)
-	defer close(done)
+	done := make(chan struct{})
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
@@ -249,10 +260,14 @@ func TestHub_Send_GivenErrOnWriteMessage_ShouldCloseConnection(t *testing.T) {
 	mockConnection.EXPECT().WriteJSON(gomock.Any()).Return(errors.New("test error"))
 	mockConnection.EXPECT().RemoteAddr().Return(&net.TCPAddr{})
 	mockConnection.EXPECT().Close().Do(func() {
-		done <- true
+		cancel()
 	}).Return(nil)
+	mockConnection.EXPECT().WriteControl(gomock.Eq(websocket.CloseMessage), gomock.Any(), gomock.Any()).MaxTimes(1)
 
-	go hub.Start(ctx)
+	go func() {
+		hub.Start(ctx)
+		close(done)
+	}()
 
 	err := hub.Connect(w, r)
 	if err != nil {
@@ -268,8 +283,7 @@ func TestHub_Send_GivenErrOnWriteError_ShouldCloseConnection(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	done := make(chan bool)
-	defer close(done)
+	done := make(chan struct{})
 	room := "test-room"
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
@@ -288,10 +302,14 @@ func TestHub_Send_GivenErrOnWriteError_ShouldCloseConnection(t *testing.T) {
 	mockConnection.EXPECT().WriteJSON(gomock.Any()).Return(errors.New("test error"))
 	mockConnection.EXPECT().RemoteAddr().Return(&net.TCPAddr{})
 	mockConnection.EXPECT().Close().Do(func() {
-		done <- true
+		cancel()
 	}).Return(nil)
+	mockConnection.EXPECT().WriteControl(gomock.Eq(websocket.CloseMessage), gomock.Any(), gomock.Any()).MaxTimes(1)
 
-	go hub.Start(ctx)
+	go func() {
+		hub.Start(ctx)
+		close(done)
+	}()
 
 	err := hub.Connect(w, r)
 	if err != nil {
@@ -307,8 +325,7 @@ func TestHub_Connect_GivenUnauthUser_ShouldNotJoinToRoom(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	done := make(chan bool)
-	defer close(done)
+	done := make(chan struct{})
 	room := "test-room"
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
@@ -329,7 +346,7 @@ func TestHub_Connect_GivenUnauthUser_ShouldNotJoinToRoom(t *testing.T) {
 			msg.Type = libwebsocket.RMessageJoin
 			return nil
 		default:
-			done <- true
+			cancel()
 			return &websocket.CloseError{Code: websocket.CloseNormalClosure}
 		}
 	}).Times(2)
@@ -338,8 +355,12 @@ func TestHub_Connect_GivenUnauthUser_ShouldNotJoinToRoom(t *testing.T) {
 		Room:  room,
 		Error: "cannot authorize user",
 	})).Return(nil)
+	mockConnection.EXPECT().WriteControl(gomock.Eq(websocket.CloseMessage), gomock.Any(), gomock.Any()).MaxTimes(1)
 
-	go hub.Start(ctx)
+	go func() {
+		hub.Start(ctx)
+		close(done)
+	}()
 
 	err := hub.Connect(w, r)
 	if err != nil {
@@ -355,8 +376,7 @@ func TestHub_Connect_GivenInvalidRMessage_ShouldSendError(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	done := make(chan bool)
-	defer close(done)
+	done := make(chan struct{})
 	room := "test-room"
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
@@ -379,7 +399,7 @@ func TestHub_Connect_GivenInvalidRMessage_ShouldSendError(t *testing.T) {
 		case 2:
 			return &json.SyntaxError{}
 		default:
-			done <- true
+			cancel()
 			return &websocket.CloseError{Code: websocket.CloseNormalClosure}
 		}
 	}).Times(3)
@@ -387,8 +407,12 @@ func TestHub_Connect_GivenInvalidRMessage_ShouldSendError(t *testing.T) {
 		Type:  libwebsocket.WMessageFail,
 		Error: "invalid message",
 	})).Return(nil)
+	mockConnection.EXPECT().WriteControl(gomock.Eq(websocket.CloseMessage), gomock.Any(), gomock.Any()).MaxTimes(1)
 
-	go hub.Start(ctx)
+	go func() {
+		hub.Start(ctx)
+		close(done)
+	}()
 
 	err := hub.Connect(w, r)
 	if err != nil {
@@ -398,13 +422,10 @@ func TestHub_Connect_GivenInvalidRMessage_ShouldSendError(t *testing.T) {
 	waitDone(t, done)
 }
 
-func waitDone(t *testing.T, done <-chan bool) {
+func waitDone(t *testing.T, done <-chan struct{}) {
 	select {
 	case <-time.After(waitTimeout):
 		t.Error("timeout expired")
-	case _, ok := <-done:
-		if !ok {
-			t.Error("channel closed")
-		}
+	case <-done:
 	}
 }

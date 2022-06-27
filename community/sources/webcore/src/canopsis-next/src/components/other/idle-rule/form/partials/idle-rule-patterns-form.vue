@@ -4,6 +4,7 @@
     :with-alarm="!isEntityType",
     :alarm-attributes="alarmAttributes",
     :entity-attributes="entityAttributes",
+    :disabled="disabled",
     some-required,
     with-entity
   )
@@ -29,6 +30,10 @@ export default {
       default: () => ({}),
     },
     isEntityType: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },
@@ -61,9 +66,7 @@ export default {
       return [
         {
           value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: {
-            disabled: true,
-          },
+          options: { disabled: true },
         },
       ];
     },

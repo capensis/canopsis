@@ -2,6 +2,8 @@ package entitycategory
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -9,7 +11,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 type Store interface {
@@ -109,23 +110,30 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Category, error) {
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Category, error) {
 	now := types.CpsTime{Time: time.Now()}
-	res, err := s.dbCollection.UpdateOne(ctx,
-		bson.M{"_id": r.ID},
-		bson.M{"$set": bson.M{
-			"name":    r.Name,
-			"author":  r.Author,
-			"updated": now,
-		}},
-	)
+	var result *Category
+
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		result = nil
+		res, err := s.dbCollection.UpdateOne(ctx,
+			bson.M{"_id": r.ID},
+			bson.M{"$set": bson.M{
+				"name":    r.Name,
+				"author":  r.Author,
+				"updated": now,
+			}},
+		)
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		result, err = s.GetOneBy(ctx, r.ID)
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	if res.MatchedCount == 0 {
-		return nil, nil
-	}
-
-	return s.GetOneBy(ctx, r.ID)
+	return result, nil
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {

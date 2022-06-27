@@ -1,5 +1,7 @@
 export const ENTITIES_TYPES = {
   alarm: 'alarm',
+  alarmDetails: 'alarmDetails',
+  alarmDetailsSteps: 'alarmDetailsSteps',
   entity: 'entity',
   service: 'entityservices',
   weatherService: 'weatherService',

@@ -6,11 +6,11 @@
       :items="items",
       hide-actions
     )
-      template(slot="items", slot-scope="props")
-        td.text-xs-left {{ props.item.v.state.a }}
-        td.text-xs-left {{ props.item.v.connector }}
-        td.text-xs-left {{ props.item.v.component }}
-        td.text-xs-left {{ props.item.v.resource }}
+      template(#items="{ item }")
+        td.text-xs-left {{ item.v.state.a }}
+        td.text-xs-left {{ item.v.connector }}
+        td.text-xs-left {{ item.v.component }}
+        td.text-xs-left {{ item.v.resource }}
 </template>
 
 <script>

@@ -121,6 +121,7 @@ export default {
               callback: this.getChartTimeTickLabel,
               font: {
                 size: 11,
+                family: 'Arial, sans-serif',
               },
             },
           },
@@ -129,6 +130,7 @@ export default {
             ticks: {
               font: {
                 size: 11,
+                family: 'Arial, sans-serif',
               },
             },
           },
@@ -141,6 +143,7 @@ export default {
               callback: this.getChartYPercentTick,
               font: {
                 size: 11,
+                family: 'Arial, sans-serif',
               },
             },
           },
@@ -152,6 +155,7 @@ export default {
               callback: this.getChartYTimeTick,
               font: {
                 size: 11,
+                family: 'Arial, sans-serif',
               },
             },
           },
@@ -171,6 +175,7 @@ export default {
             labels: {
               font: {
                 size: 11,
+                family: 'Arial, sans-serif',
               },
               boxWidth: 15,
               boxHeight: 15,

@@ -88,12 +88,10 @@ describe('actions-panel', () => {
         }), {}),
     },
   };
-  const fetchAlarmsListWithPreviousParams = jest.fn();
   const fetchAlarmItem = jest.fn();
   const alarmModule = {
     name: 'alarm',
     actions: {
-      fetchListWithPreviousParams: fetchAlarmsListWithPreviousParams,
       fetchItem: fetchAlarmItem,
     },
   };
@@ -112,16 +110,27 @@ describe('actions-panel', () => {
 
   const assignedInstructions = [
     {
+      _id: 1,
       name: 'Running instruction',
       execution: {
         status: REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running,
       },
     },
     {
+      _id: 2,
+      name: 'New instruction',
+      execution: null,
+    },
+  ];
+
+  const assignedInstructionsWithPaused = [
+    {
+      _id: 1,
       name: 'New instruction',
       execution: null,
     },
     {
+      _id: 2,
       name: 'Paused instruction',
       execution: {
         status: REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused,
@@ -154,6 +163,12 @@ describe('actions-panel', () => {
     d: 'parent-d',
   };
 
+  const refreshAlarmsList = jest.fn();
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('Ack modal showed after trigger ack action', () => {
     const isNoteRequired = Faker.datatype.boolean();
     const widgetData = {
@@ -173,6 +188,7 @@ describe('actions-panel', () => {
         item: alarm,
         widget: widgetData,
         parentAlarm,
+        refreshAlarmsList,
       },
       mocks: {
         $modals,
@@ -199,11 +215,7 @@ describe('actions-panel', () => {
 
     config.afterSubmit();
 
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Fast ack event sent after trigger fast ack action', () => {
@@ -292,6 +304,7 @@ describe('actions-panel', () => {
       propsData: {
         item: alarm,
         widget: widgetData,
+        refreshAlarmsList,
       },
       mocks: {
         $modals,
@@ -319,11 +332,7 @@ describe('actions-panel', () => {
 
     config.afterSubmit();
 
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Create pbehavior modal showed after trigger pbehavior add action', () => {
@@ -384,6 +393,7 @@ describe('actions-panel', () => {
         item: alarm,
         widget: widgetData,
         parentAlarm,
+        refreshAlarmsList,
       },
       mocks: {
         $modals,
@@ -410,11 +420,7 @@ describe('actions-panel', () => {
 
     config.afterSubmit();
 
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Pbehavior list modal showed after trigger pbehavior list action with unresolved alarm', () => {
@@ -438,6 +444,7 @@ describe('actions-panel', () => {
         item: { ...alarm, entity, pbehavior },
         widget: widgetData,
         parentAlarm,
+        refreshAlarmsList,
       },
       mocks: {
         $modals,
@@ -466,11 +473,7 @@ describe('actions-panel', () => {
 
     config.afterSubmit();
 
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Pbehavior list modal showed after trigger pbehavior list action with resolved alarm', () => {
@@ -494,6 +497,7 @@ describe('actions-panel', () => {
         item: { ...alarm, entity, pbehavior },
         widget: widgetData,
         parentAlarm,
+        refreshAlarmsList,
         isResolvedAlarm: true,
       },
       mocks: {
@@ -523,11 +527,7 @@ describe('actions-panel', () => {
 
     config.afterSubmit();
 
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Declare ticket modal showed after trigger declare action', () => {
@@ -545,6 +545,7 @@ describe('actions-panel', () => {
         item: alarm,
         widget: widgetData,
         parentAlarm,
+        refreshAlarmsList,
       },
       mocks: {
         $modals,
@@ -570,11 +571,7 @@ describe('actions-panel', () => {
 
     config.afterSubmit();
 
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Associate ticket modal showed after trigger associate ticket action', () => {
@@ -592,6 +589,7 @@ describe('actions-panel', () => {
         item: alarm,
         widget: widgetData,
         parentAlarm,
+        refreshAlarmsList,
       },
       mocks: {
         $modals,
@@ -617,11 +615,7 @@ describe('actions-panel', () => {
 
     config.afterSubmit();
 
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Change state modal showed after trigger change state action', () => {
@@ -639,6 +633,7 @@ describe('actions-panel', () => {
         item: alarm,
         widget: widgetData,
         parentAlarm,
+        refreshAlarmsList,
       },
       mocks: {
         $modals,
@@ -664,11 +659,7 @@ describe('actions-panel', () => {
 
     config.afterSubmit();
 
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Cancel modal showed after trigger cancel action', () => {
@@ -686,6 +677,7 @@ describe('actions-panel', () => {
         item: alarm,
         widget: widgetData,
         parentAlarm,
+        refreshAlarmsList,
       },
       mocks: {
         $modals,
@@ -713,11 +705,7 @@ describe('actions-panel', () => {
 
     config.afterSubmit();
 
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Variables modal showed after trigger variables help action', () => {
@@ -781,16 +769,6 @@ describe('actions-panel', () => {
         },
       },
     );
-
-    const [{ config }] = $modals.show.mock.calls[0];
-
-    config.afterSubmit();
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
   });
 
   it('History modal showed after trigger history action', () => {
@@ -840,6 +818,7 @@ describe('actions-panel', () => {
       {
         name: MODALS.alarmsList,
         config: {
+          title: expect.any(String),
           widget: {
             ...defaultWidget,
             _id: expect.any(String),
@@ -891,6 +870,7 @@ describe('actions-panel', () => {
         item: commentAlarm,
         widget: widgetData,
         parentAlarm,
+        refreshAlarmsList,
       },
       mocks: {
         $modals,
@@ -915,15 +895,8 @@ describe('actions-panel', () => {
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
-
     config.action();
+    config.afterSubmit();
 
     expect(createEvent).toBeCalledWith(
       expect.any(Object),
@@ -948,11 +921,7 @@ describe('actions-panel', () => {
       undefined,
     );
 
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Manual meta alarm modal showed after trigger manual meta alarm ungroup action', () => {
@@ -970,6 +939,7 @@ describe('actions-panel', () => {
         item: alarm,
         widget: widgetData,
         parentAlarm,
+        refreshAlarmsList,
       },
       mocks: {
         $modals,
@@ -1001,15 +971,11 @@ describe('actions-panel', () => {
 
     config.afterSubmit();
 
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Execute instruction alarm modal showed after trigger execute instruction action', () => {
-    const assignedInstruction = assignedInstructions[2];
+    const assignedInstruction = assignedInstructionsWithPaused[1];
     const alarmData = {
       ...alarm,
       _id: Faker.datatype.string(),
@@ -1034,6 +1000,7 @@ describe('actions-panel', () => {
         item: alarmData,
         widget: widgetData,
         parentAlarm,
+        refreshAlarmsList,
       },
       mocks: {
         $modals,
@@ -1061,40 +1028,13 @@ describe('actions-panel', () => {
       },
     );
 
-    const expectedFetchAlarmData = {
-      id: alarmData._id,
-      params: {
-        correlation: false,
-        limit: 1,
-        with_instructions: true,
-      },
-    };
-
     const [{ config }] = $modals.show.mock.calls[0];
 
     config.onOpen();
-
-    expect(fetchAlarmItem).toBeCalledWith(
-      expect.any(Object),
-      expectedFetchAlarmData,
-      undefined,
-    );
-
     config.onClose();
-
-    expect(fetchAlarmItem).toBeCalledWith(
-      expect.any(Object),
-      expectedFetchAlarmData,
-      undefined,
-    );
-
     config.onComplete();
 
-    expect(fetchAlarmItem).toBeCalledWith(
-      expect.any(Object),
-      expectedFetchAlarmData,
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(3);
   });
 
   it('Custom action called after trigger button', () => {
@@ -1133,6 +1073,79 @@ describe('actions-panel', () => {
 
     featureHasSpy.mockClear();
     featureGetSpy.mockClear();
+  });
+
+  // TODO: put tests for: no active instructions, one active instruction
+  it('Renders `actions-panel` with manual instruction in running', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          is_manual_instruction_running: true,
+        },
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with manual instruction in waiting result', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          is_manual_instruction_waiting_result: true,
+        },
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with auto instruction in running', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          is_auto_instruction_running: true,
+        },
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with paused manual instruction', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          assigned_instructions: assignedInstructionsWithPaused,
+        },
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with unresolved alarm and flapping status', () => {
