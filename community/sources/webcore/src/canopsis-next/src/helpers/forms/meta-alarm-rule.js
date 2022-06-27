@@ -3,7 +3,8 @@ import { omit, pick, isNumber } from 'lodash';
 import {
   DEFAULT_TIME_INTERVAL,
   META_ALARMS_RULE_TYPES,
-  META_ALARMS_THRESHOLD_TYPES, OLD_PATTERNS_FIELDS,
+  META_ALARMS_THRESHOLD_TYPES,
+  OLD_PATTERNS_FIELDS,
   PATTERNS_FIELDS,
 } from '@/constants';
 
