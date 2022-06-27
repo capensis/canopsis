@@ -8,7 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type rmqPublisher struct {
@@ -34,12 +34,6 @@ func NewEventPublisher(
 }
 
 func (p *rmqPublisher) SendImportResultEvent(uuid string, execTime time.Duration, state types.CpsNumber) error {
-	output := fmt.Sprintf("Import %s succeed.", uuid)
-
-	if state != types.AlarmStateOK {
-		output = fmt.Sprintf("Import %s failed.", uuid)
-	}
-
 	stateType := new(types.CpsNumber)
 	*stateType = 1
 
@@ -53,7 +47,7 @@ func (p *rmqPublisher) SendImportResultEvent(uuid string, execTime time.Duration
 		Timestamp:     types.NewCpsTime(time.Now().Unix()),
 		State:         state,
 		StateType:     stateType,
-		Output:        output,
+		Output:        fmt.Sprintf("Import %s failed.", uuid),
 		ExtraInfos: map[string]interface{}{
 			"execution_time": execTime,
 		},

@@ -68,7 +68,7 @@ type Entity struct {
 	Deletable      *bool                    `bson:"deletable,omitempty" json:"deletable,omitempty"`
 	IdleSince      *types.CpsTime           `bson:"idle_since,omitempty" json:"idle_since,omitempty" swaggertype:"integer"`
 	PbehaviorInfo  *PbehaviorInfo           `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	LastEventDate  *types.CpsTime           `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
+	LastEventDate  *types.CpsTime           `bson:"last_event_date,omitempty" json:"last_event_date,omitempty" swaggertype:"integer"`
 	OKEvents       int                      `bson:"ok_events" json:"ok_events"`
 	KOEvents       int                      `bson:"ko_events" json:"ko_events"`
 	State          int                      `bson:"state" json:"state"`

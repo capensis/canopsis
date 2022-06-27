@@ -27,18 +27,8 @@ func NewApi(store Store, actionLogger logger.ActionLogger) API {
 	}
 }
 
-// Get user preferences by widget id
-// @Summary Get user preferences by widget id
-// @Description Get user preferences by widget id
-// @Tags userpreference
-// @ID userpreference-get-by-id
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "widget id"
+// Get
 // @Success 200 {object} Response
-// @Failure 404 {object} common.ErrorResponse
-// @Router /user-preferences/{id} [get]
 func (a *api) Get(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	response, err := a.store.Find(c.Request.Context(), userId, c.Param("id"))
@@ -54,20 +44,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// Update user preferences by widget id
-// @Summary Update user preferences by widget id
-// @Description Update user preferences by widget id
-// @Tags userpreference
-// @ID userpreference-update-by-widget-id
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// Update
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /user-preferences [put]
 func (a api) Update(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{}

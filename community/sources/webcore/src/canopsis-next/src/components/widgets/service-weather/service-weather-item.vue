@@ -219,6 +219,7 @@ export default {
                 ...widgetParameters,
               },
             },
+            title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.service.name }),
           },
         });
       } catch (err) {

@@ -14,21 +14,22 @@
           icon,
           @click="$modals.minimize({ id: $modal.id })"
         )
-          v-icon(color="white") minimize
+          v-icon(color="white", large) minimize
         span {{ $t('modals.common.titleButtons.minimizeTooltip') }}
       v-btn.my-0(
         v-else,
         icon,
+        small,
         @click="$modals.maximize({ id: $modal.id })"
       )
         v-icon(color="white") maximize
     div.modal-title-button__wrapper(v-if="close")
-      v-btn.my-0(
-        slot="activator",
+      v-btn.ma-0(
+        :small="$modal.minimized",
         icon,
         @click="closeHandler"
       )
-        v-icon(color="white") close
+        v-icon(color="white", :large="!$modal.minimized") close
 </template>
 
 <script>
@@ -81,34 +82,6 @@ export default {
 <style lang="scss" scoped>
 .modal-title-buttons {
   display: flex;
-
-  &.close, &.minimize {
-    width: 48px;
-  }
-
-  &.close.minimize {
-    width: 96px;
-  }
-
-  .v-dialog:not(.v-dialog--fullscreen) & {
-    .modal-title-button__wrapper .v-btn {
-      font-size: 13px;
-      height: 28px;
-      width: 28px;
-
-      .v-icon {
-        font-size: 16px;
-      }
-    }
-
-    &.close, &.minimize {
-      width: 40px;
-    }
-
-    &.close.minimize {
-      width: 80px;
-    }
-  }
 
   .v-btn--minimize {
     pointer-events: auto;

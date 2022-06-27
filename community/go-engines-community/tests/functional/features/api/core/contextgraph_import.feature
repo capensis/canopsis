@@ -10,6 +10,15 @@ Feature: Import entities
     When I do PUT /api/v4/contextgraph/import
     Then the response code should be 403
 
+  Scenario: import unauthorized
+    When I do PUT /api/v4/contextgraph/import-partial
+    Then the response code should be 401
+
+  Scenario: import without permissions
+    When I am noperms
+    When I do PUT /api/v4/contextgraph/import-partial
+    Then the response code should be 403
+
   Scenario: import with action create
     When I am admin
     When I do PUT /api/v4/contextgraph/import?source=test-import-source:
@@ -1235,10 +1244,7 @@ Feature: Import entities
       "status": "done"
     }
     """
-    When I wait 2s
-    When I do GET /api/v4/entitybasics?_id=SC004C
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/entitybasics?_id=SC004C until response code is 200 and body contains:
     """json
     {
         "_id": "SC004C",

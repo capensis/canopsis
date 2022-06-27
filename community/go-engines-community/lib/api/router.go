@@ -400,6 +400,10 @@ func RegisterRoutes(
 				middleware.SetAuthor(),
 				pbehaviorApi.Patch)
 			pbehaviorRouter.DELETE(
+				"",
+				middleware.Authorize(authObjPbh, permDelete, enforcer),
+				pbehaviorApi.DeleteByName)
+			pbehaviorRouter.DELETE(
 				"/:id",
 				middleware.Authorize(authObjPbh, permDelete, enforcer),
 				pbehaviorApi.Delete)
@@ -858,7 +862,12 @@ func RegisterRoutes(
 			contextGraphRouter.PUT(
 				"import",
 				middleware.Authorize(authObjContextGraph, permCreate, enforcer),
-				contextGraphAPI.Import,
+				contextGraphAPI.ImportAll,
+			)
+			contextGraphRouter.PUT(
+				"import-partial",
+				middleware.Authorize(authObjContextGraph, permCreate, enforcer),
+				contextGraphAPI.ImportPartial,
 			)
 			contextGraphRouter.GET(
 				"import/status/:id",
