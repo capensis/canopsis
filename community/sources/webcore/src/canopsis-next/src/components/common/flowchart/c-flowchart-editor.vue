@@ -10,9 +10,9 @@
     component(
       v-for="shape in data",
       :shape="shape",
-      :key="shape.id",
+      :key="shape._id",
       :is="`${shape.type}-shape`",
-      :selected="isSelected(shape)",
+      :selected="isSelected(shape._id)",
       :readonly="readonly",
       :connecting="editing",
       @mousedown="onShapeMouseDown(shape, $event)",
@@ -41,7 +41,6 @@ import ArrowLineShape from './arrow-line-shape/arrow-line-shape.vue';
 import BidirectionalArrowLineShape from './bidirectional-arrow-line-shape/bidirectional-arrow-line-shape.vue';
 import CircleShape from './circle-shape/circle-shape.vue';
 import EllipseShape from './ellipse-shape/ellipse-shape.vue';
-import SquareShape from './square-shape/square-shape.vue';
 import ImageShape from './image-shape/image-shape.vue';
 import RhombusShape from './rhombus-shape/rhombus-shape.vue';
 import ParallelogramShape from './parallelogram-shape/parallelogram-shape.vue';
@@ -61,7 +60,6 @@ export default {
     BidirectionalArrowLineShape,
     CircleShape,
     EllipseShape,
-    SquareShape,
     ImageShape,
     RhombusShape,
     ParallelogramShape,
@@ -93,6 +91,7 @@ export default {
       cursor: {
         x: 0,
         y: 0,
+        shift: false,
       },
 
       editing: false,
@@ -135,20 +134,20 @@ export default {
   },
   methods: {
     updateShape(shape, data) {
-      Object.assign(this.data[shape.id], data);
+      Object.assign(this.data[shape._id], data);
     },
 
     updateShapes(shapes) {
       this.$emit('input', shapes);
     },
 
-    isSelected(shape) {
-      return this.selected.includes(shape.id);
+    isSelected(id) {
+      return this.selected.includes(id);
     },
 
     setSelected(shape) {
-      if (!this.isSelected(shape)) {
-        this.selected.push(shape.id);
+      if (!this.isSelected(shape._id)) {
+        this.selected.push(shape._id);
       }
     },
 
@@ -157,7 +156,7 @@ export default {
     },
 
     removeShapeSelected(shape) {
-      this.selected = this.selected.filter(id => id !== shape.id);
+      this.selected = this.selected.filter(id => id !== shape._id);
     },
 
     onShapeMouseDown(shape, event) {
@@ -165,12 +164,12 @@ export default {
         this.setSelected(shape);
       }
 
-      if (!this.isSelected(shape) && !event.ctrlKey) {
+      if (!this.isSelected(shape._id) && !event.ctrlKey) {
         this.clearSelected();
         this.setSelected(shape);
       }
 
-      if (this.isSelected(shape)) {
+      if (this.isSelected(shape._id)) {
         const { offsetX, offsetY } = event;
         this.moving = true;
         this.movingStart = {
@@ -185,7 +184,7 @@ export default {
         return;
       }
 
-      const isShapeSelected = this.isSelected(shape);
+      const isShapeSelected = this.isSelected(shape._id);
 
       if (isShapeSelected && this.selected.length === 1) {
         return;
@@ -216,43 +215,49 @@ export default {
     },
 
     onConnectFinish(shape, { side }) {
-      const connectingShape = this.data[shape.id];
+      const connectingShape = this.data[shape._id];
 
       connectingShape.connections.push({
-        shapeId: this.editingShape.id,
+        shapeId: this.editingShape._id,
         pointId: this.editingPoint._id,
         side,
       });
 
-      const editingShape = this.data[this.editingShape.id];
+      const editingShape = this.data[this.editingShape._id];
 
-      editingShape.connectedTo.push(connectingShape.id);
+      editingShape.connectedTo.push(connectingShape._id);
     },
 
     onUnconnect(shape) {
-      const connectingShape = this.data[shape.id];
+      const connectingShape = this.data[shape._id];
 
       connectingShape.connections = connectingShape.connections.filter(
-        connection => connection.shapeId !== this.editingShape.id
+        connection => connection.shapeId !== this.editingShape._id
         || connection.pointId !== this.editingPoint._id,
       );
 
-      const editingShape = this.data[this.editingShape.id];
+      const editingShape = this.data[this.editingShape._id];
 
       editingShape.connectedTo = editingShape.connectedTo
         .filter(shapeId => shapeId !== shape._id);
     },
 
-    updateConnections(shape) {
+    updateConnections(id) {
+      const shape = this.data[id];
+
       if (shape.connections?.length) {
         shape.connections.forEach(({ shapeId, pointId, side }) => {
-          const updatableShape = this.data[shapeId];
-          const point = updatableShape.points.find(({ _id: id }) => id === pointId);
+          if (this.isSelected(shapeId)) {
+            return;
+          }
+
+          const updatingShape = this.data[shapeId];
+          const updatingPoint = updatingShape.points.find(point => point._id === pointId);
 
           const { x, y } = calculateConnectorPointBySide(shape, side);
 
-          point.x = x;
-          point.y = y;
+          updatingPoint.x = x;
+          updatingPoint.y = y;
         });
       }
     },
@@ -287,7 +292,7 @@ export default {
         line.connectedTo.forEach((shapeId) => {
           const connectedShape = this.data[shapeId];
 
-          if (this.isSelected(connectedShape)) {
+          if (this.isSelected(connectedShape._id)) {
             connectedTo.push(shapeId);
             return;
           }
@@ -301,37 +306,41 @@ export default {
       }
     },
 
+    moveShapeById(id, offset) {
+      const shape = this.data[id];
+
+      switch (shape.type) {
+        case SHAPES.storage:
+        case SHAPES.parallelogram:
+        case SHAPES.image:
+        case SHAPES.circle:
+        case SHAPES.rhombus:
+        case SHAPES.ellipse:
+        case SHAPES.rect: {
+          shape.x += offset.x;
+          shape.y += offset.y;
+          break;
+        }
+        case SHAPES.arrowLine:
+        case SHAPES.bidirectionalArrowLine:
+        case SHAPES.line: {
+          shape.points = shape.points.map(point => ({
+            ...point,
+            x: point.x + offset.x,
+            y: point.y + offset.y,
+          }));
+          break;
+        }
+      }
+    },
+
     moveSelected(offset) {
       this.selected.forEach((id) => {
-        const shape = this.data[id];
-
-        switch (shape.type) {
-          case SHAPES.storage:
-          case SHAPES.square:
-          case SHAPES.parallelogram:
-          case SHAPES.image:
-          case SHAPES.circle:
-          case SHAPES.rhombus:
-          case SHAPES.ellipse:
-          case SHAPES.rect: {
-            shape.x += offset.x;
-            shape.y += offset.y;
-            break;
-          }
-          case SHAPES.arrowLine:
-          case SHAPES.bidirectionalArrowLine:
-          case SHAPES.line: {
-            shape.points = shape.points.map(point => ({
-              ...point,
-              x: point.x + offset.x,
-              y: point.y + offset.y,
-            }));
-            break;
-          }
-        }
+        this.moveShapeById(id, offset);
 
         this.clearConnectedTo(id);
-        this.updateConnections(shape);
+
+        this.updateConnections(id);
       });
     },
 
@@ -362,6 +371,7 @@ export default {
       const cursor = {
         x: roundByStep(event.offsetX, this.gridSize),
         y: roundByStep(event.offsetY, this.gridSize),
+        shift: event.shiftKey,
       };
 
       if (this.cursor.x !== cursor.x || this.cursor.y !== cursor.y) {

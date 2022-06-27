@@ -21,7 +21,8 @@
       :color="color",
       :corner-radius="cornerRadius",
       resizable,
-      @start:resize="startResize"
+      aspect-ratio,
+      @update="onRectUpdate"
     )
     rect-connectors(
       v-if="connecting",
@@ -38,14 +39,11 @@
 </template>
 
 <script>
-import { resizeSquareShapeByDirection } from '@/helpers/flowchart/resize';
-
 import RectSelection from '../common/rect-selection.vue';
 import CircleFigure from '../common/circle-figure.vue';
 import RectConnectors from '../common/rect-connectors.vue';
 
 export default {
-  inject: ['$mouseMove', '$mouseUp'],
   components: { RectConnectors, CircleFigure, RectSelection },
   props: {
     circle: {
@@ -77,39 +75,12 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      direction: undefined,
-    };
-  },
   methods: {
-    startResize(direction) {
-      this.$mouseMove.register(this.onResize);
-      this.$mouseUp.register(this.finishResize);
-      this.direction = direction;
-    },
-
-    finishResize() {
-      this.$mouseMove.unregister(this.onResize);
-      this.$mouseUp.unregister(this.finishResize);
-    },
-
-    onResize(cursor) {
-      const { square, direction } = resizeSquareShapeByDirection(
-        {
-          x: this.circle.x,
-          y: this.circle.y,
-          size: this.circle.diameter,
-        },
-        cursor,
-        this.direction,
-      );
-
-      this.direction = direction;
+    onRectUpdate(rect) {
       this.$emit('update', {
-        diameter: square.size,
-        x: square.x,
-        y: square.y,
+        diameter: rect.width,
+        x: rect.x,
+        y: rect.y,
       });
     },
   },

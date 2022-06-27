@@ -17,11 +17,12 @@
       :y="rect.y",
       :width="rect.width",
       :height="rect.height",
+      :aspect-ratio="rect.aspectRatio",
       :padding="padding",
       :color="color",
       :corner-radius="cornerRadius",
       cursor="move",
-      @start:resize="startResize"
+      @update="$listeners.update"
     )
     rect-connectors(
       v-if="connecting",
@@ -37,13 +38,10 @@
 </template>
 
 <script>
-import { resizeRectangleShapeByDirection } from '@/helpers/flowchart/resize';
-
 import RectSelection from '../common/rect-selection.vue';
 import RectConnectors from '../common/rect-connectors.vue';
 
 export default {
-  inject: ['$mouseMove', '$mouseUp'],
   components: { RectConnectors, RectSelection },
   props: {
     rect: {
@@ -73,36 +71,6 @@ export default {
     connecting: {
       type: Boolean,
       default: false,
-    },
-  },
-  data() {
-    return {
-      direction: undefined,
-    };
-  },
-  methods: {
-    startResize(direction) {
-      this.$mouseMove.register(this.onResize);
-      this.$mouseUp.register(this.finishResize);
-
-      this.direction = direction;
-    },
-
-    finishResize() {
-      this.$mouseMove.unregister(this.onResize);
-      this.$mouseUp.unregister(this.finishResize);
-    },
-
-    onResize(cursor) {
-      const { direction, rect } = resizeRectangleShapeByDirection(
-        this.rect,
-        cursor,
-        this.direction,
-      );
-
-      this.direction = direction;
-
-      this.$emit('update', rect);
     },
   },
 };

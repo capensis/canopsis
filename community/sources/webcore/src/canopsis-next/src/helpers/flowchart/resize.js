@@ -9,28 +9,20 @@ import { DIRECTIONS } from '@/constants';
  */
 
 /**
- * @typedef {Object} Square
- * @property {number} size
- * @property {number} x
- * @property {number} y
- */
-
-/**
- * @typedef {Object} Cursor
- * @property {number} x
- * @property {number} y
- */
-
-/**
  * Resize rectangle by direction and cursor position
  *
  * @param {Rect} rect
- * @param {Cursor} cursor
+ * @param {number} cursorX
+ * @param {number} cursorY
  * @param {string} direction
  * @returns {{ rect: Rect, direction: string }}
  */
-export const resizeRectangleShapeByDirection = (rect, cursor, direction) => {
-  const { x: cursorX, y: cursorY } = cursor;
+export const resizeRectangleShapeWithoutAspectRatio = ({
+  rect,
+  cursorX,
+  cursorY,
+  direction,
+}) => {
   const newRect = {
     x: rect.x,
     y: rect.y,
@@ -109,32 +101,40 @@ export const resizeRectangleShapeByDirection = (rect, cursor, direction) => {
 };
 
 /**
- * Resize square by direction and cursor position
+ * Resize rect by direction and cursor position
  *
- * @param {Square} square
- * @param {Cursor} cursor
+ * @param {Rect} rect
+ * @param {number} cursorX
+ * @param {number} cursorY
  * @param {string} direction
- * @returns {{ square: Square, direction: string }}
+ * @param {number} ratio
+ * @returns {{ rect: Rect, direction: string }}
  */
-export const resizeSquareShapeByDirection = (square, cursor, direction) => {
-  const { x: cursorX, y: cursorY } = cursor;
-  const newSquare = { ...square };
+export const resizeRectangleWithAspectRation = ({
+  rect,
+  cursorX,
+  cursorY,
+  direction,
+  ratio,
+}) => {
+  const newRect = { ...rect };
   let newDirection = direction;
 
   switch (direction) {
     case DIRECTIONS.west:
     case DIRECTIONS.southWest: {
-      const newSize = square.size + square.x - cursorX;
+      const newWidth = rect.width + rect.x - cursorX;
+      newRect.height = Math.abs(newWidth * ratio);
 
-      if (newSize >= 0) {
-        newSquare.size = newSize;
-        newSquare.x = cursorX;
+      if (newWidth >= 0) {
+        newRect.width = newWidth;
+        newRect.x = cursorX;
       } else {
-        const absoluteNewSize = Math.abs(newSize);
+        const absoluteNewWidth = Math.abs(newWidth);
 
-        newSquare.x += square.size;
-        newSquare.y -= absoluteNewSize;
-        newSquare.size = absoluteNewSize;
+        newRect.x += rect.width;
+        newRect.y -= newRect.height;
+        newRect.width = absoluteNewWidth;
 
         newDirection = DIRECTIONS.northEast;
       }
@@ -143,17 +143,19 @@ export const resizeSquareShapeByDirection = (square, cursor, direction) => {
     }
     case DIRECTIONS.east:
     case DIRECTIONS.northEast: {
-      const newSize = cursorX - square.x;
+      const newWidth = cursorX - rect.x;
 
-      if (newSize >= 0) {
-        newSquare.y += square.size - newSize;
-        newSquare.size = newSize;
+      newRect.height = Math.abs(newWidth * ratio);
+
+      if (newWidth >= 0) {
+        newRect.y += rect.height - newRect.height;
+        newRect.width = newWidth;
       } else {
-        const absoluteNewSize = Math.abs(newSize);
+        const absoluteNewWidth = Math.abs(newWidth);
 
-        newSquare.y += square.size;
-        newSquare.x -= absoluteNewSize;
-        newSquare.size = absoluteNewSize;
+        newRect.y += rect.height;
+        newRect.x -= absoluteNewWidth;
+        newRect.width = absoluteNewWidth;
 
         newDirection = DIRECTIONS.southWest;
       }
@@ -162,16 +164,17 @@ export const resizeSquareShapeByDirection = (square, cursor, direction) => {
     }
     case DIRECTIONS.south:
     case DIRECTIONS.southEast: {
-      const newSize = cursorY - square.y;
+      const newHeight = cursorY - rect.y;
+      newRect.width = Math.abs(newHeight / ratio);
 
-      if (newSize >= 0) {
-        newSquare.size = newSize;
+      if (newHeight >= 0) {
+        newRect.height = newHeight;
       } else {
-        const absoluteNewSize = Math.abs(newSize);
+        const absoluteNewHeight = Math.abs(newHeight);
 
-        newSquare.size = absoluteNewSize;
-        newSquare.x -= absoluteNewSize;
-        newSquare.y -= absoluteNewSize;
+        newRect.height = absoluteNewHeight;
+        newRect.x -= newRect.width;
+        newRect.y -= absoluteNewHeight;
 
         newDirection = DIRECTIONS.northWest;
       }
@@ -180,20 +183,19 @@ export const resizeSquareShapeByDirection = (square, cursor, direction) => {
     }
     case DIRECTIONS.north:
     case DIRECTIONS.northWest: {
-      const newSize = square.y + square.size - cursorY;
+      const newHeight = rect.y + rect.height - cursorY;
+      newRect.width = Math.abs(newHeight / ratio);
 
-      if (newSize >= 0) {
-        const diffBetweenSizes = square.size - newSize;
-
-        newSquare.size = newSize;
-        newSquare.y += diffBetweenSizes;
-        newSquare.x += diffBetweenSizes;
+      if (newHeight >= 0) {
+        newRect.height = newHeight;
+        newRect.y += rect.height - newHeight;
+        newRect.x += rect.width - newRect.width;
       } else {
-        const absoluteNewSize = Math.abs(newSize);
+        const absoluteNewHeight = Math.abs(newHeight);
 
-        newSquare.y += square.size;
-        newSquare.x += square.size;
-        newSquare.size = absoluteNewSize;
+        newRect.y += rect.height;
+        newRect.x += rect.width;
+        newRect.height = absoluteNewHeight;
 
         newDirection = DIRECTIONS.southEast;
       }
@@ -203,7 +205,37 @@ export const resizeSquareShapeByDirection = (square, cursor, direction) => {
   }
 
   return {
-    square: newSquare,
+    rect: newRect,
     direction: newDirection,
   };
+};
+
+/**
+ * Resize rect by direction and cursor position
+ *
+ * @param {Rect} rect
+ * @param {number} cursorX
+ * @param {number} cursorY
+ * @param {string} direction
+ * @param {number} ratio
+ * @param {boolean} [aspectRatio]
+ * @returns {{ rect: Rect, direction: string }}
+ */
+export const resizeRectangleShape = ({
+  rect,
+  cursorX,
+  cursorY,
+  direction,
+  ratio,
+  aspectRatio,
+}) => {
+  const func = aspectRatio ? resizeRectangleWithAspectRation : resizeRectangleShapeWithoutAspectRatio;
+
+  return func({
+    rect,
+    cursorX,
+    cursorY,
+    direction,
+    ratio,
+  });
 };
