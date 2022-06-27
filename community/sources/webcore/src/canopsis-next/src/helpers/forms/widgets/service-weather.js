@@ -58,6 +58,7 @@ import {
  * @property {ServiceWeatherWidgetCounters} counters
  * @property {number} heightFactor
  * @property {number} modalItemsPerPage
+ * @property {boolean} isPriorityEnabled
  * @property {AlarmListBaseParameters} alarmsList
  */
 
@@ -96,6 +97,7 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   counters: parameters.counters
     ? cloneDeep(parameters.counters)
     : { enabled: false, types: [] },
+  isPriorityEnabled: parameters.isPriorityEnabled ?? true,
 });
 
 /**
