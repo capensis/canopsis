@@ -7,7 +7,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeStaticAlarms } from '@unit/data/alarm';
-import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
+
 import {
   CANOPSIS_EDITION,
   EXPORT_CSV_DATETIME_FORMATS,
@@ -22,6 +22,7 @@ import {
 } from '@/constants';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
+import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
 
 jest.mock('file-saver', () => ({
   saveAs: jest.fn(),
@@ -93,6 +94,9 @@ describe('alarms-list', () => {
   const $modals = mockModals();
 
   const nowTimestamp = 1386435600000;
+  const nowUnix = 1386435600;
+  const nowSubtractOneYearUnix = 1354899600;
+
   mockDateNow(nowTimestamp);
 
   const totalItems = 10;
@@ -119,7 +123,7 @@ describe('alarms-list', () => {
     status: EXPORT_STATUSES.failed,
   };
   const exportAlarmFile = 'exportAlarmFile';
-  const widget = alarmListWidgetToForm();
+  const widget = generateDefaultAlarmListWidgetForm();
   const defaultQuery = {
     active_columns: widget.parameters.widgetColumns.map(v => v.value),
     correlation: userPreferences.content.isCorrelationEnabled,
@@ -1045,9 +1049,10 @@ describe('alarms-list', () => {
 
   it('Widget exported after trigger export button', async () => {
     const nowDate = new Date(nowTimestamp);
+    const OriginalDate = Date;
     const dateSpy = jest
       .spyOn(global, 'Date')
-      .mockImplementation(() => nowDate);
+      .mockImplementation(() => new OriginalDate(nowTimestamp));
     jest.useFakeTimers('legacy');
 
     const wrapper = factory({
@@ -1089,6 +1094,8 @@ describe('alarms-list', () => {
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
+          tstart: nowSubtractOneYearUnix,
+          tstop: nowUnix,
           fields: widget.parameters.widgetExportColumns.map(({ label, value }) => ({
             label,
             name: value,
@@ -1184,6 +1191,8 @@ describe('alarms-list', () => {
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
+          tstart: nowSubtractOneYearUnix,
+          tstop: nowUnix,
           fields: widget.parameters.widgetExportColumns.map(({ label, value }) => ({
             label,
             name: value,
@@ -1245,6 +1254,8 @@ describe('alarms-list', () => {
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
+          tstart: nowSubtractOneYearUnix,
+          tstop: nowUnix,
           fields: widget.parameters.widgetColumns.map(({ label, value }) => ({
             label,
             name: value,

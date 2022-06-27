@@ -1,6 +1,6 @@
 import { isFunction } from 'lodash';
 
-export default {
+export const vuetifyTabsMixin = {
   methods: {
     callTabsOnResizeMethod() {
       if (this.$refs.tabs && isFunction(this.$refs.tabs.onResize)) {
