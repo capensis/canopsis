@@ -207,8 +207,10 @@ export const PATTERNS_FIELDS = {
 };
 
 export const OLD_PATTERNS_FIELDS = {
-  oldAlarmPatterns: 'old_alarm_patterns',
-  oldEntityPatterns: 'old_entity_patterns',
-  oldPatterns: 'old_patterns',
-  oldMongoQuery: 'old_mongo_query',
+  alarm: 'old_alarm_patterns',
+  entity: 'old_entity_patterns',
+  event: 'old_event_patterns',
+  totalEntity: 'old_total_entity_patterns',
+  patterns: 'old_patterns',
+  mongoQuery: 'old_mongo_query',
 };

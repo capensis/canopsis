@@ -101,7 +101,7 @@ import { durationToForm } from '@/helpers/date/duration';
 /**
  * @typedef {Pattern} PatternForm
  * @property {PatternGroupsForm} groups
- * @property {Object} old_patterns
+ * @property {Object} old_mongo_query
  */
 
 /**
@@ -318,7 +318,7 @@ export const patternToForm = (pattern = {}) => ({
   id: pattern.id ?? PATTERN_CUSTOM_ITEM_VALUE,
   type: pattern.type ?? PATTERN_TYPES.alarm,
   is_corporate: pattern.is_corporate ?? false,
-  old_patterns: pattern.old_mongo_query ?? pattern.old_patterns,
+  old_mongo_query: pattern.old_mongo_query,
   groups: patternsToGroups(
     pattern.alarm_pattern
     || pattern.entity_pattern

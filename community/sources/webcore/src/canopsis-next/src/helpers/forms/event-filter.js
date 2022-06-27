@@ -105,7 +105,7 @@ export const eventFilterToForm = (eventFilter = {}) => ({
   patterns: filterPatternsToForm(
     eventFilter,
     [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
-    [OLD_PATTERNS_FIELDS.oldPatterns],
+    [OLD_PATTERNS_FIELDS.patterns],
   ),
 });
 

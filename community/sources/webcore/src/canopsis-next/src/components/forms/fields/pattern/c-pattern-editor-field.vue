@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     c-pattern-field.mb-2(
-      v-if="!patterns.old_patterns && withType",
+      v-if="!patterns.old_mongo_query && withType",
       :value="patterns.id",
       :type="type",
       :disabled="disabled",
@@ -21,7 +21,7 @@
         :href="`#${$constants.PATTERN_EDITOR_TABS.simple}`"
       ) {{ $t('pattern.simpleEditor') }}
       v-tab-item(:value="$constants.PATTERN_EDITOR_TABS.simple")
-        v-layout(v-if="patterns.old_patterns", justify-center, wrap)
+        v-layout(v-if="patterns.old_mongo_query", justify-center, wrap)
           v-flex.pt-2(xs8)
             div.error--text.text-xs-center {{ $t('pattern.errors.oldPattern') }}
           v-flex.pt-2(v-if="!disabled", xs12)
@@ -40,8 +40,8 @@
       v-tab(:href="`#${$constants.PATTERN_EDITOR_TABS.advanced}`") {{ $t('pattern.advancedEditor') }}
       v-tab-item(:value="$constants.PATTERN_EDITOR_TABS.advanced", lazy)
         c-json-field(
-          v-if="patterns.old_patterns",
-          :value="patterns.old_patterns",
+          v-if="patterns.old_mongo_query",
+          :value="patterns.old_mongo_query",
           :label="$t('pattern.advancedEditor')",
           readonly,
           rows="10"
@@ -55,7 +55,7 @@
           @input="updateGroupsFromPatterns"
         )
 
-    template(v-if="!patterns.old_patterns")
+    template(v-if="!patterns.old_mongo_query")
       v-layout(align-center, justify-end)
         div(v-if="checkCountName")
           span.mr-2(
