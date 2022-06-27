@@ -10,20 +10,20 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest, authorizedViewIds []string) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*ViewGroup, error)
-	Insert(ctx context.Context, r []EditRequest) ([]ViewGroup, error)
-	Update(ctx context.Context, r []BulkUpdateRequestItem) ([]ViewGroup, error)
-	Delete(ctx context.Context, ids []string) (bool, error)
+	Insert(ctx context.Context, r EditRequest) (*ViewGroup, error)
+	Update(ctx context.Context, r EditRequest) (*ViewGroup, error)
+	Delete(ctx context.Context, id string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
+		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.ViewGroupMongoCollection),
 		dbViewCollection:      dbClient.Collection(mongo.ViewMongoCollection),
 		defaultSearchByFields: []string{"_id", "title", "author"},
@@ -32,6 +32,7 @@ func NewStore(dbClient mongo.DbClient) Store {
 }
 
 type store struct {
+	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
 	dbViewCollection      mongo.DbCollection
 	defaultSearchByFields []string
@@ -78,6 +79,80 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 	if r.WithViews {
 		project = append(project,
 			bson.M{"$unwind": bson.M{"path": "$views", "preserveNullAndEmptyArrays": true}},
+			bson.M{"$addFields": bson.M{
+				"views.group": "$group",
+			}},
+		)
+
+		if r.WithTabs {
+			project = append(project,
+				bson.M{"$lookup": bson.M{
+					"from":         mongo.ViewTabMongoCollection,
+					"localField":   "views._id",
+					"foreignField": "view",
+					"as":           "tabs",
+				}},
+				bson.M{"$unwind": bson.M{"path": "$tabs", "preserveNullAndEmptyArrays": true}},
+			)
+
+			if r.WithWidgets {
+				project = append(project,
+					bson.M{"$lookup": bson.M{
+						"from":         mongo.WidgetMongoCollection,
+						"localField":   "tabs._id",
+						"foreignField": "tab",
+						"as":           "widgets",
+					}},
+					bson.M{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
+					bson.M{"$sort": bson.D{
+						{Key: "widgets.grid_parameters.desktop.y", Value: 1},
+						{Key: "widgets.grid_parameters.desktop.x", Value: 1},
+					}},
+					bson.M{"$group": bson.M{
+						"_id": bson.M{
+							"_id":  "$_id",
+							"view": "$views._id",
+							"tab":  "$tabs._id",
+						},
+						"group":     bson.M{"$first": "$group"},
+						"deletable": bson.M{"$first": "$deletable"},
+						"views":     bson.M{"$first": "$views"},
+						"tabs":      bson.M{"$first": "$tabs"},
+						"widgets":   bson.M{"$push": "$widgets"},
+					}},
+					bson.M{"$addFields": bson.M{
+						"_id": "$_id._id",
+						"tabs.widgets": bson.M{"$filter": bson.M{
+							"input": "$widgets",
+							"cond":  "$$this._id",
+						}},
+					}},
+				)
+			}
+
+			project = append(project,
+				bson.M{"$sort": bson.M{"tabs.position": 1}},
+				bson.M{"$group": bson.M{
+					"_id": bson.M{
+						"_id":  "$_id",
+						"view": "$views._id",
+					},
+					"group":     bson.M{"$first": "$group"},
+					"deletable": bson.M{"$first": "$deletable"},
+					"views":     bson.M{"$first": "$views"},
+					"tabs":      bson.M{"$push": "$tabs"},
+				}},
+				bson.M{"$addFields": bson.M{
+					"_id": "$_id._id",
+					"views.tabs": bson.M{"$filter": bson.M{
+						"input": "$tabs",
+						"cond":  "$$this._id",
+					}},
+				}},
+			)
+		}
+
+		project = append(project,
 			bson.M{"$sort": bson.M{"views.position": 1}},
 			bson.M{"$group": bson.M{
 				"_id":       "$_id",
@@ -85,21 +160,14 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 				"deletable": bson.M{"$first": "$deletable"},
 				"views":     bson.M{"$push": "$views"},
 			}},
-			bson.M{"$addFields": bson.M{
-				"views.group": "$group",
-			}},
 			bson.M{"$replaceRoot": bson.M{
 				"newRoot": bson.M{"$mergeObjects": bson.A{
 					"$group",
 					bson.M{
 						"deletable": "$deletable",
 						"views": bson.M{"$filter": bson.M{
-							"input": bson.M{"$cond": bson.M{
-								"if":   "$views",
-								"then": "$views",
-								"else": bson.A{},
-							}},
-							"cond": bson.M{"$in": bson.A{"$$this._id", authorizedViewIds}},
+							"input": "$views",
+							"cond":  bson.M{"$in": bson.A{"$$this._id", authorizedViewIds}},
 						}},
 					},
 				}},
@@ -155,124 +223,94 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*ViewGroup, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r []EditRequest) ([]ViewGroup, error) {
-	count, err := s.dbCollection.CountDocuments(ctx, bson.M{})
-	if err != nil {
-		return nil, err
-	}
-
-	now := types.CpsTime{Time: time.Now()}
-	models := make([]interface{}, len(r))
-	groups := make([]ViewGroup, len(r))
-
-	for i, item := range r {
-		groups[i] = ViewGroup{
-			ID:      utils.NewID(),
-			Title:   item.Title,
-			Author:  item.Author,
-			Created: now,
-			Updated: now,
-		}
-		models[i] = view.Group{
-			ID:       groups[i].ID,
-			Title:    groups[i].Title,
-			Author:   groups[i].Author,
-			Position: count + int64(i),
-			Created:  groups[i].Created,
-			Updated:  groups[i].Updated,
-		}
-	}
-
-	_, err = s.dbCollection.InsertMany(ctx, models)
-	if err != nil {
-		return nil, err
-	}
-
-	return groups, nil
-}
-
-func (s *store) Update(ctx context.Context, r []BulkUpdateRequestItem) ([]ViewGroup, error) {
-	ids := make([]string, len(r))
-	rByID := make(map[string]BulkUpdateRequestItem, len(r))
-	for i, item := range r {
-		ids[i] = item.ID
-		rByID[item.ID] = item
-	}
-
-	groups, err := s.findByIDs(ctx, ids)
-	if err != nil || len(groups) < len(ids) {
-		return nil, err
-	}
-
-	models := make([]mongodriver.WriteModel, len(groups))
-	now := types.CpsTime{Time: time.Now()}
-
-	for i := range groups {
-		groups[i].Title = rByID[groups[i].ID].Title
-		groups[i].Author = rByID[groups[i].ID].Author
-		groups[i].Updated = now
-
-		models[i] = mongodriver.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": groups[i].ID}).
-			SetUpdate(bson.M{"$set": bson.M{
-				"title":   groups[i].Title,
-				"author":  groups[i].Author,
-				"updated": groups[i].Updated,
-			}})
-	}
-
-	_, err = s.dbCollection.BulkWrite(ctx, models)
-	if err != nil {
-		return nil, err
-	}
-
-	return groups, nil
-}
-
-func (s *store) findByIDs(ctx context.Context, ids []string) ([]ViewGroup, error) {
-	cursor, err := s.dbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}},
-		options.Find().SetSort(bson.D{
-			{Key: "position", Value: 1},
-			{Key: "_id", Value: 1},
-		}))
-	if err != nil {
-		return nil, err
-	}
-
-	groups := make([]ViewGroup, 0)
-	err = cursor.All(ctx, &groups)
-	if err != nil {
-		return nil, err
-	}
-
-	return groups, nil
-}
-
-func (s *store) Delete(ctx context.Context, ids []string) (bool, error) {
-	res := s.dbViewCollection.FindOne(ctx, bson.M{"group_id": bson.M{"$in": ids}})
-	if err := res.Err(); err != nil {
-		if err != mongodriver.ErrNoDocuments {
-			return false, err
-		}
-	} else {
-		return false, ErrLinkedToView
-	}
-
-	if len(ids) > 0 {
-		count, err := s.dbCollection.CountDocuments(ctx, bson.M{"_id": bson.M{"$in": ids}})
+func (s *store) Insert(ctx context.Context, r EditRequest) (*ViewGroup, error) {
+	var response *ViewGroup
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		count, err := s.dbCollection.CountDocuments(ctx, bson.M{})
 		if err != nil {
-			return false, err
+			return err
 		}
 
-		if count < int64(len(ids)) {
-			return false, nil
+		now := types.CpsTime{Time: time.Now()}
+		group := ViewGroup{
+			ID:      utils.NewID(),
+			Title:   r.Title,
+			Author:  r.Author,
+			Created: &now,
+			Updated: &now,
 		}
-	}
 
-	delCount, err := s.dbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
-	if err != nil {
-		return false, err
-	}
+		_, err = s.dbCollection.InsertOne(ctx, view.Group{
+			ID:       group.ID,
+			Title:    group.Title,
+			Author:   group.Author,
+			Position: count,
+			Created:  *group.Created,
+			Updated:  *group.Updated,
+		})
+		if err != nil {
+			return err
+		}
 
-	return delCount > 0, nil
+		response = &group
+		return nil
+	})
+
+	return response, err
+}
+
+func (s *store) Update(ctx context.Context, r EditRequest) (*ViewGroup, error) {
+	var response *ViewGroup
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		group, err := s.GetOneBy(ctx, r.ID)
+		if err != nil || group == nil {
+			return err
+		}
+
+		now := types.CpsTime{Time: time.Now()}
+		group.Title = r.Title
+		group.Author = r.Author
+		group.Updated = &now
+
+		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": group.ID}, bson.M{"$set": bson.M{
+			"title":   group.Title,
+			"author":  group.Author,
+			"updated": group.Updated,
+		}})
+		if err != nil {
+			return err
+		}
+
+		response = group
+		return nil
+	})
+
+	return response, err
+}
+
+func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+	res := false
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		err := s.dbViewCollection.FindOne(ctx, bson.M{"group_id": id}).Err()
+		if err != nil {
+			if err != mongodriver.ErrNoDocuments {
+				return err
+			}
+		} else {
+			return ErrLinkedToView
+		}
+
+		delCount, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		if err != nil {
+			return err
+		}
+
+		res = delCount > 0
+		return nil
+	})
+
+	return res, err
 }

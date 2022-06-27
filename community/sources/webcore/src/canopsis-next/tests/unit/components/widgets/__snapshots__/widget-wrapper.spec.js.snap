@@ -47,7 +47,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode  1`] = `
     class="v-card__text pa-0 position-relative"
   >
     <alarms-list-widget-stub
-      iseditingmode="true"
+      editing="true"
       tabid="tab-id"
       widget="[object Object]"
     />
@@ -86,7 +86,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode  
     class="v-card__text pa-0 position-relative"
   >
     <alarms-list-widget-stub
-      iseditingmode="true"
+      editing="true"
       tabid="tab-id"
       widget="[object Object]"
     />
@@ -298,176 +298,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCalendar and c
 </div>
 `;
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCurves and cat edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <stats-curves-widget-stub
-      tabid="tab-id"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCurves and core edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <c-alert-overlay-stub
-      message="errors.statsWrongEditionError"
-      tab-id="tab-id"
-      value="true"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsHistogram and cat edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <stats-histogram-widget-stub
-      tabid="tab-id"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsHistogram and core edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <c-alert-overlay-stub
-      message="errors.statsWrongEditionError"
-      tab-id="tab-id"
-      value="true"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsNumber and cat edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <stats-number-widget-stub
-      tabid="tab-id"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsNumber and core edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <c-alert-overlay-stub
-      message="errors.statsWrongEditionError"
-      tab-id="tab-id"
-      value="true"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsPareto and cat edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <stats-pareto-widget-stub
-      tabid="tab-id"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsPareto and core edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <c-alert-overlay-stub
-      message="errors.statsWrongEditionError"
-      tab-id="tab-id"
-      value="true"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsTable and cat edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <stats-table-widget-stub
-      tabid="tab-id"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsTable and core edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <c-alert-overlay-stub
-      message="errors.statsWrongEditionError"
-      tab-id="tab-id"
-      value="true"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
 exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and cat edition 1`] = `
 <div
   style="min-height: 40px;"
@@ -477,7 +307,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and cat editio
     class="v-card__text pa-0 position-relative"
   >
     <text-widget-stub
-      tabid="tab-id"
+      tab-id="tab-id"
       widget="[object Object]"
     />
   </div>
@@ -494,7 +324,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and core editi
   >
     <text-widget-stub
       message="errors.statsWrongEditionError"
-      tabid="tab-id"
+      tab-id="tab-id"
       value="true"
       widget="[object Object]"
     />

@@ -13,7 +13,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { ENTITIES_TYPES, WIDGET_TYPES } from '@/constants';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
+import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 
 import { authMixin } from '@/mixins/auth';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
@@ -70,7 +70,7 @@ export default {
     this.fetchAlarmItem({ id: this.id });
 
     if (this.widgetId && !this.groupsPending) {
-      this.fetchAllGroupsListWithViews();
+      this.fetchAllGroupsListWithWidgets();
     }
   },
 };

@@ -5,12 +5,12 @@ Feature: Update an playlist
   Scenario: given update request should update playlist
     When I am admin
     Then I do PUT /api/v4/playlists/test-playlist-to-update:
-    """
+    """json
     {
       "fullscreen": false,
       "name": "test-playlist-to-update",
       "tabs_list": [
-        "test-view-to-edit-playlist-tab-1"
+        "test-tab-to-playlist-edit-1"
       ],
       "interval": {
         "value": 120,
@@ -21,7 +21,7 @@ Feature: Update an playlist
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-playlist-to-update",
       "author": "root",
@@ -34,7 +34,7 @@ Feature: Update an playlist
       },
       "name": "test-playlist-to-update",
       "tabs_list": [
-        "test-view-to-edit-playlist-tab-1"
+        "test-tab-to-playlist-edit-1"
       ]
     }
     """
@@ -42,14 +42,14 @@ Feature: Update an playlist
   Scenario: given update request with already exists name should return error
     When I am admin
     Then I do PUT /api/v4/playlists/test-playlist-to-update:
-    """
+    """json
     {
       "name": "test-playlist-to-check-unique-name-name"
     }
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "name": "Name already exists."
@@ -74,13 +74,13 @@ Feature: Update an playlist
   Scenario: given invalid update request should return errors
     When I am admin
     When I do PUT /api/v4/playlists/test-view-to-update:
-    """
+    """json
     {
     }
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "enabled": "Enabled is missing.",
@@ -92,6 +92,37 @@ Feature: Update an playlist
       }
     }
     """
+
+  Scenario: given invalid update request should return errors
+    When I am admin
+    When I do PUT /api/v4/playlists/test-view-to-update:
+    """json
+    {
+      "fullscreen": true,
+      "name": "test-view-to-update-name",
+      "tabs_list": ["notexist", "test-tab-to-playlist-edit-1"],
+      "interval": {
+        "value": 10,
+        "unit": "s"
+      },
+      "enabled": true
+    }
+    """
+    Then the response code should be 403
+    When I do PUT /api/v4/playlists/test-view-to-update:
+    """json
+    {
+      "fullscreen": true,
+      "name": "test-view-to-update-name",
+      "tabs_list": ["test-tab-to-check-access", "test-tab-to-playlist-edit-1"],
+      "interval": {
+        "value": 10,
+        "unit": "s"
+      },
+      "enabled": true
+    }
+    """
+    Then the response code should be 403
 
   Scenario: given update request with not exist id should return not allow access error
     When I am admin
