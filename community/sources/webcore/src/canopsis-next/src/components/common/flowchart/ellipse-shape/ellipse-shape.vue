@@ -1,7 +1,7 @@
 <template lang="pug">
   g
     ellipse(
-      v-bind="shape.style",
+      v-bind="shape.properties",
       :cx="centerX",
       :cy="centerY",
       :rx="radiusX",
@@ -9,14 +9,13 @@
     )
     text-editor(
       ref="editor",
+      v-bind="shape.textProperties",
       :value="shape.text",
       :y="shape.y",
       :x="shape.x",
       :width="shape.width",
       :height="shape.height",
       :editable="editing",
-      :align-center="shape.alignCenter",
-      :justify-center="shape.justifyCenter",
       @blur="disableEditingMode"
     )
     rect-shape-selection(
@@ -36,11 +35,14 @@
 </template>
 
 <script>
+import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
+
 import RectShapeSelection from '../rect-shape/rect-shape-selection.vue';
 import TextEditor from '../common/text-editor.vue';
 
 export default {
   components: { RectShapeSelection, TextEditor },
+  mixins: [flowchartTextEditorMixin],
   props: {
     shape: {
       type: Object,
@@ -63,11 +65,6 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      editing: false,
-    };
-  },
   computed: {
     radiusX() {
       return this.shape.width / 2;
@@ -83,21 +80,6 @@ export default {
 
     centerY() {
       return this.shape.y + this.radiusY;
-    },
-  },
-  methods: {
-    enableEditingMode() {
-      this.editing = true;
-
-      this.$refs.editor.focus();
-    },
-
-    disableEditingMode(event) {
-      this.$emit('update', {
-        text: event.target.innerHTML,
-      });
-
-      this.editing = false;
     },
   },
 };

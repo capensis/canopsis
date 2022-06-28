@@ -1,15 +1,18 @@
 <template lang="pug">
-  component(is="foreignObject", :y="y", :x="x", :width="width", :height="height")
-    div.text-shape-editor(:class="editorClasses")
-      div.text-shape-editor__field(
-        ref="textEditor",
-        v-html="value",
-        :contenteditable="editable",
-        @mousedown.stop="",
-        @mouseup.stop="",
-        @keydown.stop="",
-        @blur="$emit('blur', $event)"
-      )
+  component(is="foreignObject", width="100%", height="100%", pointer-events="none")
+    div.text-shape-editor(:class="editorClasses", :style="editorStyle")
+      div.text-shape-editor__wrapper
+        div.text-shape-editor__field(
+          ref="textEditor",
+          v-html="value",
+          :contenteditable="editable",
+          :style="fieldStyle",
+          :class="fieldClass",
+          @mousedown.stop="",
+          @mouseup.stop="",
+          @keydown.stop="",
+          @blur="$emit('blur', $event)"
+        )
 </template>
 
 <script>
@@ -39,11 +42,11 @@ export default {
     },
     width: {
       type: Number,
-      required: true,
+      required: false,
     },
     height: {
       type: Number,
-      required: true,
+      required: false,
     },
     editable: {
       type: Boolean,
@@ -61,6 +64,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    hidden: {
+      type: Boolean,
+      default: false,
+    },
+    fieldClass: {
+      type: String,
+      required: false,
+    },
   },
   computed: {
     editorClasses() {
@@ -69,6 +80,23 @@ export default {
         'text-shape-editor--justify-center': this.justifyCenter,
         'text-shape-editor--unselect': this.unselect,
         'text-shape-editor--editable': this.editable,
+      };
+    },
+
+    editorStyle() {
+      return {
+        top: `${this.y}px`,
+        left: `${this.x}px`,
+        width: this.width ? `${this.width}px` : '1px',
+        height: this.height ? `${this.height}px` : '1em',
+        overflow: !this.editable && this.hidden ? 'hidden' : '',
+      };
+    },
+
+    fieldStyle() {
+      return {
+        width: this.width ? `${this.width}px` : 'max-content',
+        'text-align': this.justifyCenter ? 'center' : '',
       };
     },
   },
@@ -94,9 +122,8 @@ export default {
 
 <style lang="scss" scoped>
 .text-shape-editor {
+  position: absolute;
   display: flex;
-  height: 100%;
-  width: 100%;
   user-select: none;
 
   &__field {
