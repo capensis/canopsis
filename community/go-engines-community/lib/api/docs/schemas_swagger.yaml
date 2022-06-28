@@ -3946,7 +3946,7 @@ definitions:
       is_api:
         description: Junit
         type: boolean
-      main_filter:
+      mainFilter:
         type: string
       report_fileregexp:
         type: string

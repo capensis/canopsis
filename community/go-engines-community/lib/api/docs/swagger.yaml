@@ -8322,7 +8322,7 @@ paths:
                                 "title": "New widget",
                                 "type": "AlarmsList",
                                 "parameters": {
-                                  "main_filter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                                  "mainFilter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
                                   "widgetColumns": [
                                     {
                                       "value": "v.connector",
@@ -9060,7 +9060,7 @@ paths:
                     }
                   },
                   "parameters": {
-                    "main_filter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                    "mainFilter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
                     "widgetColumns": [
                       {
                         "value": "v.connector",
@@ -9472,7 +9472,7 @@ paths:
                     }
                   },
                   "parameters": {
-                    "main_filter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                    "mainFilter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
                     "widgetColumns": [
                       {
                         "value": "v.connector",
@@ -9608,7 +9608,7 @@ paths:
                     }
                   },
                   "parameters": {
-                    "main_filter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                    "mainFilter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
                     "widgetColumns": [
                       {
                         "value": "v.connector",
