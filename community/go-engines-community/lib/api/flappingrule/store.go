@@ -150,12 +150,12 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 
 	var resp *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		resp = nil
 		prevRule, err := s.GetById(ctx, r.ID)
 		if err != nil || prevRule == nil {
 			return err
 		}
 
-		resp = nil
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
 		if err != nil {
 			return err
