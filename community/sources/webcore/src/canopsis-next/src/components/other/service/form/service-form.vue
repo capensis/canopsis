@@ -45,13 +45,11 @@
 <script>
 import { get } from 'lodash';
 
-import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    PatternsList,
     ManageInfos,
   },
   model: {
