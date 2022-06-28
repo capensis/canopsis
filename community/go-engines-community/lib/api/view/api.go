@@ -183,7 +183,7 @@ func (a *api) Delete(c *gin.Context) {
 
 // Copy
 // @Param body body EditRequest true "body"
-// @Success 200 {object} Response
+// @Success 201 {object} Response
 func (a *api) Copy(c *gin.Context) {
 	request := EditRequest{}
 

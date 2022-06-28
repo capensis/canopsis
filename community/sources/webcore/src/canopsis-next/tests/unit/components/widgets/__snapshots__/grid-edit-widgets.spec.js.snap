@@ -192,7 +192,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets 1`] = `
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
@@ -242,7 +241,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets 1`] = `
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
@@ -292,7 +290,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets 1`] = `
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
@@ -426,7 +423,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the l w
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
@@ -476,7 +472,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the l w
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
@@ -526,7 +521,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the l w
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
@@ -660,7 +654,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the m w
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
@@ -710,7 +703,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the m w
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
@@ -760,7 +752,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the m w
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
@@ -894,7 +885,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the t w
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
@@ -944,7 +934,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the t w
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
@@ -994,7 +983,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the t w
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
@@ -1128,7 +1116,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the xl 
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
@@ -1178,7 +1165,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the xl 
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
@@ -1228,7 +1214,6 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the xl 
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
-              updatetabmethod="[Function]"
               widget="[object Object]"
             />
           </div>
