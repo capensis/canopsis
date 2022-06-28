@@ -18,7 +18,7 @@ require (
 	github.com/alecthomas/participle v0.7.1
 	github.com/beevik/etree v1.1.0
 	github.com/brianvoe/gofakeit/v6 v6.7.0
-	github.com/bsm/redislock v0.7.1
+	github.com/bsm/redislock v0.7.2
 	github.com/casbin/casbin/v2 v2.36.1
 	github.com/cucumber/godog v0.12.0
 	github.com/dlclark/regexp2 v1.4.0
@@ -27,7 +27,7 @@ require (
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.9.0
-	github.com/go-redis/redis/v8 v8.11.3
+	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt v3.2.1+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-cmp v0.5.6

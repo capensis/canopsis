@@ -19,7 +19,7 @@
 <script>
 import { groupSchema } from '@/store/schemas';
 
-import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
+import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import layoutNavigationGroupsBarMixin from '@/mixins/layout/navigation/groups-bar';
 import { registrableMixin } from '@/mixins/registrable';

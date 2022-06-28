@@ -4229,7 +4229,7 @@ paths:
                     }
                   },
                   "disable_during_periods": ["pause"]
-                }  
+                }
               entity:
                 summary: Entity rule
                 description: Create an entity rule.
@@ -4255,7 +4255,7 @@ paths:
                     ]
                   ],
                   "disable_during_periods": ["pause"]
-                }         
+                }
         required: true
       responses:
         201:
