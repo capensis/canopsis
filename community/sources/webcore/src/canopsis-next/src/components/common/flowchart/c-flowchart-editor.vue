@@ -135,6 +135,8 @@ export default {
   methods: {
     updateShape(shape, data) {
       Object.assign(this.data[shape._id], data);
+
+      this.updateConnections(shape._id);
     },
 
     updateShapes(shapes) {
@@ -267,7 +269,6 @@ export default {
         this.moving = false;
         this.movingStart = { x: 0, y: 0 };
         this.movingOffset = { x: 0, y: 0 };
-        return;
       }
 
       if (this.editing) {
@@ -277,6 +278,8 @@ export default {
       }
 
       this.$mouseUp.notify();
+
+      this.updateShapes(this.data);
     },
 
     onContainerMouseDown() {
@@ -317,18 +320,19 @@ export default {
         case SHAPES.rhombus:
         case SHAPES.ellipse:
         case SHAPES.rect: {
-          shape.x += offset.x;
-          shape.y += offset.y;
+          this.updateShape(shape, { x: shape.x + offset.x, y: shape.y + offset.y });
           break;
         }
         case SHAPES.arrowLine:
         case SHAPES.bidirectionalArrowLine:
         case SHAPES.line: {
-          shape.points = shape.points.map(point => ({
-            ...point,
-            x: point.x + offset.x,
-            y: point.y + offset.y,
-          }));
+          this.updateShape(shape, {
+            points: shape.points.map(point => ({
+              ...point,
+              x: point.x + offset.x,
+              y: point.y + offset.y,
+            })),
+          });
           break;
         }
       }
@@ -339,8 +343,6 @@ export default {
         this.moveShapeById(id, offset);
 
         this.clearConnectedTo(id);
-
-        this.updateConnections(id);
       });
     },
 

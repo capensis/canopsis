@@ -1,7 +1,7 @@
 <template lang="pug">
   g
     circle-figure(
-      v-bind="shape.style",
+      v-bind="shape.properties",
       :x="shape.x",
       :y="shape.y",
       :diameter="shape.diameter",
@@ -9,14 +9,13 @@
     )
     text-editor(
       ref="editor",
+      v-bind="shape.textProperties",
       :value="shape.text",
       :y="shape.y",
       :x="shape.x",
       :width="shape.diameter",
       :height="shape.diameter",
       :editable="editing",
-      :align-center="shape.alignCenter",
-      :justify-center="shape.justifyCenter",
       @blur="disableEditingMode"
     )
     circle-shape-selection(
@@ -36,6 +35,8 @@
 </template>
 
 <script>
+import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
+
 import TextEditor from '../common/text-editor.vue';
 import CircleFigure from '../common/circle-figure.vue';
 
@@ -43,6 +44,7 @@ import CircleShapeSelection from './circle-shape-selection.vue';
 
 export default {
   components: { CircleFigure, CircleShapeSelection, TextEditor },
+  mixins: [flowchartTextEditorMixin],
   props: {
     shape: {
       type: Object,
@@ -65,11 +67,6 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      editing: false,
-    };
-  },
   computed: {
     radius() {
       return this.shape.diameter / 2;
@@ -81,21 +78,6 @@ export default {
 
     centerY() {
       return this.shape.y + this.radius;
-    },
-  },
-  methods: {
-    enableEditingMode() {
-      this.editing = true;
-
-      this.$refs.editor.focus();
-    },
-
-    disableEditingMode(event) {
-      this.$emit('update', {
-        text: event.target.innerHTML,
-      });
-
-      this.editing = false;
     },
   },
 };

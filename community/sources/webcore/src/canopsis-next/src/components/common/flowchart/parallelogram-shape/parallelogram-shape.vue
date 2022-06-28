@@ -1,7 +1,7 @@
 <template lang="pug">
   g
     parallelogram-figure(
-      v-bind="shape.style",
+      v-bind="shape.properties",
       :width="shape.width",
       :height="shape.height",
       :offset="shape.offset",
@@ -10,14 +10,13 @@
     )
     text-editor(
       ref="editor",
+      v-bind="shape.textProperties",
       :value="shape.text",
       :y="shape.y",
       :x="shape.x",
       :width="shape.width",
       :height="shape.height",
       :editable="editing",
-      :align-center="shape.alignCenter",
-      :justify-center="shape.justifyCenter",
       @blur="disableEditingMode"
     )
     parallelogram-shape-selection(
@@ -37,6 +36,8 @@
 </template>
 
 <script>
+import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
+
 import TextEditor from '../common/text-editor.vue';
 import ParallelogramFigure from '../common/parallelogram-figure.vue';
 
@@ -44,6 +45,7 @@ import ParallelogramShapeSelection from './parallelogram-shape-selection.vue';
 
 export default {
   components: { ParallelogramFigure, ParallelogramShapeSelection, TextEditor },
+  mixins: [flowchartTextEditorMixin],
   props: {
     shape: {
       type: Object,
@@ -64,26 +66,6 @@ export default {
     connecting: {
       type: Boolean,
       default: false,
-    },
-  },
-  data() {
-    return {
-      editing: false,
-    };
-  },
-  methods: {
-    enableEditingMode() {
-      this.editing = true;
-
-      this.$refs.editor.focus();
-    },
-
-    disableEditingMode(event) {
-      this.$emit('update', {
-        text: event.target.innerHTML,
-      });
-
-      this.editing = false;
     },
   },
 };
