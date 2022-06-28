@@ -74,6 +74,7 @@ flapping_rule:
     _id: test-flapping-rule-to-delete
   flapping_rule_4:
     <<: *flapping_rule
+    _id: test-flapping-rule-to-check-unique
     name: test-flapping-rule-to-check-unique-name
   flapping_rule_5:
     _id: test-flapping-rule-to-update-1
