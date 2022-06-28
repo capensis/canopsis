@@ -79,14 +79,18 @@ func loadLoggerConfig() (*config.SectionLogger, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	dbClient, err := mongo.NewClient(ctx, 0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 	if err != nil {
 		return nil, err
 	}
 
 	cfg, err := config.NewAdapter(dbClient).GetConfig(ctx)
+	dbErr := dbClient.Disconnect(ctx)
 	if err != nil {
 		return nil, err
+	}
+	if dbErr != nil {
+		return nil, dbErr
 	}
 
 	return &cfg.Logger, nil
