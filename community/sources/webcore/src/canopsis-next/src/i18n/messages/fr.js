@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -34,7 +36,7 @@ import {
 
 import featureService from '@/services/features';
 
-export default {
+export default merge({
   common: {
     ok: 'Ok',
     undefined: 'Non défini',
@@ -668,6 +670,7 @@ export default {
     selectAFilter: 'Sélectionner un filtre',
     exportAsCsv: 'Exporter le widget sous forme de fichier csv',
     criticityLevels: 'Niveaux de criticité',
+    isPriorityEnabled: 'Afficher la priorité',
     exportCsv: {
       title: 'Exporter CSV',
       fields: {
@@ -2805,6 +2808,4 @@ export default {
   filter: {
     oldPattern: 'Ancien format de motif',
   },
-
-  ...featureService.get('i18n.fr'),
-};
+}, featureService.get('i18n.fr'));
