@@ -14,7 +14,7 @@ Feature: Update a widget
         "desktop": {"x": 0, "y": 0}
       },
       "parameters": {
-        "main_filter": "test-widgetfilter-to-widget-update-1-3",
+        "mainFilter": "test-widgetfilter-to-widget-update-1-3",
         "test-widget-to-update-param-str": "teststr",
         "test-widget-to-update-param-int": 2,
         "test-widget-to-update-param-bool": true,
@@ -73,6 +73,7 @@ Feature: Update a widget
     """
     Then the response code should be 200
     When I save response mainFilterID={{ (index .lastResponse.filters 1)._id }}
+    Then the response key "parameters.mainFilter" should not be "test-widgetfilter-to-widget-update-1-3"
     Then the response body should contain:
     """json
     {
@@ -83,7 +84,7 @@ Feature: Update a widget
         "desktop": {"x": 0, "y": 0}
       },
       "parameters": {
-        "main_filter": "{{ .mainFilterID }}",
+        "mainFilter": "{{ .mainFilterID }}",
         "test-widget-to-update-param-str": "teststr",
         "test-widget-to-update-param-int": 2,
         "test-widget-to-update-param-bool": true,

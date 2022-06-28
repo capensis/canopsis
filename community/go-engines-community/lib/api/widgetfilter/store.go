@@ -274,9 +274,9 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 
 func (s *store) updateWidgets(ctx context.Context, filterId string) error {
 	_, err := s.widgetCollection.UpdateMany(ctx, bson.M{
-		"parameters.main_filter": filterId,
+		"parameters.mainFilter": filterId,
 	}, bson.M{
-		"$unset": bson.M{"parameters.main_filter": ""},
+		"$unset": bson.M{"parameters.mainFilter": ""},
 	})
 
 	return err
@@ -284,9 +284,9 @@ func (s *store) updateWidgets(ctx context.Context, filterId string) error {
 
 func (s *store) updateUserPreferences(ctx context.Context, filterId string) error {
 	_, err := s.userPrefCollection.UpdateMany(ctx, bson.M{
-		"content.main_filter": filterId,
+		"content.mainFilter": filterId,
 	}, bson.M{
-		"$unset": bson.M{"content.main_filter": ""},
+		"$unset": bson.M{"content.mainFilter": ""},
 	})
 
 	return err
