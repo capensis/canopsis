@@ -36,8 +36,6 @@ export const MODALS = {
   createEventFilter: 'create-event-filter',
   createMetaAlarmRule: 'create-meta-alarm-rule',
   createPattern: 'create-pattern',
-  createPatternRule: 'create-pattern-rule',
-  addEventFilterToPattern: 'add-event-filter-to-pattern',
   eventFilterActions: 'event-filter-actions',
   createEventFilterAction: 'create-event-filter-action',
   filtersList: 'filters-list',

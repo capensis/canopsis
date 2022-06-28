@@ -3707,5 +3707,241 @@
     "author": "test-author-metrics-axe-11",
     "created": 1637904803,
     "last_modified": 1637904803
+  },
+  {
+    "_id": "test-instruction-action-remediation-triggers-1",
+    "type": 0,
+    "status": 0,
+    "alarm_patterns": null,
+    "entity_patterns": [
+      {
+        "_id": "test-resource-action-remediation-triggers-1/test-component-action-remediation-triggers-1"
+      }
+    ],
+    "name": "test-instruction-action-remediation-triggers-1-name",
+    "description": "test-instruction-action-remediation-triggers-1-description",
+    "author": "root",
+    "enabled": true,
+    "active_on_pbh": null,
+    "disabled_on_pbh": null,
+    "timeout_after_execution": {
+      "value": 10,
+      "unit": "s"
+    },
+    "last_modified": 1653985818,
+    "created": 1653985818,
+    "steps": [
+      {
+        "_id": "test-instruction-action-remediation-triggers-1-step-1",
+        "name": "test-instruction-action-remediation-triggers-1-step-1",
+        "operations": [
+          {
+            "_id": "test-instruction-action-remediation-triggers-1-step-1-operation-1",
+            "name": "test-instruction-action-remediation-triggers-1-step-1-operation-1",
+            "time_to_complete": {
+              "value": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-action-remediation-triggers-1-step-1-operation-1-description"
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-action-remediation-triggers-1-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-action-remediation-triggers-1-step-2",
+        "name": "test-instruction-action-remediation-triggers-1-step-2",
+        "operations": [
+          {
+            "_id": "test-instruction-action-remediation-triggers-1-step-2-operation-1",
+            "name": "test-instruction-action-remediation-triggers-1-step-2-operation-1",
+            "time_to_complete": {
+              "value": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-action-remediation-triggers-1-step-2-operation-1-description"
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-action-remediation-triggers-1-step-2-endpoint"
+      }
+    ]
+  },
+  {
+    "_id": "test-instruction-action-remediation-triggers-2",
+    "type": 1,
+    "name": "test-instruction-action-remediation-triggers-2-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-action-remediation-triggers-2"
+      }
+    ],
+    "description": "test-instruction-action-remediation-triggers-2-description",
+    "jobs": [
+      {
+        "job": "test-job-action-remediation-triggers-1",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 2,
+      "unit": "s"
+    },
+    "priority": 25,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-action-remediation-triggers-3",
+    "type": 1,
+    "name": "test-instruction-action-remediation-triggers-3-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-action-remediation-triggers-3"
+      }
+    ],
+    "description": "test-instruction-action-remediation-triggers-3-description",
+    "jobs": [
+      {
+        "job": "test-job-action-remediation-triggers-1",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 2,
+      "unit": "s"
+    },
+    "priority": 26,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-action-remediation-triggers-4",
+    "type": 0,
+    "name": "test-instruction-action-remediation-triggers-4-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-action-remediation-triggers-4"
+      }
+    ],
+    "description": "test-instruction-action-remediation-triggers-4-description",
+    "steps": [
+      {
+        "_id": "test-instruction-action-remediation-triggers-4-step-1",
+        "name": "test-instruction-action-remediation-triggers-4-step-1",
+        "operations": [
+          {
+            "_id": "test-instruction-action-remediation-triggers-4-step-1-operation-1",
+            "name": "test-instruction-action-remediation-triggers-4-step-1-operation-1",
+            "time_to_complete": {
+              "value": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-action-remediation-triggers-4-step-1-operation-1-description",
+            "jobs": ["test-job-action-remediation-triggers-2"]
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-action-remediation-triggers-4-step-1-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 2,
+      "unit": "s"
+    },
+    "priority": 27,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-action-remediation-triggers-5",
+    "type": 0,
+    "status": 0,
+    "alarm_patterns": null,
+    "entity_patterns": [
+      {
+        "_id": "test-resource-action-remediation-triggers-5/test-component-action-remediation-triggers-5"
+      }
+    ],
+    "name": "test-instruction-action-remediation-triggers-5-name",
+    "description": "test-instruction-action-remediation-triggers-5-description",
+    "author": "root",
+    "enabled": true,
+    "active_on_pbh": null,
+    "disabled_on_pbh": null,
+    "timeout_after_execution": {
+      "value": 10,
+      "unit": "s"
+    },
+    "last_modified": 1653985818,
+    "created": 1653985818,
+    "steps": [
+      {
+        "_id": "test-instruction-action-remediation-triggers-5-step-1",
+        "name": "test-instruction-action-remediation-triggers-5-step-1",
+        "operations": [
+          {
+            "_id": "test-instruction-action-remediation-triggers-5-step-1-operation-1",
+            "name": "test-instruction-action-remediation-triggers-5-step-1-operation-1",
+            "time_to_complete": {
+              "value": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-action-remediation-triggers-5-step-1-operation-1-description"
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-action-remediation-triggers-5-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-action-remediation-triggers-5-step-2",
+        "name": "test-instruction-action-remediation-triggers-5-step-2",
+        "operations": [
+          {
+            "_id": "test-instruction-action-remediation-triggers-5-step-2-operation-1",
+            "name": "test-instruction-action-remediation-triggers-5-step-2-operation-1",
+            "time_to_complete": {
+              "value": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-action-remediation-triggers-5-step-2-operation-1-description"
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-action-remediation-triggers-5-step-2-endpoint"
+      }
+    ]
+  },
+  {
+    "_id": "test-instruction-action-remediation-triggers-6",
+    "type": 1,
+    "name": "test-instruction-action-remediation-triggers-6-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-action-remediation-triggers-6"
+      }
+    ],
+    "description": "test-instruction-action-remediation-triggers-6-description",
+    "jobs": [
+      {
+        "job": "test-job-action-remediation-triggers-3",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 2,
+      "unit": "s"
+    },
+    "priority": 28,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
   }
 ]
