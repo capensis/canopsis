@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -34,7 +36,7 @@ import {
 
 import featureService from '@/services/features';
 
-export default {
+export default merge({
   common: {
     ok: 'Ok',
     undefined: 'Not defined',
@@ -668,6 +670,7 @@ export default {
     selectAFilter: 'Select a filter',
     exportAsCsv: 'Export widget as csv file',
     criticityLevels: 'Criticity levels',
+    isPriorityEnabled: 'Show priority',
     exportCsv: {
       title: 'Export CSV',
       fields: {
@@ -2805,6 +2808,4 @@ export default {
   filter: {
     oldPattern: 'Old pattern format',
   },
-
-  ...featureService.get('i18n.en'),
-};
+}, featureService.get('i18n.en'));

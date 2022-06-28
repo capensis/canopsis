@@ -58,7 +58,8 @@
                 service-dependencies(
                   :root="dependency",
                   :columns="widget.parameters.serviceDependenciesColumns",
-                  include-root
+                  include-root,
+                  openable-root
                 )
     template(v-if="hasImpactsDependencies")
       v-tab {{ $t('alarmList.tabs.impactChain') }}
@@ -71,7 +72,8 @@
                   :root="dependency",
                   :columns="widget.parameters.serviceDependenciesColumns",
                   include-root,
-                  impact
+                  impact,
+                  openable-root
                 )
     template(v-if="hasEntityGantt")
       v-tab {{ $t('alarmList.tabs.entityGantt') }}
