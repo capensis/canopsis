@@ -52,9 +52,9 @@ func (mr *MockEnrichmentCenterMockRecorder) Get(arg0, arg1 interface{}) *gomock.
 }
 
 // Handle mocks base method.
-func (m *MockEnrichmentCenter) Handle(arg0 context.Context, arg1 types.Event, arg2 context0.EnrichFields) (*types.Entity, context0.UpdatedEntityServices, error) {
+func (m *MockEnrichmentCenter) Handle(arg0 context.Context, arg1 types.Event) (*types.Entity, context0.UpdatedEntityServices, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Handle", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "Handle", arg0, arg1)
 	ret0, _ := ret[0].(*types.Entity)
 	ret1, _ := ret[1].(context0.UpdatedEntityServices)
 	ret2, _ := ret[2].(error)
@@ -62,9 +62,9 @@ func (m *MockEnrichmentCenter) Handle(arg0 context.Context, arg1 types.Event, ar
 }
 
 // Handle indicates an expected call of Handle.
-func (mr *MockEnrichmentCenterMockRecorder) Handle(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockEnrichmentCenterMockRecorder) Handle(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Handle", reflect.TypeOf((*MockEnrichmentCenter)(nil).Handle), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Handle", reflect.TypeOf((*MockEnrichmentCenter)(nil).Handle), arg0, arg1)
 }
 
 // HandleEntityServiceUpdate mocks base method.
