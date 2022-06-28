@@ -41,13 +41,16 @@ const (
 	ImportJobMongoCollection          = "default_importgraph"
 	JunitTestSuiteMongoCollection     = "junit_test_suite"
 	JunitTestCaseMediaMongoCollection = "junit_test_case_media"
-	ViewMongoCollection               = "views"
-	ViewGroupMongoCollection          = "viewgroups"
 	PlaylistMongoCollection           = "view_playlist"
 	StateSettingsMongoCollection      = "state_settings"
 	BroadcastMessageMongoCollection   = "broadcast_message"
 	AssociativeTableCollection        = "default_associativetable"
 	NotificationMongoCollection       = "notification"
+
+	ViewMongoCollection      = "views"
+	ViewTabMongoCollection   = "viewtabs"
+	WidgetMongoCollection    = "widgets"
+	ViewGroupMongoCollection = "viewgroups"
 
 	// Following collections are used for event statistics.
 	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"
@@ -511,7 +514,8 @@ func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) 
 		return f(ctx)
 	}
 
-	session, err := c.Client.StartSession()
+	opts := options.Session().SetDefaultReadPreference(readpref.Primary())
+	session, err := c.Client.StartSession(opts)
 	if err != nil {
 		return err
 	}
