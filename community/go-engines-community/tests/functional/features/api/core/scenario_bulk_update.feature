@@ -69,7 +69,9 @@ Feature: Bulk update a scenario
           }
         ]
       },
-      {},
+      {
+        "priority": 12345
+      },
       {
         "name": "test-scenario-to-check-unique-name-name",
         "enabled": true,
@@ -435,11 +437,12 @@ Feature: Bulk update a scenario
           "actions": "Actions is missing.",
           "enabled": "Enabled is missing.",
           "name": "Name is missing.",
-          "priority": "Priority is missing.",
           "triggers": "Triggers is missing.",
           "_id": "ID is missing."
         },
-        "item": {}
+        "item": {
+          "priority": 12345
+        }
       },
       {
         "status": 400,
@@ -699,7 +702,6 @@ Feature: Bulk update a scenario
       {
         "status": 400,
         "errors": {
-          "actions.0.parameters.output": "Output is missing.",
           "actions.0.parameters.state": "State is missing.",
           "_id": "ID is missing."
         },
@@ -768,8 +770,7 @@ Feature: Bulk update a scenario
       {
         "status": 400,
         "errors": {
-          "actions.0.parameters.request.method": "Method is missing.",
-          "actions.0.parameters.request.url": "URL is missing.",
+          "actions.0.parameters.request": "Request is missing.",
           "_id": "ID is missing."
         },
         "item": {
@@ -858,8 +859,6 @@ Feature: Bulk update a scenario
               "entity_patterns": null,
               "type": "snooze",
               "parameters": {
-                "author": "root",
-                "user": "root",
                 "output": "test snooze updated",
                 "duration": {
                   "value": 3,
@@ -891,8 +890,6 @@ Feature: Bulk update a scenario
               "entity_patterns": null,
               "type": "snooze",
               "parameters": {
-                "author": "root",
-                "user": "root",
                 "output": "test snooze updated",
                 "duration": {
                   "value": 3,

@@ -15,8 +15,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 )
 
 const (
@@ -94,11 +94,16 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 // It logs error and sends event to next engine on fail and
 // pbehavior type will be resolved in periodical worker.
 func (p *messageProcessor) processEvent(ctx context.Context, event types.Event, msg []byte) (types.PbehaviorInfo, error) {
+	// Skip resolve if the entity is already in pbehavior.
+	if !event.Entity.PbehaviorInfo.IsDefaultActive() {
+		return event.Entity.PbehaviorInfo, nil
+	}
+	// Resolve type in case if the entity is new.
 	ctx, cancel := context.WithTimeout(ctx, resolveTimeout)
 	defer cancel()
 	now := time.Now().In(p.TimezoneConfigProvider.Get().Location)
 
-	resolveResult, err := p.PbhService.Resolve(ctx, event.Entity.ID, now)
+	resolveResult, err := p.PbhService.Resolve(ctx, *event.Entity, now)
 	if err == nil {
 		if !p.resolveDeadlineExceededAt.IsZero() {
 			p.resolveDeadlineExceededAt = time.Time{}
@@ -128,7 +133,7 @@ func (p *messageProcessor) processEvent(ctx context.Context, event types.Event, 
 }
 
 func (p *messageProcessor) processPbhCreateEvent(ctx context.Context, event types.Event, msg []byte) error {
-	params := types.ActionPBehaviorParameters{}
+	params := types.RPCPBehaviorParameters{}
 	err := p.Decoder.Decode([]byte(event.PbhParameters), &params)
 	if err != nil {
 		p.logError(err, "invalid params for create pbehavior", msg)

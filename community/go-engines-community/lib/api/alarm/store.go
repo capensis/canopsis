@@ -27,6 +27,8 @@ import (
 const (
 	InstructionExecutionStatusRunning    = 0
 	InstructionExecutionStatusPaused     = 1
+	InstructionExecutionStatusAborted    = 4
+	InstructionExecutionStatusFailed     = 4
 	InstructionExecutionStatusWaitResult = 5
 	InstructionTypeManual                = 0
 	InstructionTypeAuto                  = 1
@@ -62,7 +64,7 @@ type store struct {
 	deferredNestedObjects []bson.M
 }
 
-func NewStore(dbClient mongo.DbClient, legacyURL fmt.Stringer) Store {
+func NewStore(dbClient mongo.DbClient, legacyURL string) Store {
 	s := &store{
 		mainDbCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
 		resolvedDbCollection:             dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
@@ -161,9 +163,9 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 	project := s.getProject(r.ListRequest, entitiesToProject)
 	project = s.insertDeferred(r.FilterRequest, &pipeline, project)
 	if s.isSortByDuration(sort) {
-		pipeline = append(pipeline, s.getDurationFields())
+		pipeline = append(pipeline, s.getDurationFields()...)
 	} else {
-		project = append(project, s.getDurationFields())
+		project = append(project, s.getDurationFields()...)
 	}
 	cursor, err := collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
@@ -338,7 +340,7 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	pipeline := make([]bson.M, 0)
 	pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": []bson.M{
 		{
-			"d": bson.M{"$in": childrenIds},
+			"d":         bson.M{"$in": childrenIds},
 			"v.parents": bson.M{"$in": parentIds},
 		},
 	}}})
@@ -610,7 +612,21 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 				}}},
 				0,
 			}},
+			"auto_failed": bson.M{"$gt": bson.A{
+				bson.M{"$size": bson.M{"$filter": bson.M{
+					"input": "$auto_statuses",
+					"cond":  bson.M{"$in": bson.A{"$$this", []int{InstructionExecutionStatusAborted, InstructionExecutionStatusFailed}}},
+				}}},
+				0,
+			}},
 			"manual_running": bson.M{"$gt": bson.A{
+				bson.M{"$size": bson.M{"$filter": bson.M{
+					"input": "$manual_statuses",
+					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusRunning}},
+				}}},
+				0,
+			}},
+			"manual_waiting_result": bson.M{"$gt": bson.A{
 				bson.M{"$size": bson.M{"$filter": bson.M{
 					"input": "$manual_statuses",
 					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusWaitResult}},
@@ -682,7 +698,9 @@ func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationRes
 	for i, v := range result.Data {
 		result.Data[i].IsAutoInstructionRunning = statusesByAlarm[v.ID].AutoRunning
 		result.Data[i].IsAllAutoInstructionsCompleted = statusesByAlarm[v.ID].AutoAllCompleted
-		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualRunning
+		result.Data[i].IsAutoInstructionFailed = statusesByAlarm[v.ID].AutoFailed
+		result.Data[i].IsManualInstructionRunning = statusesByAlarm[v.ID].ManualRunning
+		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualWaitingResult
 	}
 
 	return nil
@@ -711,34 +729,56 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 	if result == nil || len(result.Data) == 0 {
 		return nil
 	}
-
-	maxItems := len(result.Data)
-	if maxItems > 100 {
-		maxItems = 100
+	// Do not fetch links for long page.
+	if len(result.Data) > 100 {
+		return nil
 	}
-	linksEntities := make([]AlarmEntity, 0, maxItems)
-	alarms := make(map[string]int, maxItems)
-	for i, al := range result.Data {
+
+	linksEntities := make([]AlarmEntity, 0, len(result.Data))
+	alarmIndexes := make(map[string]int, len(result.Data))
+	childIndexes := make(map[string][][]int)
+
+	for i, item := range result.Data {
 		linksEntities = append(linksEntities, AlarmEntity{
-			AlarmID:  al.ID,
-			EntityID: al.Entity.ID,
+			AlarmID:  item.ID,
+			EntityID: item.Entity.ID,
 		})
-		alarms[al.ID] = i
-		if len(linksEntities) == maxItems {
-			break
+		alarmIndexes[item.ID] = i
+
+		if item.Children != nil {
+			for j, child := range item.Children.Data {
+				childIndexes[child.ID] = append(childIndexes[child.ID], []int{i, j})
+
+				if len(childIndexes[child.ID]) > 1 {
+					continue
+				}
+
+				linksEntities = append(linksEntities, AlarmEntity{
+					AlarmID:  child.ID,
+					EntityID: child.Entity.ID,
+				})
+			}
 		}
 	}
 
 	res, err := s.links.Fetch(ctx, apiKey, linksEntities)
-	if err != nil {
+	if err != nil || res == nil {
 		return err
 	}
 
 	for _, rec := range res.Data {
-		if i, ok := alarms[rec.AlarmID]; ok {
+		if i, ok := alarmIndexes[rec.AlarmID]; ok {
 			result.Data[i].Links = make(map[string]interface{}, len(rec.Links))
 			for category, link := range rec.Links {
 				result.Data[i].Links[category] = link
+			}
+		}
+		if indexes, ok := childIndexes[rec.AlarmID]; ok {
+			for _, i := range indexes {
+				result.Data[i[0]].Children.Data[i[1]].Links = make(map[string]interface{}, len(rec.Links))
+				for category, link := range rec.Links {
+					result.Data[i[0]].Children.Data[i[1]].Links[category] = link
+				}
 			}
 		}
 	}
@@ -1061,19 +1101,47 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 	)
 	s.deferredNestedObjects = []bson.M{
 		{"$lookup": bson.M{
-			"from":         pbehavior.PBehaviorCollectionName,
+			"from":         mongo.PbehaviorMongoCollection,
 			"foreignField": "_id",
 			"localField":   "v.pbehavior_info.id",
 			"as":           "pbehavior",
 		}},
 		{"$unwind": bson.M{"path": "$pbehavior", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"pbehavior.comments": bson.M{
+				"$slice": bson.A{bson.M{"$reverseArray": "$pbehavior.comments"}, 1},
+			},
+		}},
 		{"$lookup": bson.M{
-			"from":         pbehavior.TypeCollectionName,
+			"from":         mongo.PbehaviorTypeMongoCollection,
 			"foreignField": "_id",
 			"localField":   "pbehavior.type_",
 			"as":           "pbehavior.type",
 		}},
 		{"$unwind": bson.M{"path": "$pbehavior.type", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorReasonMongoCollection,
+			"foreignField": "_id",
+			"localField":   "pbehavior.reason",
+			"as":           "pbehavior.reason",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior.reason", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.RightsMongoCollection,
+			"foreignField": "_id",
+			"localField":   "pbehavior.author",
+			"as":           "pbehavior.author",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior.author", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"pbehavior": bson.M{
+				"$cond": bson.M{
+					"if":   "$pbehavior._id",
+					"then": "$pbehavior",
+					"else": nil,
+				},
+			},
+		}},
 	}
 	if r.OnlyParents {
 		*pipeline = append(*pipeline,
@@ -1088,10 +1156,19 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 	}
 }
 
+// when one of sort_by attributes is an entity's field then entities $lookup should be kept until $sort stage
 func (s *store) resetEntities(r ListRequest, pipeline *[]bson.M) bool {
-	if strings.HasPrefix(r.SortBy, "entity.") || strings.HasPrefix(r.SortBy, "infos.") {
+	if len(r.MultiSort) != 0 {
+		for _, multiSortValue := range r.MultiSort {
+			multiSortData := strings.Split(multiSortValue, ",")
+			if strings.HasPrefix(multiSortData[0], "entity.") || strings.HasPrefix(multiSortData[0], "infos.") {
+				return false
+			}
+		}
+	} else if strings.HasPrefix(r.SortBy, "entity.") || strings.HasPrefix(r.SortBy, "infos.") {
 		return false
 	}
+
 	*pipeline = append(*pipeline, bson.M{"$project": bson.M{"entity": 0}})
 	return true
 }
@@ -1185,6 +1262,25 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 			bson.M{"$unwind": bson.M{"path": "$entity.category", "preserveNullAndEmptyArrays": true}},
 		)
 	}
+	pipeline = append(pipeline,
+		bson.M{"$lookup": bson.M{
+			"from":         mongo.PbehaviorTypeMongoCollection,
+			"foreignField": "_id",
+			"localField":   "v.pbehavior_info.type",
+			"as":           "pbehavior_type",
+		}},
+		bson.M{"$unwind": bson.M{"path": "$pbehavior_type", "preserveNullAndEmptyArrays": true}},
+		bson.M{"$addFields": bson.M{
+			"v.pbehavior_info": bson.M{"$cond": bson.M{
+				"if": "$v.pbehavior_info",
+				"then": bson.M{"$mergeObjects": bson.A{
+					"$v.pbehavior_info",
+					bson.M{"icon_name": "$pbehavior_type.icon_name"},
+				}},
+				"else": nil,
+			}},
+		}},
+	)
 	pipeline = append(pipeline, []bson.M{
 		{"$addFields": addFields},
 		lastCommentNilWhenEmpty,
@@ -1316,8 +1412,14 @@ func (s *store) resolveAliasesInQuery(query interface{}) (newQuery interface{}, 
 			if newKey != key.String() {
 				keys = append(keys, newKey)
 			}
+			var mapVal reflect.Value
+			if newVal == nil {
+				mapVal = reflect.ValueOf(&newVal).Elem()
+			} else {
+				mapVal = reflect.ValueOf(newVal)
+			}
 			val.SetMapIndex(key, reflect.Value{})
-			val.SetMapIndex(reflect.ValueOf(newKey), reflect.ValueOf(newVal))
+			val.SetMapIndex(reflect.ValueOf(newKey), mapVal)
 		}
 	}
 
@@ -1348,37 +1450,62 @@ func (s *store) resolveAlias(v string) string {
 	return v
 }
 
-func (s *store) getDurationFields() bson.M {
+func (s *store) getDurationFields() []bson.M {
 	now := time.Now().Unix()
 
-	return bson.M{"$addFields": bson.M{
-		"v.duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			"$v.creation_date",
-		}},
-		"v.current_state_duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			"$v.state.t",
-		}},
-		"v.active_duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			bson.M{"$sum": bson.A{
+	return []bson.M{
+		{"$addFields": bson.M{
+			"v.duration": bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
 				"$v.creation_date",
-				"$v.snooze_duration",
-				"$v.pbh_inactive_duration",
+			}},
+			"v.current_state_duration": bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
+				"$v.state.t",
+			}},
+			"v.active_duration": bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
+				bson.M{"$sum": bson.A{
+					"$v.creation_date",
+					"$v.snooze_duration",
+					"$v.pbh_inactive_duration",
+				}},
 			}},
 		}},
-	}}
+		{"$addFields": bson.M{
+			"v.duration": bson.M{
+				"$cond": bson.M{
+					"if":   bson.M{"$lt": bson.A{"$v.duration", 0}},
+					"then": 0,
+					"else": "$v.duration",
+				},
+			},
+			"v.current_state_duration": bson.M{
+				"$cond": bson.M{
+					"if":   bson.M{"$lt": bson.A{"$v.current_state_duration", 0}},
+					"then": 0,
+					"else": "$v.current_state_duration",
+				},
+			},
+			"v.active_duration": bson.M{
+				"$cond": bson.M{
+					"if":   bson.M{"$lt": bson.A{"$v.active_duration", 0}},
+					"then": 0,
+					"else": "$v.active_duration",
+				},
+			},
+		}},
+	}
 }

@@ -59,7 +59,8 @@
           color="black",
           @click="exportAlarmsList"
         )
-    v-layout(row, wrap, align-center)
+    v-layout.alarms-list__top-pagination.white.px-4(row, wrap, align-center)
+      c-density-btn-toggle(:value="userPreference.content.dense", @change="updateDense")
       c-pagination(
         v-if="hasColumns",
         :page="query.page",
@@ -80,6 +81,7 @@
       :has-columns="hasColumns",
       :columns="columns",
       :sticky-header="widget.parameters.sticky_header",
+      :dense="dense",
       selectable,
       expandable
     )
@@ -104,9 +106,10 @@ import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import widgetColumnsMixin from '@/mixins/widget/columns';
+
+import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
 import { exportCsvMixinCreator } from '@/mixins/widget/export';
-import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
+import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import widgetRemediationInstructionsFilterMixin from '@/mixins/widget/remediation-instructions-filter-select';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
@@ -139,7 +142,7 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetColumnsMixin,
+    widgetColumnsAlarmMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,
@@ -201,14 +204,20 @@ export default {
     hasAccessToExportAsCsv() {
       return this.checkAccess(USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv);
     },
+
+    dense() {
+      return this.userPreference.content.dense ?? this.widget.parameters.dense;
+    },
   },
   methods: {
     refreshExpanded() {
-      Object.entries(this.$refs.alarmsTable.expanded).forEach(([id, expanded]) => {
-        if (expanded && !this.alarms.some(alarm => alarm._id === id)) {
-          this.$set(this.$refs.alarmsTable.expanded, id, false);
-        }
-      });
+      if (this.$refs.alarmsTable?.expanded) {
+        Object.entries(this.$refs.alarmsTable.expanded).forEach(([id, expanded]) => {
+          if (expanded && !this.alarms.some(alarm => alarm._id === id)) {
+            this.$set(this.$refs.alarmsTable.expanded, id, false);
+          }
+        });
+      }
     },
 
     updateCorrelation(correlation) {
@@ -247,6 +256,12 @@ export default {
 
         limit,
       };
+    },
+
+    updateDense(dense) {
+      this.updateContentInUserPreference({
+        dense,
+      });
     },
 
     expandFirstAlarm() {
@@ -316,7 +331,7 @@ export default {
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
         widgetId: this.widget._id,
         data: {
-          ...pick(query, ['search', 'category', 'correlation', 'opened']),
+          ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
 
           fields: columns.map(({ label, value }) => ({ label, name: value })),
           filter: JSON.stringify(query.filter),
@@ -333,3 +348,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.alarms-list__top-pagination {
+  min-height: 46px;
+}
+</style>

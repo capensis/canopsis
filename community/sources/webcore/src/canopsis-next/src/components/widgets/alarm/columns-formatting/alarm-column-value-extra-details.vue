@@ -19,7 +19,8 @@
     )
     extra-details-pbehavior(
       v-if="alarm.pbehavior",
-      :pbehavior="alarm.pbehavior"
+      :pbehavior="alarm.pbehavior",
+      :pbehavior-info="alarm.v.pbehavior_info"
     )
     extra-details-causes(
       v-if="alarm.causes",

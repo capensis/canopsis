@@ -19,7 +19,7 @@ type ListRequestWithPagination struct {
 type ListRequest struct {
 	BaseFilterRequest
 	Sort     string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
-	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=_id name type category impact_level category.name idle_since infos.*"`
+	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=_id name type category impact_level category.name idle_since infos.* last_event_date enabled"`
 	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
 }
 
@@ -67,6 +67,11 @@ type Entity struct {
 	Category       *entitycategory.Category `bson:"category" json:"category"`
 	Deletable      *bool                    `bson:"deletable,omitempty" json:"deletable,omitempty"`
 	IdleSince      *types.CpsTime           `bson:"idle_since,omitempty" json:"idle_since,omitempty" swaggertype:"integer"`
+	PbehaviorInfo  *PbehaviorInfo           `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	LastEventDate  *types.CpsTime           `bson:"last_event_date,omitempty" json:"last_event_date,omitempty" swaggertype:"integer"`
+	OKEvents       int                      `bson:"ok_events" json:"ok_events"`
+	KOEvents       int                      `bson:"ko_events" json:"ko_events"`
+	State          int                      `bson:"state" json:"state"`
 }
 
 type Infos map[string]Info
@@ -94,6 +99,12 @@ func (i *Infos) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
 	*i = tmp
 
 	return nil
+}
+
+type PbehaviorInfo struct {
+	types.PbehaviorInfo `bson:",inline"`
+
+	IconName string `bson:"icon_name" json:"icon_name"`
 }
 
 type AggregationResult struct {

@@ -1,8 +1,8 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import { SORT_ORDERS } from '@/constants';
+import { SORT_ORDERS, ALARMS_OPENED_VALUES } from '@/constants';
 
-import queryMixin from '@/mixins/query';
+import { queryMixin } from '@/mixins/query';
 
 const { mapActions } = createNamespacedHelpers('alarm');
 
@@ -49,7 +49,7 @@ export default {
       };
 
       if (alarm.v.resolved) {
-        defaultParams.resolved = true;
+        defaultParams.opened = ALARMS_OPENED_VALUES.resolved;
       }
 
       return this.fetchAlarmItem({

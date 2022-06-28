@@ -430,8 +430,8 @@ Feature: update alarm by RPC stream
 		"event_type": "snooze",
 		"parameters": {
 		  "duration": {
-		    "value": 600,
-		    "unit": "s"
+		    "value": 1,
+		    "unit": "h"
 		  },
           "output": "test-output-axe-rpc-6"
         }
