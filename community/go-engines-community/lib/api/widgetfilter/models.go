@@ -19,11 +19,15 @@ type ListRequest struct {
 }
 
 type EditRequest struct {
+	BaseEditRequest
 	ID        string `json:"-"`
 	Widget    string `json:"widget" binding:"required"`
-	Title     string `json:"title" binding:"required,max=255"`
 	IsPrivate *bool  `json:"is_private" binding:"required"`
 	Author    string `json:"author" swaggerignore:"true"`
+}
+
+type BaseEditRequest struct {
+	Title string `json:"title" binding:"required,max=255"`
 
 	common.AlarmPatternFieldsRequest
 	common.EntityPatternFieldsRequest

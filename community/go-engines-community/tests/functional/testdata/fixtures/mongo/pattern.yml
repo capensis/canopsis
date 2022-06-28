@@ -795,3 +795,17 @@ pattern:
             value:
               value: 1
               unit: m
+
+  pattern_to_widget_edit_1:
+    <<: *pattern_alarm
+    _id: test-pattern-to-widget-edit-1
+    title: test-pattern-to-widget-edit-1-title
+    is_corporate: true
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-pattern-to-widget-edit-1-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
