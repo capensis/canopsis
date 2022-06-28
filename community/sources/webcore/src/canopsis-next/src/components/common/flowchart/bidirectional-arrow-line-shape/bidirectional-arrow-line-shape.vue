@@ -18,7 +18,7 @@
       markerUnits="userSpaceOnUse",
       orient="auto"
     )
-      arrow-figure(:fill="shape.style['stroke']")
+      arrow-figure(:fill="shape.properties['stroke']")
     marker(
       :id="`${shape.id}-start`",
       refX="20",
@@ -28,7 +28,7 @@
       markerUnits="userSpaceOnUse",
       orient="auto-start-reverse"
     )
-      arrow-figure(:fill="shape.style['stroke']")
+      arrow-figure(:fill="shape.properties['stroke']")
 </template>
 
 <script>
