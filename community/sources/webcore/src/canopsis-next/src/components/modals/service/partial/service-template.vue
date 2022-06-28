@@ -10,7 +10,7 @@
           @click="showPbehaviorsListModal"
         )
           v-icon(small) list
-        span {{ $t('modals.service.editPbehaviors') }}
+      span {{ $t('modals.service.editPbehaviors') }}
     v-runtime-template(v-if="compiledTemplate && !pending", :template="compiledTemplate")
     div.float-clear
     c-table-pagination(
