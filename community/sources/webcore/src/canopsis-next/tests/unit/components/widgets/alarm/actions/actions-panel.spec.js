@@ -16,7 +16,6 @@ import {
   META_ALARMS_RULE_TYPES,
   MODALS,
   PATTERN_CONDITIONS,
-  QUICK_RANGES,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 
@@ -809,29 +808,18 @@ describe('actions-panel', () => {
 
     const defaultWidget = generateDefaultAlarmListWidget();
 
-    const filter = {
-      title: entity.name,
-      filter: { $and: [{ 'entity._id': entity._id }] },
-    };
-
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.alarmsList,
         config: {
           title: expect.any(String),
+          fetchList: expect.any(Function),
           widget: {
             ...defaultWidget,
             _id: expect.any(String),
             parameters: {
               ...defaultWidget.parameters,
               widgetColumns: widgetData.parameters.widgetColumns,
-              liveReporting: {
-                tstart: QUICK_RANGES.last30Days.start,
-                tstop: QUICK_RANGES.last30Days.stop,
-              },
-              opened: false,
-              mainFilter: filter,
-              viewFilters: [filter],
             },
           },
         },

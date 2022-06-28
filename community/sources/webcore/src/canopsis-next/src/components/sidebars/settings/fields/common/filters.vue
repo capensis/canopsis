@@ -12,15 +12,21 @@
         filters-list(
           :filters="filters",
           :addable="addable",
-          :editable="editable"
+          :editable="editable",
+          @add="showCreateFilterModal",
+          @edit="showEditFilterModal",
+          @delete="showDeleteFilterModal"
         )
 </template>
 
 <script>
+import uuid from '@/helpers/uuid';
+
 import { authMixin } from '@/mixins/auth';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import FiltersList from '@/components/other/filter/filters-list.vue';
+import { MODALS } from '@/constants';
 
 export default {
   components: { FilterSelector, FiltersList },
@@ -57,6 +63,72 @@ export default {
     withPbehavior: {
       type: Boolean,
       default: false,
+    },
+  },
+  methods: {
+    showCreateFilterModal() {
+      this.$modals.show({
+        name: MODALS.createFilter,
+        config: {
+          title: this.$t('modals.createFilter.create.title'),
+          withTitle: true,
+          withAlarm: this.withAlarm,
+          withEntity: this.withEntity,
+          withPbehavior: this.withPbehavior,
+          action: (newFilter) => {
+            const filters = [
+              ...this.filters,
+
+              {
+                ...newFilter,
+
+                _id: uuid('filter'),
+                widget: this.widgetId,
+                is_private: false,
+              },
+            ];
+
+            this.$emit('update:filters', filters);
+          },
+        },
+      });
+    },
+
+    showEditFilterModal(filter) {
+      this.$modals.show({
+        name: MODALS.createFilter,
+        config: {
+          filter,
+
+          title: this.$t('modals.createFilter.edit.title'),
+          withTitle: true,
+          withAlarm: this.withAlarm,
+          withEntity: this.withEntity,
+          withPbehavior: this.withPbehavior,
+          action: (newFilter) => {
+            const filters = this.filters.map(item => (item._id === filter._id ? newFilter : item));
+
+            this.$emit('update:filters', filters);
+          },
+        },
+      });
+    },
+
+    showDeleteFilterModal(filter) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: () => {
+            const filters = this.filters.filter(({ _id: id }) => id !== filter._id);
+
+            this.$emit('update:filters', filters);
+
+            if (this.value === filter._id) {
+              this.$emit('input', null);
+            }
+          },
+        },
+      });
     },
   },
 };

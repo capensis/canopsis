@@ -43,7 +43,7 @@ import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 
