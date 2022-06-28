@@ -4,10 +4,13 @@
       field-title(v-model="form.title", :title="$t('common.title')")
       v-divider
       field-filters(
-        :entities-type="$constants.ENTITIES_TYPES.alarm",
-        :filters.sync="form.parameters.viewFilters",
+        :filters.sync="form.filters",
         addable,
-        editable
+        editable,
+        with-alarm,
+        with-entity,
+        with-pbehavior,
+        hide-selector
       )
       v-divider
       field-opened-resolved-filter(v-model="form.parameters.opened")
