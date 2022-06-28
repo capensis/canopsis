@@ -14,7 +14,7 @@ Feature: Create a widget
         "desktop": {"x": 0, "y": 0}
       },
       "parameters": {
-        "main_filter": "test-widgetfilter-to-widget-create-1-2",
+        "mainFilter": "test-widgetfilter-to-widget-create-1-2",
         "test-widget-to-create-1-param-str": "teststr",
         "test-widget-to-create-1-param-int": 2,
         "test-widget-to-create-1-param-bool": true,
@@ -146,6 +146,7 @@ Feature: Create a widget
     """
     When I save response widgetID={{ .lastResponse._id }}
     When I save response mainFilterID={{ (index .lastResponse.filters 1)._id }}
+    Then the response key "parameters.mainFilter" should not be "test-widgetfilter-to-widget-create-1-2"
     When I do GET /api/v4/widgets/{{ .widgetID }}
     Then the response code should be 200
     Then the response body should contain:
@@ -157,7 +158,7 @@ Feature: Create a widget
         "desktop": {"x": 0, "y": 0}
       },
       "parameters": {
-        "main_filter": "{{ .mainFilterID }}",
+        "mainFilter": "{{ .mainFilterID }}",
         "test-widget-to-create-1-param-str": "teststr",
         "test-widget-to-create-1-param-int": 2,
         "test-widget-to-create-1-param-bool": true,

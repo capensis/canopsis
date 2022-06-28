@@ -33,7 +33,7 @@ Feature: Import views
                       "desktop": {"x": 0, "y": 0}
                     },
                     "parameters": {
-                      "main_filter": "test-widgetfilter-to-import-2",
+                      "mainFilter": "test-widgetfilter-to-import-2",
                       "test-widget-to-view-import-1-parameter-1": {
                         "test-widget-to-view-import-1-parameter-1-subparameter": "test-widget-to-view-import-1-parameter-1-subvalue"
                       },
@@ -226,7 +226,7 @@ Feature: Import views
           "widgets": [
             {
               "parameters": {
-                "main_filter": "{{ .filterId2 }}"
+                "mainFilter": "{{ .filterId2 }}"
               }
             }
           ]
