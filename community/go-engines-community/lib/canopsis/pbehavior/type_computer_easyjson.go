@@ -131,8 +131,6 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Priority = int(in.Int())
 		case "icon_name":
 			out.IconName = string(in.String())
-		case "color":
-			out.Color = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -183,11 +181,6 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.String(string(in.IconName))
 	}
-	if in.Color != "" {
-		const prefix string = ",\"color\":"
-		out.RawString(prefix)
-		out.String(string(in.Color))
-	}
 	out.RawByte('}')
 }
 func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior2(in *jlexer.Lexer, out *ComputedPbehavior) {
@@ -213,6 +206,8 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Name = string(in.String())
 		case "r":
 			out.Reason = string(in.String())
+		case "f":
+			out.Filter = string(in.String())
 		case "t":
 			if in.IsNull() {
 				in.Skip()
@@ -221,15 +216,15 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				in.Delim('[')
 				if out.Types == nil {
 					if !in.IsDelim(']') {
-						out.Types = make([]computedType, 0, 0)
+						out.Types = make([]ComputedType, 0, 1)
 					} else {
-						out.Types = []computedType{}
+						out.Types = []ComputedType{}
 					}
 				} else {
 					out.Types = (out.Types)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v3 computedType
+					var v3 ComputedType
 					easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior3(in, &v3)
 					out.Types = append(out.Types, v3)
 					in.WantComma()
@@ -331,6 +326,11 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"r\":"
 		out.RawString(prefix)
 		out.String(string(in.Reason))
+	}
+	{
+		const prefix string = ",\"f\":"
+		out.RawString(prefix)
+		out.String(string(in.Filter))
 	}
 	{
 		const prefix string = ",\"t\":"
@@ -534,7 +534,7 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	}
 	out.RawByte('}')
 }
-func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior3(in *jlexer.Lexer, out *computedType) {
+func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior3(in *jlexer.Lexer, out *ComputedType) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -553,12 +553,12 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			continue
 		}
 		switch key {
+		case "t":
+			out.ID = string(in.String())
 		case "s":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.Span).UnmarshalJSON(data))
 			}
-		case "t":
-			out.ID = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -569,19 +569,19 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		in.Consumed()
 	}
 }
-func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior3(out *jwriter.Writer, in computedType) {
+func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior3(out *jwriter.Writer, in ComputedType) {
 	out.RawByte('{')
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"s\":"
+		const prefix string = ",\"t\":"
 		out.RawString(prefix[1:])
-		out.Raw((in.Span).MarshalJSON())
+		out.String(string(in.ID))
 	}
 	{
-		const prefix string = ",\"t\":"
+		const prefix string = ",\"s\":"
 		out.RawString(prefix)
-		out.String(string(in.ID))
+		out.Raw((in.Span).MarshalJSON())
 	}
 	out.RawByte('}')
 }
