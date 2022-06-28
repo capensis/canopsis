@@ -818,7 +818,7 @@ describe('actions-panel', () => {
       {
         name: MODALS.alarmsList,
         config: {
-          title: expect.any(String),
+          title: `${entity._id} - alarm list`,
           widget: {
             ...defaultWidget,
             _id: expect.any(String),

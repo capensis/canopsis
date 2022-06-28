@@ -56,50 +56,42 @@
     "updated": 1611229670
   },
   {
-    "_id": "test-viewgroup-to-bulk-delete-1",
-    "title": "test-viewgroup-to-bulk-delete-title-1",
-    "author": "test-viewgroup-to-bulk-delete-author-1",
-    "position": 7,
-    "created": 1611229670,
-    "updated": 1611229670
-  },
-  {
-    "_id": "test-viewgroup-to-bulk-delete-2",
-    "title": "test-viewgroup-to-bulk-delete-title-2",
-    "author": "test-viewgroup-to-bulk-delete-author-2",
-    "position": 8,
-    "created": 1611229670,
-    "updated": 1611229670
-  },
-  {
-    "_id": "test-viewgroup-to-bulk-delete-3",
-    "title": "test-viewgroup-to-bulk-delete-title-3",
-    "author": "test-viewgroup-to-bulk-delete-author-3",
-    "position": 9,
-    "created": 1611229670,
-    "updated": 1611229670
-  },
-  {
-    "_id": "test-viewgroup-to-bulk-update-1",
-    "title": "test-viewgroup-to-bulk-update-title-1",
-    "author": "test-viewgroup-to-bulk-update-author-1",
-    "position": 10,
-    "created": 1611229670,
-    "updated": 1611229670
-  },
-  {
-    "_id": "test-viewgroup-to-bulk-update-2",
-    "title": "test-viewgroup-to-bulk-update-title-2",
-    "author": "test-viewgroup-to-bulk-update-author-2",
-    "position": 11,
-    "created": 1611229670,
-    "updated": 1611229670
-  },
-  {
     "_id": "test-viewgroup-to-user-preferences-delete",
     "title": "test-viewgroup-to-user-preferences-delete",
     "author": "test-viewgroup-to-user-preferences-delete",
     "position": 12,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-viewgroup-to-export-1",
+    "title": "test-viewgroup-to-export-1-title",
+    "author": "test-author-to-export",
+    "position": 13,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-viewgroup-to-export-2",
+    "title": "test-viewgroup-to-export-2-title",
+    "author": "test-author-to-view-export",
+    "position": 14,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-viewgroup-to-import-2-1",
+    "title": "test-viewgroup-to-import-2-1-title",
+    "author": "test-author-to-view-import",
+    "position": 15,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-viewgroup-to-view-copy",
+    "title": "test-viewgroup-to-view-copy-title",
+    "author": "test-author-to-view-copy",
+    "position": 16,
     "created": 1611229670,
     "updated": 1611229670
   }

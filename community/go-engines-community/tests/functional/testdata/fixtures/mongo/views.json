@@ -38,33 +38,7 @@
       "enabled": true,
       "value": 1,
       "unit": "s"
-    },
-    "tabs": [
-      {
-        "_id": "test-view-to-get-1-tab-1",
-        "title": "test-view-to-get-1-tab-1-title",
-        "widgets": [
-          {
-            "_id": "test-view-to-get-1-tab-1-widget-1",
-            "title": "test-view-to-get-1-tab-1-widget-1-title",
-            "type": "test-view-to-get-1-tab-1-widget-1-type",
-            "grid_parameters": {
-              "test-view-to-get-1-tab-1-widget-1-gridparameter": "test-view-to-get-1-tab-1-widget-1-gridparameter-value"
-            },
-            "parameters": {
-              "test-view-to-get-1-tab-1-widget-1-parameter-1": {
-                "test-view-to-get-1-tab-1-widget-1-parameter-1-subparameter": "test-view-to-get-1-tab-1-widget-1-parameter-1-subvalue"
-              },
-              "test-view-to-get-1-tab-1-widget-1-parameter-2": [
-                {
-                  "test-view-to-get-1-tab-1-widget-1-parameter-2-subparameter": "test-view-to-get-1-tab-1-widget-1-parameter-2-subvalue"
-                }
-              ]
-            }
-          }
-        ]
-      }
-    ]
+    }
   },
   {
     "_id": "test-view-to-get-2",
@@ -83,26 +57,7 @@
       "enabled": true,
       "value": 1,
       "unit": "s"
-    },
-    "tabs": [
-      {
-        "_id": "test-view-to-get-2-tab-1",
-        "title": "test-view-to-get-2-tab-1-title",
-        "widgets": [
-          {
-            "_id": "test-view-to-get-2-tab-1-widget-1",
-            "title": "test-view-to-get-2-tab-1-widget-1-title",
-            "type": "test-view-to-get-2-tab-1-widget-1-type",
-            "grid_parameters": {
-              "test-view-to-get-2-tab-1-widget-1-gridparameter": "test-view-to-get-2-tab-1-widget-1-gridparameter-value"
-            },
-            "parameters": {
-              "test-view-to-get-2-tab-1-widget-1-parameter": "test-view-to-get-2-tab-1-widget-1-parameter-value"
-            }
-          }
-        ]
-      }
-    ]
+    }
   },
   {
     "_id": "test-view-to-update",
@@ -121,39 +76,31 @@
       "enabled": true,
       "value": 1,
       "unit": "s"
-    },
-    "tabs": [
-      {
-        "_id": "test-view-to-update-tab-1",
-        "title": "test-view-to-update-tab-1-title",
-        "widgets": [
-          {
-            "_id": "test-view-to-update-tab-1-widget-1",
-            "title": "test-view-to-update-tab-1-widget-1-title",
-            "type": "test-view-to-update-tab-1-widget-1-type",
-            "grid_parameters": {
-              "test-view-to-update-tab-1-widget-1-gridparameter": "test-view-to-update-tab-1-widget-1-gridparameter-value"
-            },
-            "parameters": {
-              "test-view-to-update-tab-1-widget-1-parameter": "test-view-to-update-tab-1-widget-1-parameter-value"
-            }
-          }
-        ]
-      }
-    ]
+    }
   },
   {
-    "_id": "test-view-to-delete",
+    "_id": "test-view-to-delete-1",
     "enabled": true,
-    "title": "test-view-to-delete-title",
-    "description": "test-view-to-delete-description",
-    "author": "test-view-to-delete-author",
+    "title": "test-view-to-delete-1-title",
+    "description": "test-view-to-delete-1-description",
+    "author": "test-author-to-view-delete",
     "position": 5,
     "created": 1611229670,
     "updated": 1611229670,
     "group_id": "test-viewgroup-to-view-edit",
-    "tags": [],
-    "tabs": []
+    "tags": []
+  },
+  {
+    "_id": "test-view-to-delete-2",
+    "enabled": true,
+    "title": "test-view-to-delete-2-title",
+    "description": "test-view-to-delete-2-description",
+    "author": "test-author-to-view-delete",
+    "position": 6,
+    "created": 1611229670,
+    "updated": 1611229670,
+    "group_id": "test-viewgroup-to-view-edit",
+    "tags": []
   },
   {
     "_id": "test-view-to-check-access",
@@ -165,108 +112,47 @@
     "created": 1611229670,
     "updated": 1611229670,
     "group_id": "test-viewgroup-to-view-edit",
-    "tags": [],
-    "tabs": []
+    "tags": []
   },
   {
-    "_id": "test-view-with-test-suites-widget",
+    "_id": "test-view-to-junit-test-suites-get",
     "enabled": true,
-    "title": "test-view-with-test-suites-widget-title",
-    "description": "test-view-with-test-suites-widget-description",
-    "author": "test-view-with-test-suites-widget-author",
+    "title": "test-view-to-junit-test-suites-get-title",
+    "description": "test-view-to-junit-test-suites-get-description",
+    "author": "test-author-to-junit-test-suites-get",
     "position": 8,
     "created": 1611229670,
     "updated": 1611229670,
-    "tags": [
-      "test-view-with-test-suites-widget-tag"
-    ],
     "periodic_refresh": {
       "enabled": true,
       "value": 1,
       "unit": "s"
     },
-    "group_id": "test-viewgroup-to-view-edit",
-    "tabs": [
-      {
-        "_id": "test-view-with-test-suites-widget-tab-1",
-        "title": "test-view-with-test-suites-widget-tab-1-title",
-        "widgets": [
-          {
-            "_id": "test-view-with-test-suites-widget-tab-1-widget-1",
-            "title": "test-view-with-test-suites-widget-tab-1-widget-1-title",
-            "type": "Junit",
-            "grid_parameters": {},
-            "parameters": {}
-          },
-          {
-            "_id": "test-view-with-test-suites-widget-tab-1-widget-2",
-            "title": "test-view-with-test-suites-widget-tab-1-widget-2-title",
-            "type": "Junit",
-            "grid_parameters": {},
-            "parameters": {},
-            "internal_parameters": {
-              "test_suites": [
-                "fdebd370-3178-4c9e-97aa-a26a79dca770",
-                "7e5d2a21-be12-47d1-a286-0b46b6b2b99b"
-              ]
-            }
-          }
-        ]
-      }
-    ]
+    "group_id": "test-viewgroup-to-view-edit"
   },
   {
-    "_id": "test-view-to-edit-junit-dir-param",
+    "_id": "test-view-to-junit-edit-dir-param",
     "enabled": true,
-    "title": "test-view-to-edit-junit-dir-param-title",
-    "description": "test-view-to-edit-junit-dir-param-description",
-    "author": "test-view-to-edit-junit-dir-param-author",
+    "title": "test-view-to-junit-edit-dir-param-title",
+    "description": "test-view-to-junit-edit-dir-param-description",
+    "author": "test-author-to-junit-edit-dir-param",
     "position": 9,
     "created": 1611229670,
     "updated": 1611229670,
     "group_id": "test-viewgroup-to-view-edit",
-    "tags": [],
-    "tabs": [
-      {
-        "_id": "test-view-to-edit-junit-dir-param-tab-1",
-        "title": "test-view-to-edit-junit-dir-param-tab-1-title",
-        "widgets": [
-          {
-            "_id": "test-view-to-edit-junit-dir-param-tab-1-widget-1",
-            "title": "test-view-to-edit-junit-dir-param-tab-1-widget-1-title",
-            "type": "Junit",
-            "grid_parameters": {},
-            "parameters": {
-              "directory": "test-view-to-edit-junit-dir-param-tab-1-widget-1-param-dir"
-            },
-            "internal_parameters": {
-              "test_suites": [
-                "test-suite-to-edit-widget-junit-dir-param-test-suite-id"
-              ]
-            }
-          }
-        ]
-      }
-    ]
+    "tags": []
   },
   {
-    "_id": "test-view-to-edit-playlist",
+    "_id": "test-view-to-playlist-edit",
     "enabled": true,
-    "title": "test-view-to-edit-playlist-title",
-    "description": "test-view-to-edit-playlist-description",
-    "author": "test-view-to-edit-playlist-author",
+    "title": "test-view-to-playlist-edit-title",
+    "description": "test-view-to-playlist-edit-description",
+    "author": "test-view-to-playlist-edit-author",
     "position": 10,
     "created": 1611229670,
     "updated": 1611229670,
     "group_id": "test-viewgroup-to-view-edit",
-    "tags": [],
-    "tabs": [
-      {
-        "_id": "test-view-to-edit-playlist-tab-1",
-        "title": "test-view-to-edit-playlist-tab-1-title",
-        "widgets": []
-      }
-    ]
+    "tags": []
   },
   {
     "_id": "test-view-to-viewgroup-get-1",
@@ -285,33 +171,7 @@
       "enabled": true,
       "value": 1,
       "unit": "s"
-    },
-    "tabs": [
-      {
-        "_id": "test-view-to-viewgroup-get-1-tab-1",
-        "title": "test-view-to-viewgroup-get-1-tab-1-title",
-        "widgets": [
-          {
-            "_id": "test-view-to-viewgroup-get-1-tab-1-widget-1",
-            "title": "test-view-to-viewgroup-get-1-tab-1-widget-1-title",
-            "type": "test-view-to-viewgroup-get-1-tab-1-widget-1-type",
-            "grid_parameters": {
-              "test-view-to-viewgroup-get-1-tab-1-widget-1-gridparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-gridparameter-value"
-            },
-            "parameters": {
-              "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1": {
-                "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1-subparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1-subvalue"
-              },
-              "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2": [
-                {
-                  "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2-subparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2-subvalue"
-                }
-              ]
-            }
-          }
-        ]
-      }
-    ]
+    }
   },
   {
     "_id": "test-view-to-viewgroup-get-2",
@@ -330,26 +190,7 @@
       "enabled": true,
       "value": 1,
       "unit": "s"
-    },
-    "tabs": [
-      {
-        "_id": "test-view-to-viewgroup-get-2-tab-1",
-        "title": "test-view-to-viewgroup-get-2-tab-1-title",
-        "widgets": [
-          {
-            "_id": "test-view-to-viewgroup-get-2-tab-1-widget-1",
-            "title": "test-view-to-viewgroup-get-2-tab-1-widget-1-title",
-            "type": "test-view-to-viewgroup-get-2-tab-1-widget-1-type",
-            "grid_parameters": {
-              "test-view-to-viewgroup-get-2-tab-1-widget-1-gridparameter": "test-view-to-viewgroup-get-2-tab-1-widget-1-gridparameter-value"
-            },
-            "parameters": {
-              "test-view-to-viewgroup-get-2-tab-1-widget-1-parameter": "test-view-to-viewgroup-get-2-tab-1-widget-1-parameter-value"
-            }
-          }
-        ]
-      }
-    ]
+    }
   },
   {
     "_id": "test-view-to-viewgroup-get-3",
@@ -368,8 +209,7 @@
       "enabled": true,
       "value": 1,
       "unit": "s"
-    },
-    "tabs": []
+    }
   },
   {
     "_id": "test-view-to-delete-linked-viewgroup",
@@ -383,135 +223,324 @@
     "updated": 1611229670
   },
   {
-    "_id": "test-view-to-bulk-delete-1",
-    "enabled": false,
-    "title": "test-view-to-bulk-delete-1-title",
-    "description": "test-view-to-bulk-delete-1-description",
-    "author": "test-view-to-bulk-delete-1-author",
-    "group_id": "test-viewgroup-to-view-edit",
-    "position": 15,
-    "created": 1611229670,
-    "updated": 1611229670
-  },
-  {
-    "_id": "test-view-to-bulk-delete-2",
-    "enabled": false,
-    "title": "test-view-to-bulk-delete-2-title",
-    "description": "test-view-to-bulk-delete-2-description",
-    "author": "test-view-to-bulk-delete-2-author",
-    "group_id": "test-viewgroup-to-view-edit",
-    "position": 16,
-    "created": 1611229670,
-    "updated": 1611229670
-  },
-  {
-    "_id": "test-view-to-bulk-delete-3",
-    "enabled": false,
-    "title": "test-view-to-bulk-delete-3-title",
-    "description": "test-view-to-bulk-delete-3-description",
-    "author": "test-view-to-bulk-delete-3-author",
-    "group_id": "test-viewgroup-to-view-edit",
-    "position": 17,
-    "created": 1611229670,
-    "updated": 1611229670
-  },
-  {
-    "_id": "test-view-to-bulk-update-1",
+    "_id": "test-view-to-user-preferences-update-1",
     "enabled": true,
-    "title": "test-view-to-bulk-update-1-title",
-    "description": "test-view-to-bulk-update-1-description",
-    "author": "test-view-to-bulk-update-1-author",
+    "title": "test-view-to-user-preferences-update-1-title",
+    "description": "test-view-to-user-preferences-update-1-description",
+    "author": "test-view-to-user-preferences-update-author",
     "group_id": "test-viewgroup-to-view-edit",
-    "position": 18,
-    "created": 1611229670,
-    "updated": 1611229670,
-    "tags": [
-      "test-view-to-bulk-update-1-tag"
-    ],
-    "periodic_refresh": {
-      "enabled": true,
-      "value": 1,
-      "unit": "s"
-    },
-    "tabs": [
-      {
-        "_id": "test-view-to-bulk-update-1-tab-1",
-        "title": "test-view-to-bulk-update-1-tab-1-title",
-        "widgets": [
-          {
-            "_id": "test-view-to-bulk-update-1-tab-1-widget-1",
-            "title": "test-view-to-bulk-update-1-tab-1-widget-1-title",
-            "type": "test-view-to-bulk-update-1-tab-1-widget-1-type",
-            "grid_parameters": {
-              "test-view-to-bulk-update-1-tab-1-widget-1-gridparameter": "test-view-to-bulk-update-1-tab-1-widget-1-gridparameter-value"
-            },
-            "parameters": {
-              "test-view-to-bulk-update-1-tab-1-widget-1-parameter": "test-view-to-bulk-update-1-tab-1-widget-1-parameter-value"
-            }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "_id": "test-view-to-bulk-update-2",
-    "enabled": true,
-    "title": "test-view-to-bulk-update-2-title",
-    "description": "test-view-to-bulk-update-2-description",
-    "author": "test-view-to-bulk-update-2-author",
-    "group_id": "test-viewgroup-to-view-edit",
-    "position": 19,
-    "created": 1611229670,
-    "updated": 1611229670,
-    "tags": [
-      "test-view-to-bulk-update-2-tag"
-    ],
-    "periodic_refresh": {
-      "enabled": true,
-      "value": 1,
-      "unit": "s"
-    },
-    "tabs": [
-      {
-        "_id": "test-view-to-bulk-update-2-tab-1",
-        "title": "test-view-to-bulk-update-2-tab-1-title",
-        "widgets": [
-          {
-            "_id": "test-view-to-bulk-update-2-tab-1-widget-1",
-            "title": "test-view-to-bulk-update-2-tab-1-widget-1-title",
-            "type": "test-view-to-bulk-update-2-tab-1-widget-1-type",
-            "grid_parameters": {
-              "test-view-to-bulk-update-2-tab-1-widget-1-gridparameter": "test-view-to-bulk-update-2-tab-1-widget-1-gridparameter-value"
-            },
-            "parameters": {
-              "test-view-to-bulk-update-2-tab-1-widget-1-parameter": "test-view-to-bulk-update-2-tab-1-widget-1-parameter-value"
-            }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "_id": "test-view-to-update-user-preferences",
-    "enabled": true,
-    "title": "test-view-to-update-user-preferences-title",
-    "description": "test-view-to-update-user-preferences-description",
-    "author": "test-view-to-update-user-preferences-author",
     "position": 20,
     "created": 1611229670,
-    "updated": 1611229670,
-    "tabs": [
-      {
-        "_id": "test-view-to-update-user-preferences-tab-1",
-        "title": "test-view-to-update-user-preferences-tab-1-title",
-        "widgets": [
-          {
-            "_id": "test-view-to-update-user-preferences-tab-1-widget-1",
-            "title": "test-view-to-update-user-preferences-tab-1-widget-1-title",
-            "type": "test-view-to-update-user-preferences-tab-1-widget-1-type"
-          }
-        ]
-      }
-    ]
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-user-preferences-update-2",
+    "enabled": true,
+    "title": "test-view-to-user-preferences-update-2-title",
+    "description": "test-view-to-user-preferences-update-2-description",
+    "author": "test-view-to-user-preferences-update-author",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 21,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-tab-edit",
+    "enabled": true,
+    "title": "test-view-to-tab-edit-title",
+    "description": "test-view-to-tab-edit-description",
+    "author": "test-author-to-tab-edit",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 22,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-tab-check-access",
+    "enabled": true,
+    "title": "test-view-to-tab-check-access-title",
+    "description": "test-view-to-tab-check-access-description",
+    "author": "test-author-to-tab-check-access",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 23,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-tab-update-position-1",
+    "enabled": true,
+    "title": "test-view-to-tab-update-position-1-title",
+    "description": "test-view-to-tab-update-position-1-description",
+    "author": "test-author-to-tab-update-position",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 24,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-tab-update-position-2",
+    "enabled": true,
+    "title": "test-view-to-tab-update-position-2-title",
+    "description": "test-view-to-tab-update-position-2-description",
+    "author": "test-author-to-tab-update-position",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 25,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-tab-update-position-3",
+    "enabled": true,
+    "title": "test-view-to-tab-update-position-3-title",
+    "description": "test-view-to-tab-update-position-3-description",
+    "author": "test-author-to-tab-update-position",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 26,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-tab-update-position-4",
+    "enabled": true,
+    "title": "test-view-to-tab-update-position-4-title",
+    "description": "test-view-to-tab-update-position-4-description",
+    "author": "test-author-to-tab-update-position",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 27,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-widget-edit",
+    "enabled": true,
+    "title": "test-view-to-widget-edit-title",
+    "description": "test-view-to-widget-edit-description",
+    "author": "test-author-to-widget-edit",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 28,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-widget-check-access",
+    "enabled": true,
+    "title": "test-view-to-widget-check-access-title",
+    "description": "test-view-to-widget-check-access-description",
+    "author": "test-author-to-widget-check-access",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 29,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-widget-update-grid-position-1",
+    "enabled": true,
+    "title": "test-view-to-widget-update-grid-position-1-title",
+    "description": "test-view-to-widget-update-grid-position-1-description",
+    "author": "test-author-to-widget-update-grid-position",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 30,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-widget-update-grid-position-2",
+    "enabled": true,
+    "title": "test-view-to-widget-update-grid-position-2-title",
+    "description": "test-view-to-widget-update-grid-position-2-description",
+    "author": "test-author-to-widget-update-grid-position",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 31,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-widget-update-grid-position-3",
+    "enabled": true,
+    "title": "test-view-to-widget-update-grid-position-3-title",
+    "description": "test-view-to-widget-update-grid-position-3-description",
+    "author": "test-author-to-widget-update-grid-position",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 32,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-export-1",
+    "enabled": true,
+    "title": "test-view-to-export-1-title",
+    "description": "test-view-to-export-1-description",
+    "author": "test-author-to-view-export",
+    "group_id": "test-viewgroup-to-export-1",
+    "position": 33,
+    "tags": [
+      "test-view-to-export-1-tag"
+    ],
+    "periodic_refresh": {
+      "enabled": true,
+      "value": 1,
+      "unit": "s"
+    },
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-export-2",
+    "enabled": true,
+    "title": "test-view-to-export-2-title",
+    "description": "test-view-to-export-2-description",
+    "author": "test-author-to-view-export",
+    "group_id": "test-viewgroup-to-export-1",
+    "position": 34,
+    "tags": [
+      "test-view-to-export-2-tag"
+    ],
+    "periodic_refresh": {
+      "enabled": true,
+      "value": 1,
+      "unit": "s"
+    },
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-import-2-1",
+    "enabled": true,
+    "title": "test-view-to-import-2-1-title",
+    "description": "test-view-to-import-2-1-description",
+    "author": "test-author-to-view-import",
+    "group_id": "test-viewgroup-to-import-2-1",
+    "position": 35,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-import-2-2",
+    "enabled": true,
+    "title": "test-view-to-import-2-2-title",
+    "description": "test-view-to-import-2-2-description",
+    "author": "test-author-to-view-import",
+    "group_id": "test-viewgroup-to-import-2-1",
+    "position": 36,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-user-preferences-get",
+    "enabled": true,
+    "title": "test-view-to-user-preferences-get-title",
+    "description": "test-view-to-user-preferences-get-description",
+    "author": "test-author-to-user-preferences-get",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 37,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-copy-1",
+    "enabled": true,
+    "title": "test-view-to-copy-1-title",
+    "description": "test-view-to-copy-1-description",
+    "periodic_refresh": {
+      "enabled": true,
+      "value": 100,
+      "unit": "m"
+    },
+    "tags": [
+      "test-view-to-copy-1-tag"
+    ],
+    "author": "test-author-to-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 40,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-copy-2",
+    "enabled": true,
+    "title": "test-view-to-copy-2-title",
+    "description": "test-view-to-copy-2-description",
+    "author": "test-author-to-copy",
+    "group_id": "test-viewgroup-to-view-copy",
+    "position": 41,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-copy-3",
+    "enabled": true,
+    "title": "test-view-to-copy-3-title",
+    "description": "test-view-to-copy-3-description",
+    "author": "test-author-to-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 42,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-tab-copy-1",
+    "enabled": true,
+    "title": "test-view-to-tab-copy-1-title",
+    "description": "test-view-to-tab-copy-1-description",
+    "author": "test-author-to-tab-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 43,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-tab-copy-2",
+    "enabled": true,
+    "title": "test-view-to-tab-copy-2-title",
+    "description": "test-view-to-tab-copy-2-description",
+    "author": "test-author-to-tab-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 44,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-tab-copy-3",
+    "enabled": true,
+    "title": "test-view-to-tab-copy-3-title",
+    "description": "test-view-to-tab-copy-3-description",
+    "author": "test-author-to-tab-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 45,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-widget-copy-1",
+    "enabled": true,
+    "title": "test-view-to-widget-copy-1-title",
+    "description": "test-view-to-widget-copy-1-description",
+    "author": "test-author-to-widget-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 46,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-widget-copy-2",
+    "enabled": true,
+    "title": "test-view-to-widget-copy-2-title",
+    "description": "test-view-to-widget-copy-2-description",
+    "author": "test-author-to-widget-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 47,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-widget-copy-3",
+    "enabled": true,
+    "title": "test-view-to-widget-copy-3-title",
+    "description": "test-view-to-widget-copy-3-description",
+    "author": "test-author-to-widget-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 48,
+    "created": 1611229670,
+    "updated": 1611229670
   }
 ]

@@ -30,6 +30,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	libdatastorage "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	libidlerule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
@@ -190,33 +191,16 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v.RegisterStructValidationCtx(userValidator.ValidateBulkUpdateRequestItem, user.BulkUpdateRequestItem{})
 
 	viewValidator := view.NewValidator(client)
-	viewBulkUniqueIDValidator := common.NewUniqueBulkFieldValidator("ID")
-	viewBulkUniqueTitleValidator := common.NewUniqueBulkFieldValidator("Title")
 	v.RegisterStructValidationCtx(viewValidator.ValidateEditRequest, view.EditRequest{})
-	v.RegisterStructValidation(view.ValidateWidgetParametersJunitRequest, view.WidgetParametersJunitRequest{})
 	v.RegisterStructValidation(view.ValidateEditPositionRequest, view.EditPositionRequest{})
-	v.RegisterStructValidationCtx(viewBulkUniqueTitleValidator.Validate, view.BulkCreateRequest{})
-	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		viewBulkUniqueIDValidator.Validate(ctx, sl)
-		viewBulkUniqueTitleValidator.Validate(ctx, sl)
-	}, view.BulkUpdateRequest{})
 
 	viewGroupUniqueTitleValidator := common.NewUniqueFieldValidator(client, mongo.ViewGroupMongoCollection, "Title")
-	viewGroupBulkUniqueIDValidator := common.NewUniqueBulkFieldValidator("ID")
-	viewGroupBulkUniqueTitleValidator := common.NewUniqueBulkFieldValidator("Title")
-	v.RegisterStructValidationCtx(viewGroupUniqueTitleValidator.Validate, viewgroup.EditRequest{}, viewgroup.BulkUpdateRequestItem{})
-	v.RegisterStructValidationCtx(viewGroupBulkUniqueTitleValidator.Validate, viewgroup.BulkCreateRequest{})
-	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		viewGroupBulkUniqueIDValidator.Validate(ctx, sl)
-		viewGroupBulkUniqueTitleValidator.Validate(ctx, sl)
-	}, viewgroup.BulkUpdateRequest{})
+	v.RegisterStructValidationCtx(viewGroupUniqueTitleValidator.Validate, viewgroup.EditRequest{})
 
-	playlistValidator := playlist.NewPlaylistValidator(client)
+	v.RegisterStructValidation(widget.ValidateEditRequest, widget.EditRequest{})
+
 	playlistUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PlaylistMongoCollection, "Name")
-	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		playlistUniqueNameValidator.Validate(ctx, sl)
-		playlistValidator.ValidateEditRequest(ctx, sl)
-	}, playlist.EditRequest{})
+	v.RegisterStructValidationCtx(playlistUniqueNameValidator.Validate, playlist.EditRequest{})
 
 	stateSettingsValidator := statesettings.NewValidator()
 	v.RegisterStructValidation(stateSettingsValidator.ValidateStateSettingRequest, statesettings.StateSettingRequest{})

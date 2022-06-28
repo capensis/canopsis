@@ -103,6 +103,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    openableRoot: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     const dependenciesByIds = {};
@@ -199,9 +203,12 @@ export default {
     },
 
     showTreeOfDependenciesModal(dependency) {
-      const isServiceEntity = dependency.entity.type === ENTITY_TYPES.service;
+      const { entity } = dependency;
 
-      if (!this.impact && !isServiceEntity) {
+      if (
+        (!this.openableRoot && this.rootId === entity._id)
+        || (!this.impact && entity.type !== ENTITY_TYPES.service)
+      ) {
         return;
       }
 

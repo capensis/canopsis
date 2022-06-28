@@ -122,7 +122,12 @@ func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 
 	if redisURL.User != nil {
 		if password, passwordFound := redisURL.User.Password(); passwordFound {
-			failoverOptions.Password = password
+			if username := redisURL.User.Username(); username != "" {
+				failoverOptions.SentinelUsername = username
+				failoverOptions.SentinelPassword = password
+			} else {
+				failoverOptions.Password = password
+			}
 		} else if password := redisURL.User.Username(); password != "" {
 			failoverOptions.Password = password
 		}
@@ -130,16 +135,15 @@ func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 
 	failoverOptions.SentinelAddrs = strings.Split(redisURL.Host, ",")
 
-	dbAssigned := false
-	if redisURL.Path != "" {
-		dbIndex, err := strconv.Atoi(redisURL.Path[1:])
-		dbAssigned = err == nil
-		if dbAssigned {
-			failoverOptions.DB = dbIndex
+	failoverOptions.DB = db
+	if db < 0 {
+		if len(redisURL.Path) < 2 {
+			return nil, errors.New("no database specified in url")
 		}
-	}
-	if !dbAssigned {
-		failoverOptions.DB = db
+		failoverOptions.DB, err = strconv.Atoi(redisURL.Path[1:])
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	failoverOptions.MasterName = redisURL.Query().Get("sentinelMasterId")
@@ -190,7 +194,9 @@ func NewSession(ctx context.Context, db int, logger zerolog.Logger, reconnectCou
 		}
 		redisClient = redis.NewClient(redisOptions)
 	}
-	err := redisClient.Ping(ctx).Err()
+	pctx, cancel := context.WithTimeout(ctx, minReconnectTimeout)
+	defer cancel()
+	err := redisClient.Ping(pctx).Err()
 	if err != nil {
 		return nil, err
 	}

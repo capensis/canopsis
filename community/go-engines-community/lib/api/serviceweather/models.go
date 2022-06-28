@@ -4,7 +4,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortype"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -44,7 +43,7 @@ type Service struct {
 		Links interface{} `json:"links" bson:"links"`
 	} `json:"linklist" bson:"links"`
 	PbehaviorInfo *types.PbehaviorInfo     `json:"pbehavior_info" bson:"pbehavior_info"`
-	Pbehaviors    []pbehavior.Response     `json:"pbehaviors" bson:"-"`
+	Pbehaviors    []alarm.Pbehavior        `json:"pbehaviors" bson:"-"`
 	PbehaviorID   string                   `json:"-" bson:"pbehavior_id"`
 	ImpactLevel   int                      `json:"impact_level" bson:"impact_level"`
 	ImpactState   int                      `json:"impact_state" bson:"impact_state"`
@@ -104,7 +103,7 @@ type Entity struct {
 	CreationDate   *types.CpsTime             `json:"alarm_creation_date" bson:"creation_date" swaggertype:"integer"`
 	DisplayName    string                     `json:"alarm_display_name" bson:"display_name"`
 	Icon           string                     `json:"icon" bson:"icon"`
-	Pbehaviors     []pbehavior.Response       `json:"pbehaviors" bson:"-"`
+	Pbehaviors     []alarm.Pbehavior          `json:"pbehaviors" bson:"-"`
 	PbehaviorInfo  *types.PbehaviorInfo       `json:"pbehavior_info" bson:"pbehavior_info"`
 	Links          []WeatherLink              `json:"linklist" bson:"-"`
 	IsGrey         bool                       `json:"is_grey"`
