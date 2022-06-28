@@ -21,3 +21,4 @@ export * from './store';
 export * from './widget';
 export * from './kpi';
 export * from './user';
+export * from './service-weather';

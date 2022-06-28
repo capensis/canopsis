@@ -192,11 +192,14 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
-	oldView := view.View{}
-	err := s.collection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&oldView)
-	if err != nil {
-		return nil, err
-	}
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		oldView := view.View{}
+		err := s.collection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&oldView)
+		if err != nil {
+			return err
+		}
 
 	var response *Response
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {

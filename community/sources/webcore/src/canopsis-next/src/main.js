@@ -28,6 +28,7 @@ import featuresService from '@/services/features';
 
 import ModalsPlugin from '@/plugins/modals';
 import PopupsPlugin from '@/plugins/popups';
+import SidebarPlugin from '@/plugins/sidebar';
 import ValidatorPlugin from '@/plugins/validator';
 import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
@@ -154,6 +155,7 @@ import DensitySmallIcon from '@/components/icons/density_small.vue';
 import CDensityBtnToggle from '@/components/common/groups/c-density-btn-toggle.vue';
 
 import * as modalsComponents from '@/components/modals';
+import * as sidebarsComponents from '@/components/sidebars';
 
 /* eslint-enable import/first */
 
@@ -386,6 +388,13 @@ Vue.use(ModalsPlugin, {
 });
 
 Vue.use(PopupsPlugin, { store });
+Vue.use(SidebarPlugin, {
+  store,
+
+  components: {
+    ...sidebarsComponents,
+  },
+});
 Vue.use(SetSeveralPlugin);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ToursPlugin);
