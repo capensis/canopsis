@@ -65,7 +65,7 @@ type Widget struct {
 }
 
 type Parameters struct {
-	MainFilter string `bson:"main_filter,omitempty" json:"main_filter,omitempty"`
+	MainFilter string `bson:"mainFilter,omitempty" json:"mainFilter,omitempty"`
 
 	// Junit
 	IsAPI                 bool     `bson:"is_api,omitempty" json:"is_api,omitempty"`

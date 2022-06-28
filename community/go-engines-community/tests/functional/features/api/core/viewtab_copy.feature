@@ -118,7 +118,7 @@ Feature: Copy a view tab
     Then the response key "widgets.0._id" should not be "test-widget-to-tab-copy-1"
     Then the response key "widgets.0.filters.0._id" should not be "test-widgetfilter-to-tab-copy-1"
     Then the response key "widgets.0.filters.1._id" should not be "test-widgetfilter-to-tab-copy-2"
-    Then the response key "widgets.0.parameters.main_filter" should not be "test-widgetfilter-to-tab-copy-1"
+    Then the response key "widgets.0.parameters.mainFilter" should not be "test-widgetfilter-to-tab-copy-1"
     When I do GET /api/v4/views/test-view-to-tab-copy-2
     Then the response code should be 200
     Then the response body should contain:
