@@ -769,7 +769,7 @@ func RegisterRoutes(
 			)
 		}
 
-		widgetAPI := widget.NewApi(widget.NewStore(dbClient), enforcer, actionLogger)
+		widgetAPI := widget.NewApi(widget.NewStore(dbClient), enforcer, common.NewPatternFieldsTransformer(dbClient), actionLogger)
 		widgetRouter := protected.Group("/widgets")
 		{
 			widgetRouter.POST(

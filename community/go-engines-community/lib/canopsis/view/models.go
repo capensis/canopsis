@@ -139,7 +139,7 @@ func (p InternalParameters) IsZero() bool {
 }
 
 type WidgetFilter struct {
-	ID        string        `bson:"_id"`
+	ID        string        `bson:"_id,omitempty"`
 	Title     string        `bson:"title"`
 	Widget    string        `bson:"widget"`
 	IsPrivate bool          `bson:"is_private"`
