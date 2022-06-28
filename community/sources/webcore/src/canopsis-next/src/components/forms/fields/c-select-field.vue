@@ -42,6 +42,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    combobox: {
+      type: Boolean,
+      default: false,
+    },
     ellipsis: {
       type: Boolean,
       default: false,
@@ -61,6 +65,10 @@ export default {
     },
 
     component() {
+      if (this.combobox) {
+        return 'v-combobox';
+      }
+
       return this.autocomplete ? 'v-autocomplete' : 'v-select';
     },
 
