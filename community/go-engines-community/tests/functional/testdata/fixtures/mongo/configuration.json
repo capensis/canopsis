@@ -47,8 +47,6 @@
       "timetoexecute": ""
     },
     "import_ctx": {
-      "thdwarnminperimport": "30m",
-      "thdcritminperimport": "60m",
       "filepattern": "/tmp/import_%s.json"
     },
     "api": {
