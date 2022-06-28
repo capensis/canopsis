@@ -14,18 +14,15 @@ type ListRequest struct {
 }
 
 type EditRequest struct {
-	BaseEditRequest
-	ID string `json:"-"`
-}
+	ID          string   `json:"-"`
+	Enabled     *bool    `json:"enabled" binding:"required"`
+	Title       string   `json:"title" binding:"required,max=255"`
+	Description string   `json:"description" binding:"max=255"`
+	Group       string   `json:"group" binding:"required"`
+	Tags        []string `json:"tags"`
+	Author      string   `json:"author" swaggerignore:"true"`
 
-type BaseEditRequest struct {
-	Enabled         *bool                      `json:"enabled" binding:"required"`
-	Title           string                     `json:"title" binding:"required,max=255"`
-	Description     string                     `json:"description" binding:"max=255"`
-	Group           string                     `json:"group" binding:"required"`
-	Tags            []string                   `json:"tags"`
 	PeriodicRefresh *types.DurationWithEnabled `json:"periodic_refresh"`
-	Author          string                     `json:"author" swaggerignore:"true"`
 }
 
 type EditPositionRequest struct {

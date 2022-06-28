@@ -14,7 +14,6 @@
     )
       draggable-group-views(
         :views="group.views",
-        :prepare-view="mapViewEntity",
         :put="viewPut",
         :pull="viewPull",
         @change="changeViewsHandler(groupIndex, $event)"
@@ -25,7 +24,6 @@
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-import { getDuplicateEntityTitle } from '@/helpers/entities';
 import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 
 import DraggableGroupViews from './draggable-group-views.vue';
@@ -70,30 +68,10 @@ export default {
     isGroupsEmpty() {
       return this.groups.length === 0;
     },
-
-    allViewsList() {
-      return this.groups.reduce((ids, { views }) => {
-        ids.push(...views);
-
-        return ids;
-      }, []);
-    },
   },
   methods: {
-    mapViewEntity(view) {
-      return { ...view, title: getDuplicateEntityTitle(view, this.allViewsList) };
-    },
-
-    mapGroupEntity(group) {
-      return {
-        ...group,
-        title: getDuplicateEntityTitle(group, this.groups),
-        views: group.views.map(this.mapViewEntity),
-      };
-    },
-
     changeGroupsOrdering(event) {
-      this.$emit('change', dragDropChangePositionHandler(this.groups, event, this.mapGroupEntity));
+      this.$emit('change', dragDropChangePositionHandler(this.groups, event));
     },
 
     changeViewsHandler(groupIndex, views) {

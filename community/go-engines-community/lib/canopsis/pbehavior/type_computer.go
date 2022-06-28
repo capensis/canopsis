@@ -1,5 +1,7 @@
 package pbehavior
 
+//go:generate easyjson -no_std_marshalers
+
 import (
 	"context"
 	"fmt"
@@ -35,6 +37,7 @@ type typeComputer struct {
 // For example, for active daily periodical behavior at 10:00-12:00 and date 2020-06-01:
 // [2020-06-01T10:00, 2020-06-01T12:00] ActiveTypeID
 // [2020-06-01T00:00, 2020-06-02T00:00] InactiveTypeID
+//easyjson:json
 type ComputedPbehavior struct {
 	Name    string         `json:"n"`
 	Reason  string         `json:"r"`
@@ -45,6 +48,11 @@ type ComputedPbehavior struct {
 
 	Patten        pattern.Entity         `json:"p,omitempty"`
 	OldMongoQuery map[string]interface{} `json:"q,omitempty"`
+}
+
+//easyjson:json
+type Types struct {
+	T map[string]Type
 }
 
 // ComputeResult represents computed data.
