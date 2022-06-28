@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import PointsPath from '../common/points-path.vue';
+import PointsPath from './points-path.vue';
 
 export default {
   components: { PointsPath },

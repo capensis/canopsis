@@ -17,7 +17,7 @@
       markerUnits="userSpaceOnUse",
       orient="auto"
     )
-      arrow-figure(:fill="shape.style['stroke']")
+      arrow-figure(:fill="shape.properties['stroke']")
 </template>
 
 <script>

@@ -2805,5 +2805,9 @@ export default {
     oldPattern: 'Ancien format de motif',
   },
 
+  flowchart: {
+    shapes: 'Formes',
+  },
+
   ...featureService.get('i18n.fr'),
 };
