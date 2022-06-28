@@ -17,6 +17,7 @@ export default {
       getAlarmsMetaByWidgetId: 'getMetaByWidgetId',
       getAlarmsPendingByWidgetId: 'getPendingByWidgetId',
       getAlarmsExportByWidgetId: 'getExportByWidgetId',
+      getAlarmsFetchingParamsByWidgetId: 'getFetchingParamsByWidgetId',
     }),
 
     alarms() {
@@ -27,6 +28,9 @@ export default {
     },
     alarmsPending() {
       return this.getAlarmsPendingByWidgetId(this.widget._id);
+    },
+    alarmsFetchingParams() {
+      return this.getAlarmsFetchingParamsByWidgetId(this.widget._id);
     },
     alarmsExportPending() {
       const exportData = this.getAlarmsExportByWidgetId(this.widget._id);
