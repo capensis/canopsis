@@ -41,7 +41,7 @@ func NewStore(
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
-	now := types.CpsTime{Time: time.Now()}
+	now := types.NewCpsTime()
 	rule := transformRequestToModel(r.EditRequest)
 	if r.ID == "" {
 		r.ID = utils.NewID()
@@ -133,7 +133,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
 	model := transformRequestToModel(r.EditRequest)
 	model.ID = r.ID
-	model.Updated = types.CpsTime{Time: time.Now()}
+	model.Updated = types.NewCpsTime()
 
 	update := bson.M{"$set": model}
 
