@@ -4,6 +4,7 @@ package pbehavior
 
 import (
 	json "encoding/json"
+	pattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -41,20 +42,12 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				in.Skip()
 			} else {
 				in.Delim('{')
-				out.T = make(map[string]*Type)
+				out.T = make(map[string]Type)
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v1 *Type
-					if in.IsNull() {
-						in.Skip()
-						v1 = nil
-					} else {
-						if v1 == nil {
-							v1 = new(Type)
-						}
-						easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior1(in, v1)
-					}
+					var v1 Type
+					easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior1(in, &v1)
 					(out.T)[key] = v1
 					in.WantComma()
 				}
@@ -90,11 +83,7 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				out.String(string(v2Name))
 				out.RawByte(':')
-				if v2Value == nil {
-					out.RawString("null")
-				} else {
-					easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior1(out, *v2Value)
-				}
+				easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior1(out, v2Value)
 			}
 			out.RawByte('}')
 		}
@@ -224,8 +213,6 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Name = string(in.String())
 		case "r":
 			out.Reason = string(in.String())
-		case "f":
-			out.Filter = string(in.String())
 		case "t":
 			if in.IsNull() {
 				in.Skip()
@@ -251,6 +238,76 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 		case "c":
 			out.Created = int64(in.Int64())
+		case "p":
+			if in.IsNull() {
+				in.Skip()
+				out.Patten = nil
+			} else {
+				in.Delim('[')
+				if out.Patten == nil {
+					if !in.IsDelim(']') {
+						out.Patten = make(pattern.Entity, 0, 2)
+					} else {
+						out.Patten = pattern.Entity{}
+					}
+				} else {
+					out.Patten = (out.Patten)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v4 []pattern.FieldCondition
+					if in.IsNull() {
+						in.Skip()
+						v4 = nil
+					} else {
+						in.Delim('[')
+						if v4 == nil {
+							if !in.IsDelim(']') {
+								v4 = make([]pattern.FieldCondition, 0, 0)
+							} else {
+								v4 = []pattern.FieldCondition{}
+							}
+						} else {
+							v4 = (v4)[:0]
+						}
+						for !in.IsDelim(']') {
+							var v5 pattern.FieldCondition
+							easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern(in, &v5)
+							v4 = append(v4, v5)
+							in.WantComma()
+						}
+						in.Delim(']')
+					}
+					out.Patten = append(out.Patten, v4)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "q":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				in.Delim('{')
+				if !in.IsDelim('}') {
+					out.OldMongoQuery = make(map[string]interface{})
+				} else {
+					out.OldMongoQuery = nil
+				}
+				for !in.IsDelim('}') {
+					key := string(in.String())
+					in.WantColon()
+					var v6 interface{}
+					if m, ok := v6.(easyjson.Unmarshaler); ok {
+						m.UnmarshalEasyJSON(in)
+					} else if m, ok := v6.(json.Unmarshaler); ok {
+						_ = m.UnmarshalJSON(in.Raw())
+					} else {
+						v6 = in.Interface()
+					}
+					(out.OldMongoQuery)[key] = v6
+					in.WantComma()
+				}
+				in.Delim('}')
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -276,22 +333,17 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.String(string(in.Reason))
 	}
 	{
-		const prefix string = ",\"f\":"
-		out.RawString(prefix)
-		out.String(string(in.Filter))
-	}
-	{
 		const prefix string = ",\"t\":"
 		out.RawString(prefix)
 		if in.Types == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v4, v5 := range in.Types {
-				if v4 > 0 {
+			for v7, v8 := range in.Types {
+				if v7 > 0 {
 					out.RawByte(',')
 				}
-				easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior3(out, v5)
+				easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior3(out, v8)
 			}
 			out.RawByte(']')
 		}
@@ -300,6 +352,56 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"c\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.Created))
+	}
+	if len(in.Patten) != 0 {
+		const prefix string = ",\"p\":"
+		out.RawString(prefix)
+		{
+			out.RawByte('[')
+			for v9, v10 := range in.Patten {
+				if v9 > 0 {
+					out.RawByte(',')
+				}
+				if v10 == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+					out.RawString("null")
+				} else {
+					out.RawByte('[')
+					for v11, v12 := range v10 {
+						if v11 > 0 {
+							out.RawByte(',')
+						}
+						easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern(out, v12)
+					}
+					out.RawByte(']')
+				}
+			}
+			out.RawByte(']')
+		}
+	}
+	if len(in.OldMongoQuery) != 0 {
+		const prefix string = ",\"q\":"
+		out.RawString(prefix)
+		{
+			out.RawByte('{')
+			v13First := true
+			for v13Name, v13Value := range in.OldMongoQuery {
+				if v13First {
+					v13First = false
+				} else {
+					out.RawByte(',')
+				}
+				out.String(string(v13Name))
+				out.RawByte(':')
+				if m, ok := v13Value.(easyjson.Marshaler); ok {
+					m.MarshalEasyJSON(out)
+				} else if m, ok := v13Value.(json.Marshaler); ok {
+					out.Raw(m.MarshalJSON())
+				} else {
+					out.Raw(json.Marshal(v13Value))
+				}
+			}
+			out.RawByte('}')
+		}
 	}
 	out.RawByte('}')
 }
@@ -312,6 +414,125 @@ func (v ComputedPbehavior) MarshalEasyJSON(w *jwriter.Writer) {
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ComputedPbehavior) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior2(l, v)
+}
+func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern(in *jlexer.Lexer, out *pattern.FieldCondition) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "field":
+			out.Field = string(in.String())
+		case "field_type":
+			out.FieldType = string(in.String())
+		case "cond":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Condition).UnmarshalJSON(data))
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern(out *jwriter.Writer, in pattern.FieldCondition) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"field\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.Field))
+	}
+	if in.FieldType != "" {
+		const prefix string = ",\"field_type\":"
+		out.RawString(prefix)
+		out.String(string(in.FieldType))
+	}
+	{
+		const prefix string = ",\"cond\":"
+		out.RawString(prefix)
+		easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern1(out, in.Condition)
+	}
+	out.RawByte('}')
+}
+func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern1(in *jlexer.Lexer, out *pattern.Condition) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "type":
+			out.Type = string(in.String())
+		case "value":
+			if m, ok := out.Value.(easyjson.Unmarshaler); ok {
+				m.UnmarshalEasyJSON(in)
+			} else if m, ok := out.Value.(json.Unmarshaler); ok {
+				_ = m.UnmarshalJSON(in.Raw())
+			} else {
+				out.Value = in.Interface()
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern1(out *jwriter.Writer, in pattern.Condition) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"type\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.Type))
+	}
+	{
+		const prefix string = ",\"value\":"
+		out.RawString(prefix)
+		if m, ok := in.Value.(easyjson.Marshaler); ok {
+			m.MarshalEasyJSON(out)
+		} else if m, ok := in.Value.(json.Marshaler); ok {
+			out.Raw(m.MarshalJSON())
+		} else {
+			out.Raw(json.Marshal(in.Value))
+		}
+	}
+	out.RawByte('}')
 }
 func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior3(in *jlexer.Lexer, out *computedType) {
 	isTopLevel := in.IsStart()
