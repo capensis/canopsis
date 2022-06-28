@@ -23,6 +23,7 @@ type Options struct {
 	PeriodicalWaitTime       time.Duration
 	WorkerPoolSize           int
 	WithWebhook              bool
+	LastRetryInterval        time.Duration
 }
 
 // DependencyMaker can be created with DependencyMaker{}
@@ -49,10 +50,11 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		action.NewRedisDelayedScenarioStorage(redis.DelayedScenarioKey, actionRedisClient, json.NewEncoder(), json.NewDecoder()),
 		options.PeriodicalWaitTime, logger)
 	scenarioExecChan := make(chan action.ExecuteScenariosTask)
-	storage := action.NewRedisScenarioExecutionStorage(redis.ScenarioExecutionKey, actionRedisClient, json.NewEncoder(), json.NewDecoder(), logger)
+	storage := action.NewRedisScenarioExecutionStorage(redis.ScenarioExecutionKey, actionRedisClient, json.NewEncoder(),
+		json.NewDecoder(), options.LastRetryInterval, logger)
 	actionScenarioStorage := action.NewScenarioStorage(actionAdapter, delayedScenarioManager, logger)
 	actionService := action.NewService(alarmAdapter, scenarioExecChan,
-		delayedScenarioManager, storage, json.NewEncoder(), amqpChannel,
+		delayedScenarioManager, storage, json.NewEncoder(), json.NewDecoder(), amqpChannel,
 		options.FifoAckExchange, options.FifoAckQueue,
 		alarm.NewActivationService(json.NewEncoder(), amqpChannel, canopsis.CheQueueName, logger), logger)
 
@@ -91,9 +93,21 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 			logger,
 		)
 	}
+	rpcPublishQueues := make([]string, 0)
+	if webhookRpcClient != nil {
+		rpcPublishQueues = append(rpcPublishQueues, canopsis.WebhookRPCQueueServerName)
+	}
+	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		engine.NewRunInfoManager(runInfoRedisClient),
+		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueueName, "", nil, rpcPublishQueues),
+		amqpChannel,
+		logger,
+	)
 
 	engineAction := engine.New(
 		func(ctx context.Context) error {
+			runInfoPeriodicalWorker.Work(ctx)
 			manager := action.NewTaskManager(
 				action.NewWorkerPool(options.WorkerPoolSize, axeRpcClient, webhookRpcClient, alarmAdapter, json.NewEncoder(), logger, timezoneConfigProvider),
 				storage,
@@ -183,18 +197,10 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		logger,
 	))
 	engineAction.AddConsumer(axeRpcClient)
-	rpcPublishQueues := make([]string, 0)
 	if webhookRpcClient != nil {
 		engineAction.AddConsumer(webhookRpcClient)
-		rpcPublishQueues = append(rpcPublishQueues, canopsis.WebhookRPCQueueServerName)
 	}
-	engineAction.AddPeriodicalWorker("run info", engine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		engine.NewRunInfoManager(runInfoRedisClient),
-		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueueName, "", nil, rpcPublishQueues),
-		amqpChannel,
-		logger,
-	))
+	engineAction.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engineAction.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:    options.PeriodicalWaitTime,
 		ActionScenarioStorage: actionScenarioStorage,

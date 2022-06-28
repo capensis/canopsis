@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -31,7 +33,7 @@ import {
 
 import featureService from '@/services/features';
 
-export default {
+export default merge({
   common: {
     ok: 'Ok',
     undefined: 'Not defined',
@@ -213,6 +215,9 @@ export default {
     exportAsCsv: 'Export as csv',
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
+    pbehavior: 'Pbehavior | Pbehaviors',
+    template: 'Template',
+    cycleDependency: 'Cycle dependency',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -289,21 +294,12 @@ export default {
     impacts: 'Impacts',
     dependencies: 'Dependencies',
     noEventsFilter: 'No events filter',
-    expandPanel: {
-      infos: 'Informations',
-      type: 'Type',
-      enabled: 'Enabled',
-      disabled: 'Disabled',
-      infosSearchLabel: 'Search infos',
-      tabs: {
-        main: 'Main',
-        pbehaviors: 'Pbehaviors',
-        impactDepends: 'Impact/Depends',
-        infos: 'Infos',
-        treeOfDependencies: 'Tree of dependencies',
-        impactChain: 'Impact chain',
-      },
-    },
+    impactChain: 'Impact chain',
+    impactDepends: 'Impact/Depends',
+    treeOfDependencies: 'Tree of dependencies',
+    infosSearchLabel: 'Search infos',
+    eventStatisticsMessage: '{ok} OK events\n{ko} KO Events',
+    eventStatistics: 'Event statistics',
     actions: {
       titles: {
         editEntity: 'Edit entity',
@@ -477,9 +473,11 @@ export default {
     tooltips: {
       priority: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
       hasInstruction: 'There is an instruction for this type of incidents',
+      hasManualInstructionInRunning: 'Manual instruction in progress',
       hasAutoInstructionInRunning: 'Automatic instruction in progress',
       allAutoInstructionExecuted: 'All automatic instructions has been executed',
       awaitingInstructionComplete: 'Awaiting for the instruction to complete',
+      autoInstructionsFailed: 'Automatic instructions failed',
     },
     metrics: {
       [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',
@@ -547,12 +545,7 @@ export default {
       [SIDE_BARS.alarmSettings]: 'Alarm list settings',
       [SIDE_BARS.contextSettings]: 'Context table settings',
       [SIDE_BARS.serviceWeatherSettings]: 'Service weather settings',
-      [SIDE_BARS.statsHistogramSettings]: 'Histogram settings',
-      [SIDE_BARS.statsCurvesSettings]: 'Curve settings',
-      [SIDE_BARS.statsTableSettings]: 'Stats table settings',
       [SIDE_BARS.statsCalendarSettings]: 'Stats calendar settings',
-      [SIDE_BARS.statsNumberSettings]: 'Stats number settings',
-      [SIDE_BARS.statsParetoSettings]: 'Stats Pareto diagram settings',
       [SIDE_BARS.textSettings]: 'Text settings',
       [SIDE_BARS.counterSettings]: 'Counter settings',
       [SIDE_BARS.testingWeatherSettings]: 'Testing weather',
@@ -592,17 +585,11 @@ export default {
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
-    statName: 'Stat name',
-    stats: 'Stats',
-    statsSelect: {
-      title: 'Stats select',
-      required: 'Select at least 1 stat',
-      draggable: 'Try dragging an item',
-    },
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
     exportAsCsv: 'Export widget as csv file',
     criticityLevels: 'Criticity levels',
+    isPriorityEnabled: 'Show priority',
     exportCsv: {
       title: 'Export CSV',
       fields: {
@@ -619,22 +606,10 @@ export default {
         [STATS_CRITICITY.critical]: 'critical',
       },
     },
-    statsDateInterval: {
-      monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
-    },
-    statsNumbers: {
-      title: 'Stats numbers',
-      yesNoMode: 'Yes/No mode',
-      defaultStat: 'Default: Alarms created',
-      sortOrder: 'Sort order',
-      displayMode: 'Display Mode',
-      selectAColor: 'Select a color',
-    },
     infoPopup: {
       title: 'Info popup',
       fields: {
         column: 'Column',
-        template: 'Template',
       },
     },
     rowGridSize: {
@@ -671,31 +646,6 @@ export default {
         [ENTITY_TYPES.service]: 'Service',
       },
     },
-    statSelector: {
-      error: {
-        alreadyExist: 'Stat with this name already exists',
-      },
-    },
-    statsGroups: {
-      title: 'Stats groups',
-      manageGroups: 'Add a group',
-      required: 'Create at least 1 group',
-    },
-    statsColor: {
-      title: 'Stats color',
-      pickColor: 'Pick a color',
-    },
-    statsAnnotationLine: {
-      title: 'Annotation line',
-      enabled: 'Is enabled?',
-      value: 'Value',
-      label: 'Label',
-      pickLineColor: 'Pick line color',
-      pickLabelColor: 'Pick label color',
-    },
-    statsPointsStyles: {
-      title: 'Points style',
-    },
     considerPbehaviors: {
       title: 'Consider pbehaviors',
     },
@@ -710,6 +660,7 @@ export default {
     templateEditor: 'Template',
     columns: {
       isHtml: 'Is it HTML?',
+      withTemplate: 'Custom template',
       isState: 'Displayed as severity?',
     },
     liveReporting: {
@@ -769,6 +720,11 @@ export default {
         + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
         + '</dl>',
     },
+    density: {
+      title: 'Default view',
+      comfort: 'Comfort view',
+      compact: 'Compact view',
+    },
   },
   modals: {
     common: {
@@ -820,9 +776,6 @@ export default {
       },
     },
     view: {
-      select: {
-        title: 'Select a view',
-      },
       create: {
         title: 'Create a view',
       },
@@ -842,11 +795,13 @@ export default {
       success: {
         create: 'New view created!',
         edit: 'View successfully edited!',
+        duplicate: 'View successfully duplicated!',
         delete: 'View successfully deleted!',
       },
       fail: {
         create: 'View creation failed...',
         edit: 'View edition failed...',
+        duplicate: 'View duplication failed...',
         delete: 'View deletion failed...',
       },
     },
@@ -992,7 +947,6 @@ export default {
       title: 'Info popup',
       add: 'Add',
       column: 'Column',
-      template: 'Template',
       addInfoPopup: {
         title: 'Add an info popup',
       },
@@ -1045,23 +999,8 @@ export default {
         [WIDGET_TYPES.serviceWeather]: {
           title: 'Service weather',
         },
-        [WIDGET_TYPES.statsHistogram]: {
-          title: 'Stats histogram',
-        },
-        [WIDGET_TYPES.statsCurves]: {
-          title: 'Stats curves',
-        },
-        [WIDGET_TYPES.statsTable]: {
-          title: 'Stats table',
-        },
         [WIDGET_TYPES.statsCalendar]: {
           title: 'Stats calendar',
-        },
-        [WIDGET_TYPES.statsNumber]: {
-          title: 'Stats number',
-        },
-        [WIDGET_TYPES.statsPareto]: {
-          title: 'Pareto diagram',
         },
         [WIDGET_TYPES.text]: {
           title: 'Text',
@@ -1102,7 +1041,8 @@ export default {
       },
     },
     alarmsList: {
-      title: 'Alarms list',
+      title: 'Alarm list',
+      prefixTitle: '{prefix} - alarm list',
     },
     createUser: {
       create: {
@@ -1170,19 +1110,6 @@ export default {
         title: 'Title',
       },
     },
-    statsDateInterval: {
-      title: 'Stats - Date interval',
-      fields: {
-        periodValue: 'Period value',
-        periodUnit: 'Period unit',
-      },
-      errors: {
-        endDateLessOrEqualStartDate: 'End date should be after start date',
-      },
-      info: {
-        monthPeriodUnit: 'Stats response will be between {start} - {stop}',
-      },
-    },
     createSnmpRule: {
       create: {
         title: 'Create SNMP rule',
@@ -1190,39 +1117,9 @@ export default {
       edit: {
         title: 'Edit SNMP rule',
       },
-      fields: {
-        oid: {
-          title: 'oid',
-          labels: {
-            module: 'Select a mib module',
-          },
-        },
-        output: {
-          title: 'output',
-        },
-        resource: {
-          title: 'resource',
-        },
-        component: {
-          title: 'component',
-        },
-        connectorName: {
-          title: 'connector_name',
-        },
-        state: {
-          title: 'severity',
-          labels: {
-            toCustom: 'To custom',
-            defineVar: 'Define matching snmp var',
-            writeTemplate: 'Write template',
-          },
-        },
-        moduleMibObjects: {
-          vars: 'Snmp vars match field',
-          regex: 'Regex',
-          formatter: 'Format (capture group with \\x)',
-        },
-      },
+    },
+    selectView: {
+      title: 'Select view',
     },
     selectViewTab: {
       title: 'Select tab',
@@ -1435,6 +1332,7 @@ export default {
         configuration: 'Configuration',
         jobId: 'Job ID',
         query: 'Query',
+        multipleExecutions: 'Allow parallel execution',
       },
       errors: {
         invalidJSON: 'Invalid JSON',
@@ -1580,6 +1478,14 @@ export default {
         + '</ul>'
         + '</p>'
         + '<p>Please check your server configuration.</p>',
+      shortText: '<p>Websockets are unavailable, so the following functionalities are restricted:</p>'
+        + '<p>'
+        + '<ul>'
+        + '<li>Active broadcast messages</li>'
+        + '<li>Active users sessions</li>'
+        + '</ul>'
+        + '</p>'
+        + '<p>Please check your server configuration.</p>',
     },
     confirmationPhrase: {
       phrase: 'Phrase',
@@ -1687,6 +1593,11 @@ export default {
     statsRequestProblem: 'An error occurred while retrieving stats data',
     statsWrongEditionError: "Stats widgets are not available with 'core' edition",
     socketConnectionProblem: 'Problem with connection to socket server',
+    endDateLessOrEqualStartDate: 'End date should be after start date',
+    unknownWidgetType: 'Unknown widget type: {type}',
+  },
+  warnings: {
+    authTokenExpired: 'Authentication token was expired',
   },
   calendar: {
     today: 'Today',
@@ -1864,10 +1775,6 @@ export default {
     errors: {
       noValuePaths: 'You have to add at least 1 value path',
     },
-  },
-  snmpRules: {
-    uploadMib: 'Upload MIB',
-    addSnmpRule: 'Add SNMP rule',
   },
   layout: {
     sideBar: {
@@ -2126,43 +2033,53 @@ export default {
 
       [HEALTHCHECK_ENGINES_NAMES.webhook]: {
         name: 'Webhook',
+        description: 'Triggers the webhooks launch',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.fifo]: {
         name: 'FIFO',
         edgeLabel: 'RabbitMQ status\nIncomming flow KPIs',
+        description: 'Manages the queue of events and alarms',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.axe]: {
         name: 'AXE',
+        description: 'Creates alarms and performs actions with them',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.che]: {
         name: 'CHE',
+        description: 'Applies eventfilters and created entities',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.pbehavior]: {
         name: 'Pbehavior',
+        description: 'Checks if the alarm is under PBehvaior',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.action]: {
         name: 'Action',
+        description: 'Triggers the actions launch',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.service]: {
         name: 'Service',
+        description: 'Updates counters and generates service-events',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
         name: 'Dynamic infos',
+        description: 'Adds dynamic infos to alarm',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.correlation]: {
         name: 'Correlation',
+        description: 'Adds dynamic infos to alarm',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.remediation]: {
         name: 'Remediation',
+        description: 'Triggers the instructions',
       },
     },
   },
@@ -2239,6 +2156,7 @@ export default {
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
     closeConfirmationText: 'Would you like to resume this instruction later?',
+    queueNumber: '{number} {name} jobs are in the queue',
     popups: {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
@@ -2322,6 +2240,7 @@ export default {
     addAction: 'Add action',
     emptyActions: 'No actions added yet',
     output: 'Output Action Format',
+    forwardAuthor: 'Forward author to the next step',
     urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
       + '<i>For example:</i>'
       + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
@@ -2384,13 +2303,10 @@ export default {
   },
 
   service: {
-    fields: {
-      category: 'Category',
-      name: 'Name',
-      outputTemplate: 'Output template',
-      createCategory: 'Add new category',
-      createCategoryHelp: 'Press <kbd>enter</kbd> to save',
-    },
+    outputTemplate: 'Output template',
+    createCategory: 'Add new category',
+    createCategoryHelp: 'Press <kbd>enter</kbd> to save',
+    availabilityState: 'Hi availability state',
   },
 
   users: {
@@ -2581,7 +2497,7 @@ export default {
      */
     [USERS_PERMISSIONS.technical.exploitation.eventFilter]: {
       title: 'Event filter',
-      message: 'The event-filter is a feature of the engine engine-cheallowing to define rules handling events.',
+      message: 'The event-filter is a feature of engine-che, allowing to define rules handling events.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: {
@@ -2651,6 +2567,10 @@ export default {
     [USERS_PERMISSIONS.technical.healthcheck]: {
       title: 'Healthcheck',
       message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
+    },
+    [USERS_PERMISSIONS.technical.engine]: {
+      title: 'Engines',
+      message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
     },
     [USERS_PERMISSIONS.technical.kpi]: {
       title: 'KPI',
@@ -2757,5 +2677,21 @@ export default {
     helpInformation: 'The list of parameters to use for rating.',
   },
 
-  ...featureService.get('i18n.en'),
-};
+  snmpRule: {
+    oid: 'oid',
+    module: 'Select a mib module',
+    output: 'output',
+    resource: 'resource',
+    component: 'component',
+    connectorName: 'connector_name',
+    toCustom: 'To custom',
+    defineVar: 'Define matching snmp var',
+    writeTemplate: 'Write template',
+    state: 'severity',
+    moduleMibObjects: 'Snmp vars match field',
+    regex: 'Regex',
+    formatter: 'Format (capture group with \\x)',
+    uploadMib: 'Upload MIB',
+    addSnmpRule: 'Add SNMP rule',
+  },
+}, featureService.get('i18n.en'));

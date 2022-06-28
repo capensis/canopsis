@@ -12,6 +12,23 @@ Feature: Get alarms
       "data": [
         {
           "_id": "test-alarm-get-4",
+          "assigned_instructions": [
+            {
+              "_id": "test-instruction-with-entity-pattern-1",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-1-name"
+            },
+            {
+              "_id": "test-instruction-with-entity-pattern-2",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-2-name"
+            },
+            {
+              "_id": "test-instruction-with-patterns-combined",
+              "execution": null,
+              "name": "test-instruction-with-patterns-combined-name"
+            }
+          ],
           "entity": {
             "_id": "test-alarm-get-resource-4/test-alarm-get-component",
             "category": null,
@@ -31,7 +48,6 @@ Feature: Get alarms
           },
           "impact_state": 1,
           "infos": {},
-          "links": {},
           "t": 1597030222,
           "v": {
             "ack": {
@@ -92,6 +108,23 @@ Feature: Get alarms
         },
         {
           "_id": "test-alarm-get-3",
+          "assigned_instructions": [
+            {
+              "_id": "test-instruction-with-entity-pattern-1",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-1-name"
+            },
+            {
+              "_id": "test-instruction-with-entity-pattern-2",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-2-name"
+            },
+            {
+              "_id": "test-instruction-with-patterns-combined",
+              "execution": null,
+              "name": "test-instruction-with-patterns-combined-name"
+            }
+          ],
           "entity": {
             "_id": "test-alarm-get-resource-3/test-alarm-get-component",
             "category": null,
@@ -111,7 +144,6 @@ Feature: Get alarms
           },
           "impact_state": 1,
           "infos": {},
-          "links": {},
           "t": 1597030220,
           "v": {
             "children": [],
@@ -155,6 +187,23 @@ Feature: Get alarms
         },
         {
           "_id": "test-alarm-get-2",
+          "assigned_instructions": [
+            {
+              "_id": "test-instruction-with-entity-pattern-1",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-1-name"
+            },
+            {
+              "_id": "test-instruction-with-entity-pattern-2",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-2-name"
+            },
+            {
+              "_id": "test-instruction-with-patterns-combined",
+              "execution": null,
+              "name": "test-instruction-with-patterns-combined-name"
+            }
+          ],
           "entity": {
             "_id": "test-alarm-get-resource-2/test-alarm-get-component",
             "category": null,
@@ -174,7 +223,6 @@ Feature: Get alarms
           },
           "impact_state": 1,
           "infos": {},
-          "links": {},
           "t": 1597030219,
           "v": {
             "children": [],
@@ -219,6 +267,23 @@ Feature: Get alarms
         },
         {
           "_id": "test-alarm-get-1",
+          "assigned_instructions": [
+            {
+              "_id": "test-instruction-with-entity-pattern-1",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-1-name"
+            },
+            {
+              "_id": "test-instruction-with-entity-pattern-2",
+              "execution": null,
+              "name": "test-instruction-with-entity-pattern-2-name"
+            },
+            {
+              "_id": "test-instruction-with-patterns-combined",
+              "execution": null,
+              "name": "test-instruction-with-patterns-combined-name"
+            }
+          ],
           "entity": {
             "_id": "test-alarm-get-resource-1/test-alarm-get-component",
             "category": {
@@ -280,7 +345,6 @@ Feature: Get alarms
           },
           "impact_state": 3,
           "infos": {},
-          "links": {},
           "t": 1596942720,
           "v": {
             "children": [],
@@ -1071,42 +1135,6 @@ Feature: Get alarms
     }
     """
 
-  Scenario: given get alarm in pbehavior should return pbehavior
-    When I am admin
-    When I do GET /api/v4/alarms?search=test-alarm-pbehavior-get
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "data": [
-        {
-          "pbehavior": {
-            "_id": "test-pbehavior-to-get-alarm",
-            "author": "root",
-            "name": "pbehavior-to-get-alarm",
-            "rrule": "",
-            "tstart": 1591172881,
-            "tstop": 1591536400,
-            "type": {
-              "_id": "test-type-to-pbh-edit-1",
-              "description": "Pbh edit 1 State type",
-              "icon_name": "test-to-pbh-edit-1-icon",
-              "name": "Pbh edit 1 State",
-              "priority": 10,
-              "type": "active"
-            }
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-
   Scenario: given get search expression request should return alarms which are matched
   to expression filter
     When I am admin
@@ -1628,168 +1656,6 @@ Feature: Get alarms
         "page_count": 1,
         "per_page": 10,
         "total_count": 4
-      }
-    }
-    """
-
-    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-with-pbh-with-some-active&with_instructions=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "data": [
-        {
-          "_id": "test-alarm-instruction-with-pbehavior-1",
-          "assigned_instructions": [
-            {
-              "_id": "test-instruction-with-pbh-all-active",
-              "name": "test-alarm-with-pbh-all-active-name",
-              "execution": null
-            },
-            {
-              "_id": "test-instruction-with-pbh-with-some-active",
-              "name": "test-alarm-with-pbh-with-some-active-name",
-              "active_on_pbh": [
-                "pbh-type-for-instruction-with-pbehavior-1",
-                "pbh-type-for-instruction-with-pbehavior-2"
-              ],
-              "execution": null
-            }
-          ]
-        },
-        {
-          "_id": "test-alarm-instruction-with-pbehavior-2",
-          "assigned_instructions": [
-            {
-              "_id": "test-instruction-with-pbh-all-active",
-              "name": "test-alarm-with-pbh-all-active-name",
-              "execution": null
-            },
-            {
-              "_id": "test-instruction-with-pbh-with-some-active",
-              "name": "test-alarm-with-pbh-with-some-active-name",
-              "active_on_pbh": [
-                "pbh-type-for-instruction-with-pbehavior-1",
-                "pbh-type-for-instruction-with-pbehavior-2"
-              ],
-              "execution": null
-            }
-          ]
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 2
-      }
-    }
-    """
-
-    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-with-pbh-all-active&with_instructions=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "data": [
-        {
-          "_id": "test-alarm-instruction-with-pbehavior-1",
-          "assigned_instructions": [
-            {
-              "_id": "test-instruction-with-pbh-all-active",
-              "name": "test-alarm-with-pbh-all-active-name",
-              "execution": null
-            },
-            {
-              "_id": "test-instruction-with-pbh-with-some-active",
-              "name": "test-alarm-with-pbh-with-some-active-name",
-              "active_on_pbh": [
-                "pbh-type-for-instruction-with-pbehavior-1",
-                "pbh-type-for-instruction-with-pbehavior-2"
-              ],
-              "execution": null
-            }
-          ]
-        },
-        {
-          "_id": "test-alarm-instruction-with-pbehavior-2",
-          "assigned_instructions": [
-            {
-              "_id": "test-instruction-with-pbh-all-active",
-              "name": "test-alarm-with-pbh-all-active-name",
-              "execution": null
-            },
-            {
-              "_id": "test-instruction-with-pbh-with-some-active",
-              "name": "test-alarm-with-pbh-with-some-active-name",
-              "active_on_pbh": [
-                "pbh-type-for-instruction-with-pbehavior-1",
-                "pbh-type-for-instruction-with-pbehavior-2"
-              ],
-              "execution": null
-            }
-          ]
-        },
-        {
-          "_id": "test-alarm-instruction-with-pbehavior-3",
-          "assigned_instructions": [
-            {
-              "_id": "test-instruction-with-pbh-all-active",
-              "name": "test-alarm-with-pbh-all-active-name",
-              "execution": null
-            },
-            {
-              "_id": "test-instruction-with-pbh-with-some-disabled",
-              "name": "test-alarm-with-pbh-with-some-disabled-name",
-              "disabled_on_pbh": [
-                "pbh-type-for-instruction-with-pbehavior-1",
-                "pbh-type-for-instruction-with-pbehavior-2"
-              ],
-              "execution": null
-            }
-          ]
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 3
-      }
-    }
-    """
-
-    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-with-pbh-with-some-disabled&with_instructions=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "data": [
-        {
-          "_id": "test-alarm-instruction-with-pbehavior-3",
-          "assigned_instructions": [
-            {
-              "_id": "test-instruction-with-pbh-all-active",
-              "name": "test-alarm-with-pbh-all-active-name",
-              "execution": null
-            },
-            {
-              "_id": "test-instruction-with-pbh-with-some-disabled",
-              "name": "test-alarm-with-pbh-with-some-disabled-name",
-              "disabled_on_pbh": [
-                "pbh-type-for-instruction-with-pbehavior-1",
-                "pbh-type-for-instruction-with-pbehavior-2"
-              ],
-              "execution": null
-            }
-          ]
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
     }
     """

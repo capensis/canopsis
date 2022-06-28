@@ -2,6 +2,7 @@ package eventfilter_test
 
 import (
 	"context"
+	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"sort"
 	"testing"
 
@@ -60,10 +61,12 @@ func testNewService(ctrl *gomock.Controller, data ...bson.M) eventfilter.Service
 		return rules[i].Priority < rules[j].Priority
 	})
 
+	dbClient := mock_mongo.NewMockDbClient(ctrl)
+
 	adapter.EXPECT().List(gomock.Any()).Return(rules, nil)
 	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
 	mockTimezoneConfigProvider.EXPECT().Get()
-	return eventfilter.NewService(adapter, mockTimezoneConfigProvider, log.NewTestLogger())
+	return eventfilter.NewService(dbClient, adapter, mockTimezoneConfigProvider, log.NewTestLogger())
 }
 
 func TestProcessEvent(t *testing.T) {

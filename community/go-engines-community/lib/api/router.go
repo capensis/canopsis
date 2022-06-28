@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"net/url"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -47,7 +48,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/userpreferences"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -58,6 +61,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -77,9 +81,7 @@ const (
 	authObjEntityCategory = apisecurity.ObjEntityCategory
 	authObjContextGraph   = apisecurity.ObjContextGraph
 
-	authObjView      = apisecurity.ObjView
-	authObjViewGroup = apisecurity.ObjViewGroup
-	authObjPlaylist  = apisecurity.ObjPlaylist
+	authObjPlaylist = apisecurity.ObjPlaylist
 
 	authPermAlarmRead = apisecurity.PermAlarmRead
 
@@ -118,6 +120,7 @@ func RegisterRoutes(
 	router gin.IRouter,
 	security Security,
 	enforcer libsecurity.Enforcer,
+	legacyUrl string,
 	dbClient mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
@@ -186,7 +189,7 @@ func RegisterRoutes(
 		userPreferencesRouter := protected.Group("/user-preferences")
 		{
 			userPreferencesRouter.Use(middleware.OnlyAuth())
-			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient), actionLogger)
+			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient), widget.NewStore(dbClient), enforcer, actionLogger)
 			userPreferencesRouter.GET("/:id", userPreferencesApi.Get)
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
@@ -251,7 +254,7 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, GetLegacyURL())
+		alarmStore := alarm.NewStore(dbClient, legacyUrl)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider)
 		alarmRouter := protected.Group("/alarms")
 		{
@@ -288,7 +291,7 @@ func RegisterRoutes(
 			)
 		}
 
-		entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor, entityCleanerTaskChan, logger)
+		entityAPI := entity.NewApi(entity.NewStore(dbClient, timezoneConfigProvider), exportExecutor, entityCleanerTaskChan, logger)
 		entityExportRouter := protected.Group("/entity-export")
 		{
 			entityExportRouter.POST(
@@ -397,6 +400,10 @@ func RegisterRoutes(
 				middleware.SetAuthor(),
 				pbehaviorApi.Patch)
 			pbehaviorRouter.DELETE(
+				"",
+				middleware.Authorize(authObjPbh, permDelete, enforcer),
+				pbehaviorApi.DeleteByName)
+			pbehaviorRouter.DELETE(
 				"/:id",
 				middleware.Authorize(authObjPbh, permDelete, enforcer),
 				pbehaviorApi.Delete)
@@ -422,7 +429,7 @@ func RegisterRoutes(
 		}
 		entityRouter := protected.Group("/entities")
 		{
-			entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor, entityCleanerTaskChan, logger)
+			entityAPI := entity.NewApi(entity.NewStore(dbClient, timezoneConfigProvider), exportExecutor, entityCleanerTaskChan, logger)
 			entityRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
@@ -586,11 +593,9 @@ func RegisterRoutes(
 
 		weatherRouter := protected.Group("/weather-services")
 		{
-			statsStore := serviceweather.NewStatsStore(dbClient)
 			weatherAPI := serviceweather.NewApi(serviceweather.NewStore(
 				dbClient,
-				GetLegacyURL(),
-				statsStore,
+				legacyUrl,
 				alarmStore,
 				timezoneConfigProvider,
 			))
@@ -673,41 +678,95 @@ func RegisterRoutes(
 			engineinfo.GetRunInfo(ctx, runInfoManager),
 		)
 
-		viewAPI := view.NewApi(view.NewStore(dbClient), actionLogger)
+		viewAPI := view.NewApi(view.NewStore(dbClient, viewtab.NewStore(dbClient, widget.NewStore(dbClient))), enforcer, actionLogger)
 		viewRouter := protected.Group("/views")
 		{
 			viewRouter.POST(
 				"",
-				middleware.Authorize(authObjView, permCreate, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionCreate, enforcer),
 				middleware.SetAuthor(),
 				viewAPI.Create,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
 			viewRouter.GET(
 				"",
-				middleware.Authorize(authObjView, permRead, enforcer),
-				middleware.ProvideAuthorizedIds(permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer),
 				viewAPI.List,
 			)
 			viewRouter.GET(
 				"/:id",
-				middleware.Authorize(authObjView, permRead, enforcer),
-				middleware.AuthorizeByID(permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				middleware.AuthorizeByID(model.PermissionRead, enforcer),
 				viewAPI.Get,
 			)
 			viewRouter.PUT(
 				"/:id",
-				middleware.Authorize(authObjView, permUpdate, enforcer),
-				middleware.AuthorizeByID(permUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.AuthorizeByID(model.PermissionUpdate, enforcer),
 				middleware.SetAuthor(),
 				viewAPI.Update,
 			)
 			viewRouter.DELETE(
 				"/:id",
-				middleware.Authorize(authObjView, permDelete, enforcer),
-				middleware.AuthorizeByID(permDelete, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionDelete, enforcer),
+				middleware.AuthorizeByID(model.PermissionDelete, enforcer),
 				viewAPI.Delete,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+			)
+		}
+
+		viewTabAPI := viewtab.NewApi(viewtab.NewStore(dbClient, widget.NewStore(dbClient)), enforcer, actionLogger)
+		viewTabRouter := protected.Group("/view-tabs")
+		{
+			viewTabRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				viewTabAPI.Create,
+			)
+			viewTabRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				viewTabAPI.Get,
+			)
+			viewTabRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				viewTabAPI.Update,
+			)
+			viewTabRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				viewTabAPI.Delete,
+			)
+		}
+
+		widgetAPI := widget.NewApi(widget.NewStore(dbClient), enforcer, actionLogger)
+		widgetRouter := protected.Group("/widgets")
+		{
+			widgetRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				widgetAPI.Create,
+			)
+			widgetRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				widgetAPI.Get,
+			)
+			widgetRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				widgetAPI.Update,
+			)
+			widgetRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				widgetAPI.Delete,
 			)
 		}
 
@@ -716,40 +775,92 @@ func RegisterRoutes(
 		{
 			viewGroupRouter.POST(
 				"",
-				middleware.Authorize(authObjViewGroup, permCreate, enforcer),
+				middleware.Authorize(apisecurity.ObjViewGroup, permCreate, enforcer),
 				middleware.SetAuthor(),
 				viewGroupAPI.Create,
 			)
 			viewGroupRouter.GET(
 				"",
 				middleware.ProvideAuthorizedIds(permRead, enforcer),
-				middleware.Authorize(authObjViewGroup, permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjViewGroup, permRead, enforcer),
 				viewGroupAPI.List,
 			)
 			viewGroupRouter.GET(
 				"/:id",
-				middleware.Authorize(authObjViewGroup, permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjViewGroup, permRead, enforcer),
 				viewGroupAPI.Get,
 			)
 			viewGroupRouter.PUT(
 				"/:id",
-				middleware.Authorize(authObjViewGroup, permUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjViewGroup, permUpdate, enforcer),
 				middleware.SetAuthor(),
 				viewGroupAPI.Update,
 			)
 			viewGroupRouter.DELETE(
 				"/:id",
-				middleware.Authorize(authObjViewGroup, permDelete, enforcer),
+				middleware.Authorize(apisecurity.ObjViewGroup, permDelete, enforcer),
 				viewGroupAPI.Delete,
 			)
 		}
 
+		protected.POST(
+			"/view-copy/:id",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionCreate, enforcer),
+			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			middleware.AuthorizeByID(model.PermissionRead, enforcer),
+			middleware.SetAuthor(),
+			viewAPI.Copy,
+			middleware.ReloadEnforcerPolicyOnChange(enforcer),
+		)
+
 		protected.PUT(
 			"/view-positions",
-			middleware.Authorize(authObjView, permUpdate, enforcer),
-			middleware.Authorize(authObjViewGroup, permUpdate, enforcer),
-			middleware.ProvideAuthorizedIds(permUpdate, enforcer),
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			middleware.Authorize(apisecurity.ObjViewGroup, model.PermissionUpdate, enforcer),
 			viewAPI.UpdatePositions,
+		)
+
+		protected.POST(
+			"/view-export",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			middleware.Authorize(apisecurity.ObjViewGroup, model.PermissionRead, enforcer),
+			viewAPI.Export,
+		)
+
+		protected.POST(
+			"/view-import",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			middleware.Authorize(apisecurity.ObjViewGroup, model.PermissionUpdate, enforcer),
+			viewAPI.Import,
+			middleware.ReloadEnforcerPolicyOnChange(enforcer),
+		)
+
+		protected.POST(
+			"/view-tab-copy/:id",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			middleware.SetAuthor(),
+			viewTabAPI.Copy,
+		)
+
+		protected.PUT(
+			"/view-tab-positions",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			viewTabAPI.UpdatePositions,
+		)
+
+		protected.POST(
+			"/widget-copy/:id",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			middleware.SetAuthor(),
+			widgetAPI.Copy,
+		)
+
+		protected.PUT(
+			"/widget-grid-positions",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			widgetAPI.UpdateGridPositions,
 		)
 
 		// broadcast message API
@@ -857,7 +968,12 @@ func RegisterRoutes(
 			contextGraphRouter.PUT(
 				"import",
 				middleware.Authorize(authObjContextGraph, permCreate, enforcer),
-				contextGraphAPI.Import,
+				contextGraphAPI.ImportAll,
+			)
+			contextGraphRouter.PUT(
+				"import-partial",
+				middleware.Authorize(authObjContextGraph, permCreate, enforcer),
+				contextGraphAPI.ImportPartial,
 			)
 			contextGraphRouter.GET(
 				"import/status/:id",
@@ -898,7 +1014,7 @@ func RegisterRoutes(
 
 		playlistRouter := protected.Group("/playlists")
 		{
-			playlistApi := playlist.NewApi(playlist.NewStore(dbClient), actionLogger)
+			playlistApi := playlist.NewApi(playlist.NewStore(dbClient), viewtab.NewStore(dbClient, widget.NewStore(dbClient)), enforcer, actionLogger)
 			playlistRouter.POST(
 				"",
 				middleware.Authorize(authObjPlaylist, permCreate, enforcer),
@@ -1082,52 +1198,6 @@ func RegisterRoutes(
 				)
 			}
 
-			viewRouter := bulkRouter.Group("/views")
-			{
-				viewRouter.POST(
-					"",
-					middleware.Authorize(authObjView, permCreate, enforcer),
-					middleware.PreProcessBulk(conf, true),
-					viewAPI.BulkCreate,
-					middleware.ReloadEnforcerPolicyOnChange(enforcer),
-				)
-				viewRouter.PUT(
-					"",
-					middleware.Authorize(authObjView, permUpdate, enforcer),
-					middleware.ProvideAuthorizedIds(permUpdate, enforcer),
-					middleware.PreProcessBulk(conf, true),
-					viewAPI.BulkUpdate,
-				)
-				viewRouter.DELETE(
-					"",
-					middleware.Authorize(authObjView, permDelete, enforcer),
-					middleware.ProvideAuthorizedIds(permDelete, enforcer),
-					viewAPI.BulkDelete,
-					middleware.ReloadEnforcerPolicyOnChange(enforcer),
-				)
-			}
-
-			viewGroupRouter := bulkRouter.Group("/view-groups")
-			{
-				viewGroupRouter.POST(
-					"",
-					middleware.Authorize(authObjViewGroup, permCreate, enforcer),
-					middleware.PreProcessBulk(conf, true),
-					viewGroupAPI.BulkCreate,
-				)
-				viewGroupRouter.PUT(
-					"",
-					middleware.Authorize(authObjViewGroup, permUpdate, enforcer),
-					middleware.PreProcessBulk(conf, true),
-					viewGroupAPI.BulkUpdate,
-				)
-				viewGroupRouter.DELETE(
-					"",
-					middleware.Authorize(authObjViewGroup, permDelete, enforcer),
-					viewGroupAPI.BulkDelete,
-				)
-			}
-
 			pbehaviorRouter := bulkRouter.Group("/pbehaviors")
 			{
 				pbehaviorRouter.POST(
@@ -1266,4 +1336,19 @@ func RegisterRoutes(
 			)
 		}
 	}
+}
+
+func GetProxy(
+	legacyUrl *url.URL,
+	security Security,
+	enforcer libsecurity.Enforcer,
+	accessConfig proxy.AccessConfig,
+) []gin.HandlerFunc {
+	authMiddleware := security.GetAuthMiddleware()
+
+	return append(
+		authMiddleware,
+		middleware.ProxyAuthorize(enforcer, accessConfig),
+		ReverseProxyHandler(legacyUrl),
+	)
 }

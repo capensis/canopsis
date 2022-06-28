@@ -9,8 +9,8 @@ import (
 )
 
 // PartialUpdateAck add ack step to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateAck(timestamp CpsTime, author, output, userID, role, initiator string) error {
-	if a.Value.ACK != nil {
+func (a *Alarm) PartialUpdateAck(timestamp CpsTime, author, output, userID, role, initiator string, allowDouble bool) error {
+	if !allowDouble && a.Value.ACK != nil {
 		return nil
 	}
 
@@ -146,12 +146,15 @@ func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, userID,
 		for i := len(a.Value.Steps) - 2; i >= 0; i-- {
 			if a.Value.Steps[i].Type == AlarmStepPbhEnter {
 				enterTimestamp = a.Value.Steps[i].Timestamp
+				break
 			}
 		}
 
-		d := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
-		a.Value.PbehaviorInactiveDuration += d
-		a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
+		if !enterTimestamp.IsZero() {
+			d := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
+			a.Value.PbehaviorInactiveDuration += d
+			a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
+		}
 	}
 
 	return nil
@@ -199,12 +202,15 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 		for i := len(a.Value.Steps) - 3; i >= 0; i-- {
 			if a.Value.Steps[i].Type == AlarmStepPbhEnter {
 				enterTimestamp = a.Value.Steps[i].Timestamp
+				break
 			}
 		}
 
-		d := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
-		a.Value.PbehaviorInactiveDuration += d
-		a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
+		if !enterTimestamp.IsZero() {
+			d := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
+			a.Value.PbehaviorInactiveDuration += d
+			a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
+		}
 	}
 
 	return nil
@@ -378,7 +384,15 @@ func ResolveSnoozeAfterPbhLeave(timestamp CpsTime, alarm *Alarm) {
 			step := steps[i]
 			switch step.Type {
 			case AlarmStepSnooze:
-				snoozeElapsed += lastEnterTime - step.Timestamp.Unix()
+				// this means, that snooze step is happened after pbh_enter step,
+				// it's possible to do with a scenario feature, so if it happens,
+				// then elapsed time = 0
+				if lastEnterTime == 0 {
+					snoozeElapsed = 0
+				} else {
+					snoozeElapsed += lastEnterTime - step.Timestamp.Unix()
+				}
+
 				snoozeDuration = int64(step.Value) - step.Timestamp.Unix()
 
 				break Loop

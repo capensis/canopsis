@@ -1,16 +1,20 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
-        v-container(v-show="isDuplicating")
-          v-alert(type="info") {{ $t('modals.view.duplicate.infoMessage') }}
-        view-form(
-          v-model="form",
-          :groups="groups"
-        )
-      template(slot="actions")
+      template(#text="")
+        v-fade-transition
+          v-layout(v-if="pending", justify-center)
+            v-progress-circular(color="primary", indeterminate)
+          v-layout(v-else)
+            v-flex(xs12)
+              v-alert(:value="duplicate", type="info") {{ $t('modals.view.duplicate.infoMessage') }}
+              view-form(
+                v-model="form",
+                :groups="groups"
+              )
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
           v-if="hasUpdateViewAccess",
@@ -19,7 +23,7 @@
           type="submit"
         ) {{ $t('common.submit') }}
         v-btn.error(
-          v-if="config.view && hasDeleteViewAccess && !isDuplicating",
+          v-if="view && hasDeleteViewAccess && !duplicate",
           :disabled="submitting",
           @click="remove"
         ) {{ $t('common.delete') }}
@@ -28,18 +32,17 @@
 <script>
 import { find, isString } from 'lodash';
 
-import { MODALS, ROUTES_NAMES } from '@/constants';
+import { MODALS } from '@/constants';
 
-import { generateCopyOfViewTab, getViewsWidgetsIdsMappings } from '@/helpers/entities';
 import { viewToForm, viewToRequest } from '@/helpers/forms/view';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
+import { viewRouterMixin } from '@/mixins/view/router';
+import { entitiesViewMixin } from '@/mixins/entities/view';
+import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
+import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import entitiesViewMixin from '@/mixins/entities/view';
-import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
-import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
-import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 
 import ViewForm from '@/components/other/view/view-form.vue';
 
@@ -56,15 +59,16 @@ export default {
   components: { ViewForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
+    viewRouterMixin,
     entitiesViewMixin,
     entitiesViewGroupMixin,
-    entitiesUserPreferenceMixin,
     permissionsTechnicalViewMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
   data() {
     return {
+      pending: true,
       form: viewToForm(this.modal.config.view),
     };
   },
@@ -77,16 +81,12 @@ export default {
       return this.config.view;
     },
 
-    isDuplicating() {
-      return this.view && !this.view._id;
-    },
-
-    isEditing() {
-      return this.view && this.view._id;
+    duplicate() {
+      return this.config.duplicate;
     },
 
     hasUpdateViewAccess() {
-      if (this.view && !this.isDuplicating) {
+      if (this.view && !this.duplicate) {
         return this.checkUpdateAccess(this.view._id) && this.hasUpdateAnyViewAccess;
       }
 
@@ -94,39 +94,32 @@ export default {
     },
 
     hasDeleteViewAccess() {
-      if (this.view && !this.isDuplicating) {
+      if (this.view && !this.duplicate) {
         return this.checkDeleteAccess(this.view._id) && this.hasDeleteAnyViewAccess;
       }
 
       return this.hasDeleteAnyViewAccess;
     },
   },
-  mounted() {
-    this.fetchAllGroupsListWithViewsWithCurrentUser();
+  async mounted() {
+    this.pending = true;
+
+    await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+
+    this.pending = false;
   },
   methods: {
     /**
-     * Redirect to home page if we surfing on this view at the moment
-     */
-    redirectToHomeIfCurrentRoute() {
-      const { name, params = {} } = this.$route;
-
-      if (name === ROUTES_NAMES.view && params.id === this.view._id) {
-        this.$router.push({ name: ROUTES_NAMES.home });
-      }
-    },
-
-    /**
      * Remove view
      */
-    remove() {
+    async remove() {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
             try {
               await this.removeViewWithPopup({ id: this.view._id });
-              await this.fetchAllGroupsListWithViewsWithCurrentUser();
+              await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
 
               this.redirectToHomeIfCurrentRoute();
 
@@ -140,26 +133,13 @@ export default {
     },
 
     /**
-     * Create view group with special title
-     *
-     * @param {string} title
-     * @return {Promise<ViewGroup>}
-     */
-    createGroupWithSpecialTitle(title) {
-      return this.createGroup({
-        data: { title },
-      });
-    },
-
-    /**
      * Try to find view group by title or create a new one with special title
      *
      * @param {string} title
      * @return {ViewGroup | Promise<ViewGroup>}
      */
     prepareGroup(title) {
-      return find(this.groups, { title })
-        || this.createGroupWithSpecialTitle(this.form.group);
+      return find(this.groups, { title }) ?? this.createGroup({ data: { title } });
     },
 
     /**
@@ -172,50 +152,38 @@ export default {
         ? await this.prepareGroup(this.form.group)
         : this.form.group;
 
-      const data = viewToRequest({
+      return viewToRequest({
         ...this.view,
         ...this.form,
 
         group,
       });
-
-      /**
-       * If we're creating a new view, or duplicating an existing one.
-       * Generate a new view. Then copy tabs and widgets if we're duplicating a view
-       */
-      if (this.isDuplicating) {
-        data.tabs = data.tabs.map(generateCopyOfViewTab);
-
-        const widgetsIdsMappings = getViewsWidgetsIdsMappings(this.view, data);
-
-        await this.copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings);
-      }
-
-      return data;
     },
 
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
-      if (isFormValid) {
-        try {
-          const data = await this.formToRequest();
-
-          if (this.isEditing) {
-            await this.updateViewWithPopup({ id: this.view._id, data });
-          } else {
-            await this.createViewWithPopup({ data });
-          }
-
-          await this.fetchAllGroupsListWithViewsWithCurrentUser();
-
-          this.$modals.hide();
-        } catch (err) {
-          const text = this.isEditing ? this.$t('modals.view.fail.edit') : this.$t('modals.view.fail.create');
-
-          this.$popups.error({ text });
-        }
+      if (!isFormValid) {
+        return;
       }
+
+      const data = await this.formToRequest();
+
+      if (this.config.action) {
+        await this.config.action(data);
+      }
+
+      if (this.duplicate) {
+        await this.copyViewWithPopup({ id: this.view._id, data });
+      } else if (this.view?._id) {
+        await this.updateViewWithPopup({ id: this.view._id, data });
+      } else {
+        await this.createViewWithPopup({ data });
+      }
+
+      await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+
+      this.$modals.hide();
     },
   },
 };

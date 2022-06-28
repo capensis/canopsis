@@ -1,6 +1,7 @@
 Feature: update user interface
   I need to be able to update user interface
   Only admin should be able to update user interface
+  Revert scenario changes to max_matched_items as fixtures loaded
 
   Scenario: PUT a valid user_interface but unauthorized
     When I do PUT /api/v4/internal/user_interface
@@ -218,3 +219,11 @@ Feature: update user interface
       }
     }
     """
+    When I do PUT /api/v4/internal/user_interface:
+    """
+    {
+      "max_matched_items": 4
+    }
+    """
+    Then the response code should be 200
+    When I wait 2s

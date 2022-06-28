@@ -552,115 +552,6 @@
     }
   },
   {
-    "_id": "test-alarm-pbehavior-get",
-    "d": "test-alarm-pbehavior-get-resource/test-alarm-pbehavior-get-component",
-    "t": 1597030118,
-    "v": {
-      "ack": {
-        "_t": "ack",
-        "t": 1597030351,
-        "a": "root",
-        "m": "",
-        "role": "admin",
-        "val": 0,
-        "initiator": "user"
-      },
-      "canceled": {
-        "_t": "cancel",
-        "t": 1597030366,
-        "a": "root",
-        "m": "Test",
-        "role": "admin",
-        "val": 4,
-        "initiator": "user"
-      },
-      "state": {
-        "_t": "stateinc",
-        "t": 1597030118,
-        "a": "test-alarm-pbehavior-get-connector.test-alarm-pbehavior-get-connectorname",
-        "m": "test-alarm-pbehavior-get alarm",
-        "val": 1
-      },
-      "status": {
-        "_t": "cancel",
-        "t": 1597030366,
-        "a": "root",
-        "m": "Test",
-        "role": "admin",
-        "val": 4,
-        "initiator": "user"
-      },
-      "steps": [
-        {
-          "_t": "stateinc",
-          "t": 1597030118,
-          "a": "test-alarm-get-connector.test-alarm-pbehavior-get-connectorname",
-          "m": "test-alarm-pbehavior-get alarm",
-          "val": 1
-        },
-        {
-          "_t": "statusinc",
-          "t": 1597030118,
-          "a": "test-alarm-pbehavior-get-connector.test-alarm-pbehavior-get-connectorname",
-          "m": "test-alarm-pbehavior-get alarm",
-          "val": 1
-        },
-        {
-          "_t": "ack",
-          "t": 1597030351,
-          "a": "root",
-          "m": "",
-          "role": "admin",
-          "val": 0,
-          "initiator": "user"
-        },
-        {
-          "_t": "cancel",
-          "t": 1597030366,
-          "a": "root",
-          "m": "Test",
-          "role": "admin",
-          "val": 0,
-          "initiator": "user"
-        },
-        {
-          "_t": "statusinc",
-          "t": 1597030366,
-          "a": "test-alarm-pbehavior-get-connector.test-alarm-pbehavior-get-connectorname",
-          "m": "Test",
-          "val": 4
-        }
-      ],
-      "component": "test-alarm-pbehavior-get-component",
-      "connector": "test-alarm-pbehavior-get-connector",
-      "connector_name": "test-alarm-pbehavior-get-connectorname",
-      "creation_date": 1597030118,
-      "display_name": "PK-SL-XK",
-      "initial_output": "test-alarm-pbehavior-get alarm",
-      "output": "test-alarm-pbehavior-get",
-      "initial_long_output": "",
-      "long_output": "",
-      "long_output_history": [
-        ""
-      ],
-      "last_update_date": 1597030366,
-      "last_event_date": 1597030118,
-      "resource": "test-alarm-pbehavior-get-resource",
-      "resolved": 1597034023,
-      "tags": [],
-      "parents": [],
-      "children": [],
-      "total_state_changes": 1,
-      "infos": {
-      },
-      "infos_rule_version": {
-      },
-      "pbehavior_info": {
-        "id": "test-pbehavior-to-get-alarm"
-      }
-    }
-  },
-  {
     "_id": "test-alarmcounter-get-1",
     "d": "test-alarmcounter-get-resource-1/test-alarmcounter-get-component",
     "t": 1596942720,
@@ -1158,6 +1049,142 @@
       "last_update_date": 1596942720,
       "last_event_date": 1596942720,
       "resource": "test-instruction-execution-start-resource-2",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-instruction-execution-start-3-1",
+    "d": "test-instruction-execution-start-resource-3-1/test-instruction-execution-start-component",
+    "t": 1596942720,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+        "m": "test-instruction-execution-start alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+        "m": "test-instruction-execution-start alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+          "m": "test-instruction-execution-start alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+          "m": "test-instruction-execution-start alarm",
+          "val": 1
+        },
+        {
+          "_t": "comment",
+          "t": 1597033041,
+          "a": "system",
+          "m": "comment test-instruction-execution-start",
+          "role": "admin",
+          "val": 0,
+          "initiator": "user"
+        }
+      ],
+      "component": "test-instruction-execution-start-component",
+      "connector": "test-instruction-execution-start-connector",
+      "connector_name": "test-instruction-execution-start-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-instruction-execution-start alarm",
+      "output": "test-instruction-execution-start alarm",
+      "initial_long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-instruction-execution-start-resource-3-1",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-instruction-execution-start-3-2",
+    "d": "test-instruction-execution-start-resource-3-2/test-instruction-execution-start-component",
+    "t": 1596942720,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+        "m": "test-instruction-execution-start alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+        "m": "test-instruction-execution-start alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+          "m": "test-instruction-execution-start alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+          "m": "test-instruction-execution-start alarm",
+          "val": 1
+        },
+        {
+          "_t": "comment",
+          "t": 1597033041,
+          "a": "system",
+          "m": "comment test-instruction-execution-start",
+          "role": "admin",
+          "val": 0,
+          "initiator": "user"
+        }
+      ],
+      "component": "test-instruction-execution-start-component",
+      "connector": "test-instruction-execution-start-connector",
+      "connector_name": "test-instruction-execution-start-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-instruction-execution-start alarm",
+      "output": "test-instruction-execution-start alarm",
+      "initial_long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-instruction-execution-start-resource-3-2",
       "tags": [],
       "parents": [],
       "children": [],
@@ -3054,105 +3081,6 @@
     }
   },
   {
-    "_id": "test-alarm-instruction-with-pbehavior-1",
-    "d": "test-alarm-instruction-with-pbehavior-1/test-alarm-instruction-with-pbehavior-component",
-    "t": 1596942720,
-    "v": {
-      "component": "test-alarm-instruction-with-pbehavior-component",
-      "connector": "test-alarm-instruction-with-pbehavior-connector",
-      "connector_name": "test-alarm-instruction-with-pbehavior-connectorname",
-      "creation_date": 1596942720,
-      "display_name": "RC-KC_tW",
-      "initial_output": "test-alarm-instruction-with-pbehavior alarm",
-      "output": "test-alarm-instruction-with-pbehavior alarm",
-      "initial_long_output": "",
-      "long_output": "test-alarm-instruction-with-pbehavior",
-      "long_output_history": [
-        ""
-      ],
-      "last_update_date": 1596942720,
-      "last_event_date": 1596942720,
-      "resource": "test-alarm-instruction-with-pbehavior-1",
-      "tags": [],
-      "parents": [],
-      "children": [],
-      "total_state_changes": 1,
-      "pbehavior_info": {
-        "type": "pbh-type-for-instruction-with-pbehavior-1"
-      },
-      "infos": {
-      },
-      "infos_rule_version": {
-      }
-    }
-  },
-  {
-    "_id": "test-alarm-instruction-with-pbehavior-2",
-    "d": "test-alarm-instruction-with-pbehavior-2/test-alarm-instruction-with-pbehavior-component",
-    "t": 1596942720,
-    "v": {
-      "component": "test-alarm-instruction-with-pbehavior-component",
-      "connector": "test-alarm-instruction-with-pbehavior-connector",
-      "connector_name": "test-alarm-instruction-with-pbehavior-connectorname",
-      "creation_date": 1596942720,
-      "display_name": "RC-KC_tW",
-      "initial_output": "test-alarm-instruction-with-pbehavior alarm",
-      "output": "test-alarm-instruction-with-pbehavior alarm",
-      "initial_long_output": "",
-      "long_output": "test-alarm-instruction-with-pbehavior",
-      "long_output_history": [
-        ""
-      ],
-      "last_update_date": 1596942720,
-      "last_event_date": 1596942720,
-      "resource": "test-alarm-instruction-with-pbehavior-2",
-      "tags": [],
-      "parents": [],
-      "children": [],
-      "total_state_changes": 1,
-      "pbehavior_info": {
-        "type": "pbh-type-for-instruction-with-pbehavior-2"
-      },
-      "infos": {
-      },
-      "infos_rule_version": {
-      }
-    }
-  },
-  {
-    "_id": "test-alarm-instruction-with-pbehavior-3",
-    "d": "test-alarm-instruction-with-pbehavior-3/test-alarm-instruction-with-pbehavior-component",
-    "t": 1596942720,
-    "v": {
-      "component": "test-alarm-instruction-with-pbehavior-component",
-      "connector": "test-alarm-instruction-with-pbehavior-connector",
-      "connector_name": "test-alarm-instruction-with-pbehavior-connectorname",
-      "creation_date": 1596942720,
-      "display_name": "RC-KC_tW",
-      "initial_output": "test-alarm-instruction-with-pbehavior alarm",
-      "output": "test-alarm-instruction-with-pbehavior alarm",
-      "initial_long_output": "",
-      "long_output": "test-alarm-instruction-with-pbehavior",
-      "long_output_history": [
-        ""
-      ],
-      "last_update_date": 1596942720,
-      "last_event_date": 1596942720,
-      "resource": "test-alarm-instruction-with-pbehavior-3",
-      "tags": [],
-      "parents": [],
-      "children": [],
-      "total_state_changes": 1,
-      "pbehavior_info": {
-        "type": "pbh-type-for-instruction-with-pbehavior-3"
-      },
-      "infos": {
-      },
-      "infos_rule_version": {
-      }
-    }
-  },
-  {
     "_id": "test-alarm-to-check-deletable-entity",
     "d": "test-entity-to-check-deletable-resource/test-entity-to-check-deletable-component",
     "t": 1596942720,
@@ -3176,7 +3104,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "pbehavior_info": null,
       "infos": {},
       "infos_rule_version": {}
     }
@@ -3205,7 +3132,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "pbehavior_info": null,
       "infos": {},
       "infos_rule_version": {}
     }
@@ -3493,7 +3419,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "pbehavior_info": null,
       "infos": {},
       "infos_rule_version": {}
     }
@@ -3522,7 +3447,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "pbehavior_info": null,
       "infos": {},
       "infos_rule_version": {}
     }
@@ -3551,7 +3475,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "pbehavior_info": null,
       "infos": {},
       "infos_rule_version": {}
     }
@@ -3580,7 +3503,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "pbehavior_info": null,
       "infos": {},
       "infos_rule_version": {}
     }
@@ -3609,7 +3531,6 @@
       "parents": [],
       "children": [],
       "total_state_changes": 1,
-      "pbehavior_info": null,
       "infos": {},
       "infos_rule_version": {}
     }
@@ -4554,7 +4475,6 @@
       ],
       "children": [],
       "total_state_changes": 1,
-      "pbehavior_info": null,
       "infos": {},
       "infos_rule_version": {}
     }
@@ -4585,7 +4505,6 @@
       ],
       "children": [],
       "total_state_changes": 1,
-      "pbehavior_info": null,
       "infos": {},
       "infos_rule_version": {}
     }
@@ -4616,7 +4535,6 @@
       ],
       "children": [],
       "total_state_changes": 1,
-      "pbehavior_info": null,
       "infos": {},
       "infos_rule_version": {}
     }
@@ -4647,7 +4565,6 @@
       ],
       "children": [],
       "total_state_changes": 1,
-      "pbehavior_info": null,
       "infos": {},
       "infos_rule_version": {}
     }

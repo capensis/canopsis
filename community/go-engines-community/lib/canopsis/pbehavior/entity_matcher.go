@@ -14,7 +14,7 @@ const defaultAggregationStep = 100
 
 // EntityMatcher checks if an entity is matched to filter.
 type EntityMatcher interface {
-	MatchAll(ctx context.Context, entityID string, filters map[string]string) (map[string]bool, error)
+	MatchAll(ctx context.Context, entityID string, filters map[string]string) ([]string, error)
 }
 
 // NewEntityMatcher creates new matcher.
@@ -46,8 +46,8 @@ func (m *entityMatcher) MatchAll(
 	ctx context.Context,
 	entityID string,
 	filters map[string]string,
-) (map[string]bool, error) {
-	res := make(map[string]bool)
+) ([]string, error) {
+	matched := make(map[string]bool)
 	filtersLen := len(filters)
 	offsetCount := int(math.Ceil(float64(filtersLen) / float64(m.aggregationStep)))
 	filtersArr := make([]keyValue, filtersLen)
@@ -97,14 +97,21 @@ func (m *entityMatcher) MatchAll(
 
 		for _, v := range subFilters {
 			if r, ok := doc[v.Key]; ok {
-				res[v.Key] = len(r) > 0
+				matched[v.Key] = len(r) > 0
 			} else {
-				res[v.Key] = true
+				matched[v.Key] = true
 			}
 		}
 	}
 
-	return res, nil
+	keys := make([]string, 0)
+	for k, ok := range matched {
+		if ok {
+			keys = append(keys, k)
+		}
+	}
+
+	return keys, nil
 }
 
 // transformFilter unmarshals string to bson expression.

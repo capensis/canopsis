@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
+
 # Note: use the following command to get the right mkdocs version
 # python3 -m pip install -r ./sources/docs/requirements.txt
 #
@@ -11,7 +13,7 @@ repo_name: 'git.canopsis.net'
 
 docs_dir:
    sources/docs/fr
-copyright: Documentation © Capensis 2018–2021 / CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/)
+copyright: Documentation © Capensis 2018–2022 / CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/)
 
 theme:
   name: material
@@ -53,7 +55,9 @@ markdown_extensions:
           - name: mermaid
             class: mermaid
             format: !!python/name:pymdownx.superfences.fence_div_format
-    - pymdownx.tabbed
+    - pymdownx.tabbed:
+        # (mandatory with mkdocs-material)
+        alternate_style: true
     - toc:
         permalink: true
 
@@ -70,12 +74,12 @@ extra:
       link: https://twitter.com/canopsis
     - icon: fontawesome/brands/linkedin
       link: https://fr.linkedin.com/company/capensis
-    - icon: fontawesome/brands/docker
-      link: https://hub.docker.com/u/canopsis/
+    - icon: fontawesome/brands/youtube
+      link: https://www.youtube.com/channel/UCkjGq4pG3jrlTRnMmA8BGbQ
 
 extra_css:
   - mkdocs.css
 
 extra_javascript:
-  # sync this with the version used in https://squidfunk.github.io/mkdocs-material/reference/diagrams source
+  # sync this with the version used in <https://squidfunk.github.io/mkdocs-material/reference/diagrams> HTML source
   - https://unpkg.com/mermaid@8.13.3/dist/mermaid.min.js
