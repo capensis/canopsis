@@ -2,9 +2,8 @@ package correlation
 
 import (
 	"context"
-	"errors"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -54,26 +53,21 @@ func (a mongoAdapter) GetManualRule() (Rule, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	cursor, err := a.dbCollection.Find(ctx, bson.M{
+	var rule Rule
+
+	err := a.dbCollection.FindOne(ctx, bson.M{
 		"type": bson.M{
 			"$eq": RuleManualGroup,
 		},
-	})
+	}).Decode(&rule)
+
 	if err != nil {
-		return Rule{}, err
+		if err == mongodriver.ErrNoDocuments {
+			return rule, nil
+		}
 	}
 
-	var rules []Rule
-	err = cursor.All(ctx, &rules)
-	if err != nil {
-		return Rule{}, err
-	}
-
-	if len(rules) == 0 {
-		return Rule{}, errt.NewNotFound(errors.New("not found existing manualrule"))
-	}
-
-	return rules[0], nil
+	return rule, err
 }
 
 func (a mongoAdapter) GetRule(id string) (Rule, error) {

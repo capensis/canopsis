@@ -40,7 +40,7 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
         common.by: lastComment-author
       </div>
       <div>
-        common.date: 08/08/2013 0:00:00
+        common.date: 07/08/2013 19:00:00
       </div>
       <div
         class="c-extra-details__message"
@@ -95,7 +95,7 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
         common.by: lastComment-author
       </div>
       <div>
-        common.date: 12:00:00
+        common.date: 6:00:00
       </div>
       <div
         class="c-extra-details__message"

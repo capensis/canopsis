@@ -1,9 +1,5 @@
 # Principes des numéros de version de Canopsis
 
-Une nouvelle version de Canopsis sort généralement toutes les 3 semaines.
-
-Afin de décrire ses changements, Canopsis suit le principe du *versionnage sémantique*.
-
 ## Mises à jour majeures
 
 On parle d'une mise à jour *majeure* lorque le premier chiffre change ; par exemple, lors du passage de Canopsis 3 à Canopsis 4.
@@ -18,7 +14,7 @@ Les mises à jour *intermédiaires* sont les plus courantes. Il s'agit, par exem
 
 Ce type de mise à jour apporte de nouvelles fonctionnalités, souvent des corrections de bugs et parfois quelques changements de comportement.
 
-Elle nécessite de suivre la [procédure standard de mise à jour](index.md) et de réaliser toute manipulation supplémentaire décrite dans les [notes de version](../../index.md#notes-de-version) correspondantes.
+Elle nécessite de suivre la [procédure standard de mise à jour](index.md) et de réaliser toute manipulation supplémentaire décrite dans les [notes de version](../../index.md#notes-de-version) correspondantes. Si un Guide de migration existe pour cette version, il doit être suivi.
 
 ## Mises à jour mineures
 

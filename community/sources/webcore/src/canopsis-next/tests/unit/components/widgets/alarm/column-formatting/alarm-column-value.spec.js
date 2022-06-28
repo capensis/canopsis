@@ -1,5 +1,6 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import flushPromises from 'flush-promises';
 
+import { mount, createVueInstance } from '@unit/utils/vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
 import AlarmColumnValue from '@/components/widgets/alarm/columns-formatting/alarm-column-value.vue';
@@ -9,6 +10,7 @@ const localVue = createVueInstance();
 const stubs = {
   'color-indicator-wrapper': true,
   'alarm-column-cell': true,
+  'v-runtime-template': true,
 };
 
 const snapshotFactory = (options = {}) => mount(AlarmColumnValue, {
@@ -48,6 +50,29 @@ describe('alarm-column-value', () => {
         columnsFilters: [{}, {}],
       },
     });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `alarm-column-value` with custom template', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        alarm: {
+          name: 'alarm-name',
+          entity: {
+            name: 'entity-name',
+          },
+        },
+        widget: {},
+        column: {
+          colorIndicator: COLOR_INDICATOR_TYPES.impactState,
+          value: 'entity.name',
+          template: '{{ value }} === {{ entity.name }} in the {{ alarm.name }}',
+        },
+      },
+    });
+
+    await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
   });

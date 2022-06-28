@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"io"
 	"log"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -374,6 +375,8 @@ func InterfaceToStringSlice(v interface{}) ([]string, error) {
 // a unix timestamp is returned).
 func AsInteger(value interface{}) (int64, bool) {
 	switch typedValue := value.(type) {
+	case float64:
+		return int64(math.Round(value.(float64))), true
 	case int64:
 		return typedValue, true
 	case uint64:

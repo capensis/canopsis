@@ -5,7 +5,7 @@
       :alarms="displayedAlarms",
       :total-items="alarmsMeta.total_count",
       :pagination.sync="vDataTablePagination",
-      :is-editing-mode="isEditingMode",
+      :editing="editing",
       :has-columns="hasGroupColumns",
       :columns="groupColumns",
       :parent-alarm="alarm",
@@ -27,7 +27,7 @@ import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, ALARM_ENTITY_FIELDS } from '@/cons
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
 
-import widgetColumnsMixin from '@/mixins/widget/columns';
+import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
 import widgetGroupFetchQueryMixin from '@/mixins/widget/group-fetch-query';
 import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
@@ -40,7 +40,7 @@ import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-pa
 export default {
   mixins: [
     widgetGroupFetchQueryMixin,
-    widgetColumnsMixin,
+    widgetColumnsAlarmMixin,
     widgetExpandPanelAlarm,
   ],
   props: {
@@ -48,7 +48,7 @@ export default {
       type: Object,
       required: true,
     },
-    isEditingMode: {
+    editing: {
       type: Boolean,
       default: false,
     },

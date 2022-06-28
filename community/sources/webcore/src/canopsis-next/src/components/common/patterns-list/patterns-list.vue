@@ -129,6 +129,8 @@ export default {
           action: async (pattern) => {
             const patterns = this.addItemIntoArray(pattern);
 
+            this.errors.remove(this.name);
+
             await this.checkEntitiesCount(patterns);
           },
         },
@@ -144,6 +146,8 @@ export default {
           action: async (pattern) => {
             const patterns = this.updateItemInArray(index, pattern);
 
+            this.errors.remove(this.name);
+
             await this.checkEntitiesCount(patterns);
           },
         },
@@ -156,6 +160,8 @@ export default {
         config: {
           action: async () => {
             const patterns = this.removeItemFromArray(index);
+
+            this.errors.remove(this.name);
 
             await this.checkEntitiesCount(patterns);
           },

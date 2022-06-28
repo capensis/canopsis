@@ -44,9 +44,9 @@ Un groupement d'alarmes se caractérise par les informations suivantes.
 | `name`  | string  | Nom donné au groupement, il apparaîtra sur les méta alarmes dans le bac.  |
 | `type`  | string  | Type de groupement : `relation`, `timebased`, `attribute`, `complex`, ou `valuegroup`.  |
 | `time_interval`  | int  | Intervalle de temps en secondes.  |
-| `threshold_count`  | int  | Le `seuil de déclenchement` exprime un nombre d'alarmes au delà duquel le groupement sera effectué.  |
-| `threshold_rate`  | float  | Le `taux de déclenchement` exprime le pourcentage d'entités impactées au delà duquel le groupement aura lieu. |
-| `value_paths`  | array  | Les `chemins de valeurs` désignent les adresses d'attributs à partir desquels le groupement va opérer. |
+| `threshold_count`  | int  | Le *seuil de déclenchement* exprime un nombre d'alarmes au delà duquel le groupement sera effectué.  |
+| `threshold_rate`  | float  | Le *taux de déclenchement* exprime le pourcentage d'entités impactées au delà duquel le groupement aura lieu. |
+| `value_paths`  | array  | Les *chemins de valeurs* désignent les adresses d'attributs à partir desquels le groupement va opérer. |
 | `auto_resolve`  | bool  | Permet de résoudre la méta alarme lorsque toutes ses alarmes conséquences sont résolues. |
 | `output_template`  | string  | L'`output_template` permet de formater le message informatif associé à une méta alarme. |
 
@@ -69,6 +69,7 @@ Exemple :
   "type": "relation"
 }
 ```
+
 Cette règle s'applique à toutes les entités.
 
 #### Groupement par intervalle de temps
@@ -211,10 +212,10 @@ La règle ci-après permet de créer une méta alarme lorsque le ratio entre le 
 }
 ```
 
-#### Groupement `groupe de valeurs`
+#### Groupement groupe de valeurs
 
-Ce type de règle possède les mêmes attributs que le type `complex` avec la notion de `chemins de valeur (value_paths)` en plus.  
-Ces **chemins de valeur** sont utilisés pour grouper les valeurs de manière unique.
+Ce type de règle possède les mêmes attributs que le type `complex` avec la notion de *chemins de valeur (value_paths)* en plus.  
+Ces *chemins de valeur* sont utilisés pour grouper les valeurs de manière unique.
 
 Exemple :
 
@@ -244,8 +245,20 @@ Exemple :
 }
 ```
 
-Cette règle s'applique si 5 alarmes ou plus concernant le même chemin de valeur (**entity.infos.site.value**), ont été créées durant un intervalle de temps de 3600 secondes.
+Cette règle s'applique si 5 alarmes ou plus concernant le même chemin de valeur (`entity.infos.site.value`), ont été créées durant un intervalle de temps de 3600 secondes.
 Plusieurs chemins de valeur peuvent être observés. Dans ce cas, une méta alarme est créée pour chaque combinaison de chemins de valeurs.
+
+### Démonstration vidéo
+
+La démonstration en vidéo suivante permet de constater l'effet obtenu avec la
+règle de corrélation `relation` (relation parent-enfant) :
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/Y-OwUIqiu_s" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+D'autres vidéos sont disponibles pour les autres types de règles de corrélation.
+Voir la [playlist « Tutoriels Canopsis » (YouTube)][youtube-pl].
+
+[youtube-pl]: https://www.youtube.com/playlist?list=PLOoYSSN74hIZVLA1oGkZpora2scQvuFNJ
 
 ### Processus de création d'une méta alarme
 
@@ -292,9 +305,9 @@ Dans l'interface cela se traduit de la façon suivante :
 
 ![Meta-alarme relation parent-enfant](img/correlation_alarmes_groupees.png)
 
-Au passage de la souris sur l'icône de la colonne `Extra Details` une info-bulle apparaît et indique le nom de la règle qui a créé la méta alarme et le nombre d'alarmes liées.
+Au passage de la souris sur l'icône de la colonne « Extra Details » une info-bulle apparaît et indique le nom de la règle qui a créé la méta alarme et le nombre d'alarmes liées.
 
-Le détail des alarmes liées peut-être consulté en déroulant le détail de la méta alarme et en affichant l'onglet `Alarmes Liées`.
+Le détail des alarmes liées peut-être consulté en déroulant le détail de la méta alarme et en affichant l'onglet « Alarmes Liées ».
 
 Dans le cas ci-dessus (groupement par relation parent-enfant), c'est l'alarme parent qui devient la méta alarme. Ses valeurs de `connector`, `connector_name` et `component` sont alors conservées. Pour les autres types de groupement, une méta alarme est générée par Canopsis. Celle-ci aura toujours les valeurs suivantes :
 

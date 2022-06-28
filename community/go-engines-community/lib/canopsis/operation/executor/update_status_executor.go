@@ -2,8 +2,6 @@ package executor
 
 import (
 	"context"
-	"fmt"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -28,11 +26,7 @@ func (e *updateStatusExecutor) Exec(
 	time types.CpsTime,
 	_, _, _ string,
 ) (types.AlarmChangeType, error) {
-	var params types.OperationParameters
-	var ok bool
-	if params, ok = operation.Parameters.(types.OperationParameters); !ok {
-		return "", fmt.Errorf("invalid parameters")
-	}
+	params := operation.Parameters
 
 	currentStatus := alarm.Value.Status.Value
 	newStatus := e.alarmStatusService.ComputeStatus(*alarm, *entity)

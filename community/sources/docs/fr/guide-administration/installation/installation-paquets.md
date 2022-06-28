@@ -51,7 +51,6 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
     Installation de l'édition open-source de Canopsis :
     ```sh
     yum install canopsis-core
-    yum install canopsis-engines-go
     ```
 
 === "Canopsis Pro (souscription commerciale)"
@@ -77,7 +76,6 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
     Installation de Canopsis Pro :
     ```sh
     yum install canopsis-cat
-    yum install canopsis-engines-go canopsis-engines-go-cat
     ```
 
 ## Initialisation de Canopsis

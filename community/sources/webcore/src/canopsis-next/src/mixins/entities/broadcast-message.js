@@ -14,7 +14,6 @@ export const entitiesBroadcastMessageMixin = {
   methods: {
     ...mapActions({
       fetchBroadcastMessagesList: 'fetchList',
-      fetchActiveBroadcastMessagesList: 'fetchActiveList',
       createBroadcastMessage: 'create',
       updateBroadcastMessage: 'update',
       removeBroadcastMessage: 'remove',

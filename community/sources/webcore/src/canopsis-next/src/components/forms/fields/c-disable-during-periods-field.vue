@@ -28,7 +28,7 @@ export default {
   },
   computed: {
     duringItems() {
-      return [PBEHAVIOR_TYPE_TYPES.maintenance, PBEHAVIOR_TYPE_TYPES.pause];
+      return [PBEHAVIOR_TYPE_TYPES.maintenance, PBEHAVIOR_TYPE_TYPES.pause, PBEHAVIOR_TYPE_TYPES.inactive];
     },
   },
 };

@@ -3,16 +3,17 @@ package mongo
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"path/filepath"
+	"strconv"
+	"strings"
+
 	"github.com/mitchellh/mapstructure"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	mongooptions "go.mongodb.org/mongo-driver/mongo/options"
 	"gopkg.in/yaml.v3"
-	"io/ioutil"
-	"path/filepath"
-	"strconv"
-	"strings"
 )
 
 // IndexService is used to implement mongo indexes creations.
@@ -64,7 +65,7 @@ func (k *IndexConfigKeys) UnmarshalYAML(value *yaml.Node) error {
 		return fmt.Errorf("content length should be an even number")
 	}
 
-	halfLen := len(value.Content)/2
+	halfLen := len(value.Content) / 2
 
 	k.Keys = make([]string, halfLen)
 	k.Values = make([]int, halfLen)
@@ -74,7 +75,7 @@ func (k *IndexConfigKeys) UnmarshalYAML(value *yaml.Node) error {
 		k.Values[i], err = strconv.Atoi(value.Content[2*i+1].Value)
 
 		if err != nil {
-			return fmt.Errorf("failed to convert %s to int, error = %s", value.Content[2*i+1].Value,  err)
+			return fmt.Errorf("failed to convert %s to int, error = %s", value.Content[2*i+1].Value, err)
 		}
 	}
 
@@ -209,27 +210,58 @@ func (s *baseIndexService) createIndexes(ctx context.Context, config *Config) {
 			}
 
 			indexOptions.Name = &indexName
-			_, err = collection.Indexes().CreateOne(ctx, mongo.IndexModel{
-				Keys:    indexKeys,
-				Options: &indexOptions,
-			})
+			for i := 0; i < 2; i++ {
+				_, err = collection.Indexes().CreateOne(ctx, mongo.IndexModel{
+					Keys:    indexKeys,
+					Options: &indexOptions,
+				})
 
-			if err != nil {
-				s.logger.
-					Error().
-					Err(err).
-					Str("collection", collectionName).
-					Str("index", indexName).
-					Msg("cannot create index")
-			} else {
-				s.logger.
-					Info().
-					Str("collection", collectionName).
-					Str("index", indexName).
-					Msg("create index")
+				if err != nil {
+					if i == 0 && isIndexKeySpecsConflict(err) {
+						if _, err = collection.Indexes().DropOne(ctx, *indexOptions.Name); err != nil {
+							s.logger.
+								Warn().
+								Err(err).
+								Str("collection", collectionName).
+								Str("index", indexName).
+								Msg("cannot drop index with conflicted specs")
+						}
+						continue
+					} else if isIndexOptionsConflict(err) {
+						s.logger.
+							Info().
+							Str("reason", err.Error()).
+							Str("collection", collectionName).
+							Str("index", indexName).
+							Interface("keys", indexKeys).
+							Msg("skip already existed index")
+					} else {
+						s.logger.
+							Error().
+							Err(err).
+							Str("collection", collectionName).
+							Str("index", indexName).
+							Msg("cannot create index")
+					}
+				} else {
+					s.logger.
+						Info().
+						Str("collection", collectionName).
+						Str("index", indexName).
+						Msg("create index")
+				}
+				break
 			}
 		}
 	}
+}
+
+func isIndexKeySpecsConflict(err error) bool {
+	return strings.HasPrefix(err.Error(), "(IndexKeySpecsConflict)")
+}
+
+func isIndexOptionsConflict(err error) bool {
+	return strings.HasPrefix(err.Error(), "(IndexOptionsConflict)")
 }
 
 // transformInterfaceMapKeyToString replaces map[interface{}]interface{} to

@@ -24,7 +24,7 @@
                   )
                     v-icon {{ action.icon }}
                 span {{ $t(`common.actions.${action.eventType}`) }}
-      v-tooltip(v-if="active && hasAccessToManagePbehaviors", top)
+      v-tooltip(v-if="hasPbehaviors && hasAccessToManagePbehaviors", top)
         v-btn(slot="activator", small, @click="showPbehaviorsListModal")
           v-icon(small) list
         span {{ $t('modals.service.editPbehaviors') }}
@@ -40,8 +40,7 @@ import {
   ENTITIES_STATUSES,
   EVENT_ENTITY_STYLE,
   EVENT_ENTITY_TYPES,
-  MODALS,
-  PBEHAVIOR_TYPE_TYPES,
+  MODALS, PBEHAVIOR_TYPE_TYPES,
   USERS_PERMISSIONS,
   WEATHER_ACTIONS_TYPES,
 } from '@/constants';
@@ -68,18 +67,14 @@ export default {
       type: String,
       default: '',
     },
-    active: {
-      type: Boolean,
-      default: false,
-    },
-    paused: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
-    pausedPbehaviors() {
-      return this.entity.pbehaviors.filter(pbehavior => pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause);
+    paused() {
+      return this.entity.pbehavior_info?.canonical_type === PBEHAVIOR_TYPE_TYPES.pause;
+    },
+
+    hasPbehaviors() {
+      return !!this.entity.pbehaviors.length;
     },
 
     hasAccessToManagePbehaviors() {
@@ -203,7 +198,7 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorList,
         config: {
-          pbehaviors: this.pausedPbehaviors,
+          pbehaviors: this.entity.pbehaviors,
           entityId: this.entity._id,
           onlyActive: true,
           availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],

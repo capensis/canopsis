@@ -89,7 +89,7 @@ export default {
     },
 
     administrationGeneralLinks() {
-      return [
+      const links = [
         {
           route: { name: ROUTES_NAMES.adminParameters },
           icon: 'settings',
@@ -106,20 +106,32 @@ export default {
           permission: USERS_PERMISSIONS.technical.remediation,
         },
         {
-          route: { name: ROUTES_NAMES.adminHealthcheck },
-          icon: '$vuetify.icons.alt_route',
-          permission: USERS_PERMISSIONS.technical.healthcheck,
-        },
-        {
           route: { name: ROUTES_NAMES.adminKPI },
           icon: 'stacked_bar_chart',
           permission: USERS_PERMISSIONS.technical.kpi,
         },
       ];
+
+      const enginesLink = this.isCatVersion
+        ? {
+          route: { name: ROUTES_NAMES.adminHealthcheck },
+          icon: '$vuetify.icons.alt_route',
+          permission: USERS_PERMISSIONS.technical.healthcheck,
+        }
+        : {
+          route: { name: ROUTES_NAMES.adminEngines },
+          icon: '$vuetify.icons.alt_route',
+          permission: USERS_PERMISSIONS.technical.engine,
+        };
+
+      links.push(enginesLink);
+
+      return links;
     },
 
     permissionsWithDefaultType() {
       return [
+        USERS_PERMISSIONS.technical.engine,
         USERS_PERMISSIONS.technical.healthcheck,
         USERS_PERMISSIONS.technical.kpi,
       ];

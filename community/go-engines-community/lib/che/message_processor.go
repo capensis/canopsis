@@ -2,6 +2,7 @@ package che
 
 import (
 	"context"
+	"errors"
 	"runtime/trace"
 	"time"
 
@@ -16,8 +17,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 )
 
 type messageProcessor struct {
@@ -77,6 +78,11 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		var report eventfilter.Report
 		event, report, err = p.EventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
+			var dropErr eventfilter.DropError
+			if errors.As(err, &dropErr) {
+				return nil, nil
+			}
+
 			if engine.IsConnectionError(err) {
 				return nil, err
 			}
@@ -142,9 +148,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 		if updated != nil {
 			updatedEntityServices = updatedEntityServices.Add(*updated)
-		} else {
-			// If context graph is not updated do not recompute service state.
-			event.EventType = types.EventTypeUpdateEntityService
 		}
 	}
 
@@ -165,6 +168,11 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			p.logError(err, "cannot find entity", d.Body)
 			return nil, nil
 		}
+	}
+
+	if event.Entity == nil && event.EventType == types.EventTypeCheck {
+		p.Logger.Warn().Str("entity", event.GetEID()).Msg("entity doesn't exist")
+		return nil, nil
 	}
 
 	event.AddedToServices = append(event.AddedToServices, updatedEntityServices.AddedTo...)

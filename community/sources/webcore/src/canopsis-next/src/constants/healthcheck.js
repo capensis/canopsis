@@ -97,6 +97,30 @@ export const HEALTHCHECK_ENGINES_CAT_REFERENCE_EDGES = [
   },
 ];
 
+export const ENGINES_QUEUE_NAMES = {
+  webhook: 'Engine_webhook',
+  fifo: 'Engine_fifo',
+  axe: 'Engine_axe',
+  che: 'Engine_che',
+  pbehavior: 'Engine_pbehavior',
+  action: 'Engine_action',
+  service: 'Engine_service',
+  dynamicInfo: 'Engine_dynamic_infos',
+  correlation: 'Engine_correlation',
+};
+
+export const ENGINES_NAMES_TO_QUEUE_NAMES = {
+  [ENGINES_QUEUE_NAMES.webhook]: HEALTHCHECK_ENGINES_NAMES.webhook,
+  [ENGINES_QUEUE_NAMES.fifo]: HEALTHCHECK_ENGINES_NAMES.fifo,
+  [ENGINES_QUEUE_NAMES.axe]: HEALTHCHECK_ENGINES_NAMES.axe,
+  [ENGINES_QUEUE_NAMES.che]: HEALTHCHECK_ENGINES_NAMES.che,
+  [ENGINES_QUEUE_NAMES.pbehavior]: HEALTHCHECK_ENGINES_NAMES.pbehavior,
+  [ENGINES_QUEUE_NAMES.action]: HEALTHCHECK_ENGINES_NAMES.action,
+  [ENGINES_QUEUE_NAMES.service]: HEALTHCHECK_ENGINES_NAMES.service,
+  [ENGINES_QUEUE_NAMES.dynamicInfo]: HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
+  [ENGINES_QUEUE_NAMES.correlation]: HEALTHCHECK_ENGINES_NAMES.correlation,
+};
+
 export const CAT_ENGINES = [
   HEALTHCHECK_ENGINES_NAMES.correlation,
   HEALTHCHECK_ENGINES_NAMES.dynamicInfos,

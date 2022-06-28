@@ -62,6 +62,7 @@ type AlarmConfig struct {
 	// DisableActionSnoozeDelayOnPbh ignores Pbh state to resolve snoozed with Action alarm while is True
 	DisableActionSnoozeDelayOnPbh bool
 	TimeToKeepResolvedAlarms      time.Duration
+	AllowDoubleAck                bool
 }
 
 type TimezoneConfig struct {
@@ -105,6 +106,7 @@ func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmC
 		CancelAutosolveDelay:          parseTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, AlarmCancelAutosolveDelay, "CancelAutosolveDelay", sectionName, logger),
 		DisableActionSnoozeDelayOnPbh: parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
 		TimeToKeepResolvedAlarms:      parseTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, 0, "TimeToKeepResolvedAlarms", sectionName, logger),
+		AllowDoubleAck:                parseBool(cfg.Alarm.AllowDoubleAck, "AllowDoubleAck", sectionName, logger),
 	}
 	conf.DisplayNameScheme, conf.displayNameSchemeText = parseTemplate(cfg.Alarm.DisplayNameScheme, AlarmDefaultNameScheme, "DisplayNameScheme", sectionName, logger)
 
@@ -177,9 +179,7 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) {
 
 	d, ok = parseUpdatedTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, p.conf.TimeToKeepResolvedAlarms, "TimeToKeepResolvedAlarms", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.TimeToKeepResolvedAlarms = d
-		p.mx.Unlock()
 	}
 
 	b, ok := parseUpdatedBool(cfg.Alarm.EnableLastEventDate, p.conf.EnableLastEventDate, "EnableLastEventDate", sectionName, p.logger)
@@ -190,6 +190,11 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) {
 	b, ok = parseUpdatedBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, p.conf.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, p.logger)
 	if ok {
 		p.conf.DisableActionSnoozeDelayOnPbh = b
+	}
+
+	b, ok = parseUpdatedBool(cfg.Alarm.AllowDoubleAck, p.conf.AllowDoubleAck, "AllowDoubleAck", sectionName, p.logger)
+	if ok {
+		p.conf.AllowDoubleAck = b
 	}
 }
 
@@ -267,7 +272,10 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 		p.conf.TokenSigningMethod = m
 	}
 
-	p.conf.BulkMaxSize = parseInt(cfg.API.BulkMaxSize, p.conf.BulkMaxSize, "BulkMaxSize", sectionName, p.logger)
+	i, ok := parseUpdatedInt(cfg.API.BulkMaxSize, p.conf.BulkMaxSize, "BulkMaxSize", sectionName, p.logger)
+	if ok {
+		p.conf.BulkMaxSize = i
+	}
 }
 
 func (p *BaseApiConfigProvider) Get() ApiConfig {

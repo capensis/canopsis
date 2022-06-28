@@ -8,12 +8,12 @@ import (
 	"sync"
 	"text/template"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"github.com/mitchellh/mapstructure"
 	"github.com/rs/zerolog"
 )
 
@@ -35,6 +35,7 @@ type Task struct {
 	AckResources   bool
 	Header         map[string]string
 	Response       map[string]interface{}
+	ResponseMap    map[string]interface{}
 	AdditionalData AdditionalData
 }
 
@@ -204,30 +205,41 @@ func (s *pool) call(ctx context.Context, task Task, workerId int) error {
 }
 
 func (s *pool) getRPCAxeEvent(task Task) (*types.RPCAxeEvent, error) {
-	params := make(map[string]interface{}, len(task.Action.Parameters))
+	params := task.Action.Parameters
 	tplData := types.AlarmWithEntity{
 		Alarm:  task.Alarm,
 		Entity: task.Entity,
 	}
+	var err error
+	params.Output, err = s.renderTemplate(params.Output, tplData)
+	if err != nil {
+		return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+	}
 
-	for k, v := range task.Action.Parameters {
-		params[k] = v
+	additionalData, err := s.resolveAuthor(task)
+	if err != nil {
+		return nil, err
+	}
 
-		switch k {
-		case "author", "output":
-			if str, ok := v.(string); ok {
-				var err error
-				params[k], err = s.renderTemplate(str, tplData)
-				if err != nil {
-					return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
-				}
-			}
-		}
+	axeParams := types.RPCAxeParameters{
+		Output:         params.Output,
+		Author:         additionalData.Author,
+		User:           additionalData.User,
+		State:          params.State,
+		Ticket:         params.Ticket,
+		Duration:       params.Duration,
+		Name:           params.Name,
+		Reason:         params.Reason,
+		Type:           params.Type,
+		RRule:          params.RRule,
+		Tstart:         params.Tstart,
+		Tstop:          params.Tstop,
+		StartOnTrigger: params.StartOnTrigger,
 	}
 
 	return &types.RPCAxeEvent{
 		EventType:  task.Action.Type,
-		Parameters: params,
+		Parameters: axeParams,
 		Alarm:      &task.Alarm,
 		Entity:     &task.Entity,
 	}, nil
@@ -242,65 +254,47 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 		}
 	}
 
+	additionalData, err := s.resolveAuthor(task)
+	if err != nil {
+		return nil, err
+	}
+
 	tplData := map[string]interface{}{
 		"Alarm":          task.Alarm,
 		"Entity":         task.Entity,
 		"Children":       children,
 		"Response":       task.Response,
+		"ResponseMap":    task.ResponseMap,
 		"Header":         task.Header,
-		"AdditionalData": task.AdditionalData,
+		"AdditionalData": additionalData,
 	}
-	params := make(map[string]interface{}, len(task.Action.Parameters))
-	for k, v := range task.Action.Parameters {
-		params[k] = v
 
-		switch k {
-		case "request":
-			if m, ok := v.(map[string]interface{}); ok {
-				newRequest := make(map[string]interface{}, len(m))
+	request := *task.Action.Parameters.Request
+	request.URL, err = s.renderTemplate(request.URL, tplData)
+	if err != nil {
+		return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+	}
+	request.Payload, err = s.renderTemplate(request.Payload, tplData)
+	if err != nil {
+		return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+	}
 
-				for requestKey, requestVal := range m {
-					newRequest[requestKey] = requestVal
-
-					switch requestKey {
-					case "url", "payload":
-						if str, ok := requestVal.(string); ok {
-							var err error
-							newRequest[requestKey], err = s.renderTemplate(str, tplData)
-							if err != nil {
-								return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
-							}
-						}
-					case "headers":
-						if headers, ok := requestVal.(map[string]interface{}); ok {
-							newHeaders := make(map[string]interface{}, len(headers))
-
-							for headerKey, headerVal := range headers {
-								newHeaders[headerKey] = headerVal
-
-								if str, ok := headerVal.(string); ok {
-									var err error
-									newHeaders[headerKey], err = s.renderTemplate(str, tplData)
-									if err != nil {
-										return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
-									}
-								}
-							}
-
-							newRequest[requestKey] = newHeaders
-						}
-					}
-				}
-
-				params[k] = newRequest
-			}
+	headers := make(map[string]string, len(request.Headers))
+	for k, v := range request.Headers {
+		headers[k], err = s.renderTemplate(v, tplData)
+		if err != nil {
+			return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
 		}
 	}
+	request.Headers = headers
 
-	webhookParams := types.WebhookParameters{}
-	err := mapstructure.Decode(params, &webhookParams)
-	if err != nil {
-		return nil, fmt.Errorf("cannot decode map struct scenario=%s : %v", task.ScenarioID, err)
+	webhookParams := types.RPCWebhookParameters{
+		Request:       request,
+		DeclareTicket: task.Action.Parameters.DeclareTicket,
+		RetryCount:    task.Action.Parameters.RetryCount,
+		RetryDelay:    task.Action.Parameters.RetryDelay,
+		Author:        additionalData.Author,
+		User:          additionalData.User,
 	}
 
 	return &types.RPCWebhookEvent{
@@ -333,4 +327,29 @@ func (s *pool) renderTemplate(templateStr string, data interface{}) (string, err
 		return "", err
 	}
 	return b.String(), nil
+}
+
+func (s *pool) resolveAuthor(task Task) (AdditionalData, error) {
+	additionalData := task.AdditionalData
+	if task.Action.Parameters.ForwardAuthor != nil && *task.Action.Parameters.ForwardAuthor {
+		return additionalData, nil
+	}
+
+	additionalData.User = ""
+
+	if task.Action.Parameters.Author == "" {
+		additionalData.Author = canopsis.DefaultEventAuthor
+		return additionalData, nil
+	}
+
+	var err error
+	additionalData.Author, err = s.renderTemplate(task.Action.Parameters.Author, types.AlarmWithEntity{
+		Alarm:  task.Alarm,
+		Entity: task.Entity,
+	})
+	if err != nil {
+		return additionalData, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+	}
+
+	return additionalData, nil
 }

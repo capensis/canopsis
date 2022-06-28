@@ -23,3 +23,7 @@ export const EVENTS_TYPES = {
   closeRoom: 'close-room',
   networkError: 'network-error',
 };
+
+export const ERROR_MESSAGES = {
+  authenticationFailed: 'authentication failed',
+};

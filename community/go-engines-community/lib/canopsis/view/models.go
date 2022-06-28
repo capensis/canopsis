@@ -1,26 +1,19 @@
 package view
 
 import (
+	"encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
+	"strings"
 )
 
 const (
 	WidgetTypeJunit = "Junit"
-)
 
-const (
-	WidgetParamJunitIsApi              = "is_api"
-	WidgetParamJunitDir                = "directory"
-	WidgetParamJunitReportFileRegexp   = "report_fileregexp"
-	WidgetParamJunitScreenshotDirs     = "screenshot_directories"
-	WidgetParamJunitScreenshotFilemask = "screenshot_filemask"
-	WidgetParamJunitVideoDirs          = "video_directories"
-	WidgetParamJunitVideoFilemask      = "video_filemask"
 	WidgetInternalParamJunitTestSuites = "test_suites"
-)
 
-const JunitReportFileRegexpSubexpName = "name"
+	JunitReportFileRegexpSubexpName = "name"
+)
 
 type Group struct {
 	ID       string        `bson:"_id"`
@@ -37,7 +30,6 @@ type View struct {
 	Title           string                     `bson:"title"`
 	Description     string                     `bson:"description"`
 	Group           string                     `bson:"group_id"`
-	Tabs            []Tab                      `bson:"tabs"`
 	Tags            []string                   `bson:"tags"`
 	PeriodicRefresh *types.DurationWithEnabled `bson:"periodic_refresh"`
 	Author          string                     `bson:"author"`
@@ -47,74 +39,96 @@ type View struct {
 }
 
 type Tab struct {
-	ID      string   `bson:"_id" json:"_id"`
-	Title   string   `bson:"title" json:"title"`
-	Widgets []Widget `bson:"widgets" json:"widgets"`
+	ID       string        `bson:"_id" json:"_id"`
+	Title    string        `bson:"title" json:"title"`
+	View     string        `bson:"view" json:"-"`
+	Author   string        `bson:"author" json:"author"`
+	Position int64         `bson:"position" json:"-"`
+	Created  types.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
+	Updated  types.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
 }
 
 type Widget struct {
-	ID                 string                 `bson:"_id" json:"_id"`
+	ID                 string                 `bson:"_id" json:"_id,omitempty"`
+	Tab                string                 `bson:"tab" json:"-"`
 	Title              string                 `bson:"title" json:"title"`
 	Type               string                 `bson:"type" json:"type"`
 	GridParameters     map[string]interface{} `bson:"grid_parameters" json:"grid_parameters"`
-	Parameters         map[string]interface{} `bson:"parameters" json:"parameters"`
-	InternalParameters map[string]interface{} `bson:"internal_parameters,omitempty" json:"-"`
+	Parameters         Parameters             `bson:"parameters" json:"parameters"`
+	InternalParameters InternalParameters     `bson:"internal_parameters,omitempty" json:"-"`
+	Author             string                 `bson:"author" json:"author,omitempty"`
+	Created            types.CpsTime          `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated            types.CpsTime          `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
-func (w Widget) GetStringParameter(k, defaultVal string) string {
-	if v, ok := w.Parameters[k]; ok {
-		if str, ok := v.(string); ok {
-			return str
-		}
-	}
+type Parameters struct {
+	// Junit
+	IsAPI                 bool     `bson:"is_api,omitempty" json:"is_api,omitempty"`
+	Directory             string   `bson:"directory,omitempty" json:"directory,omitempty"`
+	ReportFileRegexp      string   `bson:"report_fileregexp,omitempty" json:"report_fileregexp,omitempty"`
+	ScreenshotDirectories []string `bson:"screenshot_directories,omitempty" json:"screenshot_directories,omitempty"`
+	VideoDirectories      []string `bson:"video_directories,omitempty" json:"video_directories,omitempty"`
+	ScreenshotFilemask    string   `bson:"screenshot_filemask,omitempty" json:"screenshot_filemask,omitempty"`
+	VideoFilemask         string   `bson:"video_filemask,omitempty" json:"video_filemask,omitempty"`
 
-	return defaultVal
+	RemainParameters map[string]interface{} `bson:",inline" json:"-"`
 }
 
-func (w Widget) GetBoolParameter(k string, defaultVal bool) bool {
-	if v, ok := w.Parameters[k]; ok {
-		if b, ok := v.(bool); ok {
-			return b
-		}
+func (p Parameters) MarshalJSON() ([]byte, error) {
+	type Alias Parameters
+	b, err := json.Marshal(Alias(p))
+	if err != nil {
+		return nil, err
 	}
 
-	return defaultVal
+	m := make(map[string]interface{})
+	err = json.Unmarshal(b, &m)
+	if err != nil {
+		return nil, err
+	}
+
+	for k, v := range p.RemainParameters {
+		m[k] = v
+	}
+
+	return json.Marshal(m)
 }
 
-func (w Widget) GetStringsParameter(k string, defaultVal []string) []string {
-	if v, ok := w.Parameters[k]; ok {
-		typeVal := reflect.ValueOf(v)
-
-		switch typeVal.Kind() {
-		case reflect.Array, reflect.Slice:
-			val := make([]string, 0)
-			for i := 0; i < typeVal.Len(); i++ {
-				if str, ok := typeVal.Index(i).Interface().(string); ok {
-					val = append(val, str)
-				}
-			}
-			return val
-		}
+func (p *Parameters) UnmarshalJSON(b []byte) error {
+	type Alias *Parameters
+	err := json.Unmarshal(b, Alias(p))
+	if err != nil {
+		return err
+	}
+	m := make(map[string]interface{})
+	err = json.Unmarshal(b, &m)
+	if err != nil {
+		return err
 	}
 
-	return defaultVal
+	val := reflect.TypeOf(*p)
+	for i := 0; i < val.NumField(); i++ {
+		if len(m) == 0 {
+			break
+		}
+		f := val.Field(i)
+		tag := f.Tag.Get("json")
+		tag = strings.Split(tag, ",")[0]
+		delete(m, tag)
+	}
+
+	p.RemainParameters = m
+	return nil
 }
 
-func (w Widget) GetStringsInternalParameter(k string, defaultVal []string) []string {
-	if v, ok := w.InternalParameters[k]; ok {
-		typeVal := reflect.ValueOf(v)
+type InternalParameters struct {
+	// Junit
+	TestSuites []string `bson:"test_suites,omitempty"`
 
-		switch typeVal.Kind() {
-		case reflect.Array, reflect.Slice:
-			val := make([]string, 0)
-			for i := 0; i < typeVal.Len(); i++ {
-				if str, ok := typeVal.Index(i).Interface().(string); ok {
-					val = append(val, str)
-				}
-			}
-			return val
-		}
-	}
+	RemainParameters map[string]interface{} `bson:",inline"`
+}
 
-	return defaultVal
+func (p InternalParameters) IsZero() bool {
+	return len(p.TestSuites) == 0 &&
+		len(p.RemainParameters) == 0
 }

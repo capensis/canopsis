@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-radio-group(v-field="value", :name="name")
+  v-radio-group(v-field="value", :name="name", :disabled="disabled")
     v-radio(
       :value="$constants.COLOR_INDICATOR_TYPES.state",
       :label="$t('settings.colorIndicator.fields.displayAsSeverity')",
@@ -24,6 +24,10 @@ export default {
     name: {
       type: String,
       default: 'colorIndicator',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
 };

@@ -65,6 +65,7 @@ install: $(CURRENT_BUILD_OUTPUT_DIR)/www
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/srv/www" "$(DESTDIR)/etc/nginx/conf.d"
 	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/docker/files/etc/nginx/cors.inc" "$(DESTDIR)/etc/nginx/cors.inc"
 	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/docker/files/etc/nginx/https.inc" "$(DESTDIR)/etc/nginx/https.inc"
+	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/docker/files/etc/nginx/rundeck.inc" "$(DESTDIR)/etc/nginx/rundeck.inc"
 	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/docker/files/etc/nginx/default.conf" "$(DESTDIR)/etc/nginx/conf.d/default.conf"
 	cp -pR -- "$(CURRENT_BUILD_OUTPUT_DIR)/www" "$(DESTDIR)/opt/canopsis/srv/"
 
@@ -95,7 +96,7 @@ define DOCKER_BUILD_ARGS
 endef
 
 .PHONY: docker-check-version docker-images docker-nginx
-docker-images: docker-nginx
+docker-images: docker-nginx docker-nginx-openshift
 
 # We require at least Docker 20.10 for the BuildKit features we use
 docker-check-version:
@@ -110,6 +111,15 @@ docker-nginx: docker-check-version
 		$(if $(DOCKER_NO_CACHE),--no-cache,) \
 		$(DOCKER_BUILD_ARGS) \
 		--file "$(MONOREPO_ROOT)/community/docker/Dockerfile.nginx" \
+		"$(MONOREPO_ROOT)"
+
+docker-nginx-openshift: docker-check-version
+	docker build \
+		-t "$(DOCKER_IMAGE_BASE_PATH)/nginx-openshift:$(DOCKER_TAG)" \
+		$(if $(DOCKER_NO_CACHE),--no-cache,) \
+		$(DOCKER_BUILD_ARGS) \
+		--file "$(MONOREPO_ROOT)/community/docker/Dockerfile.nginx" \
+		--target nginx-openshift \
 		"$(MONOREPO_ROOT)"
 
 #

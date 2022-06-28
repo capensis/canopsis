@@ -759,63 +759,134 @@
     "created": 1000000000
   },
   {
-    "_id": "test-instruction-execution-to-start-multiple-times",
+    "_id": "test-instruction-execution-to-start-multiple-times-1",
     "type": 0,
-    "name": "test-instruction-execution-to-start-multiple-times-name",
+    "name": "test-instruction-execution-to-start-multiple-times-1-name",
     "alarm_patterns": [
       {
         "_id": "test-instruction-execution-start-2"
       }
     ],
-    "description": "test-instruction-execution-to-start-multiple-times-description",
+    "description": "test-instruction-execution-to-start-multiple-times-1-description",
     "author": "test-user-author-1-id",
     "enabled": true,
     "steps": [
       {
-        "_id": "test-instruction-execution-to-start-multiple-times-step-1",
-        "name": "test-instruction-execution-to-start-multiple-times-step-1-name",
+        "_id": "test-instruction-execution-to-start-multiple-times-1-step-1",
+        "name": "test-instruction-execution-to-start-multiple-times-1-step-1-name",
         "operations": [
           {
-            "_id": "test-instruction-execution-to-start-multiple-times-step-1-operation-1",
-            "name": "test-instruction-execution-to-start-multiple-times-step-1-operation-1-name",
+            "_id": "test-instruction-execution-to-start-multiple-times-1-step-1-operation-1",
+            "name": "test-instruction-execution-to-start-multiple-times-1-step-1-operation-1-name",
             "time_to_complete": {
               "value": 1,
               "unit": "s"
             },
-            "description": "test-instruction-execution-to-start-multiple-times-step-1-operation-1-description",
+            "description": "test-instruction-execution-to-start-multiple-times-1-step-1-operation-1-description",
             "jobs": []
           },
           {
-            "_id": "test-instruction-execution-to-start-multiple-times-step-1-operation-2",
-            "name": "test-instruction-execution-to-start-multiple-times-step-1-operation-2-name",
+            "_id": "test-instruction-execution-to-start-multiple-times-1-step-1-operation-2",
+            "name": "test-instruction-execution-to-start-multiple-times-1-step-1-operation-2-name",
             "time_to_complete": {
               "value": 3,
               "unit": "s"
             },
-            "description": "test-instruction-execution-to-start-multiple-times-step-1-operation-2-description",
+            "description": "test-instruction-execution-to-start-multiple-times-1-step-1-operation-2-description",
             "jobs": []
           }
         ],
         "stop_on_fail": true,
-        "endpoint": "test-instruction-execution-to-start-multiple-times-step-1-endpoint"
+        "endpoint": "test-instruction-execution-to-start-multiple-times-1-step-1-endpoint"
       },
       {
-        "_id": "test-instruction-execution-to-start-multiple-times-step-2",
-        "name": "test-instruction-execution-to-start-multiple-times-step-2-name",
+        "_id": "test-instruction-execution-to-start-multiple-times-1-step-2",
+        "name": "test-instruction-execution-to-start-multiple-times-1-step-2-name",
         "operations": [
           {
-            "_id": "test-instruction-execution-to-start-multiple-times-step-2-operation-1",
-            "name": "test-instruction-execution-to-start-multiple-times-step-2-operation-1-name",
+            "_id": "test-instruction-execution-to-start-multiple-times-1-step-2-operation-1",
+            "name": "test-instruction-execution-to-start-multiple-times-1-step-2-operation-1-name",
             "time_to_complete": {
               "value": 6,
               "unit": "s"
             },
-            "description": "test-instruction-execution-to-start-multiple-times-step-2-operation-1-description",
+            "description": "test-instruction-execution-to-start-multiple-times-1-step-2-operation-1-description",
             "jobs": []
           }
         ],
         "stop_on_fail": true,
-        "endpoint": "test-instruction-execution-to-start-multiple-times-step-2-endpoint"
+        "endpoint": "test-instruction-execution-to-start-multiple-times-1-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1596712203,
+    "last_modified": 1596712203,
+    "created": 1000000003
+  },
+  {
+    "_id": "test-instruction-execution-to-start-multiple-times-2",
+    "type": 0,
+    "name": "test-instruction-execution-to-start-multiple-times-2-name",
+    "alarm_patterns": [
+      {
+        "_id": "test-instruction-execution-start-3-1"
+      },
+      {
+        "_id": "test-instruction-execution-start-3-2"
+      }
+    ],
+    "description": "test-instruction-execution-to-start-multiple-times-2-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-execution-to-start-multiple-times-2-step-1",
+        "name": "test-instruction-execution-to-start-multiple-times-2-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-execution-to-start-multiple-times-2-step-1-operation-1",
+            "name": "test-instruction-execution-to-start-multiple-times-2-step-1-operation-1-name",
+            "time_to_complete": {
+              "value": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-execution-to-start-multiple-times-2-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-execution-to-start-multiple-times-2-step-1-operation-2",
+            "name": "test-instruction-execution-to-start-multiple-times-2-step-1-operation-2-name",
+            "time_to_complete": {
+              "value": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-execution-to-start-multiple-times-2-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-execution-to-start-multiple-times-2-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-execution-to-start-multiple-times-2-step-2",
+        "name": "test-instruction-execution-to-start-multiple-times-2-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-execution-to-start-multiple-times-2-step-2-operation-1",
+            "name": "test-instruction-execution-to-start-multiple-times-2-step-2-operation-1-name",
+            "time_to_complete": {
+              "value": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-execution-to-start-multiple-times-2-step-2-operation-1-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-execution-to-start-multiple-times-2-step-2-endpoint"
       }
     ],
     "timeout_after_execution": {
@@ -1699,80 +1770,6 @@
     "last_executed_on": 1596712203,
     "last_modified": 1596712203,
     "created": 1000000019
-  },
-  {
-    "_id": "test-instruction-with-pbh-with-some-active",
-    "type": 0,
-    "name": "test-alarm-with-pbh-with-some-active-name",
-    "description": "test-alarm-with-pbh-with-some-active-description",
-    "author": "test-user-author-1-id",
-    "enabled": true,
-    "alarm_patterns": [
-      {
-        "v": {
-          "component": "test-alarm-instruction-with-pbehavior-component"
-        }
-      }
-    ],
-    "steps": [],
-    "timeout_after_execution": {
-      "value": 2,
-      "unit": "s"
-    },
-    "active_on_pbh": [
-      "pbh-type-for-instruction-with-pbehavior-1",
-      "pbh-type-for-instruction-with-pbehavior-2"
-    ],
-    "last_modified": 1596712203,
-    "created": 1596712203
-  },
-  {
-    "_id": "test-instruction-with-pbh-all-active",
-    "type": 0,
-    "name": "test-alarm-with-pbh-all-active-name",
-    "description": "test-alarm-with-pbh-all-active-description",
-    "author": "test-user-author-1-id",
-    "enabled": true,
-    "alarm_patterns": [
-      {
-        "v": {
-          "component": "test-alarm-instruction-with-pbehavior-component"
-        }
-      }
-    ],
-    "steps": [],
-    "timeout_after_execution": {
-      "value": 2,
-      "unit": "s"
-    },
-    "last_modified": 1596712203,
-    "created": 1596712203
-  },
-  {
-    "_id": "test-instruction-with-pbh-with-some-disabled",
-    "type": 0,
-    "name": "test-alarm-with-pbh-with-some-disabled-name",
-    "description": "test-alarm-with-pbh-with-some-disabled-description",
-    "author": "test-user-author-1-id",
-    "enabled": true,
-    "alarm_patterns": [
-      {
-        "v": {
-          "component": "test-alarm-instruction-with-pbehavior-component"
-        }
-      }
-    ],
-    "steps": [],
-    "timeout_after_execution": {
-      "value": 2,
-      "unit": "s"
-    },
-    "disabled_on_pbh": [
-      "pbh-type-for-instruction-with-pbehavior-1",
-      "pbh-type-for-instruction-with-pbehavior-2"
-    ],
-    "last_modified": 1596712203,
-    "created": 1596712203
   },
   {
     "_id": "test-instruction-with-pbh-to-edit",
@@ -3710,5 +3707,241 @@
     "author": "test-author-metrics-axe-11",
     "created": 1637904803,
     "last_modified": 1637904803
+  },
+  {
+    "_id": "test-instruction-action-remediation-triggers-1",
+    "type": 0,
+    "status": 0,
+    "alarm_patterns": null,
+    "entity_patterns": [
+      {
+        "_id": "test-resource-action-remediation-triggers-1/test-component-action-remediation-triggers-1"
+      }
+    ],
+    "name": "test-instruction-action-remediation-triggers-1-name",
+    "description": "test-instruction-action-remediation-triggers-1-description",
+    "author": "root",
+    "enabled": true,
+    "active_on_pbh": null,
+    "disabled_on_pbh": null,
+    "timeout_after_execution": {
+      "value": 10,
+      "unit": "s"
+    },
+    "last_modified": 1653985818,
+    "created": 1653985818,
+    "steps": [
+      {
+        "_id": "test-instruction-action-remediation-triggers-1-step-1",
+        "name": "test-instruction-action-remediation-triggers-1-step-1",
+        "operations": [
+          {
+            "_id": "test-instruction-action-remediation-triggers-1-step-1-operation-1",
+            "name": "test-instruction-action-remediation-triggers-1-step-1-operation-1",
+            "time_to_complete": {
+              "value": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-action-remediation-triggers-1-step-1-operation-1-description"
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-action-remediation-triggers-1-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-action-remediation-triggers-1-step-2",
+        "name": "test-instruction-action-remediation-triggers-1-step-2",
+        "operations": [
+          {
+            "_id": "test-instruction-action-remediation-triggers-1-step-2-operation-1",
+            "name": "test-instruction-action-remediation-triggers-1-step-2-operation-1",
+            "time_to_complete": {
+              "value": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-action-remediation-triggers-1-step-2-operation-1-description"
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-action-remediation-triggers-1-step-2-endpoint"
+      }
+    ]
+  },
+  {
+    "_id": "test-instruction-action-remediation-triggers-2",
+    "type": 1,
+    "name": "test-instruction-action-remediation-triggers-2-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-action-remediation-triggers-2"
+      }
+    ],
+    "description": "test-instruction-action-remediation-triggers-2-description",
+    "jobs": [
+      {
+        "job": "test-job-action-remediation-triggers-1",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 2,
+      "unit": "s"
+    },
+    "priority": 25,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-action-remediation-triggers-3",
+    "type": 1,
+    "name": "test-instruction-action-remediation-triggers-3-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-action-remediation-triggers-3"
+      }
+    ],
+    "description": "test-instruction-action-remediation-triggers-3-description",
+    "jobs": [
+      {
+        "job": "test-job-action-remediation-triggers-1",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 2,
+      "unit": "s"
+    },
+    "priority": 26,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-action-remediation-triggers-4",
+    "type": 0,
+    "name": "test-instruction-action-remediation-triggers-4-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-action-remediation-triggers-4"
+      }
+    ],
+    "description": "test-instruction-action-remediation-triggers-4-description",
+    "steps": [
+      {
+        "_id": "test-instruction-action-remediation-triggers-4-step-1",
+        "name": "test-instruction-action-remediation-triggers-4-step-1",
+        "operations": [
+          {
+            "_id": "test-instruction-action-remediation-triggers-4-step-1-operation-1",
+            "name": "test-instruction-action-remediation-triggers-4-step-1-operation-1",
+            "time_to_complete": {
+              "value": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-action-remediation-triggers-4-step-1-operation-1-description",
+            "jobs": ["test-job-action-remediation-triggers-2"]
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-action-remediation-triggers-4-step-1-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 2,
+      "unit": "s"
+    },
+    "priority": 27,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-action-remediation-triggers-5",
+    "type": 0,
+    "status": 0,
+    "alarm_patterns": null,
+    "entity_patterns": [
+      {
+        "_id": "test-resource-action-remediation-triggers-5/test-component-action-remediation-triggers-5"
+      }
+    ],
+    "name": "test-instruction-action-remediation-triggers-5-name",
+    "description": "test-instruction-action-remediation-triggers-5-description",
+    "author": "root",
+    "enabled": true,
+    "active_on_pbh": null,
+    "disabled_on_pbh": null,
+    "timeout_after_execution": {
+      "value": 10,
+      "unit": "s"
+    },
+    "last_modified": 1653985818,
+    "created": 1653985818,
+    "steps": [
+      {
+        "_id": "test-instruction-action-remediation-triggers-5-step-1",
+        "name": "test-instruction-action-remediation-triggers-5-step-1",
+        "operations": [
+          {
+            "_id": "test-instruction-action-remediation-triggers-5-step-1-operation-1",
+            "name": "test-instruction-action-remediation-triggers-5-step-1-operation-1",
+            "time_to_complete": {
+              "value": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-action-remediation-triggers-5-step-1-operation-1-description"
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-action-remediation-triggers-5-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-action-remediation-triggers-5-step-2",
+        "name": "test-instruction-action-remediation-triggers-5-step-2",
+        "operations": [
+          {
+            "_id": "test-instruction-action-remediation-triggers-5-step-2-operation-1",
+            "name": "test-instruction-action-remediation-triggers-5-step-2-operation-1",
+            "time_to_complete": {
+              "value": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-action-remediation-triggers-5-step-2-operation-1-description"
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-action-remediation-triggers-5-step-2-endpoint"
+      }
+    ]
+  },
+  {
+    "_id": "test-instruction-action-remediation-triggers-6",
+    "type": 1,
+    "name": "test-instruction-action-remediation-triggers-6-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-action-remediation-triggers-6"
+      }
+    ],
+    "description": "test-instruction-action-remediation-triggers-6-description",
+    "jobs": [
+      {
+        "job": "test-job-action-remediation-triggers-3",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 2,
+      "unit": "s"
+    },
+    "priority": 28,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
   }
 ]

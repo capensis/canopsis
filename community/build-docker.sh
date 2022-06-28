@@ -32,6 +32,9 @@ function build_for_distribution() {
     echo "Building provisioning image"
     docker build ${docker_args} -f docker/Dockerfile.prov -t canopsis/canopsis-prov:${full_tag} .
 
+    echo "Building provisioning-openshift image"
+    docker build ${docker_args} -f docker/Dockerfile.prov -t canopsis/canopsis-prov-openshift:${full_tag} --target prov-openshift .
+
     if [ "${distribution}" = "debian-9" ]; then
         echo "TAGGING OFFICIAL CANOPSIS-CORE IMAGE"
 

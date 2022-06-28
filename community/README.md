@@ -26,4 +26,4 @@ Commercial offers (Canopsis Pro) are also available on [canopsis.com](http://www
 
 Main development of Canopsis Community is coordinated on [git.canopsis.net](https://git.canopsis.net/canopsis/canopsis-community), and then mirrored on [GitHub](https://github.com/capensis/canopsis).
 
-© 2011–2021 Capensis
+© 2011–2022 Capensis

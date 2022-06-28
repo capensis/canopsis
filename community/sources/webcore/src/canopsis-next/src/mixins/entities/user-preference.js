@@ -3,6 +3,12 @@ import { createNamespacedHelpers } from 'vuex';
 const { mapActions, mapGetters } = createNamespacedHelpers('userPreference');
 
 export const entitiesUserPreferenceMixin = {
+  props: {
+    localWidget: {
+      type: Boolean,
+      default: false,
+    },
+  },
   computed: {
     ...mapGetters({
       getUserPreferenceByWidget: 'getItemByWidget',
@@ -14,13 +20,26 @@ export const entitiesUserPreferenceMixin = {
   },
   methods: {
     ...mapActions({
-      fetchUserPreference: 'fetchItem',
+      fetchUserPreferenceItem: 'fetchItem',
       fetchUserPreferenceWithoutStore: 'fetchItemWithoutStore',
       updateUserPreference: 'update',
+      updateLocalUserPreference: 'updateLocal',
     }),
 
+    fetchUserPreference(data) {
+      if (this.localWidget) {
+        return Promise.resolve();
+      }
+
+      return this.fetchUserPreferenceItem(data);
+    },
+
     updateContentInUserPreference(content = {}) {
-      return this.updateUserPreference({
+      const method = this.localWidget
+        ? this.updateLocalUserPreference
+        : this.updateUserPreference;
+
+      return method({
         data: {
           ...this.userPreference,
 
@@ -30,30 +49,6 @@ export const entitiesUserPreferenceMixin = {
           },
         },
       });
-    },
-
-    /**
-     * Send requests to create userPreference by widgetsIdsMappings
-     *
-     * @param {{oldId: string, newId: string}[]} widgetsIdsMappings
-     * @returns {Promise}
-     */
-    copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings) {
-      return Promise.all(widgetsIdsMappings.map(async ({ oldId, newId }) => {
-        const userPreference = await this.fetchUserPreferenceWithoutStore({ id: oldId });
-
-        if (!userPreference) {
-          return Promise.resolve();
-        }
-
-        return this.updateUserPreference({
-          data: {
-            ...userPreference,
-
-            widget: newId,
-          },
-        });
-      }));
     },
   },
 };

@@ -2,35 +2,36 @@
   div
     snmp-rule-form-module-form(
       v-field="form.oid",
-      :moduleMibs.sync="moduleMibs"
+      :module-mibs.sync="moduleMibs"
     )
-    v-layout(v-if="selectedModuleMib", row, wrap)
-      v-alert.mt-3(
-        :value="selectedModuleMib.description",
-        color="grey darken-1"
-      ) {{ selectedModuleMib.description }}
+    v-layout(v-if="selectedModuleMib", row)
+      v-flex(xs12)
+        v-alert.mt-3(
+          :value="selectedModuleMib.description",
+          color="grey darken-1"
+        ) {{ selectedModuleMib.description }}
     snmp-rule-form-module-mib-objects-form(
       v-field="form.output",
       :items="selectedModuleMibObjects",
-      :label="$t('modals.createSnmpRule.fields.output.title')",
+      :label="$t('snmpRule.output')",
       large
     )
     snmp-rule-form-module-mib-objects-form(
       v-field="form.component",
       :items="selectedModuleMibObjects",
-      :label="$t('modals.createSnmpRule.fields.component.title')",
+      :label="$t('snmpRule.component')",
       large
     )
     snmp-rule-form-module-mib-objects-form(
       v-field="form.resource",
       :items="selectedModuleMibObjects",
-      :label="$t('modals.createSnmpRule.fields.resource.title')",
+      :label="$t('snmpRule.resource')",
       large
     )
     snmp-rule-form-module-mib-objects-form(
       v-field="form.connector_name",
       :items="selectedModuleMibObjects",
-      :label="$t('modals.createSnmpRule.fields.connectorName.title')",
+      :label="$t('snmpRule.connectorName')",
       large
     )
     snmp-rule-form-state-form(

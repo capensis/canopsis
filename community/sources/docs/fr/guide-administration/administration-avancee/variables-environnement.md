@@ -23,8 +23,9 @@ Votre installation de Canopsis doit obligatoirement comporter les adresses et do
 |:-------------------------|-------------------|---------|
 | `CPS_AMQP_URL` | (vide) | Une URI de connexion RabbitMQ (cf. [Spécification d'URI RabbitMQ](https://www.rabbitmq.com/uri-spec.html)) |
 | `CPS_API_URL` | (vide) | Une URI de connexion à l'API Canopsis |
-| `CPS_MONGO_URL` | (vide) | Une URI de connexion MongoDB (cf. [Spécification d'URI MongoDB](https://docs.mongodb.com/v3.6/reference/connection-string/)) |
+| `CPS_MONGO_URL` | (vide) | Une URI de connexion MongoDB (cf. [Spécification d'URI MongoDB](https://docs.mongodb.com/v4.2/reference/connection-string/)) |
 | `CPS_OLD_API_URL` | (vide) | URI de connexion à l'ancienne API Gunicorn de Canopsis |
+| `CPS_POSTGRES_URL` | (vide) | URI de connexion PostgreSQL/TimescaleDB (cf. [Spécification d'URI PostgreSQL](https://www.postgresql.org/docs/13/libpq-connect.html#LIBPQ-CONNSTRING)) |
 | `CPS_REDIS_URL` | (vide) | Une URI de connexion Redis (cf. [Spécification d'URI Redis](https://www.iana.org/assignments/uri-schemes/prov/redis)) |
 
 ### Tentatives de connexion aux services externes

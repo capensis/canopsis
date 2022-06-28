@@ -12,7 +12,7 @@
           v-text-field.vars-input.pt-0(
             slot="activator",
             v-field="form.value",
-            :label="$t('modals.createSnmpRule.fields.moduleMibObjects.vars')",
+            :label="$t('snmpRule.moduleMibObjects')",
             hide-details
           )
             template(slot="append", v-if="large")
@@ -33,12 +33,12 @@
         v-flex(v-show="isVisible", xs12)
           v-text-field(
             v-field="form.regex",
-            :label="$t('modals.createSnmpRule.fields.moduleMibObjects.regex')",
+            :label="$t('snmpRule.regex')",
             hide-details
           )
           v-text-field(
             v-field="form.formatter",
-            :label="$t('modals.createSnmpRule.fields.moduleMibObjects.formatter')",
+            :label="$t('snmpRule.formatter')",
             hide-details
           )
 </template>

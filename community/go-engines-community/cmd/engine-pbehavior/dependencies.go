@@ -53,8 +53,17 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
 	eventManager := pbehavior.NewEventManager()
+	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		engine.NewRunInfoManager(runInfoRedisSession),
+		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, canopsis.PBehaviorQueueName, options.PublishToQueue),
+		amqpChannel,
+		logger,
+	)
+
 	enginePbehavior := engine.New(
 		func(ctx context.Context) error {
+			runInfoPeriodicalWorker.Work(ctx)
 			pbhService := pbehavior.NewService(pbehavior.NewModelProvider(dbClient), entityMatcher, pbhStore, pbhLockerClient)
 
 			now := time.Now().In(timezoneConfigProvider.Get().Location)
@@ -115,7 +124,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		canopsis.FIFOAckQueueName,
 		amqpConnection,
 		&messageProcessor{
-			PbhService:               pbehavior.NewEntityTypeResolver(pbhStore, entityMatcher),
+			PbhService:               pbehavior.NewEntityTypeResolver(pbhStore, pbehavior.NewEntityMatcher(dbClient), entityMatcher),
 			TimezoneConfigProvider:   timezoneConfigProvider,
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			Encoder:                  json.NewEncoder(),
@@ -157,13 +166,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker("run info", engine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		engine.NewRunInfoManager(runInfoRedisSession),
-		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, canopsis.PBehaviorQueueName, options.PublishToQueue),
-		amqpChannel,
-		logger,
-	))
+	enginePbehavior.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	enginePbehavior.AddPeriodicalWorker("alarms", engine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisSession),
 		redis.PbehaviorPeriodicalLockKey,

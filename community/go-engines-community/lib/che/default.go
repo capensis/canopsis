@@ -54,10 +54,10 @@ func NewEngine(
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
-
-	eventFilterService := eventfilter.NewService(eventFilterAdapter, timezoneConfigProvider, logger)
+	eventFilterService := eventfilter.NewService(mongoClient, eventFilterAdapter, timezoneConfigProvider, logger)
 	enrichmentCenter := libcontext.NewEnrichmentCenter(
 		entityAdapter,
+		mongoClient,
 		options.FeatureContextEnrich,
 		entityservice.NewManager(
 			entityServiceAdapter,
@@ -69,8 +69,18 @@ func NewEngine(
 	)
 	enrichFields := libcontext.NewEnrichFields(options.EnrichInclude, options.EnrichExclude)
 
+	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		libengine.NewRunInfoManager(runInfoRedisSession),
+		libengine.NewInstanceRunInfo(canopsis.CheEngineName, options.ConsumeFromQueue, options.PublishToQueue),
+		amqpChannel,
+		logger,
+	)
+
 	engine := libengine.New(
 		func(ctx context.Context) error {
+			runInfoPeriodicalWorker.Work(ctx)
+
 			err := eventFilterService.LoadDataSourceFactories(
 				enrichmentCenter,
 				enrichFields,
@@ -176,13 +186,7 @@ func NewEngine(
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
 	})
-	engine.AddPeriodicalWorker("run info", libengine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		libengine.NewRunInfoManager(runInfoRedisSession),
-		libengine.NewInstanceRunInfo(canopsis.CheEngineName, options.ConsumeFromQueue, options.PublishToQueue),
-		amqpChannel,
-		logger,
-	))
+	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engine.AddPeriodicalWorker("alarm config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),

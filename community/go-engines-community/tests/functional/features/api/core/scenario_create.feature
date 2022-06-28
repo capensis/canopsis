@@ -5,7 +5,7 @@ Feature: Create a scenario
   Scenario: given create request should return ok
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-to-create-1-name",
       "enabled": true,
@@ -25,6 +25,7 @@ Feature: Create a scenario
           ],
           "type": "snooze",
           "parameters": {
+            "author": "test-scenario-to-create-1-action-1-author",
             "output": "test-scenario-to-create-1-action-1-output",
             "duration": {
               "value": 3,
@@ -48,6 +49,7 @@ Feature: Create a scenario
           ],
           "type": "webhook",
           "parameters": {
+            "author": "test-scenario-to-create-1-action-2-author",
             "request": {
               "method": "POST",
               "url": "http://test-scenario-to-create-1-action-2-url.com",
@@ -104,7 +106,7 @@ Feature: Create a scenario
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "name": "test-scenario-to-create-1-name",
       "author": "root",
@@ -125,8 +127,7 @@ Feature: Create a scenario
           ],
           "type": "snooze",
           "parameters": {
-            "author": "root",
-            "user": "root",
+            "author": "test-scenario-to-create-1-action-1-author",
             "output": "test-scenario-to-create-1-action-1-output",
             "duration": {
               "value": 3,
@@ -150,6 +151,7 @@ Feature: Create a scenario
           ],
           "type": "webhook",
           "parameters": {
+            "author": "test-scenario-to-create-1-action-2-author",
             "request": {
               "method": "POST",
               "url": "http://test-scenario-to-create-1-action-2-url.com",
@@ -188,8 +190,6 @@ Feature: Create a scenario
           ],
           "type": "pbehavior",
           "parameters": {
-            "author": "root",
-            "user": "root",
             "duration": {
               "value": 3,
               "unit": "s"
@@ -202,8 +202,6 @@ Feature: Create a scenario
             },
             "rrule": "FREQ=DAILY",
             "start_on_trigger": true,
-            "tstart": null,
-            "tstop": null,
             "type": {
               "_id": "test-type-to-edit-scenario",
               "description": "test-type-to-edit-scenario-description",
@@ -223,7 +221,7 @@ Feature: Create a scenario
   Scenario: given create request should return ok to get request
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-to-create-2-name",
       "enabled": true,
@@ -324,7 +322,7 @@ Feature: Create a scenario
     When I do GET /api/v4/scenarios/{{ .lastResponse._id}}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "name": "test-scenario-to-create-2-name",
       "author": "root",
@@ -345,8 +343,6 @@ Feature: Create a scenario
           ],
           "type": "snooze",
           "parameters": {
-            "author": "root",
-            "user": "root",
             "output": "test-scenario-to-create-2-action-1-output",
             "duration": {
               "value": 3,
@@ -408,8 +404,6 @@ Feature: Create a scenario
           ],
           "type": "pbehavior",
           "parameters": {
-            "author": "root",
-            "user": "root",
             "duration": {
               "value": 3,
               "unit": "s"
@@ -422,8 +416,6 @@ Feature: Create a scenario
             },
             "rrule": "FREQ=DAILY",
             "start_on_trigger": true,
-            "tstart": null,
-            "tstop": null,
             "type": {
               "_id": "test-type-to-edit-scenario",
               "description": "test-type-to-edit-scenario-description",
@@ -443,7 +435,7 @@ Feature: Create a scenario
   Scenario: given create delay request should return ok
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-to-create-3-name",
       "enabled": true,
@@ -481,7 +473,7 @@ Feature: Create a scenario
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "name": "test-scenario-to-create-3-name",
       "author": "root",
@@ -506,8 +498,6 @@ Feature: Create a scenario
           ],
           "type": "snooze",
           "parameters": {
-            "author": "root",
-            "user": "root",
             "output": "test snooze",
             "duration": {
               "value": 3,
@@ -533,18 +523,19 @@ Feature: Create a scenario
   Scenario: given invalid create request should return errors
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
-    {}
+    """json
+    {
+      "priority": 123
+    }
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "actions": "Actions is missing.",
         "enabled": "Enabled is missing.",
         "name": "Name is missing.",
-        "priority": "Priority is missing.",
         "triggers": "Triggers is missing."
       }
     }
@@ -553,7 +544,7 @@ Feature: Create a scenario
   Scenario: given create request with already exists name should return error
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-to-check-unique-name-name",
       "enabled": true,
@@ -587,7 +578,7 @@ Feature: Create a scenario
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "name": "Name already exists."
@@ -598,7 +589,7 @@ Feature: Create a scenario
   Scenario: given create request with already exists priority should return error
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
@@ -632,7 +623,7 @@ Feature: Create a scenario
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "priority": "Priority already exists."
@@ -643,7 +634,7 @@ Feature: Create a scenario
   Scenario: given create request with invalid action should return error
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
@@ -657,7 +648,7 @@ Feature: Create a scenario
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "actions.0.alarm_patterns": "AlarmPatterns is missing.",
@@ -672,7 +663,7 @@ Feature: Create a scenario
   Scenario: given create request with action without patterns should return error
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
@@ -696,7 +687,7 @@ Feature: Create a scenario
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "actions.0.alarm_patterns": "AlarmPatterns is missing.",
@@ -708,7 +699,7 @@ Feature: Create a scenario
   Scenario: given create request with invalid alarm patterns and empty should return error
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-to-create-4-name",
       "priority": 21,
@@ -747,7 +738,7 @@ Feature: Create a scenario
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "actions.0.alarm_patterns": "Invalid alarm pattern list."
@@ -758,7 +749,7 @@ Feature: Create a scenario
   Scenario: given create request with action with invalid patterns should return error
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
@@ -784,7 +775,7 @@ Feature: Create a scenario
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "actions.0.alarm_patterns": "alarm pattern list contains an empty pattern.",
@@ -796,7 +787,7 @@ Feature: Create a scenario
   Scenario: given create request with snooze action with invalid params should return error
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
@@ -823,7 +814,7 @@ Feature: Create a scenario
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "actions.0.parameters.duration": "Duration is missing."
@@ -834,7 +825,7 @@ Feature: Create a scenario
   Scenario: given create request with assocticket action with invalid params should return error
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
@@ -861,7 +852,7 @@ Feature: Create a scenario
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "actions.0.parameters.ticket": "Ticket is missing."
@@ -872,7 +863,7 @@ Feature: Create a scenario
   Scenario: given create request with changestate action with invalid params should return error
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
@@ -899,10 +890,9 @@ Feature: Create a scenario
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
-        "actions.0.parameters.output": "Output is missing.",
         "actions.0.parameters.state": "State is missing."
       }
     }
@@ -911,7 +901,7 @@ Feature: Create a scenario
   Scenario: given create request with pbehavior action with invalid params should return error
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
@@ -942,7 +932,7 @@ Feature: Create a scenario
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
          "actions.0.parameters.name": "Name is missing.",
@@ -957,7 +947,7 @@ Feature: Create a scenario
   Scenario: given create request with webhook action with invalid params should return error
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
@@ -984,7 +974,45 @@ Feature: Create a scenario
     """
     Then the response code should be 400
     Then the response body should be:
+    """json
+    {
+      "errors": {
+        "actions.0.parameters.request": "Request is missing."
+      }
+    }
     """
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-to-create-4-name",
+      "enabled": true,
+      "priority": 13,
+      "triggers": ["create"],
+      "actions": [
+        {
+          "alarm_patterns": [
+            {
+              "_id": "test-scenario-to-create-1-alarm"
+            }
+          ],
+          "entity_patterns": [
+            {
+              "name": "test-scenario-to-create-1-resource"
+            }
+          ],
+          "type": "webhook",
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "parameters": {
+            "request": {}
+          }
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
     {
       "errors": {
         "actions.0.parameters.request.method": "Method is missing.",
@@ -996,7 +1024,7 @@ Feature: Create a scenario
   Scenario: given create request with custom_id should return ok
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "_id": "my_scenario",
       "name": "my_scenario-name",
@@ -1031,7 +1059,7 @@ Feature: Create a scenario
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "my_scenario"
     }
@@ -1039,7 +1067,7 @@ Feature: Create a scenario
     When I do GET /api/v4/scenarios/my_scenario
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "my_scenario"
     }
@@ -1048,7 +1076,7 @@ Feature: Create a scenario
   Scenario: given create request with custom_id should be failed, because of existing id
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "_id": "test-scenario-to-check-id",
       "name": "my_scenario-name",
@@ -1083,7 +1111,7 @@ Feature: Create a scenario
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "_id": "ID already exists."
@@ -1094,7 +1122,7 @@ Feature: Create a scenario
   Scenario: given create request with single v.ticket.data pattern should return ok
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "_id": "ticket-data-scenario-id",
       "name": "webhook scenario",
@@ -1142,7 +1170,7 @@ Feature: Create a scenario
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "actions": [
           {
@@ -1167,7 +1195,7 @@ Feature: Create a scenario
     When I do GET /api/v4/scenarios/ticket-data-scenario-id
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "ticket-data-scenario-id"
     }
@@ -1176,7 +1204,7 @@ Feature: Create a scenario
   Scenario: given create request with single v.parents.is_empty pattern should return ok
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "webhook scenario alarm without meta parent",
       "priority": 28,
@@ -1220,7 +1248,7 @@ Feature: Create a scenario
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "actions": [
           {
@@ -1242,7 +1270,7 @@ Feature: Create a scenario
     When I do GET /api/v4/scenarios/{{ .lastResponse._id}}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "name": "webhook scenario alarm without meta parent"
     }

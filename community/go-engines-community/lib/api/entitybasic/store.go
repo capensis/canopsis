@@ -3,6 +3,7 @@ package entitybasic
 import (
 	"context"
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,6 +17,7 @@ type Store interface {
 }
 
 type store struct {
+	dbClient          mongo.DbClient
 	dbCollection      mongo.DbCollection
 	alarmDbCollection mongo.DbCollection
 	basicTypes        []string
@@ -23,6 +25,7 @@ type store struct {
 
 func NewStore(db mongo.DbClient) Store {
 	return &store{
+		dbClient:          db,
 		dbCollection:      db.Collection(mongo.EntityMongoCollection),
 		alarmDbCollection: db.Collection(mongo.AlarmMongoCollection),
 		basicTypes:        []string{types.EntityTypeResource, types.EntityTypeComponent, types.EntityTypeConnector},
@@ -53,14 +56,11 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 			"restrictSearchWithMatch": bson.M{"type": bson.M{"$in": s.basicTypes}},
 			"maxDepth":                0,
 		}},
-		{"$unwind": bson.M{"path": "$changeable_impact", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.M{"changeable_impact._id": 1}},
-		{"$group": bson.M{
-			"_id":               "$_id",
-			"data":              bson.M{"$first": "$$ROOT"},
-			"depends":           bson.M{"$first": "$depends"},
-			"changeable_impact": bson.M{"$push": "$changeable_impact"},
+		{"$addFields": bson.M{
+			"changeable_impact": bson.M{"$map": bson.M{"input": "$changeable_impact", "as": "each", "in": "$$each._id"}},
 		}},
+		{"$project": bson.M{"_id": "$_id", "changeable_impact": "$changeable_impact", "data": "$$ROOT", "depends": "$depends"}},
+		{"$project": bson.M{"data.changeable_impact": 0}},
 		{"$graphLookup": bson.M{
 			"from":                    mongo.EntityMongoCollection,
 			"startWith":               "$depends",
@@ -70,14 +70,10 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 			"restrictSearchWithMatch": bson.M{"type": bson.M{"$in": s.basicTypes}},
 			"maxDepth":                0,
 		}},
-		{"$unwind": bson.M{"path": "$changeable_depends", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.M{"changeable_depends._id": 1}},
-		{"$group": bson.M{
-			"_id":                "$_id",
-			"data":               bson.M{"$first": "$data"},
-			"changeable_impact":  bson.M{"$first": "$changeable_impact"},
-			"changeable_depends": bson.M{"$push": "$changeable_depends"},
+		{"$addFields": bson.M{
+			"changeable_depends": bson.M{"$map": bson.M{"input": "$changeable_depends", "as": "each", "in": "$$each._id"}},
 		}},
+		{"$project": bson.M{"depends": 0}},
 		{"$replaceRoot": bson.M{
 			"newRoot": bson.M{"$mergeObjects": bson.A{
 				"$data",
@@ -85,12 +81,12 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 					"changeable_impact": bson.M{"$map": bson.M{
 						"input": "$changeable_impact",
 						"as":    "i",
-						"in":    "$$i._id",
+						"in":    "$$i",
 					}},
 					"changeable_depends": bson.M{"$map": bson.M{
 						"input": "$changeable_depends",
 						"as":    "d",
-						"in":    "$$d._id",
+						"in":    "$$d",
 					}},
 				},
 			}},
@@ -120,31 +116,37 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 		return nil, false, err
 	}
 
-	res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID},
-		bson.M{"$set": bson.M{
-			"description":     r.Description,
-			"enabled":         *r.Enabled,
-			"category":        r.Category,
-			"impact_level":    r.ImpactLevel,
-			"infos":           transformInfos(r),
-			"sli_avail_state": r.SliAvailState,
-		}},
-	)
-	if err != nil || res.MatchedCount == 0 {
-		return nil, false, err
-	}
+	var updatedEntity *Entity
 
-	err = s.removeEntityLinks(ctx, *entity, r)
-	if err != nil {
-		return nil, false, err
-	}
-	err = s.addEntityLinks(ctx, *entity, r)
-	if err != nil {
-		return nil, false, err
-	}
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		updatedEntity = nil
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID},
+			bson.M{"$set": bson.M{
+				"description":     r.Description,
+				"enabled":         *r.Enabled,
+				"category":        r.Category,
+				"impact_level":    r.ImpactLevel,
+				"infos":           transformInfos(r),
+				"sli_avail_state": r.SliAvailState,
+			}},
+		)
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+		err = s.removeEntityLinks(ctx, *entity, r)
+		if err != nil {
+			return err
+		}
+		err = s.addEntityLinks(ctx, *entity, r)
+		if err != nil {
+			return err
+		}
 
-	updatedEntity, err := s.GetOneBy(ctx, r.ID)
-	if err != nil {
+		updatedEntity, err = s.GetOneBy(ctx, r.ID)
+		return err
+	})
+
+	if err != nil || updatedEntity == nil {
 		return nil, false, err
 	}
 

@@ -36,7 +36,7 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with date in prev
       common.by : ticket-author
     </div>
     <div>
-      common.date : 08/08/2013 0:00:00
+      common.date : 07/08/2013 19:00:00
     </div>
     <div>
       alarmList.actions.iconsFields.ticketNumber : ticket-message
@@ -81,7 +81,7 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full ticket 
       common.by : ticket-author
     </div>
     <div>
-      common.date : 12:00:00
+      common.date : 6:00:00
     </div>
     <div>
       alarmList.actions.iconsFields.ticketNumber : ticket-message
@@ -126,7 +126,7 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` without value 2`]
       common.by : ticket-author
     </div>
     <div>
-      common.date : 12:00:00
+      common.date : 6:00:00
     </div>
     <!---->
   </div>

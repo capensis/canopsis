@@ -2,6 +2,7 @@ package pbehavior
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -55,7 +56,14 @@ func (p *modelProvider) GetTypes(ctx context.Context) (map[string]*Type, error) 
 
 func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context) (map[string]*PBehavior, error) {
 	coll := p.dbClient.Collection(PBehaviorCollectionName)
-	cursor, err := coll.Find(ctx, bson.M{"enabled": true})
+	cursor, err := coll.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"enabled": true}},
+		{"$addFields": bson.M{
+			"comments": bson.M{
+				"$slice": bson.A{bson.M{"$reverseArray": "$comments"}, 1},
+			},
+		}},
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +86,14 @@ func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context) (map[string]*P
 
 func (p *modelProvider) GetEnabledPbehaviorsByIds(ctx context.Context, ids []string) (map[string]*PBehavior, error) {
 	coll := p.dbClient.Collection(PBehaviorCollectionName)
-	cursor, err := coll.Find(ctx, bson.M{"_id": bson.M{"$in": ids}, "enabled": true})
+	cursor, err := coll.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": bson.M{"$in": ids}, "enabled": true}},
+		{"$addFields": bson.M{
+			"comments": bson.M{
+				"$slice": bson.A{bson.M{"$reverseArray": "$comments"}, 1},
+			},
+		}},
+	})
 	if err != nil {
 		return nil, err
 	}

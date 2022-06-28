@@ -171,6 +171,7 @@ docker-cmd-canopsis-api-pro: TARGET=canopsis-api-pro
 docker-cmd-canopsis-reconfigure: TARGET=canopsis-reconfigure
 docker-cmd-engine-che: TARGET=engine-che
 docker-cmd-engine-webhook: TARGET=engine-webhook
+docker-cmd-import-context-graph: TARGET=import-context-graph
 
 #
 # INSTALLATION
@@ -208,6 +209,14 @@ test: $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/ready $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/
 	# environment variables.
 	cd -- "$(CURRENT_ROOT_DIR)" && \
 	go test -p 1 -parallel 1 ./...
+
+.PHONY: docker-test-image
+docker-test-image: $(MONOREPO_ROOT)/.dockerignore
+	docker build \
+		-f docker/functional-test.Dockerfile \
+		$(DOCKER_BUILD_ARGS) \
+		-t "canopsis/go-functional-test:${TAG}" \
+		"$(MONOREPO_ROOT)"
 
 #
 # HELP

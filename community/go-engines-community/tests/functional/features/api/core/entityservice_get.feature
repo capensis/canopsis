@@ -67,7 +67,10 @@ Feature: Get entity service
       "name": "test-entityservice-to-get-name",
       "output_template": "test-entityservice-to-get-output",
       "sli_avail_state": 0,
-      "type": "service"
+      "type": "service",
+      "ok_events": 0,
+      "ko_events": 0,
+      "state": 0
     }
     """
 

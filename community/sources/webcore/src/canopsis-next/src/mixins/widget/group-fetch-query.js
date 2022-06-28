@@ -31,14 +31,17 @@ export default {
       const {
         page,
         limit,
-        sortKey,
-        sortDir = '',
+        multiSortBy = [],
       } = this.query;
 
       let { alarms } = this;
 
-      if (sortKey) {
-        alarms = orderBy(alarms, [sortKey], [sortDir.toLowerCase()]);
+      if (multiSortBy.length) {
+        alarms = orderBy(
+          alarms,
+          multiSortBy.map(({ sortBy }) => sortBy),
+          multiSortBy.map(({ descending }) => (descending ? 'desc' : 'asc')),
+        );
       }
 
       return alarms.slice((page - 1) * limit, page * limit);

@@ -3,11 +3,9 @@ package importcontextgraph
 import (
 	"fmt"
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"github.com/streadway/amqp"
-	"time"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type eventPublisher struct {
@@ -32,19 +30,7 @@ func NewEventPublisher(
 	}
 }
 
-func (p *eventPublisher) SendUpdateEntityServiceEvent(serviceId string) error {
-	return p.sendEvent(types.Event{
-		EventType:     types.EventTypeRecomputeEntityService,
-		Connector:     types.ConnectorEngineService,
-		ConnectorName: types.ConnectorEngineService,
-		Component:     serviceId,
-		Timestamp:     types.CpsTime{Time: time.Now()},
-		Author:        canopsis.DefaultEventAuthor,
-		SourceType:    types.SourceTypeService,
-	})
-}
-
-func (p *eventPublisher) sendEvent(event types.Event) error {
+func (p *eventPublisher) SendEvent(event types.Event) error {
 	bevent, err := p.encoder.Encode(event)
 	if err != nil {
 		return fmt.Errorf("error while encoding event %+v", err)

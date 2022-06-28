@@ -19,9 +19,12 @@
 <script>
 import { MODALS } from '@/constants';
 
+import { entitiesInfoMixin } from '@/mixins/entities/info';
+
 import Socket from '@/plugins/socket/services/socket';
 
 export default {
+  mixins: [entitiesInfoMixin],
   props: {
     title: {
       type: String,
@@ -49,7 +52,9 @@ export default {
         name: MODALS.info,
         config: {
           title: this.$t('modals.webSocketError.title'),
-          text: this.$t('modals.webSocketError.text'),
+          text: this.isCatVersion
+            ? this.$t('modals.webSocketError.text')
+            : this.$t('modals.webSocketError.shortText'),
         },
       });
     },

@@ -34,7 +34,7 @@ exports[`extra-details-ack Renders \`extra-details-ack\` with date in previous m
       common.by : ack-author
     </div>
     <div>
-      common.date : 08/08/2013 0:00:00
+      common.date : 07/08/2013 19:00:00
     </div>
     <div>
       common.initiator : ack-initiator
@@ -82,7 +82,7 @@ exports[`extra-details-ack Renders \`extra-details-ack\` with full ack 2`] = `
       common.by : ack-author
     </div>
     <div>
-      common.date : 12:00:00
+      common.date : 6:00:00
     </div>
     <div>
       common.initiator : ack-initiator
@@ -130,7 +130,7 @@ exports[`extra-details-ack Renders \`extra-details-ack\` without initiator 2`] =
       common.by : ack-author
     </div>
     <div>
-      common.date : 12:00:00
+      common.date : 6:00:00
     </div>
     <!---->
     <div
@@ -176,7 +176,7 @@ exports[`extra-details-ack Renders \`extra-details-ack\` without message 2`] = `
       common.by : ack-author
     </div>
     <div>
-      common.date : 12:00:00
+      common.date : 6:00:00
     </div>
     <div>
       common.initiator : ack-initiator

@@ -7,19 +7,22 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeStaticAlarms } from '@unit/data/alarm';
-import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
+
 import {
-  CANOPSIS_EDITION, EXPORT_CSV_DATETIME_FORMATS,
+  CANOPSIS_EDITION,
+  EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_STATUSES,
   FILTER_DEFAULT_VALUES,
   FILTER_MONGO_OPERATORS,
   MODALS,
   QUICK_RANGES,
-  REMEDIATION_INSTRUCTION_TYPES, TIME_UNITS,
+  REMEDIATION_INSTRUCTION_TYPES,
+  TIME_UNITS,
   USERS_PERMISSIONS,
 } from '@/constants';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
+import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
 
 jest.mock('file-saver', () => ({
   saveAs: jest.fn(),
@@ -35,6 +38,7 @@ const stubs = {
   'alarms-list-remediation-instructions-filters': true,
   'c-action-btn': true,
   'c-pagination': true,
+  'c-density-btn-toggle': true,
   'c-table-pagination': true,
   'alarms-expand-panel-tour': true,
   'alarms-list-table': {
@@ -56,6 +60,7 @@ const snapshotStubs = {
   'c-pagination': true,
   'alarms-list-table': true,
   'c-table-pagination': true,
+  'c-density-btn-toggle': true,
   'alarms-expand-panel-tour': true,
 };
 
@@ -89,6 +94,9 @@ describe('alarms-list', () => {
   const $modals = mockModals();
 
   const nowTimestamp = 1386435600000;
+  const nowUnix = 1386435600;
+  const nowSubtractOneYearUnix = 1354899600;
+
   mockDateNow(nowTimestamp);
 
   const totalItems = 10;
@@ -115,7 +123,7 @@ describe('alarms-list', () => {
     status: EXPORT_STATUSES.failed,
   };
   const exportAlarmFile = 'exportAlarmFile';
-  const widget = alarmListWidgetToForm();
+  const widget = generateDefaultAlarmListWidgetForm();
   const defaultQuery = {
     active_columns: widget.parameters.widgetColumns.map(v => v.value),
     correlation: userPreferences.content.isCorrelationEnabled,
@@ -183,6 +191,7 @@ describe('alarms-list', () => {
       update: updateView,
     },
   };
+  const fetchUserPreference = jest.fn();
   const userPreferenceModule = {
     name: 'userPreference',
     getters: {
@@ -190,7 +199,7 @@ describe('alarms-list', () => {
     },
     actions: {
       update: updateUserPreference,
-      fetchItem: jest.fn(),
+      fetchItem: fetchUserPreference,
     },
   };
   const authModule = {
@@ -229,6 +238,7 @@ describe('alarms-list', () => {
   ]);
 
   afterEach(() => {
+    fetchUserPreference.mockClear();
     updateUserPreference.mockClear();
     updateView.mockClear();
     updateQuery.mockClear();
@@ -244,6 +254,41 @@ describe('alarms-list', () => {
     });
 
     await flushPromises();
+
+    expect(fetchUserPreference).toBeCalledWith(
+      expect.any(Object),
+      { id: widget._id },
+      undefined,
+    );
+
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: {
+          ...omit(defaultQuery, ['search', 'tstart', 'tstop']),
+          multiSortBy: [],
+          page: 1,
+          with_instructions: true,
+          opened: true,
+        },
+      },
+      undefined,
+    );
+  });
+
+  it('User preferences not fetched after mount with local widget prop', async () => {
+    factory({
+      store,
+      propsData: {
+        widget,
+        localWidget: true,
+      },
+    });
+
+    await flushPromises();
+
+    expect(fetchUserPreference).not.toBeCalled();
 
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
@@ -698,8 +743,8 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
-          include_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
-          exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
+          include_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
+          exclude_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
           exclude_instructions: excludeInstructionsIds,
           include_instructions: includeInstructionsIds,
           page: 1,
@@ -770,7 +815,7 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
-          exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual],
+          exclude_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual],
           exclude_instructions: excludeInstructionsIds,
           page: 1,
         },
@@ -1004,9 +1049,10 @@ describe('alarms-list', () => {
 
   it('Widget exported after trigger export button', async () => {
     const nowDate = new Date(nowTimestamp);
+    const OriginalDate = Date;
     const dateSpy = jest
       .spyOn(global, 'Date')
-      .mockImplementation(() => nowDate);
+      .mockImplementation(() => new OriginalDate(nowTimestamp));
     jest.useFakeTimers('legacy');
 
     const wrapper = factory({
@@ -1048,6 +1094,8 @@ describe('alarms-list', () => {
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
+          tstart: nowSubtractOneYearUnix,
+          tstop: nowUnix,
           fields: widget.parameters.widgetExportColumns.map(({ label, value }) => ({
             label,
             name: value,
@@ -1143,6 +1191,8 @@ describe('alarms-list', () => {
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
+          tstart: nowSubtractOneYearUnix,
+          tstop: nowUnix,
           fields: widget.parameters.widgetExportColumns.map(({ label, value }) => ({
             label,
             name: value,
@@ -1204,6 +1254,8 @@ describe('alarms-list', () => {
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
+          tstart: nowSubtractOneYearUnix,
+          tstop: nowUnix,
           fields: widget.parameters.widgetColumns.map(({ label, value }) => ({
             label,
             name: value,

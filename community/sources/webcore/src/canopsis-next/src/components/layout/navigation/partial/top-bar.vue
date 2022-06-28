@@ -15,7 +15,7 @@
         logged-users-count(badgeColor="secondary")
         app-version
     top-bar-title(:title="appTitle")
-    healthcheck-chips-list(v-if="hasAccessToHealthcheckStatus")
+    healthcheck-chips-list(v-if="isCatVersion && hasAccessToHealthcheckStatus")
     v-spacer(v-else)
     portal-target(:name="$constants.PORTALS_NAMES.additionalTopBarItems")
     v-toolbar-items

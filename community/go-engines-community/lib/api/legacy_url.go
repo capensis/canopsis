@@ -1,22 +1,25 @@
 package api
 
 import (
+	"github.com/rs/zerolog"
 	"net/url"
 	"os"
 )
 
-// GetLegacyURL returns old API url from env var or default url.
-func GetLegacyURL() (parsed *url.URL) {
+// GetLegacyURL returns old API url from env var.
+func GetLegacyURL(logger zerolog.Logger) *url.URL {
 	var err error
 	legacy := os.Getenv(EnvOldApiURL)
-	if legacy != "" {
-		parsed, err = url.Parse(legacy)
+	if legacy == "" {
+		logger.Warn().Msgf("%s is empty", EnvOldApiURL)
+		return nil
 	}
-	if parsed == nil || err != nil {
-		return &url.URL{
-			Scheme: "http",
-			Host:   DefaultOldAPI,
-		}
+
+	parsed, err := url.Parse(legacy)
+	if err != nil {
+		logger.Err(err).Str("url", legacy).Msgf("cannot parse %s", EnvOldApiURL)
+		return nil
 	}
+
 	return parsed
 }

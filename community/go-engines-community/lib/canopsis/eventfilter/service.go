@@ -3,6 +3,7 @@ package eventfilter
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"io/ioutil"
 	"path/filepath"
 	"plugin"
@@ -28,6 +29,7 @@ type Report struct {
 
 // service is the service that manages the event filter.
 type service struct {
+	dbClient mongo.DbClient
 	// adapter is an adapter to the rules collection.
 	adapter Adapter
 
@@ -47,8 +49,9 @@ type service struct {
 }
 
 // NewService creates an event filter service.
-func NewService(adapter Adapter, timezoneConfigProvider config.TimezoneConfigProvider, logger zerolog.Logger) Service {
+func NewService(dbClient mongo.DbClient, adapter Adapter, timezoneConfigProvider config.TimezoneConfigProvider, logger zerolog.Logger) Service {
 	s := service{
+		dbClient:               dbClient,
 		adapter:                adapter,
 		timezoneConfigProvider: timezoneConfigProvider,
 		logger:                 logger,
@@ -109,7 +112,7 @@ func (s *service) loadRuleDataSources(rule *Rule) error {
 		if !success {
 			return fmt.Errorf("no such data source: %s", source.Type)
 		}
-		getter, err := factory.Create(source.DataSourceBase.Parameters)
+		getter, err := factory.Create(s.dbClient, source.DataSourceBase.Parameters)
 		if err != nil {
 			return err
 		}

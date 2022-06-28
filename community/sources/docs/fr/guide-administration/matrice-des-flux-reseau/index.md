@@ -11,6 +11,7 @@ API Canopsis  | API REST de Canopsis                        | TCP/8082          
 Nginx         | Accès à l'interface web et API              | TCP/80,443            |
 Redis         | Serveur de cache                            | TCP/6739              |
 SNMP          | Passage des traps SNMP                      | UDP/162               |
+PostgreSQL    | Base de données, métriques (TimescaleDB)    | TCP/5432              |
 
 ## Matrice des flux
 
@@ -20,7 +21,7 @@ Certains flux de cette liste sont nécessaires pour l'installation ou la mise à
 
 Source | Destination | Port | Description |
 -------|-------------|------|-------------|
-Canopsis | git.canopsis.net, hub.docker.com | TCP/443 | Récupération des paquets d'installation (Utilisation possible à travers un proxy) |
+Canopsis | `git.canopsis.net`, `repositories.canopsis.net`, `docker.canopsis.net`, `hub.docker.com` | TCP/443 | Récupération des paquets d'installation (Utilisation possible à travers un proxy) |
 Utilisateurs | Canopsis | TCP/80,443 | Accès à l'interface web et API de Canopsis |
 Administrateurs | Canopsis, MongoDB | TCP/22 | Accès aux systèmes via SSH |
 Administrateurs | Canopsis | TCP/15672 | Accès à l'interface web du bus AMQP. Permet de suivre l'activité des files d'attente |
@@ -29,6 +30,7 @@ Sources d'événements API | Canopsis | TCP/80,443 ou TCP/8082 | Permet la publi
 Sources d'événements trap SNMP | Canopsis | UDP/162 | Permet la publication de trap SNMP vers Canopsis |
 Canopsis | LDAP | TCP/389,636 | Permet l'authentification à Canopsis via un identifiant LDAP |
 Canopsis | MongoDB | TCP/27017 | Permet l'accès à la base de données MongoDB depuis Canopsis |
+Canopsis | PostgreSQL | TCP/5432 | Permet l'accès à la base de données PostgreSQL depuis Canopsis |
 
 Définition des objets:
 
@@ -38,4 +40,3 @@ Définition des objets:
  * Sources d'événements trap SNMP : Machines qui produisent des événements au format Trap SNMP
  * Canopsis : Machine qui héberge Canopsis
  * MongoDB : Machine(s) qui héberge(nt) MongoDB
-

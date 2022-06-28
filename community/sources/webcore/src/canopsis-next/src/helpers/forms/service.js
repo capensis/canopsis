@@ -1,6 +1,8 @@
 import { cloneDeep } from 'lodash';
 
-import { enabledToForm, infosToArray } from './shared/common';
+import { ENTITIES_STATES } from '@/constants';
+
+import { infosToArray } from './shared/common';
 
 /**
  * @typedef {Object} ServiceForm
@@ -8,6 +10,7 @@ import { enabledToForm, infosToArray } from './shared/common';
  * @property {string} category
  * @property {boolean} enabled
  * @property {number} impact_level
+ * @property {number} sli_avail_state
  * @property {Object|Array} infos
  * @property {Object} entity_patterns
  * @property {string} output_template
@@ -30,12 +33,13 @@ import { enabledToForm, infosToArray } from './shared/common';
  */
 export const serviceToForm = (service = {}) => ({
   impact_level: service.impact_level,
-  name: service.name || '',
-  category: service.category || '',
-  enabled: enabledToForm(service.enabled),
+  name: service.name ?? '',
+  category: service.category ?? '',
+  enabled: service.enabled ?? true,
   infos: infosToArray(service.infos),
   entity_patterns: service.entity_patterns ? cloneDeep(service.entity_patterns) : [],
-  output_template: service.output_template || '',
+  output_template: service.output_template ?? '',
+  sli_avail_state: service.sli_avail_state ?? ENTITIES_STATES.ok,
 });
 
 /**

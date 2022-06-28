@@ -70,7 +70,7 @@
           :columns-filters="columnsFilters"
         )
       template(slot="actions", slot-scope="props")
-        actions-panel(:item="props.item", :is-editing-mode="isEditingMode")
+        actions-panel(:item="props.item", :editing="editing")
       template(slot="expand", slot-scope="props")
         entities-list-expand-panel(
           :item="props.item",
@@ -97,17 +97,17 @@ import { USERS_PERMISSIONS } from '@/constants';
 
 import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
-
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import widgetColumnsMixin from '@/mixins/widget/columns';
+import { widgetColumnsContextMixin } from '@/mixins/widget/columns';
 import { exportCsvMixinCreator } from '@/mixins/widget/export';
-import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
+import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
-import { permissionsWidgetsContextEntityFilters } from '@/mixins/permissions/widgets/context-entity/filters';
-import { permissionsWidgetsContextEntityCategory } from '@/mixins/permissions/widgets/context-entity/category';
+import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
+import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
+
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 import EntityColumnCell from './columns-formatting/entity-column-cell.vue';
 import EntitiesListExpandPanel from './partials/entities-list-expand-panel.vue';
@@ -127,12 +127,12 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetColumnsMixin,
+    widgetColumnsContextMixin,
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
     entitiesAlarmColumnsFiltersMixin,
-    permissionsWidgetsContextEntityFilters,
-    permissionsWidgetsContextEntityCategory,
+    permissionsWidgetsContextFilters,
+    permissionsWidgetsContextCategory,
     exportCsvMixinCreator({
       createExport: 'createContextExport',
       fetchExport: 'fetchContextExport',
@@ -144,7 +144,7 @@ export default {
       type: Object,
       required: true,
     },
-    isEditingMode: {
+    editing: {
       type: Boolean,
       required: true,
     },

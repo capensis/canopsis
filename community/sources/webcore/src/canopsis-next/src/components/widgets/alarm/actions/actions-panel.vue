@@ -13,7 +13,6 @@ import {
   EVENT_ENTITY_STYLE,
   ALARM_LIST_ACTIONS_TYPES,
   META_ALARMS_RULE_TYPES,
-  REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
@@ -217,6 +216,11 @@ export default {
        * Add actions for available instructions
        */
       if (assignedInstructions.length && filteredActionsMap.executeInstruction) {
+        const pausedInstruction = this.item.assigned_instructions.find(instruction => instruction.execution);
+        const hasRunningInstruction = this.item.is_auto_instruction_running
+          || this.item.is_manual_instruction_running
+          || this.item.is_manual_instruction_waiting_result;
+
         assignedInstructions.forEach((instruction) => {
           const { execution } = instruction;
           const titlePrefix = execution ? 'resume' : 'execute';
@@ -224,7 +228,7 @@ export default {
           const action = {
             ...filteredActionsMap.executeInstruction,
 
-            disabled: get(execution, 'status') === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running,
+            disabled: hasRunningInstruction || (pausedInstruction && pausedInstruction._id !== instruction._id),
             title: this.$t(`alarmList.actions.titles.${titlePrefix}Instruction`, {
               instructionName: instruction.name,
             }),
