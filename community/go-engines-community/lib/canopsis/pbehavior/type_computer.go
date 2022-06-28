@@ -59,7 +59,7 @@ type computedType struct {
 
 //easyjson:json
 type Types struct {
-	T map[string]*Type
+	T map[string]Type
 }
 
 // ComputeResult represents computed data.
