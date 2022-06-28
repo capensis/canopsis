@@ -221,7 +221,9 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	viewGroupUniqueTitleValidator := common.NewUniqueFieldValidator(client, mongo.ViewGroupMongoCollection, "Title")
 	v.RegisterStructValidationCtx(viewGroupUniqueTitleValidator.Validate, viewgroup.EditRequest{})
 
-	v.RegisterStructValidation(widget.ValidateEditRequest, widget.EditRequest{})
+	widgetValidator := widget.NewValidator(client)
+	v.RegisterStructValidation(widgetValidator.ValidateEditRequest, widget.EditRequest{})
+	v.RegisterStructValidationCtx(widgetValidator.ValidateFilterRequest, widget.FilterRequest{})
 
 	v.RegisterStructValidationCtx(widgetfilter.NewValidator(client).ValidateEditRequest, widgetfilter.EditRequest{})
 
