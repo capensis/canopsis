@@ -97,8 +97,17 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(ExternalDataContainer))
 	eventFilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, config.NewTimezoneConfigProvider(cfg, logger), logger)
 
+	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
+		canopsis.PeriodicalWaitTime,
+		libengine.NewRunInfoManager(runInfoRedisClient),
+		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, options.ConsumeFromQueue, options.PublishToQueue),
+		amqpChannel,
+		logger,
+	)
+
 	engine := libengine.New(
 		func(ctx context.Context) error {
+			runInfoPeriodicalWorker.Work(ctx)
 			scheduler.Start(ctx)
 
 			err := eventFilterService.LoadRules(ctx, []string{eventfilter.RuleTypeChangeEntity})
@@ -192,13 +201,7 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
 	})
-	engine.AddPeriodicalWorker("run info", libengine.NewRunInfoPeriodicalWorker(
-		canopsis.PeriodicalWaitTime,
-		libengine.NewRunInfoManager(runInfoRedisClient),
-		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, options.ConsumeFromQueue, options.PublishToQueue),
-		amqpChannel,
-		logger,
-	))
+	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engine.AddPeriodicalWorker("outdated rates", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(engineLockRedisClient),
 		redis.FifoDeleteOutdatedRatesLockKey,

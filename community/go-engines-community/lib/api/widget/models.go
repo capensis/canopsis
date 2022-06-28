@@ -15,6 +15,13 @@ type EditRequest struct {
 	GridParameters map[string]interface{} `json:"grid_parameters"`
 	Parameters     view.Parameters        `json:"parameters"`
 	Author         string                 `json:"author" swaggerignore:"true"`
+
+	Filters []FilterRequest `json:"filters" binding:"dive"`
+}
+
+type FilterRequest struct {
+	widgetfilter.BaseEditRequest
+	ID string `json:"_id"`
 }
 
 type EditGridPositionItemRequest struct {

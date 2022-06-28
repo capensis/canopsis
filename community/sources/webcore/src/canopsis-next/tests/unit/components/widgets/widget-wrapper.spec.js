@@ -12,12 +12,7 @@ const stubs = {
   'alarms-list-widget': true,
   'entities-list-widget': true,
   'service-weather-widget': true,
-  'stats-histogram-widget': true,
-  'stats-curves-widget': true,
-  'stats-table-widget': true,
   'stats-calendar-widget': true,
-  'stats-number-widget': true,
-  'stats-pareto-widget': true,
   'text-widget': true,
   'counter-widget': true,
   'testing-weather-widget': true,
@@ -43,7 +38,7 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
-        isEditingMode: false,
+        editing: false,
       },
       store: createMockedStoreModules([{
         name: 'info',
@@ -65,7 +60,7 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
-        isEditingMode: false,
+        editing: false,
       },
       store: createMockedStoreModules([{
         name: 'info',
@@ -87,7 +82,7 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
-        isEditingMode: false,
+        editing: false,
       },
       store: createMockedStoreModules([{
         name: 'info',
@@ -110,7 +105,7 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
-        isEditingMode: false,
+        editing: false,
       },
       store: createMockedStoreModules([{
         name: 'info',
@@ -132,7 +127,7 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
-        isEditingMode: true,
+        editing: true,
       },
       store: createMockedStoreModules([{
         name: 'info',
@@ -155,7 +150,7 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
-        isEditingMode: true,
+        editing: true,
       },
       store: createMockedStoreModules([{
         name: 'info',
