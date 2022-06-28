@@ -194,12 +194,20 @@ func NewSession(ctx context.Context, db int, logger zerolog.Logger, reconnectCou
 		}
 		redisClient = redis.NewClient(redisOptions)
 	}
-	pctx, cancel := context.WithTimeout(ctx, minReconnectTimeout)
-	defer cancel()
-	err := redisClient.Ping(pctx).Err()
-	if err != nil {
-		return nil, err
+	if minReconnectTimeout > 0 {
+		pctx, cancel := context.WithTimeout(ctx, minReconnectTimeout)
+		defer cancel()
+		err := redisClient.Ping(pctx).Err()
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		err := redisClient.Ping(ctx).Err()
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	return redisClient, nil
 }
 
