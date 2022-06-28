@@ -1,10 +1,10 @@
 <template lang="pug">
-  g
+  g(@dblclick="$emit('dblclick', $event)")
     points-path(
       :points="line.points",
+      :pointer-events="moving ? 'none' : 'stroke'",
       cursor="move",
       stroke-width="10",
-      :pointer-events="moving ? 'none' : 'stroke'",
       @mousedown.stop="$emit('mousedown', $event)",
       @mouseup="$emit('mouseup', $event)"
     )

@@ -1,7 +1,7 @@
 <template lang="pug">
   g
     storage-figure(
-      v-bind="shape.style",
+      v-bind="shape.properties",
       :width="shape.width",
       :height="shape.height",
       :radius="shape.radius",
@@ -10,14 +10,13 @@
     )
     text-editor(
       ref="editor",
+      v-bind="shape.textProperties",
       :value="shape.text",
       :y="shape.y",
       :x="shape.x",
       :width="shape.width",
       :height="shape.height",
       :editable="editing",
-      :align-center="shape.alignCenter",
-      :justify-center="shape.justifyCenter",
       @blur="disableEditingMode"
     )
     storage-shape-selection(
@@ -37,6 +36,8 @@
 </template>
 
 <script>
+import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
+
 import TextEditor from '../common/text-editor.vue';
 import StorageFigure from '../common/storage-figure.vue';
 
@@ -44,6 +45,7 @@ import StorageShapeSelection from './storage-shape-selection.vue';
 
 export default {
   components: { StorageFigure, StorageShapeSelection, TextEditor },
+  mixins: [flowchartTextEditorMixin],
   props: {
     shape: {
       type: Object,
@@ -66,29 +68,9 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      editing: false,
-    };
-  },
   computed: {
     diameter() {
       return this.shape.radius * 2;
-    },
-  },
-  methods: {
-    enableEditingMode() {
-      this.editing = true;
-
-      this.$refs.editor.focus();
-    },
-
-    disableEditingMode(event) {
-      this.$emit('update', {
-        text: event.target.innerHTML,
-      });
-
-      this.editing = false;
     },
   },
 };

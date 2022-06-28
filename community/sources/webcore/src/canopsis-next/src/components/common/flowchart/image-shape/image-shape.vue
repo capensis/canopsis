@@ -1,7 +1,7 @@
 <template lang="pug">
   g
     image(
-      v-bind="shape.style",
+      v-bind="shape.properties",
       :href="shape.src",
       :x="shape.x",
       :y="shape.y",
@@ -12,12 +12,10 @@
       ref="editor",
       :value="shape.text",
       :y="shape.y + shape.height",
-      :x="shape.x",
-      :width="shape.width",
-      :height="25",
+      :x="shape.x + shape.width / 2",
       :editable="editing",
-      :align-center="shape.alignCenter",
-      :justify-center="shape.justifyCenter",
+      align-center,
+      justify-center,
       @blur="disableEditingMode"
     )
     rect-shape-selection(
@@ -37,11 +35,14 @@
 </template>
 
 <script>
+import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
+
 import RectShapeSelection from '../rect-shape/rect-shape-selection.vue';
 import TextEditor from '../common/text-editor.vue';
 
 export default {
   components: { RectShapeSelection, TextEditor },
+  mixins: [flowchartTextEditorMixin],
   props: {
     shape: {
       type: Object,
@@ -62,26 +63,6 @@ export default {
     connecting: {
       type: Boolean,
       default: false,
-    },
-  },
-  data() {
-    return {
-      editing: false,
-    };
-  },
-  methods: {
-    enableEditingMode() {
-      this.editing = true;
-
-      this.$refs.editor.focus();
-    },
-
-    disableEditingMode(event) {
-      this.$emit('update', {
-        text: event.target.innerHTML,
-      });
-
-      this.editing = false;
     },
   },
 };
