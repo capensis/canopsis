@@ -5,6 +5,7 @@
     v-container
       v-layout(column)
         filter-selector(
+          v-if="!hideSelector",
           v-field="value",
           :label="$t('filterSelector.defaultFilter')",
           :filters="filters"
@@ -61,6 +62,10 @@ export default {
       default: false,
     },
     withPbehavior: {
+      type: Boolean,
+      default: false,
+    },
+    hideSelector: {
       type: Boolean,
       default: false,
     },
