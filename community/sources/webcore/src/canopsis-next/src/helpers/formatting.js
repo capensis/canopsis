@@ -1,5 +1,8 @@
 import { COLORS } from '@/config';
-import { ENTITIES_STATES_STYLES, ENTITY_STATUS_STYLES, EVENT_ENTITY_STYLE, UNKNOWN_VALUE_STYLE } from '@/constants';
+
+import { ENTITIES_STATES_STYLES, ENTITY_STATUS_STYLES, UNKNOWN_VALUE_STYLE } from '@/constants';
+
+import { getEntityEventColor } from '@/helpers/color';
 
 /**
  * Return object that contains the state style
@@ -46,15 +49,22 @@ export function formatStatus(value) {
 
 /**
  * Return object that contains the event style
- * @param event The event name
+ *
+ * @param {string} event The event name
  * @returns {*} Object with the color, icon and text associated
  */
-export function formatEvent(event) {
-  if (!EVENT_ENTITY_STYLE[event]) {
+export const formatEvent = (event) => {
+  const icon = getEntityEventColor(event);
+
+  if (!icon) {
     return UNKNOWN_VALUE_STYLE;
   }
-  return EVENT_ENTITY_STYLE[event];
-}
+
+  return {
+    icon,
+    color: getEntityEventColor(event),
+  };
+};
 
 /**
  * Return object that contains the step style
