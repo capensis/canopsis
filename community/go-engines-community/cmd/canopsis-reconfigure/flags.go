@@ -5,14 +5,13 @@ import (
 )
 
 const (
-	DefaultCfgFile         = "/opt/canopsis/etc/canopsis.toml"
-	DefaultOverrideCfgFile = "/opt/canopsis/etc/conf.d/canopsis-override.toml"
-	DefaultMongoConfPath   = "/opt/canopsis/share/config/mongo"
+	DefaultCfgFile       = "/opt/canopsis/etc/canopsis.toml"
+	DefaultMongoConfPath = "/opt/canopsis/share/config/mongo"
 )
 
 func (f *flags) Parse() {
 	flag.StringVar(&f.confFile, "conf", DefaultCfgFile, "The configuration file used to initialize Canopsis")
-	flag.StringVar(&f.overrideConfFile, "override", DefaultOverrideCfgFile, "The configuration file used to override default Canopsis configurations")
+	flag.StringVar(&f.overrideConfFile, "override", "", "The configuration file used to override default Canopsis configurations, for example /opt/canopsis/etc/conf.d/canopsis-override.toml")
 	flag.StringVar(&f.mongoConfPath, "mongoConf", DefaultMongoConfPath, "The configuration file path is used to create mongo indexes")
 	flag.BoolVar(&f.modeDebug, "d", false, "debug mode")
 	flag.BoolVar(&f.modeMigrateMongo, "migrate-mongo", false, "If true, it will execute mongo migration scripts")

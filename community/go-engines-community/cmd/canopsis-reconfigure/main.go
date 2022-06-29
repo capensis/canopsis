@@ -56,8 +56,10 @@ func main() {
 		os.Exit(2)
 	}
 
-	if err := loadOverrideConfig(logger, &conf, f.overrideConfFile); err != nil {
-		logger.Error().Err(err).Msgf("skipped configuration overriding")
+	if f.overrideConfFile != "" {
+		if err := loadOverrideConfig(logger, &conf, f.overrideConfFile); err != nil {
+			logger.Warn().Err(err).Msgf("skipped configuration overriding")
+		}
 	}
 
 	err = GracefullStart(ctx, logger)
