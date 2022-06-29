@@ -41,6 +41,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     />
   </c-pattern-panel-stub>
   <c-pattern-panel-stub
+    class="mb-2"
     title="Event patterns"
   >
     <c-event-filter-patterns-field-stub
@@ -50,6 +51,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     />
   </c-pattern-panel-stub>
   <c-pattern-panel-stub
+    class="mb-2"
     title="Total entity patterns"
   >
     <c-entity-patterns-field-stub
@@ -59,6 +61,16 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       with-type="with-type"
     />
   </c-pattern-panel-stub>
+  <c-pattern-panel-stub
+    class="mb-2"
+    title="Service weather patterns"
+  >
+    <c-service-weather-patterns-field-stub
+      disabled="true"
+      name="name.weather_service_pattern"
+      required="true"
+    />
+  </c-pattern-panel-stub>
 </div>
 `;
 
@@ -66,6 +78,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = 
 <div
   class="layout column"
 >
+  <!---->
   <!---->
   <!---->
   <!---->

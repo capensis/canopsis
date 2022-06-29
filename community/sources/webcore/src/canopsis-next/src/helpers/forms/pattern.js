@@ -12,7 +12,7 @@ import {
   PATTERN_QUICK_RANGES,
   PATTERN_RULE_INFOS_FIELDS,
   PATTERN_TYPES,
-  QUICK_RANGES,
+  QUICK_RANGES, SERVICE_WEATHER_PATTERN_FIELDS,
 } from '@/constants';
 
 import uid from '@/helpers/uid';
@@ -143,6 +143,7 @@ export const patternRuleToForm = (rule = {}) => {
             [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.acked,
             [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.canceled,
             [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketAssociated,
+            [SERVICE_WEATHER_PATTERN_FIELDS.grey]: PATTERN_OPERATORS.isGrey,
           }[rule.field];
         } else {
           form.operator = {
@@ -150,6 +151,7 @@ export const patternRuleToForm = (rule = {}) => {
             [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.notAcked,
             [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.notCanceled,
             [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketNotAssociated,
+            [SERVICE_WEATHER_PATTERN_FIELDS.grey]: PATTERN_OPERATORS.isNotGrey,
           }[rule.field];
         }
       }
@@ -187,6 +189,10 @@ export const patternRuleToForm = (rule = {}) => {
 
     case PATTERN_CONDITIONS.hasEvery:
       form.operator = PATTERN_OPERATORS.hasEvery;
+      form.value = rule.cond.value;
+      break;
+    case PATTERN_CONDITIONS.isOneOf:
+      form.operator = PATTERN_OPERATORS.isOneOf;
       form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.hasOneOf:
@@ -429,6 +435,9 @@ export const formRuleToPatternRule = (rule) => {
     case PATTERN_OPERATORS.hasEvery:
       pattern.cond.type = PATTERN_CONDITIONS.hasEvery;
       pattern.field_type = PATTERN_FIELD_TYPES.stringArray;
+      break;
+    case PATTERN_OPERATORS.isOneOf:
+      pattern.cond.type = PATTERN_CONDITIONS.isOneOf;
       break;
     case PATTERN_OPERATORS.hasOneOf:
       pattern.cond.type = PATTERN_CONDITIONS.hasOneOf;

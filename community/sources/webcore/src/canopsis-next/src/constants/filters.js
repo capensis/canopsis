@@ -22,6 +22,7 @@ export const PATTERN_OPERATORS = {
 
   hasEvery: 'has_every',
   hasOneOf: 'has_one_of',
+  isOneOf: 'is_one_of',
   hasNot: 'has_not',
   isEmpty: 'is_empty',
   isNotEmpty: 'is_not_empty',
@@ -132,6 +133,7 @@ export const PATTERN_RULE_INFOS_FIELDS = {
 export const PATTERN_ARRAY_OPERATORS = [
   PATTERN_OPERATORS.hasEvery,
   PATTERN_OPERATORS.hasOneOf,
+  PATTERN_OPERATORS.isOneOf,
   PATTERN_OPERATORS.hasNot,
   PATTERN_OPERATORS.isEmpty,
   PATTERN_OPERATORS.isNotEmpty,

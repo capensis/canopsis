@@ -333,6 +333,7 @@ export default merge({
 
       [PATTERN_OPERATORS.hasEvery]: 'A chaque',
       [PATTERN_OPERATORS.hasOneOf]: 'A l\'un des',
+      [PATTERN_OPERATORS.isOneOf]: 'Fait partie de',
       [PATTERN_OPERATORS.hasNot]: 'N\'a pas',
       [PATTERN_OPERATORS.isEmpty]: 'Est vide',
       [PATTERN_OPERATORS.isNotEmpty]: 'N\'est pas vide',
