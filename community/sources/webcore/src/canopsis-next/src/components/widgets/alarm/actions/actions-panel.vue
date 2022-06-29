@@ -197,6 +197,8 @@ export default {
             actions.unshift(filteredActionsMap.ack);
           }
 
+          actions.unshift(filteredActionsMap.changeState);
+
           if (!this.item.v.ticket || this.widget.parameters.isMultiDeclareTicketEnabled) {
             actions.unshift(
               filteredActionsMap.declareTicket,
@@ -207,7 +209,6 @@ export default {
           actions.unshift(
             filteredActionsMap.cancel,
             filteredActionsMap.ackRemove,
-            filteredActionsMap.changeState,
           );
         } else {
           actions.unshift(
