@@ -47,7 +47,7 @@ type ComputedPbehavior struct {
 	Types   []computedType `json:"t"`
 	Created int64          `json:"c"`
 
-	Patten        pattern.Entity         `json:"p,omitempty"`
+	Pattern       pattern.Entity         `json:"p,omitempty"`
 	OldMongoQuery map[string]interface{} `json:"q,omitempty"`
 }
 
@@ -353,7 +353,7 @@ func (c *typeComputer) computePbehavior(
 			Types:   res,
 			Created: pbehavior.Created.Unix(),
 
-			Patten:        pbehavior.EntityPattern,
+			Pattern:       pbehavior.EntityPattern,
 			OldMongoQuery: oldMongoQuery,
 		}, nil
 	}

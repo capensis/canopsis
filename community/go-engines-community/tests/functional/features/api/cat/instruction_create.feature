@@ -1190,45 +1190,6 @@ Feature: Create a instruction
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
-      "alarm_pattern": [
-        [
-          {
-            "field": "v.component",
-            "cond": {
-              "type": "eq",
-              "value": "test-instruction-to-create-1-pattern"
-            }
-          }
-        ]
-      ],
-      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-instruction-to-create-1-pattern"
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "alarm_pattern": "Can't be present both AlarmPattern and CorporateAlarmPattern.",
-        "entity_pattern": "Can't be present both EntityPattern and CorporateEntityPattern."
-      }
-    }
-    """
-    When I do POST /api/v4/cat/instructions:
-    """json
-    {
       "corporate_alarm_pattern": "test-pattern-not-exist",
       "type": 1,
       "name": "test-instruction-to-create-3-name",

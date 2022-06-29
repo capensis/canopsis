@@ -30,7 +30,7 @@ func Match(
 		}
 	} else if oldEntityPatterns.IsSet() {
 		if !oldEntityPatterns.IsValid() {
-			return false, InvalidOldEntityPattern
+			return false, ErrInvalidOldEntityPattern
 		}
 		if !oldEntityPatterns.Matches(&entity) {
 			return false, nil
@@ -47,7 +47,7 @@ func Match(
 		}
 	} else if oldAlarmPatterns.IsSet() {
 		if !oldAlarmPatterns.IsValid() {
-			return false, InvalidOldAlarmPattern
+			return false, ErrInvalidOldAlarmPattern
 		}
 		if !oldAlarmPatterns.Matches(&alarm) {
 			return false, nil
@@ -68,7 +68,7 @@ func EntityPatternToMongoQuery(
 
 	if oldEntityPatterns.IsSet() {
 		if !oldEntityPatterns.IsValid() {
-			return nil, InvalidOldEntityPattern
+			return nil, ErrInvalidOldEntityPattern
 		}
 
 		return addPrefixToOldPatternQuery(prefix, oldEntityPatterns.AsMongoDriverQuery()), nil
@@ -88,7 +88,7 @@ func AlarmPatternToMongoQuery(
 
 	if oldAlarmPatterns.IsSet() {
 		if !oldAlarmPatterns.IsValid() {
-			return nil, InvalidOldEntityPattern
+			return nil, ErrInvalidOldEntityPattern
 		}
 
 		return addPrefixToOldPatternQuery(prefix, oldAlarmPatterns.AsMongoDriverQuery()), nil

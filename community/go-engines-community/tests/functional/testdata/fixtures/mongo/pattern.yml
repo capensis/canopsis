@@ -287,6 +287,12 @@ pattern:
           cond:
             type: eq
             value: test-pattern-to-rule-metaalarm-corporate-update-1-pattern
+        - field: last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
     author: root
     created: 1605263992
     updated: 1605263992
@@ -301,6 +307,12 @@ pattern:
           cond:
             type: eq
             value: test-pattern-to-rule-metaalarm-corporate-update-2-pattern
+        - field: last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
     author: root
     created: 1605263992
     updated: 1605263992
@@ -315,6 +327,48 @@ pattern:
           cond:
             type: eq
             value: test-pattern-to-rule-metaalarm-corporate-update-3-pattern
+        - field: v.last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.last_update_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.resolved
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.ack.t
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
+        - field: v.ack.t
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
     author: root
     created: 1605263992
     updated: 1605263992
@@ -343,6 +397,12 @@ pattern:
           cond:
             type: eq
             value: test-pattern-to-scenario-corporate-update-1-pattern
+        - field: last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
     author: root
     created: 1605263992
     updated: 1605263992
@@ -357,6 +417,48 @@ pattern:
           cond:
             type: eq
             value: test-pattern-to-scenario-corporate-update-2-pattern
+        - field: v.last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.last_update_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.resolved
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.ack.t
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
+        - field: v.ack.t
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
     author: root
     created: 1605263992
     updated: 1605263992

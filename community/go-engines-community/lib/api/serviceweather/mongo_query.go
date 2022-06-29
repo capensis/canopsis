@@ -180,23 +180,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 		return fmt.Errorf("cannot fetch widget filter: %w", err)
 	}
 
-	if len(filter.OldMongoQuery) > 0 {
-		var query map[string]interface{}
-		err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
-		if err != nil {
-			return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
-		}
-
-		for _, lookup := range q.lookups {
-			q.lookupsForAdditionalMatch[lookup.key] = true
-		}
-
-		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": query})
-
-		return nil
-	}
-
-	if len(filter.EntityPattern) == 0 && len(filter.WeatherServicePattern) == 0 ||
+	if len(filter.EntityPattern) == 0 && len(filter.WeatherServicePattern) == 0 && len(filter.OldMongoQuery) == 0 ||
 		len(filter.AlarmPattern) > 0 ||
 		len(filter.PbehaviorPattern) > 0 {
 		return common.NewValidationError("filter", errors.New("Filter cannot be applied."))
@@ -224,6 +208,23 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 			q.lookupsForAdditionalMatch["alarm_counters"] = true
 		}
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": weatherPatternQuery})
+	}
+
+	if len(entityPatternQuery) == 0 && len(weatherPatternQuery) == 0 &&
+		len(filter.OldMongoQuery) > 0 {
+		var query map[string]interface{}
+		err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
+		if err != nil {
+			return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
+		}
+
+		for _, lookup := range q.lookups {
+			q.lookupsForAdditionalMatch[lookup.key] = true
+		}
+
+		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": query})
+
+		return nil
 	}
 
 	return nil

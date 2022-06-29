@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -557,11 +558,17 @@ func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) er
 	for idx, actionRequest := range request.Actions {
 		actionRequest.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, actionRequest.AlarmPatternFieldsRequest)
 		if err != nil {
+			if err == common.ErrNotExistCorporateAlarmPattern {
+				return common.NewValidationError(fmt.Sprintf("actions.%d.corporate_alarm_pattern", idx), err)
+			}
 			return err
 		}
 
 		actionRequest.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, actionRequest.EntityPatternFieldsRequest)
 		if err != nil {
+			if err == common.ErrNotExistCorporateEntityPattern {
+				return common.NewValidationError(fmt.Sprintf("actions.%d.corporate_entity_pattern", idx), err)
+			}
 			return err
 		}
 
