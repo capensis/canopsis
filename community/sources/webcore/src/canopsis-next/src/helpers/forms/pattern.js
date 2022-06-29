@@ -320,7 +320,8 @@ export const patternToForm = (pattern = {}) => ({
     || pattern.entity_pattern
     || pattern.pbehavior_pattern
     || pattern.event_pattern
-    || pattern.total_entity_pattern,
+    || pattern.total_entity_pattern
+    || pattern.weather_service_pattern,
   ),
 });
 
@@ -470,6 +471,7 @@ export const formRuleToPatternRule = (rule) => {
     case PATTERN_OPERATORS.canceled:
     case PATTERN_OPERATORS.snoozed:
     case PATTERN_OPERATORS.acked:
+    case PATTERN_OPERATORS.isGrey:
       pattern.cond.type = PATTERN_CONDITIONS.equal;
       pattern.cond.value = true;
       break;
@@ -477,6 +479,7 @@ export const formRuleToPatternRule = (rule) => {
     case PATTERN_OPERATORS.notCanceled:
     case PATTERN_OPERATORS.notSnoozed:
     case PATTERN_OPERATORS.notAcked:
+    case PATTERN_OPERATORS.isNotGrey:
       pattern.cond.type = PATTERN_CONDITIONS.equal;
       pattern.cond.value = false;
       break;

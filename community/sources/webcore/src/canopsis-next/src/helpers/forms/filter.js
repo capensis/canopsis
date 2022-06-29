@@ -18,6 +18,8 @@ import { formGroupsToPatternRules, patternToForm } from '@/helpers/forms/pattern
  *
  * @property {PatternGroups} [total_entity_pattern]
  * @property {string} [corporate_total_entity_pattern]
+ *
+ * @property {PatternGroups} [weather_service_pattern]
  * @property {Object} [old_mongo_query]
  */
 
@@ -68,13 +70,14 @@ export const filterPatternsToForm = (
  * Convert filter object to filter form
  *
  * @param {Object} [filter = {}]
+ * @param {Array} [fields]
  * @returns {FilterForm}
  */
-export const filterToForm = (filter = {}) => ({
+export const filterToForm = (filter = {}, fields) => ({
   title: filter.title ?? '',
   old_mongo_query: filter.old_mongo_query,
   is_private: filter.is_private ?? false,
-  ...filterPatternsToForm(filter),
+  ...filterPatternsToForm(filter, fields),
 });
 
 /**

@@ -31,7 +31,7 @@ import {
   EVENT_FILTER_TYPES,
   PATTERN_OPERATORS,
   PATTERN_TYPES,
-  PATTERN_FIELD_TYPES,
+  PATTERN_FIELD_TYPES, PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -165,6 +165,7 @@ export default merge({
     entityPatterns: 'Entity patterns',
     pbehaviorPatterns: 'Pbehavior patterns',
     totalEntityPatterns: 'Total entity patterns',
+    serviceWeatherPatterns: 'Service weather patterns',
     addFilter: 'Add filter',
     id: 'Id',
     reset: 'Reset',
@@ -353,6 +354,9 @@ export default merge({
 
       [PATTERN_OPERATORS.acked]: 'Acked',
       [PATTERN_OPERATORS.notAcked]: 'Not acked',
+
+      [PATTERN_OPERATORS.isGrey]: 'Gray tiles',
+      [PATTERN_OPERATORS.isNotGrey]: 'Not gray tiles',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Ack',
@@ -1973,6 +1977,9 @@ export default merge({
   },
   serviceWeather: {
     seeAlarms: 'See alarms',
+    grey: 'Gray',
+    primaryIcon: 'Primary icon',
+    secondaryIcon: 'Secondary icon',
   },
   contextGeneralTable: {
     addSelection: 'Add selection',
@@ -2051,6 +2058,11 @@ export default merge({
   pbehaviorTypes: {
     usingType: 'Cannot be deleted since it is in use',
     defaultType: 'Type is default, because cannot be edited',
+    types: {
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+    },
   },
 
   pbehaviorReasons: {
