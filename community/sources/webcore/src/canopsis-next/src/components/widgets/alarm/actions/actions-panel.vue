@@ -197,7 +197,11 @@ export default {
             actions.unshift(filteredActionsMap.ack);
           }
 
-          actions.unshift(filteredActionsMap.changeState);
+          actions.unshift(
+            filteredActionsMap.cancel,
+            filteredActionsMap.ackRemove,
+            filteredActionsMap.changeState,
+          );
 
           if (!this.item.v.ticket || this.widget.parameters.isMultiDeclareTicketEnabled) {
             actions.unshift(
@@ -205,11 +209,6 @@ export default {
               filteredActionsMap.associateTicket,
             );
           }
-
-          actions.unshift(
-            filteredActionsMap.cancel,
-            filteredActionsMap.ackRemove,
-          );
         } else {
           actions.unshift(
             filteredActionsMap.ack,
