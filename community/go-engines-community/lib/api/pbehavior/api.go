@@ -230,6 +230,11 @@ func (a *api) Create(c *gin.Context) {
 
 	err = a.store.Insert(c.Request.Context(), model)
 	if err != nil {
+		var valErr ValidationError
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ToResponse())
+			return
+		}
 		panic(err)
 	}
 
@@ -288,6 +293,11 @@ func (a *api) Update(c *gin.Context) {
 
 	ok, err := a.store.Update(c.Request.Context(), model)
 	if err != nil {
+		var valErr ValidationError
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ToResponse())
+			return
+		}
 		panic(err)
 	}
 
@@ -378,6 +388,11 @@ func (a *api) Patch(c *gin.Context) {
 			}
 			updated, err = a.store.UpdateByFilter(ctx, model, snapshot)
 			if err != nil {
+				var valErr ValidationError
+				if errors.As(err, &valErr) {
+					c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ToResponse())
+					return
+				}
 				panic(err)
 			}
 			if updated {
@@ -407,6 +422,11 @@ func (a *api) Patch(c *gin.Context) {
 
 		ok, err = a.store.Update(c.Request.Context(), model)
 		if err != nil {
+			var valErr ValidationError
+			if errors.As(err, &valErr) {
+				c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ToResponse())
+				return
+			}
 			panic(err)
 		}
 
