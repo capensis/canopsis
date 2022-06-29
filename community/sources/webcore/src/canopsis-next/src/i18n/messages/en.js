@@ -31,7 +31,8 @@ import {
   EVENT_FILTER_TYPES,
   PATTERN_OPERATORS,
   PATTERN_TYPES,
-  PATTERN_FIELD_TYPES, PBEHAVIOR_TYPE_TYPES,
+  PATTERN_FIELD_TYPES,
+  PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
