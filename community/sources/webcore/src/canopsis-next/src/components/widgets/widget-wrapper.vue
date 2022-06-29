@@ -114,9 +114,4 @@ export default {
 .widget-title {
   height: 37px;
 }
-
-.copy-widget-id {
-  z-index: 2;
-  position: relative;
-}
 </style>
