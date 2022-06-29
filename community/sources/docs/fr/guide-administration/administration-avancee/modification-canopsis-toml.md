@@ -16,7 +16,7 @@ L'emplacement du fichier de configuration diffère entre les différents types d
 | Type d'environnement | Emplacement du fichier            |
 |----------------------|-----------------------------------|
 | Paquets RPM          | `/opt/canopsis/etc/canopsis.toml` |
-| Docker Compose       | `/canopsis.toml`                  |
+| Docker Compose       | `/canopsis.toml` dans le conteneur `reconfigure` |
 
 !!! tip "Astuce"
     Le fichier de configuration `canopsis.toml` peut être surchargé par un autre fichier défini grâce à l'option `-override` de la commande `canopsis-reconfigure`. Par défaut, ce fichier est `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
