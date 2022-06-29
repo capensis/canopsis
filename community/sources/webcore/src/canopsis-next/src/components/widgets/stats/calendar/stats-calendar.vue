@@ -160,31 +160,31 @@ export default {
     showAlarmsListModal(meta) {
       const widget = generateDefaultAlarmListWidget();
 
-      const widgetParameters = {
+      widget.parameters = {
+        ...widget.parameters,
         ...this.widget.parameters.alarmsList,
-
-        opened: this.widget.parameters.opened,
-        liveReporting: {
-          tstart: convertDateToString(meta.tstart, DATETIME_FORMATS.dateTimePicker),
-          tstop: convertDateToString(meta.tstop, DATETIME_FORMATS.dateTimePicker),
-        },
       };
 
-      if (!isEmpty(meta.filter)) {
-        widgetParameters.viewFilters = [meta.filter];
-        widgetParameters.mainFilter = meta.filter;
-      }
-
       this.$modals.show({
-        name: MODALS.alarmsList, // TODO: do it like on service. Change only filter
+        name: MODALS.alarmsList,
         config: {
-          widget: {
-            ...widget,
+          widget,
+          title: this.$t('modals.alarmsList.prefixTitle', { prefix: meta.filter.title ?? 'Common' }), // TODO: i18n
+          fetchList: (params) => {
+            const newParams = {
+              ...params,
 
-            parameters: {
-              ...widget.parameters,
-              ...widgetParameters,
-            },
+              tstart: convertDateToString(meta.tstart, DATETIME_FORMATS.dateTimePicker),
+              tstop: convertDateToString(meta.tstop, DATETIME_FORMATS.dateTimePicker),
+            };
+
+            if (meta.filter) {
+              newParams.filter = meta.filter._id;
+            }
+
+            return this.fetchAlarmsListWithoutStore({
+              params: newParams,
+            });
           },
         },
       });
@@ -217,10 +217,11 @@ export default {
           this.alarms = alarms;
           this.alarmsCollections = [];
         } else {
-          const results = await Promise.all(this.query.filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
+          const results = await Promise.all(this.query.filters.map(({ _id: id }) => this.fetchAlarmsListWithoutStore({
             params: {
               ...query,
-              filter,
+
+              filter: id,
             },
           })));
 
