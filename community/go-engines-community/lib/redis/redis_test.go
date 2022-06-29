@@ -103,8 +103,16 @@ func TestNewFailoverOptions(t *testing.T) {
 		t.Fatalf("redis options error: %v", err)
 	}
 
-	if redisOptions.Password != "password" {
+	if redisOptions.Password != "" {
 		t.Fatalf("redis bad password: %s", redisOptions.Password)
+	}
+
+	if redisOptions.SentinelUsername != "user" {
+		t.Fatalf("redis bad sentinel username: %s", redisOptions.SentinelUsername)
+	}
+
+	if redisOptions.SentinelPassword != "password" {
+		t.Fatalf("redis bad sentinel password: %s", redisOptions.SentinelPassword)
 	}
 
 	if len(redisOptions.SentinelAddrs) != 1 {
@@ -119,7 +127,7 @@ func TestNewFailoverOptions(t *testing.T) {
 		t.Fatalf("redis bad database: %d", redisOptions.DB)
 	}
 
-	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://password@host1:7777,host2:7778/3?timeout=1s&sentinelMasterId=prime", 0, log.NewTestLogger(), 0, 0)
+	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://password@host1:7777,host2:7778/3?timeout=1s&sentinelMasterId=prime", -1, log.NewTestLogger(), 0, 0)
 	if err != nil {
 		t.Fatalf("redis options error: %v", err)
 	}
@@ -144,14 +152,17 @@ func TestNewFailoverOptions(t *testing.T) {
 		t.Fatalf("redis bad master: %s", redisOptions.MasterName)
 	}
 
-	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://password@host1:7777,host2:7778/?timeout=1s&sentinelMasterId=prime", 3, log.NewTestLogger(), 0, 0)
+	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://password@host1:7777,host2:7778/6?timeout=1s&sentinelMasterId=prime", 3, log.NewTestLogger(), 0, 0)
 	if err != nil {
 		t.Fatalf("redis options error: %v", err)
+	}
+	if redisOptions.Password != "password" {
+		t.Fatalf("redis bad password: %s", redisOptions.Password)
 	}
 	if redisOptions.DB != 3 {
 		t.Fatalf("redis bad database: %d", redisOptions.DB)
 	}
-	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://ignoreuser:password@host1:7777,host2:7778/?timeout=1s&sentinelMasterId=prime", 3, log.NewTestLogger(), 0, 0)
+	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://:password@host1:7777,host2:7778/?timeout=1s&sentinelMasterId=prime", 3, log.NewTestLogger(), 0, 0)
 	if err != nil {
 		t.Fatalf("redis options error: %v", err)
 	}
