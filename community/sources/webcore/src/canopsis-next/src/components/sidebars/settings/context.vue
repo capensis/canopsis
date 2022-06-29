@@ -27,10 +27,13 @@
           template(v-if="hasAccessToListFilters")
             field-filters(
               v-model="form.parameters.mainFilter",
-              :entities-type="$constants.ENTITIES_TYPES.entity",
-              :filters.sync="form.parameters.viewFilters",
+              :filters.sync="form.filters",
+              :widget-id="widget._id",
               :addable="hasAccessToAddFilter",
               :editable="hasAccessToEditFilter",
+              with-alarm,
+              with-entity,
+              with-pbehavior,
               @input="updateMainFilterUpdatedAt"
             )
             v-divider
@@ -38,7 +41,11 @@
           v-divider
           export-csv-form(v-model="form.parameters")
       v-divider
-    v-btn.primary(@click="submit") {{ $t('common.save') }}
+    v-btn.primary(
+      :loading="submitting",
+      :disabled="submitting",
+      @click="submit"
+    ) {{ $t('common.save') }}
 </template>
 
 <script>

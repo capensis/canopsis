@@ -120,9 +120,7 @@ export function convertContextWidgetToQuery(widget) {
   }
 
   if (!isEmpty(selectedTypes)) {
-    query.typesFilter = {
-      $or: selectedTypes.map(type => ({ type })),
-    };
+    query.types = selectedTypes;
   }
 
   return { ...query, ...convertSortToQuery(widget) };
