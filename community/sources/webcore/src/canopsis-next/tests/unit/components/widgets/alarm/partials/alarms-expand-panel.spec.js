@@ -177,7 +177,6 @@ describe('alarms-expand-panel', () => {
             serviceDependenciesColumns: [],
           },
         },
-        isEditingMode: true,
         hideGroups: true,
         isTourEnabled: true,
       },

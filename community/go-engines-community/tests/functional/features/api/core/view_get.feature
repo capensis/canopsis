@@ -7,7 +7,7 @@ Feature: Get a view
     When I do GET /api/v4/views?search=test-view-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -29,32 +29,6 @@ Feature: Get a view
             "value": 1,
             "unit": "s"
           },
-          "tabs": [
-            {
-              "_id": "test-view-to-get-1-tab-1",
-              "title": "test-view-to-get-1-tab-1-title",
-              "widgets": [
-                {
-                  "_id": "test-view-to-get-1-tab-1-widget-1",
-                  "grid_parameters": {
-                    "test-view-to-get-1-tab-1-widget-1-gridparameter": "test-view-to-get-1-tab-1-widget-1-gridparameter-value"
-                  },
-                  "parameters": {
-                    "test-view-to-get-1-tab-1-widget-1-parameter-1": {
-                      "test-view-to-get-1-tab-1-widget-1-parameter-1-subparameter": "test-view-to-get-1-tab-1-widget-1-parameter-1-subvalue"
-                    },
-                    "test-view-to-get-1-tab-1-widget-1-parameter-2": [
-                      {
-                        "test-view-to-get-1-tab-1-widget-1-parameter-2-subparameter": "test-view-to-get-1-tab-1-widget-1-parameter-2-subvalue"
-                      }
-                    ]
-                  },
-                  "title": "test-view-to-get-1-tab-1-widget-1-title",
-                  "type": "test-view-to-get-1-tab-1-widget-1-type"
-                }
-              ]
-            }
-          ],
           "tags": [
             "test-view-to-get-1-tag"
           ],
@@ -79,25 +53,6 @@ Feature: Get a view
             "value": 1,
             "unit": "s"
           },
-          "tabs": [
-            {
-              "_id": "test-view-to-get-2-tab-1",
-              "title": "test-view-to-get-2-tab-1-title",
-              "widgets": [
-                {
-                  "_id": "test-view-to-get-2-tab-1-widget-1",
-                  "grid_parameters": {
-                    "test-view-to-get-2-tab-1-widget-1-gridparameter": "test-view-to-get-2-tab-1-widget-1-gridparameter-value"
-                  },
-                  "parameters": {
-                    "test-view-to-get-2-tab-1-widget-1-parameter": "test-view-to-get-2-tab-1-widget-1-parameter-value"
-                  },
-                  "title": "test-view-to-get-2-tab-1-widget-1-title",
-                  "type": "test-view-to-get-2-tab-1-widget-1-type"
-                }
-              ]
-            }
-          ],
           "tags": [
             "test-view-to-get-2-tag"
           ],
@@ -118,7 +73,7 @@ Feature: Get a view
     When I do GET /api/v4/views/test-view-to-get-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-view-to-get-1",
       "author": "test-view-to-get-1-author",
@@ -140,33 +95,98 @@ Feature: Get a view
       },
       "tabs": [
         {
-          "_id": "test-view-to-get-1-tab-1",
-          "title": "test-view-to-get-1-tab-1-title",
+          "_id": "test-tab-to-view-get-1",
+          "title": "test-tab-to-view-get-1-title",
+          "author": "test-tab-to-view-get-1-author",
+          "created": 1611229670,
+          "updated": 1611229670,
           "widgets": [
             {
-              "_id": "test-view-to-get-1-tab-1-widget-1",
+              "_id": "test-widget-to-view-get-1",
+              "author": "test-widget-to-view-get-1-author",
+              "created": 1611229670,
+              "updated": 1611229670,
               "grid_parameters": {
-                "test-view-to-get-1-tab-1-widget-1-gridparameter": "test-view-to-get-1-tab-1-widget-1-gridparameter-value"
+                "desktop": {"x": 0, "y": 0}
               },
               "parameters": {
-                "test-view-to-get-1-tab-1-widget-1-parameter-1": {
-                  "test-view-to-get-1-tab-1-widget-1-parameter-1-subparameter": "test-view-to-get-1-tab-1-widget-1-parameter-1-subvalue"
+                "test-widget-to-view-get-1-parameter-1": {
+                  "test-widget-to-view-get-1-parameter-1-subparameter": "test-widget-to-view-get-1-parameter-1-subvalue"
                 },
-                "test-view-to-get-1-tab-1-widget-1-parameter-2": [
+                "test-widget-to-view-get-1-parameter-2": [
                   {
-                    "test-view-to-get-1-tab-1-widget-1-parameter-2-subparameter": "test-view-to-get-1-tab-1-widget-1-parameter-2-subvalue"
+                    "test-widget-to-view-get-1-parameter-2-subparameter": "test-widget-to-view-get-1-parameter-2-subvalue"
                   }
                 ]
               },
-              "title": "test-view-to-get-1-tab-1-widget-1-title",
-              "type": "test-view-to-get-1-tab-1-widget-1-type"
+              "title": "test-widget-to-view-get-1-title",
+              "type": "test-widget-to-view-get-1-type"
+            },
+            {
+              "_id": "test-widget-to-view-get-2",
+              "author": "test-widget-to-view-get-2-author",
+              "created": 1611229670,
+              "updated": 1611229670,
+              "grid_parameters": {
+                "desktop": {"x": 0, "y": 1}
+              },
+              "parameters": {
+                "test-widget-to-view-get-2-parameter-1": {
+                  "test-widget-to-view-get-2-parameter-1-subparameter": "test-widget-to-view-get-2-parameter-1-subvalue"
+                },
+                "test-widget-to-view-get-2-parameter-2": [
+                  {
+                    "test-widget-to-view-get-2-parameter-2-subparameter": "test-widget-to-view-get-2-parameter-2-subvalue"
+                  }
+                ]
+              },
+              "title": "test-widget-to-view-get-2-title",
+              "type": "test-widget-to-view-get-2-type"
             }
           ]
+        },
+        {
+          "_id": "test-tab-to-view-get-2",
+          "title": "test-tab-to-view-get-2-title",
+          "author": "test-tab-to-view-get-2-author",
+          "widgets": [],
+          "created": 1611229670,
+          "updated": 1611229670
         }
       ],
       "tags": [
         "test-view-to-get-1-tag"
       ],
+      "updated": 1611229670
+    }
+    """
+    When I do GET /api/v4/views/test-view-to-get-2
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "_id": "test-view-to-get-2",
+      "author": "test-view-to-get-2-author",
+      "created": 1611229670,
+      "description": "test-view-to-get-2-description",
+      "enabled": true,
+      "group": {
+        "_id": "test-viewgroup-to-view-edit",
+        "author": "test-viewgroup-to-view-edit-author",
+        "created": 1611229670,
+        "title": "test-viewgroup-to-view-edit-title",
+        "updated": 1611229670
+      },
+      "title": "test-view-to-get-2-title",
+      "periodic_refresh": {
+        "enabled": true,
+        "value": 1,
+        "unit": "s"
+      },
+      "tags": [
+        "test-view-to-get-2-tag"
+      ],
+      "tabs": [],
       "updated": 1611229670
     }
     """
@@ -176,7 +196,7 @@ Feature: Get a view
     When I do GET /api/v4/views?search=test-view-to-check-access
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -201,12 +221,12 @@ Feature: Get a view
     When I do GET /api/v4/views/test-view-to-get-1
     Then the response code should be 401
 
-  Scenario: given get request and auth user by api key without permissions should not allow access
+  Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/views/test-view-to-get-1
     Then the response code should be 403
 
-  Scenario: given get request and auth user by api key without permissions should not allow access
+  Scenario: given get request and auth user without permissions should not allow access
     When I am admin
     When I do GET /api/v4/views/test-view-to-check-access
     Then the response code should be 403
