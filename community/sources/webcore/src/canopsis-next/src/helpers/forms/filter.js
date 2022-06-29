@@ -100,8 +100,6 @@ export const formFilterToPatterns = (
 
   if (patterns.id !== PATTERN_CUSTOM_ITEM_VALUE) {
     acc[`corporate_${field}`] = patterns.id;
-
-    return acc;
   }
 
   if (patterns.groups) {
@@ -115,7 +113,7 @@ export const formFilterToPatterns = (
  * Convert filter form to filter
  *
  * @param {FilterForm} form
- * @param {PatternsFields} fields
+ * @param {PatternsFields} [fields]
  * @returns {Filter}
  */
 export const formToFilter = (form, fields) => ({
