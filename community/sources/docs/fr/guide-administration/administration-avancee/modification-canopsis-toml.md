@@ -138,7 +138,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | :------------------ | :------------------| :------------------------------------------------------ |
 | Writer              | "stdout"           | Canal de sortie du logger. **`stdout`** ou **`stderr`** |
 
-#### Sous-section [Canopsis.logger.console_writer]
+### Sous-section [Canopsis.logger.console_writer]
 
 | Attribut            | Exemple de valeur                           | Description                                             |
 | :------------------ | :-------------------------------------------| :------------------------------------------------------ |
