@@ -38,6 +38,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -125,6 +126,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-2",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -217,6 +219,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-3-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -290,6 +293,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-4",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -389,6 +393,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-5",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -503,6 +508,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-6-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -523,6 +529,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-6-2",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -651,6 +658,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-7-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -671,6 +679,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-7-2",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -768,6 +777,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-11",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -853,6 +863,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-12-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -984,6 +995,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-14-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -1101,6 +1113,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-16",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -1203,6 +1216,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-17",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -1324,6 +1338,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-18",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -1567,6 +1582,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-19",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter": {
