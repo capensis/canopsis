@@ -2,10 +2,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('pbehaviorTypes');
 
-/**
- * @mixin
- */
-export default {
+export const entitiesPbehaviorTypesMixin = {
   computed: {
     ...mapGetters({
       pbehaviorTypes: 'items',
@@ -23,5 +20,13 @@ export default {
       removePbehaviorType: 'remove',
       fetchPbehaviorTypeByEntityId: 'fetchListByEntityId',
     }),
+
+    async fetchDefaultPbehaviorTypes() {
+      const { data } = await this.fetchPbehaviorTypesListWithoutStore({
+        params: { default: true },
+      });
+
+      return data;
+    },
   },
 };
