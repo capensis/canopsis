@@ -1081,8 +1081,8 @@ Feature: Update an resolve rule
     {
       "name": "test-resolve-rule-to-update-10-name",
       "description": "test-resolve-rule-to-update-10-description",
-      "corporate_entity_pattern": "test-pattern-to-instruction-pattern-to-exclude-1",
-      "corporate_alarm_pattern": "test-pattern-to-instruction-pattern-to-exclude-2",
+      "corporate_entity_pattern": "test-pattern-to-resolve-rule-pattern-to-exclude-1",
+      "corporate_alarm_pattern": "test-pattern-to-resolve-rule-pattern-to-exclude-2",
       "duration": {
         "value": 10,
         "unit": "s"
@@ -1102,13 +1102,13 @@ Feature: Update an resolve rule
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-pattern-to-instruction-pattern-to-exclude-1-pattern"
+              "value": "test-pattern-to-resolve-rule-pattern-to-exclude-1-pattern"
             }
           }
         ]
       ],
-      "corporate_entity_pattern": "test-pattern-to-instruction-pattern-to-exclude-1",
-      "corporate_entity_pattern_title": "test-pattern-to-instruction-pattern-to-exclude-1-title",
+      "corporate_entity_pattern": "test-pattern-to-resolve-rule-pattern-to-exclude-1",
+      "corporate_entity_pattern_title": "test-pattern-to-resolve-rule-pattern-to-exclude-1-title",
       "alarm_pattern": [
         [
           {
@@ -1142,7 +1142,7 @@ Feature: Update an resolve rule
           }
         ]
       ],
-      "corporate_alarm_pattern": "test-pattern-to-instruction-pattern-to-exclude-2",
-      "corporate_alarm_pattern_title": "test-pattern-to-instruction-pattern-to-exclude-2-title"
+      "corporate_alarm_pattern": "test-pattern-to-resolve-rule-pattern-to-exclude-2",
+      "corporate_alarm_pattern_title": "test-pattern-to-resolve-rule-pattern-to-exclude-2-title"
     }
     """
