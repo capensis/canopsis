@@ -6,108 +6,16 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/go-playground/validator/v10"
 	"github.com/teambition/rrule-go"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func ValidateEditRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(EditRequest)
-
-	// Validate triggers
-	if len(r.Triggers) > 0 {
-		validTriggers := []string{
-			string(types.AlarmChangeTypeCreate),
-			string(types.AlarmChangeTypeStateIncrease),
-			string(types.AlarmChangeTypeStateDecrease),
-			string(types.AlarmChangeTypeChangeState),
-			string(types.AlarmChangeTypeUpdateStatus),
-			string(types.AlarmChangeTypeAck),
-			string(types.AlarmChangeTypeAckremove),
-			string(types.AlarmChangeTypeCancel),
-			string(types.AlarmChangeTypeUncancel),
-			string(types.AlarmChangeTypeComment),
-			string(types.AlarmChangeTypeDone),
-			string(types.AlarmChangeTypeDeclareTicket),
-			string(types.AlarmChangeTypeDeclareTicketWebhook),
-			string(types.AlarmChangeTypeAssocTicket),
-			string(types.AlarmChangeTypeSnooze),
-			string(types.AlarmChangeTypeUnsnooze),
-			string(types.AlarmChangeTypeResolve),
-			string(types.AlarmChangeTypeActivate),
-			string(types.AlarmChangeTypePbhEnter),
-			string(types.AlarmChangeTypePbhLeave),
-		}
-		param := strings.Join(validTriggers, " ")
-		for _, trigger := range r.Triggers {
-			found := false
-			for _, v := range validTriggers {
-				if v == trigger {
-					found = true
-					break
-				}
-			}
-
-			if !found {
-				sl.ReportError(r.Triggers, "Triggers", "triggers", "oneof", param)
-			}
-		}
-	}
-
-	// Validate disableDuringPeriods
-	if len(r.DisableDuringPeriods) > 0 {
-		validPeriods := []string{
-			pbehavior.TypeMaintenance,
-			pbehavior.TypePause,
-			pbehavior.TypeInactive,
-		}
-		param := strings.Join(validPeriods, " ")
-		for _, period := range r.DisableDuringPeriods {
-			found := false
-			for _, v := range validPeriods {
-				if v == period {
-					found = true
-					break
-				}
-			}
-
-			if !found {
-				sl.ReportError(r.DisableDuringPeriods, "DisableDuringPeriods", "disableDuringPeriods", "oneof", param)
-			}
-		}
-	}
-}
-
 func ValidateActionRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(ActionRequest)
 
-	// Validate type
 	if r.Type != "" {
-		validTypes := []string{
-			types.ActionTypeAck,
-			types.ActionTypeAckRemove,
-			types.ActionTypeAssocTicket,
-			types.ActionTypeCancel,
-			types.ActionTypeChangeState,
-			types.ActionTypePbehavior,
-			types.ActionTypeSnooze,
-			types.ActionTypeWebhook,
-		}
-		param := strings.Join(validTypes, " ")
-		found := false
-		for _, v := range validTypes {
-			if v == r.Type {
-				found = true
-				break
-			}
-		}
-
-		if !found {
-			sl.ReportError(r.Type, "Type", "Type", "oneof", param)
-		}
-
 		validateActionParametersRequest(sl, r.Type, r.Parameters)
 	}
 

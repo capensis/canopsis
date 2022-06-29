@@ -54,6 +54,7 @@ Vous avez également la possibilité de récupérer des informations propres à 
 | `{{ .AdditionalData.AlarmChangeType }}` | Nom du trigger (sous forme de chaîne : ack, stateinc, etc.) |                                                                               |
 | `{{ .AdditionalData.Author }}`          | Auteur de l'action                                                                                                                      |
 | `{{ .AdditionalData.Initiator }}`       | Initiateur de l'action (**user** pour une action exécutée depuis l'interface graphique, **system** pour une action exécutée par un moteur)  |
+| `{{ .AdditionalData.Output }}`          | Message de l'événement  |
 
 ## Génération de texte
 

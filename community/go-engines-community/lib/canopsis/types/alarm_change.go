@@ -15,6 +15,7 @@ const (
 	AlarmChangeTypeCreate            AlarmChangeType = "create"
 	AlarmChangeTypeCreateAndPbhEnter AlarmChangeType = "createandpbhenter"
 	AlarmChangeTypeAck               AlarmChangeType = "ack"
+	AlarmChangeTypeDoubleAck         AlarmChangeType = "doubleack"
 	AlarmChangeTypeAckremove         AlarmChangeType = "ackremove"
 	AlarmChangeTypeCancel            AlarmChangeType = "cancel"
 	AlarmChangeTypeUncancel          AlarmChangeType = "uncancel"
@@ -90,6 +91,8 @@ func (ac *AlarmChange) GetTriggers() []string {
 		triggers = append(triggers, string(AlarmChangeTypeCreate), string(AlarmChangeTypePbhEnter))
 	case AlarmChangeTypePbhLeaveAndEnter:
 		triggers = append(triggers, string(AlarmChangeTypePbhEnter), string(AlarmChangeTypePbhLeave))
+	case AlarmChangeTypeDoubleAck:
+		triggers = append(triggers, string(AlarmChangeTypeAck))
 	default:
 		t := string(ac.Type)
 		if t != "" {

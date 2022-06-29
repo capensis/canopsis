@@ -1,6 +1,6 @@
 <template lang="pug">
   div(:style="widgetWrapperStyles")
-    template(v-if="widget.title || isEditingMode")
+    template(v-if="widget.title || editing")
       v-card-title.widget-title.white.pa-2
         v-layout(justify-space-between, align-center)
           v-flex
@@ -9,10 +9,10 @@
       v-divider
     v-card-text.pa-0.position-relative
       component(
-        v-bind="getWidgetPropsByType(widget.type)",
+        v-bind="widgetProps",
         :widget="widget",
         :tab-id="tab._id",
-        :is-editing-mode="isEditingMode"
+        :editing="editing"
       )
 </template>
 
@@ -25,12 +25,7 @@ import AlarmsListWidget from './alarm/alarms-list.vue';
 import EntitiesListWidget from './context/entities-list.vue';
 import ServiceWeatherWidget from './service-weather/service-weather.vue';
 import TestingWeatherWidget from './testing-weather/testing-weather.vue';
-import StatsHistogramWidget from './stats/histogram/stats-histogram.vue';
-import StatsCurvesWidget from './stats/curves/stats-curves.vue';
-import StatsTableWidget from './stats/stats-table.vue';
 import StatsCalendarWidget from './stats/calendar/stats-calendar.vue';
-import StatsNumberWidget from './stats/stats-number.vue';
-import StatsParetoWidget from './stats/pareto/stats-pareto.vue';
 import TextWidget from './text/text.vue';
 import CounterWidget from './counter/counter.vue';
 
@@ -42,12 +37,7 @@ export default {
     EntitiesListWidget,
     ServiceWeatherWidget,
     TestingWeatherWidget,
-    StatsHistogramWidget,
-    StatsCurvesWidget,
-    StatsTableWidget,
     StatsCalendarWidget,
-    StatsNumberWidget,
-    StatsParetoWidget,
     TextWidget,
     CounterWidget,
   },
@@ -60,7 +50,7 @@ export default {
       type: Object,
       required: true,
     },
-    isEditingMode: {
+    editing: {
       type: Boolean,
       default: false,
     },
@@ -76,24 +66,18 @@ export default {
     widgetWrapperStyles() {
       return { minHeight: `${WIDGET_GRID_ROW_HEIGHT * 2}px` };
     },
-  },
-  methods: {
-    getWidgetPropsByType(type) {
+
+    widgetProps() {
+      const { type } = this.widget;
       const widgetComponentsMap = {
         [WIDGET_TYPES.alarmList]: 'alarms-list-widget',
         [WIDGET_TYPES.context]: 'entities-list-widget',
         [WIDGET_TYPES.serviceWeather]: 'service-weather-widget',
-        [WIDGET_TYPES.statsHistogram]: 'stats-histogram-widget',
-        [WIDGET_TYPES.statsCurves]: 'stats-curves-widget',
-        [WIDGET_TYPES.statsTable]: 'stats-table-widget',
         [WIDGET_TYPES.statsCalendar]: 'stats-calendar-widget',
-        [WIDGET_TYPES.statsNumber]: 'stats-number-widget',
-        [WIDGET_TYPES.statsPareto]: 'stats-pareto-widget',
         [WIDGET_TYPES.text]: 'text-widget',
         [WIDGET_TYPES.counter]: 'counter-widget',
         [WIDGET_TYPES.testingWeather]: 'testing-weather-widget',
       };
-
       let widgetSpecificsProp = {};
 
       Object.entries(WIDGET_TYPES_RULES).forEach(([key, rule]) => {
@@ -106,10 +90,20 @@ export default {
         }
       });
 
+      const component = widgetComponentsMap[type];
+
+      if (!component) {
+        return {
+          is: 'c-alert-overlay',
+          message: this.$t('errors.unknownWidgetType', { type }),
+          value: true,
+        };
+      }
+
       return {
         ...widgetSpecificsProp,
 
-        is: widgetComponentsMap[type],
+        is: component,
       };
     },
   },
@@ -119,10 +113,5 @@ export default {
 <style lang="scss" scoped>
 .widget-title {
   height: 37px;
-}
-
-.copy-widget-id {
-  z-index: 2;
-  position: relative;
 }
 </style>

@@ -9,7 +9,7 @@ import (
 
 	amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	gomock "github.com/golang/mock/gomock"
-	amqp0 "github.com/streadway/amqp"
+	amqp091 "github.com/rabbitmq/amqp091-go"
 )
 
 // MockConnection is a mock of Connection interface.
@@ -130,10 +130,10 @@ func (mr *MockChannelMockRecorder) Close() *gomock.Call {
 }
 
 // Consume mocks base method.
-func (m *MockChannel) Consume(arg0, arg1 string, arg2, arg3, arg4, arg5 bool, arg6 amqp0.Table) (<-chan amqp0.Delivery, error) {
+func (m *MockChannel) Consume(arg0, arg1 string, arg2, arg3, arg4, arg5 bool, arg6 amqp091.Table) (<-chan amqp091.Delivery, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Consume", arg0, arg1, arg2, arg3, arg4, arg5, arg6)
-	ret0, _ := ret[0].(<-chan amqp0.Delivery)
+	ret0, _ := ret[0].(<-chan amqp091.Delivery)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -145,7 +145,7 @@ func (mr *MockChannelMockRecorder) Consume(arg0, arg1, arg2, arg3, arg4, arg5, a
 }
 
 // ExchangeDeclare mocks base method.
-func (m *MockChannel) ExchangeDeclare(arg0, arg1 string, arg2, arg3, arg4, arg5 bool, arg6 amqp0.Table) error {
+func (m *MockChannel) ExchangeDeclare(arg0, arg1 string, arg2, arg3, arg4, arg5 bool, arg6 amqp091.Table) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ExchangeDeclare", arg0, arg1, arg2, arg3, arg4, arg5, arg6)
 	ret0, _ := ret[0].(error)
@@ -173,7 +173,7 @@ func (mr *MockChannelMockRecorder) Nack(arg0, arg1, arg2 interface{}) *gomock.Ca
 }
 
 // Publish mocks base method.
-func (m *MockChannel) Publish(arg0, arg1 string, arg2, arg3 bool, arg4 amqp0.Publishing) error {
+func (m *MockChannel) Publish(arg0, arg1 string, arg2, arg3 bool, arg4 amqp091.Publishing) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Publish", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].(error)
@@ -201,7 +201,7 @@ func (mr *MockChannelMockRecorder) Qos(arg0, arg1, arg2 interface{}) *gomock.Cal
 }
 
 // QueueBind mocks base method.
-func (m *MockChannel) QueueBind(arg0, arg1, arg2 string, arg3 bool, arg4 amqp0.Table) error {
+func (m *MockChannel) QueueBind(arg0, arg1, arg2 string, arg3 bool, arg4 amqp091.Table) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "QueueBind", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].(error)
@@ -215,10 +215,10 @@ func (mr *MockChannelMockRecorder) QueueBind(arg0, arg1, arg2, arg3, arg4 interf
 }
 
 // QueueDeclare mocks base method.
-func (m *MockChannel) QueueDeclare(arg0 string, arg1, arg2, arg3, arg4 bool, arg5 amqp0.Table) (amqp0.Queue, error) {
+func (m *MockChannel) QueueDeclare(arg0 string, arg1, arg2, arg3, arg4 bool, arg5 amqp091.Table) (amqp091.Queue, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "QueueDeclare", arg0, arg1, arg2, arg3, arg4, arg5)
-	ret0, _ := ret[0].(amqp0.Queue)
+	ret0, _ := ret[0].(amqp091.Queue)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -230,10 +230,10 @@ func (mr *MockChannelMockRecorder) QueueDeclare(arg0, arg1, arg2, arg3, arg4, ar
 }
 
 // QueueInspect mocks base method.
-func (m *MockChannel) QueueInspect(arg0 string) (amqp0.Queue, error) {
+func (m *MockChannel) QueueInspect(arg0 string) (amqp091.Queue, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "QueueInspect", arg0)
-	ret0, _ := ret[0].(amqp0.Queue)
+	ret0, _ := ret[0].(amqp091.Queue)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -283,7 +283,7 @@ func (m *MockPublisher) EXPECT() *MockPublisherMockRecorder {
 }
 
 // Publish mocks base method.
-func (m *MockPublisher) Publish(arg0, arg1 string, arg2, arg3 bool, arg4 amqp0.Publishing) error {
+func (m *MockPublisher) Publish(arg0, arg1 string, arg2, arg3 bool, arg4 amqp091.Publishing) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Publish", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].(error)

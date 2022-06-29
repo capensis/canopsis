@@ -28,10 +28,10 @@ for (var i in alarmCollections) {
         });
 
         var set = {};
-        if (snoozeDuration > 0) {
+        if (snoozeDuration >= 0 && snoozeDuration != doc.v.snooze_duration) {
             set["v.snooze_duration"] = snoozeDuration;
         }
-        if (pbhDuration > 0) {
+        if (pbhDuration >= 0 && pbhDuration != doc.v.pbh_inactive_duration) {
             set["v.pbh_inactive_duration"] = pbhDuration;
         }
         if (Object.keys(set).length > 0) {

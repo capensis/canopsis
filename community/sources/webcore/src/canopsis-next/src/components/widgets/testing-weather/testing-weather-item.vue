@@ -32,7 +32,7 @@ import {
   TEST_SUITE_COLORS,
 } from '@/constants';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
+import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -92,6 +92,7 @@ export default {
         name: MODALS.alarmsList,
         config: {
           widget,
+          title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.testSuite.name }),
         },
       });
     },

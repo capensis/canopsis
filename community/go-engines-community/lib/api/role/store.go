@@ -121,19 +121,28 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Role, error) {
 		return nil, err
 	}
 
-	_, err = s.dbCollection.InsertOne(ctx, bson.M{
-		"_id":          r.Name,
-		"crecord_name": r.Name,
-		"crecord_type": securitymodel.LineTypeRole,
-		"description":  r.Description,
-		"defaultview":  r.DefaultView,
-		"rights":       transformPermissionsToDoc(r.Permissions, types),
+	var role *Role
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		role = nil
+		_, err = s.dbCollection.InsertOne(ctx, bson.M{
+			"_id":          r.Name,
+			"crecord_name": r.Name,
+			"crecord_type": securitymodel.LineTypeRole,
+			"description":  r.Description,
+			"defaultview":  r.DefaultView,
+			"rights":       transformPermissionsToDoc(r.Permissions, types),
+		})
+		if err != nil {
+			return err
+		}
+		role, err = s.GetOneBy(ctx, r.Name)
+		return err
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return s.GetOneBy(ctx, r.Name)
+	return role, nil
 }
 
 func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Role, error) {
@@ -142,23 +151,28 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Role, er
 		return nil, err
 	}
 
-	res, err := s.dbCollection.UpdateOne(ctx,
-		bson.M{"_id": id, "crecord_type": securitymodel.LineTypeRole},
-		bson.M{"$set": bson.M{
-			"description": r.Description,
-			"defaultview": r.DefaultView,
-			"rights":      transformPermissionsToDoc(r.Permissions, types),
-		}},
-	)
+	var role *Role
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		role = nil
+		res, err := s.dbCollection.UpdateOne(ctx,
+			bson.M{"_id": id, "crecord_type": securitymodel.LineTypeRole},
+			bson.M{"$set": bson.M{
+				"description": r.Description,
+				"defaultview": r.DefaultView,
+				"rights":      transformPermissionsToDoc(r.Permissions, types),
+			}},
+		)
+		if err != nil || res.MatchedCount == 0 {
+			return nil
+		}
+		role, err = s.GetOneBy(ctx, id)
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	if res.MatchedCount == 0 {
-		return nil, nil
-	}
-
-	return s.GetOneBy(ctx, id)
+	return role, nil
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {

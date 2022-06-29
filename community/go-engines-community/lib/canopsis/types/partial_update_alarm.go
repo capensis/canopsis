@@ -9,8 +9,8 @@ import (
 )
 
 // PartialUpdateAck add ack step to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateAck(timestamp CpsTime, author, output, userID, role, initiator string) error {
-	if a.Value.ACK != nil {
+func (a *Alarm) PartialUpdateAck(timestamp CpsTime, author, output, userID, role, initiator string, allowDouble bool) error {
+	if !allowDouble && a.Value.ACK != nil {
 		return nil
 	}
 

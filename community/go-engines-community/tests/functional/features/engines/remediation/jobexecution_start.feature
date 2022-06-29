@@ -214,56 +214,46 @@ Feature: run a job
     When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-1&with_steps=true
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response array key "data.0.v.steps" should contain:
     """json
-    {
-      "data": [
-        {
-          "v": {
-            "steps": [
-              {},
-              {},
-              {
-                "_t": "instructionstart",
-                "a": "root",
-                "user_id": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-1-name."
-              },
-              {
-                "_t": "instructionjobstart",
-                "a": "root",
-                "user_id": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
-              },
-              {
-                "_t": "instructionjobcomplete",
-                "a": "root",
-                "user_id": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
-              },
-              {
-                "_t": "instructionjobstart",
-                "a": "root",
-                "user_id": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
-              },
-              {
-                "_t": "instructionjobcomplete",
-                "a": "root",
-                "user_id": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
-              },
-              {
-                "_t": "instructioncomplete",
-                "a": "root",
-                "user_id": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-1-name."
-              }
-            ]
-          }
-        }
-      ]
-    }
+    [
+      {
+        "_t": "instructionstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-1-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
+      },
+      {
+        "_t": "instructioncomplete",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-1-name."
+      }
+    ]
     """
 
   Scenario: given http error during job execution should return failed job status
@@ -352,35 +342,26 @@ Feature: run a job
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-2&with_steps=true until response code is 200 and body contains:
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-2&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
     """json
-    {
-      "data": [
-        {
-          "v": {
-            "steps": [
-              {},
-              {},
-              {
-                "_t": "instructionstart",
-                "a": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-2-name."
-              },
-              {
-                "_t": "instructionjobstart",
-                "a": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-name."
-              },
-              {
-                "_t": "instructionjobfail",
-                "a": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-name."
-              }
-            ]
-          }
-        }
-      ]
-    }
+    [
+      {
+        "_t": "instructionstart",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-name."
+      }
+    ]
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     When I wait the end of event processing

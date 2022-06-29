@@ -96,17 +96,16 @@
 </template>
 
 <script>
-import { omit, pick, isEmpty, isObject } from 'lodash';
+import { omit, pick, isEmpty, isObject, isEqual } from 'lodash';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
-
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import { widgetColumnsMixin } from '@/mixins/widget/columns';
+
+import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
 import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
@@ -117,6 +116,8 @@ import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widge
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
+
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
 import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
@@ -141,7 +142,7 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetColumnsMixin,
+    widgetColumnsAlarmMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,
@@ -299,18 +300,20 @@ export default {
 
     async fetchList({ isPeriodicRefresh, isQueryNonceUpdate } = {}) {
       if (this.hasColumns) {
-        const query = this.getQuery();
+        const params = this.getQuery();
 
         if ((isPeriodicRefresh || isQueryNonceUpdate) && !isEmpty(this.$refs.alarmsTable.expanded)) {
-          query.with_steps = true;
+          params.with_steps = true;
         }
 
-        await this.fetchAlarmsList({
-          widgetId: this.widget._id,
-          params: query,
-        });
+        if (!this.alarmsPending || !isEqual(params, this.alarmsFetchingParams)) {
+          await this.fetchAlarmsList({
+            widgetId: this.widget._id,
+            params,
+          });
 
-        this.refreshExpanded();
+          this.refreshExpanded();
+        }
       }
     },
 
@@ -330,7 +333,7 @@ export default {
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
         widgetId: this.widget._id,
         data: {
-          ...pick(query, ['search', 'category', 'correlation', 'opened']),
+          ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
 
           fields: columns.map(({ label, value }) => ({ label, name: value })),
           filter: JSON.stringify(query.filter),
