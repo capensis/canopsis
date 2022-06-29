@@ -180,6 +180,7 @@ func NewSession(ctx context.Context, db int, logger zerolog.Logger, reconnectCou
 	}
 
 	var redisClient *redis.Client
+	readTimeout := 3 * time.Second // redis.Options.ReadTimeout default value
 	if strings.HasPrefix(connectUrl, "redis-sentinel://") {
 		failoverOptions, err := NewFailoverOptions(connectUrl, db, logger, reconnectCount, minReconnectTimeout)
 		if err != nil {
@@ -196,7 +197,7 @@ func NewSession(ctx context.Context, db int, logger zerolog.Logger, reconnectCou
 	}
 	if minReconnectTimeout > 0 {
 		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, minReconnectTimeout)
+		ctx, cancel = context.WithTimeout(ctx, readTimeout)
 		defer cancel()
 	}
 	err := redisClient.Ping(ctx).Err()
