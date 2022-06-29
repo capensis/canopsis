@@ -647,6 +647,7 @@ export default merge({
     linksCategoriesAsList: 'Display links as a list?',
     linksCategoriesLimit: 'Number of category items',
     isMultiAckEnabled: 'Multiple ack',
+    isMultiDeclareTicketEnabled: 'Multiple declare ticket',
     fastAckOutput: 'Fast-ack output',
     isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',
     isCorrelationEnabled: 'Is correlation enabled?',

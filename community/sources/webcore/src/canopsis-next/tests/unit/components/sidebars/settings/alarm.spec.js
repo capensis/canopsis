@@ -118,7 +118,7 @@ const selectFieldFastAckOutput = wrapper => wrapper.find('input.field-fast-ack-o
 const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(3);
 const selectFieldLinksCategoriesAsList = wrapper => wrapper.find('input.field-enabled-limit');
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
-const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(4);
+const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(5);
 
 describe('alarm', () => {
   const nowTimestamp = 1386435600000;
