@@ -2,7 +2,7 @@
 
 ## Description
 
-Le fichier `canopsis.toml`regroupe la plupart des réglages fondamentaux des différents moteurs et services de Canopsis.
+Le fichier `canopsis.toml` regroupe la plupart des réglages fondamentaux des différents moteurs et services de Canopsis.
 
 !!! note
     Les réglages d'exploitation « du quotidien » se situent plutôt dans l'interface web de Canopsis.
@@ -18,6 +18,9 @@ L'emplacement du fichier de configuration diffère entre les différents types d
 | Paquets RPM          | `/opt/canopsis/etc/canopsis.toml` |
 | Docker Compose       | `/canopsis.toml`                  |
 
+!!! tip "Astuce"
+    Le fichier de configuration `canopsis.toml` peut être surchargé par un autre fichier défini grâce à l'option `-override` de la commande `canopsis-reconfigure`. Par défaut, ce fichier est `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
+
 ### Variables d'environnement associées
 
 La [variable d'environnement `CPS_DEFAULT_CFG`](variables-environnement.md) permet de définir un autre emplacement à utiliser pour charger ce fichier de configuration.
@@ -28,7 +31,7 @@ Il est recommandé de ne pas modifier cette valeur.
 
 === "En environnement paquets RPM"
 
-    Éditez directement le fichier `/opt/canopsis/etc/canopsis.toml`, et suivez le reste de cette procédure.
+    Éditez directement le fichier `/opt/canopsis/etc/canopsis.toml` (ou le fichier de surcharge `/opt/canopsis/etc/conf.d/canopsis-override.toml`), et suivez le reste de cette procédure.
 
     Lors de la mise à jour de Canopsis, vos modifications seront préservées par le gestionnaire de paquets `yum`. Vous devrez alors effectuer une synchronisation manuelle entre vos modifications passées et toute éventuelle nouvelle mise à jour du fichier.
 
