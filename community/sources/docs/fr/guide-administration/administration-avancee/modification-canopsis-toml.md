@@ -63,11 +63,14 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
 ## Description des options
 
-[Canopsis.global]
-PrefetchCount = 10000
-PrefetchSize = 0
-ReconnectTimeoutMilliseconds = 8
-ReconnectRetries = 3
+### [Canopsis.global]
+
+| Attribut                             | Exemple de valeur          | Description                          |
+| :----------------------------------- | :------------------------- | :----------------------------------- |
+| PrefetchCount                        | 10000                      |
+| PrefetchSize                         | 0                          |
+| ReconnectTimeoutMilliseconds         | 8                          | Délai de reconnexion auprès des services tiers (redis, mongodb, rabbitmq, ...)  |
+| ReconnectRetries                     | 3                          | Nombre de tentative de reconnexion aux services tiers |
 
 ### [Canopsis.file]
 
@@ -124,6 +127,23 @@ ReconnectRetries = 3
 | TokenExpiration     | "24h"              | Durée de validité d'un token d'authentification |
 | TokenSigningMethod  | "HS256"            | Méthode de signature d'un token d'authentification |
 | BulkMaxSize         | 1000               | Taille maximum d'un batch de changement de données en base |
+
+
+### [Canopsis.logger]
+
+| Attribut            | Exemple de valeur  | Description                                             |
+| :------------------ | :------------------| :------------------------------------------------------ |
+| Writer              | "stdout"           | Canal de sortie du logger. **`stdout`** ou **`stderr`** |
+
+#### [Canopsis.logger.console_writer]
+
+| Attribut            | Exemple de valeur                           | Description                                             |
+| :------------------ | :-------------------------------------------| :------------------------------------------------------ |
+| Enabled             | true                                        | Active ou désactive le mode [ConsoleWriter](https://github.com/rs/zerolog#pretty-logging). Si désactivé alors les messages sont loggués en JSON. |
+| NoColor             | true                                        | Active ou désactive les couleurs dans les logs |
+| TimeFormat          | "2006-01-02T15:04:05Z07:00"                 | Format des dates des messages de logs au format [GO](../../architecture-interne/templates-golang#formatteddate) |
+| PartsOrder          | ["time", "level", "caller", "message"]      | Ordre des parties des messages de logs parmi "time", "level", "message", "caller", "error" |
+
 
 ### [Canopsis.metrics]
 
