@@ -28,6 +28,7 @@ import {
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
+  SCENARIO_TRIGGERS,
   WEATHER_ACTIONS_TYPES,
 } from '@/constants';
 
@@ -269,6 +270,85 @@ export default merge({
       [ENTITIES_STATES.minor]: 'Mineur',
       [ENTITIES_STATES.major]: 'Majeur',
       [ENTITIES_STATES.critical]: 'Critique',
+    },
+    scenarioTriggers: {
+      [SCENARIO_TRIGGERS.create]: {
+        text: 'Création d\'alarme',
+      },
+      [SCENARIO_TRIGGERS.statedec]: {
+        text: 'Diminution de la criticité',
+      },
+      [SCENARIO_TRIGGERS.changestate]: {
+        text: 'Changement et verrouillage de la criticité',
+      },
+      [SCENARIO_TRIGGERS.stateinc]: {
+        text: 'Augmentation de la criticité',
+      },
+      [SCENARIO_TRIGGERS.changestatus]: {
+        text: 'Changement de statut (flapping, bagot, ...)',
+      },
+      [SCENARIO_TRIGGERS.ack]: {
+        text: 'Acquittement d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.ackremove]: {
+        text: 'Suppression de l\'acquittement d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.cancel]: {
+        text: 'Annulation d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.uncancel]: {
+        text: 'Annulation de l\'annulation d\'une alarme',
+        helpText: 'L\'annulation ne peut se faire que par un événement posté sur l\'API',
+      },
+      [SCENARIO_TRIGGERS.comment]: {
+        text: 'Commentaire sur une alarme',
+      },
+      [SCENARIO_TRIGGERS.done]: {
+        text: 'Alarme en statut "done"',
+        helpText: 'Ne peut s\'obtenir que par un événement posté sur l\'API',
+      },
+      [SCENARIO_TRIGGERS.declareticket]: {
+        text: 'Déclaration de ticket depuis l\'interface graphique',
+      },
+      [SCENARIO_TRIGGERS.declareticketwebhook]: {
+        text: 'Déclaration de ticket depuis un webhook',
+      },
+      [SCENARIO_TRIGGERS.assocticket]: {
+        text: 'Association de ticket sur une alarme',
+      },
+      [SCENARIO_TRIGGERS.snooze]: {
+        text: 'Mise en veille d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.unsnooze]: {
+        text: 'Sortie de veille d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.resolve]: {
+        text: 'Résolution d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.activate]: {
+        text: 'Activation d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.pbhenter]: {
+        text: 'Comportement périodique démarré',
+      },
+      [SCENARIO_TRIGGERS.pbhleave]: {
+        text: 'Comportement périodique terminé',
+      },
+      [SCENARIO_TRIGGERS.instructionfail]: {
+        text: 'Consigne manuelle en erreur',
+      },
+      [SCENARIO_TRIGGERS.autoinstructionfail]: {
+        text: 'Consigne automatique en erreur',
+      },
+      [SCENARIO_TRIGGERS.instructionjobfail]: {
+        text: 'Job de remédiation en erreur',
+      },
+      [SCENARIO_TRIGGERS.instructioncomplete]: {
+        text: 'Consigne manuelle terminée',
+      },
+      [SCENARIO_TRIGGERS.autoinstructioncomplete]: {
+        text: 'Consigne automatique terminée',
+      },
     },
   },
   variableTypes: {
@@ -577,6 +657,7 @@ export default merge({
     selectAFilter: 'Sélectionner un filtre',
     exportAsCsv: 'Exporter le widget sous forme de fichier csv',
     criticityLevels: 'Niveaux de criticité',
+    isPriorityEnabled: 'Afficher la priorité',
     exportCsv: {
       title: 'Exporter CSV',
       fields: {
