@@ -6,6 +6,34 @@
       alarms-list-modal-form(v-model="form.parameters.alarmsList")
       v-divider
       stats-calendar-advanced-form(v-model="form.parameters")
+      v-list-group
+        v-list-tile(#activator="")
+          div(:class="validationHeaderClass") {{ $t('settings.advancedSettings') }}
+        v-list.grey.lighten-4.px-2.py-0(expand)
+          field-filters(
+            :filters.sync="form.filters",
+            :widget-id="widget._id",
+            addable,
+            editable,
+            with-alarm,
+            with-entity,
+            with-pbehavior
+          )
+          v-divider
+          field-opened-resolved-filter(v-field="form.parameters.opened")
+          v-divider
+          field-switcher(
+            v-field="form.parameters.considerPbehaviors",
+            :title="$t('settings.considerPbehaviors.title')"
+          )
+          v-divider
+          field-criticity-levels(v-field="form.parameters.criticityLevels")
+          v-divider
+          field-levels-colors-selector(
+            v-field="form.parameters.criticityLevelsColors",
+            color-type="hex",
+            hide-suffix
+          )
       v-divider
     v-btn.primary(
       :loading="submitting",
@@ -18,6 +46,7 @@
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { formValidationHeaderMixin } from '@/mixins/form';
 
 import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
 import FieldOpenedResolvedFilter from '@/components/sidebars/settings/fields/alarm/opened-resolved-filter.vue';
@@ -43,6 +72,6 @@ export default {
     AlarmsListModalForm,
     StatsCalendarAdvancedForm,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [widgetSettingsMixin, formValidationHeaderMixin],
 };
 </script>

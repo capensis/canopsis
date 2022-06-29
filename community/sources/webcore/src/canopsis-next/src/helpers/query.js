@@ -148,20 +148,18 @@ export function convertWeatherWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsCalendarWidgetToQuery(widget) {
-  const {
+  const { filters = [], parameters: { considerPbehaviors = false } } = widget;
+
+  return {
+    ...convertAlarmStateFilterToQuery(widget),
+
+    considerPbehaviors,
     filters,
-    considerPbehaviors,
-  } = widget.parameters;
-
-  const query = {
-    considerPbehaviors,
-    filters: filters || [],
   };
-
-  return { ...query, ...convertAlarmStateFilterToQuery(widget) };
 }
 
 /**
+ * This function converts widget with type 'counter' widget to query Object
  *
  * @param widget
  * @returns {{filters: *}}
