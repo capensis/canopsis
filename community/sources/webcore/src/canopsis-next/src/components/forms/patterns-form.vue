@@ -14,6 +14,7 @@
       :with-entity="withEntity",
       :with-pbehavior="withPbehavior",
       :with-event="withEvent",
+      :with-service-weather="withServiceWeather",
       :alarm-attributes="alarmAttributes",
       :entity-attributes="entityAttributes"
     )
@@ -48,6 +49,10 @@ export default {
       default: false,
     },
     withPbehavior: {
+      type: Boolean,
+      default: false,
+    },
+    withServiceWeather: {
       type: Boolean,
       default: false,
     },

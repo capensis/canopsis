@@ -46,7 +46,7 @@ export default {
   ],
   data() {
     return {
-      form: filterToForm(this.modal.config.filter),
+      form: filterToForm(this.modal.config.filter, this.getPatternsFields()),
     };
   },
   computed: {
@@ -59,17 +59,22 @@ export default {
     },
 
     patternsFields() {
-      const { withAlarm, withEntity, withPbehavior, withEvent } = this.config;
+      return this.getPatternsFields();
+    },
+  },
+  methods: {
+    getPatternsFields() {
+      const { withAlarm, withEntity, withPbehavior, withEvent, withServiceWeather } = this.modal.config;
 
       return [
         withAlarm && PATTERNS_FIELDS.alarm,
         withEntity && PATTERNS_FIELDS.entity,
         withPbehavior && PATTERNS_FIELDS.pbehavior,
         withEvent && PATTERNS_FIELDS.event,
+        withServiceWeather && PATTERNS_FIELDS.serviceWeather,
       ].filter(Boolean);
     },
-  },
-  methods: {
+
     async submit() {
       const isFormValid = await this.$validator.validate();
 

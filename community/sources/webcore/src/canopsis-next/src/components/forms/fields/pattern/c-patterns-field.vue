@@ -32,7 +32,7 @@
         @input="errors.remove(pbehaviorFieldName)"
       )
 
-    c-pattern-panel(v-if="withEvent", :title="$t('common.eventPatterns')")
+    c-pattern-panel.mb-2(v-if="withEvent", :title="$t('common.eventPatterns')")
       c-event-filter-patterns-field(
         v-field="value.event_pattern",
         :required="isPatternRequired",
@@ -41,7 +41,7 @@
         @input="errors.remove(eventFieldName)"
       )
 
-    c-pattern-panel(v-if="withTotalEntity", :title="$t('common.totalEntityPatterns')")
+    c-pattern-panel.mb-2(v-if="withTotalEntity", :title="$t('common.totalEntityPatterns')")
       c-entity-patterns-field(
         v-field="value.total_entity_pattern",
         :required="isPatternRequired",
@@ -49,6 +49,15 @@
         :name="totalEntityFieldName",
         with-type,
         @input="errors.remove(totalEntityFieldName)"
+      )
+
+    c-pattern-panel.mb-2(v-if="withServiceWeather", :title="$t('common.serviceWeatherPatterns')")
+      c-service-weather-patterns-field(
+        v-field="value.weather_service_pattern",
+        :required="isPatternRequired",
+        :disabled="disabled",
+        :name="weatherServiceFieldName",
+        @input="errors.remove(weatherServiceFieldName)"
       )
 </template>
 
@@ -96,6 +105,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withServiceWeather: {
+      type: Boolean,
+      default: false,
+    },
     required: {
       type: Boolean,
       default: false,
@@ -121,11 +134,13 @@ export default {
         entity_pattern: entityPattern,
         pbehavior_pattern: pbehaviorPattern,
         event_pattern: eventPattern,
+        total_entity_pattern: totalEntityPattern,
       } = this.value;
 
       return alarmPattern?.groups?.length
         || entityPattern?.groups?.length
         || pbehaviorPattern?.groups?.length
+        || totalEntityPattern?.groups?.length
         || eventPattern?.groups?.length;
     },
 
@@ -151,6 +166,10 @@ export default {
 
     totalEntityFieldName() {
       return this.preparePatternsFieldName('total_entity_pattern');
+    },
+
+    weatherServiceFieldName() {
+      return this.preparePatternsFieldName('weather_service_pattern');
     },
   },
   methods: {
