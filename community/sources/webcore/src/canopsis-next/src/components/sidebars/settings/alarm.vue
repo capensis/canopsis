@@ -103,7 +103,7 @@
           )
           v-divider
           field-switcher(
-            v-model="settings.widget.parameters.isMultiDeclareTicketEnabled",
+            v-model="form.parameters.isMultiDeclareTicketEnabled",
             :title="$t('settings.isMultiDeclareTicketEnabled')"
           )
           v-divider
