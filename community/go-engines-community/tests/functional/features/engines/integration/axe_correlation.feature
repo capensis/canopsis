@@ -2652,7 +2652,7 @@ Feature: create and update meta alarm
       "author": "test-author-axe-correlation-16"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 3 events processing
     When I do POST /api/v4/alarm-details:
     """json
     [
