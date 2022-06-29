@@ -74,11 +74,12 @@ indexes:
       options:
         background: true
 
-  default_pbehavior:
-    eids_1:
+  pbehavior:
+    name:
       keys:
-        eids: 1
+        name: 1
       options:
+        unique: true
         background: true
 
   junit_test_suite:
