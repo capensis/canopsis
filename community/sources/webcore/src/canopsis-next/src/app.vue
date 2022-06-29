@@ -3,8 +3,7 @@
     v-layout(v-if="!pending")
       the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
-        active-broadcast-message
-        router-view(:key="routeViewKey")
+        flowchart
     the-sidebar
     the-modals
     the-popups
@@ -33,11 +32,13 @@ import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
 
 import '@/assets/styles/main.scss';
+import Flowchart from '@/components/common/flowchart/flowchart.vue';
 
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
 export default {
   components: {
+    Flowchart,
     TheNavigation,
     ActiveBroadcastMessage,
   },

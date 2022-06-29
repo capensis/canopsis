@@ -1,6 +1,8 @@
 <template lang="pug">
   svg.white(
     ref="svg",
+    v-resize="setViewBox",
+    :viewBox="viewBoxString",
     width="100%",
     height="100%",
     @mousemove="onContainerMouseMove",
@@ -85,6 +87,14 @@ export default {
   },
   data() {
     return {
+      viewBox: {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+      },
+
+      scale: 1,
       data: {},
       selected: [],
 
@@ -107,9 +117,17 @@ export default {
         x: 0,
         y: 0,
       },
+
+      panning: false,
     };
   },
   computed: {
+    viewBoxString() {
+      const { x, y, width, height } = this.viewBox;
+
+      return `${x} ${y} ${width} ${height}`;
+    },
+
     hasSelected() {
       return !!this.selected.length;
     },
@@ -128,11 +146,24 @@ export default {
   },
   mounted() {
     document.addEventListener('keydown', this.onKeyDown);
+    this.$refs.svg.addEventListener('wheel', this.onWheel);
   },
   beforeDestroy() {
     document.removeEventListener('keydown', this.onKeyDown);
+    this.$refs.svg.removeEventListener('wheel', this.onWheel);
   },
   methods: {
+    setViewBox() {
+      const { width, height } = this.$refs.svg.getBoundingClientRect();
+
+      this.viewBox.height = height;
+      this.viewBox.width = width;
+    },
+
+    onWheel(event) {
+      event.preventDefault();
+    },
+
     updateShape(shape, data) {
       Object.assign(this.data[shape._id], data);
 
@@ -265,6 +296,11 @@ export default {
     },
 
     onContainerMouseUp() {
+      if (this.panning) {
+        this.panning = false;
+        return;
+      }
+
       if (this.moving) {
         this.moving = false;
         this.movingStart = { x: 0, y: 0 };
@@ -282,8 +318,38 @@ export default {
       this.updateShapes(this.data);
     },
 
-    onContainerMouseDown() {
+    onContainerMouseDown(event) {
+      if (event.ctrlKey) {
+        this.panning = true;
+        return;
+      }
+
       this.clearSelected();
+    },
+
+    onContainerMouseMove(event) {
+      if (this.panning) {
+        this.viewBox.x -= event.movementX;
+        this.viewBox.y -= event.movementY;
+
+        return;
+      }
+
+      if (this.moving) {
+        this.handleShapeMove(event);
+      }
+
+      const cursor = {
+        x: roundByStep(event.offsetX, this.gridSize),
+        y: roundByStep(event.offsetY, this.gridSize),
+        shift: event.shiftKey,
+      };
+
+      if (this.cursor.x !== cursor.x || this.cursor.y !== cursor.y) {
+        this.cursor = cursor;
+
+        this.$mouseMove.notify(cursor);
+      }
     },
 
     clearConnectedTo(id) {
@@ -363,24 +429,6 @@ export default {
 
       this.movingOffset.x = newMovingOffsetX;
       this.movingOffset.y = newMovingOffsetY;
-    },
-
-    onContainerMouseMove(event) {
-      if (this.moving) {
-        this.handleShapeMove(event);
-      }
-
-      const cursor = {
-        x: roundByStep(event.offsetX, this.gridSize),
-        y: roundByStep(event.offsetY, this.gridSize),
-        shift: event.shiftKey,
-      };
-
-      if (this.cursor.x !== cursor.x || this.cursor.y !== cursor.y) {
-        this.cursor = cursor;
-
-        this.$mouseMove.notify(cursor);
-      }
     },
 
     moveSelectedDown() {
