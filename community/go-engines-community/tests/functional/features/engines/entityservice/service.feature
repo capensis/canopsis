@@ -328,38 +328,24 @@ Feature: update service on event
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "resource": "test-resource-service-3"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-3"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
       ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-service-3-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "resource": "test-resource-service-3"
-      }],
       "actions": [
         {
           "type": "set_entity_info_from_template",
@@ -1589,40 +1575,31 @@ Feature: update service on event
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
-        "component": "test-component-service-11"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-service-11"
+            }
+          },
+          {
+            "field": "source_type",
+            "cond": {
+              "type": "eq",
+              "value": "component"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
       ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-service-11-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
-        "component": "test-component-service-11"
-      }],
       "actions": [
         {
           "type": "set_entity_info_from_template",
@@ -1772,40 +1749,31 @@ Feature: update service on event
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
-        "component": "test-component-service-12"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-service-12"
+            }
+          },
+          {
+            "field": "source_type",
+            "cond": {
+              "type": "eq",
+              "value": "component"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
       ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-service-12-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
-        "component": "test-component-service-12"
-      }],
       "actions": [
         {
           "type": "set_entity_info_from_template",
@@ -1955,40 +1923,31 @@ Feature: update service on event
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
-        "component": "test-component-service-13"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-service-13"
+            }
+          },
+          {
+            "field": "source_type",
+            "cond": {
+              "type": "eq",
+              "value": "component"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
       ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-service-13-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
-        "component": "test-component-service-13"
-      }],
       "actions": [
         {
           "type": "set_entity_info_from_template",

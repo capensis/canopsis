@@ -47,38 +47,24 @@ Feature: Entities and users should be synchronized in metrics db
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "resource": "test-resource-metrics-api-1"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-api-1"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
       ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-metrics-api-1-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "resource": "test-resource-metrics-api-1"
-      }],
       "actions": [
         {
           "type": "set_entity_info_from_template",
