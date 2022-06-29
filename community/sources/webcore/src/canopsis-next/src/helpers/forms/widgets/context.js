@@ -14,7 +14,6 @@ import { defaultColumnsToColumns } from '@/helpers/entities';
 
 /**
  * @typedef {Object} ContextWidgetParameters
- * @property {WidgetFilter[]} viewFilters
  * @property {string | null} mainFilter
  * @property {number} itemsPerPage
  * @property {WidgetColumn[]} widgetColumns
@@ -33,9 +32,6 @@ import { defaultColumnsToColumns } from '@/helpers/entities';
  * @return {ContextWidgetParameters}
  */
 export const contextWidgetParametersToForm = (parameters = {}) => ({
-  viewFilters: parameters.viewFilters
-    ? cloneDeep(parameters.viewFilters)
-    : [],
   mainFilter: parameters.mainFilter ?? null,
   itemsPerPage: parameters.itemsPerPage ?? PAGINATION_LIMIT,
   widgetColumns: parameters.widgetColumns
