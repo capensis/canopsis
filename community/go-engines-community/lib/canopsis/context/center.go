@@ -43,9 +43,19 @@ type center struct {
 
 func (c *center) Handle(ctx context.Context, event types.Event, fields EnrichFields) (*types.Entity, UpdatedEntityServices, error) {
 	updatedServices := UpdatedEntityServices{}
-	eventEntity, entities, err := c.createEntities(ctx, event, fields)
-	if err != nil {
-		return nil, updatedServices, err
+	var eventEntity *types.Entity
+	var entities []types.Entity
+	var err error
+	if event.IsOnlyServiceUpdate() {
+		eventEntity, err = c.findEntityByID(ctx, event.GetEID())
+		if err != nil {
+			return nil, updatedServices, err
+		}
+	} else {
+		eventEntity, entities, err = c.createEntities(ctx, event, fields)
+		if err != nil {
+			return nil, updatedServices, err
+		}
 	}
 
 	if eventEntity == nil {

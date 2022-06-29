@@ -3,7 +3,8 @@ package idlerule
 import (
 	"context"
 	"encoding/json"
-	"errors"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -12,7 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/valyala/fastjson"
-	"net/http"
 )
 
 type API interface {
@@ -38,23 +38,8 @@ func NewApi(
 	}
 }
 
-// Find all idle rules
-// @Summary Find idle rules
-// @Description Get paginated list of idle rules
-// @Tags idle rules
-// @ID idlerules-find-all
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
-// @Param search query string false "search query"
-// @Param sort query string false "sort query"
-// @Param sort_by query string false "sort query"
-// @Success 200 {object} common.PaginatedListResponse{data=[]Rule}
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /idle-rules [get]
+// List
+// @Success 200 {object} common.PaginatedListResponse{data=[]idlerule.Rule}
 func (a *api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
@@ -78,18 +63,8 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Get idle rule by id
-// @Summary Get idle rule by id
-// @Description Get idle rule by id
-// @Tags idlerules
-// @ID idlerules-get-by-id
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "rule id"
-// @Success 200 {object} Rule
-// @Failure 404 {object} common.ErrorResponse
-// @Router /idle-rules/{id} [get]
+// Get
+// @Success 200 {object} idlerule.Rule
 func (a *api) Get(c *gin.Context) {
 	rule, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -103,19 +78,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, rule)
 }
 
-// Create idle rule
-// @Summary Create idle rule
-// @Description Create idle rule
-// @Tags idlerules
-// @ID idlerules-create
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// Create
 // @Param body body EditRequest true "body"
-// @Success 201 {object} Rule
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /idle-rules [post]
+// @Success 201 {object} idlerule.Rule
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 	if err := c.ShouldBind(&request); err != nil {
@@ -128,7 +93,10 @@ func (a *api) Create(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-
+	if rule == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
 	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeIdleRule,
@@ -141,21 +109,9 @@ func (a *api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, rule)
 }
 
-// Update idle rule by id
-// @Summary Update idle rule by id
-// @Description Update idle rule by id
-// @Tags idlerules
-// @ID idlerules-update-by-id
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "rule id"
+// Update
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Rule
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /idle-rules/{id} [put]
 func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{
 		ID: c.Param("id"),
@@ -189,17 +145,6 @@ func (a *api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, rule)
 }
 
-// Delete idle rule by id
-// @Summary Delete idle rule by id
-// @Description Delete idle rule by id
-// @Tags idlerules
-// @ID idlerules-delete-by-id
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "rule id"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /idle-rules/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
 	ok, err := a.store.Delete(c.Request.Context(), id)
@@ -225,19 +170,9 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// Bulk create idlerules
-// @Summary Bulk create idlerules
-// @Description Bulk create idlerules
-// @Tags idlerules
-// @ID idlerules-bulk-create
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// BulkCreate
 // @Param body body []CreateRequest true "body"
 // @Success 207 {array} []BulkCreateResponseItem
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /bulk/idle-rules [post]
 func (a *api) BulkCreate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -304,19 +239,9 @@ func (a *api) BulkCreate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-// Bulk update idlerules
-// @Summary Bulk update idlerules
-// @Description Bulk update idlerules
-// @Tags idlerules
-// @ID idlerules-bulk-update
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
 // @Success 207 {array} []BulkUpdateResponseItem
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /bulk/idle-rules [put]
 func (a *api) BulkUpdate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -388,19 +313,9 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-// Bulk delete idlerules
-// @Summary Bulk delete idlerules
-// @Description Bulk delete idlerules
-// @Tags idlerules
-// @ID idlerules-bulk-delete
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 // @Success 207 {array} []BulkDeleteResponseItem
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /bulk/idle-rules [delete]
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -472,20 +387,9 @@ func (a *api) BulkDelete(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-// Count entities and alarm matching patterns
-// @Summary Count entities and alarm matching patterns
-// @Description Count entities and alarm matching patterns
-// @Tags idlerules
-// @ID idlerules-countpatterns
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// CountPatterns
 // @Param body body CountByPatternRequest true "body"
 // @Success 200 {object} CountByPatternResult
-// @Failure 400 {object} common.ErrorResponse
-// @Failure 408 {object} common.ErrorResponse
-// @Router /idle-rules/count [post]
 func (a *api) CountPatterns(c *gin.Context) {
 	var request CountByPatternRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -495,10 +399,7 @@ func (a *api) CountPatterns(c *gin.Context) {
 	}
 
 	data, err := a.store.CountByPatterns(c.Request.Context(), request, a.conf.Get().CheckCountRequestTimeout, a.conf.Get().MaxMatchedItems)
-	if errors.Is(err, context.DeadlineExceeded) {
-		c.AbortWithStatusJSON(http.StatusRequestTimeout, common.ErrTimeoutResponse)
-		return
-	} else if err != nil {
+	if err != nil {
 		panic(err)
 	}
 

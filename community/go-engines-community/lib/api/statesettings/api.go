@@ -30,19 +30,8 @@ func NewApi(
 	}
 }
 
-// Find all state settings for a widget
-// @Summary Find all state settings for a widget
-// @Description Get paginated list of state settings
-// @Tags state-settings
-// @ID state-settings-list
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]StateSetting}
-// @Router /state-settings [get]
 func (a *api) List(c *gin.Context) {
 	var query pagination.Query
 
@@ -65,21 +54,9 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Update state setting by id
-// @Summary Update state setting type by id
-// @Description Update state setting type by id
-// @Tags state-settings
-// @ID state-settings-update-by-id
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "type id"
+// Update
 // @Param body body StateSettingRequest true "body"
 // @Success 200 {object} StateSetting
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /state-settings/{id} [put]
 func (a *api) Update(c *gin.Context) {
 	request := StateSettingRequest{
 		ID: c.Param("id"),

@@ -24,8 +24,8 @@ Feature: Get a user
           "lastname": "test-user-to-get-1-lastname",
           "name": "test-user-to-get-1",
           "role": {
-            "_id": "test-role-to-get-user-1",
-            "name": "test-role-to-get-user-1",
+            "_id": "test-role-to-user-get-1",
+            "name": "test-role-to-user-get-1",
             "defaultview": {
               "_id": "test-view-to-edit-user",
               "title": "test-view-to-edit-user-title"
@@ -52,8 +52,8 @@ Feature: Get a user
           "lastname": "test-user-to-get-2-lastname",
           "name": "test-user-to-get-2",
           "role": {
-            "_id": "test-role-to-get-user-2",
-            "name": "test-role-to-get-user-2",
+            "_id": "test-role-to-user-get-2",
+            "name": "test-role-to-user-get-2",
             "defaultview": {
               "_id": "test-view-to-edit-user",
               "title": "test-view-to-edit-user-title"
@@ -83,7 +83,7 @@ Feature: Get a user
     {
       "data": [
         {
-          "_id": "test-user-to-get-1"
+          "_id": "test-user-to-get-2"
         }
       ],
       "meta": {
@@ -97,7 +97,7 @@ Feature: Get a user
 
   Scenario: given search by role request should return users
     When I am admin
-    When I do GET /api/v4/users?search=test-role-to-get-user-1
+    When I do GET /api/v4/users?search=test-role-to-user-get-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -136,8 +136,8 @@ Feature: Get a user
       "lastname": "test-user-to-get-1-lastname",
       "name": "test-user-to-get-1",
       "role": {
-        "_id": "test-role-to-get-user-1",
-        "name": "test-role-to-get-user-1",
+        "_id": "test-role-to-user-get-1",
+        "name": "test-role-to-user-get-1",
         "defaultview": {
           "_id": "test-view-to-edit-user",
           "title": "test-view-to-edit-user-title"

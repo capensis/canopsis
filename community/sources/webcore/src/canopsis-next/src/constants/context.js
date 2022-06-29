@@ -327,6 +327,17 @@ export const WEATHER_ACK_EVENT_OUTPUT = {
   validateCancel: 'MDS_VALIDATECANCEL',
 };
 
+export const DEFAULT_CONTEXT_WIDGET_COLUMNS = [
+  {
+    labelKey: 'common.name',
+    value: 'name',
+  },
+  {
+    labelKey: 'common.type',
+    value: 'type',
+  },
+];
+
 export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [
   {
     labelKey: 'common.name',
