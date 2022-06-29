@@ -2,6 +2,7 @@ package entity
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -505,8 +506,11 @@ func (a *mongoAdapter) FindConnectorForComponent(ctx context.Context, id string)
 			"maxDepth":                0,
 		}},
 		{"$unwind": "$connector"},
+		{"$replaceRoot": bson.M{
+			"newRoot": "$connector",
+		}},
 		{"$project": bson.M{
-			"connector": 1,
+			"impact": 0, "depends": 0,
 		}},
 	})
 	if err != nil {
@@ -516,15 +520,13 @@ func (a *mongoAdapter) FindConnectorForComponent(ctx context.Context, id string)
 	defer cursor.Close(ctx)
 
 	if cursor.Next(ctx) {
-		res := &struct {
-			Connector types.Entity `bson:"connector"`
-		}{}
-		err := cursor.Decode(res)
+		res := types.Entity{}
+		err := cursor.Decode(&res)
 		if err != nil {
 			return nil, err
 		}
 
-		return &res.Connector, nil
+		return &res, nil
 	}
 
 	return nil, nil
@@ -545,8 +547,11 @@ func (a *mongoAdapter) FindConnectorForResource(ctx context.Context, id string) 
 			"maxDepth":                0,
 		}},
 		{"$unwind": "$connector"},
+		{"$replaceRoot": bson.M{
+			"newRoot": "$connector",
+		}},
 		{"$project": bson.M{
-			"connector": 1,
+			"impact": 0, "depends": 0,
 		}},
 	})
 	if err != nil {
@@ -556,16 +561,13 @@ func (a *mongoAdapter) FindConnectorForResource(ctx context.Context, id string) 
 	defer cursor.Close(ctx)
 
 	if cursor.Next(ctx) {
-		res := &struct {
-			ID        string       `bson:"_id"`
-			Connector types.Entity `bson:"connector"`
-		}{}
-		err := cursor.Decode(res)
+		res := types.Entity{}
+		err := cursor.Decode(&res)
 		if err != nil {
 			return nil, err
 		}
 
-		return &res.Connector, nil
+		return &res, nil
 	}
 
 	return nil, nil
@@ -586,8 +588,11 @@ func (a *mongoAdapter) FindComponentForResource(ctx context.Context, id string) 
 			"maxDepth":                0,
 		}},
 		{"$unwind": "$component"},
+		{"$replaceRoot": bson.M{
+			"newRoot": "$component",
+		}},
 		{"$project": bson.M{
-			"component": 1,
+			"impact": 0, "depends": 0,
 		}},
 	})
 	if err != nil {
@@ -597,16 +602,13 @@ func (a *mongoAdapter) FindComponentForResource(ctx context.Context, id string) 
 	defer cursor.Close(ctx)
 
 	if cursor.Next(ctx) {
-		res := &struct {
-			ID        string       `bson:"_id"`
-			Component types.Entity `bson:"component"`
-		}{}
-		err := cursor.Decode(res)
+		res := types.Entity{}
+		err := cursor.Decode(&res)
 		if err != nil {
 			return nil, err
 		}
 
-		return &res.Component, nil
+		return &res, nil
 	}
 
 	return nil, nil
@@ -643,7 +645,9 @@ func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, idsWithPbeh
 		filter["pbehavior_info"] = bson.M{"$ne": nil}
 	}
 
-	return a.dbCollection.Find(ctx, filter)
+	opts := &options.FindOptions{}
+	return a.dbCollection.Find(ctx, filter,
+		opts.SetProjection(bson.M{"depends": 0, "impact": 0, "infos": 0, "component_infos": 0}))
 }
 
 func (a *mongoAdapter) GetImpactedServicesInfo(ctx context.Context) (mongo.Cursor, error) {
