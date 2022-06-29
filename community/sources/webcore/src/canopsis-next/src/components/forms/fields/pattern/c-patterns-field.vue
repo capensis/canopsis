@@ -56,12 +56,14 @@
         v-field="value.weather_service_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
-        :name="weatherServiceFieldName",
-        @input="errors.remove(weatherServiceFieldName)"
+        :name="serviceWeatherFieldName",
+        @input="errors.remove(serviceWeatherFieldName)"
       )
 </template>
 
 <script>
+import { PATTERNS_FIELDS } from '@/constants';
+
 export default {
   inject: ['$validator'],
   model: {
@@ -129,19 +131,7 @@ export default {
   },
   computed: {
     hasPatterns() {
-      const {
-        alarm_pattern: alarmPattern,
-        entity_pattern: entityPattern,
-        pbehavior_pattern: pbehaviorPattern,
-        event_pattern: eventPattern,
-        total_entity_pattern: totalEntityPattern,
-      } = this.value;
-
-      return alarmPattern?.groups?.length
-        || entityPattern?.groups?.length
-        || pbehaviorPattern?.groups?.length
-        || totalEntityPattern?.groups?.length
-        || eventPattern?.groups?.length;
+      return Object.values(PATTERNS_FIELDS).some(key => this.value[key]?.groups?.length);
     },
 
     isPatternRequired() {
@@ -149,27 +139,27 @@ export default {
     },
 
     alarmFieldName() {
-      return this.preparePatternsFieldName('alarm_pattern');
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.alarm);
     },
 
     eventFieldName() {
-      return this.preparePatternsFieldName('event_pattern');
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.event);
     },
 
     entityFieldName() {
-      return this.preparePatternsFieldName('entity_pattern');
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.entity);
     },
 
     pbehaviorFieldName() {
-      return this.preparePatternsFieldName('pbehavior_pattern');
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.pbehavior);
     },
 
     totalEntityFieldName() {
-      return this.preparePatternsFieldName('total_entity_pattern');
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.totalEntity);
     },
 
-    weatherServiceFieldName() {
-      return this.preparePatternsFieldName('weather_service_pattern');
+    serviceWeatherFieldName() {
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.serviceWeather);
     },
   },
   methods: {

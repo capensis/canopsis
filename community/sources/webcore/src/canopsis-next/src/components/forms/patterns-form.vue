@@ -16,7 +16,8 @@
       :with-event="withEvent",
       :with-service-weather="withServiceWeather",
       :alarm-attributes="alarmAttributes",
-      :entity-attributes="entityAttributes"
+      :entity-attributes="entityAttributes",
+      some-required
     )
 </template>
 
