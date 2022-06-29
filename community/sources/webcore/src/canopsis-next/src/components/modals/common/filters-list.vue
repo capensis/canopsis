@@ -81,6 +81,7 @@ export default {
           withAlarm: this.config.withAlarm,
           withEntity: this.config.withEntity,
           withPbehavior: this.config.withPbehavior,
+          withServiceWeather: this.config.withServiceWeather,
           action: async (newFilter) => {
             await this.createWidgetFilter({
               data: {
@@ -108,10 +109,15 @@ export default {
           withAlarm: this.config.withAlarm,
           withEntity: this.config.withEntity,
           withPbehavior: this.config.withPbehavior,
+          withServiceWeather: this.config.withServiceWeather,
           action: async (newFilter) => {
             await this.updateWidgetFilter({
               id: filter._id,
-              data: newFilter,
+              data: {
+                ...newFilter,
+
+                widget: this.widgetId,
+              },
             });
 
             return this.refreshFilters();
