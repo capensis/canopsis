@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 // Span represents interval between two times.
 type Span struct {
 	from, to time.Time
-	stype    string
 }
 
 // New creates new span with given start and end times.
@@ -24,13 +25,6 @@ func New(from, to time.Time) Span {
 	}
 }
 
-// TypedNew creates new span of given type with start and end times.
-func TypedNew(from, to time.Time, stype string) Span {
-	s := New(from, to)
-	s.stype = stype
-	return s
-}
-
 // Intersect returns intersect of spans or nil if they don't overlap.
 func Intersect(left, right Span) *Span {
 	if left.to.Before(right.from) || right.to.Before(left.from) {
@@ -38,47 +32,9 @@ func Intersect(left, right Span) *Span {
 	}
 
 	return &Span{
-		from: maxTime(left.from, right.from),
-		to:   minTime(left.to, right.to),
+		from: utils.MaxTime(left.from, right.from),
+		to:   utils.MinTime(left.to, right.to),
 	}
-}
-
-// Compact merges adjacent spans if end of prev span is less
-// than start of next span or gap less than diff.
-func Compact(list []Span, diff time.Duration) []Span {
-	if len(list) == 0 {
-		return list
-	}
-
-	res := make([]Span, 0, len(list))
-	newFrom := list[0].from
-
-	if len(list) == 1 {
-		res = append(res, list[0])
-	}
-
-	for i := range list {
-		if i == 0 {
-			continue
-		}
-
-		if list[i].from.Sub(list[i-1].to) > diff {
-			res = append(res, Span{
-				from: newFrom,
-				to:   list[i-1].to,
-			})
-			newFrom = list[i].from
-		}
-
-		if i == len(list)-1 {
-			res = append(res, Span{
-				from: newFrom,
-				to:   list[i].to,
-			})
-		}
-	}
-
-	return res
 }
 
 // From returns time at the start of span.
@@ -89,11 +45,6 @@ func (s *Span) From() time.Time {
 // To returns time at the end of span.
 func (s *Span) To() time.Time {
 	return s.to
-}
-
-// Type returns type of span.
-func (s *Span) Type() string {
-	return s.stype
 }
 
 // Duration returns duration of span.
@@ -135,33 +86,6 @@ func (s *Span) Diff(d Span) []Span {
 
 	// dFrom sFrom sTo dTo => nil
 	return res
-}
-
-type BySpans []Span
-
-func (a BySpans) Len() int      { return len(a) }
-func (a BySpans) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-func (a BySpans) Less(i, j int) bool {
-	return a[i].from.UTC().Before(a[j].from.UTC()) ||
-		(a[i].from.UTC().Equal(a[j].from) && a[i].to.UTC().Before(a[j].to.UTC()))
-}
-
-// minTime returns maximal time between arguments.
-func maxTime(left, right time.Time) time.Time {
-	if left.After(right) {
-		return left
-	}
-
-	return right
-}
-
-// minTime returns minimal time between arguments.
-func minTime(left, right time.Time) time.Time {
-	if left.Before(right) {
-		return left
-	}
-
-	return right
 }
 
 func (s Span) MarshalJSON() ([]byte, error) {
