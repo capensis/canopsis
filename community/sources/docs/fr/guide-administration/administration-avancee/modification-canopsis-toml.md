@@ -66,7 +66,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
 ## Description des options
 
-### [Canopsis.global]
+### Section [Canopsis.global]
 
 | Attribut                             | Exemple de valeur          | Description                          |
 | :----------------------------------- | :------------------------- | :----------------------------------- |
@@ -75,7 +75,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | ReconnectTimeoutMilliseconds         | 8                          | Délai de reconnexion auprès des services tiers (redis, mongodb, rabbitmq, ...)  |
 | ReconnectRetries                     | 3                          | Nombre de tentative de reconnexion aux services tiers |
 
-### [Canopsis.file]
+### Section [Canopsis.file]
 
 | Attribut       | Exemple de valeur                        | Description                          |
 | :------------- | :--------------------------------------- | :----------------------------------- |
@@ -86,7 +86,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
 
 
-### [Canopsis.alarm]
+### Section [Canopsis.alarm]
 
 | Attribut                        | Exemple de valeur     | Description                          |
 | :------------------------------ | :---------------------| :----------------------------------- |
@@ -101,21 +101,21 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | AllowDoubleAck                  | true,false            | Permet d'acquitter plusieurs fois une alarme |
 
 
-### [Canopsis.timezone]
+### Section [Canopsis.timezone]
 
 | Attribut | Exemple de valeur | Description                           |
 | :------- | :-----------------| :------------------------------------ |
 | Timezone | "Europe/Paris"    | Timezone générale du produit Canopsis |
 
 
-### [Canopsis.data_storage]
+### Section [Canopsis.data_storage]
 
 | Attribut      | Exemple de valeur | Description                           |
 | :------------ | :-----------------| :------------------------------------ |
 | TimeToExecute | "Sunday,23"       | Jour et heure d'exécution de la politique de rotation des données définie dans le module `Data Storage` | 
 
 
-### [Canopsis.import_ctx]
+### Section [Canopsis.import_ctx]
 
 | Attribut            | Exemple de valeur     | Description                           |
 | :------------------ | :---------------------| :------------------------------------ |
@@ -123,7 +123,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | ThdCritMinPerImport | "60m"                 | Durée d'import au délà de laquelle une alarme critique sera générée |
 | FilePattern         | "/tmp/import_s.json"  | Pattern de nommage des fichiers temporaires d'import  |
 
-### [Canopsis.api]
+### Section [Canopsis.api]
 
 | Attribut            | Exemple de valeur  | Description                           |
 | :------------------ | :------------------| :------------------------------------ |
@@ -132,13 +132,13 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | BulkMaxSize         | 1000               | Taille maximum d'un batch de changement de données en base |
 
 
-### [Canopsis.logger]
+### Section [Canopsis.logger]
 
 | Attribut            | Exemple de valeur  | Description                                             |
 | :------------------ | :------------------| :------------------------------------------------------ |
 | Writer              | "stdout"           | Canal de sortie du logger. **`stdout`** ou **`stderr`** |
 
-#### [Canopsis.logger.console_writer]
+#### Sous-section [Canopsis.logger.console_writer]
 
 | Attribut            | Exemple de valeur                           | Description                                             |
 | :------------------ | :-------------------------------------------| :------------------------------------------------------ |
@@ -148,7 +148,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | PartsOrder          | ["time", "level", "caller", "message"]      | Ordre des parties des messages de logs parmi "time", "level", "message", "caller", "error" |
 
 
-### [Canopsis.metrics]
+### Section [Canopsis.metrics]
 
 | Attribut            | Exemple de valeur  | Description                           |
 | :------------------ | :------------------| :------------------------------------ |
