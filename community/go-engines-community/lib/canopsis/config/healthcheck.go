@@ -4,7 +4,7 @@ import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-commun
 
 type HealthCheckConf struct {
 	EngineOrder []EngineOrder         `toml:"engine_order" bson:"engine_order" json:"engine_order"`
-	Parameters  HealthCheckParameters `bson:"parameters" json:"parameters"`
+	Parameters  HealthCheckParameters `toml:"-" bson:"parameters" json:"parameters"`
 }
 
 type EngineOrder struct {

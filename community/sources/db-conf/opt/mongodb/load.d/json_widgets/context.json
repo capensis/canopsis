@@ -1,0 +1,67 @@
+{
+  "_id": "widget_Context_505742f9-faf5-445e-a537-2288a84fc58e",
+  "loader_id": "widget_Context_505742f9-faf5-445e-a537-2288a84fc58e",
+  "loader_no_update": true,
+  "title": "Explorateur de Contexte",
+  "type": "Context",
+  "tab": "view-tab_e5a736cf-6f3c-4edf-82d3-814ba59cb6cb",
+  "parameters": {
+    "widgetColumns": [
+      {
+        "value": "name",
+        "label": "Name"
+      },
+      {
+        "value": "type",
+        "label": "Type"
+      }
+    ],
+    "sort": {
+      "order": "ASC"
+    },
+    "viewFilters": [
+      {
+        "filter": "{\n    \"$and\": [\n        {\n            \"type\": \"component\"\n        }\n    ]\n}",
+        "title": "Composant"
+      },
+      {
+        "filter": "{\n    \"$and\": [\n        {\n            \"type\": \"connector\"\n        }\n    ]\n}",
+        "title": "Connecteur"
+      },
+      {
+        "filter": "{\n    \"$and\": [\n        {\n            \"type\": \"resource\"\n        }\n    ]\n}",
+        "title": "Ressource"
+      },
+      {
+        "filter": "{\n    \"$and\": [\n        {\n            \"type\": \"service\"\n        }\n    ]\n}",
+        "title": "Service"
+      }
+    ],
+    "itemsPerPage": 10,
+    "mainFilter": null,
+    "selectedTypes": []
+  },
+  "grid_parameters": {
+    "mobile": {
+      "x": 0,
+      "y": 0,
+      "w": 3,
+      "h": 1,
+      "autoHeight": true
+    },
+    "tablet": {
+      "x": 0,
+      "y": 0,
+      "w": 3,
+      "h": 1,
+      "autoHeight": true
+    },
+    "desktop": {
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 1,
+      "autoHeight": true
+    }
+  }
+}

@@ -2,7 +2,13 @@ import { COLORS } from '@/config';
 
 import featuresService from '@/services/features';
 
-export const ALARM_STATS_CALENDAR_COLORS = {
+export const ALARM_LEVELS = {
+  minor: 20,
+  major: 30,
+  critical: 40,
+};
+
+export const ALARM_LEVELS_COLORS = {
   ok: COLORS.state.ok,
   minor: COLORS.state.minor,
   major: COLORS.state.major,

@@ -206,3 +206,7 @@ type CountFilterResult struct {
 func (r *CountFilterResult) GetTotal() int64 {
 	return r.TotalCount
 }
+
+type DeleteByNameRequest struct {
+	Name string `form:"name" json:"name" binding:"required"`
+}

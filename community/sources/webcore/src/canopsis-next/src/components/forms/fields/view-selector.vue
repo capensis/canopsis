@@ -1,7 +1,6 @@
 <template lang="pug">
   v-layout(align-center)
     v-btn(
-      data-test="selectDefaultViewButton",
       color="secondary",
       small,
       @click="showViewSelectModal"
@@ -9,7 +8,6 @@
     div {{ defaultViewTitle }}
     v-btn(
       v-if="value",
-      data-test="removeDefaultViewButton",
       icon,
       @click="clearDefaultView"
     )
@@ -19,7 +17,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import entitiesViewMixin from '@/mixins/entities/view';
+import { entitiesViewMixin } from '@/mixins/entities/view';
 
 export default {
   mixins: [entitiesViewMixin],
