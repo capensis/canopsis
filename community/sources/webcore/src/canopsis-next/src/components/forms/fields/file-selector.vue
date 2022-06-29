@@ -5,19 +5,19 @@
         v-btn(icon, flat, small, @click="removeFileFromSelections(file.name)")
           v-icon(small) close
     div.file-selector-button-wrapper(
-      :class="{ disabled: fullDisabled }",
-      v-on="wrapperListeners"
+      v-on="wrapperListeners",
+      :class="{ disabled: fullDisabled }"
     )
       slot(
-        name="activator",
         :disabled="fullDisabled",
         :loading="loading",
-        :on="scopedActivatorSlotListeners"
+        :on="scopedActivatorSlotListeners",
+        name="activator"
       )
         v-btn(
+          v-on="scopedActivatorSlotListeners",
           :disabled="fullDisabled",
-          :loading="loading",
-          v-on="scopedActivatorSlotListeners"
+          :loading="loading"
         )
           v-icon cloud_upload
     input.hidden(

@@ -163,9 +163,9 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 	project := s.getProject(r.ListRequest, entitiesToProject)
 	project = s.insertDeferred(r.FilterRequest, &pipeline, project)
 	if s.isSortByDuration(sort) {
-		pipeline = append(pipeline, s.getDurationFields())
+		pipeline = append(pipeline, s.getDurationFields()...)
 	} else {
-		project = append(project, s.getDurationFields())
+		project = append(project, s.getDurationFields()...)
 	}
 	cursor, err := collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
@@ -1112,6 +1112,27 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 				"$slice": bson.A{bson.M{"$reverseArray": "$pbehavior.comments"}, 1},
 			},
 		}},
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorTypeMongoCollection,
+			"foreignField": "_id",
+			"localField":   "pbehavior.type_",
+			"as":           "pbehavior.type",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior.type", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorReasonMongoCollection,
+			"foreignField": "_id",
+			"localField":   "pbehavior.reason",
+			"as":           "pbehavior.reason",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior.reason", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.RightsMongoCollection,
+			"foreignField": "_id",
+			"localField":   "pbehavior.author",
+			"as":           "pbehavior.author",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior.author", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
 			"pbehavior": bson.M{
 				"$cond": bson.M{
@@ -1121,13 +1142,6 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 				},
 			},
 		}},
-		{"$lookup": bson.M{
-			"from":         mongo.PbehaviorTypeMongoCollection,
-			"foreignField": "_id",
-			"localField":   "pbehavior.type_",
-			"as":           "pbehavior.type",
-		}},
-		{"$unwind": bson.M{"path": "$pbehavior.type", "preserveNullAndEmptyArrays": true}},
 	}
 	if r.OnlyParents {
 		*pipeline = append(*pipeline,
@@ -1398,8 +1412,14 @@ func (s *store) resolveAliasesInQuery(query interface{}) (newQuery interface{}, 
 			if newKey != key.String() {
 				keys = append(keys, newKey)
 			}
+			var mapVal reflect.Value
+			if newVal == nil {
+				mapVal = reflect.ValueOf(&newVal).Elem()
+			} else {
+				mapVal = reflect.ValueOf(newVal)
+			}
 			val.SetMapIndex(key, reflect.Value{})
-			val.SetMapIndex(reflect.ValueOf(newKey), reflect.ValueOf(newVal))
+			val.SetMapIndex(reflect.ValueOf(newKey), mapVal)
 		}
 	}
 
@@ -1430,37 +1450,62 @@ func (s *store) resolveAlias(v string) string {
 	return v
 }
 
-func (s *store) getDurationFields() bson.M {
+func (s *store) getDurationFields() []bson.M {
 	now := time.Now().Unix()
 
-	return bson.M{"$addFields": bson.M{
-		"v.duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			"$v.creation_date",
-		}},
-		"v.current_state_duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			"$v.state.t",
-		}},
-		"v.active_duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			bson.M{"$sum": bson.A{
+	return []bson.M{
+		{"$addFields": bson.M{
+			"v.duration": bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
 				"$v.creation_date",
-				"$v.snooze_duration",
-				"$v.pbh_inactive_duration",
+			}},
+			"v.current_state_duration": bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
+				"$v.state.t",
+			}},
+			"v.active_duration": bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
+				bson.M{"$sum": bson.A{
+					"$v.creation_date",
+					"$v.snooze_duration",
+					"$v.pbh_inactive_duration",
+				}},
 			}},
 		}},
-	}}
+		{"$addFields": bson.M{
+			"v.duration": bson.M{
+				"$cond": bson.M{
+					"if":   bson.M{"$lt": bson.A{"$v.duration", 0}},
+					"then": 0,
+					"else": "$v.duration",
+				},
+			},
+			"v.current_state_duration": bson.M{
+				"$cond": bson.M{
+					"if":   bson.M{"$lt": bson.A{"$v.current_state_duration", 0}},
+					"then": 0,
+					"else": "$v.current_state_duration",
+				},
+			},
+			"v.active_duration": bson.M{
+				"$cond": bson.M{
+					"if":   bson.M{"$lt": bson.A{"$v.active_duration", 0}},
+					"then": 0,
+					"else": "$v.active_duration",
+				},
+			},
+		}},
+	}
 }
