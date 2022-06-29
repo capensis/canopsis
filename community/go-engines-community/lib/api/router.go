@@ -1407,7 +1407,7 @@ func RegisterRoutes(
 
 		flappingRuleRouter := protected.Group("/flapping-rules")
 		{
-			flappingRuleAPI := flappingrule.NewApi(flappingrule.NewStore(dbClient), actionLogger)
+			flappingRuleAPI := flappingrule.NewApi(flappingrule.NewStore(dbClient), common.NewPatternFieldsTransformer(dbClient), actionLogger)
 			flappingRuleRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionCreate, enforcer),

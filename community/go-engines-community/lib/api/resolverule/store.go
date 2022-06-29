@@ -163,6 +163,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 
 	var res *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		res = nil
 		originalModel := resolverule.Rule{}
 		err := s.dbCollection.FindOne(ctx, bson.M{"_id": request.ID}).Decode(&originalModel)
 		if err != nil {
@@ -172,7 +173,6 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 			return err
 		}
 
-		res = nil
 		_, err = s.dbCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": request.ID},

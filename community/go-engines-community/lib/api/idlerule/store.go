@@ -153,12 +153,12 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
 
 	var idleRule *Rule
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		idleRule = nil
 		prevRule, err := s.GetOneBy(ctx, r.ID)
 		if err != nil || prevRule == nil {
 			return err
 		}
 
-		idleRule = nil
 		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
 		if err != nil {
 			return err

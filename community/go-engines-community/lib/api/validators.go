@@ -285,14 +285,18 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 		resolveRuleValidator.ValidateUpdateRequest(ctx, sl)
 	}, resolverule.UpdateRequest{})
 
+	flappingRuleValidator := flappingrule.NewValidator(client)
 	flappingRuleIdUniqueValidator := common.NewUniqueFieldValidator(client, mongo.FlappingRuleMongoCollection, "ID")
 	flappingRuleNameUniqueValidator := common.NewUniqueFieldValidator(client, mongo.FlappingRuleMongoCollection, "Name")
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		flappingRuleIdUniqueValidator.Validate(ctx, sl)
 		flappingRuleNameUniqueValidator.Validate(ctx, sl)
+		flappingRuleValidator.ValidateCreateRequest(ctx, sl)
 	}, flappingrule.CreateRequest{})
-	v.RegisterStructValidationCtx(flappingRuleNameUniqueValidator.Validate, flappingrule.UpdateRequest{})
-	v.RegisterStructValidation(flappingrule.ValidateEditRequest, flappingrule.EditRequest{})
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		flappingRuleNameUniqueValidator.Validate(ctx, sl)
+		flappingRuleValidator.ValidateUpdateRequest(ctx, sl)
+	}, flappingrule.UpdateRequest{})
 
 	v.RegisterStructValidation(pattern.ValidateEditRequest, pattern.EditRequest{})
 }
