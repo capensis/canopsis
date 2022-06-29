@@ -1592,39 +1592,31 @@ Feature: create service entity
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-service-15"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-che-service-15"
+            }
+          },
+          {
+            "field": "source_type",
+            "cond": {
+              "type": "eq",
+              "value": "component"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
       ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-che-service-15-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
-        "component": "test-component-che-service-15"
-      }],
       "actions": [
         {
           "type": "set_entity_info_from_template",
