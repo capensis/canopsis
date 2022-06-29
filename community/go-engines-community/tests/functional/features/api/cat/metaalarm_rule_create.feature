@@ -796,47 +796,6 @@ Feature: Create an metaalarmrule
     }
     """
 
-  Scenario: given create request with both corporate total entity pattern and custom total entity pattern should return error
-    When I am admin
-    When I do POST /api/v4/cat/metaalarmrules:
-    """
-    {
-      "_id": "complex-8",
-      "auto_resolve": true,
-      "name": "complex-test-1",
-      "type": "complex",
-      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
-      "config": {
-        "time_interval": {
-          "value": 1,
-          "unit": "m"
-        },
-        "threshold_rate": 1
-      },
-      "total_entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test"
-            }
-          }
-        ]
-      ],
-      "corporate_total_entity_pattern": "test-pattern-to-rule-edit-2"
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """
-    {
-      "errors": {
-        "total_entity_pattern": "Can't be present both TotalEntityPattern and CorporateTotalEntityPattern."
-      }
-    }
-    """
-
   Scenario: given create request with absent alarm corporate pattern should return error
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -1036,47 +995,6 @@ Feature: Create an metaalarmrule
     {
       "errors": {
         "total_entity_pattern": "TotalEntityPattern is invalid entity pattern."
-      }
-    }
-    """
-
-  Scenario: given create request with corporate entity pattern and custom entity pattern should return error
-    When I am admin
-    When I do POST /api/v4/cat/metaalarmrules:
-    """
-    {
-      "_id": "complex-8",
-      "auto_resolve": true,
-      "name": "complex-test-6",
-      "type": "complex",
-      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
-      "config": {
-        "time_interval": {
-          "value": 1,
-          "unit": "m"
-        },
-        "threshold_rate": 1
-      },
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test"
-            }
-          }
-        ]
-      ],
-      "corporate_entity_pattern": "test-pattern-to-rule-edit-2"
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """
-    {
-      "errors": {
-        "entity_pattern": "Can't be present both EntityPattern and CorporateEntityPattern."
       }
     }
     """

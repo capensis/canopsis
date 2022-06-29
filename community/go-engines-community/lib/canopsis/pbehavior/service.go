@@ -211,7 +211,7 @@ func (s *service) getQueries(computed map[string]ComputedPbehavior) map[string]i
 		if len(pbehavior.OldMongoQuery) > 0 {
 			queries[id] = pbehavior.OldMongoQuery
 		} else {
-			query, err := pbehavior.Patten.ToMongoQuery("")
+			query, err := pbehavior.Pattern.ToMongoQuery("")
 			if err != nil {
 				s.logger.Err(err).Str("pbehavior", id).Msg("pbehavior has invalid pattern")
 				continue

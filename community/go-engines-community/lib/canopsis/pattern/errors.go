@@ -2,5 +2,5 @@ package pattern
 
 import "errors"
 
-var InvalidOldAlarmPattern = errors.New("old alarm pattern is invalid")
-var InvalidOldEntityPattern = errors.New("old entity pattern is invalid")
+var ErrInvalidOldAlarmPattern = errors.New("old alarm pattern is invalid")
+var ErrInvalidOldEntityPattern = errors.New("old entity pattern is invalid")

@@ -551,42 +551,6 @@ Feature: Update a scenario
           "emit_trigger": false
         },
         {
-          "alarm_pattern": [
-            [
-              {
-                "field": "v.component",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-scenario-to-update-2-alarm"
-                }
-              }
-            ]
-          ],
-          "entity_pattern": [
-            [
-              {
-                "field": "name",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-scenario-to-update-2-name"
-                }
-              }
-            ]
-          ],
-          "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
-          "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
-          "type": "snooze",
-          "parameters": {
-            "output": "test snooze",
-            "duration": {
-              "value": 3,
-              "unit": "s"
-            }
-          },
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
-        },
-        {
           "type": "snooze",
           "parameters": {
             "output": "test snooze",
@@ -608,10 +572,8 @@ Feature: Update a scenario
       "errors": {
         "actions.0.alarm_pattern": "AlarmPattern is invalid alarm pattern.",
         "actions.1.entity_pattern": "EntityPattern is invalid entity pattern.",
-        "actions.2.alarm_pattern": "Can't be present both AlarmPattern and CorporateAlarmPattern.",
-        "actions.2.entity_pattern": "Can't be present both EntityPattern and CorporateEntityPattern.",
-        "actions.3.alarm_pattern": "AlarmPattern or EntityPattern is required.",
-        "actions.3.entity_pattern": "EntityPattern or AlarmPattern is required."
+        "actions.2.alarm_pattern": "AlarmPattern or EntityPattern is required.",
+        "actions.2.entity_pattern": "EntityPattern or AlarmPattern is required."
       }
     }
     """

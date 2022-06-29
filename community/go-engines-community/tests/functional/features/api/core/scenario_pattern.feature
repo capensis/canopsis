@@ -2,7 +2,7 @@ Feature: Update and delete corporate pattern should affect eventfilter models
   Scenario: given eventfilter and corporate pattern update and delete actions should update patterns in eventfiler
     When I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "_id": "scenario-pattern-1",
       "name": "scenario-pattern-1-name",
@@ -126,7 +126,7 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     When I do GET /api/v4/scenarios/scenario-pattern-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "scenario-pattern-1",
       "name": "scenario-pattern-1-name",
@@ -200,6 +200,28 @@ Feature: Update and delete corporate pattern should affect eventfilter models
                 "cond": {
                   "type": "eq",
                   "value": "test-pattern-to-scenario-corporate-update-2-pattern"
+                }
+              }
+            ],
+            [
+              {
+                "field": "v.creation_date",
+                "cond": {
+                  "type": "absolute_time",
+                  "value": {
+                    "from": 1605263992,
+                    "to": 1605264992
+                  }
+                }
+              },
+              {
+                "field": "v.ack.t",
+                "cond": {
+                  "type": "absolute_time",
+                  "value": {
+                    "from": 1605263992,
+                    "to": 1605264992
+                  }
                 }
               }
             ]
@@ -308,7 +330,7 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     }
     """
     When I do PUT /api/v4/patterns/test-pattern-to-scenario-corporate-update-1:
-    """
+    """json
     {
       "title": "new entity pattern title",
       "type": "entity",
@@ -321,6 +343,16 @@ Feature: Update and delete corporate pattern should affect eventfilter models
               "type": "eq",
               "value": "new entity pattern"
             }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
           }
         ]
       ]
@@ -330,7 +362,7 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     When I do GET /api/v4/scenarios/scenario-pattern-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "scenario-pattern-1",
       "name": "scenario-pattern-1-name",
@@ -404,6 +436,28 @@ Feature: Update and delete corporate pattern should affect eventfilter models
                 "cond": {
                   "type": "eq",
                   "value": "test-pattern-to-scenario-corporate-update-2-pattern"
+                }
+              }
+            ],
+            [
+              {
+                "field": "v.creation_date",
+                "cond": {
+                  "type": "absolute_time",
+                  "value": {
+                    "from": 1605263992,
+                    "to": 1605264992
+                  }
+                }
+              },
+              {
+                "field": "v.ack.t",
+                "cond": {
+                  "type": "absolute_time",
+                  "value": {
+                    "from": 1605263992,
+                    "to": 1605264992
+                  }
                 }
               }
             ]
@@ -512,7 +566,7 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     }
     """
     When I do PUT /api/v4/patterns/test-pattern-to-scenario-corporate-update-2:
-    """
+    """json
     {
       "title": "new alarm pattern title",
       "type": "alarm",
@@ -525,6 +579,80 @@ Feature: Update and delete corporate pattern should affect eventfilter models
               "type": "eq",
               "value": "new alarm pattern"
             }
+          },
+          {
+            "field": "v.last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.last_update_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.resolved",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263993,
+                "to": 1605264993
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263993,
+                "to": 1605264993
+              }
+            }
           }
         ]
       ]
@@ -534,7 +662,7 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     When I do GET /api/v4/scenarios/scenario-pattern-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "scenario-pattern-1",
       "name": "scenario-pattern-1-name",
@@ -608,6 +736,28 @@ Feature: Update and delete corporate pattern should affect eventfilter models
                 "cond": {
                   "type": "eq",
                   "value": "new alarm pattern"
+                }
+              }
+            ],
+            [
+              {
+                "field": "v.creation_date",
+                "cond": {
+                  "type": "absolute_time",
+                  "value": {
+                    "from": 1605263993,
+                    "to": 1605264993
+                  }
+                }
+              },
+              {
+                "field": "v.ack.t",
+                "cond": {
+                  "type": "absolute_time",
+                  "value": {
+                    "from": 1605263993,
+                    "to": 1605264993
+                  }
                 }
               }
             ]
@@ -720,7 +870,7 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     When I do GET /api/v4/scenarios/scenario-pattern-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "scenario-pattern-1",
       "name": "scenario-pattern-1-name",
@@ -794,6 +944,28 @@ Feature: Update and delete corporate pattern should affect eventfilter models
                 "cond": {
                   "type": "eq",
                   "value": "new alarm pattern"
+                }
+              }
+            ],
+            [
+              {
+                "field": "v.creation_date",
+                "cond": {
+                  "type": "absolute_time",
+                  "value": {
+                    "from": 1605263993,
+                    "to": 1605264993
+                  }
+                }
+              },
+              {
+                "field": "v.ack.t",
+                "cond": {
+                  "type": "absolute_time",
+                  "value": {
+                    "from": 1605263993,
+                    "to": 1605264993
+                  }
                 }
               }
             ]
@@ -906,7 +1078,7 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     When I do GET /api/v4/scenarios/scenario-pattern-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "scenario-pattern-1",
       "name": "scenario-pattern-1-name",
@@ -978,6 +1150,28 @@ Feature: Update and delete corporate pattern should affect eventfilter models
                 "cond": {
                   "type": "eq",
                   "value": "new alarm pattern"
+                }
+              }
+            ],
+            [
+              {
+                "field": "v.creation_date",
+                "cond": {
+                  "type": "absolute_time",
+                  "value": {
+                    "from": 1605263993,
+                    "to": 1605264993
+                  }
+                }
+              },
+              {
+                "field": "v.ack.t",
+                "cond": {
+                  "type": "absolute_time",
+                  "value": {
+                    "from": 1605263993,
+                    "to": 1605264993
+                  }
                 }
               }
             ]

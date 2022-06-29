@@ -241,17 +241,17 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		case "p":
 			if in.IsNull() {
 				in.Skip()
-				out.Patten = nil
+				out.Pattern = nil
 			} else {
 				in.Delim('[')
-				if out.Patten == nil {
+				if out.Pattern == nil {
 					if !in.IsDelim(']') {
-						out.Patten = make(pattern.Entity, 0, 2)
+						out.Pattern = make(pattern.Entity, 0, 2)
 					} else {
-						out.Patten = pattern.Entity{}
+						out.Pattern = pattern.Entity{}
 					}
 				} else {
-					out.Patten = (out.Patten)[:0]
+					out.Pattern = (out.Pattern)[:0]
 				}
 				for !in.IsDelim(']') {
 					var v4 []pattern.FieldCondition
@@ -277,7 +277,7 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 						}
 						in.Delim(']')
 					}
-					out.Patten = append(out.Patten, v4)
+					out.Pattern = append(out.Pattern, v4)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -353,12 +353,12 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.Int64(int64(in.Created))
 	}
-	if len(in.Patten) != 0 {
+	if len(in.Pattern) != 0 {
 		const prefix string = ",\"p\":"
 		out.RawString(prefix)
 		{
 			out.RawByte('[')
-			for v9, v10 := range in.Patten {
+			for v9, v10 := range in.Pattern {
 				if v9 > 0 {
 					out.RawByte(',')
 				}

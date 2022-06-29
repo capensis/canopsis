@@ -350,58 +350,6 @@ Feature: Create a widget filter
     When I do POST /api/v4/widget-filters:
     """json
     {
-      "alarm_pattern": [
-        [
-          {
-            "field": "v.component",
-            "cond": {
-              "type": "eq",
-              "value": "test-widgetfilter-to-create-3-pattern"
-            }
-          }
-        ]
-      ],
-      "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-widgetfilter-to-create-3-pattern"
-            }
-          }
-        ]
-      ],
-      "corporate_entity_pattern": "test-pattern-to-filter-edit-2",
-      "pbehavior_pattern": [
-        [
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "test-widgetfilter-to-create-3-pattern"
-            }
-          }
-        ]
-      ],
-      "corporate_pbehavior_pattern": "test-pattern-to-filter-edit-3"
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "alarm_pattern": "Can't be present both AlarmPattern and CorporateAlarmPattern.",
-        "entity_pattern": "Can't be present both EntityPattern and CorporateEntityPattern.",
-        "pbehavior_pattern": "Can't be present both PbehaviorPattern and CorporatePbehaviorPattern."
-      }
-    }
-    """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
       "title": "test-widgetfilter-to-create-3-title",
       "widget": "test-widget-to-filter-edit",
       "is_private": true,

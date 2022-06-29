@@ -130,25 +130,6 @@ Feature: Bulk update eventfilters
         "enabled": true
       },
       {
-        "_id": "test-eventfilter-bulk-update-5",
-        "description": "drop filter",
-        "type": "drop",
-        "entity_pattern": [
-          [
-            {
-              "field": "name",
-              "cond": {
-                "type": "eq",
-                "value": "test-pattern-to-rule-edit-2-pattern"
-              }
-            }
-          ]
-        ],
-        "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
-        "priority": 1,
-        "enabled": true
-      },
-      {
         "_id": "test-eventfilter-not-found",
         "description": "drop filter",
         "type": "drop",
@@ -351,31 +332,6 @@ Feature: Bulk update eventfilters
           "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
           "priority": 1,
           "enabled": true
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "_id": "test-eventfilter-bulk-update-5",
-          "description": "drop filter",
-          "type": "drop",
-          "entity_pattern": [
-            [
-              {
-                "field": "name",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-pattern-to-rule-edit-2-pattern"
-                }
-              }
-            ]
-          ],
-          "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
-          "priority": 1,
-          "enabled": true
-        },
-        "errors": {
-          "entity_pattern": "Can't be present both EntityPattern and CorporateEntityPattern."
         }
       },
       {

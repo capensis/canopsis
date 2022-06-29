@@ -403,55 +403,6 @@ Feature: Create an eventfilter
     }
     """
 
-  Scenario: given create request with corporate entity pattern and custom entity pattern should return error
-    When I am admin
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "description": "test create 6",
-      "type": "enrichment",
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-pattern-to-rule-edit-6-pattern"
-            }
-          }
-        ]
-      ],
-      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
-      "priority": 0,
-      "enabled": true,
-      "config": {
-        "actions": [
-          {
-            "type": "set_field",
-            "name": "connector",
-            "value": "kafka_connector"
-          }
-        ],
-        "on_success": "pass",
-        "on_failure": "pass"
-      },
-      "external_data": {
-        "test": {
-          "type": "mongo"
-        }
-      }
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """
-    {
-      "errors": {
-        "entity_pattern": "Can't be present both EntityPattern and CorporateEntityPattern."
-      }
-    }
-    """
-
   Scenario: given create request with wrong type should return bad request
     When I am admin
     When I do POST /api/v4/eventfilter/rules:

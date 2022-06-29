@@ -219,18 +219,6 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 		return fmt.Errorf("cannot fetch widget filter: %w", err)
 	}
 
-	if len(filter.OldMongoQuery) > 0 {
-		var query map[string]interface{}
-		err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
-		if err != nil {
-			return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
-		}
-
-		q.entityMatch = append(q.entityMatch, bson.M{"$match": query})
-
-		return nil
-	}
-
 	entityPatternQuery, err := filter.EntityPattern.ToMongoQuery("")
 	if err != nil {
 		return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
@@ -267,6 +255,19 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 			q.computedFieldsForAdditionalMatch["alarm.v.duration"] = true
 			q.computedFields["alarm.v.duration"] = getDurationField(now)
 		}
+	}
+
+	if len(entityPatternQuery) == 0 && len(pbhPatternQuery) == 0 && len(alarmPatternQuery) == 0 &&
+		len(filter.OldMongoQuery) > 0 {
+		var query map[string]interface{}
+		err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
+		if err != nil {
+			return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
+		}
+
+		q.entityMatch = append(q.entityMatch, bson.M{"$match": query})
+
+		return nil
 	}
 
 	return nil

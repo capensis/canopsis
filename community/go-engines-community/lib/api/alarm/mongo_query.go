@@ -399,40 +399,6 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 		return fmt.Errorf("cannot fetch widget filter: %w", err)
 	}
 
-	if len(filter.OldMongoQuery) > 0 {
-		var query map[string]interface{}
-		err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
-		if err != nil {
-			return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
-		}
-
-		q.computedFieldsForAlarmMatch["v.infos_array"] = true
-		q.computedFields["v.infos_array"] = bson.M{"$objectToArray": "$v.infos"}
-		resolvedQuery := q.resolveAliasesInQuery(query)
-		extraLookups := false
-
-		for _, lookup := range q.lookups {
-			if strings.Contains(filter.OldMongoQuery, lookup.key+".") {
-				extraLookups = true
-				q.lookupsForAdditionalMatch[lookup.key] = true
-			}
-		}
-
-		if extraLookups {
-			q.additionalMatch = append(q.additionalMatch, bson.M{"$match": resolvedQuery})
-		} else {
-			q.alarmMatch = append(q.alarmMatch, bson.M{"$match": resolvedQuery})
-		}
-
-		for field := range q.computedFields {
-			if strings.Contains(filter.OldMongoQuery, field) {
-				q.computedFieldsForAlarmMatch[field] = true
-			}
-		}
-
-		return nil
-	}
-
 	alarmPatternQuery, err := filter.AlarmPattern.ToMongoQuery("")
 	if err != nil {
 		return fmt.Errorf("invalid alarm pattern in widget filter id=%q: %w", filter.ID, err)
@@ -470,6 +436,41 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 	if len(entityPatternQuery) > 0 {
 		q.lookupsForAdditionalMatch["entity"] = true
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": entityPatternQuery})
+	}
+
+	if len(alarmPatternQuery) == 0 && len(pbhPatternQuery) == 0 && len(entityPatternQuery) == 0 &&
+		len(filter.OldMongoQuery) > 0 {
+		var query map[string]interface{}
+		err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
+		if err != nil {
+			return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
+		}
+
+		q.computedFieldsForAlarmMatch["v.infos_array"] = true
+		q.computedFields["v.infos_array"] = bson.M{"$objectToArray": "$v.infos"}
+		resolvedQuery := q.resolveAliasesInQuery(query)
+		extraLookups := false
+
+		for _, lookup := range q.lookups {
+			if strings.Contains(filter.OldMongoQuery, lookup.key+".") {
+				extraLookups = true
+				q.lookupsForAdditionalMatch[lookup.key] = true
+			}
+		}
+
+		if extraLookups {
+			q.additionalMatch = append(q.additionalMatch, bson.M{"$match": resolvedQuery})
+		} else {
+			q.alarmMatch = append(q.alarmMatch, bson.M{"$match": resolvedQuery})
+		}
+
+		for field := range q.computedFields {
+			if strings.Contains(filter.OldMongoQuery, field) {
+				q.computedFieldsForAlarmMatch[field] = true
+			}
+		}
+
+		return nil
 	}
 
 	return nil

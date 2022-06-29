@@ -248,39 +248,6 @@ Feature: Update an eventfilter
     }
     """
 
-  Scenario: given update request with corporate entity pattern and custom entity pattern should return error
-    When I am admin
-    Then I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-4:
-    """
-    {
-      "description": "drop filter",
-      "type": "drop",
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-pattern-to-rule-edit-2-pattern"
-            }
-          }
-        ]
-      ],
-      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
-      "priority": 1,
-      "enabled": true
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """
-    {
-      "errors": {
-        "entity_pattern": "Can't be present both EntityPattern and CorporateEntityPattern."
-      }
-    }
-    """
-
   Scenario: given get request and no auth user should not allow access
     When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-1
     Then the response code should be 401

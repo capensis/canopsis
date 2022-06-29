@@ -244,8 +244,8 @@ func (r *typeResolver) createWorkerChByEntity(ctx context.Context, entity types.
 			case <-ctx.Done():
 				return
 			default:
-				if len(computed.Patten) > 0 {
-					ok, _, err := computed.Patten.Match(entity)
+				if len(computed.Pattern) > 0 {
+					ok, _, err := computed.Pattern.Match(entity)
 					if err != nil {
 						r.logger.Err(err).Str("pbehavior", id).Msg("pbehavior has invalid pattern")
 						continue
