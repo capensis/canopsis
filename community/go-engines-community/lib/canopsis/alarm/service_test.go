@@ -167,7 +167,7 @@ func TestService_ResolveCancels(t *testing.T) {
 			0,
 		},
 		{
-			"given canceled alarms and canceled alarms with cancel time > CancelAutosolveDelayshould return count of alarms with time > CancelAutosolveDelayshould",
+			"given canceled alarms and canceled alarms with cancel time > CancelAutosolveDelay should return count of alarms with time > CancelAutosolveDelay",
 			[]types.Alarm{
 				newCancelAlarm(types.CpsTime{
 					Time: time.Now(),

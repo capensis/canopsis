@@ -10,7 +10,8 @@
       :alarm="alarm",
       :widget="widget",
       :column="column",
-      :columns-filters="columnsFilters"
+      :columns-filters="columnsFilters",
+      @activate="$emit('activate', $event)"
     )
 </template>
 

@@ -1,22 +1,22 @@
 <template lang="pug">
-  modal-wrapper(data-test="createWidgetModal", close)
-    template(slot="title")
+  modal-wrapper(close)
+    template(#title="")
       span {{ $t('modals.createWidget.title') }}
-    template(slot="text")
+    template(#text="")
       v-layout(row, wrap)
         v-flex.my-1(
-          v-for="widgetType in availableWidgetTypes",
-          :key="widgetType",
+          v-for="type in availableTypes",
+          :key="type",
           xs12,
-          @click="selectWidgetType(widgetType)"
+          @click="selectType(type)"
         )
-          v-card.widgetType(:data-test="`widget-${widgetType}`")
+          v-card.cursor-pointer
             v-card-title(primary-title)
               v-layout(wrap, justify-between)
                 v-flex(xs11)
-                  div.subheading {{ $t(`modals.createWidget.types.${widgetType}.title`) }}
+                  div.subheading {{ $t(`modals.createWidget.types.${type}.title`) }}
                 v-flex
-                  v-icon {{ getIconByWidgetType(widgetType) }}
+                  v-icon {{ getIconByType(type) }}
 </template>
 
 <script>
@@ -28,10 +28,10 @@ import {
   WIDGET_ICONS,
 } from '@/constants';
 
-import { generateWidgetByType } from '@/helpers/entities';
+import { getNewWidgetGridParametersY } from '@/helpers/grid-layout';
+import { getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import sideBarMixin from '@/mixins/side-bar/side-bar';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -42,7 +42,7 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.createWidget,
   components: { ModalWrapper },
-  mixins: [modalInnerMixin, sideBarMixin, entitiesInfoMixin],
+  mixins: [modalInnerMixin, entitiesInfoMixin],
   computed: {
     /**
      * Some widgets are only available with 'cat' edition.
@@ -50,7 +50,7 @@ export default {
      *
      * @return {Array}
      */
-    availableWidgetTypes() {
+    availableTypes() {
       return [
         WIDGET_TYPES.alarmList,
         WIDGET_TYPES.context,
@@ -69,31 +69,39 @@ export default {
         return rules.edition && rules.edition === this.edition;
       });
     },
+
+    tabWidgets() {
+      return this.config.tab?.widgets ?? [];
+    },
   },
   methods: {
-    getIconByWidgetType(widgetType) {
-      return WIDGET_ICONS[widgetType];
+    getIconByType(type) {
+      return WIDGET_ICONS[type];
     },
 
-    selectWidgetType(widgetType) {
-      const widget = generateWidgetByType(widgetType);
+    getWidgetWithUpdatedGridParametersByType(type) {
+      const { tab } = this.config;
+      const widget = getEmptyWidgetByType(type);
+      const { mobile, tablet, desktop } = getNewWidgetGridParametersY(tab.widgets);
 
-      this.showSideBar({
-        name: SIDE_BARS_BY_WIDGET_TYPES[widgetType],
+      widget.grid_parameters.mobile.y = mobile;
+      widget.grid_parameters.tablet.y = tablet;
+      widget.grid_parameters.desktop.y = desktop;
+      widget.tab = tab._id;
+
+      return widget;
+    },
+
+    selectType(type) {
+      this.$sidebar.show({
+        name: SIDE_BARS_BY_WIDGET_TYPES[type],
         config: {
-          widget,
-          tabId: this.config.tabId,
-          isNew: true,
+          widget: this.getWidgetWithUpdatedGridParametersByType(type),
         },
       });
+
       this.$modals.hide();
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .widgetType {
-    cursor: pointer;
-  }
-</style>

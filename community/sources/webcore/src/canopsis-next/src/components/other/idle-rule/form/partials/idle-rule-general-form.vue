@@ -28,22 +28,26 @@
     c-disable-during-periods-field(v-field="form.disable_during_periods")
     template(v-if="!isEntityType")
       c-action-type-field(v-field="form.operation.type", :types="actionTypes", name="operation.type")
-      action-parameters-form(v-field="form.operation", name="operation.parameters")
+      action-author-field(v-if="!isPbehaviorOperation", v-model="parameters")
+      action-parameters-form(v-model="parameters", :type="form.operation.type", name="operation.parameters")
 </template>
 
 <script>
 import { ACTION_TYPES } from '@/constants';
 
-import { formValidationHeaderMixin } from '@/mixins/form';
+import { isPbehaviorActionType } from '@/helpers/forms/action';
+
+import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
 import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
+import ActionAuthorField from '@/components/other/action/form/partials/action-author-field.vue';
 
 import IdleRuleAlarmTypeField from './idle-rule-alarm-type-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { IdleRuleAlarmTypeField, ActionParametersForm },
-  mixins: [formValidationHeaderMixin],
+  components: { ActionAuthorField, IdleRuleAlarmTypeField, ActionParametersForm },
+  mixins: [formMixin, formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -59,6 +63,22 @@ export default {
     },
   },
   computed: {
+    isPbehaviorOperation() {
+      return isPbehaviorActionType(this.form.operation.type);
+    },
+
+    parameters: {
+      get() {
+        const { type, parameters } = this.form.operation;
+
+        return parameters[type];
+      },
+
+      set(value) {
+        this.updateField(`operation.parameters.${this.form.operation.type}`, value);
+      },
+    },
+
     actionTypes() {
       return [
         ACTION_TYPES.snooze,

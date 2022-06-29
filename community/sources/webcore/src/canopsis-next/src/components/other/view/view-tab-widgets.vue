@@ -1,27 +1,28 @@
 <template lang="pug">
   div.view(:id="`view-tab-${tab._id}`")
     grid-overview-widget(
-      v-show="!isEditingMode",
+      v-show="!editing",
       :tab="tab"
     )
       template(#default="{ widget }")
         widget-wrapper(:widget="widget", :tab="tab")
     grid-edit-widgets(
-      v-if="isEditingMode",
+      v-if="editing",
       :tab="tab",
-      :update-tab-method="updateTabMethod",
-      @update:widgets-fields="$emit('update:widgets-fields', $event)"
+      @update:widgets-grid="updateWidgetsGrid"
     )
       template(#default="{ widget }")
-        widget-wrapper(:widget="widget", :tab="tab", is-editing-mode)
+        widget-wrapper(:widget="widget", :tab="tab", editing)
 </template>
 
 <script>
+import { queryMixin } from '@/mixins/query';
+import { activeViewMixin } from '@/mixins/active-view';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
+
 import GridOverviewWidget from '@/components/widgets/grid-overview-widget.vue';
 import GridEditWidgets from '@/components/widgets/grid-edit-widgets.vue';
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
-
-import { queryMixin } from '@/mixins/query';
 
 export default {
   components: {
@@ -31,32 +32,56 @@ export default {
   },
   mixins: [
     queryMixin,
+    activeViewMixin,
+    entitiesWidgetMixin,
   ],
   props: {
     tab: {
       type: Object,
       required: true,
     },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
-    },
-    updateTabMethod: {
-      type: Function,
-      default: () => () => {},
-    },
   },
-  destroyed() {
+  data() {
+    return {
+      widgetsGrid: {},
+    };
+  },
+  created() {
+    this.registerEditingOffHandler(this.updatePositions);
+  },
+  beforeDestroy() {
+    this.unregisterEditingOffHandler(this.updatePositions);
     this.removeWidgetsQueries();
   },
   methods: {
+    updateWidgetsGrid(widgetsGrid) {
+      this.widgetsGrid = widgetsGrid;
+    },
+
+    async updatePositions() {
+      try {
+        const data = Object.entries(this.widgetsGrid)
+          .map(([id, gridParameters]) => ({
+            _id: id,
+            grid_parameters: gridParameters,
+          }));
+
+        if (!data.length) {
+          return;
+        }
+
+        await this.updateWidgetGridPositions({ data });
+        await this.fetchActiveView();
+      } catch (err) {
+        this.$popups.error({ text: this.$t('errors.default') });
+      }
+    },
+
     /**
      * Remove queries which was created for all widgets
      */
     removeWidgetsQueries() {
-      this.tab.widgets.forEach(({ _id: id }) => this.removeQuery({
-        id,
-      }));
+      this.tab.widgets.forEach(({ _id: id }) => this.removeQuery({ id }));
     },
   },
 };

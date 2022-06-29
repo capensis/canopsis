@@ -192,12 +192,17 @@ export default {
           }
 
           actions.unshift(
-            filteredActionsMap.declareTicket,
-            filteredActionsMap.associateTicket,
             filteredActionsMap.cancel,
             filteredActionsMap.ackRemove,
             filteredActionsMap.changeState,
           );
+
+          if (!this.item.v.ticket || this.widget.parameters.isMultiDeclareTicketEnabled) {
+            actions.unshift(
+              filteredActionsMap.declareTicket,
+              filteredActionsMap.associateTicket,
+            );
+          }
         } else {
           actions.unshift(
             filteredActionsMap.ack,

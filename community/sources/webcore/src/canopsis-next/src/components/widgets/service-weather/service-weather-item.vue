@@ -11,7 +11,7 @@
           v-runtime-template.weather-item__service-name.pa-3(:template="compiledTemplate")
         v-layout.weather-item__toolbar.pt-1.pr-1(row, align-center)
           c-no-events-icon.mr-1(:value="service.idle_since", color="white", top)
-          impact-state-indicator.mr-1(:value="service.impact_state")
+          impact-state-indicator.mr-1(v-if="isPriorityEnabled", :value="service.impact_state")
           v-btn.ma-0(
             v-if="hasVariablesHelpAccess",
             icon,
@@ -45,11 +45,11 @@ import {
 } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
-import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
+import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 import { getEntityColor } from '@/helpers/color';
 
 import { authMixin } from '@/mixins/auth';
-import entitiesServiceEntityMixin from '@/mixins/entities/service-entity';
+import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
@@ -166,6 +166,10 @@ export default {
 
       return counters.enabled && this.hasCounters && this.hasSelectedTypes;
     },
+
+    isPriorityEnabled() {
+      return this.widget.parameters.isPriorityEnabled ?? true;
+    },
   },
   methods: {
     showAdditionalInfoModal(e) {
@@ -219,6 +223,7 @@ export default {
                 ...widgetParameters,
               },
             },
+            title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.service.name }),
           },
         });
       } catch (err) {

@@ -1,6 +1,6 @@
 package amqp
 
-import "github.com/streadway/amqp"
+import amqp "github.com/rabbitmq/amqp091-go"
 
 // Publisher is an interface that represents a non-consumable AMQP
 // channel. This interface is implemented by amqp.Channel. It should be used

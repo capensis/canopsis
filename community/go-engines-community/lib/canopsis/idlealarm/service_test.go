@@ -3,6 +3,7 @@ package idlealarm
 import (
 	"bytes"
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
@@ -11,6 +12,7 @@ import (
 	mock_idlerule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/idlerule"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
+	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
 	"reflect"
 	"testing"
@@ -38,7 +40,6 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 			Resource:      "test-resource",
 		},
 	}
-	author := "test-author"
 	output := "test-output"
 	rule := idlerule.Rule{
 		Type:           idlerule.RuleTypeAlarm,
@@ -49,9 +50,8 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 		},
 		Operation: &idlerule.Operation{
 			Type: types.ActionTypeAck,
-			Parameters: types.OperationParameters{
+			Parameters: idlerule.Parameters{
 				Output: output,
-				Author: author,
 			},
 		},
 	}
@@ -93,7 +93,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 		ConnectorName: alarm.Value.ConnectorName,
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
-		Author:        author,
+		Author:        canopsis.DefaultEventAuthor,
 		Output:        output,
 		SourceType:    types.SourceTypeResource,
 		Initiator:     types.InitiatorSystem,
@@ -102,8 +102,8 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 	event := events[0]
 	event.Timestamp = types.CpsTime{}
 
-	if !reflect.DeepEqual(event, expectedEvent) {
-		t.Errorf("exepected event %+v but got %+v", expectedEvent, event)
+	if diff := pretty.Compare(event, expectedEvent); diff != "" {
+		t.Errorf("unexepected event %s", diff)
 	}
 }
 
@@ -128,7 +128,6 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 			Resource:       "test-resource",
 		},
 	}
-	author := "test-author"
 	output := "test-output"
 	rule := idlerule.Rule{
 		Type:           idlerule.RuleTypeAlarm,
@@ -139,9 +138,8 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 		},
 		Operation: &idlerule.Operation{
 			Type: types.ActionTypeAck,
-			Parameters: types.OperationParameters{
+			Parameters: idlerule.Parameters{
 				Output: output,
-				Author: author,
 			},
 		},
 	}
@@ -182,7 +180,7 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 		ConnectorName: alarm.Value.ConnectorName,
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
-		Author:        author,
+		Author:        canopsis.DefaultEventAuthor,
 		Output:        output,
 		SourceType:    types.SourceTypeResource,
 		Initiator:     types.InitiatorSystem,
@@ -191,8 +189,8 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 	event := events[0]
 	event.Timestamp = types.CpsTime{}
 
-	if !reflect.DeepEqual(event, expectedEvent) {
-		t.Errorf("exepected event %+v but got %+v", expectedEvent, event)
+	if diff := pretty.Compare(event, expectedEvent); diff != "" {
+		t.Errorf("unexepected event %s", diff)
 	}
 }
 
@@ -222,13 +220,12 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		Name: connectorName,
 	}
 	state := types.CpsNumber(types.AlarmStateCritical)
-	author := "test-author"
 	output := "Idle rule test-rule-name"
 	rule := idlerule.Rule{
 		ID:     "test-rule",
 		Type:   idlerule.RuleTypeEntity,
 		Name:   "test-rule-name",
-		Author: author,
+		Author: "test-author",
 		Duration: types.DurationWithUnit{
 			Value: 10,
 			Unit:  "s",
@@ -285,7 +282,7 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		Component:     component,
 		Resource:      resource,
 		SourceType:    types.SourceTypeResource,
-		Author:        author,
+		Author:        canopsis.DefaultEventAuthor,
 		Output:        output,
 		Initiator:     types.InitiatorSystem,
 		IdleRuleApply: "entity",
@@ -293,8 +290,8 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 	event := events[0]
 	event.Timestamp = types.CpsTime{}
 
-	if !reflect.DeepEqual(event, expectedEvent) {
-		t.Errorf("exepected event %+v but got %+v", expectedEvent, event)
+	if diff := pretty.Compare(event, expectedEvent); diff != "" {
+		t.Errorf("unexepected event %s", diff)
 	}
 }
 
@@ -314,7 +311,7 @@ func TestService_Process_GivenAlarmForConnectorEntity_ShouldReturnEvent(t *testi
 			Connector:     "test-connector",
 			ConnectorName: "test-connector-name",
 			State: &types.AlarmStep{
-				Author:  "test-author",
+				Author:  canopsis.DefaultEventAuthor,
 				Message: "test-message",
 			},
 		},
@@ -389,12 +386,11 @@ func TestService_Process_GivenEntityRuleAndTwoAffectedComponents_ShouldFindConne
 		LastEventDate: &types.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
 		Impacts:       []string{connectorEntity.ID},
 	}
-	author := "test-author"
 	rule := idlerule.Rule{
 		ID:     "test-rule",
 		Type:   idlerule.RuleTypeEntity,
 		Name:   "test-rule-name",
-		Author: author,
+		Author: "test-author",
 		Duration: types.DurationWithUnit{
 			Value: 10,
 			Unit:  "s",

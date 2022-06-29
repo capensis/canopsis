@@ -16,6 +16,6 @@ export default {
     },
   },
   mounted() {
-    this.fetchAllGroupsListWithViewsWithCurrentUser();
+    this.fetchAllGroupsListWithWidgetsWithCurrentUser();
   },
 };

@@ -23,7 +23,7 @@ Feature: send activation event on pbhleave
       "enabled": true,
       "name": "test-pbehavior-axe-activation-event-1",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -102,7 +102,7 @@ Feature: send activation event on pbhleave
       "enabled": true,
       "name": "test-pbehavior-axe-activation-event-2",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{

@@ -47,7 +47,7 @@ type ActionProcessor interface {
 // by an enrichment rule.
 type Action struct {
 	ActionBase
-	ActionProcessor
+	ActionProcessor `swaggerignore:"true"`
 
 	timezoneConfig *config.TimezoneConfig
 }

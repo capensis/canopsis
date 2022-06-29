@@ -2,82 +2,169 @@ import {
   MODALS,
   WEATHER_ACK_EVENT_OUTPUT,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
+  WEATHER_ACTIONS_TYPES,
   PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
 
-import { authMixin } from '@/mixins/auth';
-import eventActionsServiceEntityMixin from '@/mixins/event-actions/service-entity';
-import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
-import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
+import { isActionTypeAvailableForEntity } from '@/helpers/entities/entity';
 
-export default {
+import { authMixin } from '@/mixins/auth';
+import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
+import { entitiesPbehaviorTypesMixin } from '@/mixins/entities/pbehavior/types';
+
+export const widgetActionPanelServiceEntityMixin = {
   mixins: [
     authMixin,
     entitiesPbehaviorTypesMixin,
-    eventActionsServiceEntityMixin,
     entitiesPbehaviorMixin,
   ],
+  data() {
+    return {
+      unavailableEntitiesAction: {},
+    };
+  },
+  computed: {
+    /**
+     * @return {Object.<string, Function>}
+     */
+    actionsMethodsMap() {
+      return {
+        [WEATHER_ACTIONS_TYPES.entityAck]: this.addAckActionToQueue,
+        [WEATHER_ACTIONS_TYPES.entityAssocTicket]: this.showCreateAssociateTicketModal,
+        [WEATHER_ACTIONS_TYPES.entityValidate]: this.addValidateActionToQueue,
+        [WEATHER_ACTIONS_TYPES.entityInvalidate]: this.addInvalidateActionToQueue,
+        [WEATHER_ACTIONS_TYPES.entityPause]: this.showCreateServicePauseEventModal,
+        [WEATHER_ACTIONS_TYPES.entityPlay]: this.addPlayActionToQueue,
+        [WEATHER_ACTIONS_TYPES.entityCancel]: this.showCancelModal,
+        [WEATHER_ACTIONS_TYPES.entityComment]: this.showCreateCommentEventModal,
+        [WEATHER_ACTIONS_TYPES.declareTicket]: this.showCreateDeclareTicketModal,
+      };
+    },
+  },
   methods: {
+    removeEntityFromUnavailable(entity) {
+      this.unavailableEntitiesAction[entity._id] = false;
+    },
+
+    addActionToQueue(action) {
+      const {
+        availableEntities,
+        unavailableEntities,
+      } = action.entities.reduce((acc, entity) => {
+        if (isActionTypeAvailableForEntity(action.actionType, entity)) {
+          acc.availableEntities.push(entity);
+        } else {
+          acc.unavailableEntities.push(entity);
+        }
+
+        return acc;
+      }, {
+        availableEntities: [],
+        unavailableEntities: [],
+      });
+
+      this.unavailableEntitiesAction = unavailableEntities.reduce((acc, { _id: id }) => {
+        acc[id] = true;
+
+        return acc;
+      }, {});
+
+      this.$emit('add:action', {
+        ...action,
+        entities: availableEntities,
+      });
+    },
+
+    addEntityAction(actionType, entities) {
+      const handler = this.actionsMethodsMap[actionType];
+
+      if (handler) {
+        handler(entities);
+      }
+    },
+
     /**
      * Filter for available entity actions
      *
      * @param {string} type
-     * @return boolean
+     * @return {boolean}
      */
     actionsAccessFilterHandler({ type }) {
       const permission = BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.weather[type];
 
-      if (!permission) {
-        return true;
-      }
-
-      return this.checkAccess(permission);
+      return permission
+        ? this.checkAccess(permission)
+        : true;
     },
 
-    prepareAckAction() {
-      this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
+    addAckActionToQueue(entities) {
+      this.addActionToQueue({
+        entities,
+        actionType: WEATHER_ACTIONS_TYPES.entityAck,
+      });
     },
 
-    prepareAssocTicketAction() {
+    showCreateAssociateTicketModal(entities) {
       this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
-          title: this.$t('modals.createDeclareTicket.title'),
+          title: this.$t('modals.createAssociateTicket.title'),
           field: {
             name: 'ticket',
             label: this.$t('modals.createAssociateTicket.fields.ticket'),
             validationRules: 'required',
           },
           action: (ticket) => {
-            this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
-            this.addAssocTicketActionToQueue({ entity: this.entity, ticket });
+            this.addActionToQueue({
+              entities,
+              actionType: WEATHER_ACTIONS_TYPES.entityAssocTicket,
+              payload: { ticket },
+            });
           },
         },
       });
     },
 
-    prepareCommentAction() {
+    showCreateDeclareTicketModal(entities) {
+      this.addActionToQueue({
+        actionType: WEATHER_ACTIONS_TYPES.declareTicket,
+        entities,
+      });
+    },
+
+    showCreateCommentEventModal(entities) {
       this.$modals.show({
         name: MODALS.createCommentEvent,
         config: {
           action: ({ output }) => {
-            this.addCommentActionToQueue({ entity: this.entity, output });
+            this.addActionToQueue({
+              entities,
+              actionType: WEATHER_ACTIONS_TYPES.entityComment,
+              payload: { output },
+            });
           },
         },
       });
     },
 
-    prepareValidateAction() {
-      this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.validateOk });
-      this.addValidateActionToQueue({ entity: this.entity });
+    addValidateActionToQueue(entities) {
+      this.addActionToQueue({
+        actionType: WEATHER_ACTIONS_TYPES.entityValidate,
+        entities,
+      });
     },
 
-    prepareInvalidateAction() {
-      this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
-      this.addInvalidateActionToQueue({ entity: this.entity });
+    addInvalidateActionToQueue(entities) {
+      this.addActionToQueue({
+        entities,
+        actionType: WEATHER_ACTIONS_TYPES.entityInvalidate,
+        payload: {
+          output: WEATHER_ACK_EVENT_OUTPUT.ack,
+        },
+      });
     },
 
-    preparePauseAction() {
+    showCreateServicePauseEventModal(entities) {
       this.$modals.show({
         name: MODALS.createServicePauseEvent,
         config: {
@@ -86,36 +173,38 @@ export default {
 
             const pauseType = defaultPbehaviorTypes.find(({ type }) => type === PBEHAVIOR_TYPE_TYPES.pause);
 
-            this.addPauseActionToQueue({
-              entity: this.entity,
-              comment: pause.comment,
-              reason: pause.reason,
-              type: pauseType,
+            this.addActionToQueue({
+              entities,
+              actionType: WEATHER_ACTIONS_TYPES.entityPause,
+              payload: {
+                comment: pause.comment,
+                reason: pause.reason,
+                type: pauseType,
+              },
             });
           },
         },
       });
     },
 
-    async fetchDefaultPbehaviorTypes() {
-      const { data } = await this.fetchPbehaviorTypesListWithoutStore({
-        params: { default: true },
+    addPlayActionToQueue(entities) {
+      this.addActionToQueue({
+        entities,
+        actionType: WEATHER_ACTIONS_TYPES.entityPlay,
       });
-
-      return data;
     },
 
-    preparePlayAction() {
-      this.addPlayActionToQueue({ entity: this.entity });
-    },
-
-    prepareCancelAction() {
+    showCancelModal(entities) {
       this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
           title: this.$t('common.output'),
           action: (output) => {
-            this.addCancelActionToQueue({ entity: this.entity, output });
+            this.addActionToQueue({
+              entities,
+              actionType: WEATHER_ACTIONS_TYPES.entityCancel,
+              payload: { output },
+            });
           },
         },
       });
