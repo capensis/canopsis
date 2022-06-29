@@ -66,9 +66,11 @@ export default {
   },
   watch: {
     groups() {
-      if (this.required) {
-        this.$validator.validate(this.name);
-      }
+      this.$nextTick(() => {
+        if (this.required) {
+          this.$validator.validate(this.name);
+        }
+      });
     },
     required: {
       immediate: true,
