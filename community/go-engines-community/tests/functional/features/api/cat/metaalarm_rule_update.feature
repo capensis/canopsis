@@ -752,38 +752,6 @@ Feature: Update a metaalarmrule
     }
     """
 
-  Scenario: given update request with corporate total entity patterns and custom total entity pattern should return error
-    When I am admin
-    Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
-    """
-    {
-      "name": "test-metaalarm-to-update-8-updated",
-      "auto_resolve": false,
-      "type": "complex",
-      "total_entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-pattern-to-update-8-pattern"
-            }
-          }
-        ]
-      ],
-      "corporate_total_entity_pattern": "test-pattern-to-rule-edit-2"
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """
-    {
-      "errors": {
-        "total_entity_pattern": "Can't be present both TotalEntityPattern and CorporateTotalEntityPattern."
-      }
-    }
-    """
-
   Scenario: given update request with absent alarm corporate pattern should return error
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
@@ -936,38 +904,6 @@ Feature: Update a metaalarmrule
     {
       "errors": {
         "total_entity_pattern": "TotalEntityPattern is invalid entity pattern."
-      }
-    }
-    """
-
-  Scenario: given update request with corporate entity pattern and custom entity pattern should return error
-    When I am admin
-    Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
-    """
-    {
-      "name": "test-metaalarm-to-update-8",
-      "auto_resolve": false,
-      "type": "complex",
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test"
-            }
-          }
-        ]
-      ],
-      "corporate_entity_pattern": "test-pattern-to-rule-edit-2"
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """
-    {
-      "errors": {
-        "entity_pattern": "Can't be present both EntityPattern and CorporateEntityPattern."
       }
     }
     """

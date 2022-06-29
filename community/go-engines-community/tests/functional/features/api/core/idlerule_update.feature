@@ -188,69 +188,6 @@ Feature: Update a idle rule
       "disable_during_periods": ["pause"]
     }
     """
-    
-  Scenario: given update request with both corporate alarm and entity patterns and custom patterns should return error
-    When I am admin
-    When I do PUT /api/v4/idle-rules/test-idle-rule-to-update-3:
-    """json
-    {
-      "name": "test-idle-rule-to-update-3-name",
-      "description": "test-idle-rule-to-update-3-description",
-      "type": "alarm",
-      "alarm_condition": "last_event",
-      "enabled": true,
-      "priority": 20,
-      "duration": {
-        "value": 3,
-        "unit": "s"
-      },
-      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
-      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
-      "alarm_pattern": [
-        [
-          {
-            "field": "v.component",
-            "cond": {
-              "type": "eq",
-              "value": "test-pattern-to-rule-edit-1-pattern"
-            }
-          }
-        ]
-      ],
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-pattern-to-rule-edit-2-pattern"
-            }
-          }
-        ]
-      ],
-      "operation": {
-        "type": "snooze",
-        "parameters": {
-          "output": "test-idle-rule-to-update-3-operation-output",
-          "duration": {
-            "value": 3,
-            "unit": "s"
-          }
-        }
-      },
-      "disable_during_periods": ["pause"]
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """
-    {
-      "errors": {
-        "entity_pattern": "Can't be present both EntityPattern and CorporateEntityPattern.",
-        "alarm_pattern": "Can't be present both AlarmPattern and CorporateAlarmPattern."
-      }
-    }
-    """
 
   Scenario: given update request with absent corporate alarm pattern should return error
     When I am admin

@@ -58,23 +58,8 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 		var eventRegexMatches pattern.EventRegexMatches
 		var entityRegexMatches pattern.EntityRegexMatches
 
-		if rule.OldPatterns.IsSet() {
-			backwardCompatibility = true
-			if !rule.OldPatterns.IsValid() {
-				s.logger.Warn().Msgf("Rule %s has an invalid old event pattern, skip", rule.ID)
-				continue
-			}
-
-			oldRegexMatches, match = rule.OldPatterns.GetRegexMatches(event)
-			if !match {
-				if event.Debug {
-					s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
-				}
-
-				continue
-			}
-		} else {
-			match, eventRegexMatches, err = rule.EventPatterns.Match(event)
+		if len(rule.EventPattern) > 0 {
+			match, eventRegexMatches, err = rule.EventPattern.Match(event)
 			if err != nil {
 				s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid event pattern")
 				continue
@@ -102,6 +87,21 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 
 					continue
 				}
+			}
+		} else if rule.OldPatterns.IsSet() {
+			backwardCompatibility = true
+			if !rule.OldPatterns.IsValid() {
+				s.logger.Warn().Msgf("Rule %s has an invalid old event pattern, skip", rule.ID)
+				continue
+			}
+
+			oldRegexMatches, match = rule.OldPatterns.GetRegexMatches(event)
+			if !match {
+				if event.Debug {
+					s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
+				}
+
+				continue
 			}
 		}
 

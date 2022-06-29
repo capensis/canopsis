@@ -2,7 +2,7 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
   Scenario: given metaalarm rule and corporate pattern update and delete actions should update patterns in metaalarm rule
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "_id": "metaalarm-rule-pattern-1",
       "auto_resolve": true,
@@ -25,7 +25,7 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
     When I do GET /api/v4/cat/metaalarmrules/metaalarm-rule-pattern-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "auto_resolve": true,
       "name": "metaalarm-pattern-update-1",
@@ -76,12 +76,34 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
               "value": "test-pattern-to-rule-metaalarm-corporate-update-3-pattern"
             }
           }
+        ],
+        [
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          }
         ]
       ]
     }
     """
     When I do PUT /api/v4/patterns/test-pattern-to-rule-metaalarm-corporate-update-1:
-    """
+    """json
     {
       "title": "new total entity pattern title",
       "type": "entity",
@@ -94,6 +116,16 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
               "type": "eq",
               "value": "new total entity pattern"
             }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
           }
         ]
       ]
@@ -101,7 +133,7 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
     """
     Then the response code should be 200
     When I do PUT /api/v4/patterns/test-pattern-to-rule-metaalarm-corporate-update-2:
-    """
+    """json
     {
       "title": "new entity pattern title",
       "type": "entity",
@@ -114,6 +146,16 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
               "type": "eq",
               "value": "new entity pattern"
             }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
           }
         ]
       ]
@@ -121,7 +163,7 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
     """
     Then the response code should be 200
     When I do PUT /api/v4/patterns/test-pattern-to-rule-metaalarm-corporate-update-3:
-    """
+    """json
     {
       "title": "new alarm pattern title",
       "type": "alarm",
@@ -134,6 +176,80 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
               "type": "eq",
               "value": "new alarm pattern"
             }
+          },
+          {
+            "field": "v.last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.last_update_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.resolved",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263993,
+                "to": 1605264993
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263993,
+                "to": 1605264993
+              }
+            }
           }
         ]
       ]
@@ -143,7 +259,7 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
     When I do GET /api/v4/cat/metaalarmrules/metaalarm-rule-pattern-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "auto_resolve": true,
       "name": "metaalarm-pattern-update-1",
@@ -194,6 +310,28 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
               "value": "new alarm pattern"
             }
           }
+        ],
+        [
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263993,
+                "to": 1605264993
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263993,
+                "to": 1605264993
+              }
+            }
+          }
         ]
       ]
     }
@@ -207,7 +345,7 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
     When I do GET /api/v4/cat/metaalarmrules/metaalarm-rule-pattern-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "auto_resolve": true,
       "name": "metaalarm-pattern-update-1",
@@ -250,6 +388,28 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
             "cond": {
               "type": "eq",
               "value": "new alarm pattern"
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263993,
+                "to": 1605264993
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263993,
+                "to": 1605264993
+              }
             }
           }
         ]

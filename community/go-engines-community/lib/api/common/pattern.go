@@ -169,30 +169,6 @@ func (t *basePatternFieldsTransformer) TransformPbehaviorPatternFieldsRequest(ct
 	return r, nil
 }
 
-func ValidateAlarmPatternFieldsRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(AlarmPatternFieldsRequest)
-
-	if r.CorporateAlarmPattern != "" && len(r.AlarmPattern) > 0 {
-		sl.ReportError(r.AlarmPattern, "AlarmPattern", "AlarmPattern", "required_not_both", "CorporateAlarmPattern")
-	}
-}
-
-func ValidateEntityPatternFieldsRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(EntityPatternFieldsRequest)
-
-	if r.CorporateEntityPattern != "" && len(r.EntityPattern) > 0 {
-		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required_not_both", "CorporateEntityPattern")
-	}
-}
-
-func ValidatePbehaviorPatternFieldsRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(PbehaviorPatternFieldsRequest)
-
-	if r.CorporatePbehaviorPattern != "" && len(r.PbehaviorPattern) > 0 {
-		sl.ReportError(r.PbehaviorPattern, "PbehaviorPattern", "PbehaviorPattern", "required_not_both", "CorporatePbehaviorPattern")
-	}
-}
-
 func ValidateAlarmPattern(fl validator.FieldLevel) bool {
 	i := fl.Field().Interface()
 	if i == nil {
@@ -282,9 +258,9 @@ func GetForbiddenFieldsInAlarmPattern(collection string) []string {
 func GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection string) []string {
 	switch collection {
 	case mongo.IdleRuleMongoCollection,
-		mongo.FlappingRuleMongoCollection,
 		mongo.DynamicInfosRulesMongoCollection,
 		mongo.MetaAlarmRulesMongoCollection,
+		mongo.FlappingRuleMongoCollection,
 		mongo.ResolveRuleMongoCollection,
 		mongo.ScenarioMongoCollection,
 		mongo.InstructionMongoCollection:

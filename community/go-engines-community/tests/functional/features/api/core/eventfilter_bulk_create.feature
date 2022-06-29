@@ -234,41 +234,6 @@ Feature: Bulk create eventfilters
         }
       },
       {
-        "_id": "test-eventfilter-bulk-create-6",
-        "description": "test create 6",
-        "type": "enrichment",
-        "entity_pattern": [
-          [
-            {
-              "field": "name",
-              "cond": {
-                "type": "eq",
-                "value": "test-pattern-to-rule-edit-6-pattern"
-              }
-            }
-          ]
-        ],
-        "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
-        "priority": 0,
-        "enabled": true,
-        "config": {
-          "actions": [
-            {
-              "type": "set_field",
-              "name": "connector",
-              "value": "kafka_connector"
-            }
-          ],
-          "on_success": "pass",
-          "on_failure": "pass"
-        },
-        "external_data": {
-          "test": {
-            "type": "mongo"
-          }
-        }
-      },
-      {
         "type": "unspecified"
       },
       {
@@ -589,47 +554,6 @@ Feature: Bulk create eventfilters
         },
         "errors": {
           "corporate_entity_pattern": "CorporateEntityPattern doesn't exist."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "_id": "test-eventfilter-bulk-create-6",
-          "description": "test create 6",
-          "type": "enrichment",
-          "entity_pattern": [
-            [
-              {
-                "field": "name",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-pattern-to-rule-edit-6-pattern"
-                }
-              }
-            ]
-          ],
-          "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
-          "priority": 0,
-          "enabled": true,
-          "config": {
-            "actions": [
-              {
-                "type": "set_field",
-                "name": "connector",
-                "value": "kafka_connector"
-              }
-            ],
-            "on_success": "pass",
-            "on_failure": "pass"
-          },
-          "external_data": {
-            "test": {
-              "type": "mongo"
-            }
-          }
-        },
-        "errors": {
-          "entity_pattern": "Can't be present both EntityPattern and CorporateEntityPattern."
         }
       },
       {
