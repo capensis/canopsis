@@ -2,7 +2,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('service/serviceEntity');
 
-export default {
+export const entitiesServiceEntityMixin = {
   computed: {
     ...mapGetters({
       getServiceEntitiesListByServiceId: 'getListByServiceId',

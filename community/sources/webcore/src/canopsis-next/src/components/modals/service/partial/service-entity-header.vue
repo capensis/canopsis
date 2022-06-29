@@ -1,5 +1,12 @@
 <template lang="pug">
   v-layout(justify-space-between, align-center)
+    v-flex(@click.stop="")
+      v-checkbox.ma-0.pa-0(
+        :input-value="selected",
+        color="white",
+        hide-details,
+        @change="$listeners.select"
+      )
     v-flex.pa-2
       v-icon(color="white", small) {{ icon }}
     v-flex.pl-1.white--text.subheading(xs12)
@@ -15,17 +22,21 @@
         )
           v-icon(small) {{ icon.icon }}
         c-no-events-icon(:value="entity.idle_since", color="white", top)
+        v-alert.entity-alert.ma-0.px-2.py-1(
+          v-if="alertIsVisible",
+          v-model="alertIsVisible",
+          color="black",
+          dismissible,
+          @click.stop=""
+        ) {{ $t('serviceWeather.cannotBeApplied') }}
 </template>
 
 <script>
 import { get } from 'lodash';
 
-import {
-  ENTITIES_STATUSES,
-  EVENT_ENTITY_STYLE,
-  EVENT_ENTITY_TYPES,
-  WEATHER_ICONS,
-} from '@/constants';
+import { ENTITIES_STATUSES, EVENT_ENTITY_TYPES, WEATHER_ICONS } from '@/constants';
+
+import { getEntityEventIcon } from '@/helpers/icon';
 
 export default {
   props: {
@@ -33,12 +44,29 @@ export default {
       type: Object,
       required: true,
     },
+    selected: {
+      type: Boolean,
+      default: false,
+    },
+    lastActionUnavailable: {
+      type: Boolean,
+      default: false,
+    },
     entityNameField: {
       type: String,
       default: 'name',
     },
   },
   computed: {
+    alertIsVisible: {
+      get() {
+        return this.lastActionUnavailable;
+      },
+      set(value) {
+        this.$emit('remove-unavailable', value);
+      },
+    },
+
     entityName() {
       return get({ entity: this.entity }, this.entityNameField, this.entityNameField);
     },
@@ -52,21 +80,21 @@ export default {
 
       if (this.entity.ack) {
         extraIcons.push({
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.fastAck),
           color: 'purple',
         });
       }
 
       if (this.entity.ticket) {
         extraIcons.push({
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.assocTicket),
           color: 'blue',
         });
       }
 
       if (this.entity.status && this.entity.status.val === ENTITIES_STATUSES.cancelled) {
         extraIcons.push({
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.delete),
           color: 'grey darken-1',
         });
       }
@@ -81,5 +109,15 @@ export default {
 .entity-name {
   line-height: 1.5em;
   word-break: break-all;
+}
+.entity-alert {
+  border: none;
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 5px;
+
+  & /deep/ .v-alert__dismissible .v-icon {
+    margin-left: 0;
+    font-size: 18px;
+  }
 }
 </style>

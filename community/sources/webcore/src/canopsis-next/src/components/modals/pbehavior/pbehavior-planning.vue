@@ -29,7 +29,7 @@ import { MODALS } from '@/constants';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 
 import { pbehaviorToDuplicateForm, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 

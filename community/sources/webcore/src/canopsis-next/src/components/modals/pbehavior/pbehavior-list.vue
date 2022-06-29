@@ -43,7 +43,7 @@
 import { MODALS, CRUD_ACTIONS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 
 import PbehaviorsListExpandItem from '@/components/other/pbehavior/exploitation/pbehaviors-list-expand-item.vue';
 
@@ -53,6 +53,7 @@ import ModalWrapper from '../modal-wrapper.vue';
  * Modal showing a list of an alarm's pbehaviors
  */
 export default {
+  name: MODALS.pbehaviorList,
   inject: ['$system'],
   components: {
     PbehaviorsListExpandItem,
