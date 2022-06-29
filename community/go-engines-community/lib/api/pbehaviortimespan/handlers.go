@@ -9,7 +9,7 @@ import (
 
 // GetTimeSpans
 // @Param body body TimespansRequest true "body"
-// @Success 200 {array} timespansItemResponse
+// @Success 200 {array} ItemResponse
 func GetTimeSpans(s Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var request TimespansRequest

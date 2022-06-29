@@ -57,6 +57,24 @@ Feature: update a PBehavior
         "enabled": false
       }
     """
+
+  Scenario: PATCH a valid PBehavior with new color value
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
+    """
+      {
+        "color": "#FFFFFF"
+      }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+      {
+        "color": "#FFFFFF"
+      }
+    """
   
   Scenario: PATCH a valid PBehavior with new filter value
     When I am admin
