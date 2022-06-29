@@ -1,9 +1,12 @@
 import {
+  DECLARE_TICKET_OUTPUT,
   ENTITIES_STATES,
   EVENT_DEFAULT_ORIGIN,
   EVENT_ENTITY_TYPES,
   EVENT_INITIATORS,
   MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS,
+  WEATHER_ACK_EVENT_OUTPUT,
+  WEATHER_EVENT_DEFAULT_ENTITY,
 } from '@/constants';
 
 import { getNowTimestamp } from '@/helpers/date/date';
@@ -150,4 +153,120 @@ export const prepareEventsByAlarms = (type, alarms, data) => (
   [EVENT_ENTITY_TYPES.manualMetaAlarmGroup, EVENT_ENTITY_TYPES.manualMetaAlarmUpdate].includes(type)
     ? prepareManualMetaAlarmEventByAlarms(type, alarms, data)
     : alarms.map(alarm => prepareEventByAlarm(type, alarm, data))
+);
+
+/**
+ * Prepare event by: type, entity and already prepared data
+ *
+ * @param {Entity} entity
+ * @param {EventType} type
+ * @param {Event} [data = {}]
+ * @return {Event}
+ */
+export const prepareEventByEntity = (entity, type, data = {}) => ({
+  component: entity.component || WEATHER_EVENT_DEFAULT_ENTITY,
+  connector: entity.connector || WEATHER_EVENT_DEFAULT_ENTITY,
+  connector_name: entity.connector_name || WEATHER_EVENT_DEFAULT_ENTITY,
+  crecord_type: type,
+  event_type: type,
+  ref_rk: `${entity.resource || WEATHER_EVENT_DEFAULT_ENTITY}/${entity.component || WEATHER_EVENT_DEFAULT_ENTITY}`,
+  resource: entity.resource || WEATHER_EVENT_DEFAULT_ENTITY,
+  source_type: entity.source_type,
+  ...data,
+});
+
+/**
+ * Create acknowledge event by entity data
+ *
+ * @param {Entity} entity
+ * @param {string} output
+ * @return {Event}
+ */
+export const createAckEventByEntity = ({ entity, output }) => prepareEventByEntity(
+  entity,
+  EVENT_ENTITY_TYPES.ack,
+  { output },
+);
+
+/**
+ * Create associate ticket event by entity data
+ *
+ * @param {Entity} entity
+ * @param {string} ticket
+ * @return {Event}
+ */
+export const createAssociateTicketEventByEntity = ({ entity, ticket }) => prepareEventByEntity(
+  entity,
+  EVENT_ENTITY_TYPES.assocTicket,
+  { ticket },
+);
+
+/**
+ * Create declare ticket event by entity data
+ *
+ * @param {Entity} entity
+ * @return {Event}
+ */
+export const createDeclareTicketEventByEntity = ({ entity }) => prepareEventByEntity(
+  entity,
+  EVENT_ENTITY_TYPES.declareTicket,
+  { output: DECLARE_TICKET_OUTPUT },
+);
+
+/**
+ * Create validate event by entity data
+ *
+ * @param {Entity} entity
+ * @return {Event}
+ */
+export const createValidateEventByEntity = ({ entity }) => prepareEventByEntity(
+  entity,
+  EVENT_ENTITY_TYPES.validate,
+  {
+    state: ENTITIES_STATES.critical,
+    output: WEATHER_ACK_EVENT_OUTPUT.validateOk,
+    keep_state: true,
+  },
+);
+
+/**
+ * Create invalidate event by entity data
+ *
+ * @param {Entity} entity
+ * @return {Event}
+ */
+export const createInvalidateEventByEntity = ({ entity }) => prepareEventByEntity(
+  entity,
+  EVENT_ENTITY_TYPES.invalidate,
+  {
+    state: ENTITIES_STATES.major,
+    output: WEATHER_ACK_EVENT_OUTPUT.validateCancel,
+    keep_state: true,
+  },
+);
+
+/**
+ * Create comment event by entity data
+ *
+ * @param {Entity} entity
+ * @param {string} output
+ * @return {Event}
+ */
+export const createCommentEventByEntity = ({ entity, output }) => prepareEventByEntity(
+  entity,
+  EVENT_ENTITY_TYPES.comment,
+  { output },
+);
+
+/**
+ * Create cancel event by entity data
+ *
+ * @param {Entity} entity
+ * @param {string} output
+ * @return {Event}
+ */
+export const createCancelEventByEntity = ({ entity, output }) => prepareEventByEntity(
+  entity,
+  EVENT_ENTITY_TYPES.cancel,
+  { output },
 );
