@@ -77,7 +77,6 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
 /**
  * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
- * @property {WidgetFilter[]} viewFilters
  * @property {string | null} mainFilter
  * @property {number} mainFilterUpdatedAt
  * @property {WidgetLiveReporting} liveReporting
@@ -202,9 +201,6 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   ...alarmListWidgetDefaultParametersToForm(parameters),
 
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
-  viewFilters: parameters.viewFilters
-    ? cloneDeep(parameters.viewFilters)
-    : [],
   mainFilter: parameters.mainFilter ?? null,
   mainFilterUpdatedAt: parameters.mainFilterUpdatedAt || 0,
   liveReporting: parameters.liveReporting
