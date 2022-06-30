@@ -566,7 +566,7 @@ func (c *dbClient) checkTransactionEnabled(pCtx context.Context, logger zerolog.
 	_ = collection.Drop(ctx)
 
 	if err != nil {
-		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
+		logger.Warn().Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
 		return
 	}
 

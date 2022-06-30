@@ -3,7 +3,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { prepareEventByAlarm, prepareEventsByAlarms } from '@/helpers/forms/event';
 
-import eventActionsMixin from './index';
+import { eventActionsMixin } from './index';
 
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 

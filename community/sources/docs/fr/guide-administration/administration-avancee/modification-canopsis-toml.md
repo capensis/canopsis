@@ -2,7 +2,7 @@
 
 ## Description
 
-Le fichier `canopsis.toml`regroupe la plupart des réglages fondamentaux des différents moteurs et services de Canopsis.
+Le fichier `canopsis.toml` regroupe la plupart des réglages fondamentaux des différents moteurs et services de Canopsis.
 
 !!! note
     Les réglages d'exploitation « du quotidien » se situent plutôt dans l'interface web de Canopsis.
@@ -16,7 +16,10 @@ L'emplacement du fichier de configuration diffère entre les différents types d
 | Type d'environnement | Emplacement du fichier            |
 |----------------------|-----------------------------------|
 | Paquets RPM          | `/opt/canopsis/etc/canopsis.toml` |
-| Docker Compose       | `/canopsis.toml`                  |
+| Docker Compose       | `/canopsis.toml` dans le conteneur `reconfigure` |
+
+!!! tip "Astuce"
+    Le fichier de configuration `canopsis.toml` peut être surchargé par un autre fichier défini grâce à l'option `-override` de la commande `canopsis-reconfigure`. Par défaut, ce fichier est `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
 
 ### Variables d'environnement associées
 
@@ -28,7 +31,7 @@ Il est recommandé de ne pas modifier cette valeur.
 
 === "En environnement paquets RPM"
 
-    Éditez directement le fichier `/opt/canopsis/etc/canopsis.toml`, et suivez le reste de cette procédure.
+    Éditez directement le fichier `/opt/canopsis/etc/canopsis.toml` (ou le fichier de surcharge `/opt/canopsis/etc/conf.d/canopsis-override.toml`), et suivez le reste de cette procédure.
 
     Lors de la mise à jour de Canopsis, vos modifications seront préservées par le gestionnaire de paquets `yum`. Vous devrez alors effectuer une synchronisation manuelle entre vos modifications passées et toute éventuelle nouvelle mise à jour du fichier.
 
@@ -63,13 +66,16 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
 ## Description des options
 
-[Canopsis.global]
-PrefetchCount = 10000
-PrefetchSize = 0
-ReconnectTimeoutMilliseconds = 8
-ReconnectRetries = 3
+### Section [Canopsis.global]
 
-### [Canopsis.file]
+| Attribut                             | Exemple de valeur          | Description                          |
+| :----------------------------------- | :------------------------- | :----------------------------------- |
+| PrefetchCount                        | 10000                      |
+| PrefetchSize                         | 0                          |
+| ReconnectTimeoutMilliseconds         | 8                          | Délai de reconnexion auprès des services tiers (redis, mongodb, rabbitmq, ...)  |
+| ReconnectRetries                     | 3                          | Nombre de tentative de reconnexion aux services tiers |
+
+### Section [Canopsis.file]
 
 | Attribut       | Exemple de valeur                        | Description                          |
 | :------------- | :--------------------------------------- | :----------------------------------- |
@@ -80,7 +86,7 @@ ReconnectRetries = 3
 
 
 
-### [Canopsis.alarm]
+### Section [Canopsis.alarm]
 
 | Attribut                        | Exemple de valeur     | Description                          |
 | :------------------------------ | :---------------------| :----------------------------------- |
@@ -95,21 +101,21 @@ ReconnectRetries = 3
 | AllowDoubleAck                  | true,false            | Permet d'acquitter plusieurs fois une alarme |
 
 
-### [Canopsis.timezone]
+### Section [Canopsis.timezone]
 
 | Attribut | Exemple de valeur | Description                           |
 | :------- | :-----------------| :------------------------------------ |
 | Timezone | "Europe/Paris"    | Timezone générale du produit Canopsis |
 
 
-### [Canopsis.data_storage]
+### Section [Canopsis.data_storage]
 
 | Attribut      | Exemple de valeur | Description                           |
 | :------------ | :-----------------| :------------------------------------ |
 | TimeToExecute | "Sunday,23"       | Jour et heure d'exécution de la politique de rotation des données définie dans le module `Data Storage` | 
 
 
-### [Canopsis.import_ctx]
+### Section [Canopsis.import_ctx]
 
 | Attribut            | Exemple de valeur     | Description                           |
 | :------------------ | :---------------------| :------------------------------------ |
@@ -117,7 +123,7 @@ ReconnectRetries = 3
 | ThdCritMinPerImport | "60m"                 | Durée d'import au délà de laquelle une alarme critique sera générée |
 | FilePattern         | "/tmp/import_s.json"  | Pattern de nommage des fichiers temporaires d'import  |
 
-### [Canopsis.api]
+### Section [Canopsis.api]
 
 | Attribut            | Exemple de valeur  | Description                           |
 | :------------------ | :------------------| :------------------------------------ |
@@ -125,7 +131,24 @@ ReconnectRetries = 3
 | TokenSigningMethod  | "HS256"            | Méthode de signature d'un token d'authentification |
 | BulkMaxSize         | 1000               | Taille maximum d'un batch de changement de données en base |
 
-### [Canopsis.metrics]
+
+### Section [Canopsis.logger]
+
+| Attribut            | Exemple de valeur  | Description                                             |
+| :------------------ | :------------------| :------------------------------------------------------ |
+| Writer              | "stdout"           | Canal de sortie du logger. **`stdout`** ou **`stderr`** |
+
+### Sous-section [Canopsis.logger.console_writer]
+
+| Attribut            | Exemple de valeur                           | Description                                             |
+| :------------------ | :-------------------------------------------| :------------------------------------------------------ |
+| Enabled             | true                                        | Active ou désactive le mode [ConsoleWriter](https://github.com/rs/zerolog#pretty-logging). Si désactivé alors les messages sont loggués en JSON. |
+| NoColor             | true                                        | Active ou désactive les couleurs dans les logs |
+| TimeFormat          | "2006-01-02T15:04:05Z07:00"                 | Format des dates des messages de logs au format [GO](../../architecture-interne/templates-golang#formatteddate) |
+| PartsOrder          | ["time", "level", "caller", "message"]      | Ordre des parties des messages de logs parmi "time", "level", "message", "caller", "error" |
+
+
+### Section [Canopsis.metrics]
 
 | Attribut            | Exemple de valeur  | Description                           |
 | :------------------ | :------------------| :------------------------------------ |

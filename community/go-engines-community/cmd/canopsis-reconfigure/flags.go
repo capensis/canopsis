@@ -4,8 +4,14 @@ import (
 	"flag"
 )
 
+const (
+	DefaultCfgFile = "/opt/canopsis/etc/canopsis.toml"
+)
+
 type flags struct {
-	confFile  string
+	confFile         string
+	overrideConfFile string
+
 	modeDebug bool
 
 	modeMigrateMongo        bool
@@ -19,7 +25,9 @@ type flags struct {
 }
 
 func (f *flags) Parse() {
-	flag.StringVar(&f.confFile, "conf", DefaultCfgFile, FlagUsageConf)
+	flag.StringVar(&f.confFile, "conf", DefaultCfgFile, "The configuration file used to initialize Canopsis")
+	flag.StringVar(&f.overrideConfFile, "override", "", "The configuration file used to override default Canopsis configurations, for example /opt/canopsis/etc/conf.d/canopsis-override.toml")
+
 	flag.BoolVar(&f.modeDebug, "d", false, "debug mode")
 
 	flag.BoolVar(&f.modeMigrateMongo, "migrate-mongo", true, "If true, it will execute Mongo migration scripts")
