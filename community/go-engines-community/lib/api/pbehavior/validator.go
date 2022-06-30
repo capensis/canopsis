@@ -72,7 +72,7 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 }
 
 func (v *Validator) ValidateCalendarRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(CalendarRequest)
+	r := sl.Current().Interface().(CalendarByEntityIDRequest)
 	if r.To.Unix() > 0 && r.From.Unix() > 0 && r.To.Before(r.From) {
 		sl.ReportError(r.To, "To", "To", "gtfield", "From")
 	}
