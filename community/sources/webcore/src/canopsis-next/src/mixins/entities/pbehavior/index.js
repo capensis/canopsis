@@ -43,8 +43,8 @@ export const entitiesPbehaviorMixin = {
       const response = await this.bulkCreatePbehaviors({ data: pbehaviors });
 
       await Promise.all(
-        response.map(({ id, status, item: pbehavior }) => {
-          if (status === 200) {
+        response.map(({ id, errors, item: pbehavior }) => {
+          if (!errors) {
             return this.updateSeveralPbehaviorComments({
               comments: pbehavior.comments,
               pbehavior: {
