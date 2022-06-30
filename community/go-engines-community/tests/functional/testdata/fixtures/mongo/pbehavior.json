@@ -639,43 +639,6 @@
     "updated": 1592215337
   },
   {
-    "_id": "test-pbehavior-to-calendar-get-1",
-    "author": "root",
-    "enabled": true,
-    "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
-    "name": "test-pbehavior-to-calendar-get-1-name",
-    "reason": "test-reason-1",
-    "rrule": "",
-    "tstart": 1033552800,
-    "tstop": 1033560000,
-    "color": "#FFFFFF",
-    "type_": "test-default-maintenance-type",
-    "created": 1033527600,
-    "updated": 1033527600
-  },
-  {
-    "_id": "test-pbehavior-to-calendar-get-2",
-    "author": "root",
-    "enabled": true,
-    "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
-    "name": "test-pbehavior-to-calendar-get-2-name",
-    "reason": "test-reason-1",
-    "rrule": "FREQ=WEEKLY",
-    "tstart": 1032948000,
-    "tstop": 1032955200,
-    "color": "#FFFFFF",
-    "type_": "test-default-active-type",
-    "exdates": [
-      {
-        "begin": 1033549200,
-        "end": 1033556400,
-        "type": "test-default-maintenance-type"
-      }
-    ],
-    "created": 1032948000,
-    "updated": 1032948000
-  },
-  {
     "_id": "test-pbehavior-to-calendar-get-by-entity-1",
     "author": "root",
     "enabled": true,
