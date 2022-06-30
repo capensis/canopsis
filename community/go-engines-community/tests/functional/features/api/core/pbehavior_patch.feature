@@ -69,7 +69,7 @@ Feature: update a PBehavior
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
     """json
     {
-        "name": "test-pbehavior-to-patch-1-name-updated"
+      "name": "test-pbehavior-to-patch-1-name-updated"
     }
     """
     Then the response code should be 200
@@ -660,7 +660,7 @@ Feature: update a PBehavior
     }
     """
 
-  Scenario: given update request with start should update only if start is not empty or is valid
+  Scenario: given update request with start should update only if start is not empty and is valid
     When I am admin
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-8:
     """json
@@ -714,7 +714,7 @@ Feature: update a PBehavior
     }
     """
 
-  Scenario: given update request with start for pbehavior with pause type should update only if start is not empty or is valid
+  Scenario: given update request with start for pbehavior with pause type should update only if start is not empty and is valid
     When I am admin
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-9:
     """json
@@ -877,7 +877,7 @@ Feature: update a PBehavior
     }
     """
 
-  Scenario: given update request with type should update only if type is not empty or is valid
+  Scenario: given update request with type should update only if type is not empty and is valid
     When I am admin
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-11:
     """json
@@ -937,7 +937,7 @@ Feature: update a PBehavior
     }
     """
 
-  Scenario: given update request with type for pbehavior without stop should update only if type is not empty or is valid
+  Scenario: given update request with type for pbehavior without stop should update only if type is not empty and is valid
     When I am admin
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-12:
     """json
@@ -982,7 +982,7 @@ Feature: update a PBehavior
     }
     """
 
-  Scenario: given update request with reason should update only if reason is not empty or is valid
+  Scenario: given update request with reason should update only if reason is not empty and is valid
     When I am admin
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
     """json
@@ -1042,7 +1042,7 @@ Feature: update a PBehavior
     }
     """
 
-  Scenario: given update request with enabled should update only if enabled is not empty or is valid
+  Scenario: given update request with enabled should update only if enabled is not empty and is valid
     When I am admin
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
     """json
@@ -1081,7 +1081,7 @@ Feature: update a PBehavior
     }
     """
 
-  Scenario: given update request with rrule should update only if rrule is not empty or is valid
+  Scenario: given update request with rrule should update only if rrule is not empty and is valid
     When I am admin
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
     """json
@@ -1410,5 +1410,72 @@ Feature: update a PBehavior
           "_id": "test-exception-to-pbh-edit"
         }
       ]
+    }
+    """
+
+  Scenario: given update request with color should update only if color is not empty and is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-14:
+    """json
+    {
+      "color": null
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "color": "#FFFFFF"
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-14:
+    """json
+    {
+      "color": "test"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "color": "Color is not valid."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-14:
+    """json
+    {
+      "color": ""
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "color": "Color is missing."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-14:
+    """json
+    {
+      "color": "#AAAAAA"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "color": "#AAAAAA"
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-14
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "color": "#AAAAAA"
     }
     """

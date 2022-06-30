@@ -3,7 +3,6 @@ package pbehavior
 import (
 	"encoding/json"
 	"errors"
-	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
@@ -15,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
+	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 )
 
 type ListRequest struct {
@@ -38,6 +38,7 @@ type EditRequest struct {
 	Type       string                             `json:"type" binding:"required"`
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
 	Exceptions []string                           `json:"exceptions"`
+	Color      string                             `json:"color" binding:"required,iscolor"`
 
 	common.EntityPatternFieldsRequest
 }
@@ -73,6 +74,7 @@ type PatchRequest struct {
 	RRule      *string                            `json:"rrule"`
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
 	Exceptions []string                           `json:"exceptions"`
+	Color      *string                            `json:"color"`
 
 	EntityPattern          pattern.Entity             `json:"entity_pattern"`
 	CorporateEntityPattern *string                    `json:"corporate_entity_pattern"`
@@ -96,6 +98,7 @@ type Response struct {
 	Created       *types.CpsTime                 `bson:"created" json:"created" swaggertype:"integer"`
 	Updated       *types.CpsTime                 `bson:"updated" json:"updated" swaggertype:"integer"`
 	Type          *pbehavior.Type                `bson:"type" json:"type"`
+	Color         string                         `bson:"color" json:"color"`
 	Exdates       []pbehaviorexception.Exdate    `bson:"exdates" json:"exdates"`
 	Exceptions    []pbehaviorexception.Exception `bson:"exceptions" json:"exceptions"`
 	LastAlarmDate *types.CpsTime                 `bson:"last_alarm_date,omitempty" json:"last_alarm_date" swaggertype:"integer"`
@@ -165,4 +168,23 @@ func (r *AggregationEntitiesResult) GetTotal() int64 {
 
 type DeleteByNameRequest struct {
 	Name string `form:"name" json:"name" binding:"required"`
+}
+
+type CalendarRequest struct {
+	From types.CpsTime `form:"from" json:"from" binding:"required" swaggertype:"integer"`
+	To   types.CpsTime `form:"to" json:"to" binding:"required" swaggertype:"integer"`
+}
+
+type CalendarByEntityIDRequest struct {
+	CalendarRequest
+	ID string `form:"_id" json:"_id" binding:"required"`
+}
+
+type CalendarResponse struct {
+	ID    string         `json:"_id"`
+	Title string         `json:"title"`
+	Color string         `json:"color"`
+	From  types.CpsTime  `json:"from" swaggertype:"integer"`
+	To    types.CpsTime  `json:"to" swaggertype:"integer"`
+	Type  pbehavior.Type `json:"type"`
 }

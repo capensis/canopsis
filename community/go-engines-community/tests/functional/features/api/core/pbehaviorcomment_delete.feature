@@ -10,6 +10,7 @@ Feature: delete a PBehavior comment
       "name":" test-pbehavior-to-comment-delete",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type":"test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "entity_pattern": [
@@ -25,6 +26,7 @@ Feature: delete a PBehavior comment
       ]
     }
     """
+    Then the response code should be 201
     When I do POST /api/v4/pbehavior-comments:
     """json
     {

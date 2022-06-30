@@ -20,6 +20,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-create-1",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "entity_pattern": [
@@ -52,6 +53,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-create-1",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type":  {
         "_id": "test-type-to-pbh-edit-1"
       },
@@ -92,6 +94,7 @@ Feature: create a PBehavior
     {
       "author": "root",
       "comments": null,
+      "color": "#FFFFFF",
       "enabled": true,
       "exceptions": [
         {
@@ -169,6 +172,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-create-2",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
@@ -191,6 +195,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-create-2",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type":  {
         "_id": "test-type-to-pbh-edit-1"
       },
@@ -237,6 +242,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-create-3-name",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "entity_pattern": [
@@ -274,6 +280,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-create-4",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "entity_pattern": [
@@ -316,6 +323,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-check-unique-name",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "entity_pattern": [
@@ -357,6 +365,7 @@ Feature: create a PBehavior
       "enabled":true,
       "name": "test-pbehavior-to-create-5",
       "tstart": 1591172881,
+      "color": "#FFFFFF",
       "type": "test-type-to-pbh-edit-3",
       "reason": "test-reason-to-pbh-edit",
       "entity_pattern": [
@@ -389,6 +398,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-create-5",
       "tstart": 1591172881,
       "tstop": null,
+      "color": "#FFFFFF",
       "type": {
         "_id": "test-type-to-pbh-edit-3"
       },
@@ -434,6 +444,7 @@ Feature: create a PBehavior
     """json
     {
       "errors": {
+        "color": "Color is missing.",
         "enabled": "Enabled is missing.",
         "name": "Name is missing.",
         "entity_pattern": "EntityPattern is missing.",
@@ -749,6 +760,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-create-6",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "entity_pattern": [

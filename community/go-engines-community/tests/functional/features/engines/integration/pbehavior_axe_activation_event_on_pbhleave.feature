@@ -24,6 +24,7 @@ Feature: send activation event on pbhleave
       "name": "test-pbehavior-axe-activation-event-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -106,6 +107,7 @@ Feature: send activation event on pbhleave
       "name": "test-pbehavior-axe-activation-event-2",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -190,6 +192,7 @@ Feature: send activation event on pbhleave
       "name": "test-pbehavior-axe-activation-event-3",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "3s" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [

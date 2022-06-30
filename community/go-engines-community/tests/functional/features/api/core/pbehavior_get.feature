@@ -27,6 +27,7 @@ Feature: get a PBehavior
               "message": "test-pbehavior-to-get-by-name-1-comment-2-message"
             }
           ],
+          "color": "#FFFFFF",
           "created": 1592215337,
           "updated": 1592215337,
           "enabled": true,
@@ -100,6 +101,7 @@ Feature: get a PBehavior
           "_id": "test-pbehavior-to-get-by-name-2",
           "author": "root",
           "comments": [],
+          "color": "#FFFFFF",
           "created": 1592215337,
           "updated": 1592215337,
           "enabled": true,
@@ -299,6 +301,7 @@ Feature: get a PBehavior
           "message": "test-pbehavior-to-get-by-name-1-comment-2-message"
         }
       ],
+      "color": "#FFFFFF",
       "created": 1592215337,
       "updated": 1592215337,
       "enabled": true,

@@ -10,6 +10,7 @@ Feature: get pbehavior
       "name": "test-pbehavior-api-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -52,6 +53,7 @@ Feature: get pbehavior
       "name": "test-pbehavior-api-2",
       "tstart": {{ nowAdd "-24h" }},
       "tstop": {{ nowAdd "-23h" }},
+      "color": "#FFFFFF",
       "rrule": "FREQ=DAILY",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
@@ -95,6 +97,7 @@ Feature: get pbehavior
       "name": "test-pbehavior-api-3",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -154,6 +157,7 @@ Feature: get pbehavior
       "name": "test-pbehavior-api-4-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -179,6 +183,7 @@ Feature: get pbehavior
       "name": "test-pbehavior-api-4-2",
       "tstart": {{ nowAdd "1h" }},
       "tstop": {{ nowAdd "2h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [

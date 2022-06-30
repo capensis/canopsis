@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -12,9 +13,9 @@ type ModelProvider interface {
 	// GetTypes returns types by id.
 	GetTypes(ctx context.Context) (map[string]Type, error)
 	// GetEnabledPbehaviors returns pbehaviors.
-	GetEnabledPbehaviors(ctx context.Context) (map[string]PBehavior, error)
+	GetEnabledPbehaviors(ctx context.Context, span timespan.Span) (map[string]PBehavior, error)
 	// GetEnabledPbehaviorsByIds returns pbehaviors.
-	GetEnabledPbehaviorsByIds(ctx context.Context, ids []string) (map[string]PBehavior, error)
+	GetEnabledPbehaviorsByIds(ctx context.Context, ids []string, span timespan.Span) (map[string]PBehavior, error)
 	// GetExceptions returns exceptions by id.
 	GetExceptions(ctx context.Context) (map[string]Exception, error)
 	// GetReasons returns reasons by id.
@@ -53,10 +54,19 @@ func (p *modelProvider) GetTypes(ctx context.Context) (map[string]Type, error) {
 	return typesByID, nil
 }
 
-func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context) (map[string]PBehavior, error) {
-	coll := p.dbClient.Collection(PBehaviorCollectionName)
+func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context, span timespan.Span) (map[string]PBehavior, error) {
+	coll := p.dbClient.Collection(mongo.PbehaviorMongoCollection)
 	cursor, err := coll.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"enabled": true}},
+		{"$match": bson.M{
+			"enabled": true,
+			"$or": []bson.M{
+				{"rrule": bson.M{"$nin": bson.A{nil, ""}}},
+				{
+					"tstart": bson.M{"$lte": span.To().Unix()},
+					"tstop":  bson.M{"$gte": span.From().Unix()},
+				},
+			},
+		}},
 		{"$project": bson.M{
 			"comments": 0,
 		}},
@@ -80,14 +90,25 @@ func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context) (map[string]PB
 	return pbehaviorsByID, nil
 }
 
-func (p *modelProvider) GetEnabledPbehaviorsByIds(ctx context.Context, ids []string) (map[string]PBehavior, error) {
-	coll := p.dbClient.Collection(PBehaviorCollectionName)
+func (p *modelProvider) GetEnabledPbehaviorsByIds(ctx context.Context, ids []string, span timespan.Span) (map[string]PBehavior, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+	coll := p.dbClient.Collection(mongo.PbehaviorMongoCollection)
 	cursor, err := coll.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"_id": bson.M{"$in": ids}, "enabled": true}},
-		{"$addFields": bson.M{
-			"comments": bson.M{
-				"$slice": bson.A{bson.M{"$reverseArray": "$comments"}, 1},
+		{"$match": bson.M{
+			"_id":     bson.M{"$in": ids},
+			"enabled": true,
+			"$or": []bson.M{
+				{"rrule": bson.M{"$nin": bson.A{nil, ""}}},
+				{
+					"tstart": bson.M{"$lte": span.To().Unix()},
+					"tstop":  bson.M{"$gte": span.From().Unix()},
+				},
 			},
+		}},
+		{"$project": bson.M{
+			"comments": 0,
 		}},
 	})
 	if err != nil {

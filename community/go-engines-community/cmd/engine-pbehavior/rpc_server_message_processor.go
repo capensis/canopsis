@@ -110,9 +110,9 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, fmt.Errorf("pbehavior type not exist: %q", params.Type)
-		} else {
-			return nil, fmt.Errorf("cannot get pbehavior type: %w", err)
 		}
+
+		return nil, fmt.Errorf("cannot get pbehavior type: %w", err)
 	}
 
 	reasonCollection := p.DbClient.Collection(mongo.PbehaviorReasonMongoCollection)
@@ -120,9 +120,9 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, fmt.Errorf("pbehavior reason not exist: %q", params.Reason)
-		} else {
-			return nil, fmt.Errorf("cannot get pbehavior reason: %w", err)
 		}
+
+		return nil, fmt.Errorf("cannot get pbehavior reason: %w", err)
 	}
 
 	now := types.NewCpsTime()
@@ -149,6 +149,7 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 		Start:   &start,
 		Stop:    &stop,
 		Type:    params.Type,
+		Color:   types.ActionPbehaviorColor,
 		Created: &now,
 		Updated: &now,
 

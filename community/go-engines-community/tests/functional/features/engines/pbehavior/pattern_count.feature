@@ -57,6 +57,7 @@ Feature: Count matches
       "name": "test-pbehavior-pattern-count-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [

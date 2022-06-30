@@ -196,6 +196,16 @@ func (v *Validator) ValidatePatchRequest(ctx context.Context, sl validator.Struc
 			sl.ReportError(r.Exceptions, "Exceptions", "Exceptions", "not_exist", "")
 		}
 	}
+	if r.Color != nil {
+		if *r.Color == "" {
+			sl.ReportError(r.Color, "Color", "Color", "required", "")
+		} else {
+			err := validator.New().Var(*r.Color, "iscolor")
+			if err != nil {
+				sl.ReportError(r.Color, "Color", "Color", "iscolor", "")
+			}
+		}
+	}
 
 	cursor, err := v.dbClient.Collection(mongo.PbehaviorMongoCollection).Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": r.ID}},
@@ -327,4 +337,11 @@ func (v *Validator) checkExceptions(ctx context.Context, exceptions []string) (b
 	}
 
 	return count == int64(len(exceptions)), nil
+}
+
+func (v *Validator) ValidateCalendarRequest(sl validator.StructLevel) {
+	r := sl.Current().Interface().(CalendarRequest)
+	if r.To.Unix() > 0 && r.From.Unix() > 0 && r.To.Before(r.From) {
+		sl.ReportError(r.To, "To", "To", "gtfield", "From")
+	}
 }

@@ -146,33 +146,33 @@ func (m *MockModelProvider) EXPECT() *MockModelProviderMockRecorder {
 }
 
 // GetEnabledPbehaviors mocks base method.
-func (m *MockModelProvider) GetEnabledPbehaviors(arg0 context.Context) (map[string]pbehavior.PBehavior, error) {
+func (m *MockModelProvider) GetEnabledPbehaviors(arg0 context.Context, arg1 timespan.Span) (map[string]pbehavior.PBehavior, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEnabledPbehaviors", arg0)
+	ret := m.ctrl.Call(m, "GetEnabledPbehaviors", arg0, arg1)
 	ret0, _ := ret[0].(map[string]pbehavior.PBehavior)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetEnabledPbehaviors indicates an expected call of GetEnabledPbehaviors.
-func (mr *MockModelProviderMockRecorder) GetEnabledPbehaviors(arg0 interface{}) *gomock.Call {
+func (mr *MockModelProviderMockRecorder) GetEnabledPbehaviors(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabledPbehaviors", reflect.TypeOf((*MockModelProvider)(nil).GetEnabledPbehaviors), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabledPbehaviors", reflect.TypeOf((*MockModelProvider)(nil).GetEnabledPbehaviors), arg0, arg1)
 }
 
 // GetEnabledPbehaviorsByIds mocks base method.
-func (m *MockModelProvider) GetEnabledPbehaviorsByIds(arg0 context.Context, arg1 []string) (map[string]pbehavior.PBehavior, error) {
+func (m *MockModelProvider) GetEnabledPbehaviorsByIds(arg0 context.Context, arg1 []string, arg2 timespan.Span) (map[string]pbehavior.PBehavior, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEnabledPbehaviorsByIds", arg0, arg1)
+	ret := m.ctrl.Call(m, "GetEnabledPbehaviorsByIds", arg0, arg1, arg2)
 	ret0, _ := ret[0].(map[string]pbehavior.PBehavior)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetEnabledPbehaviorsByIds indicates an expected call of GetEnabledPbehaviorsByIds.
-func (mr *MockModelProviderMockRecorder) GetEnabledPbehaviorsByIds(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockModelProviderMockRecorder) GetEnabledPbehaviorsByIds(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabledPbehaviorsByIds", reflect.TypeOf((*MockModelProvider)(nil).GetEnabledPbehaviorsByIds), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabledPbehaviorsByIds", reflect.TypeOf((*MockModelProvider)(nil).GetEnabledPbehaviorsByIds), arg0, arg1, arg2)
 }
 
 // GetExceptions mocks base method.
@@ -607,17 +607,17 @@ func (mr *MockTypeComputerMockRecorder) Compute(arg0, arg1 interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Compute", reflect.TypeOf((*MockTypeComputer)(nil).Compute), arg0, arg1)
 }
 
-// Recompute mocks base method.
-func (m *MockTypeComputer) Recompute(arg0 context.Context, arg1 timespan.Span, arg2 []string) (map[string]pbehavior.ComputedPbehavior, error) {
+// ComputeByIds mocks base method.
+func (m *MockTypeComputer) ComputeByIds(arg0 context.Context, arg1 timespan.Span, arg2 []string) (pbehavior.ComputeResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Recompute", arg0, arg1, arg2)
-	ret0, _ := ret[0].(map[string]pbehavior.ComputedPbehavior)
+	ret := m.ctrl.Call(m, "ComputeByIds", arg0, arg1, arg2)
+	ret0, _ := ret[0].(pbehavior.ComputeResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Recompute indicates an expected call of Recompute.
-func (mr *MockTypeComputerMockRecorder) Recompute(arg0, arg1, arg2 interface{}) *gomock.Call {
+// ComputeByIds indicates an expected call of ComputeByIds.
+func (mr *MockTypeComputerMockRecorder) ComputeByIds(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Recompute", reflect.TypeOf((*MockTypeComputer)(nil).Recompute), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ComputeByIds", reflect.TypeOf((*MockTypeComputer)(nil).ComputeByIds), arg0, arg1, arg2)
 }

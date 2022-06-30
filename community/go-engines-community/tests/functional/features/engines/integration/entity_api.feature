@@ -202,6 +202,7 @@ Feature: test dynamic entity api fields
       "name": "test-pbehavior-entity-api-4",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-default-inactive-type",
       "reason": "test-reason-1",
       "entity_pattern": [
@@ -347,6 +348,7 @@ Feature: test dynamic entity api fields
       "name": "test-pbehavior-entity-api-5",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-default-maintenance-type",
       "reason": "test-reason-1",
       "entity_pattern": [

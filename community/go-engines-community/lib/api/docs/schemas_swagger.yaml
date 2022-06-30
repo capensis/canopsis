@@ -2116,6 +2116,8 @@ definitions:
     properties:
       _id:
         type: string
+      color:
+        type: string
       corporate_entity_pattern:
         type: string
       enabled:
@@ -2149,11 +2151,27 @@ definitions:
         type: string
     required:
     - _id
+    - color
     - enabled
     - name
     - reason
     - tstart
     - type
+    type: object
+  pbehavior.CalendarResponse:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      from:
+        type: integer
+      title:
+        type: string
+      to:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
     type: object
   pbehavior.Comment:
     properties:
@@ -2169,6 +2187,8 @@ definitions:
   pbehavior.CreateRequest:
     properties:
       _id:
+        type: string
+      color:
         type: string
       corporate_entity_pattern:
         type: string
@@ -2202,6 +2222,7 @@ definitions:
       type:
         type: string
     required:
+    - color
     - enabled
     - name
     - reason
@@ -2213,6 +2234,8 @@ definitions:
     type: object
   pbehavior.PatchRequest:
     properties:
+      color:
+        type: string
       corporate_entity_pattern:
         type: string
       enabled:
@@ -2263,6 +2286,8 @@ definitions:
       _id:
         type: string
       author:
+        type: string
+      color:
         type: string
       comments:
         items:
@@ -2317,8 +2342,6 @@ definitions:
     properties:
       _id:
         type: string
-      color:
-        type: string
       description:
         type: string
       icon_name:
@@ -2332,6 +2355,8 @@ definitions:
     type: object
   pbehavior.UpdateRequest:
     properties:
+      color:
+        type: string
       corporate_entity_pattern:
         type: string
       enabled:
@@ -2364,6 +2389,7 @@ definitions:
       type:
         type: string
     required:
+    - color
     - enabled
     - name
     - reason
@@ -2460,46 +2486,7 @@ definitions:
     - description
     - name
     type: object
-  pbehaviortimespan.ExdateRequest:
-    properties:
-      begin:
-        type: integer
-      end:
-        type: integer
-      type:
-        type: string
-    required:
-    - begin
-    - end
-    type: object
-  pbehaviortimespan.TimespansRequest:
-    properties:
-      by_date:
-        type: boolean
-      end_at:
-        type: integer
-      exceptions:
-        items:
-          type: string
-        type: array
-      exdates:
-        items:
-          $ref: '#/definitions/pbehaviortimespan.ExdateRequest'
-        type: array
-      rrule:
-        type: string
-      start_at:
-        type: integer
-      view_from:
-        type: integer
-      view_to:
-        type: integer
-    required:
-    - start_at
-    - view_from
-    - view_to
-    type: object
-  pbehaviortimespan.timespansItemResponse:
+  pbehaviortimespan.ItemResponse:
     properties:
       from:
         type: integer
@@ -2508,10 +2495,36 @@ definitions:
       type:
         $ref: '#/definitions/pbehavior.Type'
     type: object
+  pbehaviortimespan.TimespansRequest:
+    properties:
+      end_at:
+        type: integer
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      rrule:
+        type: string
+      start_at:
+        type: integer
+      type:
+        type: string
+      view_from:
+        type: integer
+      view_to:
+        type: integer
+    required:
+    - start_at
+    - type
+    - view_from
+    - view_to
+    type: object
   pbehaviortype.EditRequest:
     properties:
-      color:
-        type: string
       description:
         maxLength: 255
         type: string
@@ -2540,8 +2553,6 @@ definitions:
   pbehaviortype.Type:
     properties:
       _id:
-        type: string
-      color:
         type: string
       deletable:
         type: boolean
