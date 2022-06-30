@@ -87,7 +87,7 @@ const (
 
 	PatternMongoCollection = "pattern"
 
-	InfosDictionaryCollection = "infos_dictionary"
+	InfosDictionaryCollection = "entity_infos_dictionary"
 )
 
 type SingleResultHelper interface {
