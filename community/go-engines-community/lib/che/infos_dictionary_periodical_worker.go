@@ -82,7 +82,6 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 
 	defer cursor.Close(ctx)
 
-	var newModel mongodriver.WriteModel
 	writeModels := make([]mongodriver.WriteModel, 0, canopsis.DefaultBulkSize)
 	bulkBytesSize := 0
 	var ids []string
@@ -101,7 +100,7 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 
 		ids = append(ids, info.ID)
 
-		newModel = mongodriver.
+		newModel := mongodriver.
 			NewUpdateOneModel().
 			SetFilter(bson.M{"_id": info.ID}).
 			SetUpdate(bson.M{"$set": info}).
