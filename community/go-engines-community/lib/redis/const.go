@@ -34,5 +34,5 @@ const (
 	PbehaviorDefaultActiveTypeKey = "pbehavior-default-active-type"
 	PbehaviorComputedKey          = "pbehavior-computed-"
 
-	InfosDictionaryPeriodicalLockKey = "infos-periodical-lock-key"
+	EntityInfosDictionaryPeriodicalLockKey = "entity-infos-periodical-lock-key"
 )
