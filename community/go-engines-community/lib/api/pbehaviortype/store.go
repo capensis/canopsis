@@ -150,11 +150,18 @@ func (s *store) Update(ctx context.Context, id string, pt *Type) (bool, error) {
 
 // Delete pbehavior type by id
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	ToPbehavior, err := s.isLinkedToPbehavior(ctx, id)
+	isDefault, err := s.IsDefault(ctx, id)
 	if err != nil {
 		return false, err
 	}
-	if ToPbehavior {
+	if isDefault {
+		return false, ErrDefaultType
+	}
+	isLinkedToPbh, err := s.isLinkedToPbehavior(ctx, id)
+	if err != nil {
+		return false, err
+	}
+	if isLinkedToPbh {
 		return false, ErrLinkedTypeToPbehavior
 	}
 	isLinkedToException, err := s.isLinkedToException(ctx, id)
@@ -170,14 +177,6 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 	if isLinkedToAction {
 		return false, ErrLinkedToActionType
-	}
-
-	isDefault, err := s.IsDefault(ctx, id)
-	if err != nil {
-		return false, err
-	}
-	if isDefault {
-		return false, ErrDefaultType
 	}
 
 	r, err := s.getCollection().DeleteOne(ctx, bson.M{"_id": id})

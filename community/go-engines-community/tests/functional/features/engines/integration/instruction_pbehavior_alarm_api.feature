@@ -406,6 +406,7 @@ Feature: Get alarms
       "name": "test-pbehavior-instruction-pbehavior-alarm-api-2",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [

@@ -15,7 +15,7 @@ import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action

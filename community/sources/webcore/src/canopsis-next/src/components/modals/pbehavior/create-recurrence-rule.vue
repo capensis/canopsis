@@ -16,7 +16,7 @@
           :disabled="isDisabled",
           :loading="submitting",
           type="submit"
-        ) {{ $t('common.actions.saveChanges') }}
+        ) {{ $t('common.saveChanges') }}
 </template>
 
 <script>

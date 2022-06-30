@@ -30,7 +30,7 @@ import { MODALS, PLANNING_TABS } from '@/constants';
 import { permissionsTechnicalPbehaviorTypesMixin } from '@/mixins/permissions/technical/pbehavior-types';
 import { permissionsTechnicalPbehaviorReasonsMixin } from '@/mixins/permissions/technical/pbehavior-reasons';
 import { permissionsTechnicalPbehaviorExceptionsMixin } from '@/mixins/permissions/technical/pbehavior-exceptions';
-import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
+import { entitiesPbehaviorTypesMixin } from '@/mixins/entities/pbehavior/types';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
 import entitiesPbehaviorExceptionsMixin from '@/mixins/entities/pbehavior/exceptions';
 
