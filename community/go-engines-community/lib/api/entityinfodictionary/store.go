@@ -64,10 +64,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (AggregationResult, err
 
 	if cursor.Next(ctx) {
 		err = cursor.Decode(&res)
-		if err != nil {
-			return res, err
-		}
 	}
 
-	return res, nil
+	return res, err
 }
