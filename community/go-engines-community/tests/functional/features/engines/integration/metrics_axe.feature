@@ -190,6 +190,7 @@ Feature: Metrics should be added on alarm changes
       "name": "test-pbehavior-metrics-axe-3",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -843,6 +844,7 @@ Feature: Metrics should be added on alarm changes
       "name": "test-pbehavior-metrics-axe-10",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [

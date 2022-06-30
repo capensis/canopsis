@@ -214,6 +214,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "tstart": {{ now }},
       "tstop": {{ nowAdd "7s" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -433,6 +434,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "tstart": {{ now }},
       "tstop": {{ nowAdd "7s" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -582,6 +584,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "tstart": {{ now }},
       "tstop": {{ nowAdd "7s" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [

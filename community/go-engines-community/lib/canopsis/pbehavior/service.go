@@ -103,13 +103,13 @@ func (s *service) RecomputeByIds(ctx context.Context, pbehaviorIds []string) (_ 
 		return nil, err
 	}
 
-	res, err := s.computer.Recompute(ctx, span, pbehaviorIds)
+	res, err := s.computer.ComputeByIds(ctx, span, pbehaviorIds)
 	if err != nil {
 		return nil, err
 	}
 
 	for _, pbehaviorID := range pbehaviorIds {
-		computedPbehavior := res[pbehaviorID]
+		computedPbehavior := res.ComputedPbehaviors[pbehaviorID]
 
 		if computedPbehavior.Name == "" {
 			err = s.store.DelComputedPbehavior(ctx, pbehaviorID)
@@ -167,19 +167,19 @@ func (s *service) compute(ctx context.Context, span *timespan.Span) (_ ComputedE
 
 	resolver := NewTypeResolver(
 		*span,
-		res.computedPbehaviors,
-		res.typesByID,
-		res.defaultActiveType,
+		res.ComputedPbehaviors,
+		res.TypesByID,
+		res.DefaultActiveType,
 		s.logger,
 	)
 	matcher := NewComputedEntityMatcher(s.dbClient)
-	queries := s.getQueries(res.computedPbehaviors)
+	queries := s.getQueries(res.ComputedPbehaviors)
 	err = matcher.LoadAll(ctx, queries)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	return NewComputedEntityTypeResolver(matcher, resolver), len(res.computedPbehaviors), nil
+	return NewComputedEntityTypeResolver(matcher, resolver), len(res.ComputedPbehaviors), nil
 }
 
 func (s *service) load(ctx context.Context, span timespan.Span) (ComputedEntityTypeResolver, error) {
@@ -190,13 +190,13 @@ func (s *service) load(ctx context.Context, span timespan.Span) (ComputedEntityT
 
 	resolver := NewTypeResolver(
 		span,
-		data.computedPbehaviors,
-		data.typesByID,
-		data.defaultActiveType,
+		data.ComputedPbehaviors,
+		data.TypesByID,
+		data.DefaultActiveType,
 		s.logger,
 	)
 	matcher := NewComputedEntityMatcher(s.dbClient)
-	queries := s.getQueries(data.computedPbehaviors)
+	queries := s.getQueries(data.ComputedPbehaviors)
 	err = matcher.LoadAll(ctx, queries)
 	if err != nil {
 		return nil, err
