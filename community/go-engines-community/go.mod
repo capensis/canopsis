@@ -66,6 +66,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/jackc/pgconn v1.10.0
 	github.com/jackc/pgproto3/v2 v2.1.1
+	github.com/mitchellh/mapstructure v1.1.2
 	github.com/rabbitmq/amqp091-go v1.3.0
 	gopkg.in/yaml.v2 v2.4.0
 )
