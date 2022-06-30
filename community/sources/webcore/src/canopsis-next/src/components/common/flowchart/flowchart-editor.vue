@@ -76,6 +76,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    viewBox: {
+      type: Object,
+      required: true,
+    },
     gridSize: {
       type: Number,
       default: 5,
@@ -87,14 +91,11 @@ export default {
   },
   data() {
     return {
-      viewBox: {
-        x: 0,
-        y: 0,
+      editorSize: {
         width: 0,
         height: 0,
       },
 
-      scale: 1,
       data: {},
       selected: [],
 
@@ -131,6 +132,14 @@ export default {
     hasSelected() {
       return !!this.selected.length;
     },
+
+    widthScale() {
+      return this.viewBox.width / this.editorSize.width;
+    },
+
+    heightScale() {
+      return this.viewBox.height / this.editorSize.height;
+    },
   },
   watch: {
     shapes: {
@@ -153,15 +162,67 @@ export default {
     this.$refs.svg.removeEventListener('wheel', this.onWheel);
   },
   methods: {
-    setViewBox() {
+    updateViewBox(viewBox) {
+      this.$emit('update:viewBox', { ...this.viewBox, ...viewBox });
+    },
+
+    normalizeCursor({ x, y }) {
+      const point = this.$refs.svg.createSVGPoint();
+
+      point.x = x;
+      point.y = y;
+
+      return point.matrixTransform(this.$refs.svg.getScreenCTM().inverse());
+    },
+
+    setViewBox(event) {
       const { width, height } = this.$refs.svg.getBoundingClientRect();
 
-      this.viewBox.height = height;
-      this.viewBox.width = width;
+      if (event) {
+        const widthDiff = (this.editorSize.width - width) * this.widthScale;
+        const heightDiff = (this.editorSize.height - height) * this.heightScale;
+
+        this.updateViewBox({
+          width: this.viewBox.width - widthDiff,
+          height: this.viewBox.height - heightDiff,
+        });
+      } else {
+        this.updateViewBox({ width, height });
+      }
+
+      this.editorSize.width = width;
+      this.editorSize.height = height;
     },
 
     onWheel(event) {
       event.preventDefault();
+
+      if (event.ctrlKey) {
+        const percent = event.deltaY < 0 ? 0.05 : -0.05;
+
+        const scaleWidth = this.viewBox.width * percent;
+        const scaleHeight = this.viewBox.height * percent;
+
+        const deltaWidth = scaleWidth * 2;
+        const deltaHeight = scaleHeight * 2;
+
+        const { x, y } = this.normalizeCursor({ x: event.clientX, y: event.clientY });
+
+        const cursorPercentX = (x - this.viewBox.x) / this.viewBox.width;
+        const cursorPercentY = (y - this.viewBox.y) / this.viewBox.height;
+
+        const offsetX = deltaWidth * cursorPercentX;
+        const offsetY = deltaHeight * cursorPercentY;
+        const offsetWidth = scaleWidth + deltaWidth - offsetX;
+        const offsetHeight = scaleHeight + deltaHeight - offsetY;
+
+        this.updateViewBox({
+          x: this.viewBox.x + offsetX,
+          y: this.viewBox.y + offsetY,
+          width: this.viewBox.width - offsetWidth,
+          height: this.viewBox.height - offsetHeight,
+        });
+      }
     },
 
     updateShape(shape, data) {
@@ -203,11 +264,12 @@ export default {
       }
 
       if (this.isSelected(shape._id)) {
-        const { offsetX, offsetY } = event;
+        const { x, y } = this.normalizeCursor({ x: event.clientX, y: event.clientY });
+
         this.moving = true;
         this.movingStart = {
-          x: roundByStep(offsetX, this.gridSize),
-          y: roundByStep(offsetY, this.gridSize),
+          x: roundByStep(x, this.gridSize),
+          y: roundByStep(y, this.gridSize),
         };
       }
     },
@@ -329,8 +391,8 @@ export default {
 
     onContainerMouseMove(event) {
       if (this.panning) {
-        this.viewBox.x -= event.movementX;
-        this.viewBox.y -= event.movementY;
+        this.viewBox.x -= event.movementX * this.widthScale;
+        this.viewBox.y -= event.movementY * this.heightScale;
 
         return;
       }
@@ -339,9 +401,11 @@ export default {
         this.handleShapeMove(event);
       }
 
+      const { x, y } = this.normalizeCursor({ x: event.clientX, y: event.clientY });
+
       const cursor = {
-        x: roundByStep(event.offsetX, this.gridSize),
-        y: roundByStep(event.offsetY, this.gridSize),
+        x: roundByStep(x, this.gridSize),
+        y: roundByStep(y, this.gridSize),
         shift: event.shiftKey,
       };
 
@@ -413,12 +477,14 @@ export default {
     },
 
     handleShapeMove(event) {
+      const { x, y } = this.normalizeCursor({ x: event.clientX, y: event.clientY });
+
       const newMovingOffsetX = roundByStep(
-        event.offsetX - this.movingStart.x,
+        x - this.movingStart.x,
         this.gridSize,
       );
       const newMovingOffsetY = roundByStep(
-        event.offsetY - this.movingStart.y,
+        y - this.movingStart.y,
         this.gridSize,
       );
 
