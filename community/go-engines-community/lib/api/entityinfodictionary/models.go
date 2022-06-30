@@ -9,7 +9,7 @@ type ListRequest struct {
 }
 
 type Result struct {
-	Value string `bson:"value" json:"value,omitempty"`
+	Value string `bson:"value" json:"value"`
 }
 
 type AggregationResult struct {

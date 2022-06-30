@@ -53,6 +53,9 @@ Feature: get infos dictionary
     {
       "data": [
         {
+          "value": "test-entity-infos-dictionary-value-11"
+        },
+        {
           "value": "test-entity-infos-dictionary-value-2"
         },
         {
@@ -66,7 +69,7 @@ Feature: get infos dictionary
         "page": 1,
         "per_page": 10,
         "page_count": 1,
-        "total_count": 3
+        "total_count": 4
       }
     }
     """
