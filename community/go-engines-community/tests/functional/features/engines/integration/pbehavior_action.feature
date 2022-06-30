@@ -53,6 +53,7 @@ Feature: no execute action when entity is inactive
       "name": "test-pbehavior-action-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -190,6 +191,7 @@ Feature: no execute action when entity is inactive
       "name": "test-pbehavior-action-2",
       "tstart": {{ nowAdd "5s" }},
       "tstop": {{ nowAdd "10s" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [

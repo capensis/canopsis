@@ -2,9 +2,9 @@ package pbehavior
 
 import (
 	"context"
-	"github.com/rs/zerolog"
 	"time"
 
+	"github.com/rs/zerolog"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -54,8 +54,8 @@ func (r *entityTypeResolver) Resolve(
 		return ResolveResult{}, err
 	}
 
-	filters := make(map[string]interface{}, len(computed.computedPbehaviors))
-	for id, pbehavior := range computed.computedPbehaviors {
+	filters := make(map[string]interface{}, len(computed.ComputedPbehaviors))
+	for id, pbehavior := range computed.ComputedPbehaviors {
 		if len(pbehavior.OldMongoQuery) > 0 {
 			filters[id] = pbehavior.OldMongoQuery
 		}
@@ -66,7 +66,13 @@ func (r *entityTypeResolver) Resolve(
 		return ResolveResult{}, err
 	}
 
-	resolver := NewTypeResolver(span, computed.computedPbehaviors, computed.typesByID, computed.defaultActiveType, r.logger)
+	resolver := NewTypeResolver(
+		span,
+		computed.ComputedPbehaviors,
+		computed.TypesByID,
+		computed.DefaultActiveType,
+		r.logger,
+	)
 
 	return resolver.Resolve(ctx, t, entity, pbhIDs)
 }
@@ -86,7 +92,13 @@ func (r *entityTypeResolver) GetPbehaviors(ctx context.Context, pbhIDs []string,
 		return nil, err
 	}
 
-	resolver := NewTypeResolver(span, data.computedPbehaviors, data.typesByID, data.defaultActiveType, r.logger)
+	resolver := NewTypeResolver(
+		span,
+		data.ComputedPbehaviors,
+		data.TypesByID,
+		data.DefaultActiveType,
+		r.logger,
+	)
 	pbhs, err := resolver.GetPbehaviors(ctx, t, pbhIDs)
 	if err != nil {
 		return nil, err

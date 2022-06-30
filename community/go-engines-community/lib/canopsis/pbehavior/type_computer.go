@@ -5,26 +5,23 @@ package pbehavior
 import (
 	"context"
 	"fmt"
-	"sort"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
-	"github.com/teambition/rrule-go"
 	"golang.org/x/sync/errgroup"
 )
 
 const DefaultPoolSize = 100
 
-// TypeComputer is used to compute periodical behavior timespans for provided interval.
+// TypeComputer is used to compute all periodical behaviors' timespans for provided interval.
 type TypeComputer interface {
 	// Compute calculates types for provided timespan.
 	Compute(ctx context.Context, span timespan.Span) (ComputeResult, error)
-	Recompute(ctx context.Context, span timespan.Span, pbehaviorIds []string) (map[string]ComputedPbehavior, error)
+	ComputeByIds(ctx context.Context, span timespan.Span, pbehaviorIds []string) (ComputeResult, error)
 }
 
-// typeComputer computes periodical behavior timespans for provided interval.
 type typeComputer struct {
 	modelProvider ModelProvider
 	decoder       encoding.Decoder
@@ -44,17 +41,13 @@ type typeComputer struct {
 type ComputedPbehavior struct {
 	Name    string         `json:"n"`
 	Reason  string         `json:"r"`
-	Types   []computedType `json:"t"`
+	Filter  string         `json:"f"`
+	Types   []ComputedType `json:"t"`
 	Created int64          `json:"c"`
+	Color   string         `json:"-"`
 
 	Pattern       pattern.Entity         `json:"p,omitempty"`
 	OldMongoQuery map[string]interface{} `json:"q,omitempty"`
-}
-
-// computedType represents computed typeID for determined time span.
-type computedType struct {
-	Span timespan.Span `json:"s"`
-	ID   string        `json:"t"`
 }
 
 //easyjson:json
@@ -64,9 +57,9 @@ type Types struct {
 
 // ComputeResult represents computed data.
 type ComputeResult struct {
-	computedPbehaviors map[string]ComputedPbehavior
-	typesByID          map[string]Type
-	defaultActiveType  string
+	ComputedPbehaviors map[string]ComputedPbehavior
+	TypesByID          map[string]Type
+	DefaultActiveType  string
 }
 
 // models contains all required models for computing.
@@ -81,20 +74,11 @@ type models struct {
 func NewTypeComputer(
 	modelProvider ModelProvider,
 	decoder encoding.Decoder,
-	workerPoolSize ...int,
 ) TypeComputer {
-	poolSize := DefaultPoolSize
-
-	if len(workerPoolSize) == 1 {
-		poolSize = workerPoolSize[0]
-	} else if len(workerPoolSize) > 1 {
-		panic("too much arguments")
-	}
-
 	return &typeComputer{
 		modelProvider:  modelProvider,
 		decoder:        decoder,
-		workerPoolSize: poolSize,
+		workerPoolSize: DefaultPoolSize,
 	}
 }
 
@@ -110,25 +94,25 @@ func (c *typeComputer) Compute(
 	span timespan.Span,
 ) (ComputeResult, error) {
 	res := ComputeResult{}
-	models := models{}
-	pbehaviorsByID, err := c.modelProvider.GetEnabledPbehaviors(ctx)
+	pbehaviorsByID, err := c.modelProvider.GetEnabledPbehaviors(ctx, span)
 	if err != nil {
 		return res, fmt.Errorf("cannot fetch pbehaviors: %w", err)
 	}
 
+	models := models{}
 	models.typesByID, err = c.modelProvider.GetTypes(ctx)
 	if err != nil {
 		return res, fmt.Errorf("cannot fetch pbehavior types: %w", err)
 	}
 
-	models.defaultTypes, err = resolveDefaultTypes(models.typesByID)
+	models.defaultTypes, err = ResolveDefaultTypes(models.typesByID)
 	if err != nil {
-		return res, fmt.Errorf("cannot fetch defult pbehavior types: %w", err)
+		return res, fmt.Errorf("cannot fetch default pbehavior types: %w", err)
 	}
 
 	models.exceptionsByID, err = c.modelProvider.GetExceptions(ctx)
 	if err != nil {
-		return res, fmt.Errorf("cannot fetch pbehavior exeptions: %w", err)
+		return res, fmt.Errorf("cannot fetch pbehavior exceptions: %w", err)
 	}
 
 	models.reasonsByID, err = c.modelProvider.GetReasons(ctx)
@@ -141,51 +125,68 @@ func (c *typeComputer) Compute(
 		return res, err
 	}
 
-	return ComputeResult{
-		computedPbehaviors: computedPbehaviors,
-		typesByID:          models.typesByID,
-		defaultActiveType:  models.defaultTypes[TypeActive],
-	}, nil
+	res = ComputeResult{
+		ComputedPbehaviors: computedPbehaviors,
+		TypesByID:          models.typesByID,
+		DefaultActiveType:  models.defaultTypes[TypeActive],
+	}
+
+	return res, nil
 }
 
-func (c *typeComputer) Recompute(
+func (c *typeComputer) ComputeByIds(
 	ctx context.Context,
 	span timespan.Span,
 	pbehaviorIds []string,
-) (map[string]ComputedPbehavior, error) {
-	models := models{}
-	pbehaviorsByID, err := c.modelProvider.GetEnabledPbehaviorsByIds(ctx, pbehaviorIds)
-	if err != nil && len(pbehaviorsByID) == 0 {
-		return nil, fmt.Errorf("cannot fetch pbehavior: %w", err)
+) (ComputeResult, error) {
+	res := ComputeResult{}
+	pbehaviorsByID, err := c.modelProvider.GetEnabledPbehaviorsByIds(ctx, pbehaviorIds, span)
+	if err != nil {
+		return res, fmt.Errorf("cannot fetch pbehaviors: %w", err)
+	}
+	if len(pbehaviorsByID) == 0 {
+		return res, nil
 	}
 
+	models := models{}
 	models.typesByID, err = c.modelProvider.GetTypes(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("cannot fetch pbehavior types: %w", err)
+		return res, fmt.Errorf("cannot fetch pbehavior types: %w", err)
 	}
 
-	models.defaultTypes, err = resolveDefaultTypes(models.typesByID)
+	models.defaultTypes, err = ResolveDefaultTypes(models.typesByID)
 	if err != nil {
-		return nil, fmt.Errorf("cannot fetch default pbehavior types: %w", err)
+		return res, fmt.Errorf("cannot fetch default pbehavior types: %w", err)
 	}
 
 	models.exceptionsByID, err = c.modelProvider.GetExceptions(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("cannot fetch pbehavior exceptions: %w", err)
+		return res, fmt.Errorf("cannot fetch pbehavior exceptions: %w", err)
 	}
 
 	models.reasonsByID, err = c.modelProvider.GetReasons(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("cannot fetch pbehavior reasons: %w", err)
+		return res, fmt.Errorf("cannot fetch pbehavior reasons: %w", err)
 	}
 
-	return c.runWorkers(ctx, span, pbehaviorsByID, models)
+	computedPbehaviors, err := c.runWorkers(ctx, span, pbehaviorsByID, models)
+	if err != nil {
+		return res, err
+	}
+
+	res = ComputeResult{
+		ComputedPbehaviors: computedPbehaviors,
+		TypesByID:          models.typesByID,
+		DefaultActiveType:  models.defaultTypes[TypeActive],
+	}
+
+	return res, nil
 }
 
-// resolveDefaultTypes finds default types which uses :
+// ResolveDefaultTypes finds default types which uses :
 // - active default type if there aren't any behaviors
 // - inactive default type if there is behavior with active type
-func resolveDefaultTypes(typesByID map[string]Type) (map[string]string, error) {
+func ResolveDefaultTypes(typesByID map[string]Type) (map[string]string, error) {
 	defaultTypesByType := map[string]Type{
 		TypeInactive: {},
 		TypeActive:   {},
@@ -222,6 +223,8 @@ func (c *typeComputer) runWorkers(
 	workerChan := c.createWorkerCh(ctx, pbehaviorsByID)
 	g, ctx := errgroup.WithContext(ctx)
 
+	eventComputer := NewEventComputer(models.typesByID, models.defaultTypes)
+
 	for worker := 0; worker < c.workerPoolSize; worker++ {
 		g.Go(func() error {
 			for {
@@ -233,7 +236,7 @@ func (c *typeComputer) runWorkers(
 						return nil
 					}
 
-					res, err := c.computePbehavior(p, span, models)
+					res, err := c.computePbehavior(p, span, eventComputer, models)
 					if err != nil {
 						return fmt.Errorf("cannot compute pbehavior id=%q: %w", p.ID, err)
 					}
@@ -290,49 +293,33 @@ func (c *typeComputer) createWorkerCh(ctx context.Context, pbehaviorsByID map[st
 func (c *typeComputer) computePbehavior(
 	pbehavior PBehavior,
 	span timespan.Span,
+	eventComputer EventComputer,
 	models models,
 ) (ComputedPbehavior, error) {
-	var event Event
-	location := span.From().Location()
-	var stop time.Time
-	if pbehavior.Stop == nil {
-		stop = span.To()
-	} else {
-		stop = pbehavior.Stop.Time
+	var start, end types.CpsTime
+	if pbehavior.Start != nil {
+		start = *pbehavior.Start
 	}
-	stop = stop.In(location)
-
-	if pbehavior.RRule == "" {
-		event = NewEvent(pbehavior.Start.Time.In(location), stop)
-	} else {
-		rOption, err := rrule.StrToROption(pbehavior.RRule)
-		if err != nil {
-			return ComputedPbehavior{}, err
-		}
-
-		event = NewRecEvent(pbehavior.Start.Time.In(location), stop, rOption)
+	if pbehavior.Stop != nil {
+		end = *pbehavior.Stop
 	}
-
-	resByExdate, err := c.computeByExdate(pbehavior, event, span, models)
+	exdates, err := c.getExdates(pbehavior, models)
+	if err != nil {
+		return ComputedPbehavior{}, err
+	}
+	params := PbhEventParams{
+		Start:   start,
+		End:     end,
+		RRule:   pbehavior.RRule,
+		Type:    pbehavior.Type,
+		Exdates: exdates,
+	}
+	compitedTypes, err := eventComputer.Compute(params, span)
 	if err != nil {
 		return ComputedPbehavior{}, err
 	}
 
-	resByRrule, err := c.computeByRrule(pbehavior, event, span)
-	if err != nil {
-		return ComputedPbehavior{}, err
-	}
-
-	resByActiveType, err := c.computeByActiveType(pbehavior, event, span, models)
-	if err != nil {
-		return ComputedPbehavior{}, err
-	}
-
-	res := resByExdate
-	res = append(res, resByRrule...)
-	res = append(res, resByActiveType...)
-
-	if len(res) > 0 {
+	if len(compitedTypes) > 0 {
 		reason, ok := models.reasonsByID[pbehavior.Reason]
 		reasonName := pbehavior.Reason
 		if ok {
@@ -350,8 +337,9 @@ func (c *typeComputer) computePbehavior(
 		return ComputedPbehavior{
 			Name:    pbehavior.Name,
 			Reason:  reasonName,
-			Types:   res,
+			Types:   compitedTypes,
 			Created: pbehavior.Created.Unix(),
+			Color:   pbehavior.Color,
 
 			Pattern:       pbehavior.EntityPattern,
 			OldMongoQuery: oldMongoQuery,
@@ -361,114 +349,15 @@ func (c *typeComputer) computePbehavior(
 	return ComputedPbehavior{}, nil
 }
 
-// computeByExdate returns all time spans for pbehavior on the date which are defined by exdate.
-func (c *typeComputer) computeByExdate(
-	pbehavior PBehavior,
-	event Event,
-	span timespan.Span,
-	models models,
-) ([]computedType, error) {
-	exdateList, err := c.getSortedExdate(pbehavior, models)
-	if err != nil {
-		return nil, err
-	}
-
-	location := event.span.From().Location()
-	res := make([]computedType, 0)
-	for _, exdate := range exdateList {
-		from := maxTime(span.From(), exdate.Begin.Time.In(location))
-		to := minTime(span.To(), exdate.End.Time.In(location))
-		if from.After(to) {
-			continue
-		}
-
-		view := timespan.New(from, to)
-		timespans, err := GetTimeSpans(event, view)
-		if err != nil {
-			return nil, err
-		}
-
-		for i := range timespans {
-			res = append(res, computedType{
-				Span: timespans[i],
-				ID:   exdate.Type,
-			})
-		}
-
-	}
-
-	return res, nil
-}
-
-// computeByRrule returns all time spans for pbehavior on the date which are defined by rrule.
-func (c *typeComputer) computeByRrule(
-	pbehavior PBehavior,
-	event Event,
-	span timespan.Span,
-) ([]computedType, error) {
-	timespans, err := GetTimeSpans(event, span)
-	if err != nil {
-		return nil, err
-	}
-
-	res := make([]computedType, len(timespans))
-
-	for i := range timespans {
-		res[i].Span = timespans[i]
-		res[i].ID = pbehavior.Type
-	}
-
-	return res, nil
-}
-
-// computeByActiveType returns time span with default inactive type if pbehavior has
-// active type and pbehavior is in action for the date.
-func (c *typeComputer) computeByActiveType(
-	pbehavior PBehavior,
-	event Event,
-	span timespan.Span,
-	models models,
-) ([]computedType, error) {
-	t, ok := models.typesByID[pbehavior.Type]
-	if !ok {
-		return nil, fmt.Errorf("unknown type %s of pbh %+v", pbehavior.Type, pbehavior)
-	}
-
-	if t.Type != TypeActive {
-		return nil, nil
-	}
-
-	res := make([]computedType, 0)
-	// Check each day in the span if behavior is in action for this day.
-	for date := dateOf(span.From()); date.Before(span.To()); date = date.AddDate(0, 0, 1) {
-		// Interval from midnight to next day midnight.
-		dateSpan := timespan.New(date, date.AddDate(0, 0, 1))
-		timespans, err := GetTimeSpans(event, dateSpan)
-		if err != nil {
-			return nil, err
-		}
-
-		if len(timespans) > 0 {
-			res = append(res, computedType{
-				Span: timespan.New(
-					maxTime(dateSpan.From(), span.From()),
-					minTime(dateSpan.To(), span.To()),
-				),
-				ID: models.defaultTypes[TypeInactive],
-			})
-		}
-	}
-
-	return res, nil
-}
-
-// getSortedExdate returns pbehavior exdate list which is sorted by its type priority.
-func (c *typeComputer) getSortedExdate(
+// getExdates returns pbehavior exdate list.
+func (c *typeComputer) getExdates(
 	pbehavior PBehavior,
 	models models,
 ) ([]Exdate, error) {
 	res := make([]Exdate, len(pbehavior.Exdates))
-	copy(res, pbehavior.Exdates)
+	for i := range pbehavior.Exdates {
+		res[i] = pbehavior.Exdates[i]
+	}
 
 	for _, id := range pbehavior.Exceptions {
 		if exception, ok := models.exceptionsByID[id]; ok {
@@ -478,25 +367,6 @@ func (c *typeComputer) getSortedExdate(
 		} else {
 			return nil, fmt.Errorf("unknown exception %v", id)
 		}
-	}
-
-	var unknownTypeErr error
-	getPriorityByID := func(id string) int {
-		t, ok := models.typesByID[id]
-		if !ok {
-			unknownTypeErr = fmt.Errorf("unknown type %v", id)
-			return 0
-		}
-
-		return t.Priority
-	}
-
-	sort.Slice(res, func(i, j int) bool {
-		return getPriorityByID(res[i].Type) > getPriorityByID(res[j].Type)
-	})
-
-	if unknownTypeErr != nil {
-		return nil, unknownTypeErr
 	}
 
 	return res, nil
