@@ -6,6 +6,10 @@ import (
 
 const (
 	DefaultCfgFile = "/opt/canopsis/etc/canopsis.toml"
+
+	DefaultMongoMigrationsPath    = "/opt/canopsis/share/database/migrations"
+	DefaultMongoFixturesPath      = "/opt/canopsis/share/database/fixtures"
+	DefaultPostgresMigrationsPath = "/opt/canopsis/share/database/postgres_migrations"
 )
 
 type flags struct {

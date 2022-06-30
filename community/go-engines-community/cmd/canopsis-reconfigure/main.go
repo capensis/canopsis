@@ -56,7 +56,7 @@ func main() {
 	}
 
 	if f.overrideConfFile != "" {
-		if err := loadOverrideConfig(logger, &conf, f.overrideConfFile); err != nil {
+		if err := loadOverrideConfig(&conf, f.overrideConfFile); err != nil {
 			logger.Warn().Err(err).Msgf("skipped configuration overriding")
 		}
 	}
@@ -238,7 +238,7 @@ func (c *Conf) Clone() interface{} {
 	return &cloned
 }
 
-func loadOverrideConfig(logger zerolog.Logger, conf *Conf, overrideConfFile string) error {
+func loadOverrideConfig(conf *Conf, overrideConfFile string) error {
 	data, err := ioutil.ReadFile(overrideConfFile)
 	if err != nil {
 		return fmt.Errorf("no configuration file found")
