@@ -5082,39 +5082,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-  /pbehavior-calendar:
-    get:
-      tags:
-        - pbehaviors
-      summary: Find all pbehaviors
-      description: Get list of pbehaviors' timespans
-      operationId: pbehaviors-calendar
-      parameters:
-        - name: from
-          in: query
-          required: true
-          schema:
-            type: integer
-        - name: to
-          in: query
-          required: true
-          schema:
-            type: integer
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: 'schemas_swagger.yaml#/definitions/pbehavior.CalendarResponse'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /pbehavior-comments:
     post:
       tags:
@@ -5406,7 +5373,7 @@ paths:
             text/calendar:
               schema:
                 type: string
-                format: binart
+                format: binary
         404:
           description: Not Found
           content:
