@@ -51,7 +51,7 @@ Feature: update alarm on idle rule
     }
     """
     When I wait the end of 3 events processing
-    When I do GET /api/v4/entities/pbehaviors?id=test-resource-pbehavior-axe-idlerule-1/test-component-pbehavior-axe-idlerule-1
+    When I do GET /api/v4/entities/pbehaviors?_id=test-resource-pbehavior-axe-idlerule-1/test-component-pbehavior-axe-idlerule-1
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -112,7 +112,7 @@ Feature: update alarm on idle rule
       }
     }
     """
-    When I do GET /api/v4/entities/pbehaviors?id=test-resource-pbehavior-axe-idlerule-1/test-component-pbehavior-axe-idlerule-1 until response code is 200 and body contains:
+    When I do GET /api/v4/entities/pbehaviors?_id=test-resource-pbehavior-axe-idlerule-1/test-component-pbehavior-axe-idlerule-1 until response code is 200 and body contains:
     """
     [
       {
@@ -172,6 +172,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "tstart": {{ now }},
       "tstop": {{ nowAdd "7s" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -327,6 +328,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "tstart": {{ now }},
       "tstop": {{ nowAdd "7s" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -436,6 +438,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "tstart": {{ now }},
       "tstop": {{ nowAdd "7s" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{

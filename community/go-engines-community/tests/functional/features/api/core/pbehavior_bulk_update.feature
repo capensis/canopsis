@@ -22,6 +22,7 @@ Feature: Bulk update a pbehaviors
         "name": "test-pbehavior-to-bulk-update-1-name-updated",
         "tstart": 1591172881,
         "tstop": 1591536400,
+        "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-1",
         "filter":{
@@ -46,6 +47,7 @@ Feature: Bulk update a pbehaviors
         "name": "test-pbehavior-to-bulk-update-1-name-updated-twice",
         "tstart": 1591172881,
         "tstop": 1591536400,
+        "color": "#FFFFFA",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-1",
         "filter":{
@@ -70,6 +72,7 @@ Feature: Bulk update a pbehaviors
         "name": "test-pbehavior-not-found-name",
         "tstart": 1591172881,
         "tstop": 1591536400,
+        "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-1",
         "filter":{
@@ -91,6 +94,7 @@ Feature: Bulk update a pbehaviors
         "name": "test-pbehavior-to-bulk-update-2-name-updated",
         "tstart": 1591172881,
         "tstop": 1591536400,
+        "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-1",
         "filter":{
@@ -124,6 +128,7 @@ Feature: Bulk update a pbehaviors
           "name": "test-pbehavior-to-bulk-update-1-name-updated",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-1",
           "filter":{
@@ -152,6 +157,7 @@ Feature: Bulk update a pbehaviors
           "name": "test-pbehavior-to-bulk-update-1-name-updated-twice",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFA",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-1",
           "filter":{
@@ -179,6 +185,7 @@ Feature: Bulk update a pbehaviors
           "name": "test-pbehavior-not-found-name",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-1",
           "filter":{
@@ -199,6 +206,7 @@ Feature: Bulk update a pbehaviors
           "name": "Name is missing.",
           "filter": "Filter is missing.",
           "tstart": "Start is missing.",
+          "color": "Color is missing.",
           "reason": "Reason is missing.",
           "type": "Type is missing."
         }
@@ -226,6 +234,7 @@ Feature: Bulk update a pbehaviors
           "name": "test-pbehavior-to-bulk-update-2-name-updated",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-1",
           "filter":{
@@ -259,6 +268,7 @@ Feature: Bulk update a pbehaviors
           "name": "test-pbehavior-to-bulk-update-1-name-updated-twice",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFA",
           "type": {
             "_id": "test-type-to-pbh-edit-1"
           },
@@ -295,6 +305,7 @@ Feature: Bulk update a pbehaviors
           "name": "test-pbehavior-to-bulk-update-2-name-updated",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFF",
           "type": {
             "_id": "test-type-to-pbh-edit-1"
           },
