@@ -4304,11 +4304,17 @@ default_entities:
     _id: test-entity-infos-dictionary-3
     infos:
       test-entity-infos-dictionary-key-1:
-        value: test-entity-infos-dictionary-value-7
+        value:
+          - test-entity-infos-dictionary-value-7
+          - test-entity-infos-dictionary-value-10
       test-entity-infos-dictionary-key-2:
-        value: test-entity-infos-dictionary-value-8
+        value:
+          - test-entity-infos-dictionary-value-8
+          - test-entity-infos-dictionary-value-11
       test-entity-infos-dictionary-key-3:
-        value: test-entity-infos-dictionary-value-9
+        value:
+          - test-entity-infos-dictionary-value-9
+          - test-entity-infos-dictionary-value-12
   default_entities_338:
     <<: *resource
     _id: test-entity-infos-dictionary-should-be-ignored
@@ -4321,3 +4327,7 @@ default_entities:
         value: 10
       test-entity-infos-dictionary-key-should-be-ignored-4:
         value: true
+      test-entity-infos-dictionary-key-should-be-ignored-5:
+        value:
+          a: b
+          c: d
