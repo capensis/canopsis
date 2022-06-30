@@ -31,6 +31,8 @@ import {
 import { formBaseMixin } from '@/mixins/form';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
+import { generatePoint } from '@/helpers/flowchart/points';
+import { getImageProperties } from '@/helpers/file/image';
 
 export default {
   components: { FileSelector },
@@ -41,6 +43,10 @@ export default {
   },
   props: {
     shapes: {
+      type: Object,
+      required: true,
+    },
+    viewBox: {
       type: Object,
       required: true,
     },
@@ -66,6 +72,52 @@ export default {
         { icon: '$vuetify.icons.textbox_shape', action: this.addTextbox },
       ];
     },
+
+    viewBoxCenter() {
+      return {
+        x: this.viewBox.x + this.viewBox.width / 2,
+        y: this.viewBox.y + this.viewBox.height / 2,
+      };
+    },
+
+    centerRectProperties() {
+      const width = 100;
+      const height = 100;
+
+      return {
+        x: this.viewBoxCenter.x - width / 2,
+        y: this.viewBoxCenter.y - height / 2,
+        width,
+        height,
+      };
+    },
+
+    centerCircleProperties() {
+      const diameter = 100;
+      const halfDiameter = diameter / 2;
+
+      return {
+        x: this.viewBoxCenter.x - halfDiameter,
+        y: this.viewBoxCenter.y - halfDiameter,
+        diameter,
+      };
+    },
+
+    centerLinePoints() {
+      const length = 100;
+      const halfLength = length / 2;
+
+      return [
+        generatePoint({
+          x: this.viewBoxCenter.x - halfLength,
+          y: this.viewBoxCenter.y,
+        }),
+        generatePoint({
+          x: this.viewBoxCenter.x + halfLength,
+          y: this.viewBoxCenter.y,
+        }),
+      ];
+    },
   },
   methods: {
     addShape(shape) {
@@ -77,6 +129,7 @@ export default {
 
     addRectangle() {
       const rect = generateRectShape({
+        ...this.centerRectProperties,
         text: 'Rectangle',
         textProperties: {
           alignCenter: true,
@@ -89,11 +142,12 @@ export default {
         },
       });
 
-      this.$set(this.shapes, rect._id, rect);
+      this.addShape(rect);
     },
 
     addRoundedRectangle() {
       const rect = generateRectShape({
+        ...this.centerRectProperties,
         text: 'Rounded rectangle',
         textProperties: {
           alignCenter: true,
@@ -108,11 +162,12 @@ export default {
         },
       });
 
-      this.$set(this.shapes, rect._id, rect);
+      this.addShape(rect);
     },
 
     addLine() {
       const line = generateLineShape({
+        points: this.centerLinePoints,
         text: 'Line',
         properties: {
           stroke: 'black',
@@ -120,11 +175,12 @@ export default {
         },
       });
 
-      this.$set(this.shapes, line._id, line);
+      this.addShape(line);
     },
 
     addDashedLine() {
       const line = generateLineShape({
+        points: this.centerLinePoints,
         text: 'Dashed line',
         properties: {
           stroke: 'black',
@@ -132,11 +188,12 @@ export default {
         },
       });
 
-      this.$set(this.shapes, line._id, line);
+      this.addShape(line);
     },
 
     addDashedArrowLine() {
       const arrowLine = generateArrowLineShape({
+        points: this.centerLinePoints,
         text: 'Dashed arrow line',
         properties: {
           stroke: 'black',
@@ -145,11 +202,12 @@ export default {
         },
       });
 
-      this.$set(this.shapes, arrowLine._id, arrowLine);
+      this.addShape(arrowLine);
     },
 
     addArrowLine() {
       const arrowLine = generateArrowLineShape({
+        points: this.centerLinePoints,
         text: 'Arrow line',
         properties: {
           stroke: 'black',
@@ -157,11 +215,12 @@ export default {
         },
       });
 
-      this.$set(this.shapes, arrowLine._id, arrowLine);
+      this.addShape(arrowLine);
     },
 
     addBidirectionalArrowLine() {
       const bidirectionalArrowLine = generateBidirectionalArrowLineShape({
+        points: this.centerLinePoints,
         text: 'Bidirectional arrow line',
         properties: {
           stroke: 'black',
@@ -169,11 +228,12 @@ export default {
         },
       });
 
-      this.$set(this.shapes, bidirectionalArrowLine._id, bidirectionalArrowLine);
+      this.addShape(bidirectionalArrowLine);
     },
 
     addDashedBidirectionalArrowLine() {
       const bidirectionalArrowLine = generateBidirectionalArrowLineShape({
+        points: this.centerLinePoints,
         text: 'Dashed bidirectional arrow line',
         properties: {
           stroke: 'black',
@@ -182,11 +242,12 @@ export default {
         },
       });
 
-      this.$set(this.shapes, bidirectionalArrowLine._id, bidirectionalArrowLine);
+      this.addShape(bidirectionalArrowLine);
     },
 
     addCircle() {
       const circle = generateCircleShape({
+        ...this.centerCircleProperties,
         text: 'Circle',
         textProperties: {
           alignCenter: true,
@@ -199,11 +260,12 @@ export default {
         },
       });
 
-      this.$set(this.shapes, circle._id, circle);
+      this.addShape(circle);
     },
 
     addEllipse() {
       const ellipse = generateEllipseShape({
+        ...this.centerRectProperties,
         text: 'Ellipse',
         textProperties: {
           alignCenter: true,
@@ -216,11 +278,12 @@ export default {
         },
       });
 
-      this.$set(this.shapes, ellipse._id, ellipse);
+      this.addShape(ellipse);
     },
 
     addRhombus() {
       const rhombus = generateRhombusShape({
+        ...this.centerRectProperties,
         text: 'Rhombus',
         textProperties: {
           alignCenter: true,
@@ -233,11 +296,12 @@ export default {
         },
       });
 
-      this.$set(this.shapes, rhombus._id, rhombus);
+      this.addShape(rhombus);
     },
 
     addParallelogram() {
       const parallelogram = generateParallelogramShape({
+        ...this.centerRectProperties,
         text: 'Parallelogram',
         textProperties: {
           alignCenter: true,
@@ -250,11 +314,12 @@ export default {
         },
       });
 
-      this.$set(this.shapes, parallelogram._id, parallelogram);
+      this.addShape(parallelogram);
     },
 
     addSquare() {
       const square = generateRectShape({
+        ...this.centerRectProperties,
         text: 'Square',
         textProperties: {
           alignCenter: true,
@@ -268,11 +333,12 @@ export default {
         aspectRatio: true,
       });
 
-      this.$set(this.shapes, square._id, square);
+      this.addShape(square);
     },
 
     addText() {
       const text = generateRectShape({
+        ...this.centerRectProperties,
         text: 'Text',
         textProperties: {
           alignCenter: true,
@@ -283,11 +349,12 @@ export default {
         },
       });
 
-      this.$set(this.shapes, text._id, text);
+      this.addShape(text);
     },
 
     addTextbox() {
       const textbox = generateRectShape({
+        ...this.centerRectProperties,
         text: '<h2>Heading</h2><p>Paragraph</p>',
         textProperties: {
           hidden: true,
@@ -297,11 +364,12 @@ export default {
         },
       });
 
-      this.$set(this.shapes, textbox._id, textbox);
+      this.addShape(textbox);
     },
 
     addStorage() {
       const storage = generateStorageShape({
+        ...this.centerRectProperties,
         text: 'Storage',
         textProperties: {
           alignCenter: true,
@@ -314,42 +382,28 @@ export default {
         },
       });
 
-      this.$set(this.shapes, storage._id, storage);
+      this.addShape(storage);
     },
 
     async addImage([file]) {
       const src = await getFileDataUrlContent(file);
+      const { width, height } = await getImageProperties(src);
 
-      const img = document.createElement('img');
+      const image = generateImageShape({
+        ...this.centerRectProperties,
+        x: this.viewBoxCenter.x - width / 2,
+        y: this.viewBoxCenter.y - height / 2,
+        width,
+        height,
+        src,
+        text: file.name,
+        aspectRatio: true,
+      });
 
-      img.onload = () => {
-        const image = generateImageShape({
-          text: file.name,
-          aspectRatio: true,
-          x: 0,
-          y: 0,
-          width: img.width ?? 100,
-          height: img.height ?? 100,
-          src,
-        });
+      this.addShape(image);
 
-        this.$set(this.shapes, image._id, image);
-
-        this.$refs.fileSelector.clear();
-      };
-
-      img.src = src;
+      this.$refs.fileSelector.clear();
     },
   },
 };
 </script>
-
-<style lang="scss">
-.flowchart {
-  display: flex;
-
-  &__editor {
-    flex-grow: 1;
-  }
-}
-</style>
