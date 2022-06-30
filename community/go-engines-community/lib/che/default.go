@@ -211,6 +211,16 @@ func NewEngine(
 		},
 		logger,
 	))
+	engine.AddPeriodicalWorker("infos dictionary", libengine.NewLockedPeriodicalWorker(
+		periodicalLockClient,
+		redis.InfosDictionaryPeriodicalLockKey,
+		&infosDictionaryPeriodicalWorker{
+			Client:             mongoClient,
+			PeriodicalInterval: options.PeriodicalWaitTime,
+			Logger:             logger,
+		},
+		logger,
+	))
 
 	return engine
 }

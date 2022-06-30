@@ -1015,6 +1015,11 @@ definitions:
     required:
     - name
     type: object
+  entityinfodictionary.Result:
+    properties:
+      value:
+        type: string
+    type: object
   entityservice.AlarmWithEntity:
     properties:
       alarm:

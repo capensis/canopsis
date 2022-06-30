@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfodictionary"
 	"net/url"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -1446,6 +1447,16 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionDelete, enforcer),
 				flappingRuleAPI.Delete,
+			)
+		}
+
+		infoDictionaryApi := entityinfodictionary.NewApi(entityinfodictionary.NewStore(dbClient), logger)
+		infoDictionaryRouter := protected.Group("/entity-infos-dictionary")
+		{
+			infoDictionaryRouter.GET(
+				"",
+				middleware.Authorize(authObjEntity, permRead, enforcer),
+				infoDictionaryApi.List,
 			)
 		}
 	}

@@ -2785,6 +2785,42 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entity-infos-dictionary:
+    get:
+      tags:
+        - entity-infos-dictionary
+      summary: Find entity infos keys or values
+      description: Get paginated list of entity infos or values
+      operationId: entity-infos-dictionary
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - name: key
+          in: query
+          description: infos key name
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/entityinfodictionary.Result'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /entitybasics:
     get:
       tags:

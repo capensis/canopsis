@@ -4279,3 +4279,45 @@ default_entities:
     measurements: null
     name: test-valuegroup-rule-rate-backward-compatibility-2-resource-5
     type: resource
+  default_entities_335:
+    <<: *resource
+    _id: test-entity-infos-dictionary-1
+    infos:
+      test-entity-infos-dictionary-key-1:
+        value: test-entity-infos-dictionary-value-1
+      test-entity-infos-dictionary-key-2:
+        value: test-entity-infos-dictionary-value-2
+      test-entity-infos-dictionary-key-3:
+        value: test-entity-infos-dictionary-value-3
+  default_entities_336:
+    <<: *resource
+    _id: test-entity-infos-dictionary-2
+    infos:
+      test-entity-infos-dictionary-key-1:
+        value: test-entity-infos-dictionary-value-4
+      test-entity-infos-dictionary-key-2:
+        value: test-entity-infos-dictionary-value-5
+      test-entity-infos-dictionary-key-3:
+        value: test-entity-infos-dictionary-value-6
+  default_entities_337:
+    <<: *resource
+    _id: test-entity-infos-dictionary-3
+    infos:
+      test-entity-infos-dictionary-key-1:
+        value: test-entity-infos-dictionary-value-7
+      test-entity-infos-dictionary-key-2:
+        value: test-entity-infos-dictionary-value-8
+      test-entity-infos-dictionary-key-3:
+        value: test-entity-infos-dictionary-value-9
+  default_entities_338:
+    <<: *resource
+    _id: test-entity-infos-dictionary-should-be-ignored
+    infos:
+      test-entity-infos-dictionary-key-should-be-ignored-1:
+        value: ab
+      test-entity-infos-dictionary-key-should-be-ignored-2:
+        value: a
+      test-entity-infos-dictionary-key-should-be-ignored-3:
+        value: 10
+      test-entity-infos-dictionary-key-should-be-ignored-4:
+        value: true

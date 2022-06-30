@@ -86,6 +86,8 @@ const (
 	KpiFilterMongoCollection = "kpi_filter"
 
 	PatternMongoCollection = "pattern"
+
+	InfosDictionaryCollection = "infos_dictionary"
 )
 
 type SingleResultHelper interface {
