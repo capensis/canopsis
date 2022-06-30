@@ -15,6 +15,8 @@
 <script>
 import { Calendar } from 'dayspan';
 
+import { COLORS } from '@/config';
+
 import { DATETIME_FORMATS } from '@/constants';
 
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
@@ -83,7 +85,7 @@ export default {
           data: {
             ...defaultEvent,
             title: `${fromString} - ${toString} ${pbehavior.title}`,
-            color: pbehavior.color,
+            color: pbehavior.color || COLORS.secondary,
             icon: pbehavior.type.icon_name,
           },
           schedule: getScheduleForSpan(daySpan),
