@@ -26,7 +26,6 @@ type Store interface {
 	Insert(ctx context.Context, model *Response) error
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	FindByEntityID(ctx context.Context, entityID string) ([]Response, error)
-	Calendar(ctx context.Context, r CalendarRequest) ([]CalendarResponse, error)
 	CalendarByEntityID(ctx context.Context, r CalendarByEntityIDRequest) ([]CalendarResponse, error)
 	GetOneBy(ctx context.Context, filter bson.M) (*Response, error)
 	FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error)
@@ -174,33 +173,6 @@ func (s *store) FindByEntityID(ctx context.Context, entityID string) ([]Response
 	if err != nil {
 		return nil, err
 	}
-
-	return res, nil
-}
-
-func (s *store) Calendar(ctx context.Context, r CalendarRequest) ([]CalendarResponse, error) {
-	location := s.timezoneConfigProvider.Get().Location
-	span := timespan.New(r.From.In(location).Time, r.To.In(location).Time)
-	computed, err := s.pbhTypeComputer.Compute(ctx, span)
-	if err != nil {
-		return nil, err
-	}
-
-	res := make([]CalendarResponse, 0, len(computed.ComputedPbehaviors))
-	for pbhId, computedPbehavior := range computed.ComputedPbehaviors {
-		for _, computedType := range computedPbehavior.Types {
-			res = append(res, CalendarResponse{
-				ID:    pbhId,
-				Title: computedPbehavior.Name,
-				Color: computedPbehavior.Color,
-				From:  libtypes.CpsTime{Time: computedType.Span.From()},
-				To:    libtypes.CpsTime{Time: computedType.Span.To()},
-				Type:  computed.TypesByID[computedType.ID],
-			})
-		}
-	}
-
-	sort.Slice(res, sortCalendarResponse(res))
 
 	return res, nil
 }
