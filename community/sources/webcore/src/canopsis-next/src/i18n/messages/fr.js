@@ -29,6 +29,7 @@ import {
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
   SCENARIO_TRIGGERS,
+  WEATHER_ACTIONS_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -218,23 +219,11 @@ export default merge({
     pbehavior: 'Comportement périodique | Comportements périodiques',
     template: 'Template',
     cycleDependency: 'Dépendance au cycle',
-    actions: {
-      close: 'Fermer',
-      acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
-      acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
-      saveChanges: 'Sauvegarder',
-      reportIncident: 'Signaler un incident',
-      [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
-      [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
-      [EVENT_ENTITY_TYPES.validate]: 'Valider',
-      [EVENT_ENTITY_TYPES.invalidate]: 'Invalider',
-      [EVENT_ENTITY_TYPES.pause]: 'Pause',
-      [EVENT_ENTITY_TYPES.play]: 'Supprimer la pause',
-      [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
-      [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
-      [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
-      [EVENT_ENTITY_TYPES.executeInstruction]: 'Exécuter la consigne',
-    },
+    acknowledge: 'Acquitter',
+    acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
+    acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
+    saveChanges: 'Sauvegarder',
+    reportIncident: 'Signaler un incident',
     times: {
       second: 'seconde | secondes',
       minute: 'minute | minutes',
@@ -658,6 +647,7 @@ export default merge({
     linksCategoriesAsList: 'Afficher les liens sous forme de liste ?',
     linksCategoriesLimit: 'Nombre d\'éléments de catégorie',
     isMultiAckEnabled: 'Acquittement multiple',
+    isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
     fastAckOutput: 'Commentaire d\'acquittement rapide',
     isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
     isCorrelationEnabled: 'Corrélation activée ?',
@@ -1035,7 +1025,7 @@ export default merge({
       copyToClipboard: 'Copier dans le presse-papier',
     },
     service: {
-      actionPending: 'action(s) en attente',
+      actionPending: 'action en attente | actions en attente',
       refreshEntities: 'Rafraîchir la liste des entités',
       editPbehaviors: 'Éditer les comportements périodiques',
       entity: {
@@ -1955,6 +1945,20 @@ export default merge({
   },
   serviceWeather: {
     seeAlarms: 'Voir les alarmes',
+    massActions: 'Actions de masse',
+    cannotBeApplied: 'Cette action ne peut pas être appliquée',
+    actions: {
+      [WEATHER_ACTIONS_TYPES.entityAck]: 'Acquitter',
+      [WEATHER_ACTIONS_TYPES.entityValidate]: 'Valider',
+      [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalider',
+      [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',
+      [WEATHER_ACTIONS_TYPES.entityPlay]: 'Supprimer la pause',
+      [WEATHER_ACTIONS_TYPES.entityCancel]: 'Annuler',
+      [WEATHER_ACTIONS_TYPES.entityAssocTicket]: 'Associer un ticket',
+      [WEATHER_ACTIONS_TYPES.entityComment]: 'Commenter l\'alarme',
+      [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Exécuter l\'instruction',
+      [WEATHER_ACTIONS_TYPES.declareTicket]: 'Déclarer un incident',
+    },
   },
   contextGeneralTable: {
     addSelection: 'Ajouter une sélection',

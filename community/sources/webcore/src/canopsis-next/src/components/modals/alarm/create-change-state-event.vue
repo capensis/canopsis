@@ -21,7 +21,7 @@
           :disabled="isDisabled",
           data-test="createChangeStateEventSubmitButton",
           type="submit"
-        ) {{ $t('common.actions.saveChanges') }}
+        ) {{ $t('common.saveChanges') }}
 </template>
 
 <script>
