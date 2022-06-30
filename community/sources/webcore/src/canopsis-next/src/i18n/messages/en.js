@@ -28,6 +28,8 @@ import {
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
+  SCENARIO_TRIGGERS,
+  WEATHER_ACTIONS_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -217,23 +219,11 @@ export default merge({
     pbehavior: 'Pbehavior | Pbehaviors',
     template: 'Template',
     cycleDependency: 'Cycle dependency',
-    actions: {
-      close: 'Close',
-      acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
-      acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
-      saveChanges: 'Save changes',
-      reportIncident: 'Report an incident',
-      [EVENT_ENTITY_TYPES.ack]: 'Acknowledge',
-      [EVENT_ENTITY_TYPES.declareTicket]: 'Declare ticket',
-      [EVENT_ENTITY_TYPES.validate]: 'Validate',
-      [EVENT_ENTITY_TYPES.invalidate]: 'Invalidate',
-      [EVENT_ENTITY_TYPES.pause]: 'Pause',
-      [EVENT_ENTITY_TYPES.play]: 'Play',
-      [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
-      [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
-      [EVENT_ENTITY_TYPES.comment]: 'Comment',
-      [EVENT_ENTITY_TYPES.executeInstruction]: 'Execute instruction',
-    },
+    acknowledge: 'Acknowledge',
+    acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
+    acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
+    saveChanges: 'Save changes',
+    reportIncident: 'Report an incident',
     times: {
       second: 'second | seconds',
       minute: 'minute | minutes',
@@ -280,6 +270,85 @@ export default merge({
       [ENTITIES_STATES.minor]: 'Minor',
       [ENTITIES_STATES.major]: 'Major',
       [ENTITIES_STATES.critical]: 'Critical',
+    },
+    scenarioTriggers: {
+      [SCENARIO_TRIGGERS.create]: {
+        text: 'Alarm creation',
+      },
+      [SCENARIO_TRIGGERS.statedec]: {
+        text: 'Alarm state decrease',
+      },
+      [SCENARIO_TRIGGERS.changestate]: {
+        text: 'Alarm state has been changed by "change state" action',
+      },
+      [SCENARIO_TRIGGERS.stateinc]: {
+        text: 'Alarm state increase',
+      },
+      [SCENARIO_TRIGGERS.changestatus]: {
+        text: 'Alarm status changes eg. flapping',
+      },
+      [SCENARIO_TRIGGERS.ack]: {
+        text: 'Alarm has been acked',
+      },
+      [SCENARIO_TRIGGERS.ackremove]: {
+        text: 'Alarm has been unacked',
+      },
+      [SCENARIO_TRIGGERS.cancel]: {
+        text: 'Alarm has been cancelled',
+      },
+      [SCENARIO_TRIGGERS.uncancel]: {
+        text: 'Alarm has been uncancelled',
+        helpText: 'Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it\'s possible to send an uncancel event via API',
+      },
+      [SCENARIO_TRIGGERS.comment]: {
+        text: 'Alarm has been commented',
+      },
+      [SCENARIO_TRIGGERS.done]: {
+        text: 'Alarm is "done"',
+        helpText: 'Probably legacy, because there is no such action in the UI, but it\'s possible to send a done event via API',
+      },
+      [SCENARIO_TRIGGERS.declareticket]: {
+        text: 'Ticket has been declared by the UI action',
+      },
+      [SCENARIO_TRIGGERS.declareticketwebhook]: {
+        text: 'Ticket has been declared by the webhook',
+      },
+      [SCENARIO_TRIGGERS.assocticket]: {
+        text: 'Ticket has been associated with an alarm',
+      },
+      [SCENARIO_TRIGGERS.snooze]: {
+        text: 'Alarm has been snoozed',
+      },
+      [SCENARIO_TRIGGERS.unsnooze]: {
+        text: 'Alarm has been unsnoozed',
+      },
+      [SCENARIO_TRIGGERS.resolve]: {
+        text: 'Alarm has been resolved',
+      },
+      [SCENARIO_TRIGGERS.activate]: {
+        text: 'Alarm has been activated',
+      },
+      [SCENARIO_TRIGGERS.pbhenter]: {
+        text: 'Alarm enters a periodic behavior',
+      },
+      [SCENARIO_TRIGGERS.pbhleave]: {
+        text: 'Alarm leaves a periodic behavior',
+      },
+      [SCENARIO_TRIGGERS.instructionfail]: {
+        text: 'Manual instruction has failed',
+      },
+      [SCENARIO_TRIGGERS.autoinstructionfail]: {
+        text: 'Auto instruction has failed',
+      },
+      [SCENARIO_TRIGGERS.instructionjobfail]: {
+        text: 'Manual or auto instruction\'s job is failed',
+      },
+      [SCENARIO_TRIGGERS.instructioncomplete]: {
+        text: 'Manual instruction is completed',
+      },
+      [SCENARIO_TRIGGERS.autoinstructioncomplete]: {
+        text: 'Auto instruction is completed',
+      },
     },
   },
   variableTypes: {
@@ -578,6 +647,7 @@ export default merge({
     linksCategoriesAsList: 'Display links as a list?',
     linksCategoriesLimit: 'Number of category items',
     isMultiAckEnabled: 'Multiple ack',
+    isMultiDeclareTicketEnabled: 'Multiple declare ticket',
     fastAckOutput: 'Fast-ack output',
     isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',
     isCorrelationEnabled: 'Is correlation enabled?',
@@ -955,7 +1025,7 @@ export default merge({
       copyToClipboard: 'Copy to clipboard',
     },
     service: {
-      actionPending: 'action(s) pending',
+      actionPending: 'action pending | actions pending',
       refreshEntities: 'Refresh entities list',
       editPbehaviors: 'Edit pbehaviors',
       entity: {
@@ -1875,6 +1945,20 @@ export default merge({
   },
   serviceWeather: {
     seeAlarms: 'See alarms',
+    massActions: 'Mass actions',
+    cannotBeApplied: 'This action cannot be applied',
+    actions: {
+      [WEATHER_ACTIONS_TYPES.entityAck]: 'Acknowledge',
+      [WEATHER_ACTIONS_TYPES.entityValidate]: 'Validate',
+      [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalidate',
+      [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',
+      [WEATHER_ACTIONS_TYPES.entityPlay]: 'Play',
+      [WEATHER_ACTIONS_TYPES.entityCancel]: 'Cancel',
+      [WEATHER_ACTIONS_TYPES.entityAssocTicket]: 'Associate ticket',
+      [WEATHER_ACTIONS_TYPES.entityComment]: 'Comment',
+      [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Execute instruction',
+      [WEATHER_ACTIONS_TYPES.declareTicket]: 'Declare ticket',
+    },
   },
   contextGeneralTable: {
     addSelection: 'Add selection',

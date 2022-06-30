@@ -26,13 +26,6 @@ import (
 const (
 	ErrGeneral    = 1
 	ErrRabbitInit = 2
-
-	DefaultCfgFile = "/opt/canopsis/etc/canopsis.toml"
-	FlagUsageConf  = "The configuration file used to initialize Canopsis."
-
-	DefaultMongoMigrationsPath    = "/opt/canopsis/share/database/migrations"
-	DefaultMongoFixturesPath      = "/opt/canopsis/share/database/fixtures"
-	DefaultPostgresMigrationsPath = "/opt/canopsis/share/database/postgres_migrations"
 )
 
 type Conf struct {
@@ -60,6 +53,12 @@ func main() {
 	if err := toml.Unmarshal(data, &conf); err != nil {
 		logger.Error().Err(err).Int("exit status", 2).Msg("")
 		os.Exit(2)
+	}
+
+	if f.overrideConfFile != "" {
+		if err := loadOverrideConfig(logger, &conf, f.overrideConfFile); err != nil {
+			logger.Warn().Err(err).Msgf("skipped configuration overriding")
+		}
 	}
 
 	err = GracefullStart(ctx, logger)
@@ -230,5 +229,31 @@ func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
 		return err
 	}
 
+	return nil
+}
+
+// Clone returns pointer to a new deep copy of current Config
+func (c *Conf) Clone() interface{} {
+	cloned := *c
+	return &cloned
+}
+
+func loadOverrideConfig(logger zerolog.Logger, conf *Conf, overrideConfFile string) error {
+	data, err := ioutil.ReadFile(overrideConfFile)
+	if err != nil {
+		return fmt.Errorf("no configuration file found")
+	}
+
+	var overrideConf map[string]interface{}
+	if err = toml.Unmarshal(data, &overrideConf); err != nil {
+		return err
+	}
+
+	newPtr, err := config.Override(conf, overrideConf)
+	if err != nil {
+		return err
+	}
+
+	*conf = *newPtr.(*Conf)
 	return nil
 }
