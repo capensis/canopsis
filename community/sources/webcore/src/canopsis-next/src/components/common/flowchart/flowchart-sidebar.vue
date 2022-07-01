@@ -11,6 +11,12 @@
             template(#activator="{ on }")
               v-btn.ma-0.pa-0(v-on="on", flat, large)
                 v-icon(size="38", color="grey darken-3") $vuetify.icons.image_shape
+      v-expansion-panel-content
+        template(#header="")
+          span.white {{ $t('flowchart.icons') }}
+        v-layout(row, wrap)
+          v-btn.ma-0.pa-0(v-for="icon in icons", :key="icon.src", flat, large, @click="addIconAsset(icon.src)")
+            img(:src="icon.src")
 </template>
 
 <script>
@@ -33,6 +39,8 @@ import { formBaseMixin } from '@/mixins/form';
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import { generatePoint } from '@/helpers/flowchart/points';
 import { getImageProperties } from '@/helpers/file/image';
+
+import archAmazonCloudDirectory from './assets/arch-amazon-cloud-directory.svg';
 
 export default {
   components: { FileSelector },
@@ -74,6 +82,12 @@ export default {
         { icon: '$vuetify.icons.dashed_bidirectional_arrow_line_shape', action: this.addDashedBidirectionalArrowLine },
         { icon: '$vuetify.icons.text_shape', action: this.addText },
         { icon: '$vuetify.icons.textbox_shape', action: this.addTextbox },
+      ];
+    },
+
+    icons() {
+      return [
+        { src: archAmazonCloudDirectory },
       ];
     },
 
@@ -410,6 +424,21 @@ export default {
       this.addShape(image);
 
       this.$refs.fileSelector.clear();
+    },
+
+    async addIconAsset(src) {
+      const { width, height } = await getImageProperties(src);
+
+      const image = generateImageShape({
+        ...this.centerRectProperties,
+        width,
+        height,
+        src,
+        text: 'Icon',
+        aspectRatio: true,
+      });
+
+      this.addShape(image);
     },
   },
 };
