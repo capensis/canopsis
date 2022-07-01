@@ -953,17 +953,17 @@ Feature: create and update alarm by main event stream
                 "t": {{ .commentEventTimestamp }},
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
     When I send an event:
     """json
@@ -983,7 +983,7 @@ Feature: create and update alarm by main event stream
     """
     When I save response commentEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-7"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-7
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1008,8 +1008,38 @@ Feature: create and update alarm by main event stream
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -1036,7 +1066,7 @@ Feature: create and update alarm by main event stream
               "page": 1,
               "page_count": 1,
               "per_page": 10,
-              "total_count": 3
+              "total_count": 4
             }
           }
         }

@@ -1001,13 +1001,6 @@ func getComputedFields(now types.CpsTime) bson.M {
 				"$v.pbh_inactive_duration",
 			}},
 		}},
-		"v.last_comment": bson.M{"$arrayElemAt": bson.A{
-			bson.M{"$filter": bson.M{
-				"input": "$v.steps",
-				"cond":  bson.M{"$eq": bson.A{"$$this._t", types.AlarmStepComment}},
-			}},
-			-1,
-		}},
 	}
 }
 
