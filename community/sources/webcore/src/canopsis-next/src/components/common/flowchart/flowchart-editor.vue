@@ -120,13 +120,14 @@ export default {
         x: 0,
         y: 0,
       },
+      viewBoxObject: this.viewBox,
 
       panning: false,
     };
   },
   computed: {
     viewBoxString() {
-      const { x, y, width, height } = this.viewBox;
+      const { x, y, width, height } = this.viewBoxObject;
 
       return `${x} ${y} ${width} ${height}`;
     },
@@ -160,8 +161,8 @@ export default {
     this.$refs.svg.removeEventListener('wheel', this.onWheel);
   },
   methods: {
-    updateViewBox(viewBox) {
-      this.$emit('update:viewBox', { ...this.viewBox, ...viewBox });
+    updateViewBox() {
+      this.$emit('update:viewBox', this.viewBoxObject);
     },
 
     normalizeCursor({ x, y }) {
@@ -181,8 +182,8 @@ export default {
         const heightDiff = (this.editorSize.height - height) * this.heightScale;
 
         this.updateViewBox({
-          width: this.viewBox.width - widthDiff,
-          height: this.viewBox.height - heightDiff,
+          width: this.viewBoxObject.width - widthDiff,
+          height: this.viewBoxObject.height - heightDiff,
         });
       } else {
         this.updateViewBox({ width, height });
@@ -198,28 +199,26 @@ export default {
       if (event.ctrlKey) {
         const percent = event.deltaY < 0 ? 0.05 : -0.05;
 
-        const scaleWidth = this.viewBox.width * percent;
-        const scaleHeight = this.viewBox.height * percent;
+        const scaleWidth = this.viewBoxObject.width * percent;
+        const scaleHeight = this.viewBoxObject.height * percent;
 
         const deltaWidth = scaleWidth * 2;
         const deltaHeight = scaleHeight * 2;
 
         const { x, y } = this.normalizeCursor({ x: event.clientX, y: event.clientY });
 
-        const cursorPercentX = (x - this.viewBox.x) / this.viewBox.width;
-        const cursorPercentY = (y - this.viewBox.y) / this.viewBox.height;
+        const cursorPercentX = (x - this.viewBoxObject.x) / this.viewBoxObject.width;
+        const cursorPercentY = (y - this.viewBoxObject.y) / this.viewBoxObject.height;
 
         const offsetX = deltaWidth * cursorPercentX;
         const offsetY = deltaHeight * cursorPercentY;
         const offsetWidth = scaleWidth + deltaWidth - offsetX;
         const offsetHeight = scaleHeight + deltaHeight - offsetY;
 
-        this.updateViewBox({
-          x: this.viewBox.x + offsetX,
-          y: this.viewBox.y + offsetY,
-          width: this.viewBox.width - offsetWidth,
-          height: this.viewBox.height - offsetHeight,
-        });
+        this.viewBoxObject.x += offsetX;
+        this.viewBoxObject.y += offsetY;
+        this.viewBoxObject.width -= offsetWidth;
+        this.viewBoxObject.height -= offsetHeight;
       }
     },
 
@@ -339,6 +338,7 @@ export default {
 
     onContainerMouseUp() {
       if (this.panning) {
+        this.updateViewBox();
         this.panning = false;
         return;
       }
@@ -371,8 +371,8 @@ export default {
 
     onContainerMouseMove(event) {
       if (this.panning) {
-        this.viewBox.x -= event.movementX * this.widthScale;
-        this.viewBox.y -= event.movementY * this.heightScale;
+        this.viewBoxObject.x -= event.movementX * this.widthScale;
+        this.viewBoxObject.y -= event.movementY * this.heightScale;
 
         return;
       }
