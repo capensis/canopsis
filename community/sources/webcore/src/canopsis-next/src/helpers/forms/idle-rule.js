@@ -1,6 +1,12 @@
 import { omit, pick } from 'lodash';
 
-import { IDLE_RULE_ALARM_CONDITIONS, IDLE_RULE_TYPES, PATTERNS_FIELDS, TIME_UNITS } from '@/constants';
+import {
+  IDLE_RULE_ALARM_CONDITIONS,
+  IDLE_RULE_TYPES,
+  OLD_PATTERNS_FIELDS,
+  PATTERNS_FIELDS,
+  TIME_UNITS,
+} from '@/constants';
 
 import { enabledToForm } from '@/helpers/forms/shared/common';
 import { durationToForm } from '@/helpers/date/duration';
@@ -62,7 +68,11 @@ export const idleRuleToForm = (idleRule = {}) => ({
   disable_during_periods: idleRule.disable_during_periods ?? [],
   alarm_condition: idleRule.alarm_condition ?? IDLE_RULE_ALARM_CONDITIONS.lastEvent,
   operation: pick(actionToForm(idleRule.operation), ['type', 'parameters']),
-  patterns: filterPatternsToForm(idleRule, [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm]),
+  patterns: filterPatternsToForm(
+    idleRule,
+    [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm],
+    [OLD_PATTERNS_FIELDS.entity, OLD_PATTERNS_FIELDS.alarm],
+  ),
 });
 
 /**

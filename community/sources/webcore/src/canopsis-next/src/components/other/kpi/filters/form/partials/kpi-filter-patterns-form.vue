@@ -2,7 +2,7 @@
   c-patterns-field(
     v-field="form",
     :entity-attributes="entityAttributes",
-    :disabled="disabled",
+    :readonly="readonly",
     required,
     with-entity
   )
@@ -21,7 +21,7 @@ export default {
       type: Object,
       required: true,
     },
-    disabled: {
+    readonly: {
       type: Boolean,
       default: false,
     },

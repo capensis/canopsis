@@ -182,6 +182,7 @@ describe('c-patterns-field', () => {
         withPbehavior: true,
         withTotalEntity: true,
         required: true,
+        readonly: true,
         someRequired: true,
         name: 'name',
       },

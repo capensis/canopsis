@@ -143,9 +143,5 @@ export default {
         console.warn(err);
       }
     },
-
-    fetchEntitiesCountWithoutStore(context, { data }) {
-      return request.post(API_ROUTES.pbehavior.pbehaviorsCount, data);
-    },
   },
 };
