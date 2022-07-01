@@ -496,6 +496,36 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			matchResult: false,
 		},
+		"given exist ack condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.ack",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					ACK: &types.AlarmStep{},
+				},
+			},
+			matchResult: true,
+		},
+		"given not exist ack condition should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.ack",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{},
+			},
+			matchResult: false,
+		},
 	}
 }
 
@@ -623,6 +653,21 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 						{"alarm.v.infos_array.v.info_name": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
 						{"alarm.v.infos_array.v.info_name": bson.M{"$eq": 3}},
 					}},
+				}},
+			}},
+		},
+		"given ref condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.ack",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.ack": bson.M{"$exists": true, "$ne": nil}},
 				}},
 			}},
 		},

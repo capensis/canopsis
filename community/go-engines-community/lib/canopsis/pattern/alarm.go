@@ -71,8 +71,8 @@ func (p Alarm) Match(alarm types.Alarm) (bool, error) {
 				matched, _, err = cond.MatchString(str)
 			} else if i, ok := getAlarmIntField(alarm, f); ok {
 				matched, err = cond.MatchInt(i)
-			} else if b, ok := getAlarmBoolField(alarm, f); ok {
-				matched, err = cond.MatchBool(b)
+			} else if r, ok := getAlarmRefField(alarm, f); ok {
+				matched, err = cond.MatchRef(r)
 			} else if t, ok := getAlarmTimeField(alarm, f); ok {
 				matched, err = cond.MatchTime(t)
 			} else if d, ok := getAlarmDurationField(alarm, f); ok {
@@ -151,8 +151,8 @@ func (p Alarm) Validate(forbiddenFields, onlyTimeAbsoluteFields []string) bool {
 				_, _, err = cond.MatchString(str)
 			} else if i, ok := getAlarmIntField(emptyAlarm, f); ok {
 				_, err = cond.MatchInt(i)
-			} else if b, ok := getAlarmBoolField(emptyAlarm, f); ok {
-				_, err = cond.MatchBool(b)
+			} else if r, ok := getAlarmRefField(emptyAlarm, f); ok {
+				_, err = cond.MatchRef(r)
 			} else if t, ok := getAlarmTimeField(emptyAlarm, f); ok {
 				_, err = cond.MatchTime(t)
 			} else if d, ok := getAlarmDurationField(emptyAlarm, f); ok {
@@ -360,18 +360,30 @@ func getAlarmIntField(alarm types.Alarm, f string) (int64, bool) {
 	}
 }
 
-func getAlarmBoolField(alarm types.Alarm, f string) (bool, bool) {
+func getAlarmRefField(alarm types.Alarm, f string) (interface{}, bool) {
 	switch f {
 	case "v.ack":
-		return alarm.Value.ACK != nil, true
+		if alarm.Value.ACK == nil {
+			return nil, true
+		}
+		return alarm.Value.ACK, true
 	case "v.ticket":
-		return alarm.Value.Ticket != nil, true
+		if alarm.Value.Ticket == nil {
+			return nil, true
+		}
+		return alarm.Value.Ticket, true
 	case "v.canceled":
-		return alarm.Value.Canceled != nil, true
-	case "v.snoozed":
-		return alarm.Value.Snooze != nil, true
+		if alarm.Value.Canceled == nil {
+			return nil, true
+		}
+		return alarm.Value.Canceled, true
+	case "v.snooze":
+		if alarm.Value.Snooze == nil {
+			return nil, true
+		}
+		return alarm.Value.Snooze, true
 	default:
-		return false, false
+		return nil, false
 	}
 }
 
