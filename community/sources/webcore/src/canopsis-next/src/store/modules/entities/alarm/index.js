@@ -66,7 +66,15 @@ export default {
     },
   },
   actions: {
-    fetchManualMetaAlarmListWithoutStore(context, { params } = {}) {
+    fetchComponentAlarmsListWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.componentAlarms, { params });
+    },
+
+    fetchResolvedAlarmsListWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.resolvedAlarms, { params });
+    },
+
+    fetchManualMetaAlarmsListWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.manualMetaAlarm, { params });
     },
 

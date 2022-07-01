@@ -115,6 +115,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
               editable="true"
               filters=""
               widgetid="3f8dba7c-f39e-42ae-912c-e78cb39669c5"
+              withalarm="true"
+              withentity="true"
+              withpbehavior="true"
             />
             <hr
               class="v-divider theme--light"
