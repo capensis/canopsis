@@ -13,14 +13,12 @@ import (
 // implements the DataSourceFactory interface.
 type EntityDataSourceFactory struct {
 	enrichmentCenter libcontext.EnrichmentCenter
-	enrichFields     libcontext.EnrichFields
 }
 
 // NewEntityDataSourceFactory creates a new EntityDataSourceFactory.
-func NewEntityDataSourceFactory(enrichmentCenter libcontext.EnrichmentCenter, enrichFields libcontext.EnrichFields) EntityDataSourceFactory {
+func NewEntityDataSourceFactory(enrichmentCenter libcontext.EnrichmentCenter) EntityDataSourceFactory {
 	return EntityDataSourceFactory{
 		enrichmentCenter: enrichmentCenter,
-		enrichFields:     enrichFields,
 	}
 }
 
@@ -36,7 +34,6 @@ func (p EntityDataSourceFactory) Create(_ mongo.DbClient, parameters map[string]
 
 	return EntityDataSourceGetter{
 		EnrichmentCenter: p.enrichmentCenter,
-		EnrichFields:     p.enrichFields,
 	}, nil
 }
 
@@ -45,13 +42,12 @@ func (p EntityDataSourceFactory) Create(_ mongo.DbClient, parameters map[string]
 // component and connector) if they do not exist.
 type EntityDataSourceGetter struct {
 	EnrichmentCenter libcontext.EnrichmentCenter
-	EnrichFields     libcontext.EnrichFields
 }
 
 // Get returns the entity corresponding to an event.
 func (g EntityDataSourceGetter) Get(ctx context.Context, parameters DataSourceGetterParameters, report *Report) (interface{}, error) {
 	if parameters.Event.IsContextable() {
-		entity, updatedServices, err := g.EnrichmentCenter.Handle(ctx, parameters.Event, g.EnrichFields)
+		entity, updatedServices, err := g.EnrichmentCenter.Handle(ctx, parameters.Event)
 		if err != nil {
 			return nil, fmt.Errorf("unable to get entity: %w", err)
 		}
