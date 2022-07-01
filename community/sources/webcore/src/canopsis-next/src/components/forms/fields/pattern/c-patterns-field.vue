@@ -5,7 +5,9 @@
         v-field="value.alarm_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
+        :readonly="readonly",
         :name="alarmFieldName",
+        :check-count-name="$constants.PATTERNS_FIELDS.alarm",
         :attributes="alarmAttributes",
         with-type,
         @input="errors.remove(alarmFieldName)"
@@ -16,7 +18,9 @@
         v-field="value.entity_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
+        :readonly="readonly",
         :name="entityFieldName",
+        :check-count-name="$constants.PATTERNS_FIELDS.entity",
         :attributes="entityAttributes",
         with-type,
         @input="errors.remove(entityFieldName)"
@@ -27,7 +31,9 @@
         v-field="value.pbehavior_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
+        :readonly="readonly",
         :name="pbehaviorFieldName",
+        :check-count-name="$constants.PATTERNS_FIELDS.pbehavior",
         with-type,
         @input="errors.remove(pbehaviorFieldName)"
       )
@@ -37,6 +43,7 @@
         v-field="value.event_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
+        :readonly="readonly",
         :name="eventFieldName",
         @input="errors.remove(eventFieldName)"
       )
@@ -46,6 +53,7 @@
         v-field="value.total_entity_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
+        :readonly="readonly",
         :name="totalEntityFieldName",
         with-type,
         @input="errors.remove(totalEntityFieldName)"
@@ -53,6 +61,8 @@
 </template>
 
 <script>
+import { PATTERNS_FIELDS } from '@/constants';
+
 export default {
   inject: ['$validator'],
   model: {
@@ -108,6 +118,10 @@ export default {
       type: String,
       default: '',
     },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -134,23 +148,23 @@ export default {
     },
 
     alarmFieldName() {
-      return this.preparePatternsFieldName('alarm_pattern');
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.alarm);
     },
 
     eventFieldName() {
-      return this.preparePatternsFieldName('event_pattern');
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.event);
     },
 
     entityFieldName() {
-      return this.preparePatternsFieldName('entity_pattern');
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.entity);
     },
 
     pbehaviorFieldName() {
-      return this.preparePatternsFieldName('pbehavior_pattern');
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.pbehavior);
     },
 
     totalEntityFieldName() {
-      return this.preparePatternsFieldName('total_entity_pattern');
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.totalEntityPattern);
     },
   },
   methods: {

@@ -2,6 +2,7 @@
   c-pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
+    :readonly="readonly",
     :name="name",
     :required="required",
     :attributes="eventFilterAttributes"
@@ -37,6 +38,10 @@ export default {
       required: false,
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    readonly: {
       type: Boolean,
       default: false,
     },
