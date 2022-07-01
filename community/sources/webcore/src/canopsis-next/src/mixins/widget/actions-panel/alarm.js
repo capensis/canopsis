@@ -1,11 +1,11 @@
-import { get, cloneDeep } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
+import { get } from 'lodash';
 
 import {
   MODALS,
   EVENT_ENTITY_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   CRUD_ACTIONS,
-  QUICK_RANGES,
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
@@ -15,8 +15,10 @@ import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
+
+const { mapActions } = createNamespacedHelpers('alarm');
 
 export const widgetActionsPanelAlarmMixin = {
   mixins: [
@@ -26,6 +28,10 @@ export const widgetActionsPanelAlarmMixin = {
     entitiesPbehaviorMixin,
   ],
   methods: {
+    ...mapActions({
+      fetchResolvedAlarmsListWithoutStore: 'fetchResolvedAlarmsListWithoutStore',
+    }),
+
     async createFastAckEvent() {
       let eventData = {};
 
@@ -154,45 +160,24 @@ export const widgetActionsPanelAlarmMixin = {
     },
 
     showHistoryModal() {
-      const widget = generateDefaultAlarmListWidget();
+      try {
+        const widget = generateDefaultAlarmListWidget();
 
-      const filter = { $and: [{ 'entity._id': get(this.item, 'entity._id') }] }; // TODO: do it like on service
-      const entityFilter = {
-        title: this.item.entity.name,
-        filter,
-      };
+        widget.parameters.widgetColumns = this.widget.parameters.widgetColumns;
 
-      /**
-       * Default value for columns
-       */
-      widget.parameters.widgetColumns = cloneDeep(this.widget.parameters.widgetColumns);
-
-      /**
-       * Default value for liveReporting is last 30 days
-       */
-      widget.parameters.liveReporting = {
-        tstart: QUICK_RANGES.last30Days.start,
-        tstop: QUICK_RANGES.last30Days.stop,
-      };
-
-      /**
-       * Default value for opened
-       */
-      widget.parameters.opened = false;
-
-      /**
-       * Special entity filter for alarms list modal
-       */
-      widget.parameters.mainFilter = entityFilter;
-      widget.parameters.viewFilters = [entityFilter];
-
-      this.$modals.show({
-        name: MODALS.alarmsList,
-        config: {
-          widget,
-          title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.item.entity._id }),
-        },
-      });
+        this.$modals.show({
+          name: MODALS.alarmsList,
+          config: {
+            widget,
+            title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.item.entity._id }),
+            fetchList: params => this.fetchResolvedAlarmsListWithoutStore({
+              params: { ...params, _id: this.item.entity._id },
+            }),
+          },
+        });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('errors.default') });
+      }
     },
 
     showManualMetaAlarmUngroupModal() {

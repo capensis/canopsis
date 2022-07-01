@@ -31,11 +31,11 @@ const selectTextField = wrapper => wrapper.find('.v-text-field');
 const selectComboboxField = wrapper => wrapper.find('.v-combobox');
 
 describe('manual-meta-alarm-form', () => {
-  const fetchManualMetaAlarmListWithoutStore = jest.fn().mockReturnValue([]);
+  const fetchManualMetaAlarmsListWithoutStore = jest.fn().mockReturnValue([]);
   const alarmModule = {
     name: 'alarm',
     actions: {
-      fetchManualMetaAlarmListWithoutStore,
+      fetchManualMetaAlarmsListWithoutStore,
     },
   };
   const store = createMockedStoreModules([
@@ -50,7 +50,7 @@ describe('manual-meta-alarm-form', () => {
       },
     });
 
-    expect(fetchManualMetaAlarmListWithoutStore).toBeCalled();
+    expect(fetchManualMetaAlarmsListWithoutStore).toBeCalled();
   });
 
   test('Meta alarm changed after trigger text field', () => {
@@ -111,7 +111,7 @@ describe('manual-meta-alarm-form', () => {
   });
 
   test('Renders `manual-meta-alarm-form` with alarms', async () => {
-    fetchManualMetaAlarmListWithoutStore.mockReturnValueOnce([
+    fetchManualMetaAlarmsListWithoutStore.mockReturnValueOnce([
       { _id: 'entity-id', name: 'alarm-display-name' },
     ]);
     const wrapper = snapshotFactory({
