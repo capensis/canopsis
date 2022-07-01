@@ -83,9 +83,8 @@ func TestProcessEvent(t *testing.T) {
 		)
 
 		enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
-		enrichFields := libcontext.NewEnrichFields("", "")
 
-		So(service.LoadDataSourceFactories(enrichmentCenter, enrichFields, "."), ShouldBeNil)
+		So(service.LoadDataSourceFactories(enrichmentCenter, "."), ShouldBeNil)
 		err := service.LoadRules(ctx)
 		So(err, ShouldBeNil)
 
@@ -129,9 +128,8 @@ func TestEntityEnrichment(t *testing.T) {
 
 		Convey("An event with an entity is not modified", func() {
 			enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
-			enrichFields := libcontext.NewEnrichFields("", "")
 
-			So(service.LoadDataSourceFactories(enrichmentCenter, enrichFields, "."), ShouldBeNil)
+			So(service.LoadDataSourceFactories(enrichmentCenter, "."), ShouldBeNil)
 			err := service.LoadRules(ctx)
 			So(err, ShouldBeNil)
 
@@ -155,10 +153,9 @@ func TestEntityEnrichment(t *testing.T) {
 
 		Convey("An event without an entity is enriched", func() {
 			enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
-			enrichmentCenter.EXPECT().Handle(gomock.Any(), gomock.Any(), gomock.Any()).Return(&enrichmentCenterEntity, libcontext.UpdatedEntityServices{}, nil)
-			enrichFields := libcontext.NewEnrichFields("", "")
+			enrichmentCenter.EXPECT().Handle(gomock.Any(), gomock.Any()).Return(&enrichmentCenterEntity, libcontext.UpdatedEntityServices{}, nil)
 
-			So(service.LoadDataSourceFactories(enrichmentCenter, enrichFields, "."), ShouldBeNil)
+			So(service.LoadDataSourceFactories(enrichmentCenter, "."), ShouldBeNil)
 			err := service.LoadRules(ctx)
 			So(err, ShouldBeNil)
 
