@@ -85,7 +85,11 @@ const generateDefaultShape = shape => ({
   connections: shape.connections ?? [],
   connectedTo: shape.connectedTo ?? [],
   text: shape.text ?? '',
-  textProperties: shape.textProperties ?? {},
+  textProperties: {
+    ...shape.textProperties,
+    fontColor: 'black',
+    fontSize: 12,
+  },
   properties: shape.properties ?? {},
   aspectRatio: shape.aspectRatio ?? false,
 });
