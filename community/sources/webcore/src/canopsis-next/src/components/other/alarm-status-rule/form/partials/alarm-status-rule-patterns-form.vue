@@ -1,11 +1,11 @@
 <template lang="pug">
   c-patterns-field(
     v-field="form",
-    :with-alarm="!isEntityType",
+    :readonly="readonly",
+    :some-required="flapping",
     :alarm-attributes="alarmAttributes",
     :entity-attributes="entityAttributes",
-    :readonly="readonly",
-    some-required,
+    with-alarm,
     with-entity
   )
 </template>
@@ -13,13 +13,7 @@
 <script>
 import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, QUICK_RANGES } from '@/constants';
 
-import { formValidationHeaderMixin } from '@/mixins/form';
-
 export default {
-  inject: ['$validator'],
-  mixins: [
-    formValidationHeaderMixin,
-  ],
   model: {
     prop: 'form',
     event: 'input',
@@ -29,7 +23,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    isEntityType: {
+    flapping: {
       type: Boolean,
       default: false,
     },
@@ -39,13 +33,21 @@ export default {
     },
   },
   computed: {
+    intervalOptions() {
+      return {
+        intervalRanges: [QUICK_RANGES.custom],
+      };
+    },
+
     alarmAttributes() {
       return [
         {
           value: ALARM_PATTERN_FIELDS.creationDate,
-          options: {
-            intervalRanges: [QUICK_RANGES.custom],
-          },
+          options: this.intervalOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.ackAt,
+          options: this.intervalOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.lastUpdateDate,

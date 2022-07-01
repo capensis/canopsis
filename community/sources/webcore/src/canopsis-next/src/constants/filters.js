@@ -205,3 +205,12 @@ export const PATTERNS_FIELDS = {
   event: 'event_pattern',
   totalEntity: 'total_entity_pattern',
 };
+
+export const OLD_PATTERNS_FIELDS = {
+  alarm: 'old_alarm_patterns',
+  entity: 'old_entity_patterns',
+  event: 'old_event_patterns',
+  totalEntity: 'old_total_entity_patterns',
+  patterns: 'old_patterns',
+  mongoQuery: 'old_mongo_query',
+};
