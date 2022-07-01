@@ -14,27 +14,28 @@
     :small-chips="isMultiply",
     :error-messages="errors.collect(name)",
     :disabled="disabled",
+    :return-object="false",
     :menu-props="{ contentClass: 'c-entity-field__list' }",
     dense,
-    autocomplete,
+    combobox,
     @focus="onFocus",
     @blur="onBlur",
     @update:searchInput="debouncedUpdateSearch"
   )
     template(#item="{ item, tile }")
       v-list-tile.c-entity-field--tile(v-bind="tile.props", v-on="tile.on")
-        v-list-tile-content {{ item[itemText] }}
+        v-list-tile-content {{ getItemText(item) }}
         span.ml-4.grey--text(v-if="shownType") {{ item.type }}
     template(#append-item="")
       div.c-entity-field__append(ref="append")
     template(v-if="isMultiply", #selection="{ item, index }")
       v-chip.c-entity-field__chip(small, close, @input="removeItemFromArray(index)")
-        span.ellipsis {{ item[itemText] }}
+        span.ellipsis {{ getItemText(item) }}
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { debounce, isEqual, keyBy, isArray } from 'lodash';
+import { debounce, isEqual, keyBy, isArray, isString } from 'lodash';
 
 import { BASIC_ENTITY_TYPES } from '@/constants';
 
@@ -140,16 +141,16 @@ export default {
     this.observer = new IntersectionObserver(this.intersectionHandler);
 
     this.observer.observe(this.$refs.append);
-
-    if (this.value.length) {
-      this.fetchEntities(this.value);
-    }
   },
   beforeDestroy() {
     this.observer.unobserve(this.$refs.append);
   },
   methods: {
     ...entityMapActions({ fetchContextEntitiesListWithoutStore: 'fetchListWithoutStore' }),
+
+    getItemText(item) {
+      return isString(item) ? item : item[this.itemText];
+    },
 
     intersectionHandler(entries) {
       const [entry] = entries;
@@ -163,6 +164,7 @@ export default {
     },
 
     updateSearch(value) {
+      this.pageCount = Infinity;
       this.query = {
         page: 1,
         search: value,
@@ -181,26 +183,20 @@ export default {
       this.isFocused = false;
     },
 
-    getQuery(ids) {
-      const params = {
+    getQuery() {
+      return {
         limit: this.limit,
         page: this.query.page,
         search: this.query.search,
         type: this.entityTypes,
       };
-
-      if (ids) {
-        params.filter = { _id: { $in: isArray(ids) ? ids : [ids] } };
-      }
-
-      return params;
     },
 
-    async fetchEntities(ids) {
+    async fetchEntities() {
       this.entitiesPending = true;
 
       const { data: entities, meta } = await this.fetchContextEntitiesListWithoutStore({
-        params: this.getQuery(ids),
+        params: this.getQuery(),
       });
 
       this.pageCount = meta.page_count;

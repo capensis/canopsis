@@ -184,6 +184,7 @@ describe('c-patterns-field', () => {
         withTotalEntity: true,
         withServiceWeather: true,
         required: true,
+        readonly: true,
         someRequired: true,
         name: 'name',
       },

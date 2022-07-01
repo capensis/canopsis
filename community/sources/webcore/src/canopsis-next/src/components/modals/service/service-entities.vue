@@ -51,7 +51,7 @@ import { addKeyInEntities } from '@/helpers/entities';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import eventActionsMixin from '@/mixins/event-actions/alarm';
+import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import entitiesServiceEntityMixin from '@/mixins/entities/service-entity';
 import { localQueryMixin } from '@/mixins/query-local/query';
@@ -71,7 +71,7 @@ export default {
   components: { ServiceTemplate, ModalWrapper },
   mixins: [
     modalInnerMixin,
-    eventActionsMixin,
+    eventActionsAlarmMixin,
     entitiesPbehaviorMixin,
     entitiesServiceEntityMixin,
     submittableMixinCreator(),

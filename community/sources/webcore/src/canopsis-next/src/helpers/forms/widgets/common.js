@@ -215,7 +215,7 @@ export const getEmptyWidgetByType = type => ({
 export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
   type: widget.type,
   title: widget.title ?? '',
-  filters: widget.filters ?? [],
+  filters: widget.filters?.length ? [...widget.filters] : [],
   parameters: widgetParametersToForm(widget),
   grid_parameters: widget.grid_parameters
     ? cloneDeep(widget.grid_parameters)

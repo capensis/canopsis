@@ -51,13 +51,13 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchManualMetaAlarmListWithoutStore: 'fetchManualMetaAlarmListWithoutStore',
+      fetchManualMetaAlarmsListWithoutStore: 'fetchManualMetaAlarmsListWithoutStore',
     }),
 
     async fetchManualMetaAlarms() {
       this.pending = true;
 
-      const alarms = await this.fetchManualMetaAlarmListWithoutStore();
+      const alarms = await this.fetchManualMetaAlarmsListWithoutStore();
 
       this.manualMetaAlarms = alarms ?? [];
       this.pending = false;

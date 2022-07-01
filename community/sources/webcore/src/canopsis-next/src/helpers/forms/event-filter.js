@@ -4,6 +4,7 @@ import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
   EVENT_FILTER_ENRICHMENT_AFTER_TYPES,
   EVENT_FILTER_TYPES,
+  OLD_PATTERNS_FIELDS,
   PATTERNS_FIELDS,
 } from '@/constants';
 
@@ -102,7 +103,11 @@ export const eventFilterToForm = (eventFilter = {}) => ({
   priority: eventFilter.priority ?? 0,
   enabled: eventFilter.enabled ?? true,
   config: eventFilterConfigToForm(eventFilter.config),
-  patterns: filterPatternsToForm(eventFilter, [PATTERNS_FIELDS.event, PATTERNS_FIELDS.entity]),
+  patterns: filterPatternsToForm(
+    eventFilter,
+    [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
+    [OLD_PATTERNS_FIELDS.patterns],
+  ),
 });
 
 /**

@@ -176,7 +176,7 @@ export default {
       }
 
       this.$modals.show({
-        name: MODALS.alarmsList, // TODO: do it like on service
+        name: MODALS.alarmsList, // TODO: do it like on service. Change only filter
         config: {
           widget: {
             ...widget,

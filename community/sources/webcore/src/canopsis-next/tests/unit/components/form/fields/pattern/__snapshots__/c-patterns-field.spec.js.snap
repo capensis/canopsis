@@ -9,8 +9,10 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     title="Alarm patterns"
   >
     <c-alarm-patterns-field-stub
+      check-count-name="alarm_pattern"
       disabled="true"
       name="name.alarm_pattern"
+      readonly="true"
       required="true"
       value="[object Object]"
       with-type="with-type"
@@ -21,8 +23,10 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     title="Entity patterns"
   >
     <c-entity-patterns-field-stub
+      check-count-name="entity_pattern"
       disabled="true"
       name="name.entity_pattern"
+      readonly="true"
       required="true"
       value="[object Object]"
       with-type="with-type"
@@ -33,8 +37,10 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     title="Pbehavior patterns"
   >
     <c-pbehavior-patterns-field-stub
+      check-count-name="pbehavior_pattern"
       disabled="true"
       name="name.pbehavior_pattern"
+      readonly="true"
       required="true"
       value="[object Object]"
       with-type="with-type"
@@ -47,6 +53,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     <c-event-filter-patterns-field-stub
       disabled="true"
       name="name.event_pattern"
+      readonly="true"
       required="true"
     />
   </c-pattern-panel-stub>
@@ -56,7 +63,8 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
   >
     <c-entity-patterns-field-stub
       disabled="true"
-      name="name.total_entity_pattern"
+      name="name"
+      readonly="true"
       required="true"
       with-type="with-type"
     />

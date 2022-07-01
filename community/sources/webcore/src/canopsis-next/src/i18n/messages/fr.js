@@ -249,6 +249,8 @@ export default merge({
     eventType: 'Type d\'événement',
     sourceType: 'Type de Source',
     cycleDependency: 'Dépendance au cycle',
+    checkPattern: 'Motif à carreaux',
+    itemFound: '{count} article trouvé | {count} articles trouvés',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -2711,17 +2713,6 @@ export default merge({
     },
   },
 
-  entitiesCountAlerts: {
-    filter: {
-      countOverLimit: 'Le filtre que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr ?',
-      countRequestError: 'Le calcul du nombre d\'entités ciblées par le filtre s\'est terminée avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr ?',
-    },
-    patterns: {
-      countOverLimit: 'Le modèle que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr ?',
-      countRequestError: 'Le calcul du nombre d\'entités ciblées par le modèle s\'est terminé avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr ?',
-    },
-  },
-
   userInterface: {
     title: 'Interface utilisateur',
     appTitle: 'Titre de l\'application',
@@ -2807,6 +2798,7 @@ export default merge({
     simpleEditor: 'Éditeur simple',
     noData: 'Aucun modèle. Cliquez sur \'@:pattern.addGroup\' pour ajouter des champs au modèle',
     noDataDisabled: 'Aucun modèle.',
+    discard: 'Jeter le motif',
     types: {
       [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
       [PATTERN_TYPES.entity]: 'Modèle d\'entité',
@@ -2816,6 +2808,8 @@ export default merge({
       ruleRequired: 'Veuillez ajouter au moins une règle',
       groupRequired: 'Veuillez ajouter au moins un groupe',
       invalidPatterns: 'Les modèles ne sont pas valides ou il y a un champ de modèle désactivé',
+      countOverLimit: 'Le modèle que vous avez défini cible {count} éléments. Cela peut affecter les performances, en êtes-vous sûr ?',
+      oldPattern: 'Le modèle de filtre actuel est défini dans l\'ancien format. Veuillez utiliser l\'éditeur avancé pour l\'afficher. Les filtres dans l\'ancien format seront bientôt obsolètes. Veuillez créer de nouveaux modèles dans notre interface mise à jour.',
     },
   },
 

@@ -17,17 +17,15 @@
       name="freq_limit"
     )
     c-description-field(v-field="form.description", required)
-    c-patterns-field(
-      v-field="form.patterns",
-      :some-required="flapping",
-      with-alarm,
-      with-entity
-    )
+    alarm-status-rule-patterns-form(v-field="form.patterns", :flapping="flapping")
 </template>
 
 <script>
+import AlarmStatusRulePatternsForm from './partials/alarm-status-rule-patterns-form.vue';
+
 export default {
   inject: ['$validator'],
+  components: { AlarmStatusRulePatternsForm },
   model: {
     prop: 'form',
     event: 'input',
