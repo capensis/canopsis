@@ -15,7 +15,7 @@
         template(#header="")
           span.white {{ $t('flowchart.icons') }}
         v-layout(row, wrap)
-          v-btn.ma-0.pa-0(v-for="icon in icons", :key="icon.src", flat, large, @click="addIconAsset(icon.src)")
+          v-btn.ma-1(v-for="icon in icons", :key="icon.src", flat, fab, small, @click="addIconAsset(icon.src)")
             img(:src="icon.src")
 </template>
 
@@ -36,11 +36,12 @@ import {
 
 import { formBaseMixin } from '@/mixins/form';
 
-import FileSelector from '@/components/forms/fields/file-selector.vue';
 import { generatePoint } from '@/helpers/flowchart/points';
 import { getImageProperties } from '@/helpers/file/image';
 
-import archAmazonCloudDirectory from './assets/arch-amazon-cloud-directory.svg';
+import FileSelector from '@/components/forms/fields/file-selector.vue';
+
+import assets from './assets';
 
 export default {
   components: { FileSelector },
@@ -86,9 +87,9 @@ export default {
     },
 
     icons() {
-      return [
-        { src: archAmazonCloudDirectory },
-      ];
+      return assets.map(assetPath => ({
+        src: assetPath,
+      }));
     },
 
     viewBoxCenter() {
