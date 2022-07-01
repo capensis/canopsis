@@ -28,7 +28,6 @@ type messageProcessor struct {
 	AlarmConfigProvider      config.AlarmConfigProvider
 	EventFilterService       eventfilter.Service
 	EnrichmentCenter         libcontext.EnrichmentCenter
-	EnrichFields             libcontext.EnrichFields
 	AmqpPublisher            libamqp.Publisher
 	AlarmAdapter             alarm.Adapter
 	Encoder                  encoding.Encoder
@@ -75,7 +74,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	// Enrich the event with the entity and create the context.
 	if p.FeatureContextCreation && event.IsContextable() {
-		entity, updated, err := p.EnrichmentCenter.Handle(ctx, event, p.EnrichFields)
+		entity, updated, err := p.EnrichmentCenter.Handle(ctx, event)
 		if err != nil {
 			if engine.IsConnectionError(err) {
 				return nil, err
