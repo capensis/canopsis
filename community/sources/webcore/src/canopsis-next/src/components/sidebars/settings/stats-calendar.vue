@@ -5,10 +5,10 @@
       v-divider
       alarms-list-modal-form(v-model="form.parameters.alarmsList")
       v-divider
-      stats-calendar-advanced-form(v-model="form.parameters")
       v-list-group
-        v-list-tile(#activator="")
-          div(:class="validationHeaderClass") {{ $t('settings.advancedSettings') }}
+        template(#activator="")
+          v-list-tile
+            div(:class="validationHeaderClass") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-filters(
             :filters.sync="form.filters",
@@ -17,7 +17,8 @@
             editable,
             with-alarm,
             with-entity,
-            with-pbehavior
+            with-pbehavior,
+            hide-selector
           )
           v-divider
           field-opened-resolved-filter(v-field="form.parameters.opened")
