@@ -50,6 +50,10 @@ export default {
       type: Object,
       required: true,
     },
+    selected: {
+      type: Array,
+      default: () => [],
+    },
   },
   computed: {
     buttons() {
@@ -125,6 +129,8 @@ export default {
         ...this.shapes,
         [shape._id]: shape,
       });
+
+      this.$emit('update:selected', [shape._id]);
     },
 
     addRectangle() {
@@ -185,6 +191,7 @@ export default {
         properties: {
           stroke: 'black',
           'stroke-width': 2,
+          'stroke-dasharray': '4 4',
         },
       });
 
