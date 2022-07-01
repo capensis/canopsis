@@ -10,6 +10,7 @@
     )
     text-editor(
       ref="editor",
+      v-bind="shape.textProperties",
       :value="shape.text",
       :y="shape.y + shape.height",
       :x="shape.x + shape.width / 2",

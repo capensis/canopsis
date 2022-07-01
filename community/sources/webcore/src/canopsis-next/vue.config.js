@@ -21,7 +21,11 @@ module.exports = {
         };
 
         return options;
-      });
+      })
+      .end();
+
+    config.module.rule('svg').test(/.*flowchart\/assets\/.*\.svg$/i).use('file-loader')
+      .tap(options => ({ ...options, name: 'img/[name].[ext]' }));
 
     return config;
   },
