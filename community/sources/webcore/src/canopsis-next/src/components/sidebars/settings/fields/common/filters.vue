@@ -107,7 +107,13 @@ export default {
           withEntity: this.withEntity,
           withPbehavior: this.withPbehavior,
           action: (newFilter) => {
-            const filters = this.filters.map(item => (item._id === filter._id ? newFilter : item));
+            const preparedNewFilter = {
+              ...newFilter,
+              widget: this.widgetId,
+              _id: filter._id,
+            };
+
+            const filters = this.filters.map(item => (item._id === filter._id ? preparedNewFilter : item));
 
             this.$emit('update:filters', filters);
           },
