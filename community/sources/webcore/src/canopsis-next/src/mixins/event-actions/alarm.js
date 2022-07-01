@@ -4,10 +4,7 @@ import { prepareEventByAlarm, prepareEventsByAlarms } from '@/helpers/forms/even
 
 import eventActionsMixin from './index';
 
-/**
- * @mixin
- */
-export default {
+export const eventActionsAlarmMixin = {
   mixins: [eventActionsMixin],
   methods: {
     /**

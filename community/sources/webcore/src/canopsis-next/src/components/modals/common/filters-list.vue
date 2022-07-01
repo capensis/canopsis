@@ -42,16 +42,8 @@ export default {
     };
   },
   computed: {
-    private() {
-      return this.config.private;
-    },
-
     widgetId() {
       return this.config.widgetId;
-    },
-
-    widget() {
-      return this.getWidgetById(this.widgetId);
     },
 
     userPreference() {
@@ -59,7 +51,7 @@ export default {
     },
 
     filters() {
-      return (this.private ? this.userPreference?.filters : this.widget?.filters) ?? [];
+      return this.userPreference?.filters ?? [];
     },
   },
   mounted() {
@@ -67,9 +59,7 @@ export default {
   },
   methods: {
     refreshFilters() {
-      return this.config.private
-        ? this.fetchUserPreference({ id: this.config.widgetId })
-        : this.fetchWidget({ id: this.config.widgetId });
+      return this.fetchUserPreference({ id: this.config.widgetId });
     },
 
     showCreateFilterModal() {
@@ -88,7 +78,7 @@ export default {
                 ...newFilter,
 
                 widget: this.widgetId,
-                is_private: this.private,
+                is_private: true,
               },
             });
 
@@ -135,7 +125,7 @@ export default {
               id: filter._id,
             });
 
-            return this.refreshFilters(); // TODO: check selected filter (discuss with backend team)
+            return this.refreshFilters();
           },
         },
       });

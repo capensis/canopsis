@@ -45,10 +45,13 @@
           template(v-if="hasAccessToListFilters")
             field-filters(
               v-model="form.parameters.mainFilter",
+              :filters.sync="form.filters",
               :widget-id="widget._id",
-              :filters="form.filters",
               :addable="hasAccessToAddFilter",
               :editable="hasAccessToEditFilter",
+              with-alarm,
+              with-entity,
+              with-pbehavior,
               @input="updateMainFilterUpdatedAt"
             )
             v-divider

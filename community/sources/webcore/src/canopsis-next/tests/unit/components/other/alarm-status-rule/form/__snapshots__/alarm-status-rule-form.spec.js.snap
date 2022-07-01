@@ -1,0 +1,128 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <label
+            aria-hidden="true"
+            class="v-label v-label--active theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Name
+          </label>
+          <input
+            aria-label="Name"
+            name="name"
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <c-duration-field-stub
+    required="required"
+    value="[object Object]"
+  />
+  <c-priority-field-stub
+    required="required"
+    value="2"
+  />
+  <c-number-field-stub
+    label="Frequency limit"
+    min="1"
+    name="freq_limit"
+    value="3"
+  />
+  <c-description-field-stub
+    required="required"
+    value="description"
+  />
+  <alarm-status-rule-patterns-form-stub
+    flapping="true"
+    form="[object Object]"
+  />
+</div>
+`;
+
+exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="v-input v-text-field theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Name
+          </label>
+          <input
+            aria-label="Name"
+            name="name"
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <c-duration-field-stub
+    required="required"
+  />
+  <c-priority-field-stub
+    required="required"
+  />
+  <!---->
+  <c-description-field-stub
+    required="required"
+  />
+  <alarm-status-rule-patterns-form-stub
+    form="[object Object]"
+  />
+</div>
+`;
