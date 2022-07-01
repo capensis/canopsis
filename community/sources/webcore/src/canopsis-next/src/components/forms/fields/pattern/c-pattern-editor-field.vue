@@ -238,12 +238,12 @@ export default {
     },
 
     async checkPatterns() {
-      this.checkPatternsPending = true;
+      try {
+        this.checkPatternsPending = true;
 
-      const isFormValid = await this.validateChildren();
+        const isFormValid = await this.validateChildren();
 
-      if (isFormValid) {
-        try {
+        if (isFormValid) {
           const { [this.checkCountName]: patternsCount } = await this.checkPatternsCount({
             data: {
               [this.checkCountName]: formGroupsToPatternRules(this.patterns.groups),
@@ -255,18 +255,18 @@ export default {
           this.itemsCount = count;
           this.itemsOverLimit = overLimit;
           this.patternsChecked = true;
-        } catch (err) {
-          const { [this.checkCountName]: error } = err || {};
-
-          if (error) {
-            this.errors.add({ field: this.name, msg: error });
-          }
-
-          this.patternsChecked = false;
         }
-      }
+      } catch (err) {
+        const { [this.checkCountName]: error } = err || {};
 
-      this.checkPatternsPending = false;
+        if (error) {
+          this.errors.add({ field: this.name, msg: error });
+        }
+
+        this.patternsChecked = false;
+      } finally {
+        this.checkPatternsPending = false;
+      }
     },
   },
 };
