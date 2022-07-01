@@ -43,6 +43,45 @@ Feature: Entities should be synchronized in metrics db
     """
     Then the response code should be 201
     When I save response filter2ID={{ .lastResponse._id }}
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-che-1"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
+      ],
+      "actions": [
+        {
+          "type": "set_entity_info_from_template",
+          "name": "client",
+          "description": "Client",
+          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+        }
+      ],
+      "priority": 2,
+      "on_success": "pass",
+      "on_failure": "pass",
+      "description": "test-eventfilter-metrics-che-1-description",
+      "enabled": true
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
     When I send an event:
     """json
     {
@@ -162,6 +201,52 @@ Feature: Entities should be synchronized in metrics db
     """
     Then the response code should be 201
     When I save response filter2ID={{ .lastResponse._id }}
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-metrics-che-2"
+            }
+          },
+          {
+            "field": "source_type",
+            "cond": {
+              "type": "eq",
+              "value": "component"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
+      ],
+      "actions": [
+        {
+          "type": "set_entity_info_from_template",
+          "name": "client",
+          "description": "Client",
+          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+        }
+      ],
+      "priority": 2,
+      "on_success": "pass",
+      "on_failure": "pass",
+      "description": "test-eventfilter-metrics-che-2-description",
+      "enabled": true
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
     When I send an event:
     """json
     {
