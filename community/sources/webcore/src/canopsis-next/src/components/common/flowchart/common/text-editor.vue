@@ -7,7 +7,6 @@
           v-html="value",
           :contenteditable="editable",
           :style="fieldStyle",
-          :class="fieldClass",
           @mousedown.stop="",
           @mouseup.stop="",
           @keydown.stop="",
@@ -68,7 +67,15 @@ export default {
       type: Boolean,
       default: false,
     },
-    fieldClass: {
+    color: {
+      type: String,
+      required: false,
+    },
+    fontSize: {
+      type: Number,
+      default: 12,
+    },
+    backgroundColor: {
       type: String,
       required: false,
     },
@@ -97,6 +104,9 @@ export default {
       return {
         width: this.width ? `${this.width}px` : 'max-content',
         'text-align': this.justifyCenter ? 'center' : '',
+        color: this.color,
+        backgroundColor: this.backgroundColor,
+        fontSize: `${this.fontSize}px`,
       };
     },
   },

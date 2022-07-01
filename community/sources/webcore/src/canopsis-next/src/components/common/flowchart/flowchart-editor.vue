@@ -37,6 +37,8 @@ import { SHAPES } from '@/constants';
 import { roundByStep } from '@/helpers/flowchart/round';
 import { calculateConnectorPointBySide } from '@/helpers/flowchart/connectors';
 
+import { selectedShapesMixin } from '@/mixins/flowchart/selected';
+
 import RectShape from './rect-shape/rect-shape.vue';
 import LineShape from './line-shape/line-shape.vue';
 import ArrowLineShape from './arrow-line-shape/arrow-line-shape.vue';
@@ -67,6 +69,7 @@ export default {
     ParallelogramShape,
     StorageShape,
   },
+  mixins: [selectedShapesMixin],
   model: {
     event: 'input',
     prop: 'shapes',
@@ -97,7 +100,6 @@ export default {
       },
 
       data: {},
-      selected: [],
 
       cursor: {
         x: 0,
@@ -127,10 +129,6 @@ export default {
       const { x, y, width, height } = this.viewBox;
 
       return `${x} ${y} ${width} ${height}`;
-    },
-
-    hasSelected() {
-      return !!this.selected.length;
     },
 
     widthScale() {
@@ -235,24 +233,6 @@ export default {
       this.$emit('input', shapes);
     },
 
-    isSelected(id) {
-      return this.selected.includes(id);
-    },
-
-    setSelected(shape) {
-      if (!this.isSelected(shape._id)) {
-        this.selected.push(shape._id);
-      }
-    },
-
-    clearSelected() {
-      this.selected = [];
-    },
-
-    removeShapeSelected(shape) {
-      this.selected = this.selected.filter(id => id !== shape._id);
-    },
-
     onShapeMouseDown(shape, event) {
       if (!this.hasSelected) {
         this.setSelected(shape);
@@ -293,7 +273,7 @@ export default {
       }
 
       if (isShapeSelected) {
-        this.removeShapeSelected(shape);
+        this.removeSelectedShape(shape);
       } else {
         this.setSelected(shape);
       }
@@ -381,7 +361,7 @@ export default {
     },
 
     onContainerMouseDown(event) {
-      if (event.ctrlKey) {
+      if (event.ctrlKey || event.shiftKey || event.button === 1) {
         this.panning = true;
         return;
       }

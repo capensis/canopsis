@@ -12,10 +12,9 @@
       ref="editor",
       v-bind="shape.textProperties",
       :value="shape.text",
-      :y="labelPosition.y + labelPadding",
+      :y="labelPosition.y - shape.textProperties.fontSize / 2",
       :x="labelPosition.x",
       :editable="editing",
-      field-class="white",
       align-center,
       justify-center,
       @blur="disableEditingMode"
@@ -67,10 +66,6 @@ export default {
     markerEnd: {
       type: String,
       required: false,
-    },
-    labelPadding: {
-      type: Number,
-      default: 5,
     },
   },
   computed: {

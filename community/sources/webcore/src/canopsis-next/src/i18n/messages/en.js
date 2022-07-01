@@ -2807,6 +2807,14 @@ export default {
 
   flowchart: {
     shapes: 'Shapes',
+    properties: 'Properties',
+    color: 'Color',
+    fill: 'Fill',
+    stroke: 'Stroke',
+    strokeWidth: 'Stroke width',
+    fontColor: 'Font color',
+    fontSize: 'Font size',
+    fontBackgroundColor: 'Font background color',
   },
 
   ...featureService.get('i18n.en'),
