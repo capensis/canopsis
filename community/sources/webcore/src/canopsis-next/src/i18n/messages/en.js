@@ -2807,6 +2807,7 @@ export default {
 
   flowchart: {
     shapes: 'Shapes',
+    icons: 'Icons',
     properties: 'Properties',
     color: 'Color',
     fill: 'Fill',
