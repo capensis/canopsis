@@ -169,13 +169,13 @@ export function convertStatsCalendarWidgetToQuery(widget) {
  * @returns {{filters: *}}
  */
 export function convertCounterWidgetToQuery(widget) {
-  const { viewFilters = [], isCorrelationEnabled = false } = widget.parameters;
+  const { filters = [], parameters: { isCorrelationEnabled = false } } = widget;
 
   return {
     ...convertAlarmStateFilterToQuery(widget),
 
     correlation: isCorrelationEnabled,
-    filters: viewFilters.map(({ filter }) => filter),
+    filters: filters.map(({ _id: id }) => id),
   };
 }
 

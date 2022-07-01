@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { MODALS, PATTERNS_FIELDS } from '@/constants';
+import { MODALS, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
@@ -48,7 +48,11 @@ export default {
     return {
       form: {
         name: filter.name,
-        patterns: filterPatternsToForm(filter, [PATTERNS_FIELDS.entity]),
+        patterns: filterPatternsToForm(
+          filter,
+          [PATTERNS_FIELDS.entity],
+          [OLD_PATTERNS_FIELDS.entity],
+        ),
       },
     };
   },

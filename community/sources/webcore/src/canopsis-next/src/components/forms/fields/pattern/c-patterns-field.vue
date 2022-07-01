@@ -5,7 +5,9 @@
         v-field="value.alarm_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
+        :readonly="readonly",
         :name="alarmFieldName",
+        :check-count-name="$constants.PATTERNS_FIELDS.alarm",
         :attributes="alarmAttributes",
         with-type,
         @input="errors.remove(alarmFieldName)"
@@ -16,7 +18,9 @@
         v-field="value.entity_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
+        :readonly="readonly",
         :name="entityFieldName",
+        :check-count-name="$constants.PATTERNS_FIELDS.entity",
         :attributes="entityAttributes",
         with-type,
         @input="errors.remove(entityFieldName)"
@@ -27,7 +31,9 @@
         v-field="value.pbehavior_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
+        :readonly="readonly",
         :name="pbehaviorFieldName",
+        :check-count-name="$constants.PATTERNS_FIELDS.pbehavior",
         with-type,
         @input="errors.remove(pbehaviorFieldName)"
       )
@@ -37,6 +43,7 @@
         v-field="value.event_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
+        :readonly="readonly",
         :name="eventFieldName",
         @input="errors.remove(eventFieldName)"
       )
@@ -46,6 +53,7 @@
         v-field="value.total_entity_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
+        :readonly="readonly",
         :name="totalEntityFieldName",
         with-type,
         @input="errors.remove(totalEntityFieldName)"
@@ -122,6 +130,10 @@ export default {
     name: {
       type: String,
       default: '',
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

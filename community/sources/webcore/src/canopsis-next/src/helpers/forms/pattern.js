@@ -1,4 +1,4 @@
-import { isBoolean } from 'lodash';
+import { isBoolean, omit } from 'lodash';
 
 import {
   ALARM_PATTERN_FIELDS,
@@ -13,6 +13,7 @@ import {
   PATTERN_RULE_INFOS_FIELDS,
   PATTERN_TYPES,
   QUICK_RANGES,
+  PATTERNS_FIELDS,
   SERVICE_WEATHER_PATTERN_FIELDS,
 } from '@/constants';
 
@@ -101,6 +102,7 @@ import { durationToForm } from '@/helpers/date/duration';
 /**
  * @typedef {Pattern} PatternForm
  * @property {PatternGroupsForm} groups
+ * @property {Object} old_mongo_query
  */
 
 /**
@@ -317,11 +319,13 @@ export const patternsToGroups = (patterns = []) => patterns.map(patternRulesToGr
  * @return {PatternForm}
  */
 export const patternToForm = (pattern = {}) => ({
-  ...pattern,
+  ...omit(pattern, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.event]),
+
   title: pattern.title ?? '',
   id: pattern.id ?? PATTERN_CUSTOM_ITEM_VALUE,
   type: pattern.type ?? PATTERN_TYPES.alarm,
   is_corporate: pattern.is_corporate ?? false,
+  old_mongo_query: pattern.old_mongo_query,
   groups: patternsToGroups(
     pattern.alarm_pattern
     || pattern.entity_pattern
