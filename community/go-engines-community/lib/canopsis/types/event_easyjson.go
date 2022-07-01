@@ -1503,6 +1503,16 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, out.Status)
 			}
+		case "last_comment":
+			if in.IsNull() {
+				in.Skip()
+				out.LastComment = nil
+			} else {
+				if out.LastComment == nil {
+					out.LastComment = new(AlarmStep)
+				}
+				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, out.LastComment)
+			}
 		case "ticket":
 			if in.IsNull() {
 				in.Skip()
@@ -1860,6 +1870,16 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString(prefix)
 		}
 		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, *in.Status)
+	}
+	if in.LastComment != nil {
+		const prefix string = ",\"last_comment\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, *in.LastComment)
 	}
 	if in.Ticket != nil {
 		const prefix string = ",\"ticket\":"
