@@ -1,9 +1,10 @@
 <template lang="pug">
   v-navigation-drawer(permanent, width="300")
-    v-expansion-panel(color="grey")
+    v-expansion-panel(color="grey", expand)
       v-expansion-panel-content
         template(#header="")
           span.white {{ $t('flowchart.shapes') }}
+        v-divider
         v-layout(row, wrap)
           v-btn.ma-0.pa-0(v-for="button in buttons", :key="button.icon", flat, large, @click="button.action")
             v-icon(size="38", color="grey darken-3") {{ button.icon }}
@@ -14,8 +15,9 @@
       v-expansion-panel-content
         template(#header="")
           span.white {{ $t('flowchart.icons') }}
+        v-divider
         v-layout(row, wrap)
-          v-btn.ma-1(v-for="icon in icons", :key="icon.src", flat, fab, small, @click="addIconAsset(icon.src)")
+          v-btn.ma-0(v-for="icon in icons", :key="icon.src", flat, fab, small, @click="addIconAsset(icon.src)")
             img(:src="icon.src")
 </template>
 
