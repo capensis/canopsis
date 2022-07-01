@@ -160,24 +160,20 @@ export const widgetActionsPanelAlarmMixin = {
     },
 
     showHistoryModal() {
-      try {
-        const widget = generateDefaultAlarmListWidget();
+      const widget = generateDefaultAlarmListWidget();
 
-        widget.parameters.widgetColumns = this.widget.parameters.widgetColumns;
+      widget.parameters.widgetColumns = this.widget.parameters.widgetColumns;
 
-        this.$modals.show({
-          name: MODALS.alarmsList,
-          config: {
-            widget,
-            title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.item.entity._id }),
-            fetchList: params => this.fetchResolvedAlarmsListWithoutStore({
-              params: { ...params, _id: this.item.entity._id },
-            }),
-          },
-        });
-      } catch (err) {
-        this.$popups.error({ text: this.$t('errors.default') });
-      }
+      this.$modals.show({
+        name: MODALS.alarmsList,
+        config: {
+          widget,
+          title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.item.entity._id }),
+          fetchList: params => this.fetchResolvedAlarmsListWithoutStore({
+            params: { ...params, _id: this.item.entity._id },
+          }),
+        },
+      });
     },
 
     showManualMetaAlarmUngroupModal() {

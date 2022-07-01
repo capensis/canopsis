@@ -50,9 +50,9 @@ export default {
     },
 
     countersWithFilters() {
-      const { viewFilters } = this.widget.parameters;
+      const { filters } = this.widget;
 
-      return this.counters.map((counter, index) => ({ ...counter, filter: viewFilters[index] }));
+      return this.counters.map((counter, index) => ({ ...counter, filter: filters[index] }));
     },
   },
   methods: {
