@@ -20,13 +20,14 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import uuid from '@/helpers/uuid';
 
 import { authMixin } from '@/mixins/auth';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import FiltersList from '@/components/other/filter/filters-list.vue';
-import { MODALS } from '@/constants';
 
 export default {
   components: { FilterSelector, FiltersList },
