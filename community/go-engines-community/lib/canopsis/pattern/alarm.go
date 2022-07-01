@@ -338,6 +338,11 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 		return alarm.Value.Component, true
 	case "v.resource":
 		return alarm.Value.Resource, true
+	case "v.last_comment.m":
+		if alarm.Value.LastComment == nil {
+			return "", true
+		}
+		return alarm.Value.LastComment.Message, true
 	default:
 		return "", false
 	}
