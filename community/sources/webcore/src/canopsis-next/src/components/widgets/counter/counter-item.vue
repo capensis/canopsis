@@ -130,7 +130,7 @@ export default {
       };
 
       this.$modals.show({
-        name: MODALS.alarmsList, // TODO: do it like on service
+        name: MODALS.alarmsList, // TODO: do it like on service. Change only filter
         config: {
           widget,
           title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.counter.filter?.title }),
