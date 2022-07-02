@@ -460,10 +460,11 @@ func RegisterRoutes(
 				pbehaviorApi.CalendarByEntityID,
 			)
 		}
+
+		entitybasicsAPI := entitybasic.NewApi(entitybasic.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
+			actionLogger, logger)
 		entitybasicsRouter := protected.Group("/entitybasics")
 		{
-			entitybasicsAPI := entitybasic.NewApi(entitybasic.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
-				actionLogger, logger)
 			entitybasicsRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
@@ -1227,6 +1228,16 @@ func RegisterRoutes(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
 					pbehaviorApi.BulkDelete,
+				)
+			}
+
+			entityRouter := bulkRouter.Group("/entities")
+			{
+				entityRouter.PUT(
+					"",
+					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					entitybasicsAPI.BulkUpdate,
 				)
 			}
 		}
