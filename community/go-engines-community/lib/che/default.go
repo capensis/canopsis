@@ -213,7 +213,7 @@ func NewEngine(
 	))
 	engine.AddPeriodicalWorker("infos dictionary", libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,
-		redis.EntityInfosDictionaryPeriodicalLockKey,
+		redis.CheEntityInfosDictionaryPeriodicalLockKey,
 		&infosDictionaryPeriodicalWorker{
 			Client:             mongoClient,
 			PeriodicalInterval: options.PeriodicalWaitTime,
