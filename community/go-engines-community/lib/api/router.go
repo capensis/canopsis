@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfodictionary"
 	"net/url"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -19,6 +18,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfodictionary"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
@@ -1451,14 +1451,11 @@ func RegisterRoutes(
 		}
 
 		infoDictionaryApi := entityinfodictionary.NewApi(entityinfodictionary.NewStore(dbClient), logger)
-		infoDictionaryRouter := protected.Group("/entity-infos-dictionary")
-		{
-			infoDictionaryRouter.GET(
-				"",
-				middleware.Authorize(authObjEntity, permRead, enforcer),
-				infoDictionaryApi.List,
-			)
-		}
+
+		protected.GET("/entity-infos-dictionary",
+			middleware.Authorize(authObjEntity, permRead, enforcer),
+			infoDictionaryApi.List,
+		)
 	}
 }
 
