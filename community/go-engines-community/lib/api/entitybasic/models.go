@@ -68,3 +68,8 @@ func (r *InfoRequest) UnmarshalJSON(b []byte) error {
 
 	return nil
 }
+
+type BulkUpdateRequestItem struct {
+	EditRequest
+	ID string `json:"_id" binding:"required"`
+}
