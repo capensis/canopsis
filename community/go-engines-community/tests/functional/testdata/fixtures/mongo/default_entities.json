@@ -5016,5 +5016,59 @@
     "type": "resource",
     "component": "test-component-to-calendar-get-by-entity",
     "impact_level": 1
+  },
+  {
+    "_id": "test-entitybasic-to-bulk-update-connector/test-entitybasic-to-bulk-update-connector-name",
+    "category": null,
+    "depends": [
+      "test-entitybasic-to-bulk-update-component-1"
+    ],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [
+      "test-entitybasic-to-bulk-update-resource-1/test-entitybasic-to-bulk-update-component-1"
+    ],
+    "impact_level": 3,
+    "infos": {},
+    "measurements": null,
+    "name": "test-entitybasic-to-bulk-update-connector-name",
+    "description": "test-entitybasic-to-bulk-update-connector-description",
+    "type": "connector"
+  },
+  {
+    "_id": "test-entitybasic-to-bulk-update-component-1",
+    "category": "test-category-to-entitybasic-edit",
+    "depends": [
+      "test-entitybasic-to-bulk-update-resource-1/test-entitybasic-to-bulk-update-component-1"
+    ],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [
+      "test-entitybasic-to-bulk-update-connector/test-entitybasic-to-bulk-update-connector-name"
+    ],
+    "impact_level": 3,
+    "infos": {},
+    "measurements": null,
+    "name": "test-entitybasic-to-bulk-update-component-1",
+    "description": "test-entitybasic-to-bulk-update-component-1-description",
+    "type": "component"
+  },
+  {
+    "_id": "test-entitybasic-to-bulk-update-resource-1/test-entitybasic-to-bulk-update-component-1",
+    "category": "test-category-to-entitybasic-edit",
+    "depends": [
+      "test-entitybasic-to-bulk-update-connector/test-entitybasic-to-bulk-update-connector-name"
+    ],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [
+      "test-entitybasic-to-bulk-update-component-1"
+    ],
+    "impact_level": 3,
+    "infos": {},
+    "measurements": null,
+    "name": "test-entitybasic-to-bulk-update-resource-1",
+    "description": "test-entitybasic-to-bulk-update-resource-1-description",
+    "type": "resource"
   }
 ]

@@ -2,7 +2,10 @@ package entitybasic
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/valyala/fastjson"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -18,6 +21,7 @@ type API interface {
 	Get(c *gin.Context)
 	Update(c *gin.Context)
 	Delete(c *gin.Context)
+	BulkUpdate(c *gin.Context)
 }
 
 type api struct {
@@ -113,6 +117,90 @@ func (a *api) Update(c *gin.Context) {
 	a.metricMetaUpdater.UpdateById(c.Request.Context(), entity.ID)
 
 	c.JSON(http.StatusOK, entity)
+}
+
+func (a *api) BulkUpdate(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+
+	var ar fastjson.Arena
+
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+
+	for idx, rawObject := range rawObjects {
+		userObject, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request BulkUpdateRequestItem
+		err = json.Unmarshal(userObject.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		sReq := request.EditRequest
+		sReq.ID = request.ID
+
+		entity, isToggled, err := a.store.Update(ctx, sReq)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if entity == nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
+		if entity.Enabled || isToggled {
+			a.sendChangeMessage(entityservice.ChangeEntityMessage{
+				ID:         entity.ID,
+				EntityType: entity.Type,
+				IsToggled:  isToggled,
+			})
+		}
+
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, entity.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+			Action:    logger.ActionUpdate,
+			ValueType: logger.ValueTypeEntity,
+			ValueID:   entity.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
+		a.metricMetaUpdater.UpdateById(c.Request.Context(), entity.ID)
+	}
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
 func (a *api) Delete(c *gin.Context) {
