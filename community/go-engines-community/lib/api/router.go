@@ -1231,7 +1231,7 @@ func RegisterRoutes(
 				)
 			}
 
-			entityRouter := bulkRouter.Group("/entities")
+			entityRouter := bulkRouter.Group("/entitybasics")
 			{
 				entityRouter.PUT(
 					"",
