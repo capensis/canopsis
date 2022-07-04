@@ -1,10 +1,11 @@
 <template lang="pug">
   g(@dblclick="$emit('dblclick', $event)")
-    rhombus-figure(
-      :x="rhombus.x",
-      :y="rhombus.y",
-      :width="rhombus.width",
-      :height="rhombus.height",
+    process-figure(
+      :x="process.x",
+      :y="process.y",
+      :width="process.width",
+      :height="process.height",
+      :offset="process.offset",
       :pointer-events="pointerEvents",
       fill="transparent",
       cursor="move",
@@ -13,10 +14,10 @@
     )
     rect-selection(
       v-if="selected",
-      :x="rhombus.x",
-      :y="rhombus.y",
-      :width="rhombus.width",
-      :height="rhombus.height",
+      :x="process.x",
+      :y="process.y",
+      :width="process.width",
+      :height="process.height",
       :padding="padding",
       :color="color",
       :corner-radius="cornerRadius",
@@ -25,10 +26,10 @@
     )
     rect-connectors(
       v-if="connecting",
-      :x="rhombus.x",
-      :y="rhombus.y",
-      :width="rhombus.width",
-      :height="rhombus.height",
+      :x="process.x",
+      :y="process.y",
+      :width="process.width",
+      :height="process.height",
       :padding="padding",
       :color="color",
       @connected="$listeners.connected",
@@ -39,13 +40,13 @@
 
 <script>
 import RectSelection from '../common/rect-selection.vue';
-import RhombusFigure from '../common/rhombus-figure.vue';
 import RectConnectors from '../common/rect-connectors.vue';
+import ProcessFigure from '../common/process-figure.vue';
 
 export default {
-  components: { RhombusFigure, RectSelection, RectConnectors },
+  components: { ProcessFigure, RectSelection, RectConnectors },
   props: {
-    rhombus: {
+    process: {
       type: Object,
       required: true,
     },

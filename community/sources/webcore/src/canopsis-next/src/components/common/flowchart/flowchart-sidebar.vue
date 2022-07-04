@@ -31,6 +31,7 @@ import {
   generateImageShape,
   generateLineShape,
   generateParallelogramShape,
+  generateProcessShape,
   generateRectShape,
   generateRhombusShape,
   generateStorageShape,
@@ -77,6 +78,7 @@ export default {
         { icon: '$vuetify.icons.circle_shape', action: this.addCircle },
         { icon: '$vuetify.icons.ellipse_shape', action: this.addEllipse },
         { icon: '$vuetify.icons.parallelogram_shape', action: this.addParallelogram },
+        { icon: '$vuetify.icons.process_shape', action: this.addProcess },
         { icon: '$vuetify.icons.storage_shape', action: this.addStorage },
         { icon: '$vuetify.icons.curve_line_shape', action: this.addCurveLine },
         { icon: '$vuetify.icons.line_shape', action: this.addLine },
@@ -367,6 +369,24 @@ export default {
       const parallelogram = generateParallelogramShape({
         ...this.centerRectProperties,
         text: 'Parallelogram',
+        textProperties: {
+          alignCenter: true,
+          justifyCenter: true,
+        },
+        properties: {
+          stroke: 'black',
+          'stroke-width': 2,
+          fill: 'white',
+        },
+      });
+
+      this.addShape(parallelogram);
+    },
+
+    addProcess() {
+      const parallelogram = generateProcessShape({
+        ...this.centerRectProperties,
+        text: 'Process',
         textProperties: {
           alignCenter: true,
           justifyCenter: true,
