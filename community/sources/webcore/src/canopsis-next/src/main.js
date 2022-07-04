@@ -202,6 +202,7 @@ import BidirectionalArrowLineShape from '@/components/icons/bidirectional_arrow_
 import DashedBidirectionalArrowLineShape from '@/components/icons/dashed_bidirectional_arrow_line_shape.vue';
 import ImageShape from '@/components/icons/image_shape.vue';
 import CurveLineShape from '@/components/icons/curve_line_shape.vue';
+import ProcessShape from '@/components/icons/process_shape.vue';
 
 import * as modalsComponents from '@/components/modals';
 import * as sidebarsComponents from '@/components/sidebars';
@@ -293,6 +294,9 @@ Vue.use(Vuetify, {
     },
     image_shape: {
       component: ImageShape,
+    },
+    process_shape: {
+      component: ProcessShape,
     },
   },
 });
