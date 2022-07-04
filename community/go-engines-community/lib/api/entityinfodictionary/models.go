@@ -2,9 +2,14 @@ package entityinfodictionary
 
 import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 
-type ListRequest struct {
+type ListValuesRequest struct {
 	pagination.Query
-	Key    string `form:"key" json:"key"`
+	Key    string `form:"key" json:"key" binding:"required"`
+	Search string `form:"search" json:"search"`
+}
+
+type ListKeysRequest struct {
+	pagination.Query
 	Search string `form:"search" json:"search"`
 }
 

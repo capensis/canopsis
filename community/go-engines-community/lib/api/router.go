@@ -1451,10 +1451,13 @@ func RegisterRoutes(
 		}
 
 		infoDictionaryApi := entityinfodictionary.NewApi(entityinfodictionary.NewStore(dbClient), logger)
-
-		protected.GET("/entity-infos-dictionary",
+		protected.GET("/entity-infos-dictionary/keys",
 			middleware.Authorize(authObjEntity, permRead, enforcer),
-			infoDictionaryApi.List,
+			infoDictionaryApi.ListKeys,
+		)
+		protected.GET("/entity-infos-dictionary/values",
+			middleware.Authorize(authObjEntity, permRead, enforcer),
+			infoDictionaryApi.ListValues,
 		)
 	}
 }
