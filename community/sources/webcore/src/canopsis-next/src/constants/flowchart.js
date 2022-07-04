@@ -28,3 +28,8 @@ export const SHAPES = {
   storage: 'storage',
   image: 'image',
 };
+
+export const POINT_TYPES = {
+  curvesControl: 'curvesControl',
+  point: 'point',
+};

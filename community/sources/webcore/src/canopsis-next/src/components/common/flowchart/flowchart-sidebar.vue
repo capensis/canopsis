@@ -44,6 +44,7 @@ import { getImageProperties } from '@/helpers/file/image';
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 
 import assets from './assets';
+import { POINT_TYPES } from '@/constants';
 
 export default {
   components: { FileSelector },
@@ -77,6 +78,7 @@ export default {
         { icon: '$vuetify.icons.ellipse_shape', action: this.addEllipse },
         { icon: '$vuetify.icons.parallelogram_shape', action: this.addParallelogram },
         { icon: '$vuetify.icons.storage_shape', action: this.addStorage },
+        { icon: '$vuetify.icons.curve_line_shape', action: this.addCurveLine },
         { icon: '$vuetify.icons.line_shape', action: this.addLine },
         { icon: '$vuetify.icons.dashed_line_shape', action: this.addDashedLine },
         { icon: '$vuetify.icons.arrow_line_shape', action: this.addArrowLine },
@@ -139,6 +141,32 @@ export default {
         }),
       ];
     },
+
+    centerCurveLinePoints() {
+      const size = 100;
+      const halfSize = size / 2;
+
+      return [
+        generatePoint({
+          x: this.viewBoxCenter.x - halfSize,
+          y: this.viewBoxCenter.y + halfSize,
+        }),
+        generatePoint({
+          x: this.viewBoxCenter.x + halfSize,
+          y: this.viewBoxCenter.y + halfSize,
+          type: POINT_TYPES.curvesControl,
+        }),
+        generatePoint({
+          x: this.viewBoxCenter.x - halfSize,
+          y: this.viewBoxCenter.y - halfSize,
+          type: POINT_TYPES.curvesControl,
+        }),
+        generatePoint({
+          x: this.viewBoxCenter.x + halfSize,
+          y: this.viewBoxCenter.y - halfSize,
+        }),
+      ];
+    },
   },
   methods: {
     addShape(shape) {
@@ -192,6 +220,19 @@ export default {
       const line = generateLineShape({
         points: this.centerLinePoints,
         text: 'Line',
+        properties: {
+          stroke: 'black',
+          'stroke-width': 2,
+        },
+      });
+
+      this.addShape(line);
+    },
+
+    addCurveLine() {
+      const line = generateLineShape({
+        points: this.centerCurveLinePoints,
+        text: 'Curve line',
         properties: {
           stroke: 'black',
           'stroke-width': 2,

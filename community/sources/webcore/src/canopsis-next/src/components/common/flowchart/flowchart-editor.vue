@@ -492,18 +492,26 @@ export default {
 
     moveSelectedDown() {
       this.moveSelected({ x: 0, y: this.gridSize });
+
+      this.updateShapes(this.data);
     },
 
     moveSelectedTop() {
       this.moveSelected({ x: 0, y: -this.gridSize });
+
+      this.updateShapes(this.data);
     },
 
     moveSelectedRight() {
       this.moveSelected({ x: this.gridSize, y: 0 });
+
+      this.updateShapes(this.data);
     },
 
     moveSelectedLeft() {
       this.moveSelected({ x: -this.gridSize, y: 0 });
+
+      this.updateShapes(this.data);
     },
 
     removeSelectedShapes() {
@@ -513,7 +521,11 @@ export default {
       }
     },
 
-    copySelectedShapes() {
+    copySelectedShapes(event) {
+      if (!event.ctrlKey) {
+        return;
+      }
+
       const data = this.selectedIds.reduce((acc, id) => {
         acc[id] = this.data[id];
 
@@ -523,23 +535,28 @@ export default {
       navigator.clipboard.writeText(JSON.stringify(data));
     },
 
-    async pasteShapes() {
+    async pasteShapes(event) {
+      if (!event.ctrlKey) {
+        return;
+      }
+
       const data = await navigator.clipboard.readText();
 
       if (isString(data)) {
         const shapes = JSON.parse(data);
 
         if (isObject(shapes)) {
-          const preparedShapes = Object.entries(shapes).reduce((acc, [id, shape]) => {
-            const resultId = this.data[id] || acc[id] ? `${id}_${uid()}` : id;
+          const preparedShapes = Object.entries(shapes)
+            .reduce((acc, [id, shape]) => {
+              const resultId = this.data[id] || acc[id] ? `${id}_${uid()}` : id;
 
-            acc[resultId] = {
-              ...shape,
-              _id: resultId,
-            };
+              acc[resultId] = {
+                ...shape,
+                _id: resultId,
+              };
 
-            return acc;
-          }, {});
+              return acc;
+            }, {});
 
           this.data = {
             ...this.data,
@@ -558,6 +575,7 @@ export default {
         38: this.moveSelectedTop,
         39: this.moveSelectedRight,
         40: this.moveSelectedDown,
+
         46: this.removeSelectedShapes,
 
         67: this.copySelectedShapes,
@@ -566,7 +584,7 @@ export default {
 
       if (handler) {
         event.preventDefault();
-        handler();
+        handler(event);
       }
     },
   },

@@ -201,6 +201,7 @@ import DashedArrowLineShape from '@/components/icons/dashed_arrow_line_shape.vue
 import BidirectionalArrowLineShape from '@/components/icons/bidirectional_arrow_line_shape.vue';
 import DashedBidirectionalArrowLineShape from '@/components/icons/dashed_bidirectional_arrow_line_shape.vue';
 import ImageShape from '@/components/icons/image_shape.vue';
+import CurveLineShape from '@/components/icons/curve_line_shape.vue';
 
 import * as modalsComponents from '@/components/modals';
 import * as sidebarsComponents from '@/components/sidebars';
@@ -286,6 +287,9 @@ Vue.use(Vuetify, {
     },
     dashed_bidirectional_arrow_line_shape: {
       component: DashedBidirectionalArrowLineShape,
+    },
+    curve_line_shape: {
+      component: CurveLineShape,
     },
     image_shape: {
       component: ImageShape,
