@@ -1,17 +1,23 @@
 <template lang="pug">
-  v-navigation-drawer(permanent, width="300")
+  v-navigation-drawer.flowchart-sidebar(permanent, width="300")
     v-expansion-panel(color="grey", expand)
       v-expansion-panel-content
         template(#header="")
           span.white {{ $t('flowchart.shapes') }}
         v-divider
         v-layout(row, wrap)
-          v-btn.ma-0.pa-0(v-for="button in buttons", :key="button.icon", flat, large, @click="button.action")
-            v-icon(size="38", color="grey darken-3") {{ button.icon }}
+          v-btn.ma-0.pa-0.flowchart-sidebar__button(
+            v-for="(button, index) in buttons",
+            :key="index",
+            flat,
+            large,
+            @click="button.action"
+          )
+            component.grey--text.text--darken-3.pa-1(:is="button.icon")
           file-selector(ref="fileSelector", hide-details, @change="addImage")
             template(#activator="{ on }")
-              v-btn.ma-0.pa-0(v-on="on", flat, large)
-                v-icon(size="38", color="grey darken-3") $vuetify.icons.image_shape
+              v-btn.ma-0.pa-0.flowchart-sidebar__button(v-on="on", flat, large)
+                image-shape-icon.grey--text.text--darken-3
       v-expansion-panel-content
         template(#header="")
           span.white {{ $t('flowchart.icons') }}
@@ -22,6 +28,8 @@
 </template>
 
 <script>
+import { LINE_TYPES } from '@/constants';
+
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
 import {
   generateArrowLineShape,
@@ -32,23 +40,43 @@ import {
   generateLineShape,
   generateParallelogramShape,
   generateProcessShape,
+  generateDocumentShape,
   generateRectShape,
   generateRhombusShape,
   generateStorageShape,
 } from '@/helpers/flowchart/shapes';
-
-import { formBaseMixin } from '@/mixins/form';
-
 import { generatePoint } from '@/helpers/flowchart/points';
 import { getImageProperties } from '@/helpers/file/image';
 
+import { formBaseMixin } from '@/mixins/form';
+
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 
+import RectShapeIcon from './icons/rect-shape.vue';
+import RoundedRectShapeIcon from './icons/rounded-rect-shape.vue';
+import SquareShapeIcon from './icons/square-shape.vue';
+import RhombusShapeIcon from './icons/rhombus-shape.vue';
+import CircleShapeIcon from './icons/circle-shape.vue';
+import EllipseShapeIcon from './icons/ellipse-shape.vue';
+import ParallelogramShapeIcon from './icons/parallelogram-shape.vue';
+import StorageShapeIcon from './icons/storage-shape.vue';
+import LineShapeIcon from './icons/line-shape.vue';
+import DashedLineShapeIcon from './icons/dashed-line-shape.vue';
+import ArrowLineShapeIcon from './icons/arrow-line-shape.vue';
+import DashedArrowLineShapeIcon from './icons/dashed-arrow-line-shape.vue';
+import BidirectionalArrowLineShapeIcon from './icons/bidirectional-arrow-line-shape.vue';
+import DashedBidirectionalArrowLineShapeIcon from './icons/dashed-bidirectional-arrow-line-shape.vue';
+import ImageShapeIcon from './icons/image-shape.vue';
+import CurveLineShapeIcon from './icons/curve-line-shape.vue';
+import ProcessShapeIcon from './icons/process-shape.vue';
+import DocumentShapeIcon from './icons/document-shape.vue';
+import TextShapeIcon from './icons/text-shape.vue';
+import TextboxShapeIcon from './icons/textbox-shape.vue';
+
 import assets from './assets';
-import { LINE_TYPES } from '@/constants';
 
 export default {
-  components: { FileSelector },
+  components: { FileSelector, ImageShapeIcon },
   mixins: [formBaseMixin],
   model: {
     prop: 'shapes',
@@ -71,24 +99,25 @@ export default {
   computed: {
     buttons() {
       return [
-        { icon: '$vuetify.icons.rect_shape', action: this.addRectangle },
-        { icon: '$vuetify.icons.rounded_rect_shape', action: this.addRoundedRectangle },
-        { icon: '$vuetify.icons.square_shape', action: this.addSquare },
-        { icon: '$vuetify.icons.rhombus_shape', action: this.addRhombus },
-        { icon: '$vuetify.icons.circle_shape', action: this.addCircle },
-        { icon: '$vuetify.icons.ellipse_shape', action: this.addEllipse },
-        { icon: '$vuetify.icons.parallelogram_shape', action: this.addParallelogram },
-        { icon: '$vuetify.icons.process_shape', action: this.addProcess },
-        { icon: '$vuetify.icons.storage_shape', action: this.addStorage },
-        { icon: '$vuetify.icons.curve_line_shape', action: this.addCurveLine },
-        { icon: '$vuetify.icons.line_shape', action: this.addLine },
-        { icon: '$vuetify.icons.dashed_line_shape', action: this.addDashedLine },
-        { icon: '$vuetify.icons.arrow_line_shape', action: this.addArrowLine },
-        { icon: '$vuetify.icons.dashed_arrow_line_shape', action: this.addDashedArrowLine },
-        { icon: '$vuetify.icons.bidirectional_arrow_line_shape', action: this.addBidirectionalArrowLine },
-        { icon: '$vuetify.icons.dashed_bidirectional_arrow_line_shape', action: this.addDashedBidirectionalArrowLine },
-        { icon: '$vuetify.icons.text_shape', action: this.addText },
-        { icon: '$vuetify.icons.textbox_shape', action: this.addTextbox },
+        { icon: RectShapeIcon, action: this.addRectangle },
+        { icon: RoundedRectShapeIcon, action: this.addRoundedRectangle },
+        { icon: SquareShapeIcon, action: this.addSquare },
+        { icon: RhombusShapeIcon, action: this.addRhombus },
+        { icon: CircleShapeIcon, action: this.addCircle },
+        { icon: EllipseShapeIcon, action: this.addEllipse },
+        { icon: ParallelogramShapeIcon, action: this.addParallelogram },
+        { icon: ProcessShapeIcon, action: this.addProcess },
+        { icon: DocumentShapeIcon, action: this.addDocument },
+        { icon: StorageShapeIcon, action: this.addStorage },
+        { icon: CurveLineShapeIcon, action: this.addCurveLine },
+        { icon: LineShapeIcon, action: this.addLine },
+        { icon: DashedLineShapeIcon, action: this.addDashedLine },
+        { icon: ArrowLineShapeIcon, action: this.addArrowLine },
+        { icon: DashedArrowLineShapeIcon, action: this.addDashedArrowLine },
+        { icon: BidirectionalArrowLineShapeIcon, action: this.addBidirectionalArrowLine },
+        { icon: DashedBidirectionalArrowLineShapeIcon, action: this.addDashedBidirectionalArrowLine },
+        { icon: TextShapeIcon, action: this.addText },
+        { icon: TextboxShapeIcon, action: this.addTextbox },
       ];
     },
 
@@ -401,6 +430,24 @@ export default {
       this.addShape(parallelogram);
     },
 
+    addDocument() {
+      const parallelogram = generateDocumentShape({
+        ...this.centerRectProperties,
+        text: 'Document',
+        textProperties: {
+          alignCenter: true,
+          justifyCenter: true,
+        },
+        properties: {
+          stroke: 'black',
+          'stroke-width': 2,
+          fill: 'white',
+        },
+      });
+
+      this.addShape(parallelogram);
+    },
+
     addSquare() {
       const square = generateRectShape({
         ...this.centerRectProperties,
@@ -513,3 +560,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.flowchart-sidebar {
+  &__button {
+    min-width: 75px !important;
+  }
+}
+</style>
