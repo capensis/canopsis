@@ -2664,6 +2664,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-20",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
@@ -2871,6 +2872,7 @@ Feature: get service weather
       "name": "test-pbehavior-weather-service-21",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "entity_pattern": [
