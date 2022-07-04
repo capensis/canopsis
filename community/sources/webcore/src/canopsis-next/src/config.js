@@ -151,7 +151,6 @@ export const API_ROUTES = {
     exceptions: '/api/v4/pbehavior-exceptions',
     types: '/api/v4/pbehavior-types',
     pbehaviors: '/api/v4/pbehaviors',
-    pbehaviorsCount: '/api/v4/pbehaviors/count',
     pbehaviorComments: '/api/v4/pbehavior-comments',
     pbehaviorById: '/api/v4/entities/pbehaviors',
     reasons: '/api/v4/pbehavior-reasons',
@@ -180,6 +179,7 @@ export const API_ROUTES = {
   messageRateStats: '/api/v4/message-rate-stats',
   patterns: '/api/v4/patterns',
   bulkPatterns: '/api/v4/bulk/patterns',
+  patternsCount: '/api/v4/patterns-count',
 
   /**
    * Cat routes

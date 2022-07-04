@@ -1,4 +1,4 @@
-import { PATTERN_CUSTOM_ITEM_VALUE, PATTERNS_FIELDS } from '@/constants';
+import { OLD_PATTERNS_FIELDS, PATTERN_CUSTOM_ITEM_VALUE, PATTERNS_FIELDS } from '@/constants';
 
 import { formGroupsToPatternRules, patternToForm } from '@/helpers/forms/pattern';
 
@@ -50,16 +50,23 @@ import { formGroupsToPatternRules, patternToForm } from '@/helpers/forms/pattern
  * Convert filter patterns to form
  *
  * @param {Filter} filter
- * @param {PatternsFields} [fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity]]
+ * @param {PatternsFields} [fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior]]
+ * @param {string[]} [oldFields = []]
  * @return {FilterPatterns}
  */
 export const filterPatternsToForm = (
   filter = {},
-  fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity],
-) => fields.reduce((acc, field) => {
-  const { [`corporate_${field}`]: id, [field]: pattern } = filter;
+  fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior],
+  oldFields = [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
+) => fields.reduce((acc, field, index) => {
+  const oldField = oldFields[index];
+  const {
+    [`corporate_${field}`]: id,
+    [field]: pattern,
+    [oldField]: oldMongoQuery,
+  } = filter;
 
-  acc[field] = patternToForm({ [field]: pattern, id });
+  acc[field] = patternToForm({ [field]: pattern, old_mongo_query: oldMongoQuery, id });
 
   return acc;
 }, {});
