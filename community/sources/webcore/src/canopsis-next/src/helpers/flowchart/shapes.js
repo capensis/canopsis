@@ -1,4 +1,4 @@
-import { SHAPES } from '@/constants';
+import { LINE_TYPES, SHAPES } from '@/constants';
 
 import uid from '@/helpers/uid';
 
@@ -34,6 +34,7 @@ import { generatePoint } from './points';
 /**
  * @typedef {DefaultShape} LineShape
  * @property {Point[]} points
+ * @property {string} lineType
  */
 
 /**
@@ -120,6 +121,7 @@ export const generateLineShape = shape => ({
   ...generateDefaultShape(shape),
 
   type: SHAPES.line,
+  lineType: shape.lineType ?? LINE_TYPES.sharp,
   points: shape.points ?? [
     generatePoint({
       x: 0,

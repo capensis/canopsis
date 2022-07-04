@@ -1,5 +1,3 @@
-import { POINT_TYPES } from '@/constants';
-
 import uid from '@/helpers/uid';
 
 /**
@@ -14,27 +12,16 @@ import uid from '@/helpers/uid';
  *
  * @param {number} x
  * @param {number} y
- * @param {string} type
  * @returns {Point}
  */
 export const generatePoint = ({
   x,
   y,
-  type,
 }) => ({
   x,
   y,
   _id: uid(),
-  type: type ?? '',
 });
-
-/**
- * Check is curves control point
- *
- * @param {string} type
- * @returns {boolean}
- */
-export const isCurvesControl = type => type === POINT_TYPES.curvesControl;
 
 /**
  * Calculate center between points
@@ -59,12 +46,7 @@ export const getGhostPoints = points => points.reduce((acc, point, index) => {
   const nextPoint = points[nextIndex];
 
   if (nextPoint) {
-    acc.push(generatePoint({
-      ...calculateCenterBetweenPoint(point, nextPoint),
-      type: isCurvesControl(point.type) || isCurvesControl(nextPoint.type)
-        ? POINT_TYPES.curvesControl
-        : POINT_TYPES.point,
-    }));
+    acc.push(generatePoint(calculateCenterBetweenPoint(point, nextPoint)));
   }
 
   return acc;

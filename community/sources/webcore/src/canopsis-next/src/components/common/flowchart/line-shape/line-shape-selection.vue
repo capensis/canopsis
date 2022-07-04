@@ -2,6 +2,7 @@
   g(@dblclick="$emit('dblclick', $event)")
     points-path(
       :points="line.points",
+      :type="line.lineType",
       :pointer-events="moving ? 'none' : 'stroke'",
       cursor="move",
       stroke-width="10",
@@ -11,6 +12,7 @@
     template(v-if="selected")
       points-path(
         :points="editingPoints",
+        :type="line.lineType",
         :stroke="color",
         fill="transparent",
         stroke-width="1",

@@ -2,13 +2,16 @@
   g
     slot
     points-path(
+      ref="path",
       v-bind="shape.properties",
       :points="shape.points",
+      :type="shape.lineType",
       :marker-end="markerEnd",
       :marker-start="markerStart",
       pointer-events="none"
     )
     text-editor(
+      v-if="labelPosition",
       ref="editor",
       v-bind="shape.textProperties",
       :value="shape.text",
@@ -32,8 +35,6 @@
 </template>
 
 <script>
-import { calculateCenterBetweenPoint } from '@/helpers/flowchart/points';
-
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
 import PointsPath from '../common/points-path.vue';
@@ -70,19 +71,24 @@ export default {
       required: false,
     },
   },
-  computed: {
-    labelPosition() {
-      const { points } = this.shape;
-      const halfLength = points.length / 2;
-
-      if (points.length % 2 !== 0) {
-        return points[Math.floor(halfLength)];
-      }
-
-      const p1 = points[halfLength - 1];
-      const p2 = points[halfLength];
-
-      return calculateCenterBetweenPoint(p1, p2);
+  data() {
+    return {
+      labelPosition: null,
+    };
+  },
+  watch: {
+    'shape.points': {
+      handler() {
+        this.$nextTick(this.calculateLabelPosition);
+      },
+    },
+  },
+  mounted() {
+    this.calculateLabelPosition();
+  },
+  methods: {
+    calculateLabelPosition() {
+      this.labelPosition = this.$refs.path.getCenterPoint();
     },
   },
 };
