@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { calculateCenterBetweenPoint } from '@/helpers/flowchart/points';
+
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
 import PointsPath from '../common/points-path.vue';
@@ -80,10 +82,7 @@ export default {
       const p1 = points[halfLength - 1];
       const p2 = points[halfLength];
 
-      return {
-        x: (p2.x + p1.x) / 2,
-        y: (p2.y + p1.y) / 2,
-      };
+      return calculateCenterBetweenPoint(p1, p2);
     },
   },
 };
