@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import { calculateCenterBetweenPoint, isCurvesControl } from '@/helpers/flowchart/points';
+
 export default {
   props: {
     points: {
@@ -21,7 +23,25 @@ export default {
   },
   computed: {
     path() {
-      return this.points.map(({ x, y }, index) => `${index === 0 ? 'M' : 'L'} ${x} ${y}`).join(' ');
+      const [firstPoint] = this.points;
+      let path = `M ${firstPoint.x} ${firstPoint.y}`;
+
+      for (let index = 1; index < this.points.length; index += 1) {
+        const point = this.points[index];
+
+        if (isCurvesControl(point.type)) {
+          const nextPoint = this.points[index + 1];
+          const centerPoint = isCurvesControl(nextPoint.type)
+            ? calculateCenterBetweenPoint(point, nextPoint)
+            : nextPoint;
+
+          path += `Q ${point.x} ${point.y} ${centerPoint.x} ${centerPoint.y}`;
+        } else {
+          path += `L ${point.x} ${point.y}`;
+        }
+      }
+
+      return path;
     },
   },
 };
