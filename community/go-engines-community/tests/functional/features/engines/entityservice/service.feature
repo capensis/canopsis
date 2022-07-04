@@ -3181,7 +3181,7 @@ Feature: update service on event
       }
     }
     """
-    When I do PUT /api/v4/bulk/entities:
+    When I do PUT /api/v4/bulk/entitybasics:
     """json
     [
       {

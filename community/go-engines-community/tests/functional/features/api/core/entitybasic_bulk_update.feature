@@ -3,17 +3,17 @@ Feature: Bulk update entities
   Only admin should be able to bulk update entities
 
   Scenario: given bulk update request and no auth should not allow access
-    When I do PUT /api/v4/bulk/entities
+    When I do PUT /api/v4/bulk/entitybasics
     Then the response code should be 401
 
   Scenario: given bulk update request and auth by api key without permissions should not allow access
     When I am noperms
-    When I do PUT /api/v4/bulk/entities
+    When I do PUT /api/v4/bulk/entitybasics
     Then the response code should be 403
 
   Scenario: given bulk update request should return multistatus and should be handled independently
     When I am admin
-    When I do PUT /api/v4/bulk/entities:
+    When I do PUT /api/v4/bulk/entitybasics:
     """json
     [
       {

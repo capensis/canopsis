@@ -119,6 +119,9 @@ func (a *api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, entity)
 }
 
+// BulkUpdate
+// @Param body body []BulkUpdateRequestItem true "body"
+// @Success 207 {array} []BulkUpdateResponseItem
 func (a *api) BulkUpdate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
