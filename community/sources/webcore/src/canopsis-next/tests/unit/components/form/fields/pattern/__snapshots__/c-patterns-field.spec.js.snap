@@ -63,7 +63,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
   >
     <c-entity-patterns-field-stub
       disabled="true"
-      name="name"
+      name="name.total_entity_pattern"
       readonly="true"
       required="true"
       with-type="with-type"
