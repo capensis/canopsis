@@ -1,7 +1,7 @@
 <template lang="pug">
   c-patterns-field(
     v-field="form",
-    :disabled="disabled",
+    :readonly="readonly",
     :alarm-attributes="alarmAttributes",
     :entity-attributes="entityAttributes",
     with-alarm,
@@ -27,7 +27,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    disabled: {
+    readonly: {
       type: Boolean,
       default: false,
     },
