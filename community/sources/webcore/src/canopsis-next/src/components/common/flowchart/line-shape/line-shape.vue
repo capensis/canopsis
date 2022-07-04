@@ -78,6 +78,7 @@ export default {
   },
   watch: {
     'shape.points': {
+      deep: true,
       handler() {
         this.$nextTick(this.calculateLabelPosition);
       },

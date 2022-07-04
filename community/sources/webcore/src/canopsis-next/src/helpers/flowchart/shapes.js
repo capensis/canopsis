@@ -66,6 +66,16 @@ import { generatePoint } from './points';
  */
 
 /**
+ * @typedef {RectShape} ProcessShape
+ * @property {number} offset
+ */
+
+/**
+ * @typedef {RectShape} DocumentShape
+ * @property {number} offset
+ */
+
+/**
  * @typedef {RectShape} StorageShape
  * @property {number} radius
  */
@@ -213,13 +223,26 @@ export const generateParallelogramShape = shape => ({
 /**
  * Generate default process shape
  *
- * @param {ParallelogramShape} shape
- * @returns {ParallelogramShape}
+ * @param {ProcessShape} shape
+ * @returns {ProcessShape}
  */
 export const generateProcessShape = shape => ({
   ...generateRectShape(shape),
 
   type: SHAPES.process,
+  offset: shape.offset ?? 20,
+});
+
+/**
+ * Generate default document shape
+ *
+ * @param {DocumentShape} shape
+ * @returns {DocumentShape}
+ */
+export const generateDocumentShape = shape => ({
+  ...generateRectShape(shape),
+
+  type: SHAPES.document,
   offset: shape.offset ?? 20,
 });
 

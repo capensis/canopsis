@@ -184,25 +184,6 @@ import EngineeringIcon from '@/components/icons/engineering.vue';
 import InsightsIcon from '@/components/icons/insights.vue';
 import MiscellaneousServicesIcon from '@/components/icons/miscellaneous_services.vue';
 import PublishedWithChangesIcon from '@/components/icons/published_with_changes.vue';
-import TextShape from '@/components/icons/text_shape.vue';
-import TextboxShape from '@/components/icons/textbox_shape.vue';
-import RectShape from '@/components/icons/rect_shape.vue';
-import SquareShape from '@/components/icons/square_shape.vue';
-import RoundedRectShape from '@/components/icons/rounded_rect_shape.vue';
-import RhombusShape from '@/components/icons/rhombus_shape.vue';
-import EllipseShape from '@/components/icons/ellipse_shape.vue';
-import ParallelogramShape from '@/components/icons/parallelogram_shape.vue';
-import CircleShape from '@/components/icons/circle_shape.vue';
-import StorageShape from '@/components/icons/storage_shape.vue';
-import LineShape from '@/components/icons/line_shape.vue';
-import DashedLineShape from '@/components/icons/dashed_line_shape.vue';
-import ArrowLineShape from '@/components/icons/arrow_line_shape.vue';
-import DashedArrowLineShape from '@/components/icons/dashed_arrow_line_shape.vue';
-import BidirectionalArrowLineShape from '@/components/icons/bidirectional_arrow_line_shape.vue';
-import DashedBidirectionalArrowLineShape from '@/components/icons/dashed_bidirectional_arrow_line_shape.vue';
-import ImageShape from '@/components/icons/image_shape.vue';
-import CurveLineShape from '@/components/icons/curve_line_shape.vue';
-import ProcessShape from '@/components/icons/process_shape.vue';
 
 import * as modalsComponents from '@/components/modals';
 import * as sidebarsComponents from '@/components/sidebars';
@@ -240,63 +221,6 @@ Vue.use(Vuetify, {
     },
     published_with_changes: {
       component: PublishedWithChangesIcon,
-    },
-    text_shape: {
-      component: TextShape,
-    },
-    textbox_shape: {
-      component: TextboxShape,
-    },
-    rect_shape: {
-      component: RectShape,
-    },
-    square_shape: {
-      component: SquareShape,
-    },
-    rounded_rect_shape: {
-      component: RoundedRectShape,
-    },
-    rhombus_shape: {
-      component: RhombusShape,
-    },
-    ellipse_shape: {
-      component: EllipseShape,
-    },
-    parallelogram_shape: {
-      component: ParallelogramShape,
-    },
-    circle_shape: {
-      component: CircleShape,
-    },
-    storage_shape: {
-      component: StorageShape,
-    },
-    line_shape: {
-      component: LineShape,
-    },
-    dashed_line_shape: {
-      component: DashedLineShape,
-    },
-    arrow_line_shape: {
-      component: ArrowLineShape,
-    },
-    dashed_arrow_line_shape: {
-      component: DashedArrowLineShape,
-    },
-    bidirectional_arrow_line_shape: {
-      component: BidirectionalArrowLineShape,
-    },
-    dashed_bidirectional_arrow_line_shape: {
-      component: DashedBidirectionalArrowLineShape,
-    },
-    curve_line_shape: {
-      component: CurveLineShape,
-    },
-    image_shape: {
-      component: ImageShape,
-    },
-    process_shape: {
-      component: ProcessShape,
     },
   },
 });

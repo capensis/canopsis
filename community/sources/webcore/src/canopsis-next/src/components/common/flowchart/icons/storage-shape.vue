@@ -1,19 +1,15 @@
 <template>
   <svg
     width="45"
-    height="36"
-    viewBox="0 0 45 36"
+    height="45"
+    viewBox="0 0 45 45"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <rect
-      x="0.5"
-      y="1.17773"
-      width="44"
-      height="34"
-      rx="4.5"
+    <path
+      d="M 0,11a 22,10 0 1, 0 45, 0a 22,10 0 1, 0 -45, 0L 0,34a 22,10 0 1, 0 45, 0L 45,11"
       fill="currentColor"
-      fill-opacity="0.4"
+      fill-opacity="0.6"
       stroke="currentColor"
     />
   </svg>

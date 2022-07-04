@@ -52,6 +52,7 @@ import RhombusShape from './rhombus-shape/rhombus-shape.vue';
 import ParallelogramShape from './parallelogram-shape/parallelogram-shape.vue';
 import StorageShape from './storage-shape/storage-shape.vue';
 import ProcessShape from './process-shape/process-shape.vue';
+import DocumentShape from './document-shape/document-shape.vue';
 
 export default {
   provide() {
@@ -72,6 +73,7 @@ export default {
     ParallelogramShape,
     StorageShape,
     ProcessShape,
+    DocumentShape,
   },
   mixins: [selectedShapesMixin],
   model: {
@@ -447,6 +449,7 @@ export default {
         case SHAPES.rhombus:
         case SHAPES.ellipse:
         case SHAPES.process:
+        case SHAPES.document:
         case SHAPES.rect: {
           this.updateShape(shape, { x: shape.x + offset.x, y: shape.y + offset.y });
           break;
