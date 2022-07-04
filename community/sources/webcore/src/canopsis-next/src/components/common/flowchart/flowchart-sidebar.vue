@@ -44,7 +44,7 @@ import { getImageProperties } from '@/helpers/file/image';
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 
 import assets from './assets';
-import { POINT_TYPES } from '@/constants';
+import { LINE_TYPES } from '@/constants';
 
 export default {
   components: { FileSelector },
@@ -154,12 +154,10 @@ export default {
         generatePoint({
           x: this.viewBoxCenter.x + halfSize,
           y: this.viewBoxCenter.y + halfSize,
-          type: POINT_TYPES.curvesControl,
         }),
         generatePoint({
           x: this.viewBoxCenter.x - halfSize,
           y: this.viewBoxCenter.y - halfSize,
-          type: POINT_TYPES.curvesControl,
         }),
         generatePoint({
           x: this.viewBoxCenter.x + halfSize,
@@ -232,6 +230,7 @@ export default {
     addCurveLine() {
       const line = generateLineShape({
         points: this.centerCurveLinePoints,
+        lineType: LINE_TYPES.curve,
         text: 'Curve line',
         properties: {
           stroke: 'black',

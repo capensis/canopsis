@@ -29,7 +29,7 @@ export const SHAPES = {
   image: 'image',
 };
 
-export const POINT_TYPES = {
-  curvesControl: 'curvesControl',
-  point: 'point',
+export const LINE_TYPES = {
+  curve: 'curve',
+  sharp: 'sharp',
 };

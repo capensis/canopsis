@@ -1,5 +1,6 @@
 <template lang="pug">
   path(
+    ref="path",
     :d="path",
     :fill="fill",
     pointer-events="all",
@@ -8,7 +9,9 @@
 </template>
 
 <script>
-import { calculateCenterBetweenPoint, isCurvesControl } from '@/helpers/flowchart/points';
+import { LINE_TYPES } from '@/constants';
+
+import { calculateCenterBetweenPoint } from '@/helpers/flowchart/points';
 
 export default {
   props: {
@@ -20,28 +23,47 @@ export default {
       type: String,
       default: 'transparent',
     },
+    type: {
+      type: String,
+      default: LINE_TYPES.sharp,
+    },
   },
   computed: {
-    path() {
-      const [firstPoint] = this.points;
-      let path = `M ${firstPoint.x} ${firstPoint.y}`;
+    sharpPath() {
+      return this.points.map(({ x, y }, index) => `${index === 0 ? 'M' : 'L'} ${x} ${y}`).join(' ');
+    },
 
-      for (let index = 1; index < this.points.length; index += 1) {
-        const point = this.points[index];
+    curvesPath() {
+      const lastIndex = this.points.length - 1;
 
-        if (isCurvesControl(point.type)) {
-          const nextPoint = this.points[index + 1];
-          const centerPoint = isCurvesControl(nextPoint.type)
-            ? calculateCenterBetweenPoint(point, nextPoint)
-            : nextPoint;
-
-          path += `Q ${point.x} ${point.y} ${centerPoint.x} ${centerPoint.y}`;
-        } else {
-          path += `L ${point.x} ${point.y}`;
+      return this.points.reduce((acc, point, index) => {
+        if (!index) {
+          return `M ${point.x} ${point.y}`;
         }
-      }
 
-      return path;
+        if (index === lastIndex) {
+          return acc;
+        }
+
+        const nextIndex = index + 1;
+        const nextPoint = this.points[nextIndex];
+        const centerPoint = nextIndex !== lastIndex
+          ? calculateCenterBetweenPoint(point, nextPoint)
+          : nextPoint;
+
+        return `${acc}Q ${point.x} ${point.y} ${centerPoint.x} ${centerPoint.y}`;
+      }, '');
+    },
+
+    path() {
+      return this.type === LINE_TYPES.sharp ? this.sharpPath : this.curvesPath;
+    },
+  },
+  methods: {
+    getCenterPoint() {
+      const length = this.$refs.path.getTotalLength();
+
+      return this.$refs.path.getPointAtLength(length * 0.5);
     },
   },
 };

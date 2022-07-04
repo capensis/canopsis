@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { cloneDeep, isObject, isString, omit } from 'lodash';
+import { cloneDeep, isEqual, isObject, isString, omit } from 'lodash';
 
 import Observer from '@/services/observer';
 
@@ -146,7 +146,9 @@ export default {
     shapes: {
       immediate: true,
       handler(value) {
-        this.data = cloneDeep(value);
+        if (!isEqual(this.data, value)) {
+          this.data = cloneDeep(value);
+        }
       },
     },
   },
