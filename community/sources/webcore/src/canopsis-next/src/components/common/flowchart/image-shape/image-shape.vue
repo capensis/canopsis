@@ -1,7 +1,13 @@
 <template lang="pug">
   g
-    image(
+    rect(
       v-bind="shape.properties",
+      :x="shape.x",
+      :y="shape.y",
+      :width="shape.width",
+      :height="shape.height"
+    )
+    image(
       :href="shape.src",
       :x="shape.x",
       :y="shape.y",

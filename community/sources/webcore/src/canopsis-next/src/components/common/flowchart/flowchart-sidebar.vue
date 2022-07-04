@@ -422,6 +422,10 @@ export default {
         src,
         text: file.name,
         aspectRatio: true,
+        properties: {
+          fill: 'transparent',
+          stroke: 'transparent',
+        },
       });
 
       this.addShape(image);
@@ -437,8 +441,11 @@ export default {
         width,
         height,
         src,
-        text: 'Icon',
         aspectRatio: true,
+        properties: {
+          fill: 'transparent',
+          stroke: 'transparent',
+        },
       });
 
       this.addShape(image);

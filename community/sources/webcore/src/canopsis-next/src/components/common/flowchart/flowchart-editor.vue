@@ -1,5 +1,5 @@
 <template lang="pug">
-  svg.white(
+  svg.grey.lighten-3(
     ref="svg",
     v-resize="setViewBox",
     :viewBox="viewBoxString",
@@ -7,7 +7,8 @@
     height="100%",
     @mousemove="onContainerMouseMove",
     @mouseup="onContainerMouseUp",
-    @mousedown="onContainerMouseDown"
+    @mousedown="onContainerMouseDown",
+    @contextmenu.stop.prevent=""
   )
     component(
       v-for="shape in data",
@@ -28,7 +29,7 @@
 </template>
 
 <script>
-import { cloneDeep, omit } from 'lodash';
+import { cloneDeep, isObject, isString, omit } from 'lodash';
 
 import Observer from '@/services/observer';
 
@@ -36,6 +37,7 @@ import { SHAPES } from '@/constants';
 
 import { roundByStep } from '@/helpers/flowchart/round';
 import { calculateConnectorPointBySide } from '@/helpers/flowchart/connectors';
+import uid from '@/helpers/uid';
 
 import { selectedShapesMixin } from '@/mixins/flowchart/selected';
 
@@ -133,11 +135,11 @@ export default {
     },
 
     widthScale() {
-      return this.viewBox.width / this.editorSize.width;
+      return this.viewBoxObject.width / this.editorSize.width;
     },
 
     heightScale() {
-      return this.viewBox.height / this.editorSize.height;
+      return this.viewBoxObject.height / this.editorSize.height;
     },
   },
   watch: {
@@ -181,13 +183,14 @@ export default {
         const widthDiff = (this.editorSize.width - width) * this.widthScale;
         const heightDiff = (this.editorSize.height - height) * this.heightScale;
 
-        this.updateViewBox({
-          width: this.viewBoxObject.width - widthDiff,
-          height: this.viewBoxObject.height - heightDiff,
-        });
+        this.viewBoxObject.width -= widthDiff;
+        this.viewBoxObject.height -= heightDiff;
       } else {
-        this.updateViewBox({ width, height });
+        this.viewBoxObject.width = width;
+        this.viewBoxObject.height = height;
       }
+
+      this.updateViewBox();
 
       this.editorSize.width = width;
       this.editorSize.height = height;
@@ -196,8 +199,10 @@ export default {
     onWheel(event) {
       event.preventDefault();
 
+      const delta = event.deltaY;
+
       if (event.ctrlKey) {
-        const percent = event.deltaY < 0 ? 0.05 : -0.05;
+        const percent = delta < 0 ? 0.05 : -0.05;
 
         const scaleWidth = this.viewBoxObject.width * percent;
         const scaleHeight = this.viewBoxObject.height * percent;
@@ -220,6 +225,14 @@ export default {
         this.viewBoxObject.width -= offsetWidth;
         this.viewBoxObject.height -= offsetHeight;
       }
+
+      if (event.shiftKey) {
+        this.viewBoxObject.x += delta;
+      }
+
+      if (event.altKey) {
+        this.viewBoxObject.y += delta;
+      }
     },
 
     updateShape(shape, data) {
@@ -234,12 +247,12 @@ export default {
 
     onShapeMouseDown(shape, event) {
       if (!this.hasSelected) {
-        this.setSelected(shape);
+        this.setSelectedShape(shape);
       }
 
       if (!this.isSelected(shape._id) && !event.ctrlKey) {
         this.clearSelected();
-        this.setSelected(shape);
+        this.setSelectedShape(shape);
       }
 
       if (this.isSelected(shape._id)) {
@@ -260,13 +273,13 @@ export default {
 
       const isShapeSelected = this.isSelected(shape._id);
 
-      if (isShapeSelected && this.selected.length === 1) {
+      if (isShapeSelected && this.selectedIds.length === 1) {
         return;
       }
 
       if (!event.ctrlKey) {
         this.clearSelected();
-        this.setSelected(shape);
+        this.setSelectedShape(shape);
 
         return;
       }
@@ -274,7 +287,7 @@ export default {
       if (isShapeSelected) {
         this.removeSelectedShape(shape);
       } else {
-        this.setSelected(shape);
+        this.setSelectedShape(shape);
       }
     },
 
@@ -449,7 +462,7 @@ export default {
     },
 
     moveSelected(offset) {
-      this.selected.forEach((id) => {
+      this.selectedIds.forEach((id) => {
         this.moveShapeById(id, offset);
 
         this.clearConnectedTo(id);
@@ -495,8 +508,47 @@ export default {
 
     removeSelectedShapes() {
       if (this.hasSelected) {
-        this.updateShapes(omit(this.data, this.selected));
+        this.updateShapes(omit(this.data, this.selectedIds));
         this.clearSelected();
+      }
+    },
+
+    copySelectedShapes() {
+      const data = this.selectedIds.reduce((acc, id) => {
+        acc[id] = this.data[id];
+
+        return acc;
+      }, {});
+
+      navigator.clipboard.writeText(JSON.stringify(data));
+    },
+
+    async pasteShapes() {
+      const data = await navigator.clipboard.readText();
+
+      if (isString(data)) {
+        const shapes = JSON.parse(data);
+
+        if (isObject(shapes)) {
+          const preparedShapes = Object.entries(shapes).reduce((acc, [id, shape]) => {
+            const resultId = this.data[id] || acc[id] ? `${id}_${uid()}` : id;
+
+            acc[resultId] = {
+              ...shape,
+              _id: resultId,
+            };
+
+            return acc;
+          }, {});
+
+          this.data = {
+            ...this.data,
+            ...preparedShapes,
+          };
+
+          this.setSelected(Object.keys(preparedShapes));
+          this.updateShapes(this.data);
+        }
       }
     },
 
@@ -507,6 +559,9 @@ export default {
         39: this.moveSelectedRight,
         40: this.moveSelectedDown,
         46: this.removeSelectedShapes,
+
+        67: this.copySelectedShapes,
+        86: this.pasteShapes,
       }[event.keyCode];
 
       if (handler) {

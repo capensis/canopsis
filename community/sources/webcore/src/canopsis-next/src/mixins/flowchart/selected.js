@@ -7,38 +7,42 @@ export const selectedShapesMixin = {
   },
   data() {
     return {
-      selectedShapes: [...this.selected],
+      selectedIds: [...this.selected],
     };
   },
   computed: {
     hasSelected() {
-      return !!this.selectedShapes.length;
+      return !!this.selectedIds.length;
     },
   },
   methods: {
     isSelected(id) {
-      return this.selectedShapes.includes(id);
+      return this.selectedIds.includes(id);
     },
 
     updateSelected() {
-      this.$emit('update:selected', [...this.selectedShapes]);
+      this.$emit('update:selected', [...this.selectedIds]);
     },
 
-    setSelected(shape) {
+    setSelected(selected) {
+      this.selectedIds = selected;
+    },
+
+    setSelectedShape(shape) {
       if (!this.isSelected(shape._id)) {
-        this.selectedShapes.push(shape._id);
+        this.selectedIds.push(shape._id);
 
         this.updateSelected();
       }
     },
 
     clearSelected() {
-      this.selectedShapes = [];
+      this.selectedIds = [];
       this.updateSelected();
     },
 
     removeSelectedShape(shape) {
-      this.selectedShapes = this.selectedShapes.filter(id => id !== shape._id);
+      this.selectedIds = this.selectedIds.filter(id => id !== shape._id);
 
       this.updateSelected();
     },

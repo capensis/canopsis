@@ -1,5 +1,5 @@
 <template lang="pug">
-  component(is="foreignObject", width="100%", height="100%", pointer-events="none")
+  component(is="foreignObject", pointer-events="none", style="overflow: visible;")
     div.text-shape-editor(:class="editorClasses", :style="editorStyle")
       div.text-shape-editor__wrapper
         div.text-shape-editor__field(
