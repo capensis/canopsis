@@ -155,6 +155,7 @@ export function convertStatsCalendarWidgetToQuery(widget) {
 
     considerPbehaviors,
     filters,
+    time_field: 't',
   };
 }
 
