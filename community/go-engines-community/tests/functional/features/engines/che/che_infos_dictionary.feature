@@ -4,7 +4,7 @@ Feature: get infos dictionary
   Scenario: given requests should return entity infos dictionary
     Given I am admin
     When I wait the next periodical process
-    When I do GET /api/v4/entity-infos-dictionary?search=test-entity-infos-dictionary-key
+    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-entity-infos-dictionary-key
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -28,7 +28,7 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary?search=test-entity-infos-dictionary-key-2
+    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-entity-infos-dictionary-key-2
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -46,7 +46,7 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary?key=test-entity-infos-dictionary-key-2
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-key-2
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -73,7 +73,7 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary?key=test-entity-infos-dictionary-key-2&search=test-entity-infos-dictionary-value-5
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-key-2&search=test-entity-infos-dictionary-value-5
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -91,7 +91,7 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary?key=test-entity-infos-dictionary-should-be-ignored
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -162,7 +162,7 @@ Feature: get infos dictionary
       "event_type": "check",
       "component": "test-component-entity-infos-dictionary-1",
       "resource": "test-resource-entity-infos-dictionary-1",
-      "state": 2,
+      "state": 0,
       "output": "test-output-entity-infos-dictionary-1",
       "customer": "test-resource-entity-infos-dictionary-1-val-1",
       "manager": "test-resource-entity-infos-dictionary-1-val-2"
@@ -170,7 +170,7 @@ Feature: get infos dictionary
     """
     When I wait the end of event processing
     When I wait the next periodical process
-    When I do GET /api/v4/entity-infos-dictionary?search=test-resource-entity-infos-dictionary
+    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-resource-entity-infos-dictionary
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -191,7 +191,7 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary?key=test-resource-entity-infos-dictionary-1-key-1
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-resource-entity-infos-dictionary-1-key-1
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -218,7 +218,7 @@ Feature: get infos dictionary
       "event_type": "check",
       "component": "test-component-entity-infos-dictionary-1",
       "resource": "test-resource-entity-infos-dictionary-1",
-      "state": 2,
+      "state": 0,
       "output": "test-output-entity-infos-dictionary-1",
       "customer": "test-resource-entity-infos-dictionary-1-val-1-updated",
       "manager": "test-resource-entity-infos-dictionary-1-val-2"
@@ -226,7 +226,7 @@ Feature: get infos dictionary
     """
     When I wait the end of event processing
     When I wait the next periodical process
-    When I do GET /api/v4/entity-infos-dictionary?search=test-resource-entity-infos-dictionary
+    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-resource-entity-infos-dictionary
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -247,7 +247,7 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary?key=test-resource-entity-infos-dictionary-1-key-1
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-resource-entity-infos-dictionary-1-key-1
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -268,7 +268,7 @@ Feature: get infos dictionary
     When I do DELETE /api/v4/entitybasics?_id=test-resource-entity-infos-dictionary-1/test-component-entity-infos-dictionary-1
     Then the response code should be 204
     When I wait the next periodical process
-    When I do GET /api/v4/entity-infos-dictionary?search=test-resource-entity-infos-dictionary
+    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-resource-entity-infos-dictionary
     Then the response code should be 200
     Then the response body should contain:
     """

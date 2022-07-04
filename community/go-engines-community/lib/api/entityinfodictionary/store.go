@@ -9,7 +9,8 @@ import (
 )
 
 type Store interface {
-	Find(ctx context.Context, r ListRequest) (AggregationResult, error)
+	FindKeys(ctx context.Context, r ListKeysRequest) (AggregationResult, error)
+	FindValues(ctx context.Context, r ListValuesRequest) (AggregationResult, error)
 }
 
 type store struct {
@@ -24,28 +25,12 @@ func NewStore(db mongo.DbClient) Store {
 	}
 }
 
-func (s *store) Find(ctx context.Context, r ListRequest) (AggregationResult, error) {
+func (s *store) FindKeys(ctx context.Context, r ListKeysRequest) (AggregationResult, error) {
 	res := AggregationResult{}
 
 	var pipeline []bson.M
 
-	searchField := "_id"
-	if r.Key != "" {
-		pipeline = []bson.M{
-			{
-				"$match": bson.M{
-					"_id": r.Key,
-				},
-			},
-			{
-				"$unwind": "$values",
-			},
-		}
-
-		searchField = "values"
-	}
-
-	searchQuery := common.GetSearchQuery(r.Search, []string{searchField})
+	searchQuery := common.GetSearchQuery(r.Search, []string{"_id"})
 	if searchQuery != nil {
 		pipeline = append(pipeline, bson.M{"$match": searchQuery})
 	}
@@ -53,8 +38,47 @@ func (s *store) Find(ctx context.Context, r ListRequest) (AggregationResult, err
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		bson.M{"$sort": bson.D{{Key: searchField, Value: 1}}},
-		[]bson.M{{"$project": bson.M{"value": "$" + searchField}}},
+		bson.M{"$sort": bson.D{{Key: "_id", Value: 1}}},
+		[]bson.M{{"$project": bson.M{"value": "$_id"}}},
+
+	))
+	if err != nil {
+		return res, err
+	}
+
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&res)
+	}
+
+	return res, err
+}
+
+func (s *store) FindValues(ctx context.Context, r ListValuesRequest) (AggregationResult, error) {
+	res := AggregationResult{}
+
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"_id": r.Key,
+			},
+		},
+		{
+			"$unwind": "$values",
+		},
+	}
+
+	searchQuery := common.GetSearchQuery(r.Search, []string{"values"})
+	if searchQuery != nil {
+		pipeline = append(pipeline, bson.M{"$match": searchQuery})
+	}
+
+	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+		r.Query,
+		pipeline,
+		bson.M{"$sort": bson.D{{Key: "values", Value: 1}}},
+		[]bson.M{{"$project": bson.M{"value": "$values"}}},
 	))
 	if err != nil {
 		return res, err
