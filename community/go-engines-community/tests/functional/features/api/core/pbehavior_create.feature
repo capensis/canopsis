@@ -633,6 +633,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-create-7",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit"
     }
@@ -654,6 +655,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-create-7",
       "tstart": 1591172881,
       "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit"
     }
