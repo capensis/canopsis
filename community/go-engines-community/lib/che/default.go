@@ -58,7 +58,6 @@ func NewEngine(
 	enrichmentCenter := libcontext.NewEnrichmentCenter(
 		entityAdapter,
 		mongoClient,
-		options.FeatureContextEnrich,
 		entityservice.NewManager(
 			entityServiceAdapter,
 			entityAdapter,
@@ -67,7 +66,6 @@ func NewEngine(
 		),
 		metricsEntityMetaUpdater,
 	)
-	enrichFields := libcontext.NewEnrichFields(options.EnrichInclude, options.EnrichExclude)
 
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer))
@@ -178,7 +176,6 @@ func NewEngine(
 			AlarmConfigProvider:      alarmConfigProvider,
 			EventFilterService:       eventfilterService,
 			EnrichmentCenter:         enrichmentCenter,
-			EnrichFields:             enrichFields,
 			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
 			AlarmAdapter:             alarm.NewAdapter(mongoClient),
 			Encoder:                  json.NewEncoder(),
