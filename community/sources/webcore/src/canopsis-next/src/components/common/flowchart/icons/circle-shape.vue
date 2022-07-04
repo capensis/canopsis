@@ -6,10 +6,12 @@
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path
-      d="M 0,11a 22,10 0 1, 0 45, 0a 22,10 0 1, 0 -45, 0L 0,34a 22,10 0 1, 0 45, 0L 45,11"
+    <circle
+      cx="22.5"
+      cy="22.5"
+      r="21.5"
       fill="currentColor"
-      fill-opacity="0.4"
+      fill-opacity="0.6"
       stroke="currentColor"
     />
   </svg>

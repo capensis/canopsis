@@ -1,17 +1,14 @@
 <template>
   <svg
-    width="45"
     height="45"
-    viewBox="0 0 45 45"
+    viewBox="0 0 55 36"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <circle
-      cx="22.5"
-      cy="22.5"
-      r="21.5"
+    <path
+      d="M0.662865 35.1777L10.3772 1.17773H54.3371L44.6228 35.1777H0.662865Z"
       fill="currentColor"
-      fill-opacity="0.4"
+      fill-opacity="0.6"
       stroke="currentColor"
     />
   </svg>
