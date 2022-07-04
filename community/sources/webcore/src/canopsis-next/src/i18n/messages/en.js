@@ -247,6 +247,8 @@ export default merge({
     eventType: 'Event type',
     sourceType: 'Source type',
     cycleDependency: 'Cycle dependency',
+    checkPattern: 'Check pattern',
+    itemFound: '{count} item found | {count} items found',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -2697,17 +2699,6 @@ export default merge({
     },
   },
 
-  entitiesCountAlerts: {
-    filter: {
-      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
-      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
-    },
-    patterns: {
-      countOverLimit: 'The patterns you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
-      countRequestError: 'The request to entities count by the patterns was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
-    },
-  },
-
   userInterface: {
     title: 'User interface',
     appTitle: 'App title',
@@ -2793,6 +2784,7 @@ export default merge({
     simpleEditor: 'Simple editor',
     noData: 'No pattern set. Click \'@:pattern.addGroup\' button to start adding fields to the pattern',
     noDataDisabled: 'No pattern set.',
+    discard: 'Discard pattern',
     types: {
       [PATTERN_TYPES.alarm]: 'Alarm pattern',
       [PATTERN_TYPES.entity]: 'Entity pattern',
@@ -2802,6 +2794,8 @@ export default merge({
       ruleRequired: 'Please add at least one rule',
       groupRequired: 'Please add at least one group',
       invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
+      countOverLimit: 'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
+      oldPattern: 'The current filter pattern is defined in old format. Please use the Advanced editor to view it. Filters in old format will be deprecated soon. Please create new patterns in our updated interface.',
     },
   },
 

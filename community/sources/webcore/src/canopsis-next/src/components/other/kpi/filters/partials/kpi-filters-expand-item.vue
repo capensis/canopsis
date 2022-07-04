@@ -8,11 +8,11 @@
           v-tabs-items.pt-2(v-model="activeTab")
             v-tab-item(lazy)
               v-flex(xs12, lg10, offset-lg1)
-                kpi-filter-patterns-form(:form="patterns", disabled)
+                kpi-filter-patterns-form(:form="patterns", readonly)
 </template>
 
 <script>
-import { PATTERNS_FIELDS } from '@/constants';
+import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/forms/filter';
 
@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     patterns() {
-      return filterPatternsToForm(this.filter, [PATTERNS_FIELDS.entity]);
+      return filterPatternsToForm(this.filter, [PATTERNS_FIELDS.entity], [OLD_PATTERNS_FIELDS.entity]);
     },
   },
 };

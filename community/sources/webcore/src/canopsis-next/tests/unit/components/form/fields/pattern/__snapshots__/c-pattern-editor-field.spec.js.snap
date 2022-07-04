@@ -6,11 +6,6 @@ exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with advanced
 >
   <!---->
   <div
-    class="flex"
-  >
-    <!---->
-  </div>
-  <div
     class="v-tabs"
   >
     <div
@@ -98,7 +93,18 @@ exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with advanced
       </div>
     </div>
   </div>
-  <!---->
+  <div
+    class="layout align-center justify-end"
+  >
+    <!---->
+    <!---->
+  </div>
+  <div
+    class="flex"
+  >
+    <!---->
+    <!---->
+  </div>
 </div>
 `;
 
@@ -114,11 +120,6 @@ exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with custom p
     type="alarm"
     value="pattern-id"
   />
-  <div
-    class="flex"
-  >
-    <!---->
-  </div>
   <div
     class="v-tabs"
   >
@@ -185,6 +186,7 @@ exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with custom p
               class="mt-2"
               disabled="true"
               name="name.groups"
+              readonly="true"
               required="true"
               type="alarm"
               value="[object Object]"
@@ -202,20 +204,7 @@ exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with custom p
       </div>
     </div>
   </div>
-  <div
-    class="layout justify-end"
-  >
-    <button
-      class="mx-0 v-btn theme--dark primary"
-      type="button"
-    >
-      <div
-        class="v-btn__content"
-      >
-        Edit
-      </div>
-    </button>
-  </div>
+  <!---->
 </div>
 `;
 
@@ -224,11 +213,6 @@ exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with default 
   class="layout column"
 >
   <!---->
-  <div
-    class="flex"
-  >
-    <!---->
-  </div>
   <div
     class="v-tabs"
   >
@@ -309,6 +293,17 @@ exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with default 
       </div>
     </div>
   </div>
-  <!---->
+  <div
+    class="layout align-center justify-end"
+  >
+    <!---->
+    <!---->
+  </div>
+  <div
+    class="flex"
+  >
+    <!---->
+    <!---->
+  </div>
 </div>
 `;
