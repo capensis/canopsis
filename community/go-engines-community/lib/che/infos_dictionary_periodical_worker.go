@@ -2,6 +2,7 @@ package che
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
@@ -9,6 +10,18 @@ import (
 )
 
 const minInfoLength = 2
+
+func NewInfosDictionaryPeriodicalWorker(
+	client mongo.DbClient,
+	periodicalInterval time.Duration,
+	logger zerolog.Logger,
+) engine.PeriodicalWorker {
+	return &infosDictionaryPeriodicalWorker{
+		Client:             client,
+		PeriodicalInterval: periodicalInterval,
+		Logger:             logger,
+	}
+}
 
 type infosDictionaryPeriodicalWorker struct {
 	Client             mongo.DbClient
