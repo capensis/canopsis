@@ -21,13 +21,14 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import uuid from '@/helpers/uuid';
 
 import { authMixin } from '@/mixins/auth';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import FiltersList from '@/components/other/filter/filters-list.vue';
-import { MODALS } from '@/constants';
 
 export default {
   components: { FilterSelector, FiltersList },
@@ -111,7 +112,13 @@ export default {
           withEntity: this.withEntity,
           withPbehavior: this.withPbehavior,
           action: (newFilter) => {
-            const filters = this.filters.map(item => (item._id === filter._id ? newFilter : item));
+            const preparedNewFilter = {
+              ...newFilter,
+              widget: this.widgetId,
+              _id: filter._id,
+            };
+
+            const filters = this.filters.map(item => (item._id === filter._id ? preparedNewFilter : item));
 
             this.$emit('update:filters', filters);
           },

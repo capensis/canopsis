@@ -8,6 +8,7 @@
           :rules="group.rules",
           :attributes="attributes",
           :disabled="disabled",
+          :readonly="readonly",
           @input="updateRules"
         )
 </template>
@@ -31,6 +32,10 @@ export default {
       required: true,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    readonly: {
       type: Boolean,
       default: false,
     },
