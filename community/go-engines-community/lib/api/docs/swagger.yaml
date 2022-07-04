@@ -606,6 +606,65 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /bulk/entitybasics:
+    put:
+      tags:
+        - entitybasics
+      summary: Bulk update entities
+      description: Bulk update entities
+      operationId: entitybasics-bulk-update
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/entitybasic.BulkUpdateRequestItem'
+            examples:
+              update:
+                summary: Update
+                description: Update entities.
+                value: [
+                  {
+                    "description": "Important resource",
+                    "enabled": true,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "impact_level": 3,
+                    "sli_avail_state": 1,
+                    "infos": [
+                      {
+                        "name": "group",
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    ],
+                    "impact": [
+                        "cps_component"
+                    ],
+                    "depends": [
+                        "cps_connector/cps_connector_name"
+                    ]
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: 'schemas_swagger.yaml#/definitions/entitybasic.BulkUpdateResponseItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /bulk/entityservices:
     put:
       tags:
