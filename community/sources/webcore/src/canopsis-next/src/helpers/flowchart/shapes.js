@@ -211,6 +211,19 @@ export const generateParallelogramShape = shape => ({
 });
 
 /**
+ * Generate default process shape
+ *
+ * @param {ParallelogramShape} shape
+ * @returns {ParallelogramShape}
+ */
+export const generateProcessShape = shape => ({
+  ...generateRectShape(shape),
+
+  type: SHAPES.process,
+  offset: shape.offset ?? 20,
+});
+
+/**
  * Generate default storage shape
  *
  * @param {StorageShape} shape

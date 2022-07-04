@@ -25,6 +25,7 @@ export const SHAPES = {
   ellipse: 'ellipse',
   rhombus: 'rhombus',
   parallelogram: 'parallelogram',
+  process: 'process',
   storage: 'storage',
   image: 'image',
 };
