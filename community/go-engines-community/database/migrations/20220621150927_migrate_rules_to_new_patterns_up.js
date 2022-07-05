@@ -666,6 +666,12 @@ db.meta_alarm_rules.find().forEach(function (doc) {
             set.total_entity_pattern = newEntityPattern;
         }
     }
+    if (doc.old_event_patterns && !set.entity_pattern) {
+        var newPatterns = migrateOldEventPatterns(doc.old_event_patterns);
+        if (newPatterns && newPatterns[0] === null && newPatterns[1]) {
+            set.entity_pattern = newPatterns[1];
+        }
+    }
 
     if (Object.keys(set).length > 0) {
         db.meta_alarm_rules.updateOne({_id: doc._id}, {
