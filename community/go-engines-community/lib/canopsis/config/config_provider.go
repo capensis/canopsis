@@ -4,7 +4,6 @@ package config
 
 import (
 	"fmt"
-	"github.com/golang-jwt/jwt"
 	"html/template"
 	"reflect"
 	"strconv"
@@ -12,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/rs/zerolog"
 )
 
