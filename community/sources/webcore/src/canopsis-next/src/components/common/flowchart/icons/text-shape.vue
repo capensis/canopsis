@@ -9,7 +9,7 @@
     <rect
       x="2"
       y="2"
-      width="43"
+      width="41"
       height="41"
       stroke="currentColor"
       stroke-dasharray="5 5"
@@ -55,7 +55,7 @@
       stroke="currentColor"
     />
     <rect
-      x="43"
+      x="41"
       y="20.5"
       width="4"
       height="4"
@@ -63,7 +63,7 @@
       stroke="currentColor"
     />
     <rect
-      x="43"
+      x="41"
       y="0"
       width="4"
       height="4"
@@ -71,7 +71,7 @@
       stroke="currentColor"
     />
     <rect
-      x="43"
+      x="41"
       y="41"
       width="4"
       height="4"

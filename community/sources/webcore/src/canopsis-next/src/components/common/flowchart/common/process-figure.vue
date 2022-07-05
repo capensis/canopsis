@@ -63,13 +63,13 @@ export default {
       const x = this.x + this.offset + this.strokeWidth;
       const centerX = this.x + this.halfWidth;
 
-      return x <= centerX ? x : this.x + this.halfWidth - (this.strokeWidth / 2);
+      return x <= centerX ? x : this.x + this.halfWidth;
     },
 
     insetWidth() {
       const width = this.width - (this.offset + this.strokeWidth) * 2;
 
-      return width > 0 ? width : this.strokeWidth;
+      return width > 0 ? width : 0;
     },
   },
 };
