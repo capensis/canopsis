@@ -606,13 +606,13 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-  /bulk/entitybasics:
+  /bulk/entities/disable:
     put:
       tags:
-        - entitybasics
-      summary: Bulk update entities
-      description: Bulk update entities
-      operationId: entitybasics-bulk-update
+        - entities
+      summary: Bulk disable entities
+      description: Bulk disable entities
+      operationId: entitybasics-bulk-disable
       requestBody:
         description: body
         content:
@@ -620,31 +620,17 @@ paths:
             schema:
               type: array
               items:
-                $ref: 'schemas_swagger.yaml#/definitions/entitybasic.BulkUpdateRequestItem'
+                $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
             examples:
               update:
-                summary: Update
-                description: Update entities.
+                summary: Disable
+                description: Disable entities.
                 value: [
                   {
-                    "description": "Important resource",
-                    "enabled": true,
-                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
-                    "impact_level": 3,
-                    "sli_avail_state": 1,
-                    "infos": [
-                      {
-                        "name": "group",
-                        "description": "Group id",
-                        "value": "g1"
-                      }
-                    ],
-                    "impact": [
-                        "cps_component"
-                    ],
-                    "depends": [
-                        "cps_connector/cps_connector_name"
-                    ]
+                    "_id": "test-entity-id-1"
+                  },
+                  {
+                    "_id": "test-entity-id-2"
                   }
                 ]
         required: true
@@ -658,7 +644,52 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/entitybasic.BulkUpdateResponseItem'
+                    $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /bulk/entities/enable:
+    put:
+      tags:
+        - entities
+      summary: Bulk enable entities
+      description: Bulk enable entities
+      operationId: entitybasics-bulk-enable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
+            examples:
+              update:
+                summary: Enable
+                description: Enable entities.
+                value: [
+                  {
+                    "_id": "test-entity-id-1"
+                  },
+                  {
+                    "_id": "test-entity-id-2"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
         400:
           description: Bad Request
           content:

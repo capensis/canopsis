@@ -713,6 +713,28 @@ definitions:
       time:
         type: integer
     type: object
+  entity.BulkToggleRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  entity.BulkToggleResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/entity.BulkToggleRequestItem'
+      status:
+        type: integer
+    type: object
   entity.Entity:
     properties:
       _id:
@@ -822,58 +844,6 @@ definitions:
       type_name:
         description: TypeName is Name of pbehavior.Type.
         type: string
-    type: object
-  entitybasic.BulkUpdateRequestItem:
-    properties:
-      _id:
-        type: string
-      category:
-        type: string
-      depends:
-        items:
-          type: string
-        type: array
-      description:
-        maxLength: 255
-        type: string
-      enabled:
-        type: boolean
-      impact:
-        items:
-          type: string
-        type: array
-      impact_level:
-        maximum: 10
-        minimum: 1
-        type: integer
-      infos:
-        items:
-          $ref: '#/definitions/entitybasic.InfoRequest'
-        type: array
-      sli_avail_state:
-        maximum: 3
-        minimum: 0
-        type: integer
-    required:
-    - _id
-    - enabled
-    - impact_level
-    - sli_avail_state
-    type: object
-  entitybasic.BulkUpdateResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/entitybasic.BulkUpdateRequestItem'
-      status:
-        type: integer
     type: object
   entitybasic.EditRequest:
     properties:

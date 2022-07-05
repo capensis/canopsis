@@ -291,7 +291,16 @@ func RegisterRoutes(
 			)
 		}
 
-		entityAPI := entity.NewApi(entity.NewStore(dbClient, timezoneConfigProvider), exportExecutor, entityCleanerTaskChan, logger)
+		entityAPI := entity.NewApi(
+			entity.NewStore(dbClient, timezoneConfigProvider),
+			exportExecutor,
+			entityCleanerTaskChan,
+			entityPublChan,
+			metricsEntityMetaUpdater,
+			actionLogger,
+			logger,
+		)
+
 		entityExportRouter := protected.Group("/entity-export")
 		{
 			entityExportRouter.POST(
@@ -433,7 +442,6 @@ func RegisterRoutes(
 		}
 		entityRouter := protected.Group("/entities")
 		{
-			entityAPI := entity.NewApi(entity.NewStore(dbClient, timezoneConfigProvider), exportExecutor, entityCleanerTaskChan, logger)
 			entityRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
@@ -1231,13 +1239,19 @@ func RegisterRoutes(
 				)
 			}
 
-			entityRouter := bulkRouter.Group("/entitybasics")
+			entityRouter := bulkRouter.Group("/entities")
 			{
 				entityRouter.PUT(
-					"",
+					"/enable",
 					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
 					middleware.PreProcessBulk(conf, true),
-					entitybasicsAPI.BulkUpdate,
+					entityAPI.BulkEnable,
+				)
+				entityRouter.PUT(
+					"/disable",
+					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					entityAPI.BulkDisable,
 				)
 			}
 		}
