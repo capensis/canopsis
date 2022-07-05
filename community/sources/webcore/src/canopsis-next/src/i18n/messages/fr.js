@@ -32,6 +32,7 @@ import {
   PATTERN_OPERATORS,
   PATTERN_TYPES,
   PATTERN_FIELD_TYPES,
+  PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -165,6 +166,7 @@ export default merge({
     entityPatterns: 'Modèles des entités',
     pbehaviorPatterns: 'Modèles de comportement',
     totalEntityPatterns: 'Total des modèles d\'entité',
+    serviceWeatherPatterns: 'Modèles météorologiques de service',
     addFilter: 'Ajouter un filtre',
     id: 'Identifiant',
     reset: 'Réinitialiser',
@@ -334,6 +336,7 @@ export default merge({
 
       [PATTERN_OPERATORS.hasEvery]: 'A chaque',
       [PATTERN_OPERATORS.hasOneOf]: 'A l\'un des',
+      [PATTERN_OPERATORS.isOneOf]: 'Fait partie de',
       [PATTERN_OPERATORS.hasNot]: 'N\'a pas',
       [PATTERN_OPERATORS.isEmpty]: 'Est vide',
       [PATTERN_OPERATORS.isNotEmpty]: 'N\'est pas vide',
@@ -355,6 +358,9 @@ export default merge({
 
       [PATTERN_OPERATORS.acked]: 'Acquis',
       [PATTERN_OPERATORS.notAcked]: 'Non confirmé',
+
+      [PATTERN_OPERATORS.isGrey]: 'Carrelage gris',
+      [PATTERN_OPERATORS.isNotGrey]: 'Pas de carreaux gris',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
@@ -1975,6 +1981,9 @@ export default merge({
   },
   serviceWeather: {
     seeAlarms: 'Voir les alarmes',
+    grey: 'Gris',
+    primaryIcon: 'Icône principale',
+    secondaryIcon: 'Icône secondaire',
   },
   contextGeneralTable: {
     addSelection: 'Ajouter une sélection',
@@ -2053,6 +2062,11 @@ export default merge({
   pbehaviorTypes: {
     usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
     defaultType: 'Le type par défaut ne peut pas être modifié.',
+    types: {
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
+    },
   },
 
   pbehaviorReasons: {
