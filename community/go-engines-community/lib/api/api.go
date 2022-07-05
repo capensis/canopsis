@@ -139,6 +139,7 @@ func (a *api) registerRoutes() http.Handler {
 	ginRouter.Use(gin.Logger())
 	ginRouter.Use(middleware.Recovery(a.logger))
 	ginRouter.HandleMethodNotAllowed = true
+	ginRouter.ContextWithFallback = true
 
 	for _, router := range a.routers {
 		router(ginRouter)
