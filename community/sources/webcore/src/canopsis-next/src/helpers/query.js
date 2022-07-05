@@ -120,7 +120,7 @@ export function convertContextWidgetToQuery(widget) {
   }
 
   if (!isEmpty(selectedTypes)) {
-    query.types = selectedTypes;
+    query.type = selectedTypes;
   }
 
   return { ...query, ...convertSortToQuery(widget) };
