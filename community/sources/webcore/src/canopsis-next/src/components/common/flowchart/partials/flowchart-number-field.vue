@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-layout(row, justify-between, align-center)
-    v-flex.theme--light.v-label {{ label }}
+  v-layout(row, justify-space-between, align-center)
+    v-label {{ label }}
     v-flex(xs2)
       c-number-field.mt-0.pt-0(v-field="value", :min="min", hide-details)
 </template>
@@ -14,7 +14,7 @@ export default {
   props: {
     value: {
       type: Number,
-      default: 0,
+      required: false,
     },
     label: {
       type: String,

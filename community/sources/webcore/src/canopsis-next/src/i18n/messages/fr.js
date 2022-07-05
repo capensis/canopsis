@@ -29,7 +29,7 @@ import {
   EVENT_FILTER_TYPES,
   PATTERN_OPERATORS,
   PATTERN_TYPES,
-  PATTERN_FIELD_TYPES,
+  PATTERN_FIELD_TYPES, LINE_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2807,6 +2807,21 @@ export default {
 
   flowchart: {
     shapes: 'Formes',
+    icons: 'Icônes',
+    properties: 'Propriétés',
+    color: 'Couleur',
+    fill: 'Remplir',
+    stroke: 'Stroke',
+    strokeWidth: 'Stroke width',
+    strokeType: 'Stroke type',
+    fontColor: 'Couleur de la police',
+    fontSize: 'Taille de police',
+    fontBackgroundColor: 'Couleur de fond de la police',
+    lineType: 'Type de ligne',
+    lineTypes: {
+      [LINE_TYPES.curve]: 'Courbe',
+      [LINE_TYPES.sharp]: 'Tranchant',
+    },
   },
 
   ...featureService.get('i18n.fr'),

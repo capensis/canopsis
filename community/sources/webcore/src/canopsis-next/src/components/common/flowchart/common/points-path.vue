@@ -42,7 +42,9 @@ export default {
         }
 
         if (index === lastIndex) {
-          return acc;
+          return this.points.length === 2
+            ? `${acc}L ${point.x} ${point.y}`
+            : acc;
         }
 
         const nextIndex = index + 1;

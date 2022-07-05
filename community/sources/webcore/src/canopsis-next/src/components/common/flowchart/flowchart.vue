@@ -11,7 +11,7 @@
         :view-box.sync="viewBox",
         :selected.sync="selected"
       )
-    div.flowchart__properties(v-if="selected.length")
+    div.flowchart__properties(v-show="selected.length")
       flowchart-properties(v-model="shapes", :selected="selected")
 </template>
 
