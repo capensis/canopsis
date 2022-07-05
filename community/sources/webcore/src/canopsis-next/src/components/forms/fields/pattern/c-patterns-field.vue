@@ -22,6 +22,7 @@
         :name="entityFieldName",
         :check-count-name="$constants.PATTERNS_FIELDS.entity",
         :attributes="entityAttributes",
+        :entity-types="entityTypes",
         with-type,
         @input="errors.remove(entityFieldName)"
       )
@@ -118,6 +119,10 @@ export default {
     withServiceWeather: {
       type: Boolean,
       default: false,
+    },
+    entityTypes: {
+      type: Array,
+      required: false,
     },
     required: {
       type: Boolean,
