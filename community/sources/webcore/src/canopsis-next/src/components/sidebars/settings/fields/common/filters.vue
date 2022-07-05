@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import { pick } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import uuid from '@/helpers/uuid';
@@ -66,9 +68,26 @@ export default {
       type: Boolean,
       default: false,
     },
+    withServiceWeather: {
+      type: Boolean,
+      default: false,
+    },
     hideSelector: {
       type: Boolean,
       default: false,
+    },
+    entityTypes: {
+      type: Array,
+      required: false,
+    },
+  },
+  computed: {
+    modalConfig() {
+      return {
+        ...pick(this, ['withAlarm', 'withEntity', 'withPbehavior', 'withServiceWeather', 'entityTypes']),
+
+        withTitle: true,
+      };
     },
   },
   methods: {
@@ -76,11 +95,9 @@ export default {
       this.$modals.show({
         name: MODALS.createFilter,
         config: {
+          ...this.modalConfig,
+
           title: this.$t('modals.createFilter.create.title'),
-          withTitle: true,
-          withAlarm: this.withAlarm,
-          withEntity: this.withEntity,
-          withPbehavior: this.withPbehavior,
           action: (newFilter) => {
             const filters = [
               ...this.filters,
@@ -104,16 +121,14 @@ export default {
       this.$modals.show({
         name: MODALS.createFilter,
         config: {
-          filter,
+          ...this.modalConfig,
 
+          filter,
           title: this.$t('modals.createFilter.edit.title'),
-          withTitle: true,
-          withAlarm: this.withAlarm,
-          withEntity: this.withEntity,
-          withPbehavior: this.withPbehavior,
           action: (newFilter) => {
             const preparedNewFilter = {
               ...newFilter,
+
               widget: this.widgetId,
               _id: filter._id,
             };
