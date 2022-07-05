@@ -30,6 +30,7 @@ import {
   PATTERN_OPERATORS,
   PATTERN_TYPES,
   PATTERN_FIELD_TYPES,
+  LINE_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2813,9 +2814,15 @@ export default {
     fill: 'Fill',
     stroke: 'Stroke',
     strokeWidth: 'Stroke width',
+    strokeType: 'Stroke type',
     fontColor: 'Font color',
     fontSize: 'Font size',
     fontBackgroundColor: 'Font background color',
+    lineType: 'Line type',
+    lineTypes: {
+      [LINE_TYPES.curve]: 'Curve',
+      [LINE_TYPES.sharp]: 'Sharp',
+    },
   },
 
   ...featureService.get('i18n.en'),
