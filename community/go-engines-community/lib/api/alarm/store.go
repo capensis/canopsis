@@ -1176,25 +1176,6 @@ func (s *store) resetEntities(r ListRequest, pipeline *[]bson.M) bool {
 func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 	addFields := bson.M{
 		"infos": "$v.infos",
-		// outer field lastComment to make use it in $project
-		"lastComment": bson.M{
-			"$reduce": bson.M{
-				"input": bson.M{
-					"$slice": bson.A{
-						bson.M{"$filter": bson.M{
-							"input": bson.M{"$reverseArray": "$v.steps"},
-							"as":    "steps",
-							"cond": bson.M{
-								"$eq": bson.A{"$$steps._t", "comment"},
-							},
-						}},
-						1,
-					},
-				},
-				"initialValue": bson.M{},
-				"in":           bson.M{"$mergeObjects": bson.A{bson.M{}, "$$this"}},
-			},
-		},
 	}
 
 	project := bson.M{
@@ -1220,24 +1201,6 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 		}}
 		addFields["filtered_children_ids"] = "$filtered_children._id"
 	}
-	lastCommentNilWhenEmpty := bson.M{
-		"$project": bson.M{
-			"t": 1, "d": 1, "v": 1, "entity": 1, "infos": 1, "is_meta_alarm": 1,
-			"children_ids": 1, "filtered_children_ids": 1,
-			"pbehavior":       bson.M{"$cond": bson.M{"if": bson.M{"$eq": bson.A{bson.M{}, "$pbehavior"}}, "then": "$$REMOVE", "else": "$pbehavior"}},
-			"meta_alarm_rule": 1, "causes": 1,
-			"impact_state": 1,
-			"lastComment": bson.M{
-				"$cond": bson.M{
-					"if":   bson.M{"$eq": bson.A{bson.M{}, "$lastComment"}},
-					"then": nil,
-					"else": "$lastComment",
-				},
-			},
-		},
-	}
-	// remove outer lastComment
-	project["lastComment"] = 0
 	var pipeline []bson.M
 	if r.OnlyParents {
 		pipeline = s.getCausesPipeline()
@@ -1283,8 +1246,26 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 	)
 	pipeline = append(pipeline, []bson.M{
 		{"$addFields": addFields},
-		lastCommentNilWhenEmpty,
-		{"$addFields": bson.M{"v.last_comment": "$lastComment"}},
+		{
+			"$project": bson.M{
+				"t":                     1,
+				"d":                     1,
+				"v":                     1,
+				"entity":                1,
+				"infos":                 1,
+				"is_meta_alarm":         1,
+				"children_ids":          1,
+				"filtered_children_ids": 1,
+				"pbehavior": bson.M{"$cond": bson.M{
+					"if":   bson.M{"$eq": bson.A{bson.M{}, "$pbehavior"}},
+					"then": "$$REMOVE",
+					"else": "$pbehavior",
+				}},
+				"meta_alarm_rule": 1,
+				"causes":          1,
+				"impact_state":    1,
+			},
+		},
 		{"$project": project},
 	}...)
 
