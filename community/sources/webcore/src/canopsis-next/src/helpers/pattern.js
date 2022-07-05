@@ -347,6 +347,7 @@ export const isNumberPatternRuleField = value => [
  */
 export const isInfosPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.infos,
+  ENTITY_PATTERN_FIELDS.componentInfos,
   ENTITY_PATTERN_FIELDS.infos,
 ].some(field => value?.startsWith(field));
 
@@ -381,7 +382,7 @@ export const isValidRuleValueWithoutFieldType = (rule) => {
     }
 
     if (cond.type === PATTERN_CONDITIONS.relativeTime) {
-      return isNumber(cond.value) && cond.value >= 0;
+      return isValidDuration(cond.value);
     }
   }
 

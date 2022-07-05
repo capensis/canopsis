@@ -14,7 +14,7 @@ import {
   PATTERN_TYPES,
   QUICK_RANGES,
   PATTERNS_FIELDS,
-  SERVICE_WEATHER_PATTERN_FIELDS,
+  SERVICE_WEATHER_PATTERN_FIELDS, TIME_UNITS,
 } from '@/constants';
 
 import uid from '@/helpers/uid';
@@ -29,7 +29,7 @@ import {
   getDiffBetweenStartAndStopQuickInterval,
   getQuickRangeByDiffBetweenStartAndStop,
 } from '@/helpers/date/date-intervals';
-import { durationToForm } from '@/helpers/date/duration';
+import { durationToForm, toSeconds } from '@/helpers/date/duration';
 
 /**
  * @typedef { 'alarm' | 'entity' | 'pbehavior' } PatternTypes
@@ -133,8 +133,9 @@ export const patternRuleToForm = (rule = {}) => {
 
   const isAlarmInfos = rule.field?.startsWith(ALARM_PATTERN_FIELDS.infos);
   const isEntityInfos = rule.field?.startsWith(ENTITY_PATTERN_FIELDS.infos);
+  const isEntityComponentInfos = rule.field?.startsWith(ENTITY_PATTERN_FIELDS.componentInfos);
   const isDuration = rule.field === ALARM_PATTERN_FIELDS.duration;
-  const isInfos = isAlarmInfos || isEntityInfos;
+  const isInfos = isAlarmInfos || isEntityInfos || isEntityComponentInfos;
   const isExtraInfos = !isInfos && rule.field?.startsWith(EVENT_FILTER_PATTERN_FIELDS.extraInfos);
 
   switch (rule.cond.type) {
@@ -257,9 +258,14 @@ export const patternRuleToForm = (rule = {}) => {
       form.value = rule.cond.value;
       break;
     }
-    case PATTERN_CONDITIONS.relativeTime:
-      form.range.type = getQuickRangeByDiffBetweenStartAndStop(rule.cond.value, PATTERN_QUICK_RANGES).value;
+    case PATTERN_CONDITIONS.relativeTime: {
+      const { value, unit } = rule.cond.value;
+
+      const seconds = toSeconds(value, unit);
+
+      form.range.type = getQuickRangeByDiffBetweenStartAndStop(seconds, PATTERN_QUICK_RANGES).value;
       break;
+    }
     case PATTERN_CONDITIONS.absoluteTime:
       form.range = {
         type: QUICK_RANGES.custom.value,
@@ -270,18 +276,19 @@ export const patternRuleToForm = (rule = {}) => {
 
   if (isDuration) {
     form.duration = durationToForm(rule.cond.value);
-  }
-
-  if (isExtraInfos) {
+  } else if (isExtraInfos) {
     form.attribute = EVENT_FILTER_PATTERN_FIELDS.extraInfos;
     form.field = rule.field.slice(EVENT_FILTER_PATTERN_FIELDS.extraInfos.length + 1);
-  }
+  } else if (isInfos) {
+    if (isAlarmInfos) {
+      form.attribute = ALARM_PATTERN_FIELDS.infos;
+    } else if (isEntityInfos) {
+      form.attribute = ENTITY_PATTERN_FIELDS.infos;
+    } else {
+      form.attribute = ENTITY_PATTERN_FIELDS.componentInfos;
+    }
 
-  if (isInfos) {
-    const infosPrefix = isAlarmInfos ? ALARM_PATTERN_FIELDS.infos : ENTITY_PATTERN_FIELDS.infos;
-
-    form.attribute = rule.field.slice(0, infosPrefix.length);
-    form.dictionary = rule.field.slice(infosPrefix.length + 1);
+    form.dictionary = rule.field.slice(form.attribute.length + 1);
 
     form.field = PATTERN_INFOS_NAME_OPERATORS.includes(rule.cond.type)
       ? PATTERN_RULE_INFOS_FIELDS.name
@@ -354,7 +361,10 @@ export const formDateIntervalConditionToPatternRuleCondition = (range) => {
   }
 
   return {
-    value: getDiffBetweenStartAndStopQuickInterval(range.type),
+    value: {
+      value: getDiffBetweenStartAndStopQuickInterval(range.type),
+      unit: TIME_UNITS.second,
+    },
     type: PATTERN_CONDITIONS.relativeTime,
   };
 };

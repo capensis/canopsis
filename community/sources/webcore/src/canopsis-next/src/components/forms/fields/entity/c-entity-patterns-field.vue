@@ -25,6 +25,7 @@ import {
 } from '@/constants';
 
 const { mapActions: entityCategoryMapActions } = createNamespacedHelpers('entityCategory');
+const { mapActions: serviceMapActions } = createNamespacedHelpers('service');
 
 export default {
   model: {
@@ -69,6 +70,7 @@ export default {
     return {
       categories: [],
       categoriesPending: false,
+      infos: [],
     };
   },
   computed: {
@@ -123,8 +125,7 @@ export default {
 
     infosOptions() {
       return {
-        // TODO: Should be replaced on API data
-        infos: ['infos 1', 'infos 2'],
+        infos: this.infos,
         type: PATTERN_RULE_TYPES.infos,
       };
     },
@@ -232,9 +233,11 @@ export default {
   },
   mounted() {
     this.fetchCategories();
+    this.fetchInfos();
   },
   methods: {
     ...entityCategoryMapActions({ fetchCategoriesListWithoutStore: 'fetchListWithoutStore' }),
+    ...serviceMapActions({ fetchEntityInfosWithoutStore: 'fetchInfosWithoutStore' }),
 
     async fetchCategories() {
       this.categoriesPending = true;
@@ -245,6 +248,14 @@ export default {
 
       this.categories = categories;
       this.categoriesPending = false;
+    },
+
+    async fetchInfos() {
+      const { data: infos } = await this.fetchEntityInfosWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
+
+      this.infos = infos;
     },
   },
 };
