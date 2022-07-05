@@ -22,6 +22,7 @@ export const PATTERN_OPERATORS = {
 
   hasEvery: 'has_every',
   hasOneOf: 'has_one_of',
+  isOneOf: 'is_one_of',
   hasNot: 'has_not',
   isEmpty: 'is_empty',
   isNotEmpty: 'is_not_empty',
@@ -43,6 +44,9 @@ export const PATTERN_OPERATORS = {
 
   acked: 'acked',
   notAcked: 'not_acked',
+
+  isGrey: 'is_grey',
+  isNotGrey: 'is_not_grey',
 };
 
 export const PATTERN_CONDITIONS = {
@@ -109,6 +113,8 @@ export const PATTERN_OPERATORS_WITHOUT_VALUE = [
   PATTERN_OPERATORS.notSnoozed,
   PATTERN_OPERATORS.canceled,
   PATTERN_OPERATORS.notCanceled,
+  PATTERN_OPERATORS.isNotGrey,
+  PATTERN_OPERATORS.isGrey,
 ];
 
 export const PATTERN_RULE_TYPES = {
@@ -127,6 +133,7 @@ export const PATTERN_RULE_INFOS_FIELDS = {
 export const PATTERN_ARRAY_OPERATORS = [
   PATTERN_OPERATORS.hasEvery,
   PATTERN_OPERATORS.hasOneOf,
+  PATTERN_OPERATORS.isOneOf,
   PATTERN_OPERATORS.hasNot,
   PATTERN_OPERATORS.isEmpty,
   PATTERN_OPERATORS.isNotEmpty,
@@ -204,6 +211,7 @@ export const PATTERNS_FIELDS = {
   pbehavior: 'pbehavior_pattern',
   event: 'event_pattern',
   totalEntity: 'total_entity_pattern',
+  serviceWeather: 'weather_service_pattern',
 };
 
 export const OLD_PATTERNS_FIELDS = {
