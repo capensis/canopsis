@@ -98,14 +98,13 @@ describe('c-pattern-infos-attribute-field', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: {
-          dictionary: 'test',
+          dictionary: 'Test text',
           field: 'test',
         },
         label: 'Custom label',
         items: [
           {
-            value: 'test',
-            text: 'Test text',
+            value: 'Test text',
           },
         ],
         name: 'custom_filter_infos_attribute_name',

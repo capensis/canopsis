@@ -14,7 +14,8 @@ import {
   PATTERN_TYPES,
   QUICK_RANGES,
   PATTERNS_FIELDS,
-  SERVICE_WEATHER_PATTERN_FIELDS, TIME_UNITS,
+  SERVICE_WEATHER_PATTERN_FIELDS,
+  TIME_UNITS,
 } from '@/constants';
 
 import uid from '@/helpers/uid';
