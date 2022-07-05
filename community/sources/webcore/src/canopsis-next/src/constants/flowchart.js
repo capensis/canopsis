@@ -35,3 +35,8 @@ export const LINE_TYPES = {
   curve: 'curve',
   sharp: 'sharp',
 };
+
+export const STROKE_TYPES = {
+  solid: 'solid',
+  dashed: 'dashed',
+};

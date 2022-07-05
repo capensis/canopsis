@@ -3,54 +3,74 @@
     v-expansion-panel-content
       template(#header="")
         span.white {{ $t('flowchart.properties') }}
+      v-divider
       v-card
         v-card-text
           flowchart-color-field.my-1(
-            v-if="shapesWithFill.length",
+            v-if="showFill",
             :label="$t('flowchart.fill')",
-            :value="properties.fill",
+            :value="fillValue",
             @input="updateFill"
           )
           flowchart-color-field.my-1(
-            v-if="shapesWithStroke.length",
+            v-if="showStroke",
             :label="$t('flowchart.stroke')",
-            :value="properties.stroke",
+            :value="stroke",
             @input="updateStroke"
           )
-          flowchart-number-field.my-2(
-            v-if="shapesWithStroke.length",
-            :label="$t('flowchart.strokeWidth')",
-            :value="properties.strokeWidth",
-            @input="updateStrokeWidth"
+          template(v-if="showStroke && isStrokeEnabled")
+            flowchart-number-field.my-2(
+              :label="$t('flowchart.strokeWidth')",
+              :value="strokeWidth",
+              @input="updateStrokeWidth"
+            )
+            flowchart-stroke-type-field.my-2(
+              :label="$t('flowchart.strokeType')",
+              :value="strokeType",
+              @input="updateStrokeType"
+            )
+          flowchart-line-type-field.my-2(
+            v-if="showLineType",
+            :label="$t('flowchart.lineType')",
+            :value="lineType",
+            @input="updateLineType"
           )
           v-divider
           flowchart-color-field.my-1(
             :label="$t('flowchart.fontColor')",
-            :value="textProperties.color",
+            :value="textColor",
             @input="updateTextColor"
           )
           flowchart-color-field.my-1(
             :label="$t('flowchart.fontBackgroundColor')",
-            :value="textProperties.backgroundColor",
+            :value="textBackgroundColor",
             @input="updateTextBackgroundColor"
           )
           flowchart-number-field.my-2(
             :label="$t('flowchart.fontSize')",
-            :value="textProperties.fontSize",
+            :value="textFontSize",
             @input="updateFontSize"
           )
 </template>
 
 <script>
+import { merge, get } from 'lodash';
+
+import { STROKE_TYPES } from '@/constants';
+
 import { formBaseMixin } from '@/mixins/form';
 
 import FlowchartColorField from './partials/flowchart-color-field.vue';
 import FlowchartNumberField from './partials/flowchart-number-field.vue';
+import FlowchartStrokeTypeField from './partials/flowchart-stroke-type-field.vue';
+import FlowchartLineTypeField from './partials/flowchart-line-type-field.vue';
 
 export default {
   components: {
     FlowchartColorField,
     FlowchartNumberField,
+    FlowchartStrokeTypeField,
+    FlowchartLineTypeField,
   },
   mixins: [formBaseMixin],
   model: {
@@ -80,54 +100,86 @@ export default {
       return this.selectedShapes.filter(({ properties }) => properties.stroke);
     },
 
-    properties() {
-      const [firstShapeWithFill] = this.shapesWithFill;
-      const [firstShapeWithStroke] = this.shapesWithStroke;
-
-      return {
-        fill: firstShapeWithFill?.properties?.fill,
-        stroke: firstShapeWithStroke?.properties?.stroke,
-        strokeWidth: firstShapeWithStroke?.properties?.['stroke-width'],
-      };
+    shapesWithLineType() {
+      return this.selectedShapes.filter(({ lineType }) => lineType);
     },
 
-    textProperties() {
-      const [firstShape] = this.selectedShapes;
+    showFill() {
+      return this.selected.length === this.shapesWithFill.length;
+    },
 
-      return firstShape.textProperties;
+    showStroke() {
+      return this.selected.length === this.shapesWithStroke.length;
+    },
+
+    showLineType() {
+      return this.selected.length === this.shapesWithLineType.length;
+    },
+
+    fillValue() {
+      return this.getShapesPropertyValue(this.shapesWithStroke, 'properties.fill');
+    },
+
+    stroke() {
+      return this.getShapesPropertyValue(this.shapesWithStroke, 'properties.stroke');
+    },
+
+    isStrokeEnabled() {
+      return this.stroke && this.stroke !== 'transparent';
+    },
+
+    lineType() {
+      return this.getShapesPropertyValue(this.shapesWithStroke, 'lineType');
+    },
+
+    strokeWidth() {
+      return this.getShapesPropertyValue(this.shapesWithStroke, 'properties.stroke-width');
+    },
+
+    strokeType() {
+      return this.getShapesPropertyValue(this.shapesWithStroke, 'stroke-dasharray')
+        ? STROKE_TYPES.dashed
+        : STROKE_TYPES.solid;
+    },
+
+    textColor() {
+      return this.getShapesPropertyValue(this.selectedShapes, 'textProperties.color');
+    },
+
+    textBackgroundColor() {
+      return this.getShapesPropertyValue(this.selectedShapes, 'textProperties.backgroundColor');
+    },
+
+    textFontSize() {
+      return this.getShapesPropertyValue(this.selectedShapes, 'textProperties.fontSize');
     },
   },
   methods: {
-    updateSelectedShapesProperties(properties) {
+    getShapesPropertyValue(shapes, path) {
+      const [firstShape] = shapes;
+      const value = get(firstShape, path);
+
+      return shapes?.every(shape => get(shape, path) === value)
+        ? value
+        : undefined;
+    },
+
+    updateSelectedShapes(shapeData) {
       this.updateModel(this.selected.reduce((acc, id) => {
         const shape = this.shapes[id];
 
-        acc[id] = {
-          ...shape,
-          properties: {
-            ...shape.properties,
-            ...properties,
-          },
-        };
+        acc[id] = merge({}, shape, shapeData);
 
         return acc;
       }, { ...this.shapes }));
     },
 
+    updateSelectedShapesProperties(properties) {
+      this.updateSelectedShapes({ properties });
+    },
+
     updateSelectedShapesTextProperties(textProperties) {
-      this.updateModel(this.selected.reduce((acc, id) => {
-        const shape = this.shapes[id];
-
-        acc[id] = {
-          ...shape,
-          textProperties: {
-            ...shape.textProperties,
-            ...textProperties,
-          },
-        };
-
-        return acc;
-      }, { ...this.shapes }));
+      this.updateSelectedShapes({ textProperties });
     },
 
     updateFill(fill) {
@@ -140,6 +192,16 @@ export default {
 
     updateStrokeWidth(strokeWidth) {
       this.updateSelectedShapesProperties({ 'stroke-width': strokeWidth });
+    },
+
+    updateStrokeType(strokeType) {
+      this.updateSelectedShapesProperties({
+        'stroke-dasharray': strokeType === STROKE_TYPES.solid ? undefined : '4 4',
+      });
+    },
+
+    updateLineType(lineType) {
+      this.updateSelectedShapes({ lineType });
     },
 
     updateTextColor(color) {

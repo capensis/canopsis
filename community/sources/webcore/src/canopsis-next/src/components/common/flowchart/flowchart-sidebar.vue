@@ -288,7 +288,7 @@ export default {
       const bidirectionalArrowLine = generateBidirectionalArrowLineShape({
         points: this.centerCurveLinePoints,
         lineType: LINE_TYPES.curve,
-        text: 'Bidirectional arrow line',
+        text: 'Bidirectional arrow curve line',
         properties: {
           stroke: 'black',
           'stroke-width': 2,
