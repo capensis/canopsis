@@ -303,11 +303,11 @@ func (s *store) DeleteArchivedEntities(ctx context.Context) (int64, error) {
 }
 
 func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error) {
-	isToggled := false
-
+	var isToggled bool
 	var oldSimplifiedEntity SimplifiedEntity
 
 	err := s.db.WithTransaction(ctx, func(ctx context.Context) error {
+		isToggled = false
 		oldSimplifiedEntity = SimplifiedEntity{}
 
 		err := s.mainCollection.FindOneAndUpdate(
