@@ -302,6 +302,23 @@ exports[`c-pattern-operator-field Renders \`c-pattern-operator-field\` with cust
             <div
               class="v-list__tile__title"
             >
+              Is one of
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
               Has not
             </div>
           </div>
@@ -405,23 +422,6 @@ exports[`c-pattern-operator-field Renders \`c-pattern-operator-field\` with cust
               class="v-list__tile__title"
             >
               Shorter
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Ticket is associated
             </div>
           </div>
         </a>
@@ -732,6 +732,23 @@ exports[`c-pattern-operator-field Renders \`c-pattern-operator-field\` with defa
             <div
               class="v-list__tile__title"
             >
+              Is one of
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
               Has not
             </div>
           </div>
@@ -835,23 +852,6 @@ exports[`c-pattern-operator-field Renders \`c-pattern-operator-field\` with defa
               class="v-list__tile__title"
             >
               Shorter
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Ticket is associated
             </div>
           </div>
         </a>

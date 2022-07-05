@@ -19,7 +19,6 @@ import { createNamespacedHelpers } from 'vuex';
 import {
   ENTITY_PATTERN_FIELDS,
   MAX_LIMIT,
-  PATTERN_ARRAY_OPERATORS,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
@@ -77,8 +76,18 @@ export default {
       return [
         PATTERN_OPERATORS.equal,
         PATTERN_OPERATORS.notEqual,
+        PATTERN_OPERATORS.isOneOf,
+        PATTERN_OPERATORS.hasNot,
+      ];
+    },
+
+    dependenciesOperators() {
+      return [
+        PATTERN_OPERATORS.hasEvery,
         PATTERN_OPERATORS.hasOneOf,
         PATTERN_OPERATORS.hasNot,
+        PATTERN_OPERATORS.isEmpty,
+        PATTERN_OPERATORS.isNotEmpty,
       ];
     },
 
@@ -98,7 +107,7 @@ export default {
 
     impactOptions() {
       return {
-        operators: PATTERN_ARRAY_OPERATORS,
+        operators: this.dependenciesOperators,
         defaultValue: [],
         valueField: this.entitiesValueField,
       };
@@ -106,7 +115,7 @@ export default {
 
     dependsOptions() {
       return {
-        operators: PATTERN_ARRAY_OPERATORS,
+        operators: this.dependenciesOperators,
         defaultValue: [],
         valueField: this.entitiesValueField,
       };
