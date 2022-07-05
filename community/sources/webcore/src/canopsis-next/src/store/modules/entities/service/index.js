@@ -95,5 +95,9 @@ export default createEntityModule({
     fetchItemWithoutStore(context, { id, params }) {
       return request.get(`${API_ROUTES.service}/${id}`, { params });
     },
+
+    fetchInfosWithoutStore(context, { params }) {
+      return request.get(API_ROUTES.entityInfosKeys, { params });
+    },
   },
 });
