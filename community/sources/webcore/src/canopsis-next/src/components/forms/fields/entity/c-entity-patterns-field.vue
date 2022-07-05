@@ -56,6 +56,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    entityTypes: {
+      type: Array,
+      required: false,
+    },
     checkCountName: {
       type: String,
       required: false,
@@ -94,6 +98,9 @@ export default {
     entitiesValueField() {
       return {
         is: 'c-entity-field',
+        props: {
+          entityTypes: this.entityTypes,
+        },
       };
     },
 

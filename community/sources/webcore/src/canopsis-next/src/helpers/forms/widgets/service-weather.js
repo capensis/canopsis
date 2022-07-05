@@ -39,7 +39,6 @@ import {
 /**
  * @typedef {Object} ServiceWeatherWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
- * @property {WidgetFilter[]} viewFilters
  * @property {string | null} mainFilter
  * @property {WidgetSort} sort
  * @property {string} blockTemplate
@@ -68,9 +67,6 @@ import {
  */
 export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
-  viewFilters: parameters.viewFilters
-    ? cloneDeep(parameters.viewFilters)
-    : [],
   mainFilter: parameters.mainFilter ?? null,
   sort: parameters.sort ? { ...parameters.sort } : { order: SORT_ORDERS.asc },
   blockTemplate: parameters.blockTemplate ?? DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE,

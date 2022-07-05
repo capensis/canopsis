@@ -8,10 +8,13 @@
       template(v-if="hasAccessToListFilters")
         field-filters(
           v-model="form.parameters.mainFilter",
-          :entities-type="$constants.ENTITIES_TYPES.entity",
-          :filters.sync="form.parameters.viewFilters",
+          :filters.sync="form.filters",
+          :widget-id="widget._id",
           :addable="hasAccessToAddFilter",
           :editable="hasAccessToEditFilter",
+          :entity-types="[$constants.ENTITY_TYPES.service]",
+          with-entity,
+          with-service-weather,
           @input="updateMainFilterUpdatedAt"
         )
         v-divider

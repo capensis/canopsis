@@ -17,6 +17,9 @@
             :widget-id="widget._id",
             :addable="hasAccessToAddFilter",
             :editable="hasAccessToEditFilter",
+            :entity-types="[$constants.ENTITY_TYPES.service]",
+            with-entity,
+            with-service-weather,
             private
           )
     v-fade-transition(v-if="servicesPending", key="progress", mode="out-in")
