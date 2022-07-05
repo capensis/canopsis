@@ -61,13 +61,12 @@ import EllipseShapeIcon from './icons/ellipse-shape.vue';
 import ParallelogramShapeIcon from './icons/parallelogram-shape.vue';
 import StorageShapeIcon from './icons/storage-shape.vue';
 import LineShapeIcon from './icons/line-shape.vue';
-import DashedLineShapeIcon from './icons/dashed-line-shape.vue';
 import ArrowLineShapeIcon from './icons/arrow-line-shape.vue';
-import DashedArrowLineShapeIcon from './icons/dashed-arrow-line-shape.vue';
 import BidirectionalArrowLineShapeIcon from './icons/bidirectional-arrow-line-shape.vue';
-import DashedBidirectionalArrowLineShapeIcon from './icons/dashed-bidirectional-arrow-line-shape.vue';
 import ImageShapeIcon from './icons/image-shape.vue';
 import CurveLineShapeIcon from './icons/curve-line-shape.vue';
+import CurveArrowLineShapeIcon from './icons/curve-arrow-line-shape.vue';
+import BidirectionalCurveArrowLineShape from './icons/bidirectional-curve-arrow-line-shape.vue';
 import ProcessShapeIcon from './icons/process-shape.vue';
 import DocumentShapeIcon from './icons/document-shape.vue';
 import TextShapeIcon from './icons/text-shape.vue';
@@ -110,12 +109,11 @@ export default {
         { icon: DocumentShapeIcon, action: this.addDocument },
         { icon: StorageShapeIcon, action: this.addStorage },
         { icon: CurveLineShapeIcon, action: this.addCurveLine },
+        { icon: CurveArrowLineShapeIcon, action: this.addCurveArrowLine },
+        { icon: BidirectionalCurveArrowLineShape, action: this.addBidirectionalCurveArrowLine },
         { icon: LineShapeIcon, action: this.addLine },
-        { icon: DashedLineShapeIcon, action: this.addDashedLine },
         { icon: ArrowLineShapeIcon, action: this.addArrowLine },
-        { icon: DashedArrowLineShapeIcon, action: this.addDashedArrowLine },
         { icon: BidirectionalArrowLineShapeIcon, action: this.addBidirectionalArrowLine },
-        { icon: DashedBidirectionalArrowLineShapeIcon, action: this.addDashedBidirectionalArrowLine },
         { icon: TextShapeIcon, action: this.addText },
         { icon: TextboxShapeIcon, action: this.addTextbox },
       ];
@@ -272,32 +270,32 @@ export default {
       this.addShape(line);
     },
 
-    addDashedLine() {
-      const line = generateLineShape({
-        points: this.centerLinePoints,
-        text: 'Dashed line',
-        properties: {
-          stroke: 'black',
-          'stroke-width': 2,
-          'stroke-dasharray': '4 4',
-        },
-      });
-
-      this.addShape(line);
-    },
-
-    addDashedArrowLine() {
+    addCurveArrowLine() {
       const arrowLine = generateArrowLineShape({
-        points: this.centerLinePoints,
-        text: 'Dashed arrow line',
+        points: this.centerCurveLinePoints,
+        lineType: LINE_TYPES.curve,
+        text: 'Curve arrow line',
         properties: {
           stroke: 'black',
           'stroke-width': 2,
-          'stroke-dasharray': '4 4',
         },
       });
 
       this.addShape(arrowLine);
+    },
+
+    addBidirectionalCurveArrowLine() {
+      const bidirectionalArrowLine = generateBidirectionalArrowLineShape({
+        points: this.centerCurveLinePoints,
+        lineType: LINE_TYPES.curve,
+        text: 'Bidirectional arrow line',
+        properties: {
+          stroke: 'black',
+          'stroke-width': 2,
+        },
+      });
+
+      this.addShape(bidirectionalArrowLine);
     },
 
     addArrowLine() {
@@ -320,20 +318,6 @@ export default {
         properties: {
           stroke: 'black',
           'stroke-width': 2,
-        },
-      });
-
-      this.addShape(bidirectionalArrowLine);
-    },
-
-    addDashedBidirectionalArrowLine() {
-      const bidirectionalArrowLine = generateBidirectionalArrowLineShape({
-        points: this.centerLinePoints,
-        text: 'Dashed bidirectional arrow line',
-        properties: {
-          stroke: 'black',
-          'stroke-width': 2,
-          'stroke-dasharray': '4 4',
         },
       });
 
