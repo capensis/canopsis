@@ -562,7 +562,13 @@ describe('pattern form converters', () => {
     const lastHour = 3600;
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.creationDate,
-      cond: { type: PATTERN_CONDITIONS.relativeTime, value: lastHour },
+      cond: {
+        type: PATTERN_CONDITIONS.relativeTime,
+        value: {
+          value: lastHour,
+          unit: TIME_UNITS.second,
+        },
+      },
     };
 
     const form = patternRuleToForm(patternRule);

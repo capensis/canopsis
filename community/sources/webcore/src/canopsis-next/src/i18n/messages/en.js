@@ -2810,7 +2810,6 @@ export default merge({
       invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
       countOverLimit: 'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
       oldPattern: 'The current filter pattern is defined in old format. Please use the Advanced editor to view it. Filters in old format will be deprecated soon. Please create new patterns in our updated interface.',
-      excludedRule: 'The current pattern is excluded. Please remove pattern.',
     },
   },
 
