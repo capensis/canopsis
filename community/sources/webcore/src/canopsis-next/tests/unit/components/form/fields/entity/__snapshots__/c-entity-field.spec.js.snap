@@ -2,7 +2,7 @@
 
 exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
 <div
-  class="v-input c-select-field c-entity-field v-text-field v-select v-select--chips v-select--chips--small v-autocomplete v-input--is-focused theme--light primary--text"
+  class="v-input c-select-field c-entity-field v-text-field v-select v-select--chips v-select--chips--small v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-focused theme--light primary--text"
   items="[object Object],[object Object],[object Object]"
 >
   <div
@@ -24,6 +24,78 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
         <div
           class="v-select__selections"
         >
+          <span
+            class="v-chip c-entity-field__chip v-chip--small v-chip--removable theme--light"
+            tabindex="0"
+          >
+            <span
+              class="v-chip__content"
+            >
+              <span
+                class="ellipsis"
+              >
+                Text
+              </span>
+              <div
+                class="v-chip__close"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  cancel
+                </i>
+              </div>
+            </span>
+          </span>
+          <span
+            class="v-chip c-entity-field__chip v-chip--small v-chip--removable theme--light"
+            tabindex="0"
+          >
+            <span
+              class="v-chip__content"
+            >
+              <span
+                class="ellipsis"
+              >
+                Text 2
+              </span>
+              <div
+                class="v-chip__close"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  cancel
+                </i>
+              </div>
+            </span>
+          </span>
+          <span
+            class="v-chip c-entity-field__chip v-chip--small v-chip--removable theme--light"
+            tabindex="0"
+          >
+            <span
+              class="v-chip__content"
+            >
+              <span
+                class="ellipsis"
+              >
+                Text 3
+              </span>
+              <div
+                class="v-chip__close"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  cancel
+                </i>
+              </div>
+            </span>
+          </span>
           <input
             aria-label="Entities"
             autocomplete="off"
@@ -147,7 +219,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 2`] = `
 
 exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
 <div
-  class="v-input c-select-field c-entity-field v-text-field v-select v-autocomplete v-input--is-disabled theme--light"
+  class="v-input c-select-field c-entity-field v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
   items="[object Object],[object Object],[object Object]"
   loading="true"
   search="Text 2"
@@ -163,7 +235,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
       >
         <label
           aria-hidden="true"
-          class="v-label v-label--is-disabled theme--light"
+          class="v-label v-label--active v-label--is-disabled theme--light"
           style="left: 0px; position: absolute;"
         >
           Custom label
@@ -225,61 +297,21 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 2`] = `
       role="list"
     >
       <div
-        class="c-entity-field--tile"
         role="listitem"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile theme--light"
         >
           <div
             class="v-list__tile__content"
           >
-            Text
+            <div
+              class="v-list__tile__title"
+            >
+              No data available
+            </div>
           </div>
-          <span
-            class="ml-4 grey--text"
-          >
-            type1
-          </span>
-        </a>
-      </div>
-      <div
-        class="c-entity-field--tile"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            Text 2
-          </div>
-          <span
-            class="ml-4 grey--text"
-          >
-            type2
-          </span>
-        </a>
-      </div>
-      <div
-        class="c-entity-field--tile"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            Text 3
-          </div>
-          <span
-            class="ml-4 grey--text"
-          >
-            type3
-          </span>
-        </a>
+        </div>
       </div>
       <div
         class="c-entity-field__append"
@@ -291,7 +323,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 2`] = `
 
 exports[`c-entity-field Renders \`c-entity-field\` with default props 1`] = `
 <div
-  class="v-input c-select-field c-entity-field v-text-field v-select v-autocomplete v-input--is-focused theme--light primary--text"
+  class="v-input c-select-field c-entity-field v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-focused theme--light primary--text"
 >
   <div
     class="v-input__control"

@@ -38,7 +38,7 @@
         @input="errors.remove(pbehaviorFieldName)"
       )
 
-    c-pattern-panel(v-if="withEvent", :title="$t('common.eventPatterns')")
+    c-pattern-panel.mb-2(v-if="withEvent", :title="$t('common.eventPatterns')")
       c-event-filter-patterns-field(
         v-field="value.event_pattern",
         :required="isPatternRequired",
@@ -48,7 +48,7 @@
         @input="errors.remove(eventFieldName)"
       )
 
-    c-pattern-panel(v-if="withTotalEntity", :title="$t('common.totalEntityPatterns')")
+    c-pattern-panel.mb-2(v-if="withTotalEntity", :title="$t('common.totalEntityPatterns')")
       c-entity-patterns-field(
         v-field="value.total_entity_pattern",
         :required="isPatternRequired",
@@ -57,6 +57,15 @@
         :name="totalEntityFieldName",
         with-type,
         @input="errors.remove(totalEntityFieldName)"
+      )
+
+    c-pattern-panel.mb-2(v-if="withServiceWeather", :title="$t('common.serviceWeatherPatterns')")
+      c-service-weather-patterns-field(
+        v-field="value.weather_service_pattern",
+        :required="isPatternRequired",
+        :disabled="disabled",
+        :name="serviceWeatherFieldName",
+        @input="errors.remove(serviceWeatherFieldName)"
       )
 </template>
 
@@ -106,6 +115,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withServiceWeather: {
+      type: Boolean,
+      default: false,
+    },
     required: {
       type: Boolean,
       default: false,
@@ -130,17 +143,7 @@ export default {
   },
   computed: {
     hasPatterns() {
-      const {
-        alarm_pattern: alarmPattern,
-        entity_pattern: entityPattern,
-        pbehavior_pattern: pbehaviorPattern,
-        event_pattern: eventPattern,
-      } = this.value;
-
-      return alarmPattern?.groups?.length
-        || entityPattern?.groups?.length
-        || pbehaviorPattern?.groups?.length
-        || eventPattern?.groups?.length;
+      return Object.values(PATTERNS_FIELDS).some(key => this.value[key]?.groups?.length);
     },
 
     isPatternRequired() {
@@ -164,7 +167,11 @@ export default {
     },
 
     totalEntityFieldName() {
-      return this.preparePatternsFieldName(PATTERNS_FIELDS.totalEntityPattern);
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.totalEntity);
+    },
+
+    serviceWeatherFieldName() {
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.serviceWeather);
     },
   },
   methods: {

@@ -151,6 +151,8 @@ import CPbehaviorReasonField from '@/components/forms/fields/pbehavior/c-pbehavi
 import CPbehaviorTypeField from '@/components/forms/fields/pbehavior/c-pbehavior-type-field.vue';
 import CSelectField from '@/components/forms/fields/c-select-field.vue';
 import CCollapsePanel from '@/components/common/block/c-collapse-panel.vue';
+import CServiceWeatherPatternsField from '@/components/forms/fields/service-weather/c-service-weather-patterns-field.vue';
+import CServiceWeatherIconField from '@/components/forms/fields/service-weather/c-service-weather-icon-field.vue';
 
 /**
  * Patterns
@@ -412,6 +414,8 @@ Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
 Vue.component('c-entity-patterns-field', CEntityPatternsField);
 Vue.component('c-pbehavior-patterns-field', CPbehaviorPatternsField);
 Vue.component('c-event-filter-patterns-field', CEventFilterPatternsField);
+Vue.component('c-service-weather-patterns-field', CServiceWeatherPatternsField);
+Vue.component('c-service-weather-icon-field', CServiceWeatherIconField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

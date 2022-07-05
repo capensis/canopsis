@@ -68,7 +68,7 @@ export default {
       return [
         PATTERN_OPERATORS.equal,
         PATTERN_OPERATORS.notEqual,
-        PATTERN_OPERATORS.hasOneOf,
+        PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.hasNot,
       ];
     },
@@ -161,6 +161,7 @@ export default {
 
     stateOptions() {
       return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
         defaultValue: ENTITIES_STATES.ok,
         valueField: {
           is: 'c-entity-state-field',
