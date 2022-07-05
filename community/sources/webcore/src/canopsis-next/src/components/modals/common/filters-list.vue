@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import { pick } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -53,6 +55,14 @@ export default {
     filters() {
       return this.userPreference?.filters ?? [];
     },
+
+    modalConfig() {
+      return {
+        ...pick(this.config, ['withAlarm', 'withEntity', 'withPbehavior', 'withServiceWeather', 'entityTypes']),
+
+        withTitle: true,
+      };
+    },
   },
   mounted() {
     this.refreshFilters();
@@ -66,12 +76,9 @@ export default {
       this.$modals.show({
         name: MODALS.createFilter,
         config: {
+          ...this.modalConfig,
+
           title: this.$t('modals.createFilter.create.title'),
-          withTitle: true,
-          withAlarm: this.config.withAlarm,
-          withEntity: this.config.withEntity,
-          withPbehavior: this.config.withPbehavior,
-          withServiceWeather: this.config.withServiceWeather,
           action: async (newFilter) => {
             await this.createWidgetFilter({
               data: {
@@ -92,14 +99,10 @@ export default {
       this.$modals.show({
         name: MODALS.createFilter,
         config: {
-          filter,
+          ...this.modalConfig,
 
+          filter,
           title: this.$t('modals.createFilter.edit.title'),
-          withTitle: true,
-          withAlarm: this.config.withAlarm,
-          withEntity: this.config.withEntity,
-          withPbehavior: this.config.withPbehavior,
-          withServiceWeather: this.config.withServiceWeather,
           action: async (newFilter) => {
             await this.updateWidgetFilter({
               id: filter._id,

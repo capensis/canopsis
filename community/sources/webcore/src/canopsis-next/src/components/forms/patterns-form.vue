@@ -17,6 +17,7 @@
       :with-service-weather="withServiceWeather",
       :alarm-attributes="alarmAttributes",
       :entity-attributes="entityAttributes",
+      :entity-types="entityTypes",
       some-required
     )
 </template>
@@ -62,6 +63,10 @@ export default {
       required: false,
     },
     entityAttributes: {
+      type: Array,
+      required: false,
+    },
+    entityTypes: {
       type: Array,
       required: false,
     },

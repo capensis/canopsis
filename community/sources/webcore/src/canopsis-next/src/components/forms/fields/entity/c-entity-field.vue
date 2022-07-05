@@ -25,7 +25,7 @@
     template(#item="{ item, tile }")
       v-list-tile.c-entity-field--tile(v-bind="tile.props", v-on="tile.on")
         v-list-tile-content {{ getItemText(item) }}
-        span.ml-4.grey--text(v-if="shownType") {{ item.type }}
+        span.ml-4.grey--text {{ item.type }}
     template(#append-item="")
       div.c-entity-field__append(ref="append")
     template(v-if="isMultiply", #selection="{ item, index }")
@@ -102,10 +102,6 @@ export default {
   computed: {
     entities() {
       return Object.values(this.entitiesById);
-    },
-
-    shownType() {
-      return this.entityTypes.length !== 1;
     },
 
     isMultiply() {

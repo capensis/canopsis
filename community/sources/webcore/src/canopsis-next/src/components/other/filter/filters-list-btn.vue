@@ -44,6 +44,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    entityTypes: {
+      type: Array,
+      required: false,
+    },
   },
   methods: {
     showFiltersListModal() {
@@ -58,6 +62,7 @@ export default {
           withEntity: this.withEntity,
           withPbehavior: this.withPbehavior,
           withServiceWeather: this.withServiceWeather,
+          entityTypes: this.entityTypes,
         },
       });
     },
