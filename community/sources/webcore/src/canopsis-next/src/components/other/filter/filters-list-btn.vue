@@ -40,6 +40,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withServiceWeather: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     showFiltersListModal() {
@@ -53,6 +57,7 @@ export default {
           withAlarm: this.withAlarm,
           withEntity: this.withEntity,
           withPbehavior: this.withPbehavior,
+          withServiceWeather: this.withServiceWeather,
         },
       });
     },
