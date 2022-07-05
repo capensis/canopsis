@@ -19,6 +19,8 @@ CURRENT_BUILD_OUTPUT_DIR = $(CURRENT_ROOT_DIR)/build
 MONOREPO_ROOT := $(realpath $(dir $(COMMUNITY_MAKEFILE))/../..)
 VPATH = $(dir $(CURRENT_MAKEFILE))
 
+include .env
+
 # List of cmds/engines to build and install (eg: engine-che connector-junit...)
 CMDS = $(notdir $(wildcard $(CURRENT_ROOT_DIR)/cmd/*))
 # List of cmd binary paths (eg: build/cmd/engine-che build/cmd/connector-junit...)
@@ -65,8 +67,6 @@ DOCKER_NO_CACHE =
 DOCKER_TAG = $(VERSION)
 # Alpine version used in final containers (https://hub.docker.com/_/alpine?tab=tags)
 DOCKER_ALPINE_VERSION = 3.14.3
-# Version of the Go compiler (https://hub.docker.com/_/golang?tab=tags)
-DOCKER_GOLANG_VERSION = 1.17.5
 # Alpine version used in the Golang build container (https://hub.docker.com/_/golang?tab=tags&page=1&name=alpine)
 # note: the golang image only supports the latest two main release branches of Alpine!
 DOCKER_ALPINE_BUILD_VERSION = 3.14
