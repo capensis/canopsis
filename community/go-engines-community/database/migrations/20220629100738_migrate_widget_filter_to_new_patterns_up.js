@@ -398,16 +398,16 @@ function migrateOldGroupForAlarmList(oldGroup) {
                                 break;
                             default:
                                 if (entityField.startsWith("infos.") && entityField.endsWith(".value")) {
-                                    var info = entityField.replace("infos.", "").replace(".value", "");
+                                    var info = entityField.replace(".value", "");
                                     if (strCond !== null) {
                                         newEntityGroup.push({
-                                            field: "infos." + info,
+                                            field: info,
                                             field_type: "string",
                                             cond: strCond,
                                         });
                                     } else if (value === null) {
                                         newEntityGroup.push({
-                                            field: "infos." + info,
+                                            field: info,
                                             cond: {
                                                 type: "exist",
                                                 value: false
@@ -421,16 +421,16 @@ function migrateOldGroupForAlarmList(oldGroup) {
                                 }
                         }
                     } else if (field.startsWith("infos.") && field.endsWith(".value")) {
-                        var info = field.replace("infos.", "").replace(".value", "");
+                        var info = field.replace(".value", "");
                         if (strCond !== null) {
                             newEntityGroup.push({
-                                field: "infos." + info,
+                                field: info,
                                 field_type: "string",
                                 cond: strCond,
                             });
                         } else if (value === null) {
                             newEntityGroup.push({
-                                field: "infos." + info,
+                                field: info,
                                 cond: {
                                     type: "exist",
                                     value: false
@@ -440,7 +440,7 @@ function migrateOldGroupForAlarmList(oldGroup) {
                             return null;
                         }
                     } else if (field.startsWith("v.infos.*.") && strCond !== null) {
-                        var info = field.replace("v.infos.*.", "").replace(".value", "");
+                        var info = field.replace("v.infos.*.", "");
                         newAlarmGroup.push({
                             field: "infos." + info,
                             field_type: "string",
@@ -515,13 +515,25 @@ function migrateOldGroupForEntityList(oldGroup) {
                     });
                     break;
                 default:
-                    if (field.startsWith("infos.") && field.endsWith(".value") && strCond !== null) {
-                        var info = field.replace("infos.", "").replace(".value", "");
-                        newEntityGroup.push({
-                            field: "infos." + info,
-                            field_type: "string",
-                            cond: strCond,
-                        });
+                    if (field.startsWith("infos.") && field.endsWith(".value")) {
+                        var info = field.replace(".value", "");
+                        if (strCond !== null) {
+                            newEntityGroup.push({
+                                field: info,
+                                field_type: "string",
+                                cond: strCond,
+                            });
+                        } else if (value === null) {
+                            newEntityGroup.push({
+                                field: info,
+                                cond: {
+                                    type: "exist",
+                                    value: false
+                                },
+                            });
+                        } else {
+                            return null;
+                        }
                     } else {
                         return null;
                     }
@@ -609,13 +621,25 @@ function migrateOldGroupForWeather(oldGroup) {
                     }
                     break;
                 default:
-                    if (field.startsWith("infos.") && field.endsWith(".value") && strCond !== null) {
-                        var info = field.replace("infos.", "").replace(".value", "");
-                        newEntityGroup.push({
-                            field: "infos." + info,
-                            field_type: "string",
-                            cond: strCond,
-                        });
+                    if (field.startsWith("infos.") && field.endsWith(".value")) {
+                        var info = field.replace(".value", "");
+                        if (strCond !== null) {
+                            newEntityGroup.push({
+                                field: info,
+                                field_type: "string",
+                                cond: strCond,
+                            });
+                        } else if (value === null) {
+                            newEntityGroup.push({
+                                field: info,
+                                cond: {
+                                    type: "exist",
+                                    value: false
+                                },
+                            });
+                        } else {
+                            return null;
+                        }
                     } else {
                         return null;
                     }

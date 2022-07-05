@@ -54,16 +54,16 @@ function migrateOldGroup(oldGroup) {
                     break;
                 default:
                     if (field.startsWith("infos.") && field.endsWith(".value")) {
-                        var info = field.replace("infos.", "").replace(".value", "");
+                        var info = field.replace(".value", "");
                         if (strCond !== null) {
                             newGroup.push({
-                                field: "infos." + info,
+                                field: info,
                                 field_type: "string",
                                 cond: strCond,
                             });
                         } else if (value === null) {
                             newGroup.push({
-                                field: "infos." + info,
+                                field: info,
                                 cond: {
                                     type: "exist",
                                     value: false
