@@ -173,7 +173,9 @@ export default {
         name: MODALS.alarmsList,
         config: {
           widget,
-          title: this.$t('modals.alarmsList.prefixTitle', { prefix: meta.filter.title ?? 'Common' }), // TODO: i18n
+          title: this.$t('modals.alarmsList.prefixTitle', {
+            prefix: meta.filter.title,
+          }),
           fetchList: (params) => {
             const newParams = {
               ...this.getCommonQuery(),
