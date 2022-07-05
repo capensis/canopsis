@@ -139,6 +139,7 @@ describe('create-filter', () => {
       title: '',
       alarm_pattern: [],
       entity_pattern: [],
+      event_pattern: [],
       pbehavior_pattern: [],
     });
     expect($modals.hide).toBeCalledWith();
@@ -209,6 +210,7 @@ describe('create-filter', () => {
       alarm_pattern: 'Alarm pattern error',
       entity_pattern: 'Entity pattern error',
       pbehavior_pattern: 'PBehavior pattern error',
+      weather_service_pattern: 'Weather service pattern error',
     };
     const action = jest.fn().mockRejectedValue({
       ...formErrors,
@@ -219,6 +221,9 @@ describe('create-filter', () => {
         modal: {
           config: {
             withAlarm: true,
+            withEntity: true,
+            withPbehavior: true,
+            withServiceWeather: true,
 
             action,
           },
@@ -237,10 +242,13 @@ describe('create-filter', () => {
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
-    expect(formErrors).toEqual(addedErrors);
+    expect(addedErrors).toEqual(formErrors);
     expect(action).toBeCalledWith({
       is_private: false,
       alarm_pattern: [],
+      entity_pattern: [],
+      pbehavior_pattern: [],
+      weather_service_pattern: [],
       title: '',
     });
     expect($modals.hide).not.toBeCalledWith();
