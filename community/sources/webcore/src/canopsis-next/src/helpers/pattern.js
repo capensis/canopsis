@@ -231,30 +231,32 @@ export const getOperatorsByRule = (rule, ruleType) => {
  * Get value type by operator
  *
  * @param {string} operator
- * @return {PatternFieldType | undefined}
+ * @return {PatternFieldType[]}
  */
-export const getValueTypeByOperator = (operator) => {
+export const getValueTypesByOperator = (operator) => {
+  const operators = [];
+
   if (isOperatorForArray(operator)) {
-    return PATTERN_FIELD_TYPES.stringArray;
+    operators.push(PATTERN_FIELD_TYPES.stringArray);
   }
 
   if (isOperatorForString(operator)) {
-    return PATTERN_FIELD_TYPES.string;
+    operators.push(PATTERN_FIELD_TYPES.string);
   }
 
   if (isOperatorForNumber(operator)) {
-    return PATTERN_FIELD_TYPES.number;
+    operators.push(PATTERN_FIELD_TYPES.number);
   }
 
   if (isOperatorForBoolean(operator)) {
-    return PATTERN_FIELD_TYPES.boolean;
+    operators.push(PATTERN_FIELD_TYPES.boolean);
   }
 
   if (isOperatorForNull(operator)) {
-    return PATTERN_FIELD_TYPES.null;
+    operators.push(PATTERN_FIELD_TYPES.null);
   }
 
-  return undefined;
+  return operators;
 };
 
 /**
@@ -266,13 +268,13 @@ export const getValueTypeByOperator = (operator) => {
  */
 export const convertValueByOperator = (value, operator) => {
   const valueType = getFieldType(value);
-  const operatorValueType = getValueTypeByOperator(operator);
+  const operatorsValueType = getValueTypesByOperator(operator);
 
-  if (valueType === operatorValueType) {
+  if (operatorsValueType.includes(valueType)) {
     return value;
   }
 
-  return convertValueByType(value, operatorValueType);
+  return convertValueByType(value, operatorsValueType[0]);
 };
 
 /**
