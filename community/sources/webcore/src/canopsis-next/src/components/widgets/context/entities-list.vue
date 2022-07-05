@@ -36,7 +36,10 @@
               :widget-id="widget._id",
               :addable="hasAccessToAddFilter",
               :editable="hasAccessToEditFilter",
-              private
+              private,
+              with-alarm,
+              with-entity,
+              with-pbehavior
             )
         v-flex
           v-checkbox(
@@ -92,7 +95,7 @@
 </template>
 
 <script>
-import { omit, isString, isObject } from 'lodash';
+import { omit, isObject } from 'lodash';
 
 import { USERS_PERMISSIONS } from '@/constants';
 
@@ -215,34 +218,15 @@ export default {
       };
     },
 
-    getQuery() { // TODO: finish it
+    getQuery() { // TODO: move this logic to helpers
       const query = omit(this.query, [
         'sortKey',
         'sortDir',
-        'filter',
-        'searchFilter',
-        'typesFilter',
       ]);
 
       if (this.query.sortKey) {
         query.sort = this.query.sortDir.toLowerCase();
         query.sort_by = this.query.sortKey;
-      }
-
-      const filters = ['filter', 'typesFilter'].reduce((acc, filterKey) => {
-        const queryFilter = isString(this.query[filterKey]) ? JSON.parse(this.query[filterKey]) : this.query[filterKey];
-
-        if (queryFilter) {
-          acc.push(queryFilter);
-        }
-
-        return acc;
-      }, []);
-
-      if (filters.length) {
-        query.filter = {
-          $and: filters,
-        };
       }
 
       return query;
