@@ -153,6 +153,12 @@ periodical_alarm:
         t: 1597030219
         initiator: external
         val: 1
+      last_comment:
+        _t: comment
+        a: root
+        m: test-alarm-to-get-1-comment-2
+        t: 1597030221
+        initiator: user
       steps:
         - _t: stateinc
           a: test-connector-default.test-connector-default-name
