@@ -8,10 +8,6 @@ export const widgetFilterSelectMixin = {
     mainFilter() {
       return getMainFilter(this.widget, this.userPreference);
     },
-
-    viewFilters() {
-      return this.userPreference.content.viewFilters || [];
-    },
   },
   methods: {
     updateFieldsInWidgetPreferences(fields = {}) {
