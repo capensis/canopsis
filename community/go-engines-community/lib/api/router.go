@@ -323,7 +323,16 @@ func RegisterRoutes(
 			)
 		}
 
-		entityAPI := entity.NewApi(entity.NewStore(dbClient, timezoneConfigProvider), exportExecutor, entityCleanerTaskChan, logger)
+		entityAPI := entity.NewApi(
+			entity.NewStore(dbClient, timezoneConfigProvider),
+			exportExecutor,
+			entityCleanerTaskChan,
+			entityPublChan,
+			metricsEntityMetaUpdater,
+			actionLogger,
+			logger,
+		)
+
 		entityExportRouter := protected.Group("/entity-export")
 		{
 			entityExportRouter.POST(
@@ -458,7 +467,6 @@ func RegisterRoutes(
 		}
 		entityRouter := protected.Group("/entities")
 		{
-			entityAPI := entity.NewApi(entity.NewStore(dbClient, timezoneConfigProvider), exportExecutor, entityCleanerTaskChan, logger)
 			entityRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
@@ -485,10 +493,11 @@ func RegisterRoutes(
 				pbehaviorApi.CalendarByEntityID,
 			)
 		}
+
+		entitybasicsAPI := entitybasic.NewApi(entitybasic.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
+			actionLogger, logger)
 		entitybasicsRouter := protected.Group("/entitybasics")
 		{
-			entitybasicsAPI := entitybasic.NewApi(entitybasic.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
-				actionLogger, logger)
 			entitybasicsRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
@@ -1325,6 +1334,22 @@ func RegisterRoutes(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
 					pbehaviorApi.BulkDelete,
+				)
+			}
+
+			entityRouter := bulkRouter.Group("/entities")
+			{
+				entityRouter.PUT(
+					"/enable",
+					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					entityAPI.BulkEnable,
+				)
+				entityRouter.PUT(
+					"/disable",
+					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					entityAPI.BulkDisable,
 				)
 			}
 		}
