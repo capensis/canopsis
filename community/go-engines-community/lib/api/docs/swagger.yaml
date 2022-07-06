@@ -711,7 +711,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
         400:
           description: Bad Request
           content:
@@ -756,7 +761,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
         400:
           description: Bad Request
           content:

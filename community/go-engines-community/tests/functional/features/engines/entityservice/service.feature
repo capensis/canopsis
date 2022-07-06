@@ -346,19 +346,21 @@ Feature: update service on event
           }
         ]
       ],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "client",
-          "description": "Client",
-          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-eventfilter-service-3-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -1600,19 +1602,21 @@ Feature: update service on event
           }
         ]
       ],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "client",
-          "description": "Client",
-          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-eventfilter-service-11-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -1774,19 +1778,21 @@ Feature: update service on event
           }
         ]
       ],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "client",
-          "description": "Client",
-          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-eventfilter-service-12-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -1948,19 +1954,21 @@ Feature: update service on event
           }
         ]
       ],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "client",
-          "description": "Client",
-          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-eventfilter-service-13-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -3972,13 +3980,27 @@ Feature: update service on event
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"component": "test-component-service-22"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-service-22-1",
+                "test-resource-service-22-2",
+                "test-resource-service-22-3"
+              ]
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"test-entityservice-service-22"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-entityservice-service-22
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -4020,7 +4042,7 @@ Feature: update service on event
     """
     Then the response code should be 207
     When I wait the end of 4 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"test-entityservice-service-22"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-entityservice-service-22
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -4090,7 +4112,7 @@ Feature: update service on event
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"test-entityservice-service-22"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-entityservice-service-22
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -4172,7 +4194,17 @@ Feature: update service on event
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-23-1"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-23-1"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """
@@ -4186,7 +4218,17 @@ Feature: update service on event
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-23-2"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-23-2"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """
@@ -4200,7 +4242,17 @@ Feature: update service on event
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-23-3"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-23-3"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """
@@ -4214,17 +4266,27 @@ Feature: update service on event
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {"name": "test-entityservice-service-23-name-1"},
-        {"name": "test-entityservice-service-23-name-2"},
-        {"name": "test-entityservice-service-23-name-3"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-entityservice-service-23-name-1",
+                "test-entityservice-service-23-name-2",
+                "test-entityservice-service-23-name-3"
+              ]
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"test-entityservice-service-23-4"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-entityservice-service-23-4
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -4266,7 +4328,7 @@ Feature: update service on event
     """
     Then the response code should be 207
     When I wait the end of 4 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"test-entityservice-service-23-4"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-entityservice-service-23-4
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -4308,7 +4370,7 @@ Feature: update service on event
     """
     Then the response code should be 207
     When I wait the end of 6 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"test-entityservice-service-23-4"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-entityservice-service-23-4
     Then the response code should be 200
     Then the response body should contain:
     """json

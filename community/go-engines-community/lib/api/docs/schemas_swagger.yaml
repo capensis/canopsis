@@ -779,21 +779,6 @@ definitions:
     required:
     - _id
     type: object
-  entity.BulkToggleResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/entity.BulkToggleRequestItem'
-      status:
-        type: integer
-    type: object
   entity.Entity:
     properties:
       _id:
