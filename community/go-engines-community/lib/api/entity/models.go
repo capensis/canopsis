@@ -120,3 +120,22 @@ func (r AggregationResult) GetTotal() int64 {
 func (r AggregationResult) GetData() interface{} {
 	return r.Data
 }
+
+type BulkToggleRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}
+
+type SimplifiedEntity struct {
+	ID      string `bson:"_id"`
+	Type    string `bson:"type"`
+	Enabled bool   `bson:"enabled"`
+}
+
+// for swagger
+type BulkToggleResponseItem struct {
+	ID     string                `json:"id,omitempty"`
+	Item   BulkToggleRequestItem `json:"item"`
+	Status int                   `json:"status"`
+	Error  string                `json:"error,omitempty"`
+	Errors map[string]string     `json:"errors,omitempty"`
+}
