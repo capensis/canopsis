@@ -17,6 +17,7 @@ type Store interface {
 	Find(ctx context.Context, r ListRequestWithPagination) (*AggregationResult, error)
 	ArchiveDisabledEntities(ctx context.Context, archiveDeps bool) (int64, error)
 	DeleteArchivedEntities(ctx context.Context) (int64, error)
+	Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error)
 }
 
 type store struct {
@@ -222,4 +223,32 @@ func (s *store) DeleteArchivedEntities(ctx context.Context) (int64, error) {
 	deleted, err := s.archivedCollection.DeleteMany(ctx, bson.M{})
 
 	return deleted, err
+}
+
+func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error) {
+	var isToggled bool
+	var oldSimplifiedEntity SimplifiedEntity
+
+	err := s.db.WithTransaction(ctx, func(ctx context.Context) error {
+		isToggled = false
+		oldSimplifiedEntity = SimplifiedEntity{}
+
+		err := s.mainCollection.FindOneAndUpdate(
+			ctx,
+			bson.M{"_id": id},
+			bson.M{"$set": bson.M{"enabled": enabled}},
+			options.
+				FindOneAndUpdate().
+				SetProjection(bson.M{"_id": 1, "enabled": 1, "type": 1}).
+				SetReturnDocument(options.Before),
+		).Decode(&oldSimplifiedEntity)
+		if err != nil {
+			return err
+		}
+
+		isToggled = oldSimplifiedEntity.Enabled != enabled
+		return nil
+	})
+
+	return isToggled, oldSimplifiedEntity, err
 }

@@ -673,6 +673,106 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /bulk/entities/disable:
+    put:
+      tags:
+        - entities
+      summary: Bulk disable entities
+      description: Bulk disable entities
+      operationId: entitybasics-bulk-disable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
+            examples:
+              update:
+                summary: Disable
+                description: Disable entities.
+                value: [
+                  {
+                    "_id": "test-entity-id-1"
+                  },
+                  {
+                    "_id": "test-entity-id-2"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /bulk/entities/enable:
+    put:
+      tags:
+        - entities
+      summary: Bulk enable entities
+      description: Bulk enable entities
+      operationId: entitybasics-bulk-enable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
+            examples:
+              update:
+                summary: Enable
+                description: Enable entities.
+                value: [
+                  {
+                    "_id": "test-entity-id-1"
+                  },
+                  {
+                    "_id": "test-entity-id-2"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /bulk/entityservices:
     put:
       tags:
