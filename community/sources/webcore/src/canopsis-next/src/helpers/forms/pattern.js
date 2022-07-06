@@ -142,22 +142,8 @@ export const patternRuleToForm = (rule = {}) => {
   switch (rule.cond.type) {
     case PATTERN_CONDITIONS.equal: {
       if (isBoolean(rule.cond.value)) {
-        if (rule.cond.value) {
-          form.operator = {
-            [ALARM_PATTERN_FIELDS.snooze]: PATTERN_OPERATORS.snoozed,
-            [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.acked,
-            [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.canceled,
-            [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketAssociated,
-            [SERVICE_WEATHER_PATTERN_FIELDS.grey]: PATTERN_OPERATORS.isGrey,
-          }[rule.field];
-        } else {
-          form.operator = {
-            [ALARM_PATTERN_FIELDS.snooze]: PATTERN_OPERATORS.notSnoozed,
-            [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.notAcked,
-            [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.notCanceled,
-            [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketNotAssociated,
-            [SERVICE_WEATHER_PATTERN_FIELDS.grey]: PATTERN_OPERATORS.isNotGrey,
-          }[rule.field];
+        if (rule.field === SERVICE_WEATHER_PATTERN_FIELDS.grey) {
+          form.operator = rule.cond.value ? PATTERN_OPERATORS.isGrey : PATTERN_OPERATORS.isNotGrey;
         }
       }
 
@@ -187,9 +173,27 @@ export const patternRuleToForm = (rule = {}) => {
       break;
 
     case PATTERN_CONDITIONS.exist:
-      form.operator = rule.cond.value === true
-        ? PATTERN_OPERATORS.exist
-        : PATTERN_OPERATORS.notExist;
+      if (rule.cond.value) {
+        form.operator = {
+          [ALARM_PATTERN_FIELDS.snooze]: PATTERN_OPERATORS.snoozed,
+          [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.acked,
+          [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.canceled,
+          [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketAssociated,
+        }[rule.field];
+      } else {
+        form.operator = {
+          [ALARM_PATTERN_FIELDS.snooze]: PATTERN_OPERATORS.notSnoozed,
+          [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.notAcked,
+          [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.notCanceled,
+          [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketNotAssociated,
+        }[rule.field];
+      }
+
+      if (!form.operator) {
+        form.operator = rule.cond.value === true
+          ? PATTERN_OPERATORS.exist
+          : PATTERN_OPERATORS.notExist;
+      }
       break;
 
     case PATTERN_CONDITIONS.hasEvery:
@@ -504,7 +508,7 @@ export const formRuleToPatternRule = (rule) => {
     case PATTERN_OPERATORS.snoozed:
     case PATTERN_OPERATORS.acked:
     case PATTERN_OPERATORS.isGrey:
-      pattern.cond.type = PATTERN_CONDITIONS.equal;
+      pattern.cond.type = PATTERN_CONDITIONS.exist;
       pattern.cond.value = true;
       break;
     case PATTERN_OPERATORS.ticketNotAssociated:
@@ -512,7 +516,7 @@ export const formRuleToPatternRule = (rule) => {
     case PATTERN_OPERATORS.notSnoozed:
     case PATTERN_OPERATORS.notAcked:
     case PATTERN_OPERATORS.isNotGrey:
-      pattern.cond.type = PATTERN_CONDITIONS.equal;
+      pattern.cond.type = PATTERN_CONDITIONS.exist;
       pattern.cond.value = false;
       break;
   }
