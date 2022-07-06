@@ -772,6 +772,13 @@ definitions:
       time:
         type: integer
     type: object
+  entity.BulkToggleRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   entity.Entity:
     properties:
       _id:

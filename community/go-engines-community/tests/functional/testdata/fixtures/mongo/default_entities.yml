@@ -4279,3 +4279,46 @@ default_entities:
     measurements: null
     name: test-valuegroup-rule-rate-backward-compatibility-2-resource-5
     type: resource
+  default_entities_335:
+    <<: *connector
+    _id: test-entity-to-bulk-toggle-connector/test-entity-to-bulk-toggle-connector-name
+    depends:
+      - test-entity-to-bulk-toggle-component-1
+    impact:
+      - test-entity-to-bulk-toggle-resource-1/test-entity-to-bulk-toggle-component-1
+      - test-entity-to-bulk-toggle-resource-2/test-entity-to-bulk-toggle-component-1
+    impact_level: 5
+    name: test-entity-to-bulk-toggle-connector-name
+  default_entities_336:
+    <<: *component
+    _id: test-entity-to-bulk-toggle-component-1
+    depends:
+      - test-entity-to-bulk-toggle-resource-1/test-entity-to-bulk-toggle-component-1
+      - test-entity-to-bulk-toggle-resource-2/test-entity-to-bulk-toggle-component-1
+    impact:
+      - test-entity-to-bulk-toggle-connector/test-entity-to-bulk-toggle-connector-name
+    impact_level: 4
+    name: test-entity-to-bulk-toggle-component-1
+  default_entities_337:
+    <<: *resource
+    _id: test-entity-to-bulk-toggle-resource-1/test-entity-to-bulk-toggle-component-1
+    depends:
+      - test-entity-to-bulk-toggle-connector/test-entity-to-bulk-toggle-connector-name
+    impact:
+      - test-entity-to-bulk-toggle-component-1
+    impact_level: 3
+    name: test-entity-to-bulk-toggle-resource-1
+  default_entities_338:
+    <<: *resource
+    _id: test-entity-to-bulk-toggle-resource-2/test-entity-to-bulk-toggle-component-1
+    depends:
+      - test-entity-to-bulk-toggle-connector/test-entity-to-bulk-toggle-connector-name
+    impact:
+      - test-entity-to-bulk-toggle-component-1
+    impact_level: 2
+    name: test-entity-to-bulk-toggle-resource-2
+  default_entities_339:
+    <<: *service
+    _id: test-entity-to-bulk-toggle-service
+    impact_level: 1
+    name: test-entity-to-bulk-toggle-service-name
