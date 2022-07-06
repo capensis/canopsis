@@ -276,7 +276,8 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 				continue
 			}
 
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot update entity")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
