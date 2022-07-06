@@ -230,12 +230,12 @@ definitions:
         type: string
       initial_output:
         type: string
+      last_comment:
+        $ref: '#/definitions/alarm.AlarmStep'
       last_event_date:
         type: integer
       last_update_date:
         type: integer
-      lastComment:
-        $ref: '#/definitions/alarm.AlarmStep'
       long_output:
         type: string
       long_output_history:
@@ -3173,6 +3173,8 @@ definitions:
         type: string
       initial_output:
         type: string
+      last_comment:
+        $ref: '#/definitions/types.AlarmStep'
       last_event_date:
         $ref: '#/definitions/types.CpsTime'
       last_update_date:

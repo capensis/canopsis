@@ -57,6 +57,15 @@
       ],
       "last_update_date": 1596942720,
       "last_event_date": 1596942720,
+      "last_comment": {
+        "_t": "comment",
+        "t": 1597033041,
+        "a": "system",
+        "m": "comment test-alarm-get",
+        "role": "admin",
+        "val": 0,
+        "initiator": "user"
+      },
       "resource": "test-alarm-get-resource-1",
       "tags": [],
       "parents": [],
