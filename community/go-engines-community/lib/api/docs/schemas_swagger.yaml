@@ -772,6 +772,13 @@ definitions:
       time:
         type: integer
     type: object
+  entity.BulkToggleRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   entity.Entity:
     properties:
       _id:
@@ -3527,6 +3534,8 @@ definitions:
         type: string
       initial_output:
         type: string
+      last_comment:
+        $ref: '#/definitions/types.AlarmStep'
       last_event_date:
         $ref: '#/definitions/types.CpsTime'
       last_update_date:

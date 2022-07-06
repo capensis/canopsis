@@ -346,19 +346,21 @@ Feature: update service on event
           }
         ]
       ],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "client",
-          "description": "Client",
-          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-eventfilter-service-3-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -1600,19 +1602,21 @@ Feature: update service on event
           }
         ]
       ],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "client",
-          "description": "Client",
-          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-eventfilter-service-11-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -1774,19 +1778,21 @@ Feature: update service on event
           }
         ]
       ],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "client",
-          "description": "Client",
-          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-eventfilter-service-12-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -1948,19 +1954,21 @@ Feature: update service on event
           }
         ]
       ],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "client",
-          "description": "Client",
-          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-eventfilter-service-13-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -3908,6 +3916,478 @@ Feature: update service on event
               "val": 1
             },
             "output": "All: 1; Alarms: 1; Acknowledged: 1; NotAcknowledged: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[];"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given new entity service with dependencies and bulk enable and bulk disable requests should recompute service
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-22",
+      "connector_name": "test-connector-name-service-22",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-service-22",
+      "resource": "test-resource-service-22-1",
+      "state": 1,
+      "output": "test-output-service-22"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-22",
+      "connector_name": "test-connector-name-service-22",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-service-22",
+      "resource": "test-resource-service-22-2",
+      "state": 2,
+      "output": "test-output-service-22"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-22",
+      "connector_name": "test-connector-name-service-22",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-service-22",
+      "resource": "test-resource-service-22-3",
+      "state": 3,
+      "output": "test-output-service-22"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-entityservice-service-22",
+      "name": "test-entityservice-service-22-name",
+      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-service-22-1",
+                "test-resource-service-22-2",
+                "test-resource-service-22-3"
+              ]
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-entityservice-service-22
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "test-entityservice-service-22",
+            "connector": "service",
+            "connector_name": "service",
+            "state": {
+              "val": 3
+            },
+            "status": {
+              "val": 1
+            },
+            "output": "All: 3; Alarms: 3; Acknowledged: 0; NotAcknowledged: 3; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateInfo: 0; Pbehaviors: map[];"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/bulk/entities/disable:
+    """json
+    [
+      {
+        "_id": "test-resource-service-22-2/test-component-service-22"
+      },
+      {
+        "_id": "test-resource-service-22-3/test-component-service-22"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of 4 events processing
+    When I do GET /api/v4/alarms?search=test-entityservice-service-22
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "test-entityservice-service-22",
+            "connector": "service",
+            "connector_name": "service",
+            "state": {
+              "val": 1
+            },
+            "status": {
+              "val": 1
+            },
+            "output": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateInfo: 0; Pbehaviors: map[];"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/bulk/entities/enable:
+    """json
+    [
+      {
+        "_id": "test-resource-service-22-2/test-component-service-22"
+      },
+      {
+        "_id": "test-resource-service-22-3/test-component-service-22"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of 2 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-22",
+      "connector_name": "test-connector-name-service-22",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-service-22",
+      "resource": "test-resource-service-22-2",
+      "state": 2,
+      "output": "test-output-service-22"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-22",
+      "connector_name": "test-connector-name-service-22",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-service-22",
+      "resource": "test-resource-service-22-3",
+      "state": 3,
+      "output": "test-output-service-22"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-entityservice-service-22
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "test-entityservice-service-22",
+            "connector": "service",
+            "connector_name": "service",
+            "state": {
+              "val": 3
+            },
+            "status": {
+              "val": 1
+            },
+            "output": "All: 3; Alarms: 3; Acknowledged: 0; NotAcknowledged: 3; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateInfo: 0; Pbehaviors: map[];"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given new entity service with services as dependencies and bulk enable and bulk disable requests should recompute service
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-23",
+      "connector_name": "test-connector-name-service-23",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-service-23",
+      "resource": "test-resource-service-23-1",
+      "state": 1,
+      "output": "test-output-service-23"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-23",
+      "connector_name": "test-connector-name-service-23",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-service-23",
+      "resource": "test-resource-service-23-2",
+      "state": 2,
+      "output": "test-output-service-23"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-23",
+      "connector_name": "test-connector-name-service-23",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-service-23",
+      "resource": "test-resource-service-23-3",
+      "state": 3,
+      "output": "test-output-service-23"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-entityservice-service-23-1",
+      "name": "test-entityservice-service-23-name-1",
+      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-23-1"
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-entityservice-service-23-2",
+      "name": "test-entityservice-service-23-name-2",
+      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-23-2"
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-entityservice-service-23-3",
+      "name": "test-entityservice-service-23-name-3",
+      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-23-3"
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-entityservice-service-23-4",
+      "name": "test-entityservice-service-23-name-4",
+      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-entityservice-service-23-name-1",
+                "test-entityservice-service-23-name-2",
+                "test-entityservice-service-23-name-3"
+              ]
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-entityservice-service-23-4
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "test-entityservice-service-23-4",
+            "connector": "service",
+            "connector_name": "service",
+            "state": {
+              "val": 3
+            },
+            "status": {
+              "val": 1
+            },
+            "output": "All: 3; Alarms: 3; Acknowledged: 0; NotAcknowledged: 3; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateInfo: 0; Pbehaviors: map[];"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/bulk/entities/disable:
+    """json
+    [
+      {
+        "_id": "test-entityservice-service-23-2"
+      },
+      {
+        "_id": "test-entityservice-service-23-3"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of 4 events processing
+    When I do GET /api/v4/alarms?search=test-entityservice-service-23-4
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "test-entityservice-service-23-4",
+            "connector": "service",
+            "connector_name": "service",
+            "state": {
+              "val": 1
+            },
+            "status": {
+              "val": 1
+            },
+            "output": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateInfo: 0; Pbehaviors: map[];"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/bulk/entities/enable:
+    """json
+    [
+      {
+        "_id": "test-entityservice-service-23-2"
+      },
+      {
+        "_id": "test-entityservice-service-23-3"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of 6 events processing
+    When I do GET /api/v4/alarms?search=test-entityservice-service-23-4
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "test-entityservice-service-23-4",
+            "connector": "service",
+            "connector_name": "service",
+            "state": {
+              "val": 3
+            },
+            "status": {
+              "val": 1
+            },
+            "output": "All: 3; Alarms: 3; Acknowledged: 0; NotAcknowledged: 3; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateInfo: 0; Pbehaviors: map[];"
           }
         }
       ],
