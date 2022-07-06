@@ -208,10 +208,15 @@ export const patternRuleToForm = (rule = {}) => {
       form.operator = PATTERN_OPERATORS.hasNot;
       form.value = rule.cond.value;
       break;
+    case PATTERN_CONDITIONS.isNotOneOf:
+      form.operator = PATTERN_OPERATORS.isNotOneOf;
+      form.value = rule.cond.value;
+      break;
     case PATTERN_CONDITIONS.isEmpty:
       form.operator = rule.cond.value === true
         ? PATTERN_OPERATORS.isEmpty
         : PATTERN_OPERATORS.isNotEmpty;
+      form.value = [];
       break;
 
     case PATTERN_CONDITIONS.regexp: {
@@ -461,7 +466,9 @@ export const formRuleToPatternRule = (rule) => {
       break;
     case PATTERN_OPERATORS.hasNot:
       pattern.cond.type = PATTERN_CONDITIONS.hasNot;
-      pattern.field_type = PATTERN_FIELD_TYPES.stringArray;
+      break;
+    case PATTERN_OPERATORS.isNotOneOf:
+      pattern.cond.type = PATTERN_CONDITIONS.isNotOneOf;
       break;
     case PATTERN_OPERATORS.isEmpty:
       pattern.cond.type = PATTERN_CONDITIONS.isEmpty;

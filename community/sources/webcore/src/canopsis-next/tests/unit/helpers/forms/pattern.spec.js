@@ -431,7 +431,6 @@ describe('pattern form converters', () => {
     const value = [Faker.lorem.word()];
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.hasNot, value },
     };
 
@@ -459,6 +458,7 @@ describe('pattern form converters', () => {
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.connectorName,
       operator: PATTERN_OPERATORS.isEmpty,
+      value: [],
     });
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
@@ -476,6 +476,7 @@ describe('pattern form converters', () => {
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.connectorName,
       operator: PATTERN_OPERATORS.isNotEmpty,
+      value: [],
     });
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });

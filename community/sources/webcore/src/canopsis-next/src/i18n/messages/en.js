@@ -338,6 +338,7 @@ export default merge({
       [PATTERN_OPERATORS.hasOneOf]: 'Has one of',
       [PATTERN_OPERATORS.isOneOf]: 'Is one of',
       [PATTERN_OPERATORS.hasNot]: 'Has not',
+      [PATTERN_OPERATORS.isNotOneOf]: 'Is not one of',
       [PATTERN_OPERATORS.isEmpty]: 'Is empty',
       [PATTERN_OPERATORS.isNotEmpty]: 'Is not empty',
 

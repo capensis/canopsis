@@ -15,7 +15,7 @@ import {
   PATTERN_CONDITIONS,
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
-  EVENT_FILTER_PATTERN_FIELDS,
+  EVENT_FILTER_PATTERN_FIELDS, PATTERN_OPERATORS,
 } from '@/constants';
 import { isValidDateInterval } from '@/helpers/date/date';
 import { isValidDuration } from '@/helpers/date/duration';
@@ -198,7 +198,13 @@ export const getOperatorsByFieldType = (fieldType) => {
     case PATTERN_FIELD_TYPES.number:
       return PATTERN_NUMBER_OPERATORS;
     case PATTERN_FIELD_TYPES.stringArray:
-      return PATTERN_ARRAY_OPERATORS;
+      return [
+        PATTERN_OPERATORS.hasEvery,
+        PATTERN_OPERATORS.hasOneOf,
+        PATTERN_OPERATORS.hasNot,
+        PATTERN_OPERATORS.isEmpty,
+        PATTERN_OPERATORS.isNotEmpty,
+      ];
     case PATTERN_FIELD_TYPES.boolean:
       return PATTERN_BOOLEAN_OPERATORS;
     default:
@@ -340,6 +346,26 @@ export const isNumberPatternRuleField = value => [
 ].includes(value);
 
 /**
+ * Check pattern field is array
+ *
+ * @param {string} value
+ * @return {boolean}
+ */
+export const isArrayPatternRuleField = value => [
+  ALARM_PATTERN_FIELDS.component,
+  ALARM_PATTERN_FIELDS.connector,
+  ALARM_PATTERN_FIELDS.connectorName,
+  ALARM_PATTERN_FIELDS.resource,
+  ENTITY_PATTERN_FIELDS.id,
+  ENTITY_PATTERN_FIELDS.impact,
+  ENTITY_PATTERN_FIELDS.depends,
+  EVENT_FILTER_PATTERN_FIELDS.component,
+  EVENT_FILTER_PATTERN_FIELDS.connector,
+  EVENT_FILTER_PATTERN_FIELDS.connectorName,
+  EVENT_FILTER_PATTERN_FIELDS.resource,
+].includes(value);
+
+/**
  * Check pattern field is infos
  *
  * @param {string} value
@@ -394,6 +420,10 @@ export const isValidRuleValueWithoutFieldType = (rule) => {
     return isNumber(cond.value);
   }
 
+  if (isArrayPatternRuleField(field)) {
+    return isArrayCondition(cond.value);
+  }
+
   if (isBoolean(cond.value)) {
     return isBooleanCondition(cond.type);
   }
@@ -411,9 +441,12 @@ export const isValidRuleValueWithFieldType = (rule) => {
   const { field, cond, field_type: fieldType } = rule;
 
   if (isStringArrayFieldType(fieldType)) {
-    return isArrayCondition(cond.type)
-      && isArray(cond.value)
-      && cond.value.every(isString);
+    if (isArrayCondition(cond.type)) {
+      return (isArray(cond.value) && cond.value.every(isString))
+        || (isBoolean(cond.value) && cond.type === PATTERN_CONDITIONS.isEmpty);
+    }
+
+    return false;
   }
 
   const isInfos = isInfosPatternRuleField(field) || isExtraInfosPatternRuleField(field);

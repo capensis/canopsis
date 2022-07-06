@@ -187,6 +187,8 @@ export default {
       handler(groups, oldGroups) {
         if (!isEqual(groups, oldGroups)) {
           this.patternsChecked = false;
+
+          this.errors.remove(this.name);
         }
       },
     },
