@@ -365,7 +365,7 @@ describe('create-filter', () => {
           {
             field: ALARM_PATTERN_FIELDS.ack,
             cond: {
-              type: PATTERN_CONDITIONS.equal,
+              type: PATTERN_CONDITIONS.exist,
               value: true,
             },
           },
