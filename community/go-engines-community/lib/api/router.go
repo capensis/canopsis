@@ -1450,14 +1450,14 @@ func RegisterRoutes(
 			)
 		}
 
-		infoDictionaryApi := entityinfodictionary.NewApi(entityinfodictionary.NewStore(dbClient), logger)
+		entityInfoDictionaryApi := entityinfodictionary.NewApi(entityinfodictionary.NewStore(dbClient), logger)
 		protected.GET("/entity-infos-dictionary/keys",
 			middleware.Authorize(authObjEntity, permRead, enforcer),
-			infoDictionaryApi.ListKeys,
+			entityInfoDictionaryApi.ListKeys,
 		)
 		protected.GET("/entity-infos-dictionary/values",
 			middleware.Authorize(authObjEntity, permRead, enforcer),
-			infoDictionaryApi.ListValues,
+			entityInfoDictionaryApi.ListValues,
 		)
 	}
 }

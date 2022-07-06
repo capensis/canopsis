@@ -2,11 +2,12 @@ package che
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
-	"time"
 )
 
 const minInfoLength = 2
@@ -86,7 +87,7 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 				},
 			},
 			{
-				"$out": mongo.InfosDictionaryCollection,
+				"$out": mongo.EntityInfosDictionaryCollection,
 			},
 		},
 	)

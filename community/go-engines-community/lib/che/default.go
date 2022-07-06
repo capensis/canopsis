@@ -213,7 +213,7 @@ func NewEngine(
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker("infos dictionary", libengine.NewLockedPeriodicalWorker(
+	engine.AddPeriodicalWorker("entity infos dictionary", libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,
 		redis.CheEntityInfosDictionaryPeriodicalLockKey,
 		infosDictPeriodicalWorker,
