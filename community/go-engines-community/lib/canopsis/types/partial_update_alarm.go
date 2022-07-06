@@ -286,12 +286,13 @@ func (a *Alarm) PartialUpdateDone(timestamp CpsTime, author, output, userID, rol
 
 func (a *Alarm) PartialUpdateComment(timestamp CpsTime, author, output, userID, role, initiator string) error {
 	newStep := NewAlarmStep(AlarmStepComment, timestamp, author, output, userID, role, initiator)
+	a.Value.LastComment = &newStep
 	err := a.Value.Steps.Add(newStep)
 	if err != nil {
 		return err
 	}
-
-	a.AddUpdate("$push", bson.M{"v.steps": newStep})
+	a.AddUpdate("$set", bson.M{"v.last_comment": a.Value.LastComment})
+	a.AddUpdate("$push", bson.M{"v.steps": a.Value.LastComment})
 
 	return nil
 }

@@ -315,14 +315,16 @@ func (i PbehaviorInfo) Same(v PbehaviorInfo) bool {
 
 // AlarmValue represents a full description of an alarm.
 type AlarmValue struct {
-	ACK               *AlarmStep    `bson:"ack,omitempty" json:"ack,omitempty"`
-	Canceled          *AlarmStep    `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done              *AlarmStep    `bson:"done,omitempty" json:"done,omitempty"`
-	Snooze            *AlarmStep    `bson:"snooze,omitempty" json:"snooze,omitempty"`
-	State             *AlarmStep    `bson:"state,omitempty" json:"state,omitempty"`
-	Status            *AlarmStep    `bson:"status,omitempty" json:"status,omitempty"`
-	Ticket            *AlarmTicket  `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	Steps             AlarmSteps    `bson:"steps" json:"steps"`
+	ACK         *AlarmStep   `bson:"ack,omitempty" json:"ack,omitempty"`
+	Canceled    *AlarmStep   `bson:"canceled,omitempty" json:"canceled,omitempty"`
+	Done        *AlarmStep   `bson:"done,omitempty" json:"done,omitempty"`
+	Snooze      *AlarmStep   `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	State       *AlarmStep   `bson:"state,omitempty" json:"state,omitempty"`
+	Status      *AlarmStep   `bson:"status,omitempty" json:"status,omitempty"`
+	LastComment *AlarmStep   `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+	Ticket      *AlarmTicket `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	Steps       AlarmSteps   `bson:"steps" json:"steps"`
+
 	Component         string        `bson:"component" json:"component"`
 	Connector         string        `bson:"connector" json:"connector"`
 	ConnectorName     string        `bson:"connector_name" json:"connector_name"`
