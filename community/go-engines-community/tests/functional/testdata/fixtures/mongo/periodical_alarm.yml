@@ -2708,6 +2708,64 @@ periodical_alarm:
       tags: [ ]
       total_state_changes: 1
 
+  test-alarm-to-dynamic-infos-dictionary-1:
+    _id: test-alarm-to-dynamic-infos-dictionary-1
+    d: test-alarm-to-dynamic-infos-dictionary-1
+    v:
+      <<: *alarm_value
+      infos:
+        some-rule-1:
+          test-dynamic-infos-dictionary-key-1: test-dynamic-infos-dictionary-value-1
+        some-rule-2:
+          test-dynamic-infos-dictionary-key-2: test-dynamic-infos-dictionary-value-2
+        some-rule-3:
+          test-dynamic-infos-dictionary-key-3: test-dynamic-infos-dictionary-value-3
+
+  test-alarm-to-dynamic-infos-dictionary-2:
+    _id: test-alarm-to-dynamic-infos-dictionary-2
+    d: test-alarm-to-dynamic-infos-dictionary-2
+    v:
+      <<: *alarm_value
+      infos:
+        some-rule-1:
+          test-dynamic-infos-dictionary-key-1: test-dynamic-infos-dictionary-value-4
+          test-dynamic-infos-dictionary-key-2: test-dynamic-infos-dictionary-value-5
+          test-dynamic-infos-dictionary-key-3: test-dynamic-infos-dictionary-value-6
+
+  test-alarm-to-dynamic-infos-dictionary-3:
+    _id: test-alarm-to-dynamic-infos-dictionary-3
+    d: test-alarm-to-dynamic-infos-dictionary-3
+    v:
+      <<: *alarm_value
+      infos:
+        some-rule-1:
+          test-dynamic-infos-dictionary-key-1:
+            - test-dynamic-infos-dictionary-value-7
+            - test-dynamic-infos-dictionary-value-10
+          test-dynamic-infos-dictionary-key-2:
+            - test-dynamic-infos-dictionary-value-8
+            - test-dynamic-infos-dictionary-value-11
+        some-rule-2:
+          test-dynamic-infos-dictionary-key-3:
+            - test-dynamic-infos-dictionary-value-9
+            - test-dynamic-infos-dictionary-value-12
+
+  test-alarm-to-dynamic-infos-dictionary-4:
+    _id: test-alarm-to-dynamic-infos-dictionary-4
+    d: test-alarm-to-dynamic-infos-dictionary-4
+    v:
+      <<: *alarm_value
+      infos:
+        some-rule-1:
+          test-dynamic-infos-dictionary-should-be-ignored-key-1: ab
+          test-dynamic-infos-dictionary-should-be-ignored-key-2: a
+        some-rule-2:
+          test-dynamic-infos-dictionary-should-be-ignored-key-3: 10
+          test-dynamic-infos-dictionary-should-be-ignored-key-4: true
+          test-dynamic-infos-dictionary-should-be-ignored-key-5:
+            a: b
+            c: d
+
 resolved_alarms:
   alarm_to_get_3:
     <<: *alarm_to_get_3
