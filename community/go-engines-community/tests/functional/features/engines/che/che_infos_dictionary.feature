@@ -91,7 +91,93 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored
+    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-entity-infos-dictionary-should-be-ignored
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "value": "test-entity-infos-dictionary-should-be-ignored-key-1"
+        },
+        {
+          "value": "test-entity-infos-dictionary-should-be-ignored-key-2"
+        },
+        {
+          "value": "test-entity-infos-dictionary-should-be-ignored-key-3"
+        },
+        {
+          "value": "test-entity-infos-dictionary-should-be-ignored-key-4"
+        },
+        {
+          "value": "test-entity-infos-dictionary-should-be-ignored-key-5"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 5
+      }
+    }
+    """
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-4
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-5
     Then the response code should be 200
     Then the response body should contain:
     """
