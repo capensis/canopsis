@@ -24,6 +24,7 @@ export const PATTERN_OPERATORS = {
   hasOneOf: 'has_one_of',
   isOneOf: 'is_one_of',
   hasNot: 'has_not',
+  isNotOneOf: 'is_not_one_of',
   isEmpty: 'is_empty',
   isNotEmpty: 'is_not_empty',
 
@@ -59,6 +60,7 @@ export const PATTERN_CONDITIONS = {
   isOneOf: 'is_one_of',
   hasOneOf: 'has_one_of',
   hasNot: 'has_not',
+  isNotOneOf: 'is_not_one_of',
   isEmpty: 'is_empty',
   exist: 'exist',
   relativeTime: 'relative_time',
@@ -135,6 +137,7 @@ export const PATTERN_ARRAY_OPERATORS = [
   PATTERN_OPERATORS.hasOneOf,
   PATTERN_OPERATORS.isOneOf,
   PATTERN_OPERATORS.hasNot,
+  PATTERN_OPERATORS.isNotOneOf,
   PATTERN_OPERATORS.isEmpty,
   PATTERN_OPERATORS.isNotEmpty,
 ];

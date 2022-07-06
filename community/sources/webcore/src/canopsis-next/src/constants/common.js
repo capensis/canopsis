@@ -254,3 +254,5 @@ export const ASSOCIATIVE_TABLES_NAMES = {
 };
 
 export const DEFAULT_COLUMN_TEMPLATE_VALUE = '{{ value }}';
+
+export const VALIDATION_DELAY = 300;
