@@ -65,17 +65,19 @@ Feature: Entities and users should be synchronized in metrics db
           }
         ]
       ],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "client",
-          "description": "Client",
-          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass",
       "description": "test-eventfilter-metrics-api-1-description",
       "enabled": true
     }

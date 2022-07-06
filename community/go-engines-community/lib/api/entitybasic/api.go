@@ -53,7 +53,7 @@ func (a *api) Get(c *gin.Context) {
 		return
 	}
 
-	entity, err := a.store.GetOneBy(c.Request.Context(), request.ID)
+	entity, err := a.store.GetOneBy(c, request.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -83,7 +83,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	request.ID = idRequest.ID
-	entity, isToggled, err := a.store.Update(c.Request.Context(), request)
+	entity, isToggled, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -110,7 +110,7 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.metricMetaUpdater.UpdateById(c.Request.Context(), entity.ID)
+	a.metricMetaUpdater.UpdateById(c, entity.ID)
 
 	c.JSON(http.StatusOK, entity)
 }
@@ -122,7 +122,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.store.Delete(c.Request.Context(), request.ID)
+	ok, err := a.store.Delete(c, request.ID)
 
 	if err != nil {
 		if err == ErrLinkedEntityToAlarm {
@@ -146,7 +146,7 @@ func (a *api) Delete(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.metricMetaUpdater.DeleteById(c.Request.Context(), request.ID)
+	a.metricMetaUpdater.DeleteById(c, request.ID)
 
 	c.Status(http.StatusNoContent)
 }
