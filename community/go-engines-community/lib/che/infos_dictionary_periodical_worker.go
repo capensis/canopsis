@@ -56,23 +56,24 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 				"$unwind": "$infos.v.value",
 			},
 			{
-				"$match": bson.M{
-					"infos.v.value": bson.M{
-						"$type": "string",
+				"$addFields": bson.M{
+					"valueLen": bson.M{
+						"$cond": bson.M{
+							"if":   bson.M{"$eq": bson.A{bson.M{"$type": "$infos.v.value"}, "string"}},
+							"then": bson.M{"$strLenCP": "$infos.v.value"},
+							"else": 0,
+						},
 					},
 				},
 			},
 			{
 				"$addFields": bson.M{
-					"valueLen": bson.M{
-						"$strLenCP": "$infos.v.value",
-					},
-				},
-			},
-			{
-				"$match": bson.M{
-					"valueLen": bson.M{
-						"$gt": minInfoLength,
+					"infos.v": bson.M{
+						"$cond": bson.M{
+							"if":   bson.M{"$gt": bson.A{"$valueLen", minInfoLength}},
+							"then": "$infos.v",
+							"else": bson.M{},
+						},
 					},
 				},
 			},

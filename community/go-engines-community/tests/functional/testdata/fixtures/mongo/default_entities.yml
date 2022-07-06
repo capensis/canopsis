@@ -4319,15 +4319,15 @@ default_entities:
     <<: *resource
     _id: test-entity-infos-dictionary-should-be-ignored
     infos:
-      test-entity-infos-dictionary-key-should-be-ignored-1:
+      test-entity-infos-dictionary-should-be-ignored-key-1:
         value: ab
-      test-entity-infos-dictionary-key-should-be-ignored-2:
+      test-entity-infos-dictionary-should-be-ignored-key-2:
         value: a
-      test-entity-infos-dictionary-key-should-be-ignored-3:
+      test-entity-infos-dictionary-should-be-ignored-key-3:
         value: 10
-      test-entity-infos-dictionary-key-should-be-ignored-4:
+      test-entity-infos-dictionary-should-be-ignored-key-4:
         value: true
-      test-entity-infos-dictionary-key-should-be-ignored-5:
+      test-entity-infos-dictionary-should-be-ignored-key-5:
         value:
           a: b
           c: d
