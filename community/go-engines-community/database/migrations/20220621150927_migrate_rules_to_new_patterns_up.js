@@ -328,19 +328,17 @@ function migrateOldEventPatterns(oldEventPatterns) {
                                 }
                             }
                             if (value.has_not) {
-                                if (value.has_not) {
-                                    if (isStringArray(value.has_not)) {
-                                        newGroup.push({
-                                            field: newField,
-                                            field_type: "string_array",
-                                            cond: {
-                                                type: "has_not",
-                                                value: value.has_not,
-                                            },
-                                        });
-                                    } else {
-                                        return null;
-                                    }
+                                if (isStringArray(value.has_not)) {
+                                    newGroup.push({
+                                        field: newField,
+                                        field_type: "string_array",
+                                        cond: {
+                                            type: "has_not",
+                                            value: value.has_not,
+                                        },
+                                    });
+                                } else {
+                                    return null;
                                 }
                             }
                             if (value.is_empty) {
