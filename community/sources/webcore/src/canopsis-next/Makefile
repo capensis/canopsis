@@ -16,6 +16,8 @@ CURRENT_BUILD_OUTPUT_DIR = $(CURRENT_ROOT_DIR)/build
 MONOREPO_ROOT := $(realpath $(dir $(CURRENT_MAKEFILE))/../../../../../)
 VPATH = $(dir $(CURRENT_MAKEFILE))
 
+include $(MONOREPO_ROOT)/community/go-engines-community/.env
+
 #
 # BUILD FLAGS
 #
@@ -23,9 +25,6 @@ VPATH = $(dir $(CURRENT_MAKEFILE))
 SOURCE_DATE_EPOCH:=$(shell date -u +%s)
 VERSION:=$(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-authordate --format='%(refname:short)' --count=1 2>/dev/null || echo "0.0.0")
 GITCOMMIT:=$(shell git -C "$(MONOREPO_ROOT)" log -n 1 --format=oneline --abbrev=12 --pretty="%h" 2>/dev/null || echo "unknown Git commit")
-
-# Version of NodeJS to use
-NODE_VERSION=14.18.3
 
 # Yarn/NPM flags
 export FORCE_COLOR=0
@@ -42,8 +41,8 @@ export NODE_OPTIONS="--max-old-space-size=6144" # canopsis/canopsis-pro#4066
 all: $(CURRENT_BUILD_OUTPUT_DIR)/www
 
 $(CURRENT_BUILD_OUTPUT_DIR)/www: jest.config.js package.json src/ vue.config.js
-	if test "$$(node -v | sed 's/v//')" != "$(NODE_VERSION)" ;then\
-		echo "ERROR: Couldn't find NodeJS $(NODE_VERSION) on your system";\
+	if test "$$(node -v | sed 's/v//')" != "$(DOCKER_NODE_VERSION)" ;then\
+		echo "ERROR: Couldn't find NodeJS $(DOCKER_NODE_VERSION) on your system";\
 		exit 1;\
 	fi
 	yarn install
@@ -82,17 +81,15 @@ export DOCKER_BUILDKIT:=1
 export BUILDKIT_PROGRESS:=plain
 
 # If set to 1, previous build caches will be ignored
-DOCKER_NO_CACHE = 
+DOCKER_NO_CACHE =
 DOCKER_TAG = $(VERSION)
 DOCKERFILE_PATH = $(COMMUNITY_ROOT_DIR)/Dockerfile
 DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
-# The official nginx container is based on Debian unless stated otherwise in the tag.
-DOCKER_NGINX_VERSION = 1.20.2
 
 define DOCKER_BUILD_ARGS
 --platform linux/amd64 \
---build-arg "NODE_VERSION=$(NODE_VERSION)-buster-slim" \
---build-arg "NGINX_VERSION=$(DOCKER_NGINX_VERSION)" 
+--build-arg "NODE_VERSION=$(DOCKER_NODE_VERSION)-buster-slim" \
+--build-arg "NGINX_VERSION=$(DOCKER_NGINX_VERSION)"
 endef
 
 .PHONY: docker-check-version docker-images docker-nginx
