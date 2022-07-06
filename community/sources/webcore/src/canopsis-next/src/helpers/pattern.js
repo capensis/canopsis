@@ -15,7 +15,8 @@ import {
   PATTERN_CONDITIONS,
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
-  EVENT_FILTER_PATTERN_FIELDS, PATTERN_OPERATORS,
+  EVENT_FILTER_PATTERN_FIELDS,
+  PATTERN_OPERATORS,
 } from '@/constants';
 import { isValidDateInterval } from '@/helpers/date/date';
 import { isValidDuration } from '@/helpers/date/duration';
@@ -307,6 +308,7 @@ export const isArrayCondition = condition => [
   PATTERN_CONDITIONS.hasNot,
   PATTERN_CONDITIONS.hasOneOf,
   PATTERN_CONDITIONS.isOneOf,
+  PATTERN_CONDITIONS.isNotOneOf,
   PATTERN_CONDITIONS.hasEvery,
 ].includes(condition);
 
@@ -421,7 +423,9 @@ export const isValidRuleValueWithoutFieldType = (rule) => {
   }
 
   if (isArrayPatternRuleField(field)) {
-    return isArrayCondition(cond.value);
+    if (isArrayCondition(cond.type)) {
+      return isArray(cond.value);
+    }
   }
 
   if (isBoolean(cond.value)) {
