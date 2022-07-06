@@ -34,7 +34,7 @@ export const MAX_PBEHAVIOR_DEFAULT_TSTOP = 2147483647;
 export const WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE = 'downtime';
 
 export const PBEHAVIOR_PATTERN_FIELDS = {
-  name: 'pbehavior_info._id',
+  name: 'pbehavior_info.id',
   reason: 'pbehavior_info.reason',
   type: 'pbehavior_info.type',
 };

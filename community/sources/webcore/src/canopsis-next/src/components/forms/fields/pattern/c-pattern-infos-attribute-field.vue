@@ -10,6 +10,8 @@
         :return-object="false",
         :name="dictionaryName",
         :error-messages="errors.collect(dictionaryName)",
+        item-text="value",
+        item-value="value",
         hide-details
       )
     v-flex.pl-3(xs6)
