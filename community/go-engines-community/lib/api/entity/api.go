@@ -211,14 +211,12 @@ func (a *api) Clean(c *gin.Context) {
 
 // BulkEnable
 // @Param body body []BulkToggleRequestItem true "body"
-// @Success 207 {array} []BulkToggleResponseItem
 func (a *api) BulkEnable(c *gin.Context) {
 	a.toggle(c, true)
 }
 
 // BulkDisable
 // @Param body body []BulkToggleRequestItem true "body"
-// @Success 207 {array} []BulkToggleResponseItem
 func (a *api) BulkDisable(c *gin.Context) {
 	a.toggle(c, false)
 }
