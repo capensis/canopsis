@@ -15,6 +15,7 @@ import {
   QUICK_RANGES,
   PATTERNS_FIELDS,
   SERVICE_WEATHER_PATTERN_FIELDS,
+  TIME_UNITS,
 } from '@/constants';
 
 import uid from '@/helpers/uid';
@@ -29,7 +30,7 @@ import {
   getDiffBetweenStartAndStopQuickInterval,
   getQuickRangeByDiffBetweenStartAndStop,
 } from '@/helpers/date/date-intervals';
-import { durationToForm } from '@/helpers/date/duration';
+import { durationToForm, toSeconds } from '@/helpers/date/duration';
 
 /**
  * @typedef { 'alarm' | 'entity' | 'pbehavior' } PatternTypes
@@ -133,29 +134,16 @@ export const patternRuleToForm = (rule = {}) => {
 
   const isAlarmInfos = rule.field?.startsWith(ALARM_PATTERN_FIELDS.infos);
   const isEntityInfos = rule.field?.startsWith(ENTITY_PATTERN_FIELDS.infos);
+  const isEntityComponentInfos = rule.field?.startsWith(ENTITY_PATTERN_FIELDS.componentInfos);
   const isDuration = rule.field === ALARM_PATTERN_FIELDS.duration;
-  const isInfos = isAlarmInfos || isEntityInfos;
+  const isInfos = isAlarmInfos || isEntityInfos || isEntityComponentInfos;
   const isExtraInfos = !isInfos && rule.field?.startsWith(EVENT_FILTER_PATTERN_FIELDS.extraInfos);
 
   switch (rule.cond.type) {
     case PATTERN_CONDITIONS.equal: {
       if (isBoolean(rule.cond.value)) {
-        if (rule.cond.value) {
-          form.operator = {
-            [ALARM_PATTERN_FIELDS.snooze]: PATTERN_OPERATORS.snoozed,
-            [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.acked,
-            [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.canceled,
-            [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketAssociated,
-            [SERVICE_WEATHER_PATTERN_FIELDS.grey]: PATTERN_OPERATORS.isGrey,
-          }[rule.field];
-        } else {
-          form.operator = {
-            [ALARM_PATTERN_FIELDS.snooze]: PATTERN_OPERATORS.notSnoozed,
-            [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.notAcked,
-            [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.notCanceled,
-            [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketNotAssociated,
-            [SERVICE_WEATHER_PATTERN_FIELDS.grey]: PATTERN_OPERATORS.isNotGrey,
-          }[rule.field];
+        if (rule.field === SERVICE_WEATHER_PATTERN_FIELDS.grey) {
+          form.operator = rule.cond.value ? PATTERN_OPERATORS.isGrey : PATTERN_OPERATORS.isNotGrey;
         }
       }
 
@@ -185,9 +173,27 @@ export const patternRuleToForm = (rule = {}) => {
       break;
 
     case PATTERN_CONDITIONS.exist:
-      form.operator = rule.cond.value === true
-        ? PATTERN_OPERATORS.exist
-        : PATTERN_OPERATORS.notExist;
+      if (rule.cond.value) {
+        form.operator = {
+          [ALARM_PATTERN_FIELDS.snooze]: PATTERN_OPERATORS.snoozed,
+          [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.acked,
+          [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.canceled,
+          [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketAssociated,
+        }[rule.field];
+      } else {
+        form.operator = {
+          [ALARM_PATTERN_FIELDS.snooze]: PATTERN_OPERATORS.notSnoozed,
+          [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.notAcked,
+          [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.notCanceled,
+          [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketNotAssociated,
+        }[rule.field];
+      }
+
+      if (!form.operator) {
+        form.operator = rule.cond.value === true
+          ? PATTERN_OPERATORS.exist
+          : PATTERN_OPERATORS.notExist;
+      }
       break;
 
     case PATTERN_CONDITIONS.hasEvery:
@@ -206,10 +212,15 @@ export const patternRuleToForm = (rule = {}) => {
       form.operator = PATTERN_OPERATORS.hasNot;
       form.value = rule.cond.value;
       break;
+    case PATTERN_CONDITIONS.isNotOneOf:
+      form.operator = PATTERN_OPERATORS.isNotOneOf;
+      form.value = rule.cond.value;
+      break;
     case PATTERN_CONDITIONS.isEmpty:
       form.operator = rule.cond.value === true
         ? PATTERN_OPERATORS.isEmpty
         : PATTERN_OPERATORS.isNotEmpty;
+      form.value = [];
       break;
 
     case PATTERN_CONDITIONS.regexp: {
@@ -257,9 +268,14 @@ export const patternRuleToForm = (rule = {}) => {
       form.value = rule.cond.value;
       break;
     }
-    case PATTERN_CONDITIONS.relativeTime:
-      form.range.type = getQuickRangeByDiffBetweenStartAndStop(rule.cond.value, PATTERN_QUICK_RANGES).value;
+    case PATTERN_CONDITIONS.relativeTime: {
+      const { value, unit } = rule.cond.value;
+
+      const seconds = toSeconds(value, unit);
+
+      form.range.type = getQuickRangeByDiffBetweenStartAndStop(seconds, PATTERN_QUICK_RANGES).value;
       break;
+    }
     case PATTERN_CONDITIONS.absoluteTime:
       form.range = {
         type: QUICK_RANGES.custom.value,
@@ -270,18 +286,19 @@ export const patternRuleToForm = (rule = {}) => {
 
   if (isDuration) {
     form.duration = durationToForm(rule.cond.value);
-  }
-
-  if (isExtraInfos) {
+  } else if (isExtraInfos) {
     form.attribute = EVENT_FILTER_PATTERN_FIELDS.extraInfos;
     form.field = rule.field.slice(EVENT_FILTER_PATTERN_FIELDS.extraInfos.length + 1);
-  }
+  } else if (isInfos) {
+    if (isAlarmInfos) {
+      form.attribute = ALARM_PATTERN_FIELDS.infos;
+    } else if (isEntityInfos) {
+      form.attribute = ENTITY_PATTERN_FIELDS.infos;
+    } else {
+      form.attribute = ENTITY_PATTERN_FIELDS.componentInfos;
+    }
 
-  if (isInfos) {
-    const infosPrefix = isAlarmInfos ? ALARM_PATTERN_FIELDS.infos : ENTITY_PATTERN_FIELDS.infos;
-
-    form.attribute = rule.field.slice(0, infosPrefix.length);
-    form.dictionary = rule.field.slice(infosPrefix.length + 1);
+    form.dictionary = rule.field.slice(form.attribute.length + 1);
 
     form.field = PATTERN_INFOS_NAME_OPERATORS.includes(rule.cond.type)
       ? PATTERN_RULE_INFOS_FIELDS.name
@@ -354,7 +371,10 @@ export const formDateIntervalConditionToPatternRuleCondition = (range) => {
   }
 
   return {
-    value: getDiffBetweenStartAndStopQuickInterval(range.type),
+    value: {
+      value: getDiffBetweenStartAndStopQuickInterval(range.type),
+      unit: TIME_UNITS.second,
+    },
     type: PATTERN_CONDITIONS.relativeTime,
   };
 };
@@ -450,7 +470,9 @@ export const formRuleToPatternRule = (rule) => {
       break;
     case PATTERN_OPERATORS.hasNot:
       pattern.cond.type = PATTERN_CONDITIONS.hasNot;
-      pattern.field_type = PATTERN_FIELD_TYPES.stringArray;
+      break;
+    case PATTERN_OPERATORS.isNotOneOf:
+      pattern.cond.type = PATTERN_CONDITIONS.isNotOneOf;
       break;
     case PATTERN_OPERATORS.isEmpty:
       pattern.cond.type = PATTERN_CONDITIONS.isEmpty;
@@ -486,7 +508,7 @@ export const formRuleToPatternRule = (rule) => {
     case PATTERN_OPERATORS.snoozed:
     case PATTERN_OPERATORS.acked:
     case PATTERN_OPERATORS.isGrey:
-      pattern.cond.type = PATTERN_CONDITIONS.equal;
+      pattern.cond.type = PATTERN_CONDITIONS.exist;
       pattern.cond.value = true;
       break;
     case PATTERN_OPERATORS.ticketNotAssociated:
@@ -494,7 +516,7 @@ export const formRuleToPatternRule = (rule) => {
     case PATTERN_OPERATORS.notSnoozed:
     case PATTERN_OPERATORS.notAcked:
     case PATTERN_OPERATORS.isNotGrey:
-      pattern.cond.type = PATTERN_CONDITIONS.equal;
+      pattern.cond.type = PATTERN_CONDITIONS.exist;
       pattern.cond.value = false;
       break;
   }

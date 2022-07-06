@@ -20,7 +20,9 @@ describe('extra-details-pbehavior', () => {
 
   const pbehavior = {
     name: 'pbehavior-name',
-    author: 'pbehavior-author',
+    author: {
+      name: 'pbehavior-author',
+    },
     tstart: prevDateStartTimestamp,
     tstop: prevDateStopTimestamp,
     rrule: 'rrule',

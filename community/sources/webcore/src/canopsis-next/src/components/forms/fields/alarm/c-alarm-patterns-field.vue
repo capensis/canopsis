@@ -69,7 +69,7 @@ export default {
         PATTERN_OPERATORS.equal,
         PATTERN_OPERATORS.notEqual,
         PATTERN_OPERATORS.isOneOf,
-        PATTERN_OPERATORS.hasNot,
+        PATTERN_OPERATORS.isNotOneOf,
       ];
     },
 
