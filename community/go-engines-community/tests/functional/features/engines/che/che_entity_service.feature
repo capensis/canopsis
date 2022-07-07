@@ -1617,17 +1617,19 @@ Feature: create service entity
           }
         ]
       ],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "client",
-          "description": "Client",
-          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass",
       "description": "test-eventfilter-che-service-15-description",
       "enabled": true
     }
