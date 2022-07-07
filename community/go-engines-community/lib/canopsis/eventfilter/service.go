@@ -61,10 +61,10 @@ func NewService(dbClient mongo.DbClient, adapter Adapter, timezoneConfigProvider
 
 // LoadDataSourceFactories loads the data source factories and adds them to the
 // service.
-func (s *service) LoadDataSourceFactories(enrichmentCenter libcontext.EnrichmentCenter, enrichFields libcontext.EnrichFields, dataSourceDirectory string) error {
+func (s *service) LoadDataSourceFactories(enrichmentCenter libcontext.EnrichmentCenter, dataSourceDirectory string) error {
 	s.dataSourceFactories = make(map[string]DataSourceFactory)
 
-	s.dataSourceFactories["entity"] = NewEntityDataSourceFactory(enrichmentCenter, enrichFields)
+	s.dataSourceFactories["entity"] = NewEntityDataSourceFactory(enrichmentCenter)
 
 	files, err := ioutil.ReadDir(dataSourceDirectory)
 	if err != nil {

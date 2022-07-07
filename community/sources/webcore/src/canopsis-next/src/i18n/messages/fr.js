@@ -2056,6 +2056,7 @@ export default merge({
   },
 
   healthcheck: {
+    systemIsDown: 'Le système est en panne',
     notRunning: '{name} n\'est pas disponible',
     queueOverflow: 'Débordement de file d\'attente',
     lackOfInstances: 'Manque d\'instances',
