@@ -32,7 +32,7 @@
         :loading="submitting",
         type="submit",
         @click="submit"
-      ) {{ $t('common.actions.saveChanges') }}
+      ) {{ $t('common.saveChanges') }}
 </template>
 
 <script>

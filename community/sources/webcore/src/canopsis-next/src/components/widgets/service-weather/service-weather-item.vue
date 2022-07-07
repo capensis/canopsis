@@ -50,7 +50,7 @@ import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 import { getEntityColor } from '@/helpers/color';
 
 import { authMixin } from '@/mixins/auth';
-import entitiesServiceEntityMixin from '@/mixins/entities/service-entity';
+import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 

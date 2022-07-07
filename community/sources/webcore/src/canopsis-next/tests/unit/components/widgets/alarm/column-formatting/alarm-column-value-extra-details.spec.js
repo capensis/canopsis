@@ -49,7 +49,7 @@ describe('alarm-column-value-extra-details', () => {
     },
     v: {
       ack: {},
-      lastComment: {
+      last_comment: {
         m: ' ',
       },
       ticket: {},

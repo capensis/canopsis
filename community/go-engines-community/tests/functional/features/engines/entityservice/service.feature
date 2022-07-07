@@ -235,6 +235,59 @@ Feature: update service on event
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "resource": "test-resource-service-3"
+      }],
+      "external_data": {
+        "entity": {
+          "type": "entity"
+        }
+      },
+      "actions": [
+        {
+          "type": "copy",
+          "from": "ExternalData.entity",
+          "to": "Entity"
+        }
+      ],
+      "on_success": "pass",
+      "on_failure": "pass",
+      "description": "test-eventfilter-service-3-description",
+      "enabled": true,
+      "priority": 1
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "resource": "test-resource-service-3"
+      }],
+      "actions": [
+        {
+          "type": "set_entity_info_from_template",
+          "name": "client",
+          "description": "Client",
+          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+        }
+      ],
+      "description": "test-eventfilter-service-3-description",
+      "enabled": true,
+      "priority": 2,
+      "on_success": "pass",
+      "on_failure": "pass"
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
     When I send an event:
     """json
     {
@@ -1134,6 +1187,61 @@ Feature: update service on event
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "source_type": "component",
+        "component": "test-component-service-11"
+      }],
+      "external_data": {
+        "entity": {
+          "type": "entity"
+        }
+      },
+      "actions": [
+        {
+          "type": "copy",
+          "from": "ExternalData.entity",
+          "to": "Entity"
+        }
+      ],
+      "on_success": "pass",
+      "on_failure": "pass",
+      "description": "test-eventfilter-service-11-description",
+      "enabled": true,
+      "priority": 1
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "source_type": "component",
+        "component": "test-component-service-11"
+      }],
+      "actions": [
+        {
+          "type": "set_entity_info_from_template",
+          "name": "client",
+          "description": "Client",
+          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+        }
+      ],
+      "description": "test-eventfilter-service-11-description",
+      "enabled": true,
+      "priority": 2,
+      "on_success": "pass",
+      "on_failure": "pass"
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
     When I send an event:
     """json
     {
@@ -1223,6 +1331,61 @@ Feature: update service on event
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "source_type": "component",
+        "component": "test-component-service-12"
+      }],
+      "external_data": {
+        "entity": {
+          "type": "entity"
+        }
+      },
+      "actions": [
+        {
+          "type": "copy",
+          "from": "ExternalData.entity",
+          "to": "Entity"
+        }
+      ],
+      "on_success": "pass",
+      "on_failure": "pass",
+      "description": "test-eventfilter-service-12-description",
+      "enabled": true,
+      "priority": 1
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "source_type": "component",
+        "component": "test-component-service-12"
+      }],
+      "actions": [
+        {
+          "type": "set_entity_info_from_template",
+          "name": "client",
+          "description": "Client",
+          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+        }
+      ],
+      "description": "test-eventfilter-service-12-description",
+      "enabled": true,
+      "priority": 2,
+      "on_success": "pass",
+      "on_failure": "pass"
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
     When I send an event:
     """json
     {
@@ -1312,6 +1475,61 @@ Feature: update service on event
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "source_type": "component",
+        "component": "test-component-service-13"
+      }],
+      "external_data": {
+        "entity": {
+          "type": "entity"
+        }
+      },
+      "actions": [
+        {
+          "type": "copy",
+          "from": "ExternalData.entity",
+          "to": "Entity"
+        }
+      ],
+      "on_success": "pass",
+      "on_failure": "pass",
+      "description": "test-eventfilter-service-13-description",
+      "enabled": true,
+      "priority": 1
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "source_type": "component",
+        "component": "test-component-service-13"
+      }],
+      "actions": [
+        {
+          "type": "set_entity_info_from_template",
+          "name": "client",
+          "description": "Client",
+          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+        }
+      ],
+      "description": "test-eventfilter-service-13-description",
+      "enabled": true,
+      "priority": 2,
+      "on_success": "pass",
+      "on_failure": "pass"
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
     When I send an event:
     """json
     {

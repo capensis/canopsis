@@ -58,7 +58,6 @@ func NewEngine(
 	enrichmentCenter := libcontext.NewEnrichmentCenter(
 		entityAdapter,
 		mongoClient,
-		options.FeatureContextEnrich,
 		entityservice.NewManager(
 			entityServiceAdapter,
 			entityAdapter,
@@ -67,7 +66,6 @@ func NewEngine(
 		),
 		metricsEntityMetaUpdater,
 	)
-	enrichFields := libcontext.NewEnrichFields(options.EnrichInclude, options.EnrichExclude)
 
 	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
@@ -83,7 +81,6 @@ func NewEngine(
 
 			err := eventFilterService.LoadDataSourceFactories(
 				enrichmentCenter,
-				enrichFields,
 				options.DataSourceDirectory,
 			)
 			if err != nil {
@@ -171,7 +168,6 @@ func NewEngine(
 			AlarmConfigProvider:      alarmConfigProvider,
 			EventFilterService:       eventFilterService,
 			EnrichmentCenter:         enrichmentCenter,
-			EnrichFields:             enrichFields,
 			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
 			AlarmAdapter:             alarm.NewAdapter(mongoClient),
 			Encoder:                  json.NewEncoder(),

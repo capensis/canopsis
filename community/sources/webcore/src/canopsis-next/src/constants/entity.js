@@ -304,9 +304,98 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: {
     icon: 'keyboard_arrow_up',
   },
-  [EVENT_ENTITY_TYPES.executeInstruction]: {
-    icon: 'assignment',
-  },
+};
+
+export const WEATHER_ACTIONS_TYPES = {
+  entityAck: 'entityAck',
+  entityAssocTicket: 'entityAssocTicket',
+  entityValidate: 'entityValidate',
+  entityInvalidate: 'entityInvalidate',
+  entityPause: 'entityPause',
+  entityPlay: 'entityPlay',
+  entityCancel: 'entityCancel',
+  entityComment: 'entityComment',
+  declareTicket: 'declareTicket',
+
+  entityLinks: 'entityLinks',
+
+  moreInfos: 'moreInfos',
+  alarmsList: 'alarmsList',
+  pbehaviorList: 'pbehaviorList',
+  variablesHelp: 'variablesHelp',
+
+  executeInstruction: 'executeInstruction',
+};
+
+export const EVENT_ENTITY_ICONS_BY_TYPE = {
+  [EVENT_ENTITY_TYPES.ack]: 'playlist_add_check',
+  [EVENT_ENTITY_TYPES.fastAck]: 'check',
+  [EVENT_ENTITY_TYPES.pbehaviorAdd]: 'pause',
+  [EVENT_ENTITY_TYPES.pbehaviorList]: 'list',
+  [EVENT_ENTITY_TYPES.ackRemove]: 'not_interested',
+  [EVENT_ENTITY_TYPES.declareTicket]: 'report_problem',
+  [EVENT_ENTITY_TYPES.assocTicket]: 'local_play',
+  [EVENT_ENTITY_TYPES.delete]: 'delete',
+  [EVENT_ENTITY_TYPES.changeState]: 'thumbs_up_down',
+  [EVENT_ENTITY_TYPES.snooze]: 'alarm',
+  [EVENT_ENTITY_TYPES.done]: 'assignment_turned_in',
+  [EVENT_ENTITY_TYPES.validate]: 'thumb_up',
+  [EVENT_ENTITY_TYPES.invalidate]: 'thumb_down',
+  [EVENT_ENTITY_TYPES.pause]: 'pause',
+  [EVENT_ENTITY_TYPES.play]: 'play_arrow',
+  [EVENT_ENTITY_TYPES.groupRequest]: 'note_add',
+  [EVENT_ENTITY_TYPES.pbhenter]: 'pause',
+  [EVENT_ENTITY_TYPES.pbhleave]: 'play_arrow',
+  [EVENT_ENTITY_TYPES.comment]: 'comment',
+  [EVENT_ENTITY_TYPES.manualMetaAlarmGroup]: 'center_focus_strong',
+  [EVENT_ENTITY_TYPES.manualMetaAlarmUngroup]: 'link_off',
+  [EVENT_ENTITY_TYPES.metaalarmattach]: 'center_focus_weak',
+  [EVENT_ENTITY_TYPES.executeInstruction]: 'assignment',
+  [EVENT_ENTITY_TYPES.instructionStart]: 'assignment',
+  [EVENT_ENTITY_TYPES.instructionPause]: 'assignment',
+  [EVENT_ENTITY_TYPES.instructionResume]: 'assignment',
+  [EVENT_ENTITY_TYPES.instructionComplete]: 'assignment',
+  [EVENT_ENTITY_TYPES.instructionAbort]: 'assignment',
+  [EVENT_ENTITY_TYPES.instructionFail]: 'assignment',
+  [EVENT_ENTITY_TYPES.instructionJobStart]: 'assignment',
+  [EVENT_ENTITY_TYPES.instructionJobComplete]: 'assignment',
+  [EVENT_ENTITY_TYPES.instructionJobAbort]: 'assignment',
+  [EVENT_ENTITY_TYPES.instructionJobFail]: 'assignment',
+  [EVENT_ENTITY_TYPES.autoInstructionStart]: 'assignment',
+  [EVENT_ENTITY_TYPES.autoInstructionComplete]: 'assignment',
+  [EVENT_ENTITY_TYPES.autoInstructionFail]: 'assignment',
+  [EVENT_ENTITY_TYPES.autoInstructionAlreadyRunning]: 'assignment',
+  [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: 'keyboard_arrow_up',
+  [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: 'keyboard_arrow_up',
+  [EVENT_ENTITY_TYPES.cancel]: 'delete',
+  groupConsequences: 'center_focus_strong',
+  groupCauses: 'center_focus_weak',
+};
+
+export const EVENT_ENTITY_COLORS_BY_TYPE = {
+  [EVENT_ENTITY_TYPES.ack]: COLORS.entitiesEvents.ack,
+  [EVENT_ENTITY_TYPES.ackRemove]: COLORS.entitiesEvents.ackRemove,
+  [EVENT_ENTITY_TYPES.declareTicket]: COLORS.entitiesEvents.declareTicket,
+  [EVENT_ENTITY_TYPES.snooze]: COLORS.entitiesEvents.snooze,
+  [EVENT_ENTITY_TYPES.done]: COLORS.entitiesEvents.done,
+  [EVENT_ENTITY_TYPES.pbhenter]: COLORS.entitiesEvents.pbhenter,
+  [EVENT_ENTITY_TYPES.pbhleave]: COLORS.entitiesEvents.pbhleave,
+  [EVENT_ENTITY_TYPES.comment]: COLORS.entitiesEvents.comment,
+  [EVENT_ENTITY_TYPES.metaalarmattach]: COLORS.entitiesEvents.metaalarmattach,
+};
+
+export const ENTITY_EVENT_BY_ACTION_TYPE = {
+  [WEATHER_ACTIONS_TYPES.entityAck]: EVENT_ENTITY_TYPES.ack,
+  [WEATHER_ACTIONS_TYPES.entityAssocTicket]: EVENT_ENTITY_TYPES.assocTicket,
+  [WEATHER_ACTIONS_TYPES.entityValidate]: EVENT_ENTITY_TYPES.validate,
+  [WEATHER_ACTIONS_TYPES.entityInvalidate]: EVENT_ENTITY_TYPES.invalidate,
+  [WEATHER_ACTIONS_TYPES.entityPause]: EVENT_ENTITY_TYPES.pause,
+  [WEATHER_ACTIONS_TYPES.entityPlay]: EVENT_ENTITY_TYPES.play,
+  [WEATHER_ACTIONS_TYPES.entityCancel]: EVENT_ENTITY_TYPES.cancel,
+  [WEATHER_ACTIONS_TYPES.entityComment]: EVENT_ENTITY_TYPES.comment,
+  [WEATHER_ACTIONS_TYPES.pbehaviorList]: EVENT_ENTITY_TYPES.pbehaviorList,
+  [WEATHER_ACTIONS_TYPES.executeInstruction]: EVENT_ENTITY_TYPES.executeInstruction,
+  [WEATHER_ACTIONS_TYPES.declareTicket]: EVENT_ENTITY_TYPES.declareTicket,
 };
 
 export const UNKNOWN_VALUE_STYLE = {
@@ -408,25 +497,6 @@ export const CONTEXT_ACTIONS_TYPES = {
   listFilters: 'listFilters',
   editFilter: 'editFilter',
   addFilter: 'addFilter',
-};
-
-export const WEATHER_ACTIONS_TYPES = {
-  entityAck: 'entityAck',
-  entityAssocTicket: 'entityAssocTicket',
-  entityValidate: 'entityValidate',
-  entityInvalidate: 'entityInvalidate',
-  entityPause: 'entityPause',
-  entityPlay: 'entityPlay',
-  entityCancel: 'entityCancel',
-  entityComment: 'entityComment',
-
-  entityLinks: 'entityLinks',
-
-  moreInfos: 'moreInfos',
-  alarmsList: 'alarmsList',
-  pbehaviorList: 'pbehaviorList',
-  variablesHelp: 'variablesHelp',
-  executeInstruction: 'executeInstruction',
 };
 
 export const COUNTER_ACTIONS_TYPES = {

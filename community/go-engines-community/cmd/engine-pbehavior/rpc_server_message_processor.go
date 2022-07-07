@@ -127,23 +127,23 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 	entity *types.Entity,
 ) (*libpbehavior.PBehavior, error) {
 	typeCollection := p.DbClient.Collection(mongo.PbehaviorTypeMongoCollection)
-	res := typeCollection.FindOne(ctx, bson.M{"_id": params.Type})
-	if err := res.Err(); err != nil {
+	err := typeCollection.FindOne(ctx, bson.M{"_id": params.Type}).Err()
+	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, fmt.Errorf("pbehavior type not exist: %q", params.Type)
-		} else {
-			return nil, fmt.Errorf("cannot get pbehavior type: %w", err)
 		}
+
+		return nil, fmt.Errorf("cannot get pbehavior type: %w", err)
 	}
 
 	reasonCollection := p.DbClient.Collection(mongo.PbehaviorReasonMongoCollection)
-	res = reasonCollection.FindOne(ctx, bson.M{"_id": params.Reason})
-	if err := res.Err(); err != nil {
+	err = reasonCollection.FindOne(ctx, bson.M{"_id": params.Reason}).Err()
+	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, fmt.Errorf("pbehavior reason not exist: %q", params.Reason)
-		} else {
-			return nil, fmt.Errorf("cannot get pbehavior reason: %w", err)
 		}
+
+		return nil, fmt.Errorf("cannot get pbehavior reason: %w", err)
 	}
 
 	now := types.NewCpsTime()
@@ -171,12 +171,13 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 		Start:   &start,
 		Stop:    &stop,
 		Type:    params.Type,
+		Color:   types.ActionPbehaviorColor,
 		Created: now,
 		Updated: now,
 	}
 
 	collection := p.DbClient.Collection(mongo.PbehaviorMongoCollection)
-	_, err := collection.InsertOne(ctx, pbehavior)
+	_, err = collection.InsertOne(ctx, pbehavior)
 	if err != nil {
 		return nil, fmt.Errorf("create new pbehavior failed: %w", err)
 	}
