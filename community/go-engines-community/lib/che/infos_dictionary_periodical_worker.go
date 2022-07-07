@@ -41,12 +41,7 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 			{
 				"$project": bson.M{
 					"infos": bson.M{
-						"$map": bson.M{
-							"input": bson.M{
-								"$objectToArray": "$infos",
-							},
-							"in": "$$this",
-						},
+						"$objectToArray": "$infos",
 					},
 				},
 			},
