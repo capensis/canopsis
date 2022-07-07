@@ -308,16 +308,18 @@ export default {
 
     async fetchList() {
       if (this.hasColumns) {
-        const query = this.getQuery();
+        const params = this.getQuery();
 
         this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
 
-        await this.fetchAlarmsList({
-          widgetId: this.widget._id,
-          params: query,
-        });
+        if (!this.alarmsPending) {
+          await this.fetchAlarmsList({
+            widgetId: this.widget._id,
+            params,
+          });
 
-        this.refreshExpanded();
+          this.refreshExpanded();
+        }
       }
     },
 

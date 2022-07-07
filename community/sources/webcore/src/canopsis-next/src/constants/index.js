@@ -1,5 +1,5 @@
 export * from './common';
-export * from './context';
+export * from './entity';
 export * from './alarm';
 export * from './broadcast-message';
 export * from './date';
