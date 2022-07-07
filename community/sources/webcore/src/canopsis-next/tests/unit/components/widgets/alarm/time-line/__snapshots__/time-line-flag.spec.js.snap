@@ -186,9 +186,8 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: cancel 1`] = `
 <div>
   <i
     class="material-icons"
-    style="color: black;"
   >
-    clear
+    delete
   </i>
 </div>
 `;
