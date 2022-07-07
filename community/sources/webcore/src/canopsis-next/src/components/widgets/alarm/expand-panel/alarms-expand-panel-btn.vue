@@ -64,14 +64,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.not-filtered {
-  opacity: .4;
-  transition: opacity .3s linear;
-
-  &:hover {
-    opacity: 1;
-  }
-}
-</style>

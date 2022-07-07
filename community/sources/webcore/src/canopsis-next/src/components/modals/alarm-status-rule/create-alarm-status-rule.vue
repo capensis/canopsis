@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { alarmStatusRuleToForm, formToAlarmStatusRule } from '@/helpers/forms/alarm-status-rule';
 
@@ -31,6 +31,7 @@ export default {
   name: MODALS.createAlarmStatusRule,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { AlarmStatusRuleForm, ModalWrapper },
   mixins: [

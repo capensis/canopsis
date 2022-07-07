@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { eventFilterToForm, formToEventFilter } from '@/helpers/forms/event-filter';
 
@@ -31,6 +31,7 @@ export default {
   name: MODALS.createEventFilter,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { EventFilterForm, ModalWrapper },
   mixins: [
