@@ -1,4 +1,4 @@
-import { omit, isObject, groupBy } from 'lodash';
+import { omit, isObject, groupBy, map } from 'lodash';
 
 import i18n from '@/i18n';
 import {
@@ -81,6 +81,24 @@ export const groupAlarmSteps = (steps) => {
 
   return groupBy(orderedSteps, step => convertDateToString(step.t, DATETIME_FORMATS.short));
 };
+
+/**
+ * Return entities ids
+ *
+ * @param {Array} entities
+ * @param {string} [idKey = '_id']
+ */
+export const mapIds = (entities, idKey = '_id') => map(entities, idKey);
+
+/**
+ * Return entities ids
+ *
+ * @param {Object[]} items
+ * @param {Object} item
+ * @param {string} [idKey = '_id']
+ */
+export const filterById = (items, item, idKey = '_id') => items
+  .filter(({ [idKey]: itemId }) => item[idKey] !== itemId);
 
 /**
  * Generate alarm list widget form with default parameters.

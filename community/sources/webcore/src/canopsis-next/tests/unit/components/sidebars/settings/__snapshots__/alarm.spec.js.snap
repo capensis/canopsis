@@ -232,6 +232,12 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
             <hr
               class="v-divider theme--light"
             />
+            <field-switcher-stub
+              title="settings.isMultiDeclareTicketEnabled"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
             <field-enabled-limit-stub
               label="Number of category items"
               title="Display links as a list?"
@@ -489,6 +495,12 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
             <hr
               class="v-divider theme--light"
             />
+            <field-switcher-stub
+              title="settings.isMultiDeclareTicketEnabled"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
             <field-enabled-limit-stub
               label="Number of category items"
               title="Display links as a list?"
@@ -739,6 +751,12 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
             />
             <field-switcher-stub
               title="Note field required when snooze?"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
+            <field-switcher-stub
+              title="settings.isMultiDeclareTicketEnabled"
             />
             <hr
               class="v-divider theme--light"

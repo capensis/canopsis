@@ -123,15 +123,16 @@ type Children struct {
 }
 
 type AlarmValue struct {
-	ACK                           *AlarmStep            `bson:"ack,omitempty" json:"ack,omitempty"`
-	Canceled                      *AlarmStep            `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done                          *AlarmStep            `bson:"done,omitempty" json:"done,omitempty"`
-	Snooze                        *AlarmStep            `bson:"snooze,omitempty" json:"snooze,omitempty"`
-	State                         *AlarmStep            `bson:"state,omitempty" json:"state,omitempty"`
-	Status                        *AlarmStep            `bson:"status,omitempty" json:"status,omitempty"`
-	Ticket                        *AlarmTicket          `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	LastComment                   *AlarmStep            `bson:"last_comment,omitempty" json:"lastComment,omitempty"`
-	Steps                         []AlarmStep           `bson:"steps,omitempty" json:"steps,omitempty"`
+	ACK         *AlarmStep   `bson:"ack,omitempty" json:"ack,omitempty"`
+	Canceled    *AlarmStep   `bson:"canceled,omitempty" json:"canceled,omitempty"`
+	Done        *AlarmStep   `bson:"done,omitempty" json:"done,omitempty"`
+	Snooze      *AlarmStep   `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	State       *AlarmStep   `bson:"state,omitempty" json:"state,omitempty"`
+	Status      *AlarmStep   `bson:"status,omitempty" json:"status,omitempty"`
+	Ticket      *AlarmTicket `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	LastComment *AlarmStep   `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+	Steps       []AlarmStep  `bson:"steps,omitempty" json:"steps,omitempty"`
+
 	Component                     string                `bson:"component" json:"component"`
 	Connector                     string                `bson:"connector" json:"connector"`
 	ConnectorName                 string                `bson:"connector_name" json:"connector_name"`

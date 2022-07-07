@@ -2,8 +2,8 @@
   v-layout
     extra-details-ack(v-if="alarm.v.ack", :ack="alarm.v.ack")
     extra-details-last-comment(
-      v-if="alarm.v.lastComment && alarm.v.lastComment.m",
-      :last-comment="alarm.v.lastComment"
+      v-if="alarm.v.last_comment && alarm.v.last_comment.m",
+      :last-comment="alarm.v.last_comment"
     )
     extra-details-ticket(
       v-if="alarm.v.ticket",

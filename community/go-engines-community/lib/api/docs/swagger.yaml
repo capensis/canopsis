@@ -2121,6 +2121,51 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entities/pbehavior-calendar:
+    get:
+      tags:
+        - pbehaviors
+      summary: Find pbehaviors by entity id
+      description: Get list of pbehaviors' timespans
+      operationId: pbehaviors-calendar-by-entity-id
+      parameters:
+        - name: _id
+          in: query
+          description: Entity id
+          required: true
+          schema:
+            type: string
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/pbehavior.CalendarResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /entities/pbehaviors:
     get:
       tags:
@@ -2129,7 +2174,7 @@ paths:
       description: Get list of pbehaviors
       operationId: pbehaviors-find-by-entity-id
       parameters:
-        - name: id
+        - name: _id
           in: query
           description: Entity id
           required: true
@@ -2150,6 +2195,12 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /entity-categories:
     get:
       tags:
@@ -3805,6 +3856,39 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /pbehavior-calendar:
+    get:
+      tags:
+        - pbehaviors
+      summary: Find all pbehaviors
+      description: Get list of pbehaviors' timespans
+      operationId: pbehaviors-calendar
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/pbehavior.CalendarResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /pbehavior-comments:
     post:
       tags:
@@ -4305,7 +4389,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: 'schemas_swagger.yaml#/definitions/pbehaviortimespan.timespansItemResponse'
+                  $ref: 'schemas_swagger.yaml#/definitions/pbehaviortimespan.ItemResponse'
         400:
           description: Bad Request
           content:

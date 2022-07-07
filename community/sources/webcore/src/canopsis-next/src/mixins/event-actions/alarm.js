@@ -2,7 +2,7 @@ import { isArray } from 'lodash';
 
 import { prepareEventByAlarm, prepareEventsByAlarms } from '@/helpers/forms/event';
 
-import eventActionsMixin from './index';
+import { eventActionsMixin } from './index';
 
 export const eventActionsAlarmMixin = {
   mixins: [eventActionsMixin],

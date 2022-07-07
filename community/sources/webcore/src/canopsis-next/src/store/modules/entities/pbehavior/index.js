@@ -124,12 +124,20 @@ export default {
       }
     },
 
+    bulkCreate(context, { data }) {
+      return request.post(API_ROUTES.pbehavior.bulkPbehaviors, data);
+    },
+
     async update({ dispatch }, { data, id }) {
       await dispatch('entities/update', {
         route: `${API_ROUTES.pbehavior.pbehaviors}/${id}`,
         schema: schemas.pbehavior,
         body: data,
       }, { root: true });
+    },
+
+    bulkUpdate(context, { data }) {
+      return request.put(API_ROUTES.pbehavior.bulkPbehaviors, data);
     },
 
     async remove({ dispatch }, { id }) {
@@ -142,6 +150,10 @@ export default {
       } catch (err) {
         console.warn(err);
       }
+    },
+
+    bulkRemove(context, { data }) {
+      return request.delete(API_ROUTES.pbehavior.bulkPbehaviors, { data });
     },
   },
 };

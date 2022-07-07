@@ -69,6 +69,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {boolean} isAckNoteRequired
  * @property {boolean} isSnoozeNoteRequired
  * @property {boolean} isMultiAckEnabled
+ * @property {boolean} isMultiDeclareTicketEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
  * @property {boolean} sticky_header
  * @property {boolean} dense
@@ -164,6 +165,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isAckNoteRequired: !!parameters.isAckNoteRequired,
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
+  isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
   sticky_header: !!parameters.sticky_header,
   dense: !!parameters.dense,

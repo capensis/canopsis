@@ -1,7 +1,7 @@
 import featuresService from '@/services/features';
 
 import { ALARM_LIST_ACTIONS_TYPES } from './alarm';
-import { CONTEXT_ACTIONS_TYPES, WEATHER_ACTIONS_TYPES, COUNTER_ACTIONS_TYPES } from './context';
+import { CONTEXT_ACTIONS_TYPES, WEATHER_ACTIONS_TYPES, COUNTER_ACTIONS_TYPES } from './entity';
 
 export const CRUD_ACTIONS = {
   can: 'can',

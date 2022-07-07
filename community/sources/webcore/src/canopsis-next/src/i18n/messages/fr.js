@@ -33,6 +33,8 @@ import {
   PATTERN_TYPES,
   PATTERN_FIELD_TYPES,
   PBEHAVIOR_TYPE_TYPES,
+  SCENARIO_TRIGGERS,
+  WEATHER_ACTIONS_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -267,6 +269,11 @@ export default merge({
       [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
       [EVENT_ENTITY_TYPES.executeInstruction]: 'Exécuter la consigne',
     },
+    acknowledge: 'Acquitter',
+    acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
+    acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
+    saveChanges: 'Sauvegarder',
+    reportIncident: 'Signaler un incident',
     times: {
       second: 'seconde | secondes',
       minute: 'minute | minutes',
@@ -374,6 +381,85 @@ export default merge({
       [EVENT_ENTITY_TYPES.check]: 'Vérifier',
       [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
       [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
+    },
+    scenarioTriggers: {
+      [SCENARIO_TRIGGERS.create]: {
+        text: 'Création d\'alarme',
+      },
+      [SCENARIO_TRIGGERS.statedec]: {
+        text: 'Diminution de la criticité',
+      },
+      [SCENARIO_TRIGGERS.changestate]: {
+        text: 'Changement et verrouillage de la criticité',
+      },
+      [SCENARIO_TRIGGERS.stateinc]: {
+        text: 'Augmentation de la criticité',
+      },
+      [SCENARIO_TRIGGERS.changestatus]: {
+        text: 'Changement de statut (flapping, bagot, ...)',
+      },
+      [SCENARIO_TRIGGERS.ack]: {
+        text: 'Acquittement d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.ackremove]: {
+        text: 'Suppression de l\'acquittement d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.cancel]: {
+        text: 'Annulation d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.uncancel]: {
+        text: 'Annulation de l\'annulation d\'une alarme',
+        helpText: 'L\'annulation ne peut se faire que par un événement posté sur l\'API',
+      },
+      [SCENARIO_TRIGGERS.comment]: {
+        text: 'Commentaire sur une alarme',
+      },
+      [SCENARIO_TRIGGERS.done]: {
+        text: 'Alarme en statut "done"',
+        helpText: 'Ne peut s\'obtenir que par un événement posté sur l\'API',
+      },
+      [SCENARIO_TRIGGERS.declareticket]: {
+        text: 'Déclaration de ticket depuis l\'interface graphique',
+      },
+      [SCENARIO_TRIGGERS.declareticketwebhook]: {
+        text: 'Déclaration de ticket depuis un webhook',
+      },
+      [SCENARIO_TRIGGERS.assocticket]: {
+        text: 'Association de ticket sur une alarme',
+      },
+      [SCENARIO_TRIGGERS.snooze]: {
+        text: 'Mise en veille d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.unsnooze]: {
+        text: 'Sortie de veille d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.resolve]: {
+        text: 'Résolution d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.activate]: {
+        text: 'Activation d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.pbhenter]: {
+        text: 'Comportement périodique démarré',
+      },
+      [SCENARIO_TRIGGERS.pbhleave]: {
+        text: 'Comportement périodique terminé',
+      },
+      [SCENARIO_TRIGGERS.instructionfail]: {
+        text: 'Consigne manuelle en erreur',
+      },
+      [SCENARIO_TRIGGERS.autoinstructionfail]: {
+        text: 'Consigne automatique en erreur',
+      },
+      [SCENARIO_TRIGGERS.instructionjobfail]: {
+        text: 'Job de remédiation en erreur',
+      },
+      [SCENARIO_TRIGGERS.instructioncomplete]: {
+        text: 'Consigne manuelle terminée',
+      },
+      [SCENARIO_TRIGGERS.autoinstructioncomplete]: {
+        text: 'Consigne automatique terminée',
+      },
     },
   },
   variableTypes: {
@@ -669,6 +755,7 @@ export default merge({
     linksCategoriesAsList: 'Afficher les liens sous forme de liste ?',
     linksCategoriesLimit: 'Nombre d\'éléments de catégorie',
     isMultiAckEnabled: 'Acquittement multiple',
+    isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
     fastAckOutput: 'Commentaire d\'acquittement rapide',
     isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
     isCorrelationEnabled: 'Corrélation activée ?',
@@ -1046,7 +1133,7 @@ export default merge({
       copyToClipboard: 'Copier dans le presse-papier',
     },
     service: {
-      actionPending: 'action(s) en attente',
+      actionPending: 'action en attente | actions en attente',
       refreshEntities: 'Rafraîchir la liste des entités',
       editPbehaviors: 'Éditer les comportements périodiques',
       entity: {
@@ -1985,6 +2072,20 @@ export default merge({
     grey: 'Gris',
     primaryIcon: 'Icône principale',
     secondaryIcon: 'Icône secondaire',
+    massActions: 'Actions de masse',
+    cannotBeApplied: 'Cette action ne peut pas être appliquée',
+    actions: {
+      [WEATHER_ACTIONS_TYPES.entityAck]: 'Acquitter',
+      [WEATHER_ACTIONS_TYPES.entityValidate]: 'Valider',
+      [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalider',
+      [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',
+      [WEATHER_ACTIONS_TYPES.entityPlay]: 'Supprimer la pause',
+      [WEATHER_ACTIONS_TYPES.entityCancel]: 'Annuler',
+      [WEATHER_ACTIONS_TYPES.entityAssocTicket]: 'Associer un ticket',
+      [WEATHER_ACTIONS_TYPES.entityComment]: 'Commenter l\'alarme',
+      [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Exécuter l\'instruction',
+      [WEATHER_ACTIONS_TYPES.declareTicket]: 'Déclarer un incident',
+    },
   },
   contextGeneralTable: {
     addSelection: 'Ajouter une sélection',
@@ -2083,6 +2184,7 @@ export default merge({
   },
 
   healthcheck: {
+    systemIsDown: 'Le système est en panne',
     notRunning: '{name} n\'est pas disponible',
     queueOverflow: 'Débordement de file d\'attente',
     lackOfInstances: 'Manque d\'instances',
