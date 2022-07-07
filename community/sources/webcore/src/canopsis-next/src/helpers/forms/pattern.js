@@ -503,11 +503,19 @@ export const formRuleToPatternRule = (rule) => {
       pattern.cond.value = rule.duration;
       break;
 
+    case PATTERN_OPERATORS.isGrey:
+      pattern.cond.type = PATTERN_CONDITIONS.equal;
+      pattern.cond.value = true;
+      break;
+    case PATTERN_OPERATORS.isNotGrey:
+      pattern.cond.type = PATTERN_CONDITIONS.equal;
+      pattern.cond.value = false;
+      break;
+
     case PATTERN_OPERATORS.ticketAssociated:
     case PATTERN_OPERATORS.canceled:
     case PATTERN_OPERATORS.snoozed:
     case PATTERN_OPERATORS.acked:
-    case PATTERN_OPERATORS.isGrey:
       pattern.cond.type = PATTERN_CONDITIONS.exist;
       pattern.cond.value = true;
       break;
@@ -515,7 +523,6 @@ export const formRuleToPatternRule = (rule) => {
     case PATTERN_OPERATORS.notCanceled:
     case PATTERN_OPERATORS.notSnoozed:
     case PATTERN_OPERATORS.notAcked:
-    case PATTERN_OPERATORS.isNotGrey:
       pattern.cond.type = PATTERN_CONDITIONS.exist;
       pattern.cond.value = false;
       break;

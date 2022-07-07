@@ -51,7 +51,7 @@ export default {
       return [
         PATTERN_OPERATORS.equal,
         PATTERN_OPERATORS.notEqual,
-        PATTERN_OPERATORS.hasOneOf,
+        PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.isNotOneOf,
       ];
     },

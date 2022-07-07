@@ -6,7 +6,7 @@ export * from './date';
 export * from './dynamic-info';
 export * from './event';
 export * from './event-filter';
-export * from './filters';
+export * from './pattern';
 export * from './healthcheck';
 export * from './idle-rule';
 export * from './junit';

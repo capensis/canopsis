@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { formToIdleRule, idleRuleToForm } from '@/helpers/forms/idle-rule';
 
@@ -31,6 +31,7 @@ export default {
   name: MODALS.createIdleRule,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     IdleRuleForm,
