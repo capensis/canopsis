@@ -233,7 +233,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
               class="v-divider theme--light"
             />
             <field-switcher-stub
-              title="settings.isMultiDeclareTicketEnabled"
+              title="Multiple declare ticket"
             />
             <hr
               class="v-divider theme--light"
@@ -496,7 +496,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
               class="v-divider theme--light"
             />
             <field-switcher-stub
-              title="settings.isMultiDeclareTicketEnabled"
+              title="Multiple declare ticket"
             />
             <hr
               class="v-divider theme--light"
@@ -756,7 +756,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
               class="v-divider theme--light"
             />
             <field-switcher-stub
-              title="settings.isMultiDeclareTicketEnabled"
+              title="Multiple declare ticket"
             />
             <hr
               class="v-divider theme--light"
