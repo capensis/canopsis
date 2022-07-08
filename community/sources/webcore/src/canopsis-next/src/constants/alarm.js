@@ -218,6 +218,7 @@ export const ALARM_PATTERN_FIELDS = {
   lastUpdateDate: 'v.last_update_date',
   ack: 'v.ack',
   ackAt: 'v.ack.t',
+  ackBy: 'v.ack.a',
   resolvedAt: 'v.resolved',
   ticket: 'v.ticket',
   canceled: 'v.canceled',
