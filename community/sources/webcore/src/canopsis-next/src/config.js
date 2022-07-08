@@ -190,6 +190,7 @@ export const API_ROUTES = {
   ratingSettings: '/api/v4/cat/rating-settings',
   bulkRatingSettings: '/api/v4/cat/rating-settings/bulk',
   dynamicInfo: '/api/v4/cat/dynamic-infos',
+  dynamicInfosDictionaryKeys: '/api/v4/cat/dynamic-infos-dictionary/keys',
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
   remediation: {
     instructions: '/api/v4/cat/instructions',

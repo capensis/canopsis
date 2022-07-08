@@ -244,7 +244,7 @@ export default {
   },
   methods: {
     ...entityCategoryMapActions({ fetchCategoriesListWithoutStore: 'fetchListWithoutStore' }),
-    ...serviceMapActions({ fetchEntityInfosWithoutStore: 'fetchInfosWithoutStore' }),
+    ...serviceMapActions({ fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
 
     async fetchCategories() {
       this.categoriesPending = true;
@@ -258,7 +258,7 @@ export default {
     },
 
     async fetchInfos() {
-      const { data: infos } = await this.fetchEntityInfosWithoutStore({
+      const { data: infos } = await this.fetchEntityInfosKeysWithoutStore({
         params: { limit: MAX_LIMIT },
       });
 
