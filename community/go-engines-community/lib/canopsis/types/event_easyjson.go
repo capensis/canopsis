@@ -1774,6 +1774,26 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				in.Delim('}')
 			}
+		case "inactive_start":
+			if in.IsNull() {
+				in.Skip()
+				out.InactiveStart = nil
+			} else {
+				if out.InactiveStart == nil {
+					out.InactiveStart = new(CpsTime)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.InactiveStart).UnmarshalJSON(data))
+				}
+			}
+		case "duration":
+			out.Duration = int64(in.Int64())
+		case "current_state_duration":
+			out.CurrentStateDuration = int64(in.Int64())
+		case "active_duration":
+			out.ActiveDuration = int64(in.Int64())
+		case "inactive_duration":
+			out.InactiveDuration = int64(in.Int64())
 		case "snooze_duration":
 			out.SnoozeDuration = int64(in.Int64())
 		case "pbh_inactive_duration":
@@ -2121,6 +2141,35 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 			out.RawByte('}')
 		}
+	}
+	{
+		const prefix string = ",\"inactive_start\":"
+		out.RawString(prefix)
+		if in.InactiveStart == nil {
+			out.RawString("null")
+		} else {
+			out.Raw((*in.InactiveStart).MarshalJSON())
+		}
+	}
+	{
+		const prefix string = ",\"duration\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.Duration))
+	}
+	{
+		const prefix string = ",\"current_state_duration\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.CurrentStateDuration))
+	}
+	{
+		const prefix string = ",\"active_duration\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.ActiveDuration))
+	}
+	{
+		const prefix string = ",\"inactive_duration\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.InactiveDuration))
 	}
 	{
 		const prefix string = ",\"snooze_duration\":"
