@@ -85,11 +85,10 @@ func NewEngine(
 		logger,
 	)
 
-	infosDictPeriodicalWorker := NewInfosDictionaryPeriodicalWorker(mongoClient, options.InfosDictionaryWaitTime, logger)
 	infosDictLockedPeriodicalWorker := libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,
 		redis.CheEntityInfosDictionaryPeriodicalLockKey,
-		infosDictPeriodicalWorker,
+		NewInfosDictionaryPeriodicalWorker(mongoClient, options.InfosDictionaryWaitTime, logger),
 		logger,
 	)
 
