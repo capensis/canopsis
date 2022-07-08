@@ -170,14 +170,10 @@ type DeleteByNameRequest struct {
 	Name string `form:"name" json:"name" binding:"required"`
 }
 
-type CalendarRequest struct {
+type CalendarByEntityIDRequest struct {
+	ID   string        `form:"_id" json:"_id" binding:"required"`
 	From types.CpsTime `form:"from" json:"from" binding:"required" swaggertype:"integer"`
 	To   types.CpsTime `form:"to" json:"to" binding:"required" swaggertype:"integer"`
-}
-
-type CalendarByEntityIDRequest struct {
-	CalendarRequest
-	ID string `form:"_id" json:"_id" binding:"required"`
 }
 
 type CalendarResponse struct {

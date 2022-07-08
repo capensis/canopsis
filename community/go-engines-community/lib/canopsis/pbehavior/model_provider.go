@@ -63,7 +63,10 @@ func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context, span timespan.
 				{"rrule": bson.M{"$nin": bson.A{nil, ""}}},
 				{
 					"tstart": bson.M{"$lte": span.To().Unix()},
-					"tstop":  bson.M{"$gte": span.From().Unix()},
+					"$or": []bson.M{
+						{"tstop": nil},
+						{"tstop": bson.M{"$gte": span.From().Unix()}},
+					},
 				},
 			},
 		}},
@@ -103,7 +106,10 @@ func (p *modelProvider) GetEnabledPbehaviorsByIds(ctx context.Context, ids []str
 				{"rrule": bson.M{"$nin": bson.A{nil, ""}}},
 				{
 					"tstart": bson.M{"$lte": span.To().Unix()},
-					"tstop":  bson.M{"$gte": span.From().Unix()},
+					"$or": []bson.M{
+						{"tstop": nil},
+						{"tstop": bson.M{"$gte": span.From().Unix()}},
+					},
 				},
 			},
 		}},
