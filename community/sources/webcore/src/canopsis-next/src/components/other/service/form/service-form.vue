@@ -36,7 +36,7 @@
     v-tabs(slider-color="primary", centered)
       v-tab(:class="{ 'error--text': errors.has('entity_patterns') }") {{ $t('common.entityPatterns') }}
       v-tab-item
-        patterns-list(v-field="form.entity_patterns", v-validate="'required'", name="entity_patterns")
+        c-patterns-field.mt-2(v-field="form.patterns", with-entity)
       v-tab.validation-header(:disabled="advancedJsonWasChanged") {{ $t('entity.manageInfos') }}
       v-tab-item
         manage-infos(v-field="form.infos")

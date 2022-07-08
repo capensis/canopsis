@@ -7,7 +7,6 @@ import {
   PATTERN_CONDITIONS,
   PATTERN_CUSTOM_ITEM_VALUE,
   PATTERN_INFOS_NAME_OPERATORS,
-  PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
   PATTERN_QUICK_RANGES,
   PATTERN_RULE_INFOS_FIELDS,
@@ -459,14 +458,12 @@ export const formRuleToPatternRule = (rule) => {
 
     case PATTERN_OPERATORS.hasEvery:
       pattern.cond.type = PATTERN_CONDITIONS.hasEvery;
-      pattern.field_type = PATTERN_FIELD_TYPES.stringArray;
       break;
     case PATTERN_OPERATORS.isOneOf:
       pattern.cond.type = PATTERN_CONDITIONS.isOneOf;
       break;
     case PATTERN_OPERATORS.hasOneOf:
       pattern.cond.type = PATTERN_CONDITIONS.hasOneOf;
-      pattern.field_type = PATTERN_FIELD_TYPES.stringArray;
       break;
     case PATTERN_OPERATORS.hasNot:
       pattern.cond.type = PATTERN_CONDITIONS.hasNot;
@@ -476,12 +473,10 @@ export const formRuleToPatternRule = (rule) => {
       break;
     case PATTERN_OPERATORS.isEmpty:
       pattern.cond.type = PATTERN_CONDITIONS.isEmpty;
-      pattern.field_type = PATTERN_FIELD_TYPES.stringArray;
       pattern.cond.value = true;
       break;
     case PATTERN_OPERATORS.isNotEmpty:
       pattern.cond.type = PATTERN_CONDITIONS.isEmpty;
-      pattern.field_type = PATTERN_FIELD_TYPES.stringArray;
       pattern.cond.value = false;
       break;
 

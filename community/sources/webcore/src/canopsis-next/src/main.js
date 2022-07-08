@@ -468,6 +468,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.createKpiFilter]: { maxWidth: 1280 },
     [MODALS.createDynamicInfo]: { maxWidth: 1280 },
     [MODALS.createAlarmStatusRule]: { maxWidth: 1280 },
+    [MODALS.createService]: { maxWidth: 1280 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

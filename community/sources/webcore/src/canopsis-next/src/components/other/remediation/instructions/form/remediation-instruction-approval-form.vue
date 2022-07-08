@@ -26,7 +26,8 @@
             v-field="approval.user",
             :required="!isRoleType",
             :name="userFieldName",
-            :label="$tc('common.user')"
+            :label="$tc('common.user')",
+            return-object
           )
       v-textarea(
         v-field="approval.comment",
