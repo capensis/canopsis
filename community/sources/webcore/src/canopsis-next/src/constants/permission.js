@@ -171,6 +171,8 @@ export const USERS_PERMISSIONS = {
         pbehaviorAdd: `${USER_PERMISSIONS_PREFIXES.business.context}_pbehavior`,
         pbehaviorList: `${USER_PERMISSIONS_PREFIXES.business.context}_listPbehavior`,
         pbehaviorDelete: `${USER_PERMISSIONS_PREFIXES.business.context}_deletePbehavior`,
+        massEnable: `${USER_PERMISSIONS_PREFIXES.business.context}_massEnable`,
+        massDisable: `${USER_PERMISSIONS_PREFIXES.business.context}_massDisable`,
 
         listFilters: `${USER_PERMISSIONS_PREFIXES.business.context}_listFilters`,
         editFilter: `${USER_PERMISSIONS_PREFIXES.business.context}_editFilter`,
@@ -339,6 +341,9 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [CONTEXT_ACTIONS_TYPES.pbehaviorAdd]: USERS_PERMISSIONS.business.context.actions.pbehaviorAdd,
     [CONTEXT_ACTIONS_TYPES.pbehaviorList]: USERS_PERMISSIONS.business.context.actions.pbehaviorList,
     [CONTEXT_ACTIONS_TYPES.pbehaviorDelete]: USERS_PERMISSIONS.business.context.actions.pbehaviorDelete,
+    [CONTEXT_ACTIONS_TYPES.pbehaviorDelete]: USERS_PERMISSIONS.business.context.actions.pbehaviorDelete,
+    [CONTEXT_ACTIONS_TYPES.massEnable]: USERS_PERMISSIONS.business.context.actions.massEnable,
+    [CONTEXT_ACTIONS_TYPES.massDisable]: USERS_PERMISSIONS.business.context.actions.massDisable,
 
     [CONTEXT_ACTIONS_TYPES.listFilters]: USERS_PERMISSIONS.business.context.actions.listFilters,
     [CONTEXT_ACTIONS_TYPES.editFilter]: USERS_PERMISSIONS.business.context.actions.editFilter,

@@ -24,7 +24,12 @@
       v-flex(v-if="hasMassActionsSlot", xs12)
         v-expand-transition
           v-layout(v-if="selected.length")
-            slot(name="mass-actions", :selected="selected", :count="selected.length")
+            slot(
+              name="mass-actions",
+              :selected="selected",
+              :count="selected.length",
+              :clear-selected="clearSelected"
+            )
     v-data-table(
       v-model="selected",
       :headers="headersWithExpand",
@@ -246,6 +251,10 @@ export default {
 
     clearSearchHandler() {
       this.updatePagination(omit(this.pagination, ['search']));
+    },
+
+    clearSelected() {
+      this.selectedItems = [];
     },
 
     getItemsProps(state) {
