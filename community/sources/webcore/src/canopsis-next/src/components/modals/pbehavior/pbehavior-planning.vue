@@ -1,9 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(slot="title")
+    modal-wrapper(fill-height, close)
+      template(#title="")
         span {{ $t('modals.pbehaviorPlanning.title') }}
-      template(slot="text")
+      template(#text="")
         pbehavior-planning-calendar(
           :pbehaviors-by-id.sync="form.pbehaviorsById",
           :added-pbehaviors-by-id.sync="form.addedPbehaviorsById",
@@ -12,7 +12,7 @@
           :read-only="readOnly",
           :filter="filter"
         )
-      template(slot="actions")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",

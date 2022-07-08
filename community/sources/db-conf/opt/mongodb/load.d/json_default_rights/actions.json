@@ -328,13 +328,6 @@
         "desc": "Rights on listalarm: Manual meta alarm actions"
     },
     {
-        "_id": "listalarm_listPbehavior",
-        "loader_id": "listalarm_listPbehavior",
-        "crecord_name": "listalarm_listPbehavior",
-        "crecord_type": "action",
-        "desc": "Rights on listalarm: list pbehavior"
-    },
-    {
         "_id": "listalarm_listFilters",
         "loader_id": "listalarm_listFilters",
         "crecord_name": "listalarm_listFilters",
