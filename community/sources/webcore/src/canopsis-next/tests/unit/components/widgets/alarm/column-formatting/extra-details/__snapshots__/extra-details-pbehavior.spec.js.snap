@@ -11,7 +11,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -84,7 +84,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text material-icons theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text material-icons theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -155,7 +155,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -212,7 +212,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -283,7 +283,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -354,7 +354,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>

@@ -2,7 +2,6 @@ package config_test
 
 import (
 	"context"
-	"os"
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -61,17 +60,5 @@ func TestConfSave(t *testing.T) {
 				So(err, ShouldBeNil)
 			})
 		})
-	})
-}
-
-func TestGetConfWrongMongo(t *testing.T) {
-	Convey("Given a bad mongo url", t, func() {
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
-		ou := os.Getenv(mongo.EnvURL)
-		os.Setenv(mongo.EnvURL, "howmanytimeshaveitoldyaidontexist?")
-		_, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
-		So(err, ShouldNotBeNil)
-		os.Setenv(mongo.EnvURL, ou)
 	})
 }

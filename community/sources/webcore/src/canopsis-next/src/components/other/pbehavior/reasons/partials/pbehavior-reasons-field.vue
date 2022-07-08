@@ -6,6 +6,7 @@
     :items="reasons",
     :error-messages="errors.collect(name)",
     :name="name",
+    :disabled="disabled",
     item-text="name",
     item-value="_id",
     return-object
@@ -41,6 +42,10 @@ export default {
     name: {
       type: String,
       default: 'reason',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

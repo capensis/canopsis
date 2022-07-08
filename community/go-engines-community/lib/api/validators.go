@@ -96,7 +96,7 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		pbhValidator.ValidateEditRequest(ctx, sl)
 	}, pbehavior.PatchRequest{})
-	v.RegisterStructValidation(pbhValidator.ValidateCalendarRequest, pbehavior.CalendarRequest{})
+	v.RegisterStructValidation(pbhValidator.ValidateCalendarRequest, pbehavior.CalendarByEntityIDRequest{})
 
 	pbhReasonUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "ID")
 	pbhReasonUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Name")

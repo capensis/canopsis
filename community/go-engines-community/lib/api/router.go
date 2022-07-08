@@ -422,9 +422,6 @@ func RegisterRoutes(
 				middleware.Authorize(authObjPbh, permCreate, enforcer),
 				pbehaviorApi.CountFilter)
 		}
-		protected.GET("/pbehavior-calendar",
-			middleware.Authorize(authObjPbh, permRead, enforcer),
-			pbehaviorApi.Calendar)
 		pbehaviorCommentRouter := protected.Group("/pbehavior-comments")
 		{
 			pbehaviorCommentAPI := pbehaviorcomment.NewApi(pbehaviorcomment.NewModelTransformer(), pbehaviorcomment.NewStore(dbClient))
