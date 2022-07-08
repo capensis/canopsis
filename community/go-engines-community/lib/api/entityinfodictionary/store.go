@@ -2,6 +2,7 @@ package entityinfodictionary
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -21,7 +22,7 @@ type store struct {
 func NewStore(db mongo.DbClient) Store {
 	return &store{
 		db:         db,
-		collection: db.Collection(mongo.InfosDictionaryCollection),
+		collection: db.Collection(mongo.EntityInfosDictionaryCollection),
 	}
 }
 
@@ -40,7 +41,6 @@ func (s *store) FindKeys(ctx context.Context, r ListKeysRequest) (AggregationRes
 		pipeline,
 		bson.M{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		[]bson.M{{"$project": bson.M{"value": "$_id"}}},
-
 	))
 	if err != nil {
 		return res, err
