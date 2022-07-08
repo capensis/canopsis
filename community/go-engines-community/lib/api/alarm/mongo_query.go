@@ -973,32 +973,40 @@ func getComputedFields(now types.CpsTime) bson.M {
 	return bson.M{
 		"infos":        "$v.infos",
 		"impact_state": bson.M{"$multiply": bson.A{"$v.state.val", "$entity.impact_level"}},
-		"v.duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			"$v.creation_date",
-		}},
-		"v.current_state_duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			"$v.state.t",
-		}},
-		"v.active_duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			bson.M{"$sum": bson.A{
+		"v.duration": bson.M{"$ifNull": bson.A{
+			"$v.duration",
+			bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
 				"$v.creation_date",
-				"$v.snooze_duration",
-				"$v.pbh_inactive_duration",
+			}},
+		}},
+		"v.current_state_duration": bson.M{"$ifNull": bson.A{
+			"$v.current_state_duration",
+			bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
+				"$v.state.t",
+			}},
+		}},
+		"v.active_duration": bson.M{"$ifNull": bson.A{
+			"$v.active_duration",
+			bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
+				bson.M{"$sum": bson.A{
+					"$v.creation_date",
+					"$v.inactive_duration",
+				}},
 			}},
 		}},
 	}

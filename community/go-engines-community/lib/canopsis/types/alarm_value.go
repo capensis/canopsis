@@ -359,7 +359,23 @@ type AlarmValue struct {
 	// store version of dynamic-infos rule
 	RuleVersion map[string]string `bson:"infos_rule_version"`
 
-	SnoozeDuration            int64 `bson:"snooze_duration" json:"snooze_duration"`
+	// InactiveStart represents start of snooze or maintenance, pause, inactive pbehavior interval.
+	// It's used only to compute InactiveDuration.
+	InactiveStart *CpsTime `bson:"inactive_start,omitempty" json:"inactive_start"`
+	// Duration represents a duration from creation date to resolve date.
+	// Keep omitempty.
+	Duration int64 `bson:"duration,omitempty" json:"duration"`
+	// CurrentStateDuration represents a duration when an alarm was in current state.
+	// Keep omitempty.
+	CurrentStateDuration int64 `bson:"current_state_duration,omitempty" json:"current_state_duration"`
+	// ActiveDuration represents a duration when an alarm wasn't in snooze or in maintenance, pause, inactive pbehavior interval.
+	// Keep omitempty.
+	ActiveDuration int64 `bson:"active_duration,omitempty" json:"active_duration"`
+	// InactiveDuration represents a duration when an alarm was in snooze or in maintenance, pause, inactive pbehavior interval.
+	InactiveDuration int64 `bson:"inactive_duration" json:"inactive_duration"`
+	// SnoozeDuration represents a duration when an alarm was in snooze.
+	SnoozeDuration int64 `bson:"snooze_duration" json:"snooze_duration"`
+	// PbehaviorInactiveDuration represents a duration when an alarm was in maintenance, pause, inactive pbehavior interval.
 	PbehaviorInactiveDuration int64 `bson:"pbh_inactive_duration" json:"pbh_inactive_duration"`
 }
 
