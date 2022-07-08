@@ -85,14 +85,19 @@ func NewEngine(
 		logger,
 	)
 
-	infosDictPeriodicalWorker := NewInfosDictionaryPeriodicalWorker(mongoClient, options.InfosDictionaryWaitTime, logger)
+	infosDictLockedPeriodicalWorker := libengine.NewLockedPeriodicalWorker(
+		periodicalLockClient,
+		redis.CheEntityInfosDictionaryPeriodicalLockKey,
+		NewInfosDictionaryPeriodicalWorker(mongoClient, options.InfosDictionaryWaitTime, logger),
+		logger,
+	)
 
 	engine := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
 
 			// run in goroutine because it may take some time to process heavy dbs, don't want to slow down the engine startup
-			go infosDictPeriodicalWorker.Work(ctx)
+			go infosDictLockedPeriodicalWorker.Work(ctx)
 
 			logger.Debug().Msg("Loading event filter rules")
 			err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
@@ -213,12 +218,7 @@ func NewEngine(
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker("infos dictionary", libengine.NewLockedPeriodicalWorker(
-		periodicalLockClient,
-		redis.CheEntityInfosDictionaryPeriodicalLockKey,
-		infosDictPeriodicalWorker,
-		logger,
-	))
+	engine.AddPeriodicalWorker("entity infos dictionary", infosDictLockedPeriodicalWorker)
 
 	return engine
 }
