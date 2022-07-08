@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { MODALS, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
+import { MODALS, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS, VALIDATION_DELAY } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
@@ -35,6 +35,7 @@ export default {
   name: MODALS.createKpiFilter,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { KpiFilterForm, ModalWrapper },
   mixins: [

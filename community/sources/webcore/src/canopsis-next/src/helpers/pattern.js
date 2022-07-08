@@ -18,6 +18,7 @@ import {
   EVENT_FILTER_PATTERN_FIELDS,
   PATTERN_OPERATORS,
 } from '@/constants';
+
 import { isValidDateInterval } from '@/helpers/date/date';
 import { isValidDuration } from '@/helpers/date/duration';
 
@@ -58,7 +59,7 @@ export const isOperatorForArray = operator => PATTERN_ARRAY_OPERATORS.includes(o
 export const isOperatorForString = operator => PATTERN_STRING_OPERATORS.includes(operator);
 
 /**
- * Check is operator for string
+ * Check is operator for number
  *
  * @param {string} operator
  * @return {boolean}
@@ -176,7 +177,7 @@ export const convertValueByType = (value, type, defaultValue) => {
     case PATTERN_FIELD_TYPES.boolean:
       return Boolean(preparedValue);
     case PATTERN_FIELD_TYPES.string:
-      return (isNan(preparedValue) || isNull(preparedValue))
+      return (isNan(preparedValue) || isNull(preparedValue) || isUndefined(preparedValue))
         ? ''
         : String(preparedValue);
     case PATTERN_FIELD_TYPES.null:
