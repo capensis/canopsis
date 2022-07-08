@@ -43,6 +43,47 @@ Feature: Entities and users should be synchronized in metrics db
     """
     Then the response code should be 201
     When I save response filter2ID={{ .lastResponse._id }}
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-api-1"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
+      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "priority": 2,
+      "description": "test-eventfilter-metrics-api-1-description",
+      "enabled": true
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
     When I send an event:
     """json
     {

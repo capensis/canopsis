@@ -107,6 +107,7 @@ Feature: Import entities
         [
           {
             "field": "infos.test-component-import-partial-2-infos-1",
+            "field_type": "string",
             "cond": {
               "type": "eq",
               "value": "test-component-import-partial-2-infos-1-value"

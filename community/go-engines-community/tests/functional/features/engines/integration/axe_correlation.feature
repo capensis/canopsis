@@ -2566,19 +2566,17 @@ Feature: create and update meta alarm
     {
       "name": "test-metaalarmrule-axe-correlation-16",
       "type": "attribute",
-      "config": {
-        "alarm_pattern": [
-          [
-            {
-              "field": "v.component",
-              "cond": {
-                "type": "eq",
-                "value": "test-component-axe-correlation-16"
-              }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-axe-correlation-16"
             }
-          ]
+          }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201

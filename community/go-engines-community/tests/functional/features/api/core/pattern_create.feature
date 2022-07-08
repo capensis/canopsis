@@ -32,7 +32,7 @@ Feature: Create a saved pattern
           {
             "field": "v.ack",
             "cond": {
-              "type": "eq",
+              "type": "exist",
               "value": false
             }
           }
@@ -145,7 +145,7 @@ Feature: Create a saved pattern
           {
             "field": "v.ack",
             "cond": {
-              "type": "eq",
+              "type": "exist",
               "value": false
             }
           }
@@ -259,7 +259,7 @@ Feature: Create a saved pattern
           {
             "field": "v.ack",
             "cond": {
-              "type": "eq",
+              "type": "exist",
               "value": false
             }
           }
