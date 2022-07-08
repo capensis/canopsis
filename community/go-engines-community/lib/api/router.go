@@ -18,6 +18,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfodictionary"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
@@ -323,7 +324,16 @@ func RegisterRoutes(
 			)
 		}
 
-		entityAPI := entity.NewApi(entity.NewStore(dbClient, timezoneConfigProvider), exportExecutor, entityCleanerTaskChan, logger)
+		entityAPI := entity.NewApi(
+			entity.NewStore(dbClient, timezoneConfigProvider),
+			exportExecutor,
+			entityCleanerTaskChan,
+			entityPublChan,
+			metricsEntityMetaUpdater,
+			actionLogger,
+			logger,
+		)
+
 		entityExportRouter := protected.Group("/entity-export")
 		{
 			entityExportRouter.POST(
@@ -455,7 +465,6 @@ func RegisterRoutes(
 		}
 		entityRouter := protected.Group("/entities")
 		{
-			entityAPI := entity.NewApi(entity.NewStore(dbClient, timezoneConfigProvider), exportExecutor, entityCleanerTaskChan, logger)
 			entityRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
@@ -482,10 +491,11 @@ func RegisterRoutes(
 				pbehaviorApi.CalendarByEntityID,
 			)
 		}
+
+		entitybasicsAPI := entitybasic.NewApi(entitybasic.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
+			actionLogger, logger)
 		entitybasicsRouter := protected.Group("/entitybasics")
 		{
-			entitybasicsAPI := entitybasic.NewApi(entitybasic.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
-				actionLogger, logger)
 			entitybasicsRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
@@ -1324,6 +1334,22 @@ func RegisterRoutes(
 					pbehaviorApi.BulkDelete,
 				)
 			}
+
+			entityRouter := bulkRouter.Group("/entities")
+			{
+				entityRouter.PUT(
+					"/enable",
+					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					entityAPI.BulkEnable,
+				)
+				entityRouter.PUT(
+					"/disable",
+					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					entityAPI.BulkDisable,
+				)
+			}
 		}
 
 		dateStorageRouter := protected.Group("data-storage")
@@ -1445,6 +1471,16 @@ func RegisterRoutes(
 				flappingRuleAPI.Delete,
 			)
 		}
+
+		infoDictionaryApi := entityinfodictionary.NewApi(entityinfodictionary.NewStore(dbClient), logger)
+		protected.GET("/entity-infos-dictionary/keys",
+			middleware.Authorize(authObjEntity, permRead, enforcer),
+			infoDictionaryApi.ListKeys,
+		)
+		protected.GET("/entity-infos-dictionary/values",
+			middleware.Authorize(authObjEntity, permRead, enforcer),
+			infoDictionaryApi.ListValues,
+		)
 	}
 }
 

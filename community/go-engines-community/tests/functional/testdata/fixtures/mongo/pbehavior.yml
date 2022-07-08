@@ -69,7 +69,6 @@ pbehavior:
     updated: 1592215337
 
   pbehavior_to_get_by_name_2:
-    <<: *pbehavior
     _id: test-pbehavior-to-get-by-name-2
     author: root
     created: 1592215337
@@ -87,6 +86,7 @@ pbehavior:
     reason: test-reason-to-pbh-edit
     rrule: ""
     tstart: 1591172881
+    color: "#FFFFFF"
     type_: test-type-to-pbh-edit-2
     comments: [ ]
     updated: 1592215337
@@ -409,10 +409,10 @@ pbehavior:
     type_: test-type-to-pbh-edit-1
 
   pbehavior_to_patch_12:
-    <<: *pbehavior
     _id: test-pbehavior-to-patch-12
     author: noperms
     tstart: 1591172881
+    color: "#FFFFFF"
     type_: test-type-to-pbh-edit-3
     name: test-pbehavior-to-patch-12-name
     reason: test-reason-to-pbh-edit

@@ -58,7 +58,6 @@ func NewEngine(
 	enrichmentCenter := libcontext.NewEnrichmentCenter(
 		entityAdapter,
 		mongoClient,
-		options.FeatureContextEnrich,
 		entityservice.NewManager(
 			entityServiceAdapter,
 			entityAdapter,
@@ -67,7 +66,6 @@ func NewEngine(
 		),
 		metricsEntityMetaUpdater,
 	)
-	enrichFields := libcontext.NewEnrichFields(options.EnrichInclude, options.EnrichExclude)
 
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer))
@@ -87,9 +85,14 @@ func NewEngine(
 		logger,
 	)
 
+	infosDictPeriodicalWorker := NewInfosDictionaryPeriodicalWorker(mongoClient, options.InfosDictionaryWaitTime, logger)
+
 	engine := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
+
+			// run in goroutine because it may take some time to process heavy dbs, don't want to slow down the engine startup
+			go infosDictPeriodicalWorker.Work(ctx)
 
 			logger.Debug().Msg("Loading event filter rules")
 			err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
@@ -173,7 +176,6 @@ func NewEngine(
 			AlarmConfigProvider:      alarmConfigProvider,
 			EventFilterService:       eventfilterService,
 			EnrichmentCenter:         enrichmentCenter,
-			EnrichFields:             enrichFields,
 			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
 			AlarmAdapter:             alarm.NewAdapter(mongoClient),
 			Encoder:                  json.NewEncoder(),
@@ -209,6 +211,12 @@ func NewEngine(
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			Logger:             logger,
 		},
+		logger,
+	))
+	engine.AddPeriodicalWorker("infos dictionary", libengine.NewLockedPeriodicalWorker(
+		periodicalLockClient,
+		redis.CheEntityInfosDictionaryPeriodicalLockKey,
+		infosDictPeriodicalWorker,
 		logger,
 	))
 

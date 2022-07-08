@@ -673,6 +673,106 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /bulk/entities/disable:
+    put:
+      tags:
+        - entities
+      summary: Bulk disable entities
+      description: Bulk disable entities
+      operationId: entitybasics-bulk-disable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
+            examples:
+              update:
+                summary: Disable
+                description: Disable entities.
+                value: [
+                  {
+                    "_id": "test-entity-id-1"
+                  },
+                  {
+                    "_id": "test-entity-id-2"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /bulk/entities/enable:
+    put:
+      tags:
+        - entities
+      summary: Bulk enable entities
+      description: Bulk enable entities
+      operationId: entitybasics-bulk-enable
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
+            examples:
+              update:
+                summary: Enable
+                description: Enable entities.
+                value: [
+                  {
+                    "_id": "test-entity-id-1"
+                  },
+                  {
+                    "_id": "test-entity-id-2"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /bulk/entityservices:
     put:
       tags:
@@ -2785,6 +2885,73 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entity-infos-dictionary/keys:
+    get:
+      tags:
+        - entity-infos-dictionary
+      summary: Find entity infos keys
+      description: Get paginated list of entity info keys
+      operationId: entity-infos-dictionary-list-keys
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/entityinfodictionary.Result'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /entity-infos-dictionary/values:
+    get:
+      tags:
+        - entity-infos-dictionary
+      summary: Find entity infos values
+      description: Get paginated list of entity info values
+      operationId: entity-infos-dictionary-list-values
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - name: key
+          in: query
+          description: infos key name
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/entityinfodictionary.Result'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /entitybasics:
     get:
       tags:
