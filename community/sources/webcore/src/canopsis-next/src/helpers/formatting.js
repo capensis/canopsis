@@ -3,6 +3,7 @@ import { COLORS } from '@/config';
 import { ENTITIES_STATES_STYLES, ENTITY_STATUS_STYLES, UNKNOWN_VALUE_STYLE } from '@/constants';
 
 import { getEntityEventColor } from '@/helpers/color';
+import { getEntityEventIcon } from '@/helpers/icon';
 
 /**
  * Return object that contains the state style
@@ -54,7 +55,7 @@ export function formatStatus(value) {
  * @returns {*} Object with the color, icon and text associated
  */
 export const formatEvent = (event) => {
-  const icon = getEntityEventColor(event);
+  const icon = getEntityEventIcon(event);
 
   if (!icon) {
     return UNKNOWN_VALUE_STYLE;
