@@ -86,6 +86,8 @@ export const API_ROUTES = {
   currentUser: '/api/v4/account/me',
   alarmList: '/api/v4/alarms',
   entity: '/api/v4/entities',
+  bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
+  bulkEntitiesDisable: '/api/v4/bulk/entities/disable',
   entityBasics: '/api/v4/entitybasics',
   service: '/api/v4/entityservices',
   serviceDependencies: '/api/v4/entityservice-dependencies',
