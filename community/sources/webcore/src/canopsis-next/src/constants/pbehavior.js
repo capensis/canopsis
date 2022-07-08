@@ -37,4 +37,5 @@ export const PBEHAVIOR_PATTERN_FIELDS = {
   name: 'pbehavior_info.id',
   reason: 'pbehavior_info.reason',
   type: 'pbehavior_info.type',
+  canonicalType: 'pbehavior_info.canonical_type',
 };

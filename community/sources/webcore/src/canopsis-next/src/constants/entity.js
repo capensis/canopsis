@@ -521,8 +521,9 @@ export const CONTEXT_COLUMNS_WITH_SORTABLE = [ // TODO: We should receive it fro
 export const ENTITY_PATTERN_FIELDS = {
   id: '_id',
   name: 'name',
-  impact: 'impact',
-  depends: 'depends',
+  type: 'type',
+  component: 'component',
+  connector: 'connector',
   infos: 'infos',
   componentInfos: 'component_infos',
   category: 'category',

@@ -216,6 +216,15 @@ export default {
       };
     },
 
+    ackByOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-user-picker-field',
+        },
+      };
+    },
+
     alarmAttributes() {
       return [
         {
@@ -290,6 +299,11 @@ export default {
           text: this.$t('common.ackedAt'),
           value: ALARM_PATTERN_FIELDS.ackAt,
           options: this.dateOptions,
+        },
+        {
+          text: this.$t('common.ackedBy'),
+          value: ALARM_PATTERN_FIELDS.ackBy,
+          options: this.ackByOptions,
         },
         {
           text: this.$t('common.resolvedAt'),

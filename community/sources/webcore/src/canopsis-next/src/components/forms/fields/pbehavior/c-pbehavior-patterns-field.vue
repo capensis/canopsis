@@ -134,6 +134,11 @@ export default {
           value: PBEHAVIOR_PATTERN_FIELDS.type,
           options: this.typeOptions,
         },
+        {
+          text: this.$t('common.canonicalType'),
+          value: PBEHAVIOR_PATTERN_FIELDS.canonicalType,
+          options: this.typeOptions,
+        },
       ];
     },
   },
