@@ -1140,19 +1140,19 @@ func (a *ApiClient) ValueShouldBeGteLteThan(left, op, right string) error {
 	switch op {
 	case "<":
 		if !(leftV < rightV) {
-			return fmt.Errorf("%q is not lesser than %q", left, right)
+			return fmt.Errorf("%q is not lesser than %q (%v < %v)", left, right, leftV, rightV)
 		}
 	case "<=":
 		if !(leftV <= rightV) {
-			return fmt.Errorf("%q is not lesser or equal than %q", left, right)
+			return fmt.Errorf("%q is not lesser or equal than %q (%v <= %v)", left, right, leftV, rightV)
 		}
 	case ">":
 		if !(leftV > rightV) {
-			return fmt.Errorf("%q is not greater than %q", left, right)
+			return fmt.Errorf("%q is not greater than %q (%v > %v)", left, right, leftV, rightV)
 		}
 	case ">=":
 		if !(leftV >= rightV) {
-			return fmt.Errorf("%q is not greater or equal than %q", left, right)
+			return fmt.Errorf("%q is not greater or equal than %q (%v >= %v)", left, right, leftV, rightV)
 		}
 	default:
 		return fmt.Errorf("unknown operator %q", op)

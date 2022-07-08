@@ -19,6 +19,7 @@ template:
     children: [ ],
     tags: [ ],
     total_state_changes: 1,
+    inactive_duration: 0,
     snooze_duration: 0,
     pbh_inactive_duration: 0,
     state: {
@@ -67,6 +68,9 @@ template:
     v: {
        <<: *alarm_value,
        resolved: <NowUnix()>,
+       duration: 0,
+       active_duration: 0,
+       current_state_duration: 0,
        state: {
          _t: statedec,
          a: <Word()>,
@@ -250,6 +254,9 @@ periodical_alarm:
       long_output: ""
       long_output_history: [""]
       resolved: 1597030241
+      duration: 20
+      current_state_duration: 0
+      active_duration: 20
       state:
         _t: statedec
         a: test-connector-default.test-connector-default-name
@@ -2796,6 +2803,9 @@ resolved_alarms:
       long_output: ""
       long_output_history: [ "" ]
       resolved: 1597030141
+      duration: 20
+      current_state_duration: 0
+      active_duration: 20
       state:
         _t: statedec
         a: test-connector-default.test-connector-default-name
