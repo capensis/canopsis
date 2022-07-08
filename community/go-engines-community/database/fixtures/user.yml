@@ -746,6 +746,16 @@ default_rights:
     _id: crudcontext_exportAsCsv
     crecord_name: <Current()._id>
     desc: "Rights on context: Export as csv"
+  permission_crudcontext_massEnable:
+    <<: *permission
+    _id: crudcontext_massEnable
+    crecord_name: <Current()._id>
+    desc: "Rights on context: Mass enable"
+  permission_crudcontext_massDisable:
+    <<: *permission
+    _id: crudcontext_massDisable
+    crecord_name: <Current()._id>
+    desc: "Rights on context: Mass disable"
   permission_common_variablesHelp:
     <<: *permission
     _id: common_variablesHelp
@@ -1182,6 +1192,10 @@ default_rights:
       "@permission_crudcontext_category":
         checksum: 1
       "@permission_crudcontext_exportAsCsv":
+        checksum: 1
+      "@permission_crudcontext_massEnable":
+        checksum: 1
+      "@permission_crudcontext_massDisable":
         checksum: 1
       "@permission_common_variablesHelp":
         checksum: 1
