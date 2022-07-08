@@ -89,12 +89,6 @@ export default {
           title: this.$t('alarmList.actions.titles.snooze'),
           method: this.showSnoozeModal,
         },
-        pbehaviorList: {
-          type: ALARM_LIST_ACTIONS_TYPES.pbehaviorList,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorList].icon,
-          title: this.$t('alarmList.actions.titles.pbehaviorList'),
-          method: this.showPbehaviorsListModal,
-        },
         declareTicket: {
           type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,

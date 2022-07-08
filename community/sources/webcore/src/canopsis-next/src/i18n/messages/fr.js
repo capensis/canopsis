@@ -218,6 +218,7 @@ export default merge({
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
     template: 'Template',
+    pbehaviorList: 'Lister les comportements périodiques',
     cycleDependency: 'Dépendance au cycle',
     acknowledge: 'Acquitter',
     acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -451,7 +452,6 @@ export default merge({
         ackRemove: 'Annuler l\'acquittement',
         pbehavior: 'Définir un comportement périodique',
         snooze: 'Mettre en veille',
-        pbehaviorList: 'Lister les comportements périodiques',
         declareTicket: 'Déclarer un incident',
         associateTicket: 'Associer un ticket',
         cancel: 'Annuler l\'alarme',
@@ -1383,7 +1383,6 @@ export default merge({
         type: 'Type',
         priority: 'Priorité',
         iconName: 'Nom de l\'icône',
-        isSpecialColor: 'Utiliser une couleur spéciale pour le type ?',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -1636,6 +1635,12 @@ export default merge({
           + '<strong>Les opérations de suppression sont irreversibles.</strong>',
         phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
         phrase: 'archiver ou supprimer',
+      },
+    },
+    pbehaviorsCalendar: {
+      title: 'Comportements périodiques',
+      entity: {
+        title: 'Comportements périodiques - {name}',
       },
     },
   },
