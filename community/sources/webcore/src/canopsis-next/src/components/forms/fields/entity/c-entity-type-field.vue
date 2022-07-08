@@ -22,7 +22,7 @@ export default {
   props: {
     value: {
       type: String,
-      required: true,
+      required: false,
     },
     label: {
       type: String,
@@ -36,10 +36,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    types: {
+      type: Array,
+      required: false,
+    },
   },
   computed: {
     actionTypes() {
-      return Object.values(BASIC_ENTITY_TYPES).map(type => ({
+      const types = this.types ?? Object.values(BASIC_ENTITY_TYPES);
+
+      return types.map(type => ({
         value: type,
         text: this.$t(`entity.types.${type}`),
       }));
