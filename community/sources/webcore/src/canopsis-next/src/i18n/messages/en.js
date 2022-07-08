@@ -245,6 +245,7 @@ export default merge({
     extraDetail: 'Extra detail | Extra details',
     acked: 'Acked',
     ackedAt: 'Acked at',
+    ackedBy: 'Acked by',
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Custom',
@@ -253,6 +254,7 @@ export default merge({
     cycleDependency: 'Cycle dependency',
     checkPattern: 'Check pattern',
     itemFound: '{count} item found | {count} items found',
+    canonicalType: 'Canonical type',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -2509,9 +2511,10 @@ export default merge({
     emptyInfos: 'No information',
     availabilityState: 'Hi availability state',
     types: {
-      connector: 'connector type',
-      component: 'component',
-      resource: 'resource',
+      [ENTITY_TYPES.component]: 'Component',
+      [ENTITY_TYPES.connector]: 'Connector',
+      [ENTITY_TYPES.resource]: 'Resource',
+      [ENTITY_TYPES.service]: 'Service',
     },
   },
 

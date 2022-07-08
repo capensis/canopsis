@@ -245,6 +245,7 @@ export default merge({
     extraDetails: 'Détails supplémentaires',
     acked: 'Acked',
     ackedAt: 'Acked at',
+    ackedBy: 'Acked by',
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Personnalisé',
@@ -253,6 +254,7 @@ export default merge({
     cycleDependency: 'Dépendance au cycle',
     checkPattern: 'Motif à carreaux',
     itemFound: '{count} article trouvé | {count} articles trouvés',
+    canonicalType: 'Type canonique',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -2509,9 +2511,10 @@ export default merge({
     emptyInfos: 'Aucune information',
     availabilityState: 'État de haute disponibilité',
     types: {
-      connector: 'type de connecteur',
-      component: 'composant',
-      resource: 'ressource',
+      [ENTITY_TYPES.component]: 'Composant',
+      [ENTITY_TYPES.connector]: 'Connecteur',
+      [ENTITY_TYPES.resource]: 'Ressource',
+      [ENTITY_TYPES.service]: 'Service',
     },
   },
 

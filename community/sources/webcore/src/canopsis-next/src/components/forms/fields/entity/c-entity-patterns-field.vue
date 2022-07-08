@@ -18,6 +18,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import {
   ENTITY_PATTERN_FIELDS,
+  ENTITY_TYPES,
   MAX_LIMIT,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
@@ -114,17 +115,17 @@ export default {
       };
     },
 
-    impactOptions() {
+    componentOptions() {
       return {
-        operators: this.dependenciesOperators,
+        operators: [PATTERN_OPERATORS.hasOneOf, PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
         defaultValue: [],
         valueField: this.entitiesValueField,
       };
     },
 
-    dependsOptions() {
+    connectorOptions() {
       return {
-        operators: this.dependenciesOperators,
+        operators: [PATTERN_OPERATORS.hasOneOf, PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
         defaultValue: [],
         valueField: this.entitiesValueField,
       };
@@ -171,6 +172,18 @@ export default {
       };
     },
 
+    typeOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-entity-type-field',
+          props: {
+            types: Object.values(ENTITY_TYPES),
+          },
+        },
+      };
+    },
+
     entityAttributes() {
       return [
         {
@@ -183,14 +196,19 @@ export default {
           value: ENTITY_PATTERN_FIELDS.name,
         },
         {
-          text: this.$tc('common.impact', 2),
-          value: ENTITY_PATTERN_FIELDS.impact,
-          options: this.impactOptions,
+          text: this.$t('common.type'),
+          value: ENTITY_PATTERN_FIELDS.type,
+          options: this.typeOptions,
         },
         {
-          text: this.$tc('common.depend', 2),
-          value: ENTITY_PATTERN_FIELDS.depends,
-          options: this.dependsOptions,
+          text: this.$t('common.component'),
+          value: ENTITY_PATTERN_FIELDS.component,
+          options: this.componentOptions,
+        },
+        {
+          text: this.$t('common.connector'),
+          value: ENTITY_PATTERN_FIELDS.connector,
+          options: this.connectorOptions,
         },
         {
           text: this.$t('common.infos'),
