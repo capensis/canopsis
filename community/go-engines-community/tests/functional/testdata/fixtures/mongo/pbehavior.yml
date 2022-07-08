@@ -478,28 +478,6 @@ pbehavior:
         ]
       }
 
-  pbehavior_to_calendar_get_1:
-    <<: *pbehavior
-    _id: test-pbehavior-to-calendar-get-1
-    name: test-pbehavior-to-calendar-get-1-name
-    rrule:
-    tstart: 1033552800
-    tstop: 1033560000
-    type_: test-default-maintenance-type
-
-  pbehavior_to_calendar_get_1:
-    <<: *pbehavior
-    _id: test-pbehavior-to-calendar-get-2
-    name: test-pbehavior-to-calendar-get-2-name
-    rrule: FREQ=WEEKLY
-    tstart: 1032948000
-    tstop: 1032955200
-    type_: test-default-active-type
-    exdates:
-      - begin: 1033549200
-        end: 1033556400
-        type: test-default-maintenance-type
-
   pbehavior_to_calendar_get_by_entity_1:
     <<: *pbehavior
     _id: test-pbehavior-to-calendar-get-by-entity-1
