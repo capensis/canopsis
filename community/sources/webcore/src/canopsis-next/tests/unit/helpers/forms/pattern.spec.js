@@ -393,7 +393,6 @@ describe('pattern form converters', () => {
     const value = [Faker.lorem.word()];
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.hasEvery, value },
     };
 
@@ -412,7 +411,6 @@ describe('pattern form converters', () => {
     const value = [Faker.lorem.word()];
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.hasOneOf, value },
     };
 
@@ -448,7 +446,6 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `is empty` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.isEmpty, value: true },
     };
 
@@ -466,7 +463,6 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `is not empty` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.isEmpty, value: false },
     };
 
