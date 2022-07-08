@@ -45,6 +45,8 @@ export const entitiesContextEntityMixin = {
       fetchContextExport: 'fetchContextExport',
       fetchContextCsvFile: 'fetchContextCsvFile',
       cleanEntitiesData: 'cleanEntitiesData',
+      bulkEnableEntities: 'bulkEnable',
+      bulkDisableEntities: 'bulkDisable',
     }),
 
     async updateContextEntityWithPopup({ data, id }) {
