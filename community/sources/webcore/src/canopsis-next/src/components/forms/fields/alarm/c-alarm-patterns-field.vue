@@ -14,17 +14,24 @@
 
 <script>
 import { keyBy, merge } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
 import {
   ALARM_PATTERN_FIELDS,
   BASIC_ENTITY_TYPES,
   ENTITIES_STATES,
   ENTITIES_STATUSES,
+  MAX_LIMIT,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
 } from '@/constants';
 
+import { entitiesInfoMixin } from '@/mixins/entities/info';
+
+const { mapActions: dynamicInfoMapActions } = createNamespacedHelpers('dynamicInfo');
+
 export default {
+  mixins: [entitiesInfoMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -62,6 +69,11 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  data() {
+    return {
+      infos: [],
+    };
   },
   computed: {
     entitiesOperators() {
@@ -128,8 +140,7 @@ export default {
 
     infosOptions() {
       return {
-        // TODO: Should be replaced on API data
-        infos: ['infos 1', 'infos 2'],
+        infos: this.infos,
         type: PATTERN_RULE_TYPES.infos,
       };
     },
@@ -323,6 +334,22 @@ export default {
       );
 
       return Object.values(mergedAttributes);
+    },
+  },
+  mounted() {
+    if (this.isCatVersion) {
+      this.fetchInfos();
+    }
+  },
+  methods: {
+    ...dynamicInfoMapActions({ fetchDynamicInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
+
+    async fetchInfos() {
+      const { data: infos } = await this.fetchDynamicInfosKeysWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
+
+      this.infos = infos;
     },
   },
 };

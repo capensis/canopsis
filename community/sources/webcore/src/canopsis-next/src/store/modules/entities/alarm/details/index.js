@@ -3,8 +3,9 @@ import { get } from 'lodash';
 
 import { API_ROUTES } from '@/config';
 
-import { alarmDetailsSchema } from '@/store/schemas';
 import { ENTITIES_TYPES } from '@/constants';
+
+import { alarmDetailsSchema } from '@/store/schemas';
 
 import { generateAlarmDetailsId, getAlarmDetailsDataPreparer } from '@/helpers/entities';
 

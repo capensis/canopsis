@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { formToMetaAlarmRule, metaAlarmRuleToForm } from '@/helpers/forms/meta-alarm-rule';
 
@@ -31,6 +31,7 @@ export default {
   name: MODALS.createMetaAlarmRule,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     MetaAlarmRuleForm,
