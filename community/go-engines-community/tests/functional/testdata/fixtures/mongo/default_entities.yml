@@ -11,6 +11,7 @@ template:
     enabled: true,
     impact_level: 1,
     infos: { },
+    connector: "test-connector-default/test-connector-default-name",
     impact: [ "test-connector-default/test-connector-default-name" ],
     created: <NowUnix()>
   }
@@ -19,6 +20,7 @@ template:
     enabled: true,
     impact_level: 1,
     infos: { },
+    connector: "test-connector-default/test-connector-default-name",
     component: "test-component-default",
     impact: [ "test-component-default" ],
     depends: [ "test-connector-default/test-connector-default-name" ],
@@ -65,12 +67,14 @@ default_entities:
     <<: *component
     _id: test-component-default
     name: <Current()._id>
+    component: <Current()._id>
     depends: []
 
   component_to_alarm_get:
     <<: *component
     _id: test-component-to-alarm-get
     name: <Current()._id>
+    component: <Current()._id>
     depends:
       - test-resource-to-alarm-get-1/test-component-to-alarm-get
       - test-resource-to-alarm-get-2/test-component-to-alarm-get
@@ -406,6 +410,7 @@ default_entities:
     <<: *component
     _id: test-component-to-entity-get
     name: test-component-to-entity-get
+    component: test-component-to-entity-get
     impact_level: 2
     category: test-category-to-entity-get-2
     depends:
@@ -486,171 +491,197 @@ default_entities:
     _id: test-resource-to-stats-executions-get-with-resolved-alarms-resolved/test-component-default
     name: test-resource-to-stats-executions-get-with-resolved-alarms-resolved
 
-  default_entities_17:
-    _id: test-alarm-pbehavior-get-resource/test-alarm-pbehavior-get-component
-    depends: [ ]
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact: [ ]
-    infos: { }
-    measurements: null
-    name: test-alarm-pbehavior-get-resource
-    type: resource
-  default_entities_18:
-    _id: test-alarm-instruction-with-pbehavior-1/test-alarm-instruction-with-pbehavior-component
-    depends: [ ]
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact: [ ]
-    infos: { }
-    measurements: null
-    name: test-alarm-instruction-with-pbehavior-1
-    type: resource
-  default_entities_19:
-    _id: test-alarm-instruction-with-pbehavior-2/test-alarm-instruction-with-pbehavior-component
-    depends: [ ]
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact: [ ]
-    infos: { }
-    measurements: null
-    name: test-alarm-instruction-with-pbehavior-2
-    type: resource
-  default_entities_20:
-    _id: test-alarm-instruction-with-pbehavior-3/test-alarm-instruction-with-pbehavior-component
-    depends: [ ]
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact: [ ]
-    infos: { }
-    measurements: null
-    name: test-alarm-instruction-with-pbehavior-3
-    type: resource
-  default_entities_21:
-    _id: test-alarmcounter-get-connector/test-alarmcounter-get-connectorname
-    depends:
-      - test-alarmcounter-get-component
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact:
-      - test-alarmcounter-get-resource-1/test-alarmcounter-get-component
-      - test-alarmcounter-get-resource4/test-alarmcounter-get-component
-      - test-alarmcounter-get-resource-2/test-alarmcounter-get-component
-      - test-alarmcounter-get-resource-3/test-alarmcounter-get-component
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-alarmcounter-get-connectorname
-    type: connector
-  default_entities_22:
-    _id: test-alarmcounter-get-component
-    component: test-alarmcounter-get-component
-    depends:
-      - test-alarmcounter-get-resource-1/test-alarmcounter-get-component
-      - test-alarmcounter-get-resource-4/test-alarmcounter-get-component
-      - test-alarmcounter-get-resource-2/test-alarmcounter-get-component
-      - test-alarmcounter-get-resource-3/test-alarmcounter-get-component
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact:
-      - test-alarmcounter-get-connector/test-alarmcounter-get-connectorname
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-alarmcounter-get-component
+  entity_to_contextgraph_import_update:
+    _id: test-entity-contextgraph-import-to-update
+    name: test-entity-contextgraph-import-to-update
+    component: test-entity-contextgraph-import-to-update
     type: component
-  default_entities_23:
-    _id: test-alarmcounter-get-resource-1/test-alarmcounter-get-component
-    component: test-alarmcounter-get-component
-    depends:
-      - test-alarmcounter-get-connector/test-alarmcounter-get-connectorname
-    enable_history:
-      - 1597030096
     enabled: true
-    impact:
-      - test-alarmcounter-get-component
+    enable_history: []
+    depends: [ ]
+    impact: [ ]
     impact_level: 1
     infos:
-      customer:
-        value: test-alarmcounter-get-customer
-    measurements: null
-    name: test-alarmcounter-get-resource-1
-    type: resource
-  default_entities_24:
-    _id: test-alarmcounter-get-resource-4/test-alarmcounter-get-component
-    component: test-alarmcounter-get-component
-    depends:
-      - test-alarmcounter-get-connector/test-alarmcounter-get-connectorname
-    enable_history:
-      - 1597030118
+      old_info:
+        value: "1"
+
+  entity_to_contextgraph_import_set:
+    _id: test-entity-contextgraph-import-to-set
+    name: test-entity-contextgraph-import-to-set
+    component: test-entity-contextgraph-import-to-set
+    type: component
     enabled: true
-    impact:
-      - test-alarmcounter-get-component
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-alarmcounter-get-resource-4
-    type: resource
-  default_entities_25:
-    _id: test-alarmcounter-get-resource-2/test-alarmcounter-get-component
-    component: test-alarmcounter-get-component
-    depends:
-      - test-alarmcounter-get-connector/test-alarmcounter-get-connectorname
-    enable_history:
-      - 1597030219
-    enabled: true
-    impact:
-      - test-alarmcounter-get-component
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-alarmcounter-get-resource-2
-    type: resource
-  default_entities_26:
-    _id: test-alarmcounter-get-entity-meta-1/metaalarm
-    component: metaalarm
+    enable_history: []
     depends: [ ]
-    enable_history:
-      - 1597030219
-    enabled: true
     impact: [ ]
     impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-alarmcounter-get-alarm-entity-meta-1
-    type: metaalarm
-  default_entities_27:
-    _id: test-alarmcounter-get-resource-3/test-alarmcounter-get-component
-    component: test-alarmcounter-get-component
+    infos:
+      old_info:
+        value: "1"
+
+  entity_to_contextgraph_import_delete_1:
+    _id: test-entity-contextgraph-import-resource-to-delete-1/test-entity-contextgraph-import-component-to-delete
+    name: test-entity-contextgraph-import-resource-to-delete-1
+    type: resource
+    enabled: true
+    component: test-entity-contextgraph-import-component-to-delete
+    depends: [ ]
+    impact:
+      - test-entity-contextgraph-import-component-to-delete
+    impact_level: 1
+
+  entity_to_contextgraph_import_delete_2:
+    _id: test-entity-contextgraph-import-resource-to-delete-2/test-entity-contextgraph-import-component-to-delete
+    name: test-entity-contextgraph-import-resource-to-delete-2
+    type: resource
+    enabled: true
+    component: test-entity-contextgraph-import-component-to-delete
+    depends: [ ]
+    impact:
+      - test-entity-contextgraph-import-component-to-delete
+    impact_level: 1
+
+  entity_to_contextgraph_import_delete_3:
+    _id: test-entity-contextgraph-import-component-to-delete
+    name: test-entity-contextgraph-import-component-to-delete
+    type: component
+    enabled: true
+    component: test-entity-contextgraph-import-component-to-delete
     depends:
-      - test-alarmcounter-get-connector/test-alarmcounter-get-connectorname
-    enable_history:
-      - 1597030220
+      - test-entity-contextgraph-import-resource-to-delete-1/test-entity-contextgraph-import-component-to-delete
+      - test-entity-contextgraph-import-resource-to-delete-2/test-entity-contextgraph-import-component-to-delete
+    impact: []
+    enable_history: []
+    infos: {}
+    impact_level: 1
+
+  entity_to_contextgraph_import_enable:
+    _id: test-entity-contextgraph-import-component-to-enable
+    name: test-entity-contextgraph-import-component-to-enable
+    type: component
+    enabled: true
+    component: test-entity-contextgraph-import-component-to-enable
+    depends: []
+    impact: []
+    impact_level: 1
+
+  entity_to_contextgraph_import_disable:
+    _id: test-entity-contextgraph-import-component-to-disable
+    name: test-entity-contextgraph-import-component-to-disable
+    type: component
+    enabled: true
+    component: test-entity-contextgraph-import-component-to-disable
+    depends: []
+    impact: []
+    impact_level: 1
+
+  entity_to_contextgraph_import_link_1:
+    _id: test-entity-contextgraph-import-resource-to-link-1/test-entity-contextgraph-import-component-to-link
+    name: test-entity-contextgraph-import-resource-to-link-1
+    type: resource
+    enabled: true
+    depends: []
+    impact: []
+    impact_level: 1
+    infos:
+      old_info:
+        value: "1"
+
+  entity_to_contextgraph_import_link_2:
+    _id: test-entity-contextgraph-import-resource-to-link-2/test-entity-contextgraph-import-component-to-link
+    name: test-entity-contextgraph-import-resource-to-link-2
+    type: resource
+    enabled: true
+    depends: []
+    impact: []
+    impact_level: 1
+    infos:
+      old_info:
+        value: "1"
+
+  entity_to_contextgraph_import_link_3:
+    _id: test-entity-contextgraph-import-component-to-link
+    name: test-entity-contextgraph-import-component-to-link
+    component: test-entity-contextgraph-import-component-to-link
+    type: component
+    enabled: true
+    impact_level: 1
+    depends: []
+    impact: []
+
+  entity_to_contextgraph_import_link_4:
+    _id: test-entity-contextgraph-import-connector-to-link
+    name: test-entity-contextgraph-import-connector-to-link
+    type: connector
+    enabled: true
+    impact_level: 1
+    depends: []
+    impact: []
+
+  entity_to_contextgraph_import_unlink_1:
+    _id: test-entity-contextgraph-import-resource-to-unlink-1/test-entity-contextgraph-import-component-to-unlink
+    name: test-entity-contextgraph-import-resource-to-unlink-1
+    connector: test-entity-contextgraph-import-connector-to-unlink
+    component: test-entity-contextgraph-import-component-to-unlink
+    type: resource
+    enabled: true
+    depends:
+      - test-entity-contextgraph-import-connector-to-unlink
+    impact:
+      - test-entity-contextgraph-import-component-to-unlink
+    impact_level: 1
+    infos:
+      old_info:
+        value: "1"
+
+  entity_to_contextgraph_import_unlink_2:
+    _id: test-entity-contextgraph-import-resource-to-unlink-2/test-entity-contextgraph-import-component-to-unlink
+    name: test-entity-contextgraph-import-resource-to-unlink-2
+    connector: test-entity-contextgraph-import-connector-to-unlink
+    component: test-entity-contextgraph-import-component-to-unlink
+    type: resource
+    enabled: true
+    depends:
+      - test-entity-contextgraph-import-connector-to-unlink
+    impact:
+      - test-entity-contextgraph-import-component-to-unlink
+    impact_level: 1
+    infos:
+      old_info:
+        value: "1"
+
+  entity_to_contextgraph_import_unlink_3:
+    _id: test-entity-contextgraph-import-component-to-unlink
+    name: test-entity-contextgraph-import-component-to-unlink
+    component: test-entity-contextgraph-import-component-to-unlink
+    connector: test-entity-contextgraph-import-connector-to-unlink
+    type: component
+    enabled: true
+    depends:
+      - test-entity-contextgraph-import-resource-to-unlink-1/test-entity-contextgraph-import-component-to-unlink
+      - test-entity-contextgraph-import-resource-to-unlink-2/test-entity-contextgraph-import-component-to-unlink
+    impact:
+      - test-entity-contextgraph-import-connector-to-unlink
+    impact_level: 1
+    infos:
+      old_info:
+        value: "1"
+
+  entity_to_contextgraph_import_unlink_4:
+    _id: test-entity-contextgraph-import-connector-to-unlink
+    name: test-entity-contextgraph-import-connector-to-unlink
+    type: connector
     enabled: true
     impact:
-      - test-alarmcounter-get-component
+      - test-entity-contextgraph-import-resource-to-unlink-1/test-entity-contextgraph-import-component-to-unlink
+      - test-entity-contextgraph-import-resource-to-unlink-2/test-entity-contextgraph-import-component-to-unlink
+    depends:
+      - test-entity-contextgraph-import-component-to-unlink
     impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-alarmcounter-get-resource-3
-    type: resource
-  default_entities_28:
-    _id: test-alarmalarmcounter-get-entity-meta-1/metaalarm
-    depends: [ ]
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact: [ ]
-    infos: { }
-    measurements: null
-    name: test-alarmalarmcounter-get-entity-meta-1
-    type: resource
+    infos:
+      old_info:
+        value: "1"
+
   default_entities_34:
     _id: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
     component: test-instruction-execution-next-component
@@ -1226,186 +1257,6 @@ default_entities:
     measurements: null
     name: test-entitybasic-to-delete-linked-to-alarm-resource
     type: resource
-  default_entities_89:
-    _id: test-entity-contextgraph-import-to-update
-    depends: [ ]
-    description: test-entity-contextgraph-import-to-update-description
-    enable_history: [ ]
-    enabled: true
-    impact: [ ]
-    impact_level: 1
-    infos:
-      old_info:
-        value: "1"
-    measurements: null
-    name: test-entity-contextgraph-import-to-update-name
-    type: component
-  default_entities_90:
-    _id: test-entity-contextgraph-import-to-set
-    depends: [ ]
-    description: test-entity-contextgraph-import-to-update-description
-    enable_history: [ ]
-    enabled: true
-    impact: [ ]
-    impact_level: 1
-    infos:
-      old_info:
-        value: "1"
-    measurements: null
-    name: test-entity-contextgraph-import-to-update-name
-    type: component
-  default_entities_91:
-    _id: test-entity-contextgraph-import-resource-to-delete-1
-    depends: [ ]
-    description: test-entity-contextgraph-import-resource-to-delete-1-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entity-contextgraph-import-component-to-delete
-    impact_level: 1
-    infos:
-      old_info:
-        value: "1"
-    measurements: null
-    name: test-entity-contextgraph-import-resource-to-delete-1-name
-    type: resource
-  default_entities_92:
-    _id: test-entity-contextgraph-import-resource-to-delete-2
-    depends: [ ]
-    description: test-entity-contextgraph-import-resource-to-delete-2-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entity-contextgraph-import-component-to-delete
-    impact_level: 1
-    infos:
-      old_info:
-        value: "1"
-    measurements: null
-    name: test-entity-contextgraph-import-resource-to-delete-2-name
-    type: resource
-  default_entities_93:
-    _id: test-entity-contextgraph-import-component-to-delete
-    depends:
-      - test-entity-contextgraph-import-resource-to-delete-1
-      - test-entity-contextgraph-import-resource-to-delete-2
-    description: test-entity-contextgraph-import-component-to-delete-description
-    enable_history: [ ]
-    enabled: true
-    impact: [ ]
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-entity-contextgraph-import-component-to-delete-name
-    type: component
-  default_entities_94:
-    _id: test-entity-contextgraph-import-component-to-enable
-    depends: [ ]
-    description: test-entity-contextgraph-import-component-to-enable-description
-    enable_history: [ ]
-    enabled: false
-    impact: [ ]
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-entity-contextgraph-import-component-to-enable-name
-    type: component
-  default_entities_95:
-    _id: test-entity-contextgraph-import-component-to-disable
-    depends: [ ]
-    description: test-entity-contextgraph-import-component-to-disable-description
-    enable_history: [ ]
-    enabled: true
-    impact: [ ]
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-entity-contextgraph-import-component-to-disable-name
-    type: component
-  default_entities_96:
-    _id: test-entity-contextgraph-import-resource-to-link-1
-    depends: [ ]
-    description: test-entity-contextgraph-import-resource-to-link-1-description
-    enable_history: [ ]
-    enabled: true
-    impact: [ ]
-    impact_level: 1
-    infos:
-      old_info:
-        value: "1"
-    measurements: null
-    name: test-entity-contextgraph-import-resource-to-link-1-name
-    type: resource
-  default_entities_97:
-    _id: test-entity-contextgraph-import-resource-to-link-2
-    depends: [ ]
-    description: test-entity-contextgraph-import-resource-to-link-2-description
-    enable_history: [ ]
-    enabled: true
-    impact: [ ]
-    impact_level: 1
-    infos:
-      old_info:
-        value: "1"
-    measurements: null
-    name: test-entity-contextgraph-import-resource-to-link-2-name
-    type: resource
-  default_entities_98:
-    _id: test-entity-contextgraph-import-component-to-link
-    depends: [ ]
-    description: test-entity-contextgraph-import-component-to-link-description
-    enable_history: [ ]
-    enabled: true
-    impact: [ ]
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-entity-contextgraph-import-component-to-link-name
-    type: component
-  default_entities_99:
-    _id: test-entity-contextgraph-import-resource-to-unlink-1
-    depends: [ ]
-    description: test-entity-contextgraph-import-resource-to-unlink-1-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entity-contextgraph-import-component-to-unlink
-    impact_level: 1
-    infos:
-      old_info:
-        value: "1"
-    measurements: null
-    name: test-entity-contextgraph-import-resource-to-unlink-1-name
-    type: resource
-  default_entities_100:
-    _id: test-entity-contextgraph-import-resource-to-unlink-2
-    depends: [ ]
-    description: test-entity-contextgraph-import-resource-to-unlink-2-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entity-contextgraph-import-component-to-unlink
-    impact_level: 1
-    infos:
-      old_info:
-        value: "1"
-    measurements: null
-    name: test-entity-contextgraph-import-resource-to-unlink-2-name
-    type: resource
-  default_entities_101:
-    _id: test-entity-contextgraph-import-component-to-unlink
-    depends:
-      - test-entity-contextgraph-import-resource-to-unlink-1
-      - test-entity-contextgraph-import-resource-to-unlink-2
-    description: test-entity-contextgraph-import-component-to-unlink-description
-    enable_history: [ ]
-    enabled: true
-    impact: [ ]
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-entity-contextgraph-import-component-to-unlink-name
-    type: component
   default_entities_114:
     _id: test-idle-since-integration-connector/test-idle-since-integration-connectorname
     depends:

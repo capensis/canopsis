@@ -3,6 +3,7 @@ package common
 import (
 	"context"
 	"errors"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -223,9 +224,8 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 
 func GetForbiddenFieldsInEntityPattern(collection string) []string {
 	switch collection {
-	case mongo.EntityMongoCollection,
-		mongo.KpiFilterMongoCollection:
-		return []string{"last_event_date", "impact", "depends"}
+	case mongo.EntityMongoCollection:
+		return []string{"last_event_date", "connector", "component_infos"}
 	case mongo.PbehaviorMongoCollection,
 		mongo.IdleRuleMongoCollection,
 		mongo.DynamicInfosRulesMongoCollection,
@@ -233,7 +233,8 @@ func GetForbiddenFieldsInEntityPattern(collection string) []string {
 		mongo.FlappingRuleMongoCollection,
 		mongo.ResolveRuleMongoCollection,
 		mongo.ScenarioMongoCollection,
-		mongo.InstructionMongoCollection:
+		mongo.InstructionMongoCollection,
+		mongo.KpiFilterMongoCollection:
 		return []string{"last_event_date"}
 	default:
 		return nil
