@@ -2,8 +2,6 @@
 
 La commande `amqp2tty` permet de se connecter en ligne de commande sur l'exchange `canopsis.events` et ainsi d'afficher les évènements bruts qui circulent.
 
-La commande affiche les résultats sur le canal d'erreur, si vous souhaitez rechercher des évènements particuliers, il faut rediriger `stderr` vers la sortie standard (`2>&1`).
-
 ## Depuis un environnement paquets
 
 Voici un exemple d'utilisation de la commande, qui cherche des évènements en provenance de Centreon. Elle doit être exécutée depuis un nœud Canopsis, idéalement en étant connecté avec l'utilisateur `canopsis` :
@@ -38,15 +36,13 @@ et son résultat :
 
 ## Depuis un environnement Docker Compose
 
-Dans un environnement Docker Compose, la procédure est la même, tant que vous ciblez un conteneur disposant d'un environnement Python Canopsis.
+Dans un environnement Docker Compose, il suffit de lancer le conteneur ampq2tty
+dans le réseau docker de Canopsis et de lui indiquer l'url de rabbitmq :
 
-On peut, par exemple, exécuter un shell dans le conteneur `oldapi` :
 
 ```sh
-docker-compose exec oldapi /bin/bash
-```
+docker run --env CPS_AMQP_URL=amqp://cpsrabbit:canopsis@rabbitmq/canopsis \
+	--network=canopsis-pro_default \
+	docker.canopsis.net/docker/community/amqp2tty:<VERSION CANOPSIS>
 
-Puis, une fois connecté sur celui-ci, `amqp2tty` sera disponible dans le virtualenv Python :
-```sh
-amqp2tty 2>&1 | grep -i centreon
 ```
