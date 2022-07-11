@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -33,7 +34,6 @@ type MongoQueryBuilder struct {
 	defaultSortBy         string
 	defaultSort           string
 
-	// todo remove after remove OldMongoQuery
 	fieldsAliases        map[string]string
 	fieldsAliasesByRegex map[string]string
 
@@ -358,7 +358,10 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest) e
 	q.addStartFromFilter(r, &alarmMatch)
 	q.addStartToFilter(r, &alarmMatch)
 	q.addOnlyParentsFilter(r, &alarmMatch)
-	searchMarch, withLookups := q.addSearchFilter(r)
+	searchMarch, withLookups, err := q.addSearchFilter(r)
+	if err != nil {
+		return err
+	}
 	if len(searchMarch) > 0 {
 		if withLookups {
 			q.additionalMatch = append(q.additionalMatch, bson.M{"$match": searchMarch})
@@ -373,7 +376,7 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest) e
 
 	entityMatch := make([]bson.M, 0)
 	q.addCategoryFilter(r, &entityMatch)
-	err := q.addInstructionsFilter(ctx, r, &entityMatch)
+	err = q.addInstructionsFilter(ctx, r, &entityMatch)
 	if err != nil {
 		return err
 	}
@@ -476,9 +479,37 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 	return nil
 }
 
-func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (match bson.M, withLookups bool) {
+func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (match bson.M, withLookups bool, err error) {
 	if r.Search == "" {
 		return
+	}
+
+	p := parser.NewParser()
+	expr, err := p.Parse(r.Search)
+	if err == nil {
+		query := expr.Query()
+		resolvedQuery := q.resolveAliasesInQuery(query).(bson.M)
+		b, err := json.Marshal(resolvedQuery)
+		if err != nil {
+			return nil, false, fmt.Errorf("cannot marshal search expression: %w", err)
+		}
+		resolvedSearch := string(b)
+		extraLookups := false
+
+		for _, lookup := range q.lookups {
+			if strings.Contains(resolvedSearch, lookup.key+".") {
+				extraLookups = true
+				q.lookupsForAdditionalMatch[lookup.key] = true
+			}
+		}
+
+		for field := range q.computedFields {
+			if strings.Contains(resolvedSearch, field) {
+				q.computedFieldsForAlarmMatch[field] = true
+			}
+		}
+
+		return resolvedQuery, extraLookups, nil
 	}
 
 	searchRegexp := primitive.Regex{
@@ -496,7 +527,7 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (match bson.M, with
 	}
 
 	if !r.OnlyParents {
-		return bson.M{"$or": searchMatch}, false
+		return bson.M{"$or": searchMatch}, false, nil
 	}
 
 	childrenMatch := bson.M{"$or": searchMatch}
@@ -518,7 +549,7 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (match bson.M, with
 	copy(searchMatchWithChildren, searchMatch)
 	searchMatchWithChildren = append(searchMatchWithChildren, bson.M{"filtered_children": bson.M{"$ne": []string{}}})
 
-	return bson.M{"$or": searchMatchWithChildren}, true
+	return bson.M{"$or": searchMatchWithChildren}, true, nil
 }
 
 func (q *MongoQueryBuilder) addStartFromFilter(r FilterRequest, match *[]bson.M) {
