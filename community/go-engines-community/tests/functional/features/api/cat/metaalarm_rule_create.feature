@@ -1430,6 +1430,55 @@ Feature: Create an metaalarmrule
       }
     }
     """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "valuegroup",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_count": 2,
+        "value_paths": [
+          "entity.infos.some.value"
+        ]
+      },
+      "total_entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "total_entity_pattern": "TotalEntityPattern is invalid entity pattern."
+      }
+    }
+    """
 
   Scenario: given create request with unacceptable corporate alarm pattern and corporate entity pattern fields for metaalarm rules should exclude invalid patterns
     When I am admin
@@ -1448,6 +1497,7 @@ Feature: Create an metaalarmrule
         "threshold_rate": 1
       },
       "corporate_entity_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1",
+      "corporate_total_entity_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1",
       "corporate_alarm_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-2"
     }
     """
@@ -1516,6 +1566,19 @@ Feature: Create an metaalarmrule
         ]
       ],
       "corporate_alarm_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-2",
-      "corporate_alarm_pattern_title": "test-pattern-to-metaalarm-rule-pattern-to-exclude-2-title"
+      "corporate_alarm_pattern_title": "test-pattern-to-metaalarm-rule-pattern-to-exclude-2-title",
+      "total_entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_total_entity_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1",
+      "corporate_total_entity_pattern_title": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1-title"
     }
     """
