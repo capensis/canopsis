@@ -565,7 +565,7 @@ Feature: Create an resolve rule
             }
           },
           {
-          "field": "v.resolved",
+            "field": "v.resolved",
             "cond": {
               "type": "relative_time",
               "value": {
