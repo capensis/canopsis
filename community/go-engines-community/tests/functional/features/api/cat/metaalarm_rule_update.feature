@@ -802,6 +802,17 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
       "type": "complex",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
       "corporate_total_entity_pattern": "test-pattern-not-exist"
     }
     """
@@ -885,6 +896,17 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
       "type": "complex",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
       "total_entity_pattern": [
         [
           {
@@ -915,7 +937,18 @@ Feature: Update a metaalarmrule
     {
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
-      "type": "not-exist"
+      "type": "not-exist",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ]
     }
     """
     Then the response code should be 400
@@ -936,6 +969,17 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
       "type": "complex",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
       "config": {
         "time_interval": {
           "value": 1,
@@ -982,6 +1026,29 @@ Feature: Update a metaalarmrule
     """
     {
       "error": "Not found"
+    }
+    """
+
+  Scenario: given гзвфеу request with empty patterns should return error
+    When I am admin
+    When I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
+    """
+    {
+      "auto_resolve": false,
+      "name": "test-attribute-type-1",
+      "config": {},
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "type": "attribute"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern or EntityPattern is required.",
+        "entity_pattern": "EntityPattern or AlarmPattern is required."
+      }
     }
     """
 
