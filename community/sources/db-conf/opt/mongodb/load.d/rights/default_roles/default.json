@@ -294,6 +294,14 @@
         "checksum": 1,
         "desc": ""
       },
+      "crudcontext_massEnable": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_massDisable": {
+        "checksum": 1,
+        "desc": ""
+      },
       "models_broadcastMessage": {
         "checksum": 15,
         "desc": ""
