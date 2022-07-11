@@ -464,6 +464,45 @@ Feature: Get alarms
     }
     """
 
+  Scenario: given search expression get request should return alarms
+    When I am admin
+    When I do GET /api/v4/alarms?search=resource%20LIKE%20"to-alarm-get-2"
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-to-get-2"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=entity.name="test-resource-to-alarm-get-2"
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-to-get-2"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
   Scenario: given get sort request should return sorted alarms
     When I am admin
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-get&sort_by=v.state.val&sort=desc
