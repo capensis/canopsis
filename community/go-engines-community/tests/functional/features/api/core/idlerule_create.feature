@@ -723,7 +723,7 @@ Feature: Create a idle rule
             }
           },
           {
-            "field": "v.idled",
+            "field": "v.resolved",
             "cond": {
               "type": "relative_time",
               "value": {
