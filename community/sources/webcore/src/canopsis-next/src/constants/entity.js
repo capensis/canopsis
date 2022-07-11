@@ -488,6 +488,8 @@ export const CONTEXT_ACTIONS_TYPES = {
   pbehaviorList: 'pbehaviorList',
   pbehaviorDelete: 'pbehaviorDelete',
   variablesHelp: 'variablesHelp',
+  massEnable: 'massEnable',
+  massDisable: 'massDisable',
 
   listFilters: 'listFilters',
   editFilter: 'editFilter',
