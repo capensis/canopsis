@@ -1,4 +1,4 @@
-import { omit, isObject, groupBy, map } from 'lodash';
+import { omit, pick, isObject, groupBy, map } from 'lodash';
 
 import i18n from '@/i18n';
 import {
@@ -89,6 +89,15 @@ export const groupAlarmSteps = (steps) => {
  * @param {string} [idKey = '_id']
  */
 export const mapIds = (entities, idKey = '_id') => map(entities, idKey);
+
+/**
+ * Pick id field from entities
+ *
+ * @param {U[]} entities
+ * @param {string} idKey
+ * @returns {PartialObject<U>[]}
+ */
+export const pickIds = (entities = [], idKey = '_id') => entities.map(entity => pick(entity, [idKey]));
 
 /**
  * Return entities ids

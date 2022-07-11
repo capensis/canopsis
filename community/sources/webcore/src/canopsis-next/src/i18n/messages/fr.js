@@ -376,6 +376,8 @@ export default merge({
         deleteEntity: 'Supprimer l\'entité',
         pbehavior: 'Comportement périodique',
         variablesHelp: 'Liste des variables disponibles',
+        massEnable: 'Activer les entités',
+        massDisable: 'Désactiver les entités',
       },
     },
     entityInfo: {
