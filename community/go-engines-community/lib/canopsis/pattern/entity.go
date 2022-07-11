@@ -165,8 +165,6 @@ func (p Entity) Match(entity types.Entity) (bool, EntityRegexMatches, error) {
 				matched, err = cond.MatchInt(i)
 			} else if t, ok := getEntityTimeField(entity, f); ok {
 				matched, err = cond.MatchTime(t)
-			} else if a, ok := getEntityStringArrayField(entity, f); ok {
-				matched, err = cond.MatchStringArray(a)
 			} else {
 				err = ErrUnsupportedField
 			}
@@ -205,7 +203,7 @@ func (p Entity) Validate(forbiddenFields []string) bool {
 			cond := v.Condition
 			var err error
 
-			if forbiddenFieldsMap[f] {
+			if isForbiddenEntityField(v, forbiddenFieldsMap) {
 				return false
 			}
 
@@ -257,8 +255,6 @@ func (p Entity) Validate(forbiddenFields []string) bool {
 				_, err = cond.MatchInt(i)
 			} else if t, ok := getEntityTimeField(emptyEntity, f); ok {
 				_, err = cond.MatchTime(t)
-			} else if a, ok := getEntityStringArrayField(emptyEntity, f); ok {
-				_, err = cond.MatchStringArray(a)
 			} else {
 				err = ErrUnsupportedField
 			}
@@ -334,7 +330,7 @@ func (p Entity) RemoveFields(fields []string) Entity {
 	for _, group := range p {
 		newGroup := make([]FieldCondition, 0, len(group))
 		for _, condition := range group {
-			if forbiddenFieldsMap[condition.Field] {
+			if isForbiddenEntityField(condition, forbiddenFieldsMap) {
 				continue
 			}
 
@@ -481,6 +477,10 @@ func getEntityStringField(entity types.Entity, f string) (string, bool) {
 		return entity.Category, true
 	case "type":
 		return entity.Type, true
+	case "connector":
+		return entity.Connector, true
+	case "component":
+		return entity.Component, true
 	default:
 		return "", false
 	}
@@ -505,17 +505,6 @@ func getEntityTimeField(entity types.Entity, field string) (time.Time, bool) {
 		return time.Time{}, true
 	default:
 		return time.Time{}, false
-	}
-}
-
-func getEntityStringArrayField(entity types.Entity, f string) ([]string, bool) {
-	switch f {
-	case "impact":
-		return entity.Impacts, true
-	case "depends":
-		return entity.Depends, true
-	default:
-		return nil, false
 	}
 }
 
@@ -549,4 +538,10 @@ func getEntityComponentInfoName(f string) string {
 	}
 
 	return ""
+}
+
+func isForbiddenEntityField(condition FieldCondition, forbiddenFieldsMap map[string]bool) bool {
+	return forbiddenFieldsMap[condition.Field] ||
+		forbiddenFieldsMap["infos"] && strings.HasPrefix(condition.Field, "infos") ||
+		forbiddenFieldsMap["component_infos"] && strings.HasPrefix(condition.Field, "component_infos")
 }

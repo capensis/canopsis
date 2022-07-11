@@ -55,22 +55,6 @@ Feature: Update a kpi filter
               }
             }
           }
-        ],
-        [
-          {
-            "field": "impact",
-            "cond": {
-              "type": "has_one_of",
-              "value": ["test-pattern-to-kpi-filter-pattern-1-pattern-updated"]
-            }
-          },
-          {
-            "field": "depends",
-            "cond": {
-              "type": "has_one_of",
-              "value": ["test-pattern-to-kpi-filter-pattern-1-pattern-updated"]
-            }
-          }
         ]
       ]
     }

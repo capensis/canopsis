@@ -3,6 +3,8 @@ package context
 import (
 	"context"
 	"errors"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -12,7 +14,6 @@ import (
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 func NewEnrichmentCenter(
@@ -436,6 +437,7 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 		EnableHistory: []types.CpsTime{now},
 		Enabled:       true,
 		Type:          types.EntityTypeComponent,
+		Connector:     connectorID,
 		Component:     event.Component,
 		Infos:         map[string]types.Info{},
 		ImpactLevel:   types.EntityDefaultImpactLevel,
@@ -452,11 +454,13 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 
 	if entity != nil {
 		if event.SourceType == types.SourceTypeResource && !entity.HasDepend(connectorID) {
+			entity.Connector = connectorID
 			entity.Depends = append(entity.Depends, connectorID)
 			entities = []types.Entity{connector, component, *entity}
 		}
 
 		if event.SourceType == types.SourceTypeComponent && !entity.HasImpact(connectorID) {
+			entity.Connector = connectorID
 			entity.Impacts = append(entity.Impacts, connectorID)
 			entities = []types.Entity{connector, *entity}
 		}
@@ -471,7 +475,8 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 				EnableHistory: []types.CpsTime{now},
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
-				Component:     event.Component,
+				Connector:     connectorID,
+				Component:     componentID,
 				Infos:         map[string]types.Info{},
 				ImpactLevel:   types.EntityDefaultImpactLevel,
 				IsNew:         true,

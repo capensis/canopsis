@@ -119,10 +119,7 @@ func (p Alarm) Validate(forbiddenFields, onlyTimeAbsoluteFields []string) bool {
 			cond := v.Condition
 			var err error
 
-			if forbiddenFieldsMap[f] {
-				return false
-			}
-			if timeAbsoluteFieldsMap[f] && cond.Type == ConditionTimeRelative {
+			if isForbiddenAlarmField(v, forbiddenFieldsMap, timeAbsoluteFieldsMap) {
 				return false
 			}
 
@@ -303,10 +300,7 @@ func (p Alarm) RemoveFields(fields, onlyTimeAbsoluteFields []string) Alarm {
 	for _, group := range p {
 		newGroup := make([]FieldCondition, 0, len(group))
 		for _, condition := range group {
-			if forbiddenFieldsMap[condition.Field] {
-				continue
-			}
-			if timeAbsoluteFieldsMap[condition.Field] && condition.Condition.Type == ConditionTimeRelative {
+			if isForbiddenAlarmField(condition, forbiddenFieldsMap, timeAbsoluteFieldsMap) {
 				continue
 			}
 
@@ -343,6 +337,12 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 			return "", true
 		}
 		return alarm.Value.LastComment.Message, true
+	case "v.ack.a":
+		if alarm.Value.ACK == nil {
+			return "", true
+		}
+
+		return alarm.Value.ACK.Author, true
 	default:
 		return "", false
 	}
@@ -465,4 +465,10 @@ func getTypeMongoQuery(f, ft string) []bson.M {
 	}
 
 	return conds
+}
+
+func isForbiddenAlarmField(condition FieldCondition, forbiddenFieldsMap map[string]bool, timeAbsoluteFieldsMap map[string]bool) bool {
+	return forbiddenFieldsMap[condition.Field] ||
+		forbiddenFieldsMap["v.infos"] && strings.HasPrefix(condition.Field, "v.infos") ||
+		timeAbsoluteFieldsMap[condition.Field] && condition.Condition.Type == ConditionTimeRelative
 }
