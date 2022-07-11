@@ -346,8 +346,8 @@ function migrateOldGroupForAlarmList(oldGroup) {
                             newPbehaviorGroup.push({
                                 field: "pbehavior_info.canonical_type",
                                 cond: {
-                                    type: "is_one_of",
-                                    value: ["inactive", "pause", "maintenance"],
+                                    type: "neq",
+                                    value: "active",
                                 },
                             });
                         } else {

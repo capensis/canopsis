@@ -3,6 +3,8 @@ package alarm
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -14,7 +16,6 @@ import (
 	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"testing"
 )
 
 func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_ShouldBuildQueryWithLookupsAfterLimit(t *testing.T) {
@@ -100,7 +101,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			PbehaviorPattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "canonical_type",
+						Field:     "pbehavior_info.canonical_type",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
 					},
 				},
@@ -379,7 +380,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			PbehaviorPattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "canonical_type",
+						Field:     "pbehavior_info.canonical_type",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
 					},
 				},
