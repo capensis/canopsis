@@ -125,14 +125,15 @@ func (a api) Get(c *gin.Context) {
 // @Param body body UpdateRequest true "body"
 // @Success 200 {object} eventfilter.Rule
 func (a api) Update(c *gin.Context) {
-	var request UpdateRequest
+	request := UpdateRequest{
+		ID: c.Param("id"),
+	}
+
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 
 		return
 	}
-
-	request.ID = c.Param("id")
 
 	ctx := c.Request.Context()
 

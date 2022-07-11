@@ -873,6 +873,17 @@ Feature: Create an metaalarmrule
         },
         "threshold_rate": 1
       },
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
       "corporate_total_entity_pattern": "test-pattern-to-rule-edit-not-exist"
     }
     """
@@ -895,7 +906,6 @@ Feature: Create an metaalarmrule
       "auto_resolve": false,
       "name": "wrong-alarm-pattern-1",
       "config": {},
-      "patterns": null,
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "type": "complex",
       "alarm_pattern": [
@@ -976,6 +986,17 @@ Feature: Create an metaalarmrule
         },
         "threshold_rate": 1
       },
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
       "total_entity_pattern": [
         [
           {
@@ -1008,7 +1029,17 @@ Feature: Create an metaalarmrule
       "auto_resolve": false,
       "name": "wrong-type-1",
       "config": {},
-      "patterns": null,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "type": "attribute_path"
     }
@@ -1064,6 +1095,29 @@ Feature: Create an metaalarmrule
     }
     """
 
+  Scenario: given create request with empty patterns should return error
+    When I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """
+    {
+      "auto_resolve": false,
+      "name": "test-attribute-type-1",
+      "config": {},
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "type": "attribute"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern or EntityPattern is required.",
+        "entity_pattern": "EntityPattern or AlarmPattern is required."
+      }
+    }
+    """
+
   Scenario: given create request with already exists id should return error
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -1073,7 +1127,17 @@ Feature: Create an metaalarmrule
       "auto_resolve": false,
       "name": "test-attribute-type-1",
       "config": {},
-      "patterns": null,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "type": "attribute"
     }
