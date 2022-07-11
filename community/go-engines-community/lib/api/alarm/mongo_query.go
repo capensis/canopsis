@@ -419,7 +419,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 		}
 	}
 
-	pbhPatternQuery, err := filter.PbehaviorPattern.ToMongoQuery("v.pbehavior_info")
+	pbhPatternQuery, err := filter.PbehaviorPattern.ToMongoQuery("v")
 	if err != nil {
 		return fmt.Errorf("invalid pbehavior pattern in widget filter id=%q: %w", filter.ID, err)
 	}
