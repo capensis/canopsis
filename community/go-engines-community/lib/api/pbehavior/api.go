@@ -25,6 +25,7 @@ type API interface {
 	Patch(c *gin.Context)
 	DeleteByName(c *gin.Context)
 	ListByEntityID(c *gin.Context)
+	CalendarByEntityID(c *gin.Context)
 	ListEntities(c *gin.Context)
 	CountFilter(c *gin.Context)
 }
@@ -92,7 +93,43 @@ func (a *api) ListByEntityID(c *gin.Context) {
 		return
 	}
 
+	exist, err := a.store.ExistEntity(c.Request.Context(), r.ID)
+	if err != nil {
+		panic(err)
+	}
+	if !exist {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
 	res, err := a.store.FindByEntityID(c.Request.Context(), r.ID)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// CalendarByEntityID
+// @Success 200 {array} CalendarResponse
+func (a *api) CalendarByEntityID(c *gin.Context) {
+	var r CalendarByEntityIDRequest
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+
+		return
+	}
+
+	exist, err := a.store.ExistEntity(c.Request.Context(), r.ID)
+	if err != nil {
+		panic(err)
+	}
+	if !exist {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	res, err := a.store.CalendarByEntityID(c.Request.Context(), r)
 	if err != nil {
 		panic(err)
 	}

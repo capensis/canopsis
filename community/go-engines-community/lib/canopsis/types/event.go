@@ -308,10 +308,19 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 }
 
 // IsContextable tells you if the given event can lead to context enrichment.
-func (e Event) IsContextable() bool {
+func (e *Event) IsContextable() bool {
 	switch e.EventType {
 	case EventTypeCheck, EventTypePerf, EventTypeDeclareTicket, EventTypeMetaAlarm,
 		EventTypeEntityToggled, EventTypeEntityUpdated:
+		return true
+	default:
+		return false
+	}
+}
+
+func (e *Event) IsOnlyServiceUpdate() bool {
+	switch e.EventType {
+	case EventTypeEntityToggled, EventTypeEntityUpdated:
 		return true
 	default:
 		return false

@@ -13,7 +13,7 @@
       expand,
       no-pagination
     )
-      template(slot="toolbar", slot-scope="props")
+      template(#toolbar="")
         v-flex
           c-advanced-search-field(
             :query.sync="query",
@@ -69,17 +69,17 @@
           :column="column",
           :columns-filters="columnsFilters"
         )
-      template(slot="actions", slot-scope="props")
-        actions-panel(:item="props.item", :is-editing-mode="isEditingMode")
-      template(slot="expand", slot-scope="props")
+      template(#actions="{ item }")
+        actions-panel(:item="item", :editing="editing")
+      template(#expand="{ item }")
         entities-list-expand-panel(
-          :item="props.item",
+          :item="item",
           :widget="widget",
           :tab-id="tabId",
           :columns-filters="columnsFilters"
         )
-      template(slot="mass-actions", slot-scope="props")
-        mass-actions-panel.ml-3(:items="props.selected")
+      template(#mass-actions="{ selected, clearSelected }")
+        mass-actions-panel.ml-3(:items="selected", @clear:items="clearSelected")
 
     c-table-pagination(
       :total-items="contextEntitiesMeta.total_count",
@@ -104,8 +104,8 @@ import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
-import { permissionsWidgetsContextEntityFilters } from '@/mixins/permissions/widgets/context-entity/filters';
-import { permissionsWidgetsContextEntityCategory } from '@/mixins/permissions/widgets/context-entity/category';
+import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
+import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
@@ -131,8 +131,8 @@ export default {
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
     entitiesAlarmColumnsFiltersMixin,
-    permissionsWidgetsContextEntityFilters,
-    permissionsWidgetsContextEntityCategory,
+    permissionsWidgetsContextFilters,
+    permissionsWidgetsContextCategory,
     exportCsvMixinCreator({
       createExport: 'createContextExport',
       fetchExport: 'fetchContextExport',
@@ -144,7 +144,7 @@ export default {
       type: Object,
       required: true,
     },
-    isEditingMode: {
+    editing: {
       type: Boolean,
       required: true,
     },

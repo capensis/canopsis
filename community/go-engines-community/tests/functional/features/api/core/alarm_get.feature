@@ -357,7 +357,7 @@ Feature: Get alarms
             "infos_rule_version": {},
             "initial_long_output": "",
             "initial_output": "test-alarm-get alarm",
-            "lastComment": {
+            "last_comment": {
               "_t": "comment",
               "a": "system",
               "m": "comment test-alarm-get",

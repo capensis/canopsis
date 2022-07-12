@@ -1,0 +1,133 @@
+<template lang="pug">
+  div.fab
+    v-layout(row)
+      view-scroll-top-btn
+      view-periodic-refresh-btn
+      v-speed-dial(
+        v-if="updatable",
+        v-model="isVSpeedDialOpen",
+        direction="top",
+        transition="slide-y-reverse-transition"
+      )
+        v-btn(
+          slot="activator",
+          :input-value="isVSpeedDialOpen",
+          color="primary",
+          dark,
+          fab
+        )
+          v-icon menu
+          v-icon close
+        view-fullscreen-btn(:active-tab="activeTab", small, left-tooltip)
+        view-editing-btn(v-if="updatable", :updatable="updatable")
+        v-tooltip(left)
+          v-btn(
+            slot="activator",
+            v-if="updatable",
+            color="indigo",
+            fab,
+            dark,
+            small,
+            @click.stop="showCreateWidgetModal"
+          )
+            v-icon add
+          span {{ $t('common.addWidget') }}
+        v-tooltip(left)
+          v-btn(
+            slot="activator",
+            v-if="updatable",
+            color="green",
+            fab,
+            dark,
+            small,
+            @click.stop="showCreateTabModal"
+          )
+            v-icon add
+          span {{ $t('common.addTab') }}
+      view-fullscreen-btn(v-else, :active-tab="activeTab", top-tooltip)
+</template>
+
+<script>
+import { MODALS } from '@/constants';
+
+import { activeViewMixin } from '@/mixins/active-view';
+import { viewRouterMixin } from '@/mixins/view/router';
+import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
+
+import ViewEditingBtn from './view-editing-btn.vue';
+import ViewScrollTopBtn from './view-scroll-top-btn.vue';
+import ViewFullscreenBtn from './view-fullscreen-btn.vue';
+import ViewPeriodicRefreshBtn from './view-periodic-refresh-btn.vue';
+
+export default {
+  components: {
+    ViewEditingBtn,
+    ViewScrollTopBtn,
+    ViewFullscreenBtn,
+    ViewPeriodicRefreshBtn,
+  },
+  mixins: [
+    activeViewMixin,
+    viewRouterMixin,
+    entitiesViewTabMixin,
+  ],
+  props: {
+    activeTab: {
+      type: Object,
+      required: false,
+    },
+    updatable: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      isVSpeedDialOpen: false,
+    };
+  },
+
+  methods: {
+    showCreateWidgetModal() {
+      if (!this.activeTab) {
+        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
+        return;
+      }
+
+      this.$modals.show({
+        name: MODALS.createWidget,
+        config: {
+          tab: this.activeTab,
+        },
+      });
+    },
+
+    showCreateTabModal() {
+      this.$modals.show({
+        name: MODALS.textFieldEditor,
+        config: {
+          title: this.$t('modals.viewTab.create.title'),
+          field: {
+            name: 'text',
+            label: this.$t('modals.viewTab.fields.title'),
+            validationRules: 'required',
+          },
+          action: async (title) => {
+            const data = {
+              view: this.view._id,
+              title,
+            };
+
+            await this.createViewTab({ data });
+            await this.fetchActiveView();
+
+            if (!this.$route.query.tabId) {
+              await this.redirectToFirstTab();
+            }
+          },
+        },
+      });
+    },
+  },
+};
+</script>

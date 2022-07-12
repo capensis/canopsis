@@ -66,7 +66,7 @@ describe('alarm-column-value-extra-details', () => {
           consequences: {},
           v: {
             ack: {},
-            lastComment: {
+            last_comment: {
               m: ' ',
             },
             ticket: {},
