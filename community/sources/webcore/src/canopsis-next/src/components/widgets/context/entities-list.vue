@@ -13,7 +13,7 @@
       expand,
       no-pagination
     )
-      template(slot="toolbar", slot-scope="props")
+      template(#toolbar="")
         v-flex
           c-advanced-search-field(
             :query.sync="query",
@@ -69,17 +69,17 @@
           :column="column",
           :columns-filters="columnsFilters"
         )
-      template(slot="actions", slot-scope="props")
-        actions-panel(:item="props.item", :editing="editing")
-      template(slot="expand", slot-scope="props")
+      template(#actions="{ item }")
+        actions-panel(:item="item", :editing="editing")
+      template(#expand="{ item }")
         entities-list-expand-panel(
-          :item="props.item",
+          :item="item",
           :widget="widget",
           :tab-id="tabId",
           :columns-filters="columnsFilters"
         )
-      template(slot="mass-actions", slot-scope="props")
-        mass-actions-panel.ml-3(:items="props.selected")
+      template(#mass-actions="{ selected, clearSelected }")
+        mass-actions-panel.ml-3(:items="selected", @clear:items="clearSelected")
 
     c-table-pagination(
       :total-items="contextEntitiesMeta.total_count",

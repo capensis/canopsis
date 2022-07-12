@@ -218,6 +218,7 @@ export default merge({
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
     template: 'Template',
+    pbehaviorList: 'List periodic behaviors',
     cycleDependency: 'Cycle dependency',
     acknowledge: 'Acknowledge',
     acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -375,6 +376,8 @@ export default merge({
         deleteEntity: 'Delete entity',
         pbehavior: 'Periodical behavior',
         variablesHelp: 'List of available variables',
+        massEnable: 'Enable entities',
+        massDisable: 'Disable entities',
       },
     },
     entityInfo: {
@@ -451,7 +454,6 @@ export default merge({
         ackRemove: 'Cancel ack',
         pbehavior: 'Periodical behavior',
         snooze: 'Snooze alarm',
-        pbehaviorList: 'List periodic behaviors',
         declareTicket: 'Declare ticket',
         associateTicket: 'Associate ticket',
         cancel: 'Cancel alarm',
@@ -1383,7 +1385,6 @@ export default merge({
         type: 'Type',
         priority: 'Priority',
         iconName: 'Icon name',
-        isSpecialColor: 'Use special color for the type?',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -1636,6 +1637,12 @@ export default merge({
           + '<strong>Deletion operation won\'t be cancellable.</strong>',
         phraseText: 'Please, type the following to confirm:',
         phrase: 'archive or delete',
+      },
+    },
+    pbehaviorsCalendar: {
+      title: 'Periodic behaviors',
+      entity: {
+        title: 'Periodic behaviors - {name}',
       },
     },
   },

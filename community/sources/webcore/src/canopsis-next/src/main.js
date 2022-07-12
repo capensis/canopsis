@@ -80,6 +80,7 @@ import CExpandBtn from '@/components/common/buttons/c-expand-btn.vue';
 import CActionBtn from '@/components/common/buttons/c-action-btn.vue';
 import CDownloadBtn from '@/components/common/buttons/c-download-btn.vue';
 import CCopyBtn from '@/components/common/buttons/c-copy-btn.vue';
+import CActionFabBtn from '@/components/common/buttons/c-action-fab-btn.vue';
 import CFabExpandBtn from '@/components/common/buttons/c-fab-expand-btn.vue';
 import CFabBtn from '@/components/common/buttons/c-fab-btn.vue';
 import CRefreshBtn from '@/components/common/buttons/c-refresh-btn.vue';
@@ -133,6 +134,7 @@ import CFiltersField from '@/components/forms/fields/c-filters-field.vue';
 import CStateTypeField from '@/components/forms/fields/c-state-type-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
+import CIconField from '@/components/forms/fields/c-icon-field.vue';
 
 /**
  * Icons
@@ -279,6 +281,7 @@ Vue.component('c-refresh-btn', CRefreshBtn);
 Vue.component('c-download-btn', CDownloadBtn);
 Vue.component('c-copy-btn', CCopyBtn);
 Vue.component('c-density-btn-toggle', CDensityBtnToggle);
+Vue.component('c-action-fab-btn', CActionFabBtn);
 Vue.component('c-empty-data-table-columns', CEmptyDataTableColumns);
 Vue.component('c-enabled', CEnabled);
 Vue.component('c-ellipsis', CEllipsis);
@@ -339,6 +342,7 @@ Vue.component('c-alarm-metric-parameters-field', CAlarmMetricParametersField);
 Vue.component('c-state-type-field', CStateTypeField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-operator-field', COperatorField);
+Vue.component('c-icon-field', CIconField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
@@ -371,6 +375,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.importExportViews]: { maxWidth: 920, persistent: true },
     [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
     [MODALS.pbehaviorPlanning]: { maxWidth: '95%', lazy: true, persistent: true },
+    [MODALS.pbehaviorsCalendar]: { fullscreen: true, lazy: true, persistent: true },
     [MODALS.pbehaviorRecurrenceRule]: { maxWidth: '95%', lazy: true, persistent: true },
     [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
     [MODALS.createRemediationInstruction]: { maxWidth: 960 },

@@ -62,7 +62,7 @@
         :fluid="fluid",
         :fill-height="fillHeight"
       )
-        c-progress-overlay(:pending="pending")
+        slot(name="calendarAppLoader")
         ds-gestures(
           @swipeleft="next",
           @swiperight="prev"
@@ -172,6 +172,10 @@ export default {
       default: false,
     },
     currentTimeForToday: {
+      type: Boolean,
+      default: false,
+    },
+    removeEventsBeforeMove: {
       type: Boolean,
       default: false,
     },
@@ -313,12 +317,20 @@ export default {
     },
 
     next() {
+      if (this.removeEventsBeforeMove) {
+        this.calendar.removeEvents(null, true);
+      }
+
       this.calendar.unselect().next();
 
       this.triggerChange();
     },
 
     prev() {
+      if (this.removeEventsBeforeMove) {
+        this.calendar.removeEvents(null, true);
+      }
+
       this.calendar.unselect().prev();
 
       this.triggerChange();
