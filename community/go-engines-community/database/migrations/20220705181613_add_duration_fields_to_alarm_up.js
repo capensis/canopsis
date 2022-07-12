@@ -28,9 +28,14 @@ function updateResolvedAlarms(collectionName) {
         var pbhIndex = null;
 
         for (var step of doc.v.steps) {
+            var stepTs = step.t;
+            if (stepTs < doc.v.creation_date) {
+                stepTs = doc.v.creation_date;
+            }
+
             switch (step._t) {
                 case "snooze":
-                    var snoozeStartTs = step.t;
+                    var snoozeStartTs = stepTs;
                     var snoozeEndTs = step.val;
                     if (snoozeEndTs > doc.v.resolved) {
                         snoozeEndTs = doc.v.resolved;
@@ -47,7 +52,7 @@ function updateResolvedAlarms(collectionName) {
                     if (step.pbehavior_canonical_type !== "active") {
                         pbhIndex = inactivePeriods.length;
                         inactivePeriods.push({
-                            start: step.t,
+                            start: stepTs,
                         });
                     }
                     break;
@@ -57,7 +62,7 @@ function updateResolvedAlarms(collectionName) {
                     }
 
                     var pbhEnterTs = inactivePeriods[pbhIndex].start;
-                    var pbhLeaveTs = step.t;
+                    var pbhLeaveTs = stepTs;
                     pbhInactiveDuration += pbhLeaveTs - pbhEnterTs;
                     inactivePeriods[pbhIndex].end = pbhLeaveTs;
 
@@ -119,9 +124,14 @@ function updateOpenedAlarms(collectionName) {
         var now = Math.ceil((new Date()).getTime() / 1000);
 
         for (var step of doc.v.steps) {
+            var stepTs = step.t;
+            if (stepTs < doc.v.creation_date) {
+                stepTs = doc.v.creation_date;
+            }
+
             switch (step._t) {
                 case "snooze":
-                    var snoozeStartTs = step.t;
+                    var snoozeStartTs = stepTs;
                     var snoozeEndTs = step.val;
 
                     if (snoozeEndTs < now) {
@@ -141,7 +151,7 @@ function updateOpenedAlarms(collectionName) {
                     if (step.pbehavior_canonical_type !== "active") {
                         pbhIndex = inactivePeriods.length;
                         inactivePeriods.push({
-                            start: step.t,
+                            start: stepTs,
                             end: null,
                         });
                     }
@@ -152,7 +162,7 @@ function updateOpenedAlarms(collectionName) {
                     }
 
                     var pbhEnterTs = inactivePeriods[pbhIndex].start;
-                    var pbhLeaveTs = step.t;
+                    var pbhLeaveTs = stepTs;
                     pbhInactiveDuration += pbhLeaveTs - pbhEnterTs;
                     inactivePeriods[pbhIndex].end = pbhLeaveTs;
 
