@@ -4,7 +4,7 @@ La commande `amqp2tty` permet de se connecter en ligne de commande sur l'exchang
 
 ## Depuis un environnement paquets
 
-Voici un exemple d'utilisation de la commande, qui cherche des évènements en provenance de Centreon. Elle doit être exécutée depuis un nœud Canopsis, idéalement en étant connecté avec l'utilisateur `canopsis` :
+Voici un exemple d'utilisation de la commande, qui cherche des évènements en provenance de Centreon. Elle doit être exécutée depuis un nœud Canopsis :
 ```sh
 set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
 /opt/canopsis/bin/amqp2tty | grep -i centreon
