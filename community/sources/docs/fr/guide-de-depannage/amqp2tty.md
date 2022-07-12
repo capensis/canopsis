@@ -37,7 +37,7 @@ et son résultat :
 
 ## Depuis un environnement Docker Compose
 
-Dans un environnement Docker Compose, il suffit de lancer le conteneur ampq2tty
+Dans un environnement Docker Compose, il suffit de lancer le conteneur amqp2tty
 dans le réseau docker de Canopsis et de lui indiquer l'url de rabbitmq :
 
 
