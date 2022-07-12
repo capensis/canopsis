@@ -46,11 +46,6 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
     alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
   </button>
   <button
-    class="drop-down-action-pbehaviorList"
-  >
-    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
-  </button>
-  <button
     class="drop-down-action-comment"
   >
     alarmList.actions.titles.comment|comment|comment
@@ -134,11 +129,6 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
     alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
   </button>
   <button
-    class="drop-down-action-pbehaviorList"
-  >
-    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
-  </button>
-  <button
     class="drop-down-action-comment"
   >
     alarmList.actions.titles.comment|comment|comment
@@ -212,11 +202,6 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
     class="drop-down-action-pbehaviorAdd"
   >
     alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
-  </button>
-  <button
-    class="drop-down-action-pbehaviorList"
-  >
-    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
   </button>
   <button
     class="drop-down-action-comment"
@@ -294,11 +279,6 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
     alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
   </button>
   <button
-    class="drop-down-action-pbehaviorList"
-  >
-    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
-  </button>
-  <button
     class="drop-down-action-comment"
   >
     alarmList.actions.titles.comment|comment|comment
@@ -331,11 +311,6 @@ exports[`actions-panel Renders \`actions-panel\` with resolved alarm 1`] = `
 <div
   class="shared-actions-panel"
 >
-  <button
-    class="action-pbehaviorList"
-  >
-    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
-  </button>
   <button
     class="action-variablesHelp"
   >
@@ -389,11 +364,6 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
     class="drop-down-action-pbehaviorAdd"
   >
     alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
-  </button>
-  <button
-    class="drop-down-action-pbehaviorList"
-  >
-    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
   </button>
   <button
     class="drop-down-action-comment"
@@ -453,11 +423,6 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
     class="drop-down-action-pbehaviorAdd"
   >
     alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
-  </button>
-  <button
-    class="drop-down-action-pbehaviorList"
-  >
-    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
   </button>
   <button
     class="drop-down-action-comment"

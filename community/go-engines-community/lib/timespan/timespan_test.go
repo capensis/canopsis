@@ -85,58 +85,6 @@ func TestIntersect(t *testing.T) {
 	}
 }
 
-func TestCompact(t *testing.T) {
-	dataSets := map[string]struct {
-		list     []Span
-		diff     time.Duration
-		expected []Span
-	}{
-		"Given adjacent spans Should return 1 span": {
-			list: []Span{
-				New(genTime("01-06-2020 00:00"), genTime("02-06-2020 00:00")),
-				New(genTime("03-06-2020 00:00"), genTime("04-06-2020 00:00")),
-				New(genTime("05-06-2020 00:00"), genTime("06-06-2020 00:00")),
-			},
-			diff: 24 * time.Hour,
-			expected: []Span{
-				New(genTime("01-06-2020 00:00"), genTime("06-06-2020 00:00")),
-			},
-		},
-		"Given intersected spans Should return 1 span": {
-			list: []Span{
-				New(genTime("01-06-2020 00:00"), genTime("04-06-2020 00:00")),
-				New(genTime("03-06-2020 00:00"), genTime("06-06-2020 00:00")),
-				New(genTime("05-06-2020 00:00"), genTime("08-06-2020 00:00")),
-			},
-			diff: 24 * time.Hour,
-			expected: []Span{
-				New(genTime("01-06-2020 00:00"), genTime("08-06-2020 00:00")),
-			},
-		},
-		"Given not adjacent spans Should return the same spans": {
-			list: []Span{
-				New(genTime("01-06-2020 00:00"), genTime("02-06-2020 00:00")),
-				New(genTime("04-06-2020 00:00"), genTime("05-06-2020 00:00")),
-				New(genTime("07-06-2020 00:00"), genTime("08-06-2020 00:00")),
-			},
-			diff: 24 * time.Hour,
-			expected: []Span{
-				New(genTime("01-06-2020 00:00"), genTime("02-06-2020 00:00")),
-				New(genTime("04-06-2020 00:00"), genTime("05-06-2020 00:00")),
-				New(genTime("07-06-2020 00:00"), genTime("08-06-2020 00:00")),
-			},
-		},
-	}
-
-	for name, data := range dataSets {
-		output := Compact(data.list, data.diff)
-
-		if len(output) != len(data.expected) || len(output) > 0 && !reflect.DeepEqual(output, data.expected) {
-			t.Errorf("%s: expected %s but got %s", name, sprintSpans(data.expected), sprintSpans(output))
-		}
-	}
-}
-
 func TestSpan_Duration(t *testing.T) {
 	from := genTime("01-06-2020 10:05")
 	to := genTime("02-06-2020 10:06")

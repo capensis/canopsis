@@ -309,6 +309,18 @@ TokenExpiration = "24h"
 TokenSigningMethod = "HS256"
 BulkMaxSize = 10000
 
+# It's required to restart api and engines after canopsis-reconfigure updates mongodb
+# to catch up following parameters.
+[Canopsis.logger]
+Writer = "stdout"
+
+# It's required to restart api and engines after canopsis-reconfigure updates mongodb
+# to catch up following parameters.
+[Canopsis.logger.console_writer]
+Enabled = true
+NoColor = false
+TimeFormat = "2006-01-02T15:04:05Z07:00"
+PartsOrder = ["time", "level", "caller", "message"]
 [Canopsis.metrics]
 # Long SLI intervals are splitted to short intervals which are defined by SliInterval paramter.
 # Lower value provides more accurate metrics but requires more disk space.

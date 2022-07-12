@@ -18,7 +18,7 @@
           :disabled="isDisabled",
           data-test="createSnoozeEventSubmitButton",
           type="submit"
-        ) {{ $t('common.actions.saveChanges') }}
+        ) {{ $t('common.saveChanges') }}
 </template>
 
 <script>

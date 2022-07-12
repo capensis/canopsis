@@ -18,11 +18,8 @@ func TestEntityDataSourceCreate(t *testing.T) {
 	defer ctrl.Finish()
 	Convey("Given an entity data source factory", t, func() {
 		enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
-		enrichFields := libcontext.NewEnrichFields("", "")
-
 		dbClient := mock_mongo.NewMockDbClient(ctrl)
-
-		factory := eventfilter.NewEntityDataSourceFactory(enrichmentCenter, enrichFields)
+		factory := eventfilter.NewEntityDataSourceFactory(enrichmentCenter)
 
 		Convey("Creating an entity data source with parameters returns an error", func() {
 			_, err := factory.Create(dbClient, map[string]interface{}{
@@ -39,10 +36,9 @@ func TestEntityDataSourceGet(t *testing.T) {
 	Convey("Given an entity data source factory", t, func() {
 		entity := types.NewEntity("component", "name", types.EntityTypeComponent, nil, nil, nil)
 		enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
-		enrichmentCenter.EXPECT().Handle(gomock.Any(), gomock.Any(), gomock.Any()).Return(&entity, libcontext.UpdatedEntityServices{}, nil)
-		enrichFields := libcontext.NewEnrichFields("", "")
+		enrichmentCenter.EXPECT().Handle(gomock.Any(), gomock.Any()).Return(&entity, libcontext.UpdatedEntityServices{}, nil)
 
-		factory := eventfilter.NewEntityDataSourceFactory(enrichmentCenter, enrichFields)
+		factory := eventfilter.NewEntityDataSourceFactory(enrichmentCenter)
 
 		Convey("Creating an entity data source without parameters succeeds", func() {
 			dbClient := mock_mongo.NewMockDbClient(ctrl)

@@ -51,7 +51,7 @@ import { groupSchema } from '@/store/schemas';
 import { isDeepOrderChanged } from '@/helpers/dragdrop';
 import { groupsWithViewsToPositions } from '@/helpers/forms/view';
 
-import entitiesViewMixin from '@/mixins/entities/view';
+import { entitiesViewMixin } from '@/mixins/entities/view';
 import layoutNavigationGroupsBarMixin from '@/mixins/layout/navigation/groups-bar';
 import { registrableMixin } from '@/mixins/registrable';
 
@@ -169,7 +169,7 @@ export default {
         const data = groupsWithViewsToPositions(this.mutatedGroups);
 
         await this.updateViewsPositions({ data });
-        await this.fetchAllGroupsListWithViews();
+        await this.fetchAllGroupsListWithWidgets();
 
         this.$popups.success({ text: this.$t('layout.sideBar.ordering.popups.success') });
       } catch (err) {

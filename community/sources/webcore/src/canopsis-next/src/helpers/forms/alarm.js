@@ -84,7 +84,7 @@
  * @property {AlarmEvent} ticket
  * @property {AlarmEvent} snooze
  * @property {AlarmEvent} canceled
- * @property {AlarmEvent} lastComment
+ * @property {AlarmEvent} last_comment
  * @property {AlarmEvent[]} [steps]
  * @property {AlarmValuePbehaviorInfo} [pbehavior_info]
  */

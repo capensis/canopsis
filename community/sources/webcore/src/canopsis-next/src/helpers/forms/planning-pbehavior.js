@@ -12,6 +12,8 @@ import {
   Schedule,
 } from 'dayspan';
 
+import { COLORS } from '@/config';
+
 import uid from '@/helpers/uid';
 import {
   convertDateToTimestampByTimezone,
@@ -19,18 +21,6 @@ import {
   getLocaleTimezone,
 } from '@/helpers/date/date';
 import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/entities';
-
-import { enabledToForm } from './shared/common';
-
-/**
- * @typedef {Object} PbehaviorType
- * @property {string} _id
- * @property {string} description
- * @property {string} icon_name
- * @property {string} name
- * @property {number} priority
- * @property {string} type
- */
 
 /**
  * @typedef {Object} PbehaviorReason
@@ -178,19 +168,20 @@ export const pbehaviorToForm = (
   filter = null,
   timezone = getLocaleTimezone(),
 ) => {
-  let rrule = pbehavior.rrule || null;
+  let rrule = pbehavior.rrule ?? null;
 
   if (pbehavior.rrule && isObject(pbehavior.rrule)) {
     ({ rrule } = pbehavior.rrule);
   }
 
-  const resultFilter = filter || pbehavior.filter || {};
+  const resultFilter = filter ?? pbehavior.filter ?? {};
 
   return {
     rrule,
-    _id: pbehavior._id || uid('pbehavior'),
-    enabled: enabledToForm(pbehavior.enabled),
-    name: pbehavior.name || '',
+    _id: pbehavior._id ?? uid('pbehavior'),
+    color: pbehavior.color ?? COLORS.secondary,
+    enabled: pbehavior.enabled ?? true,
+    name: pbehavior.name ?? '',
     type: cloneDeep(pbehavior.type),
     reason: cloneDeep(pbehavior.reason),
     tstart: pbehavior.tstart ? convertDateToDateObjectByTimezone(pbehavior.tstart, timezone) : null,
@@ -221,7 +212,7 @@ export const pbehaviorToDuplicateForm = pbehavior => ({
 export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
   ...form,
 
-  enabled: enabledToForm(form.enabled),
+  enabled: form.enabled ?? true,
   reason: form.reason,
   type: form.type,
   comments: removeKeyFromEntities(form.comments),
@@ -298,7 +289,12 @@ export const formToCalendarEvent = (form, calendarEvent, timezone) => {
 
   event.id = calendarEvent.event.id;
 
-  return new CalendarEvent(calendarEvent.id, event, span, calendarEvent.day);
+  return new CalendarEvent(
+    calendarEvent.id,
+    event,
+    schedule.getSingleEventSpan(),
+    calendarEvent.day,
+  );
 };
 
 /**

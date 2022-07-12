@@ -37,6 +37,7 @@ type EditRequest struct {
 	Type       string                             `json:"type" binding:"required"`
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
 	Exceptions []string                           `json:"exceptions"`
+	Color      string                             `json:"color" binding:"required,iscolor"`
 }
 
 type CreateRequest struct {
@@ -97,6 +98,7 @@ type PatchRequest struct {
 	Type       *string                            `json:"type"`
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
 	Exceptions []string                           `json:"exceptions"`
+	Color      *string                            `json:"color"`
 }
 
 type FilterRequest struct {
@@ -104,7 +106,7 @@ type FilterRequest struct {
 }
 
 type FindByEntityIDRequest struct {
-	ID string `form:"id" binding:"required"`
+	ID string `form:"_id" binding:"required"`
 }
 
 type Response struct {
@@ -121,6 +123,7 @@ type Response struct {
 	Created       *types.CpsTime                 `bson:"created" json:"created" swaggertype:"integer"`
 	Updated       *types.CpsTime                 `bson:"updated" json:"updated" swaggertype:"integer"`
 	Type          *pbehavior.Type                `bson:"type" json:"type"`
+	Color         string                         `bson:"color" json:"color"`
 	Exdates       []pbehaviorexception.Exdate    `bson:"exdates" json:"exdates"`
 	Exceptions    []pbehaviorexception.Exception `bson:"exceptions" json:"exceptions"`
 	LastAlarmDate *types.CpsTime                 `bson:"last_alarm_date,omitempty" json:"last_alarm_date" swaggertype:"integer"`
@@ -209,4 +212,19 @@ func (r *CountFilterResult) GetTotal() int64 {
 
 type DeleteByNameRequest struct {
 	Name string `form:"name" json:"name" binding:"required"`
+}
+
+type CalendarByEntityIDRequest struct {
+	ID   string        `form:"_id" json:"_id" binding:"required"`
+	From types.CpsTime `form:"from" json:"from" binding:"required" swaggertype:"integer"`
+	To   types.CpsTime `form:"to" json:"to" binding:"required" swaggertype:"integer"`
+}
+
+type CalendarResponse struct {
+	ID    string         `json:"_id"`
+	Title string         `json:"title"`
+	Color string         `json:"color"`
+	From  types.CpsTime  `json:"from" swaggertype:"integer"`
+	To    types.CpsTime  `json:"to" swaggertype:"integer"`
+	Type  pbehavior.Type `json:"type"`
 }
