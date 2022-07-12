@@ -6,7 +6,8 @@ La commande `amqp2tty` permet de se connecter en ligne de commande sur l'exchang
 
 Voici un exemple d'utilisation de la commande, qui cherche des évènements en provenance de Centreon. Elle doit être exécutée depuis un nœud Canopsis, idéalement en étant connecté avec l'utilisateur `canopsis` :
 ```sh
-/opt/canopsis/bin/amqp2tty 2>&1 | grep -i centreon
+set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
+/opt/canopsis/bin/amqp2tty | grep -i centreon
 ```
 
 et son résultat :
@@ -44,5 +45,4 @@ dans le réseau docker de Canopsis et de lui indiquer l'url de rabbitmq :
 docker run --env CPS_AMQP_URL=amqp://cpsrabbit:canopsis@rabbitmq/canopsis \
 	--network=canopsis-pro_default \
 	docker.canopsis.net/docker/community/amqp2tty:<VERSION CANOPSIS>
-
 ```
