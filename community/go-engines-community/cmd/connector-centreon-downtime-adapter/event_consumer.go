@@ -3,18 +3,20 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
+	"strings"
+	"sync"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 	"github.com/valyala/fastjson"
 	"golang.org/x/sync/errgroup"
-	"io/ioutil"
-	"net/http"
-	"net/http/httputil"
-	"net/url"
-	"strings"
-	"time"
 )
 
 const (
@@ -39,6 +41,15 @@ type eventConsumer struct {
 	config     Config
 	httpClient *http.Client
 	logger     zerolog.Logger
+
+	locksMx sync.Mutex
+	locks   map[string]*pbhLock
+}
+
+type pbhLock struct {
+	Mx     sync.Mutex
+	Count  int64
+	Action string
 }
 
 func NewEventConsumer(
@@ -52,6 +63,8 @@ func NewEventConsumer(
 		httpClient: httpClient,
 		config:     config,
 		logger:     logger,
+
+		locks: make(map[string]*pbhLock),
 	}
 }
 
@@ -158,16 +171,29 @@ func (c *eventConsumer) processMsg(ctx context.Context, msg amqp.Delivery) error
 		event.Get("timestamp").String(),
 	}, "-")
 
+	skip := c.lock(uniquePbhName, action)
+	defer func() {
+		c.unlock(uniquePbhName, action, skip)
+	}()
+
+	if skip {
+		c.logger.Debug().Str("event", string(msg.Body)).Msg("skip event")
+		return nil
+	}
+
+	entityID := ""
+	if resource == "" {
+		entityID = resource
+	} else {
+		entityID = fmt.Sprintf("%s/%s", resource, component)
+	}
+
 	switch action {
 	case ActionCreate:
 		arena := &fastjson.Arena{}
 
 		pbhFilter := arena.NewObject()
-		if resource == "" {
-			pbhFilter.Set("_id", arena.NewString(resource))
-		} else {
-			pbhFilter.Set("_id", arena.NewString(fmt.Sprintf("%s/%s", resource, component)))
-		}
+		pbhFilter.Set("_id", arena.NewString(entityID))
 
 		requestBody := arena.NewObject()
 		requestBody.Set("name", arena.NewString(uniquePbhName))
@@ -288,4 +314,58 @@ func (c *eventConsumer) doRequest(request *http.Request, logMsg string) (*http.R
 	}
 
 	return response, err
+}
+
+// lock prevents to process events for the same pbehavior simultaneously.
+// It returns skip=true if events aren't processed in order.
+func (c *eventConsumer) lock(pbhName, action string) (skip bool) {
+	lock := c.getLockOnLock(pbhName)
+	lock.Mx.Lock()
+
+	return lock.Action == ActionDelete && action == ActionCreate
+}
+
+func (c *eventConsumer) unlock(pbhName, action string, skip bool) {
+	lock := c.getLockOnUnlock(pbhName, action, skip)
+	if lock != nil {
+		lock.Mx.Unlock()
+	}
+}
+
+// getLockOnLock gets a lock from locks or creates new one on absence.
+func (c *eventConsumer) getLockOnLock(pbhName string) *pbhLock {
+	c.locksMx.Lock()
+	defer c.locksMx.Unlock()
+
+	var lock *pbhLock
+	var ok bool
+	if lock, ok = c.locks[pbhName]; !ok {
+		lock = &pbhLock{}
+		c.locks[pbhName] = lock
+	}
+
+	lock.Count++
+
+	return lock
+}
+
+// getLockOnUnlock gets a lock from locks and deletes it if there is not any waiting goroutines.
+// It updates last event data in lock if an event wasn't skipped.
+func (c *eventConsumer) getLockOnUnlock(pbhName, action string, skip bool) *pbhLock {
+	c.locksMx.Lock()
+	defer c.locksMx.Unlock()
+
+	if lock, ok := c.locks[pbhName]; ok {
+		lock.Count--
+
+		if lock.Count == 0 {
+			delete(c.locks, pbhName)
+		} else if !skip {
+			lock.Action = action
+		}
+
+		return lock
+	}
+
+	return nil
 }
