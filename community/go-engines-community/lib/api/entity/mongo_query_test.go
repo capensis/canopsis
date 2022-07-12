@@ -3,6 +3,8 @@ package entity
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -14,7 +16,6 @@ import (
 	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"testing"
 )
 
 func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_ShouldBuildQueryWithLookupsAfterLimit(t *testing.T) {
@@ -614,6 +615,62 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 				{"type": searchRegexp},
 			}},
 		}}},
+		{"$facet": bson.M{
+			"data":        expectedDataPipeline,
+			"total_count": []bson.M{{"$count": "count"}},
+		}},
+		{"$addFields": bson.M{
+			"total_count": bson.M{"$sum": "$total_count.count"},
+		}},
+	}
+
+	b := NewMongoQueryBuilder(mockDbClient)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+	if diff := pretty.Compare(result, expected); diff != "" {
+		t.Errorf("unexpected result: %s", diff)
+	}
+}
+
+func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchExpression_ShouldBuildQuery(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	mockDbClient := createMockDbClient(ctrl)
+	request := ListRequestWithPagination{
+		Query: pagination.GetDefaultQuery(),
+		ListRequest: ListRequest{
+			BaseFilterRequest: BaseFilterRequest{
+				Search: "infos.test1.value LIKE \"test val\"",
+			},
+		},
+	}
+	now := types.NewCpsTime()
+	expectedDataPipeline := []bson.M{
+		{"$sort": bson.D{{Key: "_id", Value: 1}}},
+		{"$skip": 0},
+		{"$limit": 10},
+	}
+	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(),
+	})
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$project": bson.M{
+			"alarm":               0,
+			"event_stats":         0,
+			"pbehavior_info_type": 0,
+		},
+	})
+	expected := []bson.M{
+		{"$match": bson.M{"$and": []bson.M{{"infos.test1.value": bson.M{"$regex": "test val"}}}}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
