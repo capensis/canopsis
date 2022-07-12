@@ -2,14 +2,16 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"log"
 	"os"
 	"os/signal"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 )
 
 const (
@@ -17,6 +19,10 @@ const (
 )
 
 func main() {
+	exchange := flag.String("exchange", canopsis.CanopsisEventsExchange, "exchange name to read events from")
+
+	flag.Parse()
+
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
@@ -44,11 +50,6 @@ func main() {
 		}
 	}()
 
-	exchange := canopsis.CanopsisEventsExchange
-	if len(os.Args) > 1 {
-		exchange = os.Args[1]
-	}
-
 	queue, err := ch.QueueDeclare(
 		daemonName,
 		true,
@@ -64,7 +65,7 @@ func main() {
 	err = ch.QueueBind(
 		queue.Name,
 		"#",
-		exchange,
+		*exchange,
 		false,
 		nil,
 	)
