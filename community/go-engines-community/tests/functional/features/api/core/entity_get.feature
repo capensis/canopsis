@@ -319,6 +319,27 @@ Feature: Get entities
     }
     """
 
+  Scenario: given get search expression request should return entities which are matched to the expression
+    When I am admin
+    When I do GET /api/v4/entities?search=name%20LIKE%20"to-entity-get-1"
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-to-entity-get-1/test-component-to-entity-get"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
   Scenario: old event statistics shouldn't be returned
     When I am admin
     When I do GET /api/v4/entities?search=test-resource-entity-api-8
