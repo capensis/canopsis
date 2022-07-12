@@ -370,16 +370,16 @@ Feature: Create a saved pattern
         ],
         [
           {
-            "field": "impact",
+            "field": "connector",
             "cond": {
-              "type": "has_one_of",
+              "type": "is_one_of",
               "value": ["test-pattern-to-create-2-pattern"]
             }
           },
           {
-            "field": "depends",
+            "field": "component",
             "cond": {
-              "type": "has_one_of",
+              "type": "is_one_of",
               "value": ["test-pattern-to-create-2-pattern"]
             }
           }
@@ -420,16 +420,16 @@ Feature: Create a saved pattern
         ],
         [
           {
-            "field": "impact",
+            "field": "connector",
             "cond": {
-              "type": "has_one_of",
+              "type": "is_one_of",
               "value": ["test-pattern-to-create-2-pattern"]
             }
           },
           {
-            "field": "depends",
+            "field": "component",
             "cond": {
-              "type": "has_one_of",
+              "type": "is_one_of",
               "value": ["test-pattern-to-create-2-pattern"]
             }
           }
@@ -471,16 +471,16 @@ Feature: Create a saved pattern
         ],
         [
           {
-            "field": "impact",
+            "field": "connector",
             "cond": {
-              "type": "has_one_of",
+              "type": "is_one_of",
               "value": ["test-pattern-to-create-2-pattern"]
             }
           },
           {
-            "field": "depends",
+            "field": "component",
             "cond": {
-              "type": "has_one_of",
+              "type": "is_one_of",
               "value": ["test-pattern-to-create-2-pattern"]
             }
           }

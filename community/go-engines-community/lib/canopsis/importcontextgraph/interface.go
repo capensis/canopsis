@@ -40,6 +40,7 @@ type ConfigurationItem struct {
 	Name           *string                `json:"name" bson:"name,omitempty"`
 	Depends        []string               `json:"-" bson:"depends"`
 	Impact         []string               `json:"-" bson:"impact"`
+	Component      string                 `json:"-" bson:"component,omitempty"`
 	EnableHistory  []int64                `json:"-" bson:"enable_history"`
 	Measurements   []interface{}          `json:"measurements" bson:"measurements"`
 	EntityPattern  pattern.Entity         `json:"entity_pattern,omitempty" bson:"entity_pattern"`

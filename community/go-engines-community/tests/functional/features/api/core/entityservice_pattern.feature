@@ -64,17 +64,18 @@ Feature: Update entity service
         ],
         [
           {
-            "field": "impact",
+            "field": "connector",
             "cond": {
-              "type": "has_one_of",
-              "value": ["test-pattern-to-entityservice-pattern-1-pattern-updated"]
+              "type": "eq",
+              "value": "test-pattern-to-entityservice-pattern-1-pattern-updated"
             }
           },
           {
-            "field": "depends",
+            "field": "component_infos.info1",
+            "field_type": "string",
             "cond": {
-              "type": "has_one_of",
-              "value": ["test-pattern-to-entityservice-pattern-1-pattern-updated"]
+              "type": "eq",
+              "value": "test-pattern-to-entityservice-pattern-1-pattern-updated"
             }
           }
         ]

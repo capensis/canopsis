@@ -789,6 +789,8 @@ definitions:
         type: string
       component_infos:
         $ref: '#/definitions/entity.Infos'
+      connector:
+        type: string
       deletable:
         type: boolean
       depends:
@@ -947,6 +949,8 @@ definitions:
         type: string
       component_infos:
         $ref: '#/definitions/entity.Infos'
+      connector:
+        type: string
       deletable:
         type: boolean
       depends:
@@ -1140,6 +1144,8 @@ definitions:
         type: string
       component_infos:
         $ref: '#/definitions/entity.Infos'
+      connector:
+        type: string
       corporate_entity_pattern:
         type: string
       corporate_entity_pattern_title:
