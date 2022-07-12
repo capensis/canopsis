@@ -411,6 +411,7 @@ default_entities:
     _id: test-component-to-entity-get
     name: test-component-to-entity-get
     component: test-component-to-entity-get
+    connector: test-connector-to-entity-get/test-connector-name-to-entity-get
     impact_level: 2
     category: test-category-to-entity-get-2
     depends:
@@ -419,7 +420,7 @@ default_entities:
     enable_history:
       - 1597030220
     impact:
-      - test-component-to-entity-get
+      - test-connector-to-entity-get/test-connector-name-to-entity-get
 
   resource_to_entity_get_1:
     <<: *resource
@@ -428,6 +429,7 @@ default_entities:
     category: test-category-to-entity-get-2
     depends:
       - test-connector-to-entity-get/test-connector-name-to-entity-get
+    connector: test-connector-to-entity-get/test-connector-name-to-entity-get
     enable_history:
       - 1597030220
     impact:
@@ -474,6 +476,7 @@ default_entities:
     name: test-resource-to-entity-get-2
     depends:
       - test-connector-to-entity-get/test-connector-name-to-entity-get
+    connector: test-connector-to-entity-get/test-connector-name-to-entity-get
     enable_history:
       - 1597030220
     impact:
