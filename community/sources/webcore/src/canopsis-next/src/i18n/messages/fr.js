@@ -28,6 +28,8 @@ import {
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
+  SCENARIO_TRIGGERS,
+  WEATHER_ACTIONS_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -216,24 +218,13 @@ export default merge({
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
     template: 'Template',
+    pbehaviorList: 'Lister les comportements périodiques',
     cycleDependency: 'Dépendance au cycle',
-    actions: {
-      close: 'Fermer',
-      acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
-      acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
-      saveChanges: 'Sauvegarder',
-      reportIncident: 'Signaler un incident',
-      [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
-      [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
-      [EVENT_ENTITY_TYPES.validate]: 'Valider',
-      [EVENT_ENTITY_TYPES.invalidate]: 'Invalider',
-      [EVENT_ENTITY_TYPES.pause]: 'Pause',
-      [EVENT_ENTITY_TYPES.play]: 'Supprimer la pause',
-      [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
-      [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
-      [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
-      [EVENT_ENTITY_TYPES.executeInstruction]: 'Exécuter la consigne',
-    },
+    acknowledge: 'Acquitter',
+    acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
+    acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
+    saveChanges: 'Sauvegarder',
+    reportIncident: 'Signaler un incident',
     times: {
       second: 'seconde | secondes',
       minute: 'minute | minutes',
@@ -281,6 +272,85 @@ export default merge({
       [ENTITIES_STATES.major]: 'Majeur',
       [ENTITIES_STATES.critical]: 'Critique',
     },
+    scenarioTriggers: {
+      [SCENARIO_TRIGGERS.create]: {
+        text: 'Création d\'alarme',
+      },
+      [SCENARIO_TRIGGERS.statedec]: {
+        text: 'Diminution de la criticité',
+      },
+      [SCENARIO_TRIGGERS.changestate]: {
+        text: 'Changement et verrouillage de la criticité',
+      },
+      [SCENARIO_TRIGGERS.stateinc]: {
+        text: 'Augmentation de la criticité',
+      },
+      [SCENARIO_TRIGGERS.changestatus]: {
+        text: 'Changement de statut (flapping, bagot, ...)',
+      },
+      [SCENARIO_TRIGGERS.ack]: {
+        text: 'Acquittement d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.ackremove]: {
+        text: 'Suppression de l\'acquittement d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.cancel]: {
+        text: 'Annulation d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.uncancel]: {
+        text: 'Annulation de l\'annulation d\'une alarme',
+        helpText: 'L\'annulation ne peut se faire que par un événement posté sur l\'API',
+      },
+      [SCENARIO_TRIGGERS.comment]: {
+        text: 'Commentaire sur une alarme',
+      },
+      [SCENARIO_TRIGGERS.done]: {
+        text: 'Alarme en statut "done"',
+        helpText: 'Ne peut s\'obtenir que par un événement posté sur l\'API',
+      },
+      [SCENARIO_TRIGGERS.declareticket]: {
+        text: 'Déclaration de ticket depuis l\'interface graphique',
+      },
+      [SCENARIO_TRIGGERS.declareticketwebhook]: {
+        text: 'Déclaration de ticket depuis un webhook',
+      },
+      [SCENARIO_TRIGGERS.assocticket]: {
+        text: 'Association de ticket sur une alarme',
+      },
+      [SCENARIO_TRIGGERS.snooze]: {
+        text: 'Mise en veille d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.unsnooze]: {
+        text: 'Sortie de veille d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.resolve]: {
+        text: 'Résolution d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.activate]: {
+        text: 'Activation d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.pbhenter]: {
+        text: 'Comportement périodique démarré',
+      },
+      [SCENARIO_TRIGGERS.pbhleave]: {
+        text: 'Comportement périodique terminé',
+      },
+      [SCENARIO_TRIGGERS.instructionfail]: {
+        text: 'Consigne manuelle en erreur',
+      },
+      [SCENARIO_TRIGGERS.autoinstructionfail]: {
+        text: 'Consigne automatique en erreur',
+      },
+      [SCENARIO_TRIGGERS.instructionjobfail]: {
+        text: 'Job de remédiation en erreur',
+      },
+      [SCENARIO_TRIGGERS.instructioncomplete]: {
+        text: 'Consigne manuelle terminée',
+      },
+      [SCENARIO_TRIGGERS.autoinstructioncomplete]: {
+        text: 'Consigne automatique terminée',
+      },
+    },
   },
   variableTypes: {
     string: 'Chaîne de caractères',
@@ -306,6 +376,8 @@ export default merge({
         deleteEntity: 'Supprimer l\'entité',
         pbehavior: 'Comportement périodique',
         variablesHelp: 'Liste des variables disponibles',
+        massEnable: 'Activer les entités',
+        massDisable: 'Désactiver les entités',
       },
     },
     entityInfo: {
@@ -382,7 +454,6 @@ export default merge({
         ackRemove: 'Annuler l\'acquittement',
         pbehavior: 'Définir un comportement périodique',
         snooze: 'Mettre en veille',
-        pbehaviorList: 'Lister les comportements périodiques',
         declareTicket: 'Déclarer un incident',
         associateTicket: 'Associer un ticket',
         cancel: 'Annuler l\'alarme',
@@ -544,12 +615,7 @@ export default merge({
       [SIDE_BARS.alarmSettings]: 'Paramètres du bac à alarmes',
       [SIDE_BARS.contextSettings]: 'Paramètres de l\'explorateur de contexte',
       [SIDE_BARS.serviceWeatherSettings]: 'Paramètres de la météo des services',
-      [SIDE_BARS.statsHistogramSettings]: 'Paramètres de l\'histogramme',
-      [SIDE_BARS.statsCurvesSettings]: 'Paramètres de courbes de stats',
-      [SIDE_BARS.statsTableSettings]: 'Paramètres du tableau de stats',
       [SIDE_BARS.statsCalendarSettings]: 'Paramètres du calendrier',
-      [SIDE_BARS.statsNumberSettings]: 'Paramètres du compteur de stats',
-      [SIDE_BARS.statsParetoSettings]: 'Paramètres du diagramme de Pareto',
       [SIDE_BARS.textSettings]: 'Paramètres du widget de texte',
       [SIDE_BARS.counterSettings]: 'Paramètres du widget de compteur',
       [SIDE_BARS.testingWeatherSettings]: 'Paramètres du widget scénario des tests',
@@ -583,23 +649,18 @@ export default merge({
     linksCategoriesAsList: 'Afficher les liens sous forme de liste ?',
     linksCategoriesLimit: 'Nombre d\'éléments de catégorie',
     isMultiAckEnabled: 'Acquittement multiple',
+    isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
     fastAckOutput: 'Commentaire d\'acquittement rapide',
     isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
     isCorrelationEnabled: 'Corrélation activée ?',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
-    statName: 'Nom de la statistique',
-    stats: 'Statistiques',
-    statsSelect: {
-      title: 'Sélecteur de statistique',
-      required: 'Veuillez sélectionner au moins une statistique',
-      draggable: 'Essayez de faire glisser un élément',
-    },
     yesNoMode: 'Mode Oui/Non',
     selectAFilter: 'Sélectionner un filtre',
     exportAsCsv: 'Exporter le widget sous forme de fichier csv',
     criticityLevels: 'Niveaux de criticité',
+    isPriorityEnabled: 'Afficher la priorité',
     exportCsv: {
       title: 'Exporter CSV',
       fields: {
@@ -615,17 +676,6 @@ export default merge({
         [STATS_CRITICITY.major]: 'majeur',
         [STATS_CRITICITY.critical]: 'critique',
       },
-    },
-    statsDateInterval: {
-      monthPeriodInfo: "Avec une période 'au mois', les dates de début/fin de calcul des statistiques seront arrondies au 1er jour du mois, à 00:00 UTC",
-    },
-    statsNumbers: {
-      title: 'Cellule de stats',
-      yesNoMode: 'Mode Oui/Non',
-      defaultStat: 'Défaut : Alarmes créées',
-      sortOrder: 'Sens de tri',
-      displayMode: 'Mode d\'affichage',
-      selectAColor: 'Sélectionner une couleur',
     },
     infoPopup: {
       title: 'Info popup',
@@ -666,31 +716,6 @@ export default merge({
         [ENTITY_TYPES.resource]: 'Ressource',
         [ENTITY_TYPES.service]: 'Service',
       },
-    },
-    statSelector: {
-      error: {
-        alreadyExist: 'Une statistique portant ce nom existe déjà.',
-      },
-    },
-    statsGroups: {
-      title: 'Groupes de statistiques',
-      manageGroups: 'Ajouter un groupe',
-      required: 'Veuillez créer au moins un groupe',
-    },
-    statsColor: {
-      title: 'Couleurs des statistiques',
-      pickColor: 'Sélectionner une couleur',
-    },
-    statsAnnotationLine: {
-      title: 'Ligne repère',
-      enabled: 'Activée',
-      value: 'Valeur',
-      label: 'Label',
-      pickLineColor: 'Couleur de la ligne',
-      pickLabelColor: 'Couleur du label',
-    },
-    statsPointsStyles: {
-      title: 'Forme des points',
     },
     considerPbehaviors: {
       title: 'Prendre en compte les comportements périodiques ?',
@@ -822,9 +847,6 @@ export default merge({
       },
     },
     view: {
-      select: {
-        title: 'Sélectionner une vue',
-      },
       create: {
         title: 'Créer une vue',
       },
@@ -844,11 +866,13 @@ export default merge({
       success: {
         create: 'Nouvelle vue créée !',
         edit: 'Vue éditée avec succès !',
+        duplicate: 'Afficher dupliqué avec succès !',
         delete: 'Vue supprimée avec succès !',
       },
       fail: {
         create: 'Erreur lors de la création de la vue...',
-        edit: 'Erreur lors de  l\'édition de la vue...',
+        edit: 'Erreur lors de l\'édition de la vue...',
+        duplicate: 'Échec de la duplication de la vue...',
         delete: 'Erreur lors de la suppression de la vue...',
       },
     },
@@ -1003,7 +1027,7 @@ export default merge({
       copyToClipboard: 'Copier dans le presse-papier',
     },
     service: {
-      actionPending: 'action(s) en attente',
+      actionPending: 'action en attente | actions en attente',
       refreshEntities: 'Rafraîchir la liste des entités',
       editPbehaviors: 'Éditer les comportements périodiques',
       entity: {
@@ -1046,23 +1070,8 @@ export default merge({
         [WIDGET_TYPES.serviceWeather]: {
           title: 'Météo des services',
         },
-        [WIDGET_TYPES.statsHistogram]: {
-          title: 'Histogramme des statistiques',
-        },
-        [WIDGET_TYPES.statsCurves]: {
-          title: 'Courbes de statistiques',
-        },
-        [WIDGET_TYPES.statsTable]: {
-          title: 'Tableau de statistiques',
-        },
         [WIDGET_TYPES.statsCalendar]: {
           title: 'Calendrier',
-        },
-        [WIDGET_TYPES.statsNumber]: {
-          title: 'Compteur de statistiques',
-        },
-        [WIDGET_TYPES.statsPareto]: {
-          title: 'Diagramme de Pareto',
         },
         [WIDGET_TYPES.text]: {
           title: 'Texte',
@@ -1230,19 +1239,6 @@ export default merge({
         title: 'Titre',
       },
     },
-    statsDateInterval: {
-      title: 'Stats - Intervalle de dates',
-      fields: {
-        periodValue: 'Période',
-        periodUnit: 'Unité',
-      },
-      errors: {
-        endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
-      },
-      info: {
-        monthPeriodUnit: 'Les statistiques calculées seront situées entre {start} et {stop}',
-      },
-    },
     createSnmpRule: {
       create: {
         title: 'Créer une règle SNMP',
@@ -1250,6 +1246,9 @@ export default merge({
       edit: {
         title: 'Modifier la règle SNMP',
       },
+    },
+    selectView: {
+      title: 'Sélectionner une vue',
     },
     selectViewTab: {
       title: 'Sélectionnez l\'onglet',
@@ -1386,7 +1385,6 @@ export default merge({
         type: 'Type',
         priority: 'Priorité',
         iconName: 'Nom de l\'icône',
-        isSpecialColor: 'Utiliser une couleur spéciale pour le type ?',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -1641,6 +1639,12 @@ export default merge({
         phrase: 'archiver ou supprimer',
       },
     },
+    pbehaviorsCalendar: {
+      title: 'Comportements périodiques',
+      entity: {
+        title: 'Comportements périodiques - {name}',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1730,6 +1734,8 @@ export default merge({
     statsRequestProblem: 'Erreur dans la récupération des statistiques',
     statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
     socketConnectionProblem: 'Problème de connexion aux websockets',
+    endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
+    unknownWidgetType: 'Type de widget inconnu: {type}',
   },
   warnings: {
     authTokenExpired: 'Le jeton d\'authentification a expiré',
@@ -1946,6 +1952,20 @@ export default merge({
   },
   serviceWeather: {
     seeAlarms: 'Voir les alarmes',
+    massActions: 'Actions de masse',
+    cannotBeApplied: 'Cette action ne peut pas être appliquée',
+    actions: {
+      [WEATHER_ACTIONS_TYPES.entityAck]: 'Acquitter',
+      [WEATHER_ACTIONS_TYPES.entityValidate]: 'Valider',
+      [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalider',
+      [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',
+      [WEATHER_ACTIONS_TYPES.entityPlay]: 'Supprimer la pause',
+      [WEATHER_ACTIONS_TYPES.entityCancel]: 'Annuler',
+      [WEATHER_ACTIONS_TYPES.entityAssocTicket]: 'Associer un ticket',
+      [WEATHER_ACTIONS_TYPES.entityComment]: 'Commenter l\'alarme',
+      [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Exécuter l\'instruction',
+      [WEATHER_ACTIONS_TYPES.declareTicket]: 'Déclarer un incident',
+    },
   },
   contextGeneralTable: {
     addSelection: 'Ajouter une sélection',
@@ -2038,6 +2058,7 @@ export default merge({
   },
 
   healthcheck: {
+    systemIsDown: 'Le système est en panne',
     notRunning: '{name} n\'est pas disponible',
     queueOverflow: 'Débordement de file d\'attente',
     lackOfInstances: 'Manque d\'instances',

@@ -26,6 +26,17 @@
                 :is-html-enabled="isHtmlEnabled",
                 :hide-groups="hideGroups"
               )
+    v-tab {{ $tc('common.pbehavior', 2) }}
+    v-tab-item
+      v-layout.pa-3.secondary.lighten-2(row)
+        v-flex(:class="cardFlexClass")
+          v-card.tab-item-card
+            v-card-text
+              pbehaviors-simple-list(
+                :entity="alarm.entity",
+                :deletable="hasDeleteAnyPbehaviorAccess",
+                :editable="hasUpdateAnyPbehaviorAccess"
+              )
     template(v-if="hasCauses")
       v-tab {{ $t('alarmList.tabs.alarmsCauses') }}
       v-tab-item
@@ -38,7 +49,7 @@
                   :default-query-id="causesKey",
                   :tab-id="causesKey",
                   :alarm="alarm",
-                  :is-editing-mode="isEditingMode"
+                  :editing="editing"
                 )
     template(v-if="hasConsequences")
       v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
@@ -52,7 +63,7 @@
                   :default-query-id="consequencesKey",
                   :tab-id="consequencesKey",
                   :alarm="alarm",
-                  :is-editing-mode="isEditingMode"
+                  :editing="editing"
                 )
     template(v-if="hasServiceDependencies")
       v-tab {{ $t('alarmList.tabs.trackSource') }}
@@ -105,8 +116,10 @@ import { getStepClass } from '@/helpers/tour';
 import { serviceToServiceDependency } from '@/helpers/treeview/service-dependencies';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import ServiceDependencies from '@/components/other/service/table/service-dependencies.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/partials/pbehaviors-simple-list.vue';
 
 import TimeLine from '../time-line/time-line.vue';
 import MoreInfos from '../more-infos/more-infos.vue';
@@ -115,13 +128,17 @@ import EntityGantt from '../entity-gantt/entity-gantt.vue';
 
 export default {
   components: {
+    PbehaviorsSimpleList,
     ServiceDependencies,
     TimeLine,
     MoreInfos,
     GroupAlarmsList,
     EntityGantt,
   },
-  mixins: [entitiesInfoMixin],
+  mixins: [
+    entitiesInfoMixin,
+    permissionsTechnicalExploitationPbehaviorMixin,
+  ],
   props: {
     alarm: {
       type: Object,
@@ -131,7 +148,7 @@ export default {
       type: Object,
       required: true,
     },
-    isEditingMode: {
+    editing: {
       type: Boolean,
       default: false,
     },

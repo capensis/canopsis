@@ -691,7 +691,7 @@ Feature: create and update alarm by main event stream
       "source_type" : "resource",
       "component" :  "test-component-axe-7",
       "resource" : "test-resource-axe-7",
-      "output" : "test-output-axe-7",
+      "output" : "test-output-axe-7-1",
       "long_output" : "test-long-output-axe-7",
       "author" : "test-author-axe-7",
       "user_id": "test-author-id-7",
@@ -712,11 +712,11 @@ Feature: create and update alarm by main event stream
             "connector": "test-connector-axe-7",
             "connector_name": "test-connector-name-axe-7",
             "last_update_date": {{ .checkEventTimestamp }},
-            "lastComment": {
+            "last_comment": {
               "_t": "comment",
               "a": "test-author-axe-7",
               "user_id": "test-author-id-7",
-              "m": "test-output-axe-7",
+              "m": "test-output-axe-7-1",
               "t": {{ .commentEventTimestamp }},
               "val": 0
             },
@@ -739,7 +739,85 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "comment",
                 "a": "test-author-axe-7",
-                "m": "test-output-axe-7",
+                "m": "test-output-axe-7-1",
+                "t": {{ .commentEventTimestamp }},
+                "val": 0
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "event_type" : "comment",
+      "connector" : "test-connector-axe-7",
+      "connector_name" : "test-connector-name-axe-7",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-7",
+      "resource" : "test-resource-axe-7",
+      "output" : "test-output-axe-7-2",
+      "long_output" : "test-long-output-axe-7",
+      "author" : "test-author-axe-7",
+      "user_id": "test-author-id-7",
+      "timestamp": {{ nowAdd "-2s" }}
+    }
+    """
+    When I save response commentEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-7"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "test-component-axe-7",
+            "connector": "test-connector-axe-7",
+            "connector_name": "test-connector-name-axe-7",
+            "last_comment": {
+              "_t": "comment",
+              "a": "test-author-axe-7",
+              "user_id": "test-author-id-7",
+              "m": "test-output-axe-7-2",
+              "t": {{ .commentEventTimestamp }},
+              "val": 0
+            },
+            "resource": "test-resource-axe-7",
+            "state": {
+              "val": 2
+            },
+            "status": {
+              "val": 1
+            },
+            "steps": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "comment",
+                "a": "test-author-axe-7",
+                "m": "test-output-axe-7-1",
+                "val": 0
+              },
+              {
+                "_t": "comment",
+                "a": "test-author-axe-7",
+                "m": "test-output-axe-7-2",
                 "t": {{ .commentEventTimestamp }},
                 "val": 0
               }

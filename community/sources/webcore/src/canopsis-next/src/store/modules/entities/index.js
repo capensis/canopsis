@@ -14,7 +14,6 @@ import remediationJobExecutionModule from './remediation-job-execution';
 import remediationInstructionStatsModule from './remediation-instruction-stats';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
-import statsModule from './stats';
 import roleModule from './role';
 import userModule from './user';
 import permissionModule from './permission';
@@ -56,7 +55,6 @@ export default {
   pbehaviorTypes: pbehaviorTypesModule,
   userPreference: userPreferenceModule,
   view: viewModule,
-  stats: statsModule,
   role: roleModule,
   user: userModule,
   permission: permissionModule,

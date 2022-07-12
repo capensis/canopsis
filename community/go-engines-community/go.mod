@@ -1,6 +1,6 @@
 module git.canopsis.net/canopsis/canopsis-community/community/go-engines-community
 
-// Needs to be synced with Makefile:DOCKER_GOLANG_VERSION and go.mod from Pro
+// Needs to be synced with .env:DOCKER_GOLANG_VERSION and go.mod from Pro
 // Only two integers are allowed here (https://golang.org/ref/mod#go-mod-file-go)
 go 1.17
 
@@ -17,7 +17,7 @@ require (
 	github.com/ajg/form v1.5.1
 	github.com/alecthomas/participle v0.7.1
 	github.com/beevik/etree v1.1.0
-	github.com/bsm/redislock v0.7.1
+	github.com/bsm/redislock v0.7.2
 	github.com/casbin/casbin/v2 v2.36.1
 	github.com/cucumber/godog v0.12.0
 	github.com/dlclark/regexp2 v1.4.0
@@ -26,7 +26,7 @@ require (
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.9.0
-	github.com/go-redis/redis/v8 v8.11.3
+	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt v3.2.1+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/go-cmp v0.5.6
@@ -47,7 +47,7 @@ require (
 	github.com/valyala/fastjson v1.6.3
 	go.mongodb.org/mongo-driver v1.8.1
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
-	golang.org/x/sys v0.0.0-20211013075003-97ac67df715c // indirect
+	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/text v0.3.7
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )

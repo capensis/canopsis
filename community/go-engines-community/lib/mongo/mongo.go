@@ -41,13 +41,16 @@ const (
 	ImportJobMongoCollection          = "default_importgraph"
 	JunitTestSuiteMongoCollection     = "junit_test_suite"
 	JunitTestCaseMediaMongoCollection = "junit_test_case_media"
-	ViewMongoCollection               = "views"
-	ViewGroupMongoCollection          = "viewgroups"
 	PlaylistMongoCollection           = "view_playlist"
 	StateSettingsMongoCollection      = "state_settings"
 	BroadcastMessageMongoCollection   = "broadcast_message"
 	AssociativeTableCollection        = "default_associativetable"
 	NotificationMongoCollection       = "notification"
+
+	ViewMongoCollection      = "views"
+	ViewTabMongoCollection   = "viewtabs"
+	WidgetMongoCollection    = "widgets"
+	ViewGroupMongoCollection = "viewgroups"
 
 	// Following collections are used for event statistics.
 	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"
@@ -555,7 +558,7 @@ func (c *dbClient) checkTransactionEnabled(pCtx context.Context, logger zerolog.
 	_ = collection.Drop(ctx)
 
 	if err != nil {
-		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
+		logger.Warn().Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
 		return
 	}
 

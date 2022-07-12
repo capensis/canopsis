@@ -93,9 +93,21 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 			logger,
 		)
 	}
+	rpcPublishQueues := make([]string, 0)
+	if webhookRpcClient != nil {
+		rpcPublishQueues = append(rpcPublishQueues, canopsis.WebhookRPCQueueServerName)
+	}
+	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		engine.NewRunInfoManager(runInfoRedisClient),
+		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueueName, "", nil, rpcPublishQueues),
+		amqpChannel,
+		logger,
+	)
 
 	engineAction := engine.New(
 		func(ctx context.Context) error {
+			runInfoPeriodicalWorker.Work(ctx)
 			manager := action.NewTaskManager(
 				action.NewWorkerPool(options.WorkerPoolSize, axeRpcClient, webhookRpcClient, alarmAdapter, json.NewEncoder(), logger, timezoneConfigProvider),
 				storage,
@@ -185,18 +197,10 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		logger,
 	))
 	engineAction.AddConsumer(axeRpcClient)
-	rpcPublishQueues := make([]string, 0)
 	if webhookRpcClient != nil {
 		engineAction.AddConsumer(webhookRpcClient)
-		rpcPublishQueues = append(rpcPublishQueues, canopsis.WebhookRPCQueueServerName)
 	}
-	engineAction.AddPeriodicalWorker("run info", engine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		engine.NewRunInfoManager(runInfoRedisClient),
-		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueueName, "", nil, rpcPublishQueues),
-		amqpChannel,
-		logger,
-	))
+	engineAction.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engineAction.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:    options.PeriodicalWaitTime,
 		ActionScenarioStorage: actionScenarioStorage,
