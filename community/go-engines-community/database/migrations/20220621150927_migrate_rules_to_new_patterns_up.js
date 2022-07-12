@@ -1,4 +1,4 @@
-function migrateOldEntityPatterns(oldEntityPatterns) {
+function migrateOldEntityPatterns(oldEntityPatterns, forbiddenFields) {
     if (!oldEntityPatterns) {
         return null;
     }
@@ -8,6 +8,10 @@ function migrateOldEntityPatterns(oldEntityPatterns) {
         var newGroup = [];
 
         for (var field of Object.keys(group)) {
+            if (forbiddenFields && forbiddenFields[field]) {
+                return null;
+            }
+
             var value = group[field];
             switch (field) {
                 case "_id":
@@ -24,6 +28,8 @@ function migrateOldEntityPatterns(oldEntityPatterns) {
                         cond: cond,
                     });
                     break;
+                case "last_event_date":
+                    return null;
                 case "infos":
                     for (var infoKey of Object.keys(value)) {
                         var info = value[infoKey];
@@ -137,8 +143,6 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                                 newGroup.push(sCond);
                                 break;
                             case "creation_date":
-                            case "last_update_date":
-                            case "last_event_date":
                                 var timeCond = migrateOldTimePattern(vValue)
                                 if (!timeCond) {
                                     return null;
@@ -149,6 +153,10 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                                     cond: timeCond,
                                 });
                                 break;
+                            case "last_update_date":
+                            case "last_event_date":
+                            case "resolved":
+                                return null;
                             case "resource":
                             case "component":
                             case "connector":
@@ -163,20 +171,6 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                                     field: newField,
                                     cond: cond,
                                 });
-                                break;
-                            case "resolved":
-                                if (vValue === null) {
-                                    return null;
-                                } else {
-                                    var resolvedCond = migrateOldTimePattern(vValue);
-                                    if (!resolvedCond) {
-                                        return null;
-                                    }
-                                    newGroup.push({
-                                        field: newField,
-                                        cond: resolvedCond,
-                                    });
-                                }
                                 break;
                             default:
                                 return null;
@@ -523,8 +517,13 @@ db.default_entities.updateMany({type: "service"}, {
     }
 });
 db.default_entities.find({type: "service"}).forEach(function (doc) {
+    var forbiddenFields = {
+        "connector": true,
+        "component_infos": true,
+    };
+
     if (doc.old_entity_patterns) {
-        var newPattern = migrateOldEntityPatterns(doc.old_entity_patterns);
+        var newPattern = migrateOldEntityPatterns(doc.old_entity_patterns, forbiddenFields);
         if (newPattern) {
             db.default_entities.updateOne({_id: doc._id}, {
                 $set: {entity_pattern: newPattern},

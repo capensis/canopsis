@@ -27,8 +27,15 @@ Feature: Import entities
       "json": {
         "cis": [
           {
-            "_id": "SC003C",
-            "name": "SC003C",
+            "_id": "test-connector-contextgraph-import-1/test-connector-name-contextgraph-import-1",
+            "name": "test-connector-name-contextgraph-import-1",
+            "type": "connector",
+            "action": "create",
+            "enabled": true
+          },
+          {
+            "_id": "test-component-contextgraph-import-1",
+            "name": "test-component-contextgraph-import-1",
             "type": "component",
             "infos": {
               "test_info": {
@@ -40,8 +47,8 @@ Feature: Import entities
             "enabled": true
           },
           {
-            "_id": "script_import/SC003C",
-            "name": "script_import",
+            "_id": "test-resource-contextgraph-import-1-1/test-component-contextgraph-import-1",
+            "name": "test-resource-contextgraph-import-1-1",
             "type": "resource",
             "infos": {
               "test_info": {
@@ -53,8 +60,8 @@ Feature: Import entities
             "enabled": true
           },
           {
-            "_id": "script_import_2/SC003C",
-            "name": "script_import",
+            "_id": "test-resource-contextgraph-import-1-2/test-component-contextgraph-import-1",
+            "name": "test-resource-contextgraph-import-1-2",
             "type": "resource",
             "infos": {
               "test_info": {
@@ -68,15 +75,27 @@ Feature: Import entities
         ],
         "links": [
           {
+            "from": ["test-component-contextgraph-import-1"],
+            "to": "test-connector-contextgraph-import-1/test-connector-name-contextgraph-import-1",
+            "action": "create"
+          },
+          {
             "from": [
-              "script_import/SC003C",
-              "script_import_2/SC003C"
+              "test-resource-contextgraph-import-1-1/test-component-contextgraph-import-1",
+              "test-resource-contextgraph-import-1-2/test-component-contextgraph-import-1"
             ],
-            "to": "SC003C",
-            "action": "create",
-            "infos": {},
-            "id": "id_0",
-            "properties": []
+            "to": "test-component-contextgraph-import-1",
+            "action": "create"
+          },
+          {
+            "from": ["test-connector-contextgraph-import-1/test-connector-name-contextgraph-import-1"],
+            "to": "test-resource-contextgraph-import-1-1/test-component-contextgraph-import-1",
+            "action": "create"
+          },
+          {
+            "from": ["test-connector-contextgraph-import-1/test-connector-name-contextgraph-import-1"],
+            "to": "test-resource-contextgraph-import-1-2/test-component-contextgraph-import-1",
+            "action": "create"
           }
         ]
       }
@@ -89,17 +108,21 @@ Feature: Import entities
       "status": "done"
     }
     """
-    When I do GET /api/v4/entitybasics?_id=SC003C
+    When I do GET /api/v4/entitybasics?_id=test-component-contextgraph-import-1
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "SC003C",
-      "name": "SC003C",
-      "impact": [],
+      "_id": "test-component-contextgraph-import-1",
+      "name": "test-component-contextgraph-import-1",
+      "connector": "test-connector-contextgraph-import-1/test-connector-name-contextgraph-import-1",
+      "component": "test-component-contextgraph-import-1",
+      "impact": [
+        "test-connector-contextgraph-import-1/test-connector-name-contextgraph-import-1"
+      ],
       "depends": [
-        "script_import/SC003C",
-        "script_import_2/SC003C"
+        "test-resource-contextgraph-import-1-1/test-component-contextgraph-import-1",
+        "test-resource-contextgraph-import-1-2/test-component-contextgraph-import-1"
       ],
       "enable_history": [],
       "infos": {
@@ -115,17 +138,21 @@ Feature: Import entities
       "impact_level": 1
     }
     """
-    When I do GET /api/v4/entitybasics?_id=script_import/SC003C
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-import-1-1/test-component-contextgraph-import-1
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "script_import/SC003C",
-      "name": "script_import",
+      "_id": "test-resource-contextgraph-import-1-1/test-component-contextgraph-import-1",
+      "name": "test-resource-contextgraph-import-1-1",
+      "connector": "test-connector-contextgraph-import-1/test-connector-name-contextgraph-import-1",
+      "component": "test-component-contextgraph-import-1",
       "impact": [
-        "SC003C"
+        "test-component-contextgraph-import-1"
       ],
-      "depends": [],
+      "depends": [
+        "test-connector-contextgraph-import-1/test-connector-name-contextgraph-import-1"
+      ],
       "enable_history": [],
       "measurements": [],
       "enabled": true,
@@ -134,6 +161,13 @@ Feature: Import entities
           "description": "description 2",
           "name": "test_info",
           "value": "value 2"
+        }
+      },
+      "component_infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "value 1"
         }
       },
       "type": "resource",
@@ -355,7 +389,7 @@ Feature: Import entities
         "cis": [
           {
             "_id": "test-entity-contextgraph-import-to-set-not-exist",
-            "name": "test-entity-contextgraph-import-to-set-not-exist-name",
+            "name": "test-entity-contextgraph-import-to-set-not-exist",
             "type": "component",
             "infos": {
               "new_info": {
@@ -382,7 +416,7 @@ Feature: Import entities
     """json
     {
       "_id": "test-entity-contextgraph-import-to-set-not-exist",
-      "name": "test-entity-contextgraph-import-to-set-not-exist-name",
+      "name": "test-entity-contextgraph-import-to-set-not-exist",
       "type": "component",
       "infos": {
             "new_info": {
@@ -401,9 +435,9 @@ Feature: Import entities
       "json": {
         "cis": [
           {
-            "_id": "test-entity-contextgraph-import-resource-to-delete-1",
+            "_id": "test-entity-contextgraph-import-resource-to-delete-1/test-entity-contextgraph-import-component-to-delete",
             "name": "change name",
-            "type": "component",
+            "type": "resource",
             "infos": {
               "new_info": {
                 "value": "2"
@@ -430,10 +464,10 @@ Feature: Import entities
     """json
     {
       "_id": "test-entity-contextgraph-import-component-to-delete",
-      "name": "test-entity-contextgraph-import-component-to-delete-name",
+      "name": "test-entity-contextgraph-import-component-to-delete",
       "impact": [],
       "depends": [
-        "test-entity-contextgraph-import-resource-to-delete-2"
+        "test-entity-contextgraph-import-resource-to-delete-2/test-entity-contextgraph-import-component-to-delete"
       ],
       "enable_history": [],
       "enabled": true,
@@ -472,17 +506,15 @@ Feature: Import entities
     """
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-component-to-delete
     Then the response code should be 404
-    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-delete-2
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-delete-2/test-entity-contextgraph-import-component-to-delete
     Then the response body should contain:
     """json
     {
-      "_id": "test-entity-contextgraph-import-resource-to-delete-2",
-      "name": "test-entity-contextgraph-import-resource-to-delete-2-name",
+      "_id": "test-entity-contextgraph-import-resource-to-delete-2/test-entity-contextgraph-import-component-to-delete",
+      "name": "test-entity-contextgraph-import-resource-to-delete-2",
       "impact": [],
       "depends": [],
-      "enable_history": [],
       "enabled": true,
-      "infos": {},
       "type": "resource",
       "impact_level": 1
     }
@@ -554,12 +586,10 @@ Feature: Import entities
     """json
     {
       "_id": "test-entity-contextgraph-import-component-to-enable",
-      "name": "test-entity-contextgraph-import-component-to-enable-name",
+      "name": "test-entity-contextgraph-import-component-to-enable",
       "impact": [],
       "depends": [],
-      "enable_history": [],
       "enabled": true,
-      "infos": {},
       "type": "component",
       "impact_level": 1
     }
@@ -631,12 +661,10 @@ Feature: Import entities
     """json
     {
       "_id": "test-entity-contextgraph-import-component-to-disable",
-      "name": "test-entity-contextgraph-import-component-to-disable-name",
+      "name": "test-entity-contextgraph-import-component-to-disable",
       "impact": [],
       "depends": [],
-      "enable_history": [],
       "enabled": false,
-      "infos": {},
       "type": "component",
       "impact_level": 1
     }
@@ -682,14 +710,32 @@ Feature: Import entities
         "links": [
           {
             "from": [
-              "test-entity-contextgraph-import-resource-to-link-1",
-              "test-entity-contextgraph-import-resource-to-link-2"
+              "test-entity-contextgraph-import-resource-to-link-1/test-entity-contextgraph-import-component-to-link",
+              "test-entity-contextgraph-import-resource-to-link-2/test-entity-contextgraph-import-component-to-link"
             ],
             "to": "test-entity-contextgraph-import-component-to-link",
-            "action": "create",
-            "infos": {},
-            "id": "id_0",
-            "properties": []
+            "action": "create"
+          },
+          {
+            "from": [
+              "test-entity-contextgraph-import-component-to-link"
+            ],
+            "to": "test-entity-contextgraph-import-connector-to-link",
+            "action": "create"
+          },
+          {
+            "from": [
+              "test-entity-contextgraph-import-connector-to-link"
+            ],
+            "to": "test-entity-contextgraph-import-resource-to-link-1/test-entity-contextgraph-import-component-to-link",
+            "action": "create"
+          },
+          {
+            "from": [
+              "test-entity-contextgraph-import-connector-to-link"
+            ],
+            "to": "test-entity-contextgraph-import-resource-to-link-2/test-entity-contextgraph-import-component-to-link",
+            "action": "create"
           }
         ]
       }
@@ -709,29 +755,33 @@ Feature: Import entities
     {
       "_id": "test-entity-contextgraph-import-component-to-link",
       "depends": [
-        "test-entity-contextgraph-import-resource-to-link-1",
-        "test-entity-contextgraph-import-resource-to-link-2"
+        "test-entity-contextgraph-import-resource-to-link-1/test-entity-contextgraph-import-component-to-link",
+        "test-entity-contextgraph-import-resource-to-link-2/test-entity-contextgraph-import-component-to-link"
       ],
-      "enable_history": [],
       "enabled": true,
-      "impact": [],
+      "connector": "test-entity-contextgraph-import-connector-to-link",
+      "impact": [
+        "test-entity-contextgraph-import-connector-to-link"
+      ],
       "impact_level": 1,
-      "infos": {},
       "measurements": null,
-      "name": "test-entity-contextgraph-import-component-to-link-name",
-      "description": "test-entity-contextgraph-import-component-to-link-description",
+      "name": "test-entity-contextgraph-import-component-to-link",
+      "component": "test-entity-contextgraph-import-component-to-link",
       "type": "component"
     }
     """
-    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-link-1
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-link-1/test-entity-contextgraph-import-component-to-link
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-entity-contextgraph-import-resource-to-link-1",
-      "depends": [],
-      "enable_history": [],
+      "_id": "test-entity-contextgraph-import-resource-to-link-1/test-entity-contextgraph-import-component-to-link",
+      "connector": "test-entity-contextgraph-import-connector-to-link",
+      "depends": [
+        "test-entity-contextgraph-import-connector-to-link"
+      ],
       "enabled": true,
+      "component": "test-entity-contextgraph-import-component-to-link",
       "impact": [
         "test-entity-contextgraph-import-component-to-link"
       ],
@@ -741,21 +791,22 @@ Feature: Import entities
           "value": "1"
         }
       },
-      "measurements": null,
-      "name": "test-entity-contextgraph-import-resource-to-link-1-name",
-      "description": "test-entity-contextgraph-import-resource-to-link-1-description",
+      "name": "test-entity-contextgraph-import-resource-to-link-1",
       "type": "resource"
     }
     """
-    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-link-2
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-link-2/test-entity-contextgraph-import-component-to-link
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-entity-contextgraph-import-resource-to-link-2",
-      "depends": [],
-      "enable_history": [],
+      "_id": "test-entity-contextgraph-import-resource-to-link-2/test-entity-contextgraph-import-component-to-link",
+      "connector": "test-entity-contextgraph-import-connector-to-link",
+      "depends": [
+        "test-entity-contextgraph-import-connector-to-link"
+      ],
       "enabled": true,
+      "component": "test-entity-contextgraph-import-component-to-link",
       "impact": [
         "test-entity-contextgraph-import-component-to-link"
       ],
@@ -765,9 +816,7 @@ Feature: Import entities
           "value": "1"
         }
       },
-      "measurements": null,
-      "name": "test-entity-contextgraph-import-resource-to-link-2-name",
-      "description": "test-entity-contextgraph-import-resource-to-link-2-description",
+      "name": "test-entity-contextgraph-import-resource-to-link-2",
       "type": "resource"
     }
     """
@@ -781,14 +830,32 @@ Feature: Import entities
         "links": [
           {
             "from": [
-              "test-entity-contextgraph-import-resource-to-unlink-1",
-              "test-entity-contextgraph-import-resource-to-unlink-2"
+              "test-entity-contextgraph-import-resource-to-unlink-1/test-entity-contextgraph-import-component-to-unlink",
+              "test-entity-contextgraph-import-resource-to-unlink-2/test-entity-contextgraph-import-component-to-unlink"
             ],
             "to": "test-entity-contextgraph-import-component-to-unlink",
-            "action": "delete",
-            "infos": {},
-            "id": "id_0",
-            "properties": []
+            "action": "delete"
+          },
+          {
+            "from": [
+              "test-entity-contextgraph-import-component-to-unlink"
+            ],
+            "to": "test-entity-contextgraph-import-connector-to-unlink",
+            "action": "delete"
+          },
+          {
+            "from": [
+              "test-entity-contextgraph-import-connector-to-unlink"
+            ],
+            "to": "test-entity-contextgraph-import-resource-to-unlink-1/test-entity-contextgraph-import-component-to-unlink",
+            "action": "delete"
+          },
+          {
+            "from": [
+              "test-entity-contextgraph-import-connector-to-unlink"
+            ],
+            "to": "test-entity-contextgraph-import-resource-to-unlink-2/test-entity-contextgraph-import-component-to-unlink",
+            "action": "delete"
           }
         ]
       }
@@ -808,25 +875,21 @@ Feature: Import entities
     {
       "_id": "test-entity-contextgraph-import-component-to-unlink",
       "depends": [],
-      "enable_history": [],
       "enabled": true,
       "impact": [],
       "impact_level": 1,
-      "infos": {},
       "measurements": null,
-      "name": "test-entity-contextgraph-import-component-to-unlink-name",
-      "description": "test-entity-contextgraph-import-component-to-unlink-description",
+      "name": "test-entity-contextgraph-import-component-to-unlink",
       "type": "component"
     }
     """
-    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-unlink-1
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-unlink-1/test-entity-contextgraph-import-component-to-unlink
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-entity-contextgraph-import-resource-to-unlink-1",
+      "_id": "test-entity-contextgraph-import-resource-to-unlink-1/test-entity-contextgraph-import-component-to-unlink",
       "depends": [],
-      "enable_history": [],
       "enabled": true,
       "impact": [],
       "impact_level": 1,
@@ -835,20 +898,17 @@ Feature: Import entities
           "value": "1"
         }
       },
-      "measurements": null,
-      "name": "test-entity-contextgraph-import-resource-to-unlink-1-name",
-      "description": "test-entity-contextgraph-import-resource-to-unlink-1-description",
+      "name": "test-entity-contextgraph-import-resource-to-unlink-1",
       "type": "resource"
     }
     """
-    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-unlink-2
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-unlink-2/test-entity-contextgraph-import-component-to-unlink
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-entity-contextgraph-import-resource-to-unlink-2",
+      "_id": "test-entity-contextgraph-import-resource-to-unlink-2/test-entity-contextgraph-import-component-to-unlink",
       "depends": [],
-      "enable_history": [],
       "enabled": true,
       "impact": [],
       "impact_level": 1,
@@ -857,9 +917,7 @@ Feature: Import entities
           "value": "1"
         }
       },
-      "measurements": null,
-      "name": "test-entity-contextgraph-import-resource-to-unlink-2-name",
-      "description": "test-entity-contextgraph-import-resource-to-unlink-2-description",
+      "name": "test-entity-contextgraph-import-resource-to-unlink-2",
       "type": "resource"
     }
     """
@@ -1228,7 +1286,7 @@ Feature: Import entities
           },
           {
             "_id": "test-entityservice-service-import",
-            "name": "test-entityservice-service-import-name",
+            "name": "test-entityservice-service-import",
             "output_template": "abc",
             "impact_level": 1,
             "enabled": true,
@@ -1349,7 +1407,7 @@ Feature: Import entities
       ],
       "impact": [],
       "impact_level": 1,
-      "name": "test-entityservice-service-import-name",
+      "name": "test-entityservice-service-import",
       "output_template": "abc",
       "type": "service"
     }
@@ -1504,72 +1562,6 @@ Feature: Import entities
       },
       "type": "resource",
       "impact_level": 1
-    }
-    """
-
-  Scenario: given import with create component and resource should update resource component_infos
-    When I am admin
-    When I do PUT /api/v4/contextgraph/import?source=test-import-source:
-    """json
-    {
-      "json": {
-        "cis": [
-          {
-            "_id": "test-component-contextgraph-import-28",
-            "name": "test-component-contextgraph-import-28",
-            "type": "component",
-            "infos": {
-              "test_info": {
-                "description": "description 1",
-                "value": "value 1"
-              }
-            },
-            "action": "create",
-            "enabled": true
-          },
-          {
-            "_id": "test-resource-contextgraph-import-28/test-component-contextgraph-import-28",
-            "name": "test-resource-contextgraph-import-28",
-            "type": "resource",
-            "action": "create",
-            "enabled": true
-          }
-        ],
-        "links": [
-          {
-            "from": [
-              "test-resource-contextgraph-import-28/test-component-contextgraph-import-28"
-            ],
-            "to": "test-component-contextgraph-import-28",
-            "action": "create",
-            "infos": {},
-            "id": "id_0",
-            "properties": []
-          }
-        ]
-      }
-    }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
-    """json
-    {
-      "status": "done"
-    }
-    """
-    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-import-28/test-component-contextgraph-import-28
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "component": "test-component-contextgraph-import-28",
-      "component_infos": {
-        "test_info": {
-          "description": "description 1",
-          "name": "test_info",
-          "value": "value 1"
-        }
-      }
     }
     """
 

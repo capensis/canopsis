@@ -55,15 +55,12 @@ type ExportResponse struct {
 type Entity struct {
 	ID             string                   `bson:"_id" json:"_id"`
 	Name           string                   `bson:"name" json:"name"`
-	Impacts        []string                 `bson:"impact" json:"impact"`
-	Depends        []string                 `bson:"depends" json:"depends"`
 	EnableHistory  []types.CpsTime          `bson:"enable_history" json:"enable_history" swaggertype:"array,integer"`
 	Measurements   interface{}              `bson:"measurements" json:"measurements"`
 	Enabled        bool                     `bson:"enabled" json:"enabled"`
 	Infos          Infos                    `bson:"infos" json:"infos"`
 	ComponentInfos Infos                    `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
 	Type           string                   `bson:"type" json:"type"`
-	Component      string                   `bson:"component,omitempty" json:"component,omitempty"`
 	ImpactLevel    int64                    `bson:"impact_level" json:"impact_level"`
 	Category       *entitycategory.Category `bson:"category" json:"category"`
 	Deletable      *bool                    `bson:"deletable,omitempty" json:"deletable,omitempty"`
@@ -73,6 +70,11 @@ type Entity struct {
 	OKEvents       *int                     `bson:"ok_events" json:"ok_events,omitempty"`
 	KOEvents       *int                     `bson:"ko_events" json:"ko_events,omitempty"`
 	State          *int                     `bson:"state" json:"state,omitempty"`
+
+	Impacts   []string `bson:"impact" json:"impact"`
+	Depends   []string `bson:"depends" json:"depends"`
+	Connector string   `bson:"connector,omitempty" json:"connector,omitempty"`
+	Component string   `bson:"component,omitempty" json:"component,omitempty"`
 }
 
 type Infos map[string]Info

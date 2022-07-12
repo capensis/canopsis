@@ -26,13 +26,15 @@ Feature: Get entities
             1597030220
           ],
           "enabled": true,
+          "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "impact": [
-            "test-component-to-entity-get"
+            "test-connector-to-entity-get/test-connector-name-to-entity-get"
           ],
           "impact_level": 2,
           "infos": {},
           "measurements": null,
           "name": "test-component-to-entity-get",
+          "component": "test-component-to-entity-get",
           "type": "component",
           "ok_events": 0,
           "ko_events": 0,
@@ -79,6 +81,7 @@ Feature: Get entities
           "depends": [
             "test-connector-to-entity-get/test-connector-name-to-entity-get"
           ],
+          "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "enable_history": [
             1597030220
           ],
@@ -138,6 +141,7 @@ Feature: Get entities
           "depends": [
             "test-connector-to-entity-get/test-connector-name-to-entity-get"
           ],
+          "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "enable_history": [
             1597030220
           ],
