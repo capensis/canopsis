@@ -512,6 +512,34 @@ Feature: Update an eventfilter
     }
     """
 
+  Scenario: update request with empty patterns should return error
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-1:
+    """
+    {
+      "type":"enrichment",
+      "description":"Another entity copy",
+      "priority":0,
+      "enabled":true,
+      "config": {
+        "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+        "on_success":"pass",
+        "on_failure":"pass"
+      },
+      "external_data":{"entity":{"type":"entity"}}
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "event_pattern": "EventPattern or EntityPattern is required.",
+        "entity_pattern": "EntityPattern or EventPattern is required."
+      }
+    }
+    """
+
   Scenario: given update request should update eventfilter without changes in old patterns,
             but should unset old patterns if new patterns are present
     When I am admin
