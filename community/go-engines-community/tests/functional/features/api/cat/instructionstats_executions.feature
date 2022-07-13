@@ -14,11 +14,13 @@ Feature: get instruction statistics
           "executed_on": 1618280210,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-1"
-          }
+          },
+          "duration": 600
         },
         {
           "executed_on": 1596712203,
-          "alarm": null
+          "alarm": null,
+          "duration": 0
         }
       ],
       "meta": {
@@ -39,7 +41,8 @@ Feature: get instruction statistics
           "executed_on": 1618280210,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-1"
-          }
+          },
+          "duration": 600
         }
       ],
       "meta": {
@@ -58,7 +61,8 @@ Feature: get instruction statistics
       "data": [
         {
           "executed_on": 1596712203,
-          "alarm": null
+          "alarm": null,
+          "duration": 0
         }
       ],
       "meta": {
@@ -96,13 +100,15 @@ Feature: get instruction statistics
           "executed_on": 1618280210,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-1"
-          }
+          },
+          "duration": 600
         },
         {
           "executed_on": 1518280210,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-resolved"
-          }
+          },
+          "duration": 0
         }
       ],
       "meta": {
@@ -123,7 +129,8 @@ Feature: get instruction statistics
           "executed_on": 1518280210,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-resolved"
-          }
+          },
+          "duration": 0
         }
       ],
       "meta": {
@@ -144,7 +151,8 @@ Feature: get instruction statistics
           "executed_on": 1618280210,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-1"
-          }
+          },
+          "duration": 600
         }
       ],
       "meta": {
@@ -168,11 +176,13 @@ Feature: get instruction statistics
           "executed_on": 1618280210,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-1"
-          }
+          },
+          "duration": 600
         },
         {
           "executed_on": 1596712203,
-          "alarm": null
+          "alarm": null,
+          "duration": 0
         }
       ],
       "meta": {
@@ -231,7 +241,8 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280210
+          "executed_on": 1618280210,
+          "duration": 600
         }
       ],
       "meta": {
@@ -277,7 +288,8 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280210
+          "executed_on": 1618280210,
+          "duration": 600
         }
       ],
       "meta": {
@@ -331,7 +343,8 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280630
+          "executed_on": 1618280630,
+          "duration": 400
         },
         {
           "alarm": {
@@ -358,7 +371,8 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280210
+          "executed_on": 1618280210,
+          "duration": 600
         }
       ],
       "meta": {
@@ -409,7 +423,8 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280630
+          "executed_on": 1618280630,
+          "duration": 400
         },
         {
           "alarm": {
@@ -441,7 +456,8 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280210
+          "executed_on": 1618280210,
+          "duration": 600
         }
       ],
       "meta": {
@@ -483,7 +499,8 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280210
+          "executed_on": 1618280210,
+          "duration": 600
         }
       ],
       "meta": {
@@ -537,7 +554,8 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280630
+          "executed_on": 1618280630,
+          "duration": 400
         }
       ],
       "meta": {
@@ -583,7 +601,8 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280210
+          "executed_on": 1618280210,
+          "duration": 600
         }
       ],
       "meta": {
@@ -634,7 +653,8 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280630
+          "executed_on": 1618280630,
+          "duration": 400
         }
       ],
       "meta": {
