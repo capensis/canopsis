@@ -2,13 +2,14 @@ package userpreferences
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 type Store interface {
@@ -17,16 +18,18 @@ type Store interface {
 }
 
 type store struct {
-	client     mongo.DbClient
-	collection mongo.DbCollection
+	client           mongo.DbClient
+	collection       mongo.DbCollection
+	filterCollection mongo.DbCollection
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
 ) Store {
 	return &store{
-		client:     dbClient,
-		collection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		client:           dbClient,
+		collection:       dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		filterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 	}
 }
 
@@ -69,9 +72,23 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 	if err != nil {
 		return nil, err
 	}
+	defer cursor.Close(ctx)
 
 	if cursor.Next(ctx) {
 		err := cursor.Decode(&res)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		filterCursor, err := s.filterCollection.Find(ctx, bson.M{
+			"author":     userId,
+			"widget":     widgetId,
+			"is_private": true,
+		}, options.Find().SetSort(bson.M{"title": 1}))
+		if err != nil {
+			return nil, err
+		}
+		err = filterCursor.All(ctx, &res.Filters)
 		if err != nil {
 			return nil, err
 		}
