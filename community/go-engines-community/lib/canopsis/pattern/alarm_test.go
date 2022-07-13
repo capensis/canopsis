@@ -2,12 +2,13 @@ package pattern_test
 
 import (
 	"errors"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/bson"
-	"testing"
-	"time"
 )
 
 func TestAlarm_Match(t *testing.T) {
@@ -619,13 +620,16 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 				},
 			},
 			mongoQueryFields: bson.M{
-				"alarm.v.duration": bson.M{"$subtract": bson.A{
-					bson.M{"$cond": bson.M{
-						"if":   "$alarm.v.resolved",
-						"then": "$alarm.v.resolved",
-						"else": time.Now().Unix(),
+				"alarm.v.duration": bson.M{"$ifNull": bson.A{
+					"$alarm.v.duration",
+					bson.M{"$subtract": bson.A{
+						bson.M{"$cond": bson.M{
+							"if":   "$alarm.v.resolved",
+							"then": "$alarm.v.resolved",
+							"else": time.Now().Unix(),
+						}},
+						"$alarm.v.creation_date",
 					}},
-					"$alarm.v.creation_date",
 				}},
 			},
 			mongoQueryResult: bson.M{"$or": []bson.M{
