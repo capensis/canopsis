@@ -1950,8 +1950,6 @@ definitions:
         type: string
       action:
         type: string
-      action_properties:
-        type: object
       category:
         type: string
       enabled:
@@ -5410,6 +5408,41 @@ paths:
       - application/json
       description: Create import task
       operationId: contextgraph-import-create-import
+      parameters:
+      - description: source
+        in: query
+        name: source
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/contextgraph.ImportRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/contextgraph.ImportResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Create import task
+      tags:
+      - contextgraph-import
+  /contextgraph/import-partial:
+    put:
+      consumes:
+      - application/json
+      description: Create import task
+      operationId: contextgraph-import-create-import-partial
       parameters:
       - description: source
         in: query

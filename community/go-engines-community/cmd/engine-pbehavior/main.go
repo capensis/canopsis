@@ -21,6 +21,7 @@ func main() {
 	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.FIFOAckExchangeName, "Publish FIFO Ack event to this exchange.")
+	flag.BoolVar(&opts.FeatureResolveDeadlineDisabled, "disableResolveDeadline", false, "Resolve entites may last unlimited period")
 
 	flagVersion := flag.Bool("version", false, "version infos")
 

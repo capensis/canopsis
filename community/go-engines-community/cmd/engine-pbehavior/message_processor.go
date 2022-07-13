@@ -36,6 +36,8 @@ type messageProcessor struct {
 	// resolveDeadlineExceededAt contains time of last logged deadline exceeded error.
 	// The error is logged only once in resolveDeadlineExceededErrInterval.
 	resolveDeadlineExceededAt time.Time
+	// FeatureResolveDeadlineDisabled to disable resolve deadline
+	FeatureResolveDeadlineDisabled bool
 }
 
 func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte, error) {
@@ -99,12 +101,21 @@ func (p *messageProcessor) processEvent(ctx context.Context, event types.Event, 
 		return event.Entity.PbehaviorInfo, nil
 	}
 	// Resolve type in case if the entity is new.
-	ctx, cancel := context.WithTimeout(ctx, resolveTimeout)
-	defer cancel()
+	var cancel context.CancelFunc
+	if !p.FeatureResolveDeadlineDisabled {
+		ctx, cancel = context.WithTimeout(ctx, resolveTimeout)
+		defer cancel()
+	}
 	now := time.Now().In(p.TimezoneConfigProvider.Get().Location)
 
 	resolveResult, err := p.PbhService.Resolve(ctx, *event.Entity, now)
 	if err == nil {
+		if p.FeatureResolveDeadlineDisabled {
+			if resolveDuration := time.Since(now); resolveDuration > resolveTimeout {
+				p.Logger.Warn().Dur("duration", resolveDuration).Str("entity", event.Entity.ID).
+					Str("pbh", resolveResult.ResolvedPbhID).Msg("resolve of pbehavior interval tooks too much time")
+			}
+		}
 		if !p.resolveDeadlineExceededAt.IsZero() {
 			p.resolveDeadlineExceededAt = time.Time{}
 			p.Logger.Info().Msg("entity resolving has been fixed")

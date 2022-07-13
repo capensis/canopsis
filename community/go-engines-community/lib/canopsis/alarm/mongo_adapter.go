@@ -805,5 +805,6 @@ func (a mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdAfter
 		}},
 		{"$unwind": "$entity"},
 		{"$match": bson.M{"entity.enabled": true}},
+		{"$project": bson.M{"alarm": 1, "entity._id": 1}},
 	})
 }
