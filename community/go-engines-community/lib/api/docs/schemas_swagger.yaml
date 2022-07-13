@@ -3508,6 +3508,11 @@ definitions:
         $ref: '#/definitions/types.AlarmStep'
       activation_date:
         $ref: '#/definitions/types.CpsTime'
+      active_duration:
+        description: |-
+          ActiveDuration represents a duration when an alarm wasn't in snooze or in maintenance, pause, inactive pbehavior interval.
+          Keep omitempty.
+        type: integer
       canceled:
         $ref: '#/definitions/types.AlarmStep'
       children:
@@ -3522,15 +3527,33 @@ definitions:
         type: string
       creation_date:
         $ref: '#/definitions/types.CpsTime'
+      current_state_duration:
+        description: |-
+          CurrentStateDuration represents a duration when an alarm was in current state.
+          Keep omitempty.
+        type: integer
       display_name:
         type: string
       done:
         $ref: '#/definitions/types.AlarmStep'
+      duration:
+        description: |-
+          Duration represents a duration from creation date to resolve date.
+          Keep omitempty.
+        type: integer
       events_count:
         description: EventsCount accumulates count of check events.
         type: integer
       hard_limit:
         type: integer
+      inactive_duration:
+        description: InactiveDuration represents a duration when an alarm was in snooze
+          or in maintenance, pause, inactive pbehavior interval.
+        type: integer
+      inactive_start:
+        $ref: '#/definitions/types.CpsTime'
+        description: InactiveStart represents start of snooze or maintenance, pause,
+          inactive pbehavior interval.
       infos:
         additionalProperties:
           additionalProperties: true
@@ -3565,6 +3588,8 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
       pbh_inactive_duration:
+        description: PbehaviorInactiveDuration represents a duration when an alarm
+          was in maintenance, pause, inactive pbehavior interval.
         type: integer
       resolved:
         $ref: '#/definitions/types.CpsTime'
@@ -3578,6 +3603,7 @@ definitions:
       snooze:
         $ref: '#/definitions/types.AlarmStep'
       snooze_duration:
+        description: SnoozeDuration represents a duration when an alarm was in snooze.
         type: integer
       state:
         $ref: '#/definitions/types.AlarmStep'
