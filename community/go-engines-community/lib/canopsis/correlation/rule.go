@@ -53,6 +53,26 @@ type Rule struct {
 	OldEventPatterns       oldpattern.EventPatternList  `bson:"old_event_patterns,omitempty" json:"old_event_patterns,omitempty"`
 }
 
+func (r *Rule) Matches(event types.Event, alarmWithEntity types.AlarmWithEntity) (bool, error) {
+	if r.Type == RuleValueGroup && !r.OldEventPatterns.IsSet() &&
+		!r.OldEntityPatterns.IsSet() && !r.OldAlarmPatterns.IsSet() &&
+		len(r.EntityPattern) == 0 && len(r.AlarmPattern) == 0 {
+		return true, nil
+	}
+
+	if r.OldEventPatterns.IsSet() {
+		if !r.OldEventPatterns.IsValid() {
+			return false, pattern.ErrInvalidOldEventPattern
+		}
+
+		if !r.OldEventPatterns.Matches(event) {
+			return false, nil
+		}
+	}
+
+	return pattern.Match(alarmWithEntity.Entity, alarmWithEntity.Alarm, r.EntityPattern, r.AlarmPattern, r.OldEntityPatterns, r.OldAlarmPatterns)
+}
+
 type TotalEntityPatternFields struct {
 	TotalEntityPattern pattern.Entity `bson:"total_entity_pattern" json:"total_entity_pattern,omitempty"`
 

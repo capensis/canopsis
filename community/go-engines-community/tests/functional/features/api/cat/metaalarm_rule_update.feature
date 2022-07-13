@@ -802,6 +802,17 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
       "type": "complex",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
       "corporate_total_entity_pattern": "test-pattern-not-exist"
     }
     """
@@ -885,6 +896,17 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
       "type": "complex",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
       "total_entity_pattern": [
         [
           {
@@ -915,7 +937,18 @@ Feature: Update a metaalarmrule
     {
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
-      "type": "not-exist"
+      "type": "not-exist",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ]
     }
     """
     Then the response code should be 400
@@ -936,6 +969,17 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
       "type": "complex",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
       "config": {
         "time_interval": {
           "value": 1,
@@ -982,6 +1026,29 @@ Feature: Update a metaalarmrule
     """
     {
       "error": "Not found"
+    }
+    """
+
+  Scenario: given update request with empty patterns should return error
+    When I am admin
+    When I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
+    """
+    {
+      "auto_resolve": false,
+      "name": "test-attribute-type-1",
+      "config": {},
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "type": "attribute"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern or EntityPattern is required.",
+        "entity_pattern": "EntityPattern or AlarmPattern is required."
+      }
     }
     """
 
@@ -1197,5 +1264,475 @@ Feature: Update a metaalarmrule
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_event_patterns": null
+    }
+    """
+
+  Scenario: given update request with unacceptable alarm pattern and entity pattern fields for metaalarm rules should return error
+    When I am admin
+    When I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.last_update_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.resolved",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
+      }
+    }
+    """
+    When I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "valuegroup",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_count": 2,
+        "value_paths": [
+          "entity.infos.some.value"
+        ]
+      },
+      "total_entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "total_entity_pattern": "TotalEntityPattern is invalid entity pattern."
+      }
+    }
+    """
+
+  Scenario: given update request with unacceptable corporate alarm pattern and corporate entity pattern fields for metaalarm rules should exclude invalid patterns
+    When I am admin
+    When I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "corporate_entity_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1",
+      "corporate_total_entity_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1",
+      "corporate_alarm_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-2"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "author": "root",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "old_alarm_patterns": null,
+      "old_entity_patterns": null,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_entity_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1",
+      "corporate_entity_pattern_title": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1-title",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.state.val",
+            "cond": {
+              "type": "eq",
+              "value": 3
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          }
+        ]
+      ],
+      "corporate_alarm_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-2",
+      "corporate_alarm_pattern_title": "test-pattern-to-metaalarm-rule-pattern-to-exclude-2-title",
+      "total_entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_total_entity_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1",
+      "corporate_total_entity_pattern_title": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1-title"
+    }
+    """
+
+  Scenario: given update request should allow to update value group metaalarmrule without patterns
+            and all old patterns should be removed
+    When I am admin
+    Then I do PUT /api/v4/cat/metaalarmrules/test-valuegroup-rule-rate-backward-compatibility-to-update:
+    """
+    {
+      "name": "test-valuegroup-rule-rate-backward-compatibility-to-update-1",
+      "type": "valuegroup",
+      "config": {
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        },
+        "threshold_count": 2,
+        "value_paths": [
+          "entity.infos.some.value"
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/cat/metaalarmrules/test-valuegroup-rule-rate-backward-compatibility-to-update
+    Then the response body should contain:
+    """
+    {
+      "_id": "test-valuegroup-rule-rate-backward-compatibility-to-update",
+      "old_alarm_patterns": null,
+      "old_entity_patterns": null,
+      "old_event_patterns": null,
+      "old_total_entity_patterns": [
+        {
+          "name": {
+            "regex_match": "test-valuegroup-rule-rate-backward-compatibility-to-update"
+          }
+        }
+      ]
     }
     """

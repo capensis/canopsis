@@ -994,3 +994,73 @@ pattern:
     author: root
     created: 1605263992
     updated: 1605263992
+
+  pattern_to_rule_metaalarm_corporate_update_to_exclude_1:
+    <<: *pattern_entity
+    _id: test-pattern-to-metaalarm-rule-pattern-to-exclude-1
+    is_corporate: true
+    title: test-pattern-to-metaalarm-rule-pattern-to-exclude-1-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-metaalarm-rule-pattern-to-exclude-1-pattern
+        - field: last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+
+  pattern_to_rule_metaalarm_corporate_update_to_exclude_2:
+    <<: *pattern_alarm
+    _id: test-pattern-to-metaalarm-rule-pattern-to-exclude-2
+    is_corporate: true
+    title: test-pattern-to-metaalarm-rule-pattern-to-exclude-2-title
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 3
+        - field: v.last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.last_update_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.resolved
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.ack.t
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
+        - field: v.ack.t
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
