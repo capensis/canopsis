@@ -393,51 +393,6 @@ Feature: update alarm on pbehavior
     Then the response code should be 200
     Then the response key "last_alarm_date" should not be "null"
 
-  Scenario: given pbehavior should update alarm pbehavior duration
-    Given I am admin
-    When I send an event:
-    """json
-    {
-      "connector": "test-connector-pbehavior-4",
-      "connector_name": "test-connector-name-pbehavior-4",
-      "source_type": "resource",
-      "event_type": "check",
-      "component": "test-component-pbehavior-4",
-      "resource": "test-resource-pbehavior-4",
-      "state": 1,
-      "output": "noveo alarm"
-    }
-    """
-    When I wait the end of event processing
-    When I do POST /api/v4/pbehaviors:
-    """json
-    {
-      "enabled": true,
-      "name": "test-pbehavior-4",
-      "tstart": {{ now }},
-      "tstop": {{ nowAdd "2s" }},
-      "color": "#FFFFFF",
-      "type": "test-maintenance-type-to-engine",
-      "reason": "test-reason-to-engine",
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-resource-pbehavior-4"
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-resource-pbehavior-4
-    Then the response code should be 200
-    Then the response key "data.0.v.pbh_inactive_duration" should not be "0"
-
   Scenario: given pbehavior and entity without alarm should update last alarm date of pbehavior
     Given I am admin
     When I send an event:

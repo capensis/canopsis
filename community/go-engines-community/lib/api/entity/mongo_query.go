@@ -476,12 +476,15 @@ func getComputedFields() bson.M {
 }
 
 func getDurationField(now types.CpsTime) bson.M {
-	return bson.M{"$subtract": bson.A{
-		bson.M{"$cond": bson.M{
-			"if":   "$v.resolved",
-			"then": "$v.resolved",
-			"else": now,
+	return bson.M{"$ifNull": bson.A{
+		"$alarm.v.duration",
+		bson.M{"$subtract": bson.A{
+			bson.M{"$cond": bson.M{
+				"if":   "$alarm.v.resolved",
+				"then": "$alarm.v.resolved",
+				"else": now,
+			}},
+			"$alarm.v.creation_date",
 		}},
-		"$v.creation_date",
 	}}
 }

@@ -245,13 +245,16 @@ func (p Alarm) GetMongoFields(prefix string) bson.M {
 
 	addFields := bson.M{}
 	if withDuration {
-		addFields[prefix+"v.duration"] = bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$" + prefix + "v.resolved",
-				"then": "$" + prefix + "v.resolved",
-				"else": time.Now().Unix(),
+		addFields[prefix+"v.duration"] = bson.M{"$ifNull": bson.A{
+			"$" + prefix + "v.duration",
+			bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$" + prefix + "v.resolved",
+					"then": "$" + prefix + "v.resolved",
+					"else": time.Now().Unix(),
+				}},
+				"$" + prefix + "v.creation_date",
 			}},
-			"$" + prefix + "v.creation_date",
 		}}
 	}
 
@@ -420,6 +423,10 @@ func getAlarmTimeField(alarm types.Alarm, field string) (time.Time, bool) {
 func getAlarmDurationField(alarm types.Alarm, field string) (int64, bool) {
 	switch field {
 	case "v.duration":
+		if alarm.Value.Duration > 0 {
+			return alarm.Value.Duration, true
+		}
+
 		if alarm.Value.Resolved != nil {
 			return int64(alarm.Value.Resolved.Sub(alarm.Time.Time).Seconds()), true
 		}
