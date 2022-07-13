@@ -27,6 +27,8 @@ type Options struct {
 	FrameDuration            int
 	PeriodicalWaitTime       time.Duration
 	FifoAckExchange          string
+
+	FeatureResolveDeadlineDisabled bool
 }
 
 type DependencyMaker struct {
@@ -131,6 +133,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			},
 			ChannelPub: amqpChannel,
 			Logger:     logger,
+
+			FeatureResolveDeadlineDisabled: options.FeatureResolveDeadlineDisabled,
 		},
 		logger,
 	))
