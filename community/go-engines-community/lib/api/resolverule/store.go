@@ -139,10 +139,6 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 }
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, error) {
-	if request.ID == resolverule.DefaultRule {
-		return nil, ErrDefaultRule
-	}
-
 	model := s.transformRequestToDocument(request.EditRequest)
 	model.Updated = types.CpsTime{Time: time.Now()}
 

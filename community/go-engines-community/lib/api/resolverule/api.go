@@ -3,9 +3,9 @@ package resolverule
 import (
 	"context"
 	"errors"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"net/http"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -124,11 +124,6 @@ func (a api) Update(c *gin.Context) {
 
 	rule, err := a.store.Update(ctx, request)
 	if err != nil {
-		if errors.Is(err, ErrDefaultRule) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-			return
-		}
-
 		panic(err)
 	}
 

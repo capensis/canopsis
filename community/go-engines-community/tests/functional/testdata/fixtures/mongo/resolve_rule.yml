@@ -1,5 +1,49 @@
+template:
+  - &resolve_rule {
+    _id: <UUID()>,
+    name: <Word()>,
+    description: <Phrase()>,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    priority: <Index()>,
+    author: root,
+    duration: {
+      value: 1,
+      unit: m
+    },
+    alarm_pattern: [
+      [
+        {
+          field: v.connector,
+          cond: {
+            type: eq,
+            value: <Word()>
+          }
+        }
+      ]
+    ],
+    entity_pattern: [
+      [
+        {
+          field: name,
+          cond: {
+            type: eq,
+            value: <Word()>
+          }
+        }
+      ]
+    ]
+  }
+
 resolve_rule:
-  resolve_rule_1:
+  resolve_rule_default:
+    <<: *resolve_rule
+    _id: default_rule
+    alarm_pattern:
+    entity_pattern:
+
+  resolve_rule_to_get_1:
+    <<: *resolve_rule
     _id: test-resolve-rule-to-get-1
     alarm_pattern:
       - - field: v.connector
@@ -18,9 +62,10 @@ resolve_rule:
       unit: s
       value: 10
     name: test-resolve-rule-to-get-1-name
-    priority: 0
     updated: 1619083733
-  resolve_rule_2:
+
+  resolve_rule_to_get_2:
+    <<: *resolve_rule
     _id: test-resolve-rule-to-get-2
     alarm_pattern:
       - - field: v.connector
@@ -39,335 +84,112 @@ resolve_rule:
       unit: s
       value: 10
     name: test-resolve-rule-to-get-2-name
-    priority: 1
     updated: 1619083733
-  resolve_rule_3:
+
+  resolve_rule_to_delete:
+    <<: *resolve_rule
     _id: test-resolve-rule-to-delete
-    alarm_pattern:
-      - - field: v.connector
-          cond:
-            type: eq
-            value: test-resolve-rule-to-delete-pattern
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resolve-rule-to-delete-resource
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-to-delete-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-to-delete-name
-    priority: 2
-    updated: 1619083733
-  resolve_rule_4:
+
+  resolve_rule_to_update_1:
+    <<: *resolve_rule
     _id: test-resolve-rule-to-update-1
-    alarm_pattern:
-      - - field: v.connector
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-1-pattern
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-1-resource
-    author: root
     created: 1619083733
-    description: test-resolve-rule-to-update-1-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-to-update-1-name
-    priority: 3
-    updated: 1619083733
-  resolve_rule_5:
+
+  resolve_rule_to_check_unique:
+    <<: *resolve_rule
     _id: test-resolve-rule-to-check-unique
-    alarm_pattern:
-      - - field: v.connector
-          cond:
-            type: eq
-            value: test-resolve-rule-to-check-unique-pattern
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resolve-rule-to-check-unique-resource
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-to-check-unique-description
-    duration:
-      unit: s
-      value: 10
     name: test-resolve-rule-to-check-unique-name
-    priority: 4
-    updated: 1619083733
-  resolve_rule_6:
+
+  resolve_rule_to_update_2:
+    <<: *resolve_rule
     _id: test-resolve-rule-to-update-2
-    alarm_pattern:
-      - - field: v.connector
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-2-pattern
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-2-resource
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-to-update-2-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-to-update-2-name
-    priority: 5
-    updated: 1619083733
-  resolve_rule_7:
+
+  resolve_rule_to_update_3:
+    <<: *resolve_rule
     _id: test-resolve-rule-to-update-3
-    alarm_pattern:
-      - - field: v.connector
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-3-pattern
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-3-resource
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-to-update-3-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-to-update-3-name
-    priority: 5
-    updated: 1619083733
-  resolve_rule_8:
+
+  resolve_rule_to_update_4:
+    <<: *resolve_rule
     _id: test-resolve-rule-to-update-4
-    alarm_pattern:
-      - - field: v.connector
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-4-pattern
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-4-resource
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-to-update-4-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-to-update-4-name
-    priority: 5
-    updated: 1619083733
-  resolve_rule_9:
+
+  resolve_rule_to_update_5:
+    <<: *resolve_rule
     _id: test-resolve-rule-to-update-5
-    alarm_pattern:
-      - - field: v.connector
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-5-pattern
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-5-resource
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-to-update-5-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-to-update-5-name
-    priority: 5
-    updated: 1619083733
-  resolve_rule_10:
+
+  resolve_rule_to_update_6:
+    <<: *resolve_rule
     _id: test-resolve-rule-to-update-6
-    alarm_pattern:
-      - - field: v.connector
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-6-pattern
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-6-resource
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-to-update-6-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-to-update-6-name
-    priority: 5
-    updated: 1619083733
-  resolve_rule_11:
+
+  resolve_rule_to_update_7:
+    <<: *resolve_rule
     _id: test-resolve-rule-to-update-7
-    alarm_pattern:
-      - - field: v.connector
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-7-pattern
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-7-resource
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-to-update-7-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-to-update-7-name
-    priority: 5
-    updated: 1619083733
-  resolve_rule_12:
+
+  resolve_rule_to_update_8:
+    <<: *resolve_rule
     _id: test-resolve-rule-to-update-8
-    alarm_pattern:
-      - - field: v.connector
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-8-pattern
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-8-resource
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-to-update-8-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-to-update-8-name
-    priority: 5
-    updated: 1619083733
-  resolve_rule_13:
+
+  resolve_rule_to_update_9:
+    <<: *resolve_rule
     _id: test-resolve-rule-to-update-9
-    alarm_pattern:
-      - - field: v.connector
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-9-pattern
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-9-resource
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-to-update-9-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-to-update-9-name
-    priority: 5
-    updated: 1619083733
-  resolve_rule_14:
+
+  resolve_rule_to_update_10:
+    <<: *resolve_rule
     _id: test-resolve-rule-to-update-10
-    alarm_pattern:
-      - - field: v.connector
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-10-pattern
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resolve-rule-to-update-10-resource
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-to-update-10-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-to-update-10-name
-    priority: 5
-    updated: 1619083733    
-  resolve_rule_15:
+
+  resolve_rule_backward_compatibility_to_update_1:
+    <<: *resolve_rule
     _id: test-resolve-rule-backward-compatibility-to-update-1
+    created: 1619083733
+    entity_pattern:
+    alarm_pattern:
     old_alarm_patterns:
       - v:
           component: test-resolve-rule-backward-compatibility-to-update-1
     old_entity_patterns:
       - name:
           regex_match: test-resolve-rule-backward-compatibility-to-update-1
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-backward-compatibility-to-update-1-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-backward-compatibility-to-update-1-name
-    priority: 5
-    updated: 1619083733
-  resolve_rule_16:
+
+  resolve_rule_backward_compatibility_to_update_2:
+    <<: *resolve_rule
     _id: test-resolve-rule-backward-compatibility-to-update-2
+    entity_pattern:
+    alarm_pattern:
     old_entity_patterns:
       - name:
           regex_match: test-resolve-rule-backward-compatibility-to-update-2
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-backward-compatibility-to-update-2-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-backward-compatibility-to-update-2-name
-    priority: 5
-    updated: 1619083733 
-  resolve_rule_17:
+
+  resolve_rule_backward_compatibility_to_update_3:
+    <<: *resolve_rule
     _id: test-resolve-rule-backward-compatibility-to-update-3
+    entity_pattern:
+    alarm_pattern:
     old_alarm_patterns:
       - v:
           component: test-resolve-rule-backward-compatibility-to-update-3
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-backward-compatibility-to-update-3-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-backward-compatibility-to-update-3-name
-    priority: 5
-    updated: 1619083733
-  resolve_rule_18:
+
+  resolve_rule_backward_compatibility_to_update_4:
+    <<: *resolve_rule
     _id: test-resolve-rule-backward-compatibility-to-update-4
+    created: 1619083733
+    entity_pattern:
+    alarm_pattern:
     old_alarm_patterns:
       - v:
           component: test-resolve-rule-backward-compatibility-to-update-4
     old_entity_patterns:
       - name:
           regex_match: test-resolve-rule-backward-compatibility-to-update-4
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-backward-compatibility-to-update-4-description
-    duration:
-      unit: s
-      value: 10
-    name: test-resolve-rule-backward-compatibility-to-update-4-name
-    priority: 5
-    updated: 1619083733    
-  resolve_rule_19:
+
+  resolve_rule_backward_compatibility_1:
+    <<: *resolve_rule
     _id: test-resolve-rule-backward-compatibility-1
+    entity_pattern:
+    alarm_pattern:
     old_alarm_patterns:
       - v:
           component: test-resolve-rule-backward-compatibility-1-component
     old_entity_patterns:
       - name: test-resolve-rule-backward-compatibility-1-resource
-    author: root
-    created: 1619083733
-    description: test-resolve-rule-backward-compatibility-1-description
     duration:
       unit: s
       value: 2
-    name: test-resolve-rule-backward-compatibility-1-name
-    priority: 5
-    updated: 1619083733
