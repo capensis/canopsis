@@ -31,6 +31,8 @@ db.instruction_week_stats.dropIndex("instruction_1_date_1");
 
 db.instruction_mod_stats.dropIndex("instruction_1_date_1");
 
+db.instruction_rating.dropIndex("instruction_1");
+
 db.job_history.dropIndex("job_1_status_1");
 db.job_history.dropIndex("next_exec_1_status_1");
 db.job_history.dropIndex("execution_1");
@@ -52,3 +54,22 @@ db.instruction.dropIndex("created_1");
 db.flapping_rule.dropIndex("priority_1");
 
 db.resolve_rule.dropIndex("priority_1");
+
+db.userpreferences.dropIndex("user_1_widget_1");
+
+db.views.dropIndex("group_id_1");
+
+db.viewtabs.dropIndex("view_1");
+
+db.widgets.dropIndex("tab_1");
+
+db.widget_filters.dropIndex("widget_1");
+
+db.pbehavior_reason.drop();
+db.pbehavior_exception.drop();
+db.meta_alarm_rules.drop();
+db.dynamic_infos.drop();
+db.eventfilter.drop();
+db.broadcast_message.drop();
+db.viewgroups.drop();
+db.view_playlist.drop();
