@@ -52,7 +52,7 @@ func (f *Flags) ParseArgs() {
 	flag.StringVar(&f.eventWaitKey, "ewk", canopsis.FIFOAckQueueName, "Consume by routing key to detect the end of event processing.")
 	flag.StringVar(&f.eventLogs, "eventlogs", "", "Log all received events.")
 	flag.Int64Var(&f.dummyHttpPort, "dummyHttpPort", 3000, "Port for dummy http server.")
-	flag.BoolVar(&f.checkUncaughtEvents, "checkUncaughtEvents", true, "Enable catching event after each scenario.")
+	flag.BoolVar(&f.checkUncaughtEvents, "checkUncaughtEvents", false, "Enable catching event after each scenario.")
 	flag.BoolVar(&f.onlyFixtures, "onlyFixtures", false, "Only apply fixtures.")
 	flag.Parse()
 
