@@ -1745,7 +1745,7 @@ Feature: get service weather
     }
     """
 
-  Scenario: given entity service entity should decrease pbh filter if disabled and increase if enabled
+  Scenario: given entity service entity should decrease pbh counter on disabled and increase on enabled actions
     Given I am admin
     When I send an event:
     """json
