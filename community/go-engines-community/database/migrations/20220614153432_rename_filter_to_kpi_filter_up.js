@@ -17,3 +17,5 @@ if (!db.default_rights.findOne({_id: "api_kpi_filter"})) {
     );
     db.default_rights.deleteOne({_id: "api_filter"});
 }
+
+db.createCollection("kpi_filter");
