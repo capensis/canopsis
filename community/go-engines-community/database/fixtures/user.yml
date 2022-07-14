@@ -104,7 +104,7 @@ viewtabs:
   tab_resolved_alarms:
     <<: *tab
     title: Résolues
-    view: "@view_open_alarms"
+    view: "@view_resolved_alarms"
 
   tab_context_explorer:
     <<: *tab
@@ -192,8 +192,7 @@ widgets:
         order: ASC
       itemsPerPage: 10
       infoPopups: [ ]
-      alarmsStateFilter:
-        opened: false
+      opened: false
       moreInfoTemplate:
       periodic_refresh:
         value: 1
@@ -451,6 +450,11 @@ default_rights:
     _id: models_notification_instructionStats
     crecord_name: <Current()._id>
     desc: "Notifications: Instructions stats"
+  permission_models_profile_corporatePattern:
+    <<: *permission_crud
+    _id: models_profile_corporatePattern
+    crecord_name: <Current()._id>
+    desc: "Profile: Corporate patterns"
   permission_listalarm_ack:
     <<: *permission
     _id: listalarm_ack
@@ -999,14 +1003,17 @@ default_rights:
   permission_view_open_alarms:
     <<: *permission_rw
     _id: "@view_open_alarms"
+    crecord_name: <Current()._id>
     desc: "Rights on view: alarmes en cours"
   permission_view_resolved_alarms:
     <<: *permission_rw
     _id: "@view_resolved_alarms"
+    crecord_name: <Current()._id>
     desc: "Rights on view: alarmes resolues"
   permission_view_context_explorer:
     <<: *permission_rw
     _id: "@view_context_explorer"
+    crecord_name: <Current()._id>
     desc: "Rights on view: Explorateur de Contexte"
 
   role_admin:
@@ -1076,6 +1083,8 @@ default_rights:
       "@permission_models_kpiRatingSettings":
         checksum: 15
       "@permission_models_notification_instructionStats":
+        checksum: 15
+      "@permission_models_profile_corporatePattern":
         checksum: 15
       "@permission_listalarm_ack":
         checksum: 1
