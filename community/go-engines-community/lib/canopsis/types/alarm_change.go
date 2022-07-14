@@ -60,6 +60,7 @@ const (
 	AlarmChangeTypeJunitTestSuiteUpdate AlarmChangeType = "junittestsuiteupdate"
 	AlarmChangeTypeJunitTestCaseUpdate  AlarmChangeType = "junittestcaseupdate"
 
+	// AlarmChangeTypeEntityToggled is used to update entity service's counters on disable/enable entity actions.
 	AlarmChangeTypeEntityToggled AlarmChangeType = "entitytoggled"
 )
 

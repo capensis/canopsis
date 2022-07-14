@@ -1745,7 +1745,8 @@ Feature: get service weather
     }
     """
 
-  Scenario: given entity service entity should be grey if remained entities are in pbh state after disable and should be green after enable
+  Scenario: given entity service entity should be grey if active entity is disabled, while other entities are in pbh state,
+    if disabled entity is enabled again, the entity service should be returned to the ok state.
     Given I am admin
     When I send an event:
     """json
@@ -1992,7 +1993,7 @@ Feature: get service weather
     """
 
 
-  Scenario: given entity service entity should decrease pbh filter if mass disabled and increase if mass enabled
+  Scenario: given entity service entity should decrease pbh counter on mass disabled and increase on mass enabled actions
     Given I am admin
     When I send an event:
     """json
@@ -2220,7 +2221,8 @@ Feature: get service weather
     }
     """
 
-  Scenario: given entity service entity should be grey if remained entities are in pbh state after mass disable and should be green after mass enable
+  Scenario: given entity service entity should be grey if active entities are disabled by bulk disable action, while other entities are in pbh state,
+    if disabled entities are enabled again, the entity service should be returned to the ok state.
     Given I am admin
     When I send an event:
     """json
@@ -2439,7 +2441,7 @@ Feature: get service weather
     }
     """
 
-  Scenario: given entity service entity should count pbh counters properly if enabled first in mass enable action
+  Scenario: given entity service entity should recompute counters properly if entity service is enabled before the dependent entity in mass enable action
     Given I am admin
     When I send an event:
     """json
