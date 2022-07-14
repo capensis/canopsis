@@ -59,6 +59,8 @@ const (
 	// Following change types are used for junit.
 	AlarmChangeTypeJunitTestSuiteUpdate AlarmChangeType = "junittestsuiteupdate"
 	AlarmChangeTypeJunitTestCaseUpdate  AlarmChangeType = "junittestcaseupdate"
+
+	AlarmChangeTypeEntityToggled AlarmChangeType = "entitytoggled"
 )
 
 // AlarmChange is a struct containing the type of change that occured on an
