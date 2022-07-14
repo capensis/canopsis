@@ -1,7 +1,7 @@
 template:
   - &tab {
     _id: <UUID()>,
-    title: <Word()>,
+    title: <UniqueName()>,
     position: 0,
     author: root,
     created: <NowUnix()>,

@@ -3,27 +3,27 @@ template:
     _id: <UUID()>,
     crecord_type: action,
     crecord_name: <Current()._id>,
-    desc: <Phrase()>
+    desc: <LoremIpsumSentence(3)>
   }
   - &permission_crud {
     _id: <UUID()>,
     crecord_type: action,
     crecord_name: <Current()._id>,
-    desc: <Phrase()>,
+    desc: <LoremIpsumSentence(3)>,
     type: CRUD
   }
   - &permission_rw {
     _id: <UUID()>,
     crecord_type: action,
     crecord_name: <Current()._id>,
-    desc: <Phrase()>,
+    desc: <LoremIpsumSentence(3)>,
     type: RW
   }
   - &role {
     _id: <UUID()>,
     crecord_type: role,
     crecord_name: <Current()._id>,
-    description: <Phrase()>,
+    description: <LoremIpsumSentence(3)>,
     rights: { }
   }
   - &user {

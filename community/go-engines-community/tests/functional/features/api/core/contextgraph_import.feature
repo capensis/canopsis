@@ -1328,7 +1328,9 @@ Feature: Import entities
       "status": "done"
     }
     """
-    When I do GET /api/v4/entitybasics?_id=SC004C until response code is 200 and body contains:
+    When I do GET /api/v4/entitybasics?_id=SC004C
+    Then the response code should be 200
+    Then the response body should contain:
     """json
     {
       "_id": "SC004C",
@@ -1345,9 +1347,7 @@ Feature: Import entities
       "type": "component"
     }
     """
-    When I do GET /api/v4/entitybasics?_id=script_import_service/SC004C
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/entitybasics?_id=script_import_service/SC004C until response code is 200 and body contains:
     """json
     {
       "_id": "script_import_service/SC004C",

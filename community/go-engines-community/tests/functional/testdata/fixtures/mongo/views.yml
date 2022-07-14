@@ -1,8 +1,8 @@
 template:
   - &view {
     _id: <UUID()>,
-    title: <Word()>,
-    description: <Phrase()>,
+    title: <UniqueName()>,
+    description: <LoremIpsumSentence(3)>,
     enabled: true,
     position: <Index()>,
     author: root,
