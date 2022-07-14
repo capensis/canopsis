@@ -28,14 +28,14 @@ template:
   }
   - &service {
     _id: <UUID()>,
-    name: <Word()>,
+    name: <UniqueName()>,
     type: service,
     enabled: true,
     impact_level: 1,
     infos: { },
     impact: [ ],
     depends: [ ],
-    output_template: <Phrase()>,
+    output_template: <LoremIpsumSentence(5)>,
     created: <NowUnix()>,
     entity_pattern: [
       [
@@ -43,7 +43,7 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]

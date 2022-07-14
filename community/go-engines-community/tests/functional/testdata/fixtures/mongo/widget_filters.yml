@@ -1,7 +1,7 @@
 template:
   - &filter {
     _id: <UUID()>,
-    title: <Word()>,
+    title: <UniqueName()>,
     is_private: false,
     author: root,
     created: <NowUnix()>,
@@ -12,7 +12,7 @@ template:
           field: v.connector,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -23,7 +23,7 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -34,7 +34,7 @@ template:
           field: pbehavior_info.type,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]

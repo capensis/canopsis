@@ -166,7 +166,7 @@ func main() {
 	if len(collections) == 0 {
 		logger.Info().Msg("Start fixtures")
 		loader := fixtures.NewLoader(client, []string{f.mongoFixtureDirectory}, true,
-			fixtures.NewParser(password.NewSha1Encoder()), logger)
+			fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), logger)
 		err = loader.Load(ctx)
 		utils.FailOnError(err, "Failed to apply fixtures")
 		logger.Info().Msg("Finish fixtures")

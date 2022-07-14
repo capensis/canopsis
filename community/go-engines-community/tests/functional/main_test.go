@@ -23,9 +23,7 @@ import (
 	"github.com/cucumber/godog"
 	redismod "github.com/go-redis/redis/v8"
 	"github.com/go-testfixtures/testfixtures/v3"
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/pgx"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/golang-migrate/migrate/v4/database/pgx"
 	"github.com/rs/zerolog"
 )
 
@@ -84,7 +82,7 @@ func TestMain(m *testing.M) {
 	defer redisClient.Close()
 
 	loader := fixtures.NewLoader(dbClient, flags.mongoFixtures, true,
-		fixtures.NewParser(password.NewSha1Encoder()), logger)
+		fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), logger)
 	opts := godog.Options{
 		StopOnFailure:  true,
 		Format:         "pretty",
@@ -250,25 +248,6 @@ func clearStores(
 	if err != nil {
 		return err
 	}
-
-	p := &pgx.Postgres{}
-	driver, err := p.Open(pgConnStr)
-	if err != nil {
-		return fmt.Errorf("cannot connect to timescale for migrations: %w", err)
-	}
-	defer driver.Close()
-
-	m, err := migrate.NewWithDatabaseInstance(fmt.Sprintf("file://%s", flags.timescaleMigrations), "pgx", driver)
-	if err != nil {
-		return fmt.Errorf("cannot init timescale migrations: %w", err)
-	}
-
-	err = m.Up()
-	if err != nil && err != migrate.ErrNoChange {
-		return fmt.Errorf("cannot apply timescale migrations: %w", err)
-	}
-
-	logger.Info().Msg("PostgresSQL migrations are applied")
 
 	pgDb, err := sql.Open("pgx", pgConnStr)
 	if err != nil {
