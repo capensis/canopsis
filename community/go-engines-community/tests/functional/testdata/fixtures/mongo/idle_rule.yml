@@ -8,7 +8,7 @@ template:
           field: v.component,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -19,13 +19,13 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
     ],
-    author: <Word()>,
-    description: <Word()>,
+    author: root,
+    description: <LoremIpsumSentence(3)>,
     created: <NowUnix()>,
     updated: <Current().created>,
     duration: {
@@ -33,15 +33,15 @@ template:
       value: 3
     },
     enabled: true,
-    name: <Word()>,
+    name: <UniqueName()>,
     operation: {
       parameters: {
-        author: <Word()>,
+        author: root,
         duration: {
           unit: s,
           value: 3
         },
-        output: <Word()>,
+        output: <LoremIpsumSentence(3)>,
         type: snooze
       }
     },
@@ -57,13 +57,13 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
     ],
-    author: <Word()>,
-    description: <Word()>,
+    author: root,
+    description: <LoremIpsumSentence(3)>,
     created: <NowUnix()>,
     updated: <Current().created>,
     duration: {
@@ -71,7 +71,7 @@ template:
       value: 3
     },
     enabled: true,
-    name: <Word()>,
+    name: <UniqueName()>,
     priority: <Index()>,
     type: entity
   }
@@ -480,7 +480,7 @@ idle_rule:
     alarm_pattern:
       - - field: v.ticket
           cond:
-            type: eq
+            type: exist
             value: false
     author: test-author-metrics-axe-12
     description: test-idle-rule-axe-12-description

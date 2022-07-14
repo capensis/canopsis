@@ -1,7 +1,7 @@
 template:
   - &category {
       _id: <UUID>,
-      name: <Word()>,
+      name: <UniqueName()>,
       author: root,
       created: <NowUnix()>,
       updated: <Current().created>

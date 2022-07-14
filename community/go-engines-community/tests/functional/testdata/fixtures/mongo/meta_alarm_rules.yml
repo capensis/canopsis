@@ -2,7 +2,7 @@ template:
   - &metaaalarm_rule_complex {
     _id: <UUID()>,
     auto_resolve: false,
-    name: <Word()>,
+    name: <UniqueName()>,
     type: complex,
     author: root,
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}",
@@ -20,7 +20,7 @@ template:
           field: v.component,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -31,7 +31,7 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -40,7 +40,7 @@ template:
   - &metaaalarm_rule_attribute {
     _id: <UUID()>,
     auto_resolve: false,
-    name: <Word()>,
+    name: <UniqueName()>,
     type: attribute,
     author: root,
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}",
@@ -52,7 +52,7 @@ template:
           field: v.component,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -63,7 +63,7 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
