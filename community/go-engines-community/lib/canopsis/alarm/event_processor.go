@@ -3,10 +3,11 @@ package alarm
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"runtime/trace"
 	"sync"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -81,12 +82,18 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	if !event.Entity.Enabled {
+		var err error
+
 		if event.EventType == types.EventTypeEntityToggled ||
 			event.EventType == types.EventTypeRecomputeEntityService {
-			return s.resolveAlarmForDisabledEntity(ctx, event)
+			alarmChange, err = s.resolveAlarmForDisabledEntity(ctx, event)
+
+			if err == nil && alarmChange.Type == types.AlarmChangeTypeNone {
+				alarmChange.Type = types.AlarmChangeTypeEntityToggled
+			}
 		}
 
-		return alarmChange, nil
+		return alarmChange, err
 	}
 
 	alarm, err := s.adapter.GetOpenedAlarm(ctx, event.Connector, event.ConnectorName, event.GetEID())
@@ -130,6 +137,9 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		changeType, err := s.processMetaAlarmCreateEvent(ctx, event)
 		alarmChange.Type = changeType
 		return alarmChange, err
+	case types.EventTypeEntityToggled:
+		alarmChange.Type = types.AlarmChangeTypeEntityToggled
+		return alarmChange, nil
 	case types.EventTypeTrigger:
 		if event.AlarmChange == nil || event.Alarm == nil {
 			return types.NewAlarmChange(), nil
