@@ -45,15 +45,19 @@ func (g *generator) Generate(
 		event.Connector = strings.TrimSuffix(entity.ID, "/"+entity.Name)
 		event.ConnectorName = entity.Name
 	case types.EntityTypeComponent:
-		connector, err := g.findConnectorForComponent(ctx, entity)
-		if err != nil {
-			return event, err
+		if entity.Connector != "" {
+			event.Connector, event.ConnectorName, _ = strings.Cut(entity.Connector, "/")
+		} else {
+			connector, err := g.findConnectorForComponent(ctx, entity)
+			if err != nil {
+				return event, err
+			}
+			if connector == nil {
+				return event, fmt.Errorf("cannot generate event for entity %v : not found any alarm and not found linked connector", entity.ID)
+			}
+			event.Connector = strings.TrimSuffix(connector.ID, "/"+connector.Name)
+			event.ConnectorName = connector.Name
 		}
-		if connector == nil {
-			return event, fmt.Errorf("cannot generate event for entity %v : not found any alarm and not found linked connector", entity.ID)
-		}
-		event.Connector = strings.TrimSuffix(connector.ID, "/"+connector.Name)
-		event.ConnectorName = connector.Name
 		event.Component = entity.Name
 	case types.EntityTypeResource:
 		if entity.Connector != "" {
