@@ -63,10 +63,10 @@ Feature: Count matches
       "entity_pattern": [
         [
           {
-            "field": "impact",
+            "field": "component",
             "cond": {
-              "type": "has_one_of",
-              "value": ["test-component-pbehavior-pattern-count-1"]
+              "type": "eq",
+              "value": "test-component-pbehavior-pattern-count-1"
             }
           }
         ]

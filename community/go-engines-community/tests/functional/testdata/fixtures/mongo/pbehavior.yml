@@ -1,7 +1,7 @@
 template:
   - &pbehavior {
     _id: <UUID()>,
-    name: <Word()>,
+    name: <UniqueName()>,
     enabled: true,
     tstart: <NowUnix()>,
     tstop: <NowUnix()>,
@@ -18,7 +18,7 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -27,7 +27,7 @@ template:
       {
         _id: <UUID()>,
         author: root,
-        message: <Phrase()>,
+        message: <LoremIpsumSentence(3)>,
         ts: <NowUnix()>
       }
     ]
@@ -361,7 +361,7 @@ pbehavior:
       - - field: name
           cond:
             type: eq
-            value: <Word()>
+            value: <LoremIpsumWord()>
 
   pbehavior_to_patch_7:
     <<: *pbehavior
@@ -393,7 +393,7 @@ pbehavior:
       - - field: name
           cond:
             type: eq
-            value: <Word()>
+            value: <LoremIpsumWord()>
 
   pbehavior_to_patch_10:
     <<: *pbehavior
@@ -422,7 +422,7 @@ pbehavior:
       - - field: name
           cond:
             type: eq
-            value: <Word()>
+            value: <LoremIpsumWord()>
 
   pbehavior_to_patch_13:
     <<: *pbehavior
@@ -464,16 +464,16 @@ pbehavior:
     _id: test-pbehavior-to-check-unique
     name: test-pbehavior-to-check-unique-name
 
-  pbehavior_to_pbehavior_13:
+  pbehavior_to_pbehavior_14:
     <<: *pbehavior
-    _id: test-pbehavior-13
+    _id: test-pbehavior-14
     enabled: false
     entity_pattern:
     old_mongo_query: |
       {
         "$and": [
           {
-            "name": "test-resource-pbehavior-13"
+            "name": "test-resource-pbehavior-14"
           }
         ]
       }

@@ -2,9 +2,9 @@ template:
   - &instruction_manual {
     _id: <UUID()>,
     type: 0,
-    name: <Word()>,
+    name: <UniqueName()>,
     enabled: true,
-    description: <Phrase()>,
+    description: <LoremIpsumSentence(3)>,
     author: root,
     created: <NowUnix()>,
     last_modified: <Current().created>,
@@ -18,7 +18,7 @@ template:
           field: v.component,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -29,7 +29,7 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -37,13 +37,13 @@ template:
     steps: [
       {
         _id: <UUID()>,
-        name: <Word()>,
-        endpoint: <Phrase()>,
+        name: <LoremIpsumWord()>,
+        endpoint: <LoremIpsumSentence(3)>,
         operations: [
           {
             _id: <UUID()>,
-            name: <Word()>,
-            description: <Phrase()>,
+            name: <LoremIpsumWord()>,
+            description: <LoremIpsumSentence(3)>,
             time_to_complete: {
               value: 1,
               unit: s
@@ -57,9 +57,9 @@ template:
   - &instruction_auto {
     _id: <UUID()>,
     type: 1,
-    name: <Word()>,
+    name: <UniqueName()>,
     enabled: true,
-    description: <Phrase()>,
+    description: <LoremIpsumSentence(3)>,
     author: root,
     created: <NowUnix()>,
     last_modified: <Current().created>,
@@ -73,7 +73,7 @@ template:
           field: v.component,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -84,7 +84,7 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]

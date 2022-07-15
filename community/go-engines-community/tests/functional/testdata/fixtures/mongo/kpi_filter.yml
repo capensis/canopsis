@@ -1,7 +1,7 @@
 template:
   - &filter {
     _id: <UUID()>,
-    name: <Word()>,
+    name: <UniqueName()>,
     author: root,
     created: <NowUnix()>,
     updated: <Current().created>,
@@ -11,7 +11,7 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
