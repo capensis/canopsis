@@ -873,6 +873,17 @@ Feature: Create an metaalarmrule
         },
         "threshold_rate": 1
       },
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
       "corporate_total_entity_pattern": "test-pattern-to-rule-edit-not-exist"
     }
     """
@@ -895,7 +906,6 @@ Feature: Create an metaalarmrule
       "auto_resolve": false,
       "name": "wrong-alarm-pattern-1",
       "config": {},
-      "patterns": null,
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "type": "complex",
       "alarm_pattern": [
@@ -976,6 +986,17 @@ Feature: Create an metaalarmrule
         },
         "threshold_rate": 1
       },
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
       "total_entity_pattern": [
         [
           {
@@ -1008,7 +1029,17 @@ Feature: Create an metaalarmrule
       "auto_resolve": false,
       "name": "wrong-type-1",
       "config": {},
-      "patterns": null,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "type": "attribute_path"
     }
@@ -1064,6 +1095,29 @@ Feature: Create an metaalarmrule
     }
     """
 
+  Scenario: given create request with empty patterns should return error
+    When I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """
+    {
+      "auto_resolve": false,
+      "name": "test-attribute-type-1",
+      "config": {},
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "type": "attribute"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern or EntityPattern is required.",
+        "entity_pattern": "EntityPattern or AlarmPattern is required."
+      }
+    }
+    """
+
   Scenario: given create request with already exists id should return error
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -1073,7 +1127,17 @@ Feature: Create an metaalarmrule
       "auto_resolve": false,
       "name": "test-attribute-type-1",
       "config": {},
-      "patterns": null,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "type": "attribute"
     }
@@ -1085,5 +1149,436 @@ Feature: Create an metaalarmrule
       "errors": {
         "_id": "ID already exists."
       }
+    }
+    """
+
+  Scenario: given create request with unacceptable alarm pattern and entity pattern fields for metaalarm rules should return error
+    When I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.last_update_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.resolved",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "valuegroup",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_count": 2,
+        "value_paths": [
+          "entity.infos.some.value"
+        ]
+      },
+      "total_entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-metaalarm-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "total_entity_pattern": "TotalEntityPattern is invalid entity pattern."
+      }
+    }
+    """
+
+  Scenario: given create request with unacceptable corporate alarm pattern and corporate entity pattern fields for metaalarm rules should exclude invalid patterns
+    When I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "corporate_entity_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1",
+      "corporate_total_entity_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1",
+      "corporate_alarm_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-2"
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "auto_resolve": true,
+      "name": "complex-test-1",
+      "author": "root",
+      "type": "complex",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "threshold_rate": 1
+      },
+      "old_alarm_patterns": null,
+      "old_entity_patterns": null,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_entity_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1",
+      "corporate_entity_pattern_title": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1-title",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.state.val",
+            "cond": {
+              "type": "eq",
+              "value": 3
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          }
+        ]
+      ],
+      "corporate_alarm_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-2",
+      "corporate_alarm_pattern_title": "test-pattern-to-metaalarm-rule-pattern-to-exclude-2-title",
+      "total_entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_total_entity_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1",
+      "corporate_total_entity_pattern_title": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1-title"
     }
     """

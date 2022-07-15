@@ -861,7 +861,7 @@ Feature: update alarm on idle rule
     }
     """
     When I save response idleSince={{ (index .lastResponse.data 0).entity.idle_since }}
-    Then the difference between idleSince createTimestamp is in range -2,8
+    Then the difference between idleSince createTimestamp is in range 8,10
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -2058,7 +2058,7 @@ Feature: update alarm on idle rule
     }
     """
     When I save response idleSince={{ (index .lastResponse.data 0).entity.idle_since }}
-    Then the difference between idleSince createTimestamp is in range -2,6
+    Then the difference between idleSince createTimestamp is in range 3,5
     When I do POST /api/v4/alarm-details:
     """json
     [

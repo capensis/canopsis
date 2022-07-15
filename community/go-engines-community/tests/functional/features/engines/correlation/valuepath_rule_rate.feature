@@ -132,10 +132,10 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "description" : "test-correlation-valuegroup-rate-2",
         "enabled": true,
-        "alarm_pattern": [
+        "event_pattern": [
           [
             {
-              "field": "v.connector",
+              "field": "connector",
               "cond": {
                 "type": "eq",
                 "value": "test-valuegroup-rule-rate-2-connector"
