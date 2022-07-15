@@ -36,15 +36,6 @@ template:
   }
 
 resolve_rule:
-  resolve_rule_default:
-    <<: *resolve_rule
-    _id: default_rule
-    alarm_pattern:
-    entity_pattern:
-    duration:
-      value: 100
-      unit: h
-
   resolve_rule_to_get_1:
     <<: *resolve_rule
     _id: test-resolve-rule-to-get-1
@@ -196,3 +187,13 @@ resolve_rule:
     duration:
       unit: s
       value: 2
+
+  # Should be in the end not to overlap other rules.
+  resolve_rule_default:
+    <<: *resolve_rule
+    _id: default_rule
+    alarm_pattern:
+    entity_pattern:
+    duration:
+      value: 100
+      unit: h
