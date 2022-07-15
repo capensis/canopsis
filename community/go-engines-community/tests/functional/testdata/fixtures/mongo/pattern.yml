@@ -1,7 +1,7 @@
 template:
   - &pattern_alarm {
     _id: <UUID()>,
-    title: <Word()>,
+    title: <UniqueName()>,
     is_corporate: false,
     type: alarm,
     alarm_pattern: [
@@ -10,7 +10,7 @@ template:
           field: v.connector,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -21,7 +21,7 @@ template:
   }
   - &pattern_entity {
     _id: <UUID()>,
-    title: <Word()>,
+    title: <UniqueName()>,
     is_corporate: false,
     type: entity,
     entity_pattern: [
@@ -30,7 +30,7 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -41,7 +41,7 @@ template:
   }
   - &pattern_pbehavior {
     _id: <UUID()>,
-    title: <Word()>,
+    title: <UniqueName()>,
     is_corporate: false,
     type: pbehavior,
     pbehavior_pattern: [
@@ -50,7 +50,7 @@ template:
           field: pbehavior_info.type,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
