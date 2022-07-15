@@ -8,6 +8,7 @@ const (
 )
 
 func (f *Flags) ParseArgs() {
+	flag.BoolVar(&f.Version, "version", false, "Show the version information")
 	flag.Int64Var(&f.Port, "port", defaultPort, "Server port")
 	flag.StringVar(&f.ConfigDir, "c", defaultConfigDir, "Configuration files directory")
 	flag.BoolVar(&f.Debug, "d", false, "debug")
@@ -19,6 +20,7 @@ func (f *Flags) ParseArgs() {
 }
 
 type Flags struct {
+	Version       bool
 	Port          int64
 	ConfigDir     string
 	Debug         bool
