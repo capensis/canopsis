@@ -44,7 +44,7 @@ func main() {
 	f.Parse()
 
 	if f.version {
-		canopsis.PrintVersionInfo("canopsis-reconfigure")
+		canopsis.PrintVersionInfo()
 		return
 	}
 

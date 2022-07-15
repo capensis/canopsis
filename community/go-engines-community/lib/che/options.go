@@ -2,11 +2,13 @@ package che
 
 import (
 	"flag"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 )
 
 type Options struct {
+	Version                 bool
 	FeatureEventProcessing  bool
 	FeatureContextCreation  bool
 	Purge                   bool
@@ -40,13 +42,9 @@ func ParseOptions() Options {
 	flag.String("enrichExclude", "", "Coma separated list of fields that shall not be part of context enrichment. - deprecated")
 	flag.String("enrichInclude", "", "Coma separated list of the only fields that will be part of context enrichment. If present, -enrichExclude is ignored. - deprecated")
 
-	flagVersion := flag.Bool("version", false, "version infos")
+	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 
 	flag.Parse()
-
-	if *flagVersion {
-		canopsis.PrintVersionExit()
-	}
 
 	return opts
 }
