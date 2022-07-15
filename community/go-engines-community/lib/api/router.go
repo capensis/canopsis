@@ -815,7 +815,7 @@ func RegisterRoutes(
 			)
 		}
 
-		widgetFilterAPI := widgetfilter.NewApi(widgetfilter.NewStore(dbClient), enforcer, common.NewPatternFieldsTransformer(dbClient), actionLogger)
+		widgetFilterAPI := widgetfilter.NewApi(widgetfilter.NewStore(dbClient), enforcer, widgetfilter.NewPatternFieldsTransformer(dbClient), actionLogger)
 		widgetFilterRouter := protected.Group("/widget-filters")
 		{
 			widgetFilterRouter.GET(

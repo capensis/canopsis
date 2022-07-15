@@ -216,6 +216,48 @@ pattern:
     created: 1605263992
     updated: 1605263992
 
+  pattern_to_filter_edit_4:
+    <<: *pattern_alarm
+    _id: test-pattern-to-filter-edit-4
+    title: test-pattern-to-filter-edit-4-title
+    is_corporate: false
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-pattern-to-filter-edit-4-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_filter_edit_5:
+    <<: *pattern_entity
+    _id: test-pattern-to-filter-edit-5
+    title: test-pattern-to-filter-edit-5-title
+    is_corporate: false
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-filter-edit-5-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_filter_edit_6:
+    <<: *pattern_pbehavior
+    _id: test-pattern-to-filter-edit-6
+    title: test-pattern-to-filter-edit-6-title
+    is_corporate: false
+    pbehavior_pattern:
+      - - field: pbehavior_info.type
+          cond:
+            type: eq
+            value: test-pattern-to-filter-edit-6-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
   pattern_to_filter_pattern_1:
     <<: *pattern_alarm
     _id: test-pattern-to-filter-pattern-1

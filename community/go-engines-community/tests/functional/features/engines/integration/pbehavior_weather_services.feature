@@ -2079,7 +2079,7 @@ Feature: get service weather
         "value": 1,
         "unit": "s"
       },
-      "priority": 10
+      "priority": 1
     }
     """
     Then the response code should be 201

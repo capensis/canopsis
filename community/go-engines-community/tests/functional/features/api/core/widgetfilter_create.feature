@@ -242,6 +242,68 @@ Feature: Create a widget filter
     }
     """
 
+  Scenario: given create request with saved patterns should return ok
+    When I am admin
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-to-create-3-title",
+      "widget": "test-widget-to-filter-edit",
+      "is_private": true,
+      "corporate_alarm_pattern": "test-pattern-to-filter-edit-4",
+      "corporate_entity_pattern": "test-pattern-to-filter-edit-5",
+      "corporate_pbehavior_pattern": "test-pattern-to-filter-edit-6"
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "title": "test-widgetfilter-to-create-3-title",
+      "is_private": true,
+      "corporate_alarm_pattern": "test-pattern-to-filter-edit-4",
+      "corporate_alarm_pattern_title": "test-pattern-to-filter-edit-4-title",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-filter-edit-4-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_entity_pattern": "test-pattern-to-filter-edit-5",
+      "corporate_entity_pattern_title": "test-pattern-to-filter-edit-5-title",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-filter-edit-5-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_pbehavior_pattern": "test-pattern-to-filter-edit-6",
+      "corporate_pbehavior_pattern_title": "test-pattern-to-filter-edit-6-title",
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.type",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-filter-edit-6-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+
   Scenario: given create request and no auth user should not allow access
     When I do POST /api/v4/widget-filters
     Then the response code should be 401
@@ -398,6 +460,24 @@ Feature: Create a widget filter
     {
       "errors": {
         "corporate_pbehavior_pattern": "CorporatePbehaviorPattern doesn't exist."
+      }
+    }
+    """
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-to-create-3-title",
+      "widget": "test-widget-to-filter-edit",
+      "is_private": false,
+      "corporate_alarm_pattern": "test-pattern-to-filter-edit-4"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "corporate_alarm_pattern": "CorporateAlarmPattern doesn't exist."
       }
     }
     """

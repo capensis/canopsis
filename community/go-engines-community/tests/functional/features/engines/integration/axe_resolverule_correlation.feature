@@ -45,7 +45,7 @@ Feature: resolve meta alarm
         "value": 2,
         "unit": "s"
       },
-      "priority": 10
+      "priority": 1
     }
     """
     Then the response code should be 201
