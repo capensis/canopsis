@@ -1,8 +1,8 @@
 template:
   - &resolve_rule {
     _id: <UUID()>,
-    name: <Word()>,
-    description: <Phrase()>,
+    name: <UniqueName()>,
+    description: <LoremIpsumSentence(3)>,
     created: <NowUnix()>,
     updated: <Current().created>,
     priority: <Index()>,
@@ -17,7 +17,7 @@ template:
           field: v.connector,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -28,7 +28,7 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -41,6 +41,9 @@ resolve_rule:
     _id: default_rule
     alarm_pattern:
     entity_pattern:
+    duration:
+      value: 100
+      unit: h
 
   resolve_rule_to_get_1:
     <<: *resolve_rule

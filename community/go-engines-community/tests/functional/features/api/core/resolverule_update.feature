@@ -87,8 +87,8 @@ Feature: Update an resolve rule
       "name": "Default rule",
       "description": "Default rule",
       "duration": {
-        "value": 10,
-        "unit": "s"
+        "value": 200,
+        "unit": "h"
       },
       "priority": 1
     }
@@ -100,8 +100,8 @@ Feature: Update an resolve rule
       "name": "Default rule",
       "description": "Default rule",
       "duration": {
-        "value": 10,
-        "unit": "s"
+        "value": 200,
+        "unit": "h"
       },
       "priority": 1
     }
