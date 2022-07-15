@@ -55,6 +55,7 @@ Feature: create entities on event
           "infos": {},
           "measurements": null,
           "name": "test-connector-name-che-1",
+          "connector_type": "test-connector-che-1",
           "type": "connector"
         },
         {
