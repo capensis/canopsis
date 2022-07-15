@@ -203,6 +203,31 @@ Feature: scenarios should be triggered by remediation triggers
     ]
     """
     Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain:
+    """json
+    [
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-action-remediation-triggers-2-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-action-remediation-triggers-2-name. Job test-job-action-remediation-triggers-1-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "system",
+        "m": "Instruction test-instruction-action-remediation-triggers-2-name. Job test-job-action-remediation-triggers-1-name."
+      },
+      {
+        "_t": "autoinstructionfail",
+        "a": "system",
+        "m": "Instruction test-instruction-action-remediation-triggers-2-name."
+      }
+    ]
+    """
     Then the response body should contain:
     """json
     [
@@ -214,23 +239,15 @@ Feature: scenarios should be triggered by remediation triggers
               {},
               {},
               {
-                "_t": "autoinstructionstart",
-                "a": "system",
                 "m": "Instruction test-instruction-action-remediation-triggers-2-name."
               },
               {
-                "_t": "instructionjobstart",
-                "a": "system",
                 "m": "Instruction test-instruction-action-remediation-triggers-2-name. Job test-job-action-remediation-triggers-1-name."
               },
               {
-                "_t": "instructionjobfail",
-                "a": "system",
                 "m": "Instruction test-instruction-action-remediation-triggers-2-name. Job test-job-action-remediation-triggers-1-name."
               },
               {
-                "_t": "autoinstructionfail",
-                "a": "system",
                 "m": "Instruction test-instruction-action-remediation-triggers-2-name."
               },
               {
@@ -332,6 +349,31 @@ Feature: scenarios should be triggered by remediation triggers
     ]
     """
     Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain:
+    """json
+    [
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-action-remediation-triggers-3-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-action-remediation-triggers-3-name. Job test-job-action-remediation-triggers-1-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "system",
+        "m": "Instruction test-instruction-action-remediation-triggers-3-name. Job test-job-action-remediation-triggers-1-name."
+      },
+      {
+        "_t": "autoinstructionfail",
+        "a": "system",
+        "m": "Instruction test-instruction-action-remediation-triggers-3-name."
+      }
+    ]
+    """
     Then the response body should contain:
     """json
     [
@@ -343,23 +385,15 @@ Feature: scenarios should be triggered by remediation triggers
               {},
               {},
               {
-                "_t": "autoinstructionstart",
-                "a": "system",
                 "m": "Instruction test-instruction-action-remediation-triggers-3-name."
               },
               {
-                "_t": "instructionjobstart",
-                "a": "system",
                 "m": "Instruction test-instruction-action-remediation-triggers-3-name. Job test-job-action-remediation-triggers-1-name."
               },
               {
-                "_t": "instructionjobfail",
-                "a": "system",
                 "m": "Instruction test-instruction-action-remediation-triggers-3-name. Job test-job-action-remediation-triggers-1-name."
               },
               {
-                "_t": "autoinstructionfail",
-                "a": "system",
                 "m": "Instruction test-instruction-action-remediation-triggers-3-name."
               },
               {
@@ -485,6 +519,26 @@ Feature: scenarios should be triggered by remediation triggers
     ]
     """
     Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain:
+    """json
+    [
+      {
+        "_t": "instructionstart",
+        "a": "root",
+        "m": "Instruction test-instruction-action-remediation-triggers-4-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "m": "Instruction test-instruction-action-remediation-triggers-4-name. Job test-job-action-remediation-triggers-2-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "root",
+        "m": "Instruction test-instruction-action-remediation-triggers-4-name. Job test-job-action-remediation-triggers-2-name."
+      }
+    ]
+    """
     Then the response body should contain:
     """json
     [
@@ -496,18 +550,12 @@ Feature: scenarios should be triggered by remediation triggers
               {},
               {},
               {
-                "_t": "instructionstart",
-                "a": "root",
                 "m": "Instruction test-instruction-action-remediation-triggers-4-name."
               },
               {
-                "_t": "instructionjobstart",
-                "a": "root",
                 "m": "Instruction test-instruction-action-remediation-triggers-4-name. Job test-job-action-remediation-triggers-2-name."
               },
               {
-                "_t": "instructionjobfail",
-                "a": "root",
                 "m": "Instruction test-instruction-action-remediation-triggers-4-name. Job test-job-action-remediation-triggers-2-name."
               },
               {
@@ -725,6 +773,31 @@ Feature: scenarios should be triggered by remediation triggers
     ]
     """
     Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain:
+    """json
+    [
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-action-remediation-triggers-6-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-action-remediation-triggers-6-name. Job test-job-action-remediation-triggers-3-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-action-remediation-triggers-6-name. Job test-job-action-remediation-triggers-3-name."
+      },
+      {
+        "_t": "autoinstructioncomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-action-remediation-triggers-6-name."
+      }
+    ]
+    """
     Then the response body should contain:
     """json
     [
@@ -736,23 +809,15 @@ Feature: scenarios should be triggered by remediation triggers
               {},
               {},
               {
-                "_t": "autoinstructionstart",
-                "a": "system",
                 "m": "Instruction test-instruction-action-remediation-triggers-6-name."
               },
               {
-                "_t": "instructionjobstart",
-                "a": "system",
                 "m": "Instruction test-instruction-action-remediation-triggers-6-name. Job test-job-action-remediation-triggers-3-name."
               },
               {
-                "_t": "instructionjobcomplete",
-                "a": "system",
                 "m": "Instruction test-instruction-action-remediation-triggers-6-name. Job test-job-action-remediation-triggers-3-name."
               },
               {
-                "_t": "autoinstructioncomplete",
-                "a": "system",
                 "m": "Instruction test-instruction-action-remediation-triggers-6-name."
               },
               {
