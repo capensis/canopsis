@@ -7,7 +7,7 @@ template:
           field: v.component,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -18,13 +18,13 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
     ],
-    author: <Word()>,
-    description: <Word()>,
+    author: root,
+    description: <LoremIpsumSentence(3)>,
     created: <NowUnix()>,
     updated: <Current().created>,
     duration: {
@@ -32,7 +32,7 @@ template:
       value: 3
     },
     freq_limit: 3,
-    name: <Word()>,
+    name: <UniqueName()>,
     priority: <Index()>
   }
 

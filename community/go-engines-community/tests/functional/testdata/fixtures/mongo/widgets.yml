@@ -1,7 +1,7 @@
 template:
   - &widget {
     _id: <UUID()>,
-    title: <Word()>,
+    title: <UniqueName()>,
     type: AlarmsList,
     grid_parameters: {
       desktop: {

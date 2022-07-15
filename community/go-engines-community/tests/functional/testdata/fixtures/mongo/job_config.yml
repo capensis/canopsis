@@ -2,7 +2,7 @@ template:
   - &condig_rundeck {
     _id: <UUID()>,
     type: rundeck,
-    name: <Word()>,
+    name: <UniqueName()>,
     host: <URL()>,
     auth_token: <UUID()>,
     author: root,
@@ -11,7 +11,7 @@ template:
   - &condig_dummy_rundeck {
     _id: <UUID()>,
     type: rundeck,
-    name: <Word()>,
+    name: <UniqueName()>,
     host: "http://localhost:3000",
     auth_token: <UUID()>,
     author: root,
@@ -20,7 +20,7 @@ template:
   - &condig_dummy_awx {
     _id: <UUID()>,
     type: awx,
-    name: <Word()>,
+    name: <UniqueName()>,
     host: "http://localhost:3000",
     auth_token: <UUID()>,
     author: root,
@@ -29,7 +29,7 @@ template:
   - &condig_dummy_jenkins {
     _id: <UUID()>,
     type: jenkins,
-    name: <Word()>,
+    name: <UniqueName()>,
     host: "http://localhost:3000",
     auth_token: <UUID()>,
     author: root,

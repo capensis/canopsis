@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
@@ -41,6 +42,11 @@ func main() {
 
 	f := flags{}
 	f.Parse()
+
+	if f.version {
+		canopsis.PrintVersionInfo("canopsis-reconfigure")
+		return
+	}
 
 	logger := log.NewLogger(f.modeDebug)
 	data, err := ioutil.ReadFile(f.confFile)
@@ -160,12 +166,19 @@ func main() {
 	if len(collections) == 0 {
 		logger.Info().Msg("Start fixtures")
 		loader := fixtures.NewLoader(client, []string{f.mongoFixtureDirectory}, true,
-			fixtures.NewParser(password.NewSha1Encoder()), logger)
+			fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), logger)
 		err = loader.Load(ctx)
 		utils.FailOnError(err, "Failed to apply fixtures")
 		logger.Info().Msg("Finish fixtures")
 	}
 
+	buildInfo := canopsis.GetBuildInfo()
+	err = config.NewVersionAdapter(client).UpsertConfig(ctx, config.VersionConf{
+		Version: buildInfo.Version,
+		Edition: f.edition,
+		Stack:   "go",
+	})
+	utils.FailOnError(err, "Failed to save config into mongo")
 	err = config.NewAdapter(client).UpsertConfig(ctx, conf.Canopsis)
 	utils.FailOnError(err, "Failed to save config into mongo")
 	err = config.NewRemediationAdapter(client).UpsertConfig(ctx, conf.Remediation)

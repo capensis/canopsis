@@ -2,7 +2,7 @@ template:
   - &metaaalarm_rule_complex {
     _id: <UUID()>,
     auto_resolve: false,
-    name: <Word()>,
+    name: <UniqueName()>,
     type: complex,
     author: root,
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}",
@@ -20,7 +20,7 @@ template:
           field: v.component,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -31,7 +31,7 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -40,7 +40,7 @@ template:
   - &metaaalarm_rule_attribute {
     _id: <UUID()>,
     auto_resolve: false,
-    name: <Word()>,
+    name: <UniqueName()>,
     type: attribute,
     author: root,
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}",
@@ -52,7 +52,7 @@ template:
           field: v.component,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -63,7 +63,7 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -646,3 +646,29 @@ meta_alarm_rules:
           regex_match: test-valuegroup-rule-rate-backward-compatibility-1-resource
       - name:
           regex_match: test-valuegroup-rule-rate-backward-compatibility-2-resource
+
+  metaalarm_rule_backward_compatibility_4:
+    _id: test-valuegroup-rule-rate-backward-compatibility-to-update
+    auto_resolve: false
+    name: test-valuegroup-rule-rate-backward-compatibility-to-update-name
+    config:
+      threshold_rate: 0.6
+      time_interval: {
+        unit: s,
+        value: 10
+      }
+      value_paths:
+        - entity.infos.test-valuegroup-rule-rate-backward-compatibility-to-update.value
+    type: valuegroup
+    old_event_patterns:
+      - resource:
+          regex_match: test-valuegroup-rule-rate-backward-compatibility-to-update
+    old_alarm_patterns:
+      - v:
+          component: test-valuegroup-rule-rate-backward-compatibility-to-update
+    old_entity_patterns:
+      - name:
+          regex_match: test-valuegroup-rule-rate-backward-compatibility-to-update
+    old_total_entity_patterns:
+      - name:
+          regex_match: test-valuegroup-rule-rate-backward-compatibility-to-update

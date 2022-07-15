@@ -534,7 +534,7 @@ Feature: Create an flapping rule
             }
           },
           {
-            "field": "v.flappingd",
+            "field": "v.resolved",
             "cond": {
               "type": "relative_time",
               "value": {

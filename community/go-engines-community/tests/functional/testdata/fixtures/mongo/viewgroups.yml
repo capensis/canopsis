@@ -1,7 +1,7 @@
 template:
   - &group {
     _id: <UUID()>,
-    title: <Word()>,
+    title: <UniqueName()>,
     position: <Index()>,
     author: root,
     created: <NowUnix()>,

@@ -8,8 +8,6 @@ import (
 	"strconv"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
-	"github.com/brianvoe/gofakeit/v6"
 	"github.com/goccy/go-yaml"
 )
 
@@ -24,13 +22,9 @@ type Parser interface {
 	Parse(content []byte) (map[string][]interface{}, error)
 }
 
-func NewParser(passwordEncoder password.Encoder) Parser {
-	faker := Faker{
-		Faker:           gofakeit.New(0),
-		passwordEncoder: passwordEncoder,
-	}
-
+func NewParser(faker *Faker) Parser {
 	return &parser{
+		faker:        faker,
 		reflectFaker: reflect.ValueOf(faker),
 		referenceRe:  regexp.MustCompile(referenceRegexp),
 		methodRe:     regexp.MustCompile(methodRegexp),
@@ -38,6 +32,7 @@ func NewParser(passwordEncoder password.Encoder) Parser {
 }
 
 type parser struct {
+	faker        *Faker
 	reflectFaker reflect.Value
 
 	referenceRe, methodRe *regexp.Regexp
@@ -94,6 +89,7 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 		}
 
 		docsByCollection[collectionName] = docs
+		p.faker.ResetUniqueName()
 	}
 
 	return docsByCollection, nil
@@ -202,6 +198,9 @@ func callReflectMethod(rv reflect.Value, method, args string) (interface{}, erro
 	in := make([]reflect.Value, 0)
 	if args != "" {
 		strs := strings.Split(args, ",")
+		if methodReflect.Type().NumIn() != len(strs) {
+			return nil, fmt.Errorf("expected %d arguments for method %q but got %d", methodReflect.Type().NumIn(), method, len(strs))
+		}
 		for i, s := range strs {
 			switch methodReflect.Type().In(i).Kind() {
 			case reflect.Int:
@@ -225,6 +224,16 @@ func callReflectMethod(rv reflect.Value, method, args string) (interface{}, erro
 	}
 
 	returnReflect := methodReflect.Call(in)
+	if len(returnReflect) == 2 {
+		errVal := returnReflect[1].Interface()
+		if errVal == nil {
+			return returnReflect[0].Interface(), nil
+		}
+		if err, ok := errVal.(error); ok {
+			return returnReflect[0].Interface(), fmt.Errorf("method %q returned error: %w", method, err)
+		}
+	}
+
 	if len(returnReflect) != 1 {
 		return nil, fmt.Errorf("unexpected count of return value for method %q : expected 1 but got %d", method, len(returnReflect))
 	}
