@@ -64,6 +64,7 @@ Feature: Get entities
           "infos": {},
           "measurements": null,
           "name": "test-connector-name-to-entity-get",
+          "connector_type": "test-connector-to-entity-get",
           "type": "connector",
           "ok_events": 0,
           "ko_events": 0,
