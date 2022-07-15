@@ -47,7 +47,7 @@ Feature: Get a resolve rule
             "value": 10,
             "unit": "s"
           },
-          "priority": 2,
+          "priority": 1,
           "updated": 1619083733
         },
         {
@@ -87,7 +87,7 @@ Feature: Get a resolve rule
             "value": 10,
             "unit": "s"
           },
-          "priority": 3,
+          "priority": 2,
           "updated": 1619083733
         }
       ],
@@ -143,7 +143,7 @@ Feature: Get a resolve rule
         "value": 10,
         "unit": "s"
       },
-      "priority": 2,
+      "priority": 1,
       "updated": 1619083733
     }
     """
