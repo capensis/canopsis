@@ -32,6 +32,7 @@ import (
 )
 
 type Options struct {
+	Version                  bool
 	FeatureHideResources     bool
 	FeaturePrintEventOnError bool
 	ModeDebug                bool
@@ -53,12 +54,8 @@ func ParseOptions() Options {
 	flag.BoolVar(&opts.IgnoreDefaultTomlConfig, "ignoreDefaultTomlConfig", false, "load toml file values into database. - deprecated")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
+	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.Parse()
-
-	flagVersion := flag.Bool("version", false, "version infos")
-	if *flagVersion {
-		canopsis.PrintVersionExit()
-	}
 
 	return opts
 }
