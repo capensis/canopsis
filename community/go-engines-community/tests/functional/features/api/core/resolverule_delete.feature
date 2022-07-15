@@ -28,3 +28,14 @@ Feature: Delete a resolve rule
       "error": "Not found"
     }
     """
+
+  Scenario: given delete default rule request should return error
+    When I am admin
+    When I do DELETE /api/v4/resolve-rules/default_rule
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "error": "cannot delete the default rule"
+    }
+    """

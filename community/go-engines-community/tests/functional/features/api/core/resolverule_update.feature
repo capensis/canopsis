@@ -79,6 +79,34 @@ Feature: Update an resolve rule
     }
     """
 
+  Scenario: given update default rule request should update resolve rule
+    When I am admin
+    Then I do PUT /api/v4/resolve-rules/default_rule:
+    """json
+    {
+      "name": "Default rule",
+      "description": "Default rule",
+      "duration": {
+        "value": 200,
+        "unit": "h"
+      },
+      "priority": 1
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "name": "Default rule",
+      "description": "Default rule",
+      "duration": {
+        "value": 200,
+        "unit": "h"
+      },
+      "priority": 1
+    }
+    """
+
   Scenario: given get request and no auth user should not allow access
     When I do PUT /api/v4/resolve-rules/test-resolve-rule-to-update
     Then the response code should be 401
