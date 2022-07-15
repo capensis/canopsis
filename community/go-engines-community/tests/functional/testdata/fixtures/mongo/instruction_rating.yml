@@ -2,7 +2,7 @@ template:
   - &rating {
     _id: <UUID()>,
     rating: <Number(1,5)>,
-    comment: <Phrase()>,
+    comment: <LoremIpsumSentence(3)>,
     created: <NowUnix()>,
     user: root
   }

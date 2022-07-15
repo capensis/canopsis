@@ -1,7 +1,7 @@
 template:
   - &job {
     _id: <UUID()>,
-    name: <Word()>,
+    name: <UniqueName()>,
     config: test-job-config-to-edit-job,
     multiple_executions: false,
     external_id: <UUID()>,
@@ -10,7 +10,7 @@ template:
   }
   - &job_dummy_succeeded {
     _id: <UUID()>,
-    name: <Word()>,
+    name: <UniqueName()>,
     multiple_executions: false,
     config: test-job-config-to-run-auto-instruction,
     external_id: test-job-succeeded,
@@ -19,7 +19,7 @@ template:
   }
   - &job_dummy_long_succeeded {
     _id: <UUID()>,
-    name: <Word()>,
+    name: <UniqueName()>,
     multiple_executions: false,
     config: test-job-config-to-run-auto-instruction,
     external_id: test-job-long-succeeded,
@@ -28,7 +28,7 @@ template:
   }
   - &job_dummy_failed {
     _id: <UUID()>,
-    name: <Word()>,
+    name: <UniqueName()>,
     multiple_executions: false,
     config: test-job-config-to-run-auto-instruction,
     external_id: test-job-failed,
@@ -37,7 +37,7 @@ template:
   }
   - &job_dummy_long_failed {
     _id: <UUID()>,
-    name: <Word()>,
+    name: <UniqueName()>,
     multiple_executions: false,
     config: test-job-config-to-run-auto-instruction,
     external_id: test-job-long-failed,
@@ -46,7 +46,7 @@ template:
   }
   - &job_dummy_http_error {
     _id: <UUID()>,
-    name: <Word()>,
+    name: <UniqueName()>,
     multiple_executions: false,
     config: test-job-config-to-run-auto-instruction,
     external_id: test-job-http-error,

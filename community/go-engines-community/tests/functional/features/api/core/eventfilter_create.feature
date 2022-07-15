@@ -637,6 +637,34 @@ Feature: Create an eventfilter
     }
     """
 
+  Scenario: create request with empty patterns should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "type":"enrichment",
+      "description":"Another entity copy",
+      "priority":0,
+      "enabled":true,
+      "config": {
+        "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+        "on_success":"pass",
+        "on_failure":"pass"
+      },
+      "external_data":{"entity":{"type":"entity"}}
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "event_pattern": "EventPattern or EntityPattern is required.",
+        "entity_pattern": "EntityPattern or EventPattern is required."
+      }
+    }
+    """
+
   Scenario: given POST change_entity rule requests should return error, because of empty config
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:

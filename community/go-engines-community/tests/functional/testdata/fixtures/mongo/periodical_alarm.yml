@@ -3,18 +3,18 @@ template:
     component: test-component-default,
     connector: test-connector-default,
     connector_name: test-connector-default-name,
-    resource: <Word()>,
+    resource: <UniqueName()>,
     creation_date: <NowUnix()>,
     last_event_date: <NowUnix()>,
     last_update_date: <NowUnix()>,
-    display_name: <Word()>,
+    display_name: <UniqueName()>,
     infos: { },
     infos_rule_version: { },
     long_output: "",
     initial_long_output: "",
     long_output_history: [""],
-    output: <Phrase()>,
-    initial_output: <Phrase()>,
+    output: <LoremIpsumSentence(3)>,
+    initial_output: <LoremIpsumSentence(3)>,
     parents: [ ],
     children: [ ],
     tags: [ ],
@@ -25,7 +25,7 @@ template:
     state: {
       _t: stateinc,
       a: test-connector-default/test-connector-default-name,
-      m: <Phrase()>,
+      m: <LoremIpsumSentence(3)>,
       t: <NowUnix()>,
       initiator: external,
       val: 3
@@ -33,7 +33,7 @@ template:
     status: {
       _t: statusinc,
       a: test-connector-default/test-connector-default-name,
-      m: <Phrase()>,
+      m: <LoremIpsumSentence(3)>,
       t: <NowUnix()>,
       initiator: external,
       val: 1
@@ -42,7 +42,7 @@ template:
       {
         _t: stateinc,
         a: test-connector-default/test-connector-default-name,
-        m: <Phrase()>,
+        m: <LoremIpsumSentence(3)>,
         t: <NowUnix()>,
         initiator: external,
         val: 3
@@ -50,7 +50,7 @@ template:
       {
         _t: statusinc,
         a: test-connector-default/test-connector-default-name,
-        m: <Phrase()>,
+        m: <LoremIpsumSentence(3)>,
         t: <NowUnix()>,
         initiator: external,
         val: 1
@@ -73,16 +73,16 @@ template:
        current_state_duration: 0,
        state: {
          _t: statedec,
-         a: <Word()>,
-         m: <Phrase()>,
+         a: root,
+         m: <LoremIpsumSentence(3)>,
          t: <NowUnix()>,
          initiator: external,
          val: 0
        },
        status: {
          _t: statusdec,
-         a: <Word()>,
-         m: <Phrase()>,
+         a: root,
+         m: <LoremIpsumSentence(3)>,
          t: <NowUnix()>,
          initiator: external,
          val: 0
@@ -90,32 +90,32 @@ template:
        steps: [
          {
            _t: stateinc,
-           a: <Word()>,
-           m: <Phrase()>,
+           a: root,
+           m: <LoremIpsumSentence(3)>,
            t: <NowUnix()>,
            initiator: external,
            val: 3
          },
          {
            _t: statusinc,
-           a: <Word()>,
-           m: <Phrase()>,
+           a: root,
+           m: <LoremIpsumSentence(3)>,
            t: <NowUnix()>,
            initiator: external,
            val: 1
          }
          {
            _t: statedec,
-           a: <Word()>,
-           m: <Phrase()>,
+           a: root,
+           m: <LoremIpsumSentence(3)>,
            t: <NowUnix()>,
            initiator: external,
            val: 0
          },
          {
            _t: statusdec,
-           a: <Word()>,
-           m: <Phrase()>,
+           a: root,
+           m: <LoremIpsumSentence(3)>,
            t: <NowUnix()>,
            initiator: external,
            val: 0
