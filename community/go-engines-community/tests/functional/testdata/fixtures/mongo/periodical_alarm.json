@@ -4269,6 +4269,236 @@
     }
   },
   {
+    "_id": "test-alarm-to-stats-executions-get-9",
+    "d": "test-resource-to-stats-executions-get-9/test-component-to-stats-executions-get-9",
+    "t": 1618279310,
+    "v": {
+      "state": {
+        "_t": "statedec",
+        "t": 1618280220,
+        "a": "",
+        "m": "",
+        "val": 2
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1618279310,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1618279310,
+          "a": "",
+          "m": "",
+          "val": 2
+        },
+        {
+          "_t": "statusinc",
+          "t": 1618279310,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "stateinc",
+          "t": 1618279510,
+          "a": "",
+          "m": "",
+          "val": 3
+        },
+        {
+          "_t": "comment",
+          "t": 1618279511,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1618279610,
+          "a": "",
+          "m": "",
+          "exec": "test-auto-instruction-execution-to-get-stats-4"
+        },
+        {
+          "_t": "instructionfail",
+          "t": 1618280210,
+          "a": "",
+          "m": "",
+          "exec": "test-auto-instruction-execution-to-get-stats-4"
+        },
+        {
+          "_t": "ack",
+          "t": 1618280220,
+          "a": "",
+          "m": ""
+        },
+        {
+          "_t": "statedec",
+          "t": 1618280221,
+          "a": "",
+          "m": "",
+          "val": 2
+        }
+      ],
+      "component": "test-component-to-stats-executions-get-9",
+      "connector": "test-connector-to-stats-executions-get-9",
+      "connector_name": "test-connector-name-to-stats-executions-get-9",
+      "creation_date": 1618279310,
+      "resource": "test-resource-to-stats-executions-get-9"
+    }
+  },
+  {
+    "_id": "test-alarm-to-stats-executions-get-11-1",
+    "d": "test-resource-to-stats-executions-get-11-1/test-component-to-stats-executions-get-11-1",
+    "t": 1618280213,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1618280213,
+        "a": "",
+        "m": "",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1618280213,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1618280213,
+          "a": "",
+          "m": "",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1618280213,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1618280213,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1618280218,
+          "a": "",
+          "m": "",
+          "val": 1
+        }
+      ],
+      "component": "test-component-to-stats-executions-get-11-1",
+      "connector": "test-connector-to-stats-executions-get-11-1",
+      "connector_name": "test-connector-name-to-stats-executions-get-11-1",
+      "creation_date": 1596942720,
+      "display_name": "RC-yN_tW",
+      "initial_output": "",
+      "output": "",
+      "initial_long_output": "",
+      "long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-resource-to-stats-executions-get-11-1",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-to-stats-executions-get-11-2",
+    "d": "test-resource-to-stats-executions-get-11-2/test-component-to-stats-executions-get-11-2",
+    "t": 1596942720,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "",
+        "m": "",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "",
+        "m": "",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "instructionstart",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 1
+        },
+        {
+          "_t": "instructioncomplete",
+          "t": 1596942720,
+          "a": "",
+          "m": "",
+          "val": 1
+        }
+      ],
+      "component": "test-component-to-stats-executions-get-11-2",
+      "connector": "test-connector-to-stats-executions-get-11-2",
+      "connector_name": "test-connector-name-to-stats-executions-get-11-2",
+      "creation_date": 1596942720,
+      "display_name": "pO-MT_t1",
+      "initial_output": "",
+      "output": "",
+      "initial_long_output": "",
+      "long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-resource-to-stats-executions-get-11-2",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
     "_id": "test-alarm-meta-children-with-instructions-1",
     "d": "test-alarm-meta-children-with-instructions-1/metaalarm",
     "t": 1597030219,

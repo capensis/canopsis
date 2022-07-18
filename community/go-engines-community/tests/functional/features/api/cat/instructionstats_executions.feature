@@ -665,6 +665,112 @@ Feature: get instruction statistics
       }
     }
     """
+    When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-executions-get-11/executions?show_failed=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "alarm": {
+            "_id": "test-alarm-to-stats-executions-get-11-2",
+            "v": {
+              "steps": [
+                {
+                  "_t": "stateinc",
+                  "t": 1596942720
+                },
+                {
+                  "_t": "statusinc",
+                  "t": 1596942720
+                },
+                {
+                  "_t": "instructionstart",
+                  "t": 1596942720
+                },
+                {
+                  "_t": "instructioncomplete",
+                  "t": 1596942720
+                }
+              ]
+            }
+          },
+          "duration": 0,
+          "status": 4,
+          "executed_on": 1618280220
+        },
+        {
+          "alarm": {
+            "_id": "test-alarm-to-stats-executions-get-11-1",
+            "v": {
+              "steps": [
+                {
+                  "_t": "stateinc",
+                  "t": 1618280213
+                },
+                {
+                  "_t": "statusinc",
+                  "t": 1618280213
+                },
+                {
+                  "_t": "instructionstart",
+                  "t": 1618280213
+                },
+                {
+                  "_t": "instructioncomplete",
+                  "t": 1618280218
+                }
+              ]
+            }
+          },
+          "duration": 5,
+          "status": 2,
+          "executed_on": 1618280218
+        },
+        {
+          "alarm": null,
+          "executed_on": 1596712203,
+          "duration": 0
+        }
+      ],
+      "meta": {
+          "page": 1,
+          "page_count": 1,
+          "per_page": 10,
+          "total_count": 3
+      }
+    }
+    """
+    When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-get-1/executions
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+          {
+              "duration": 200,
+              "status": 2,
+              "executed_on": 1618394399
+          },
+          {
+              "duration": 350,
+              "status": 2,
+              "executed_on": 1618307999
+          },
+          {
+              "duration": 400,
+              "status": 2,
+              "executed_on": 1618221599
+          }
+      ],
+      "meta": {
+          "page": 1,
+          "page_count": 1,
+          "per_page": 10,
+          "total_count": 3
+      }
+    }
+    """
 
   Scenario: given get request and no auth user should not allow access
     When I do GET /api/v4/cat/instruction-stats/notexist/executions

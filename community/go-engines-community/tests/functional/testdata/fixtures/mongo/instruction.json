@@ -3557,6 +3557,85 @@
     "created": 1596712203
   },
   {
+    "_id": "test-instruction-to-stats-executions-get-11",
+    "type": 0,
+    "name": "test-instruction-to-stats-executions-get-11-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-executions-get-11-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "steps": [
+      {
+        "_id": "test-instruction-to-stats-executions-get-11-step-1",
+        "name": "test-instruction-to-stats-executions-get-11-step-1-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-11-step-1-operation-1",
+            "name": "test-instruction-to-stats-executions-get-11-step-1-operation-1-name",
+            "time_to_complete": {
+              "value": 1,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-11-step-1-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-11-step-1-operation-2",
+            "name": "test-instruction-to-stats-executions-get-11-step-1-operation-2-name",
+            "time_to_complete": {
+              "value": 3,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-11-step-1-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-11-step-1-endpoint"
+      },
+      {
+        "_id": "test-instruction-to-stats-executions-get-11-step-2",
+        "name": "test-instruction-to-stats-executions-get-11-step-2-name",
+        "operations": [
+          {
+            "_id": "test-instruction-to-stats-executions-get-11-step-2-operation-1",
+            "name": "test-instruction-to-stats-executions-get-11-step-2-operation-1-name",
+            "time_to_complete": {
+              "value": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-11-step-2-operation-1-description",
+            "jobs": []
+          },
+          {
+            "_id": "test-instruction-to-stats-executions-get-11-step-2-operation-2",
+            "name": "test-instruction-to-stats-executions-get-11-step-2-operation-2-name",
+            "time_to_complete": {
+              "value": 6,
+              "unit": "s"
+            },
+            "description": "test-instruction-to-stats-executions-get-11-step-2-operation-2-description",
+            "jobs": []
+          }
+        ],
+        "stop_on_fail": true,
+        "endpoint": "test-instruction-to-stats-executions-get-11-step-2-endpoint"
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 2,
+      "unit": "s"
+    },
+    "last_executed_on": 1618280210,
+    "last_modified": 1596712203,
+    "created": 1596712203,
+    "users": ["test-user-to-stats-instruction-get"]
+  },
+  {
     "_id": "test-alarm-meta-children-with-instructions",
     "type": 0,
     "name": "test-alarm-meta-children-with-instructions-name",
@@ -3943,5 +4022,36 @@
     "enabled": true,
     "last_modified": 1596712203,
     "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-summary-get-4",
+    "type": 0,
+    "name": "test-instruction-to-stats-summary-get-4-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-summary-get-4-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "jobs": [
+      {
+        "job": "test-job-to-instruction-edit-1",
+        "stop_on_fail": true
+      },
+      {
+        "job": "test-job-to-instruction-edit-2"
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 2,
+      "unit": "s"
+    },
+    "priority": 16,
+    "last_modified": 1596712204,
+    "created": 1596712203,
+    "last_executed_on": 1596712209,
+    "avg_complete_time": 401
   }
 ]
