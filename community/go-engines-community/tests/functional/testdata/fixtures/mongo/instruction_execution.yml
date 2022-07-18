@@ -159,6 +159,7 @@ instruction_execution:
     alarm_state: 3
     completed_at: 1618221599
     instruction: test-instruction-to-stats-get-2
+    alarm: test-alarm-to-stats-executions-get-9
     instruction_modified_on: 1617555600
     started_at: 1618221599
 
@@ -312,6 +313,30 @@ instruction_execution:
     result_alarm_state: 1
     started_at: 1618280230
 
+  instruction-execution-to-stats-executions-get-11-1:
+    <<: *execution_completed
+    _id: test-auto-instruction-execution-to-stats-executions-get-11-1
+    instruction_modified_on: 1596712203
+    instruction: test-instruction-to-stats-executions-get-11
+    alarm: test-alarm-to-stats-executions-get-11-1
+    started_at: 1618280213
+    completed_at: 1618280218
+    complete_time: 5
+    alarm_state: 3
+    result_alarm_state: 1
+
+  instruction-execution-to-stats-executions-get-11-2:
+    <<: *execution_failed
+    _id: test-auto-instruction-execution-to-stats-executions-get-11-2
+    instruction_modified_on: 1596712203
+    instruction: test-instruction-to-stats-executions-get-11
+    alarm: test-alarm-to-stats-executions-get-11-2
+    started_at: 1618280220
+    completed_at: 1618280220
+    complete_time: 400
+    alarm_state: 3
+    result_alarm_state: 3
+
   instruction_execution_to_stats_executions_get_with_resolved_alarms_1:
     <<: *execution_completed
     _id: test-auto-instruction-execution-to-stats-executions-get-with-resolved-alarms-1
@@ -335,3 +360,15 @@ instruction_execution:
     instruction_modified_on: 1596712203
     result_alarm_state: 3
     started_at: 1618279610
+
+  instruction-executoin-to-stats-summary-get-4:
+    <<: *execution_completed
+    _id: test-instruction-executoin-to-stats-summary-get-4
+    instruction_modified_on: 1617555600
+    instruction: test-instruction-to-stats-summary-get-4
+    alarm: test-alarm-to-stats-executions-get-11-1
+    started_at: 1618221199
+    completed_at: 1618221599
+    complete_time: 400
+    alarm_state: 3
+    result_alarm_state: 3
