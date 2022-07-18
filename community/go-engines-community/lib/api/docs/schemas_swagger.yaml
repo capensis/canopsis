@@ -791,6 +791,9 @@ definitions:
         $ref: '#/definitions/entity.Infos'
       connector:
         type: string
+      connector_type:
+        description: ConnectorType contains a part before "/" of connector id.
+        type: string
       deletable:
         type: boolean
       depends:
@@ -950,6 +953,9 @@ definitions:
       component_infos:
         $ref: '#/definitions/entity.Infos'
       connector:
+        type: string
+      connector_type:
+        description: ConnectorType contains a part before "/" of connector id.
         type: string
       deletable:
         type: boolean
@@ -1145,6 +1151,9 @@ definitions:
       component_infos:
         $ref: '#/definitions/entity.Infos'
       connector:
+        type: string
+      connector_type:
+        description: ConnectorType contains a part before "/" of connector id.
         type: string
       corporate_entity_pattern:
         type: string
@@ -3552,8 +3561,9 @@ definitions:
         type: integer
       inactive_start:
         $ref: '#/definitions/types.CpsTime'
-        description: InactiveStart represents start of snooze or maintenance, pause,
-          inactive pbehavior interval.
+        description: |-
+          InactiveStart represents start of snooze or maintenance, pause, inactive pbehavior interval.
+          It's used only to compute InactiveDuration.
       infos:
         additionalProperties:
           additionalProperties: true
