@@ -128,7 +128,11 @@ type basePatternFieldsTransformer struct {
 
 func (t *basePatternFieldsTransformer) TransformAlarmPatternFieldsRequest(ctx context.Context, r AlarmPatternFieldsRequest) (AlarmPatternFieldsRequest, error) {
 	if r.CorporateAlarmPattern != "" {
-		err := t.patternCollection.FindOne(ctx, bson.M{"_id": r.CorporateAlarmPattern, "type": savedpattern.TypeAlarm}).Decode(&r.CorporatePattern)
+		err := t.patternCollection.FindOne(ctx, bson.M{
+			"_id":          r.CorporateAlarmPattern,
+			"type":         savedpattern.TypeAlarm,
+			"is_corporate": true,
+		}).Decode(&r.CorporatePattern)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return r, ErrNotExistCorporateAlarmPattern
@@ -143,7 +147,11 @@ func (t *basePatternFieldsTransformer) TransformAlarmPatternFieldsRequest(ctx co
 
 func (t *basePatternFieldsTransformer) TransformEntityPatternFieldsRequest(ctx context.Context, r EntityPatternFieldsRequest) (EntityPatternFieldsRequest, error) {
 	if r.CorporateEntityPattern != "" {
-		err := t.patternCollection.FindOne(ctx, bson.M{"_id": r.CorporateEntityPattern, "type": savedpattern.TypeEntity}).Decode(&r.CorporatePattern)
+		err := t.patternCollection.FindOne(ctx, bson.M{
+			"_id":          r.CorporateEntityPattern,
+			"type":         savedpattern.TypeEntity,
+			"is_corporate": true,
+		}).Decode(&r.CorporatePattern)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return r, ErrNotExistCorporateEntityPattern
@@ -158,7 +166,11 @@ func (t *basePatternFieldsTransformer) TransformEntityPatternFieldsRequest(ctx c
 
 func (t *basePatternFieldsTransformer) TransformPbehaviorPatternFieldsRequest(ctx context.Context, r PbehaviorPatternFieldsRequest) (PbehaviorPatternFieldsRequest, error) {
 	if r.CorporatePbehaviorPattern != "" {
-		err := t.patternCollection.FindOne(ctx, bson.M{"_id": r.CorporatePbehaviorPattern, "type": savedpattern.TypePbehavior}).Decode(&r.CorporatePattern)
+		err := t.patternCollection.FindOne(ctx, bson.M{
+			"_id":          r.CorporatePbehaviorPattern,
+			"type":         savedpattern.TypePbehavior,
+			"is_corporate": true,
+		}).Decode(&r.CorporatePattern)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return r, ErrNotExistCorporatePbehaviorPattern

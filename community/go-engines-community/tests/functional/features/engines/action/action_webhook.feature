@@ -318,10 +318,10 @@ Feature: execute action on trigger
       "triggers": ["ack"],
       "actions": [
         {
-          "alarm_pattern": [
+          "entity_pattern": [
             [
               {
-                "field": "v.component",
+                "field": "_id",
                 "cond": {
                   "type": "eq",
                   "value": "test-component-action-webhook-3"

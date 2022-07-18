@@ -3,18 +3,18 @@ template:
     _id: <UUID()>,
     author: root,
     enabled: true,
-    name: <Word()>,
-    description: <Phrase()>,
+    name: <UniqueName()>,
+    description: <LoremIpsumSentence(3)>,
     created: <NowUnix()>,
     updated: <Current().created>,
     infos: [
       {
-        name: <Word()>,
-        value: <Word()>
+        name: <LoremIpsumWord()>,
+        value: <LoremIpsumWord()>
       },
       {
-        name: <Word()>,
-        value: <Word()>
+        name: <LoremIpsumWord()>,
+        value: <LoremIpsumWord()>
       }
     ],
     alarm_pattern: [
@@ -23,7 +23,7 @@ template:
           field: v.component,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -34,12 +34,12 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
     ],
-    pattern: [<Word()>, <Word()>]
+    pattern: [<LoremIpsumWord()>, <LoremIpsumWord()>]
   }
 
 dynamic_infos:

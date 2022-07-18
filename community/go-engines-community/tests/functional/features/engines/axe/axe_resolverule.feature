@@ -24,7 +24,7 @@ Feature: resolve alarm on resolve rule
         "value": 2,
         "unit": "s"
       },
-      "priority": 10
+      "priority": 1
     }
     """
     Then the response code should be 201

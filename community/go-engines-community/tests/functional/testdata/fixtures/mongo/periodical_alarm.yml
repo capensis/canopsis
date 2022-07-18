@@ -3,18 +3,18 @@ template:
     component: test-component-default,
     connector: test-connector-default,
     connector_name: test-connector-default-name,
-    resource: <Word()>,
+    resource: <UniqueName()>,
     creation_date: <NowUnix()>,
     last_event_date: <NowUnix()>,
     last_update_date: <NowUnix()>,
-    display_name: <Word()>,
+    display_name: <UniqueName()>,
     infos: { },
     infos_rule_version: { },
     long_output: "",
     initial_long_output: "",
     long_output_history: [""],
-    output: <Phrase()>,
-    initial_output: <Phrase()>,
+    output: <LoremIpsumSentence(3)>,
+    initial_output: <LoremIpsumSentence(3)>,
     parents: [ ],
     children: [ ],
     tags: [ ],
@@ -25,7 +25,7 @@ template:
     state: {
       _t: stateinc,
       a: test-connector-default/test-connector-default-name,
-      m: <Phrase()>,
+      m: <LoremIpsumSentence(3)>,
       t: <NowUnix()>,
       initiator: external,
       val: 3
@@ -33,7 +33,7 @@ template:
     status: {
       _t: statusinc,
       a: test-connector-default/test-connector-default-name,
-      m: <Phrase()>,
+      m: <LoremIpsumSentence(3)>,
       t: <NowUnix()>,
       initiator: external,
       val: 1
@@ -42,7 +42,7 @@ template:
       {
         _t: stateinc,
         a: test-connector-default/test-connector-default-name,
-        m: <Phrase()>,
+        m: <LoremIpsumSentence(3)>,
         t: <NowUnix()>,
         initiator: external,
         val: 3
@@ -50,7 +50,7 @@ template:
       {
         _t: statusinc,
         a: test-connector-default/test-connector-default-name,
-        m: <Phrase()>,
+        m: <LoremIpsumSentence(3)>,
         t: <NowUnix()>,
         initiator: external,
         val: 1
@@ -73,16 +73,16 @@ template:
        current_state_duration: 0,
        state: {
          _t: statedec,
-         a: <Word()>,
-         m: <Phrase()>,
+         a: root,
+         m: <LoremIpsumSentence(3)>,
          t: <NowUnix()>,
          initiator: external,
          val: 0
        },
        status: {
          _t: statusdec,
-         a: <Word()>,
-         m: <Phrase()>,
+         a: root,
+         m: <LoremIpsumSentence(3)>,
          t: <NowUnix()>,
          initiator: external,
          val: 0
@@ -90,32 +90,32 @@ template:
        steps: [
          {
            _t: stateinc,
-           a: <Word()>,
-           m: <Phrase()>,
+           a: root,
+           m: <LoremIpsumSentence(3)>,
            t: <NowUnix()>,
            initiator: external,
            val: 3
          },
          {
            _t: statusinc,
-           a: <Word()>,
-           m: <Phrase()>,
+           a: root,
+           m: <LoremIpsumSentence(3)>,
            t: <NowUnix()>,
            initiator: external,
            val: 1
          }
          {
            _t: statedec,
-           a: <Word()>,
-           m: <Phrase()>,
+           a: root,
+           m: <LoremIpsumSentence(3)>,
            t: <NowUnix()>,
            initiator: external,
            val: 0
          },
          {
            _t: statusdec,
-           a: <Word()>,
-           m: <Phrase()>,
+           a: root,
+           m: <LoremIpsumSentence(3)>,
            t: <NowUnix()>,
            initiator: external,
            val: 0
@@ -455,6 +455,7 @@ periodical_alarm:
     d: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-next-component
       connector: test-instruction-execution-next-connector
@@ -510,6 +511,7 @@ periodical_alarm:
     d: test-instruction-execution-next-resource-2/test-instruction-execution-next-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-next-component
       connector: test-instruction-execution-next-connector
@@ -565,6 +567,7 @@ periodical_alarm:
     d: test-instruction-execution-next-step-resource-1/test-instruction-execution-next-step-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-next-step-component
       connector: test-instruction-execution-next-step-connector
@@ -620,6 +623,7 @@ periodical_alarm:
     d: test-instruction-execution-next-step-resource-2/test-instruction-execution-next-step-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-next-step-component
       connector: test-instruction-execution-next-step-connector
@@ -675,6 +679,7 @@ periodical_alarm:
     d: test-instruction-execution-next-step-resource-3/test-instruction-execution-next-step-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-next-step-component
       connector: test-instruction-execution-next-step-connector
@@ -730,6 +735,7 @@ periodical_alarm:
     d: test-instruction-execution-next-step-resource-4/test-instruction-execution-next-step-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-next-step-component
       connector: test-instruction-execution-next-step-connector
@@ -785,6 +791,7 @@ periodical_alarm:
     d: test-instruction-execution-next-step-resource-5/test-instruction-execution-next-step-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-next-step-component
       connector: test-instruction-execution-next-step-connector
@@ -840,6 +847,7 @@ periodical_alarm:
     d: test-instruction-execution-next-step-resource-6/test-instruction-execution-next-step-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-next-step-component
       connector: test-instruction-execution-next-step-connector
@@ -895,6 +903,7 @@ periodical_alarm:
     d: test-instruction-execution-previous-resource-1/test-instruction-execution-previous-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-previous-component
       connector: test-instruction-execution-previous-connector
@@ -950,6 +959,7 @@ periodical_alarm:
     d: test-instruction-execution-previous-resource-2/test-instruction-execution-previous-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-previous-component
       connector: test-instruction-execution-previous-connector
@@ -1005,6 +1015,7 @@ periodical_alarm:
     d: test-instruction-execution-previous-resource-3/test-instruction-execution-previous-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-previous-component
       connector: test-instruction-execution-previous-connector
@@ -1060,6 +1071,7 @@ periodical_alarm:
     d: test-instruction-execution-previous-resource-4/test-instruction-execution-previous-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-previous-component
       connector: test-instruction-execution-previous-connector
@@ -1115,6 +1127,7 @@ periodical_alarm:
     d: test-instruction-execution-cancel-resource-1/test-instruction-execution-cancel-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-cancel-component
       connector: test-instruction-execution-cancel-connector
@@ -1170,6 +1183,7 @@ periodical_alarm:
     d: test-instruction-execution-cancel-resource-2/test-instruction-execution-cancel-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-cancel-component
       connector: test-instruction-execution-cancel-connector
@@ -1225,6 +1239,7 @@ periodical_alarm:
     d: test-instruction-execution-pause-resource-1/test-instruction-execution-pause-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-pause-component
       connector: test-instruction-execution-pause-connector
@@ -1273,6 +1288,7 @@ periodical_alarm:
     d: test-instruction-execution-pause-resource-2/test-instruction-execution-pause-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-pause-component
       connector: test-instruction-execution-pause-connector
@@ -1321,6 +1337,7 @@ periodical_alarm:
     d: test-instruction-execution-pause-resource-3/test-instruction-execution-pause-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-pause-component
       connector: test-instruction-execution-pause-connector
@@ -1369,6 +1386,7 @@ periodical_alarm:
     d: test-instruction-execution-pause-resource-4/test-instruction-execution-pause-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-pause-component
       connector: test-instruction-execution-pause-connector
@@ -1417,6 +1435,7 @@ periodical_alarm:
     d: test-instruction-execution-resume-resource-1/test-instruction-execution-resume-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-resume-component
       connector: test-instruction-execution-resume-connector
@@ -1465,6 +1484,7 @@ periodical_alarm:
     d: test-instruction-execution-get-resource-1/test-instruction-execution-get-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-get-component
       connector: test-instruction-execution-get-connector
@@ -1520,6 +1540,7 @@ periodical_alarm:
     d: test-instruction-execution-get-resource-2/test-instruction-execution-get-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-get-component
       connector: test-instruction-execution-get-connector
@@ -1575,6 +1596,7 @@ periodical_alarm:
     d: test-instruction-execution-get-resource-3/test-instruction-execution-get-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-get-component
       connector: test-instruction-execution-get-connector
@@ -1630,6 +1652,7 @@ periodical_alarm:
     d: test-instruction-execution-get-resource-4/test-instruction-execution-get-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-instruction-execution-get-component
       connector: test-instruction-execution-get-connector
@@ -1685,6 +1708,7 @@ periodical_alarm:
     d: test-entity-to-check-deletable-resource/test-entity-to-check-deletable-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-entity-to-check-deletable-component
       connector: test-entity-to-check-deletable-connector
@@ -1710,6 +1734,7 @@ periodical_alarm:
     d: test-entitybasic-to-delete-linked-to-alarm-resource/test-entitybasic-to-delete-linked-to-alarm-component
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-entitybasic-to-delete-linked-to-alarm-component
       connector: test-entitybasic-to-delete-linked-to-alarm-connector
@@ -1735,6 +1760,7 @@ periodical_alarm:
     d: test-entity-to-export-resource-1/test-entity-to-export-component
     t: 1596942720
     v:
+      <<: *alarm_value
       ack:
         _t: ack
         a: system
@@ -1798,6 +1824,7 @@ periodical_alarm:
     d: test-entity-to-export-resource-2/test-entity-to-export-component
     t: 1597030219
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-alarm-to-export-component
       connector: test-alarm-to-export-connector
@@ -1846,6 +1873,7 @@ periodical_alarm:
     d: test-resource-to-not-run-auto-instruction-manually/test-component-to-not-run-auto-instruction-manually
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-component-to-not-run-auto-instruction-manually
       connector: test-connector-to-not-run-auto-instruction-manually
@@ -1894,6 +1922,7 @@ periodical_alarm:
     d: test-resource-to-stats-executions-get-1/test-component-to-stats-executions-get-1
     t: 1596942720
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-component-to-stats-executions-get-1
       connector: test-connector-to-stats-executions-get-1
@@ -1952,6 +1981,7 @@ periodical_alarm:
     d: test-resource-to-stats-executions-get-3/test-component-to-stats-executions-get-3
     t: 1618279310
     v:
+      <<: *alarm_value
       component: test-component-to-stats-executions-get-3
       connector: test-connector-to-stats-executions-get-3
       connector_name: test-connector-name-to-stats-executions-get-3
@@ -2017,6 +2047,7 @@ periodical_alarm:
     d: test-resource-to-stats-executions-get-4/test-component-to-stats-executions-get-4
     t: 1618279310
     v:
+      <<: *alarm_value
       component: test-component-to-stats-executions-get-4
       connector: test-connector-to-stats-executions-get-4
       connector_name: test-connector-name-to-stats-executions-get-4
@@ -2078,6 +2109,7 @@ periodical_alarm:
     d: test-resource-to-stats-executions-get-5/test-component-to-stats-executions-get-5
     t: 1618279310
     v:
+      <<: *alarm_value
       component: test-component-to-stats-executions-get-5
       connector: test-connector-to-stats-executions-get-5
       connector_name: test-connector-name-to-stats-executions-get-5
@@ -2148,6 +2180,7 @@ periodical_alarm:
     d: test-resource-to-stats-executions-get-6/test-component-to-stats-executions-get-6
     t: 1618279310
     v:
+      <<: *alarm_value
       component: test-component-to-stats-executions-get-6
       connector: test-connector-to-stats-executions-get-6
       connector_name: test-connector-name-to-stats-executions-get-6
@@ -2232,6 +2265,7 @@ periodical_alarm:
     d: test-resource-to-stats-executions-get-7/test-component-to-stats-executions-get-7
     t: 1618279310
     v:
+      <<: *alarm_value
       component: test-component-to-stats-executions-get-7
       connector: test-connector-to-stats-executions-get-7
       connector_name: test-connector-name-to-stats-executions-get-7
@@ -2302,6 +2336,7 @@ periodical_alarm:
     d: test-resource-to-stats-executions-get-8/test-component-to-stats-executions-get-8
     t: 1618279310
     v:
+      <<: *alarm_value
       component: test-component-to-stats-executions-get-8
       connector: test-connector-to-stats-executions-get-8
       connector_name: test-connector-name-to-stats-executions-get-8
@@ -2386,6 +2421,7 @@ periodical_alarm:
     d: test-alarm-time-fields-search-get-resource-1/test-alarm-time-fields-search-get-component
     t: 2000000000
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-alarm-time-fields-search-get-component
       connector: test-alarm-time-fields-search-get-connector
@@ -2442,6 +2478,7 @@ periodical_alarm:
     d: test-alarm-time-fields-search-get-resource-1/test-alarm-time-fields-search-get-component
     t: 2000000010
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-alarm-time-fields-search-get-component
       connector: test-alarm-time-fields-search-get-connector
@@ -2498,6 +2535,7 @@ periodical_alarm:
     d: test-alarm-time-fields-search-get-resource-3/test-alarm-time-fields-search-get-component
     t: 2000000020
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-alarm-time-fields-search-get-component
       connector: test-alarm-time-fields-search-get-connector
@@ -2554,6 +2592,7 @@ periodical_alarm:
     d: test-alarm-time-fields-search-get-resource-4/test-alarm-time-fields-search-get-component
     t: 2000000120
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-alarm-time-fields-search-get-component
       connector: test-alarm-time-fields-search-get-connector
@@ -2611,6 +2650,7 @@ periodical_alarm:
     d: test-alarm-time-fields-search-get-resource-5/test-alarm-time-fields-search-get-component
     t: 2000000120
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-alarm-time-fields-search-get-component
       connector: test-alarm-time-fields-search-get-connector
@@ -2668,6 +2708,7 @@ periodical_alarm:
     d: test-alarm-time-fields-search-get-resource-6/test-alarm-time-fields-search-get-component
     t: 2000000120
     v:
+      <<: *alarm_value
       children: [ ]
       component: test-alarm-time-fields-search-get-component
       connector: test-alarm-time-fields-search-get-connector

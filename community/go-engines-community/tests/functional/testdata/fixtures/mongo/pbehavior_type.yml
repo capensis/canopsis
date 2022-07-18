@@ -2,32 +2,32 @@ template:
   - &type_inactive {
     _id: <UUID()>,
     priority: <Index()>,
-    name: <Word()>,
-    description: <Phrase()>,
+    name: <UniqueName()>,
+    description: <LoremIpsumSentence(3)>,
     icon_name: brightness_3,
     type: inactive
   }
   - &type_active {
     _id: <UUID()>,
     priority: <Index()>,
-    name: <Word()>,
-    description: <Phrase()>,
+    name: <UniqueName()>,
+    description: <LoremIpsumSentence(3)>,
     icon_name: brightness_3,
     type: active
   }
   - &type_maintenance {
     _id: <UUID()>,
     priority: <Index()>,
-    name: <Word()>,
-    description: <Phrase()>,
+    name: <UniqueName()>,
+    description: <LoremIpsumSentence(3)>,
     icon_name: build,
     type: maintenance
   }
   - &type_pause {
     _id: <UUID()>,
     priority: <Index()>,
-    name: <Word()>,
-    description: <Phrase()>,
+    name: <UniqueName()>,
+    description: <LoremIpsumSentence(3)>,
     icon_name: pause,
     type: pause
   }

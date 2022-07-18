@@ -1,7 +1,7 @@
 template:
   - &scenario {
     _id: <UUID()>,
-    name: <Word()>,
+    name: <UniqueName()>,
     priority: <Index()>,
     enabled: true,
     author: root,
@@ -19,7 +19,7 @@ template:
               field: v.component,
               cond: {
                 type: eq,
-                value: <Word()>
+                value: <LoremIpsumWord()>
               }
             }
           ]
@@ -30,7 +30,7 @@ template:
               field: name,
               cond: {
                 type: eq,
-                value: <Word()>
+                value: <LoremIpsumWord()>
               }
             }
           ]

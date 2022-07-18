@@ -1,8 +1,8 @@
 template:
   - &exception {
     _id: <UUID()>,
-    name: <Word()>,
-    description: <Phrase()>,
+    name: <UniqueName()>,
+    description: <LoremIpsumSentence(3)>,
     created: <NowUnix()>,
     exdates: [
       {

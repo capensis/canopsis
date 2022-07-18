@@ -3,6 +3,8 @@ package fifo
 import (
 	"context"
 	"flag"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -16,10 +18,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type Options struct {
+	Version                  bool
 	PrintEventOnError        bool
 	ModeDebug                bool
 	ConsumeFromQueue         string
@@ -44,14 +46,9 @@ func ParseOptions() Options {
 	flag.StringVar(&opts.DataSourceDirectory, "dataSourceDirectory", ".", "The path of the directory containing the event filter's data source plugins.")
 	flag.DurationVar(&opts.ExternalDataApiTimeout, "externalDataApiTimeout", 30*time.Second, "External API HTTP Request Timeout.")
 	flag.Bool("enableMetaAlarmProcessing", true, "Enable meta-alarm processing - deprecated")
-
-	flagVersion := flag.Bool("version", false, "version infos")
+	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 
 	flag.Parse()
-
-	if *flagVersion {
-		canopsis.PrintVersionExit()
-	}
 
 	return opts
 }
