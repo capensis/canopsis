@@ -86,6 +86,10 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	if err != nil {
 		panic(err)
 	}
+	err = v.RegisterValidation("info_value", common.ValidateInfoValue)
+	if err != nil {
+		panic(err)
+	}
 	v.RegisterCustomTypeFunc(common.ValidateCpsTimeType, types.CpsTime{})
 
 	// Request validators
