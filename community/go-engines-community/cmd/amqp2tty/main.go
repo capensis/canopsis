@@ -20,6 +20,8 @@ const (
 
 func main() {
 	var version bool
+	var exchange string
+	flag.StringVar(&exchange, "exchange", canopsis.CanopsisEventsExchange, "exchange name to read events from")
 	flag.BoolVar(&version, "version", false, "Show the version information")
 	flag.Parse()
 
@@ -54,11 +56,6 @@ func main() {
 			log.Fatal(err)
 		}
 	}()
-
-	exchange := canopsis.CanopsisEventsExchange
-	if len(os.Args) > 1 {
-		exchange = os.Args[1]
-	}
 
 	queue, err := ch.QueueDeclare(
 		daemonName,
