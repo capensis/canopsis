@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -220,6 +222,10 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 	}
 
 	return p.Validate(nil)
+}
+
+func ValidateInfoValue(fl validator.FieldLevel) bool {
+	return types.IsInfoValueValid(fl.Field().Interface())
 }
 
 func GetForbiddenFieldsInEntityPattern(collection string) []string {

@@ -121,3 +121,23 @@ dynamic_infos:
   dynamic_infos_to_check_unique:
     <<: *rule
     _id: test-dynamic-infos-to-check-unique
+
+  dynamic_infos_to_update_3:
+    <<: *rule
+    _id: test-dynamic-infos-to-update-3
+
+  dynamic_infos_to_update_4:
+    <<: *rule
+    _id: test-dynamic-infos-to-update-4
+
+  dynamic_infos_to_update_5:
+    <<: *rule
+    _id: test-dynamic-infos-to-update-5
+
+  dynamic_infos_to_update_6:
+    <<: *rule
+    _id: test-dynamic-infos-to-update-6
+
+  dynamic_infos_to_update_7:
+    <<: *rule
+    _id: test-dynamic-infos-to-update-7
