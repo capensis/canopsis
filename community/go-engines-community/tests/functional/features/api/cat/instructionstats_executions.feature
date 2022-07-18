@@ -665,6 +665,75 @@ Feature: get instruction statistics
       }
     }
     """
+    When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-get-1/executions?show_failed=true
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "data": [
+          {
+              "alarm": null,
+              "duration": 200,
+              "status": 2,
+              "executed_on": 1618394399
+          },
+          {
+              "alarm": null,
+              "duration": 350,
+              "status": 2,
+              "executed_on": 1618307999
+          },
+          {
+              "alarm": null,
+              "duration": 400,
+              "status": 2,
+              "executed_on": 1618221599
+          },
+          {
+              "alarm": null,
+              "status": 4,
+              "executed_on": 1618221599,
+              "duration": 0
+          }
+      ],
+      "meta": {
+          "page": 1,
+          "page_count": 1,
+          "per_page": 10,
+          "total_count": 4
+      }
+    }
+    """
+    When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-get-1/executions
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+          {
+              "duration": 200,
+              "status": 2,
+              "executed_on": 1618394399
+          },
+          {
+              "duration": 350,
+              "status": 2,
+              "executed_on": 1618307999
+          },
+          {
+              "duration": 400,
+              "status": 2,
+              "executed_on": 1618221599
+          }
+      ],
+      "meta": {
+          "page": 1,
+          "page_count": 1,
+          "per_page": 10,
+          "total_count": 3
+      }
+    }
+    """
 
   Scenario: given get request and no auth user should not allow access
     When I do GET /api/v4/cat/instruction-stats/notexist/executions
