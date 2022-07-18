@@ -3,6 +3,8 @@ package context
 import (
 	"context"
 	"errors"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -12,7 +14,6 @@ import (
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 func NewEnrichmentCenter(
@@ -91,10 +92,6 @@ func (c *center) Handle(ctx context.Context, event types.Event) (*types.Entity, 
 	updatedEntities = append(updatedEntities, resources...)
 	if len(updatedEntities) > 0 {
 		go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
-	}
-
-	if !eventEntity.Enabled {
-		return eventEntity, updatedServices, nil
 	}
 
 	found := false
