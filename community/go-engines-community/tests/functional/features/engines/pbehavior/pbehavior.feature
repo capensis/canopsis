@@ -993,7 +993,7 @@ Feature: update alarm on pbehavior
             "name": "test-pbehavior-10",
             "reason": "Test Engine",
             "canonical_type": "pause",
-            "icon_name": "test-pause-to-engine-icon",
+            "icon_name": "pause",
             "type": "test-pause-type-to-engine",
             "type_name": "Engine pause"
           }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"os"
 	"strconv"
 	"time"
 
@@ -141,7 +142,8 @@ func NewFeeder(logger zerolog.Logger) (*Feeder, error) {
 	}
 
 	if f.flags.Version {
-		cps.PrintVersionExit()
+		cps.PrintVersionInfo()
+		os.Exit(0)
 	}
 
 	return &f, nil

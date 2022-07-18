@@ -3,6 +3,7 @@ package canopsis
 import (
 	"fmt"
 	"os"
+	"path"
 	"runtime/debug"
 	"strconv"
 	"time"
@@ -18,26 +19,15 @@ type BuildInfo struct {
 	Version     string
 	Date        time.Time
 	VcsRevision string
+	GoVersion   string
+	Os          string
 }
 
-// PrintVersion outputs version information
-func PrintVersion() {
+func PrintVersionInfo() {
 	bi := GetBuildInfo()
 
-	fmt.Printf("build date  : %s\n", bi.Date.Format(time.RFC3339))
-	fmt.Printf("build commit: %s\n", bi.VcsRevision)
-}
-
-// PrintVersionExit calls PrintVersion then exit(0)
-func PrintVersionExit() {
-	PrintVersion()
-	os.Exit(0)
-}
-
-func PrintVersionInfo(name string) {
-	bi := GetBuildInfo()
-
-	fmt.Printf("%s version %s, build %s %s\n", name, bi.Version, bi.VcsRevision, bi.Date.Format(time.RFC3339))
+	fmt.Printf("%s version %s build %s %s %s %s\n", path.Base(os.Args[0]), bi.Version, bi.VcsRevision,
+		bi.Date.Format(time.RFC3339), bi.GoVersion, bi.Os)
 }
 
 func GetBuildInfo() BuildInfo {
@@ -52,12 +42,20 @@ func GetBuildInfo() BuildInfo {
 		buildDate = time.Unix(timestamp, 0).UTC()
 	}
 
+	goVersion := ""
+	buildOs := ""
+	buildArch := ""
 	vcsRevision := ""
 	vcsModified := false
 	const revLen = 12
 	if bi, ok := debug.ReadBuildInfo(); ok {
+		goVersion = bi.GoVersion
 		for _, setting := range bi.Settings {
 			switch setting.Key {
+			case "GOOS":
+				buildOs = setting.Value
+			case "GOARCH":
+				buildArch = setting.Value
 			case "vcs.revision":
 				vcsRevision = setting.Value
 				if len(vcsRevision) > revLen {
@@ -78,5 +76,7 @@ func GetBuildInfo() BuildInfo {
 		Version:     v,
 		Date:        buildDate,
 		VcsRevision: vcsRevision,
+		GoVersion:   goVersion,
+		Os:          fmt.Sprintf("%s/%s", buildOs, buildArch),
 	}
 }

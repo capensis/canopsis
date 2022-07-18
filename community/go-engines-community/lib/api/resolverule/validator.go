@@ -3,7 +3,9 @@ package resolverule
 import (
 	"context"
 	"errors"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
@@ -46,6 +48,9 @@ func (v *Validator) validatePatterns(ctx context.Context, sl validator.StructLev
 		len(r.AlarmPattern) == 0 && r.CorporateAlarmPattern == "" {
 
 		if id != "" {
+			if id == resolverule.DefaultRule {
+				return
+			}
 			err := v.dbClient.Collection(mongo.ResolveRuleMongoCollection).FindOne(
 				ctx,
 				bson.M{

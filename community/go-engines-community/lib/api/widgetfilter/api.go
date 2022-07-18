@@ -17,14 +17,14 @@ import (
 type api struct {
 	store        Store
 	enforcer     security.Enforcer
-	transformer  common.PatternFieldsTransformer
+	transformer  PatternFieldsTransformer
 	actionLogger logger.ActionLogger
 }
 
 func NewApi(
 	store Store,
 	enforcer security.Enforcer,
-	transformer common.PatternFieldsTransformer,
+	transformer PatternFieldsTransformer,
 	actionLogger logger.ActionLogger,
 ) common.CrudAPI {
 	return &api{
@@ -278,15 +278,30 @@ func (a *api) checkAccessByWidget(ctx context.Context, id string, userId, perm s
 
 func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
 	var err error
-	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, request.AlarmPatternFieldsRequest)
+	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(
+		ctx,
+		request.AlarmPatternFieldsRequest,
+		*request.IsPrivate,
+		request.Author,
+	)
 	if err != nil {
 		return err
 	}
-	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(
+		ctx,
+		request.EntityPatternFieldsRequest,
+		*request.IsPrivate,
+		request.Author,
+	)
 	if err != nil {
 		return err
 	}
-	request.PbehaviorPatternFieldsRequest, err = a.transformer.TransformPbehaviorPatternFieldsRequest(ctx, request.PbehaviorPatternFieldsRequest)
+	request.PbehaviorPatternFieldsRequest, err = a.transformer.TransformPbehaviorPatternFieldsRequest(
+		ctx,
+		request.PbehaviorPatternFieldsRequest,
+		*request.IsPrivate,
+		request.Author,
+	)
 	if err != nil {
 		return err
 	}

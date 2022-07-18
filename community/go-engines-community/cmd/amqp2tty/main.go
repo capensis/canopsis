@@ -2,14 +2,16 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"log"
 	"os"
 	"os/signal"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 )
 
 const (
@@ -17,6 +19,15 @@ const (
 )
 
 func main() {
+	var version bool
+	flag.BoolVar(&version, "version", false, "Show the version information")
+	flag.Parse()
+
+	if version {
+		canopsis.PrintVersionInfo()
+		return
+	}
+
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
