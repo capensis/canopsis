@@ -449,7 +449,7 @@ Feature: Create an dynamic-infos
     """
     {
       "errors": {
-        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+        "infos.0.value": "info value should be int, string, bool or array of strings"
       }
     }
     """
@@ -487,7 +487,7 @@ Feature: Create an dynamic-infos
     """
     {
       "errors": {
-        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+        "infos.0.value": "info value should be int, string, bool or array of strings"
       }
     }
     """
@@ -528,7 +528,7 @@ Feature: Create an dynamic-infos
     """
     {
       "errors": {
-        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+        "infos.0.value": "info value should be int, string, bool or array of strings"
       }
     }
     """
