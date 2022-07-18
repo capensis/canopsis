@@ -445,6 +445,14 @@ Feature: Create an dynamic-infos
     }
     """
     Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """
 
   Scenario: given create request where info value is array of various types should return error
     When I am admin
@@ -475,7 +483,15 @@ Feature: Create an dynamic-infos
     }
     """
     Then the response code should be 400
-    
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """
+
   Scenario: given create request where info value is object should return error
     When I am admin
     When I do POST /api/v4/cat/dynamic-infos:
@@ -508,3 +524,11 @@ Feature: Create an dynamic-infos
     }
     """
     Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """

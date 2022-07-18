@@ -461,6 +461,14 @@ Feature: Update a dynamic infos
     }
     """
     Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """
 
   Scenario: given create request where info value is array of various types should return error
     When I am admin
@@ -491,7 +499,15 @@ Feature: Update a dynamic infos
     }
     """
     Then the response code should be 400
-    
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """
+
   Scenario: given create request where info value is object should return error
     When I am admin
     When I do PUT /api/v4/cat/dynamic-infos/test-dynamic-infos-to-update-7:
@@ -524,3 +540,11 @@ Feature: Update a dynamic infos
     }
     """
     Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """
