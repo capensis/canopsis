@@ -185,6 +185,7 @@
     "_id": "test-auto-instruction-execution-to-get-stats-4",
     "instruction_modified_on": 1617555600,
     "instruction": "test-instruction-to-stats-get-2",
+    "alarm": "test-alarm-to-stats-executions-get-9",
     "status": 4,
     "started_at": 1618221599,
     "completed_at": 1618221599,
