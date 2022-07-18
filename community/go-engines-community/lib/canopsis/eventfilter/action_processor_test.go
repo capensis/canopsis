@@ -4,10 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestActionProcessor(t *testing.T) {
