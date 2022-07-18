@@ -1,8 +1,6 @@
 package entityservice
 
 import (
-	"fmt"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -17,10 +15,6 @@ func GetAlarmCountersFromEvent(event types.Event) (*AlarmCounters, *AlarmCounter
 	}
 
 	var oldCounters, currentCounters *AlarmCounters
-
-	if event.EventType == types.EventTypeEntityToggled {
-		fmt.Printf("process toggle event\n")
-	}
 
 	if event.Alarm == nil {
 		switch alarmChangeType {
