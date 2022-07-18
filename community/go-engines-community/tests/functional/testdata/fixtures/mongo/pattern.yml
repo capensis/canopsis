@@ -1,7 +1,7 @@
 template:
   - &pattern_alarm {
     _id: <UUID()>,
-    title: <Word()>,
+    title: <UniqueName()>,
     is_corporate: false,
     type: alarm,
     alarm_pattern: [
@@ -10,7 +10,7 @@ template:
           field: v.connector,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -21,7 +21,7 @@ template:
   }
   - &pattern_entity {
     _id: <UUID()>,
-    title: <Word()>,
+    title: <UniqueName()>,
     is_corporate: false,
     type: entity,
     entity_pattern: [
@@ -30,7 +30,7 @@ template:
           field: name,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -41,7 +41,7 @@ template:
   }
   - &pattern_pbehavior {
     _id: <UUID()>,
-    title: <Word()>,
+    title: <UniqueName()>,
     is_corporate: false,
     type: pbehavior,
     pbehavior_pattern: [
@@ -50,7 +50,7 @@ template:
           field: pbehavior_info.type,
           cond: {
             type: eq,
-            value: <Word()>
+            value: <LoremIpsumWord()>
           }
         }
       ]
@@ -212,6 +212,48 @@ pattern:
           cond:
             type: eq
             value: test-pattern-to-filter-edit-3-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_filter_edit_4:
+    <<: *pattern_alarm
+    _id: test-pattern-to-filter-edit-4
+    title: test-pattern-to-filter-edit-4-title
+    is_corporate: false
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-pattern-to-filter-edit-4-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_filter_edit_5:
+    <<: *pattern_entity
+    _id: test-pattern-to-filter-edit-5
+    title: test-pattern-to-filter-edit-5-title
+    is_corporate: false
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-filter-edit-5-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_filter_edit_6:
+    <<: *pattern_pbehavior
+    _id: test-pattern-to-filter-edit-6
+    title: test-pattern-to-filter-edit-6-title
+    is_corporate: false
+    pbehavior_pattern:
+      - - field: pbehavior_info.type
+          cond:
+            type: eq
+            value: test-pattern-to-filter-edit-6-pattern
     author: root
     created: 1605263992
     updated: 1605263992

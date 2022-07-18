@@ -23,12 +23,13 @@ func main() {
 	flag.String("consumeQueue", "", "Consume events from this queue. - deprecated")
 	flag.String("fifoAckExchange", canopsis.FIFOAckExchangeName, "Publish FIFO Ack event to this exchange. - deprecated")
 
-	flagVersion := flag.Bool("version", false, "version infos")
+	flagVersion := flag.Bool("version", false, "Show the version information")
 
 	flag.Parse()
 
 	if *flagVersion {
-		canopsis.PrintVersionExit()
+		canopsis.PrintVersionInfo()
+		return
 	}
 
 	logger := log.NewLogger(opts.ModeDebug)
