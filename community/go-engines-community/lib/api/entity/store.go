@@ -2,6 +2,7 @@ package entity
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -64,6 +65,8 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 			return nil, err
 		}
 	}
+
+	s.fillConnectorType(&res)
 
 	return &res, nil
 }
@@ -252,4 +255,15 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 	})
 
 	return isToggled, oldSimplifiedEntity, err
+}
+
+func (s *store) fillConnectorType(result *AggregationResult) {
+	if result == nil {
+		return
+	}
+	for i, v := range result.Data {
+		if v.Type == types.EntityTypeConnector {
+			result.Data[i].ConnectorType = strings.TrimSuffix(v.ID, "/"+v.Name)
+		}
+	}
 }

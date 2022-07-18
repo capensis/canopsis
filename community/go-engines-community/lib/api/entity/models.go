@@ -75,6 +75,9 @@ type Entity struct {
 	Depends   []string `bson:"depends" json:"depends"`
 	Connector string   `bson:"connector,omitempty" json:"connector,omitempty"`
 	Component string   `bson:"component,omitempty" json:"component,omitempty"`
+
+	// ConnectorType contains a part before "/" of connector id.
+	ConnectorType string `bson:"-" json:"connector_type,omitempty"`
 }
 
 type Infos map[string]Info
