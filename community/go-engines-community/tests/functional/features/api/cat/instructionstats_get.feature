@@ -29,6 +29,7 @@ Feature: get instruction statistics
           "ok_alarm_states": 0,
           "avg_complete_time": 316,
           "execution_count": 7,
+          "total_executions": 8,
           "last_executed_on": 1618394399,
           "last_modified": 1617555600,
           "created": 1617555600,
@@ -56,6 +57,7 @@ Feature: get instruction statistics
           "ok_alarm_states": 0,
           "avg_complete_time": 316,
           "execution_count": 7,
+          "total_executions": 8,
           "last_executed_on": 1618394399,
           "last_modified": 1617555600,
           "created": 1617555600,
@@ -110,7 +112,7 @@ Feature: get instruction statistics
           "_id": "test-instruction-to-stats-get-1",
           "alarm_states": {
             "critical": {
-              "from": 5,
+              "from": 6,
               "to": 3
             },
             "major": {
@@ -137,7 +139,7 @@ Feature: get instruction statistics
           "_id": "test-instruction-to-stats-get-2",
           "alarm_states": {
             "critical": {
-              "from": 5,
+              "from": 6,
               "to": 3
             },
             "major": {
