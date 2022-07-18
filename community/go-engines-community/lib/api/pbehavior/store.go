@@ -85,7 +85,8 @@ func (s *store) Insert(ctx context.Context, model *Response) error {
 	// tstop field can be cleared
 	if model.Stop == nil {
 		m := make(map[string]interface{})
-		p, err := bson.Marshal(doc)
+		var p []byte
+		p, err = bson.Marshal(doc)
 		if err != nil {
 			return err
 		}
@@ -97,14 +98,15 @@ func (s *store) Insert(ctx context.Context, model *Response) error {
 
 		delete(m, "tstop")
 		_, err = s.dbCollection.InsertOne(ctx, m)
-		if err != nil {
-			return err
-		}
 	} else {
 		_, err = s.dbCollection.InsertOne(ctx, doc)
-		if err != nil {
-			return err
+	}
+
+	if err != nil {
+		if mongodriver.IsDuplicateKeyError(err) {
+			return ValidationError{field: "name", err: errors.New("Name already exists.")}
 		}
+		return err
 	}
 
 	model.Created = &now
@@ -349,6 +351,9 @@ func (s *store) Update(ctx context.Context, model *Response) (bool, error) {
 		update,
 	)
 	if err != nil {
+		if mongodriver.IsDuplicateKeyError(err) {
+			return false, ValidationError{field: "name", err: errors.New("Name already exists.")}
+		}
 		return false, err
 	}
 
@@ -398,6 +403,9 @@ func (s *store) UpdateByFilter(ctx context.Context, model *Response, filters bso
 		update,
 	)
 	if err != nil {
+		if mongodriver.IsDuplicateKeyError(err) {
+			return false, ValidationError{field: "name", err: errors.New("Name already exists.")}
+		}
 		return false, err
 	}
 
