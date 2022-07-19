@@ -112,7 +112,7 @@ Feature: get instruction statistics
           "_id": "test-instruction-to-stats-get-1",
           "alarm_states": {
             "critical": {
-              "from": 6,
+              "from": 5,
               "to": 3
             },
             "major": {
@@ -140,7 +140,7 @@ Feature: get instruction statistics
           "_id": "test-instruction-to-stats-get-2",
           "alarm_states": {
             "critical": {
-              "from": 6,
+              "from": 5,
               "to": 3
             },
             "major": {
