@@ -6,7 +6,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
@@ -233,10 +232,6 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 	}
 
 	return p.Validate(nil)
-}
-
-func ValidateInfoValue(fl validator.FieldLevel) bool {
-	return types.IsInfoValueValid(fl.Field().Interface())
 }
 
 func GetForbiddenFieldsInEntityPattern(collection string) []string {
