@@ -238,18 +238,10 @@ Feature: scenarios should be triggered by remediation triggers
             "data": [
               {},
               {},
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-2-name."
-              },
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-2-name. Job test-job-action-remediation-triggers-1-name."
-              },
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-2-name. Job test-job-action-remediation-triggers-1-name."
-              },
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-2-name."
-              },
+              {},
+              {},
+              {},
+              {},
               {
                 "_t": "ack",
                 "a": "system",
@@ -384,18 +376,10 @@ Feature: scenarios should be triggered by remediation triggers
             "data": [
               {},
               {},
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-3-name."
-              },
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-3-name. Job test-job-action-remediation-triggers-1-name."
-              },
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-3-name. Job test-job-action-remediation-triggers-1-name."
-              },
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-3-name."
-              },
+              {},
+              {},
+              {},
+              {},
               {
                 "_t": "ack",
                 "a": "system",
@@ -549,15 +533,9 @@ Feature: scenarios should be triggered by remediation triggers
             "data": [
               {},
               {},
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-4-name."
-              },
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-4-name. Job test-job-action-remediation-triggers-2-name."
-              },
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-4-name. Job test-job-action-remediation-triggers-2-name."
-              },
+              {},
+              {},
+              {},
               {
                 "_t": "ack",
                 "a": "system",
@@ -808,18 +786,10 @@ Feature: scenarios should be triggered by remediation triggers
             "data": [
               {},
               {},
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-6-name."
-              },
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-6-name. Job test-job-action-remediation-triggers-3-name."
-              },
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-6-name. Job test-job-action-remediation-triggers-3-name."
-              },
-              {
-                "m": "Instruction test-instruction-action-remediation-triggers-6-name."
-              },
+              {},
+              {},
+              {},
+              {},
               {
                 "_t": "ack",
                 "a": "system",
