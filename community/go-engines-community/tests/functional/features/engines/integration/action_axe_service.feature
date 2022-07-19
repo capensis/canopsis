@@ -1,7 +1,7 @@
 Feature: update service when alarm is updated by action
   I need to be able to update service when action is applied to alarm.
 
-  Scenario: given meta alarm and scenario should update meta alarm and update children
+  Scenario: given service and scenario should update service and update children
     Given I am admin
     When I do POST /api/v4/entityservices:
     """json
