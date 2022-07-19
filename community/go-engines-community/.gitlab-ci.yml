@@ -21,7 +21,6 @@ stage_test:
     - echo "Begin script"
     - make docker_test_image
     - docker-compose --project-directory ${CI_COMPOSE_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} up -d
-    - docker-compose --project-directory ${CI_COMPOSE_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} exec -T webserver ./bin/canopsinit && sleep 2
     - docker-compose --project-directory ${CI_COMPOSE_PROJECT_DIR} -p ${CI_COMPOSE_PROJECT} -f ${CI_COMPOSE_FILE} exec -T testing /bin/sh /go-test.sh
 
 after_script:
