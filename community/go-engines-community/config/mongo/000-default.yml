@@ -137,6 +137,14 @@ indexes:
       keys:
         filename: 1
 
+  pbehavior:
+    name:
+      keys:
+        name: 1
+      options:
+        unique: true
+        background: true
+
   junit_test_case_media:
     relative_filepath_1:
       keys:
