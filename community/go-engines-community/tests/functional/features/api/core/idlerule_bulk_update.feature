@@ -114,8 +114,6 @@ Feature: Bulk update idlerules
       },
       {
         "type": "alarm",
-        "alarm_patterns": [],
-        "entity_patterns": [],
         "operation": {
           "type": "notexists"
         }
@@ -326,8 +324,6 @@ Feature: Bulk update idlerules
         "status": 400,
         "item": {
           "type": "alarm",
-          "alarm_patterns": [],
-          "entity_patterns": [],
           "operation": {
             "type": "notexists"
           }

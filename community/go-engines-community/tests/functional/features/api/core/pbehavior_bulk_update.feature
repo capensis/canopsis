@@ -97,7 +97,25 @@ Feature: Bulk update a pbehaviors
       },
       {},
       {
-        "name": "test-pbehavior-to-check-unique-name"
+        "_id": "test-pbehavior-to-bulk-update-1",
+        "enabled": true,
+        "name": "test-pbehavior-to-check-unique-name",
+        "tstart": 1591172881,
+        "tstop": 1591536400,
+        "color": "#FFFFFF",
+        "type": "test-type-to-pbh-edit-1",
+        "reason": "test-reason-1",
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-pbehavior-to-bulk-update-1-pattern-updated"
+              }
+            }
+          ]
+        ]
       },
       [],
       {
@@ -242,7 +260,25 @@ Feature: Bulk update a pbehaviors
       {
         "status": 400,
         "item": {
-          "name": "test-pbehavior-to-check-unique-name"
+          "_id": "test-pbehavior-to-bulk-update-1",
+          "enabled": true,
+          "name": "test-pbehavior-to-check-unique-name",
+          "tstart": 1591172881,
+          "tstop": 1591536400,
+          "color": "#FFFFFF",
+          "type": "test-type-to-pbh-edit-1",
+          "reason": "test-reason-1",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-to-bulk-update-1-pattern-updated"
+                }
+              }
+            ]
+          ]
         },
         "errors": {
           "name": "Name already exists."
