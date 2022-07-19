@@ -306,7 +306,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
-		err := s.dbCollection.FindOne(ctx, bson.M{"name": model.Name, "_id": bson.M{"$ne": model.ID}}).Err()
+		err := s.dbCollection.FindOne(ctx, bson.M{"name": r.Name, "_id": bson.M{"$ne": r.ID}}).Err()
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
@@ -384,6 +384,17 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 	var pbh *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
+
+		if r.Name != nil {
+			err := s.dbCollection.FindOne(ctx, bson.M{"name": *r.Name, "_id": bson.M{"$ne": r.ID}}).Err()
+			if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+				return err
+			}
+			if err == nil {
+				return common.NewValidationError("name", errors.New("Name already exists."))
+			}
+		}
+
 		_, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
 			return err

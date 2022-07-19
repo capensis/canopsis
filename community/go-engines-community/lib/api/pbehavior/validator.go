@@ -134,20 +134,8 @@ func (v *Validator) ValidatePatchRequest(ctx context.Context, sl validator.Struc
 		}
 	}
 
-	if r.Name != nil {
-		if *r.Name == "" {
-			sl.ReportError(r.Name, "Name", "Name", "required", "")
-		} else {
-			err := v.dbClient.Collection(mongo.PbehaviorMongoCollection).FindOne(ctx, bson.M{
-				"_id":  bson.M{"$ne": r.ID},
-				"name": *r.Name,
-			}).Err()
-			if err == nil {
-				sl.ReportError(r.Name, "Name", "Name", "unique", "")
-			} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
-				panic(err)
-			}
-		}
+	if r.Name != nil && *r.Name == "" {
+		sl.ReportError(r.Name, "Name", "Name", "required", "")
 	}
 
 	var foundType *pbehavior.Type
