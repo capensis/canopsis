@@ -54,41 +54,13 @@ services:
   redis:
     image: redis:${REDIS_TAG} 
     restart: unless-stopped
-  webserver:
-    image: canopsis/canopsis-cat:latest
-    env_file:
-      - compose.env
-    environment:
-      - CPS_WEBSERVER=1
-      - CPS_MONGO_URL=mongodb://cpsmongo:canopsis@mongodb/canopsis
-    depends_on:
-      - "mongodb"
-    volumes:
-      - importctxdata:/opt/canopsis/tmp
-      - dumpdata:/opt/canopsis/var/www/src/canopsis/dumpdata
-    links:
-      - mongodb
-      - rabbitmq
-      - influxdb
-    restart: unless-stopped
-#  init:
-#    image: canopsis/init:latest
-#    depends_on:
-#      - "rabbitmq"
-#      - "mongodb"
-#    env_file:
-#      - compose.env
-#    volumes:
-#      - "./docker/initialisation.toml:/initialisation.toml"
   testing:
     image: canopsis/go-test:latest
     env_file:
       - compose.env
     depends_on:
-#      - init
       - mongodb
       - influxdb
       - redis
       - rabbitmq
-      - webserver
     entrypoint: ["tail", "-F", "/dev/null"]
