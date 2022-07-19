@@ -18,6 +18,10 @@ func GetAlarmCountersFromEvent(event types.Event) (*AlarmCounters, *AlarmCounter
 
 	if event.Alarm == nil {
 		switch alarmChangeType {
+		case types.AlarmChangeTypeEntityToggled:
+			currentCounters = &AlarmCounters{}
+			*currentCounters = getEntityCounters(event.Entity.PbehaviorInfo.CanonicalType, event.Entity.PbehaviorInfo.TypeID)
+			oldCounters = currentCounters
 		case types.AlarmChangeTypePbhEnter, types.AlarmChangeTypePbhLeave, types.AlarmChangeTypePbhLeaveAndEnter:
 			currentCounters, oldCounters = &AlarmCounters{}, &AlarmCounters{}
 			*currentCounters = getEntityCounters(event.Entity.PbehaviorInfo.CanonicalType, event.Entity.PbehaviorInfo.TypeID)
