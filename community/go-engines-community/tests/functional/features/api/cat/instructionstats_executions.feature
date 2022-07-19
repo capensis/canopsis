@@ -671,30 +671,30 @@ Feature: get instruction statistics
     """json
     {
       "data": [
-          {
-              "alarm": null,
-              "duration": 200,
-              "status": 2,
-              "executed_on": 1618394399
-          },
-          {
-              "alarm": null,
-              "duration": 350,
-              "status": 2,
-              "executed_on": 1618307999
-          },
-          {
-              "alarm": null,
-              "duration": 400,
-              "status": 2,
-              "executed_on": 1618221599
-          },
-          {
-              "alarm": null,
-              "status": 4,
-              "executed_on": 1618221599,
-              "duration": 0
-          }
+        {
+            "alarm": null,
+            "duration": 200,
+            "status": 2,
+            "executed_on": 1618394399
+        },
+        {
+            "alarm": null,
+            "duration": 350,
+            "status": 2,
+            "executed_on": 1618307999
+        },
+        {
+            "alarm": null,
+            "duration": 400,
+            "status": 2,
+            "executed_on": 1618221599
+        },
+        {
+            "alarm": null,
+            "status": 4,
+            "executed_on": 1618221599,
+            "duration": 0
+        }
       ],
       "meta": {
           "page": 1,
