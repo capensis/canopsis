@@ -6,7 +6,7 @@ Feature: Get an eventfilter
     When I am admin
     When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-get-1
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """
     {
       "_id": "test-eventfilter-to-get-1",
@@ -25,7 +25,6 @@ Feature: Get an eventfilter
           }
         ]
       ],
-      "priority": 0,
       "enabled": true,
       "config": {
         "actions": [
@@ -42,9 +41,7 @@ Feature: Get an eventfilter
         "entity": {
           "type": "entity"
         }
-      },
-      "created": 1608284568,
-      "updated": 1608285370
+      }
     }
     """
 
@@ -52,7 +49,7 @@ Feature: Get an eventfilter
     When I am admin
     When I do GET /api/v4/eventfilter/rules?search=test-eventfilter-to-get
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """
     {
       "data": [
@@ -84,15 +81,12 @@ Feature: Get an eventfilter
             "on_success": "pass",
             "on_failure": "pass"
           },
-          "priority": 0,
           "enabled": true,
           "external_data": {
             "entity": {
               "type": "entity"
             }
-          },
-          "created": 1608284568,
-          "updated": 1608285370
+          }
         },
         {
           "_id": "test-eventfilter-to-get-2",
@@ -111,11 +105,8 @@ Feature: Get an eventfilter
               }
             ]
           ],
-          "priority": 1,
           "config": {},
-          "enabled": true,
-          "created": 1608635535,
-          "updated": 1608635535
+          "enabled": true
         },
         {
           "_id": "test-eventfilter-to-get-3",
@@ -134,11 +125,8 @@ Feature: Get an eventfilter
               }
             ]
           ],
-          "priority": 2,
           "config": {},
-          "enabled": true,
-          "created": 1608635535,
-          "updated": 1608635535
+          "enabled": true
         }
       ],
       "meta": {
@@ -183,14 +171,13 @@ Feature: Get an eventfilter
     When I am admin
     When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-backward-compatibility-to-get
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """
     {
       "_id": "test-eventfilter-to-backward-compatibility-to-get",
       "author": "root",
       "description": "how it should have ended.",
       "type": "enrichment",
-      "priority": 0,
       "enabled": true,
       "config": {
         "actions": [
@@ -211,8 +198,6 @@ Feature: Get an eventfilter
             "regex_match": "test-eventfilter-to-backward-compatibility-to-get"
           }
         }
-      ],
-      "created": 1608284568,
-      "updated": 1608285370
+      ]
     }
     """

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var ErrInvalidInfoType = fmt.Errorf("info value should be int, string, bool or array of strings")
@@ -18,7 +18,7 @@ func IsInfoValueValid(value interface{}) bool {
 	case float64:
 		return val == math.Trunc(val)
 	// bson unmarshalling
-	case primitive.A:
+	case bson.A:
 		for _, v := range val {
 			_, ok := v.(string)
 			if !ok {

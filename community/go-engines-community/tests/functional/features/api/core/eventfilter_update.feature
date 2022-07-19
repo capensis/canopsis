@@ -44,8 +44,7 @@ Feature: Update an eventfilter
         ]
       ],
       "priority": 1,
-      "enabled": true,
-      "created": 1608635535
+      "enabled": true
     }
     """
 
@@ -113,8 +112,7 @@ Feature: Update an eventfilter
         ]
       ],
       "priority": 1,
-      "enabled": true,
-      "created": 1608635535
+      "enabled": true
     }
     """
 
@@ -182,8 +180,7 @@ Feature: Update an eventfilter
         ]
       ],
       "priority": 1,
-      "enabled": true,
-      "created": 1608635535
+      "enabled": true
     }
     """
 
@@ -243,8 +240,7 @@ Feature: Update an eventfilter
         ]
       ],
       "priority": 1,
-      "enabled": true,
-      "created": 1608635535
+      "enabled": true
     }
     """
 
