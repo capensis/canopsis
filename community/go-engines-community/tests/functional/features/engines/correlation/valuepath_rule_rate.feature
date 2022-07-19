@@ -128,6 +128,40 @@ Feature: correlation feature - valuegroup rule with threshold rate
 
   Scenario: given meta alarm rule with threshold rate and events shouldn't create meta alarm because rate was recomputed by the new entity event after, metaalarm should be create after reaching the new rate
     Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "description" : "test-correlation-valuegroup-rate-2",
+      "enabled": true,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-valuegroup-rule-rate-2-connector"
+            }
+          }
+        ]
+      ],
+      "external_data" : {},
+      "config": {
+        "actions": [
+          {
+            "type" : "set_entity_info_from_template",
+            "name" : "valuegroupRate2",
+            "value" : "{{ `{{.Event.ExtraInfos.valuegroupRate2}}` }}",
+            "description" : "valuegroupRate2"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "priority" : 10001,
+      "type" : "enrichment"
+    }
+    """
+    Then the response code should be 201
     When I do POST /api/v4/cat/metaalarmrules:
     """json
     {
