@@ -94,10 +94,6 @@ func (c *center) Handle(ctx context.Context, event types.Event) (*types.Entity, 
 		go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
 	}
 
-	if !eventEntity.Enabled {
-		return eventEntity, updatedServices, nil
-	}
-
 	found := false
 	for k, v := range entities {
 		if eventEntity.ID == v.ID {

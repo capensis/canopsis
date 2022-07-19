@@ -2,13 +2,14 @@ package entityservice
 
 import (
 	"context"
+	"math"
+	"sync"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
-	"math"
-	"sync"
 )
 
 const (
@@ -251,6 +252,8 @@ func (m *manager) processService(ctx context.Context, data ServiceData, entities
 
 	for _, e := range entities {
 		found := false
+		enabled := e.Enabled
+
 		for _, impact := range e.Impacts {
 			if impact == data.ID {
 				found = true
@@ -274,8 +277,12 @@ func (m *manager) processService(ctx context.Context, data ServiceData, entities
 		}
 
 		if match {
-			if !found {
+			if !found && enabled {
 				added = append(added, e.ID)
+			}
+
+			if found && !enabled {
+				removed = append(removed, e.ID)
 			}
 		} else if found {
 			removed = append(removed, e.ID)
