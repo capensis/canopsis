@@ -2306,7 +2306,7 @@ Feature: create service entity
             }
           }
         ]
-      ]
+      ],
       "sli_avail_state": 0
     }
     """

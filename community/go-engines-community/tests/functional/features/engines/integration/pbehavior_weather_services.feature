@@ -3042,12 +3042,16 @@ Feature: get service weather
       "category": "test-category-pbehavior-weather-service",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {
-          "name": {
-            "regex_match": "test-resource-pbehavior-weather-service-22"
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-resource-pbehavior-weather-service-22"
+            }
           }
-        }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -3348,12 +3352,16 @@ Feature: get service weather
       "category": "test-category-pbehavior-weather-service",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {
-          "name": {
-            "regex_match": "test-resource-pbehavior-weather-service-23"
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-resource-pbehavior-weather-service-23"
+            }
           }
-        }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -3594,12 +3602,16 @@ Feature: get service weather
       "category": "test-category-pbehavior-weather-service",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {
-          "name": {
-            "regex_match": "test-resource-pbehavior-weather-service-24"
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-resource-pbehavior-weather-service-24"
+            }
           }
-        }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -3823,12 +3835,16 @@ Feature: get service weather
       "category": "test-category-pbehavior-weather-service",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {
-          "name": {
-            "regex_match": "test-resource-pbehavior-weather-service-25"
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-resource-pbehavior-weather-service-25"
+            }
           }
-        }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -4042,12 +4058,16 @@ Feature: get service weather
       "category": "test-category-pbehavior-weather-service",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {
-          "name": {
-            "regex_match": "test-resource-pbehavior-weather-service-26"
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-resource-pbehavior-weather-service-26"
+            }
           }
-        }
+        ]
       ],
       "sli_avail_state": 0
     }
