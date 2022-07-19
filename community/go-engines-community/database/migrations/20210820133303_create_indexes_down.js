@@ -15,6 +15,8 @@ db.resolved_alarms.dropIndex("v.creation_date_1");
 db.resolved_alarms.dropIndex("v.last_event_date_1");
 db.resolved_alarms.dropIndex("v.last_update_date_1");
 
+db.pbehavior.dropIndex("name_1");
+
 db.pbehavior_type.dropIndex("priority_1");
 
 db.junit_test_suite.dropIndex("test_suite_id_1");
