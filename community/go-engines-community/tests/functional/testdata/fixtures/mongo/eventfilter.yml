@@ -190,6 +190,8 @@ eventfilter:
           value: '{{ .RegexMatch.Resource.SI_CMDB }}'
       on_failure: pass
       on_success: pass
+    entity_pattern: []
+    event_pattern: []
     old_patterns:
       - resource:
           regex_match: 'CMDD:(?P<SI_CMDB>.*?)($|,)'
