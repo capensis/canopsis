@@ -131,6 +131,14 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		return alarmChange, err
 	case types.EventTypeNoEvents:
 		changeType, err := s.processNoEvents(ctx, event)
+
+		go func() {
+			err := s.metaAlarmEventProcessor.Process(context.Background(), *event)
+			if err != nil {
+				s.logger.Err(err).Msg("cannot process meta alarm")
+			}
+		}()
+
 		alarmChange.Type = changeType
 		return alarmChange, err
 	case types.EventTypeMetaAlarm:
