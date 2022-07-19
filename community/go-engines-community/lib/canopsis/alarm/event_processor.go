@@ -83,12 +83,18 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	if !event.Entity.Enabled {
+		var err error
+
 		if event.EventType == types.EventTypeEntityToggled ||
 			event.EventType == types.EventTypeRecomputeEntityService {
-			return s.resolveAlarmForDisabledEntity(ctx, event)
+			alarmChange, err = s.resolveAlarmForDisabledEntity(ctx, event)
+
+			if err == nil && alarmChange.Type == types.AlarmChangeTypeNone {
+				alarmChange.Type = types.AlarmChangeTypeEntityToggled
+			}
 		}
 
-		return alarmChange, nil
+		return alarmChange, err
 	}
 
 	alarm, err := s.adapter.GetOpenedAlarm(ctx, event.Connector, event.ConnectorName, event.GetEID())
@@ -136,6 +142,9 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		event.Alarm = alarm
 		alarmChange.Type = types.AlarmChangeTypeCreate
 		return alarmChange, err
+	case types.EventTypeEntityToggled:
+		alarmChange.Type = types.AlarmChangeTypeEntityToggled
+		return alarmChange, nil
 	case types.EventTypeTrigger:
 		if event.AlarmChange == nil || event.Alarm == nil {
 			return types.NewAlarmChange(), nil
