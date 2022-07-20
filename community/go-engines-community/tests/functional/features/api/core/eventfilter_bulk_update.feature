@@ -451,9 +451,7 @@ Feature: Bulk update eventfilters
               }
             ]
           ],
-          "priority": 1,
-          "enabled": true,
-          "created": 1608635535
+          "enabled": true
         },
         {
           "_id": "test-eventfilter-bulk-update-2",
@@ -482,9 +480,7 @@ Feature: Bulk update eventfilters
               }
             ]
           ],
-          "priority": 1,
-          "enabled": true,
-          "created": 1608635535
+          "enabled": true
         },
         {
           "_id": "test-eventfilter-bulk-update-3",
@@ -513,9 +509,7 @@ Feature: Bulk update eventfilters
               }
             ]
           ],
-          "priority": 1,
-          "enabled": true,
-          "created": 1608635535
+          "enabled": true
         },
         {
           "_id": "test-eventfilter-bulk-update-4",
@@ -546,9 +540,7 @@ Feature: Bulk update eventfilters
               }
             ]
           ],
-          "priority": 1,
-          "enabled": true,
-          "created": 1608635535
+          "enabled": true
         },
         {
           "_id": "test-eventfilter-bulk-update-5",
@@ -566,7 +558,6 @@ Feature: Bulk update eventfilters
               }
             ]
           ],
-          "priority": 3,
           "type": "break"
         }
       ],
