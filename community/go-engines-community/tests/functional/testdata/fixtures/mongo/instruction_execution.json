@@ -364,5 +364,16 @@
     "complete_time": 400,
     "alarm_state": 3,
     "result_alarm_state": 3
+  },
+  {
+    "_id": "test-instruction-executoin-to-stats-summary-get-4",
+    "instruction_modified_on": 1617555600,
+    "instruction": "test-instruction-to-stats-summary-get-4",
+    "status": 2,
+    "started_at": 1618221199,
+    "completed_at": 1618221599,
+    "complete_time": 400,
+    "alarm_state": 3,
+    "result_alarm_state": 3
   }
 ]
