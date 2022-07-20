@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -26,11 +28,13 @@ import {
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
+  SCENARIO_TRIGGERS,
+  WEATHER_ACTIONS_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
 
-export default {
+export default merge({
   common: {
     ok: 'Ok',
     undefined: 'Not defined',
@@ -214,23 +218,13 @@ export default {
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
     template: 'Template',
-    actions: {
-      close: 'Close',
-      acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
-      acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
-      saveChanges: 'Save changes',
-      reportIncident: 'Report an incident',
-      [EVENT_ENTITY_TYPES.ack]: 'Acknowledge',
-      [EVENT_ENTITY_TYPES.declareTicket]: 'Declare ticket',
-      [EVENT_ENTITY_TYPES.validate]: 'Validate',
-      [EVENT_ENTITY_TYPES.invalidate]: 'Invalidate',
-      [EVENT_ENTITY_TYPES.pause]: 'Pause',
-      [EVENT_ENTITY_TYPES.play]: 'Play',
-      [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
-      [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
-      [EVENT_ENTITY_TYPES.comment]: 'Comment',
-      [EVENT_ENTITY_TYPES.executeInstruction]: 'Execute instruction',
-    },
+    pbehaviorList: 'List periodic behaviors',
+    cycleDependency: 'Cycle dependency',
+    acknowledge: 'Acknowledge',
+    acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
+    acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
+    saveChanges: 'Save changes',
+    reportIncident: 'Report an incident',
     times: {
       second: 'second | seconds',
       minute: 'minute | minutes',
@@ -278,6 +272,85 @@ export default {
       [ENTITIES_STATES.major]: 'Major',
       [ENTITIES_STATES.critical]: 'Critical',
     },
+    scenarioTriggers: {
+      [SCENARIO_TRIGGERS.create]: {
+        text: 'Alarm creation',
+      },
+      [SCENARIO_TRIGGERS.statedec]: {
+        text: 'Alarm state decrease',
+      },
+      [SCENARIO_TRIGGERS.changestate]: {
+        text: 'Alarm state has been changed by "change state" action',
+      },
+      [SCENARIO_TRIGGERS.stateinc]: {
+        text: 'Alarm state increase',
+      },
+      [SCENARIO_TRIGGERS.changestatus]: {
+        text: 'Alarm status changes eg. flapping',
+      },
+      [SCENARIO_TRIGGERS.ack]: {
+        text: 'Alarm has been acked',
+      },
+      [SCENARIO_TRIGGERS.ackremove]: {
+        text: 'Alarm has been unacked',
+      },
+      [SCENARIO_TRIGGERS.cancel]: {
+        text: 'Alarm has been cancelled',
+      },
+      [SCENARIO_TRIGGERS.uncancel]: {
+        text: 'Alarm has been uncancelled',
+        helpText: 'Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it\'s possible to send an uncancel event via API',
+      },
+      [SCENARIO_TRIGGERS.comment]: {
+        text: 'Alarm has been commented',
+      },
+      [SCENARIO_TRIGGERS.done]: {
+        text: 'Alarm is "done"',
+        helpText: 'Probably legacy, because there is no such action in the UI, but it\'s possible to send a done event via API',
+      },
+      [SCENARIO_TRIGGERS.declareticket]: {
+        text: 'Ticket has been declared by the UI action',
+      },
+      [SCENARIO_TRIGGERS.declareticketwebhook]: {
+        text: 'Ticket has been declared by the webhook',
+      },
+      [SCENARIO_TRIGGERS.assocticket]: {
+        text: 'Ticket has been associated with an alarm',
+      },
+      [SCENARIO_TRIGGERS.snooze]: {
+        text: 'Alarm has been snoozed',
+      },
+      [SCENARIO_TRIGGERS.unsnooze]: {
+        text: 'Alarm has been unsnoozed',
+      },
+      [SCENARIO_TRIGGERS.resolve]: {
+        text: 'Alarm has been resolved',
+      },
+      [SCENARIO_TRIGGERS.activate]: {
+        text: 'Alarm has been activated',
+      },
+      [SCENARIO_TRIGGERS.pbhenter]: {
+        text: 'Alarm enters a periodic behavior',
+      },
+      [SCENARIO_TRIGGERS.pbhleave]: {
+        text: 'Alarm leaves a periodic behavior',
+      },
+      [SCENARIO_TRIGGERS.instructionfail]: {
+        text: 'Manual instruction has failed',
+      },
+      [SCENARIO_TRIGGERS.autoinstructionfail]: {
+        text: 'Auto instruction has failed',
+      },
+      [SCENARIO_TRIGGERS.instructionjobfail]: {
+        text: 'Manual or auto instruction\'s job is failed',
+      },
+      [SCENARIO_TRIGGERS.instructioncomplete]: {
+        text: 'Manual instruction is completed',
+      },
+      [SCENARIO_TRIGGERS.autoinstructioncomplete]: {
+        text: 'Auto instruction is completed',
+      },
+    },
   },
   variableTypes: {
     string: 'String',
@@ -303,6 +376,8 @@ export default {
         deleteEntity: 'Delete entity',
         pbehavior: 'Periodical behavior',
         variablesHelp: 'List of available variables',
+        massEnable: 'Enable entities',
+        massDisable: 'Disable entities',
       },
     },
     entityInfo: {
@@ -379,7 +454,6 @@ export default {
         ackRemove: 'Cancel ack',
         pbehavior: 'Periodical behavior',
         snooze: 'Snooze alarm',
-        pbehaviorList: 'List periodic behaviors',
         declareTicket: 'Declare ticket',
         associateTicket: 'Associate ticket',
         cancel: 'Cancel alarm',
@@ -469,9 +543,11 @@ export default {
     tooltips: {
       priority: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
       hasInstruction: 'There is an instruction for this type of incidents',
+      hasManualInstructionInRunning: 'Manual instruction in progress',
       hasAutoInstructionInRunning: 'Automatic instruction in progress',
       allAutoInstructionExecuted: 'All automatic instructions has been executed',
       awaitingInstructionComplete: 'Awaiting for the instruction to complete',
+      autoInstructionsFailed: 'Automatic instructions failed',
     },
     metrics: {
       [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',
@@ -539,12 +615,7 @@ export default {
       [SIDE_BARS.alarmSettings]: 'Alarm list settings',
       [SIDE_BARS.contextSettings]: 'Context table settings',
       [SIDE_BARS.serviceWeatherSettings]: 'Service weather settings',
-      [SIDE_BARS.statsHistogramSettings]: 'Histogram settings',
-      [SIDE_BARS.statsCurvesSettings]: 'Curve settings',
-      [SIDE_BARS.statsTableSettings]: 'Stats table settings',
       [SIDE_BARS.statsCalendarSettings]: 'Stats calendar settings',
-      [SIDE_BARS.statsNumberSettings]: 'Stats number settings',
-      [SIDE_BARS.statsParetoSettings]: 'Stats Pareto diagram settings',
       [SIDE_BARS.textSettings]: 'Text settings',
       [SIDE_BARS.counterSettings]: 'Counter settings',
       [SIDE_BARS.testingWeatherSettings]: 'Testing weather',
@@ -578,23 +649,18 @@ export default {
     linksCategoriesAsList: 'Display links as a list?',
     linksCategoriesLimit: 'Number of category items',
     isMultiAckEnabled: 'Multiple ack',
+    isMultiDeclareTicketEnabled: 'Multiple declare ticket',
     fastAckOutput: 'Fast-ack output',
     isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',
     isCorrelationEnabled: 'Is correlation enabled?',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
-    statName: 'Stat name',
-    stats: 'Stats',
-    statsSelect: {
-      title: 'Stats select',
-      required: 'Select at least 1 stat',
-      draggable: 'Try dragging an item',
-    },
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
     exportAsCsv: 'Export widget as csv file',
     criticityLevels: 'Criticity levels',
+    isPriorityEnabled: 'Show priority',
     exportCsv: {
       title: 'Export CSV',
       fields: {
@@ -610,17 +676,6 @@ export default {
         [STATS_CRITICITY.major]: 'major',
         [STATS_CRITICITY.critical]: 'critical',
       },
-    },
-    statsDateInterval: {
-      monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
-    },
-    statsNumbers: {
-      title: 'Stats numbers',
-      yesNoMode: 'Yes/No mode',
-      defaultStat: 'Default: Alarms created',
-      sortOrder: 'Sort order',
-      displayMode: 'Display Mode',
-      selectAColor: 'Select a color',
     },
     infoPopup: {
       title: 'Info popup',
@@ -661,31 +716,6 @@ export default {
         [ENTITY_TYPES.resource]: 'Resource',
         [ENTITY_TYPES.service]: 'Service',
       },
-    },
-    statSelector: {
-      error: {
-        alreadyExist: 'Stat with this name already exists',
-      },
-    },
-    statsGroups: {
-      title: 'Stats groups',
-      manageGroups: 'Add a group',
-      required: 'Create at least 1 group',
-    },
-    statsColor: {
-      title: 'Stats color',
-      pickColor: 'Pick a color',
-    },
-    statsAnnotationLine: {
-      title: 'Annotation line',
-      enabled: 'Is enabled?',
-      value: 'Value',
-      label: 'Label',
-      pickLineColor: 'Pick line color',
-      pickLabelColor: 'Pick label color',
-    },
-    statsPointsStyles: {
-      title: 'Points style',
     },
     considerPbehaviors: {
       title: 'Consider pbehaviors',
@@ -761,6 +791,11 @@ export default {
         + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
         + '</dl>',
     },
+    density: {
+      title: 'Default view',
+      comfort: 'Comfort view',
+      compact: 'Compact view',
+    },
   },
   modals: {
     common: {
@@ -812,9 +847,6 @@ export default {
       },
     },
     view: {
-      select: {
-        title: 'Select a view',
-      },
       create: {
         title: 'Create a view',
       },
@@ -834,11 +866,13 @@ export default {
       success: {
         create: 'New view created!',
         edit: 'View successfully edited!',
+        duplicate: 'View successfully duplicated!',
         delete: 'View successfully deleted!',
       },
       fail: {
         create: 'View creation failed...',
         edit: 'View edition failed...',
+        duplicate: 'View duplication failed...',
         delete: 'View deletion failed...',
       },
     },
@@ -993,7 +1027,7 @@ export default {
       copyToClipboard: 'Copy to clipboard',
     },
     service: {
-      actionPending: 'action(s) pending',
+      actionPending: 'action pending | actions pending',
       refreshEntities: 'Refresh entities list',
       editPbehaviors: 'Edit pbehaviors',
       entity: {
@@ -1036,23 +1070,8 @@ export default {
         [WIDGET_TYPES.serviceWeather]: {
           title: 'Service weather',
         },
-        [WIDGET_TYPES.statsHistogram]: {
-          title: 'Stats histogram',
-        },
-        [WIDGET_TYPES.statsCurves]: {
-          title: 'Stats curves',
-        },
-        [WIDGET_TYPES.statsTable]: {
-          title: 'Stats table',
-        },
         [WIDGET_TYPES.statsCalendar]: {
           title: 'Stats calendar',
-        },
-        [WIDGET_TYPES.statsNumber]: {
-          title: 'Stats number',
-        },
-        [WIDGET_TYPES.statsPareto]: {
-          title: 'Pareto diagram',
         },
         [WIDGET_TYPES.text]: {
           title: 'Text',
@@ -1093,7 +1112,8 @@ export default {
       },
     },
     alarmsList: {
-      title: 'Alarms list',
+      title: 'Alarm list',
+      prefixTitle: '{prefix} - alarm list',
     },
     createUser: {
       create: {
@@ -1219,19 +1239,6 @@ export default {
         title: 'Title',
       },
     },
-    statsDateInterval: {
-      title: 'Stats - Date interval',
-      fields: {
-        periodValue: 'Period value',
-        periodUnit: 'Period unit',
-      },
-      errors: {
-        endDateLessOrEqualStartDate: 'End date should be after start date',
-      },
-      info: {
-        monthPeriodUnit: 'Stats response will be between {start} - {stop}',
-      },
-    },
     createSnmpRule: {
       create: {
         title: 'Create SNMP rule',
@@ -1239,6 +1246,9 @@ export default {
       edit: {
         title: 'Edit SNMP rule',
       },
+    },
+    selectView: {
+      title: 'Select view',
     },
     selectViewTab: {
       title: 'Select tab',
@@ -1375,7 +1385,6 @@ export default {
         type: 'Type',
         priority: 'Priority',
         iconName: 'Icon name',
-        isSpecialColor: 'Use special color for the type?',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -1458,6 +1467,7 @@ export default {
         configuration: 'Configuration',
         jobId: 'Job ID',
         query: 'Query',
+        multipleExecutions: 'Allow parallel execution',
       },
       errors: {
         invalidJSON: 'Invalid JSON',
@@ -1629,6 +1639,12 @@ export default {
         phrase: 'archive or delete',
       },
     },
+    pbehaviorsCalendar: {
+      title: 'Periodic behaviors',
+      entity: {
+        title: 'Periodic behaviors - {name}',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1718,6 +1734,8 @@ export default {
     statsRequestProblem: 'An error occurred while retrieving stats data',
     statsWrongEditionError: "Stats widgets are not available with 'core' edition",
     socketConnectionProblem: 'Problem with connection to socket server',
+    endDateLessOrEqualStartDate: 'End date should be after start date',
+    unknownWidgetType: 'Unknown widget type: {type}',
   },
   warnings: {
     authTokenExpired: 'Authentication token was expired',
@@ -1934,6 +1952,20 @@ export default {
   },
   serviceWeather: {
     seeAlarms: 'See alarms',
+    massActions: 'Mass actions',
+    cannotBeApplied: 'This action cannot be applied',
+    actions: {
+      [WEATHER_ACTIONS_TYPES.entityAck]: 'Acknowledge',
+      [WEATHER_ACTIONS_TYPES.entityValidate]: 'Validate',
+      [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalidate',
+      [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',
+      [WEATHER_ACTIONS_TYPES.entityPlay]: 'Play',
+      [WEATHER_ACTIONS_TYPES.entityCancel]: 'Cancel',
+      [WEATHER_ACTIONS_TYPES.entityAssocTicket]: 'Associate ticket',
+      [WEATHER_ACTIONS_TYPES.entityComment]: 'Comment',
+      [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Execute instruction',
+      [WEATHER_ACTIONS_TYPES.declareTicket]: 'Declare ticket',
+    },
   },
   contextGeneralTable: {
     addSelection: 'Add selection',
@@ -2026,6 +2058,7 @@ export default {
   },
 
   healthcheck: {
+    systemIsDown: 'The system is down',
     notRunning: '{name} is unavailable',
     queueOverflow: 'Queue overflow',
     lackOfInstances: 'Lack of instances',
@@ -2212,6 +2245,7 @@ export default {
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
     closeConfirmationText: 'Would you like to resume this instruction later?',
+    queueNumber: '{number} {name} jobs are in the queue',
     popups: {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
@@ -2295,6 +2329,7 @@ export default {
     addAction: 'Add action',
     emptyActions: 'No actions added yet',
     output: 'Output Action Format',
+    forwardAuthor: 'Forward author to the next step',
     urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
       + '<i>For example:</i>'
       + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
@@ -2748,6 +2783,4 @@ export default {
     uploadMib: 'Upload MIB',
     addSnmpRule: 'Add SNMP rule',
   },
-
-  ...featureService.get('i18n.en'),
-};
+}, featureService.get('i18n.en'));

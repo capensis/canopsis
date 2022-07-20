@@ -1,4 +1,4 @@
-import Faker from 'faker';
+import flushPromises from 'flush-promises';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
@@ -8,7 +8,6 @@ import ViewTabWidgets from '@/components/other/view/view-tab-widgets.vue';
 const localVue = createVueInstance();
 
 const createWidgetsGridStub = className => ({
-  props: ['update-tab-method'],
   template: `
     <div class="${className}">
       <slot :widget="{}" />
@@ -37,13 +36,58 @@ const snapshotFactory = (options = {}) => mount(ViewTabWidgets, {
 });
 
 describe('view-tab-widgets', () => {
+  const removeQuery = jest.fn();
+  const fetchActiveView = jest.fn();
+  const registerEditingOffHandler = jest.fn();
+  const unregisterEditingOffHandler = jest.fn();
+  const updateGridPositions = jest.fn();
+
+  const queryModule = {
+    name: 'query',
+    actions: {
+      remove: removeQuery,
+    },
+  };
+
+  const activeViewModule = {
+    name: 'activeView',
+    getters: {
+      editing: false,
+    },
+    actions: {
+      fetch: fetchActiveView,
+      registerEditingOffHandler,
+      unregisterEditingOffHandler,
+    },
+  };
+
+  const widgetModule = {
+    name: 'view/widget',
+    actions: {
+      updateGridPositions,
+    },
+  };
+
+  const store = createMockedStoreModules([
+    queryModule,
+    activeViewModule,
+    widgetModule,
+  ]);
+
   const widgets = [
     { title: 'Widget 1', _id: 'id' },
     { title: 'Widget 2', _id: 'id2' },
   ];
 
+  afterEach(() => {
+    removeQuery.mockReset();
+    fetchActiveView.mockReset();
+    registerEditingOffHandler.mockReset();
+    unregisterEditingOffHandler.mockReset();
+    updateGridPositions.mockReset();
+  });
+
   it('Each query removed after destroy', () => {
-    const removeQuery = jest.fn();
     const wrapper = factory({
       propsData: {
         tab: {
@@ -51,12 +95,7 @@ describe('view-tab-widgets', () => {
           widgets,
         },
       },
-      store: createMockedStoreModules([{
-        name: 'query',
-        actions: {
-          remove: removeQuery,
-        },
-      }]),
+      store,
     });
 
     wrapper.destroy();
@@ -69,88 +108,103 @@ describe('view-tab-widgets', () => {
     );
   });
 
-  it('Event emitted after trigger edition grid', () => {
+  it('Register and unregister editing off handler is working', async () => {
     const wrapper = factory({
       propsData: {
         tab: {
           id: 'tab-id',
           widgets,
         },
-        isEditingMode: true,
       },
-      store: createMockedStoreModules([{
-        name: 'query',
-        actions: {
-          remove: jest.fn(),
-        },
-      }]),
+      store,
     });
 
-    const gridEditWidgetsElement = wrapper.find('.grid-edit-widgets');
+    await flushPromises();
 
-    const newWidgets = [{ _id: Faker.datatype.string() }];
+    expect(registerEditingOffHandler).toHaveBeenCalledTimes(1);
 
-    gridEditWidgetsElement.vm.$emit('update:widgets-fields', newWidgets);
+    wrapper.destroy();
 
-    const updateWidgetsFields = wrapper.emitted('update:widgets-fields');
-    expect(updateWidgetsFields).toHaveLength(1);
-
-    const [eventData] = updateWidgetsFields[0];
-
-    expect(eventData).toEqual(newWidgets);
+    expect(unregisterEditingOffHandler).toHaveBeenCalledTimes(1);
   });
 
-  it('Update tab method called', () => {
-    const updateTabMethod = jest.fn();
+  it('Event emitted after trigger edition grid', async () => {
     const wrapper = factory({
       propsData: {
         tab: {
           id: 'tab-id',
           widgets,
         },
-        isEditingMode: true,
-        updateTabMethod,
       },
-      store: createMockedStoreModules([{
-        name: 'query',
-        actions: {
-          remove: jest.fn(),
-        },
-      }]),
-    });
+      store: createMockedStoreModules([
+        queryModule,
+        widgetModule,
+        {
+          ...activeViewModule,
 
-    const widget = { id: Faker.datatype.string() };
+          getters: {
+            editing: true,
+          },
+        },
+      ]),
+    });
 
     const gridEditWidgetsElement = wrapper.find('.grid-edit-widgets');
 
-    gridEditWidgetsElement.vm.updateTabMethod(widget);
+    const data = {
+      'widget-id': {
+        desktop: {
+          autoHeight: true,
+          x: 0,
+          y: 0,
+          h: 1,
+          w: 12,
+        },
+        tablet: {
+          autoHeight: true,
+          x: 0,
+          y: 0,
+          h: 1,
+          w: 12,
+        },
+        mobile: {
+          autoHeight: true,
+          x: 0,
+          y: 0,
+          h: 1,
+          w: 12,
+        },
+      },
+    };
+    gridEditWidgetsElement.vm.$emit('update:widgets-grid', data);
 
-    expect(updateTabMethod).toHaveBeenCalledTimes(1);
-    expect(updateTabMethod).toHaveBeenCalledWith(widget);
+    expect(wrapper.vm.widgetsGrid).toEqual(data);
+
+    await wrapper.vm.updatePositions();
+
+    expect(updateGridPositions).toHaveBeenCalledTimes(1);
+    expect(updateGridPositions).toHaveBeenLastCalledWith(
+      expect.any(Object),
+      {
+        data: Object.entries(data).map(([key, value]) => ({ _id: key, grid_parameters: value })),
+      },
+      undefined,
+    );
+    expect(fetchActiveView).toHaveBeenCalledTimes(1);
   });
 
-  it('Default update tab method called', () => {
-    const wrapper = factory({
+  it('Renders `view-tab-widgets` with editing mode', () => {
+    const wrapper = snapshotFactory({
       propsData: {
         tab: {
           id: 'tab-id',
-          widgets,
+          widgets: [],
         },
-        isEditingMode: true,
       },
-      store: createMockedStoreModules([{
-        name: 'query',
-        actions: {
-          remove: jest.fn(),
-        },
-      }]),
+      store,
     });
 
-    const widget = { id: Faker.datatype.string() };
-
-    const gridEditWidgetsElement = wrapper.find('.grid-edit-widgets');
-
-    gridEditWidgetsElement.vm.updateTabMethod(widget);
+    expect(wrapper.element).toMatchSnapshot();
   });
 
   it('Renders `view-tab-widgets` with default and required props', () => {
@@ -161,7 +215,7 @@ describe('view-tab-widgets', () => {
           widgets: [],
         },
       },
-      store: createMockedStoreModules([{ name: 'query' }]),
+      store,
     });
 
     expect(wrapper.element).toMatchSnapshot();
@@ -174,9 +228,18 @@ describe('view-tab-widgets', () => {
           id: 'tab-id',
           widgets: [],
         },
-        isEditingMode: true,
       },
-      store: createMockedStoreModules([{ name: 'query' }]),
+      store: createMockedStoreModules([
+        queryModule,
+        widgetModule,
+        {
+          ...activeViewModule,
+
+          getters: {
+            editing: true,
+          },
+        },
+      ]),
     });
 
     expect(wrapper.element).toMatchSnapshot();
@@ -190,7 +253,31 @@ describe('view-tab-widgets', () => {
           widgets,
         },
       },
-      store: createMockedStoreModules([{ name: 'query' }]),
+      store,
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `view-tab-widgets` with widgets with editing mode', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        tab: {
+          id: 'tab-id',
+          widgets,
+        },
+      },
+      store: createMockedStoreModules([
+        queryModule,
+        widgetModule,
+        {
+          ...activeViewModule,
+
+          getters: {
+            editing: true,
+          },
+        },
+      ]),
     });
 
     expect(wrapper.element).toMatchSnapshot();

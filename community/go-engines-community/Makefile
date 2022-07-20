@@ -19,6 +19,8 @@ CURRENT_BUILD_OUTPUT_DIR = $(CURRENT_ROOT_DIR)/build
 MONOREPO_ROOT := $(realpath $(dir $(COMMUNITY_MAKEFILE))/../..)
 VPATH = $(dir $(CURRENT_MAKEFILE))
 
+include $(MONOREPO_ROOT)/community/go-engines-community/.env
+
 # List of cmds/engines to build and install (eg: engine-che connector-junit...)
 CMDS = $(notdir $(wildcard $(CURRENT_ROOT_DIR)/cmd/*))
 # List of cmd binary paths (eg: build/cmd/engine-che build/cmd/connector-junit...)
@@ -37,13 +39,12 @@ DOCKER_CMD_TARGETS = $(addprefix docker-cmd-,$(CMDS))
 
 SOURCE_DATE_EPOCH:=$(shell date -u +%s)
 LINKPKG=git.canopsis.net/canopsis/canopsis-$(CANOPSIS_EDITION)/$(CANOPSIS_EDITION)/go-engines-$(CANOPSIS_EDITION)/lib/canopsis
-VERSION:=$(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-authordate --format='%(refname:short)' --count=1 2>/dev/null || echo "0.0.0")
-GITCOMMIT:=$(shell git -C "$(MONOREPO_ROOT)" log -n 1 --format=oneline --abbrev=12 --pretty="%h" 2>/dev/null || echo "unknown Git commit")
+VERSION:=$(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-taggerdate --format='%(refname:short)' --count=1 2>/dev/null || echo "0.0.0")
 # Metadata for the binaries
 CUSTOM_LDFLAGS=
 # TODO: simplify this after Go 1.18 with https://utcc.utoronto.ca/~cks/space/blog/programming/GoVersionOfYourSource
 LDFLAGS:=-ldflags "\
-	-X '$(LINKPKG).BuildGitCommit=$(GITCOMMIT)' \
+	-X '$(LINKPKG).Version=$(VERSION)' \
 	-X '$(LINKPKG).BuildDate=$(SOURCE_DATE_EPOCH)' $(CUSTOM_LDFLAGS)"
 
 # -trimpath makes the log lines shorter and independent from the current machine.
@@ -65,8 +66,6 @@ DOCKER_NO_CACHE =
 DOCKER_TAG = $(VERSION)
 # Alpine version used in final containers (https://hub.docker.com/_/alpine?tab=tags)
 DOCKER_ALPINE_VERSION = 3.14.3
-# Version of the Go compiler (https://hub.docker.com/_/golang?tab=tags)
-DOCKER_GOLANG_VERSION = 1.17.5
 # Alpine version used in the Golang build container (https://hub.docker.com/_/golang?tab=tags&page=1&name=alpine)
 # note: the golang image only supports the latest two main release branches of Alpine!
 DOCKER_ALPINE_BUILD_VERSION = 3.14

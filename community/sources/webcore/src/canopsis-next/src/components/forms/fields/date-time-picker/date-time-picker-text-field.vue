@@ -108,7 +108,7 @@ export default {
       const pickerFormatRuleName = `picker_format_${uid()}`;
 
       this.$validator.extend(pickerFormatRuleName, {
-        getMessage: () => this.$t('modals.statsDateInterval.errors.endDateLessOrEqualStartDate'),
+        getMessage: () => this.$t('errors.endDateLessOrEqualStartDate'),
         validate: (value) => {
           try {
             if (!isEmpty(value)) {

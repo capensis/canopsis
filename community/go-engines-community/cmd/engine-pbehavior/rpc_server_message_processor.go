@@ -4,16 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
@@ -21,7 +22,10 @@ import (
 
 type rpcServerMessageProcessor struct {
 	FeaturePrintEventOnError bool
-	Processor                createPbehaviorMessageProcessor
+	DbClient                 mongo.DbClient
+	PbhService               libpbehavior.Service
+	EventManager             libpbehavior.EventManager
+	TimezoneConfigProvider   config.TimezoneConfigProvider
 	Decoder                  encoding.Decoder
 	Encoder                  encoding.Encoder
 	Logger                   zerolog.Logger
@@ -31,18 +35,17 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 	msg := d.Body
 	var event types.RPCPBehaviorEvent
 	err := p.Decoder.Decode(msg, &event)
-	if err != nil || event.Alarm == nil {
+	if err != nil || event.Alarm == nil || event.Entity == nil {
 		p.logError(err, "invalid event", msg)
 
 		return p.getErrRpcEvent(errors.New("invalid event")), nil
 	}
 
-	pbhEvent, err := p.Processor.Process(
+	pbhEvent, err := p.processCreatePbhEvent(
 		ctx,
-		event.Alarm,
-		event.Entity,
+		*event.Alarm,
+		*event.Entity,
 		event.Params,
-		msg,
 	)
 	if err != nil {
 		if engine.IsConnectionError(err) {
@@ -55,102 +58,78 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 
 	if pbhEvent == nil {
 		pbhEvent = &types.Event{}
+	} else {
+		pbhEvent.Entity = event.Entity
 	}
 
 	return p.getRpcEvent(types.RPCPBehaviorResultEvent{
 		Alarm:    event.Alarm,
 		Entity:   event.Entity,
 		PbhEvent: *pbhEvent,
-		Error:    nil,
 	})
 }
 
-type createPbehaviorMessageProcessor struct {
-	FeaturePrintEventOnError bool
-	DbClient                 mongo.DbClient
-	PbhService               libpbehavior.Service
-	EventManager             libpbehavior.EventManager
-	AlarmAdapter             alarm.Adapter
-	TimezoneConfigProvider   config.TimezoneConfigProvider
-	Logger                   zerolog.Logger
-}
-
-func (p *createPbehaviorMessageProcessor) Process(
+func (p *rpcServerMessageProcessor) processCreatePbhEvent(
 	ctx context.Context,
-	alarm *types.Alarm,
-	entity *types.Entity,
-	params types.ActionPBehaviorParameters,
-	_ []byte,
+	alarm types.Alarm,
+	entity types.Entity,
+	params types.RPCPBehaviorParameters,
 ) (*types.Event, error) {
 	pbehavior, err := p.createPbehavior(ctx, params, entity)
 	if err != nil {
 		return nil, err
 	}
 
-	err = p.recomputePbehavior(ctx, pbehavior.ID)
+	resolver, err := p.PbhService.RecomputeByIds(ctx, []string{pbehavior.ID})
+	if err != nil {
+		return nil, fmt.Errorf("pbehavior recompute failed: %w", err)
+	}
+
+	p.Logger.Debug().Str("pbehavior", pbehavior.ID).Msg("pbehavior recomputed")
+
+	resolveResult, err := p.getResolveResult(ctx, entity, resolver)
 	if err != nil {
 		return nil, err
 	}
 
-	resolveResult, err := p.getResolveResult(ctx, entity)
-	if err != nil {
-		return nil, err
-	}
-
-	if alarm == nil {
-		alarms := make([]types.Alarm, 0)
-		err := p.AlarmAdapter.GetOpenedAlarmsByIDs(ctx, []string{entity.ID}, &alarms)
-		if err != nil {
-			return nil, fmt.Errorf("failed to find alarm: %w", err)
-		}
-
-		if len(alarms) == 0 {
-			return nil, nil
-		}
-
-		alarm = &alarms[0]
-	}
-
-	pbhEvent := p.EventManager.GetEvent(resolveResult, *alarm, time.Now())
+	pbhEvent := p.EventManager.GetEvent(resolveResult, alarm, time.Now())
 	if pbhEvent.EventType == "" {
 		return nil, nil
 	}
 
-	pbhEvent.Entity = entity
-
 	return &pbhEvent, nil
 }
 
-func (p *createPbehaviorMessageProcessor) createPbehavior(
+func (p *rpcServerMessageProcessor) createPbehavior(
 	ctx context.Context,
-	params types.ActionPBehaviorParameters,
-	entity *types.Entity,
+	params types.RPCPBehaviorParameters,
+	entity types.Entity,
 ) (*libpbehavior.PBehavior, error) {
 	typeCollection := p.DbClient.Collection(mongo.PbehaviorTypeMongoCollection)
-	res := typeCollection.FindOne(ctx, bson.M{"_id": params.Type})
-	if err := res.Err(); err != nil {
+	err := typeCollection.FindOne(ctx, bson.M{"_id": params.Type}).Err()
+	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, fmt.Errorf("pbehavior type not exist: %q", params.Type)
-		} else {
-			return nil, fmt.Errorf("cannot get pbehavior type: %w", err)
 		}
+
+		return nil, fmt.Errorf("cannot get pbehavior type: %w", err)
 	}
 
 	reasonCollection := p.DbClient.Collection(mongo.PbehaviorReasonMongoCollection)
-	res = reasonCollection.FindOne(ctx, bson.M{"_id": params.Reason})
-	if err := res.Err(); err != nil {
+	err = reasonCollection.FindOne(ctx, bson.M{"_id": params.Reason}).Err()
+	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, fmt.Errorf("pbehavior reason not exist: %q", params.Reason)
-		} else {
-			return nil, fmt.Errorf("cannot get pbehavior reason: %w", err)
 		}
+
+		return nil, fmt.Errorf("cannot get pbehavior reason: %w", err)
 	}
 
 	now := types.NewCpsTime()
 	var start, stop types.CpsTime
 	if params.Tstart != nil && params.Tstop != nil {
-		start = types.NewCpsTime(*params.Tstart)
-		stop = types.NewCpsTime(*params.Tstop)
+		start = *params.Tstart
+		stop = *params.Tstop
 	} else if params.StartOnTrigger != nil && *params.StartOnTrigger &&
 		params.Duration != nil && params.Duration.Value > 0 {
 		start = now
@@ -163,21 +142,34 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 
 	pbehavior := libpbehavior.PBehavior{
 		ID:      utils.NewID(),
-		Author:  params.UserID,                       // since author now contains username, we should use user_id in author
 		Enabled: true,
-		Filter:  fmt.Sprintf(`{"_id": "%s"}`, entity.ID),
 		Name:    params.Name,
 		Reason:  params.Reason,
 		RRule:   params.RRule,
 		Start:   &start,
 		Stop:    &stop,
 		Type:    params.Type,
-		Created: now,
-		Updated: now,
+		Color:   types.ActionPbehaviorColor,
+		Created: &now,
+		Updated: &now,
+
+		EntityPatternFields: savedpattern.EntityPatternFields{
+			EntityPattern: pattern.Entity{
+				{
+					{
+						Field: "_id",
+						Condition: pattern.Condition{
+							Type:  pattern.ConditionEqual,
+							Value: entity.ID,
+						},
+					},
+				},
+			},
+		},
 	}
 
 	collection := p.DbClient.Collection(mongo.PbehaviorMongoCollection)
-	_, err := collection.InsertOne(ctx, pbehavior)
+	_, err = collection.InsertOne(ctx, pbehavior)
 	if err != nil {
 		return nil, fmt.Errorf("create new pbehavior failed: %w", err)
 	}
@@ -186,22 +178,14 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 	return &pbehavior, nil
 }
 
-func (p *createPbehaviorMessageProcessor) recomputePbehavior(ctx context.Context, pbehaviorID string) error {
-	err := p.PbhService.RecomputeByID(ctx, pbehaviorID)
-
-	if err != nil {
-		return fmt.Errorf("pbehavior recompute failed: %w", err)
-	}
-
-	p.Logger.Debug().Str("pbehavior", pbehaviorID).Msg("pbehavior recomputed")
-
-	return nil
-}
-
-func (p *createPbehaviorMessageProcessor) getResolveResult(ctx context.Context, entity *types.Entity) (libpbehavior.ResolveResult, error) {
+func (p *rpcServerMessageProcessor) getResolveResult(
+	ctx context.Context,
+	entity types.Entity,
+	resolver libpbehavior.ComputedEntityTypeResolver,
+) (libpbehavior.ResolveResult, error) {
 	location := p.TimezoneConfigProvider.Get().Location
 	now := time.Now().In(location)
-	resolveResult, err := p.PbhService.Resolve(ctx, entity.ID, now)
+	resolveResult, err := resolver.Resolve(ctx, entity, now)
 	if err != nil {
 		return libpbehavior.ResolveResult{}, fmt.Errorf("resolve an entity failed: %w", err)
 	}

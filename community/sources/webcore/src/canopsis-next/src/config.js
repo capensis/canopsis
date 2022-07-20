@@ -86,6 +86,8 @@ export const API_ROUTES = {
   currentUser: '/api/v4/account/me',
   alarmList: '/api/v4/alarms',
   entity: '/api/v4/entities',
+  bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
+  bulkEntitiesDisable: '/api/v4/bulk/entities/disable',
   entityBasics: '/api/v4/entitybasics',
   service: '/api/v4/entityservices',
   serviceDependencies: '/api/v4/entityservice-dependencies',
@@ -93,15 +95,24 @@ export const API_ROUTES = {
   weatherService: '/api/v4/weather-services',
   alarmListExport: '/api/v4/alarm-export',
   contextExport: '/api/v4/entity-export',
-  actions: '/api/v2/actions',
   event: '/api/v4/event',
   userPreferences: '/api/v4/user-preferences',
-  view: '/api/v4/views',
-  bulkView: '/api/v4/bulk/views',
-  viewPosition: '/api/v4/view-positions',
-  viewGroup: '/api/v4/view-groups',
-  bulkViewGroup: '/api/v4/bulk/view-groups',
-  stats: '/api/v2/stats',
+  view: {
+    list: '/api/v4/views',
+    copy: '/api/v4/view-copy',
+    export: '/api/v4/view-export',
+    import: '/api/v4/view-import',
+    positions: '/api/v4/view-positions',
+    groups: '/api/v4/view-groups',
+    tabs: '/api/v4/view-tabs',
+    tabCopy: '/api/v4/view-tab-copy',
+    tabPositions: '/api/v4/view-tab-positions',
+  },
+  widget: {
+    list: '/api/v4/widgets',
+    copy: '/api/v4/widget-copy',
+    gridPositions: '/api/v4/widget-grid-positions',
+  },
   permissions: '/api/v4/permissions',
   users: '/api/v4/users',
   roles: '/api/v4/roles',
@@ -122,7 +133,6 @@ export const API_ROUTES = {
     userInterface: '/api/v4/internal/user_interface',
   },
   associativeTable: '/api/v4/associativetable',
-  sessionTracePath: '/api/v2/session_tracepath',
   sessionsCount: '/api/v4/sessions-count',
   broadcastMessage: {
     list: '/api/v4/broadcast-message',
@@ -135,10 +145,13 @@ export const API_ROUTES = {
     exceptions: '/api/v4/pbehavior-exceptions',
     types: '/api/v4/pbehavior-types',
     pbehaviors: '/api/v4/pbehaviors',
+    bulkPbehaviors: '/api/v4/bulk/pbehaviors',
     pbehaviorsCount: '/api/v4/pbehaviors/count',
     pbehaviorComments: '/api/v4/pbehavior-comments',
-    pbehaviorById: '/api/v4/entities/pbehaviors',
+    entities: '/api/v4/entities/pbehaviors',
+    entitiesCalendar: '/api/v4/entities/pbehavior-calendar',
     reasons: '/api/v4/pbehavior-reasons',
+    calendar: '/api/v4/pbehavior-calendar',
   },
   engineRunInfo: '/api/v4/engine-runinfo',
   cas: {
@@ -316,6 +329,8 @@ export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
 export const EXPORT_FETCHING_INTERVAL = 2000;
 
 export const DEFAULT_CATEGORIES_LIMIT = 3;
+
+export const MAX_PBEHAVIOR_DATES_DIFF_YEARS = 5;
 
 export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-';
 

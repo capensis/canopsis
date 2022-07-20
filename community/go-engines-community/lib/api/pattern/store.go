@@ -2,14 +2,22 @@ package pattern
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"golang.org/x/sync/errgroup"
+	"reflect"
 )
 
 type Store interface {
@@ -18,6 +26,7 @@ type Store interface {
 	Find(ctx context.Context, r ListRequest, userId string) (*AggregationResult, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, pattern Response) (bool, error)
+	Count(ctx context.Context, r CountRequest, maxCount int64) (CountResponse, error)
 }
 
 type store struct {
@@ -28,10 +37,19 @@ type store struct {
 
 	defaultSearchByFields []string
 	defaultSortBy         string
+
+	pbhComputeChan chan<- pbehavior.ComputeTask
+
+	serviceChangeListener chan<- entityservice.ChangeEntityMessage
+
+	logger zerolog.Logger
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
+	pbhComputeChan chan<- pbehavior.ComputeTask,
+	serviceChangeListener chan<- entityservice.ChangeEntityMessage,
+	logger zerolog.Logger,
 ) Store {
 	return &store{
 		client:     dbClient,
@@ -42,7 +60,23 @@ func NewStore(
 
 		linkedCollections: []string{
 			mongo.WidgetFiltersMongoCollection,
+			mongo.EventFilterRulesMongoCollection,
+			mongo.MetaAlarmRulesMongoCollection,
+			mongo.InstructionMongoCollection,
+			mongo.PbehaviorMongoCollection,
+			mongo.EntityMongoCollection,
+			mongo.ResolveRuleMongoCollection,
+			mongo.IdleRuleMongoCollection,
+			mongo.DynamicInfosRulesMongoCollection,
+			mongo.FlappingRuleMongoCollection,
+			mongo.KpiFilterMongoCollection,
 		},
+
+		pbhComputeChan: pbhComputeChan,
+
+		serviceChangeListener: serviceChangeListener,
+
+		logger: logger,
 	}
 }
 
@@ -53,12 +87,19 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 	model.Created = now
 	model.Updated = now
 
-	_, err := s.collection.InsertOne(ctx, model)
-	if err != nil {
-		return nil, err
-	}
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err := s.collection.InsertOne(ctx, model)
+		if err != nil {
+			return err
+		}
 
-	return s.GetById(ctx, model.ID, model.Author)
+		response, err = s.GetById(ctx, model.ID, model.Author)
+		return err
+	})
+
+	return response, err
 }
 
 func (s *store) GetById(ctx context.Context, id, userId string) (*Response, error) {
@@ -151,40 +192,90 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 	model.ID = request.ID
 	model.Updated = now
 
-	res, err := s.collection.UpdateOne(
-		ctx,
-		bson.M{"_id": request.ID},
-		bson.M{"$set": model},
-	)
-	if err != nil || res.MatchedCount == 0 {
-		return nil, err
+	var response *Response
+	var pbhIds, serviceIds []string
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		pbhIds = nil
+		serviceIds = nil
+		prevPattern := savedpattern.SavedPattern{}
+		err := s.collection.FindOneAndUpdate(
+			ctx,
+			bson.M{"_id": request.ID},
+			bson.M{"$set": model},
+			options.FindOneAndUpdate().SetReturnDocument(options.Before),
+		).Decode(&prevPattern)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+			return err
+		}
+
+		response, err = s.GetById(ctx, model.ID, model.Author)
+		if err != nil || response == nil {
+			return err
+		}
+
+		err = s.updateLinkedModels(ctx, *response)
+		if err != nil {
+			return err
+		}
+
+		if !reflect.DeepEqual(response.EntityPattern, prevPattern.EntityPattern) {
+			pbhIds, err = s.findPbehaviors(ctx, *response)
+			if err != nil {
+				return err
+			}
+
+			serviceIds, err = s.findEntityServices(ctx, *response)
+			if err != nil {
+				return err
+			}
+
+		}
+
+		return nil
+	})
+
+	if len(pbhIds) > 0 {
+		s.pbhComputeChan <- pbehavior.ComputeTask{
+			PbehaviorIds: pbhIds,
+		}
 	}
 
-	pattern, err := s.GetById(ctx, model.ID, model.Author)
-	if err != nil || pattern == nil {
-		return nil, err
+	if len(serviceIds) > 0 {
+		for _, serviceId := range serviceIds {
+			s.serviceChangeListener <- entityservice.ChangeEntityMessage{
+				ID:                      serviceId,
+				EntityType:              types.EntityTypeService,
+				IsServicePatternChanged: true,
+			}
+		}
 	}
 
-	err = s.updateLinkedModels(ctx, *pattern)
-	if err != nil {
-		return nil, err
-	}
-
-	return pattern, nil
+	return response, err
 }
 
 func (s *store) Delete(ctx context.Context, pattern Response) (bool, error) {
-	deleted, err := s.collection.DeleteOne(ctx, bson.M{"_id": pattern.ID})
-	if err != nil || deleted == 0 {
-		return false, err
-	}
+	res := false
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		deleted, err := s.collection.DeleteOne(ctx, bson.M{"_id": pattern.ID})
+		if err != nil || deleted == 0 {
+			return err
+		}
 
-	err = s.cleanLinkedModels(ctx, pattern)
-	if err != nil {
-		return false, err
-	}
+		err = s.cleanLinkedModels(ctx, pattern)
+		if err != nil {
+			return err
+		}
 
-	return true, nil
+		res = true
+		return nil
+	})
+
+	return res, err
 }
 
 func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error {
@@ -192,35 +283,99 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 		return nil
 	}
 
-	filter := bson.M{}
-	set := bson.M{}
+	var filter bson.M
 	switch pattern.Type {
 	case savedpattern.TypeAlarm:
 		filter = bson.M{"corporate_alarm_pattern": pattern.ID}
-		set = bson.M{
-			"alarm_pattern":                 pattern.AlarmPattern,
-			"corporate_alarm_pattern_title": pattern.Title,
-		}
 	case savedpattern.TypeEntity:
 		filter = bson.M{"corporate_entity_pattern": pattern.ID}
-		set = bson.M{
-			"entity_pattern":                 pattern.AlarmPattern,
-			"corporate_entity_pattern_title": pattern.Title,
-		}
 	case savedpattern.TypePbehavior:
 		filter = bson.M{"corporate_pbehavior_pattern": pattern.ID}
-		set = bson.M{
-			"pbehavior_pattern":               pattern.AlarmPattern,
-			"pbehavior_pattern_pattern_title": pattern.Title,
-		}
 	default:
 		return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
 	}
 
 	for _, collection := range s.linkedCollections {
+		var set bson.M
+		switch pattern.Type {
+		case savedpattern.TypeAlarm:
+			set = bson.M{
+				"alarm_pattern": pattern.AlarmPattern.RemoveFields(
+					common.GetForbiddenFieldsInAlarmPattern(collection),
+					common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
+				),
+				"corporate_alarm_pattern_title": pattern.Title,
+			}
+		case savedpattern.TypeEntity:
+			set = bson.M{
+				"entity_pattern": pattern.EntityPattern.RemoveFields(
+					common.GetForbiddenFieldsInEntityPattern(collection),
+				),
+				"corporate_entity_pattern_title": pattern.Title,
+			}
+		case savedpattern.TypePbehavior:
+			set = bson.M{
+				"pbehavior_pattern":                 pattern.PbehaviorPattern,
+				"corporate_pbehavior_pattern_title": pattern.Title,
+			}
+		default:
+			return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
+		}
+
 		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, bson.M{
 			"$set": set,
 		})
+		if err != nil {
+			return err
+		}
+	}
+
+	switch pattern.Type {
+	case savedpattern.TypeEntity:
+		metaAlarmRulesCollection := mongo.MetaAlarmRulesMongoCollection
+		_, err := s.client.Collection(metaAlarmRulesCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
+			"$set": bson.M{
+				"total_entity_pattern": pattern.EntityPattern.RemoveFields(
+					common.GetForbiddenFieldsInEntityPattern(metaAlarmRulesCollection),
+				),
+				"corporate_total_entity_pattern_title": pattern.Title,
+			},
+		})
+		if err != nil {
+			return err
+		}
+
+		scenarioCollection := mongo.ScenarioMongoCollection
+		_, err = s.client.Collection(scenarioCollection).UpdateMany(ctx,
+			bson.M{"actions.corporate_entity_pattern": pattern.ID},
+			bson.M{"$set": bson.M{
+				"actions.$[action].entity_pattern": pattern.EntityPattern.RemoveFields(
+					common.GetForbiddenFieldsInEntityPattern(scenarioCollection),
+				),
+				"actions.$[action].corporate_entity_pattern_title": pattern.Title,
+			}},
+			options.Update().SetArrayFilters(options.ArrayFilters{
+				Filters: []interface{}{bson.M{"action.corporate_entity_pattern": pattern.ID}},
+			}),
+		)
+		if err != nil {
+			return err
+		}
+	case savedpattern.TypeAlarm:
+		scenarioCollection := mongo.ScenarioMongoCollection
+		_, err := s.client.Collection(scenarioCollection).UpdateMany(ctx,
+			bson.M{"actions.corporate_alarm_pattern": pattern.ID},
+			bson.M{"$set": bson.M{
+				"actions.$[action].alarm_pattern": pattern.AlarmPattern.RemoveFields(
+					common.GetForbiddenFieldsInAlarmPattern(scenarioCollection),
+					common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(scenarioCollection),
+				),
+				"actions.$[action].corporate_alarm_pattern_title": pattern.Title,
+			}},
+			options.Update().SetArrayFilters(options.ArrayFilters{
+				Filters: []interface{}{bson.M{"action.corporate_alarm_pattern": pattern.ID}},
+			}),
+		)
 		if err != nil {
 			return err
 		}
@@ -258,7 +413,184 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 		}
 	}
 
+	switch pattern.Type {
+	case savedpattern.TypeEntity:
+		_, err := s.client.Collection(mongo.MetaAlarmRulesMongoCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
+			"$unset": bson.M{
+				"corporate_total_entity_pattern":       "",
+				"corporate_total_entity_pattern_title": "",
+			},
+		})
+		if err != nil {
+			return err
+		}
+
+		_, err = s.client.Collection(mongo.ScenarioMongoCollection).UpdateMany(ctx,
+			bson.M{"actions.corporate_entity_pattern": pattern.ID},
+			bson.M{"$unset": bson.M{
+				"actions.$[action].corporate_entity_pattern":       "",
+				"actions.$[action].corporate_entity_pattern_title": "",
+			}},
+			options.Update().SetArrayFilters(options.ArrayFilters{
+				Filters: []interface{}{bson.M{"action.corporate_entity_pattern": pattern.ID}},
+			}),
+		)
+		if err != nil {
+			return err
+		}
+	case savedpattern.TypeAlarm:
+		_, err := s.client.Collection(mongo.ScenarioMongoCollection).UpdateMany(ctx,
+			bson.M{"actions.corporate_alarm_pattern": pattern.ID},
+			bson.M{"$unset": bson.M{
+				"actions.$[action].corporate_alarm_pattern":       "",
+				"actions.$[action].corporate_alarm_pattern_title": "",
+			}},
+			options.Update().SetArrayFilters(options.ArrayFilters{
+				Filters: []interface{}{bson.M{"action.corporate_alarm_pattern": pattern.ID}},
+			}),
+		)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
+}
+
+func (s *store) Count(ctx context.Context, r CountRequest, maxCount int64) (CountResponse, error) {
+	res := CountResponse{}
+	g, ctx := errgroup.WithContext(ctx)
+	var err error
+	var alarmPatternQuery, entityPatternQuery, pbhPatternQuery bson.M
+	var alarmPatternCount, entityPatternCount, pbhPatternCount Count
+	if len(r.AlarmPattern) > 0 {
+		alarmPatternQuery, err = r.AlarmPattern.ToMongoQuery("")
+		if err != nil {
+			return res, err
+		}
+	}
+	if len(r.PbehaviorPattern) > 0 {
+		pbhPatternQuery, err = r.PbehaviorPattern.ToMongoQuery("v")
+		if err != nil {
+			return res, err
+		}
+	}
+	if len(r.EntityPattern) > 0 {
+		entityPatternQuery, err = r.EntityPattern.ToMongoQuery("")
+		if err != nil {
+			return res, err
+		}
+	}
+
+	if len(alarmPatternQuery) > 0 {
+		g.Go(func() error {
+			alarmPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection), alarmPatternQuery)
+			alarmPatternCount.OverLimit = alarmPatternCount.Count > maxCount
+
+			return err
+		})
+	}
+	if len(pbhPatternQuery) > 0 {
+		g.Go(func() error {
+			var err error
+			pbhPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection), pbhPatternQuery)
+			pbhPatternCount.OverLimit = pbhPatternCount.Count > maxCount
+
+			return err
+		})
+	}
+	if len(entityPatternQuery) > 0 {
+		g.Go(func() error {
+			var err error
+			entityPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.EntityMongoCollection), entityPatternQuery)
+			entityPatternCount.OverLimit = entityPatternCount.Count > maxCount
+
+			return err
+		})
+	}
+	if err := g.Wait(); err != nil {
+		return res, err
+	}
+
+	res.AlarmPattern = alarmPatternCount
+	res.PbehaviorPattern = pbhPatternCount
+	res.EntityPattern = entityPatternCount
+
+	return res, nil
+}
+
+func (s *store) fetchCount(ctx context.Context, collection mongo.DbCollection, match bson.M) (int64, error) {
+	cursor, err := collection.Aggregate(ctx, []bson.M{
+		{"$match": match},
+		{"$count": "total_count"},
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	defer cursor.Close(ctx)
+
+	res := AggregationResult{}
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&res)
+	}
+
+	return res.GetTotal(), err
+}
+
+func (s *store) findPbehaviors(ctx context.Context, pattern Response) ([]string, error) {
+	if pattern.Type != savedpattern.TypeEntity {
+		return nil, nil
+	}
+
+	cursor, err := s.client.Collection(mongo.PbehaviorMongoCollection).Find(ctx, bson.M{
+		"corporate_entity_pattern": pattern.ID,
+	}, options.Find().SetProjection(bson.M{"_id": 1}))
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	ids := make([]string, 0)
+	for cursor.Next(ctx) {
+		pbh := pbehavior.PBehavior{}
+		err := cursor.Decode(&pbh)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot decode pbehavior")
+			continue
+		}
+		ids = append(ids, pbh.ID)
+	}
+
+	return ids, nil
+}
+
+func (s *store) findEntityServices(ctx context.Context, pattern Response) ([]string, error) {
+	if pattern.Type != savedpattern.TypeEntity {
+		return nil, nil
+	}
+
+	cursor, err := s.client.Collection(mongo.EntityMongoCollection).Find(ctx, bson.M{
+		"type":                     types.EntityTypeService,
+		"corporate_entity_pattern": pattern.ID,
+	}, options.Find().SetProjection(bson.M{"_id": 1}))
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	ids := make([]string, 0)
+	for cursor.Next(ctx) {
+		entity := types.Entity{}
+		err := cursor.Decode(&entity)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot decode entity service")
+			continue
+		}
+		ids = append(ids, entity.ID)
+	}
+
+	return ids, nil
 }
 
 func getAuthorPipeline() []bson.M {

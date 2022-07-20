@@ -7,14 +7,16 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"os"
 	"strconv"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	amqpmod "github.com/streadway/amqp"
 )
 
 const (
@@ -25,7 +27,7 @@ const (
 type resourceData func() (int64, int64, int64)
 
 type References struct {
-	channelPub *amqpmod.Channel
+	channelPub *amqp.Channel
 }
 
 type Feeder struct {
@@ -55,7 +57,7 @@ func (f *Feeder) sendBytes(content []byte, rk string) error {
 		"Engine_che",
 		false,
 		false,
-		amqpmod.Publishing{
+		amqp.Publishing{
 			Body:        content,
 			ContentType: "application/json",
 		},
@@ -87,7 +89,7 @@ func (f *Feeder) adjust(target float64, sent, tsent int64) int64 {
 }
 
 func (f *Feeder) setupAmqp() error {
-	amqpSession, err := amqp.NewSession()
+	amqpSession, err := libamqp.NewSession()
 	if err != nil {
 		return fmt.Errorf("amqp session: %v", err)
 	}
@@ -232,6 +234,11 @@ func NewFeeder(logger zerolog.Logger) (*Feeder, error) {
 
 	if err := f.flags.ParseArgs(); err != nil {
 		return nil, err
+	}
+
+	if f.flags.Version {
+		canopsis.PrintVersionInfo()
+		os.Exit(0)
 	}
 
 	return &f, nil

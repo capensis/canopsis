@@ -1,56 +1,47 @@
 package fixtures
 
 import (
+	"bytes"
 	"fmt"
 	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
-	"github.com/brianvoe/gofakeit/v6"
-	"gopkg.in/yaml.v2"
+	"github.com/goccy/go-yaml"
 )
 
 const (
-	tplRegexp        = `^(?P<name>[\w\-\d]+)\s*\(template\)$`
-	docRegexp        = `^(?P<name>[\w\-\d]+)$`
-	docWithTplRegexp = `^(?P<name>[\w\-\d]+)\s*\(extend\s*(?P<tpl>[\w\-\d]+)\)$`
-	referenceRegexp  = `^@(?P<ref>[\w\-\d]+)$`
-	methodRegexp     = `^<(?P<method>\w+)\((?P<args>[^)]*)\)(\.(?P<field>\w+))?>$`
-	keyCurrent       = "Current"
-	keyIndex         = "Index"
+	referenceRegexp = `^@(?P<ref>[\w\-\d]+)$`
+	methodRegexp    = `^<(?P<method>\w+)\((?P<args>[^)]*)\)(\.(?P<field>\w+))?>$`
+	keyCurrent      = "Current"
+	keyIndex        = "Index"
 )
 
 type Parser interface {
 	Parse(content []byte) (map[string][]interface{}, error)
 }
 
-func NewParser(passwordEncoder password.Encoder) Parser {
-	faker := Faker{
-		Faker:           gofakeit.New(0),
-		passwordEncoder: passwordEncoder,
-	}
-
+func NewParser(faker *Faker) Parser {
 	return &parser{
+		faker:        faker,
 		reflectFaker: reflect.ValueOf(faker),
-		docRe:        regexp.MustCompile(docRegexp),
-		docWithTplRe: regexp.MustCompile(docWithTplRegexp),
-		tplRe:        regexp.MustCompile(tplRegexp),
 		referenceRe:  regexp.MustCompile(referenceRegexp),
 		methodRe:     regexp.MustCompile(methodRegexp),
 	}
 }
 
 type parser struct {
+	faker        *Faker
 	reflectFaker reflect.Value
 
-	docRe, docWithTplRe, tplRe, referenceRe, methodRe *regexp.Regexp
+	referenceRe, methodRe *regexp.Regexp
 }
 
 func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 	var dataByCollection yaml.MapSlice
-	err := yaml.Unmarshal(content, &dataByCollection)
+	decoder := yaml.NewDecoder(bytes.NewBuffer(content), yaml.UseOrderedMap())
+	err := decoder.Decode(&dataByCollection)
 	if err != nil {
 		return nil, fmt.Errorf("cannot decode content: %w", err)
 	}
@@ -64,12 +55,15 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 			return nil, fmt.Errorf("%+v not string key", collV.Key)
 		}
 
+		if collectionName == "template" {
+			continue
+		}
+
 		data, ok := collV.Value.(yaml.MapSlice)
 		if !ok {
 			return nil, fmt.Errorf("cannot decode content: %q must be object", collectionName)
 		}
 
-		tpls := make(map[string]yaml.MapSlice)
 		docs := make([]interface{}, 0, len(data))
 		index := 0
 
@@ -84,53 +78,18 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 				return nil, fmt.Errorf("cannot decode content: %q must be object", key)
 			}
 
-			matches := p.tplRe.FindStringSubmatch(key)
-			if len(matches) > 0 {
-				name := matches[p.tplRe.SubexpIndex("name")]
-				tpls[name] = val
-
-				continue
-			}
-
-			matches = p.docRe.FindStringSubmatch(key)
-			if len(matches) > 0 {
-				name := matches[p.docRe.SubexpIndex("name")]
-				doc, err := p.processItem(index, val, references)
-				index++
-				if err != nil {
-					return nil, fmt.Errorf("cannot process %s: %w", name, err)
-				}
-
-				references[name] = doc["_id"]
-				docs = append(docs, doc)
-				continue
-			}
-
-			matches = p.docWithTplRe.FindStringSubmatch(key)
-			if len(matches) == 0 {
-				return nil, fmt.Errorf("invalid doc key %q", key)
-			}
-
-			name := matches[p.docWithTplRe.SubexpIndex("name")]
-			tplName := matches[p.docWithTplRe.SubexpIndex("tpl")]
-			tpl, ok := tpls[tplName]
-			if !ok {
-				return nil, fmt.Errorf("unknown tpl %q", tplName)
-			}
-
-			doc, err := p.processItem(index, mergeOrderedMaps(tpl, val), references)
+			doc, err := p.processItem(index, val, references)
 			index++
 			if err != nil {
-				return nil, fmt.Errorf("cannot process %s: %w", name, err)
+				return nil, fmt.Errorf("cannot process %s: %w", key, err)
 			}
 
-			references[name] = doc["_id"]
+			references[key] = doc["_id"]
 			docs = append(docs, doc)
 		}
 
-		if len(docs) > 0 {
-			docsByCollection[collectionName] = docs
-		}
+		docsByCollection[collectionName] = docs
+		p.faker.ResetUniqueName()
 	}
 
 	return docsByCollection, nil
@@ -216,7 +175,7 @@ func (p *parser) processValue(fieldVal interface{}, index int, doc map[string]in
 
 			return nil, fmt.Errorf("missing %q field", keyCurrent)
 		case keyIndex:
-			return index, nil
+			return index + 1, nil
 		default:
 			newVal, err := callReflectMethod(p.reflectFaker, method, args)
 			if err != nil {
@@ -230,40 +189,6 @@ func (p *parser) processValue(fieldVal interface{}, index int, doc map[string]in
 	}
 }
 
-func mergeOrderedMaps(l, r yaml.MapSlice) yaml.MapSlice {
-	res := make(yaml.MapSlice, len(r))
-	has := make(map[interface{}]bool)
-
-	for i, rv := range r {
-		has[rv.Key] = true
-		v := rv
-
-		if rm, ok := rv.Value.(yaml.MapSlice); ok {
-			for _, lv := range l {
-				if lv.Key == rv.Key {
-					if lm, ok := lv.Value.(yaml.MapSlice); ok {
-						v = yaml.MapItem{
-							Key:   rv.Key,
-							Value: mergeOrderedMaps(lm, rm),
-						}
-						break
-					}
-				}
-			}
-		}
-
-		res[i] = v
-	}
-
-	for _, v := range l {
-		if !has[v.Key] {
-			res = append(res, v)
-		}
-	}
-
-	return res
-}
-
 func callReflectMethod(rv reflect.Value, method, args string) (interface{}, error) {
 	methodReflect := rv.MethodByName(method)
 	if !methodReflect.IsValid() {
@@ -273,6 +198,9 @@ func callReflectMethod(rv reflect.Value, method, args string) (interface{}, erro
 	in := make([]reflect.Value, 0)
 	if args != "" {
 		strs := strings.Split(args, ",")
+		if methodReflect.Type().NumIn() != len(strs) {
+			return nil, fmt.Errorf("expected %d arguments for method %q but got %d", methodReflect.Type().NumIn(), method, len(strs))
+		}
 		for i, s := range strs {
 			switch methodReflect.Type().In(i).Kind() {
 			case reflect.Int:
@@ -296,6 +224,16 @@ func callReflectMethod(rv reflect.Value, method, args string) (interface{}, erro
 	}
 
 	returnReflect := methodReflect.Call(in)
+	if len(returnReflect) == 2 {
+		errVal := returnReflect[1].Interface()
+		if errVal == nil {
+			return returnReflect[0].Interface(), nil
+		}
+		if err, ok := errVal.(error); ok {
+			return returnReflect[0].Interface(), fmt.Errorf("method %q returned error: %w", method, err)
+		}
+	}
+
 	if len(returnReflect) != 1 {
 		return nil, fmt.Errorf("unexpected count of return value for method %q : expected 1 but got %d", method, len(returnReflect))
 	}

@@ -744,10 +744,10 @@ func (a *mongoAdapter) ArchiveResolvedAlarms(ctx context.Context, before types.C
 	return archived, nil
 }
 
-func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdAfter types.CpsTime, idsWithPbehaviors []string) (libmongo.Cursor, error) {
+func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefore types.CpsTime, idsWithPbehaviors []string) (libmongo.Cursor, error) {
 	filter := bson.M{
 		"v.resolved": nil,
-		"t":          bson.M{"$lt": createdAfter},
+		"t":          bson.M{"$lt": createdBefore},
 	}
 
 	if len(idsWithPbehaviors) > 0 {
@@ -784,7 +784,7 @@ func (a *mongoAdapter) GetWorstAlarmState(ctx context.Context, entityIds []strin
 		}},
 		{"$group": bson.M{
 			"_id":   nil,
-			"state": bson.M{"$max": "$v.state.v"},
+			"state": bson.M{"$max": "$v.state.val"},
 		}},
 	})
 	if err != nil {
@@ -796,6 +796,7 @@ func (a *mongoAdapter) GetWorstAlarmState(ctx context.Context, entityIds []strin
 		res := struct {
 			State int64 `bson:"state"`
 		}{}
+
 		err := cursor.Decode(&res)
 
 		return res.State, err

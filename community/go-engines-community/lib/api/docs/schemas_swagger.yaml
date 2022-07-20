@@ -1,0 +1,4376 @@
+definitions:
+  account.User:
+    properties:
+      _id:
+        type: string
+      authkey:
+        type: string
+      defaultview:
+        $ref: '#/definitions/user.View'
+      email:
+        type: string
+      enable:
+        type: boolean
+      external_id:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/role.Permission'
+        type: array
+      role:
+        $ref: '#/definitions/user.Role'
+      source:
+        type: string
+      ui_groups_navigation_type:
+        type: string
+      ui_language:
+        type: string
+      ui_tours:
+        additionalProperties:
+          type: boolean
+        type: object
+    type: object
+  action.Parameters:
+    properties:
+      author:
+        type: string
+      declare_ticket:
+        $ref: '#/definitions/types.WebhookDeclareTicket'
+        description: DeclareTicket is used in webhook action.
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        description: Duration is used in snooze and pbehavior actions.
+      forward_author:
+        type: boolean
+      name:
+        description: Name is used in pbehavior action.
+        maxLength: 255
+        type: string
+      output:
+        maxLength: 255
+        type: string
+      reason:
+        description: Reason is used in pbehavior action.
+        type: string
+      request:
+        $ref: '#/definitions/types.WebhookRequest'
+        description: Request is used in webhook action.
+      retry_count:
+        description: RetryCount is used in webhook action.
+        minimum: 0
+        type: integer
+      retry_delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+        description: RetryDelay is used in webhook action.
+      rrule:
+        description: RRule is used in pbehavior action.
+        type: string
+      start_on_trigger:
+        description: StartOnTrigger is used in pbehavior action.
+        type: boolean
+      state:
+        description: |-
+          State is used in changestate action.
+            * `0` - Info
+            * `1` - Minor
+            * `2` - Major
+            * `3` - Critical
+        type: integer
+      ticket:
+        description: Ticket is used in assocticket action.
+        maxLength: 255
+        type: string
+      tstart:
+        description: Tstart is used in pbehavior action.
+        type: integer
+      tstop:
+        description: Tstop is used in pbehavior action.
+        type: integer
+      type:
+        description: Type is used in pbehavior action.
+        type: string
+    type: object
+  alarm.Alarm:
+    properties:
+      _id:
+        type: string
+      assigned_instructions:
+        items:
+          $ref: '#/definitions/alarm.AssignedInstruction'
+        type: array
+      children:
+        type: integer
+      children_instructions:
+        type: boolean
+      entity:
+        $ref: '#/definitions/entity.Entity'
+      filtered_children:
+        items:
+          type: string
+        type: array
+      impact_state:
+        type: integer
+      infos:
+        additionalProperties:
+          additionalProperties: true
+          type: object
+        type: object
+      is_all_auto_instructions_completed:
+        type: boolean
+      is_auto_instruction_failed:
+        type: boolean
+      is_auto_instruction_running:
+        type: boolean
+      is_manual_instruction_running:
+        type: boolean
+      is_manual_instruction_waiting_result:
+        type: boolean
+      is_meta_alarm:
+        type: boolean
+      links:
+        additionalProperties: true
+        type: object
+      meta_alarm_rule:
+        $ref: '#/definitions/alarm.MetaAlarmRule'
+        description: Meta alarm fields
+      meta_alarm_rules:
+        items:
+          $ref: '#/definitions/alarm.MetaAlarmRule'
+        type: array
+      parents:
+        description: Meta alarm child fields
+        type: integer
+      pbehavior:
+        $ref: '#/definitions/alarm.Pbehavior'
+      t:
+        type: integer
+      v:
+        $ref: '#/definitions/alarm.AlarmValue'
+    type: object
+  alarm.AlarmStep:
+    properties:
+      _t:
+        type: string
+      a:
+        type: string
+      initiator:
+        type: string
+      m:
+        type: string
+      statecounter:
+        $ref: '#/definitions/types.CropCounter'
+      t:
+        type: integer
+      user_id:
+        type: string
+      val:
+        type: integer
+    type: object
+  alarm.AlarmTicket:
+    properties:
+      _t:
+        type: string
+      a:
+        type: string
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      m:
+        type: string
+      t:
+        type: integer
+      user_id:
+        type: string
+      val:
+        type: string
+    type: object
+  alarm.AlarmValue:
+    properties:
+      ack:
+        $ref: '#/definitions/alarm.AlarmStep'
+      activation_date:
+        type: integer
+      active_duration:
+        type: integer
+      canceled:
+        $ref: '#/definitions/alarm.AlarmStep'
+      children:
+        items:
+          type: string
+        type: array
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      creation_date:
+        type: integer
+      current_state_duration:
+        type: integer
+      display_name:
+        type: string
+      done:
+        $ref: '#/definitions/alarm.AlarmStep'
+      duration:
+        type: integer
+      events_count:
+        type: integer
+      infos:
+        additionalProperties:
+          additionalProperties: true
+          type: object
+        type: object
+      infos_rule_version:
+        additionalProperties:
+          type: string
+        type: object
+      initial_long_output:
+        type: string
+      initial_output:
+        type: string
+      last_comment:
+        $ref: '#/definitions/alarm.AlarmStep'
+      last_event_date:
+        type: integer
+      last_update_date:
+        type: integer
+      long_output:
+        type: string
+      long_output_history:
+        items:
+          type: string
+        type: array
+      meta:
+        type: string
+      output:
+        type: string
+      parents:
+        items:
+          type: string
+        type: array
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+      pbh_inactive_duration:
+        type: integer
+      resolved:
+        type: integer
+      resource:
+        type: string
+      snooze:
+        $ref: '#/definitions/alarm.AlarmStep'
+      snooze_duration:
+        type: integer
+      state:
+        $ref: '#/definitions/alarm.AlarmStep'
+      state_changes_since_status_update:
+        type: integer
+      status:
+        $ref: '#/definitions/alarm.AlarmStep'
+      steps:
+        items:
+          $ref: '#/definitions/alarm.AlarmStep'
+        type: array
+      tags:
+        items:
+          type: string
+        type: array
+      ticket:
+        $ref: '#/definitions/alarm.AlarmTicket'
+      total_state_changes:
+        type: integer
+    type: object
+  alarm.AssignedInstruction:
+    properties:
+      _id:
+        type: string
+      execution:
+        $ref: '#/definitions/alarm.Execution'
+      name:
+        type: string
+    type: object
+  alarm.ChildDetailsRequest:
+    properties:
+      limit:
+        type: integer
+      multi_sort:
+        items:
+          type: string
+        type: array
+      page:
+        type: integer
+      paginate:
+        type: boolean
+      sort:
+        type: string
+      sort_by:
+        type: string
+    type: object
+  alarm.ChildrenDetails:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/alarm.Alarm'
+        type: array
+      meta:
+        $ref: '#/definitions/common.PaginatedMeta'
+    type: object
+  alarm.Count:
+    properties:
+      ack:
+        type: integer
+      pbehavior_active:
+        type: integer
+      snooze:
+        type: integer
+      ticket:
+        type: integer
+      total:
+        type: integer
+      total_active:
+        type: integer
+    type: object
+  alarm.Details:
+    properties:
+      children:
+        $ref: '#/definitions/alarm.ChildrenDetails'
+      steps:
+        $ref: '#/definitions/alarm.StepDetails'
+    type: object
+  alarm.DetailsRequest:
+    properties:
+      _id:
+        type: string
+      children:
+        $ref: '#/definitions/alarm.ChildDetailsRequest'
+      opened:
+        type: boolean
+      steps:
+        $ref: '#/definitions/pagination.Query'
+      with_instructions:
+        type: boolean
+    required:
+    - _id
+    type: object
+  alarm.DetailsResponse:
+    properties:
+      _id:
+        type: string
+      data:
+        $ref: '#/definitions/alarm.Details'
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      status:
+        type: integer
+    type: object
+  alarm.Execution:
+    properties:
+      _id:
+        type: string
+      status:
+        type: integer
+    type: object
+  alarm.ExportRequest:
+    properties:
+      category:
+        type: string
+      correlation:
+        type: boolean
+      exclude_instruction_types:
+        items:
+          type: integer
+        type: array
+      exclude_instructions:
+        items:
+          type: string
+        type: array
+      fields:
+        items:
+          $ref: '#/definitions/export.Field'
+        type: array
+      filter:
+        type: string
+      include_instruction_types:
+        items:
+          type: integer
+        type: array
+      include_instructions:
+        items:
+          type: string
+        type: array
+      opened:
+        type: boolean
+      search:
+        type: string
+      separator:
+        type: string
+      time_field:
+        type: string
+      time_format:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+    type: object
+  alarm.ExportResponse:
+    properties:
+      _id:
+        type: string
+      status:
+        type: integer
+    type: object
+  alarm.ManualResponse:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
+  alarm.MetaAlarmRule:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
+  alarm.Pbehavior:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/common.User'
+      last_comment:
+        $ref: '#/definitions/pbehavior.Comment'
+      name:
+        type: string
+      reason:
+        $ref: '#/definitions/pbehavior.Reason'
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+    type: object
+  alarm.StepDetails:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/alarm.AlarmStep'
+        type: array
+      meta:
+        $ref: '#/definitions/common.PaginatedMeta'
+    type: object
+  appinfo.AppInfoResponse:
+    properties:
+      allow_change_severity_to_info:
+        type: boolean
+      app_title:
+        type: string
+      check_count_request_timeout:
+        type: integer
+      edition:
+        type: string
+      file_upload_max_size:
+        type: integer
+      footer:
+        type: string
+      language:
+        type: string
+      login:
+        $ref: '#/definitions/appinfo.LoginConf'
+      login_page_description:
+        type: string
+      logo:
+        type: string
+      max_matched_items:
+        type: integer
+      popup_timeout:
+        $ref: '#/definitions/appinfo.PopupTimeout'
+      remediation:
+        $ref: '#/definitions/appinfo.RemediationConf'
+      stack:
+        type: string
+      timezone:
+        type: string
+      version:
+        type: string
+    type: object
+  appinfo.JobConfigType:
+    properties:
+      auth_type:
+        type: string
+      name:
+        type: string
+    type: object
+  appinfo.LoginConf:
+    properties:
+      casconfig:
+        $ref: '#/definitions/appinfo.LoginConfigMethod'
+      ldapconfig:
+        $ref: '#/definitions/appinfo.LoginConfigMethod'
+      saml2config:
+        $ref: '#/definitions/appinfo.LoginConfigMethod'
+    type: object
+  appinfo.LoginConfigMethod:
+    properties:
+      enable:
+        type: boolean
+      title:
+        type: string
+    type: object
+  appinfo.PopupTimeout:
+    properties:
+      error:
+        $ref: '#/definitions/types.DurationWithUnit'
+      info:
+        $ref: '#/definitions/types.DurationWithUnit'
+    type: object
+  appinfo.RemediationConf:
+    properties:
+      job_config_types:
+        items:
+          $ref: '#/definitions/appinfo.JobConfigType'
+        type: array
+    type: object
+  appinfo.UserInterfaceConf:
+    properties:
+      allow_change_severity_to_info:
+        type: boolean
+      app_title:
+        type: string
+      check_count_request_timeout:
+        type: integer
+      footer:
+        type: string
+      language:
+        type: string
+      login_page_description:
+        type: string
+      logo:
+        type: string
+      max_matched_items:
+        type: integer
+      popup_timeout:
+        $ref: '#/definitions/appinfo.PopupTimeout'
+    type: object
+  associativetable.AssociativeTable:
+    properties:
+      content:
+        $ref: '#/definitions/associativetable.Content'
+      name:
+        type: string
+    required:
+    - content
+    - name
+    type: object
+  associativetable.Content:
+    type: object
+  auth.loginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  auth.loginResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
+  broadcastmessage.BroadcastMessage:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      created:
+        type: integer
+      end:
+        type: integer
+      message:
+        type: string
+      start:
+        type: integer
+      updated:
+        type: integer
+    required:
+    - color
+    - end
+    - message
+    - start
+    type: object
+  broadcastmessage.Payload:
+    properties:
+      color:
+        type: string
+      created:
+        type: integer
+      end:
+        type: integer
+      message:
+        type: string
+      start:
+        type: integer
+      updated:
+        type: integer
+    required:
+    - color
+    - end
+    - message
+    - start
+    type: object
+  common.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  common.PaginatedListResponse:
+    properties:
+      data: {}
+      meta:
+        $ref: '#/definitions/common.PaginatedMeta'
+    type: object
+  common.PaginatedMeta:
+    properties:
+      page:
+        type: integer
+      page_count:
+        type: integer
+      per_page:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  common.User:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
+  common.ValidationErrorResponse:
+    properties:
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
+  contextgraph.ImportJob:
+    properties:
+      _id:
+        type: string
+      creation:
+        type: string
+      exec_time:
+        type: string
+      info:
+        type: string
+      source:
+        type: string
+      stats:
+        $ref: '#/definitions/importcontextgraph.Stats'
+      status:
+        type: string
+    type: object
+  contextgraph.ImportRequest:
+    properties:
+      json:
+        properties:
+          cis:
+            items:
+              $ref: '#/definitions/importcontextgraph.ConfigurationItem'
+            type: array
+          links:
+            items:
+              $ref: '#/definitions/importcontextgraph.Link'
+            type: array
+        type: object
+    type: object
+  contextgraph.ImportResponse:
+    properties:
+      _id:
+        type: string
+    type: object
+  datastorage.Config:
+    properties:
+      alarm:
+        properties:
+          archive_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
+      health_check:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
+      junit:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
+      pbehavior:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
+      remediation:
+        properties:
+          accumulate_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
+    type: object
+  datastorage.DataStorage:
+    properties:
+      config:
+        $ref: '#/definitions/datastorage.Config'
+      history:
+        $ref: '#/definitions/datastorage.History'
+    type: object
+  datastorage.History:
+    properties:
+      alarm:
+        $ref: '#/definitions/datastorage.HistoryWithCount'
+      entity:
+        $ref: '#/definitions/datastorage.HistoryWithCount'
+      health_check:
+        type: integer
+      junit:
+        type: integer
+      pbehavior:
+        type: integer
+      remediation:
+        type: integer
+    type: object
+  datastorage.HistoryWithCount:
+    properties:
+      archived:
+        type: integer
+      deleted:
+        type: integer
+      time:
+        type: integer
+    type: object
+  entity.BulkToggleRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  entity.Entity:
+    properties:
+      _id:
+        type: string
+      category:
+        $ref: '#/definitions/entitycategory.Category'
+      component:
+        type: string
+      component_infos:
+        $ref: '#/definitions/entity.Infos'
+      connector:
+        type: string
+      connector_type:
+        description: ConnectorType contains a part before "/" of connector id.
+        type: string
+      deletable:
+        type: boolean
+      depends:
+        items:
+          type: string
+        type: array
+      enable_history:
+        items:
+          type: integer
+        type: array
+      enabled:
+        type: boolean
+      idle_since:
+        type: integer
+      impact:
+        items:
+          type: string
+        type: array
+      impact_level:
+        type: integer
+      infos:
+        $ref: '#/definitions/entity.Infos'
+      ko_events:
+        type: integer
+      last_event_date:
+        type: integer
+      measurements: {}
+      name:
+        type: string
+      ok_events:
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+      state:
+        type: integer
+      type:
+        type: string
+    type: object
+  entity.ExportRequest:
+    properties:
+      category:
+        type: string
+      fields:
+        items:
+          $ref: '#/definitions/export.Field'
+        type: array
+      filter:
+        type: string
+      no_events:
+        type: boolean
+      search:
+        type: string
+      separator:
+        type: string
+      type:
+        items:
+          type: string
+        type: array
+    type: object
+  entity.ExportResponse:
+    properties:
+      _id:
+        type: string
+      status:
+        type: integer
+    type: object
+  entity.Info:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      value: {}
+    type: object
+  entity.Infos:
+    additionalProperties:
+      $ref: '#/definitions/entity.Info'
+    type: object
+  entity.PbehaviorInfo:
+    properties:
+      canonical_type:
+        description: CanonicalType is Type of pbehavior.Type.
+        type: string
+      icon_name:
+        type: string
+      id:
+        description: ID is ID of pbehavior.PBehavior.
+        type: string
+      name:
+        description: Name is Name of pbehavior.PBehavior.
+        type: string
+      reason:
+        description: Reason is Name of pbehavior.Reason.
+        type: string
+      timestamp:
+        description: |-
+          Timestamp is time when entity enters pbehavior.
+          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+        type: integer
+      type:
+        description: TypeID is ID of pbehavior.Type.
+        type: string
+      type_name:
+        description: TypeName is Name of pbehavior.Type.
+        type: string
+    type: object
+  entitybasic.EditRequest:
+    properties:
+      category:
+        type: string
+      depends:
+        items:
+          type: string
+        type: array
+      description:
+        maxLength: 255
+        type: string
+      enabled:
+        type: boolean
+      impact:
+        items:
+          type: string
+        type: array
+      impact_level:
+        maximum: 10
+        minimum: 1
+        type: integer
+      infos:
+        items:
+          $ref: '#/definitions/entitybasic.InfoRequest'
+        type: array
+      sli_avail_state:
+        maximum: 3
+        minimum: 0
+        type: integer
+    required:
+    - enabled
+    - impact_level
+    - sli_avail_state
+    type: object
+  entitybasic.Entity:
+    properties:
+      _id:
+        type: string
+      category:
+        $ref: '#/definitions/entitycategory.Category'
+      changeable_depends:
+        items:
+          type: string
+        type: array
+      changeable_impact:
+        items:
+          type: string
+        type: array
+      component:
+        type: string
+      component_infos:
+        $ref: '#/definitions/entity.Infos'
+      connector:
+        type: string
+      connector_type:
+        description: ConnectorType contains a part before "/" of connector id.
+        type: string
+      deletable:
+        type: boolean
+      depends:
+        items:
+          type: string
+        type: array
+      description:
+        type: string
+      enable_history:
+        items:
+          type: integer
+        type: array
+      enabled:
+        type: boolean
+      idle_since:
+        type: integer
+      impact:
+        items:
+          type: string
+        type: array
+      impact_level:
+        type: integer
+      infos:
+        $ref: '#/definitions/entity.Infos'
+      ko_events:
+        type: integer
+      last_event_date:
+        type: integer
+      measurements: {}
+      name:
+        type: string
+      ok_events:
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+      sli_avail_state:
+        type: integer
+      state:
+        type: integer
+      type:
+        type: string
+    type: object
+  entitybasic.InfoRequest:
+    properties:
+      description:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      value: {}
+    required:
+    - name
+    type: object
+  entitycategory.Category:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      name:
+        type: string
+      updated:
+        type: integer
+    type: object
+  entitycategory.EditRequest:
+    properties:
+      name:
+        maxLength: 255
+        type: string
+    required:
+    - name
+    type: object
+  entityinfodictionary.Result:
+    properties:
+      value:
+        type: string
+    type: object
+  entityservice.AlarmWithEntity:
+    properties:
+      alarm:
+        $ref: '#/definitions/types.Alarm'
+      entity:
+        $ref: '#/definitions/entity.Entity'
+      has_dependencies:
+        type: boolean
+      has_impacts:
+        type: boolean
+      impact_state:
+        type: integer
+    type: object
+  entityservice.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  entityservice.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      category:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      impact_level:
+        maximum: 10
+        minimum: 1
+        type: integer
+      infos:
+        items:
+          $ref: '#/definitions/entitybasic.InfoRequest'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      output_template:
+        maxLength: 500
+        type: string
+      sli_avail_state:
+        maximum: 3
+        minimum: 0
+        type: integer
+    required:
+    - _id
+    - enabled
+    - impact_level
+    - name
+    - output_template
+    - sli_avail_state
+    type: object
+  entityservice.CreateRequest:
+    properties:
+      _id:
+        type: string
+      category:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      impact_level:
+        maximum: 10
+        minimum: 1
+        type: integer
+      infos:
+        items:
+          $ref: '#/definitions/entitybasic.InfoRequest'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      output_template:
+        maxLength: 500
+        type: string
+      sli_avail_state:
+        maximum: 3
+        minimum: 0
+        type: integer
+    required:
+    - enabled
+    - impact_level
+    - name
+    - output_template
+    - sli_avail_state
+    type: object
+  entityservice.Response:
+    properties:
+      _id:
+        type: string
+      category:
+        $ref: '#/definitions/entitycategory.Category'
+      component:
+        type: string
+      component_infos:
+        $ref: '#/definitions/entity.Infos'
+      connector:
+        type: string
+      connector_type:
+        description: ConnectorType contains a part before "/" of connector id.
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      deletable:
+        type: boolean
+      depends:
+        items:
+          type: string
+        type: array
+      enable_history:
+        items:
+          type: integer
+        type: array
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      idle_since:
+        type: integer
+      impact:
+        items:
+          type: string
+        type: array
+      impact_level:
+        type: integer
+      infos:
+        $ref: '#/definitions/entity.Infos'
+      ko_events:
+        type: integer
+      last_event_date:
+        type: integer
+      measurements: {}
+      name:
+        type: string
+      ok_events:
+        type: integer
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
+      output_template:
+        type: string
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+      sli_avail_state:
+        type: integer
+      state:
+        type: integer
+      type:
+        type: string
+    type: object
+  entityservice.UpdateRequest:
+    properties:
+      category:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      impact_level:
+        maximum: 10
+        minimum: 1
+        type: integer
+      infos:
+        items:
+          $ref: '#/definitions/entitybasic.InfoRequest'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      output_template:
+        maxLength: 500
+        type: string
+      sli_avail_state:
+        maximum: 3
+        minimum: 0
+        type: integer
+    required:
+    - enabled
+    - impact_level
+    - name
+    - output_template
+    - sli_avail_state
+    type: object
+  eventfilter.Action:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+      value: {}
+    type: object
+  eventfilter.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  eventfilter.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+      corporate_entity_pattern:
+        type: string
+      created:
+        type: integer
+      description:
+        maxLength: 255
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      event_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      external_data:
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
+        type: object
+      priority:
+        type: integer
+      type:
+        enum:
+        - break
+        - drop
+        - enrichment
+        - change_entity
+        type: string
+      updated:
+        type: integer
+    required:
+    - _id
+    - description
+    - type
+    type: object
+  eventfilter.CreateRequest:
+    properties:
+      _id:
+        type: string
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+      corporate_entity_pattern:
+        type: string
+      created:
+        type: integer
+      description:
+        maxLength: 255
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      event_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      external_data:
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
+        type: object
+      priority:
+        type: integer
+      type:
+        enum:
+        - break
+        - drop
+        - enrichment
+        - change_entity
+        type: string
+      updated:
+        type: integer
+    required:
+    - description
+    - type
+    type: object
+  eventfilter.ExternalDataParameters:
+    properties:
+      collection:
+        description: are used in mongo external data
+        type: string
+      request:
+        $ref: '#/definitions/request.Parameters'
+        description: are used in api external data
+      select:
+        additionalProperties:
+          type: string
+        type: object
+      type:
+        type: string
+    type: object
+  eventfilter.Rule:
+    properties:
+      _id:
+        type: string
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      created:
+        type: integer
+      description:
+        maxLength: 255
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      event_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      external_data:
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
+        type: object
+      old_patterns:
+        $ref: '#/definitions/oldpattern.EventPatternList'
+      priority:
+        type: integer
+      type:
+        enum:
+        - break
+        - drop
+        - enrichment
+        - change_entity
+        type: string
+      updated:
+        type: integer
+    required:
+    - description
+    - type
+    type: object
+  eventfilter.RuleConfig:
+    properties:
+      actions:
+        description: enrichment fields
+        items:
+          $ref: '#/definitions/eventfilter.Action'
+        type: array
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      on_failure:
+        type: string
+      on_success:
+        type: string
+      resource:
+        type: string
+    type: object
+  eventfilter.UpdateRequest:
+    properties:
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+      corporate_entity_pattern:
+        type: string
+      created:
+        type: integer
+      description:
+        maxLength: 255
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      event_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      external_data:
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
+        type: object
+      priority:
+        type: integer
+      type:
+        enum:
+        - break
+        - drop
+        - enrichment
+        - change_entity
+        type: string
+      updated:
+        type: integer
+    required:
+    - description
+    - type
+    type: object
+  export.Field:
+    properties:
+      label:
+        type: string
+      name:
+        type: string
+    type: object
+  file.File:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      filename:
+        type: string
+      mediatype:
+        type: string
+    type: object
+  flappingrule.CreateRequest:
+    properties:
+      _id:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      freq_limit:
+        type: integer
+      name:
+        maxLength: 255
+        type: string
+      priority:
+        type: integer
+    required:
+    - duration
+    - freq_limit
+    - name
+    - priority
+    type: object
+  flappingrule.Response:
+    properties:
+      _id:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      author:
+        $ref: '#/definitions/common.User'
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      created:
+        type: integer
+      description:
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      freq_limit:
+        type: integer
+      name:
+        type: string
+      old_alarm_patterns:
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
+      priority:
+        type: integer
+      updated:
+        type: integer
+    type: object
+  flappingrule.UpdateRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      freq_limit:
+        type: integer
+      name:
+        maxLength: 255
+        type: string
+      priority:
+        type: integer
+    required:
+    - duration
+    - freq_limit
+    - name
+    - priority
+    type: object
+  idlerule.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  idlerule.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      alarm_condition:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      disable_during_periods:
+        items:
+          type: string
+        type: array
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      operation:
+        $ref: '#/definitions/idlerule.OperationRequest'
+      priority:
+        type: integer
+      type:
+        type: string
+    required:
+    - _id
+    - duration
+    - enabled
+    - name
+    - priority
+    - type
+    type: object
+  idlerule.CreateRequest:
+    properties:
+      _id:
+        type: string
+      alarm_condition:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      disable_during_periods:
+        items:
+          type: string
+        type: array
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      operation:
+        $ref: '#/definitions/idlerule.OperationRequest'
+      priority:
+        type: integer
+      type:
+        type: string
+    required:
+    - duration
+    - enabled
+    - name
+    - priority
+    - type
+    type: object
+  idlerule.EditRequest:
+    properties:
+      alarm_condition:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      disable_during_periods:
+        items:
+          type: string
+        type: array
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      operation:
+        $ref: '#/definitions/idlerule.OperationRequest'
+      priority:
+        type: integer
+      type:
+        type: string
+    required:
+    - duration
+    - enabled
+    - name
+    - priority
+    - type
+    type: object
+  idlerule.Operation:
+    properties:
+      parameters:
+        $ref: '#/definitions/idlerule.Parameters'
+      type:
+        type: string
+    type: object
+  idlerule.OperationRequest:
+    properties:
+      parameters:
+        $ref: '#/definitions/idlerule.Parameters'
+      type:
+        type: string
+    required:
+    - type
+    type: object
+  idlerule.Parameters:
+    properties:
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        description: Snooze and Pbehavior
+      name:
+        description: Pbehavior
+        maxLength: 255
+        type: string
+      output:
+        type: string
+      reason:
+        $ref: '#/definitions/pbehavior.Reason'
+      rrule:
+        type: string
+      start_on_trigger:
+        type: boolean
+      state:
+        description: ChangeState
+        type: integer
+      ticket:
+        description: AssocTicket
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+    type: object
+  idlerule.Rule:
+    properties:
+      _id:
+        type: string
+      alarm_condition:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      author:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      created:
+        type: integer
+      description:
+        type: string
+      disable_during_periods:
+        description: |-
+          DisableDuringPeriods is an option that allows to disable the rule
+          when entity is in listed periods due pbehavior schedule.
+        items:
+          type: string
+        type: array
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      name:
+        type: string
+      old_alarm_patterns:
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
+        description: Only for Alarm rules
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
+      operation:
+        $ref: '#/definitions/idlerule.Operation'
+      priority:
+        type: integer
+      type:
+        type: string
+      updated:
+        type: integer
+    type: object
+  importcontextgraph.ConfigurationItem:
+    properties:
+      _id:
+        type: string
+      action:
+        enum:
+        - set
+        - create
+        - update
+        - delete
+        - enable
+        - disable
+        type: string
+      category:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      impact_level:
+        type: integer
+      infos:
+        additionalProperties: true
+        type: object
+      measurements:
+        items: {}
+        type: array
+      name:
+        type: string
+      output_template:
+        type: string
+      type:
+        enum:
+        - connector
+        - component
+        - resource
+        - service
+        type: string
+    type: object
+  importcontextgraph.Link:
+    properties:
+      _id:
+        type: string
+      action:
+        enum:
+        - create
+        - delete
+        type: string
+      action_properties: {}
+      from:
+        items:
+          type: string
+        type: array
+      infos:
+        additionalProperties: true
+        type: object
+      to:
+        type: string
+    type: object
+  importcontextgraph.Stats:
+    properties:
+      deleted:
+        type: integer
+      updated:
+        type: integer
+    type: object
+  messageratestats.StatsListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/messageratestats.StatsResponse'
+        type: array
+      meta:
+        properties:
+          deleted_before:
+            type: integer
+        type: object
+    type: object
+  messageratestats.StatsResponse:
+    properties:
+      rate:
+        type: integer
+      time:
+        type: integer
+    type: object
+  notification.InstructionNotification:
+    properties:
+      rate:
+        type: boolean
+      rate_frequency:
+        $ref: '#/definitions/types.DurationWithUnit'
+    required:
+    - rate
+    - rate_frequency
+    type: object
+  notification.Notification:
+    properties:
+      instruction:
+        $ref: '#/definitions/notification.InstructionNotification'
+    type: object
+  oldpattern.AlarmPatternList:
+    type: object
+  oldpattern.EntityPatternList:
+    type: object
+  oldpattern.EventPatternList:
+    type: object
+  pagination.Query:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      paginate:
+        type: boolean
+    type: object
+  pattern.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  pattern.Condition:
+    properties:
+      type:
+        type: string
+      value: {}
+    type: object
+  pattern.Count:
+    properties:
+      count:
+        type: integer
+      over_limit:
+        type: boolean
+    type: object
+  pattern.CountRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+    type: object
+  pattern.CountResponse:
+    properties:
+      alarm_pattern:
+        $ref: '#/definitions/pattern.Count'
+      entity_pattern:
+        $ref: '#/definitions/pattern.Count'
+      pbehavior_pattern:
+        $ref: '#/definitions/pattern.Count'
+    type: object
+  pattern.EditRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      is_corporate:
+        type: boolean
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      title:
+        maxLength: 255
+        type: string
+      type:
+        enum:
+        - alarm
+        - entity
+        - pbehavior
+        type: string
+    required:
+    - is_corporate
+    - title
+    - type
+    type: object
+  pattern.FieldCondition:
+    properties:
+      cond:
+        $ref: '#/definitions/pattern.Condition'
+      field:
+        type: string
+      field_type:
+        description: 'FieldType is only defined for custom fields, ex: infos.'
+        type: string
+    type: object
+  pattern.Response:
+    properties:
+      _id:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      author:
+        $ref: '#/definitions/common.User'
+      created:
+        type: integer
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      is_corporate:
+        type: boolean
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      title:
+        type: string
+      type:
+        type: string
+      updated:
+        type: integer
+    type: object
+  pbehavior.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  pbehavior.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - _id
+    - color
+    - enabled
+    - name
+    - reason
+    - tstart
+    - type
+    type: object
+  pbehavior.CalendarResponse:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      from:
+        type: integer
+      title:
+        type: string
+      to:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+    type: object
+  pbehavior.Comment:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      message:
+        type: string
+      ts:
+        type: integer
+    type: object
+  pbehavior.CreateRequest:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - color
+    - enabled
+    - name
+    - reason
+    - tstart
+    - type
+    type: object
+  pbehavior.OldMongoQuery:
+    additionalProperties: true
+    type: object
+  pbehavior.PatchRequest:
+    properties:
+      color:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      name:
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    type: object
+  pbehavior.Reason:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  pbehavior.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      color:
+        type: string
+      comments:
+        items:
+          $ref: '#/definitions/pbehavior.Comment'
+        type: array
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      created:
+        type: integer
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exceptions:
+        items:
+          $ref: '#/definitions/pbehaviorexception.Exception'
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.Exdate'
+        type: array
+      is_active_status:
+        description: IsActiveStatus represents if pbehavior is in action for current
+          time.
+        type: boolean
+      last_alarm_date:
+        type: integer
+      name:
+        type: string
+      old_mongo_query:
+        $ref: '#/definitions/pbehavior.OldMongoQuery'
+      reason:
+        $ref: '#/definitions/pbehaviorreason.Reason'
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+      updated:
+        type: integer
+    type: object
+  pbehavior.Type:
+    properties:
+      _id:
+        type: string
+      description:
+        type: string
+      icon_name:
+        type: string
+      name:
+        type: string
+      priority:
+        type: integer
+      type:
+        type: string
+    type: object
+  pbehavior.UpdateRequest:
+    properties:
+      color:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - color
+    - enabled
+    - name
+    - reason
+    - tstart
+    - type
+    type: object
+  pbehaviorcomment.Request:
+    properties:
+      message:
+        maxLength: 255
+        type: string
+      pbehavior:
+        type: string
+    required:
+    - message
+    - pbehavior
+    type: object
+  pbehaviorexception.Exception:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      deletable:
+        type: boolean
+      description:
+        type: string
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.Exdate'
+        type: array
+      name:
+        type: string
+    type: object
+  pbehaviorexception.Exdate:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+    type: object
+  pbehaviorexception.ExdateRequest:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
+      type:
+        type: string
+    required:
+    - begin
+    - end
+    - type
+    type: object
+  pbehaviorexception.Request:
+    properties:
+      description:
+        maxLength: 255
+        type: string
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+    required:
+    - description
+    - exdates
+    - name
+    type: object
+  pbehaviorreason.Reason:
+    properties:
+      _id:
+        type: string
+      deletable:
+        type: boolean
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  pbehaviorreason.Request:
+    properties:
+      description:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  pbehaviortimespan.ItemResponse:
+    properties:
+      from:
+        type: integer
+      to:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+    type: object
+  pbehaviortimespan.TimespansRequest:
+    properties:
+      end_at:
+        type: integer
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      rrule:
+        type: string
+      start_at:
+        type: integer
+      type:
+        type: string
+      view_from:
+        type: integer
+      view_to:
+        type: integer
+    required:
+    - start_at
+    - type
+    - view_from
+    - view_to
+    type: object
+  pbehaviortype.EditRequest:
+    properties:
+      description:
+        maxLength: 255
+        type: string
+      icon_name:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      priority:
+        type: integer
+      type:
+        enum:
+        - active
+        - inactive
+        - maintenance
+        - pause
+        type: string
+    required:
+    - description
+    - icon_name
+    - name
+    - priority
+    - type
+    type: object
+  pbehaviortype.Type:
+    properties:
+      _id:
+        type: string
+      deletable:
+        type: boolean
+      description:
+        type: string
+      editable:
+        type: boolean
+      icon_name:
+        type: string
+      name:
+        type: string
+      priority:
+        type: integer
+      type:
+        type: string
+    type: object
+  permission.Permission:
+    properties:
+      _id:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  playlist.EditRequest:
+    properties:
+      enabled:
+        type: boolean
+      fullscreen:
+        type: boolean
+      interval:
+        $ref: '#/definitions/types.DurationWithUnit'
+      name:
+        maxLength: 255
+        type: string
+      tabs_list:
+        items:
+          type: string
+        type: array
+    required:
+    - enabled
+    - fullscreen
+    - interval
+    - name
+    - tabs_list
+    type: object
+  playlist.Playlist:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      enabled:
+        type: boolean
+      fullscreen:
+        type: boolean
+      interval:
+        $ref: '#/definitions/types.DurationWithUnit'
+      name:
+        type: string
+      tabs_list:
+        items:
+          type: string
+        type: array
+      updated:
+        type: integer
+    type: object
+  request.BasicAuth:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  request.Parameters:
+    properties:
+      auth:
+        $ref: '#/definitions/request.BasicAuth'
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      method:
+        type: string
+      payload:
+        type: string
+      retry_count:
+        type: integer
+      retry_delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+      skip_verify:
+        type: boolean
+      url:
+        type: string
+    type: object
+  resolverule.CreateRequest:
+    properties:
+      _id:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      priority:
+        type: integer
+    required:
+    - duration
+    - name
+    - priority
+    type: object
+  resolverule.Response:
+    properties:
+      _id:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      author:
+        $ref: '#/definitions/common.User'
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      created:
+        type: integer
+      description:
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      name:
+        type: string
+      old_alarm_patterns:
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
+      priority:
+        type: integer
+      updated:
+        type: integer
+    type: object
+  resolverule.UpdateRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      priority:
+        type: integer
+    required:
+    - duration
+    - name
+    - priority
+    type: object
+  role.CreateRequest:
+    properties:
+      defaultview:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      permissions:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+    required:
+    - name
+    type: object
+  role.EditRequest:
+    properties:
+      defaultview:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      permissions:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+    type: object
+  role.Permission:
+    properties:
+      _id:
+        type: string
+      actions:
+        items:
+          type: string
+        type: array
+      description:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  role.Role:
+    properties:
+      _id:
+        type: string
+      defaultview:
+        properties:
+          _id:
+            type: string
+          title:
+            type: string
+        type: object
+      description:
+        type: string
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/role.Permission'
+        type: array
+    type: object
+  scenario.Action:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      comment:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      drop_scenario_if_not_matched:
+        type: boolean
+      emit_trigger:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      old_alarm_patterns:
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
+      parameters:
+        $ref: '#/definitions/scenario.Parameters'
+      type:
+        type: string
+    type: object
+  scenario.ActionRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      comment:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      drop_scenario_if_not_matched:
+        type: boolean
+      emit_trigger:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      old_alarm_patterns:
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
+      parameters:
+        $ref: '#/definitions/action.Parameters'
+      type:
+        enum:
+        - ack
+        - ackremove
+        - assocticket
+        - cancel
+        - changestate
+        - pbehavior
+        - snooze
+        - webhook
+        type: string
+    required:
+    - drop_scenario_if_not_matched
+    - emit_trigger
+    - type
+    type: object
+  scenario.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  scenario.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      actions:
+        items:
+          $ref: '#/definitions/scenario.ActionRequest'
+        type: array
+      author:
+        maxLength: 255
+        type: string
+      delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+      disable_during_periods:
+        items:
+          type: string
+        type: array
+      enabled:
+        type: boolean
+      name:
+        maxLength: 255
+        type: string
+      priority:
+        type: integer
+      triggers:
+        description: |-
+          Possible trigger values.
+            * `create` - Alarm creation
+            * `statedec` - Alarm state decrease
+            * `changestate` - Alarm state has been changed by "change state" action
+            * `stateinc` - Alarm state increase
+            * `changestatus` - Alarm status changes eg. flapping
+            * `ack` - Alarm has been acked
+            * `ackremove` - Alarm has been unacked
+            * `cancel` - Alarm has been cancelled
+            * `uncancel` - Alarm has been uncancelled
+            * `comment` - Alarm has been commented
+            * `done` - Alarm is "done"
+            * `declareticket` - Ticket has been declared by the UI action
+            * `declareticketwebhook` - Ticket has been declared by the webhook
+            * `assocticket` - Ticket has been associated with an alarm
+            * `snooze` - Alarm has been snoozed
+            * `unsnooze` - Alarm has been unsnoozed
+            * `pbhenter` - Alarm enters a periodic behavior
+            * `activate` - Alarm has been activated
+            * `resolve` - Alarm has been resolved
+            * `pbhleave` - Alarm leaves a periodic behavior
+            * `instructionfail` - Manual instruction has failed
+            * `autoinstructionfail` - Auto instruction has failed
+            * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructioncomplete` - Manual instruction is completed
+            * `autoinstructioncomplete` - Auto instruction is completed
+        items:
+          type: string
+        type: array
+    required:
+    - _id
+    - actions
+    - author
+    - enabled
+    - name
+    - triggers
+    type: object
+  scenario.CheckPriorityRequest:
+    properties:
+      priority:
+        type: integer
+    required:
+    - priority
+    type: object
+  scenario.CheckPriorityResponse:
+    properties:
+      recommended_priority:
+        type: integer
+      valid:
+        type: boolean
+    type: object
+  scenario.CreateRequest:
+    properties:
+      _id:
+        type: string
+      actions:
+        items:
+          $ref: '#/definitions/scenario.ActionRequest'
+        type: array
+      author:
+        maxLength: 255
+        type: string
+      delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+      disable_during_periods:
+        items:
+          type: string
+        type: array
+      enabled:
+        type: boolean
+      name:
+        maxLength: 255
+        type: string
+      priority:
+        type: integer
+      triggers:
+        description: |-
+          Possible trigger values.
+            * `create` - Alarm creation
+            * `statedec` - Alarm state decrease
+            * `changestate` - Alarm state has been changed by "change state" action
+            * `stateinc` - Alarm state increase
+            * `changestatus` - Alarm status changes eg. flapping
+            * `ack` - Alarm has been acked
+            * `ackremove` - Alarm has been unacked
+            * `cancel` - Alarm has been cancelled
+            * `uncancel` - Alarm has been uncancelled
+            * `comment` - Alarm has been commented
+            * `done` - Alarm is "done"
+            * `declareticket` - Ticket has been declared by the UI action
+            * `declareticketwebhook` - Ticket has been declared by the webhook
+            * `assocticket` - Ticket has been associated with an alarm
+            * `snooze` - Alarm has been snoozed
+            * `unsnooze` - Alarm has been unsnoozed
+            * `pbhenter` - Alarm enters a periodic behavior
+            * `activate` - Alarm has been activated
+            * `resolve` - Alarm has been resolved
+            * `pbhleave` - Alarm leaves a periodic behavior
+            * `instructionfail` - Manual instruction has failed
+            * `autoinstructionfail` - Auto instruction has failed
+            * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructioncomplete` - Manual instruction is completed
+            * `autoinstructioncomplete` - Auto instruction is completed
+        items:
+          type: string
+        type: array
+    required:
+    - actions
+    - author
+    - enabled
+    - name
+    - triggers
+    type: object
+  scenario.EditRequest:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/scenario.ActionRequest'
+        type: array
+      author:
+        maxLength: 255
+        type: string
+      delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+      disable_during_periods:
+        items:
+          type: string
+        type: array
+      enabled:
+        type: boolean
+      name:
+        maxLength: 255
+        type: string
+      priority:
+        type: integer
+      triggers:
+        description: |-
+          Possible trigger values.
+            * `create` - Alarm creation
+            * `statedec` - Alarm state decrease
+            * `changestate` - Alarm state has been changed by "change state" action
+            * `stateinc` - Alarm state increase
+            * `changestatus` - Alarm status changes eg. flapping
+            * `ack` - Alarm has been acked
+            * `ackremove` - Alarm has been unacked
+            * `cancel` - Alarm has been cancelled
+            * `uncancel` - Alarm has been uncancelled
+            * `comment` - Alarm has been commented
+            * `done` - Alarm is "done"
+            * `declareticket` - Ticket has been declared by the UI action
+            * `declareticketwebhook` - Ticket has been declared by the webhook
+            * `assocticket` - Ticket has been associated with an alarm
+            * `snooze` - Alarm has been snoozed
+            * `unsnooze` - Alarm has been unsnoozed
+            * `pbhenter` - Alarm enters a periodic behavior
+            * `activate` - Alarm has been activated
+            * `resolve` - Alarm has been resolved
+            * `pbhleave` - Alarm leaves a periodic behavior
+            * `instructionfail` - Manual instruction has failed
+            * `autoinstructionfail` - Auto instruction has failed
+            * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructioncomplete` - Manual instruction is completed
+            * `autoinstructioncomplete` - Auto instruction is completed
+        items:
+          type: string
+        type: array
+    required:
+    - actions
+    - author
+    - enabled
+    - name
+    - triggers
+    type: object
+  scenario.GetMinimalPriorityResponse:
+    properties:
+      priority:
+        type: integer
+    type: object
+  scenario.Parameters:
+    properties:
+      author:
+        type: string
+      declare_ticket:
+        $ref: '#/definitions/types.WebhookDeclareTicket'
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        description: Snooze and Pbehavior
+      forward_author:
+        type: boolean
+      name:
+        description: Pbehavior
+        type: string
+      output:
+        type: string
+      reason:
+        $ref: '#/definitions/pbehavior.Reason'
+      request:
+        $ref: '#/definitions/types.WebhookRequest'
+        description: Webhook
+      retry_count:
+        type: integer
+      retry_delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+      rrule:
+        type: string
+      start_on_trigger:
+        type: boolean
+      state:
+        description: ChangeState
+        type: integer
+      ticket:
+        description: AssocTicket
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+    type: object
+  scenario.Scenario:
+    properties:
+      _id:
+        type: string
+      actions:
+        items:
+          $ref: '#/definitions/scenario.Action'
+        type: array
+      author:
+        type: string
+      created:
+        type: integer
+      delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+      disable_during_periods:
+        items:
+          type: string
+        type: array
+      enabled:
+        type: boolean
+      name:
+        type: string
+      priority:
+        type: integer
+      triggers:
+        items:
+          type: string
+        type: array
+      updated:
+        type: integer
+    type: object
+  serviceweather.AlarmCounter:
+    properties:
+      count:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehaviortype.Type'
+    type: object
+  serviceweather.Entity:
+    properties:
+      _id:
+        type: string
+      ack:
+        $ref: '#/definitions/alarm.AlarmStep'
+      alarm_creation_date:
+        type: integer
+      alarm_display_name:
+        type: string
+      alarm_id:
+        type: string
+      assigned_instructions:
+        items:
+          $ref: '#/definitions/alarm.AssignedInstruction'
+        type: array
+      category:
+        $ref: '#/definitions/entitycategory.Category'
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      icon:
+        type: string
+      idle_since:
+        type: integer
+      impact_level:
+        type: integer
+      impact_state:
+        type: integer
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/serviceweather.Info'
+        type: object
+      is_all_auto_instructions_completed:
+        type: boolean
+      is_auto_instruction_failed:
+        type: boolean
+      is_auto_instruction_running:
+        type: boolean
+      is_grey:
+        type: boolean
+      is_manual_instruction_running:
+        type: boolean
+      is_manual_instruction_waiting_result:
+        type: boolean
+      last_update_date:
+        type: integer
+      linklist:
+        items:
+          $ref: '#/definitions/serviceweather.WeatherLink'
+        type: array
+      name:
+        type: string
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+      pbehaviors:
+        items:
+          $ref: '#/definitions/alarm.Pbehavior'
+        type: array
+      resource:
+        type: string
+      snooze:
+        $ref: '#/definitions/alarm.AlarmStep'
+      source_type:
+        type: string
+      state:
+        $ref: '#/definitions/alarm.AlarmStep'
+      stats:
+        $ref: '#/definitions/statistics.EventStatistics'
+      status:
+        $ref: '#/definitions/alarm.AlarmStep'
+      ticket:
+        $ref: '#/definitions/alarm.AlarmTicket'
+    type: object
+  serviceweather.Info:
+    properties:
+      description:
+        type: string
+      value: {}
+    type: object
+  serviceweather.Service:
+    properties:
+      _id:
+        type: string
+      ack:
+        $ref: '#/definitions/alarm.AlarmStep'
+      alarm_counters:
+        items:
+          $ref: '#/definitions/serviceweather.AlarmCounter'
+        type: array
+      category:
+        $ref: '#/definitions/entitycategory.Category'
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      icon:
+        type: string
+      idle_since:
+        type: integer
+      impact_level:
+        type: integer
+      impact_state:
+        type: integer
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/serviceweather.Info'
+        type: object
+      is_action_required:
+        type: boolean
+      is_grey:
+        type: boolean
+      last_update_date:
+        type: integer
+      linklist:
+        items:
+          $ref: '#/definitions/serviceweather.WeatherLink'
+        type: array
+      name:
+        type: string
+      output:
+        type: string
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+      pbehaviors:
+        items:
+          $ref: '#/definitions/alarm.Pbehavior'
+        type: array
+      resource:
+        type: string
+      secondary_icon:
+        type: string
+      snooze:
+        $ref: '#/definitions/alarm.AlarmStep'
+      state:
+        $ref: '#/definitions/alarm.AlarmStep'
+      status:
+        $ref: '#/definitions/alarm.AlarmStep'
+    type: object
+  serviceweather.WeatherLink:
+    properties:
+      cat_name:
+        type: string
+      links: {}
+    type: object
+  statesettings.JUnitThresholds:
+    properties:
+      errors:
+        $ref: '#/definitions/statesettings.StateThresholds'
+      failures:
+        $ref: '#/definitions/statesettings.StateThresholds'
+      skipped:
+        $ref: '#/definitions/statesettings.StateThresholds'
+    required:
+    - errors
+    - failures
+    - skipped
+    type: object
+  statesettings.StateSetting:
+    properties:
+      _id:
+        type: string
+      junit_thresholds:
+        $ref: '#/definitions/statesettings.JUnitThresholds'
+      method:
+        type: string
+      type:
+        type: string
+    type: object
+  statesettings.StateSettingRequest:
+    properties:
+      junit_thresholds:
+        $ref: '#/definitions/statesettings.JUnitThresholds'
+      method:
+        type: string
+      type:
+        type: string
+    required:
+    - method
+    - type
+    type: object
+  statesettings.StateThresholds:
+    properties:
+      critical:
+        maximum: 100
+        minimum: 0
+        type: number
+      major:
+        maximum: 100
+        minimum: 0
+        type: number
+      minor:
+        maximum: 100
+        minimum: 0
+        type: number
+      type:
+        type: integer
+    required:
+    - critical
+    - major
+    - minor
+    - type
+    type: object
+  statistics.EventStatistics:
+    properties:
+      ko:
+        type: integer
+      last_event:
+        type: integer
+      last_ko:
+        type: integer
+      ok:
+        type: integer
+    type: object
+  types.Alarm:
+    properties:
+      _id:
+        type: string
+      d:
+        type: string
+      t:
+        $ref: '#/definitions/types.CpsTime'
+      v:
+        $ref: '#/definitions/types.AlarmValue'
+    type: object
+  types.AlarmStep:
+    properties:
+      _t:
+        type: string
+      a:
+        type: string
+      exec:
+        description: Execution contains id if instruction execution for instruction
+          steps only.
+        type: string
+      initiator:
+        type: string
+      m:
+        type: string
+      pbehavior_canonical_type:
+        type: string
+      role:
+        type: string
+      statecounter:
+        $ref: '#/definitions/types.CropCounter'
+      t:
+        $ref: '#/definitions/types.CpsTime'
+      user_id:
+        type: string
+      val:
+        type: integer
+    type: object
+  types.AlarmTicket:
+    properties:
+      _t:
+        type: string
+      a:
+        type: string
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      m:
+        type: string
+      role:
+        type: string
+      t:
+        $ref: '#/definitions/types.CpsTime'
+      user_id:
+        type: string
+      val:
+        type: string
+    type: object
+  types.AlarmValue:
+    properties:
+      ack:
+        $ref: '#/definitions/types.AlarmStep'
+      activation_date:
+        $ref: '#/definitions/types.CpsTime'
+      active_duration:
+        description: |-
+          ActiveDuration represents a duration when an alarm wasn't in snooze or in maintenance, pause, inactive pbehavior interval.
+          Keep omitempty.
+        type: integer
+      canceled:
+        $ref: '#/definitions/types.AlarmStep'
+      children:
+        items:
+          type: string
+        type: array
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      creation_date:
+        $ref: '#/definitions/types.CpsTime'
+      current_state_duration:
+        description: |-
+          CurrentStateDuration represents a duration when an alarm was in current state.
+          Keep omitempty.
+        type: integer
+      display_name:
+        type: string
+      done:
+        $ref: '#/definitions/types.AlarmStep'
+      duration:
+        description: |-
+          Duration represents a duration from creation date to resolve date.
+          Keep omitempty.
+        type: integer
+      events_count:
+        description: EventsCount accumulates count of check events.
+        type: integer
+      hard_limit:
+        type: integer
+      inactive_duration:
+        description: InactiveDuration represents a duration when an alarm was in snooze
+          or in maintenance, pause, inactive pbehavior interval.
+        type: integer
+      inactive_start:
+        $ref: '#/definitions/types.CpsTime'
+        description: |-
+          InactiveStart represents start of snooze or maintenance, pause, inactive pbehavior interval.
+          It's used only to compute InactiveDuration.
+      infos:
+        additionalProperties:
+          additionalProperties: true
+          type: object
+        type: object
+      initial_long_output:
+        type: string
+      initial_output:
+        type: string
+      last_comment:
+        $ref: '#/definitions/types.AlarmStep'
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+      last_update_date:
+        $ref: '#/definitions/types.CpsTime'
+      long_output:
+        type: string
+      long_output_history:
+        items:
+          type: string
+        type: array
+      meta:
+        type: string
+      meta_value_path:
+        type: string
+      output:
+        type: string
+      parents:
+        items:
+          type: string
+        type: array
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+      pbh_inactive_duration:
+        description: PbehaviorInactiveDuration represents a duration when an alarm
+          was in maintenance, pause, inactive pbehavior interval.
+        type: integer
+      resolved:
+        $ref: '#/definitions/types.CpsTime'
+      resource:
+        type: string
+      ruleVersion:
+        additionalProperties:
+          type: string
+        description: store version of dynamic-infos rule
+        type: object
+      snooze:
+        $ref: '#/definitions/types.AlarmStep'
+      snooze_duration:
+        description: SnoozeDuration represents a duration when an alarm was in snooze.
+        type: integer
+      state:
+        $ref: '#/definitions/types.AlarmStep'
+      state_changes_since_status_update:
+        type: integer
+      status:
+        $ref: '#/definitions/types.AlarmStep'
+      steps:
+        items:
+          $ref: '#/definitions/types.AlarmStep'
+        type: array
+      tags:
+        items:
+          type: string
+        type: array
+      ticket:
+        $ref: '#/definitions/types.AlarmTicket'
+      total_state_changes:
+        type: integer
+    type: object
+  types.CpsTime:
+    properties:
+      time.Time:
+        type: string
+    type: object
+  types.CropCounter:
+    properties:
+      state:0:
+        type: integer
+      state:1:
+        type: integer
+      state:2:
+        type: integer
+      state:3:
+        type: integer
+      statechanges:
+        type: integer
+      statedec:
+        type: integer
+      stateinc:
+        type: integer
+    type: object
+  types.DurationWithEnabled:
+    properties:
+      enabled:
+        type: boolean
+      unit:
+        enum:
+        - s
+        - m
+        - h
+        - d
+        - w
+        - M
+        - "y"
+        type: string
+      value:
+        minimum: 1
+        type: integer
+    required:
+    - enabled
+    - unit
+    - value
+    type: object
+  types.DurationWithUnit:
+    properties:
+      unit:
+        enum:
+        - s
+        - m
+        - h
+        - d
+        - w
+        - M
+        - "y"
+        type: string
+      value:
+        minimum: 1
+        type: integer
+    required:
+    - unit
+    - value
+    type: object
+  types.PbehaviorInfo:
+    properties:
+      canonical_type:
+        description: CanonicalType is Type of pbehavior.Type.
+        type: string
+      id:
+        description: ID is ID of pbehavior.PBehavior.
+        type: string
+      name:
+        description: Name is Name of pbehavior.PBehavior.
+        type: string
+      reason:
+        description: Reason is Name of pbehavior.Reason.
+        type: string
+      timestamp:
+        description: |-
+          Timestamp is time when entity enters pbehavior.
+          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+        type: integer
+      type:
+        description: TypeID is ID of pbehavior.Type.
+        type: string
+      type_name:
+        description: TypeName is Name of pbehavior.Type.
+        type: string
+    type: object
+  types.WebhookBasicAuth:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  types.WebhookDeclareTicket:
+    properties:
+      empty_response:
+        type: boolean
+      fields:
+        additionalProperties:
+          type: string
+        type: object
+      is_regexp:
+        type: boolean
+      ticket_id:
+        type: string
+    type: object
+  types.WebhookRequest:
+    properties:
+      auth:
+        $ref: '#/definitions/types.WebhookBasicAuth'
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      method:
+        type: string
+      payload:
+        type: string
+      skip_verify:
+        type: boolean
+      url:
+        type: string
+    required:
+    - method
+    - url
+    type: object
+  user.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  user.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      defaultview:
+        type: string
+      email:
+        type: string
+      enable:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      ui_groups_navigation_type:
+        type: string
+      ui_language:
+        type: string
+      ui_tours:
+        additionalProperties:
+          type: boolean
+        type: object
+    required:
+    - _id
+    - email
+    - enable
+    - name
+    - role
+    type: object
+  user.EditRequest:
+    properties:
+      defaultview:
+        type: string
+      email:
+        type: string
+      enable:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      ui_groups_navigation_type:
+        type: string
+      ui_language:
+        type: string
+      ui_tours:
+        additionalProperties:
+          type: boolean
+        type: object
+    required:
+    - email
+    - enable
+    - name
+    - role
+    type: object
+  user.Request:
+    properties:
+      defaultview:
+        type: string
+      email:
+        type: string
+      enable:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      ui_groups_navigation_type:
+        type: string
+      ui_language:
+        type: string
+      ui_tours:
+        additionalProperties:
+          type: boolean
+        type: object
+    required:
+    - email
+    - enable
+    - name
+    - role
+    type: object
+  user.Role:
+    properties:
+      _id:
+        type: string
+      defaultview:
+        $ref: '#/definitions/user.View'
+      name:
+        type: string
+    type: object
+  user.User:
+    properties:
+      _id:
+        type: string
+      authkey:
+        type: string
+      defaultview:
+        $ref: '#/definitions/user.View'
+      email:
+        type: string
+      enable:
+        type: boolean
+      external_id:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      name:
+        type: string
+      role:
+        $ref: '#/definitions/user.Role'
+      source:
+        type: string
+      ui_groups_navigation_type:
+        type: string
+      ui_language:
+        type: string
+      ui_tours:
+        additionalProperties:
+          type: boolean
+        type: object
+    type: object
+  user.View:
+    properties:
+      _id:
+        type: string
+      title:
+        type: string
+    type: object
+  userpreferences.EditRequest:
+    properties:
+      content:
+        additionalProperties: true
+        type: object
+      widget:
+        type: string
+    required:
+    - content
+    - widget
+    type: object
+  userpreferences.Response:
+    properties:
+      content:
+        additionalProperties: true
+        type: object
+      filters:
+        items:
+          $ref: '#/definitions/widgetfilter.Response'
+        type: array
+      widget:
+        type: string
+    type: object
+  view.EditPositionItemRequest:
+    properties:
+      _id:
+        type: string
+      views:
+        items:
+          type: string
+        type: array
+    required:
+    - _id
+    - views
+    type: object
+  view.EditRequest:
+    properties:
+      description:
+        maxLength: 255
+        type: string
+      enabled:
+        type: boolean
+      group:
+        type: string
+      periodic_refresh:
+        $ref: '#/definitions/types.DurationWithEnabled'
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        maxLength: 255
+        type: string
+    required:
+    - enabled
+    - group
+    - title
+    type: object
+  view.ExportRequest:
+    properties:
+      groups:
+        items:
+          properties:
+            _id:
+              type: string
+            views:
+              items:
+                type: string
+              type: array
+          required:
+          - _id
+          type: object
+        type: array
+      views:
+        items:
+          type: string
+        type: array
+    type: object
+  view.ExportResponse:
+    properties:
+      groups:
+        items:
+          $ref: '#/definitions/view.ExportViewGroupResponse'
+        type: array
+      views:
+        items:
+          $ref: '#/definitions/view.Response'
+        type: array
+    type: object
+  view.ExportViewGroupResponse:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      title:
+        type: string
+      updated:
+        type: integer
+      views:
+        items:
+          $ref: '#/definitions/view.Response'
+        type: array
+    type: object
+  view.ImportItemRequest:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      title:
+        type: string
+      updated:
+        type: integer
+      views:
+        items:
+          $ref: '#/definitions/view.Response'
+        type: array
+    type: object
+  view.Parameters:
+    properties:
+      directory:
+        type: string
+      is_api:
+        description: Junit
+        type: boolean
+      mainFilter:
+        type: string
+      report_fileregexp:
+        type: string
+      screenshot_directories:
+        items:
+          type: string
+        type: array
+      screenshot_filemask:
+        type: string
+      video_directories:
+        items:
+          type: string
+        type: array
+      video_filemask:
+        type: string
+    type: object
+  view.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      description:
+        type: string
+      enabled:
+        type: boolean
+      group:
+        $ref: '#/definitions/view.ViewGroup'
+      periodic_refresh:
+        $ref: '#/definitions/types.DurationWithEnabled'
+      tabs:
+        items:
+          $ref: '#/definitions/viewtab.Response'
+        type: array
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      updated:
+        type: integer
+    type: object
+  view.ViewGroup:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      title:
+        type: string
+      updated:
+        type: integer
+    type: object
+  viewgroup.EditRequest:
+    properties:
+      title:
+        maxLength: 255
+        type: string
+    required:
+    - title
+    type: object
+  viewgroup.ViewGroup:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      deletable:
+        type: boolean
+      title:
+        type: string
+      updated:
+        type: integer
+      views:
+        items:
+          $ref: '#/definitions/view.Response'
+        type: array
+    type: object
+  viewtab.EditRequest:
+    properties:
+      title:
+        maxLength: 255
+        type: string
+      view:
+        type: string
+    required:
+    - title
+    - view
+    type: object
+  viewtab.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        $ref: '#/definitions/types.CpsTime'
+      title:
+        type: string
+      updated:
+        $ref: '#/definitions/types.CpsTime'
+      widgets:
+        items:
+          $ref: '#/definitions/widget.Response'
+        type: array
+    type: object
+  widget.EditGridPositionItemRequest:
+    properties:
+      _id:
+        type: string
+      grid_parameters:
+        additionalProperties: true
+        type: object
+    type: object
+  widget.EditRequest:
+    properties:
+      filters:
+        items:
+          $ref: '#/definitions/widget.FilterRequest'
+        type: array
+      grid_parameters:
+        additionalProperties: true
+        type: object
+      parameters:
+        $ref: '#/definitions/view.Parameters'
+      tab:
+        type: string
+      title:
+        maxLength: 255
+        type: string
+      type:
+        maxLength: 255
+        type: string
+    required:
+    - tab
+    - type
+    type: object
+  widget.FilterRequest:
+    properties:
+      _id:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_pbehavior_pattern:
+        type: string
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      title:
+        maxLength: 255
+        type: string
+      weather_service_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+    required:
+    - title
+    type: object
+  widget.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      filters:
+        items:
+          $ref: '#/definitions/widgetfilter.Response'
+        type: array
+      grid_parameters:
+        additionalProperties: true
+        type: object
+      parameters:
+        $ref: '#/definitions/view.Parameters'
+      title:
+        type: string
+      type:
+        type: string
+      updated:
+        type: integer
+    type: object
+  widgetfilter.EditRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_pbehavior_pattern:
+        type: string
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      is_private:
+        type: boolean
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      title:
+        maxLength: 255
+        type: string
+      weather_service_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      widget:
+        type: string
+    required:
+    - is_private
+    - title
+    - widget
+    type: object
+  widgetfilter.OldMongoQuery:
+    additionalProperties: true
+    type: object
+  widgetfilter.Response:
+    properties:
+      _id:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      author:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      corporate_pbehavior_pattern:
+        type: string
+      corporate_pbehavior_pattern_title:
+        type: string
+      created:
+        type: integer
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      is_private:
+        type: boolean
+      old_mongo_query:
+        $ref: '#/definitions/widgetfilter.OldMongoQuery'
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      title:
+        type: string
+      updated:
+        type: integer
+      weather_service_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+    type: object
+info:
+  contact: {}
+  description: This doc contains auto generated Open API v2 schemas of requests and
+    responses to use in Open Api v3 doc.
+  title: Generated schemas
+  version: 4.0.0
+paths: {}
+swagger: "2.0"

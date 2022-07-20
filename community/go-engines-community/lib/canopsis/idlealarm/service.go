@@ -8,8 +8,10 @@ package idlealarm
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
@@ -28,6 +30,7 @@ func NewService(
 	ruleAdapter idlerule.RuleAdapter,
 	alarmAdapter libalarm.Adapter,
 	entityAdapter libentity.Adapter,
+	pbhRpcClient engine.RPCClient,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Service {
@@ -35,6 +38,7 @@ func NewService(
 		ruleAdapter:   ruleAdapter,
 		alarmAdapter:  alarmAdapter,
 		entityAdapter: entityAdapter,
+		pbhRpcClient:  pbhRpcClient,
 		encoder:       encoder,
 		logger:        logger,
 	}
@@ -44,6 +48,7 @@ type baseService struct {
 	ruleAdapter   idlerule.RuleAdapter
 	alarmAdapter  libalarm.Adapter
 	entityAdapter libentity.Adapter
+	pbhRpcClient  engine.RPCClient
 	encoder       encoding.Encoder
 	logger        zerolog.Logger
 }
@@ -164,11 +169,30 @@ func (s *baseService) applyRules(
 	for _, rule := range rules {
 		switch rule.Type {
 		case idlerule.RuleTypeAlarm:
-			if alarm != nil && rule.Matches(alarm, &entity, now) && !alarm.Value.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
-				return s.applyAlarmRule(rule, *alarm, now)
+			if alarm == nil {
+				continue
+			}
+
+			matched, err := rule.Matches(types.AlarmWithEntity{
+				Alarm:  *alarm,
+				Entity: entity,
+			}, now)
+			if err != nil {
+				s.logger.Error().Err(err).Str("idle rule", rule.ID).Msg("match idle rule returned error, skip")
+				continue
+			}
+
+			if matched && !alarm.Value.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
+				return s.applyAlarmRule(ctx, rule, *alarm, entity, now)
 			}
 		case idlerule.RuleTypeEntity:
-			if !rule.Matches(nil, &entity, now) || entity.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
+			matched, err := rule.Matches(types.AlarmWithEntity{Entity: entity}, now)
+			if err != nil {
+				s.logger.Error().Err(err).Str("idle rule", rule.ID).Msg("match idle rule returned error, skip")
+				continue
+			}
+
+			if !matched || entity.PbehaviorInfo.OneOf(rule.DisableDuringPeriods) {
 				continue
 			}
 
@@ -194,78 +218,79 @@ func (s *baseService) applyRules(
 }
 
 func (s *baseService) applyAlarmRule(
+	ctx context.Context,
 	rule idlerule.Rule,
 	alarm types.Alarm,
+	entity types.Entity,
 	now types.CpsTime,
 ) (*types.Event, error) {
+	idleRuleApply := fmt.Sprintf("%s_%s", rule.Type, rule.AlarmCondition)
 	event := types.Event{
 		Connector:     alarm.Value.Connector,
 		ConnectorName: alarm.Value.ConnectorName,
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
 		Timestamp:     now,
+		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
-		IdleRuleApply: fmt.Sprintf("%s_%s", rule.Type, rule.AlarmCondition),
+		IdleRuleApply: idleRuleApply,
 	}
 	event.SourceType = event.DetectSourceType()
 
+	event.Output = rule.Operation.Parameters.Output
+	event.Ticket = rule.Operation.Parameters.Ticket
+	if rule.Operation.Parameters.State != nil {
+		event.State = *rule.Operation.Parameters.State
+	}
+
 	switch rule.Operation.Type {
 	case types.ActionTypeAck:
-		if params, ok := rule.Operation.Parameters.(types.OperationParameters); ok {
-			event.EventType = types.EventTypeAck
-			event.Output = params.Output
-			event.Author = params.Author
-			event.UserID = params.User
-		}
+		event.EventType = types.EventTypeAck
 	case types.ActionTypeAckRemove:
-		if params, ok := rule.Operation.Parameters.(types.OperationParameters); ok {
-			event.EventType = types.EventTypeAckremove
-			event.Output = params.Output
-			event.Author = params.Author
-			event.UserID = params.User
-		}
+		event.EventType = types.EventTypeAckremove
 	case types.ActionTypeCancel:
-		if params, ok := rule.Operation.Parameters.(types.OperationParameters); ok {
-			event.EventType = types.EventTypeCancel
-			event.Output = params.Output
-			event.Author = params.Author
-			event.UserID = params.User
-		}
+		event.EventType = types.EventTypeCancel
 	case types.ActionTypeAssocTicket:
-		if params, ok := rule.Operation.Parameters.(types.OperationAssocTicketParameters); ok {
-			event.EventType = types.EventTypeAssocTicket
-			event.Ticket = params.Ticket
-			event.Output = params.Output
-			event.Author = params.Author
-			event.UserID = params.User
-		}
+		event.EventType = types.EventTypeAssocTicket
 	case types.ActionTypeChangeState:
-		if params, ok := rule.Operation.Parameters.(types.OperationChangeStateParameters); ok {
-			event.EventType = types.EventTypeChangestate
-			event.State = params.State
-			event.Output = params.Output
-			event.Author = params.Author
-			event.UserID = params.User
-		}
+		event.EventType = types.EventTypeChangestate
 	case types.ActionTypePbehavior:
-		if params, ok := rule.Operation.Parameters.(types.ActionPBehaviorParameters); ok {
-			event.EventType = types.EventTypePbhCreate
-			encodedParams, err := s.encoder.Encode(params)
-			if err != nil {
-				return nil, fmt.Errorf("cannot encode parameters: %w", err)
-			}
-			event.PbhParameters = string(encodedParams)
-			event.Author = params.Author
-			event.UserID = params.UserID
+		rpcEvent := types.RPCPBehaviorEvent{
+			Alarm:  &alarm,
+			Entity: &entity,
+			Params: types.RPCPBehaviorParameters{
+				Name:           rule.Operation.Parameters.Name,
+				Reason:         rule.Operation.Parameters.Reason,
+				Type:           rule.Operation.Parameters.Type,
+				RRule:          rule.Operation.Parameters.RRule,
+				Tstart:         rule.Operation.Parameters.Tstart,
+				Tstop:          rule.Operation.Parameters.Tstop,
+				StartOnTrigger: rule.Operation.Parameters.StartOnTrigger,
+				Duration:       rule.Operation.Parameters.Duration,
+			},
 		}
+		b, err := s.encoder.Encode(rpcEvent)
+		if err != nil {
+			return nil, fmt.Errorf("cannot encode rpc event: %w", err)
+		}
+
+		err = s.pbhRpcClient.Call(engine.RPCMessage{
+			CorrelationID: fmt.Sprintf("%s&&%s", alarm.ID, rule.ID),
+			Body:          b,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("cannot sent rpc event: %w", err)
+		}
+
+		err = s.entityAdapter.UpdateIdleFields(ctx, entity.ID, entity.IdleSince, idleRuleApply)
+		if err != nil {
+			return nil, fmt.Errorf("cannot update entity: %w", err)
+		}
+
+		return nil, nil
 	case types.ActionTypeSnooze:
-		if params, ok := rule.Operation.Parameters.(types.OperationSnoozeParameters); ok {
-			event.EventType = types.EventTypeSnooze
-			event.Duration = types.CpsNumber(params.Duration.AddTo(now).Sub(now.Time).Seconds())
-			event.Output = params.Output
-			event.Author = params.Author
-			event.UserID = params.User
-		}
+		event.EventType = types.EventTypeSnooze
+		event.Duration = types.CpsNumber(rule.Operation.Parameters.Duration.AddTo(now).Sub(now.Time).Seconds())
 	default:
 		return nil, fmt.Errorf("unknown idle rule id=%q operation type=%q", rule.ID, rule.Operation.Type)
 	}
@@ -305,7 +330,7 @@ func (s *baseService) applyEntityRule(
 	event.EventType = types.EventTypeNoEvents
 	event.Timestamp = types.CpsTime{Time: time.Now()}
 	event.State = types.AlarmStateCritical
-	event.Author = rule.Author
+	event.Author = canopsis.DefaultEventAuthor
 	event.Initiator = types.InitiatorSystem
 	event.Output = fmt.Sprintf("Idle rule %s", rule.Name)
 	event.IdleRuleApply = rule.Type

@@ -445,6 +445,21 @@ func (mr *MockBatchResultsMockRecorder) Query() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Query", reflect.TypeOf((*MockBatchResults)(nil).Query))
 }
 
+// QueryFunc mocks base method.
+func (m *MockBatchResults) QueryFunc(arg0 []interface{}, arg1 func(pgx.QueryFuncRow) error) (pgconn.CommandTag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "QueryFunc", arg0, arg1)
+	ret0, _ := ret[0].(pgconn.CommandTag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// QueryFunc indicates an expected call of QueryFunc.
+func (mr *MockBatchResultsMockRecorder) QueryFunc(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueryFunc", reflect.TypeOf((*MockBatchResults)(nil).QueryFunc), arg0, arg1)
+}
+
 // QueryRow mocks base method.
 func (m *MockBatchResults) QueryRow() pgx.Row {
 	m.ctrl.T.Helper()

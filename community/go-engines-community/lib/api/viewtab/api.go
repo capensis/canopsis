@@ -38,18 +38,8 @@ func NewApi(
 	}
 }
 
-// Get view tab by id
-// @Summary Get view tab by id
-// @Description Get view tab by id
-// @Tags viewtabs
-// @ID viewtabs-get-by-id
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "tab id"
+// Get
 // @Success 200 {object} Response
-// @Failure 404 {object} common.ErrorResponse
-// @Router /view-tabs/{id} [get]
 func (a *api) Get(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	tab, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
@@ -74,19 +64,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, tab)
 }
 
-// Create view tab
-// @Summary Create view tab
-// @Description Create view tab
-// @Tags viewtabs
-// @ID viewtabs-create
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// Create
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /view-tabs [post]
 func (a *api) Create(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{}
@@ -122,21 +102,9 @@ func (a *api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, tab)
 }
 
-// Update view tab by id
-// @Summary Update view tab by id
-// @Description Update view tab by id
-// @Tags viewtabs
-// @ID viewtabs-update-by-id
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "tab id"
+// Update
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /view-tabs/{id} [put]
 func (a *api) Update(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{
@@ -200,17 +168,6 @@ func (a *api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, newTab)
 }
 
-// Delete view tab by id
-// @Summary Delete view tab by id
-// @Description Delete view tab by id
-// @Tags viewtabs
-// @ID viewtabs-delete-by-id
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "tab id"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /view-tabs/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
@@ -262,21 +219,9 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// Copy view tab
-// @Summary Copy view tab
-// @Description Copy view tab
-// @Tags viewtabs
-// @ID viewtabs-copy
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "tab id"
+// Copy
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /view-tab-copy/{id} [post]
 func (a *api) Copy(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
@@ -339,19 +284,6 @@ func (a *api) Copy(c *gin.Context) {
 	c.JSON(http.StatusCreated, newTab)
 }
 
-// Update view tabs positions
-// @Summary Update view tabs positions
-// @Description Update view tabs positions
-// @Tags viewtabs
-// @ID viewtabs-update-positions
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param body body []string true "body"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /view-tab-positions [put]
 func (a *api) UpdatePositions(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := EditPositionRequest{}

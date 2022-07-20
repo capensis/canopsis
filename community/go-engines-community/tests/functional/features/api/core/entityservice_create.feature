@@ -11,38 +11,48 @@ Feature: Create entity service
       "category": "test-category-to-entityservice-edit",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-entityservice-to-create-1-pattern"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-create-1-pattern"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 1,
       "infos": [
         {
-          "description": "test-entityservice-to-create-info-1-description",
-          "name": "test-entityservice-to-create-info-1-name",
-          "value": "test-entityservice-to-create-info-1-value"
+          "description": "test-entityservice-to-create-1-info-1-description",
+          "name": "test-entityservice-to-create-1-info-1-name",
+          "value": "test-entityservice-to-create-1-info-1-value"
         },
         {
-          "description": "test-entityservice-to-create-info-2-description",
-          "name": "test-entityservice-to-create-info-2-name",
+          "description": "test-entityservice-to-create-1-info-2-description",
+          "name": "test-entityservice-to-create-1-info-2-name",
           "value": false
         },
         {
-          "description": "test-entityservice-to-create-info-3-description",
-          "name": "test-entityservice-to-create-info-3-name",
+          "description": "test-entityservice-to-create-1-info-3-description",
+          "name": "test-entityservice-to-create-1-info-3-name",
           "value": 1022
         },
         {
-          "description": "test-entityservice-to-create-info-4-description",
-          "name": "test-entityservice-to-create-info-4-name",
+          "description": "test-entityservice-to-create-1-info-4-description",
+          "name": "test-entityservice-to-create-1-info-4-name",
           "value": 10.45
         },
         {
-          "description": "test-entityservice-to-create-info-5-description",
-          "name": "test-entityservice-to-create-info-5-name",
+          "description": "test-entityservice-to-create-1-info-5-description",
+          "name": "test-entityservice-to-create-1-info-5-name",
           "value": null
         },
         {
-          "description": "test-entityservice-to-create-info-6-description",
-          "name": "test-entityservice-to-create-info-6-name",
-          "value": ["test-entityservice-to-create-info-6-value", false, 1022, 10.45, null]
+          "description": "test-entityservice-to-create-1-info-6-description",
+          "name": "test-entityservice-to-create-1-info-6-name",
+          "value": ["test-entityservice-to-create-1-info-6-value", false, 1022, 10.45, null]
         }
       ]
     }
@@ -61,43 +71,49 @@ Feature: Create entity service
       "depends": [],
       "enabled": true,
       "enable_history": [],
-      "entity_patterns": [
-        {
-          "name": "test-entityservice-to-create-1-pattern"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-create-1-pattern"
+            }
+          }
+        ]
       ],
       "impact": [],
       "impact_level": 1,
       "infos": {
-        "test-entityservice-to-create-info-1-name": {
-          "description": "test-entityservice-to-create-info-1-description",
-          "name": "test-entityservice-to-create-info-1-name",
-          "value": "test-entityservice-to-create-info-1-value"
+        "test-entityservice-to-create-1-info-1-name": {
+          "description": "test-entityservice-to-create-1-info-1-description",
+          "name": "test-entityservice-to-create-1-info-1-name",
+          "value": "test-entityservice-to-create-1-info-1-value"
         },
-        "test-entityservice-to-create-info-2-name": {
-          "description": "test-entityservice-to-create-info-2-description",
-          "name": "test-entityservice-to-create-info-2-name",
+        "test-entityservice-to-create-1-info-2-name": {
+          "description": "test-entityservice-to-create-1-info-2-description",
+          "name": "test-entityservice-to-create-1-info-2-name",
           "value": false
         },
-        "test-entityservice-to-create-info-3-name": {
-          "description": "test-entityservice-to-create-info-3-description",
-          "name": "test-entityservice-to-create-info-3-name",
+        "test-entityservice-to-create-1-info-3-name": {
+          "description": "test-entityservice-to-create-1-info-3-description",
+          "name": "test-entityservice-to-create-1-info-3-name",
           "value": 1022
         },
-        "test-entityservice-to-create-info-4-name": {
-          "description": "test-entityservice-to-create-info-4-description",
-          "name": "test-entityservice-to-create-info-4-name",
+        "test-entityservice-to-create-1-info-4-name": {
+          "description": "test-entityservice-to-create-1-info-4-description",
+          "name": "test-entityservice-to-create-1-info-4-name",
           "value": 10.45
         },
-        "test-entityservice-to-create-info-5-name": {
-          "description": "test-entityservice-to-create-info-5-description",
-          "name": "test-entityservice-to-create-info-5-name",
+        "test-entityservice-to-create-1-info-5-name": {
+          "description": "test-entityservice-to-create-1-info-5-description",
+          "name": "test-entityservice-to-create-1-info-5-name",
           "value": null
         },
-        "test-entityservice-to-create-info-6-name": {
-          "description": "test-entityservice-to-create-info-6-description",
-          "name": "test-entityservice-to-create-info-6-name",
-          "value": ["test-entityservice-to-create-info-6-value", false, 1022, 10.45, null]
+        "test-entityservice-to-create-1-info-6-name": {
+          "description": "test-entityservice-to-create-1-info-6-description",
+          "name": "test-entityservice-to-create-1-info-6-name",
+          "value": ["test-entityservice-to-create-1-info-6-value", false, 1022, 10.45, null]
         }
       },
       "measurements": null,
@@ -118,7 +134,17 @@ Feature: Create entity service
       "category": "test-category-to-entityservice-edit",
       "impact_level": 2,
       "enabled": true,
-      "entity_patterns": [{"name": "test-entityservice-to-create-2-pattern"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-create-2-pattern"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 1,
       "infos": [
         {
@@ -145,10 +171,16 @@ Feature: Create entity service
       "depends": [],
       "enabled": true,
       "enable_history": [],
-      "entity_patterns": [
-        {
-          "name": "test-entityservice-to-create-2-pattern"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-create-2-pattern"
+            }
+          }
+        ]
       ],
       "impact": [],
       "impact_level": 2,
@@ -180,6 +212,7 @@ Feature: Create entity service
       "errors": {
         "enabled": "Enabled is missing.",
         "impact_level": "ImpactLevel is missing.",
+        "entity_pattern": "EntityPattern is missing.",
         "name": "Name is missing.",
         "output_template": "OutputTemplate is missing.",
         "sli_avail_state": "SliAvailState is missing."
@@ -225,6 +258,127 @@ Feature: Create entity service
     {
       "errors": {
           "name": "Name already exists."
+      }
+    }
+    """
+
+  Scenario: given invalid create request with invalid entity pattern should return error
+    When I am admin
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "entity_pattern": [[]]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-create-3-pattern"
+            }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-create-3-pattern"
+            }
+          }
+        ],
+        [
+          {
+            "field": "impact",
+            "cond": {
+              "type": "has_one_of",
+              "value": ["test-entityservice-to-create-3-pattern"]
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-create-3-pattern"
+            }
+          }
+        ],
+        [
+          {
+            "field": "depends",
+            "cond": {
+              "type": "has_one_of",
+              "value": ["test-entityservice-to-create-3-pattern"]
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
       }
     }
     """

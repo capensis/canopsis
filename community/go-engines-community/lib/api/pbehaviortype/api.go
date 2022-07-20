@@ -38,24 +38,8 @@ func NewApi(
 	}
 }
 
-// Find all pbehavior types
-// @Summary Find pbehavior types
-// @Description Get paginated list of behavior types
-// @Tags pbehavior-types
-// @ID pbehavior-types-find-all
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
-// @Param search query string false "search query"
-// @Param sort query string false "sort query"
-// @Param sort_by query string false "sort query"
-// @Param with_flags query bool false "with flags"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]pbehavior.Type}
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /pbehavior-types [get]
 func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -79,18 +63,8 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Get pbehavior type by id
-// @Summary Get pbehavior type by id
-// @Description Get pbehavior type by id
-// @Tags pbehavior-types
-// @ID pbehavior-types-get-by-id
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "type id"
+// Get
 // @Success 200 {object} pbehavior.Type
-// @Failure 404 {object} common.ErrorResponse
-// @Router /pbehavior-types/{id} [get]
 func (a *api) Get(c *gin.Context) {
 	pt, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -104,19 +78,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, pt)
 }
 
-// Create pbehavior type
-// @Summary Create pbehavior type
-// @Description Create pbehavior type
-// @Tags pbehavior-types
-// @ID pbehavior-types-create
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// Create
 // @Param body body EditRequest true "body"
 // @Success 201 {object} pbehavior.Type
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /pbehavior-types [post]
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -144,25 +108,13 @@ func (a *api) Create(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.computeChan <- pbehavior.ComputeTask{}
+	a.sendComputeTask()
 	c.JSON(http.StatusCreated, pt)
 }
 
-// Update behavior type by id
-// @Summary Update behavior type by id
-// @Description Update behavior type by id
-// @Tags pbehavior-types
-// @ID pbehavior-types-update-by-id
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "type id"
+// Update
 // @Param body body EditRequest true "body"
 // @Success 200 {object} pbehavior.Type
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /pbehavior-types/{id} [put]
 func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{
 		ID: c.Param("id"),
@@ -199,22 +151,10 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask(pt.ID)
+	a.sendComputeTask()
 	c.JSON(http.StatusOK, pt)
 }
 
-// Delete pbehavior type by id
-// @Summary Delete pbehavior type by id
-// @Description Delete pbehavior type by id
-// @Tags pbehavior-types
-// @ID pbehavior-types-delete-by-id
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "type id"
-// @Success 204
-// @Failure 400 {object} common.ErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /pbehavior-types/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -244,14 +184,6 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (a *api) sendComputeTask(typeID string) {
-	task := pbehavior.ComputeTask{}
-
-	select {
-	case a.computeChan <- task:
-	default:
-		a.logger.Err(errors.New("channel is full")).
-			Str("type", typeID).
-			Msg("fail to start linked pbehaviors recompute on type update")
-	}
+func (a *api) sendComputeTask() {
+	a.computeChan <- pbehavior.ComputeTask{}
 }

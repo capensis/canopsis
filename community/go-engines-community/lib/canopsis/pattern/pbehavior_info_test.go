@@ -2,11 +2,12 @@ package pattern_test
 
 import (
 	"errors"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/bson"
-	"testing"
 )
 
 func TestPbehaviorInfo_Match(t *testing.T) {
@@ -54,7 +55,7 @@ func getPbehaviorInfoMatchDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "pbehavior_info._id",
+						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 				},
@@ -68,7 +69,7 @@ func getPbehaviorInfoMatchDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "pbehavior_info._id",
+						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 				},
@@ -90,6 +91,18 @@ func getPbehaviorInfoMatchDataSets() map[string]PbehaviorInfoDataSet {
 			pbehaviorInfo: types.PbehaviorInfo{},
 			matchErr:      pattern.ErrUnsupportedField,
 		},
+		"given active canonical field condition and emtpty pbehavior infos should match": {
+			pattern: pattern.PbehaviorInfo{
+				{
+					{
+						Field:     "pbehavior_info.canonical_type",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "active"),
+					},
+				},
+			},
+			pbehaviorInfo: types.PbehaviorInfo{},
+			matchResult:   true,
+		},
 	}
 }
 
@@ -99,24 +112,22 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "pbehavior_info._id",
+						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.pbehavior_info.id": bson.M{"$eq": "test id"}},
+				}},
+			}},
 		},
 		"given multiple conditions": {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "pbehavior_info._id",
+						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 					{
@@ -125,20 +136,18 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
-						{"alarm.pbehavior_info.type": bson.M{"$eq": "test type"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.pbehavior_info.id": bson.M{"$eq": "test id"}},
+					{"alarm.pbehavior_info.type": bson.M{"$eq": "test type"}},
+				}},
+			}},
 		},
 		"given multiple groups": {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "pbehavior_info._id",
+						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 				},
@@ -149,27 +158,55 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
-					}},
-					{"$and": []bson.M{
-						{"alarm.pbehavior_info.type": bson.M{"$eq": "test type"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.pbehavior_info.id": bson.M{"$eq": "test id"}},
+				}},
+				{"$and": []bson.M{
+					{"alarm.pbehavior_info.type": bson.M{"$eq": "test type"}},
+				}},
+			}},
 		},
 		"given invalid condition": {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "pbehavior_info._id",
+						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionIsEmpty, "test id"),
 					},
 				},
 			},
 			mongoQueryErr: pattern.ErrWrongConditionValue,
+		},
+		"given equal to active canonical type condition": {
+			pattern: pattern.PbehaviorInfo{
+				{
+					{
+						Field:     "pbehavior_info.canonical_type",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "active"),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.pbehavior_info.canonical_type": bson.M{"$in": bson.A{nil, "active"}}},
+				}},
+			}},
+		},
+		"given not equal to active canonical type condition": {
+			pattern: pattern.PbehaviorInfo{
+				{
+					{
+						Field:     "pbehavior_info.canonical_type",
+						Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, "active"),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.pbehavior_info.canonical_type": bson.M{"$nin": bson.A{nil, "active"}}},
+				}},
+			}},
 		},
 	}
 }
@@ -180,5 +217,5 @@ type PbehaviorInfoDataSet struct {
 	matchErr         error
 	matchResult      bool
 	mongoQueryErr    error
-	mongoQueryResult []bson.M
+	mongoQueryResult bson.M
 }

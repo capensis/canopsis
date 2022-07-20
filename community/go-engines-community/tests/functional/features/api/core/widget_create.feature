@@ -14,12 +14,57 @@ Feature: Create a widget
         "desktop": {"x": 0, "y": 0}
       },
       "parameters": {
+        "mainFilter": "test-widgetfilter-to-widget-create-1-2",
         "test-widget-to-create-1-param-str": "teststr",
         "test-widget-to-create-1-param-int": 2,
         "test-widget-to-create-1-param-bool": true,
         "test-widget-to-create-1-param-arr": ["teststr1", "teststr2"],
         "test-widget-to-create-1-param-map": {"testkey": "teststr"}
-      }
+      },
+      "filters": [
+        {
+          "_id": "test-widgetfilter-to-widget-create-1-1",
+          "title": "test-widgetfilter-to-widget-create-1-1-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-widget-create-1-1-pattern"
+                }
+              }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-widget-create-1-1-pattern"
+                }
+              }
+            ]
+          ],
+          "pbehavior_pattern": [
+            [
+              {
+                "field": "pbehavior_info.type",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-widget-create-1-1-pattern"
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "_id": "test-widgetfilter-to-widget-create-1-2",
+          "title": "test-widgetfilter-to-widget-create-1-2-title",
+          "corporate_alarm_pattern": "test-pattern-to-widget-edit-1"
+        }
+      ]
     }
     """
     Then the response code should be 201
@@ -38,10 +83,71 @@ Feature: Create a widget
         "test-widget-to-create-1-param-arr": ["teststr1", "teststr2"],
         "test-widget-to-create-1-param-map": {"testkey": "teststr"}
       },
-      "author": "root"
+      "author": "root",
+      "filters": [
+        {
+          "title": "test-widgetfilter-to-widget-create-1-1-title",
+          "is_private": false,
+          "author": "root",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-widget-create-1-1-pattern"
+                }
+              }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-widget-create-1-1-pattern"
+                }
+              }
+            ]
+          ],
+          "pbehavior_pattern": [
+            [
+              {
+                "field": "pbehavior_info.type",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-widget-create-1-1-pattern"
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "title": "test-widgetfilter-to-widget-create-1-2-title",
+          "is_private": false,
+          "author": "root",
+          "corporate_alarm_pattern": "test-pattern-to-widget-edit-1",
+          "corporate_alarm_pattern_title": "test-pattern-to-widget-edit-1-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-widget-edit-1-pattern"
+                }
+              }
+            ]
+          ]
+        }
+      ]
     }
     """
-    When I do GET /api/v4/widgets/{{ .lastResponse._id}}
+    When I save response widgetID={{ .lastResponse._id }}
+    When I save response mainFilterID={{ (index .lastResponse.filters 1)._id }}
+    Then the response key "parameters.mainFilter" should not be "test-widgetfilter-to-widget-create-1-2"
+    When I do GET /api/v4/widgets/{{ .widgetID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -52,13 +158,72 @@ Feature: Create a widget
         "desktop": {"x": 0, "y": 0}
       },
       "parameters": {
+        "mainFilter": "{{ .mainFilterID }}",
         "test-widget-to-create-1-param-str": "teststr",
         "test-widget-to-create-1-param-int": 2,
         "test-widget-to-create-1-param-bool": true,
         "test-widget-to-create-1-param-arr": ["teststr1", "teststr2"],
         "test-widget-to-create-1-param-map": {"testkey": "teststr"}
       },
-      "author": "root"
+      "author": "root",
+      "filters": [
+        {
+          "title": "test-widgetfilter-to-widget-create-1-1-title",
+          "is_private": false,
+          "author": "root",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-widget-create-1-1-pattern"
+                }
+              }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-widget-create-1-1-pattern"
+                }
+              }
+            ]
+          ],
+          "pbehavior_pattern": [
+            [
+              {
+                "field": "pbehavior_info.type",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-widget-create-1-1-pattern"
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "title": "test-widgetfilter-to-widget-create-1-2-title",
+          "is_private": false,
+          "author": "root",
+          "corporate_alarm_pattern": "test-pattern-to-widget-edit-1",
+          "corporate_alarm_pattern_title": "test-pattern-to-widget-edit-1-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-widget-edit-1-pattern"
+                }
+              }
+            ]
+          ]
+        }
+      ]
     }
     """
 
@@ -85,6 +250,55 @@ Feature: Create a widget
       "errors": {
         "type": "Type is missing.",
         "tab": "Tab is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/widgets:
+    """json
+    {
+      "filters": [
+        {}
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "type": "Type is missing.",
+        "tab": "Tab is missing.",
+        "filters.0.alarm_pattern": "AlarmPattern is missing.",
+        "filters.0.corporate_alarm_pattern": "CorporateAlarmPattern is missing.",
+        "filters.0.corporate_entity_pattern": "CorporateEntityPattern is missing.",
+        "filters.0.corporate_pbehavior_pattern": "CorporatePbehaviorPattern is missing.",
+        "filters.0.entity_pattern": "EntityPattern is missing.",
+        "filters.0.pbehavior_pattern": "PbehaviorPattern is missing.",
+        "filters.0.title": "Title is missing.",
+        "filters.0.weather_service_pattern": "WeatherServicePattern is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/widgets:
+    """json
+    {
+      "title": "test-widget-to-create-2-title",
+      "tab": "test-tab-to-widget-edit",
+      "type": "test-widget-to-create-2-type",
+      "filters": [
+        {
+          "title": "test-widgetfilter-to-widget-create-2-1-title",
+          "corporate_entity_pattern": "test-pattern-to-widget-edit-1"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "filters.0.corporate_entity_pattern": "CorporateEntityPattern doesn't exist."
       }
     }
     """

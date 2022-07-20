@@ -3,56 +3,58 @@ package pattern
 import (
 	"context"
 	"encoding/json"
-	"github.com/gin-gonic/gin/binding"
-	"github.com/valyala/fastjson"
 	"net/http"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/rs/zerolog"
+	"github.com/valyala/fastjson"
 )
 
 type API interface {
 	common.CrudAPI
 	BulkDelete(c *gin.Context)
+	Count(c *gin.Context)
 }
 
 type api struct {
 	store        Store
 	enforcer     security.Enforcer
 	actionLogger logger.ActionLogger
+	logger       zerolog.Logger
+
+	configProvider config.UserInterfaceConfigProvider
 }
 
 func NewApi(
 	store Store,
+	configProvider config.UserInterfaceConfigProvider,
 	enforcer security.Enforcer,
 	actionLogger logger.ActionLogger,
+	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:        store,
 		enforcer:     enforcer,
 		actionLogger: actionLogger,
+		logger:       logger,
+
+		configProvider: configProvider,
 	}
 }
 
-// Create creates new pattern.
-// @Summary Create saved pattern
-// @Description Create saved pattern
-// @Tags saved-patterns
-// @ID saved-patterns-create
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// Create
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
-// @Failure 400 {object} common.ErrorResponse
-// @Router /patterns [post]
 func (a *api) Create(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{}
@@ -90,19 +92,8 @@ func (a *api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, pattern)
 }
 
-// List finds saved patterns.
-// @Summary Find all saved patterns
-// @Description Get paginated list of saved patterns
-// @Tags saved-patterns
-// @ID saved-patterns-find-all
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param request query ListRequest true "request"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Response}
-// @Failure 400 {object} common.ErrorResponse
-// @Router /patterns [get]
 func (a *api) List(c *gin.Context) {
 	var request ListRequest
 	request.Query = pagination.GetDefaultQuery()
@@ -126,18 +117,8 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Get saved pattern by id.
-// @Summary Get saved pattern by id
-// @Description Get saved pattern by id
-// @Tags saved-patterns
-// @ID saved-patterns-get-by-id
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "pattern id"
+// Get
 // @Success 200 {object} Response
-// @Failure 404 {object} common.ErrorResponse
-// @Router /patterns/{id} [get]
 func (a *api) Get(c *gin.Context) {
 	pattern, err := a.store.GetById(c.Request.Context(), c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
@@ -152,21 +133,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, pattern)
 }
 
-// Update saved pattern by id.
-// @Summary Update saved pattern by id
-// @Description Update saved pattern by id
-// @Tags saved-patterns
-// @ID saved-patterns-update-by-id
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "pattern id"
+// Update
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /patterns/{id} [put]
 func (a *api) Update(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{
@@ -231,17 +200,6 @@ func (a *api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, pattern)
 }
 
-// Delete saved pattern by id
-// @Summary Delete saved pattern by id
-// @Description Delete saved pattern by id
-// @Tags saved-patterns
-// @ID saved-patterns-delete-by-id
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "pattern id"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /patterns/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
@@ -289,19 +247,8 @@ func (a *api) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-// Bulk delete patterns
-// @Summary Bulk delete patterns
-// @Description Bulk delete patterns
-// @Tags saved-patterns
-// @ID saved-patterns-bulk-delete
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
-// @Success 207 {array} []BulkDeleteResponseItem
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /bulk/patterns [delete]
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -358,23 +305,24 @@ func (a *api) BulkDelete(c *gin.Context) {
 		}
 
 		if pattern == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
 		if pattern.IsCorporate && !canDeleteCorporate {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusForbidden, rawObject, ar.NewString("Forbidden")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusForbidden, rawObject, ar.NewString(common.ForbiddenResponse.Error)))
 			continue
 		}
 
 		ok, err := a.store.Delete(ctx, *pattern)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot delete pattern")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if !ok {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
@@ -391,4 +339,26 @@ func (a *api) BulkDelete(c *gin.Context) {
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
+// Count
+// @Param body body CountRequest true "body"
+// @Success 200 {object} CountResponse
+func (a *api) Count(c *gin.Context) {
+	request := CountRequest{}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	conf := a.configProvider.Get()
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Duration(conf.CheckCountRequestTimeout)*time.Second)
+	defer cancel()
+
+	res, err := a.store.Count(ctx, request, int64(conf.MaxMatchedItems))
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, res)
 }

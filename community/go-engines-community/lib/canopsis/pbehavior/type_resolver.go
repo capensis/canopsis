@@ -6,7 +6,9 @@ import (
 	"sort"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
+	"github.com/rs/zerolog"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -14,7 +16,8 @@ import (
 type TypeResolver interface {
 	// Resolve returns current type for entity if there is corresponding periodical behavior.
 	// Otherwise it returns default active type.
-	Resolve(context.Context, time.Time, []string) (ResolveResult, error)
+	// An entity is matched to a pbehavior by an entity pattern or by cachedMatchedPbehaviorIds for old pbehaviors' queries.
+	Resolve(ctx context.Context, t time.Time, entity types.Entity, cachedMatchedPbehaviorIds []string) (ResolveResult, error)
 	GetPbehaviors(ctx context.Context, t time.Time, pbehaviorIDs []string) ([]ResolveResult, error)
 }
 
@@ -29,15 +32,18 @@ type typeResolver struct {
 	// DefaultActiveTypeID uses if there aren't any behaviors.
 	DefaultActiveTypeID string
 	// TypesByID contains all types.
-	TypesByID map[string]*Type
+	TypesByID map[string]Type
+
+	logger zerolog.Logger
 }
 
 // NewTypeResolver creates new type resolver.
 func NewTypeResolver(
 	span timespan.Span,
 	computedPbehaviors map[string]ComputedPbehavior,
-	typesByID map[string]*Type,
+	typesByID map[string]Type,
 	defaultActiveTypeID string,
+	logger zerolog.Logger,
 ) TypeResolver {
 	return &typeResolver{
 		Span:                span,
@@ -45,12 +51,13 @@ func NewTypeResolver(
 		DefaultActiveTypeID: defaultActiveTypeID,
 		TypesByID:           typesByID,
 		workerPoolSize:      DefaultPoolSize,
+		logger:              logger,
 	}
 }
 
 // ResolveResult represents current state of entity.
 type ResolveResult struct {
-	ResolvedType      *Type
+	ResolvedType      Type
 	ResolvedPbhID     string
 	ResolvedPbhName   string
 	ResolvedPbhReason string
@@ -61,14 +68,16 @@ type ResolveResult struct {
 func (r *typeResolver) Resolve(
 	ctx context.Context,
 	t time.Time,
-	pbhIDs []string,
+	entity types.Entity,
+	cachedMatchedPbehaviorIds []string,
 ) (ResolveResult, error) {
 	// Return error if time is out of timespan.
 	if !r.Span.In(t) {
 		return ResolveResult{}, ErrRecomputeNeed
 	}
 
-	pbhRes, err := r.GetPbehaviors(ctx, t, pbhIDs)
+	workerCh := r.createWorkerChByEntity(ctx, entity, cachedMatchedPbehaviorIds)
+	pbhRes, err := r.getPbehaviorIntervals(ctx, t, workerCh)
 	if err != nil {
 		return ResolveResult{}, err
 	}
@@ -81,12 +90,12 @@ func (r *typeResolver) Resolve(
 	}
 
 	// Empty result represents default active type.
-	if res.ResolvedType != nil {
+	if res.ResolvedType.ID != "" {
 		activeType, ok := r.TypesByID[r.DefaultActiveTypeID]
 		if !ok {
 			return ResolveResult{}, fmt.Errorf("unknown type %v, probably need recompute data", r.DefaultActiveTypeID)
 		}
-		if *res.ResolvedType == *activeType {
+		if res.ResolvedType == activeType {
 			res = ResolveResult{}
 		}
 	}
@@ -104,8 +113,22 @@ func (r *typeResolver) GetPbehaviors(
 	t time.Time,
 	pbehaviorIDs []string,
 ) ([]ResolveResult, error) {
-	resCh := make(chan ResolveResult)
+	// Return error if time is out of timespan.
+	if !r.Span.In(t) {
+		return nil, ErrRecomputeNeed
+	}
+
 	workerCh := r.createWorkerCh(ctx, pbehaviorIDs)
+
+	return r.getPbehaviorIntervals(ctx, t, workerCh)
+}
+
+func (r *typeResolver) getPbehaviorIntervals(
+	ctx context.Context,
+	t time.Time,
+	workerCh <-chan workerData,
+) ([]ResolveResult, error) {
+	resCh := make(chan ResolveResult)
 
 	g, ctx := errgroup.WithContext(ctx)
 
@@ -197,6 +220,52 @@ func (r *typeResolver) createWorkerCh(ctx context.Context, pbehaviorIDs []string
 				workerCh <- workerData{
 					id:       id,
 					computed: computed,
+				}
+			}
+		}
+	}()
+
+	return workerCh
+}
+
+func (r *typeResolver) createWorkerChByEntity(ctx context.Context, entity types.Entity, cachedMatchedPbehaviorIds []string) <-chan workerData {
+	workerCh := make(chan workerData)
+
+	cachedPbehaviorIds := make(map[string]bool, len(cachedMatchedPbehaviorIds))
+	for _, id := range cachedMatchedPbehaviorIds {
+		cachedPbehaviorIds[id] = true
+	}
+
+	go func() {
+		defer close(workerCh)
+
+		for id, computed := range r.ComputedPbehaviors {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				if len(computed.Pattern) > 0 {
+					ok, _, err := computed.Pattern.Match(entity)
+					if err != nil {
+						r.logger.Err(err).Str("pbehavior", id).Msg("pbehavior has invalid pattern")
+						continue
+					}
+
+					if ok {
+						workerCh <- workerData{
+							id:       id,
+							computed: computed,
+						}
+					}
+
+					continue
+				}
+
+				if cachedPbehaviorIds[id] {
+					workerCh <- workerData{
+						id:       id,
+						computed: computed,
+					}
 				}
 			}
 		}

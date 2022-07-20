@@ -3,14 +3,20 @@ Feature: SLI metrics should be added on alarm changes
 
   Scenario: given entity in maintenance pbehavior should add SLI maintenance metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-pbehavior-axe-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-pbehavior-axe-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-1"
+            }
+          }
+        ]
       ]
     }
     """
@@ -36,15 +42,20 @@ Feature: SLI metrics should be added on alarm changes
       "name": "test-pbehavior-metrics-pbehavior-axe-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2s" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-metrics-pbehavior-axe-1"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-1"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -64,14 +75,20 @@ Feature: SLI metrics should be added on alarm changes
 
   Scenario: given entity in pause pbehavior should add SLI downtime metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-pbehavior-axe-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-pbehavior-axe-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-2"
+            }
+          }
+        ]
       ]
     }
     """
@@ -96,16 +113,21 @@ Feature: SLI metrics should be added on alarm changes
       "enabled": true,
       "name": "test-pbehavior-metrics-pbehavior-axe-2",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "2s" }},
+      "tstop": {{ nowAdd "3s" }},
+      "color": "#FFFFFF",
       "type": "test-pause-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-metrics-pbehavior-axe-2"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-2"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -125,14 +147,20 @@ Feature: SLI metrics should be added on alarm changes
 
   Scenario: given entity in inactive pbehavior should add SLI maintenance metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-pbehavior-axe-3-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-pbehavior-axe-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-3"
+            }
+          }
+        ]
       ]
     }
     """
@@ -157,16 +185,21 @@ Feature: SLI metrics should be added on alarm changes
       "enabled": true,
       "name": "test-pbehavior-metrics-pbehavior-axe-3",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "2s" }},
+      "tstop": {{ nowAdd "3s" }},
+      "color": "#FFFFFF",
       "type": "test-inactive-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-metrics-pbehavior-axe-3"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-3"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -186,14 +219,20 @@ Feature: SLI metrics should be added on alarm changes
 
   Scenario: given entity in active pbehavior should add SLI maintenance metrics for outer intervals
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-pbehavior-axe-4-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-pbehavior-axe-4"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-4"
+            }
+          }
+        ]
       ]
     }
     """
@@ -219,20 +258,25 @@ Feature: SLI metrics should be added on alarm changes
       "name": "test-pbehavior-metrics-pbehavior-axe-4",
       "tstart": {{ nowAdd "2s" }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-metrics-pbehavior-axe-4"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-4"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.maintenance" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.maintenance" is greater or equal than 1
     Then the response body should contain:
     """json
     {
@@ -247,14 +291,20 @@ Feature: SLI metrics should be added on alarm changes
 
   Scenario: given entity in active pbehavior should not add SLI any metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-pbehavior-axe-5-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-pbehavior-axe-5"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-5"
+            }
+          }
+        ]
       ]
     }
     """
@@ -280,23 +330,25 @@ Feature: SLI metrics should be added on alarm changes
       "name": "test-pbehavior-metrics-pbehavior-axe-5",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2s" }},
+      "color": "#FFFFFF",
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-metrics-pbehavior-axe-5"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-5"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I wait 1s
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": []
@@ -305,14 +357,20 @@ Feature: SLI metrics should be added on alarm changes
 
   Scenario: given alarm should add downtime metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-pbehavior-axe-6-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-pbehavior-axe-6"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-6"
+            }
+          }
+        ]
       ]
     }
     """
@@ -360,14 +418,20 @@ Feature: SLI metrics should be added on alarm changes
 
   Scenario: given minor alarm with SLI minor state should not add downtime metrics for minor state
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-pbehavior-axe-7-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-pbehavior-axe-7"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-7"
+            }
+          }
+        ]
       ]
     }
     """
@@ -449,10 +513,7 @@ Feature: SLI metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I wait 1s
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -467,14 +528,20 @@ Feature: SLI metrics should be added on alarm changes
 
   Scenario: given minor alarm with SLI critical state should not add downtime metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-pbehavior-axe-8-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-pbehavior-axe-8"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-8"
+            }
+          }
+        ]
       ]
     }
     """
@@ -557,10 +624,7 @@ Feature: SLI metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I wait 1s
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": []

@@ -44,18 +44,8 @@ func NewApi(
 	}
 }
 
-// Get entity by id
-// @Summary Get entity by id
-// @Description Get entity by id
-// @Tags entitybasics
-// @ID entitybasics-get-by-id
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param _id query string true "Entity id"
+// Get
 // @Success 200 {object} Entity
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entitybasics [get]
 func (a *api) Get(c *gin.Context) {
 	var request IdRequest
 	if err := c.ShouldBind(&request); err != nil {
@@ -63,7 +53,7 @@ func (a *api) Get(c *gin.Context) {
 		return
 	}
 
-	entity, err := a.store.GetOneBy(c.Request.Context(), request.ID)
+	entity, err := a.store.GetOneBy(c, request.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -75,21 +65,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, entity)
 }
 
-// Update entity by id
-// @Summary Update entity by id
-// @Description Update entity by id
-// @Tags entitybasics
-// @ID entitybasics-update-by-id
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param _id query string true "Entity id"
+// Update
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Entity
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entitybasics [put]
 func (a *api) Update(c *gin.Context) {
 	idRequest := IdRequest{}
 	if err := c.ShouldBindQuery(&idRequest); err != nil {
@@ -105,7 +83,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	request.ID = idRequest.ID
-	entity, isToggled, err := a.store.Update(c.Request.Context(), request)
+	entity, isToggled, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -117,8 +95,9 @@ func (a *api) Update(c *gin.Context) {
 
 	if entity.Enabled || isToggled {
 		a.sendChangeMessage(entityservice.ChangeEntityMessage{
-			ID:        entity.ID,
-			IsToggled: isToggled,
+			ID:         entity.ID,
+			EntityType: entity.Type,
+			IsToggled:  isToggled,
 		})
 	}
 
@@ -131,23 +110,11 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.metricMetaUpdater.UpdateById(c.Request.Context(), entity.ID)
+	a.metricMetaUpdater.UpdateById(c, entity.ID)
 
 	c.JSON(http.StatusOK, entity)
 }
 
-// Delete entity by id
-// @Summary Delete entity by id
-// @Description Delete entity by id
-// @Tags entitybasics
-// @ID entitybasics-delete-by-id
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param _id query string true "Entity id"
-// @Success 204
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entitybasics [delete]
 func (a *api) Delete(c *gin.Context) {
 	var request IdRequest
 	if err := c.ShouldBind(&request); err != nil {
@@ -155,7 +122,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.store.Delete(c.Request.Context(), request.ID)
+	ok, err := a.store.Delete(c, request.ID)
 
 	if err != nil {
 		if err == ErrLinkedEntityToAlarm {
@@ -179,7 +146,7 @@ func (a *api) Delete(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.metricMetaUpdater.DeleteById(c.Request.Context(), request.ID)
+	a.metricMetaUpdater.DeleteById(c, request.ID)
 
 	c.Status(http.StatusNoContent)
 }

@@ -7,6 +7,7 @@ import (
 	"runtime/trace"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
@@ -40,6 +41,8 @@ type eventProcessor struct {
 	statisticsSender statistics.EventStatisticsSender
 
 	stateCountersService statecounters.StateCountersService
+
+	pbhTypeResolver pbehavior.EntityTypeResolver
 }
 
 func NewEventProcessor(
@@ -54,6 +57,7 @@ func NewEventProcessor(
 	metaAlarmEventProcessor MetaAlarmEventProcessor,
 	statisticsSender statistics.EventStatisticsSender,
 	stateCountersService statecounters.StateCountersService,
+	pbhTypeResolver pbehavior.EntityTypeResolver,
 	logger zerolog.Logger,
 ) EventProcessor {
 	return &eventProcessor{
@@ -66,6 +70,7 @@ func NewEventProcessor(
 		alarmStatusService:  alarmStatusService,
 		metricsSender:       metricsSender,
 		statisticsSender:    statisticsSender,
+		pbhTypeResolver:     pbhTypeResolver,
 		logger:              logger,
 
 		metaAlarmEventProcessor: metaAlarmEventProcessor,
@@ -83,6 +88,8 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		return alarmChange, nil
 	}
 
+	var entityOldIdleSince *types.CpsTime
+	var entityOldLastIdleRuleApply string
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
 	firstTimeTran := true
 
@@ -136,15 +143,21 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		case types.EventTypeMetaAlarm:
 			event.Alarm, err = s.metaAlarmEventProcessor.CreateMetaAlarm(tCtx, *event)
 			alarmChange.Type = types.AlarmChangeTypeCreate
+		case types.EventTypeTrigger:
+			if event.AlarmChange != nil && event.Alarm != nil {
+				alarmChange = *event.AlarmChange
+			}
 		default:
 			if event.Entity == nil {
 				return nil
 			}
 
+			entityOldIdleSince, entityOldLastIdleRuleApply = event.Entity.IdleSince, event.Entity.LastIdleRuleApply
+
 			if event.Alarm == nil {
 				err = s.processPbhEventsForEntity(tCtx, event, &alarmChange)
 			} else {
-				operation := s.createOperationFromEvent(*event)
+				operation := s.createOperationFromEvent(event)
 				alarmChange.Type, err = s.executor.Exec(tCtx, operation, event.Alarm, event.Entity, event.Timestamp, event.UserID, event.Role, event.Initiator)
 				if err != nil {
 					err = fmt.Errorf("cannot update alarm: %w", err)
@@ -200,6 +213,9 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		return alarmChange, nil
 	}
 
+	mustUpdateIdleFields := entityOldIdleSince != event.Entity.IdleSince ||
+		entityOldLastIdleRuleApply != event.Entity.LastIdleRuleApply
+
 	if alarmChange.Type == types.AlarmChangeTypeResolve {
 		go func() {
 			err := s.adapter.CopyAlarmToResolvedCollection(context.Background(), *event.Alarm)
@@ -211,10 +227,13 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 	if event.IdleRuleApply != "" {
 		event.Entity.LastIdleRuleApply = event.IdleRuleApply
-		err := s.entityAdapter.UpdateIdleFields(ctx, event.Entity.ID, event.Entity.IdleSince,
+		mustUpdateIdleFields = true
+	}
+	if mustUpdateIdleFields {
+		err = s.entityAdapter.UpdateIdleFields(ctx, event.Entity.ID, event.Entity.IdleSince,
 			event.Entity.LastIdleRuleApply)
 		if err != nil {
-			return alarmChange, fmt.Errorf("cannot update alarm: %w", err)
+			return alarmChange, fmt.Errorf("cannot update entity: %w", err)
 		}
 	}
 
@@ -264,28 +283,32 @@ func (s *eventProcessor) storeAlarm(ctx context.Context, event *types.Event) (ty
 
 func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (types.AlarmChangeType, error) {
 	changeType := types.AlarmChangeTypeNone
+	pbehaviorInfo, err := s.resolvePbehaviorInfo(ctx, *event.Entity)
+	if err != nil {
+		return changeType, err
+	}
 
 	alarmConfig := s.alarmConfigProvider.Get()
 	alarm := newAlarm(*event, alarmConfig)
-	err := UpdateAlarmState(&alarm, *event.Entity, event.Timestamp, event.State, event.Output, s.alarmStatusService)
+	err = UpdateAlarmState(&alarm, *event.Entity, event.Timestamp, event.State, event.Output, s.alarmStatusService)
 	if err != nil {
 		return changeType, err
 	}
 
 	alarm.PartialUpdateEventsCount()
 
-	if event.PbehaviorInfo.IsDefaultActive() {
+	if pbehaviorInfo.IsDefaultActive() {
 		changeType = types.AlarmChangeTypeCreate
 	} else {
 		output := fmt.Sprintf(
 			"Pbehavior %s. Type: %s. Reason: %s.",
-			event.PbehaviorInfo.Name,
-			event.PbehaviorInfo.TypeName,
-			event.PbehaviorInfo.Reason,
+			pbehaviorInfo.Name,
+			pbehaviorInfo.TypeName,
+			pbehaviorInfo.Reason,
 		)
 
-		err := alarm.PartialUpdatePbhEnter(event.Timestamp, event.PbehaviorInfo,
-			event.Author, output, event.UserID, event.Role, event.Initiator)
+		err := alarm.PartialUpdatePbhEnter(event.Timestamp, pbehaviorInfo,
+			canopsis.DefaultEventAuthor, output, "", event.Role, event.Initiator)
 		if err != nil {
 			return changeType, fmt.Errorf("cannot add alarm steps: %w", err)
 		}
@@ -378,13 +401,17 @@ func (s *eventProcessor) updateAlarm(ctx context.Context, event *types.Event) (t
 
 func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event) (types.AlarmChangeType, error) {
 	changeType := types.AlarmChangeTypeNone
-	if event.Entity == nil || event.Alarm == nil && event.State == types.AlarmStateOK {
+	if event.Alarm == nil && event.State == types.AlarmStateOK {
 		return changeType, nil
 	}
 
-	alarmConfig := s.alarmConfigProvider.Get()
+	pbehaviorInfo, err := s.resolvePbehaviorInfo(ctx, *event.Entity)
+	if err != nil {
+		return changeType, err
+	}
 
 	if event.Alarm == nil {
+		alarmConfig := s.alarmConfigProvider.Get()
 		alarm := newAlarm(*event, alarmConfig)
 		err := s.updateAlarmOnNoEventsEvent(&alarm, *event.Entity, *event)
 		if err != nil {
@@ -393,16 +420,16 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 
 		changeType = types.AlarmChangeTypeCreate
 
-		if !event.PbehaviorInfo.IsDefaultActive() {
+		if !pbehaviorInfo.IsDefaultActive() {
 			output := fmt.Sprintf(
 				"Pbehavior %s. Type: %s. Reason: %s.",
-				event.PbehaviorInfo.Name,
-				event.PbehaviorInfo.TypeName,
-				event.PbehaviorInfo.Reason,
+				pbehaviorInfo.Name,
+				pbehaviorInfo.TypeName,
+				pbehaviorInfo.Reason,
 			)
 
-			err := alarm.PartialUpdatePbhEnter(event.Timestamp, event.PbehaviorInfo,
-				event.Author, output, event.UserID, event.Role, event.Initiator)
+			err := alarm.PartialUpdatePbhEnter(event.Timestamp, pbehaviorInfo,
+				canopsis.DefaultEventAuthor, output, "", event.Role, event.Initiator)
 			if err != nil {
 				return changeType, fmt.Errorf("cannot add alarm steps: %w", err)
 			}
@@ -449,7 +476,7 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 		event.Entity.LastIdleRuleApply = ""
 	}
 
-	err := s.entityAdapter.UpdateIdleFields(ctx, event.Entity.ID, event.Entity.IdleSince,
+	err = s.entityAdapter.UpdateIdleFields(ctx, event.Entity.ID, event.Entity.IdleSince,
 		event.Entity.LastIdleRuleApply)
 	if err != nil {
 		return changeType, fmt.Errorf("cannot update entity: %w", err)
@@ -466,60 +493,24 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 	return changeType, nil
 }
 
-func (s *eventProcessor) createOperationFromEvent(event types.Event) types.Operation {
-	var parameters interface{}
+func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Operation {
+	parameters := types.OperationParameters{
+		Ticket:    event.Ticket,
+		Data:      event.TicketData,
+		Output:    event.Output,
+		Author:    event.Author,
+		Execution: event.Execution,
+	}
 	switch event.EventType {
-	case types.EventTypeAssocTicket:
-		parameters = types.OperationAssocTicketParameters{
-			Ticket: event.Ticket,
-			Output: event.Output,
-			Author: event.Author,
-		}
-	case types.EventTypeDeclareTicketWebhook:
-		parameters = types.OperationDeclareTicketParameters{
-			Ticket: event.Ticket,
-			Data:   event.TicketData,
-			Output: event.Output,
-			Author: event.Author,
-		}
 	case types.EventTypeSnooze:
-		parameters = types.OperationSnoozeParameters{
-			Duration: types.DurationWithUnit{
-				Value: int64(event.Duration),
-				Unit:  "s",
-			},
-			Output: event.Output,
-			Author: event.Author,
+		parameters.Duration = &types.DurationWithUnit{
+			Value: int64(event.Duration),
+			Unit:  "s",
 		}
 	case types.EventTypeChangestate, types.EventTypeKeepstate:
-		parameters = types.OperationChangeStateParameters{
-			State:  event.State,
-			Output: event.Output,
-			Author: event.Author,
-		}
+		parameters.State = &event.State
 	case types.EventTypePbhEnter, types.EventTypePbhLeave, types.EventTypePbhLeaveAndEnter:
-		parameters = types.OperationPbhParameters{
-			PbehaviorInfo: event.PbehaviorInfo,
-			Output:        event.Output,
-			Author:        event.Author,
-		}
-	case types.EventTypeInstructionStarted, types.EventTypeInstructionPaused,
-		types.EventTypeInstructionResumed, types.EventTypeInstructionCompleted,
-		types.EventTypeInstructionFailed, types.EventTypeInstructionAborted,
-		types.EventTypeAutoInstructionStarted, types.EventTypeAutoInstructionCompleted,
-		types.EventTypeAutoInstructionFailed, types.EventTypeAutoInstructionAlreadyRunning,
-		types.EventTypeInstructionJobStarted, types.EventTypeInstructionJobCompleted,
-		types.EventTypeInstructionJobAborted, types.EventTypeInstructionJobFailed:
-		parameters = types.OperationInstructionParameters{
-			Execution: event.Execution,
-			Output:    event.Output,
-			Author:    event.Author,
-		}
-	default:
-		parameters = types.OperationParameters{
-			Output: event.Output,
-			Author: event.Author,
-		}
+		parameters.PbehaviorInfo = &event.PbehaviorInfo
 	}
 
 	return types.Operation{
@@ -538,6 +529,8 @@ func (s *eventProcessor) processAckResources(ctx context.Context, event types.Ev
 
 func (s *eventProcessor) resolveAlarmForDisabledEntity(ctx context.Context, event *types.Event) (types.AlarmChange, error) {
 	alarmChange := types.NewAlarmChange()
+	event.Entity.IdleSince = nil
+	event.Entity.LastIdleRuleApply = ""
 	if event.Alarm == nil {
 		return alarmChange, nil
 	}
@@ -636,7 +629,7 @@ func (s *eventProcessor) processPbhEventsForEntity(ctx context.Context, event *t
 	switch event.EventType {
 	case types.EventTypePbhEnter, types.EventTypePbhLeave, types.EventTypePbhLeaveAndEnter:
 		curPbehaviorInfo := event.Entity.PbehaviorInfo
-		if curPbehaviorInfo != event.PbehaviorInfo {
+		if !curPbehaviorInfo.Same(event.PbehaviorInfo) {
 			alarmChange.PreviousPbehaviorCannonicalType = event.Entity.PbehaviorInfo.CanonicalType
 			alarmChange.PreviousPbehaviorTypeID = event.Entity.PbehaviorInfo.TypeID
 			event.Entity.PbehaviorInfo = event.PbehaviorInfo
@@ -675,6 +668,20 @@ func (s *eventProcessor) sendEventStatistics(ctx context.Context, event types.Ev
 	}
 
 	s.statisticsSender.Send(ctx, event.GetEID(), stats)
+}
+
+func (s *eventProcessor) resolvePbehaviorInfo(ctx context.Context, entity types.Entity) (types.PbehaviorInfo, error) {
+	if !entity.PbehaviorInfo.IsDefaultActive() {
+		return entity.PbehaviorInfo, nil
+	}
+
+	now := time.Now()
+	result, err := s.pbhTypeResolver.Resolve(ctx, entity, now)
+	if err != nil {
+		return types.PbehaviorInfo{}, err
+	}
+
+	return pbehavior.NewPBehaviorInfo(types.CpsTime{Time: now}, result), nil
 }
 
 func newAlarm(event types.Event, alarmConfig config.AlarmConfig) types.Alarm {

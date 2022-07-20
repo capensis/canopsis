@@ -115,6 +115,9 @@ func (a *mongoAdapter) UpsertMany(ctx context.Context, entities []types.Entity) 
 			"created":         entity.Created,
 			"last_event_date": entity.LastEventDate,
 		}
+		if entity.Connector != "" {
+			insert["connector"] = entity.Connector
+		}
 		if entity.Component != "" {
 			insert["component"] = entity.Component
 		}
@@ -250,13 +253,14 @@ func (a *mongoAdapter) AddImpactByQuery(ctx context.Context, query interface{}, 
 }
 
 func (a *mongoAdapter) RemoveImpactByQuery(ctx context.Context, query interface{}, impact string) ([]string, error) {
+	and := []interface{}{bson.M{"enabled": true}}
+	if query != nil {
+		and = append(and, query)
+	}
+	and = append(and, bson.M{"impact": bson.M{"$in": bson.A{impact}}})
 	res, err := a.dbCollection.Find(
 		ctx,
-		bson.M{"$and": []interface{}{
-			bson.M{"enabled": true},
-			query,
-			bson.M{"impact": bson.M{"$in": bson.A{impact}}},
-		}},
+		bson.M{"$and": and},
 		options.Find().SetProjection(bson.M{"_id": 1}))
 	if err != nil {
 		return nil, err
@@ -505,8 +509,11 @@ func (a *mongoAdapter) FindConnectorForComponent(ctx context.Context, id string)
 			"maxDepth":                0,
 		}},
 		{"$unwind": "$connector"},
+		{"$replaceRoot": bson.M{
+			"newRoot": "$connector",
+		}},
 		{"$project": bson.M{
-			"connector": 1,
+			"impact": 0, "depends": 0,
 		}},
 	})
 	if err != nil {
@@ -516,15 +523,13 @@ func (a *mongoAdapter) FindConnectorForComponent(ctx context.Context, id string)
 	defer cursor.Close(ctx)
 
 	if cursor.Next(ctx) {
-		res := &struct {
-			Connector types.Entity `bson:"connector"`
-		}{}
-		err := cursor.Decode(res)
+		res := types.Entity{}
+		err := cursor.Decode(&res)
 		if err != nil {
 			return nil, err
 		}
 
-		return &res.Connector, nil
+		return &res, nil
 	}
 
 	return nil, nil
@@ -545,8 +550,11 @@ func (a *mongoAdapter) FindConnectorForResource(ctx context.Context, id string) 
 			"maxDepth":                0,
 		}},
 		{"$unwind": "$connector"},
+		{"$replaceRoot": bson.M{
+			"newRoot": "$connector",
+		}},
 		{"$project": bson.M{
-			"connector": 1,
+			"impact": 0, "depends": 0,
 		}},
 	})
 	if err != nil {
@@ -556,16 +564,13 @@ func (a *mongoAdapter) FindConnectorForResource(ctx context.Context, id string) 
 	defer cursor.Close(ctx)
 
 	if cursor.Next(ctx) {
-		res := &struct {
-			ID        string       `bson:"_id"`
-			Connector types.Entity `bson:"connector"`
-		}{}
-		err := cursor.Decode(res)
+		res := types.Entity{}
+		err := cursor.Decode(&res)
 		if err != nil {
 			return nil, err
 		}
 
-		return &res.Connector, nil
+		return &res, nil
 	}
 
 	return nil, nil
@@ -586,8 +591,11 @@ func (a *mongoAdapter) FindComponentForResource(ctx context.Context, id string) 
 			"maxDepth":                0,
 		}},
 		{"$unwind": "$component"},
+		{"$replaceRoot": bson.M{
+			"newRoot": "$component",
+		}},
 		{"$project": bson.M{
-			"component": 1,
+			"impact": 0, "depends": 0,
 		}},
 	})
 	if err != nil {
@@ -597,16 +605,13 @@ func (a *mongoAdapter) FindComponentForResource(ctx context.Context, id string) 
 	defer cursor.Close(ctx)
 
 	if cursor.Next(ctx) {
-		res := &struct {
-			ID        string       `bson:"_id"`
-			Component types.Entity `bson:"component"`
-		}{}
-		err := cursor.Decode(res)
+		res := types.Entity{}
+		err := cursor.Decode(&res)
 		if err != nil {
 			return nil, err
 		}
 
-		return &res.Component, nil
+		return &res, nil
 	}
 
 	return nil, nil
@@ -643,7 +648,9 @@ func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, idsWithPbeh
 		filter["pbehavior_info"] = bson.M{"$ne": nil}
 	}
 
-	return a.dbCollection.Find(ctx, filter)
+	opts := &options.FindOptions{}
+	return a.dbCollection.Find(ctx, filter,
+		opts.SetProjection(bson.M{"depends": 0, "impact": 0}))
 }
 
 func (a *mongoAdapter) GetImpactedServicesInfo(ctx context.Context) (mongo.Cursor, error) {
