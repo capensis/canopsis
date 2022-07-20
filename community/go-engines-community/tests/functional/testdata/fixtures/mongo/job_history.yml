@@ -1,18 +1,1 @@
-job_history:
-  job_history_failed (template):
-    _id: <UUID()>
-    status: 2
-    output: <Phrase()>
-    fail_reason: <Phrase()>
-    started_at: <NowUnix()>
-    launched_at: <Current().started_at>
-    completed_at: <Current().started_at>
-
-  job_history_to_job_execution_get (extend job_history_failed):
-    _id: test-job-execution-to-get
-    job: test-job-execution-to-get
-    output: test-job-execution-to-get-output
-    fail_reason: test-job-execution-to-get-fail-reason
-    started_at: 1597906527
-    launched_at: 1597906527
-    completed_at: 1597906537
+job_history: {}

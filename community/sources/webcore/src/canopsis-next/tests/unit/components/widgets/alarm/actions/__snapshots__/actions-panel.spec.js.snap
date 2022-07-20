@@ -1,5 +1,80 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`actions-panel Renders \`actions-panel\` with auto instruction in running 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-declareTicket"
+  >
+    alarmList.actions.titles.declareTicket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    alarmList.actions.titles.associateTicket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    alarmList.actions.titles.cancel|delete|cancel
+  </button>
+   
+  <button
+    class="drop-down-action-ackRemove"
+  >
+    alarmList.actions.titles.ackRemove|not_interested|ackRemove
+  </button>
+  <button
+    class="drop-down-action-changeState"
+  >
+    alarmList.actions.titles.changeState|thumbs_up_down|changeState
+  </button>
+  <button
+    class="drop-down-action-ack"
+  >
+    alarmList.actions.titles.ack|playlist_add_check|ack
+  </button>
+  <button
+    class="drop-down-action-snooze"
+  >
+    alarmList.actions.titles.snooze|alarm|snooze
+  </button>
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    alarmList.actions.titles.comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    alarmList.actions.titles.history|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    alarmList.actions.titles.variablesHelp|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.resumeInstruction:{"instructionName":"Running instruction"}|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.executeInstruction:{"instructionName":"New instruction"}|assignment|executeInstruction
+  </button>
+</div>
+`;
+
 exports[`actions-panel Renders \`actions-panel\` with full unresolved alarm, but without access 1`] = `
 <div
   class="shared-actions-panel"
@@ -8,15 +83,234 @@ exports[`actions-panel Renders \`actions-panel\` with full unresolved alarm, but
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with resolved alarm 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with manual instruction in running 1`] = `
 <div
   class="shared-actions-panel"
 >
   <button
-    class="action-pbehaviorList"
+    class="action-declareTicket"
   >
-    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
+    alarmList.actions.titles.declareTicket|report_problem|declareTicket
   </button>
+  <button
+    class="action-associateTicket"
+  >
+    alarmList.actions.titles.associateTicket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    alarmList.actions.titles.cancel|delete|cancel
+  </button>
+   
+  <button
+    class="drop-down-action-ackRemove"
+  >
+    alarmList.actions.titles.ackRemove|not_interested|ackRemove
+  </button>
+  <button
+    class="drop-down-action-changeState"
+  >
+    alarmList.actions.titles.changeState|thumbs_up_down|changeState
+  </button>
+  <button
+    class="drop-down-action-ack"
+  >
+    alarmList.actions.titles.ack|playlist_add_check|ack
+  </button>
+  <button
+    class="drop-down-action-snooze"
+  >
+    alarmList.actions.titles.snooze|alarm|snooze
+  </button>
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    alarmList.actions.titles.comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    alarmList.actions.titles.history|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    alarmList.actions.titles.variablesHelp|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.resumeInstruction:{"instructionName":"Running instruction"}|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.executeInstruction:{"instructionName":"New instruction"}|assignment|executeInstruction
+  </button>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with manual instruction in waiting result 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-declareTicket"
+  >
+    alarmList.actions.titles.declareTicket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    alarmList.actions.titles.associateTicket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    alarmList.actions.titles.cancel|delete|cancel
+  </button>
+   
+  <button
+    class="drop-down-action-ackRemove"
+  >
+    alarmList.actions.titles.ackRemove|not_interested|ackRemove
+  </button>
+  <button
+    class="drop-down-action-changeState"
+  >
+    alarmList.actions.titles.changeState|thumbs_up_down|changeState
+  </button>
+  <button
+    class="drop-down-action-ack"
+  >
+    alarmList.actions.titles.ack|playlist_add_check|ack
+  </button>
+  <button
+    class="drop-down-action-snooze"
+  >
+    alarmList.actions.titles.snooze|alarm|snooze
+  </button>
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    alarmList.actions.titles.comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    alarmList.actions.titles.history|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    alarmList.actions.titles.variablesHelp|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.resumeInstruction:{"instructionName":"Running instruction"}|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.executeInstruction:{"instructionName":"New instruction"}|assignment|executeInstruction
+  </button>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-declareTicket"
+  >
+    alarmList.actions.titles.declareTicket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    alarmList.actions.titles.associateTicket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    alarmList.actions.titles.cancel|delete|cancel
+  </button>
+   
+  <button
+    class="drop-down-action-ackRemove"
+  >
+    alarmList.actions.titles.ackRemove|not_interested|ackRemove
+  </button>
+  <button
+    class="drop-down-action-changeState"
+  >
+    alarmList.actions.titles.changeState|thumbs_up_down|changeState
+  </button>
+  <button
+    class="drop-down-action-ack"
+  >
+    alarmList.actions.titles.ack|playlist_add_check|ack
+  </button>
+  <button
+    class="drop-down-action-snooze"
+  >
+    alarmList.actions.titles.snooze|alarm|snooze
+  </button>
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    alarmList.actions.titles.comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    alarmList.actions.titles.history|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    alarmList.actions.titles.variablesHelp|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.executeInstruction:{"instructionName":"New instruction"}|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+  >
+    alarmList.actions.titles.resumeInstruction:{"instructionName":"Paused instruction"}|assignment|executeInstruction
+  </button>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with resolved alarm 1`] = `
+<div
+  class="shared-actions-panel"
+>
   <button
     class="action-variablesHelp"
   >
@@ -72,11 +366,6 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
     alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
   </button>
   <button
-    class="drop-down-action-pbehaviorList"
-  >
-    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
-  </button>
-  <button
     class="drop-down-action-comment"
   >
     alarmList.actions.titles.comment|comment|comment
@@ -98,19 +387,14 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
   </button>
   <button
     class="drop-down-action-executeInstruction"
-    disabled="disabled"
   >
     alarmList.actions.titles.resumeInstruction:{"instructionName":"Running instruction"}|assignment|executeInstruction
   </button>
   <button
     class="drop-down-action-executeInstruction"
+    disabled="disabled"
   >
     alarmList.actions.titles.executeInstruction:{"instructionName":"New instruction"}|assignment|executeInstruction
-  </button>
-  <button
-    class="drop-down-action-executeInstruction"
-  >
-    alarmList.actions.titles.resumeInstruction:{"instructionName":"Paused instruction"}|assignment|executeInstruction
   </button>
 </div>
 `;
@@ -141,11 +425,6 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
     alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
   </button>
   <button
-    class="drop-down-action-pbehaviorList"
-  >
-    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
-  </button>
-  <button
     class="drop-down-action-comment"
   >
     alarmList.actions.titles.comment|comment|comment
@@ -167,19 +446,14 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
   </button>
   <button
     class="drop-down-action-executeInstruction"
-    disabled="disabled"
   >
     alarmList.actions.titles.resumeInstruction:{"instructionName":"Running instruction"}|assignment|executeInstruction
   </button>
   <button
     class="drop-down-action-executeInstruction"
+    disabled="disabled"
   >
     alarmList.actions.titles.executeInstruction:{"instructionName":"New instruction"}|assignment|executeInstruction
-  </button>
-  <button
-    class="drop-down-action-executeInstruction"
-  >
-    alarmList.actions.titles.resumeInstruction:{"instructionName":"Paused instruction"}|assignment|executeInstruction
   </button>
 </div>
 `;

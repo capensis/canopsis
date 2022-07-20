@@ -62,12 +62,12 @@ func GetTemplateFunc(cfgTimezone *config.TimezoneConfig) template.FuncMap {
 			log.Printf("trim : %+v is not a string", v)
 			return ""
 		},
-		// formattedDate will return a formatted string from a CpsTime
+		// formattedDate will return a formatted string from a time type
 		"formattedDate": func(format string, v interface{}) string {
-			if t, ok := v.(CpsTime); ok {
-				return t.Time.Format(format)
+			if t, ok := castTime(v); ok {
+				return t.Format(format)
 			}
-			log.Printf("formattedDate : %+v is not a CpsTime", v)
+			log.Printf("formattedDate : %+v is not a time type", v)
 			return ""
 		},
 		// replace will replace a string, replacing matches of the regex with the replacement string
@@ -101,20 +101,20 @@ func GetTemplateFunc(cfgTimezone *config.TimezoneConfig) template.FuncMap {
 			return ""
 		},
 		"localtime": func(v ...interface{}) string {
-			var value CpsTime
+			var value time.Time
 			var timezone string
 			var format string
 			var ok bool
 
 			if len(v) == 3 {
-				if value, ok = v[2].(CpsTime); !ok {
+				if value, ok = castTime(v[2]); !ok {
 					log.Printf("localtime : %+v is not a CpsTime", v)
 					return ""
 				}
 				timezone = v[1].(string)
 				format = v[0].(string)
 			} else if len(v) == 2 {
-				if value, ok = v[1].(CpsTime); !ok {
+				if value, ok = castTime(v[1]); !ok {
 					log.Printf("localtime : %+v is not a CpsTime", v)
 					return ""
 				}
@@ -131,15 +131,36 @@ func GetTemplateFunc(cfgTimezone *config.TimezoneConfig) template.FuncMap {
 					log.Print("localtime : invalid timezone")
 					return ""
 				}
-			} else {
-				if cfgTimezone == nil {
-					return value.Time.Format(format)
-				}
+			} else if cfgTimezone != nil {
 				loc = cfgTimezone.Location
 			}
 
-			intz := value.Time.In(loc)
-			return intz.Format(format)
+			if loc == nil {
+				return value.Format(format)
+			}
+
+			return value.In(loc).Format(format)
 		},
+	}
+}
+
+func castTime(v interface{}) (time.Time, bool) {
+	switch t := v.(type) {
+	case CpsTime:
+		return t.Time, true
+	case *CpsTime:
+		if t == nil {
+			return time.Time{}, false
+		}
+		return t.Time, true
+	case time.Time:
+		return t, true
+	case *time.Time:
+		if t == nil {
+			return time.Time{}, false
+		}
+		return *t, true
+	default:
+		return time.Time{}, false
 	}
 }

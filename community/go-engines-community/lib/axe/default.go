@@ -4,6 +4,8 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -31,10 +33,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type Options struct {
+	Version                  bool
 	FeatureHideResources     bool
 	FeaturePrintEventOnError bool
 	ModeDebug                bool
@@ -60,12 +62,8 @@ func ParseOptions() Options {
 	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.FIFOAckExchangeName, "Publish FIFO Ack event to this exchange.")
 	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
 	flag.BoolVar(&opts.RecomputeAllOnInit, "recomputeAllOnInit", false, "Recompute entity services on init.")
+	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.Parse()
-
-	flagVersion := flag.Bool("version", false, "version infos")
-	if *flagVersion {
-		canopsis.PrintVersionExit()
-	}
 
 	return opts
 }
@@ -132,8 +130,27 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		amqpChannel,
 		logger,
 	)
+	pbhRpcClientForIdleRules := libengine.NewRPCClient(
+		canopsis.AxeRPCConsumerName,
+		canopsis.PBehaviorRPCQueueServerName,
+		"",
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		&rpcPBehaviorClientMessageProcessor{
+			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+			PublishCh:                amqpChannel,
+			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
+			EntityAdapter:            entity.NewAdapter(dbClient),
+			PbehaviorAdapter:         pbehavior.NewAdapter(dbClient),
+			Decoder:                  json.NewDecoder(),
+			Encoder:                  json.NewEncoder(),
+			Logger:                   logger,
+		},
+		amqpChannel,
+		logger,
+	)
 
-	rpcPublishQueues := make([]string, 0)
+	rpcPublishQueues := []string{canopsis.PBehaviorRPCQueueServerName}
 	var remediationRpcClient libengine.RPCClient
 	if options.WithRemediation {
 		remediationRpcClient = libengine.NewRPCClient(
@@ -148,6 +165,14 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		)
 		rpcPublishQueues = append(rpcPublishQueues, canopsis.RemediationRPCQueueServerName)
 	}
+
+	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		libengine.NewRunInfoManager(runInfoRedisClient),
+		libengine.NewInstanceRunInfo(canopsis.AxeEngineName, canopsis.AxeQueueName, options.PublishToQueue, nil, rpcPublishQueues),
+		amqpChannel,
+		logger,
+	)
 
 	metaAlarmEventProcessor := alarm.NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
@@ -177,6 +202,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 				}
 			}
 
+			runInfoPeriodicalWorker.Work(ctx)
 			return alarmStatusService.Load(ctx)
 		},
 		func(ctx context.Context) {
@@ -236,6 +262,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 				metaAlarmEventProcessor,
 				statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider),
 				stateCountersService,
+				pbehavior.NewEntityTypeResolver(pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()), pbehavior.NewEntityMatcher(dbClient), logger),
 				logger,
 			),
 			RemediationRpcClient:   remediationRpcClient,
@@ -258,6 +285,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			MetricsSender:            metricsSender,
 			EntityAdapter:            entityAdapter,
 			AlarmAdapter:             alarmAdapter,
+			RMQChannel:               amqpChannel,
 			PbhRpc:                   pbhRpcClient,
 			RemediationRpc:           remediationRpcClient,
 			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
@@ -271,13 +299,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		logger,
 	))
 	engineAxe.AddConsumer(pbhRpcClient)
-	engineAxe.AddPeriodicalWorker("run info", libengine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		libengine.NewRunInfoManager(runInfoRedisClient),
-		libengine.NewInstanceRunInfo(canopsis.AxeEngineName, canopsis.AxeQueueName, options.PublishToQueue, nil, rpcPublishQueues),
-		amqpChannel,
-		logger,
-	))
+	engineAxe.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		AlarmStatusService: alarmStatusService,
@@ -296,6 +318,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 				idlerule.NewRuleAdapter(dbClient),
 				alarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
+				pbhRpcClientForIdleRules,
 				json.NewEncoder(),
 				logger,
 			),
@@ -386,7 +409,6 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypeAutoInstructionStarted, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeAutoInstructionCompleted, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeAutoInstructionFailed, executor.NewInstructionExecutor(metricsSender))
-	container.Set(types.EventTypeAutoInstructionAlreadyRunning, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionJobStarted, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionJobCompleted, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionJobAborted, executor.NewInstructionExecutor(metricsSender))

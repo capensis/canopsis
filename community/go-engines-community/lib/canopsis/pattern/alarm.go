@@ -26,27 +26,34 @@ func (p Alarm) Match(alarm types.Alarm) (bool, error) {
 			matched = false
 
 			if infoName := getAlarmInfoName(f); infoName != "" {
-				infoVal := getAlarmInfoVal(alarm, infoName)
-
-				switch v.FieldType {
-				case FieldTypeString:
-					if s, err := getStringValue(infoVal); err == nil {
-						matched, _, err = cond.MatchString(s)
-					}
-				case FieldTypeInt:
-					if i, err := getIntValue(infoVal); err == nil {
-						matched, err = cond.MatchInt(i)
-					}
-				case FieldTypeBool:
-					if b, err := getBoolValue(infoVal); err == nil {
-						matched, err = cond.MatchBool(b)
-					}
-				case FieldTypeStringArray:
-					if a, err := getStringArrayValue(infoVal); err == nil {
-						matched, err = cond.MatchStringArray(a)
-					}
-				default:
+				infoVal, ok := getAlarmInfoVal(alarm, infoName)
+				if v.FieldType == "" {
 					matched, err = cond.MatchRef(infoVal)
+				} else if ok {
+					switch v.FieldType {
+					case FieldTypeString:
+						var s string
+						if s, err = getStringValue(infoVal); err == nil {
+							matched, _, err = cond.MatchString(s)
+						}
+					case FieldTypeInt:
+						var i int64
+						if i, err = getIntValue(infoVal); err == nil {
+							matched, err = cond.MatchInt(i)
+						}
+					case FieldTypeBool:
+						var b bool
+						if b, err = getBoolValue(infoVal); err == nil {
+							matched, err = cond.MatchBool(b)
+						}
+					case FieldTypeStringArray:
+						var a []string
+						if a, err = getStringArrayValue(infoVal); err == nil {
+							matched, err = cond.MatchStringArray(a)
+						}
+					default:
+						return false, fmt.Errorf("invalid field type for %q field: %s", f, v.FieldType)
+					}
 				}
 
 				if err != nil {
@@ -64,8 +71,8 @@ func (p Alarm) Match(alarm types.Alarm) (bool, error) {
 				matched, _, err = cond.MatchString(str)
 			} else if i, ok := getAlarmIntField(alarm, f); ok {
 				matched, err = cond.MatchInt(i)
-			} else if b, ok := getAlarmBoolField(alarm, f); ok {
-				matched, err = cond.MatchBool(b)
+			} else if r, ok := getAlarmRefField(alarm, f); ok {
+				matched, err = cond.MatchRef(r)
 			} else if t, ok := getAlarmTimeField(alarm, f); ok {
 				matched, err = cond.MatchTime(t)
 			} else if d, ok := getAlarmDurationField(alarm, f); ok {
@@ -91,8 +98,16 @@ func (p Alarm) Match(alarm types.Alarm) (bool, error) {
 	return false, nil
 }
 
-func (p Alarm) Validate() bool {
+func (p Alarm) Validate(forbiddenFields, onlyTimeAbsoluteFields []string) bool {
 	emptyAlarm := types.Alarm{}
+	forbiddenFieldsMap := make(map[string]bool, len(forbiddenFields))
+	for _, field := range forbiddenFields {
+		forbiddenFieldsMap[field] = true
+	}
+	timeAbsoluteFieldsMap := make(map[string]bool, len(onlyTimeAbsoluteFields))
+	for _, field := range onlyTimeAbsoluteFields {
+		timeAbsoluteFieldsMap[field] = true
+	}
 
 	for _, group := range p {
 		if len(group) == 0 {
@@ -103,6 +118,10 @@ func (p Alarm) Validate() bool {
 			f := v.Field
 			cond := v.Condition
 			var err error
+
+			if isForbiddenAlarmField(v, forbiddenFieldsMap, timeAbsoluteFieldsMap) {
+				return false
+			}
 
 			if infoName := getAlarmInfoName(f); infoName != "" {
 				switch v.FieldType {
@@ -129,8 +148,8 @@ func (p Alarm) Validate() bool {
 				_, _, err = cond.MatchString(str)
 			} else if i, ok := getAlarmIntField(emptyAlarm, f); ok {
 				_, err = cond.MatchInt(i)
-			} else if b, ok := getAlarmBoolField(emptyAlarm, f); ok {
-				_, err = cond.MatchBool(b)
+			} else if r, ok := getAlarmRefField(emptyAlarm, f); ok {
+				_, err = cond.MatchRef(r)
 			} else if t, ok := getAlarmTimeField(emptyAlarm, f); ok {
 				_, err = cond.MatchTime(t)
 			} else if d, ok := getAlarmDurationField(emptyAlarm, f); ok {
@@ -148,8 +167,7 @@ func (p Alarm) Validate() bool {
 	return true
 }
 
-func (p Alarm) ToMongoQuery(prefix string) ([]bson.M, error) {
-	pipeline := make([]bson.M, 0)
+func (p Alarm) ToMongoQuery(prefix string) (bson.M, error) {
 	if len(p) == 0 {
 		return nil, nil
 	}
@@ -160,8 +178,6 @@ func (p Alarm) ToMongoQuery(prefix string) ([]bson.M, error) {
 
 	groupQueries := make([]bson.M, len(p))
 	var err error
-	withDuration := false
-	withInfos := false
 
 	for i, group := range p {
 		condQueries := make([]bson.M, len(group))
@@ -169,7 +185,6 @@ func (p Alarm) ToMongoQuery(prefix string) ([]bson.M, error) {
 			f := cond.Field
 
 			if infoName := getAlarmInfoName(f); infoName != "" {
-				withInfos = true
 				f = prefix + "v.infos_array.v." + infoName
 
 				condQueries[j], err = cond.Condition.ToMongoQuery(f)
@@ -187,10 +202,6 @@ func (p Alarm) ToMongoQuery(prefix string) ([]bson.M, error) {
 				continue
 			}
 
-			if f == "v.duration" {
-				withDuration = true
-			}
-
 			f = prefix + f
 			condQueries[j], err = cond.Condition.ToMongoQuery(f)
 			if err != nil {
@@ -201,15 +212,49 @@ func (p Alarm) ToMongoQuery(prefix string) ([]bson.M, error) {
 		groupQueries[i] = bson.M{"$and": condQueries}
 	}
 
+	return bson.M{"$or": groupQueries}, nil
+}
+
+func (p Alarm) GetMongoFields(prefix string) bson.M {
+	if len(p) == 0 {
+		return nil
+	}
+
+	if prefix != "" {
+		prefix += "."
+	}
+
+	withDuration := false
+	withInfos := false
+
+	for _, group := range p {
+		for _, cond := range group {
+			f := cond.Field
+
+			if infoName := getAlarmInfoName(f); infoName != "" {
+				withInfos = true
+
+				continue
+			}
+
+			if f == "v.duration" {
+				withDuration = true
+			}
+		}
+	}
+
 	addFields := bson.M{}
 	if withDuration {
-		addFields[prefix+"v.duration"] = bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$" + prefix + "v.resolved",
-				"then": "$" + prefix + "v.resolved",
-				"else": time.Now().Unix(),
+		addFields[prefix+"v.duration"] = bson.M{"$ifNull": bson.A{
+			"$" + prefix + "v.duration",
+			bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$" + prefix + "v.resolved",
+					"then": "$" + prefix + "v.resolved",
+					"else": time.Now().Unix(),
+				}},
+				"$" + prefix + "v.creation_date",
 			}},
-			"$" + prefix + "v.creation_date",
 		}}
 	}
 
@@ -217,13 +262,63 @@ func (p Alarm) ToMongoQuery(prefix string) ([]bson.M, error) {
 		addFields[prefix+"v.infos_array"] = bson.M{"$objectToArray": "$" + prefix + "v.infos"}
 	}
 
-	if len(addFields) > 0 {
-		pipeline = append(pipeline, bson.M{"$addFields": addFields})
+	return addFields
+}
+
+func (p Alarm) HasField(field string) bool {
+	for _, group := range p {
+		for _, condition := range group {
+			if condition.Field == field {
+				return true
+			}
+		}
 	}
 
-	pipeline = append(pipeline, bson.M{"$match": bson.M{"$or": groupQueries}})
+	return false
+}
 
-	return pipeline, nil
+func (p Alarm) HasInfosField() bool {
+	for _, group := range p {
+		for _, condition := range group {
+			if infoName := getAlarmInfoName(condition.Field); infoName != "" {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func (p Alarm) RemoveFields(fields, onlyTimeAbsoluteFields []string) Alarm {
+	forbiddenFieldsMap := make(map[string]bool, len(fields))
+	for _, field := range fields {
+		forbiddenFieldsMap[field] = true
+	}
+	timeAbsoluteFieldsMap := make(map[string]bool, len(onlyTimeAbsoluteFields))
+	for _, field := range onlyTimeAbsoluteFields {
+		timeAbsoluteFieldsMap[field] = true
+	}
+
+	newGroups := make(Alarm, 0, len(p))
+	for _, group := range p {
+		newGroup := make([]FieldCondition, 0, len(group))
+		for _, condition := range group {
+			if isForbiddenAlarmField(condition, forbiddenFieldsMap, timeAbsoluteFieldsMap) {
+				continue
+			}
+
+			newGroup = append(newGroup, condition)
+		}
+		if len(newGroup) > 0 {
+			newGroups = append(newGroups, newGroup)
+		}
+	}
+
+	if len(newGroups) > 0 {
+		return newGroups
+	}
+
+	return nil
 }
 
 func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
@@ -240,6 +335,17 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 		return alarm.Value.Component, true
 	case "v.resource":
 		return alarm.Value.Resource, true
+	case "v.last_comment.m":
+		if alarm.Value.LastComment == nil {
+			return "", true
+		}
+		return alarm.Value.LastComment.Message, true
+	case "v.ack.a":
+		if alarm.Value.ACK == nil {
+			return "", true
+		}
+
+		return alarm.Value.ACK.Author, true
 	default:
 		return "", false
 	}
@@ -262,18 +368,30 @@ func getAlarmIntField(alarm types.Alarm, f string) (int64, bool) {
 	}
 }
 
-func getAlarmBoolField(alarm types.Alarm, f string) (bool, bool) {
+func getAlarmRefField(alarm types.Alarm, f string) (interface{}, bool) {
 	switch f {
 	case "v.ack":
-		return alarm.Value.ACK != nil, true
+		if alarm.Value.ACK == nil {
+			return nil, true
+		}
+		return alarm.Value.ACK, true
 	case "v.ticket":
-		return alarm.Value.Ticket != nil, true
+		if alarm.Value.Ticket == nil {
+			return nil, true
+		}
+		return alarm.Value.Ticket, true
 	case "v.canceled":
-		return alarm.Value.Canceled != nil, true
-	case "v.snoozed":
-		return alarm.Value.Snooze != nil, true
+		if alarm.Value.Canceled == nil {
+			return nil, true
+		}
+		return alarm.Value.Canceled, true
+	case "v.snooze":
+		if alarm.Value.Snooze == nil {
+			return nil, true
+		}
+		return alarm.Value.Snooze, true
 	default:
-		return false, false
+		return nil, false
 	}
 }
 
@@ -305,6 +423,10 @@ func getAlarmTimeField(alarm types.Alarm, field string) (time.Time, bool) {
 func getAlarmDurationField(alarm types.Alarm, field string) (int64, bool) {
 	switch field {
 	case "v.duration":
+		if alarm.Value.Duration > 0 {
+			return alarm.Value.Duration, true
+		}
+
 		if alarm.Value.Resolved != nil {
 			return int64(alarm.Value.Resolved.Sub(alarm.Time.Time).Seconds()), true
 		}
@@ -315,14 +437,14 @@ func getAlarmDurationField(alarm types.Alarm, field string) (int64, bool) {
 	}
 }
 
-func getAlarmInfoVal(alarm types.Alarm, f string) interface{} {
+func getAlarmInfoVal(alarm types.Alarm, f string) (interface{}, bool) {
 	for _, infosByRule := range alarm.Value.Infos {
 		if v, ok := infosByRule[f]; ok {
-			return v
+			return v, true
 		}
 	}
 
-	return nil
+	return nil, false
 }
 
 func getAlarmInfoName(f string) string {
@@ -350,4 +472,10 @@ func getTypeMongoQuery(f, ft string) []bson.M {
 	}
 
 	return conds
+}
+
+func isForbiddenAlarmField(condition FieldCondition, forbiddenFieldsMap map[string]bool, timeAbsoluteFieldsMap map[string]bool) bool {
+	return forbiddenFieldsMap[condition.Field] ||
+		forbiddenFieldsMap["v.infos"] && strings.HasPrefix(condition.Field, "v.infos") ||
+		timeAbsoluteFieldsMap[condition.Field] && condition.Condition.Type == ConditionTimeRelative
 }

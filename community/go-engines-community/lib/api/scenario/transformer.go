@@ -1,8 +1,9 @@
 package scenario
 
 import (
-	"encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	libaction "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 )
 
 type ModelTransformer interface {
@@ -18,19 +19,19 @@ type modelTransformer struct{}
 func (modelTransformer) TransformEditRequestToModel(r EditRequest) libaction.Scenario {
 	actions := make([]libaction.Action, len(r.Actions))
 	for i := range actions {
-		var params map[string]interface{}
-
-		if r.Actions[i].Parameters != nil {
-			b, _ := json.Marshal(r.Actions[i].Parameters)
-			_ = json.Unmarshal(b, &params)
-		}
-
 		actions[i] = libaction.Action{
-			Type:                     r.Actions[i].Type,
-			Comment:                  r.Actions[i].Comment,
-			Parameters:               params,
-			AlarmPatterns:            r.Actions[i].AlarmPatterns,
-			EntityPatterns:           r.Actions[i].EntityPatterns,
+			Type:              r.Actions[i].Type,
+			Comment:           r.Actions[i].Comment,
+			Parameters:        r.Actions[i].Parameters,
+			OldAlarmPatterns:  r.Actions[i].OldAlarmPatterns,
+			OldEntityPatterns: r.Actions[i].OldEntityPatterns,
+			EntityPatternFields: r.Actions[i].EntityPatternFieldsRequest.ToModelWithoutFields(
+				common.GetForbiddenFieldsInEntityPattern(mongo.ScenarioMongoCollection),
+			),
+			AlarmPatternFields: r.Actions[i].AlarmPatternFieldsRequest.ToModelWithoutFields(
+				common.GetForbiddenFieldsInAlarmPattern(mongo.ScenarioMongoCollection),
+				common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ScenarioMongoCollection),
+			),
 			DropScenarioIfNotMatched: *r.Actions[i].DropScenarioIfNotMatched,
 			EmitTrigger:              *r.Actions[i].EmitTrigger,
 		}

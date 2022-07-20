@@ -3,7 +3,6 @@ package scheduler
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -12,9 +11,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	redismod "github.com/go-redis/redis/v8"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
-	"github.com/valyala/fastjson"
 )
 
 var (
@@ -201,26 +199,4 @@ func (s *scheduler) processExpiredLock(ctx context.Context, lockID string) {
 			Str("lockID", lockID).
 			Msg("error on publishsing event to queue")
 	}
-}
-
-func getChildren(b []byte) ([]string, error) {
-	jsonEvent, err := fastjson.ParseBytes(b)
-	if err != nil {
-		return nil, err
-	}
-
-	jsonChildren := jsonEvent.GetArray("ma_children")
-	children := make([]string, len(jsonChildren))
-	for idx, child := range jsonChildren {
-		if child == nil {
-			continue
-		}
-
-		children[idx], err = strconv.Unquote(child.String())
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return children, nil
 }

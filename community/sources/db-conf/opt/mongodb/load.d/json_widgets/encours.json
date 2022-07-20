@@ -45,9 +45,7 @@
     },
     "itemsPerPage": 10,
     "infoPopups": [],
-    "alarmsStateFilter": {
-      "opened": true
-    },
+    "opened": true,
     "moreInfoTemplate": "",
     "periodic_refresh": {
       "value": 1,

@@ -7,8 +7,8 @@ import (
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -20,6 +20,7 @@ type service struct {
 	delayedScenarioManager  DelayedScenarioManager
 	executionStorage        ScenarioExecutionStorage
 	encoder                 encoding.Encoder
+	decoder                 encoding.Decoder
 	fifoChan                libamqp.Channel
 	fifoExchange, fifoQueue string
 	activationService       libalarm.ActivationService
@@ -33,6 +34,7 @@ func NewService(
 	delayedScenarioManager DelayedScenarioManager,
 	storage ScenarioExecutionStorage,
 	encoder encoding.Encoder,
+	decoder encoding.Decoder,
 	fifoChan libamqp.Channel,
 	fifoExchange string,
 	fifoQueue string,
@@ -46,6 +48,7 @@ func NewService(
 		executionStorage:       storage,
 		fifoChan:               fifoChan,
 		encoder:                encoder,
+		decoder:                decoder,
 		fifoExchange:           fifoExchange,
 		fifoQueue:              fifoQueue,
 		activationService:      activationService,
@@ -138,13 +141,12 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		}
 	}
 
-	additionalData := AdditionalData{
-		AlarmChangeType: event.AlarmChange.Type,
-		Author:          event.Author,
-		Initiator:       event.Initiator,
-	}
-
 	if event.EventType == types.EventTypeRunDelayedScenario {
+		additionalData := AdditionalData{}
+		err := s.decoder.Decode([]byte(event.DelayedScenarioData), &additionalData)
+		if err != nil {
+			s.logger.Err(err).Msg("invalid additional data for delayed scenario")
+		}
 		s.scenarioInputChannel <- ExecuteScenariosTask{
 			Alarm:             alarm,
 			Entity:            entity,
@@ -156,11 +158,17 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 	}
 
 	s.scenarioInputChannel <- ExecuteScenariosTask{
-		Triggers:       event.AlarmChange.GetTriggers(),
-		Alarm:          alarm,
-		Entity:         entity,
-		AckResources:   event.AckResources,
-		AdditionalData: additionalData,
+		Triggers:     event.AlarmChange.GetTriggers(),
+		Alarm:        alarm,
+		Entity:       entity,
+		AckResources: event.AckResources,
+		AdditionalData: AdditionalData{
+			AlarmChangeType: event.AlarmChange.Type,
+			Author:          event.Author,
+			User:            event.UserID,
+			Initiator:       event.Initiator,
+			Output:          event.Output,
+		},
 	}
 
 	return nil

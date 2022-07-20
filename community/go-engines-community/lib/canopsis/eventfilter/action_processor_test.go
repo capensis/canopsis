@@ -2,7 +2,6 @@ package eventfilter_test
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
 	"testing"
@@ -13,7 +12,7 @@ func TestActionProcessor(t *testing.T) {
 		testName      string
 		action        eventfilter.Action
 		event         types.Event
-		regexMatches  pattern.EventRegexMatches
+		regexMatches  eventfilter.RegexMatch
 		externalData  map[string]interface{}
 		expectedEvent types.Event
 		expectedError bool
@@ -26,7 +25,7 @@ func TestActionProcessor(t *testing.T) {
 				Value: "test output",
 			},
 			event:        types.Event{},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Output: "test output",
@@ -41,7 +40,7 @@ func TestActionProcessor(t *testing.T) {
 				Value: 5,
 			},
 			event:         types.Event{},
-			regexMatches:  pattern.EventRegexMatches{},
+			regexMatches:  eventfilter.RegexMatch{},
 			externalData:  map[string]interface{}{},
 			expectedEvent: types.Event{},
 			expectedError: true,
@@ -54,7 +53,7 @@ func TestActionProcessor(t *testing.T) {
 				Value: "{{.ExternalData.data_1}}",
 			},
 			event:        types.Event{},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{
 				"data_1": "test output",
 			},
@@ -71,7 +70,7 @@ func TestActionProcessor(t *testing.T) {
 				Value: "{{.Some.data_1}}",
 			},
 			event:        types.Event{},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{
 				"data_1": "test output",
 			},
@@ -86,7 +85,7 @@ func TestActionProcessor(t *testing.T) {
 				Value: 123,
 			},
 			event:        types.Event{},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{
 				"data_1": "test output",
 			},
@@ -104,7 +103,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Entity: &types.Entity{},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
@@ -131,7 +130,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Entity: &types.Entity{},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
@@ -158,7 +157,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Entity: &types.Entity{},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
@@ -193,7 +192,7 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
@@ -228,7 +227,7 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
@@ -254,7 +253,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Entity: &types.Entity{},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{
 				"data_1": "test output",
 			},
@@ -283,7 +282,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Entity: &types.Entity{},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
@@ -301,7 +300,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Entity: &types.Entity{},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
@@ -327,7 +326,7 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
@@ -362,7 +361,7 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Entity: &types.Entity{
@@ -387,7 +386,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Resource: "test resource",
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
@@ -405,7 +404,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Resource: "test resource",
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
@@ -422,7 +421,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Resource: "test resource",
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
@@ -439,7 +438,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Resource: "test resource",
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
@@ -458,7 +457,7 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 				Entity:   &types.Entity{},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
@@ -487,7 +486,7 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 				Entity:   &types.Entity{},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
@@ -516,7 +515,7 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 				Entity:   &types.Entity{},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{
 				"Info": 123,
 			},
@@ -547,7 +546,7 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 				Entity:   &types.Entity{},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{
 				"Info": true,
 			},
@@ -578,7 +577,7 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 				Entity:   &types.Entity{},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
@@ -615,7 +614,7 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
@@ -652,7 +651,7 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
@@ -680,7 +679,7 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 				Entity:   &types.Entity{},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
@@ -700,7 +699,7 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 				Entity:   &types.Entity{},
 			},
-			regexMatches: pattern.EventRegexMatches{},
+			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
 				Resource: "test resource",
@@ -713,7 +712,10 @@ func TestActionProcessor(t *testing.T) {
 	processor := eventfilter.NewActionProcessor()
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			resultEvent, resultErr := processor.Process(dataset.action, dataset.event, dataset.regexMatches, dataset.externalData, nil)
+			resultEvent, resultErr := processor.Process(dataset.action, dataset.event, eventfilter.RegexMatchWrapper{
+				BackwardCompatibility: false,
+				RegexMatch:            dataset.regexMatches,
+			}, dataset.externalData, nil)
 			if !reflect.DeepEqual(resultEvent, dataset.expectedEvent) {
 				t.Errorf("expected an event = %v, but got %v", dataset.expectedEvent, resultEvent)
 			}

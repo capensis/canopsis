@@ -205,19 +205,6 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
-name = "Engine_pbehavior"
-durable = true
-autoDelete = false
-exclusive = false
-noWait = false
-# args =
-[RabbitMQ.queues.bind]
-key = "Engine_pbehavior"
-exchange = "amq.direct"
-noWait = false
-# args =
-
-[[RabbitMQ.queues]]
 name = "Engine_pbehavior_rpc_server"
 durable = true
 autoDelete = false
@@ -255,6 +242,7 @@ LongOutputLength = 1024
 DisableActionSnoozeDelayOnPbh = false
 # TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
 TimeToKeepResolvedAlarms = "720h"
+AllowDoubleAck = false
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.timezone]
@@ -279,6 +267,18 @@ TokenExpiration = "24h"
 TokenSigningMethod = "HS256"
 BulkMaxSize = 10000
 
+# It's required to restart api and engines after canopsis-reconfigure updates mongodb
+# to catch up following parameters.
+[Canopsis.logger]
+Writer = "stdout"
+
+# It's required to restart api and engines after canopsis-reconfigure updates mongodb
+# to catch up following parameters.
+[Canopsis.logger.console_writer]
+Enabled = true
+NoColor = false
+TimeFormat = "2006-01-02T15:04:05Z07:00"
+PartsOrder = ["time", "level", "caller", "message"]
 [Canopsis.metrics]
 # Long SLI intervals are splitted to short intervals which are defined by SliInterval paramter.
 # Lower value provides more accurate metrics but requires more disk space.
@@ -420,9 +420,6 @@ from = "engine-fifo"
 to = "engine-che"
 [[HealthCheck.engine_order]]
 from = "engine-che"
-to = "engine-pbehavior"
-[[HealthCheck.engine_order]]
-from = "engine-pbehavior"
 to = "engine-axe"
 [[HealthCheck.engine_order]]
 from = "engine-axe"
@@ -430,6 +427,9 @@ to = "engine-correlation"
 [[HealthCheck.engine_order]]
 from = "engine-axe"
 to = "engine-remediation"
+[[HealthCheck.engine_order]]
+from = "engine-axe"
+to = "engine-pbehavior"
 [[HealthCheck.engine_order]]
 from = "engine-correlation"
 to = "engine-dynamic-infos"

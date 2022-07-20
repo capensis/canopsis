@@ -10,18 +10,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
 	"github.com/golang/mock/gomock"
-	"go.mongodb.org/mongo-driver/bson"
 )
-
-type entityPatternListWrapper struct {
-	PatternList pattern.EntityPatternList `bson:"list"`
-}
 
 func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 	ctrl := gomock.NewController(t)
@@ -44,34 +40,22 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 		}
 	}(timerCtx)
 
-	bsonPattern, err := bson.Marshal(bson.M{
-		"list": []bson.M{
-			{
-				"enabled": true,
-				"type":    bson.M{"regex_match": "abc-.*-def"},
-				"infos": bson.M{
-					"output": bson.M{
-						"value": "debian9",
-					},
-				},
-			},
+	cond, err := pattern.NewRegexpCondition("regexp", "abc-.*-def")
+	if err != nil {
+		t.Fatal("error shouldn't be raised")
+	}
+
+	p := pattern.Entity{{
+		{
+			Field:     "type",
+			Condition: cond,
 		},
-	})
-	if err != nil {
-		t.Fatal("error shouldn't be raised")
-	}
-
-	var w entityPatternListWrapper
-	err = bson.Unmarshal(bsonPattern, &w)
-	if err != nil {
-		t.Fatal("error shouldn't be raised")
-	}
-
-	p := w.PatternList
-
-	if p.IsSet() != true || p.IsValid() != true {
-		t.Fatal("bad entity patterns")
-	}
+		{
+			Field:     "infos.output",
+			FieldType: "string",
+			Condition: pattern.NewStringCondition("eq", "debian9"),
+		},
+	}}
 
 	axeRpcMock := mock_engine.NewMockRPCClient(ctrl)
 	webhookRpcMock := mock_engine.NewMockRPCClient(ctrl)
@@ -96,11 +80,13 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 		{
 			task: action.Task{
 				Action: action.Action{
-					EntityPatterns: p,
-					Type:           "action_1",
-					Parameters: map[string]interface{}{
-						"output": "output 1",
-						"author": "author 1",
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: p,
+					},
+					Type: "action_1",
+					Parameters: action.Parameters{
+						Output: "output 1",
+						Author: "author 1",
 					},
 				},
 				Alarm: types.Alarm{
@@ -124,11 +110,13 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 		{
 			task: action.Task{
 				Action: action.Action{
-					EntityPatterns: p,
-					Type:           "action_2",
-					Parameters: map[string]interface{}{
-						"output": "output 2",
-						"author": "author 2",
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: p,
+					},
+					Type: "action_2",
+					Parameters: action.Parameters{
+						Output: "output 2",
+						Author: "author 2",
 					},
 				},
 				Alarm: types.Alarm{
@@ -142,11 +130,13 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 		{
 			task: action.Task{
 				Action: action.Action{
-					EntityPatterns: p,
-					Type:           "action_3",
-					Parameters: map[string]interface{}{
-						"output": "output 3",
-						"author": "author 3",
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: p,
+					},
+					Type: "action_3",
+					Parameters: action.Parameters{
+						Output: "output 3",
+						Author: "author 3",
 					},
 				},
 				Alarm: types.Alarm{
@@ -171,11 +161,13 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 			testName: "should render templates",
 			task: action.Task{
 				Action: action.Action{
-					EntityPatterns: p,
-					Type:           "action_1",
-					Parameters: map[string]interface{}{
-						"output": "rendered output: {{.Entity.ID}}",
-						"author": "rendered author: {{.Alarm.ID}}",
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: p,
+					},
+					Type: "action_1",
+					Parameters: action.Parameters{
+						Output: "rendered output: {{.Entity.ID}}",
+						Author: "rendered author: {{.Alarm.ID}}",
 					},
 				},
 				Alarm: types.Alarm{
@@ -223,16 +215,14 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 						err := decoder.Decode(message.Body, &event)
 						if err != nil {
 							t.Error("failed to decode rpc axe event")
-						} else if params, ok := event.Parameters.(types.OperationParameters); ok {
-							if params.Output != dataset.expectedOutput {
-								t.Errorf("expected output = %s, got %s", dataset.expectedOutput, params.Output)
+						} else {
+							if event.Parameters.Output != dataset.expectedOutput {
+								t.Errorf("expected output = %s, got %s", dataset.expectedOutput, event.Parameters.Output)
 							}
 
-							if params.Author != dataset.expectedAuthor {
-								t.Errorf("expected author = %s, got %s", dataset.expectedAuthor, params.Author)
+							if event.Parameters.Author != dataset.expectedAuthor {
+								t.Errorf("expected author = %s, got %s", dataset.expectedAuthor, event.Parameters.Author)
 							}
-						} else {
-							t.Errorf("unexpected action params: %+v", event.Parameters)
 						}
 
 						rpcWait <- 1

@@ -17,6 +17,7 @@ type Store interface {
 }
 
 type store struct {
+	dbClient          mongo.DbClient
 	dbCollection      mongo.DbCollection
 	alarmDbCollection mongo.DbCollection
 	basicTypes        []string
@@ -24,6 +25,7 @@ type store struct {
 
 func NewStore(db mongo.DbClient) Store {
 	return &store{
+		dbClient:          db,
 		dbCollection:      db.Collection(mongo.EntityMongoCollection),
 		alarmDbCollection: db.Collection(mongo.AlarmMongoCollection),
 		basicTypes:        []string{types.EntityTypeResource, types.EntityTypeComponent, types.EntityTypeConnector},
@@ -114,31 +116,37 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 		return nil, false, err
 	}
 
-	res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID},
-		bson.M{"$set": bson.M{
-			"description":     r.Description,
-			"enabled":         *r.Enabled,
-			"category":        r.Category,
-			"impact_level":    r.ImpactLevel,
-			"infos":           transformInfos(r),
-			"sli_avail_state": r.SliAvailState,
-		}},
-	)
-	if err != nil || res.MatchedCount == 0 {
-		return nil, false, err
-	}
+	var updatedEntity *Entity
 
-	err = s.removeEntityLinks(ctx, *entity, r)
-	if err != nil {
-		return nil, false, err
-	}
-	err = s.addEntityLinks(ctx, *entity, r)
-	if err != nil {
-		return nil, false, err
-	}
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		updatedEntity = nil
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID},
+			bson.M{"$set": bson.M{
+				"description":     r.Description,
+				"enabled":         *r.Enabled,
+				"category":        r.Category,
+				"impact_level":    r.ImpactLevel,
+				"infos":           transformInfos(r),
+				"sli_avail_state": r.SliAvailState,
+			}},
+		)
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+		err = s.removeEntityLinks(ctx, *entity, r)
+		if err != nil {
+			return err
+		}
+		err = s.addEntityLinks(ctx, *entity, r)
+		if err != nil {
+			return err
+		}
 
-	updatedEntity, err := s.GetOneBy(ctx, r.ID)
-	if err != nil {
+		updatedEntity, err = s.GetOneBy(ctx, r.ID)
+		return err
+	})
+
+	if err != nil || updatedEntity == nil {
 		return nil, false, err
 	}
 
@@ -191,6 +199,16 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 	_, err = s.dbCollection.UpdateMany(ctx, bson.M{"depends": id},
 		bson.M{"$pull": bson.M{"depends": id}})
+	if err != nil {
+		return false, err
+	}
+	_, err = s.dbCollection.UpdateMany(ctx, bson.M{"connector": id},
+		bson.M{"$unset": bson.M{"connector": ""}})
+	if err != nil {
+		return false, err
+	}
+	_, err = s.dbCollection.UpdateMany(ctx, bson.M{"component": id},
+		bson.M{"$unset": bson.M{"component": ""}})
 	if err != nil {
 		return false, err
 	}

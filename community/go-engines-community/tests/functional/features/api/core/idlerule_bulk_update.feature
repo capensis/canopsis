@@ -28,15 +28,27 @@ Feature: Bulk update idlerules
           "value": 5,
           "unit": "s"
         },
-        "alarm_patterns": [
-          {
-            "_id": "test-idle-rule-to-bulk-update-1-alarm-updated"
-          }
+        "alarm_pattern": [
+          [
+            {
+              "field": "v.component",
+              "cond": {
+                "type": "eq",
+                "value": "test-idle-rule-to-bulk-update-1-alarm-updated"
+              }
+            }
+          ]
         ],
-        "entity_patterns": [
-          {
-            "name": "test-idle-rule-to-bulk-update-1-resource-updated"
-          }
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-idle-rule-to-bulk-update-1-resource-updated"
+              }
+            }
+          ]
         ],
         "operation": {
           "type": "snooze",
@@ -62,15 +74,27 @@ Feature: Bulk update idlerules
           "value": 5,
           "unit": "s"
         },
-        "alarm_patterns": [
-          {
-            "_id": "test-idle-rule-to-bulk-update-1-alarm-updated"
-          }
+        "alarm_pattern": [
+          [
+            {
+              "field": "v.component",
+              "cond": {
+                "type": "eq",
+                "value": "test-idle-rule-to-bulk-update-1-alarm-updated"
+              }
+            }
+          ]
         ],
-        "entity_patterns": [
-          {
-            "name": "test-idle-rule-to-bulk-update-1-resource-updated"
-          }
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-idle-rule-to-bulk-update-1-resource-updated"
+              }
+            }
+          ]
         ],
         "operation": {
           "type": "snooze",
@@ -109,15 +133,27 @@ Feature: Bulk update idlerules
           "value": 5,
           "unit": "s"
         },
-        "alarm_patterns": [
-          {
-            "_id": "test-idle-rule-to-bulk-update-2-alarm-updated"
-          }
+        "alarm_pattern": [
+          [
+            {
+              "field": "v.component",
+              "cond": {
+                "type": "eq",
+                "value": "test-idle-rule-to-bulk-update-2-alarm-updated"
+              }
+            }
+          ]
         ],
-        "entity_patterns": [
-          {
-            "name": "test-idle-rule-to-bulk-update-2-resource-updated"
-          }
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-idle-rule-to-bulk-update-2-resource-updated"
+              }
+            }
+          ]
         ],
         "operation": {
           "type": "snooze",
@@ -130,6 +166,32 @@ Feature: Bulk update idlerules
           }
         },
         "disable_during_periods": ["maintenance"]
+      },
+      {
+        "_id": "test-idle-rule-to-bulk-update-3",
+        "name": "test-idle-rule-to-bulk-update-3-name",
+        "description": "test-idle-rule-to-bulk-update-3-description",
+        "type": "alarm",
+        "alarm_condition": "last_event",
+        "enabled": true,
+        "priority": 20,
+        "duration": {
+          "value": 3,
+          "unit": "s"
+        },
+        "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+        "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+        "operation": {
+          "type": "snooze",
+          "parameters": {
+            "output": "test-idle-rule-to-bulk-update-3-operation-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          }
+        },
+        "disable_during_periods": ["pause"]
       }
     ]
     """
@@ -152,15 +214,27 @@ Feature: Bulk update idlerules
             "value": 5,
             "unit": "s"
           },
-          "alarm_patterns": [
-            {
-              "_id": "test-idle-rule-to-bulk-update-1-alarm-updated"
-            }
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-update-1-alarm-updated"
+                }
+              }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "name": "test-idle-rule-to-bulk-update-1-resource-updated"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-update-1-resource-updated"
+                }
+              }
+            ]
           ],
           "operation": {
             "type": "snooze",
@@ -190,15 +264,27 @@ Feature: Bulk update idlerules
             "value": 5,
             "unit": "s"
           },
-          "alarm_patterns": [
-            {
-              "_id": "test-idle-rule-to-bulk-update-1-alarm-updated"
-            }
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-update-1-alarm-updated"
+                }
+              }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "name": "test-idle-rule-to-bulk-update-1-resource-updated"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-update-1-resource-updated"
+                }
+              }
+            ]
           ],
           "operation": {
             "type": "snooze",
@@ -249,8 +335,8 @@ Feature: Bulk update idlerules
         "errors": {
           "_id": "ID is missing.",
           "alarm_condition": "AlarmCondition is missing.",
-          "alarm_patterns": "AlarmPatterns or EntityPatterns is required.",
-          "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
+          "alarm_pattern": "AlarmPattern or EntityPattern is required.",
+          "entity_pattern": "EntityPattern or AlarmPattern is required.",
           "operation.type": "Type must be one of [ack ackremove cancel assocticket changestate snooze pbehavior]."
         }
       },
@@ -274,15 +360,27 @@ Feature: Bulk update idlerules
             "value": 5,
             "unit": "s"
           },
-          "alarm_patterns": [
-            {
-              "_id": "test-idle-rule-to-bulk-update-2-alarm-updated"
-            }
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-update-2-alarm-updated"
+                }
+              }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "name": "test-idle-rule-to-bulk-update-2-resource-updated"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-update-2-resource-updated"
+                }
+              }
+            ]
           ],
           "operation": {
             "type": "snooze",
@@ -295,6 +393,35 @@ Feature: Bulk update idlerules
             }
           },
           "disable_during_periods": ["maintenance"]
+        }
+      },
+      {
+        "id": "test-idle-rule-to-bulk-update-3",
+        "status": 200,
+        "item": {
+          "name": "test-idle-rule-to-bulk-update-3-name",
+          "description": "test-idle-rule-to-bulk-update-3-description",
+          "type": "alarm",
+          "alarm_condition": "last_event",
+          "enabled": true,
+          "priority": 20,
+          "duration": {
+            "value": 3,
+            "unit": "s"
+          },
+          "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+          "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+          "operation": {
+            "type": "snooze",
+            "parameters": {
+              "output": "test-idle-rule-to-bulk-update-3-operation-output",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            }
+          },
+          "disable_during_periods": ["pause"]
         }
       }
     ]
@@ -313,26 +440,35 @@ Feature: Bulk update idlerules
           "type": "alarm",
           "alarm_condition": "last_event",
           "enabled": true,
-          "priority": 30,
-          "created": 1616567033,
           "duration": {
             "value": 5,
             "unit": "s"
           },
-          "alarm_patterns": [
-            {
-              "_id": "test-idle-rule-to-bulk-update-1-alarm-updated"
-            }
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-update-1-alarm-updated"
+                }
+              }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "name": "test-idle-rule-to-bulk-update-1-resource-updated"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-update-1-resource-updated"
+                }
+              }
+            ]
           ],
           "operation": {
             "type": "snooze",
             "parameters": {
-              "author": "root",
               "output": "test-idle-rule-to-bulk-update-1-operation-output-updated",
               "duration": {
                 "value": 5,
@@ -350,26 +486,35 @@ Feature: Bulk update idlerules
           "type": "alarm",
           "alarm_condition": "last_event",
           "enabled": true,
-          "priority": 31,
-          "created": 1616567033,
           "duration": {
             "value": 5,
             "unit": "s"
           },
-          "alarm_patterns": [
-            {
-              "_id": "test-idle-rule-to-bulk-update-2-alarm-updated"
-            }
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-update-2-alarm-updated"
+                }
+              }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "name": "test-idle-rule-to-bulk-update-2-resource-updated"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-update-2-resource-updated"
+                }
+              }
+            ]
           ],
           "operation": {
             "type": "snooze",
             "parameters": {
-              "author": "root",
               "output": "test-idle-rule-to-bulk-update-2-operation-output-updated",
               "duration": {
                 "value": 5,
@@ -378,13 +523,62 @@ Feature: Bulk update idlerules
             }
           },
           "disable_during_periods": ["maintenance"]
-        }
+        },
+        {
+          "_id": "test-idle-rule-to-bulk-update-3",
+          "name": "test-idle-rule-to-bulk-update-3-name",
+          "description": "test-idle-rule-to-bulk-update-3-description",
+          "author": "root",
+          "type": "alarm",
+          "alarm_condition": "last_event",
+          "enabled": true,
+          "duration": {
+            "value": 3,
+            "unit": "s"
+          },
+          "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+          "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-rule-edit-1-pattern"
+                }
+              }
+            ]
+          ],
+          "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+          "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-rule-edit-2-pattern"
+                }
+              }
+            ]
+          ],
+          "operation": {
+            "type": "snooze",
+            "parameters": {
+              "output": "test-idle-rule-to-bulk-update-3-operation-output",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            }
+          }
+        }        
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """

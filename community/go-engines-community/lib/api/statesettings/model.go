@@ -18,7 +18,7 @@ type StateThresholds struct {
 	Minor    *float64 `json:"minor" bson:"minor" binding:"required,numeric,gte=0,lte=100,ltefield=Major,ltefield=Critical"`
 	Major    *float64 `json:"major" bson:"major" binding:"required,numeric,gte=0,lte=100,ltefield=Critical"`
 	Critical *float64 `json:"critical" bson:"critical" binding:"required,numeric,gte=0,lte=100"`
-	Type     *int    `json:"type" bson:"type" binding:"required"`
+	Type     *int     `json:"type" bson:"type" binding:"required"`
 }
 
 type JUnitThresholds struct {

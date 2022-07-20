@@ -5,12 +5,9 @@ const { mapGetters, mapActions } = createNamespacedHelpers('view');
 /**
  * @mixin Helpers for the view entity
  */
-export default {
+export const entitiesViewMixin = {
   computed: {
     ...mapGetters({
-      viewId: 'itemId',
-      viewPending: 'pending',
-      view: 'item',
       getViewById: 'getItemById',
     }),
   },
@@ -22,25 +19,57 @@ export default {
       updateViewsPositions: 'updatePositions',
       updateViewWithoutStore: 'updateWithoutStore',
       removeView: 'remove',
-      bulkCreateViewsWithoutStore: 'bulkCreateWithoutStore',
+      copyView: 'copy',
+      exportViewsWithoutStore: 'exportWithoutStore',
+      importViewsWithoutStore: 'importWithoutStore',
     }),
 
     async createViewWithPopup({ data }) {
-      await this.createView({ data });
+      try {
+        await this.createView({ data });
 
-      this.$popups.success({ text: this.$t('modals.view.success.create') });
+        this.$popups.success({ text: this.$t('modals.view.success.create') });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('modals.view.fail.create') });
+
+        throw err;
+      }
     },
 
     async updateViewWithPopup({ id, data }) {
-      await this.updateView({ id, data });
+      try {
+        await this.updateView({ id, data });
 
-      this.$popups.success({ text: this.$t('modals.view.success.edit') });
+        this.$popups.success({ text: this.$t('modals.view.success.edit') });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('modals.view.fail.edit') });
+
+        throw err;
+      }
+    },
+
+    async copyViewWithPopup({ id, data }) {
+      try {
+        await this.copyView({ id, data });
+
+        this.$popups.success({ text: this.$t('modals.view.success.duplicate') });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('modals.view.fail.duplicate') });
+
+        throw err;
+      }
     },
 
     async removeViewWithPopup({ id }) {
-      await this.removeView({ id });
+      try {
+        await this.removeView({ id });
 
-      this.$popups.success({ text: this.$t('modals.view.success.delete') });
+        this.$popups.success({ text: this.$t('modals.view.success.delete') });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('modals.view.fail.delete') });
+
+        throw err;
+      }
     },
   },
 };

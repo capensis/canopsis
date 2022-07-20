@@ -2,6 +2,7 @@ package entityservice
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -21,19 +22,7 @@ type mongoAdapter struct {
 }
 
 func (a *mongoAdapter) GetValid(ctx context.Context) ([]EntityService, error) {
-	res, err := a.find(ctx, bson.M{"type": types.EntityTypeService, "enabled": true})
-	if err != nil {
-		return nil, err
-	}
-
-	filtered := make([]EntityService, 0)
-	for _, s := range res {
-		if s.EntityPatterns.IsSet() && s.EntityPatterns.IsValid() {
-			filtered = append(filtered, s)
-		}
-	}
-
-	return filtered, nil
+	return a.find(ctx, bson.M{"type": types.EntityTypeService, "enabled": true})
 }
 
 func (a *mongoAdapter) UpdateBulk(ctx context.Context, models []mongodriver.WriteModel) error {

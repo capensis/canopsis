@@ -3,7 +3,7 @@ package eventfilter_test
 import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	"github.com/golang/mock/gomock"
@@ -19,7 +19,7 @@ func TestChangeEntityApply(t *testing.T) {
 		rule          eventfilter.Rule
 		event         types.Event
 		expectedEvent types.Event
-		regexMatches  pattern.EventRegexMatches
+		regexMatches  eventfilter.RegexMatch
 	}{
 		{
 			testName: "given event and rule, resource should be changed",
@@ -208,10 +208,12 @@ func TestChangeEntityApply(t *testing.T) {
 				Connector:     "connector",
 				ConnectorName: "connector name",
 			},
-			regexMatches: pattern.EventRegexMatches{
-				ExtraInfos: map[string]pattern.RegexMatches{
-					"data": map[string]string{
-						"match": "new value",
+			regexMatches: eventfilter.RegexMatch{
+				EventRegexMatches: pattern.EventRegexMatches{
+					ExtraInfos: map[string]pattern.RegexMatches{
+						"data": map[string]string{
+							"match": "new value",
+						},
 					},
 				},
 			},
@@ -235,10 +237,12 @@ func TestChangeEntityApply(t *testing.T) {
 				Connector:     "connector",
 				ConnectorName: "connector name",
 			},
-			regexMatches: pattern.EventRegexMatches{
-				ExtraInfos: map[string]pattern.RegexMatches{
-					"data": map[string]string{
-						"match": "new value",
+			regexMatches: eventfilter.RegexMatch{
+				EventRegexMatches: pattern.EventRegexMatches{
+					ExtraInfos: map[string]pattern.RegexMatches{
+						"data": map[string]string{
+							"match": "new value",
+						},
 					},
 				},
 			},
@@ -262,10 +266,12 @@ func TestChangeEntityApply(t *testing.T) {
 				Connector:     "new value",
 				ConnectorName: "connector name",
 			},
-			regexMatches: pattern.EventRegexMatches{
-				ExtraInfos: map[string]pattern.RegexMatches{
-					"data": map[string]string{
-						"match": "new value",
+			regexMatches: eventfilter.RegexMatch{
+				EventRegexMatches: pattern.EventRegexMatches{
+					ExtraInfos: map[string]pattern.RegexMatches{
+						"data": map[string]string{
+							"match": "new value",
+						},
 					},
 				},
 			},
@@ -289,10 +295,12 @@ func TestChangeEntityApply(t *testing.T) {
 				Connector:     "connector",
 				ConnectorName: "new value",
 			},
-			regexMatches: pattern.EventRegexMatches{
-				ExtraInfos: map[string]pattern.RegexMatches{
-					"data": map[string]string{
-						"match": "new value",
+			regexMatches: eventfilter.RegexMatch{
+				EventRegexMatches: pattern.EventRegexMatches{
+					ExtraInfos: map[string]pattern.RegexMatches{
+						"data": map[string]string{
+							"match": "new value",
+						},
 					},
 				},
 			},
@@ -301,7 +309,10 @@ func TestChangeEntityApply(t *testing.T) {
 
 	for _, dataSet := range dataSets {
 		t.Run(dataSet.testName, func(t *testing.T) {
-			outcome, resultEvent, err := applicator.Apply(context.Background(), dataSet.rule, dataSet.event, dataSet.regexMatches, nil)
+			outcome, resultEvent, err := applicator.Apply(context.Background(), dataSet.rule, dataSet.event, eventfilter.RegexMatchWrapper{
+				BackwardCompatibility: false,
+				RegexMatch:            dataSet.regexMatches,
+			}, nil)
 
 			if err != nil {
 				t.Errorf("expected not error but got %v", err)
@@ -358,7 +369,7 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 			},
 		},
 		event,
-		pattern.EventRegexMatches{},
+		eventfilter.RegexMatchWrapper{},
 		nil,
 	)
 

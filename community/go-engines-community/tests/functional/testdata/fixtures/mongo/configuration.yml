@@ -16,24 +16,38 @@ configuration:
   configuration_3:
     _id: global_config
     alarm:
+      allowdoubleack: true
       cancelautosolvedelay: 1h
+      disableactionsnoozedelayonpbh: true
       displaynamescheme: '{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3
         }}'
       enablelasteventdate: true
       longoutputlength: 1024
       outputlength: 255
       stealthyinterval: 0
+      timetokeepresolvedalarms: 0h
     api:
       bulkmaxsize: 10000
       tokenexpiration: 24h
       tokensigningmethod: HS256
+    data_storage:
+      timetoexecute: ""
     file:
       junit: /tmp/canopsis/junit
       junitapi: /tmp/canopsis/junitapi
-      remediation: /tmp/canopsis/remediation
+      upload: /tmp/canopsis/upload
+      uploadmaxsize: 314572800
     global:
       prefetchcount: 10000
       prefetchsize: 0
+      reconnectretries: 3
+      reconnecttimeoutmilliseconds: 8
+    import_ctx:
+      filepattern: /tmp/import_%s.json
+      thdcritminperimport: 60m
+      thdwarnminperimport: 30m
+    metrics:
+      sliinterval: 1h
     timezone:
       timezone: Europe/Paris
   configuration_4:

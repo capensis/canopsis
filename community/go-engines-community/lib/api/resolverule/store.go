@@ -42,34 +42,43 @@ func NewStore(
 }
 
 func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, error) {
+	now := types.NewCpsTime(time.Now().Unix())
+	model := s.transformRequestToDocument(request.EditRequest)
+
+	if request.ID == "" {
+		request.ID = utils.NewID()
+	}
+
+	model.ID = request.ID
+	model.Created = now
+	model.Updated = now
+
 	id := request.ID
 	if id == "" {
 		id = utils.NewID()
 	}
-	now := types.NewCpsTime(time.Now().Unix())
 
-	_, err := s.dbCollection.InsertOne(ctx, resolverule.Rule{
-		ID:             id,
-		Name:           request.Name,
-		Description:    request.Description,
-		Duration:       request.Duration,
-		AlarmPatterns:  request.AlarmPatterns,
-		EntityPatterns: request.EntityPatterns,
-		Priority:       request.Priority,
-		Author:         request.Author,
-		Created:        now,
-		Updated:        now,
+	var res *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		res = nil
+
+		_, err := s.dbCollection.InsertOne(ctx, model)
+		if err != nil {
+			return err
+		}
+
+		err = s.updateFollowingPriorities(ctx, id, request.Priority)
+		if err != nil {
+			return err
+		}
+
+		res, err = s.GetById(ctx, id)
+		return err
 	})
 	if err != nil {
 		return nil, err
 	}
-
-	err = s.updateFollowingPriorities(ctx, id, request.Priority)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.GetById(ctx, id)
+	return res, nil
 }
 
 func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
@@ -130,47 +139,66 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 }
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, error) {
-	model := resolverule.Rule{}
-	err := s.dbCollection.FindOne(ctx, bson.M{"_id": request.ID}).Decode(&model)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, nil
-		}
-		return nil, err
+	model := s.transformRequestToDocument(request.EditRequest)
+	model.Updated = types.CpsTime{Time: time.Now()}
+
+	update := bson.M{"$set": model}
+
+	unset := bson.M{}
+	if request.CorporateAlarmPattern != "" || len(request.AlarmPattern) > 0 {
+		unset["old_alarm_patterns"] = 1
 	}
 
-	now := types.NewCpsTime(time.Now().Unix())
-	_, err = s.dbCollection.UpdateOne(
-		ctx,
-		bson.M{"_id": request.ID},
-		bson.M{"$set": resolverule.Rule{
-			ID:             request.ID,
-			Name:           request.Name,
-			Description:    request.Description,
-			Duration:       request.Duration,
-			AlarmPatterns:  request.AlarmPatterns,
-			EntityPatterns: request.EntityPatterns,
-			Priority:       request.Priority,
-			Author:         request.Author,
-			Created:        model.Created,
-			Updated:        now,
-		}},
-	)
-	if err != nil {
-		return nil, err
+	if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 {
+		unset["old_entity_patterns"] = 1
 	}
 
-	if model.Priority != request.Priority {
-		err := s.updateFollowingPriorities(ctx, request.ID, request.Priority)
+	if len(unset) > 0 {
+		update["$unset"] = unset
+	}
+
+	var res *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		res = nil
+		originalModel := resolverule.Rule{}
+		err := s.dbCollection.FindOne(ctx, bson.M{"_id": request.ID}).Decode(&originalModel)
 		if err != nil {
-			return nil, err
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+			return err
 		}
-	}
 
-	return s.GetById(ctx, model.ID)
+		_, err = s.dbCollection.UpdateOne(
+			ctx,
+			bson.M{"_id": request.ID},
+			update,
+		)
+		if err != nil {
+			return err
+		}
+
+		if originalModel.Priority != request.Priority {
+			err := s.updateFollowingPriorities(ctx, request.ID, request.Priority)
+			if err != nil {
+				return err
+			}
+		}
+
+		res, err = s.GetById(ctx, originalModel.ID)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+	if id == resolverule.DefaultRule {
+		return false, ErrDefaultRule
+	}
+
 	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
 		return false, err
@@ -213,5 +241,22 @@ func (s *store) authorPipeline() []bson.M {
 			"as":           "author",
 		}},
 		{"$unwind": bson.M{"path": "$author", "preserveNullAndEmptyArrays": true}},
+	}
+}
+
+func (s *store) transformRequestToDocument(r EditRequest) resolverule.Rule {
+	return resolverule.Rule{
+		Name:        r.Name,
+		Description: r.Description,
+		Duration:    r.Duration,
+		AlarmPatternFields: r.AlarmPatternFieldsRequest.ToModelWithoutFields(
+			common.GetForbiddenFieldsInAlarmPattern(mongo.ResolveRuleMongoCollection),
+			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ResolveRuleMongoCollection),
+		),
+		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(
+			common.GetForbiddenFieldsInEntityPattern(mongo.ResolveRuleMongoCollection),
+		),
+		Priority: r.Priority,
+		Author:   r.Author,
 	}
 }

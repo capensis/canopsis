@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
@@ -30,17 +31,20 @@ type API interface {
 }
 
 type api struct {
-	store                 Store
+	store             Store
+	metricMetaUpdater metrics.MetaUpdater
+	transformer       common.PatternFieldsTransformer
+	actionLogger      logger.ActionLogger
+	logger            zerolog.Logger
+
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage
-	metricMetaUpdater     metrics.MetaUpdater
-	actionLogger          logger.ActionLogger
-	logger                zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage,
 	metricMetaUpdater metrics.MetaUpdater,
+	transformer common.PatternFieldsTransformer,
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
@@ -48,23 +52,14 @@ func NewApi(
 		store:                 store,
 		serviceChangeListener: serviceChangeListener,
 		metricMetaUpdater:     metricMetaUpdater,
+		transformer:           transformer,
 		actionLogger:          actionLogger,
 		logger:                logger,
 	}
 }
 
-// Get entity service by id
-// @Summary Get entity service by id
-// @Description Get entity service by id
-// @Tags entityservices
-// @ID entityservices-get-by-id
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "entity service id"
+// Get
 // @Success 200 {object} Response
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entityservices/{id} [get]
 func (a *api) Get(c *gin.Context) {
 	service, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -78,20 +73,8 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, service)
 }
 
-// Get entity service's dependencies by id
-// @Summary Get entity service's dependencies by id
-// @Description Get entity service's dependencies by id
-// @Tags entityservices
-// @ID entityservices-get-dependencies-by-id
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id query string true "entity service id"
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
+// GetDependencies
 // @Success 200 {object} common.PaginatedListResponse{data=[]AlarmWithEntity}
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entityservice-dependencies [get]
 func (a *api) GetDependencies(c *gin.Context) {
 	var r ContextGraphRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -120,20 +103,8 @@ func (a *api) GetDependencies(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Get entity's impacted services by id
-// @Summary Get entity's impacted services by id
-// @Description Get entity's impacted services by id
-// @Tags entityservices
-// @ID entityservices-get-impacts-by-id
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id query string true "entity id"
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
+// GetImpacts
 // @Success 200 {object} common.PaginatedListResponse{data=[]AlarmWithEntity}
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entityservice-impacts [get]
 func (a *api) GetImpacts(c *gin.Context) {
 	var r ContextGraphRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -162,24 +133,24 @@ func (a *api) GetImpacts(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Create entity service
-// @Summary Create entity service
-// @Description Create entity service
-// @Tags entityservices
-// @ID entityservices-create
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param body body EditRequest true "body"
+// Create
+// @Param body body CreateRequest true "body"
 // @Success 201 {object} Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /entityservices [post]
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
+	}
+
+	err := a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
 	}
 
 	service, err := a.store.Create(c.Request.Context(), request)
@@ -190,7 +161,7 @@ func (a *api) Create(c *gin.Context) {
 	if service.Enabled {
 		a.sendChangeMsg(entityservice.ChangeEntityMessage{
 			ID:                      service.ID,
-			IsService:               true,
+			EntityType:              service.Type,
 			IsServicePatternChanged: true,
 		})
 	}
@@ -209,21 +180,9 @@ func (a *api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, service)
 }
 
-// Update entity service by id
-// @Summary Update entity service by id
-// @Description Update entity service by id
-// @Tags entityservices
-// @ID entityservices-update-by-id
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "entity service id"
-// @Param body body EditRequest true "body"
+// Update
+// @Param body body UpdateRequest true "body"
 // @Success 200 {object} Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entityservices/{id} [put]
 func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{
 		ID: c.Param("id"),
@@ -231,6 +190,16 @@ func (a *api) Update(c *gin.Context) {
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
+	}
+
+	err := a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
 	}
 
 	service, serviceChanges, err := a.store.Update(c.Request.Context(), request)
@@ -246,7 +215,7 @@ func (a *api) Update(c *gin.Context) {
 	if service.Enabled || serviceChanges.IsToggled {
 		a.sendChangeMsg(entityservice.ChangeEntityMessage{
 			ID:                      service.ID,
-			IsService:               true,
+			EntityType:              service.Type,
 			IsServicePatternChanged: serviceChanges.IsPatternChanged,
 			IsToggled:               serviceChanges.IsToggled,
 		})
@@ -266,17 +235,6 @@ func (a *api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, service)
 }
 
-// Delete entity service by id
-// @Summary Delete entity service by id
-// @Description Delete entity service by id
-// @Tags entityservices
-// @ID entityservices-delete-by-id
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "entity service id"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entityservices/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
 	ok, alarm, err := a.store.Delete(c.Request.Context(), id)
@@ -292,7 +250,7 @@ func (a *api) Delete(c *gin.Context) {
 
 	a.sendChangeMsg(entityservice.ChangeEntityMessage{
 		ID:                      id,
-		IsService:               true,
+		EntityType:              types.EntityTypeService,
 		IsServicePatternChanged: true,
 		ServiceAlarm:            alarm,
 	})
@@ -311,19 +269,8 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// Bulk create entityservices
-// @Summary Bulk create entityservices
-// @Description Bulk create entityservices
-// @Tags entityservices
-// @ID entityservices-bulk-create
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// BulkCreate
 // @Param body body []CreateRequest true "body"
-// @Success 207 {array} []BulkCreateResponseItem
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /bulk/entityservices [post]
 func (a *api) BulkCreate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -370,16 +317,30 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
+		err = a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
+			a.logger.Err(err).Msg("cannot create entity service")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
+		}
+
 		service, err := a.store.Create(ctx, request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot create entity service")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if service.Enabled {
 			a.sendChangeMsg(entityservice.ChangeEntityMessage{
 				ID:                      service.ID,
-				IsService:               true,
+				EntityType:              service.Type,
 				IsServicePatternChanged: true,
 			})
 		}
@@ -403,19 +364,8 @@ func (a *api) BulkCreate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-// Bulk update entityservices
-// @Summary Bulk update entityservices
-// @Description Bulk update entityservices
-// @Tags entityservices
-// @ID entityservices-bulk-update
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
-// @Success 207 {array} []BulkUpdateResponseItem
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /bulk/entityservices [put]
 func (a *api) BulkUpdate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -462,21 +412,35 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
+		err = a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
+			a.logger.Err(err).Msg("cannot update entity service")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
+		}
+
 		service, serviceChanges, err := a.store.Update(ctx, UpdateRequest(request))
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot update entity service")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if service == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
 		if service.Enabled || serviceChanges.IsToggled {
 			a.sendChangeMsg(entityservice.ChangeEntityMessage{
 				ID:                      service.ID,
-				IsService:               true,
+				EntityType:              service.Type,
 				IsServicePatternChanged: serviceChanges.IsPatternChanged,
 				IsToggled:               serviceChanges.IsToggled,
 			})
@@ -501,19 +465,8 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-// Bulk delete entityservices
-// @Summary Bulk delete entityservices
-// @Description Bulk delete entityservices
-// @Tags entityservices
-// @ID entityservices-bulk-delete
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
-// @Success 207 {array} []BulkDeleteResponseItem
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /bulk/entityservices [delete]
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -562,18 +515,19 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 		ok, alarm, err := a.store.Delete(ctx, request.ID)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot delete entity service")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if !ok {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
 		a.sendChangeMsg(entityservice.ChangeEntityMessage{
 			ID:                      request.ID,
-			IsService:               true,
+			EntityType:              types.EntityTypeService,
 			IsServicePatternChanged: true,
 			ServiceAlarm:            alarm,
 		})
@@ -605,4 +559,14 @@ func (a *api) sendChangeMsg(msg entityservice.ChangeEntityMessage) {
 			Str("service_id", msg.ID).
 			Msg("fail to send change message")
 	}
+}
+
+func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
+	var err error
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

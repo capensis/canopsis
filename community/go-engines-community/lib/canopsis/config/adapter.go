@@ -115,6 +115,37 @@ func (a *healthCheckAdapter) GetConfig(ctx context.Context) (HealthCheckConf, er
 
 func (a *healthCheckAdapter) UpsertConfig(ctx context.Context, conf HealthCheckConf) error {
 	_, err := a.collection.UpdateOne(ctx, bson.M{"_id": HealthCheckName},
+		bson.M{"$set": bson.M{
+			"engine_order": conf.EngineOrder,
+		}}, options.Update().SetUpsert(true))
+
+	return err
+}
+
+type VersionAdapter interface {
+	GetConfig(ctx context.Context) (VersionConf, error)
+	UpsertConfig(ctx context.Context, conf VersionConf) error
+}
+
+type versionAdapter struct {
+	collection mongo.DbCollection
+}
+
+func NewVersionAdapter(client mongo.DbClient) VersionAdapter {
+	return &versionAdapter{
+		collection: client.Collection(mongo.ConfigurationMongoCollection),
+	}
+}
+
+func (a *versionAdapter) GetConfig(ctx context.Context) (VersionConf, error) {
+	conf := VersionConf{}
+	err := a.collection.FindOne(ctx, bson.M{"_id": VersionKeyName}).Decode(&conf)
+
+	return conf, err
+}
+
+func (a *versionAdapter) UpsertConfig(ctx context.Context, conf VersionConf) error {
+	_, err := a.collection.UpdateOne(ctx, bson.M{"_id": VersionKeyName},
 		bson.M{"$set": conf}, options.Update().SetUpsert(true))
 
 	return err

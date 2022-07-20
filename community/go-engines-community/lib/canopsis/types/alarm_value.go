@@ -123,12 +123,17 @@ type AlarmSteps []AlarmStep
 
 // Add handle adding a step to the list
 func (s *AlarmSteps) Add(step AlarmStep) error {
-	if len(*s) >= AlarmStepsHardLimit {
-		return fmt.Errorf("max number of steps reached: %v", AlarmStepsHardLimit)
+	if len(*s) < AlarmStepsHardLimit ||
+		step.Type == AlarmStepStateDecrease && step.Value == AlarmStateOK ||
+		step.Type == AlarmStepStatusDecrease && step.Value == AlarmStateOK ||
+		step.Type == AlarmStepCancel ||
+		step.Type == AlarmStepStatusIncrease && step.Value == AlarmStatusCancelled {
+
+		*s = append(*s, step)
+		return nil
 	}
 
-	*s = append(*s, step)
-	return nil
+	return fmt.Errorf("max number of steps reached: %v", AlarmStepsHardLimit)
 }
 
 // Crop steps by replacing stateinc and statedec steps after the current status with a statecounter step
@@ -253,7 +258,7 @@ func (s ByTimestamp) Less(i, j int) bool {
 type PbehaviorInfo struct {
 	// Timestamp is time when entity enters pbehavior.
 	// Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
-	Timestamp *CpsTime `bson:"timestamp" json:"timestamp"`
+	Timestamp *CpsTime `bson:"timestamp" json:"timestamp" swaggertype:"integer"`
 	// ID is ID of pbehavior.PBehavior.
 	ID string `bson:"id" json:"id"`
 	// Name is Name of pbehavior.PBehavior.
@@ -310,14 +315,16 @@ func (i PbehaviorInfo) Same(v PbehaviorInfo) bool {
 
 // AlarmValue represents a full description of an alarm.
 type AlarmValue struct {
-	ACK               *AlarmStep    `bson:"ack,omitempty" json:"ack,omitempty"`
-	Canceled          *AlarmStep    `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done              *AlarmStep    `bson:"done,omitempty" json:"done,omitempty"`
-	Snooze            *AlarmStep    `bson:"snooze,omitempty" json:"snooze,omitempty"`
-	State             *AlarmStep    `bson:"state,omitempty" json:"state,omitempty"`
-	Status            *AlarmStep    `bson:"status,omitempty" json:"status,omitempty"`
-	Ticket            *AlarmTicket  `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	Steps             AlarmSteps    `bson:"steps" json:"steps"`
+	ACK         *AlarmStep   `bson:"ack,omitempty" json:"ack,omitempty"`
+	Canceled    *AlarmStep   `bson:"canceled,omitempty" json:"canceled,omitempty"`
+	Done        *AlarmStep   `bson:"done,omitempty" json:"done,omitempty"`
+	Snooze      *AlarmStep   `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	State       *AlarmStep   `bson:"state,omitempty" json:"state,omitempty"`
+	Status      *AlarmStep   `bson:"status,omitempty" json:"status,omitempty"`
+	LastComment *AlarmStep   `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+	Ticket      *AlarmTicket `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	Steps       AlarmSteps   `bson:"steps" json:"steps"`
+
 	Component         string        `bson:"component" json:"component"`
 	Connector         string        `bson:"connector" json:"connector"`
 	ConnectorName     string        `bson:"connector_name" json:"connector_name"`
@@ -352,7 +359,23 @@ type AlarmValue struct {
 	// store version of dynamic-infos rule
 	RuleVersion map[string]string `bson:"infos_rule_version"`
 
-	SnoozeDuration            int64 `bson:"snooze_duration" json:"snooze_duration"`
+	// InactiveStart represents start of snooze or maintenance, pause, inactive pbehavior interval.
+	// It's used only to compute InactiveDuration.
+	InactiveStart *CpsTime `bson:"inactive_start,omitempty" json:"inactive_start"`
+	// Duration represents a duration from creation date to resolve date.
+	// Keep omitempty.
+	Duration int64 `bson:"duration,omitempty" json:"duration"`
+	// CurrentStateDuration represents a duration when an alarm was in current state.
+	// Keep omitempty.
+	CurrentStateDuration int64 `bson:"current_state_duration,omitempty" json:"current_state_duration"`
+	// ActiveDuration represents a duration when an alarm wasn't in snooze or in maintenance, pause, inactive pbehavior interval.
+	// Keep omitempty.
+	ActiveDuration int64 `bson:"active_duration,omitempty" json:"active_duration"`
+	// InactiveDuration represents a duration when an alarm was in snooze or in maintenance, pause, inactive pbehavior interval.
+	InactiveDuration int64 `bson:"inactive_duration" json:"inactive_duration"`
+	// SnoozeDuration represents a duration when an alarm was in snooze.
+	SnoozeDuration int64 `bson:"snooze_duration" json:"snooze_duration"`
+	// PbehaviorInactiveDuration represents a duration when an alarm was in maintenance, pause, inactive pbehavior interval.
 	PbehaviorInactiveDuration int64 `bson:"pbh_inactive_duration" json:"pbh_inactive_duration"`
 }
 

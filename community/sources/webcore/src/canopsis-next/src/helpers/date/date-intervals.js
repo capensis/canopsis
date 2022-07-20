@@ -19,8 +19,8 @@ export const convertStringToDateInterval = (dateString, type) => {
     const result = moment().utc();
     const operator = matches[2];
     const deltaValue = matches[3];
-    let roundUnit = matches[6];
     let deltaUnit = matches[4];
+    let roundUnit = matches[6];
 
     const roundMethod = type === DATETIME_INTERVAL_TYPES.start ? 'startOf' : 'endOf';
     const deltaMethod = operator === '+' ? 'add' : 'subtract';

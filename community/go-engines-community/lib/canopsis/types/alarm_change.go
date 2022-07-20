@@ -15,6 +15,7 @@ const (
 	AlarmChangeTypeCreate            AlarmChangeType = "create"
 	AlarmChangeTypeCreateAndPbhEnter AlarmChangeType = "createandpbhenter"
 	AlarmChangeTypeAck               AlarmChangeType = "ack"
+	AlarmChangeTypeDoubleAck         AlarmChangeType = "doubleack"
 	AlarmChangeTypeAckremove         AlarmChangeType = "ackremove"
 	AlarmChangeTypeCancel            AlarmChangeType = "cancel"
 	AlarmChangeTypeUncancel          AlarmChangeType = "uncancel"
@@ -46,10 +47,9 @@ const (
 	// AlarmChangeTypeInstructionAbort is used for manual and auto instruction execution.
 	AlarmChangeTypeInstructionAbort AlarmChangeType = "instructionabort"
 	// Following change types are used for auto instruction execution.
-	AlarmChangeTypeAutoInstructionStart          AlarmChangeType = "autoinstructionstart"
-	AlarmChangeTypeAutoInstructionComplete       AlarmChangeType = "autoinstructioncomplete"
-	AlarmChangeTypeAutoInstructionFail           AlarmChangeType = "autoinstructionfail"
-	AlarmChangeTypeAutoInstructionAlreadyRunning AlarmChangeType = "autoinstructionalreadyrunning"
+	AlarmChangeTypeAutoInstructionStart    AlarmChangeType = "autoinstructionstart"
+	AlarmChangeTypeAutoInstructionComplete AlarmChangeType = "autoinstructioncomplete"
+	AlarmChangeTypeAutoInstructionFail     AlarmChangeType = "autoinstructionfail"
 	// Following change types are used for job execution.
 	AlarmChangeTypeInstructionJobStart    AlarmChangeType = "instructionjobstart"
 	AlarmChangeTypeInstructionJobComplete AlarmChangeType = "instructionjobcomplete"
@@ -94,6 +94,8 @@ func (ac *AlarmChange) GetTriggers() []string {
 		triggers = append(triggers, string(AlarmChangeTypeCreate), string(AlarmChangeTypePbhEnter))
 	case AlarmChangeTypePbhLeaveAndEnter:
 		triggers = append(triggers, string(AlarmChangeTypePbhEnter), string(AlarmChangeTypePbhLeave))
+	case AlarmChangeTypeDoubleAck:
+		triggers = append(triggers, string(AlarmChangeTypeAck))
 	default:
 		t := string(ac.Type)
 		if t != "" {

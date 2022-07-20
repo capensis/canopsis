@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/debug"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
@@ -12,6 +13,12 @@ import (
 
 func main() {
 	opts := che.ParseOptions()
+
+	if opts.Version {
+		canopsis.PrintVersionInfo()
+		return
+	}
+
 	logger := log.NewLogger(opts.ModeDebug)
 	trace := debug.Start(logger)
 
@@ -25,12 +32,6 @@ func main() {
 		logger.Info().Msg("Context creation ENABLED")
 	} else {
 		logger.Info().Msg("Context creation DISABLED")
-	}
-
-	if opts.FeatureContextEnrich {
-		logger.Info().Msg("Context enrichment ENABLED")
-	} else {
-		logger.Info().Msg("Context enrichment DISABLED")
 	}
 
 	// Graceful shutdown.

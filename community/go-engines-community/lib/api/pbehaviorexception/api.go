@@ -2,7 +2,6 @@ package pbehaviorexception
 
 import (
 	"context"
-	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -38,24 +37,8 @@ type api struct {
 	logger       zerolog.Logger
 }
 
-// Find all pbehavior exceptions
-// @Summary Find all pbehavior exceptions
-// @Description Get paginated list of behavior exceptions
-// @Tags pbehavior-exceptions
-// @ID pbehavior-exceptions-find-all
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
-// @Param search query string false "search query"
-// @Param sort query string false "sort query"
-// @Param sort_by query string false "sort query"
-// @Param with_flags query bool false "with flags"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Exception}
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /pbehavior-exceptions [get]
 func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -79,19 +62,9 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Create pbehavior exception
-// @Summary Create pbehavior exception
-// @Description Create pbehavior exception
-// @Tags pbehavior-exceptions
-// @ID pbehavior-exceptions-create
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// Create
 // @Param body body Request true "body"
 // @Success 201 {object} Exception
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /pbehavior-exceptions [post]
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 
@@ -126,21 +99,9 @@ func (a *api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, exception)
 }
 
-// Update behavior exception by id
-// @Summary Update behavior exception by id
-// @Description Update behavior exception by id
-// @Tags pbehavior-exceptions
-// @ID pbehavior-exceptions-update-by-id
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "exception id"
+// Update
 // @Param body body Request true "body"
 // @Success 200 {object} Exception
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /pbehavior-exceptions/{id} [put]
 func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{
 		ID: c.Param("id"),
@@ -185,24 +146,14 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if isLinked {
-		a.sendComputeTask(exception.ID)
+		a.sendComputeTask()
 	}
 
 	c.JSON(http.StatusOK, exception)
 }
 
-// Get pbehavior exception by id
-// @Summary Get pbehavior exception by id
-// @Description Get pbehavior exception by id
-// @Tags pbehavior-exceptions
-// @ID pbehavior-exceptions-get-by-id
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "exception id"
+// Get
 // @Success 200 {object} Exception
-// @Failure 404 {object} common.ErrorResponse
-// @Router /pbehavior-exceptions/{id} [get]
 func (a *api) Get(c *gin.Context) {
 	exception, err := a.store.GetOneBy(c.Request.Context(), bson.M{"_id": c.Param("id")})
 	if err != nil {
@@ -217,18 +168,6 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, exception)
 }
 
-// Delete pbehavior exception by id
-// @Summary Delete pbehavior exception by id
-// @Description Delete pbehavior exception by id
-// @Tags pbehavior-exceptions
-// @ID pbehavior-exceptions-delete-by-id
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "exception id"
-// @Success 204
-// @Failure 400 {object} common.ErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /pbehavior-exceptions/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 
@@ -258,14 +197,6 @@ func (a *api) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-func (a *api) sendComputeTask(exceptionID string) {
-	task := pbehavior.ComputeTask{}
-
-	select {
-	case a.computeChan <- task:
-	default:
-		a.logger.Err(errors.New("channel is full")).
-			Str("exception", exceptionID).
-			Msg("fail to start linked pbehaviors recompute on exception update")
-	}
+func (a *api) sendComputeTask() {
+	a.computeChan <- pbehavior.ComputeTask{}
 }

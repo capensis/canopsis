@@ -3,16 +3,17 @@ package eventfilter_test
 import (
 	"context"
 	"errors"
+	"reflect"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
-	"reflect"
-	"testing"
 )
 
 func TestProcessEventSuccess(t *testing.T) {
@@ -23,20 +24,26 @@ func TestProcessEventSuccess(t *testing.T) {
 
 	adapter := mock_eventfilter.NewMockRuleAdapter(ctrl)
 	adapter.EXPECT().GetByTypes(gomock.Any(), gomock.Any()).Return([]eventfilter.Rule{
-		{Type: "rule-1"},
-		{Type: "rule-2"},
+		{Type: "rule-1", EventPattern: [][]pattern.FieldCondition{{pattern.FieldCondition{
+			Field:     "resource",
+			Condition: pattern.NewStringCondition("eq", "test resource"),
+		}}}},
+		{Type: "rule-2", EventPattern: [][]pattern.FieldCondition{{pattern.FieldCondition{
+			Field:     "component",
+			Condition: pattern.NewStringCondition("eq", "test component"),
+		}}}},
 	}, nil)
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ pattern.EventRegexMatches, _ *config.TimezoneConfig) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper, _ *config.TimezoneConfig) (string, types.Event, error) {
 			event.Resource = "apply 1"
 
 			return eventfilter.OutcomePass, event, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ pattern.EventRegexMatches, _ *config.TimezoneConfig) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper, _ *config.TimezoneConfig) (string, types.Event, error) {
 			event.Component = "apply 2"
 
 			return eventfilter.OutcomePass, event, nil
@@ -68,7 +75,7 @@ func TestProcessEventSuccess(t *testing.T) {
 		Component: "apply 2",
 	}
 
-	resultEvent, err := ruleService.ProcessEvent(ctx, types.Event{})
+	resultEvent, err := ruleService.ProcessEvent(ctx, types.Event{Resource: "test resource", Component: "test component"})
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
@@ -86,20 +93,26 @@ func TestProcessEventBreakOutcome(t *testing.T) {
 
 	adapter := mock_eventfilter.NewMockRuleAdapter(ctrl)
 	adapter.EXPECT().GetByTypes(gomock.Any(), gomock.Any()).Return([]eventfilter.Rule{
-		{Type: "rule-1"},
-		{Type: "rule-2"},
+		{Type: "rule-1", EventPattern: [][]pattern.FieldCondition{{pattern.FieldCondition{
+			Field:     "resource",
+			Condition: pattern.NewStringCondition("eq", "test resource"),
+		}}}},
+		{Type: "rule-2", EventPattern: [][]pattern.FieldCondition{{pattern.FieldCondition{
+			Field:     "component",
+			Condition: pattern.NewStringCondition("eq", "test component"),
+		}}}},
 	}, nil)
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ pattern.EventRegexMatches, _ *config.TimezoneConfig) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper, _ *config.TimezoneConfig) (string, types.Event, error) {
 			event.Resource = "apply 1"
 
 			return eventfilter.OutcomeBreak, event, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ pattern.EventRegexMatches, _ *config.TimezoneConfig) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper, _ *config.TimezoneConfig) (string, types.Event, error) {
 			event.Component = "apply 2"
 
 			return eventfilter.OutcomePass, event, nil
@@ -128,10 +141,11 @@ func TestProcessEventBreakOutcome(t *testing.T) {
 
 	//since first applicator returns break outcome, second applicator should be skipped
 	expectedEvent := types.Event{
-		Resource: "apply 1",
+		Resource:  "apply 1",
+		Component: "test component",
 	}
 
-	resultEvent, err := ruleService.ProcessEvent(ctx, types.Event{})
+	resultEvent, err := ruleService.ProcessEvent(ctx, types.Event{Resource: "test resource", Component: "test component"})
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
@@ -149,20 +163,26 @@ func TestProcessEventDropOutcome(t *testing.T) {
 
 	adapter := mock_eventfilter.NewMockRuleAdapter(ctrl)
 	adapter.EXPECT().GetByTypes(gomock.Any(), gomock.Any()).Return([]eventfilter.Rule{
-		{Type: "rule-1"},
-		{Type: "rule-2"},
+		{Type: "rule-1", EventPattern: [][]pattern.FieldCondition{{pattern.FieldCondition{
+			Field:     "resource",
+			Condition: pattern.NewStringCondition("eq", "test resource"),
+		}}}},
+		{Type: "rule-2", EventPattern: [][]pattern.FieldCondition{{pattern.FieldCondition{
+			Field:     "component",
+			Condition: pattern.NewStringCondition("eq", "test component"),
+		}}}},
 	}, nil)
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ pattern.EventRegexMatches, _ *config.TimezoneConfig) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper, _ *config.TimezoneConfig) (string, types.Event, error) {
 			event.Resource = "apply 1"
 
 			return eventfilter.OutcomeDrop, event, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ pattern.EventRegexMatches, _ *config.TimezoneConfig) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper, _ *config.TimezoneConfig) (string, types.Event, error) {
 			event.Component = "apply 2"
 
 			return eventfilter.OutcomePass, event, nil
@@ -191,10 +211,11 @@ func TestProcessEventDropOutcome(t *testing.T) {
 
 	//since first applicator returns drop outcome, second applicator should be skipped
 	expectedEvent := types.Event{
-		Resource: "apply 1",
+		Resource:  "apply 1",
+		Component: "test component",
 	}
 
-	resultEvent, err := ruleService.ProcessEvent(ctx, types.Event{})
+	resultEvent, err := ruleService.ProcessEvent(ctx, types.Event{Resource: "test resource", Component: "test component"})
 	if !errors.Is(err, eventfilter.ErrDropOutcome) {
 		t.Errorf("expected error %v, but got %v", eventfilter.ErrDropOutcome, err)
 	}

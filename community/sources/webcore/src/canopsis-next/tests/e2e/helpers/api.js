@@ -195,7 +195,7 @@ async function createWidgetForView(viewId, { row, type, ...widget }) {
  * @returns {Object}
  */
 async function createViewGroup(group, options = {}) {
-  const response = await request.post(API_ROUTES.viewGroup, group, options);
+  const response = await request.post(API_ROUTES.view.group, group, options);
 
   return response.data;
 }
@@ -207,7 +207,7 @@ async function createViewGroup(group, options = {}) {
  * @returns {Promise}
  */
 async function removeViewGroup(groupId, options = {}) {
-  return request.delete(`${API_ROUTES.viewGroup}/${groupId}`, options);
+  return request.delete(`${API_ROUTES.view.group}/${groupId}`, options);
 }
 
 /**

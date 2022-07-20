@@ -3,14 +3,19 @@ package idlealarm
 import (
 	"bytes"
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
+	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
 	mock_entity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/entity"
 	mock_idlerule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/idlerule"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
+	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
 	"reflect"
 	"testing"
@@ -26,6 +31,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+	mockRPCClient := mock_engine.NewMockRPCClient(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	entity := types.Entity{}
 	alarm := types.Alarm{
@@ -38,7 +44,6 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 			Resource:      "test-resource",
 		},
 	}
-	author := "test-author"
 	output := "test-output"
 	rule := idlerule.Rule{
 		Type:           idlerule.RuleTypeAlarm,
@@ -49,9 +54,18 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 		},
 		Operation: &idlerule.Operation{
 			Type: types.ActionTypeAck,
-			Parameters: types.OperationParameters{
+			Parameters: idlerule.Parameters{
 				Output: output,
-				Author: author,
+			},
+		},
+		AlarmPatternFields: savedpattern.AlarmPatternFields{
+			AlarmPattern: [][]pattern.FieldCondition{
+				{
+					{
+						Field:     "v.resource",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
+					},
+				},
 			},
 		},
 	}
@@ -74,7 +88,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 		Return(mockCursor, nil)
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
-	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockEncoder, logger)
+	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, mockEncoder, logger)
 	events, err := service.Process(ctx)
 
 	if err != nil {
@@ -93,7 +107,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 		ConnectorName: alarm.Value.ConnectorName,
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
-		Author:        author,
+		Author:        canopsis.DefaultEventAuthor,
 		Output:        output,
 		SourceType:    types.SourceTypeResource,
 		Initiator:     types.InitiatorSystem,
@@ -102,8 +116,8 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 	event := events[0]
 	event.Timestamp = types.CpsTime{}
 
-	if !reflect.DeepEqual(event, expectedEvent) {
-		t.Errorf("exepected event %+v but got %+v", expectedEvent, event)
+	if diff := pretty.Compare(event, expectedEvent); diff != "" {
+		t.Errorf("unexepected event %s", diff)
 	}
 }
 
@@ -116,6 +130,7 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+	mockRPCClient := mock_engine.NewMockRPCClient(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	entity := types.Entity{}
 	alarm := types.Alarm{
@@ -128,7 +143,6 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 			Resource:       "test-resource",
 		},
 	}
-	author := "test-author"
 	output := "test-output"
 	rule := idlerule.Rule{
 		Type:           idlerule.RuleTypeAlarm,
@@ -139,9 +153,18 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 		},
 		Operation: &idlerule.Operation{
 			Type: types.ActionTypeAck,
-			Parameters: types.OperationParameters{
+			Parameters: idlerule.Parameters{
 				Output: output,
-				Author: author,
+			},
+		},
+		AlarmPatternFields: savedpattern.AlarmPatternFields{
+			AlarmPattern: [][]pattern.FieldCondition{
+				{
+					{
+						Field:     "v.resource",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
+					},
+				},
 			},
 		},
 	}
@@ -163,7 +186,7 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 		Return(mockCursor, nil)
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
-	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockEncoder, logger)
+	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, mockEncoder, logger)
 	events, err := service.Process(ctx)
 
 	if err != nil {
@@ -182,7 +205,7 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 		ConnectorName: alarm.Value.ConnectorName,
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
-		Author:        author,
+		Author:        canopsis.DefaultEventAuthor,
 		Output:        output,
 		SourceType:    types.SourceTypeResource,
 		Initiator:     types.InitiatorSystem,
@@ -191,8 +214,8 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 	event := events[0]
 	event.Timestamp = types.CpsTime{}
 
-	if !reflect.DeepEqual(event, expectedEvent) {
-		t.Errorf("exepected event %+v but got %+v", expectedEvent, event)
+	if diff := pretty.Compare(event, expectedEvent); diff != "" {
+		t.Errorf("unexepected event %s", diff)
 	}
 }
 
@@ -205,6 +228,7 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+	mockRPCClient := mock_engine.NewMockRPCClient(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	resource := "test-resource"
 	component := "test-component"
@@ -222,16 +246,25 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		Name: connectorName,
 	}
 	state := types.CpsNumber(types.AlarmStateCritical)
-	author := "test-author"
 	output := "Idle rule test-rule-name"
 	rule := idlerule.Rule{
 		ID:     "test-rule",
 		Type:   idlerule.RuleTypeEntity,
 		Name:   "test-rule-name",
-		Author: author,
+		Author: "test-author",
 		Duration: types.DurationWithUnit{
 			Value: 10,
 			Unit:  "s",
+		},
+		EntityPatternFields: savedpattern.EntityPatternFields{
+			EntityPattern: [][]pattern.FieldCondition{
+				{
+					{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, resource),
+					},
+				},
+			},
 		},
 	}
 
@@ -264,7 +297,7 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		Return(connectorEntity, nil)
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
-	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockEncoder, logger)
+	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, mockEncoder, logger)
 	events, err := service.Process(ctx)
 
 	if err != nil {
@@ -285,7 +318,7 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		Component:     component,
 		Resource:      resource,
 		SourceType:    types.SourceTypeResource,
-		Author:        author,
+		Author:        canopsis.DefaultEventAuthor,
 		Output:        output,
 		Initiator:     types.InitiatorSystem,
 		IdleRuleApply: "entity",
@@ -293,8 +326,8 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 	event := events[0]
 	event.Timestamp = types.CpsTime{}
 
-	if !reflect.DeepEqual(event, expectedEvent) {
-		t.Errorf("exepected event %+v but got %+v", expectedEvent, event)
+	if diff := pretty.Compare(event, expectedEvent); diff != "" {
+		t.Errorf("unexepected event %s", diff)
 	}
 }
 
@@ -307,6 +340,7 @@ func TestService_Process_GivenAlarmForConnectorEntity_ShouldReturnEvent(t *testi
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+	mockRPCClient := mock_engine.NewMockRPCClient(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	alarm := types.Alarm{
 		ID: "test-alarm",
@@ -314,7 +348,7 @@ func TestService_Process_GivenAlarmForConnectorEntity_ShouldReturnEvent(t *testi
 			Connector:     "test-connector",
 			ConnectorName: "test-connector-name",
 			State: &types.AlarmStep{
-				Author:  "test-author",
+				Author:  canopsis.DefaultEventAuthor,
 				Message: "test-message",
 			},
 		},
@@ -326,7 +360,7 @@ func TestService_Process_GivenAlarmForConnectorEntity_ShouldReturnEvent(t *testi
 		Return(nil, nil)
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return([]types.Alarm{alarm}, nil)
 
-	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockEncoder, logger)
+	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, mockEncoder, logger)
 	events, err := service.Process(ctx)
 
 	if err != nil {
@@ -366,6 +400,7 @@ func TestService_Process_GivenEntityRuleAndTwoAffectedComponents_ShouldFindConne
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+	mockRPCClient := mock_engine.NewMockRPCClient(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
 	component1 := "test-component-1"
 	component2 := "test-component-2"
@@ -389,15 +424,30 @@ func TestService_Process_GivenEntityRuleAndTwoAffectedComponents_ShouldFindConne
 		LastEventDate: &types.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
 		Impacts:       []string{connectorEntity.ID},
 	}
-	author := "test-author"
 	rule := idlerule.Rule{
 		ID:     "test-rule",
 		Type:   idlerule.RuleTypeEntity,
 		Name:   "test-rule-name",
-		Author: author,
+		Author: "test-author",
 		Duration: types.DurationWithUnit{
 			Value: 10,
 			Unit:  "s",
+		},
+		EntityPatternFields: savedpattern.EntityPatternFields{
+			EntityPattern: [][]pattern.FieldCondition{
+				{
+					{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, component1),
+					},
+				},
+				{
+					{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, component2),
+					},
+				},
+			},
 		},
 	}
 
@@ -443,7 +493,7 @@ func TestService_Process_GivenEntityRuleAndTwoAffectedComponents_ShouldFindConne
 		Return(connectorEntity, nil)
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
-	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockEncoder, logger)
+	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, mockEncoder, logger)
 	events, err := service.Process(ctx)
 
 	if err != nil {

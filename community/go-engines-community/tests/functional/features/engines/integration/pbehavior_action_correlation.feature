@@ -8,15 +8,17 @@ Feature: update meta alarm on action
     {
       "name": "test-metaalarmrule-pbehavior-action-correlation-1",
       "type": "attribute",
-      "config": {
-        "alarm_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "v": {
-              "component": "test-component-pbehavior-action-correlation-1"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-pbehavior-action-correlation-1"
             }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -36,7 +38,7 @@ Feature: update meta alarm on action
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-correlation-1&correlation=true
     Then the response code should be 200
     When I save response metalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
     When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
@@ -48,21 +50,26 @@ Feature: update meta alarm on action
     {
       "name": "test-scenario-pbehavior-action-correlation-1-name",
       "enabled": true,
-      "priority": 92,
       "triggers": ["comment"],
       "actions": [
         {
           "_id": "test-action-pbehavior-action-correlation-1",
           "enabled": true,
-          "entity_patterns": [
-            {
-              "_id": "{{ .metalarmEntityID }}"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "{{ .metaAlarmResource }}"
+                }
+              }
+            ]
           ],
           "parameters": {
             "name": "test-pbehavior-action-correlation-1",
             "tstart": {{ now }},
-            "tstop": {{ nowAdd "10m" }},
+            "tstop": {{ nowAdd "1h" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
@@ -88,45 +95,15 @@ Feature: update meta alarm on action
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-correlation-1&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "v": {
-                  "component": "test-component-pbehavior-action-correlation-1",
-                  "connector": "test-connector-pbehavior-action-correlation-1",
-                  "connector_name": "test-connector-name-pbehavior-action-correlation-1",
-                  "resource": "test-resource-pbehavior-action-correlation-1",
-                  "steps": [
-                    {
-                      "_t": "stateinc",
-                      "val": 2
-                    },
-                    {
-                      "_t": "statusinc",
-                      "val": 1
-                    },
-                    {
-                      "_t": "metaalarmattach",
-                      "val": 0
-                    },
-                    {
-                      "_t": "comment"
-                    }
-                  ]
-                }
-              }
-            ],
-            "total": 1
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-metaalarmrule-pbehavior-action-correlation-1"
           },
           "v": {
@@ -146,8 +123,38 @@ Feature: update meta alarm on action
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -164,15 +171,64 @@ Feature: update meta alarm on action
                 "m": "Pbehavior test-pbehavior-action-correlation-1. Type: Engine maintenance. Reason: Test Engine.",
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-correlation-1
+    Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "metaalarmattach",
+                "val": 0
+              },
+              {
+                "_t": "comment"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      }
+    ]
     """

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"testing"
 	"time"
@@ -24,9 +23,7 @@ import (
 	"github.com/cucumber/godog"
 	redismod "github.com/go-redis/redis/v8"
 	"github.com/go-testfixtures/testfixtures/v3"
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/pgx"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/golang-migrate/migrate/v4/database/pgx"
 	"github.com/rs/zerolog"
 )
 
@@ -34,20 +31,21 @@ func TestMain(m *testing.M) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	logger := liblog.NewLogger(true)
+
 	// Test allowed only with "API_URL" environment variable
 	if _, err := bdd.GetApiURL(); err != nil {
-		log.Fatal(err)
+		logger.Fatal().Err(err).Msg("")
 	}
 
 	var flags Flags
 	flags.ParseArgs()
 
-	logger := liblog.NewLogger(true)
 	var eventLogger zerolog.Logger
 	if flags.eventLogs != "" {
 		f, err := os.OpenFile(flags.eventLogs, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		if err != nil {
-			log.Fatal(err)
+			logger.Fatal().Err(err).Msg("")
 		}
 		defer f.Close()
 		eventLogger = zerolog.New(&eventLogWriter{writer: f}).
@@ -58,43 +56,53 @@ func TestMain(m *testing.M) {
 
 	err := bdd.RunDummyHttpServer(ctx, fmt.Sprintf("localhost:%d", flags.dummyHttpPort))
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal().Err(err).Msg("")
 	}
 
 	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal().Err(err).Msg("")
 	}
 	defer func() {
 		if err = dbClient.Disconnect(context.Background()); err != nil {
-			log.Fatal(err)
+			logger.Fatal().Err(err).Msg("")
 		}
 	}()
 
 	amqpConnection, err := amqp.NewConnection(logger, 0, 0)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal().Err(err).Msg("")
 	}
 	defer amqpConnection.Close()
 
-	redisClient, err := redis.NewSession(ctx, 0, liblog.NewLogger(false), 0, 0)
+	redisClient, err := redis.NewSession(ctx, 0, logger, 0, 0)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal().Err(err).Msg("")
 	}
 	defer redisClient.Close()
 
 	loader := fixtures.NewLoader(dbClient, flags.mongoFixtures, true,
-		fixtures.NewParser(password.NewSha1Encoder()), logger)
+		fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), logger)
 	opts := godog.Options{
 		StopOnFailure:  true,
 		Format:         "pretty",
 		Paths:          flags.paths,
 		DefaultContext: ctx,
 	}
-	testSuiteInitializer := InitializeTestSuite(ctx, flags, loader, redisClient)
+
+	if flags.onlyFixtures {
+		err := clearStores(ctx, flags, loader, redisClient, logger)
+		if err != nil {
+			logger.Fatal().Err(err).Msg("")
+		}
+
+		return
+	}
+
+	testSuiteInitializer := InitializeTestSuite(ctx, flags, loader, redisClient, logger)
 	scenarioInitializer, err := InitializeScenario(flags, dbClient, amqpConnection, eventLogger)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal().Err(err).Msg("")
 	}
 
 	status := godog.TestSuite{
@@ -111,19 +119,27 @@ func TestMain(m *testing.M) {
 	os.Exit(status)
 }
 
-func InitializeTestSuite(ctx context.Context, flags Flags, loader fixtures.Loader, redisClient redismod.Cmdable) func(*godog.TestSuiteContext) {
+func InitializeTestSuite(
+	ctx context.Context,
+	flags Flags,
+	loader fixtures.Loader,
+	redisClient redismod.Cmdable,
+	logger zerolog.Logger,
+) func(*godog.TestSuiteContext) {
 	return func(godogCtx *godog.TestSuiteContext) {
 		godogCtx.BeforeSuite(func() {
-			err := clearStores(ctx, flags, loader, redisClient)
+			err := clearStores(ctx, flags, loader, redisClient, logger)
 			if err != nil {
-				panic(err)
+				logger.Fatal().Err(err).Msg("")
 			}
+
+			logger.Info().Msg("waiting the next periodical process")
 			time.Sleep(flags.periodicalWaitTime)
 		})
 		godogCtx.AfterSuite(func() {
-			err := clearStores(ctx, flags, loader, redisClient)
+			err := clearStores(ctx, flags, loader, redisClient, logger)
 			if err != nil {
-				panic(err)
+				logger.Fatal().Err(err).Msg("")
 			}
 		})
 	}
@@ -175,6 +191,7 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 		ctx.Step(`^I do (\w+) (.+) until response code is (\d+) and body is:$`, apiClient.IDoRequestUntilResponse)
 		ctx.Step(`^I do (\w+) (.+) until response code is (\d+) and body contains:$`, apiClient.IDoRequestUntilResponseContains)
 		ctx.Step(`^I do (\w+) (.+) until response code is (\d+) and response key \"([\w\.]+)\" is greater or equal than (\d+)$`, apiClient.IDoRequestUntilResponseKeyIsGreaterOrEqualThan)
+		ctx.Step(`^I do (\w+) (.+) until response code is (\d+) and response array key \"([\w\.]+)\" contains:$`, apiClient.IDoRequestUntilResponseArrayKeyContains)
 		ctx.Step(`^I do (\w+) (.+):$`, apiClient.IDoRequestWithBody)
 		ctx.Step(`^I do (\w+) (.+) until response code is (\d+)$`, apiClient.IDoRequestUntilResponseCode)
 		ctx.Step(`^I do (\w+) (.+)$`, apiClient.IDoRequest)
@@ -182,10 +199,16 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 		ctx.Step(`^the response body should be:$`, apiClient.TheResponseBodyShouldBe)
 		ctx.Step(`^the response body should contain:$`, apiClient.TheResponseBodyShouldContain)
 		ctx.Step(`^the response raw body should be:$`, apiClient.TheResponseRawBodyShouldBe)
+		ctx.Step(`^the response key \"([\w\.]+)\" should exist$`, apiClient.TheResponseKeyShouldExist)
 		ctx.Step(`^the response key \"([\w\.]+)\" should not exist$`, apiClient.TheResponseKeyShouldNotExist)
 		ctx.Step(`^the response key \"([\w\.]+)\" should not be \"([^\"]+)\"$`, apiClient.TheResponseKeyShouldNotBe)
+		ctx.Step(`^the difference between ([\w\.]+) ([\w\.]+) is in range (-?\d+\.?\d*),(-?\d+\.?\d*)$`, apiClient.TheDifferenceBetweenValues)
 		ctx.Step(`^the response key \"([\w\.]+)\" should be greater or equal than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterOrEqualThan)
+		ctx.Step(`^the response key \"([\w\.]+)\" should be greater than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterThan)
+		ctx.Step(`^the response array key \"([\w\.]+)\" should contain:$`, apiClient.TheResponseArrayKeyShouldContain)
+		ctx.Step(`^the response array key \"([\w\.]+)\" should contain only:$`, apiClient.TheResponseArrayKeyShouldContainOnly)
 		ctx.Step(`^I save response ([\w]+)=(.+)$`, apiClient.ISaveResponse)
+		ctx.Step(`^\"([\w]+)\" (>|<|>=|<=) \"([\w]+)\"$`, apiClient.ValueShouldBeGteLteThan)
 		ctx.Step(`^an alarm (.+) should be in the db$`, mongoClient.AlarmShouldBeInTheDb)
 		ctx.Step(`^an entity (.+) should be in the db$`, mongoClient.EntityShouldBeInTheDb)
 		ctx.Step(`^I set header ([\w\.\-]+)=(.+)$`, apiClient.ISetRequestHeader)
@@ -208,32 +231,22 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 	}, nil
 }
 
-func clearStores(ctx context.Context, flags Flags, loader fixtures.Loader, redisClient redismod.Cmdable) error {
+func clearStores(
+	ctx context.Context,
+	flags Flags,
+	loader fixtures.Loader,
+	redisClient redismod.Cmdable,
+	logger zerolog.Logger,
+) error {
 	err := loader.Load(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot load mongo fixtures: %w", err)
 	}
 
+	logger.Info().Msg("MongoDB fixtures are applied")
 	pgConnStr, err := postgres.GetConnStr()
 	if err != nil {
 		return err
-	}
-
-	p := &pgx.Postgres{}
-	driver, err := p.Open(pgConnStr)
-	if err != nil {
-		return fmt.Errorf("cannot connect to timescale for migrations: %w", err)
-	}
-	defer driver.Close()
-
-	m, err := migrate.NewWithDatabaseInstance(fmt.Sprintf("file://%s", flags.timescaleMigrations), "pgx", driver)
-	if err != nil {
-		return fmt.Errorf("cannot init timescale migrations: %w", err)
-	}
-
-	err = m.Up()
-	if err != nil && err != migrate.ErrNoChange {
-		return fmt.Errorf("cannot apply timescale migrations: %w", err)
 	}
 
 	pgDb, err := sql.Open("pgx", pgConnStr)
@@ -257,10 +270,14 @@ func clearStores(ctx context.Context, flags Flags, loader fixtures.Loader, redis
 		return fmt.Errorf("cannot load timescale fixtures: %w", err)
 	}
 
+	logger.Info().Msg("PostgresSQL fixtures are applied")
+
 	err = redisClient.FlushAll(ctx).Err()
 	if err != nil {
 		return err
 	}
+
+	logger.Info().Msg("Redis is flushed")
 
 	return nil
 }

@@ -9,6 +9,14 @@ export const permissionsWidgetsServiceWeatherFilters = {
       return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.listFilters);
     },
 
+    hasAccessToEditFilter() {
+      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.editFilter);
+    },
+
+    hasAccessToAddFilter() {
+      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.addFilter);
+    },
+
     hasAccessToUserFilter() {
       return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.userFilter);
     },

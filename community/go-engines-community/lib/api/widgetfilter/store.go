@@ -23,6 +23,7 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
+		client:             dbClient,
 		collection:         dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		widgetCollection:   dbClient.Collection(mongo.WidgetMongoCollection),
 		userPrefCollection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
@@ -30,6 +31,7 @@ func NewStore(dbClient mongo.DbClient) Store {
 }
 
 type store struct {
+	client             mongo.DbClient
 	collection         mongo.DbCollection
 	widgetCollection   mongo.DbCollection
 	userPrefCollection mongo.DbCollection
@@ -190,12 +192,19 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	filter.Created = now
 	filter.Updated = now
 
-	_, err := s.collection.InsertOne(ctx, filter)
-	if err != nil {
-		return nil, err
-	}
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err := s.collection.InsertOne(ctx, filter)
+		if err != nil {
+			return err
+		}
 
-	return s.GetOneBy(ctx, filter.ID, r.Author)
+		response, err = s.GetOneBy(ctx, filter.ID, r.Author)
+		return err
+	})
+
+	return response, err
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
@@ -205,51 +214,69 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	filter.Widget = r.Widget
 	filter.Updated = now
 
-	_, err := s.collection.UpdateOne(ctx,
-		bson.M{"_id": filter.ID},
-		bson.M{
-			"$set":   filter,
-			"$unset": bson.M{"old_mongo_query": ""},
-		},
-	)
-	if err != nil {
-		return nil, err
+	update := bson.M{
+		"$set": filter,
+	}
+	if len(filter.EntityPattern) > 0 || len(filter.AlarmPattern) > 0 || len(filter.PbehaviorPattern) > 0 {
+		update["$unset"] = bson.M{"old_mongo_query": ""}
 	}
 
-	return s.GetOneBy(ctx, r.ID, r.Author)
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err := s.collection.UpdateOne(ctx,
+			bson.M{"_id": filter.ID},
+			update,
+		)
+		if err != nil {
+			return err
+		}
+
+		response, err = s.GetOneBy(ctx, r.ID, r.Author)
+		return err
+	})
+
+	return response, err
 }
 
 func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
-	delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id, "$or": bson.A{
-		bson.M{"author": userId},
-		bson.M{"is_private": false},
-	}})
-	if err != nil {
-		return false, err
-	}
+	res := false
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id, "$or": bson.A{
+			bson.M{"author": userId},
+			bson.M{"is_private": false},
+		}})
+		if err != nil {
+			return err
+		}
 
-	if delCount == 0 {
-		return false, nil
-	}
+		if delCount == 0 {
+			return nil
+		}
 
-	err = s.updateWidgets(ctx, id)
-	if err != nil {
-		return false, err
-	}
+		err = s.updateWidgets(ctx, id)
+		if err != nil {
+			return err
+		}
 
-	err = s.updateUserPreferences(ctx, id)
-	if err != nil {
-		return false, err
-	}
+		err = s.updateUserPreferences(ctx, id)
+		if err != nil {
+			return err
+		}
 
-	return true, nil
+		res = true
+		return nil
+	})
+
+	return res, err
 }
 
 func (s *store) updateWidgets(ctx context.Context, filterId string) error {
 	_, err := s.widgetCollection.UpdateMany(ctx, bson.M{
-		"parameters.main_filter": filterId,
+		"parameters.mainFilter": filterId,
 	}, bson.M{
-		"$unset": bson.M{"parameters.main_filter": ""},
+		"$unset": bson.M{"parameters.mainFilter": ""},
 	})
 
 	return err
@@ -257,9 +284,9 @@ func (s *store) updateWidgets(ctx context.Context, filterId string) error {
 
 func (s *store) updateUserPreferences(ctx context.Context, filterId string) error {
 	_, err := s.userPrefCollection.UpdateMany(ctx, bson.M{
-		"content.main_filter": filterId,
+		"content.mainFilter": filterId,
 	}, bson.M{
-		"$unset": bson.M{"content.main_filter": ""},
+		"$unset": bson.M{"content.mainFilter": ""},
 	})
 
 	return err
@@ -274,5 +301,7 @@ func transformEditRequestToModel(request EditRequest) view.WidgetFilter {
 		AlarmPatternFields:     request.AlarmPatternFieldsRequest.ToModel(),
 		EntityPatternFields:    request.EntityPatternFieldsRequest.ToModel(),
 		PbehaviorPatternFields: request.PbehaviorPatternFieldsRequest.ToModel(),
+
+		WeatherServicePattern: request.WeatherServicePattern,
 	}
 }

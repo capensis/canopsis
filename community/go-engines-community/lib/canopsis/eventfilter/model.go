@@ -1,8 +1,10 @@
 package eventfilter
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -52,13 +54,16 @@ type Rule struct {
 	Author       string                            `bson:"author" json:"author" swaggerignore:"true"`
 	Description  string                            `bson:"description" json:"description" binding:"required,max=255"`
 	Type         string                            `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
-	Patterns     pattern.EventPatternList          `bson:"patterns" json:"patterns"`
 	Priority     int                               `bson:"priority" json:"priority"`
 	Enabled      bool                              `bson:"enabled" json:"enabled"`
+	OldPatterns  oldpattern.EventPatternList       `bson:"old_patterns,omitempty" json:"old_patterns,omitempty"`
 	Config       RuleConfig                        `bson:"config" json:"config"`
 	ExternalData map[string]ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
 	Created      *types.CpsTime                    `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated      *types.CpsTime                    `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+
+	EventPattern                     pattern.Event `json:"event_pattern" bson:"event_pattern"`
+	savedpattern.EntityPatternFields `bson:",inline"`
 }
 
 type RuleConfig struct {
@@ -80,8 +85,43 @@ type Action struct {
 	Value       interface{} `bson:"value" json:"value"`
 }
 
-type TemplateParameters struct {
-	Event        types.Event
-	RegexMatch   pattern.EventRegexMatches
-	ExternalData map[string]interface{}
+type RegexMatchWrapper struct {
+	BackwardCompatibility bool
+	OldRegexMatch         oldpattern.EventRegexMatches
+	RegexMatch            RegexMatch
+}
+
+type RegexMatch struct {
+	pattern.EventRegexMatches
+	Entity pattern.EntityRegexMatches
+}
+
+type Template struct {
+	Event             types.Event
+	RegexMatchWrapper RegexMatchWrapper
+	ExternalData      map[string]interface{}
+}
+
+func (t Template) GetTemplate() interface{} {
+	if t.RegexMatchWrapper.BackwardCompatibility {
+		return struct {
+			Event        types.Event
+			RegexMatch   oldpattern.EventRegexMatches
+			ExternalData map[string]interface{}
+		}{
+			Event:        t.Event,
+			RegexMatch:   t.RegexMatchWrapper.OldRegexMatch,
+			ExternalData: t.ExternalData,
+		}
+	}
+
+	return struct {
+		Event        types.Event
+		RegexMatch   RegexMatch
+		ExternalData map[string]interface{}
+	}{
+		Event:        t.Event,
+		RegexMatch:   t.RegexMatchWrapper.RegexMatch,
+		ExternalData: t.ExternalData,
+	}
 }

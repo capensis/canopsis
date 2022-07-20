@@ -1,17 +1,22 @@
-widgets:
-  widget (template):
-    _id: <UUID()>
-    title: <Word()>
-    type: AlarmsList
-    grid_parameters:
-      desktop:
-        x: 0
+template:
+  - &widget {
+    _id: <UUID()>,
+    title: <UniqueName()>,
+    type: AlarmsList,
+    grid_parameters: {
+      desktop: {
+        x: 0,
         "y": 0
-    author: root
-    created: <NowUnix()>
+      }
+    },
+    author: root,
+    created: <NowUnix()>,
     updated: <Current().created>
+  }
 
-  widget_to_view_get_1 (extend widget):
+widgets:
+  widget_to_view_get_1:
+    <<: *widget
     _id: test-widget-to-view-get-1
     author: test-widget-to-view-get-1-author
     created: 1611229670
@@ -29,7 +34,8 @@ widgets:
     type: test-widget-to-view-get-1-type
     updated: 1611229670
 
-  widget_to_view_get_2 (extend widget):
+  widget_to_view_get_2:
+    <<: *widget
     _id: test-widget-to-view-get-2
     author: test-widget-to-view-get-2-author
     created: 1611229670
@@ -47,7 +53,8 @@ widgets:
     type: test-widget-to-view-get-2-type
     updated: 1611229670
 
-  widget_to_viewgroup_get_1 (extend widget):
+  widget_to_viewgroup_get_1:
+    <<: *widget
     _id: test-widget-to-viewgroup-get-1
     author: test-user-to-viewgroup-get
     created: 1611229670
@@ -65,7 +72,8 @@ widgets:
     type: test-widget-to-viewgroup-get-1-type
     updated: 1611229670
 
-  widget_to_viewgroup_get_2 (extend widget):
+  widget_to_viewgroup_get_2:
+    <<: *widget
     _id: test-widget-to-viewgroup-get-2
     author: test-user-to-viewgroup-get
     created: 1611229670
@@ -79,7 +87,8 @@ widgets:
     type: test-widget-to-viewgroup-get-2-type
     updated: 1611229670
 
-  widget_to_tab_get_1 (extend widget):
+  widget_to_tab_get_1:
+    <<: *widget
     _id: test-widget-to-tab-get-1
     author: test-user-to-tab-get
     created: 1611229670
@@ -97,7 +106,8 @@ widgets:
     type: test-widget-to-tab-get-1-type
     updated: 1611229670
 
-  widget_to_tab_get_2 (extend widget):
+  widget_to_tab_get_2:
+    <<: *widget
     _id: test-widget-to-tab-get-2
     author: test-user-to-tab-get
     created: 1611229670
@@ -115,7 +125,8 @@ widgets:
     type: test-widget-to-tab-get-2-type
     updated: 1611229670
 
-  widget_to_junit_edit_dir_param (extend widget):
+  widget_to_junit_edit_dir_param:
+    <<: *widget
     _id: test-widget-to-junit-edit-dir-param
     internal_parameters:
       test_suites:
@@ -125,24 +136,29 @@ widgets:
     tab: test-tab-to-junit-edit-dir-param
     type: Junit
 
-  widget_to_view_delete (extend widget):
+  widget_to_view_delete:
+    <<: *widget
     _id: test-widget-to-view-delete
     tab: test-tab-to-view-delete
 
-  widget_to_user_preferences_update_1 (extend widget):
+  widget_to_user_preferences_update_1:
+    <<: *widget
     _id: test-widget-to-user-preferences-update-1
     tab: test-tab-to-user-preferences-update-1
 
-  widget_to_user_preferences_update_2 (extend widget):
+  widget_to_user_preferences_update_2:
+    <<: *widget
     _id: test-widget-to-user-preferences-update-2
     tab: test-tab-to-user-preferences-update-2
 
-  widget_to_junit_test_suites_get_1 (extend widget):
+  widget_to_junit_test_suites_get_1:
+    <<: *widget
     _id: test-widget-to-junit-test-suites-get-1
     tab: test-tab-to-junit-test-suites-get
     type: Junit
 
-  widget_to_junit_test_suites_get_2 (extend widget):
+  widget_to_junit_test_suites_get_2:
+    <<: *widget
     _id: test-widget-to-junit-test-suites-get-2
     internal_parameters:
       test_suites:
@@ -151,11 +167,13 @@ widgets:
     tab: test-tab-to-junit-test-suites-get
     type: Junit
 
-  widget_to_delete (extend widget):
+  widget_to_delete:
+    <<: *widget
     _id: test-widget-to-delete
     tab: test-tab-to-widget-edit
 
-  widget_to_get (extend widget):
+  widget_to_get:
+    <<: *widget
     _id: test-widget-to-get
     author: test-author-to-widget-edit
     created: 1611229670
@@ -173,32 +191,40 @@ widgets:
     type: test-widget-to-get-type
     updated: 1611229670
 
-  widget_to_update (extend widget):
+  widget_to_update:
+    <<: *widget
     _id: test-widget-to-update
     created: 1611229670
+    updated: <Current().created>
     tab: test-tab-to-widget-edit
 
-  widget_to_check_access (extend widget):
+  widget_to_check_access:
+    <<: *widget
     _id: test-widget-to-check-access
     tab: test-tab-to-widget-check-access
 
-  widget_to_update_grid_position_2 (extend widget):
+  widget_to_update_grid_position_2:
+    <<: *widget
     _id: test-widget-to-update-grid-position-2
     tab: test-tab-to-widget-update-grid-position-2
 
-  widget_to_update_grid_position_3_1 (extend widget):
+  widget_to_update_grid_position_3_1:
+    <<: *widget
     _id: test-widget-to-update-grid-position-3-1
     tab: test-tab-to-widget-update-grid-position-3
 
-  widget_to_update_grid_position_3_2 (extend widget):
+  widget_to_update_grid_position_3_2:
+    <<: *widget
     _id: test-widget-to-update-grid-position-3-2
     tab: test-tab-to-widget-update-grid-position-3
 
-  widget_to_update_grid_position_4 (extend widget):
+  widget_to_update_grid_position_4:
+    <<: *widget
     _id: test-widget-to-update-grid-position-4
     tab: test-tab-to-widget-update-grid-position-4
 
-  widget_to_export_1 (extend widget):
+  widget_to_export_1:
+    <<: *widget
     _id: test-widget-to-export-1
     author: test-author-to-view-export
     created: 1611229670
@@ -207,7 +233,7 @@ widgets:
         x: 0
         "y": 0
     parameters:
-      main_filter: test-widgetfilter-to-export-2
+      mainFilter: test-widgetfilter-to-export-2
       test-widget-to-view-export-1-parameter-1:
         test-widget-to-view-export-1-parameter-1-subparameter: test-widget-to-view-export-1-parameter-1-subvalue
       test-widget-to-view-export-1-parameter-2:
@@ -217,15 +243,18 @@ widgets:
     type: test-widget-to-export-1-type
     updated: 1611229670
 
-  widget_to_user_preferences_get_1 (extend widget):
+  widget_to_user_preferences_get_1:
+    <<: *widget
     _id: test-widget-to-user-preferences-get-1
     tab: test-tab-to-user-preferences-get
 
-  widget_to_user_preferences_get_2 (extend widget):
+  widget_to_user_preferences_get_2:
+    <<: *widget
     _id: test-widget-to-user-preferences-get-2
     tab: test-tab-to-user-preferences-get
 
-  widget_to_view_copy_1 (extend widget):
+  widget_to_view_copy_1:
+    <<: *widget
     _id: test-widget-to-view-copy-1
     author: test-widget-to-view-copy-1-author
     created: 1611229670
@@ -243,7 +272,8 @@ widgets:
     type: test-widget-to-view-copy-1-type
     updated: 1611229670
 
-  widget_to_tab_copy_1 (extend widget):
+  widget_to_tab_copy_1:
+    <<: *widget
     _id: test-widget-to-tab-copy-1
     author: test-widget-to-tab-copy-1-author
     created: 1611229670
@@ -252,7 +282,7 @@ widgets:
         x: 0
         "y": 0
     parameters:
-      main_filter: test-widgetfilter-to-tab-copy-1
+      mainFilter: test-widgetfilter-to-tab-copy-1
       test-widget-to-tab-copy-1-parameter-1:
         test-widget-to-tab-copy-1-parameter-1-subparameter: test-widget-to-tab-copy-1-parameter-1-subvalue
       test-widget-to-tab-copy-1-parameter-2:
@@ -262,26 +292,52 @@ widgets:
     type: test-widget-to-tab-copy-1-type
     updated: 1611229670
 
-  widget_to_copy_1 (extend widget):
+  widget_to_copy_1:
+    <<: *widget
     _id: test-widget-to-copy-1
     tab: test-tab-to-widget-copy-1
 
-  widget_to_copy_2 (extend widget):
+  widget_to_copy_2:
+    <<: *widget
     _id: test-widget-to-copy-2
     tab: test-tab-to-widget-copy-2
 
-  widget_to_copy_3 (extend widget):
+  widget_to_copy_3:
+    <<: *widget
     _id: test-widget-to-copy-3
     tab: test-tab-to-widget-copy-3
 
-  widget_to_filter_edit (extend widget):
+  widget_to_filter_edit:
+    <<: *widget
     _id: test-widget-to-filter-edit
     tab: test-tab-to-filter-edit
 
-  widget_to_filter_get (extend widget):
+  widget_to_filter_get:
+    <<: *widget
     _id: test-widget-to-filter-get
     tab: test-tab-to-filter-edit
 
-  widget_to_filter_check_access (extend widget):
+  widget_to_filter_check_access:
+    <<: *widget
     _id: test-widget-to-filter-check-access
     tab: test-tab-to-filter-check-access
+
+  widget_to_alarm_get:
+    <<: *widget
+    _id: test-widget-to-alarm-get
+    tab: test-tab-to-alarm-get
+
+  widget_to_entity_get:
+    <<: *widget
+    _id: test-widget-to-entity-get
+    tab: test-tab-to-entity-get
+
+  widget_to_dynamic_infos:
+    <<: *widget
+    _id: test-widget-dynamic-infos
+    tab: test-tab-dynamic-infos
+
+  widget_to_weather_get:
+    <<: *widget
+    _id: test-widget-to-weather-get
+    tab: test-tab-to-weather-get

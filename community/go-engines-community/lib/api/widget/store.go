@@ -19,11 +19,13 @@ type Store interface {
 	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	Copy(ctx context.Context, widget Response, r EditRequest) (*Response, error)
+	CopyForTab(ctx context.Context, tabID, newTabID, author string) error
 	UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
+		client:             dbClient,
 		collection:         dbClient.Collection(mongo.WidgetMongoCollection),
 		tabCollection:      dbClient.Collection(mongo.ViewTabMongoCollection),
 		filterCollection:   dbClient.Collection(mongo.WidgetFiltersMongoCollection),
@@ -32,6 +34,7 @@ func NewStore(dbClient mongo.DbClient) Store {
 }
 
 type store struct {
+	client             mongo.DbClient
 	collection         mongo.DbCollection
 	tabCollection      mongo.DbCollection
 	filterCollection   mongo.DbCollection
@@ -119,7 +122,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 
 	defer cursor.Close(ctx)
 
-	for cursor.Next(ctx) {
+	if cursor.Next(ctx) {
 		widget := Response{}
 		err = cursor.Decode(&widget)
 		if err != nil {
@@ -139,12 +142,41 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	widget.Created = now
 	widget.Updated = now
 
-	_, err := s.collection.InsertOne(ctx, widget)
-	if err != nil {
-		return nil, err
+	filters := make([]interface{}, len(r.Filters))
+	for i, filter := range r.Filters {
+		doc := transformFilterRequestToModel(filter)
+		doc.ID = utils.NewID()
+		doc.Widget = widget.ID
+		doc.Author = widget.Author
+		doc.Created = now
+		doc.Updated = now
+		if widget.Parameters.MainFilter == filter.ID {
+			widget.Parameters.MainFilter = doc.ID
+		}
+
+		filters[i] = doc
 	}
 
-	return s.GetOneBy(ctx, widget.ID)
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err := s.collection.InsertOne(ctx, widget)
+		if err != nil {
+			return err
+		}
+
+		if len(filters) > 0 {
+			_, err := s.filterCollection.InsertMany(ctx, filters)
+			if err != nil {
+				return err
+			}
+		}
+
+		response, err = s.GetOneBy(ctx, widget.ID)
+		return err
+	})
+
+	return response, err
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
@@ -157,50 +189,166 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	widget := transformEditRequestToModel(r)
 	widget.ID = oldWidget.ID
 	widget.Updated = now
-	// Empty InternalParameters to remove from update query.
-	widget.InternalParameters = view.InternalParameters{}
-	update := bson.M{"$set": widget}
 
-	if oldWidget.Type == view.WidgetTypeJunit &&
-		(widget.Type != oldWidget.Type ||
-			widget.Parameters.IsAPI != oldWidget.Parameters.IsAPI ||
-			widget.Parameters.Directory != oldWidget.Parameters.Directory ||
-			widget.Parameters.ReportFileRegexp != oldWidget.Parameters.ReportFileRegexp) {
-		update["$unset"] = bson.M{"internal_parameters": ""}
+	filters := make(map[string]view.WidgetFilter, len(r.Filters))
+	for _, filter := range r.Filters {
+		doc := transformFilterRequestToModel(filter)
+		doc.Widget = widget.ID
+		doc.Author = widget.Author
+		doc.Updated = now
+
+		filters[filter.ID] = doc
 	}
 
-	_, err = s.collection.UpdateOne(ctx, bson.M{"_id": widget.ID}, update)
-	if err != nil {
-		return nil, err
-	}
+	var response *Response
+	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
 
-	return s.GetOneBy(ctx, widget.ID)
+		cursor, err := s.filterCollection.Find(ctx, bson.M{"widget": widget.ID, "is_private": false})
+		if err != nil {
+			return err
+		}
+		defer cursor.Close(ctx)
+		filterWriteModels := make([]mongodriver.WriteModel, 0, len(filters))
+		updateFilterIds := make([]string, 0, len(filters))
+		for cursor.Next(ctx) {
+			idModel := struct {
+				ID string `bson:"_id"`
+			}{}
+			err := cursor.Decode(&idModel)
+			if err != nil {
+				return err
+			}
+			if doc, ok := filters[idModel.ID]; ok {
+				updateFilterIds = append(updateFilterIds, idModel.ID)
+				filterUpdate := bson.M{"$set": doc}
+				if len(doc.EntityPattern) > 0 || len(doc.AlarmPattern) > 0 || len(doc.PbehaviorPattern) > 0 {
+					filterUpdate["$unset"] = bson.M{"old_mongo_query": ""}
+				}
+				filterWriteModels = append(filterWriteModels, mongodriver.NewUpdateOneModel().
+					SetFilter(bson.M{"_id": idModel.ID}).
+					SetUpdate(filterUpdate))
+				delete(filters, idModel.ID)
+			}
+		}
+		for id, doc := range filters {
+			doc.ID = utils.NewID()
+			doc.Created = now
+			updateFilterIds = append(updateFilterIds, doc.ID)
+			// Use id from request only to set main filter.
+			if id == widget.Parameters.MainFilter {
+				widget.Parameters.MainFilter = doc.ID
+			}
+			filterWriteModels = append(filterWriteModels, mongodriver.NewInsertOneModel().SetDocument(doc))
+		}
+
+		update := bson.M{"$set": widget}
+
+		if oldWidget.Type == view.WidgetTypeJunit &&
+			(widget.Type != oldWidget.Type ||
+				widget.Parameters.IsAPI != oldWidget.Parameters.IsAPI ||
+				widget.Parameters.Directory != oldWidget.Parameters.Directory ||
+				widget.Parameters.ReportFileRegexp != oldWidget.Parameters.ReportFileRegexp) {
+			update["$unset"] = bson.M{"internal_parameters": ""}
+		}
+
+		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": widget.ID}, update)
+		if err != nil {
+			return err
+		}
+
+		if len(filterWriteModels) > 0 {
+			_, err := s.filterCollection.BulkWrite(ctx, filterWriteModels)
+			if err != nil {
+				return err
+			}
+		}
+
+		_, err = s.filterCollection.DeleteMany(ctx, bson.M{
+			"widget":     widget.ID,
+			"is_private": false,
+			"_id":        bson.M{"$nin": updateFilterIds},
+		})
+		if err != nil {
+			return err
+		}
+
+		response, err = s.GetOneBy(ctx, widget.ID)
+		return err
+	})
+
+	return response, err
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+	res := false
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
+		if err != nil || delCount == 0 {
+			return err
+		}
 
-	if delCount == 0 {
-		return false, nil
-	}
+		err = s.deleteUserPreferences(ctx, id)
+		if err != nil {
+			return err
+		}
 
-	err = s.deleteUserPreferences(ctx, id)
-	if err != nil {
-		return false, err
-	}
+		err = s.deleteFilters(ctx, id)
+		if err != nil {
+			return err
+		}
 
-	err = s.deleteFilters(ctx, id)
-	if err != nil {
-		return false, err
-	}
+		res = true
+		return nil
+	})
 
-	return true, nil
+	return res, err
 }
 
 func (s *store) Copy(ctx context.Context, widget Response, r EditRequest) (*Response, error) {
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		var err error
+		response, err = s.copy(ctx, widget, r)
+		return err
+	})
+
+	return response, err
+}
+
+func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string) error {
+	cursor, err := s.collection.Find(ctx, bson.M{"tab": tabID})
+	if err != nil {
+		return err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		w := Response{}
+		err := cursor.Decode(&w)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.copy(ctx, w, EditRequest{
+			Tab:            newTabID,
+			Title:          w.Title,
+			Type:           w.Type,
+			GridParameters: w.GridParameters,
+			Parameters:     w.Parameters,
+			Author:         author,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *store) copy(ctx context.Context, widget Response, r EditRequest) (*Response, error) {
 	now := types.NewCpsTime()
 	newWidget := view.Widget{
 		ID:             utils.NewID(),
@@ -268,47 +416,55 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 	for i, item := range items {
 		ids[i] = item.ID
 	}
-	widgets := make([]view.Widget, 0, len(items))
-	cursor, err := s.collection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
-	if err != nil {
-		return false, err
-	}
 
-	err = cursor.All(ctx, &widgets)
-	if err != nil || len(widgets) != len(items) {
-		return false, err
-	}
-
-	tabId := ""
-	for _, w := range widgets {
-		if tabId == "" {
-			tabId = w.Tab
-		} else if tabId != w.Tab {
-			return false, ValidationErr{error: errors.New("widgets are related to different view tabs")}
+	res := false
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		widgets := make([]view.Widget, 0, len(items))
+		cursor, err := s.collection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
+		if err != nil {
+			return err
 		}
-	}
 
-	count, err := s.collection.CountDocuments(ctx, bson.M{"tab": tabId})
-	if err != nil {
-		return false, err
-	}
-	if count != int64(len(items)) {
-		return false, ValidationErr{error: errors.New("widgets are missing")}
-	}
+		err = cursor.All(ctx, &widgets)
+		if err != nil || len(widgets) != len(items) {
+			return err
+		}
 
-	writeModels := make([]mongodriver.WriteModel, len(widgets))
-	for i, item := range items {
-		writeModels[i] = mongodriver.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": item.ID}).
-			SetUpdate(bson.M{"$set": bson.M{"grid_parameters": item.GridParameters}})
-	}
+		tabId := ""
+		for _, w := range widgets {
+			if tabId == "" {
+				tabId = w.Tab
+			} else if tabId != w.Tab {
+				return ValidationErr{error: errors.New("widgets are related to different view tabs")}
+			}
+		}
 
-	res, err := s.collection.BulkWrite(ctx, writeModels)
-	if err != nil {
-		return false, err
-	}
+		count, err := s.collection.CountDocuments(ctx, bson.M{"tab": tabId})
+		if err != nil {
+			return err
+		}
+		if count != int64(len(items)) {
+			return ValidationErr{error: errors.New("widgets are missing")}
+		}
 
-	return res.MatchedCount > 0, nil
+		writeModels := make([]mongodriver.WriteModel, len(widgets))
+		for i, item := range items {
+			writeModels[i] = mongodriver.NewUpdateOneModel().
+				SetFilter(bson.M{"_id": item.ID}).
+				SetUpdate(bson.M{"$set": bson.M{"grid_parameters": item.GridParameters}})
+		}
+
+		writeRes, err := s.collection.BulkWrite(ctx, writeModels)
+		if err != nil {
+			return err
+		}
+
+		res = writeRes.MatchedCount > 0
+		return nil
+	})
+
+	return res, err
 }
 
 func (s *store) deleteUserPreferences(ctx context.Context, widgetID string) error {
@@ -327,13 +483,24 @@ func (s *store) deleteFilters(ctx context.Context, widgetID string) error {
 	return err
 }
 
-func transformEditRequestToModel(request EditRequest) view.Widget {
+func transformEditRequestToModel(r EditRequest) view.Widget {
 	return view.Widget{
-		Tab:            request.Tab,
-		Title:          request.Title,
-		Type:           request.Type,
-		GridParameters: request.GridParameters,
-		Parameters:     request.Parameters,
-		Author:         request.Author,
+		Tab:            r.Tab,
+		Title:          r.Title,
+		Type:           r.Type,
+		GridParameters: r.GridParameters,
+		Parameters:     r.Parameters,
+		Author:         r.Author,
+	}
+}
+
+func transformFilterRequestToModel(r FilterRequest) view.WidgetFilter {
+	return view.WidgetFilter{
+		Title:                  r.Title,
+		IsPrivate:              false,
+		AlarmPatternFields:     r.AlarmPatternFieldsRequest.ToModel(),
+		EntityPatternFields:    r.EntityPatternFieldsRequest.ToModel(),
+		PbehaviorPatternFields: r.PbehaviorPatternFieldsRequest.ToModel(),
+		WeatherServicePattern:  r.WeatherServicePattern,
 	}
 }

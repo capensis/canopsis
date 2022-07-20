@@ -1,18 +1,21 @@
-instruction_mod_stats:
-  mod_stats (template):
-    _id: <UUID()>
-    date: <NowUnix()>
-    avg_complete_time: 0
-    execution_count: 0
-    init_critical: 0
-    init_major: 0
-    init_minor: 0
-    res_critical: 0
-    res_major: 0
-    res_minor: 0
+template:
+  - &mod_stats {
+    _id: <UUID()>,
+    date: <NowUnix()>,
+    avg_complete_time: 0,
+    execution_count: 0,
+    init_critical: 0,
+    init_major: 0,
+    init_minor: 0,
+    res_critical: 0,
+    res_major: 0,
+    res_minor: 0,
     res_ok: 0
+  }
 
-  instruction_mod_stats_to_stats_summary_get_1_1 (extend mod_stats):
+instruction_mod_stats:
+  instruction_mod_stats_to_stats_summary_get_1_1:
+    <<: *mod_stats
     instruction: test-instruction-to-stats-summary-get-1
     date: 1596712203
     avg_complete_time: 400
@@ -24,7 +27,8 @@ instruction_mod_stats:
     res_major: 2
     res_minor: 3
 
-  instruction_mod_stats_to_stats_summary_get_1_2 (extend mod_stats):
+  instruction_mod_stats_to_stats_summary_get_1_2:
+    <<: *mod_stats
     instruction: test-instruction-to-stats-summary-get-1
     date: 1596712303
     avg_complete_time: 400
@@ -32,7 +36,8 @@ instruction_mod_stats:
     init_critical: 1
     res_ok: 1
 
-  instruction_mod_stats_to_stats_summary_get_2_1 (extend mod_stats):
+  instruction_mod_stats_to_stats_summary_get_2_1:
+    <<: *mod_stats
     instruction: test-instruction-to-stats-summary-get-2
     date: 1596712203
     avg_complete_time: 400
@@ -44,7 +49,8 @@ instruction_mod_stats:
     res_major: 2
     res_minor: 3
 
-  instruction_mod_stats_to_stats_summary_get_2_2 (extend mod_stats):
+  instruction_mod_stats_to_stats_summary_get_2_2:
+    <<: *mod_stats
     instruction: test-instruction-to-stats-summary-get-2
     date: 1596712303
     avg_complete_time: 400
@@ -52,7 +58,8 @@ instruction_mod_stats:
     init_critical: 1
     res_ok: 1
 
-  instruction_mod_stats_to_stats_changes_get_1_1 (extend mod_stats):
+  instruction_mod_stats_to_stats_changes_get_1_1:
+    <<: *mod_stats
     instruction: test-instruction-to-stats-changes-get-1
     date: 1596712203
     avg_complete_time: 400
@@ -60,7 +67,8 @@ instruction_mod_stats:
     init_critical: 1
     res_critical: 1
 
-  instruction_mod_stats_to_stats_changes_get_1_2 (extend mod_stats):
+  instruction_mod_stats_to_stats_changes_get_1_2:
+    <<: *mod_stats
     instruction: test-instruction-to-stats-changes-get-1
     date: 1596712103
     avg_complete_time: 275
@@ -69,11 +77,13 @@ instruction_mod_stats:
     res_critical: 1
     res_ok: 1
 
-  instruction_mod_stats_to_stats_changes_get_1_3 (extend mod_stats):
+  instruction_mod_stats_to_stats_changes_get_1_3:
+    <<: *mod_stats
     instruction: test-instruction-to-stats-changes-get-1
     date: 1596712003
 
-  instruction_mod_stats_to_stats_changes_get_2_1 (extend mod_stats):
+  instruction_mod_stats_to_stats_changes_get_2_1:
+    <<: *mod_stats
     instruction: test-instruction-to-stats-changes-get-2
     date: 1596712203
     avg_complete_time: 400
@@ -81,7 +91,8 @@ instruction_mod_stats:
     init_critical: 1
     res_critical: 1
 
-  instruction_mod_stats_to_stats_changes_get_2_2 (extend mod_stats):
+  instruction_mod_stats_to_stats_changes_get_2_2:
+    <<: *mod_stats
     instruction: test-instruction-to-stats-changes-get-2
     date: 1596712103
     avg_complete_time: 275
@@ -90,58 +101,72 @@ instruction_mod_stats:
     res_critical: 1
     res_ok: 1
 
-  instruction_mod_stats_to_stats_changes_get_2_3 (extend mod_stats):
+  instruction_mod_stats_to_stats_changes_get_2_3:
+    <<: *mod_stats
     instruction: test-instruction-to-stats-changes-get-2
     date: 1596712003
 
-  instruction_mod_stats_to_stats_changes_get_3 (extend mod_stats):
+  instruction_mod_stats_to_stats_changes_get_3:
+    <<: *mod_stats
     instruction: test-instruction-to-stats-changes-get-3
     date: 1596712203
 
-  instruction_mod_stats_to_stats_executions_get_1 (extend mod_stats):
+  instruction_mod_stats_to_stats_executions_get_1:
+    <<: *mod_stats
     instruction: test-instruction-to-stats-executions-get-1
     date: 1596712203
 
-  instruction_mod_stats_to_stats_executions_get_2 (extend mod_stats):
+  instruction_mod_stats_to_stats_executions_get_2:
+    <<: *mod_stats
     instruction: test-instruction-to-stats-executions-get-2
     date: 1596712203
 
-  instruction_mod_stats_to_run_auto_instruction_1_1 (extend mod_stats):
+  instruction_mod_stats_to_run_auto_instruction_1_1:
+    <<: *mod_stats
     instruction: test-instruction-to-run-auto-instruction-1-1
     date: 1596712203
 
-  instruction_mod_stats_to_run_auto_instruction_1_2 (extend mod_stats):
+  instruction_mod_stats_to_run_auto_instruction_1_2:
+    <<: *mod_stats
     instruction: test-instruction-to-run-auto-instruction-1-2
     date: 1596712203
 
-  instruction_mod_stats_to_run_auto_instruction_2_1 (extend mod_stats):
+  instruction_mod_stats_to_run_auto_instruction_2_1:
+    <<: *mod_stats
     instruction: test-instruction-to-run-auto-instruction-2-1
     date: 1596712203
 
-  instruction_mod_stats_to_run_auto_instruction_2_2 (extend mod_stats):
+  instruction_mod_stats_to_run_auto_instruction_2_2:
+    <<: *mod_stats
     instruction: test-instruction-to-run-auto-instruction-2-2
     date: 1596712203
 
-  instruction_mod_stats_to_run_auto_instruction_3_1 (extend mod_stats):
+  instruction_mod_stats_to_run_auto_instruction_3_1:
+    <<: *mod_stats
     instruction: test-instruction-to-run-auto-instruction-3-1
     date: 1596712203
 
-  instruction_mod_stats_to_run_auto_instruction_3_2 (extend mod_stats):
+  instruction_mod_stats_to_run_auto_instruction_3_2:
+    <<: *mod_stats
     instruction: test-instruction-to-run-auto-instruction-3-2
     date: 1596712203
 
-  instruction_mod_stats_to_run_auto_instruction_4_1 (extend mod_stats):
+  instruction_mod_stats_to_run_auto_instruction_4_1:
+    <<: *mod_stats
     instruction: test-instruction-to-run-auto-instruction-4-1
     date: 1596712203
 
-  instruction_mod_stats_to_run_auto_instruction_4_2 (extend mod_stats):
+  instruction_mod_stats_to_run_auto_instruction_4_2:
+    <<: *mod_stats
     instruction: test-instruction-to-run-auto-instruction-4-2
     date: 1596712203
 
-  instruction_mod_stats_to_run_auto_instruction_4_3 (extend mod_stats):
+  instruction_mod_stats_to_run_auto_instruction_4_3:
+    <<: *mod_stats
     instruction: test-instruction-to-run-auto-instruction-4-3
     date: 1596712203
 
-  instruction_mod_stats_to_run_auto_instruction_5 (extend mod_stats):
+  instruction_mod_stats_to_run_auto_instruction_5:
+    <<: *mod_stats
     instruction: test-instruction-to-run-auto-instruction-5
     date: 1596712203

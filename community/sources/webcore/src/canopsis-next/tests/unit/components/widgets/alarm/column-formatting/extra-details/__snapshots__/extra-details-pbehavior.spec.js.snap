@@ -11,7 +11,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -44,7 +44,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
         common.reason: pbehavior-reason-name
       </div>
       <div>
-        07/12/2013 9:13:20 - 07/12/2013 12:00:00
+        07/12/2013 3:13:20 - 07/12/2013 6:00:00
       </div>
       <div>
         rrule
@@ -84,7 +84,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text material-icons theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text material-icons theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -115,7 +115,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
         common.reason: pbehavior-reason-name
       </div>
       <div>
-        07/08/2013 21:13:20 - 08/08/2013 0:00:00
+        07/08/2013 16:13:20 - 07/08/2013 19:00:00
       </div>
       <div>
         rrule
@@ -155,7 +155,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -188,7 +188,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
         common.reason: pbehavior-reason-name
       </div>
       <div>
-        07/12/2013 9:13:20 - 07/12/2013 12:00:00
+        07/12/2013 3:13:20 - 07/12/2013 6:00:00
       </div>
       <div>
         rrule
@@ -212,7 +212,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -243,7 +243,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
       </div>
       <!---->
       <div>
-        07/12/2013 9:13:20 - 07/12/2013 12:00:00
+        07/12/2013 3:13:20 - 07/12/2013 6:00:00
       </div>
       <div>
         rrule
@@ -283,7 +283,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -316,7 +316,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
         common.reason: pbehavior-reason-name
       </div>
       <div>
-        07/12/2013 9:13:20 - 07/12/2013 12:00:00
+        07/12/2013 3:13:20 - 07/12/2013 6:00:00
       </div>
       <!---->
       <div>
@@ -354,7 +354,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -387,7 +387,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
         common.reason: pbehavior-reason-name
       </div>
       <div>
-        07/12/2013 9:13:20
+        07/12/2013 3:13:20
         <!---->
       </div>
       <div>

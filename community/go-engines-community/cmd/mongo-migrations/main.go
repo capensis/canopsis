@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/migration/cli"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -16,6 +17,15 @@ import (
 const helpFlag = "-h"
 
 func main() {
+	var version bool
+	flag.BoolVar(&version, "version", false, "Show the version information")
+	flag.Parse()
+
+	if version {
+		canopsis.PrintVersionInfo()
+		return
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	logger := log.NewLogger(false)

@@ -4,13 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	redismod "github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
-	amqpmod "github.com/streadway/amqp"
 )
 
 // DependencyMaker is just a handling struct and can be initialized empty.
@@ -44,22 +43,15 @@ func (m DependencyMaker) DepConfig(ctx context.Context, dbClient mongo.DbClient)
 	return cfg
 }
 
-// DepAmqpSession opens an amqp session.
-func (m DependencyMaker) DepAmqpSession() *amqpmod.Connection {
-	s, err := amqp.NewSession()
-	Panic("amqp session", err)
-	return s
-}
-
 // DepAmqpConnection opens an amqp session.
-func (m DependencyMaker) DepAmqpConnection(logger zerolog.Logger, cfg config.CanopsisConf) amqp.Connection {
-	c, err := amqp.NewConnection(logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+func (m DependencyMaker) DepAmqpConnection(logger zerolog.Logger, cfg config.CanopsisConf) libamqp.Connection {
+	c, err := libamqp.NewConnection(logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	Panic("amqp session", err)
 	return c
 }
 
 // DepAMQPChannelSub opens a channel from a given session, and apply Qos on it.
-func (m DependencyMaker) DepAMQPChannelSub(session amqp.Connection, prefetchCount, prefetchSize int) amqp.Channel {
+func (m DependencyMaker) DepAMQPChannelSub(session libamqp.Connection, prefetchCount, prefetchSize int) libamqp.Channel {
 	channel, err := session.Channel()
 	Panic("amqp consume channel", err)
 
@@ -70,7 +62,7 @@ func (m DependencyMaker) DepAMQPChannelSub(session amqp.Connection, prefetchCoun
 }
 
 // DepAMQPChannelPub opens a channel from a given session, to be used for publishing messages.
-func (m DependencyMaker) DepAMQPChannelPub(session amqp.Connection) amqp.Channel {
+func (m DependencyMaker) DepAMQPChannelPub(session libamqp.Connection) libamqp.Channel {
 	channel, err := session.Channel()
 	Panic("amqp publish channel", err)
 	return channel

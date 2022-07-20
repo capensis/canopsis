@@ -1,11 +1,10 @@
 package action
 
 import (
-	"encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
 
 const (
@@ -41,55 +40,58 @@ func (s Scenario) IsTriggered(triggers []string) bool {
 
 // Action represents a canopsis Action on alarms.
 type Action struct {
-	Type                     string                    `bson:"type" json:"type"`
-	Comment                  string                    `bson:"comment" json:"comment"`
-	Parameters               map[string]interface{}    `bson:"parameters,omitempty" json:"parameters,omitempty"` // parameters for the action
-	AlarmPatterns            pattern.AlarmPatternList  `bson:"alarm_patterns" json:"alarm_patterns"`
-	EntityPatterns           pattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
-	DropScenarioIfNotMatched bool                      `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
-	EmitTrigger              bool                      `bson:"emit_trigger" json:"emit_trigger"`
+	Type                     string                       `bson:"type" json:"type"`
+	Comment                  string                       `bson:"comment" json:"comment"`
+	Parameters               Parameters                   `bson:"parameters,omitempty" json:"parameters,omitempty"`
+	OldAlarmPatterns         oldpattern.AlarmPatternList  `bson:"old_alarm_patterns,omitempty" json:"old_alarm_patterns,omitempty"`
+	OldEntityPatterns        oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
+	DropScenarioIfNotMatched bool                         `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
+	EmitTrigger              bool                         `bson:"emit_trigger" json:"emit_trigger"`
+
+	savedpattern.EntityPatternFields `bson:",inline"`
+	savedpattern.AlarmPatternFields  `bson:",inline"`
 }
 
-func (a *Action) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
-	type Alias Action
-	var tmp Alias
-
-	err := bson.Unmarshal(b, &tmp)
-	if err != nil {
-		return err
-	}
-
-	*a = Action(tmp)
-	a.Parameters = bsonDtoMap(a.Parameters).(map[string]interface{})
-
-	return nil
+func (a Action) Match(entity types.Entity, alarm types.Alarm) (bool, error) {
+	return pattern.Match(entity, alarm, a.EntityPattern, a.AlarmPattern, a.OldEntityPatterns, a.OldAlarmPatterns)
 }
 
-func (a *Action) UnmarshalJSON(b []byte) error {
-	type Alias Action
-	var tmp Alias
+type Parameters struct {
+	Output string `json:"output" bson:"output,omitempty" binding:"max=255"`
 
-	err := json.Unmarshal(b, &tmp)
-	if err != nil {
-		return err
-	}
+	ForwardAuthor *bool  `json:"forward_author" bson:"forward_author,omitempty"`
+	Author        string `json:"author" bson:"author,omitempty"`
 
-	*a = Action(tmp)
-
-	return nil
-}
-
-func bsonDtoMap(i interface{}) interface{} {
-	if b, ok := i.(bson.D); ok {
-		m := b.Map()
-		for k := range m {
-			if b, ok := m[k].(bson.D); ok {
-				m[k] = bsonDtoMap(b)
-			}
-		}
-
-		return m
-	}
-
-	return i
+	// State is used in changestate action.
+	//   * `0` - Info
+	//   * `1` - Minor
+	//   * `2` - Major
+	//   * `3` - Critical
+	State *types.CpsNumber `json:"state" bson:"state,omitempty"`
+	// Ticket is used in assocticket action.
+	Ticket string `json:"ticket" binding:"max=255" bson:"ticket,omitempty"`
+	// Duration is used in snooze and pbehavior actions.
+	Duration *types.DurationWithUnit `json:"duration" bson:"duration,omitempty"`
+	// Name is used in pbehavior action.
+	Name string `json:"name" binding:"max=255" bson:"name,omitempty"`
+	// Reason is used in pbehavior action.
+	Reason string `json:"reason" bson:"reason,omitempty"`
+	// Type is used in pbehavior action.
+	Type string `json:"type" bson:"type,omitempty"`
+	// RRule is used in pbehavior action.
+	RRule string `json:"rrule" bson:"rrule,omitempty"`
+	// Tstart is used in pbehavior action.
+	Tstart *types.CpsTime `json:"tstart" bson:"tstart,omitempty" swaggertype:"integer"`
+	// Tstop is used in pbehavior action.
+	Tstop *types.CpsTime `json:"tstop" bson:"tstop,omitempty" swaggertype:"integer"`
+	// StartOnTrigger is used in pbehavior action.
+	StartOnTrigger *bool `json:"start_on_trigger" bson:"start_on_trigger,omitempty"`
+	// Request is used in webhook action.
+	Request *types.WebhookRequest `json:"request" bson:"request,omitempty"`
+	// DeclareTicket is used in webhook action.
+	DeclareTicket *types.WebhookDeclareTicket `json:"declare_ticket" bson:"declare_ticket,omitempty"`
+	// RetryCount is used in webhook action.
+	RetryCount int64 `json:"retry_count" bson:"retry_count,omitempty" binding:"min=0"`
+	// RetryDelay is used in webhook action.
+	RetryDelay *types.DurationWithUnit `json:"retry_delay" bson:"retry_delay,omitempty"`
 }

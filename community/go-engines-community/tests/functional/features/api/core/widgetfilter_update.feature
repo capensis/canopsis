@@ -152,6 +152,71 @@ Feature: Update a widget filter
     }
     """
 
+  Scenario: given update request for a filter with an old mongo query should return ok
+    When I am admin
+    When I do PUT /api/v4/widget-filters/test-widgetfilter-to-update-6:
+    """json
+    {
+      "title": "test-widgetfilter-to-update-6-title",
+      "widget": "test-widget-to-filter-edit",
+      "is_private": false
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "title": "test-widgetfilter-to-update-6-title",
+      "is_private": false,
+      "created": 1605263992,
+      "old_mongo_query": {
+        "name": "test-widgetfilter-to-update-6-pattern"
+      }
+    }
+    """
+    When I do PUT /api/v4/widget-filters/test-widgetfilter-to-update-6:
+    """json
+    {
+      "title": "test-widgetfilter-to-update-6-title",
+      "widget": "test-widget-to-filter-edit",
+      "is_private": false,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-update-6-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "title": "test-widgetfilter-to-update-6-title",
+      "is_private": false,
+      "created": 1605263992,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-update-6-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response key "old_mongo_query" should not exist
+
   Scenario: given update request and no auth user should not allow access
     When I do PUT /api/v4/widget-filters/test-widgetfilter-not-exist
     Then the response code should be 401
@@ -312,7 +377,8 @@ Feature: Update a widget filter
         "entity_pattern": "EntityPattern is missing.",
         "corporate_entity_pattern": "CorporateEntityPattern is missing.",
         "pbehavior_pattern": "PbehaviorPattern is missing.",
-        "corporate_pbehavior_pattern": "CorporatePbehaviorPattern is missing."
+        "corporate_pbehavior_pattern": "CorporatePbehaviorPattern is missing.",
+        "weather_service_pattern": "WeatherServicePattern is missing."
       }
     }
     """

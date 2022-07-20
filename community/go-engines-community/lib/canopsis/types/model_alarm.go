@@ -77,10 +77,9 @@ const (
 	// AlarmStepInstructionAbort are used for manual and auto instruction execution.
 	AlarmStepInstructionAbort = "instructionabort"
 	// Following alarm steps are used for manual instruction execution.
-	AlarmStepAutoInstructionStart          = "autoinstructionstart"
-	AlarmStepAutoInstructionComplete       = "autoinstructioncomplete"
-	AlarmStepAutoInstructionFail           = "autoinstructionfail"
-	AlarmStepAutoInstructionAlreadyRunning = "autoinstructionalreadyrunning"
+	AlarmStepAutoInstructionStart    = "autoinstructionstart"
+	AlarmStepAutoInstructionComplete = "autoinstructioncomplete"
+	AlarmStepAutoInstructionFail     = "autoinstructionfail"
 	// Following alarm steps are used for job execution.
 	AlarmStepInstructionJobStart    = "instructionjobstart"
 	AlarmStepInstructionJobComplete = "instructionjobcomplete"
