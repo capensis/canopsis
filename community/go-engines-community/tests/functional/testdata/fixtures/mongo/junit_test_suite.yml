@@ -6,8 +6,10 @@ junit_test_suite:
     errors: 1
     failures: 0
     filepath: D:\junit\10.edit-mode-advanced-settings.xml
+    filename: 10.edit-mode-advanced-settings.xml
     hostname: ""
     name: 05-widget.alarms-list.10.edit-mode-advanced-settings
+    entity_id: 05-widget.alarms-list.10.edit-mode-advanced-settings.10.edit-mode-advanced-settings.xml
     package: alarms-list
     skipped: 15
     state: 2
@@ -72,8 +74,10 @@ junit_test_suite:
     errors: 1
     failures: 0
     filepath: D:\junit\TEST-noveo.app.PublishMissionTest.xml
+    filename: TEST-noveo.app.PublishMissionTest.xml
     hostname: ""
     name: noveo.app.PublishMissionTest
+    entity_id: noveo.app.PublishMissionTest.TEST-noveo.app.PublishMissionTest.xml
     package: ""
     skipped: 0
     state: 2
@@ -99,6 +103,7 @@ junit_test_suite:
     filepath: D:\junit\TEST-noveo.app.PublishMissionTest.xml
     hostname: noveo.app.PublishMissionTest-hostname
     name: noveo.app.PublishMissionTest
+    entity_id: noveo.app.PublishMissionTest.noveo.app.PublishMissionTest-filename
     package: ""
     skipped: 1
     state: 1
@@ -121,8 +126,10 @@ junit_test_suite:
     errors: 0
     failures: 1
     filepath: D:\junit\TEST-noveo.app.PublishMissionTest.xml
+    filename: TEST-noveo.app.PublishMissionTest.xml
     hostname: ""
     name: noveo.app.PublishMissionTest
+    entity_id: noveo.app.PublishMissionTest.TEST-noveo.app.PublishMissionTest.xml
     package: ""
     skipped: 0
     state: 3
@@ -145,8 +152,10 @@ junit_test_suite:
     errors: 0
     failures: 0
     filepath: D:\junit\TEST-noveo.app.LoginTest.xml
+    filename: TEST-noveo.app.LoginTest.xml
     hostname: ""
     name: noveo.app.LoginTest
+    entity_id: noveo.app.LoginTest.TEST-noveo.app.LoginTest.xml
     package: ""
     skipped: 0
     state: 0
@@ -172,7 +181,9 @@ junit_test_suite:
     errors: 1
     failures: 1
     filepath: test-suite-to-get-gantt-1.xml
+    filename: test-suite-to-get-gantt-1.xml
     name: test-suite-to-get-gantt-1-name
+    entity_id: test-suite-to-get-gantt-1-name.test-suite-to-get-gantt-1.xml
     skipped: 1
     state: 3
     system_err: ""
@@ -312,8 +323,10 @@ junit_test_suite:
     errors: 1
     failures: 1
     filepath: test-suite-to-get-gantt-1.xml
+    filename: test-suite-to-get-gantt-1.xml
     hostname: ""
     name: test-suite-to-get-gantt-1-name
+    entity_id: test-suite-to-get-gantt-1-name.test-suite-to-get-gantt-1.xml
     package: alarms-list
     skipped: 2
     state: 3
@@ -451,8 +464,10 @@ junit_test_suite:
     errors: 1
     failures: 1
     filepath: test-suite-to-get-gantt-1.xml
+    filename: test-suite-to-get-gantt-1.xml
     hostname: ""
     name: test-suite-to-get-gantt-1-name
+    entity_id: test-suite-to-get-gantt-1-name.test-suite-to-get-gantt-1.xml
     package: alarms-list
     skipped: 1
     state: 3
@@ -590,7 +605,9 @@ junit_test_suite:
     errors: 1
     failures: 1
     filepath: test-suite-to-get-details-1.xml
+    filename: test-suite-to-get-details-1.xml
     name: test-suite-to-get-details-1-name
+    entity_id: test-suite-to-get-details-1-name.test-suite-to-get-details-1.xml
     skipped: 1
     state: 3
     system_err: ""
@@ -737,8 +754,10 @@ junit_test_suite:
     errors: 0
     failures: 0
     filepath: D:\junit\11.edit-mode-advanced-settings.xml
+    filename: 11.edit-mode-advanced-settings.xml
     hostname: ""
     name: 05-widget.alarms-list.10.edit-mode-advanced-settings
+    entity_id: 05-widget.alarms-list.10.edit-mode-advanced-settings.11.edit-mode-advanced-settings.xml
     package: alarms-list
     skipped: 0
     state: 0
@@ -836,8 +855,10 @@ junit_test_suite:
     errors: 0
     failures: 0
     filepath: test-suite-to-edit-widget-junit-dir-param-filepath
+    filename: test-suite-to-edit-widget-junit-dir-param-filepath
     hostname: ""
     name: test-suite-to-edit-widget-junit-dir-param-name
+    entity_id: test-suite-to-edit-widget-junit-dir-param-name.test-suite-to-edit-widget-junit-dir-param-filepath
     package: ""
     skipped: 0
     state: 0

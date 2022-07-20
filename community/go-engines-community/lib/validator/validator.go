@@ -84,6 +84,24 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("gte", fe.Field(), fe.Param())
 		return t
 	})
+	_ = v.RegisterTranslation("ltfield", trans, func(ut ut.Translator) error {
+		return ut.Add("ltfield", "{0} should be less than {1}.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("ltfield", fe.StructField(), fe.Param())
+		return t
+	})
+	_ = v.RegisterTranslation("ltefield", trans, func(ut ut.Translator) error {
+		return ut.Add("ltefield", "{0} should be less or equal than {1}.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("ltefield", fe.StructField(), fe.Param())
+		return t
+	})
+	_ = v.RegisterTranslation("lt", trans, func(ut ut.Translator) error {
+		return ut.Add("lt", "{0} should be less than {1}.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("lt", fe.Field(), fe.Param())
+		return t
+	})
 	_ = v.RegisterTranslation("lte", trans, func(ut ut.Translator) error {
 		return ut.Add("lte", "{0} should be less or equal than {1}.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -148,18 +166,6 @@ func RegisterTranslations(v *validator.Validate) {
 		return ut.Add("entityfilter", "{0} is invalid entity filter.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("entityfilter", fe.StructField())
-		return t
-	})
-	_ = v.RegisterTranslation("eventfilter_patterns_invalid", trans, func(ut ut.Translator) error {
-		return ut.Add("eventfilter_patterns_invalid", "Invalid eventfilter pattern list.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("eventfilter_patterns_invalid", fe.StructField())
-		return t
-	})
-	_ = v.RegisterTranslation("eventfilter_invalid_onsuccess", trans, func(ut ut.Translator) error {
-		return ut.Add("eventfilter_invalid_onsuccess", "Invalid OnSuccess value.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("eventfilter_invalid_onsuccess", fe.StructField())
 		return t
 	})
 	_ = v.RegisterTranslation("url", trans, func(ut ut.Translator) error {
@@ -264,6 +270,12 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("regexp", fe.StructField())
 		return t
 	})
+	_ = v.RegisterTranslation("event_pattern", trans, func(ut ut.Translator) error {
+		return ut.Add("event_pattern", "{0} is invalid event pattern.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("event_pattern", fe.StructField())
+		return t
+	})
 	_ = v.RegisterTranslation("alarm_pattern", trans, func(ut ut.Translator) error {
 		return ut.Add("alarm_pattern", "{0} is invalid alarm pattern.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -280,6 +292,12 @@ func RegisterTranslations(v *validator.Validate) {
 		return ut.Add("pbehavior_pattern", "{0} is invalid pbehavior pattern.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("pbehavior_pattern", fe.StructField())
+		return t
+	})
+	_ = v.RegisterTranslation("weather_service_pattern", trans, func(ut ut.Translator) error {
+		return ut.Add("weather_service_pattern", "{0} is invalid weather service pattern.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("weather_service_pattern", fe.StructField())
 		return t
 	})
 }

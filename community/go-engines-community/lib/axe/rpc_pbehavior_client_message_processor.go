@@ -15,8 +15,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 	"strings"
 	"time"
 )
@@ -53,6 +53,8 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 
 		return p.publishResult(routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("invalid event")))
 	}
+
+	alarmChangeType := types.AlarmChangeTypeNone
 
 	if event.PbhEvent.EventType != "" {
 		var updatedServiceInfos map[string]statecounters.UpdatedServicesInfo
@@ -91,8 +93,8 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 				ctx,
 				types.Operation{
 					Type: event.PbhEvent.EventType,
-					Parameters: types.OperationPbhParameters{
-						PbehaviorInfo: event.PbhEvent.PbehaviorInfo,
+					Parameters: types.OperationParameters{
+						PbehaviorInfo: &event.PbhEvent.PbehaviorInfo,
 						Author:        event.PbhEvent.Author,
 						Output:        event.PbhEvent.Output,
 					},
@@ -115,7 +117,6 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 			updatedServiceInfos, err = p.StateCountersService.UpdateServiceCounters(tCtx, *event.Entity, event.Alarm, alarmChange)
 			return err
 		})
-
 		if err != nil {
 			if engine.IsConnectionError(err) {
 				return err
@@ -151,7 +152,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 
 	replyEvent, err = p.getRpcEvent(types.RPCAxeResultEvent{
 		Alarm:           event.Alarm,
-		AlarmChangeType: types.AlarmChangeType(event.PbhEvent.EventType),
+		AlarmChangeType: alarmChangeType,
 		Error:           nil,
 	})
 	if err != nil {

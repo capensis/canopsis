@@ -13,10 +13,17 @@ Feature: Get an eventfilter
       "author": "root",
       "description": "how it should have ended.",
       "type": "enrichment",
-      "patterns": [
-        {
-          "resource": "test-eventfilter-to-get-1-pattern"
-        }
+      "old_patterns": null,
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-to-get-1-pattern"
+            }
+          }
+        ]
       ],
       "priority": 0,
       "enabled": true,
@@ -54,10 +61,17 @@ Feature: Get an eventfilter
           "author": "root",
           "description": "how it should have ended.",
           "type": "enrichment",
-          "patterns": [
-            {
-              "resource": "test-eventfilter-to-get-1-pattern"
-            }
+          "old_patterns": null,
+          "event_pattern": [
+            [
+              {
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-get-1-pattern"
+                }
+              }
+            ]
           ],
           "config": {
             "actions": [
@@ -85,10 +99,17 @@ Feature: Get an eventfilter
           "author": "root",
           "description": "drop filter",
           "type": "drop",
-          "patterns": [
-            {
-              "resource": "test-eventfilter-to-get-2-pattern"
-            }
+          "old_patterns": null,
+          "event_pattern": [
+            [
+              {
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-get-2-pattern"
+                }
+              }
+            ]
           ],
           "priority": 1,
           "config": {},
@@ -101,10 +122,17 @@ Feature: Get an eventfilter
           "author": "root",
           "description": "break filter",
           "type": "break",
-          "patterns": [
-            {
-              "resource": "test-eventfilter-to-get-3-pattern"
-            }
+          "old_patterns": null,
+          "event_pattern": [
+            [
+              {
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-get-3-pattern"
+                }
+              }
+            ]
           ],
           "priority": 2,
           "config": {},
@@ -148,5 +176,43 @@ Feature: Get an eventfilter
     """
     {
       "error": "Not found"
+    }
+    """
+
+  Scenario: given search request should return an eventfilter with old patterns
+    When I am admin
+    When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-backward-compatibility-to-get
+    Then the response code should be 200
+    Then the response body should be:
+    """
+    {
+      "_id": "test-eventfilter-to-backward-compatibility-to-get",
+      "author": "root",
+      "description": "how it should have ended.",
+      "type": "enrichment",
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "customer",
+            "description": "customer",
+            "value": "test"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "event_pattern": null,
+      "old_patterns": [
+        {
+          "resource": {
+            "regex_match": "test-eventfilter-to-backward-compatibility-to-get"
+          }
+        }
+      ],
+      "created": 1608284568,
+      "updated": 1608285370
     }
     """

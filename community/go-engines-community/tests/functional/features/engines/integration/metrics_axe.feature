@@ -3,14 +3,20 @@ Feature: Metrics should be added on alarm changes
 
   Scenario: given new alarm should add created_alarms metric
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-axe-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-axe-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-axe-1"
+            }
+          }
+        ]
       ]
     }
     """
@@ -48,17 +54,23 @@ Feature: Metrics should be added on alarm changes
 
   Scenario: given new alarm with auto instruction should add instruction_alarms and non_displayed_alarms metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-axe-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-axe-2-1"
-        },
-        {
-          "name": "test-resource-metrics-axe-2-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-metrics-axe-2-1",
+                "test-resource-metrics-axe-2-2"
+              ]
+            }
+          }
+        ]
       ]
     }
     """
@@ -87,22 +99,24 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-metrics-axe-2-1"}]}&with_steps=true until response code is 200 and body contains:
+    When I wait the end of 4 events processing
+    When I do GET /api/v4/alarms?search=test-resource-metrics-axe-2-1&with_instructions=true until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "v": {
-            "steps": [
-              {},
-              {},
-              {"_t": "autoinstructionstart"},
-              {"_t": "instructionjobstart"},
-              {"_t": "instructionjobcomplete"},
-              {"_t": "autoinstructioncomplete"}
-            ]
-          }
+          "is_all_auto_instructions_completed": true
+        }
+      ]
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-resource-metrics-axe-2-2&with_instructions=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_all_auto_instructions_completed": true
         }
       ]
     }
@@ -137,14 +151,20 @@ Feature: Metrics should be added on alarm changes
 
   Scenario: given new alarm under pbehavior should add pbehavior_alarms and non_displayed_alarms metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-axe-3-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-axe-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-axe-3"
+            }
+          }
+        ]
       ]
     }
     """
@@ -170,15 +190,20 @@ Feature: Metrics should be added on alarm changes
       "name": "test-pbehavior-metrics-axe-3",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-metrics-axe-3"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-axe-3"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -224,14 +249,20 @@ Feature: Metrics should be added on alarm changes
 
   Scenario: given new alarm and new meta alarm should add correlation_alarms and non_displayed_alarms metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-axe-4-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-axe-4"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-axe-4"
+            }
+          }
+        ]
       ]
     }
     """
@@ -250,10 +281,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of 3 events processing
-    When I wait 1s
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -281,17 +309,23 @@ Feature: Metrics should be added on alarm changes
 
   Scenario: given new alarm and existed meta alarm should add correlation_alarms and non_displayed_alarms metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-axe-5-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-axe-5-1"
-        },
-        {
-          "name": "test-resource-metrics-axe-5-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-metrics-axe-5-1",
+                "test-resource-metrics-axe-5-2"
+              ]
+            }
+          }
+        ]
       ]
     }
     """
@@ -351,14 +385,20 @@ Feature: Metrics should be added on alarm changes
 
   Scenario: given acked alarm should add ack_alarms and average_ack metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-axe-6-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-axe-6"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-axe-6"
+            }
+          }
+        ]
       ]
     }
     """
@@ -407,14 +447,14 @@ Feature: Metrics should be added on alarm changes
           "title": "average_ack",
           "data": [
             {
-              "timestamp": {{ nowDate }},
-              "value": 1
+              "timestamp": {{ nowDate }}
             }
           ]
         }
       ]
     }
     """
+    Then the response key "data.1.data.0.value" should be greater or equal than 1
     When I send an event:
     """json
     {
@@ -457,25 +497,31 @@ Feature: Metrics should be added on alarm changes
           "title": "average_ack",
           "data": [
             {
-              "timestamp": {{ nowDate }},
-              "value": 1
+              "timestamp": {{ nowDate }}
             }
           ]
         }
       ]
     }
     """
+    Then the response key "data.1.data.0.value" should be greater or equal than 1
 
   Scenario: given unacked alarm should add cancel_ack_alarms and ack_active_alarms metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-axe-7-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-axe-7"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-axe-7"
+            }
+          }
+        ]
       ]
     }
     """
@@ -583,17 +629,23 @@ Feature: Metrics should be added on alarm changes
 
   Scenario: given alarm with ticket should add ticket_active_alarms and without_ticket_active_alarms metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-axe-8-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-axe-8-1"
-        },
-        {
-          "name": "test-resource-metrics-axe-8-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-metrics-axe-8-1",
+                "test-resource-metrics-axe-8-2"
+              ]
+            }
+          }
+        ]
       ]
     }
     """
@@ -642,17 +694,14 @@ Feature: Metrics should be added on alarm changes
       "connector" : "test-connector-metrics-axe-8",
       "connector_name" : "test-connector-name-metrics-axe-8",
       "source_type" : "resource",
-      "event_type" : "assocticket2",
+      "event_type" : "assocticket",
       "component" : "test-component-metrics-axe-8",
       "resource" : "test-resource-metrics-axe-8-1",
       "ticket": "testticket"
     }
     """
     When I wait the end of event processing
-    When I wait 1s
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ticket_active_alarms&parameters[]=without_ticket_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ticket_active_alarms&parameters[]=without_ticket_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -680,14 +729,20 @@ Feature: Metrics should be added on alarm changes
 
   Scenario: given resolved alarm should add average_resolve metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-axe-9-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-axe-9"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-axe-9"
+            }
+          }
+        ]
       ]
     }
     """
@@ -739,25 +794,31 @@ Feature: Metrics should be added on alarm changes
           "title": "average_resolve",
           "data": [
             {
-              "timestamp": {{ nowDate }},
-              "value": 1
+              "timestamp": {{ nowDate }}
             }
           ]
         }
       ]
     }
     """
+    Then the response key "data.0.data.0.value" should be greater or equal than 1
 
   Scenario: given new alarm with auto instruction, meta alarm and pbehavior should add non_displayed_alarms metrics only once
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-axe-10-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-axe-10"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-axe-10"
+            }
+          }
+        ]
       ]
     }
     """
@@ -783,15 +844,20 @@ Feature: Metrics should be added on alarm changes
       "name": "test-pbehavior-metrics-axe-10",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-metrics-axe-10"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-axe-10"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -808,7 +874,7 @@ Feature: Metrics should be added on alarm changes
       "state" : 1
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=correlation_alarms&parameters[]=pbehavior_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
@@ -855,17 +921,23 @@ Feature: Metrics should be added on alarm changes
 
   Scenario: given resolved alarm should decrease active_alarms, ratio_correlation, ratio_instructions, ratio_tickets, ratio_non_displayed, ack_active_alarms metrics
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-axe-11-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-axe-11-1"
-        },
-        {
-          "name": "test-resource-metrics-axe-11-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-metrics-axe-11-1",
+                "test-resource-metrics-axe-11-2"
+              ]
+            }
+          }
+        ]
       ]
     }
     """
@@ -1192,23 +1264,25 @@ Feature: Metrics should be added on alarm changes
 
   Scenario: given alarm with ticket should add ticket_active_alarms and without_ticket_active_alarms metrics for user
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-axe-12-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-metrics-axe-12-1"
-        },
-        {
-          "name": "test-resource-metrics-axe-12-2"
-        },
-        {
-          "name": "test-resource-metrics-axe-12-3"
-        },
-        {
-          "name": "test-resource-metrics-axe-12-4"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-metrics-axe-12-1",
+                "test-resource-metrics-axe-12-2",
+                "test-resource-metrics-axe-12-3",
+                "test-resource-metrics-axe-12-4"
+              ]
+            }
+          }
+        ]
       ]
     }
     """
@@ -1288,15 +1362,123 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/rating?filter={{ .filterID }}&metric=ticket_active_alarms&criteria=3&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/rating?filter={{ .filterID }}&metric=ticket_active_alarms&criteria=3&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "label": "test-user-metrics-axe-12",
           "value": 1
+        }
+      ]
+    }
+    """
+
+  Scenario: given double acked alarm should affect metrics only one time
+    Given I am admin
+    When I do POST /api/v4/cat/kpi-filters:
+    """json
+    {
+      "name": "test-filter-metrics-axe-13-name",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-axe-13"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-13",
+      "connector_name" : "test-connector-name-metrics-axe-13",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-metrics-axe-13",
+      "resource" : "test-resource-metrics-axe-13",
+      "state" : 1
+    }
+    """
+    When I wait the end of event processing
+    When I wait 1s
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-13",
+      "connector_name" : "test-connector-name-metrics-axe-13",
+      "source_type" : "resource",
+      "event_type" : "ack",
+      "component" : "test-component-metrics-axe-13",
+      "resource" : "test-resource-metrics-axe-13"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "title": "ack_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "average_ack",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-13",
+      "connector_name" : "test-connector-name-metrics-axe-13",
+      "source_type" : "resource",
+      "event_type" : "ack",
+      "component" : "test-component-metrics-axe-13",
+      "resource" : "test-resource-metrics-axe-13"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "title": "ack_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "average_ack",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
         }
       ]
     }

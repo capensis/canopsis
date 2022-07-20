@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
@@ -19,20 +20,13 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/pgx"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/pelletier/go-toml"
+	"github.com/pelletier/go-toml/v2"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 const (
 	ErrGeneral    = 1
 	ErrRabbitInit = 2
-
-	DefaultCfgFile = "/opt/canopsis/etc/canopsis.toml"
-	FlagUsageConf  = "The configuration file used to initialize Canopsis."
-
-	DefaultMongoMigrationsPath    = "/opt/canopsis/share/database/migrations"
-	DefaultMongoFixturesPath      = "/opt/canopsis/share/database/fixtures"
-	DefaultPostgresMigrationsPath = "/opt/canopsis/share/database/postgres_migrations"
 )
 
 type Conf struct {
@@ -49,6 +43,11 @@ func main() {
 	f := flags{}
 	f.Parse()
 
+	if f.version {
+		canopsis.PrintVersionInfo()
+		return
+	}
+
 	logger := log.NewLogger(f.modeDebug)
 	data, err := ioutil.ReadFile(f.confFile)
 	if err != nil {
@@ -60,6 +59,12 @@ func main() {
 	if err := toml.Unmarshal(data, &conf); err != nil {
 		logger.Error().Err(err).Int("exit status", 2).Msg("")
 		os.Exit(2)
+	}
+
+	if f.overrideConfFile != "" {
+		if err := loadOverrideConfig(&conf, f.overrideConfFile); err != nil {
+			logger.Warn().Err(err).Msgf("skipped configuration overriding")
+		}
 	}
 
 	err = GracefullStart(ctx, logger)
@@ -161,12 +166,19 @@ func main() {
 	if len(collections) == 0 {
 		logger.Info().Msg("Start fixtures")
 		loader := fixtures.NewLoader(client, []string{f.mongoFixtureDirectory}, true,
-			fixtures.NewParser(password.NewSha1Encoder()), logger)
+			fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), logger)
 		err = loader.Load(ctx)
 		utils.FailOnError(err, "Failed to apply fixtures")
 		logger.Info().Msg("Finish fixtures")
 	}
 
+	buildInfo := canopsis.GetBuildInfo()
+	err = config.NewVersionAdapter(client).UpsertConfig(ctx, config.VersionConf{
+		Version: buildInfo.Version,
+		Edition: f.edition,
+		Stack:   "go",
+	})
+	utils.FailOnError(err, "Failed to save config into mongo")
 	err = config.NewAdapter(client).UpsertConfig(ctx, conf.Canopsis)
 	utils.FailOnError(err, "Failed to save config into mongo")
 	err = config.NewRemediationAdapter(client).UpsertConfig(ctx, conf.Remediation)
@@ -230,5 +242,31 @@ func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
 		return err
 	}
 
+	return nil
+}
+
+// Clone returns pointer to a new deep copy of current Config
+func (c *Conf) Clone() interface{} {
+	cloned := *c
+	return &cloned
+}
+
+func loadOverrideConfig(conf *Conf, overrideConfFile string) error {
+	data, err := ioutil.ReadFile(overrideConfFile)
+	if err != nil {
+		return fmt.Errorf("no configuration file found")
+	}
+
+	var overrideConf map[string]interface{}
+	if err = toml.Unmarshal(data, &overrideConf); err != nil {
+		return err
+	}
+
+	newPtr, err := config.Override(conf, overrideConf)
+	if err != nil {
+		return err
+	}
+
+	*conf = *newPtr.(*Conf)
 	return nil
 }

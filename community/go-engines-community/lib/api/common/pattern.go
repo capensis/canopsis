@@ -3,6 +3,7 @@ package common
 import (
 	"context"
 	"errors"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -38,6 +39,20 @@ func (r AlarmPatternFieldsRequest) ToModel() savedpattern.AlarmPatternFields {
 	}
 }
 
+func (r AlarmPatternFieldsRequest) ToModelWithoutFields(forbiddenFields, onlyTimeAbsoluteFields []string) savedpattern.AlarmPatternFields {
+	if r.CorporatePattern.ID == "" {
+		return savedpattern.AlarmPatternFields{
+			AlarmPattern: r.AlarmPattern,
+		}
+	}
+
+	return savedpattern.AlarmPatternFields{
+		AlarmPattern:               r.CorporatePattern.AlarmPattern.RemoveFields(forbiddenFields, onlyTimeAbsoluteFields),
+		CorporateAlarmPattern:      r.CorporatePattern.ID,
+		CorporateAlarmPatternTitle: r.CorporatePattern.Title,
+	}
+}
+
 type EntityPatternFieldsRequest struct {
 	EntityPattern          pattern.Entity `json:"entity_pattern" binding:"entity_pattern"`
 	CorporateEntityPattern string         `json:"corporate_entity_pattern"`
@@ -54,6 +69,20 @@ func (r EntityPatternFieldsRequest) ToModel() savedpattern.EntityPatternFields {
 
 	return savedpattern.EntityPatternFields{
 		EntityPattern:               r.CorporatePattern.EntityPattern,
+		CorporateEntityPattern:      r.CorporatePattern.ID,
+		CorporateEntityPatternTitle: r.CorporatePattern.Title,
+	}
+}
+
+func (r EntityPatternFieldsRequest) ToModelWithoutFields(forbiddenFields []string) savedpattern.EntityPatternFields {
+	if r.CorporatePattern.ID == "" {
+		return savedpattern.EntityPatternFields{
+			EntityPattern: r.EntityPattern,
+		}
+	}
+
+	return savedpattern.EntityPatternFields{
+		EntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(forbiddenFields),
 		CorporateEntityPattern:      r.CorporatePattern.ID,
 		CorporateEntityPatternTitle: r.CorporatePattern.Title,
 	}
@@ -98,7 +127,11 @@ type basePatternFieldsTransformer struct {
 
 func (t *basePatternFieldsTransformer) TransformAlarmPatternFieldsRequest(ctx context.Context, r AlarmPatternFieldsRequest) (AlarmPatternFieldsRequest, error) {
 	if r.CorporateAlarmPattern != "" {
-		err := t.patternCollection.FindOne(ctx, bson.M{"_id": r.CorporateAlarmPattern, "type": savedpattern.TypeAlarm}).Decode(&r.CorporatePattern)
+		err := t.patternCollection.FindOne(ctx, bson.M{
+			"_id":          r.CorporateAlarmPattern,
+			"type":         savedpattern.TypeAlarm,
+			"is_corporate": true,
+		}).Decode(&r.CorporatePattern)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return r, ErrNotExistCorporateAlarmPattern
@@ -113,7 +146,11 @@ func (t *basePatternFieldsTransformer) TransformAlarmPatternFieldsRequest(ctx co
 
 func (t *basePatternFieldsTransformer) TransformEntityPatternFieldsRequest(ctx context.Context, r EntityPatternFieldsRequest) (EntityPatternFieldsRequest, error) {
 	if r.CorporateEntityPattern != "" {
-		err := t.patternCollection.FindOne(ctx, bson.M{"_id": r.CorporateEntityPattern, "type": savedpattern.TypeEntity}).Decode(&r.CorporatePattern)
+		err := t.patternCollection.FindOne(ctx, bson.M{
+			"_id":          r.CorporateEntityPattern,
+			"type":         savedpattern.TypeEntity,
+			"is_corporate": true,
+		}).Decode(&r.CorporatePattern)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return r, ErrNotExistCorporateEntityPattern
@@ -128,7 +165,11 @@ func (t *basePatternFieldsTransformer) TransformEntityPatternFieldsRequest(ctx c
 
 func (t *basePatternFieldsTransformer) TransformPbehaviorPatternFieldsRequest(ctx context.Context, r PbehaviorPatternFieldsRequest) (PbehaviorPatternFieldsRequest, error) {
 	if r.CorporatePbehaviorPattern != "" {
-		err := t.patternCollection.FindOne(ctx, bson.M{"_id": r.CorporatePbehaviorPattern, "type": savedpattern.TypePbehavior}).Decode(&r.CorporatePattern)
+		err := t.patternCollection.FindOne(ctx, bson.M{
+			"_id":          r.CorporatePbehaviorPattern,
+			"type":         savedpattern.TypePbehavior,
+			"is_corporate": true,
+		}).Decode(&r.CorporatePattern)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return r, ErrNotExistCorporatePbehaviorPattern
@@ -141,30 +182,6 @@ func (t *basePatternFieldsTransformer) TransformPbehaviorPatternFieldsRequest(ct
 	return r, nil
 }
 
-func ValidateAlarmPatternFieldsRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(AlarmPatternFieldsRequest)
-
-	if r.CorporateAlarmPattern != "" && len(r.AlarmPattern) > 0 {
-		sl.ReportError(r.AlarmPattern, "AlarmPattern", "AlarmPattern", "required_not_both", "CorporateAlarmPattern")
-	}
-}
-
-func ValidateEntityPatternFieldsRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(EntityPatternFieldsRequest)
-
-	if r.CorporateEntityPattern != "" && len(r.EntityPattern) > 0 {
-		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required_not_both", "CorporateEntityPattern")
-	}
-}
-
-func ValidatePbehaviorPatternFieldsRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(PbehaviorPatternFieldsRequest)
-
-	if r.CorporatePbehaviorPattern != "" && len(r.PbehaviorPattern) > 0 {
-		sl.ReportError(r.PbehaviorPattern, "PbehaviorPattern", "PbehaviorPattern", "required_not_both", "CorporatePbehaviorPattern")
-	}
-}
-
 func ValidateAlarmPattern(fl validator.FieldLevel) bool {
 	i := fl.Field().Interface()
 	if i == nil {
@@ -175,7 +192,20 @@ func ValidateAlarmPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate()
+	return p.Validate(nil, nil)
+}
+
+func ValidateEventPattern(fl validator.FieldLevel) bool {
+	i := fl.Field().Interface()
+	if i == nil {
+		return true
+	}
+	p, ok := i.(pattern.Event)
+	if !ok {
+		return false
+	}
+
+	return p.Validate(nil)
 }
 
 func ValidateEntityPattern(fl validator.FieldLevel) bool {
@@ -188,7 +218,7 @@ func ValidateEntityPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate()
+	return p.Validate(nil)
 }
 
 func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
@@ -201,5 +231,54 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate()
+	return p.Validate(nil)
+}
+
+func GetForbiddenFieldsInEntityPattern(collection string) []string {
+	switch collection {
+	case mongo.EntityMongoCollection:
+		return []string{"last_event_date", "connector", "component_infos"}
+	case mongo.PbehaviorMongoCollection,
+		mongo.IdleRuleMongoCollection,
+		mongo.DynamicInfosRulesMongoCollection,
+		mongo.MetaAlarmRulesMongoCollection,
+		mongo.FlappingRuleMongoCollection,
+		mongo.ResolveRuleMongoCollection,
+		mongo.ScenarioMongoCollection,
+		mongo.InstructionMongoCollection,
+		mongo.KpiFilterMongoCollection:
+		return []string{"last_event_date"}
+	default:
+		return nil
+	}
+}
+
+func GetForbiddenFieldsInAlarmPattern(collection string) []string {
+	switch collection {
+	case mongo.IdleRuleMongoCollection,
+		mongo.DynamicInfosRulesMongoCollection,
+		mongo.MetaAlarmRulesMongoCollection,
+		mongo.FlappingRuleMongoCollection,
+		mongo.ResolveRuleMongoCollection,
+		mongo.ScenarioMongoCollection,
+		mongo.InstructionMongoCollection:
+		return []string{"v.last_event_date", "v.last_update_date", "v.resolved"}
+	default:
+		return nil
+	}
+}
+
+func GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection string) []string {
+	switch collection {
+	case mongo.IdleRuleMongoCollection,
+		mongo.DynamicInfosRulesMongoCollection,
+		mongo.MetaAlarmRulesMongoCollection,
+		mongo.FlappingRuleMongoCollection,
+		mongo.ResolveRuleMongoCollection,
+		mongo.ScenarioMongoCollection,
+		mongo.InstructionMongoCollection:
+		return []string{"v.creation_date", "v.ack.t"}
+	default:
+		return nil
+	}
 }

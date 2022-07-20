@@ -93,7 +93,13 @@ func (s *service) isFlapping(alarm types.Alarm, entity types.Entity) bool {
 	lastStepType := ""
 	freq := 0
 	for _, rule := range s.flappingRules {
-		if rule.Matches(alarmWithEntity) {
+		matched, err := rule.Matches(alarmWithEntity)
+		if err != nil {
+			s.logger.Error().Err(err).Str("flapping rule", rule.ID).Msg("match flapping rule returned error, skip")
+			continue
+		}
+
+		if matched {
 			before := rule.Duration.SubFrom(now)
 
 			for i := len(alarm.Value.Steps) - 1; i >= 0; i-- {

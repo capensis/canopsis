@@ -38,24 +38,8 @@ type api struct {
 	logger       zerolog.Logger
 }
 
-// Find all pbehavior reasons
-// @Summary Find pbehavior reasons
-// @Description Get paginated list of behavior reasons
-// @Tags pbehavior-reasons
-// @ID pbehavior-reasons-find-all
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
-// @Param search query string false "search query"
-// @Param sort query string false "sort query"
-// @Param sort_by query string false "sort query"
-// @Param with_flags query bool false "with flags"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Reason}
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /pbehavior-reasons [get]
 func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -79,19 +63,9 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Create pbehavior reason
-// @Summary Create pbehavior reason
-// @Description Create pbehavior reason
-// @Tags pbehavior-reasons
-// @ID pbehavior-reasons-create
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// Create
 // @Param body body Request true "body"
 // @Success 201 {object} Reason
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /pbehavior-reasons [post]
 func (a *api) Create(c *gin.Context) {
 	request := CreateRequest{}
 
@@ -119,18 +93,9 @@ func (a *api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, reason)
 }
 
-// Get pbehavior reason by id
-// @Summary Get pbehavior reason by id
-// @Description Get pbehavior reason by id
-// @Tags pbehavior-reasons
-// @ID pbehavior-reasons-get-by-id
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// Get
 // @Param id path string true "reason id"
 // @Success 200 {object} Reason
-// @Failure 404 {object} common.ErrorResponse
-// @Router /pbehavior-reasons/{id} [get]
 func (a *api) Get(c *gin.Context) {
 	reason, err := a.store.GetOneBy(c.Request.Context(), bson.M{"_id": c.Param("id")})
 	if err != nil {
@@ -145,21 +110,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, reason)
 }
 
-// Update behavior reason by id
-// @Summary Update behavior reason by id
-// @Description Update behavior reason by id
-// @Tags pbehavior-reasons
-// @ID pbehavior-reasons-update-by-id
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "reason id"
+// Update
 // @Param body body Request true "body"
 // @Success 200 {object} Reason
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /pbehavior-reasons/{id} [put]
 func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{
 		ID: c.Param("id"),
@@ -198,23 +151,11 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if isLinked {
-		a.sendComputeTask(reason.ID)
+		a.sendComputeTask()
 	}
 	c.JSON(http.StatusOK, reason)
 }
 
-// Delete pbehavior reason by id
-// @Summary Delete pbehavior reason by id
-// @Description Delete pbehavior reason by id
-// @Tags pbehavior-reasons
-// @ID pbehavior-reasons-delete-by-id
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "reason id"
-// @Success 204
-// @Failure 400 {object} common.ErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /pbehavior-reasons/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -243,14 +184,6 @@ func (a *api) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-func (a *api) sendComputeTask(reasonID string) {
-	task := pbehavior.ComputeTask{}
-
-	select {
-	case a.computeChan <- task:
-	default:
-		a.logger.Err(errors.New("channel is full")).
-			Str("reason", reasonID).
-			Msg("fail to start linked pbehaviors recompute on reason update")
-	}
+func (a *api) sendComputeTask() {
+	a.computeChan <- pbehavior.ComputeTask{}
 }

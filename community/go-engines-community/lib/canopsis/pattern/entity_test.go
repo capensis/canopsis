@@ -15,7 +15,7 @@ func TestEntity_Match(t *testing.T) {
 
 	for name, data := range dataSets {
 		t.Run(name, func(t *testing.T) {
-			ok, err := data.pattern.Match(data.entity)
+			ok, _, err := data.pattern.Match(data.entity)
 			if !errors.Is(err, data.matchErr) {
 				t.Errorf("expected error %v but got %v", data.matchErr, err)
 			}
@@ -27,7 +27,7 @@ func TestEntity_Match(t *testing.T) {
 }
 
 func TestEntity_ToMongoQuery(t *testing.T) {
-	dataSets := getEntityMongoQueryDataSets()
+	dataSets := getEntityToMongoQueryDataSets()
 
 	for name, data := range dataSets {
 		t.Run(name, func(t *testing.T) {
@@ -37,6 +37,22 @@ func TestEntity_ToMongoQuery(t *testing.T) {
 			}
 			if diff := pretty.Compare(query, data.mongoQueryResult); diff != "" {
 				t.Errorf("unexpected result %s", diff)
+			}
+		})
+	}
+}
+
+func TestEntity_ToSql(t *testing.T) {
+	dataSets := getEntityToSqlDataSets()
+
+	for name, data := range dataSets {
+		t.Run(name, func(t *testing.T) {
+			sql, err := data.pattern.ToSql("entity")
+			if !errors.Is(err, data.sqlErr) {
+				t.Errorf("expected error %v but got %v", data.sqlErr, err)
+			}
+			if sql != data.sqlResult {
+				t.Errorf("expected\n%s\nbut got\n%s", sql, data.sqlResult)
 			}
 		})
 	}
@@ -241,7 +257,7 @@ func benchmarkEntityMatch(b *testing.B, fieldCond pattern.FieldCondition, entity
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := p.Match(entity)
+		_, _, err := p.Match(entity)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
@@ -272,7 +288,7 @@ func benchmarkEntityUnmarshalBsonAndMatch(b *testing.B, fieldCond pattern.FieldC
 			b.Fatalf("unexpected error %v", err)
 		}
 
-		_, err = w.Pattern.Match(entity)
+		_, _, err = w.Pattern.Match(entity)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
@@ -401,6 +417,7 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 					},
 				},
 			},
+			matchErr:    pattern.ErrWrongConditionValue,
 			matchResult: false,
 		},
 		"given string info condition and unknown info should not match": {
@@ -496,10 +513,167 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 			},
 			matchResult: false,
 		},
+		"given string component info condition should match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"info_name": {
+						Name:        "info_name",
+						Description: "test description",
+						Value:       "test name",
+					},
+				},
+			},
+			matchResult: true,
+		},
+		"given string component info condition should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"info_name": {
+						Name:        "info_name",
+						Description: "test description",
+						Value:       "test another name",
+					},
+				},
+			},
+			matchResult: false,
+		},
+		"given string component info condition and not string info should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"info_name": {
+						Name:        "info_name",
+						Description: "test description",
+						Value:       2,
+					},
+				},
+			},
+			matchErr:    pattern.ErrWrongConditionValue,
+			matchResult: false,
+		},
+		"given string component info condition and unknown info should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+					},
+				},
+			},
+			entity:      types.Entity{},
+			matchResult: false,
+		},
+		"given exist component info condition should match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"info_name": {
+						Name:        "info_name",
+						Description: "test description",
+						Value:       "test name",
+					},
+				},
+			},
+			matchResult: true,
+		},
+		"given exist component info condition should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"info_another_name": {
+						Name:        "info_another_name",
+						Description: "test description",
+						Value:       "test name",
+					},
+				},
+			},
+			matchResult: false,
+		},
+		"given not exist component info condition should match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"info_another_name": {
+						Name:        "info_another_name",
+						Description: "test description",
+						Value:       "test name",
+					},
+				},
+			},
+			matchResult: true,
+		},
+		"given not exist component info condition should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"info_name": {
+						Name:        "info_name",
+						Description: "test description",
+						Value:       "test name",
+					},
+				},
+			},
+			matchResult: false,
+		},
 	}
 }
 
-func getEntityMongoQueryDataSets() map[string]entityDataSet {
+func getEntityToMongoQueryDataSets() map[string]entityDataSet {
 	return map[string]entityDataSet{
 		"given one condition": {
 			pattern: pattern.Entity{
@@ -510,13 +684,11 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"entity.name": bson.M{"$eq": "test name"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"entity.name": bson.M{"$eq": "test name"}},
+				}},
+			}},
 		},
 		"given multiple conditions": {
 			pattern: pattern.Entity{
@@ -531,14 +703,12 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"entity.name": bson.M{"$eq": "test name"}},
-						{"entity.category": bson.M{"$eq": "test category"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"entity.name": bson.M{"$eq": "test name"}},
+					{"entity.category": bson.M{"$eq": "test category"}},
+				}},
+			}},
 		},
 		"given multiple groups": {
 			pattern: pattern.Entity{
@@ -555,16 +725,14 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"entity.name": bson.M{"$eq": "test name"}},
-					}},
-					{"$and": []bson.M{
-						{"entity.category": bson.M{"$eq": "test category"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"entity.name": bson.M{"$eq": "test name"}},
+				}},
+				{"$and": []bson.M{
+					{"entity.category": bson.M{"$eq": "test category"}},
+				}},
+			}},
 		},
 		"given invalid condition": {
 			pattern: pattern.Entity{
@@ -587,25 +755,130 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
 					{"$and": []bson.M{
-						{"$and": []bson.M{
-							{"entity.infos.info_name.val": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
-							{"entity.infos.info_name.val": bson.M{"$eq": 3}},
-						}},
+						{"entity.infos.info_name.value": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
+						{"entity.infos.info_name.value": bson.M{"$eq": 3}},
 					}},
-				}}},
+				}},
+			}},
+		},
+		"given component infos condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						FieldType: pattern.FieldTypeInt,
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
+					},
+				},
 			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"$and": []bson.M{
+						{"entity.component_infos.info_name.value": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
+						{"entity.component_infos.info_name.value": bson.M{"$eq": 3}},
+					}},
+				}},
+			}},
+		},
+	}
+}
+
+func getEntityToSqlDataSets() map[string]entityDataSet {
+	return map[string]entityDataSet{
+		"given one condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+					},
+				},
+			},
+			sqlResult: "(entity.name = 'test name')",
+		},
+		"given multiple conditions": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+					},
+					{
+						Field:     "category",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test category"),
+					},
+				},
+			},
+			sqlResult: "(entity.name = 'test name' AND entity.category = 'test category')",
+		},
+		"given multiple groups": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+					},
+				},
+				{
+					{
+						Field:     "category",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test category"),
+					},
+				},
+			},
+			sqlResult: "(entity.name = 'test name') OR (entity.category = 'test category')",
+		},
+		"given invalid condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionIsNotOneOf, "test name"),
+					},
+				},
+			},
+			sqlErr: pattern.ErrWrongConditionValue,
+		},
+		"given infos condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.info_name",
+						FieldType: pattern.FieldTypeInt,
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
+					},
+				},
+			},
+			sqlResult: `((jsonb_typeof(infos->'info_name') = 'number' AND (CASE WHEN jsonb_typeof(infos->'info_name') = 'number' THEN (infos->'info_name')::numeric END) = 3))`,
+		},
+		"given component infos condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						FieldType: pattern.FieldTypeInt,
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
+					},
+				},
+			},
+			sqlResult: `((jsonb_typeof(component_infos->'info_name') = 'number' AND (CASE WHEN jsonb_typeof(component_infos->'info_name') = 'number' THEN (component_infos->'info_name')::numeric END) = 3))`,
 		},
 	}
 }
 
 type entityDataSet struct {
-	pattern          pattern.Entity
-	entity           types.Entity
-	matchErr         error
-	matchResult      bool
+	pattern pattern.Entity
+	entity  types.Entity
+
+	matchErr    error
+	matchResult bool
+
 	mongoQueryErr    error
-	mongoQueryResult []bson.M
+	mongoQueryResult bson.M
+
+	sqlErr    error
+	sqlResult string
 }

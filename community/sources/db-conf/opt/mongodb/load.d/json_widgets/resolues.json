@@ -45,10 +45,7 @@
     },
     "itemsPerPage": 10,
     "infoPopups": [],
-    "alarmsStateFilter": {
-      "resolved": true,
-      "opened": false
-    },
+    "opened": false,
     "moreInfoTemplate": "",
     "periodic_refresh": {
       "value": 1,
@@ -75,7 +72,7 @@
       "x": 0,
       "y": 0,
       "w": 12,
-      "h": 1,
+      "h": 39,
       "autoHeight": true
     }
   }

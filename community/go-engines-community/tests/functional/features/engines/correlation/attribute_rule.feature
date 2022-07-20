@@ -7,15 +7,17 @@ Feature: correlation feature - attribute rule
     {
       "name": "test-attribute-correlation-1",
       "type": "attribute",
-      "config": {
-        "alarm_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "v": {
-              "component": "test-attribute-correlation-1"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-attribute-correlation-1"
             }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -37,30 +39,15 @@ Feature: correlation feature - attribute rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-attribute-correlation-1"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 1
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-attribute-correlation-1"
           }
         }
@@ -72,6 +59,49 @@ Feature: correlation feature - attribute rule
         "total_count": 1
       }
     }
+    """
+    When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmID }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-attribute-1",
+                  "connector_name": "test-attribute-1-name",
+                  "component": "test-attribute-correlation-1",
+                  "resource": "test-attribute-correlation-resource-1"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      }
+    ]
     """
     When I send an event:
     """
@@ -89,49 +119,53 @@ Feature: correlation feature - attribute rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmID }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
     """
-    {
-      "data": [
-        {
-          "consequences": {
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
             "data": [
               {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-attribute-correlation-1"
-                    }
-                  ],
-                  "total": 1
+                "v": {
+                  "connector": "test-attribute-1",
+                  "connector_name": "test-attribute-1-name",
+                  "component": "test-attribute-correlation-1",
+                  "resource": "test-attribute-correlation-resource-1"
                 }
               },
               {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-attribute-correlation-1"
-                    }
-                  ],
-                  "total": 1
+                "v": {
+                  "connector": "test-attribute-1",
+                  "connector_name": "test-attribute-1-name",
+                  "component": "test-attribute-correlation-1",
+                  "resource": "test-attribute-correlation-resource-2"
                 }
               }
             ],
-            "total": 2
-          },
-          "metaalarm": true,
-          "rule": {
-            "name": "test-attribute-correlation-1"
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """

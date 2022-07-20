@@ -161,7 +161,10 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 
 			_, found := impactMap[serviceID]
 
-			match := serv.EntityPatterns.Matches(&ent)
+			match, _, err := serv.EntityPattern.Match(ent)
+			if err != nil {
+
+			}
 
 			if match && !found {
 				entData := entitiesData[entityID]
@@ -359,11 +362,16 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 
 	if len(service.Depends) != 0 {
 		var entitiesToRemove []types.Entity
+		negativeQuery, err := service.EntityPattern.ToNegativeMongoQuery("")
+		if err != nil {
+
+		}
+
 		cursor, err := m.collection.Find(
 			ctx,
 			bson.M{"$and": []interface{}{
 				bson.M{"_id": bson.M{"$in": service.Depends}},
-				service.EntityPatterns.AsNegativeMongoDriverQuery(),
+				negativeQuery,
 			}},
 		)
 		if err != nil {
@@ -411,7 +419,11 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 		}
 	}
 
-	query := service.EntityPatterns.AsMongoDriverQuery()
+	query, err := service.EntityPattern.ToMongoQuery("")
+	if err != nil {
+
+	}
+
 	if len(service.Depends) > 0 {
 		query = bson.M{"$and": []interface{}{
 			bson.M{"_id": bson.M{"$nin": service.Depends}},
@@ -459,7 +471,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 		return types.Entity{}, nil, err
 	}
 
-	if !event.IsContextable() {
+	if !event.IsContextable() || event.IsOnlyServiceUpdate() {
 		if isNew {
 			return types.Entity{}, nil, fmt.Errorf("entity %s doesn't exist", event.GetEID())
 		}

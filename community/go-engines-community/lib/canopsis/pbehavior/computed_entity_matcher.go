@@ -4,51 +4,43 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/go-redis/redis/v8"
 	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/sync/errgroup"
 )
 
+var ErrCacheNotLoaded = errors.New("cache is not loaded")
+
 // ComputedEntityMatcher checks if an entity is matched to filter. It precomputes
 // filter-entity associations and uses computed data to resolve matched filters.
 type ComputedEntityMatcher interface {
-	// LoadAll computes filter-entity associations.
-	LoadAll(ctx context.Context, filters map[string]string) error
-	// Match matches entity to filters by precomputed data.
-	Match(ctx context.Context, entityID string) ([]string, error)
-	GetComputedEntityIDs(ctx context.Context) ([]string, error)
+	// LoadAll computes filter-entity associations to memory.
+	LoadAll(ctx context.Context, filters map[string]interface{}) error
+	// Match matches entity to filters by precomputed data in memory.
+	Match(entityID string) ([]string, error)
+	GetComputedEntityIDs() ([]string, error)
 }
 
-func NewComputedEntityMatcher(
-	dbClient mongo.DbClient,
-	redisClient redis.Cmdable,
-	encoder encoding.Encoder,
-	decoder encoding.Decoder,
-) ComputedEntityMatcher {
+func NewComputedEntityMatcher(dbClient mongo.DbClient) ComputedEntityMatcher {
 	return &computedEntityMatcher{
 		dbCollection: dbClient.Collection(mongo.EntityMongoCollection),
-		redisClient:  redisClient,
-		encoder:      encoder,
-		decoder:      decoder,
-		key:          libredis.PbehaviorEntityMatchKey,
 	}
 }
 
-// entityMatcher parses filter and executes parsed mongo query to check if entity is matched.
+// entityMatcher executes mongo query to check if entity is matched.
 type computedEntityMatcher struct {
-	dbCollection mongo.DbCollection
-	redisClient  redis.Cmdable
-	encoder      encoding.Encoder
-	decoder      encoding.Decoder
-	key          string
+	dbCollection   mongo.DbCollection
+	keysByEntityID map[string][]string
 }
 
-func (m *computedEntityMatcher) LoadAll(ctx context.Context, filters map[string]string) error {
+func (m *computedEntityMatcher) LoadAll(ctx context.Context, filters map[string]interface{}) error {
+	keysByEntityID := make(map[string][]string, len(filters))
+	if len(filters) == 0 {
+		m.keysByEntityID = keysByEntityID
+		return nil
+	}
+
 	ch := make(chan string)
 	type workerResult struct {
 		key       string
@@ -56,31 +48,33 @@ func (m *computedEntityMatcher) LoadAll(ctx context.Context, filters map[string]
 	}
 	resCh := make(chan workerResult)
 
-	go func() {
+	g, ctx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
 		defer close(ch)
 		for key := range filters {
 			select {
 			case <-ctx.Done():
-				return
+				return nil
 			case ch <- key:
 			}
 		}
-	}()
 
-	g, gctx := errgroup.WithContext(ctx)
+		return nil
+	})
 
-	for i := 0; i < 10; i++ {
+	for i := 0; i < DefaultPoolSize; i++ {
 		g.Go(func() error {
 			for {
 				select {
-				case <-gctx.Done():
+				case <-ctx.Done():
 					return nil
 				case key, ok := <-ch:
 					if !ok {
 						return nil
 					}
 
-					entityIDs, err := m.findEntityIDs(gctx, filters[key])
+					entityIDs, err := m.findEntityIDs(ctx, filters[key])
 					if err != nil {
 						return err
 					}
@@ -99,11 +93,9 @@ func (m *computedEntityMatcher) LoadAll(ctx context.Context, filters map[string]
 		close(resCh)
 	}()
 
-	keysByEntityID := make(map[string][]string)
 	for res := range resCh {
 		for _, entityID := range res.entityIDs {
-			redisKey := m.key + entityID
-			keysByEntityID[redisKey] = append(keysByEntityID[redisKey], res.key)
+			keysByEntityID[entityID] = append(keysByEntityID[entityID], res.key)
 		}
 	}
 
@@ -112,79 +104,36 @@ func (m *computedEntityMatcher) LoadAll(ctx context.Context, filters map[string]
 		return err
 	}
 
-	encodedData := make(map[string]interface{}, len(keysByEntityID))
-	for k, v := range keysByEntityID {
-		encodedData[k], err = m.encoder.Encode(v)
-		if err != nil {
-			return fmt.Errorf("cannot encode entity ids: %w", err)
-		}
-	}
-
-	if len(encodedData) > 0 {
-		err := m.redisClient.MSet(ctx, encodedData).Err()
-		if err != nil {
-			return fmt.Errorf("cannot set entity ids: %w", err)
-		}
-	}
-
-	return m.deleteMissingKeys(ctx, keysByEntityID)
+	m.keysByEntityID = keysByEntityID
+	return nil
 }
 
-func (m *computedEntityMatcher) Match(ctx context.Context, entityID string) ([]string, error) {
-	res := m.redisClient.Get(ctx, m.key+entityID)
-	if err := res.Err(); err != nil {
-		if errors.Is(err, redis.Nil) {
-			return nil, nil
-		}
-
-		return nil, fmt.Errorf("cannot get keys: %w", err)
+func (m *computedEntityMatcher) Match(entityID string) ([]string, error) {
+	if m.keysByEntityID == nil {
+		return nil, ErrCacheNotLoaded
 	}
 
-	var matchedKeys []string
-	err := m.decoder.Decode([]byte(res.Val()), &matchedKeys)
-	if err != nil {
-		return nil, fmt.Errorf("cannot decode entity ids: %w", err)
-	}
-
-	return matchedKeys, nil
+	return m.keysByEntityID[entityID], nil
 }
 
-func (m *computedEntityMatcher) GetComputedEntityIDs(ctx context.Context) ([]string, error) {
-	var cursor uint64
-	entityIDs := make([]string, 0)
-	processedKeys := make(map[string]bool)
+func (m *computedEntityMatcher) GetComputedEntityIDs() ([]string, error) {
+	if m.keysByEntityID == nil {
+		return nil, ErrCacheNotLoaded
+	}
 
-	for {
-		res := m.redisClient.Scan(ctx, cursor, fmt.Sprintf("%s*", m.key), redisStep)
-		if err := res.Err(); err != nil {
-			return nil, fmt.Errorf("cannot scan keys: %w", err)
-		}
-
-		var keys []string
-		keys, cursor = res.Val()
-		for _, key := range keys {
-			if !processedKeys[key] {
-				processedKeys[key] = true
-				entityIDs = append(entityIDs, strings.ReplaceAll(key, m.key, ""))
-			}
-		}
-
-		if cursor == 0 {
-			break
-		}
+	entityIDs := make([]string, len(m.keysByEntityID))
+	i := 0
+	for entityID := range m.keysByEntityID {
+		entityIDs[i] = entityID
+		i++
 	}
 
 	return entityIDs, nil
 }
 
-func (m *computedEntityMatcher) findEntityIDs(ctx context.Context, filter string) ([]string, error) {
-	match, err := transformFilter(filter)
-	if err != nil {
-		return nil, err
-	}
-
+func (m *computedEntityMatcher) findEntityIDs(ctx context.Context, filter interface{}) ([]string, error) {
 	cursor, err := m.dbCollection.Aggregate(ctx, []bson.M{
-		match,
+		{"$match": filter},
 		{"$project": bson.M{
 			"_id": 1,
 		}},
@@ -211,37 +160,4 @@ func (m *computedEntityMatcher) findEntityIDs(ctx context.Context, filter string
 	}
 
 	return entityIDs, nil
-}
-
-func (m *computedEntityMatcher) deleteMissingKeys(ctx context.Context, keysByEntityID map[string][]string) error {
-	var cursor uint64
-
-	for {
-		res := m.redisClient.Scan(ctx, cursor, fmt.Sprintf("%s*", m.key), redisStep)
-		if err := res.Err(); err != nil {
-			return fmt.Errorf("cannot scan keys: %w", err)
-		}
-
-		var keys []string
-		keys, cursor = res.Val()
-		unprocessedKeys := make([]string, 0)
-		for _, key := range keys {
-			if _, ok := keysByEntityID[key]; !ok {
-				unprocessedKeys = append(unprocessedKeys, key)
-			}
-		}
-
-		if len(unprocessedKeys) > 0 {
-			resGet := m.redisClient.Del(ctx, unprocessedKeys...)
-			if err := resGet.Err(); err != nil {
-				return fmt.Errorf("cannot del keys: %w", err)
-			}
-		}
-
-		if cursor == 0 {
-			break
-		}
-	}
-
-	return nil
 }

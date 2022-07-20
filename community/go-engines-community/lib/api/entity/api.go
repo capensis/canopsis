@@ -2,18 +2,29 @@ package entity
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
+	"github.com/valyala/fastjson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 )
 
 type API interface {
 	List(c *gin.Context)
+	BulkEnable(c *gin.Context)
+	BulkDisable(c *gin.Context)
 	StartExport(c *gin.Context)
 	GetExport(c *gin.Context)
 	DownloadExport(c *gin.Context)
@@ -21,18 +32,24 @@ type API interface {
 }
 
 type api struct {
-	store               Store
-	exportExecutor      export.TaskExecutor
-	defaultExportFields export.Fields
-	exportSeparators    map[string]rune
-	cleanTaskChan       chan<- CleanTask
-	logger              zerolog.Logger
+	store                Store
+	exportExecutor       export.TaskExecutor
+	defaultExportFields  export.Fields
+	exportSeparators     map[string]rune
+	cleanTaskChan        chan<- CleanTask
+	entityChangeListener chan<- entityservice.ChangeEntityMessage
+	metricMetaUpdater    metrics.MetaUpdater
+	actionLogger         logger.ActionLogger
+	logger               zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	exportExecutor export.TaskExecutor,
 	cleanTaskChan chan<- CleanTask,
+	entityChangeListener chan<- entityservice.ChangeEntityMessage,
+	metricMetaUpdater metrics.MetaUpdater,
+	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
 	fields := []string{"_id", "name", "type", "enabled", "depends", "impact"}
@@ -50,24 +67,16 @@ func NewApi(
 		defaultExportFields: defaultExportFields,
 		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
 			"tab": '	', "space": ' '},
-		cleanTaskChan: cleanTaskChan,
-		logger:        logger,
+		cleanTaskChan:        cleanTaskChan,
+		entityChangeListener: entityChangeListener,
+		metricMetaUpdater:    metricMetaUpdater,
+		actionLogger:         actionLogger,
+		logger:               logger,
 	}
 }
 
-// Find all entities
-// @Summary Find entities
-// @Description Get paginated list of entities
-// @Tags entities
-// @ID entities-find-all
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param request query ListRequestWithPagination true "request"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Entity}
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /entities [get]
 func (a *api) List(c *gin.Context) {
 	var query ListRequestWithPagination
 	query.Query = pagination.GetDefaultQuery()
@@ -90,18 +99,9 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Start export entities
-// @Summary Start export entities
-// @Description Start export entities
-// @Tags entities
-// @ID entities-export-start
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// StartExport
 // @Param request body ExportRequest true "request"
 // @Success 200 {object} ExportResponse
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /entity-export [post]
 func (a *api) StartExport(c *gin.Context) {
 	var r ExportRequest
 	if err := c.ShouldBind(&r); err != nil {
@@ -150,19 +150,8 @@ func (a *api) StartExport(c *gin.Context) {
 	})
 }
 
-// Get status of export entities
-// @Summary Get status of export entities
-// @Description Get status of export entities
-// @Tags entities
-// @ID entities-export-get
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "export task id"
+// GetExport
 // @Success 200 {object} ExportResponse
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entity-export/{id} [get]
 func (a *api) GetExport(c *gin.Context) {
 	id := c.Param("id")
 	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
@@ -181,19 +170,6 @@ func (a *api) GetExport(c *gin.Context) {
 	})
 }
 
-// Get result of export entities
-// @Summary Get result of export entities
-// @Description Get result of export entities
-// @Tags entities
-// @ID entities-export-download
-// @Produce text/csv
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "export task id"
-// @Success 200 {object} http.Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entity-export/{id}/download [get]
 func (a *api) DownloadExport(c *gin.Context) {
 	id := c.Param("id")
 	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
@@ -213,19 +189,6 @@ func (a *api) DownloadExport(c *gin.Context) {
 	c.File(t.File)
 }
 
-// Clean disabled entities
-// @Summary Clean disabled entities
-// @Description Clean disabled entities
-// @Tags entities
-// @ID entities-clean
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param request query CleanRequest true "request"
-// @Success 202
-// @Failure 400 {object} common.ErrorResponse
-// @Router /entities/clean [post]
 func (a *api) Clean(c *gin.Context) {
 	var r CleanRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
@@ -244,4 +207,115 @@ func (a *api) Clean(c *gin.Context) {
 	}
 
 	c.Status(http.StatusAccepted)
+}
+
+// BulkEnable
+// @Param body body []BulkToggleRequestItem true "body"
+func (a *api) BulkEnable(c *gin.Context) {
+	a.toggle(c, true)
+}
+
+// BulkDisable
+// @Param body body []BulkToggleRequestItem true "body"
+func (a *api) BulkDisable(c *gin.Context) {
+	a.toggle(c, false)
+}
+
+func (a *api) toggle(c *gin.Context, enabled bool) {
+	userId := c.MustGet(auth.UserKey).(string)
+
+	var ar fastjson.Arena
+
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+
+	for idx, rawObject := range rawObjects {
+		userObject, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request BulkToggleRequestItem
+		err = json.Unmarshal(userObject.MarshalTo(nil), &request)
+		if err != nil {
+			a.logger.Err(err).Msg("cannot update entity")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		isToggled, simplifiedEntity, err := a.store.Toggle(ctx, request.ID, enabled)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+				continue
+			}
+
+			a.logger.Err(err).Msg("cannot update entity")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
+		}
+
+		if isToggled {
+			a.sendChangeMessage(entityservice.ChangeEntityMessage{
+				ID:         simplifiedEntity.ID,
+				EntityType: simplifiedEntity.Type,
+				IsToggled:  isToggled,
+			})
+		}
+
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, simplifiedEntity.ID, http.StatusOK, rawObject, nil))
+
+		entry := logger.LogEntry{
+			Action:    logger.ActionUpdate,
+			ValueType: logger.ValueTypeEntity,
+			ValueID:   simplifiedEntity.ID,
+		}
+
+		if simplifiedEntity.Type == types.EntityTypeService {
+			entry.ValueType = logger.ValueTypeEntityService
+		}
+
+		err = a.actionLogger.Action(context.Background(), userId, entry)
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
+		a.metricMetaUpdater.UpdateById(c.Request.Context(), simplifiedEntity.ID)
+	}
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
+func (a *api) sendChangeMessage(msg entityservice.ChangeEntityMessage) {
+	select {
+	case a.entityChangeListener <- msg:
+	default:
+		a.logger.Err(errors.New("channel is full")).
+			Str("entity", msg.ID).
+			Msg("fail to send change entity message")
+	}
 }

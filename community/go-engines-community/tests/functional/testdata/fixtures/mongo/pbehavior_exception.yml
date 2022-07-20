@@ -1,82 +1,91 @@
+template:
+  - &exception {
+    _id: <UUID()>,
+    name: <UniqueName()>,
+    description: <LoremIpsumSentence(3)>,
+    created: <NowUnix()>,
+    exdates: [
+      {
+        begin: <NowUnix()>,
+        end: <NowUnix()>,
+        type: test-default-maintenance-type
+      }
+    ]
+  }
+
 pbehavior_exception:
-  pbehavior_exception_1:
+  exception_to_update:
+    <<: *exception
     _id: test-exception-to-update
     created: 1592215037
-    description: test
-    exdates:
-    - begin: 1591164001
-      end: 1591167601
-      type: test-type-to-exception-edit-1
-    name: Exception to update
-  pbehavior_exception_2:
+
+  exception_to_delete:
+    <<: *exception
     _id: test-exception-to-delete
-    created: 1592215037
-    description: test
-    exdates:
-    - begin: 1591163001
-      end: 1591167801
-      type: test-type-to-exception-edit-1
-    name: Exception to delete
-  pbehavior_exception_3:
+
+  exception_to_get_1:
+    <<: *exception
     _id: test-exception-to-get-1
     created: 1592215037
     description: test-exception-to-get-1-description
     exdates:
-    - begin: 1591164001
-      end: 1591167601
-      type: test-type-to-exception-edit-2
+      - begin: 1591164001
+        end: 1591167601
+        type: test-type-to-exception-edit-2
     name: test-exception-to-get-1-name
-  pbehavior_exception_4:
+
+  exception_to_get_2:
+    <<: *exception
     _id: test-exception-to-get-2
     created: 1592215037
     description: test-exception-to-get-2-description
     exdates:
-    - begin: 1591164001
-      end: 1591167601
-      type: test-type-to-exception-edit-2
+      - begin: 1591164001
+        end: 1591167601
+        type: test-type-to-exception-edit-2
     name: test-exception-to-get-2-name
-  pbehavior_exception_5:
+
+  exception_to_delete_used_by_pbehavior:
+    <<: *exception
     _id: test-exception-to-delete-used-by-pbehavior
-    created: 1592215037
-    description: test
-    exdates:
-    - begin: 15911648001
-      end: 1591167901
-      type: test-type-to-exception-edit-1
-    name: Exception to delete used by pbehavior
-  pbehavior_exception_6:
+
+  exception_to_pbh_edit:
+    <<: *exception
     _id: test-exception-to-pbh-edit
     created: 1592215037
     description: test
     exdates:
-    - begin: 15911648001
-      end: 1591167901
-      type: test-type-to-pbh-edit-1
+      - begin: 15911648001
+        end: 1591167901
+        type: test-type-to-pbh-edit-1
     name: Exception to pbehavior edit
-  pbehavior_exception_7:
+
+  exception_to_type_delete:
+    <<: *exception
     _id: test-exception-to-type-delete
-    created: 1592215037
-    description: test
     exdates:
-    - begin: 15911648001
-      end: 1591167901
-      type: test-type-to-delete-linked-to-exception
-    name: Exception to type delete
-  pbehavior_exception_8:
+      - begin: 15911648001
+        end: 1591167901
+        type: test-type-to-delete-linked-to-exception
+
+  exception_to_patch_pbehavior:
+    <<: *exception
     _id: test-exception-to-patch-pbehavior
     created: 1592215337
     description: test-exception-to-patch-pbehavior-description
     exdates:
-    - begin: 1592215337
-      end: 1592215337
-      type: test-active-type-to-patch-pbehavior
+      - begin: 1592215337
+        end: 1592215337
+        type: test-active-type-to-patch-pbehavior
     name: test-exception-to-patch-pbehavior-name
-  pbehavior_exception_9:
+
+  exception_to_patch_pbehavior_new:
+    <<: *exception
     _id: test-exception-to-patch-pbehavior-new
     created: 1592215337
     description: test-exception-to-patch-pbehavior-new-description
     exdates:
-    - begin: 1592215337
-      end: 1592215337
-      type: test-pause-type-to-patch-pbehavior
+      - begin: 1592215337
+        end: 1592215337
+        type: test-pause-type-to-patch-pbehavior
     name: test-exception-to-patch-pbehavior-new-name

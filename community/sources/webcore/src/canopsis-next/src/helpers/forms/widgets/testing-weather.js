@@ -1,7 +1,6 @@
-import { DEFAULT_PERIODIC_REFRESH, TEST_CASE_FILE_MASK, WIDGET_TYPES } from '@/constants';
+import { DEFAULT_PERIODIC_REFRESH, TEST_CASE_FILE_MASK } from '@/constants';
 
 import { addKeyInEntities } from '@/helpers/entities';
-import { widgetToForm } from '@/helpers/forms/widgets/common';
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
@@ -27,19 +26,9 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  */
 
 /**
- * @typedef {Widget} TestingWeatherWidget
- * @property {TestingWeatherWidgetParameters} parameters
- */
-
-/**
  * @typedef {TestingWeatherWidgetParameters} TestingWeatherWidgetParametersForm
  * @property {StorageForm[]} screenshot_directories
  * @property {StorageForm[]} video_directories
- */
-
-/**
- * @typedef {Widget} TestingWeatherWidgetForm
- * @property {TestingWeatherWidgetParametersForm} parameters
  */
 
 /**
@@ -48,64 +37,42 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @param {Storage[]} storages
  * @return {StorageForm[]}
  */
-const storagesToFormStorages = (storages = []) => addKeyInEntities(storages.map(directory => ({ directory })));
+const storagesToForm = (storages = []) => addKeyInEntities(storages.map(directory => ({ directory })));
 
 /**
- * Convert storages array to form array
+ * Convert testing weather widget parameters to form
  *
  * @param {TestingWeatherWidgetParameters} parameters
  * @return {TestingWeatherWidgetParametersForm}
  */
-const testingWeatherWidgetParametersToForm = (parameters = {}) => ({
+export const testingWeatherWidgetParametersToForm = (parameters = {}) => ({
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
-  directory: parameters.directory || '',
-  is_api: !!parameters.is_api,
-  screenshot_directories: storagesToFormStorages(parameters.screenshot_directories),
-  video_directories: storagesToFormStorages(parameters.video_directories),
-  screenshot_filemask: parameters.screenshot_filemask || TEST_CASE_FILE_MASK,
-  video_filemask: parameters.video_filemask || TEST_CASE_FILE_MASK,
-  report_fileregexp: parameters.report_fileregexp,
+  directory: parameters.directory ?? '',
+  is_api: parameters.is_api ?? false,
+  screenshot_directories: storagesToForm(parameters.screenshot_directories),
+  video_directories: storagesToForm(parameters.video_directories),
+  screenshot_filemask: parameters.screenshot_filemask ?? TEST_CASE_FILE_MASK,
+  video_filemask: parameters.video_filemask ?? TEST_CASE_FILE_MASK,
+  report_fileregexp: parameters.report_fileregexp ?? '',
 });
 
 /**
- * Convert testing weather widget to form object
- *
- * @param {TestingWeatherWidget} [testingWeatherWidget = {}]
- * @returns {TestingWeatherWidgetForm}
- */
-export const testingWeatherWidgetToForm = (testingWeatherWidget = {}) => {
-  const widget = widgetToForm(testingWeatherWidget);
-
-  return {
-    ...widget,
-    type: WIDGET_TYPES.testingWeather,
-    parameters: testingWeatherWidgetParametersToForm(testingWeatherWidget.parameters),
-  };
-};
-
-/**
- * Convert storages array to form array
+ * Convert form array storages array
  *
  * @param {StorageForm[]} storages
  * @return {Storage[]}
  */
-const formStoragesToStorages = (storages = []) => storages.map(({ directory }) => directory);
+const formToStorages = (storages = []) => storages.map(({ directory }) => directory);
 
 /**
- * Convert role form to role object
+ * Convert form to testing weather widget parameters
  *
- * @param {TestingWeatherWidgetForm} form
- * @returns {TestingWeatherWidget}
+ * @param {TestingWeatherWidgetParametersForm} form
+ * @return {TestingWeatherWidgetParameters}
  */
-export const formToTestingWeatherWidget = (form) => {
-  const { parameters } = form;
+export const formToTestingWeatherWidgetParameters = form => ({
+  ...form,
 
-  return {
-    ...form,
-    parameters: {
-      ...parameters,
-      screenshot_directories: formStoragesToStorages(parameters.screenshot_directories),
-      video_directories: formStoragesToStorages(parameters.video_directories),
-    },
-  };
-};
+  screenshot_directories: formToStorages(form.screenshot_directories),
+  video_directories: formToStorages(form.video_directories),
+});

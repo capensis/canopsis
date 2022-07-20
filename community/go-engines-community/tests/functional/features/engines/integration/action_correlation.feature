@@ -18,9 +18,10 @@ Feature: update meta alarm on action
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
     Then the response code should be 200
-    When I save response metalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
+    When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
+    When I save response metaalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
     When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
     When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
@@ -30,14 +31,19 @@ Feature: update meta alarm on action
     {
       "name": "test-scenario-action-correlation-1-name",
       "enabled": true,
-      "priority": 81,
       "triggers": ["comment"],
       "actions": [
         {
-          "entity_patterns": [
-            {
-              "_id": "{{ .metalarmEntityID }}"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "{{ .metaAlarmResource }}"
+                }
+              }
+            ]
           ],
           "type": "assocticket",
           "parameters": {
@@ -48,10 +54,16 @@ Feature: update meta alarm on action
           "emit_trigger": false
         },
         {
-          "entity_patterns": [
-            {
-              "_id": "{{ .metalarmEntityID }}"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "{{ .metaAlarmResource }}"
+                }
+              }
+            ]
           ],
           "type": "ack",
           "parameters": {
@@ -78,72 +90,74 @@ Feature: update meta alarm on action
     }
     """
     When I wait the end of 4 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=v.resource&sort_dir=asc
-    Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmID }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
     Then the response body should contain:
     """json
-    {
-      "data": [
-        {
-          "consequences": {
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
             "data": [
               {
                 "v": {
                   "component": "test-component-action-correlation-1",
                   "connector": "test-connector-action-correlation-1",
                   "connector_name": "test-connector-name-action-correlation-1",
-                  "resource": "test-resource-action-correlation-1",
-                  "steps": [
-                    {
-                      "_t": "stateinc",
-                      "val": 2
-                    },
-                    {
-                      "_t": "statusinc",
-                      "val": 1
-                    },
-                    {
-                      "_t": "metaalarmattach",
-                      "val": 0
-                    },
-                    {
-                      "_t": "comment"
-                    },
-                    {
-                      "_t": "assocticket",
-                      "a": "root",
-                      "m": "test-ticket-action-correlation-1"
-                    },
-                    {
-                      "_t": "ack",
-                      "a": "root",
-                      "m": "test-output-action-correlation-1-engine"
-                    }
-                  ]
+                  "resource": "test-resource-action-correlation-1"
                 }
               }
             ],
-            "total": 1
-          },
-          "metaalarm": true,
-          "rule": {
-            "id": "test-metaalarmrule-action-correlation-1"
-          },
-          "v": {
-            "children": [
-              "test-resource-action-correlation-1/test-component-action-correlation-1"
-            ],
-            "component": "metaalarm",
-            "connector": "engine",
-            "connector_name": "correlation",
-            "meta": "{{ .metaAlarmRuleID }}",
-            "state": {
-              "val": 2
-            },
-            "status": {
-              "val": 1
-            },
-            "steps": [
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmID }}",
+        "steps": {
+          "page": 1
+        }
+      },
+      {
+        "_id": "{{ (index (index .lastResponse 0).data.children.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -157,25 +171,65 @@ Feature: update meta alarm on action
               },
               {
                 "_t": "assocticket",
-                "a": "root",
+                "a": "system",
                 "m": "test-ticket-action-correlation-1"
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "system",
                 "m": "test-output-action-correlation-1-engine"
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 5
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
+      },
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "metaalarmattach",
+                "val": 0
+              },
+              {
+                "_t": "comment"
+              },
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "test-ticket-action-correlation-1"
+              },
+              {
+                "_t": "ack",
+                "a": "system",
+                "m": "test-output-action-correlation-1-engine"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 6
+            }
+          }
+        }
       }
-    }
+    ]
     """
 
   Scenario: given meta alarm and scenario with webhook action should update meta alarm and update children
@@ -209,10 +263,11 @@ Feature: update meta alarm on action
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
     Then the response code should be 200
-    When I save response metalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
-    When I save response metalarmDisplayName={{ (index .lastResponse.data 0).v.display_name }}
+    When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
+    When I save response metaalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
+    When I save response metaalarmDisplayName={{ (index .lastResponse.data 0).v.display_name }}
     When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
     When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
@@ -222,14 +277,19 @@ Feature: update meta alarm on action
     {
       "name": "test-scenario-action-correlation-2-name",
       "enabled": true,
-      "priority": 82,
       "triggers": ["comment"],
       "actions": [
         {
-          "entity_patterns": [
-            {
-              "_id": "{{ .metalarmEntityID }}"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "{{ .metaAlarmResource }}"
+                }
+              }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -277,14 +337,27 @@ Feature: update meta alarm on action
     }
     """
     When I wait the end of 3 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=v.resource&sort_dir=asc
-    Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmID }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
     Then the response body should contain:
     """json
-    {
-      "data": [
-        {
-          "consequences": {
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
             "data": [
               {
                 "v": {
@@ -298,26 +371,7 @@ Feature: update meta alarm on action
                     "data": {
                       "ticket_data": "testdata"
                     }
-                  },
-                  "steps": [
-                    {
-                      "_t": "stateinc"
-                    },
-                    {
-                      "_t": "statusinc",
-                      "val": 1
-                    },
-                    {
-                      "_t": "metaalarmattach",
-                      "val": 0
-                    },
-                    {
-                      "_t": "comment"
-                    },
-                    {
-                      "_t": "declareticket"
-                    }
-                  ]
+                  }
                 }
               },
               {
@@ -332,26 +386,7 @@ Feature: update meta alarm on action
                     "data": {
                       "ticket_data": "testdata"
                     }
-                  },
-                  "steps": [
-                    {
-                      "_t": "stateinc"
-                    },
-                    {
-                      "_t": "statusinc",
-                      "val": 1
-                    },
-                    {
-                      "_t": "metaalarmattach",
-                      "val": 0
-                    },
-                    {
-                      "_t": "comment"
-                    },
-                    {
-                      "_t": "declareticket"
-                    }
-                  ]
+                  }
                 }
               },
               {
@@ -366,51 +401,59 @@ Feature: update meta alarm on action
                     "data": {
                       "ticket_data": "testdata"
                     }
-                  },
-                  "steps": [
-                    {
-                      "_t": "stateinc"
-                    },
-                    {
-                      "_t": "statusinc",
-                      "val": 1
-                    },
-                    {
-                      "_t": "metaalarmattach",
-                      "val": 0
-                    },
-                    {
-                      "_t": "declareticket"
-                    }
-                  ]
+                  }
                 }
               }
             ],
-            "total": 3
-          },
-          "metaalarm": true,
-          "rule": {
-            "id": "test-metaalarmrule-action-correlation-2"
-          },
-          "v": {
-            "component": "metaalarm",
-            "connector": "engine",
-            "connector_name": "correlation",
-            "meta": "{{ .metaAlarmRuleID }}",
-            "ticket": {
-              "_t": "declareticket",
-              "val": "testticket",
-              "data": {
-                "ticket_data": "testdata"
-              }
-            },
-            "state": {
-              "val": 2
-            },
-            "status": {
-              "val": 1
-            },
-            "steps": [
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmID }}",
+        "steps": {
+          "page": 1
+        }
+      },
+      {
+        "_id": "{{ (index (index .lastResponse 0).data.children.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      },
+      {
+        "_id": "{{ (index (index .lastResponse 0).data.children.data 1)._id }}",
+        "steps": {
+          "page": 1
+        }
+      },
+      {
+        "_id": "{{ (index (index .lastResponse 0).data.children.data 2)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -425,17 +468,110 @@ Feature: update meta alarm on action
               {
                 "_t": "declareticket"
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
+      },
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "metaalarmattach",
+                "val": 0
+              },
+              {
+                "_t": "comment"
+              },
+              {
+                "_t": "declareticket"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 5
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "metaalarmattach",
+                "val": 0
+              },
+              {
+                "_t": "comment"
+              },
+              {
+                "_t": "declareticket"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 5
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "metaalarmattach",
+                "val": 0
+              },
+              {
+                "_t": "declareticket"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
       }
-    }
+    ]
     """
 
   Scenario: given scenario for meta alarm and scenario for child alarm should child alarm in correct order
@@ -455,10 +591,11 @@ Feature: update meta alarm on action
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
     Then the response code should be 200
-    When I save response metalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
-    When I save response metalarmDisplayName={{ (index .lastResponse.data 0).v.display_name }}
+    When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
+    When I save response metaalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
+    When I save response metaalarmDisplayName={{ (index .lastResponse.data 0).v.display_name }}
     When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
     When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
@@ -468,14 +605,19 @@ Feature: update meta alarm on action
     {
       "name": "test-scenario-action-correlation-3-1-name",
       "enabled": true,
-      "priority": 83,
       "triggers": ["comment"],
       "actions": [
         {
-          "entity_patterns": [
-            {
-              "_id": "{{ .metalarmEntityID }}"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "{{ .metaAlarmResource }}"
+                }
+              }
+            ]
           ],
           "type": "ack",
           "parameters": {
@@ -492,14 +634,19 @@ Feature: update meta alarm on action
     {
       "name": "test-scenario-action-correlation-3-2-name",
       "enabled": true,
-      "priority": 84,
       "triggers": ["comment"],
       "actions": [
         {
-          "entity_patterns": [
-            {
-              "name": "test-resource-action-correlation-3"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-correlation-3"
+                }
+              }
+            ]
           ],
           "type": "snooze",
           "parameters": {
@@ -526,7 +673,7 @@ Feature: update meta alarm on action
         "event_type": "comment",
         "component":  "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
-        "output": "test-output-action-correlation-3-metalarm"
+        "output": "test-output-action-correlation-3-metaalarm"
       },
       {
         "connector": "test-connector-action-correlation-3",
@@ -540,70 +687,74 @@ Feature: update meta alarm on action
     ]
     """
     When I wait the end of 4 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=v.resource&sort_dir=asc
-    Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmID }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
     Then the response body should contain:
     """json
-    {
-      "data": [
-        {
-          "consequences": {
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
             "data": [
               {
                 "v": {
                   "component": "test-component-action-correlation-3",
                   "connector": "test-connector-action-correlation-3",
                   "connector_name": "test-connector-name-action-correlation-3",
-                  "resource": "test-resource-action-correlation-3",
-                  "steps": [
-                    {
-                      "_t": "stateinc",
-                      "val": 2
-                    },
-                    {
-                      "_t": "statusinc",
-                      "val": 1
-                    },
-                    {
-                      "_t": "metaalarmattach",
-                      "val": 0
-                    },
-                    {
-                      "_t": "comment",
-                      "m": "test-output-action-correlation-3"
-                    },
-                    {
-                      "_t": "snooze"
-                    },
-                    {
-                      "_t": "comment",
-                      "m": "test-output-action-correlation-3-metalarm"
-                    },
-                    {
-                      "_t": "ack"
-                    }
-                  ]
+                  "resource": "test-resource-action-correlation-3"
                 }
               }
             ],
-            "total": 1
-          },
-          "metaalarm": true,
-          "rule": {
-            "id": "test-metaalarmrule-action-correlation-3"
-          },
-          "v": {
-            "component": "metaalarm",
-            "connector": "engine",
-            "connector_name": "correlation",
-            "meta": "{{ .metaAlarmRuleID }}",
-            "state": {
-              "val": 2
-            },
-            "status": {
-              "val": 1
-            },
-            "steps": [
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmID }}",
+        "steps": {
+          "page": 1
+        }
+      },
+      {
+        "_id": "{{ (index (index .lastResponse 0).data.children.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -618,15 +769,56 @@ Feature: update meta alarm on action
               {
                 "_t": "ack"
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
+      },
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "metaalarmattach",
+                "val": 0
+              },
+              {
+                "_t": "comment",
+                "m": "test-output-action-correlation-3"
+              },
+              {
+                "_t": "snooze"
+              },
+              {
+                "_t": "comment",
+                "m": "test-output-action-correlation-3-metaalarm"
+              },
+              {
+                "_t": "ack"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 7
+            }
+          }
+        }
       }
-    }
+    ]
     """

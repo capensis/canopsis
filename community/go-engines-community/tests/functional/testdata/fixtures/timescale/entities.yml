@@ -1,6 +1,6 @@
 - id: 1
   custom_id: test-entity-to-alarm-metrics-get-1
-  name: test-entity-to-alarm-total-metrics-get-1
+  name: test-entity-to-alarm-metrics-get-1
   type: component
   impact_level: 1
 - id: 2

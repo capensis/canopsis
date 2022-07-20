@@ -114,10 +114,12 @@ Identifier of previously defined document in the same file can be used as value 
 ```yaml
 roles:
   role_admin:
+    _id: <UUID()>
     name: admin
 
 users:
   user1:
+    _id: <UUID()>
     name: John
     role: "@role_admin"  
 ```
@@ -127,17 +129,21 @@ users:
 Use template to not repeat fields in documents.
 
 ```yaml
-users:
-  default_user (template):
-    _id: <UUID()>
-    created: <NowUnix()>
+template:
+  - &default_user {
+    _id: <UUID()>,
+    created: <NowUnix()>,
     role: "@role_admin"
+  }
 
-  user1 (extend default_user):
+users:
+  user1:
+    <<: *default_user
     name: John
     password: <Password(test)>
 
-  user2 (extend default_user):
+  user2:
+    <<: *default_user
     name: Bob
     password: <Password(test)>
     role: "@role_support"

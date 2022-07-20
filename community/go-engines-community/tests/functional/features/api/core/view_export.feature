@@ -49,7 +49,7 @@ Feature: Export views
                         "desktop": {"x": 0, "y": 0}
                       },
                       "parameters": {
-                        "main_filter": "test-widgetfilter-to-export-2",
+                        "mainFilter": "test-widgetfilter-to-export-2",
                         "test-widget-to-view-export-1-parameter-1": {
                           "test-widget-to-view-export-1-parameter-1-subparameter": "test-widget-to-view-export-1-parameter-1-subvalue"
                         },

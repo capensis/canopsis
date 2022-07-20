@@ -4,7 +4,6 @@ package config
 
 import (
 	"fmt"
-	"github.com/golang-jwt/jwt"
 	"html/template"
 	"reflect"
 	"strconv"
@@ -12,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/rs/zerolog"
 )
 
@@ -62,6 +62,7 @@ type AlarmConfig struct {
 	// DisableActionSnoozeDelayOnPbh ignores Pbh state to resolve snoozed with Action alarm while is True
 	DisableActionSnoozeDelayOnPbh bool
 	TimeToKeepResolvedAlarms      time.Duration
+	AllowDoubleAck                bool
 }
 
 type TimezoneConfig struct {
@@ -105,6 +106,7 @@ func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmC
 		CancelAutosolveDelay:          parseTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, AlarmCancelAutosolveDelay, "CancelAutosolveDelay", sectionName, logger),
 		DisableActionSnoozeDelayOnPbh: parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
 		TimeToKeepResolvedAlarms:      parseTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, 0, "TimeToKeepResolvedAlarms", sectionName, logger),
+		AllowDoubleAck:                parseBool(cfg.Alarm.AllowDoubleAck, "AllowDoubleAck", sectionName, logger),
 	}
 	conf.DisplayNameScheme, conf.displayNameSchemeText = parseTemplate(cfg.Alarm.DisplayNameScheme, AlarmDefaultNameScheme, "DisplayNameScheme", sectionName, logger)
 
@@ -188,6 +190,11 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) {
 	b, ok = parseUpdatedBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, p.conf.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, p.logger)
 	if ok {
 		p.conf.DisableActionSnoozeDelayOnPbh = b
+	}
+
+	b, ok = parseUpdatedBool(cfg.Alarm.AllowDoubleAck, p.conf.AllowDoubleAck, "AllowDoubleAck", sectionName, p.logger)
+	if ok {
+		p.conf.AllowDoubleAck = b
 	}
 }
 

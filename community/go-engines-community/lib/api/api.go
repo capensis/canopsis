@@ -71,6 +71,10 @@ func New(
 }
 
 func (a *api) AddWorker(key string, worker Worker) {
+	if _, ok := a.workers[key]; ok {
+		panic(fmt.Errorf("%q worker already exists", key))
+	}
+
 	a.workers[key] = worker
 }
 
@@ -135,6 +139,7 @@ func (a *api) registerRoutes() http.Handler {
 	ginRouter.Use(gin.Logger())
 	ginRouter.Use(middleware.Recovery(a.logger))
 	ginRouter.HandleMethodNotAllowed = true
+	ginRouter.ContextWithFallback = true
 
 	for _, router := range a.routers {
 		router(ginRouter)

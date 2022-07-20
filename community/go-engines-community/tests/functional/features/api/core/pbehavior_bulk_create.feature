@@ -17,20 +17,25 @@ Feature: Bulk create pbehaviors
     """json
     [
       {
-        "_id": "test-pbehavior-to-bulk-create-1-1",
+        "_id": "test-pbehavior-to-bulk-create-1",
         "enabled": true,
-        "name": "test-pbehavior-to-bulk-create-1-1-name",
+        "name": "test-pbehavior-to-bulk-create-1-name",
         "tstart": 1591172881,
         "tstop": 1591536400,
+        "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-1",
-        "filter": {
-          "$and": [
+        "entity_pattern": [
+          [
             {
-              "name": "test-pbehavior-to-bulk-create-1-1-filter"
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-pbehavior-to-bulk-create-1-pattern"
+              }
             }
           ]
-        },
+        ],
         "exdates": [
           {
             "begin": 1591164001,
@@ -41,20 +46,25 @@ Feature: Bulk create pbehaviors
         "exceptions": ["test-exception-to-pbh-edit"]
       },
       {
-        "_id": "test-pbehavior-to-bulk-create-1-1",
+        "_id": "test-pbehavior-to-bulk-create-1",
         "enabled": true,
-        "name": "test-pbehavior-to-bulk-create-1-1-name",
+        "name": "test-pbehavior-to-bulk-create-1-name",
         "tstart": 1591172881,
         "tstop": 1591536400,
+        "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-1",
-        "filter": {
-          "$and": [
+        "entity_pattern": [
+          [
             {
-              "name": "test-pbehavior-to-bulk-create-1-1-filter"
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-pbehavior-to-bulk-create-1-pattern"
+              }
             }
           ]
-        },
+        ],
         "exdates": [
           {
             "begin": 1591164001,
@@ -73,20 +83,25 @@ Feature: Bulk create pbehaviors
       },
       [],
       {
-        "_id": "test-pbehavior-to-bulk-create-1-2",
+        "_id": "test-pbehavior-to-bulk-create-2",
         "enabled": true,
-        "name": "test-pbehavior-to-bulk-create-1-2-name",
+        "name": "test-pbehavior-to-bulk-create-2-name",
         "tstart": 1591172881,
         "tstop": 1591536400,
+        "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-1",
-        "filter": {
-          "$and": [
+        "entity_pattern": [
+          [
             {
-              "name": "test-pbehavior-to-bulk-create-1-2-filter"
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-pbehavior-to-bulk-create-2-pattern"
+              }
             }
           ]
-        },
+        ],
         "exdates": [
           {
             "begin": 1591164001,
@@ -104,22 +119,27 @@ Feature: Bulk create pbehaviors
     [
       {
         "status": 200,
-        "id": "test-pbehavior-to-bulk-create-1-1",
+        "id": "test-pbehavior-to-bulk-create-1",
         "item": {
-          "_id": "test-pbehavior-to-bulk-create-1-1",
+          "_id": "test-pbehavior-to-bulk-create-1",
           "enabled": true,
-          "name": "test-pbehavior-to-bulk-create-1-1-name",
+          "name": "test-pbehavior-to-bulk-create-1-name",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-1",
-          "filter": {
-            "$and": [
+          "entity_pattern": [
+            [
               {
-                "name": "test-pbehavior-to-bulk-create-1-1-filter"
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-to-bulk-create-1-pattern"
+                }
               }
             ]
-          },
+          ],
           "exdates": [
             {
               "begin": 1591164001,
@@ -133,20 +153,25 @@ Feature: Bulk create pbehaviors
       {
         "status": 400,
         "item": {
-          "_id": "test-pbehavior-to-bulk-create-1-1",
+          "_id": "test-pbehavior-to-bulk-create-1",
           "enabled": true,
-          "name": "test-pbehavior-to-bulk-create-1-1-name",
+          "name": "test-pbehavior-to-bulk-create-1-name",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-1",
-          "filter": {
-            "$and": [
+          "entity_pattern": [
+            [
               {
-                "name": "test-pbehavior-to-bulk-create-1-1-filter"
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-to-bulk-create-1-pattern"
+                }
               }
             ]
-          },
+          ],
           "exdates": [
             {
               "begin": 1591164001,
@@ -166,8 +191,9 @@ Feature: Bulk create pbehaviors
         "errors": {
           "enabled": "Enabled is missing.",
           "name": "Name is missing.",
-          "filter": "Filter is missing.",
+          "entity_pattern": "EntityPattern is missing.",
           "tstart": "Start is missing.",
+          "color": "Color is missing.",
           "reason": "Reason is missing.",
           "type": "Type is missing."
         }
@@ -197,21 +223,26 @@ Feature: Bulk create pbehaviors
       },
       {
         "status": 200,
-        "id": "test-pbehavior-to-bulk-create-1-2",
+        "id": "test-pbehavior-to-bulk-create-2",
         "item": {
           "enabled": true,
-          "name": "test-pbehavior-to-bulk-create-1-2-name",
+          "name": "test-pbehavior-to-bulk-create-2-name",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-1",
-          "filter": {
-            "$and": [
+          "entity_pattern": [
+            [
               {
-                "name": "test-pbehavior-to-bulk-create-1-2-filter"
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-to-bulk-create-2-pattern"
+                }
               }
             ]
-          },
+          ],
           "exdates": [
             {
               "begin": 1591164001,
@@ -224,32 +255,37 @@ Feature: Bulk create pbehaviors
       }
     ]
     """
-    When I do GET /api/v4/pbehaviors?search=test-pbehavior-to-bulk-create-1&sort_by=name
+    When I do GET /api/v4/pbehaviors?search=test-pbehavior-to-bulk-create&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "_id": "test-pbehavior-to-bulk-create-1-1",
+          "_id": "test-pbehavior-to-bulk-create-1",
           "enabled": true,
           "author": "root",
-          "name": "test-pbehavior-to-bulk-create-1-1-name",
+          "name": "test-pbehavior-to-bulk-create-1-name",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFF",
           "type": {
             "_id": "test-type-to-pbh-edit-1"
           },
           "reason": {
             "_id": "test-reason-1"
           },
-          "filter": {
-            "$and": [
+          "entity_pattern": [
+            [
               {
-                "name": "test-pbehavior-to-bulk-create-1-1-filter"
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-to-bulk-create-1-pattern"
+                }
               }
             ]
-          },
+          ],
           "exdates": [
             {
               "begin": 1591164001,
@@ -268,22 +304,27 @@ Feature: Bulk create pbehaviors
         {
           "enabled": true,
           "author": "root",
-          "name": "test-pbehavior-to-bulk-create-1-2-name",
+          "name": "test-pbehavior-to-bulk-create-2-name",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFF",
           "type": {
             "_id": "test-type-to-pbh-edit-1"
           },
           "reason": {
             "_id": "test-reason-1"
           },
-          "filter": {
-            "$and": [
+          "entity_pattern": [
+            [
               {
-                "name": "test-pbehavior-to-bulk-create-1-2-filter"
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-to-bulk-create-2-pattern"
+                }
               }
             ]
-          },
+          ],
           "exdates": [
             {
               "begin": 1591164001,
