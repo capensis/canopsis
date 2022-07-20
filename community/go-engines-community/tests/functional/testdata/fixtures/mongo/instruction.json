@@ -3943,5 +3943,36 @@
     "enabled": true,
     "last_modified": 1596712203,
     "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-stats-summary-get-4",
+    "type": 0,
+    "name": "test-instruction-to-stats-summary-get-4-name",
+    "entity_patterns": [
+      {
+        "name": "test filter"
+      }
+    ],
+    "description": "test-instruction-to-stats-summary-get-4-description",
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "jobs": [
+      {
+        "job": "test-job-to-instruction-edit-1",
+        "stop_on_fail": true
+      },
+      {
+        "job": "test-job-to-instruction-edit-2"
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 2,
+      "unit": "s"
+    },
+    "priority": 16,
+    "last_modified": 1596712204,
+    "created": 1596712203,
+    "last_executed_on": 1596712209,
+    "avg_complete_time": 401
   }
 ]
