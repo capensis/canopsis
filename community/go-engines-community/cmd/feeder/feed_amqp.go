@@ -1,13 +1,14 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 )
 
-func (f *Feeder) sendIterable(iterable []interface{}) error {
+func (f *Feeder) sendIterable(ctx context.Context, iterable []interface{}) error {
 	for i, v := range iterable {
 		f.logger.Info().Msgf("sending event %d/%d", i+1, len(iterable))
 		_, ok := v.(map[string]interface{})
@@ -20,7 +21,7 @@ func (f *Feeder) sendIterable(iterable []interface{}) error {
 		if err != nil {
 			return fmt.Errorf("sending event: %v", err)
 		}
-		if err = f.sendBytes(bv, "#"); err != nil {
+		if err = f.sendBytes(ctx, bv, "#"); err != nil {
 			return fmt.Errorf("sending event: %v", err)
 		}
 	}
@@ -28,7 +29,7 @@ func (f *Feeder) sendIterable(iterable []interface{}) error {
 	return nil
 }
 
-func (f *Feeder) sendLoop(content []byte) error {
+func (f *Feeder) sendLoop(ctx context.Context, content []byte) error {
 	var err error
 	if f.flags.CheckJSON {
 		var ref interface{}
@@ -47,20 +48,20 @@ func (f *Feeder) sendLoop(content []byte) error {
 			length := len(ref)
 			f.logger.Info().Msgf("sending %d events from file %s", length, f.flags.File)
 			iterable = true
-			err = f.sendIterable(ref)
+			err = f.sendIterable(ctx, ref)
 		}
 
 		if !iterable {
-			err = f.sendBytes(content, "#")
+			err = f.sendBytes(ctx, content, "#")
 		}
 	} else {
-		err = f.sendBytes(content, "#")
+		err = f.sendBytes(ctx, content, "#")
 	}
 
 	return err
 }
 
-func (f *Feeder) modeSendEvent() error {
+func (f *Feeder) modeSendEvent(ctx context.Context) error {
 	if err := f.setupAmqp(); err != nil {
 		return err
 	}
@@ -83,7 +84,7 @@ func (f *Feeder) modeSendEvent() error {
 	sendLoop := true
 
 	for sendLoop {
-		err := f.sendLoop(content)
+		err := f.sendLoop(ctx, content)
 
 		if err != nil {
 			return fmt.Errorf("sending event: %v", err)

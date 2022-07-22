@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -113,12 +114,12 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery, c
 	}
 
 	if c.nextQueue != "" && msgToNext != nil {
-		err := publishToChannel(publishCh, c.nextExchange, c.nextQueue, msgToNext)
+		err := publishToChannel(ctx, publishCh, c.nextExchange, c.nextQueue, msgToNext)
 		if err != nil {
 			return fmt.Errorf("cannot sent message to next queue: %w", err)
 		}
 	} else if c.fifoQueue != "" {
-		err := publishToChannel(publishCh, c.fifoExchange, c.fifoQueue, d.Body)
+		err := publishToChannel(ctx, publishCh, c.fifoExchange, c.fifoQueue, d.Body)
 		if err != nil {
 			return fmt.Errorf("cannot sent message to fifo queue: %w", err)
 		}
@@ -166,8 +167,9 @@ func getConsumeChannel(
 	return channel, msgs, nil
 }
 
-func publishToChannel(channel libamqp.Channel, exchange, queue string, body []byte) error {
-	return channel.Publish(
+func publishToChannel(ctx context.Context, channel libamqp.Channel, exchange, queue string, body []byte) error {
+	return channel.PublishWithContext(
+		ctx,
 		exchange,
 		queue,
 		false,

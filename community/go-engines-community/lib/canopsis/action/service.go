@@ -85,7 +85,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					break
 				}
 
-				event := &types.Event{
+				event := types.Event{
 					Connector:     alarm.Value.Connector,
 					ConnectorName: alarm.Value.ConnectorName,
 					Component:     alarm.Value.Component,
@@ -98,7 +98,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					(result.Err != nil && len(result.ActionExecutions) > 0 &&
 						result.ActionExecutions[len(result.ActionExecutions)-1].Action.Type == types.ActionTypeWebhook)) {
 					// Send activation event
-					ok, err = s.activationService.Process(&alarm)
+					ok, err = s.activationService.Process(ctx, alarm)
 					if err != nil {
 						s.logger.Error().Err(err).Msg("failed to send activation")
 						break
@@ -110,7 +110,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 				}
 
 				if !activationSent {
-					s.sendEventToFifoAck(event)
+					s.sendEventToFifoAck(ctx, event)
 				}
 			}
 		}
@@ -119,7 +119,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 
 func (s *service) Process(ctx context.Context, event *types.Event) error {
 	if event.Alarm == nil || event.Entity == nil {
-		s.sendEventToFifoAck(event)
+		s.sendEventToFifoAck(ctx, *event)
 
 		return nil
 	}
@@ -217,14 +217,15 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 	return nil
 }
 
-func (s *service) sendEventToFifoAck(event *types.Event) {
+func (s *service) sendEventToFifoAck(ctx context.Context, event types.Event) {
 	body, err := s.encoder.Encode(event)
 	if err != nil {
 		s.logger.Error().Err(err).Msg("failed to send fifo ack event: failed to encode fifo ack event")
 		return
 	}
 
-	err = s.fifoChan.Publish(
+	err = s.fifoChan.PublishWithContext(
+		ctx,
 		s.fifoExchange,
 		s.fifoQueue,
 		false,

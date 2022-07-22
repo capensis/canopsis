@@ -2,6 +2,9 @@ package entityservice_test
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -12,8 +15,6 @@ import (
 	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"testing"
-	"time"
 )
 
 func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T) {
@@ -85,7 +86,7 @@ func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T)
 				}
 			}).Return(body, nil)
 			mockPublisher := mock_amqp.NewMockPublisher(ctrl)
-			mockPublisher.EXPECT().Publish(gomock.Eq(exchange), gomock.Eq(routingKey),
+			mockPublisher.EXPECT().PublishWithContext(gomock.Any(), gomock.Eq(exchange), gomock.Eq(routingKey),
 				gomock.Any(), gomock.Any(), gomock.Eq(amqp.Publishing{
 					ContentType:  contentType,
 					Body:         body,
@@ -166,7 +167,7 @@ func TestEventPublisher_Publish_GivenChangedService_ShouldSendEvent(t *testing.T
 				}
 			}).Return(body, nil)
 			mockPublisher := mock_amqp.NewMockPublisher(ctrl)
-			mockPublisher.EXPECT().Publish(gomock.Eq(exchange), gomock.Eq(routingKey),
+			mockPublisher.EXPECT().PublishWithContext(gomock.Any(), gomock.Eq(exchange), gomock.Eq(routingKey),
 				gomock.Any(), gomock.Any(), gomock.Eq(amqp.Publishing{
 					ContentType:  contentType,
 					Body:         body,
