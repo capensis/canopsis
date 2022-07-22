@@ -32,7 +32,7 @@ type Stats struct {
 }
 
 type EventPublisher interface {
-	SendEvent(event types.Event) error
+	SendEvent(ctx context.Context, event types.Event) error
 }
 
 type ConfigurationItem struct {
