@@ -173,7 +173,7 @@ Feature: get instruction statistics
       "_id": "test-instruction-to-stats-summary-get-4",
       "alarm_states": {
         "critical": {
-          "from": 3,
+          "from": 2,
           "to": 1
         },
         "major": {
@@ -182,10 +182,10 @@ Feature: get instruction statistics
         },
         "minor": {
           "from": 1,
-          "to": 3
+          "to": 1
         }
       },
-      "ok_alarm_states": 897,
+      "ok_alarm_states": 1,
       "avg_complete_time": 401,
       "execution_count": 6,
       "successful": 5,
