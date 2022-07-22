@@ -61,7 +61,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 	event.AlarmChange = &alarmChange
 
-	err = p.handleRemediation(event, msg)
+	err = p.handleRemediation(ctx, event, msg)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ func (p *messageProcessor) updatePbhLastAlarmDate(ctx context.Context, event typ
 	}()
 }
 
-func (p *messageProcessor) handleRemediation(event types.Event, msg []byte) error {
+func (p *messageProcessor) handleRemediation(ctx context.Context, event types.Event, msg []byte) error {
 	if p.RemediationRpcClient == nil {
 		return nil
 	}
@@ -120,7 +120,7 @@ func (p *messageProcessor) handleRemediation(event types.Event, msg []byte) erro
 		return nil
 	}
 
-	err = p.RemediationRpcClient.Call(engine.RPCMessage{
+	err = p.RemediationRpcClient.Call(ctx, engine.RPCMessage{
 		CorrelationID: event.Alarm.ID,
 		Body:          body,
 	})
