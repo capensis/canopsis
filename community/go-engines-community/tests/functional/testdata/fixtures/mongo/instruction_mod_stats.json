@@ -145,6 +145,11 @@
     "date": 1596712203
   },
   {
+    "_id": "test-mod-stats-to-stats-executions-get-11",
+    "instruction": "test-instruction-to-stats-executions-get-11",
+    "date": 1596712203
+  },
+  {
     "_id": "test-mod-stats-to-run-auto-instruction-1-1",
     "instruction": "test-instruction-to-run-auto-instruction-1-1",
     "date": 1596712203
@@ -201,12 +206,12 @@
     "avg_complete_time": 400,
     "execution_count": 6,
     "successful": 5,
-    "init_critical": 3,
+    "init_critical": 2,
     "init_major": 2,
     "init_minor": 1,
     "res_critical": 1,
     "res_major": 2,
-    "res_minor": 3,
-    "res_ok": 897
+    "res_minor": 1,
+    "res_ok": 1
   }
 ]
