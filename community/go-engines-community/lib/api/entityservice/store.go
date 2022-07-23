@@ -295,7 +295,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 			OutputTemplate: entity.OutputTemplate,
 		})
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		response, err = s.GetOneBy(ctx, entity.ID)
@@ -355,9 +355,9 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 
 		_, err = s.serviceCountersCollection.UpdateOne(
 			ctx,
-			bson.M{"_id": service.ID}, bson.M{
+			bson.M{"_id": request.ID}, bson.M{
 				"$set": bson.M{
-					"output_template": service.OutputTemplate,
+					"output_template": request.OutputTemplate,
 				},
 			})
 		if err != nil {

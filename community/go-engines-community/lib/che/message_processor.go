@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"runtime/trace"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -18,8 +21,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"runtime/trace"
-	"time"
 )
 
 type messageProcessor struct {
@@ -114,15 +115,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			updatedEntities = []types.Entity{eventEntity}
 		}
 
-		if event.IsEntityUpdated && eventEntity.Type == types.EntityTypeComponent {
-			resources, err := p.ContextGraphManager.FillResourcesWithInfos(tCtx, eventEntity)
-			if err != nil {
-				return fmt.Errorf("cannot update entity infos: %w", err)
-			}
-
-			updatedEntities = append(updatedEntities, resources...)
-		}
-
 		updatedEntities = append(updatedEntities, contextGraphEntities...)
 
 		if len(updatedEntities) > 0 {
@@ -130,6 +122,15 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			updatedEntities, err = p.ContextGraphManager.CheckServices(tCtx, updatedEntities)
 			if err != nil {
 				return fmt.Errorf("cannot check services: %w", err)
+			}
+
+			if event.IsEntityUpdated || event.EventType == types.EventTypeEntityUpdated && eventEntity.Type == types.EntityTypeComponent {
+				resources, err := p.ContextGraphManager.FillResourcesWithInfos(tCtx, eventEntity)
+				if err != nil {
+					return fmt.Errorf("cannot update entity infos: %w", err)
+				}
+
+				updatedEntities = append(updatedEntities, resources...)
 			}
 
 			eventEntity, err = p.ContextGraphManager.UpdateEntities(tCtx, eventEntity.ID, updatedEntities)

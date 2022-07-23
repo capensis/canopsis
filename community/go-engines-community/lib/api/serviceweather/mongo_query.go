@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	pbehaviorlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -13,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 type MongoQueryBuilder struct {
@@ -397,9 +398,20 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 	}
 
 	return []bson.M{
+		{
+			"$lookup": bson.M{
+				"from":         mongo.EntityServiceCountersMongoCollection,
+				"localField":   "_id",
+				"foreignField": "_id",
+				"as":           "entity_service_counters",
+			},
+		},
+		{
+			"$unwind": "$entity_service_counters",
+		},
 		{"$addFields": bson.M{"pbh_types": bson.M{"$ifNull": bson.A{
 			bson.M{"$map": bson.M{
-				"input": bson.M{"$objectToArray": "$alarms_cumulative_data.watched_pbehavior_count"},
+				"input": bson.M{"$objectToArray": "$entity_service_counters.pbehavior"},
 				"in":    "$$this.k",
 			}},
 			[]int{-1},
@@ -409,7 +421,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 			"as":   "alarm_counters",
 			"let": bson.M{
 				"pbh_types":  "$pbh_types",
-				"cumulative": bson.M{"$objectToArray": "$alarms_cumulative_data.watched_pbehavior_count"},
+				"cumulative": bson.M{"$objectToArray": "$entity_service_counters.pbehavior"},
 			},
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$expr": bson.M{"$in": []string{"$_id", "$$pbh_types"}}}},
@@ -447,7 +459,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 		{"$addFields": bson.M{
 			"depends_total": bson.M{"$size": "$depends"},
 			"has_open_alarm": bson.M{"$cond": bson.M{
-				"if":   bson.M{"$gt": bson.A{"$alarms_cumulative_data.watched_not_acked_count", 0}},
+				"if":   bson.M{"$gt": bson.A{"$entity_service_counters.unacked", 0}},
 				"then": true,
 				"else": false,
 			}},
