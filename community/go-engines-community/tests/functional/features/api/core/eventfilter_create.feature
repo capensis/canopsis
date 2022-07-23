@@ -752,3 +752,268 @@ Feature: Create an eventfilter
       }
     }
     """
+
+  Scenario: given create request with set_entity_info where info value is string value should return success
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 5",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-5-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+
+  Scenario: given create request with set_entity_info where info value is int value should return success
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 6",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-6-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": 123
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+
+  Scenario: given create request with set_entity_info where info value is bool value should return success
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 7",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-7-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": true
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+
+  Scenario: given create request with set_entity_info where info value is array of strings value should return success
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 8",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-8-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": ["kafka_connector_1", "kafka_connector_2"]
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+
+  Scenario: given create request with set_entity_info where info value is float should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 9",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-9-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": 1.2
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """
+
+  Scenario: given create request with set_entity_info where info value is array of various types should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 10",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-10-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": ["test", 1, "test 2", false]
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """
+
+  Scenario: given create request with set_entity_info where info value is object should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 11",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-11-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": {
+              "test": "abc",
+              "test2": 1
+            }
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """
