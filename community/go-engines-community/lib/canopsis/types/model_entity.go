@@ -54,7 +54,7 @@ type Entity struct {
 
 	Impacts []string `bson:"impact" json:"impact"`
 	// impacted_services field is only for connectors, see entity service RecomputeIdleSince method
-	ImpactedServices []string `bson:"impacted_services" json:"-"`
+	ImpactedServices []string `bson:"impacted_services" json:"impacted_services"`
 	Depends          []string `bson:"depends" json:"depends"`
 	Connector        string   `bson:"connector,omitempty" json:"connector,omitempty"`
 	Component        string   `bson:"component,omitempty" json:"component,omitempty"`

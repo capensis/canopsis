@@ -4,15 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 const (
@@ -25,12 +30,14 @@ func NewManager(
 	dbClient libmongo.DbClient,
 	storage EntityServiceStorage,
 	metricMetaUpdater metrics.MetaUpdater,
+	logger zerolog.Logger,
 ) Manager {
 	return &manager{
 		adapter:           adapter,
 		collection:        dbClient.Collection(libmongo.EntityMongoCollection),
 		storage:           storage,
 		metricMetaUpdater: metricMetaUpdater,
+		logger:            logger,
 	}
 }
 
@@ -39,6 +46,7 @@ type manager struct {
 	storage           EntityServiceStorage
 	collection        libmongo.DbCollection
 	metricMetaUpdater metrics.MetaUpdater
+	logger            zerolog.Logger
 }
 
 func (m *manager) UpdateEntities(ctx context.Context, eventEntityID string, entities []types.Entity) (types.Entity, error) {
@@ -161,9 +169,19 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 
 			_, found := impactMap[serviceID]
 
-			match, _, err := serv.EntityPattern.Match(ent)
-			if err != nil {
-
+			match := false
+			if len(serv.EntityPattern) > 0 {
+				var err error
+				match, _, err = serv.EntityPattern.Match(ent)
+				if err != nil {
+					m.logger.Err(err).Str("service", serv.ID).Msgf("service has invalid pattern")
+				}
+			} else if serv.OldEntityPatterns.IsSet() {
+				if serv.OldEntityPatterns.IsValid() {
+					match = serv.OldEntityPatterns.Matches(&ent)
+				} else {
+					m.logger.Err(pattern.ErrInvalidOldEntityPattern).Str("service", serv.ID).Msgf("service has invalid pattern")
+				}
 			}
 
 			if match && !found {
@@ -360,12 +378,13 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 
 	var updatedEntities []types.Entity
 
+	query, negativeQuery, err := getServiceQueries(service)
+	if err != nil {
+		return types.Entity{}, nil, err
+	}
+
 	if len(service.Depends) != 0 {
 		var entitiesToRemove []types.Entity
-		negativeQuery, err := service.EntityPattern.ToNegativeMongoQuery("")
-		if err != nil {
-
-		}
 
 		cursor, err := m.collection.Find(
 			ctx,
@@ -417,11 +436,6 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 				idx--
 			}
 		}
-	}
-
-	query, err := service.EntityPattern.ToMongoQuery("")
-	if err != nil {
-
 	}
 
 	if len(service.Depends) > 0 {
@@ -539,6 +553,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 			return types.Entity{
 				ID:            event.Component,
 				Name:          event.Component,
+				Connector:     connectorID,
 				Impacts:       []string{connectorID},
 				Depends:       []string{},
 				EnableHistory: []types.CpsTime{now},
@@ -677,6 +692,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 			contextGraphEntities = append(contextGraphEntities, types.Entity{
 				ID:            event.Component,
 				Name:          event.Component,
+				Connector:     connectorID,
 				Impacts:       []string{connectorID},
 				Depends:       []string{resourceID},
 				EnableHistory: []types.CpsTime{now},
@@ -708,6 +724,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 			EnableHistory:  []types.CpsTime{now},
 			Enabled:        true,
 			Type:           types.EntityTypeResource,
+			Connector:      connectorID,
 			Component:      event.Component,
 			Infos:          map[string]types.Info{},
 			ComponentInfos: componentInfosDoc.ComponentInfos,
@@ -920,4 +937,29 @@ func (m *manager) entityExist(ctx context.Context, id string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func getServiceQueries(service entityservice.EntityService) (interface{}, interface{}, error) {
+	var query, negativeQuery interface{}
+	var err error
+
+	if len(service.EntityPattern) > 0 {
+		query, err = service.EntityPattern.ToMongoQuery("")
+		if err != nil {
+			return nil, nil, err
+		}
+
+		negativeQuery, err = service.EntityPattern.ToNegativeMongoQuery("")
+		if err != nil {
+			return nil, nil, err
+		}
+	} else if service.OldEntityPatterns.IsSet() {
+		if !service.OldEntityPatterns.IsValid() {
+			return nil, nil, pattern.ErrInvalidOldEntityPattern
+		}
+		query = service.OldEntityPatterns.AsMongoDriverQuery()
+		negativeQuery = service.OldEntityPatterns.AsNegativeMongoDriverQuery()
+	}
+
+	return query, negativeQuery, nil
 }

@@ -4,8 +4,9 @@ package metrics
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type Sender interface {
@@ -20,7 +21,7 @@ type Sender interface {
 	SendUserActivity(ctx context.Context, timestamp time.Time, username string, value int64)
 	SendPbhEnter(ctx context.Context, alarm types.Alarm, entity types.Entity)
 	SendPbhLeave(ctx context.Context, entity types.Entity, timestamp time.Time, prevCanonicalType string, prevTimestamp time.Time)
-	SendPbhLeaveAndEnter(ctx context.Context, alarm *types.Alarm, entity types.Entity, prevCanonicalType string, prevTimestamp time.Time)
+	SendPbhLeaveAndEnter(ctx context.Context, alarm types.Alarm, entity types.Entity, prevCanonicalType string, prevTimestamp time.Time)
 	SendUpdateState(ctx context.Context, alarm types.Alarm, entity types.Entity, previousState types.CpsNumber)
 	SendEventMetrics(
 		ctx context.Context,
@@ -74,7 +75,7 @@ func (s *nullSender) SendPbhLeave(_ context.Context, _ types.Entity, _ time.Time
 
 }
 
-func (s *nullSender) SendPbhLeaveAndEnter(_ context.Context, _ *types.Alarm, _ types.Entity, _ string, _ time.Time) {
+func (s *nullSender) SendPbhLeaveAndEnter(_ context.Context, _ types.Alarm, _ types.Entity, _ string, _ time.Time) {
 
 }
 

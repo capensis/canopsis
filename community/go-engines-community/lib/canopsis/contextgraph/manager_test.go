@@ -3,20 +3,23 @@ package contextgraph_test
 import (
 	"context"
 	"fmt"
+	"math/rand"
+	"reflect"
+	"sort"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_contextgraph "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/contextgraph"
 	mock_metrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/metrics"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
-	"math/rand"
-	"reflect"
-	"sort"
-	"testing"
 )
 
 func TestCheckServices(t *testing.T) {
@@ -55,23 +58,15 @@ func TestCheckServices(t *testing.T) {
 						ID:      "serv-1",
 						Depends: []string{},
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-1",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 			},
@@ -104,46 +99,30 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID: "serv-1",
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-1",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 				{
 					Entity: types.Entity{
 						ID: "serv-2",
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-1",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 			},
@@ -183,46 +162,30 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID: "serv-1",
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-1",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 				{
 					Entity: types.Entity{
 						ID: "serv-2",
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-1",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 			},
@@ -263,23 +226,15 @@ func TestCheckServices(t *testing.T) {
 						ID:      "serv-1",
 						Depends: []string{"id-1"},
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-2",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 			},
@@ -314,23 +269,15 @@ func TestCheckServices(t *testing.T) {
 						ID:      "serv-1",
 						Depends: []string{"id-1"},
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-2",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 				{
@@ -338,23 +285,15 @@ func TestCheckServices(t *testing.T) {
 						ID:      "serv-2",
 						Depends: []string{"id-1"},
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-2",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 			},
@@ -394,23 +333,15 @@ func TestCheckServices(t *testing.T) {
 						ID:      "serv-1",
 						Depends: []string{"id-1"},
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-1",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 				{
@@ -418,46 +349,30 @@ func TestCheckServices(t *testing.T) {
 						ID:      "serv-2",
 						Depends: []string{"id-1"},
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-2",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 				{
 					Entity: types.Entity{
 						ID: "serv-3",
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-1",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 			},
@@ -501,23 +416,15 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID: "serv-1",
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-1",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 			},
@@ -562,46 +469,30 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID: "serv-1",
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-1",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 				{
 					Entity: types.Entity{
 						ID: "serv-2",
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-1",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 			},
@@ -654,23 +545,15 @@ func TestCheckServices(t *testing.T) {
 						ID:      "serv-1",
 						Depends: []string{"id-1"},
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-2",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 			},
@@ -718,23 +601,15 @@ func TestCheckServices(t *testing.T) {
 						ID:      "serv-1",
 						Depends: []string{"id-1", "id-2"},
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-2",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 				{
@@ -742,23 +617,15 @@ func TestCheckServices(t *testing.T) {
 						ID:      "serv-2",
 						Depends: []string{"id-1", "id-2"},
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-2",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 			},
@@ -811,23 +678,15 @@ func TestCheckServices(t *testing.T) {
 						ID:      "serv-1",
 						Depends: []string{"id-1"},
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-1",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 				{
@@ -835,23 +694,15 @@ func TestCheckServices(t *testing.T) {
 						ID:      "serv-2",
 						Depends: []string{"id-1", "id-2"},
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-2",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 				{
@@ -859,23 +710,15 @@ func TestCheckServices(t *testing.T) {
 						ID:      "serv-3",
 						Depends: []string{"id-2"},
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-1",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 			},
@@ -935,23 +778,15 @@ func TestCheckServices(t *testing.T) {
 						ID:      "serv-1",
 						Depends: []string{"id-1", "id-2"},
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-1",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 				{
@@ -959,23 +794,15 @@ func TestCheckServices(t *testing.T) {
 						ID:      "serv-2",
 						Depends: []string{"id-1", "id-2"},
 					},
-					EntityPatterns: pattern.EntityPatternList{
-						Patterns: []pattern.EntityPattern{
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
 							{
-								EntityFields: pattern.EntityFields{
-									Component: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "component-1",
-											},
-										},
-									},
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 								},
 							},
 						},
-						Set:   true,
-						Valid: true,
 					},
 				},
 			},
@@ -996,7 +823,7 @@ func TestCheckServices(t *testing.T) {
 		},
 	}
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater, log.NewLogger(true))
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.name, func(t *testing.T) {
@@ -1085,24 +912,15 @@ func BenchmarkCenterCheckServices(b *testing.B) {
 	for i := 0; i < 1000; i++ {
 		services[i] = entityservice.EntityService{
 			Entity: types.Entity{ID: fmt.Sprintf("serv-%d", i)},
-			EntityPatterns: pattern.EntityPatternList{
-				Patterns: []pattern.EntityPattern{
+			EntityPatternFields: savedpattern.EntityPatternFields{
+				EntityPattern: [][]pattern.FieldCondition{
 					{
-						EntityFields: pattern.EntityFields{
-							Component: pattern.StringPattern{
-								StringConditions: pattern.StringConditions{
-									Equal: types.OptionalString{
-										Set:   true,
-										Value: fmt.Sprintf("component-%d", i),
-									},
-								},
-							},
+						{
+							Field:     "component",
+							Condition: pattern.NewStringCondition(pattern.ConditionEqual, fmt.Sprintf("component-%d", i)),
 						},
 					},
 				},
-				Set: true,
-
-				Valid: true,
 			},
 		}
 	}
@@ -1122,7 +940,7 @@ func BenchmarkCenterCheckServices(b *testing.B) {
 	}
 
 	storage.EXPECT().GetAll(gomock.Any()).Return(services, nil).AnyTimes()
-	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater, log.NewLogger(true))
 
 	for i := 0; i < b.N; i++ {
 		_, _ = manager.CheckServices(ctx, entities)
@@ -1206,23 +1024,15 @@ func TestRecomputeService(t *testing.T) {
 					ID:      "serv-1",
 					Depends: []string{"id-1", "id-2", "id-3"},
 				},
-				EntityPatterns: pattern.EntityPatternList{
-					Patterns: []pattern.EntityPattern{
+				EntityPatternFields: savedpattern.EntityPatternFields{
+					EntityPattern: [][]pattern.FieldCondition{
 						{
-							EntityFields: pattern.EntityFields{
-								Component: pattern.StringPattern{
-									StringConditions: pattern.StringConditions{
-										Equal: types.OptionalString{
-											Set:   true,
-											Value: "component-1",
-										},
-									},
-								},
+							{
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
-					Set:   true,
-					Valid: true,
 				},
 			},
 			serviceName: "serv-1",
@@ -1280,23 +1090,15 @@ func TestRecomputeService(t *testing.T) {
 					ID:      "serv-1",
 					Enabled: true,
 				},
-				EntityPatterns: pattern.EntityPatternList{
-					Patterns: []pattern.EntityPattern{
+				EntityPatternFields: savedpattern.EntityPatternFields{
+					EntityPattern: [][]pattern.FieldCondition{
 						{
-							EntityFields: pattern.EntityFields{
-								Component: pattern.StringPattern{
-									StringConditions: pattern.StringConditions{
-										Equal: types.OptionalString{
-											Set:   true,
-											Value: "component-1",
-										},
-									},
-								},
+							{
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
-					Set:   true,
-					Valid: true,
 				},
 			},
 			serviceName: "serv-1",
@@ -1349,23 +1151,15 @@ func TestRecomputeService(t *testing.T) {
 					ID:      "serv-1",
 					Enabled: true,
 				},
-				EntityPatterns: pattern.EntityPatternList{
-					Patterns: []pattern.EntityPattern{
+				EntityPatternFields: savedpattern.EntityPatternFields{
+					EntityPattern: [][]pattern.FieldCondition{
 						{
-							EntityFields: pattern.EntityFields{
-								Component: pattern.StringPattern{
-									StringConditions: pattern.StringConditions{
-										Equal: types.OptionalString{
-											Set:   true,
-											Value: "component-1",
-										},
-									},
-								},
+							{
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
-					Set:   true,
-					Valid: true,
 				},
 			},
 			serviceName: "serv-1",
@@ -1422,23 +1216,15 @@ func TestRecomputeService(t *testing.T) {
 					Enabled: true,
 					Depends: []string{"id-1", "id-2", "id-3"},
 				},
-				EntityPatterns: pattern.EntityPatternList{
-					Patterns: []pattern.EntityPattern{
+				EntityPatternFields: savedpattern.EntityPatternFields{
+					EntityPattern: [][]pattern.FieldCondition{
 						{
-							EntityFields: pattern.EntityFields{
-								Component: pattern.StringPattern{
-									StringConditions: pattern.StringConditions{
-										Equal: types.OptionalString{
-											Set:   true,
-											Value: "component-1",
-										},
-									},
-								},
+							{
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
-					Set:   true,
-					Valid: true,
 				},
 			},
 			serviceName: "serv-1",
@@ -1496,23 +1282,15 @@ func TestRecomputeService(t *testing.T) {
 					Enabled: true,
 					Depends: []string{"id-1", "id-2", "id-3"},
 				},
-				EntityPatterns: pattern.EntityPatternList{
-					Patterns: []pattern.EntityPattern{
+				EntityPatternFields: savedpattern.EntityPatternFields{
+					EntityPattern: [][]pattern.FieldCondition{
 						{
-							EntityFields: pattern.EntityFields{
-								Component: pattern.StringPattern{
-									StringConditions: pattern.StringConditions{
-										Equal: types.OptionalString{
-											Set:   true,
-											Value: "component-1",
-										},
-									},
-								},
+							{
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
-					Set:   true,
-					Valid: true,
 				},
 			},
 			serviceName: "serv-1",
@@ -1571,23 +1349,15 @@ func TestRecomputeService(t *testing.T) {
 					Enabled: true,
 					Depends: []string{"id-1", "id-2", "id-3"},
 				},
-				EntityPatterns: pattern.EntityPatternList{
-					Patterns: []pattern.EntityPattern{
+				EntityPatternFields: savedpattern.EntityPatternFields{
+					EntityPattern: [][]pattern.FieldCondition{
 						{
-							EntityFields: pattern.EntityFields{
-								Component: pattern.StringPattern{
-									StringConditions: pattern.StringConditions{
-										Equal: types.OptionalString{
-											Set:   true,
-											Value: "component-1",
-										},
-									},
-								},
+							{
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
-					Set:   true,
-					Valid: true,
 				},
 			},
 			serviceName: "serv-1",
@@ -1649,23 +1419,15 @@ func TestRecomputeService(t *testing.T) {
 					Enabled: true,
 					Depends: []string{"id-1", "id-2", "id-3"},
 				},
-				EntityPatterns: pattern.EntityPatternList{
-					Patterns: []pattern.EntityPattern{
+				EntityPatternFields: savedpattern.EntityPatternFields{
+					EntityPattern: [][]pattern.FieldCondition{
 						{
-							EntityFields: pattern.EntityFields{
-								Component: pattern.StringPattern{
-									StringConditions: pattern.StringConditions{
-										Equal: types.OptionalString{
-											Set:   true,
-											Value: "component-1",
-										},
-									},
-								},
+							{
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 					},
-					Set:   true,
-					Valid: true,
 				},
 			},
 			serviceName: "serv-1",
@@ -1727,35 +1489,21 @@ func TestRecomputeService(t *testing.T) {
 					Enabled: true,
 					Depends: []string{"id-1", "id-4"},
 				},
-				EntityPatterns: pattern.EntityPatternList{
-					Patterns: []pattern.EntityPattern{
+				EntityPatternFields: savedpattern.EntityPatternFields{
+					EntityPattern: [][]pattern.FieldCondition{
 						{
-							EntityFields: pattern.EntityFields{
-								Component: pattern.StringPattern{
-									StringConditions: pattern.StringConditions{
-										Equal: types.OptionalString{
-											Set:   true,
-											Value: "component-1",
-										},
-									},
-								},
+							{
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 						{
-							EntityFields: pattern.EntityFields{
-								Component: pattern.StringPattern{
-									StringConditions: pattern.StringConditions{
-										Equal: types.OptionalString{
-											Set:   true,
-											Value: "component-2",
-										},
-									},
-								},
+							{
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 							},
 						},
 					},
-					Set:   true,
-					Valid: true,
 				},
 			},
 			serviceName:           "serv-1",
@@ -1805,35 +1553,21 @@ func TestRecomputeService(t *testing.T) {
 					Enabled: true,
 					Depends: []string{"id-1", "id-4"},
 				},
-				EntityPatterns: pattern.EntityPatternList{
-					Patterns: []pattern.EntityPattern{
+				EntityPatternFields: savedpattern.EntityPatternFields{
+					EntityPattern: [][]pattern.FieldCondition{
 						{
-							EntityFields: pattern.EntityFields{
-								Component: pattern.StringPattern{
-									StringConditions: pattern.StringConditions{
-										Equal: types.OptionalString{
-											Set:   true,
-											Value: "component-1",
-										},
-									},
-								},
+							{
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 							},
 						},
 						{
-							EntityFields: pattern.EntityFields{
-								Component: pattern.StringPattern{
-									StringConditions: pattern.StringConditions{
-										Equal: types.OptionalString{
-											Set:   true,
-											Value: "component-2",
-										},
-									},
-								},
+							{
+								Field:     "component",
+								Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
 							},
 						},
 					},
-					Set:   true,
-					Valid: true,
 				},
 			},
 			serviceName:           "serv-1",
@@ -1878,7 +1612,7 @@ func TestRecomputeService(t *testing.T) {
 	}
 
 	call := 0
-	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater, log.NewLogger(true))
 	for _, dataset := range dataSets {
 		t.Run(dataset.name, func(t *testing.T) {
 			storage.EXPECT().Get(gomock.Any(), gomock.Any()).Return(dataset.service, nil)
@@ -2003,29 +1737,21 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 			ID:      "serv-1",
 			Depends: dependsIds,
 		},
-		EntityPatterns: pattern.EntityPatternList{
-			Patterns: []pattern.EntityPattern{
+		EntityPatternFields: savedpattern.EntityPatternFields{
+			EntityPattern: [][]pattern.FieldCondition{
 				{
-					EntityFields: pattern.EntityFields{
-						Component: pattern.StringPattern{
-							StringConditions: pattern.StringConditions{
-								Equal: types.OptionalString{
-									Set:   true,
-									Value: "component-1",
-								},
-							},
-						},
+					{
+						Field:     "component",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 					},
 				},
 			},
-			Set:   true,
-			Valid: true,
 		},
 	}, nil).AnyTimes()
 
 	metaUpdater := mock_metrics.NewMockMetaUpdater(ctrl)
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater, log.NewLogger(true))
 	for i := 0; i < b.N; i++ {
 		_, _, _ = manager.RecomputeService(ctx, "serv-1")
 	}
@@ -2070,29 +1796,21 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 			ID:      "serv-1",
 			Enabled: true,
 		},
-		EntityPatterns: pattern.EntityPatternList{
-			Patterns: []pattern.EntityPattern{
+		EntityPatternFields: savedpattern.EntityPatternFields{
+			EntityPattern: [][]pattern.FieldCondition{
 				{
-					EntityFields: pattern.EntityFields{
-						Component: pattern.StringPattern{
-							StringConditions: pattern.StringConditions{
-								Equal: types.OptionalString{
-									Set:   true,
-									Value: "component-1",
-								},
-							},
-						},
+					{
+						Field:     "component",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 					},
 				},
 			},
-			Set:   true,
-			Valid: true,
 		},
 	}, nil).AnyTimes()
 
 	metaUpdater := mock_metrics.NewMockMetaUpdater(ctrl)
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater, log.NewLogger(true))
 	for i := 0; i < b.N; i++ {
 		call = 0
 		_, _, _ = manager.RecomputeService(ctx, "serv-1")
@@ -2158,29 +1876,21 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 			Enabled: true,
 			Depends: dependsIds,
 		},
-		EntityPatterns: pattern.EntityPatternList{
-			Patterns: []pattern.EntityPattern{
+		EntityPatternFields: savedpattern.EntityPatternFields{
+			EntityPattern: [][]pattern.FieldCondition{
 				{
-					EntityFields: pattern.EntityFields{
-						Component: pattern.StringPattern{
-							StringConditions: pattern.StringConditions{
-								Equal: types.OptionalString{
-									Set:   true,
-									Value: "component-1",
-								},
-							},
-						},
+					{
+						Field:     "component",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-1"),
 					},
 				},
 			},
-			Set:   true,
-			Valid: true,
 		},
 	}, nil).AnyTimes()
 
 	metaUpdater := mock_metrics.NewMockMetaUpdater(ctrl)
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater)
+	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater, log.NewLogger(true))
 	for i := 0; i < b.N; i++ {
 		call = 0
 		_, _, _ = manager.RecomputeService(ctx, "serv-1")

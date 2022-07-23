@@ -450,7 +450,7 @@ Feature: no update service when entity is inactive
     }
     """
     When I wait the end of 2 events processing
-    When I do POST /api/v4/bulk/pbehaviors:
+    When I do POST /api/v4/pbehaviors:
     """json
     {
       "enabled": true,
