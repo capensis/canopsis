@@ -2994,3 +2994,1335 @@ Feature: get service weather
       }
     }
     """
+
+  Scenario: given entity service entity should decrease pbh counter on disabled and increase on enabled actions
+    Given I am admin
+    When I send an event:
+    """json
+    [
+      {
+        "connector" : "test-connector-pbehavior-weather-service-22",
+        "connector_name": "test-connector-name-pbehavior-weather-service-22",
+        "source_type": "resource",
+        "event_type": "check",
+        "component" :  "test-component-pbehavior-weather-service-22",
+        "resource" : "test-resource-pbehavior-weather-service-22-1",
+        "state" : 2,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-pbehavior-weather-service-22",
+        "connector_name": "test-connector-name-pbehavior-weather-service-22",
+        "source_type": "resource",
+        "event_type": "check",
+        "component" :  "test-component-pbehavior-weather-service-22",
+        "resource" : "test-resource-pbehavior-weather-service-22-2",
+        "state" : 2,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-pbehavior-weather-service-22",
+        "connector_name": "test-connector-name-pbehavior-weather-service-22",
+        "source_type": "resource",
+        "event_type": "check",
+        "component" :  "test-component-pbehavior-weather-service-22",
+        "resource" : "test-resource-pbehavior-weather-service-22-3",
+        "state" : 2,
+        "output" : "noveo alarm"
+      }
+    ]
+    """
+    When I wait the end of 3 events processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-pbehavior-weather-service-22",
+      "name": "test-pbehavior-weather-service-22",
+      "output_template": "test-pbehavior-weather-service-22",
+      "category": "test-category-pbehavior-weather-service",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-resource-pbehavior-weather-service-22"
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-weather-service-22",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-22-2"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-pbehavior-weather-service-22",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-weather-service-22"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-22",
+          "state": {"val": 2},
+          "status": {"val": 1},
+          "icon": "major",
+          "secondary_icon": "maintenance",
+          "is_grey": false,
+          "alarm_counters": [
+            {
+              "count": 1,
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "description": "Engine maintenance",
+                "icon_name": "build",
+                "name": "Engine maintenance",
+                "priority": 18,
+                "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/entitybasics?_id=test-resource-pbehavior-weather-service-22-2/test-component-pbehavior-weather-service-22:
+    """json
+    {
+      "enabled": false,
+      "impact_level": 1,
+      "sli_avail_state": 0,
+      "infos": [],
+      "impact": [
+        "test-component-pbehavior-weather-service-22"
+      ],
+      "depends": [
+        "test-connector-pbehavior-weather-service-22/test-connector-name-pbehavior-weather-service-22"
+      ]
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-22",
+          "state": {"val": 2},
+          "status": {"val": 1},
+          "icon": "major",
+          "secondary_icon": "",
+          "is_grey": false,
+          "alarm_counters": []
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/entitybasics?_id=test-resource-pbehavior-weather-service-22-2/test-component-pbehavior-weather-service-22:
+    """json
+    {
+      "enabled": true,
+      "impact_level": 1,
+      "sli_avail_state": 0,
+      "infos": [],
+      "impact": [
+        "test-component-pbehavior-weather-service-22"
+      ],
+      "depends": [
+        "test-connector-pbehavior-weather-service-22/test-connector-name-pbehavior-weather-service-22"
+      ]
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-22",
+          "state": {"val": 2},
+          "status": {"val": 1},
+          "icon": "major",
+          "secondary_icon": "maintenance",
+          "is_grey": false,
+          "alarm_counters": [
+            {
+              "count": 1,
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "description": "Engine maintenance",
+                "icon_name": "build",
+                "name": "Engine maintenance",
+                "priority": 18,
+                "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/entitybasics?_id=test-resource-pbehavior-weather-service-22-2/test-component-pbehavior-weather-service-22:
+    """json
+    {
+      "enabled": false,
+      "impact_level": 1,
+      "sli_avail_state": 0,
+      "infos": [],
+      "impact": [
+        "test-component-pbehavior-weather-service-22"
+      ],
+      "depends": [
+        "test-connector-pbehavior-weather-service-22/test-connector-name-pbehavior-weather-service-22"
+      ]
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-22",
+          "state": {"val": 2},
+          "status": {"val": 1},
+          "icon": "major",
+          "secondary_icon": "",
+          "is_grey": false,
+          "alarm_counters": []
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/entitybasics?_id=test-resource-pbehavior-weather-service-22-2/test-component-pbehavior-weather-service-22:
+    """json
+    {
+      "enabled": true,
+      "impact_level": 1,
+      "sli_avail_state": 0,
+      "infos": [],
+      "impact": [
+        "test-component-pbehavior-weather-service-22"
+      ],
+      "depends": [
+        "test-connector-pbehavior-weather-service-22/test-connector-name-pbehavior-weather-service-22"
+      ]
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-22",
+          "state": {"val": 2},
+          "status": {"val": 1},
+          "icon": "major",
+          "secondary_icon": "maintenance",
+          "is_grey": false,
+          "alarm_counters": [
+            {
+              "count": 1,
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "description": "Engine maintenance",
+                "icon_name": "build",
+                "name": "Engine maintenance",
+                "priority": 18,
+                "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given entity service entity should be grey if active entity is disabled, while other entities are in pbh state,
+    if disabled entity is enabled again, the entity service should be returned to the ok state.
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-23",
+      "connector_name": "test-connector-name-pbehavior-weather-service-23",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-23",
+      "resource" : "test-resource-pbehavior-weather-service-23-1",
+      "state" : 0,
+      "output" : "noveo alarm"
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-23",
+      "connector_name": "test-connector-name-pbehavior-weather-service-23",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-23",
+      "resource" : "test-resource-pbehavior-weather-service-23-2",
+      "state" : 0,
+      "output" : "noveo alarm"
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-23",
+      "connector_name": "test-connector-name-pbehavior-weather-service-23",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-23",
+      "resource" : "test-resource-pbehavior-weather-service-23-3",
+      "state" : 0,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-pbehavior-weather-service-23",
+      "name": "test-pbehavior-weather-service-23",
+      "output_template": "test-pbehavior-weather-service-23",
+      "category": "test-category-pbehavior-weather-service",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-resource-pbehavior-weather-service-23"
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-weather-service-23-1",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-23-1"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-weather-service-23-3",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-23-3"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-pbehavior-weather-service-23",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-weather-service-23"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-23",
+          "state": {"val": 0},
+          "status": {"val": 0},
+          "icon": "ok",
+          "secondary_icon": "maintenance",
+          "is_grey": false,
+          "alarm_counters": [
+            {
+              "count": 2,
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "description": "Engine maintenance",
+                "icon_name": "build",
+                "name": "Engine maintenance",
+                "priority": 18,
+                "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/entitybasics?_id=test-resource-pbehavior-weather-service-23-2/test-component-pbehavior-weather-service-23:
+    """json
+    {
+      "enabled": false,
+      "impact_level": 1,
+      "sli_avail_state": 0,
+      "infos": [],
+      "impact": [
+        "test-component-pbehavior-weather-service-23"
+      ],
+      "depends": [
+        "test-connector-pbehavior-weather-service-23/test-connector-name-pbehavior-weather-service-23"
+      ]
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-23",
+          "state": {"val": 0},
+          "status": {"val": 0},
+          "icon": "maintenance",
+          "secondary_icon": "",
+          "is_grey": true,
+          "alarm_counters": [
+            {
+              "count": 2,
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "description": "Engine maintenance",
+                "icon_name": "build",
+                "name": "Engine maintenance",
+                "priority": 18,
+                "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/entitybasics?_id=test-resource-pbehavior-weather-service-23-2/test-component-pbehavior-weather-service-23:
+    """json
+    {
+      "enabled": true,
+      "impact_level": 1,
+      "sli_avail_state": 0,
+      "infos": [],
+      "impact": [
+        "test-component-pbehavior-weather-service-23"
+      ],
+      "depends": [
+        "test-connector-pbehavior-weather-service-23/test-connector-name-pbehavior-weather-service-23"
+      ]
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-23",
+          "state": {"val": 0},
+          "status": {"val": 0},
+          "icon": "ok",
+          "secondary_icon": "maintenance",
+          "is_grey": false,
+          "alarm_counters": [
+            {
+              "count": 2,
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "description": "Engine maintenance",
+                "icon_name": "build",
+                "name": "Engine maintenance",
+                "priority": 18,
+                "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given entity service entity should decrease pbh counter on mass disabled and increase on mass enabled actions
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-24",
+      "connector_name": "test-connector-name-pbehavior-weather-service-24",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-24",
+      "resource" : "test-resource-pbehavior-weather-service-24-1",
+      "state" : 2,
+      "output" : "noveo alarm"
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-24",
+      "connector_name": "test-connector-name-pbehavior-weather-service-24",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-24",
+      "resource" : "test-resource-pbehavior-weather-service-24-2",
+      "state" : 2,
+      "output" : "noveo alarm"
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-24",
+      "connector_name": "test-connector-name-pbehavior-weather-service-24",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-24",
+      "resource" : "test-resource-pbehavior-weather-service-24-3",
+      "state" : 2,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-pbehavior-weather-service-24",
+      "name": "test-pbehavior-weather-service-24",
+      "output_template": "test-pbehavior-weather-service-24",
+      "category": "test-category-pbehavior-weather-service",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-resource-pbehavior-weather-service-24"
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-weather-service-24-1",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-24-1"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-weather-service-24-2",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-24-2"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-pbehavior-weather-service-24",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-weather-service-24"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-24",
+          "state": {"val": 2},
+          "status": {"val": 1},
+          "icon": "major",
+          "secondary_icon": "maintenance",
+          "is_grey": false,
+          "alarm_counters": [
+            {
+              "count": 2,
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "description": "Engine maintenance",
+                "icon_name": "build",
+                "name": "Engine maintenance",
+                "priority": 18,
+                "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/bulk/entities/disable:
+    """json
+    [
+      {
+        "_id": "test-resource-pbehavior-weather-service-24-1/test-component-pbehavior-weather-service-24"
+      },
+      {
+        "_id": "test-resource-pbehavior-weather-service-24-2/test-component-pbehavior-weather-service-24"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of 4 events processing
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-24",
+          "state": {"val": 2},
+          "status": {"val": 1},
+          "icon": "major",
+          "secondary_icon": "",
+          "is_grey": false,
+          "alarm_counters": []
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/bulk/entities/enable:
+    """json
+    [
+      {
+        "_id": "test-resource-pbehavior-weather-service-24-1/test-component-pbehavior-weather-service-24"
+      },
+      {
+        "_id": "test-resource-pbehavior-weather-service-24-2/test-component-pbehavior-weather-service-24"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of 4 events processing
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-24",
+          "state": {"val": 2},
+          "status": {"val": 1},
+          "icon": "major",
+          "secondary_icon": "maintenance",
+          "is_grey": false,
+          "alarm_counters": [
+            {
+              "count": 2,
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "description": "Engine maintenance",
+                "icon_name": "build",
+                "name": "Engine maintenance",
+                "priority": 18,
+                "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given entity service entity should be grey if active entities are disabled by bulk disable action, while other entities are in pbh state,
+    if disabled entities are enabled again, the entity service should be returned to the ok state.
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-25",
+      "connector_name": "test-connector-name-pbehavior-weather-service-25",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-25",
+      "resource" : "test-resource-pbehavior-weather-service-25-1",
+      "state" : 0,
+      "output" : "noveo alarm"
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-25",
+      "connector_name": "test-connector-name-pbehavior-weather-service-25",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-25",
+      "resource" : "test-resource-pbehavior-weather-service-25-2",
+      "state" : 0,
+      "output" : "noveo alarm"
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-25",
+      "connector_name": "test-connector-name-pbehavior-weather-service-25",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-25",
+      "resource" : "test-resource-pbehavior-weather-service-25-3",
+      "state" : 0,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-pbehavior-weather-service-25",
+      "name": "test-pbehavior-weather-service-25",
+      "output_template": "test-pbehavior-weather-service-25",
+      "category": "test-category-pbehavior-weather-service",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-resource-pbehavior-weather-service-25"
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-weather-service-25-1",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-25-1"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-pbehavior-weather-service-25",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-weather-service-25"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-25",
+          "state": {"val": 0},
+          "status": {"val": 0},
+          "icon": "ok",
+          "secondary_icon": "maintenance",
+          "is_grey": false,
+          "alarm_counters": [
+            {
+              "count": 1,
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "description": "Engine maintenance",
+                "icon_name": "build",
+                "name": "Engine maintenance",
+                "priority": 18,
+                "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/bulk/entities/disable:
+    """json
+    [
+      {
+        "_id": "test-resource-pbehavior-weather-service-25-2/test-component-pbehavior-weather-service-25"
+      },
+      {
+        "_id": "test-resource-pbehavior-weather-service-25-3/test-component-pbehavior-weather-service-25"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-25",
+          "state": {"val": 0},
+          "status": {"val": 0},
+          "icon": "maintenance",
+          "secondary_icon": "",
+          "is_grey": true,
+          "alarm_counters": [
+            {
+              "count": 1,
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "description": "Engine maintenance",
+                "icon_name": "build",
+                "name": "Engine maintenance",
+                "priority": 18,
+                "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/bulk/entities/enable:
+    """json
+    [
+      {
+        "_id": "test-resource-pbehavior-weather-service-25-2/test-component-pbehavior-weather-service-25"
+      },
+      {
+        "_id": "test-resource-pbehavior-weather-service-25-3/test-component-pbehavior-weather-service-25"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-25",
+          "state": {"val": 0},
+          "status": {"val": 0},
+          "icon": "ok",
+          "secondary_icon": "maintenance",
+          "is_grey": false,
+          "alarm_counters": [
+            {
+              "count": 1,
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "description": "Engine maintenance",
+                "icon_name": "build",
+                "name": "Engine maintenance",
+                "priority": 18,
+                "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given entity service entity should recompute counters properly if entity service is enabled before the dependent entity in mass enable action
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-26",
+      "connector_name": "test-connector-name-pbehavior-weather-service-26",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-26",
+      "resource" : "test-resource-pbehavior-weather-service-26-1",
+      "state" : 2,
+      "output" : "noveo alarm"
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-26",
+      "connector_name": "test-connector-name-pbehavior-weather-service-26",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-26",
+      "resource" : "test-resource-pbehavior-weather-service-26-2",
+      "state" : 2,
+      "output" : "noveo alarm"
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-26",
+      "connector_name": "test-connector-name-pbehavior-weather-service-26",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-26",
+      "resource" : "test-resource-pbehavior-weather-service-26-3",
+      "state" : 3,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-pbehavior-weather-service-26",
+      "name": "test-pbehavior-weather-service-26",
+      "output_template": "test-pbehavior-weather-service-26",
+      "category": "test-category-pbehavior-weather-service",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-resource-pbehavior-weather-service-26"
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-weather-service-26-1",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-26-1"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-pbehavior-weather-service-26",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-weather-service-26"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-26",
+          "state": {"val": 3},
+          "status": {"val": 1},
+          "icon": "critical",
+          "secondary_icon": "maintenance",
+          "is_grey": false,
+          "alarm_counters": [
+            {
+              "count": 1,
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "description": "Engine maintenance",
+                "icon_name": "build",
+                "name": "Engine maintenance",
+                "priority": 18,
+                "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/bulk/entities/disable:
+    """json
+    [
+      {
+        "_id": "test-pbehavior-weather-service-26"
+      },
+      {
+        "_id": "test-resource-pbehavior-weather-service-26-1/test-component-pbehavior-weather-service-26"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of 2 events processing
+    When I do PUT /api/v4/bulk/entities/enable:
+    """json
+    [
+      {
+        "_id": "test-pbehavior-weather-service-26"
+      },
+      {
+        "_id": "test-resource-pbehavior-weather-service-26-1/test-component-pbehavior-weather-service-26"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-26",
+          "state": {"val": 3},
+          "status": {"val": 1},
+          "icon": "critical",
+          "secondary_icon": "maintenance",
+          "is_grey": false,
+          "alarm_counters": [
+            {
+              "count": 1,
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "description": "Engine maintenance",
+                "icon_name": "build",
+                "name": "Engine maintenance",
+                "priority": 18,
+                "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """

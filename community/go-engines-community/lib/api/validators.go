@@ -86,6 +86,10 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	if err != nil {
 		panic(err)
 	}
+	err = v.RegisterValidation("info_value", common.ValidateInfoValue)
+	if err != nil {
+		panic(err)
+	}
 	v.RegisterCustomTypeFunc(common.ValidateCpsTimeType, types.CpsTime{})
 
 	// Request validators
@@ -93,18 +97,14 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 
 	pbhValidator := pbehavior.NewValidator(client)
 	pbhUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorMongoCollection, "ID")
-	pbhUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorMongoCollection, "Name")
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		pbhUniqueIDValidator.Validate(ctx, sl)
-		pbhUniqueNameValidator.Validate(ctx, sl)
 		pbhValidator.ValidateCreateRequest(sl)
 	}, pbehavior.CreateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		pbhUniqueNameValidator.Validate(ctx, sl)
 		pbhValidator.ValidateUpdateRequest(ctx, sl)
 	}, pbehavior.UpdateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		pbhUniqueNameValidator.Validate(ctx, sl)
 		pbhValidator.ValidateUpdateRequest(ctx, sl)
 	}, pbehavior.BulkUpdateRequestItem{})
 	v.RegisterStructValidationCtx(pbhValidator.ValidateEditRequest, pbehavior.EditRequest{})

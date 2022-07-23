@@ -37,6 +37,8 @@ db.resolved_alarms.createIndex({"v.creation_date": 1}, {name: "v.creation_date_1
 db.resolved_alarms.createIndex({"v.last_event_date": 1}, {name: "v.last_event_date_1"});
 db.resolved_alarms.createIndex({"v.last_update_date": 1}, {name: "v.last_update_date_1"});
 
+db.pbehavior.createIndex({name: 1}, {name: "name_1", unique: true});
+
 db.pbehavior_type.createIndex({priority: 1}, {name: "priority_1", unique: true});
 
 db.junit_test_suite.createIndex({test_suite_id: 1}, {name: "test_suite_id_1"});
