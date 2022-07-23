@@ -1941,3 +1941,695 @@ Feature: create service entity
       }
     }
     """
+
+  Scenario: given resource entity and new service entity should update context graph on entity disable or enable
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-che-service-21",
+      "connector_name": "test-connector-name-che-service-21",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-che-service-21",
+      "resource": "test-resource-che-service-21",
+      "state": 0,
+      "output": "test-output-che-service-21"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-entityservice-che-service-21",
+      "name": "test-entityservice-che-service-21-name",
+      "output_template": "test-entityservice-che-service-21-output",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-che-service-21"
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/entities?search=che-service-21&sort_by=name
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-component-che-service-21",
+          "category": null,
+          "component": "test-component-che-service-21",
+          "depends": [
+            "test-resource-che-service-21/test-component-che-service-21"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-connector-che-service-21/test-connector-name-che-service-21"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-component-che-service-21",
+          "type": "component"
+        },
+        {
+          "_id": "test-connector-che-service-21/test-connector-name-che-service-21",
+          "category": null,
+          "depends": [
+            "test-component-che-service-21"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-resource-che-service-21/test-component-che-service-21"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-connector-name-che-service-21",
+          "type": "connector"
+        },
+        {
+          "_id": "test-entityservice-che-service-21",
+          "category": null,
+          "depends": [
+            "test-resource-che-service-21/test-component-che-service-21"
+          ],
+          "enabled": true,
+          "impact": [],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-entityservice-che-service-21-name",
+          "type": "service"
+        },
+        {
+          "_id": "test-resource-che-service-21/test-component-che-service-21",
+          "category": null,
+          "component": "test-component-che-service-21",
+          "depends": [
+            "test-connector-che-service-21/test-connector-name-che-service-21"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-component-che-service-21",
+            "test-entityservice-che-service-21"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-resource-che-service-21",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 4
+      }
+    }
+    """
+    When I do PUT /api/v4/entitybasics?_id=test-resource-che-service-21/test-component-che-service-21:
+    """json
+    {
+      "enabled": false,
+      "impact_level": 1,
+      "impact": [
+        "test-component-che-service-21"
+      ],
+      "depends": [
+        "test-connector-che-service-21/test-connector-name-che-service-21"
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=che-service-21&sort_by=name
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-component-che-service-21",
+          "category": null,
+          "component": "test-component-che-service-21",
+          "depends": [
+            "test-resource-che-service-21/test-component-che-service-21"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-connector-che-service-21/test-connector-name-che-service-21"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-component-che-service-21",
+          "type": "component"
+        },
+        {
+          "_id": "test-connector-che-service-21/test-connector-name-che-service-21",
+          "category": null,
+          "depends": [
+            "test-component-che-service-21"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-resource-che-service-21/test-component-che-service-21"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-connector-name-che-service-21",
+          "type": "connector"
+        },
+        {
+          "_id": "test-entityservice-che-service-21",
+          "category": null,
+          "depends": [],
+          "enabled": true,
+          "impact": [],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-entityservice-che-service-21-name",
+          "type": "service"
+        },
+        {
+          "_id": "test-resource-che-service-21/test-component-che-service-21",
+          "category": null,
+          "component": "test-component-che-service-21",
+          "depends": [
+            "test-connector-che-service-21/test-connector-name-che-service-21"
+          ],
+          "enabled": false,
+          "impact": [
+            "test-component-che-service-21"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-resource-che-service-21",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 4
+      }
+    }
+    """
+    When I do PUT /api/v4/entitybasics?_id=test-resource-che-service-21/test-component-che-service-21:
+    """json
+    {
+      "enabled": true,
+      "impact_level": 1,
+      "impact": [
+        "test-component-che-service-21"
+      ],
+      "depends": [
+        "test-connector-che-service-21/test-connector-name-che-service-21"
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=che-service-21&sort_by=name
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-component-che-service-21",
+          "category": null,
+          "component": "test-component-che-service-21",
+          "depends": [
+            "test-resource-che-service-21/test-component-che-service-21"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-connector-che-service-21/test-connector-name-che-service-21"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-component-che-service-21",
+          "type": "component"
+        },
+        {
+          "_id": "test-connector-che-service-21/test-connector-name-che-service-21",
+          "category": null,
+          "depends": [
+            "test-component-che-service-21"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-resource-che-service-21/test-component-che-service-21"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-connector-name-che-service-21",
+          "type": "connector"
+        },
+        {
+          "_id": "test-entityservice-che-service-21",
+          "category": null,
+          "depends": [
+            "test-resource-che-service-21/test-component-che-service-21"
+          ],
+          "enabled": true,
+          "impact": [],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-entityservice-che-service-21-name",
+          "type": "service"
+        },
+        {
+          "_id": "test-resource-che-service-21/test-component-che-service-21",
+          "category": null,
+          "component": "test-component-che-service-21",
+          "depends": [
+            "test-connector-che-service-21/test-connector-name-che-service-21"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-component-che-service-21",
+            "test-entityservice-che-service-21"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-resource-che-service-21",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 4
+      }
+    }
+    """
+
+  Scenario: given resource entity and new service entity should update context graph on entity mass disable or enable
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-che-service-22",
+      "connector_name": "test-connector-name-che-service-22",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-che-service-22",
+      "resource": "test-resource-che-service-22-1",
+      "state": 0,
+      "output": "test-output-che-service-22"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-che-service-22",
+      "connector_name": "test-connector-name-che-service-22",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-che-service-22",
+      "resource": "test-resource-che-service-22-2",
+      "state": 0,
+      "output": "test-output-che-service-22"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-entityservice-che-service-22",
+      "name": "test-entityservice-che-service-22-name",
+      "output_template": "test-entityservice-che-service-22-output",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-che-service-22-1",
+                "test-resource-che-service-22-2"
+              ]
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/entities?search=che-service-22&sort_by=name
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-component-che-service-22",
+          "category": null,
+          "component": "test-component-che-service-22",
+          "depends": [
+            "test-resource-che-service-22-1/test-component-che-service-22",
+            "test-resource-che-service-22-2/test-component-che-service-22"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-connector-che-service-22/test-connector-name-che-service-22"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-component-che-service-22",
+          "type": "component"
+        },
+        {
+          "_id": "test-connector-che-service-22/test-connector-name-che-service-22",
+          "category": null,
+          "depends": [
+            "test-component-che-service-22"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-resource-che-service-22-1/test-component-che-service-22",
+            "test-resource-che-service-22-2/test-component-che-service-22"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-connector-name-che-service-22",
+          "type": "connector"
+        },
+        {
+          "_id": "test-entityservice-che-service-22",
+          "category": null,
+          "depends": [
+            "test-resource-che-service-22-1/test-component-che-service-22",
+            "test-resource-che-service-22-2/test-component-che-service-22"
+          ],
+          "enabled": true,
+          "impact": [],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-entityservice-che-service-22-name",
+          "type": "service"
+        },
+        {
+          "_id": "test-resource-che-service-22-1/test-component-che-service-22",
+          "category": null,
+          "component": "test-component-che-service-22",
+          "depends": [
+            "test-connector-che-service-22/test-connector-name-che-service-22"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-component-che-service-22",
+            "test-entityservice-che-service-22"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-resource-che-service-22-1",
+          "type": "resource"
+        },
+        {
+          "_id": "test-resource-che-service-22-2/test-component-che-service-22",
+          "category": null,
+          "component": "test-component-che-service-22",
+          "depends": [
+            "test-connector-che-service-22/test-connector-name-che-service-22"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-component-che-service-22",
+            "test-entityservice-che-service-22"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-resource-che-service-22-2",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 5
+      }
+    }
+    """
+    When I do PUT /api/v4/bulk/entities/disable:
+    """json
+    [
+      {
+        "_id": "test-resource-che-service-22-1/test-component-che-service-22"
+      },
+      {
+        "_id": "test-resource-che-service-22-2/test-component-che-service-22"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/entities?search=che-service-22&sort_by=name
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-component-che-service-22",
+          "category": null,
+          "component": "test-component-che-service-22",
+          "depends": [
+            "test-resource-che-service-22-1/test-component-che-service-22",
+            "test-resource-che-service-22-2/test-component-che-service-22"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-connector-che-service-22/test-connector-name-che-service-22"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-component-che-service-22",
+          "type": "component"
+        },
+        {
+          "_id": "test-connector-che-service-22/test-connector-name-che-service-22",
+          "category": null,
+          "depends": [
+            "test-component-che-service-22"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-resource-che-service-22-1/test-component-che-service-22",
+            "test-resource-che-service-22-2/test-component-che-service-22"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-connector-name-che-service-22",
+          "type": "connector"
+        },
+        {
+          "_id": "test-entityservice-che-service-22",
+          "category": null,
+          "depends": [],
+          "enabled": true,
+          "impact": [],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-entityservice-che-service-22-name",
+          "type": "service"
+        },
+        {
+          "_id": "test-resource-che-service-22-1/test-component-che-service-22",
+          "category": null,
+          "component": "test-component-che-service-22",
+          "depends": [
+            "test-connector-che-service-22/test-connector-name-che-service-22"
+          ],
+          "enabled": false,
+          "impact": [
+            "test-component-che-service-22"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-resource-che-service-22-1",
+          "type": "resource"
+        },
+        {
+          "_id": "test-resource-che-service-22-2/test-component-che-service-22",
+          "category": null,
+          "component": "test-component-che-service-22",
+          "depends": [
+            "test-connector-che-service-22/test-connector-name-che-service-22"
+          ],
+          "enabled": false,
+          "impact": [
+            "test-component-che-service-22"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-resource-che-service-22-2",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 5
+      }
+    }
+    """
+    When I do PUT /api/v4/bulk/entities/enable:
+    """json
+    [
+      {
+        "_id": "test-resource-che-service-22-1/test-component-che-service-22"
+      },
+      {
+        "_id": "test-resource-che-service-22-2/test-component-che-service-22"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/entities?search=che-service-22&sort_by=name
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-component-che-service-22",
+          "category": null,
+          "component": "test-component-che-service-22",
+          "depends": [
+            "test-resource-che-service-22-1/test-component-che-service-22",
+            "test-resource-che-service-22-2/test-component-che-service-22"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-connector-che-service-22/test-connector-name-che-service-22"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-component-che-service-22",
+          "type": "component"
+        },
+        {
+          "_id": "test-connector-che-service-22/test-connector-name-che-service-22",
+          "category": null,
+          "depends": [
+            "test-component-che-service-22"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-resource-che-service-22-1/test-component-che-service-22",
+            "test-resource-che-service-22-2/test-component-che-service-22"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-connector-name-che-service-22",
+          "type": "connector"
+        },
+        {
+          "_id": "test-entityservice-che-service-22",
+          "category": null,
+          "depends": [
+            "test-resource-che-service-22-1/test-component-che-service-22",
+            "test-resource-che-service-22-2/test-component-che-service-22"
+          ],
+          "enabled": true,
+          "impact": [],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-entityservice-che-service-22-name",
+          "type": "service"
+        },
+        {
+          "_id": "test-resource-che-service-22-1/test-component-che-service-22",
+          "category": null,
+          "component": "test-component-che-service-22",
+          "depends": [
+            "test-connector-che-service-22/test-connector-name-che-service-22"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-component-che-service-22",
+            "test-entityservice-che-service-22"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-resource-che-service-22-1",
+          "type": "resource"
+        },
+        {
+          "_id": "test-resource-che-service-22-2/test-component-che-service-22",
+          "category": null,
+          "component": "test-component-che-service-22",
+          "depends": [
+            "test-connector-che-service-22/test-connector-name-che-service-22"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-component-che-service-22",
+            "test-entityservice-che-service-22"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-resource-che-service-22-2",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 5
+      }
+    }
+    """

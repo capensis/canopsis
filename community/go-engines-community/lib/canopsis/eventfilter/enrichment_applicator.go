@@ -3,6 +3,7 @@ package eventfilter
 import (
 	"context"
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -34,7 +35,7 @@ func (a *enrichmentApplicator) Apply(
 	for _, action := range rule.Config.Actions {
 		event, err = a.actionProcessor.Process(action, event, regexMatchWrapper, externalData, cfgTimezone)
 		if err != nil {
-			return rule.Config.OnFailure, event, err
+			return rule.Config.OnFailure, event, fmt.Errorf("invalid action name=%q type=%q: %w", action.Name, action.Type, err)
 		}
 	}
 

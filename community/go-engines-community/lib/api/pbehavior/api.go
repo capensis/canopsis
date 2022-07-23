@@ -202,6 +202,11 @@ func (a *api) Create(c *gin.Context) {
 
 	pbh, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
+		validationErr := common.ValidationError{}
+		if errors.As(err, &validationErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
+			return
+		}
 		panic(err)
 	}
 
@@ -247,6 +252,11 @@ func (a *api) Update(c *gin.Context) {
 
 	pbh, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
+		validationErr := common.ValidationError{}
+		if errors.As(err, &validationErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
+			return
+		}
 		panic(err)
 	}
 
@@ -454,6 +464,12 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 		pbh, err := a.store.Insert(ctx, request)
 		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
 			a.logger.Err(err).Msg("cannot create pbehavior")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
@@ -543,6 +559,12 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 		pbh, err := a.store.Update(ctx, UpdateRequest(request))
 		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
 			a.logger.Err(err).Msg("cannot update pbehavior")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
