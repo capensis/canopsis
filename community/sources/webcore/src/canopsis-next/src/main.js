@@ -375,7 +375,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.importExportViews]: { maxWidth: 920, persistent: true },
     [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
     [MODALS.pbehaviorPlanning]: { maxWidth: '95%', lazy: true, persistent: true },
-    [MODALS.pbehaviorsCalendar]: { fullscreen: true, lazy: true, persistent: true },
+    [MODALS.pbehaviorsCalendar]: { maxWidth: '95%', lazy: true, persistent: true },
     [MODALS.pbehaviorRecurrenceRule]: { maxWidth: '95%', lazy: true, persistent: true },
     [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
     [MODALS.createRemediationInstruction]: { maxWidth: 960 },
