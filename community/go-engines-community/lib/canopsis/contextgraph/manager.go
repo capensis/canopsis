@@ -299,6 +299,7 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 			updatedEntities = append(updatedEntities, types.Entity{
 				ID:      ent.ID,
 				Depends: ent.Depends,
+				Enabled: true,
 				Type:    types.EntityTypeService,
 			})
 		}
@@ -484,6 +485,7 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 	return service.Entity, append(updatedEntities, types.Entity{
 		ID:      service.ID,
 		Depends: service.Depends,
+		Enabled: service.Enabled,
 	}), nil
 }
 
