@@ -18,6 +18,7 @@ export const entitiesPbehaviorMixin = {
     ...mapActions({
       fetchPbehaviorsList: 'fetchList',
       fetchPbehaviorsListWithoutStore: 'fetchListWithoutStore',
+      fetchPbehaviorsListWithPreviousParams: 'fetchListWithPreviousParams',
       fetchPbehaviorEIDSListWithoutStore: 'fetchEIDSWithoutStore',
       createPbehavior: 'create',
       bulkCreatePbehaviors: 'bulkCreate',
