@@ -145,7 +145,7 @@ func (mr *MockSenderMockRecorder) SendPbhLeave(arg0, arg1, arg2, arg3, arg4 inte
 }
 
 // SendPbhLeaveAndEnter mocks base method.
-func (m *MockSender) SendPbhLeaveAndEnter(arg0 context.Context, arg1 *types.Alarm, arg2 types.Entity, arg3 string, arg4 time.Time) {
+func (m *MockSender) SendPbhLeaveAndEnter(arg0 context.Context, arg1 types.Alarm, arg2 types.Entity, arg3 string, arg4 time.Time) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SendPbhLeaveAndEnter", arg0, arg1, arg2, arg3, arg4)
 }
