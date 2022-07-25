@@ -21,25 +21,5 @@ import { activeViewMixin } from '@/mixins/active-view';
 
 export default {
   mixins: [activeViewMixin],
-  props: {
-    updatable: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  created() {
-    document.addEventListener('keydown', this.keyDownListener);
-  },
-  beforeDestroy() {
-    document.removeEventListener('keydown', this.keyDownListener);
-  },
-  methods: {
-    keyDownListener(event) {
-      if (event.key === 'e' && event.ctrlKey && this.updatable) {
-        this.toggleEditing();
-        event.preventDefault();
-      }
-    },
-  },
 };
 </script>
