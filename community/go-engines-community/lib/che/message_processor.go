@@ -16,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -67,6 +66,8 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		p.logError(err, "invalid event", d.Body)
 		return nil, nil
 	}
+
+	fmt.Printf("event = %s\n", event.EventType)
 
 	alarmConfig := p.AlarmConfigProvider.Get()
 	event.Output = utils.TruncateString(event.Output, alarmConfig.OutputLength)
@@ -246,23 +247,4 @@ func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {
 	} else {
 		p.Logger.Err(err).Msg(errMsg)
 	}
-}
-
-func (p *messageProcessor) publishToEngineFIFO(event types.Event) error {
-	body, err := p.Encoder.Encode(event)
-	if err != nil {
-		p.Logger.Err(err).Msg("cannot encode event")
-		return nil
-	}
-	return errt.NewIOError(p.AmqpPublisher.Publish(
-		"",
-		canopsis.FIFOQueueName,
-		false,
-		false,
-		amqp.Publishing{
-			ContentType:  "application/json", // this type is mandatory to avoid bad conversions into Python.
-			Body:         body,
-			DeliveryMode: amqp.Persistent,
-		},
-	))
 }
