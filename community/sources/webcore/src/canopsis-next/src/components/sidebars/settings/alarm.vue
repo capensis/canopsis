@@ -20,7 +20,6 @@
             :label="$t('settings.columnNames')",
             with-template,
             with-html,
-            with-template,
             with-color-indicator
           )
           v-divider
