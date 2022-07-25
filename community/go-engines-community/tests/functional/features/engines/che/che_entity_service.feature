@@ -2077,7 +2077,7 @@ Feature: create service entity
     }
     """
     Then the response code should be 200
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/entities?search=che-service-21&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
@@ -2170,7 +2170,7 @@ Feature: create service entity
     }
     """
     Then the response code should be 200
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/entities?search=che-service-21&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
@@ -2422,7 +2422,7 @@ Feature: create service entity
     ]
     """
     Then the response code should be 207
-    When I wait the end of 2 events processing
+    When I wait the end of 4 events processing
     When I do GET /api/v4/entities?search=che-service-22&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
@@ -2531,7 +2531,7 @@ Feature: create service entity
     ]
     """
     Then the response code should be 207
-    When I wait the end of 2 events processing
+    When I wait the end of 4 events processing
     When I do GET /api/v4/entities?search=che-service-22&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
