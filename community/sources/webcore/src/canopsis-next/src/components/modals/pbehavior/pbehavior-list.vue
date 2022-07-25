@@ -1,7 +1,7 @@
 <template lang="pug">
   modal-wrapper(close)
     template(#title="")
-      span {{ $t('alarmList.actions.titles.pbehaviorList') }}
+      span {{ $t('common.pbehaviorList') }}
     template(#text="")
       c-advanced-data-table(:headers="headers", :items="filteredPbehaviors", expand)
         template(#enabled="{ item }")
@@ -26,12 +26,21 @@
           v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
         template(#expand="{ item }")
           pbehaviors-list-expand-item(:pbehavior="item")
-      v-layout(v-if="showAddButton", justify-end)
+      v-layout(justify-end)
+        c-action-fab-btn(
+          :tooltip="$t('modals.pbehaviorsCalendar.title')",
+          icon="calendar_today",
+          color="secondary",
+          small,
+          left,
+          @click="showPbehaviorsCalendarModal"
+        )
         v-btn(
+          v-if="showAddButton",
+          color="primary",
           icon,
           fab,
           small,
-          color="primary",
           @click="showCreatePbehaviorModal"
         )
           v-icon add
@@ -132,6 +141,15 @@ export default {
           noPattern: true,
           timezone: this.$system.timezone,
           action: data => this.updatePbehavior({ data, id: pbehavior._id }),
+        },
+      });
+    },
+
+    showPbehaviorsCalendarModal() {
+      this.$modals.show({
+        name: MODALS.pbehaviorsCalendar,
+        config: {
+          entityId: this.modal.config.entityId,
         },
       });
     },

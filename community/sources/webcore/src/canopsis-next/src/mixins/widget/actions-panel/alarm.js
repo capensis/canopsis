@@ -5,7 +5,6 @@ import {
   MODALS,
   EVENT_ENTITY_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
-  CRUD_ACTIONS,
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
@@ -78,21 +77,6 @@ export const widgetActionsPanelAlarmMixin = {
           ...this.modalConfig,
 
           isNoteRequired: this.widget.parameters.isAckNoteRequired,
-        },
-      });
-    },
-
-    showPbehaviorsListModal() {
-      const availableActions = !this.isResolvedAlarm ? [CRUD_ACTIONS.delete, CRUD_ACTIONS.update] : [];
-
-      this.$modals.show({
-        name: MODALS.pbehaviorList,
-        config: {
-          ...this.modalConfig,
-
-          availableActions,
-          pbehaviors: [this.item.pbehavior],
-          entityId: this.item.entity._id,
         },
       });
     },
