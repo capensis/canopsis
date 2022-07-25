@@ -106,11 +106,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .refresh-btn {
-    text-decoration: none;
-    text-transform: none;
-  }
-
   .view-wrapper {
     padding-bottom: 70px;
   }
