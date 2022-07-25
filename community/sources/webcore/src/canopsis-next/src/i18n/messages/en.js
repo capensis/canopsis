@@ -233,6 +233,7 @@ export default merge({
     dictionary: 'Dictionary',
     condition: 'Condition | Conditions',
     template: 'Template',
+    pbehaviorList: 'List periodic behaviors',
     canceled: 'Canceled',
     snoozed: 'Snoozed',
     impact: 'Impact | Impacts',
@@ -488,6 +489,8 @@ export default merge({
         deleteEntity: 'Delete entity',
         pbehavior: 'Periodical behavior',
         variablesHelp: 'List of available variables',
+        massEnable: 'Enable entities',
+        massDisable: 'Disable entities',
       },
     },
     entityInfo: {
@@ -564,7 +567,6 @@ export default merge({
         ackRemove: 'Cancel ack',
         pbehavior: 'Periodical behavior',
         snooze: 'Snooze alarm',
-        pbehaviorList: 'List periodic behaviors',
         declareTicket: 'Declare ticket',
         associateTicket: 'Associate ticket',
         cancel: 'Cancel alarm',
@@ -695,6 +697,9 @@ export default merge({
     created: 'Creation date',
     updated: 'Last update date',
     lastAlarmDate: 'Last alarm date',
+    massRemove: 'Remove pbehaviors',
+    massEnable: 'Enable pbehaviors',
+    massDisable: 'Disable pbehaviors',
     searchHelp: '<span>Help on the advanced research :</span>\n'
       + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
       + '<p>The "-" before the research is required</p>\n'
@@ -1421,7 +1426,6 @@ export default merge({
         type: 'Type',
         priority: 'Priority',
         iconName: 'Icon name',
-        isSpecialColor: 'Use special color for the type?',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -1673,6 +1677,12 @@ export default merge({
           + '<strong>Deletion operation won\'t be cancellable.</strong>',
         phraseText: 'Please, type the following to confirm:',
         phrase: 'archive or delete',
+      },
+    },
+    pbehaviorsCalendar: {
+      title: 'Periodic behaviors',
+      entity: {
+        title: 'Periodic behaviors - {name}',
       },
     },
     createAlarmPattern: {

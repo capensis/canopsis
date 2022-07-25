@@ -233,6 +233,7 @@ export default merge({
     dictionary: 'Dictionnaire',
     condition: 'Condition | Conditions',
     template: 'Template',
+    pbehaviorList: 'Lister les comportements périodiques',
     canceled: 'Annulé',
     snoozed: 'En attente',
     impact: 'Impact | Impacts',
@@ -488,6 +489,8 @@ export default merge({
         deleteEntity: 'Supprimer l\'entité',
         pbehavior: 'Comportement périodique',
         variablesHelp: 'Liste des variables disponibles',
+        massEnable: 'Activer les entités',
+        massDisable: 'Désactiver les entités',
       },
     },
     entityInfo: {
@@ -564,7 +567,6 @@ export default merge({
         ackRemove: 'Annuler l\'acquittement',
         pbehavior: 'Définir un comportement périodique',
         snooze: 'Mettre en veille',
-        pbehaviorList: 'Lister les comportements périodiques',
         declareTicket: 'Déclarer un incident',
         associateTicket: 'Associer un ticket',
         cancel: 'Annuler l\'alarme',
@@ -695,6 +697,9 @@ export default merge({
     created: 'Date de création',
     updated: 'Date de dernière modification',
     lastAlarmDate: 'Date de la dernière alarme',
+    massRemove: 'Supprimer les comportements',
+    massEnable: 'Activer les comportements',
+    massDisable: 'Désactiver les comportements',
     searchHelp: '<span>Aide sur la recherche avancée :</span>\n'
       + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
       + '<p>Le "-" avant la recherche est obligatoire</p>\n'
@@ -1421,7 +1426,6 @@ export default merge({
         type: 'Type',
         priority: 'Priorité',
         iconName: 'Nom de l\'icône',
-        isSpecialColor: 'Utiliser une couleur spéciale pour le type ?',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -1673,6 +1677,12 @@ export default merge({
           + '<strong>Les opérations de suppression sont irreversibles.</strong>',
         phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
         phrase: 'archiver ou supprimer',
+      },
+    },
+    pbehaviorsCalendar: {
+      title: 'Comportements périodiques',
+      entity: {
+        title: 'Comportements périodiques - {name}',
       },
     },
     createAlarmPattern: {

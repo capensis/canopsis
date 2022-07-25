@@ -82,6 +82,7 @@ import CExpandBtn from '@/components/common/buttons/c-expand-btn.vue';
 import CActionBtn from '@/components/common/buttons/c-action-btn.vue';
 import CDownloadBtn from '@/components/common/buttons/c-download-btn.vue';
 import CCopyBtn from '@/components/common/buttons/c-copy-btn.vue';
+import CActionFabBtn from '@/components/common/buttons/c-action-fab-btn.vue';
 import CFabExpandBtn from '@/components/common/buttons/c-fab-expand-btn.vue';
 import CFabBtn from '@/components/common/buttons/c-fab-btn.vue';
 import CRefreshBtn from '@/components/common/buttons/c-refresh-btn.vue';
@@ -139,6 +140,7 @@ import CFilterField from '@/components/forms/fields/pattern/c-filter-field.vue';
 import CEntityStateField from '@/components/forms/fields/entity/c-entity-state-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
+import CIconField from '@/components/forms/fields/c-icon-field.vue';
 import CIdField from '@/components/forms/fields/c-id-field.vue';
 import CDescriptionField from '@/components/forms/fields/c-description-field.vue';
 import CEventFilterTypeField from '@/components/forms/fields/c-event-filter-type-field.vue';
@@ -319,6 +321,7 @@ Vue.component('c-refresh-btn', CRefreshBtn);
 Vue.component('c-download-btn', CDownloadBtn);
 Vue.component('c-copy-btn', CCopyBtn);
 Vue.component('c-density-btn-toggle', CDensityBtnToggle);
+Vue.component('c-action-fab-btn', CActionFabBtn);
 Vue.component('c-empty-data-table-columns', CEmptyDataTableColumns);
 Vue.component('c-enabled', CEnabled);
 Vue.component('c-ellipsis', CEllipsis);
@@ -384,6 +387,7 @@ Vue.component('c-entity-state-field', CEntityStateField);
 Vue.component('c-entity-status-field', CEntityStatusField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-operator-field', COperatorField);
+Vue.component('c-icon-field', CIconField);
 Vue.component('c-id-field', CIdField);
 Vue.component('c-description-field', CDescriptionField);
 Vue.component('c-event-filter-type-field', CEventFilterTypeField);
@@ -448,6 +452,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.importExportViews]: { maxWidth: 920, persistent: true },
     [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
     [MODALS.pbehaviorPlanning]: { maxWidth: '95%', lazy: true, persistent: true },
+    [MODALS.pbehaviorsCalendar]: { maxWidth: '95%', lazy: true, persistent: true },
     [MODALS.pbehaviorRecurrenceRule]: { maxWidth: '95%', lazy: true, persistent: true },
     [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
     [MODALS.createRemediationInstruction]: { maxWidth: 960 },

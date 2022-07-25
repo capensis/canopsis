@@ -33,6 +33,17 @@
                 :is-html-enabled="isHtmlEnabled",
                 @update:page="updateStepsQueryPage"
               )
+    v-tab {{ $tc('common.pbehavior', 2) }}
+    v-tab-item
+      v-layout.pa-3.secondary.lighten-2(row)
+        v-flex(:class="cardFlexClass")
+          v-card.tab-item-card
+            v-card-text
+              pbehaviors-simple-list(
+                :entity="alarm.entity",
+                :deletable="hasDeleteAnyPbehaviorAccess",
+                :editable="hasUpdateAnyPbehaviorAccess"
+              )
     template(v-if="hasChildren")
       v-tab {{ $t('alarmList.tabs.alarmsChildren') }}
       v-tab-item
@@ -101,8 +112,10 @@ import { serviceToServiceDependency } from '@/helpers/treeview/service-dependenc
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
+import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import ServiceDependencies from '@/components/other/service/table/service-dependencies.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/partials/pbehaviors-simple-list.vue';
 
 import TimeLine from '../time-line/time-line.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
@@ -111,6 +124,7 @@ import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
 
 export default {
   components: {
+    PbehaviorsSimpleList,
     ServiceDependencies,
     TimeLine,
     EntityGantt,
@@ -120,6 +134,7 @@ export default {
   mixins: [
     entitiesInfoMixin,
     widgetExpandPanelAlarmDetails,
+    permissionsTechnicalExploitationPbehaviorMixin,
   ],
   props: {
     alarm: {

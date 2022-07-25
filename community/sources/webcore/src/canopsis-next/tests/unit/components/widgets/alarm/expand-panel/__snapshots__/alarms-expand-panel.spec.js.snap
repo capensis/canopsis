@@ -42,6 +42,16 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
             Timeline
           </a>
         </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            common.pbehavior:2
+          </a>
+        </div>
+        <!---->
         <!---->
         <!---->
         <!---->
@@ -142,6 +152,34 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
                 >
                   <time-line-stub
                     steps="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehaviors-simple-list-stub
+                    entity="[object Object]"
                   />
                 </div>
               </div>
@@ -280,33 +318,91 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                   role="progressbar"
                   style="height: 3px;"
                 >
-                  <div
-                    class="v-progress-linear__background primary"
-                    style="height: 0px; opacity: 0.3; width: 100%;"
+                  <time-line-stub
+                    alarm="[object Object]"
+                    widget="[object Object]"
                   />
-                  <div
-                    class="v-progress-linear__bar"
-                    style="height: 0px;"
-                  >
-                    <transition-stub
-                      name="fade-transition"
-                    >
-                      <div
-                        class="v-progress-linear__bar__indeterminate"
-                      >
-                        <div
-                          class="v-progress-linear__bar__indeterminate long primary"
-                        />
-                        <div
-                          class="v-progress-linear__bar__indeterminate short primary"
-                        />
-                      </div>
-                    </transition-stub>
-                    <transition-stub
-                      name="slide-x-transition"
-                    />
-                  </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehaviors-simple-list-stub
+                    entity="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <group-alarms-list-stub
+                    alarm="[object Object]"
+                    defaultqueryid="causes_alarm-id"
+                    tabid="causes_alarm-id"
+                    widget="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
                 <div
                   class="v-card__text"
                 >
@@ -426,7 +522,16 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           <a
             class="v-tabs__item"
           >
-            Timeline
+            alarmList.tabs.timeLine
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            common.pbehavior:2
           </a>
         </div>
         <!---->
@@ -550,6 +655,34 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
         <div
           class="v-window-item"
           style="display: none;"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehaviors-simple-list-stub
+                    entity="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
         />
       </transition-stub>
     </div>
@@ -596,7 +729,16 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           <a
             class="v-tabs__item"
           >
-            Timeline
+            alarmList.tabs.timeLine
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            common.pbehavior:2
           </a>
         </div>
         <!---->
@@ -699,6 +841,34 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
                 >
                   <time-line-stub
                     steps="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehaviors-simple-list-stub
+                    entity="[object Object]"
                   />
                 </div>
               </div>

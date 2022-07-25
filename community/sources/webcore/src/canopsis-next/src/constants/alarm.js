@@ -20,7 +20,6 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   fastAck: 'fastAck',
   ackRemove: 'ackRemove',
   pbehaviorAdd: 'pbehaviorAdd',
-  pbehaviorList: 'pbehaviorList',
   moreInfos: 'moreInfos',
   snooze: 'snooze',
   declareTicket: 'declareTicket',
