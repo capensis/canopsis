@@ -179,3 +179,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.refresh-btn {
+  text-decoration: none;
+  text-transform: none;
+}
+</style>
