@@ -5,21 +5,26 @@
       view-periodic-refresh-btn
       v-speed-dial(
         v-if="updatable",
-        v-model="isVSpeedDialOpen",
+        v-model="opened",
         direction="top",
         transition="slide-y-reverse-transition"
       )
         v-btn(
           slot="activator",
-          :input-value="isVSpeedDialOpen",
+          :input-value="opened",
           color="primary",
           dark,
           fab
         )
           v-icon menu
           v-icon close
-        view-fullscreen-btn(:active-tab="activeTab", small, left-tooltip)
-        view-editing-btn(v-if="updatable", :updatable="updatable")
+        view-fullscreen-btn(
+          :value="fullscreen",
+          :toggle-full-screen="toggleFullScreen",
+          left-tooltip,
+          small
+        )
+        view-editing-btn(v-if="updatable")
         v-tooltip(left)
           v-btn(
             slot="activator",
@@ -83,11 +88,47 @@ export default {
   },
   data() {
     return {
-      isVSpeedDialOpen: false,
+      opened: false,
+      fullscreen: false,
     };
   },
-
+  created() {
+    document.addEventListener('keydown', this.keyDownListener);
+  },
+  beforeDestroy() {
+    this.$fullscreen.exit();
+    document.removeEventListener('keydown', this.keyDownListener);
+  },
   methods: {
+    toggleFullScreen() {
+      if (!this.activeTab) {
+        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
+        return;
+      }
+
+      const element = document.getElementById(`view-tab-${this.activeTab._id}`);
+
+      if (!element) {
+        return;
+      }
+
+      this.$fullscreen.toggle(element, {
+        fullscreenClass: 'full-screen',
+        background: 'white',
+        callback: value => this.fullscreen = value,
+      });
+    },
+
+    keyDownListener(event) {
+      if (event.key === 'e' && event.ctrlKey && this.updatable) {
+        this.toggleEditing();
+        event.preventDefault();
+      } else if (event.key === 'Enter' && event.altKey) {
+        this.toggleFullScreen();
+        event.preventDefault();
+      }
+    },
+
     showCreateWidgetModal() {
       if (!this.activeTab) {
         this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
