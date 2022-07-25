@@ -19,7 +19,7 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
   >
     Cancel alarm|delete|cancel
   </button>
-   
+
   <button
     class="drop-down-action-ackRemove"
   >
@@ -44,11 +44,6 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
     class="drop-down-action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
-  </button>
-  <button
-    class="drop-down-action-pbehaviorList"
-  >
-    List periodic behaviors|list|pbehaviorList
   </button>
   <button
     class="drop-down-action-comment"
@@ -84,7 +79,7 @@ exports[`actions-panel Renders \`actions-panel\` with full unresolved alarm, but
 <div
   class="shared-actions-panel"
 >
-   
+
 </div>
 `;
 
@@ -107,7 +102,7 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
   >
     Cancel alarm|delete|cancel
   </button>
-   
+
   <button
     class="drop-down-action-ackRemove"
   >
@@ -187,7 +182,7 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
   >
     Cancel alarm|delete|cancel
   </button>
-   
+
   <button
     class="drop-down-action-ackRemove"
   >
@@ -212,11 +207,6 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
     class="drop-down-action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
-  </button>
-  <button
-    class="drop-down-action-pbehaviorList"
-  >
-    List periodic behaviors|list|pbehaviorList
   </button>
   <button
     class="drop-down-action-comment"
@@ -267,7 +257,7 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
   >
     Cancel alarm|delete|cancel
   </button>
-   
+
   <button
     class="drop-down-action-ackRemove"
   >
@@ -292,11 +282,6 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
     class="drop-down-action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
-  </button>
-  <button
-    class="drop-down-action-pbehaviorList"
-  >
-    List periodic behaviors|list|pbehaviorList
   </button>
   <button
     class="drop-down-action-comment"
@@ -332,16 +317,11 @@ exports[`actions-panel Renders \`actions-panel\` with resolved alarm 1`] = `
   class="shared-actions-panel"
 >
   <button
-    class="action-pbehaviorList"
-  >
-    List periodic behaviors|list|pbehaviorList
-  </button>
-  <button
     class="action-variablesHelp"
   >
     List of available variables|help|variablesHelp
   </button>
-   
+
 </div>
 `;
 
@@ -364,7 +344,7 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
   >
     Cancel alarm|delete|cancel
   </button>
-   
+
   <button
     class="drop-down-action-ackRemove"
   >
@@ -389,11 +369,6 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
     class="drop-down-action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
-  </button>
-  <button
-    class="drop-down-action-pbehaviorList"
-  >
-    List periodic behaviors|list|pbehaviorList
   </button>
   <button
     class="drop-down-action-comment"
@@ -448,16 +423,11 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
   >
     Snooze alarm|alarm|snooze
   </button>
-   
+
   <button
     class="drop-down-action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
-  </button>
-  <button
-    class="drop-down-action-pbehaviorList"
-  >
-    List periodic behaviors|list|pbehaviorList
   </button>
   <button
     class="drop-down-action-comment"
@@ -497,6 +467,6 @@ exports[`actions-panel Renders \`actions-panel\` without entity, instructions, b
 <div
   class="shared-actions-panel"
 >
-   
+
 </div>
 `;

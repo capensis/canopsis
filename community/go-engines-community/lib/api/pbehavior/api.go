@@ -22,7 +22,6 @@ import (
 
 type API interface {
 	common.BulkCrudAPI
-	Calendar(c *gin.Context)
 	Patch(c *gin.Context)
 	DeleteByName(c *gin.Context)
 	ListByEntityID(c *gin.Context)
@@ -79,25 +78,6 @@ func (a *api) List(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
-	}
-
-	c.JSON(http.StatusOK, res)
-}
-
-// Calendar
-// @Success 200 {array} CalendarResponse
-func (a *api) Calendar(c *gin.Context) {
-	var r CalendarRequest
-
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
-
-		return
-	}
-
-	res, err := a.store.Calendar(c.Request.Context(), r)
-	if err != nil {
-		panic(err)
 	}
 
 	c.JSON(http.StatusOK, res)
@@ -229,6 +209,11 @@ func (a *api) Create(c *gin.Context) {
 
 	err = a.store.Insert(c.Request.Context(), model)
 	if err != nil {
+		validationErr := common.ValidationError{}
+		if errors.As(err, &validationErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
+			return
+		}
 		panic(err)
 	}
 
@@ -275,6 +260,11 @@ func (a *api) Update(c *gin.Context) {
 
 	ok, err := a.store.Update(c.Request.Context(), model)
 	if err != nil {
+		validationErr := common.ValidationError{}
+		if errors.As(err, &validationErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
+			return
+		}
 		panic(err)
 	}
 

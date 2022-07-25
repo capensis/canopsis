@@ -14,7 +14,6 @@ export const MODALS = {
   serviceEntities: 'service-entities',
   serviceDependencies: 'service-dependencies',
   createServicePauseEvent: 'create-service-pause-event',
-  pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
   infoPopupSetting: 'info-popup-setting',
   addInfoPopup: 'add-info-popup',
@@ -48,7 +47,10 @@ export const MODALS = {
   createDynamicInfoTemplate: 'create-dynamic-info-template',
   createPlaylist: 'create-playlist',
   managePlaylistTabs: 'manage-playlist-tabs',
+
+  pbehaviorList: 'pbehavior-list',
   pbehaviorPlanning: 'pbehavior-planning',
+  pbehaviorsCalendar: 'pbehaviors-calendar',
   pbehaviorRecurrenceRule: 'pbehavior-recurrence-rule',
   createRecurrenceRule: 'create-recurrence-rule',
   selectExceptionsLists: 'select-exceptions-lists',
@@ -57,6 +59,7 @@ export const MODALS = {
   createPbehaviorType: 'create-pbehavior-type',
   createPbehaviorReason: 'create-pbehavior-reason',
   createPbehaviorException: 'create-pbehavior-exception',
+
   createManualMetaAlarm: 'create-manual-meta-alarm',
   createRemediationInstruction: 'create-remediation-instruction',
   createRemediationConfiguration: 'create-remediation-configuration',
@@ -66,6 +69,7 @@ export const MODALS = {
   remediationPatterns: 'remediation-patterns',
   pbehaviorPatterns: 'pbehavior-patterns',
   remediationInstructionApproval: 'remediation-instruction-approval',
+
   imageViewer: 'image-viewer',
   imagesViewer: 'images-viewer',
   rate: 'rate',

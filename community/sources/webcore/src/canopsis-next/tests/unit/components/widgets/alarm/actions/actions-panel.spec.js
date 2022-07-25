@@ -6,7 +6,6 @@ import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
-  CRUD_ACTIONS,
   ENTITIES_STATUSES,
   ENTITIES_TYPES,
   ENTITY_PATTERN_FIELDS,
@@ -411,113 +410,6 @@ describe('actions-panel', () => {
           itemsIds: [alarm._id],
           itemsType: ENTITIES_TYPES.alarm,
           afterSubmit: expect.any(Function),
-        },
-      },
-    );
-
-    const [{ config }] = $modals.show.mock.calls[0];
-
-    config.afterSubmit();
-
-    expect(refreshAlarmsList).toBeCalledTimes(1);
-  });
-
-  it('Pbehavior list modal showed after trigger pbehavior list action with unresolved alarm', () => {
-    const widgetData = {
-      _id: Faker.datatype.string(),
-      parameters: {},
-    };
-    const entity = {
-      _id: Faker.datatype.string(),
-    };
-    const pbehavior = {
-      _id: Faker.datatype.string(),
-    };
-
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        authModuleWithAccess,
-        alarmModule,
-      ]),
-      propsData: {
-        item: { ...alarm, entity, pbehavior },
-        widget: widgetData,
-        parentAlarm,
-        refreshAlarmsList,
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    const pbehaviorListAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.pbehaviorList);
-
-    pbehaviorListAction.trigger('click');
-
-    expect($modals.show).toBeCalledWith(
-      {
-        name: MODALS.pbehaviorList,
-        config: {
-          itemsIds: [alarm._id],
-          itemsType: ENTITIES_TYPES.alarm,
-          afterSubmit: expect.any(Function),
-          pbehaviors: [pbehavior],
-          entityId: entity._id,
-          availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
-        },
-      },
-    );
-
-    const [{ config }] = $modals.show.mock.calls[0];
-
-    config.afterSubmit();
-
-    expect(refreshAlarmsList).toBeCalledTimes(1);
-  });
-
-  it('Pbehavior list modal showed after trigger pbehavior list action with resolved alarm', () => {
-    const widgetData = {
-      _id: Faker.datatype.string(),
-      parameters: {},
-    };
-    const entity = {
-      _id: Faker.datatype.string(),
-    };
-    const pbehavior = {
-      _id: Faker.datatype.string(),
-    };
-
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        authModuleWithAccess,
-        alarmModule,
-      ]),
-      propsData: {
-        item: { ...alarm, entity, pbehavior },
-        widget: widgetData,
-        parentAlarm,
-        refreshAlarmsList,
-        isResolvedAlarm: true,
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    const pbehaviorListAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.pbehaviorList);
-
-    pbehaviorListAction.trigger('click');
-
-    expect($modals.show).toBeCalledWith(
-      {
-        name: MODALS.pbehaviorList,
-        config: {
-          itemsIds: [alarm._id],
-          itemsType: ENTITIES_TYPES.alarm,
-          afterSubmit: expect.any(Function),
-          pbehaviors: [pbehavior],
-          entityId: entity._id,
-          availableActions: [],
         },
       },
     );

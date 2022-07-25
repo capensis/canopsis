@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-tooltip.c-extra-details(top)
-      v-icon.c-extra-details__badge.cyan.accent-2.white--text(
+      v-icon.c-extra-details__badge.secondary.accent-2.white--text(
         small,
         slot="activator"
       ) {{ pbehaviorInfo.icon_name }}

@@ -49,16 +49,16 @@ export default {
       type: Boolean,
       required: false,
     },
+    left: {
+      type: Boolean,
+      required: false,
+    },
     bottom: {
       type: Boolean,
       required: false,
       default() {
         return !this.top && !this.right && !this.left;
       },
-    },
-    left: {
-      type: Boolean,
-      required: false,
     },
     small: {
       type: Boolean,

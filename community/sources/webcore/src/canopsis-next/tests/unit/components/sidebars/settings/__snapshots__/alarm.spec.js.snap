@@ -357,6 +357,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
               label="Column names for meta alarms"
               withcolorindicator="true"
               withhtml="true"
+              withtemplate="true"
             />
             <hr
               class="v-divider theme--light"

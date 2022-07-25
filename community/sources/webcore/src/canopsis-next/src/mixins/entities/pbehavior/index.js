@@ -18,6 +18,7 @@ export const entitiesPbehaviorMixin = {
     ...mapActions({
       fetchPbehaviorsList: 'fetchList',
       fetchPbehaviorsListWithoutStore: 'fetchListWithoutStore',
+      fetchPbehaviorsListWithPreviousParams: 'fetchListWithPreviousParams',
       fetchPbehaviorEIDSListWithoutStore: 'fetchEIDSWithoutStore',
       createPbehavior: 'create',
       bulkCreatePbehaviors: 'bulkCreate',
@@ -27,6 +28,8 @@ export const entitiesPbehaviorMixin = {
       bulkRemovePbehaviors: 'bulkRemove',
       fetchPbehaviorsByEntityId: 'fetchListByEntityId',
       fetchPbehaviorsByEntityIdWithoutStore: 'fetchListByEntityIdWithoutStore',
+      fetchPbehaviorsCalendarWithoutStore: 'fetchPbehaviorsCalendarWithoutStore',
+      fetchEntitiesPbehaviorsCalendarWithoutStore: 'fetchEntitiesPbehaviorsCalendarWithoutStore',
     }),
 
     async createPbehaviorWithComments({ data }) {
@@ -41,14 +44,20 @@ export const entitiesPbehaviorMixin = {
       const response = await this.bulkCreatePbehaviors({ data: pbehaviors });
 
       await Promise.all(
-        response.map(({ id, item: pbehavior }) => this.updateSeveralPbehaviorComments({
-          comments: pbehavior.comments,
-          pbehavior: {
-            ...pbehavior,
-            _id: id,
-            comments: [],
-          },
-        })),
+        response.map(({ id, errors, item: pbehavior }) => {
+          if (!errors) {
+            return this.updateSeveralPbehaviorComments({
+              comments: pbehavior.comments,
+              pbehavior: {
+                ...pbehavior,
+                _id: id,
+                comments: [],
+              },
+            });
+          }
+
+          return Promise.resolve();
+        }),
       );
 
       return response;

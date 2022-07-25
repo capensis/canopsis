@@ -4,7 +4,12 @@ import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/s
 
 import { fakeAlarmDetails } from '@unit/data/alarm';
 
-import { CANOPSIS_EDITION, ENTITY_TYPES, JUNIT_ALARM_CONNECTOR } from '@/constants';
+import {
+  CANOPSIS_EDITION,
+  ENTITY_TYPES,
+  JUNIT_ALARM_CONNECTOR,
+  USERS_PERMISSIONS,
+} from '@/constants';
 
 import AlarmsExpandPanel from '@/components/widgets/alarm/expand-panel/alarms-expand-panel.vue';
 
@@ -16,6 +21,7 @@ const stubs = {
   'alarms-expand-panel-children': true,
   'service-dependencies': true,
   'entity-gantt': true,
+  'pbehaviors-simple-list': true,
 };
 
 const factory = (options = {}) => shallowMount(AlarmsExpandPanel, {
@@ -43,6 +49,14 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
   const catInfoModule = {
     name: 'info',
     getters: { edition: CANOPSIS_EDITION.cat },
+  };
+  const authModule = {
+    name: 'auth',
+    getters: {
+      currentUserPermissionsById: {
+        [USERS_PERMISSIONS.technical.exploitation.pbehavior]: { actions: [] },
+      },
+    },
   };
 
   const fetchAlarmDetails = jest.fn();
@@ -77,6 +91,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
   };
 
   const store = createMockedStoreModules([
+    authModule,
     alarmModule,
     infoModule,
   ]);
@@ -232,6 +247,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
       store: createMockedStoreModules([
         alarmModule,
         catInfoModule,
+        authModule,
       ]),
       propsData: {
         alarm: {

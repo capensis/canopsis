@@ -2,17 +2,19 @@
   ds-calendar-app(
     :calendar="calendar",
     :config="calendarConfig",
-    :events="events",
     :read-only="readOnly",
     fluid,
     fill-height,
     current-time-for-today,
+    remove-events-before-move,
     @change="changeCalendarHandler",
     @changed="changedEventHandler",
     @added="applyEventChangesHandler",
     @moved="changedEventHandler",
     @resized="changedEventHandler"
   )
+    template(#calendarAppLoader="props")
+      c-progress-overlay.calendar-progress(:pending="pending")
     template(#eventPopover="props")
       ds-calendar-event-popover(v-bind="props")
         template(#default="{ calendarEvent, close, edit }")
@@ -102,13 +104,18 @@ export default {
     },
   },
   data() {
+    const calendar = Calendar.months();
+
+    calendar.set({ listTimes: false });
+
     return {
+      calendar,
+
       pending: false,
       exceptionTypes: [],
-      calendar: Calendar.months(),
       events: [],
       defaultTypes: [],
-      colorsToTypes: {},
+      colorsToPbehaviors: {},
     };
   },
   computed: {
@@ -159,7 +166,7 @@ export default {
     },
   },
   watch: {
-    allPbehaviorsById: {
+    pbehaviorsById: {
       immediate: true,
       handler() {
         this.setCalendarView();
@@ -184,28 +191,27 @@ export default {
       if (startTimestamps.length) {
         const startTimestamp = Math.min.apply(null, startTimestamps);
         const calendarStart = convertDateToMoment(startTimestamp);
+        const { filled: { start } } = this.calendar;
 
-        this.calendar.set({ around: calendarStart });
+        if (start.date.isAfter(calendarStart)) {
+          this.calendar.set({ around: calendarStart });
+        }
       }
     },
 
     /**
-     * Get color for type and save that into data for correct displaying
+     * Get color for pbehavior and save that into data for correct displaying
      *
      * @param {Object} [type = {}]
      * @param {string} [color = getRandomHexColor()]
      * @returns {string}
      */
-    getColorForType(type = {}, color = getRandomHexColor()) {
-      if (type.color) {
-        return type.color;
+    getColorForPbehavior(pbehavior = {}, color = getRandomHexColor()) {
+      if (!this.colorsToPbehaviors[pbehavior._id]) {
+        this.colorsToPbehaviors[pbehavior._id] = color;
       }
 
-      if (!this.colorsToTypes[type._id]) {
-        this.colorsToTypes[type._id] = color;
-      }
-
-      return this.colorsToTypes[type._id];
+      return this.colorsToPbehaviors[pbehavior._id];
     },
 
     /**
@@ -259,7 +265,7 @@ export default {
         /**
          * If there is `type` field in timespan it means that timespan is exception date with a `type`
          */
-        const color = type.color || this.getColorForType(type);
+        const color = pbehavior.color ?? this.getColorForPbehavior(pbehavior);
         const forecolor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
         const daySpan = getSpanForTimestamps({
@@ -267,6 +273,7 @@ export default {
           end: timespan.to,
           timezone: this.$system.timezone,
         });
+        const schedule = getScheduleForSpan(daySpan);
 
         return {
           id: `${pbehavior._id}-${index}`,
@@ -280,7 +287,7 @@ export default {
             title: pbehavior.name,
             withoutResize: !pbehavior.tstop,
           },
-          schedule: getScheduleForSpan(daySpan),
+          schedule,
         };
       });
     },
@@ -306,6 +313,15 @@ export default {
         ...this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id),
         ...events,
       ];
+
+      return this.applyEvents();
+    },
+
+    async applyEvents() {
+      if (this.events) {
+        this.calendar.removeEvents(null, true);
+        await this.calendar.addEventsAsync(this.events);
+      }
     },
 
     /**
@@ -511,7 +527,9 @@ export default {
      * @param {Object} pbehavior
      * @returns {Promise<void>}
      */
-    updatePbehavior(pbehavior) {
+    async updatePbehavior(pbehavior) {
+      this.pending = true;
+
       const hasPbehaviorInList = this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id];
 
       if (hasPbehaviorInList) {
@@ -523,7 +541,9 @@ export default {
         });
       }
 
-      return this.fetchEventsForPbehavior(pbehavior);
+      await this.fetchEventsForPbehavior(pbehavior);
+
+      this.pending = false;
     },
 
     /**
@@ -560,3 +580,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+// We've turned off animation because of render freezes on css animation on the render process
+
+.calendar-progress /deep/ .v-progress-circular--indeterminate .v-progress-circular__overlay {
+  animation: none;
+}
+</style>

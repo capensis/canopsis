@@ -1,76 +1,84 @@
 <template lang="pug">
-  div
-    v-layout(wrap)
-      v-flex(xs12)
-        v-text-field(
-          v-field="form.name",
-          v-validate="'required'",
-          :label="$t('modals.createPbehavior.steps.general.fields.name')",
-          :error-messages="errors.collect('name')",
-          name="name"
+  v-layout(column)
+    v-text-field(
+      v-field="form.name",
+      v-validate="'required'",
+      :label="$t('modals.createPbehavior.steps.general.fields.name')",
+      :error-messages="errors.collect('name')",
+      name="name"
+    )
+    c-enabled-field(v-if="!noEnabled", v-field="form.enabled", hide-details)
+    v-flex.mt-3(xs12)
+      c-enabled-field.mt-0.mb-1(
+        v-if="withStartOnTrigger",
+        :value="form.start_on_trigger",
+        :label="$t('modals.createPbehavior.steps.general.fields.startOnTrigger')",
+        hide-details,
+        @input="updateStartOnTrigger"
+      )
+      c-duration-field(
+        v-if="form.start_on_trigger",
+        v-field="form.duration",
+        required
+      )
+      template(v-else)
+        date-time-splitted-range-picker-field(
+          :start="form.tstart",
+          :end="form.tstop",
+          :start-label="$t('modals.createPbehavior.steps.general.fields.start')",
+          :end-label="$t('modals.createPbehavior.steps.general.fields.stop')",
+          :start-rules="tstartRules",
+          :end-rules="tstopRules",
+          :end-min="tstopMin",
+          :end-max="tstopMax",
+          :no-ending="noEnding",
+          :full-day="fullDay",
+          @update:start="updateField('tstart', $event)",
+          @update:end="updateTStop"
         )
-      v-flex(v-if="!noEnabled", xs12)
-        c-enabled-field(v-field="form.enabled", hide-details)
-      v-flex.mt-3(xs12)
-        v-layout(v-if="withStartOnTrigger", wrap)
-          v-switch.mt-0.mb-1(
-            v-model="form.start_on_trigger",
-            :label="$t('modals.createPbehavior.steps.general.fields.startOnTrigger')",
-            color="primary",
-            hide-details,
-            @change="changeStartOnTrigger"
-          )
-        v-layout(v-if="form.start_on_trigger", row)
-          c-duration-field(v-field="form.duration", required)
-        template(v-else)
-          v-layout(row)
-            date-time-splitted-range-picker-field(
-              :start="form.tstart",
-              :end="form.tstop",
-              :startLabel="$t('modals.createPbehavior.steps.general.fields.start')",
-              :endLabel="$t('modals.createPbehavior.steps.general.fields.stop')",
-              :startRules="tstartRules",
-              :endRules="tstopRules",
-              :noEnding="noEnding",
-              :fullDay="fullDay",
-              @update:start="updateField('tstart', $event)",
-              @update:end="updateField('tstop', $event)"
-            )
-          v-layout(wrap)
-            v-checkbox.mt-0(
-              v-model="fullDay",
-              :label="$t('modals.createPbehavior.steps.general.fields.fullDay')",
-              color="primary",
-              hide-details
-            )
-          v-layout(wrap)
-            v-checkbox.mt-0.mb-2(
-              v-if="hasPauseType",
-              v-model="noEnding",
-              :label="$t('modals.createPbehavior.steps.general.fields.noEnding')",
-              color="primary",
-              hide-details
-            )
-      v-flex(xs12)
-        c-pbehavior-reason-field(v-field="form.reason", required, return-object)
-      v-flex(xs12)
-        c-pbehavior-type-field(v-field="form.type", required, return-object)
+        v-checkbox.mt-0(
+          v-model="fullDay",
+          :label="$t('modals.createPbehavior.steps.general.fields.fullDay')",
+          color="primary",
+          hide-details
+        )
+        v-checkbox.mt-0.mb-2(
+          v-if="hasPauseType",
+          v-model="noEnding",
+          :label="$t('modals.createPbehavior.steps.general.fields.noEnding')",
+          color="primary",
+          hide-details
+        )
+    pbehavior-reasons-field(
+      v-field="form.reason",
+      v-validate="'required'"
+    )
+    pbehavior-type-field(
+      v-field="form.type",
+      v-validate="'required'",
+      return-object
+    )
+    c-color-picker-field(v-field="form.color")
 </template>
 
 <script>
 import { get } from 'lodash';
 
-import { DATETIME_FORMATS, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+import { MAX_PBEHAVIOR_DATES_DIFF_YEARS } from '@/config';
+
+import { DATETIME_FORMATS, PBEHAVIOR_TYPE_TYPES, TIME_UNITS } from '@/constants';
 
 import {
   isStartOfDay,
   isEndOfDay,
-  convertDateToStartOfDayDateObject,
-  convertDateToEndOfDayDateObject,
-  convertDateToString,
   addUnitToDate,
+  getNowTimestamp,
+  convertDateToString,
+  convertDateToTimestamp,
   convertDateToDateObject,
+  convertDateToStartOfDayDateObject,
   convertDateToEndOfUnitDateObject,
+  convertDateToEndOfDayDateObject,
 } from '@/helpers/date/date';
 
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
@@ -137,6 +145,23 @@ export default {
 
       return rules;
     },
+
+    tstopMin() {
+      const nowTimestamp = getNowTimestamp();
+      const startTimestamp = convertDateToTimestamp(this.form.tstart);
+
+      return convertDateToString(
+        Math.min(nowTimestamp, startTimestamp),
+        DATETIME_FORMATS.vuetifyDatePicker,
+      );
+    },
+
+    tstopMax() {
+      return convertDateToString(
+        addUnitToDate(this.form.tstart, MAX_PBEHAVIOR_DATES_DIFF_YEARS, TIME_UNITS.year),
+        DATETIME_FORMATS.vuetifyDatePicker,
+      );
+    },
   },
   watch: {
     noEnding(noEnding) {
@@ -173,7 +198,11 @@ export default {
     },
   },
   methods: {
-    changeStartOnTrigger(value) {
+    updateTStop(tstop) {
+      this.updateField('tstop', tstop ? convertDateToEndOfUnitDateObject(tstop, TIME_UNITS.minute) : tstop);
+    },
+
+    updateStartOnTrigger(value) {
       if (value) {
         this.fullDay = false;
         this.noEnding = false;
@@ -181,11 +210,18 @@ export default {
         this.updateModel({
           ...this.form,
 
+          start_on_trigger: true,
           tstart: null,
           tstop: null,
         });
       } else {
-        this.removeField('duration');
+        const { duration, ...form } = this.form;
+
+        this.updateModel({
+          ...form,
+
+          start_on_trigger: false,
+        });
       }
     },
   },
