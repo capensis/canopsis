@@ -1,4 +1,4 @@
-# Modification du fichier de configuration `canopsis.toml`
+# Modification du fichier de configuration toml `canopsis.toml`
 
 ## Description
 
