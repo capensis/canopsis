@@ -586,6 +586,9 @@ export default merge({
     created: 'Creation date',
     updated: 'Last update date',
     lastAlarmDate: 'Last alarm date',
+    massRemove: 'Remove pbehaviors',
+    massEnable: 'Enable pbehaviors',
+    massDisable: 'Disable pbehaviors',
     searchHelp: '<span>Help on the advanced research :</span>\n'
       + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
       + '<p>The "-" before the research is required</p>\n'
