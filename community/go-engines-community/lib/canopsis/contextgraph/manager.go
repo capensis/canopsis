@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 
@@ -184,19 +185,27 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 				}
 			}
 
-			if match && !found {
-				entData := entitiesData[entityID]
-				entData[added] = append(entData[added], serviceID)
-				entitiesData[entityID] = entData
+			if match {
+				if !found && ent.Enabled {
+					entData := entitiesData[entityID]
+					entData[added] = append(entData[added], serviceID)
+					entitiesData[entityID] = entData
 
-				servData := servicesData[serviceID]
-				servData[added] = append(servData[added], entityID)
-				servicesData[serviceID] = servData
+					servData := servicesData[serviceID]
+					servData[added] = append(servData[added], entityID)
+					servicesData[serviceID] = servData
+				}
 
-				continue
-			}
+				if found && !ent.Enabled {
+					entData := entitiesData[entityID]
+					entData[removed] = append(entData[removed], serviceID)
+					entitiesData[entityID] = entData
 
-			if !match && found {
+					servData := servicesData[serviceID]
+					servData[removed] = append(servData[removed], entityID)
+					servicesData[serviceID] = servData
+				}
+			} else if found {
 				entData := entitiesData[entityID]
 				entData[removed] = append(entData[removed], serviceID)
 				entitiesData[entityID] = entData
@@ -204,8 +213,6 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 				servData := servicesData[serviceID]
 				servData[removed] = append(servData[removed], entityID)
 				servicesData[serviceID] = servData
-
-				continue
 			}
 		}
 	}

@@ -3,6 +3,11 @@ package statecounters
 import (
 	"context"
 	"fmt"
+	"math"
+	"strings"
+	"text/template"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -14,10 +19,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"math"
-	"strings"
-	"text/template"
-	"time"
 )
 
 type service struct {
@@ -185,7 +186,13 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 	var cursor mongo.Cursor
 	var err error
 
-	inSlice := append(entity.ImpactedServices, entity.ImpactedServicesToRemove...)
+	var inSlice []string
+	if changeType == types.AlarmChangeTypeEnabled {
+		inSlice = entity.ImpactedServicesToAdd
+	} else {
+		inSlice = append(entity.ImpactedServices, entity.ImpactedServicesToRemove...)
+	}
+
 	if len(inSlice) == 0 {
 		return updatedServiceInfos, nil
 	}

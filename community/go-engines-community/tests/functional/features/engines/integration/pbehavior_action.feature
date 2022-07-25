@@ -608,7 +608,6 @@ Feature: no execute action when entity is inactive
     {
       "name": "test-scenario-pbehavior-action-5-name",
       "enabled": true,
-      "priority": 75,
       "triggers": ["stateinc"],
       "actions": [
         {

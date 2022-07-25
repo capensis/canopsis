@@ -97,9 +97,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		}
 
 		event.Entity = &eventEntity
-		if !eventEntity.Enabled {
-			return nil
-		}
 
 		// Process event by event filters.
 		event, err = p.EventFilterService.ProcessEvent(tCtx, event)
@@ -111,6 +108,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		if eventEntity.IsNew ||
 			event.IsEntityUpdated ||
 			event.EventType == types.EventTypeEntityUpdated ||
+			event.EventType == types.EventTypeEntityToggled ||
 			event.SourceType == types.SourceTypeService {
 			updatedEntities = []types.Entity{eventEntity}
 		}
