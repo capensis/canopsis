@@ -116,7 +116,8 @@ func (a *healthCheckAdapter) GetConfig(ctx context.Context) (HealthCheckConf, er
 func (a *healthCheckAdapter) UpsertConfig(ctx context.Context, conf HealthCheckConf) error {
 	_, err := a.collection.UpdateOne(ctx, bson.M{"_id": HealthCheckName},
 		bson.M{"$set": bson.M{
-			"engine_order": conf.EngineOrder,
+			"engine_order":    conf.EngineOrder,
+			"update_interval": conf.UpdateInterval,
 		}}, options.Update().SetUpsert(true))
 
 	return err
