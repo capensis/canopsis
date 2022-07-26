@@ -26,10 +26,12 @@ par l'*action* configurée.
 
 ### Importer le media type
 
-Récupérer le fichier `media_canopsis.xml` à partir du
-[dépôt connector-zabbix2canopsis][conn-z2c].
+Selon votre version de Zabbix, récupérer le fichier XML ou YAML à partir du
+[dépôt connector-zabbix2canopsis][conn-z2c-webhook].
 
 Importer le média dans « Administration » > « Media types », bouton « Import ».
+
+[conn-z2c-webhook]: https://git.canopsis.net/canopsis-connectors/connector-zabbix2canopsis/-/tree/master/webhook
 
 ### Paramétrer le media type
 
