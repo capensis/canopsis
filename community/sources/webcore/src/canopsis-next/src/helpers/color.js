@@ -2,7 +2,7 @@ import { get, camelCase } from 'lodash';
 import tinycolor from 'tinycolor2';
 
 import { COLORS } from '@/config';
-import { CAT_ENGINES, COLOR_INDICATOR_TYPES, ENTITIES_STATES_STYLES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
+import { PRO_ENGINES, COLOR_INDICATOR_TYPES, ENTITIES_STATES_STYLES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
 
 /**
  * Get most readable text color ('white' or 'black')
@@ -60,7 +60,7 @@ export const getHealthcheckNodeColor = (node = {}) => {
     return COLORS.healthcheck.warning;
   }
 
-  return CAT_ENGINES.includes(node.name) ? COLORS.secondary : COLORS.primary;
+  return PRO_ENGINES.includes(node.name) ? COLORS.secondary : COLORS.primary;
 };
 
 /**

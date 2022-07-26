@@ -178,7 +178,7 @@ describe('alarms-list', () => {
   };
   const infoModule = {
     name: 'info',
-    getters: { edition: CANOPSIS_EDITION.cat },
+    getters: { edition: CANOPSIS_EDITION.pro },
   };
   const queryModule = {
     name: 'query',
