@@ -221,6 +221,6 @@ export const ALARM_PATTERN_FIELDS = {
   resolvedAt: 'v.resolved',
   ticket: 'v.ticket',
   canceled: 'v.canceled',
-  snooze: 'v.snoozed',
+  snooze: 'v.snooze',
   lastComment: 'v.last_comment.m',
 };

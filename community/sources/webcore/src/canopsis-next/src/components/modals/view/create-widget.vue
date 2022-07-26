@@ -45,7 +45,7 @@ export default {
   mixins: [modalInnerMixin, entitiesInfoMixin],
   computed: {
     /**
-     * Some widgets are only available with 'cat' edition.
+     * Some widgets are only available with 'pro' edition.
      * Filter widgetTypes list to keep only available widgets, thanks to the edition
      *
      * @return {Array}
