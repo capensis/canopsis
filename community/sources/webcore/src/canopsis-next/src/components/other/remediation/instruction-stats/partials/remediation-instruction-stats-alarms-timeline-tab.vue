@@ -14,15 +14,11 @@
       )
     template(#executed_on="{ item }")
       span.c-nowrap {{ item.executed_on | date }}
-    template(#alarm._id="{ item }")
-      span {{ item.alarm | get('v.display_name') }}
-    template(#alarm._id="{ item }")
-      span {{ item.alarm | get('v.display_name') }}
     template(#result="{ item }")
       c-enabled(:value="item.status === $constants.REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed")
     template(#duration="{ item }")
       span {{ item.duration | duration }}
-    template(#alarm._id="{ item }")
+    template(#resolved="{ item }")
       span {{ item.alarm | get('v.resolved') | date }}
     template(#timeline="{ item }")
       span.grey--text.text--darken-2(v-if="!item.alarm") {{ $t('remediationInstructionStats.instructionChanged') }}
