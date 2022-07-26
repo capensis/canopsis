@@ -116,6 +116,7 @@ export default merge({
     tags: 'Étiquettes',
     actionsLabel: 'Actions',
     noResults: 'Pas de résultats',
+    result: 'Résultat',
     exploitation: 'Exploitation',
     administration: 'Administration',
     forbidden: 'Accès refusé',
@@ -1326,7 +1327,6 @@ export default merge({
       title: 'Vues d\'importation / exportation',
       groups: 'Groupes',
       views: 'Vues',
-      result: 'Résultat',
     },
     createBroadcastMessage: {
       create: {
@@ -1361,7 +1361,6 @@ export default merge({
         unit: 'Unité',
       },
       groups: 'Groupe',
-      result: 'Résultat',
       manageTabs: 'Gérer les onglets',
     },
     pbehaviorPlanning: {
@@ -2290,10 +2289,14 @@ export default merge({
     modifiedOn: 'Dernière modification le',
     averageCompletionTime: 'Temps moyen\nd\'achèvement',
     executionCount: 'Nombre\nd\'exécutions',
+    totalExecutions: 'Total des exécutions',
+    successfulExecutions: 'Exécutions réussies',
     alarmStates: 'Alarmes affectées par l\'état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
     notAvailable: 'Indisponible',
     instructionChanged: 'La consigne a été modifiée',
+    alarmResolvedDate: 'Date de résolution de l\'alarme',
+    showFailedExecutions: 'Afficher les exécutions d\'instructions ayant échoué',
     actions: {
       needRate: 'Notez-le!',
       rate: 'Évaluer',
