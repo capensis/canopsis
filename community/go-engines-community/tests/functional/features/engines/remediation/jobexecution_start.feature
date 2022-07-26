@@ -76,7 +76,7 @@ Feature: run a job
       "output": "test-output-to-job-execution-start-1"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-1
     Then the response code should be 200
     Then the response body should contain:
