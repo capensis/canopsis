@@ -179,7 +179,6 @@ export const API_ROUTES = {
   dataStorage: '/api/v4/data-storage',
   notification: '/api/v4/notification',
   idleRules: '/api/v4/idle-rules',
-  idleRulesCount: '/api/v4/idle-rules/count',
   flappingRules: '/api/v4/flapping-rules',
   resolveRules: '/api/v4/resolve-rules',
   messageRateStats: '/api/v4/message-rate-stats',
