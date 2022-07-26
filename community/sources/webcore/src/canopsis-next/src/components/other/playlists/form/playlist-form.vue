@@ -17,7 +17,7 @@
       v-layout(v-if="tabsPending", justify-center)
         v-progress-circular(color="primary", indeterminate)
       v-flex(v-else, xs12)
-        v-flex.text-xs-center.mb-2 {{ $t('modals.createPlaylist.result') }}
+        v-flex.text-xs-center.mb-2 {{ $t('common.result') }}
         draggable-playlist-tabs(v-field="form.tabs_list")
     v-layout
       v-alert(:value="errors.has('tabs')", type="error") {{ $t('modals.createPlaylist.errors.emptyTabs') }}
