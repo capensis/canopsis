@@ -79,6 +79,17 @@ Feature: run a job
     When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-1
     Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/cat/executions:
     """json
