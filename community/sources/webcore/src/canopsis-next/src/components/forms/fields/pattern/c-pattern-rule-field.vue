@@ -52,7 +52,7 @@
               :name="name",
               @input="updateType"
             )
-          v-flex.pl-3(:xs6="!isInfosRule && !isExtraInfosRule", xs4)
+          v-flex.pl-3(v-if="operators.length !== 1", :xs6="!isInfosRule && !isExtraInfosRule", xs4)
             c-pattern-operator-field(
               v-field="rule.operator",
               :operators="operators",
@@ -114,7 +114,7 @@ export default {
     },
     operators: {
       type: Array,
-      required: false,
+      default: () => [],
     },
     inputTypes: {
       type: Array,
