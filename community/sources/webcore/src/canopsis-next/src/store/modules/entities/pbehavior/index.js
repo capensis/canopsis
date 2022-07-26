@@ -95,12 +95,12 @@ export default {
       return request.get(API_ROUTES.pbehavior.pbehaviors, { params });
     },
 
-    async fetchListByEntityId({ commit, dispatch }, { id }) {
+    async fetchListByEntityId({ commit, dispatch }, { params }) {
       try {
         const { normalizedData } = await dispatch('entities/fetch', {
           route: API_ROUTES.pbehavior.entities,
           schema: [schemas.pbehavior],
-          params: { _id: id },
+          params,
         }, { root: true });
 
         commit(types.FETCH_BY_ID_COMPLETED, { allIds: normalizedData.result });
@@ -160,10 +160,6 @@ export default {
 
     bulkRemove(context, { data }) {
       return request.delete(API_ROUTES.pbehavior.bulkPbehaviors, { data });
-    },
-
-    fetchEntitiesCountWithoutStore(context, { data }) {
-      return request.post(API_ROUTES.pbehavior.pbehaviorsCount, data);
     },
 
     fetchPbehaviorsCalendarWithoutStore(context, { params } = {}) {
