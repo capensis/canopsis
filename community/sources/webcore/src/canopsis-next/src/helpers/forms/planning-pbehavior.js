@@ -20,6 +20,7 @@ import {
   getLocaleTimezone,
 } from '@/helpers/date/date';
 import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/entities';
+import { getRandomHexColor } from '@/helpers/color';
 
 /**
  * @typedef {Object} PbehaviorReason
@@ -78,6 +79,7 @@ import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/help
  * @property {Duration} duration
  * @property {number} tstart
  * @property {number} tstop
+ * @property {string} color
  * @property {PbehaviorType} type
  * @property {PbehaviorReason} reason
  * @property {PbehaviorComment[]} comments
@@ -320,6 +322,10 @@ export const pbehaviorToRequest = (pbehavior) => {
 
   if (pbehavior.exceptions) {
     result.exceptions = exceptionsToRequest(pbehavior.exceptions);
+  }
+
+  if (!pbehavior.color) {
+    result.color = getRandomHexColor();
   }
 
   return result;

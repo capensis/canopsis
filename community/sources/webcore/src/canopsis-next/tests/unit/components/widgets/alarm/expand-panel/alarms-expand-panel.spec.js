@@ -43,12 +43,12 @@ const selectTabs = wrapper => wrapper.vm.$children[0];
 describe('alarms-expand-panel', () => { // TODO: add tests for children, timeline, query
   const infoModule = {
     name: 'info',
-    getters: { edition: CANOPSIS_EDITION.core },
+    getters: { edition: CANOPSIS_EDITION.community },
   };
 
   const catInfoModule = {
     name: 'info',
-    getters: { edition: CANOPSIS_EDITION.cat },
+    getters: { edition: CANOPSIS_EDITION.pro },
   };
   const authModule = {
     name: 'auth',

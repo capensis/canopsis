@@ -19,8 +19,8 @@ import {
   HEALTHCHECK_ENGINES_NAMES,
   HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_ENGINES_REFERENCE_EDGES,
-  HEALTHCHECK_ENGINES_CAT_REFERENCE_EDGES,
-  CAT_ENGINES,
+  HEALTHCHECK_ENGINES_PRO_REFERENCE_EDGES,
+  PRO_ENGINES,
 } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -39,9 +39,9 @@ export default {
     enginesGraph() {
       return {
         nodes: Object.values(HEALTHCHECK_ENGINES_NAMES)
-          .filter(name => this.isCatVersion || !CAT_ENGINES.includes(name)),
-        edges: this.isCatVersion
-          ? HEALTHCHECK_ENGINES_CAT_REFERENCE_EDGES
+          .filter(name => this.isProVersion || !PRO_ENGINES.includes(name)),
+        edges: this.isProVersion
+          ? HEALTHCHECK_ENGINES_PRO_REFERENCE_EDGES
           : HEALTHCHECK_ENGINES_REFERENCE_EDGES,
       };
     },
