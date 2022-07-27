@@ -58,7 +58,7 @@
           v-layout(row, wrap, align-center)
             c-pagination(
               :page="query.page",
-              :limit="query.rowsPerPage",
+              :limit="query.limit",
               :total="contextEntitiesMeta.total_count",
               type="top",
               @input="updateQueryPage"
