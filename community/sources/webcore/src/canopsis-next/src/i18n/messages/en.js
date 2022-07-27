@@ -493,9 +493,6 @@ export default merge({
         massDisable: 'Disable entities',
       },
     },
-    entityInfo: {
-      valueAsList: 'Change value type to list',
-    },
     fab: {
       common: 'Add a new entity',
       addService: 'Add a new service entity',
