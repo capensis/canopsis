@@ -9,7 +9,7 @@
     c-description-field(v-field="form.description", required)
     c-priority-field(v-field="form.priority")
     c-enabled-field(v-field="form.enabled")
-    c-patterns-field(v-field="form.patterns", with-entity, with-event)
+    c-patterns-field(v-field="form.patterns", with-entity, with-event, some-required)
 
     template(v-if="isChangeEntityType || isEnrichmentType")
       v-divider.my-3
