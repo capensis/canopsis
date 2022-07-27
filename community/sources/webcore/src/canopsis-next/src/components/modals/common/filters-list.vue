@@ -79,6 +79,7 @@ export default {
           ...this.modalConfig,
 
           title: this.$t('modals.createFilter.create.title'),
+          corporate: true,
           action: async (newFilter) => {
             await this.createWidgetFilter({
               data: {
