@@ -104,6 +104,7 @@ export default {
 
           filter,
           title: this.$t('modals.createFilter.edit.title'),
+          corporate: true,
           action: async (newFilter) => {
             await this.updateWidgetFilter({
               id: filter._id,
