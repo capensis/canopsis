@@ -80,7 +80,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToFilter(this.form, this.patternsFields));
+          await this.config.action(formToFilter(this.form, this.patternsFields, this.config.corporate));
         }
 
         this.$modals.hide();
