@@ -45,8 +45,9 @@
 <script>
 import { get } from 'lodash';
 
-import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 import { ENTITY_PATTERN_FIELDS } from '@/constants';
+
+import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 
 export default {
   inject: ['$validator'],
