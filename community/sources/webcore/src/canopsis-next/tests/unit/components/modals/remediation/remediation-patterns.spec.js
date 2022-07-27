@@ -74,6 +74,7 @@ describe('remediation-patterns', () => {
 
   const entityPattern = {
     id: 'entity-pattern',
+    is_corporate: true,
     groups: [],
   };
 
