@@ -68,7 +68,12 @@ export const filterPatternsToForm = (
     [oldField]: oldMongoQuery,
   } = filter;
 
-  acc[field] = patternToForm({ [field]: pattern, old_mongo_query: oldMongoQuery, id });
+  acc[field] = patternToForm({
+    [field]: pattern,
+    old_mongo_query: oldMongoQuery,
+    is_corporate: !!id && id !== PATTERN_CUSTOM_ITEM_VALUE,
+    id,
+  });
 
   return acc;
 }, {});
@@ -92,6 +97,7 @@ export const filterToForm = (filter = {}, fields) => ({
  *
  * @param {FilterPatternsForm} [form = {}]
  * @param {PatternsFields} [fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity]]
+ * @param {boolean} [corporate = false]
  * @return {{}}
  */
 export const formFilterToPatterns = (
@@ -101,6 +107,7 @@ export const formFilterToPatterns = (
     PATTERNS_FIELDS.entity,
     PATTERNS_FIELDS.pbehavior,
   ],
+  corporate = false,
 ) => fields.reduce((acc, field) => {
   const patterns = form[field];
 
@@ -108,7 +115,7 @@ export const formFilterToPatterns = (
     return acc;
   }
 
-  if (patterns.id !== PATTERN_CUSTOM_ITEM_VALUE) {
+  if ((corporate || patterns.is_corporate) && patterns.id !== PATTERN_CUSTOM_ITEM_VALUE) {
     acc[`corporate_${field}`] = patterns.id;
   }
 
@@ -124,10 +131,11 @@ export const formFilterToPatterns = (
  *
  * @param {FilterForm} form
  * @param {PatternsFields} [fields]
+ * @param {boolean} [corporate]
  * @returns {Filter}
  */
-export const formToFilter = (form, fields) => ({
+export const formToFilter = (form, fields, corporate) => ({
   title: form.title,
   is_private: form.is_private,
-  ...formFilterToPatterns(form, fields),
+  ...formFilterToPatterns(form, fields, corporate),
 });
