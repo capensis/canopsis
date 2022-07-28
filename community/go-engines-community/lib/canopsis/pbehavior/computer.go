@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -15,8 +18,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"sync"
-	"time"
 )
 
 const calculateAll = "all"
@@ -315,7 +316,8 @@ func (c *cancelableComputer) sendAlarmEvents(
 			return nil, fmt.Errorf("cannot encode event: %w", err)
 		}
 
-		err = c.publisher.Publish(
+		err = c.publisher.PublishWithContext(
+			ctx,
 			"",
 			c.queue,
 			false,

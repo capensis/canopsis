@@ -7,13 +7,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/rs/zerolog"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
 	"github.com/golang/mock/gomock"
@@ -64,7 +65,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 	taskChannel := make(chan action.Task)
 	defer close(taskChannel)
 
-	pool := action.NewWorkerPool(5, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), log.NewLogger(true), nil)
+	pool := action.NewWorkerPool(5, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), zerolog.Nop(), nil)
 	resultChannel, err := pool.RunWorkers(ctx, taskChannel)
 	if err != nil {
 		t.Fatal("error shouldn't be raised")
@@ -199,9 +200,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 			if !dataset.expectedNotMatched {
 				axeRpcMock.
 					EXPECT().
-					Call(gomock.Any()).
+					Call(gomock.Any(), gomock.Any()).
 					Times(1).
-					Do(func(val1 interface{}) {
+					Do(func(_ context.Context, val1 interface{}) {
 						decoder := json.NewDecoder()
 						message := val1.(engine.RPCMessage)
 						correlationID := message.CorrelationID
@@ -272,7 +273,7 @@ func TestPool_RunWorkers_GivenCancelContext_ShouldCancelTasks(t *testing.T) {
 	taskChannel := make(chan action.Task)
 
 	poolSize := 5
-	pool := action.NewWorkerPool(poolSize, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), log.NewLogger(true), nil)
+	pool := action.NewWorkerPool(poolSize, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), zerolog.Nop(), nil)
 	resultChannel, err := pool.RunWorkers(ctx, taskChannel)
 	if err != nil {
 		t.Fatal("error shouldn't be raised")

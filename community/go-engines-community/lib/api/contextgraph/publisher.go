@@ -1,6 +1,7 @@
 package contextgraph
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -33,11 +34,11 @@ func NewEventPublisher(
 	}
 }
 
-func (p *rmqPublisher) SendImportResultEvent(uuid string, execTime time.Duration, state types.CpsNumber) error {
+func (p *rmqPublisher) SendImportResultEvent(ctx context.Context, uuid string, execTime time.Duration, state types.CpsNumber) error {
 	stateType := new(types.CpsNumber)
 	*stateType = 1
 
-	return p.sendEvent(types.Event{
+	return p.sendEvent(ctx, types.Event{
 		Connector:     "taskhandler",
 		ConnectorName: "task_importctx",
 		Component:     "job",
@@ -54,11 +55,11 @@ func (p *rmqPublisher) SendImportResultEvent(uuid string, execTime time.Duration
 	})
 }
 
-func (p *rmqPublisher) SendPerfDataEvent(uuid string, stats importcontextgraph.Stats, state types.CpsNumber) error {
+func (p *rmqPublisher) SendPerfDataEvent(ctx context.Context, uuid string, stats importcontextgraph.Stats, state types.CpsNumber) error {
 	stateType := new(types.CpsNumber)
 	*stateType = 1
 
-	return p.sendEvent(types.Event{
+	return p.sendEvent(ctx, types.Event{
 		Connector:     "Taskhandler",
 		ConnectorName: "task_importctx",
 		Component:     uuid,
@@ -88,13 +89,14 @@ func (p *rmqPublisher) SendPerfDataEvent(uuid string, stats importcontextgraph.S
 	})
 }
 
-func (p *rmqPublisher) sendEvent(event types.Event) error {
+func (p *rmqPublisher) sendEvent(ctx context.Context, event types.Event) error {
 	bevent, err := p.encoder.Encode(event)
 	if err != nil {
 		return fmt.Errorf("error while encoding event %+v", err)
 	}
 
-	return p.amqpPublisher.Publish(
+	return p.amqpPublisher.PublishWithContext(
+		ctx,
 		p.exchange,
 		p.queue,
 		false,

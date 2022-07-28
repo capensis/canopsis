@@ -216,7 +216,7 @@ type PublishEventMsg struct {
 
 func (w *periodicalWorker) publishToFifoChan(idTitle string, msgs <-chan PublishEventMsg) {
 	for ms := range msgs {
-		err := w.publishToEngineFIFO(ms.event)
+		err := w.publishToEngineFIFO(context.Background(), ms.event)
 		if err != nil {
 			w.Logger.Err(err).Str(idTitle, ms.id).Msgf("failed to send %s event", ms.event.EventType)
 		} else {
@@ -229,17 +229,18 @@ func (w *periodicalWorker) publishToFifoChan(idTitle string, msgs <-chan Publish
 	}
 }
 
-func (w *periodicalWorker) publishToEngineFIFO(event types.Event) error {
-	return w.publishTo(event, canopsis.FIFOQueueName)
+func (w *periodicalWorker) publishToEngineFIFO(ctx context.Context, event types.Event) error {
+	return w.publishTo(ctx, event, canopsis.FIFOQueueName)
 }
 
-func (w *periodicalWorker) publishTo(event types.Event, queue string) error {
+func (w *periodicalWorker) publishTo(ctx context.Context, event types.Event, queue string) error {
 	bevent, err := w.Encoder.Encode(event)
 	if err != nil {
 		return fmt.Errorf("publishTo(): error while encoding event %+v", err)
 	}
 
-	return errt.NewIOError(w.ChannelPub.Publish(
+	return errt.NewIOError(w.ChannelPub.PublishWithContext(
+		ctx,
 		"",
 		queue,
 		false,

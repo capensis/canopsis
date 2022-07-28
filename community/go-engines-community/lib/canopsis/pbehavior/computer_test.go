@@ -2,6 +2,9 @@ package pbehavior_test
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -13,8 +16,6 @@ import (
 	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"testing"
-	"time"
 )
 
 func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t *testing.T) {
@@ -210,7 +211,7 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldSendPbehaviorEvent(t 
 	mockEncoder.EXPECT().Encode(gomock.Any()).Return(body, nil)
 
 	mockPublisher.EXPECT().
-		Publish(gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Eq(amqp.Publishing{
+		PublishWithContext(gomock.Any(), gomock.Any(), gomock.Eq(queue), gomock.Any(), gomock.Any(), gomock.Eq(amqp.Publishing{
 			ContentType:  "application/json",
 			Body:         body,
 			DeliveryMode: amqp.Persistent,
