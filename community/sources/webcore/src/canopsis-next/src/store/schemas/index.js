@@ -156,6 +156,8 @@ export const ratingSettingsSchema = new schema.Entity(ENTITIES_TYPES.ratingSetti
 
 export const patternSchema = new schema.Entity(ENTITIES_TYPES.pattern, {}, { idAttribute: '_id' });
 
+export const mapSchema = new schema.Entity(ENTITIES_TYPES.map, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -193,4 +195,5 @@ export default {
   [ENTITIES_TYPES.filter]: filterSchema,
   [ENTITIES_TYPES.ratingSettings]: ratingSettingsSchema,
   [ENTITIES_TYPES.pattern]: patternSchema,
+  [ENTITIES_TYPES.map]: mapSchema,
 };
