@@ -80,13 +80,14 @@ func NewService(
 	return &service
 }
 
-func (s *service) sendEvent(event types.Event) error {
+func (s *service) sendEvent(ctx context.Context, event types.Event) error {
 	body, err := s.encoder.Encode(event)
 	if err != nil {
 		return fmt.Errorf("unable to serialize service event: %v", err)
 	}
 
-	err = s.pubChannel.Publish(
+	err = s.pubChannel.PublishWithContext(
+		ctx,
 		s.pubExchangeName,
 		s.pubQueueName,
 		false,
@@ -115,7 +116,7 @@ func (s *service) updateServiceState(
 		return err
 	}
 
-	err = s.sendEvent(types.Event{
+	err = s.sendEvent(ctx, types.Event{
 		EventType:     types.EventTypeCheck,
 		SourceType:    types.SourceTypeService,
 		Component:     serviceID,
@@ -787,7 +788,8 @@ func (s *service) processSkippedQueue(ctx context.Context, serviceID string) err
 	}
 
 	for entityID, body := range events {
-		err := s.pubChannel.Publish(
+		err := s.pubChannel.PublishWithContext(
+			ctx,
 			s.pubExchangeName,
 			s.pubQueueName,
 			false,

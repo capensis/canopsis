@@ -3,6 +3,8 @@ package alarm
 import (
 	"context"
 	"fmt"
+	"math"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -15,7 +17,6 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"golang.org/x/sync/errgroup"
-	"math"
 )
 
 const workers = 10
@@ -214,7 +215,7 @@ func (p *metaAlarmEventProcessor) ProcessWebhookRpc(ctx context.Context, event t
 			}
 			childEvent.SourceType = childEvent.DetectSourceType()
 
-			err = p.sendToFifo(childEvent)
+			err = p.sendToFifo(ctx, childEvent)
 			if err != nil {
 				return err
 			}
@@ -248,7 +249,7 @@ func (p *metaAlarmEventProcessor) ProcessWebhookRpc(ctx context.Context, event t
 			}
 			resourceEvent.SourceType = resourceEvent.DetectSourceType()
 
-			err = p.sendToFifo(resourceEvent)
+			err = p.sendToFifo(ctx, resourceEvent)
 			if err != nil {
 				return err
 			}
@@ -293,7 +294,7 @@ func (p *metaAlarmEventProcessor) ProcessAckResources(ctx context.Context, event
 		}
 		resourceEvent.SourceType = resourceEvent.DetectSourceType()
 
-		err = p.sendToFifo(resourceEvent)
+		err = p.sendToFifo(ctx, resourceEvent)
 		if err != nil {
 			return err
 		}
@@ -411,7 +412,7 @@ func (p *metaAlarmEventProcessor) sendChildrenEvents(ctx context.Context, childr
 		childEvent.Component = alarm.Alarm.Value.Component
 		childEvent.SourceType = childEvent.DetectSourceType()
 
-		err = p.sendToFifo(childEvent)
+		err = p.sendToFifo(ctx, childEvent)
 		if err != nil {
 			return err
 		}
@@ -588,13 +589,14 @@ func (p *metaAlarmEventProcessor) updateParentState(ctx context.Context, childAl
 	return g.Wait()
 }
 
-func (p *metaAlarmEventProcessor) sendToFifo(event types.Event) error {
+func (p *metaAlarmEventProcessor) sendToFifo(ctx context.Context, event types.Event) error {
 	body, err := p.encoder.Encode(event)
 	if err != nil {
 		return fmt.Errorf("cannot encode event: %w", err)
 	}
 
-	err = p.amqpPublisher.Publish(
+	err = p.amqpPublisher.PublishWithContext(
+		ctx,
 		p.fifoExchange,
 		p.fifoQueue,
 		false,

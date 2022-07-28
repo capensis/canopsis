@@ -4,11 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
+	"sync"
+	"testing"
+	"time"
+
+	"github.com/rs/zerolog"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	mock_action "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/action"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
@@ -16,10 +22,6 @@ import (
 	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"go.mongodb.org/mongo-driver/mongo"
-	"reflect"
-	"sync"
-	"testing"
-	"time"
 )
 
 func TestService_Process(t *testing.T) {
@@ -42,7 +44,7 @@ func TestService_Process(t *testing.T) {
 		}
 	}(timerCtx)
 
-	logger := log.NewLogger(true)
+	logger := zerolog.Nop()
 	scenarioExecChan := make(chan action.ExecuteScenariosTask)
 	defer close(scenarioExecChan)
 
@@ -150,7 +152,7 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 			Resource:  "resource-2",
 		},
 	}
-	logger := log.NewLogger(true)
+	logger := zerolog.Nop()
 
 	var dataSets = []struct {
 		testName      string
@@ -222,8 +224,8 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 				getInOrder = append(getInOrder, get)
 
 				if info.Err == nil {
-					process := activationService.EXPECT().Process(gomock.Any()).
-						Do(func(alarm *types.Alarm) {
+					process := activationService.EXPECT().Process(gomock.Any(), gomock.Any()).
+						Do(func(_ context.Context, alarm types.Alarm) {
 							if alarm.ID != info.Alarm.ID {
 								t.Errorf("expected alarm %s but got %s", info.Alarm.ID, alarm.ID)
 							}
@@ -236,7 +238,7 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 				encode := encoderMock.
 					EXPECT().
 					Encode(gomock.Any()).
-					Do(func(event *types.Event) {
+					Do(func(event types.Event) {
 						if event.Alarm.ID != info.Alarm.ID {
 							t.Errorf("expected alarm %s but got %s", info.Alarm.ID, event.Alarm.ID)
 						}
@@ -245,8 +247,8 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 				encodeInOrder = append(encodeInOrder, encode)
 				publish := amqpChannelMock.
 					EXPECT().
-					Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-					Do(func(exchange, key string, mandatory, immediate bool, msg amqp.Publishing) {
+					PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+					Do(func(_ context.Context, exchange, key string, mandatory, immediate bool, msg amqp.Publishing) {
 						if !reflect.DeepEqual(msg.Body, body) {
 							t.Errorf("expected event %s but got %s", body, msg.Body)
 						}
@@ -295,7 +297,7 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 		}
 	}(timerCtx)
 
-	logger := log.NewLogger(true)
+	logger := zerolog.Nop()
 	amqpChannelMock := mock_amqp.NewMockChannel(ctrl)
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	decoderMock := mock_encoding.NewMockDecoder(ctrl)

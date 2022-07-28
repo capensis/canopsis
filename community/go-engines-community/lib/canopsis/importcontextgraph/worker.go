@@ -129,14 +129,14 @@ func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stat
 
 	if serviceCount == 0 {
 		for _, event := range res.serviceEvents {
-			err := w.publisher.SendEvent(event)
+			err := w.publisher.SendEvent(ctx, event)
 			if err != nil {
 				return stats, err
 			}
 		}
 	} else if len(res.serviceEvents)+len(res.basicEntityEvents) <= int(serviceCount) {
 		for _, event := range res.serviceEvents {
-			err := w.publisher.SendEvent(event)
+			err := w.publisher.SendEvent(ctx, event)
 			if err != nil {
 				return stats, err
 			}
@@ -147,7 +147,7 @@ func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stat
 				return stats, err
 			}
 			if fixedEvent.EventType != "" {
-				err = w.publisher.SendEvent(fixedEvent)
+				err = w.publisher.SendEvent(ctx, fixedEvent)
 				if err != nil {
 					return stats, err
 				}
@@ -560,7 +560,7 @@ func (w *worker) sendUpdateServiceEvents(ctx context.Context) error {
 			return err
 		}
 
-		err = w.publisher.SendEvent(types.Event{
+		err = w.publisher.SendEvent(ctx, types.Event{
 			EventType:     types.EventTypeRecomputeEntityService,
 			Connector:     types.ConnectorEngineService,
 			ConnectorName: types.ConnectorEngineService,

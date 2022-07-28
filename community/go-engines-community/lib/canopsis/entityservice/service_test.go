@@ -55,7 +55,7 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 	defer ctrl.Finish()
 	mockAmqpPublisher := mock_amqp.NewMockPublisher(ctrl)
 	mockAmqpPublisher.EXPECT().
-		Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockEncoder.EXPECT().Encode(gomock.Any()).Return(eventBody, nil)
@@ -161,7 +161,7 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 	defer ctrl.Finish()
 	mockAmqpPublisher := mock_amqp.NewMockPublisher(ctrl)
 	mockAmqpPublisher.EXPECT().
-		Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockEncoder.EXPECT().Encode(gomock.Any()).Return(eventBody, nil)
@@ -257,7 +257,7 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 	defer ctrl.Finish()
 	mockAmqpPublisher := mock_amqp.NewMockPublisher(ctrl)
 	mockAmqpPublisher.EXPECT().
-		Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Times(0)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	resendEventBody := []byte("test-body")
@@ -357,7 +357,7 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 	defer ctrl.Finish()
 	mockAmqpPublisher := mock_amqp.NewMockPublisher(ctrl)
 	mockAmqpPublisher.EXPECT().
-		Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil).
 		Times(2)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
