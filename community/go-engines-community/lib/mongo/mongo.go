@@ -457,7 +457,7 @@ func NewClientWithOptions(
 	retryCount int,
 	minRetryTimeout time.Duration,
 	serverSelectionTimeout time.Duration,
-	socketTimeout time.Duration,
+	clientTimeout time.Duration,
 	logger zerolog.Logger,
 ) (DbClient, error) {
 	mongoURL, dbName, err := getURL()
@@ -470,7 +470,7 @@ func NewClientWithOptions(
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
 	clientOptions.SetServerSelectionTimeout(serverSelectionTimeout)
-	clientOptions.SetSocketTimeout(socketTimeout)
+	clientOptions.SetTimeout(clientTimeout)
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, err

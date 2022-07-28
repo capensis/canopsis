@@ -8,6 +8,8 @@ package idlealarm
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -17,7 +19,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 // Service interface is used to implement alarms modification by idle rules.
@@ -274,7 +275,7 @@ func (s *baseService) applyAlarmRule(
 			return nil, fmt.Errorf("cannot encode rpc event: %w", err)
 		}
 
-		err = s.pbhRpcClient.Call(engine.RPCMessage{
+		err = s.pbhRpcClient.Call(ctx, engine.RPCMessage{
 			CorrelationID: fmt.Sprintf("%s&&%s", alarm.ID, rule.ID),
 			Body:          b,
 		})

@@ -2,6 +2,9 @@ package scheduler_test
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-redis/redis/v8"
@@ -10,8 +13,6 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
-	"testing"
-	"time"
 )
 
 func TestScheduler_ProcessEvent_GivenEventAndNoLock_ShouldPublishEvent(t *testing.T) {
@@ -34,7 +35,7 @@ func TestScheduler_ProcessEvent_GivenEventAndNoLock_ShouldPublishEvent(t *testin
 		Return(redis.NewBoolResult(true, nil))
 	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
 	mockChannel := mock_amqp.NewMockChannel(ctrl)
-	mockChannel.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+	mockChannel.EXPECT().PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil)
 	publishToQueue := "test-queue"
 	lockTtl := 100
@@ -150,7 +151,7 @@ func TestScheduler_AckEvent_GivenEventAndNextEvent_ShouldPublishNextEvent(t *tes
 	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(lockID)).
 		Return(redis.NewStringResult(string(body), nil))
 	mockChannel := mock_amqp.NewMockChannel(ctrl)
-	mockChannel.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+	mockChannel.EXPECT().PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil)
 	publishToQueue := "test-queue"
 	lockTtl := 100

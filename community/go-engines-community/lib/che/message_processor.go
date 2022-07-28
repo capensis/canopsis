@@ -199,6 +199,7 @@ func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {
 // component infos of resources have been updated on component event.
 // It's not possible to immediately process such resources  since only component entity
 // is locked by engine fifo and resource entity can be updated by another event in parallel.
+// todo delete after old patterns support ends
 func (p *messageProcessor) publishComponentInfosUpdatedEvents(ctx context.Context, resources []string) error {
 	if len(resources) == 0 {
 		return nil
@@ -230,7 +231,7 @@ func (p *messageProcessor) publishComponentInfosUpdatedEvents(ctx context.Contex
 			Initiator:     types.InitiatorSystem,
 		}
 
-		err := p.publishToEngineFIFO(e)
+		err := p.publishToEngineFIFO(ctx, e)
 		if err != nil {
 			return err
 		}
@@ -246,13 +247,14 @@ func (p *messageProcessor) publishComponentInfosUpdatedEvents(ctx context.Contex
 	return nil
 }
 
-func (p *messageProcessor) publishToEngineFIFO(event types.Event) error {
+func (p *messageProcessor) publishToEngineFIFO(ctx context.Context, event types.Event) error {
 	body, err := p.Encoder.Encode(event)
 	if err != nil {
 		p.Logger.Err(err).Msg("cannot encode event")
 		return nil
 	}
-	return errt.NewIOError(p.AmqpPublisher.Publish(
+	return errt.NewIOError(p.AmqpPublisher.PublishWithContext(
+		ctx,
 		"",
 		canopsis.FIFOQueueName,
 		false,
