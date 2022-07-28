@@ -1,7 +1,7 @@
 export const MAP_TYPES = {
-  geo: 'geo',
   flowchart: 'flowchart',
   mermaid: 'mermaid',
+  geo: 'geo',
   treeOfDependencies: 'treeOfDependencies',
 };
 
