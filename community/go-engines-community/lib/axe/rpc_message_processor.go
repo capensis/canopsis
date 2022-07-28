@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -14,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type rpcMessageProcessor struct {
@@ -163,6 +164,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	if event.Entity != nil &&
 		alarmChangeType == types.AlarmChangeTypeAutoInstructionFail ||
 		alarmChangeType == types.AlarmChangeTypeInstructionJobFail ||
+		alarmChangeType == types.AlarmChangeTypeInstructionJobComplete ||
 		alarmChangeType == types.AlarmChangeTypeAutoInstructionComplete {
 		body, err := p.Encoder.Encode(types.Event{
 			EventType:     types.EventTypeTrigger,
