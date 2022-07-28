@@ -34,15 +34,15 @@
           @click="$emit('remove', item._id)"
         )
     template(#expand="{ item }")
-      playlist-list-expand-item(:map="item")
+      maps-list-expand-item(:map="item")
 </template>
 
 <script>
-import MapListExpandItem from './partials/maps-list-expand-item.vue';
+import MapsListExpandItem from './partials/maps-list-expand-item.vue';
 
 export default {
   components: {
-    MapListExpandItem,
+    MapsListExpandItem,
   },
   props: {
     maps: {
