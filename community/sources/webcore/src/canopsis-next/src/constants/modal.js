@@ -79,4 +79,9 @@ export const MODALS = {
   healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
   patterns: 'patterns',
   info: 'info',
+  createMap: 'create-map',
+  createGeoMap: 'create-geo-map',
+  createFlowchartMap: 'create-flowchart-map',
+  createMermaidMap: 'create-mermaid-map',
+  createTreeOfDependenciesMap: 'create-tree-of-dependencies-map',
 };

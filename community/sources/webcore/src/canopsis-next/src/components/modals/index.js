@@ -317,3 +317,23 @@ export const CreateAlarmStatusRule = () => ({
   component: import(/* webpackChunkName: "AlarmStatusRule" */ './alarm-status-rule/create-alarm-status-rule.vue'),
   loading: LoaderOverlay,
 });
+export const CreateMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-map.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateGeoMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-geo-map.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateFlowchartMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-flowchart-map.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateMermaidMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-mermaid-map.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateTreeOfDependenciesMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-tree-of-dependencies-map.vue'),
+  loading: LoaderOverlay,
+});

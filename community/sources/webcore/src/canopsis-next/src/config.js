@@ -175,6 +175,8 @@ export const API_ROUTES = {
   messageRateStats: '/api/v4/message-rate-stats',
   patterns: '/api/v4/patterns',
   bulkPatterns: '/api/v4/bulk/patterns',
+  maps: '/api/v4/maps',
+  bulkMaps: '/api/v4/bulk/maps',
 
   /**
    * Cat routes
