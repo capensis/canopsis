@@ -33,6 +33,7 @@ import {
 } from '@/constants';
 
 import featureService from '@/services/features';
+import { MAP_TYPES } from '@/constants/map';
 
 export default {
   common: {
@@ -1623,6 +1624,53 @@ export default {
         title: 'Edit shared pbehavior filter',
       },
     },
+    createMap: {
+      title: 'Create a map',
+    },
+    createGeoMap: {
+      create: {
+        title: 'Create a geomap',
+      },
+      edit: {
+        title: 'Edit a geomap',
+      },
+      duplicate: {
+        title: 'Duplicate a geomap',
+      },
+    },
+    createFlowchartMap: {
+      create: {
+        title: 'Create a flowchart',
+      },
+      edit: {
+        title: 'Edit a flowchart',
+      },
+      duplicate: {
+        title: 'Duplicate a flowchart',
+      },
+    },
+    createMermaidMap: {
+      create: {
+        title: 'Create a mermaid diagram',
+      },
+      edit: {
+        title: 'Edit a mermaid diagram',
+      },
+      duplicate: {
+        title: 'Duplicate a mermaid diagram',
+      },
+    },
+    createTreeOfDependenciesMap: {
+      create: {
+        title: 'Create a tree of dependencies diagram',
+      },
+      edit: {
+        title: 'Edit a tree of dependencies diagram',
+      },
+      duplicate: {
+        title: 'Duplicate a tree of dependencies diagram',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -2668,6 +2716,10 @@ export default {
       title: 'KPI',
       message: '', // TODO: add correct message
     },
+    [USERS_PERMISSIONS.technical.map]: {
+      title: 'Maps',
+      message: '', // TODO: add correct message
+    },
 
     /**
      * Admin general
@@ -2803,6 +2855,15 @@ export default {
 
   filter: {
     oldPattern: 'Old pattern format',
+  },
+
+  map: {
+    types: {
+      [MAP_TYPES.geo]: 'Geo',
+      [MAP_TYPES.flowchart]: 'Flowchart',
+      [MAP_TYPES.mermaid]: 'Mermaid',
+      [MAP_TYPES.treeOfDependencies]: 'Tree of dependencies',
+    },
   },
 
   ...featureService.get('i18n.en'),
