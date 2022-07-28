@@ -459,3 +459,156 @@ Feature: scenarios should be triggered by remediation triggers
       }
     ]
     """
+
+  Scenario: given scenario should be triggered by instructionjobcomplete trigger with manual instruction
+    Given I am admin
+    When I send an event:
+    """
+    {
+      "connector" : "test-connector-action-remediation-triggers-7",
+      "connector_name" : "test-connector-name-action-remediation-triggers-7",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-action-remediation-triggers-7",
+      "resource" : "test-resource-action-remediation-triggers-7",
+      "state" : 1,
+      "output" : "test output"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-action-remediation-triggers-7-name",
+      "enabled": true,
+      "triggers": ["instructionjobcomplete"],
+      "actions": [
+        {
+          "entity_patterns": [
+            {
+              "_id": "test-resource-action-remediation-triggers-7/test-component-action-remediation-triggers-7"
+            }
+          ],
+          "type": "ack",
+          "parameters": {
+            "output": "test-resource-action-remediation-triggers-7-ack"
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I do GET /api/v4/alarms?search=test-resource-action-remediation-triggers-7
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-action-remediation-triggers-7"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of event processing
+    When I save response executionID={{ .lastResponse._id }}
+    When I save response operationID={{ (index (index .lastResponse.steps 0).operations 0).operation_id }}
+    When I do POST /api/v4/cat/job-executions:
+    """json
+    {
+      "execution": "{{ .executionID }}",
+      "operation": "{{ .operationID }}",
+      "job": "test-job-action-remediation-triggers-3"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-action-remediation-triggers-7&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
+    """json
+    [
+      {
+        "_t": "instructionstart",
+        "a": "root",
+        "m": "Instruction test-instruction-action-remediation-triggers-7-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "m": "Instruction test-instruction-action-remediation-triggers-7-name. Job test-job-action-remediation-triggers-3-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "root",
+        "m": "Instruction test-instruction-action-remediation-triggers-7-name. Job test-job-action-remediation-triggers-3-name."
+      },
+      {
+        "_t": "ack",
+        "a": "system",
+        "m": "test-resource-action-remediation-triggers-7-ack"
+      }
+    ]
+    """
+
+  Scenario: given scenario should be triggered by instructionjobcomplete trigger with auto instruction
+    Given I am admin
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-action-remediation-triggers-8-name",
+      "enabled": true,
+      "triggers": ["instructionjobcomplete"],
+      "actions": [
+        {
+          "entity_patterns": [
+            {
+              "_id": "test-resource-action-remediation-triggers-8/test-component-action-remediation-triggers-8"
+            }
+          ],
+          "type": "ack",
+          "parameters": {
+            "output": "test-resource-action-remediation-triggers-8-ack"
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """
+    {
+      "connector" : "test-connector-action-remediation-triggers-8",
+      "connector_name" : "test-connector-name-action-remediation-triggers-8",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-action-remediation-triggers-8",
+      "resource" : "test-resource-action-remediation-triggers-8",
+      "state" : 1,
+      "output" : "test output"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/alarms?search=test-resource-action-remediation-triggers-8&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
+    """json
+    [
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-action-remediation-triggers-8-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-action-remediation-triggers-8-name. Job test-job-action-remediation-triggers-3-name."
+      },
+      {
+        "_t": "ack",
+        "a": "system",
+        "m": "test-resource-action-remediation-triggers-8-ack"
+      }
+    ]
+    """
