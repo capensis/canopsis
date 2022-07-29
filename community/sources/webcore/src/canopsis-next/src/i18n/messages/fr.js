@@ -256,6 +256,7 @@ export default merge({
     checkPattern: 'Motif à carreaux',
     itemFound: '{count} article trouvé | {count} articles trouvés',
     canonicalType: 'Type canonique',
+    map: 'Carte | Plans',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -2931,5 +2932,10 @@ export default merge({
 
   filter: {
     oldPattern: 'Ancien format de motif',
+  },
+
+  map: {
+    defineEntity: 'Définir l\'entité',
+    addLink: 'Ajouter un lien',
   },
 }, featureService.get('i18n.fr'));
