@@ -1,4 +1,4 @@
-import { omit, isObject, groupBy } from 'lodash';
+import { omit, pick, isObject, groupBy, map } from 'lodash';
 
 import i18n from '@/i18n';
 import {
@@ -83,6 +83,33 @@ export const groupAlarmSteps = (steps) => {
 };
 
 /**
+ * Return entities ids
+ *
+ * @param {Array} entities
+ * @param {string} [idKey = '_id']
+ */
+export const mapIds = (entities, idKey = '_id') => map(entities, idKey);
+
+/**
+ * Pick id field from entities
+ *
+ * @param {U[]} entities
+ * @param {string} idKey
+ * @returns {PartialObject<U>[]}
+ */
+export const pickIds = (entities = [], idKey = '_id') => entities.map(entity => pick(entity, [idKey]));
+
+/**
+ * Return entities ids
+ *
+ * @param {Object[]} items
+ * @param {Object} item
+ * @param {string} [idKey = '_id']
+ */
+export const filterById = (items, item, idKey = '_id') => items
+  .filter(({ [idKey]: itemId }) => item[idKey] !== itemId);
+
+/**
  * Generate alarm list widget form with default parameters.
  *
  * @return {WidgetForm}
@@ -99,3 +126,30 @@ export const generateDefaultAlarmListWidget = () => ({
 
   _id: uuid(),
 });
+
+/**
+ * Generate alarm details id by widgetId
+ *
+ * @param {string} alarmId
+ * @param {string} widgetId
+ * @returns {string}
+ */
+export const generateAlarmDetailsId = (alarmId, widgetId) => `${alarmId}_${widgetId}`;
+
+/**
+ * Get dataPreparer for alarmDetails entity
+ *
+ * @param {string} widgetId
+ * @returns {Function}
+ */
+export const getAlarmDetailsDataPreparer = widgetId => data => (
+  data.map(item => ({
+    ...item,
+
+    /**
+     * We are generating new id based on alarmId and widgetId to avoiding collision with two widgets
+     * on the same view with opened expand panel on the same alarm
+     */
+    _id: generateAlarmDetailsId(item._id, widgetId),
+  }))
+);

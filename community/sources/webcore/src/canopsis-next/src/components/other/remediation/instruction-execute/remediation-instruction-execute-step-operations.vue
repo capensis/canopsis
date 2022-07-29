@@ -9,7 +9,8 @@
       :is-first-step="isFirstStep",
       @next="nextOperation(index)",
       @previous="previousOperation",
-      @execute-job="executeJob"
+      @execute-job="executeJob",
+      @cancel-job-execution="cancelJobExecution"
     )
 </template>
 
@@ -53,6 +54,10 @@ export default {
 
     executeJob(data) {
       this.$emit('execute-job', data);
+    },
+
+    cancelJobExecution(data) {
+      this.$emit('cancel-job-execution', data);
     },
   },
 };

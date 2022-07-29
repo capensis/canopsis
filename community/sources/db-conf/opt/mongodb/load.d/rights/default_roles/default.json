@@ -110,10 +110,6 @@
         "checksum": 1,
         "desc": ""
       },
-      "listalarm_listPbehavior": {
-        "checksum": 1,
-        "desc": ""
-      },
       "listalarm_listFilters": {
         "checksum": 1,
         "desc": ""
@@ -295,6 +291,14 @@
         "desc": ""
       },
       "crudcontext_exportAsCsv": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_massEnable": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "crudcontext_massDisable": {
         "checksum": 1,
         "desc": ""
       },
@@ -560,10 +564,6 @@
         "checksum": 1,
         "desc": ""
       },
-      "listalarm_listPbehavior": {
-        "checksum": 1,
-        "desc": ""
-      },
       "serviceweather_userFilter": {
         "checksum": 1,
         "desc": ""
@@ -667,10 +667,6 @@
         "desc": ""
       },
       "listalarm_changeState": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "listalarm_listPbehavior": {
         "checksum": 1,
         "desc": ""
       },

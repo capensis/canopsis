@@ -2,12 +2,10 @@ package userpreferences
 
 import (
 	"context"
-	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
@@ -18,45 +16,43 @@ type Store interface {
 }
 
 type store struct {
-	collection, viewCollection mongo.DbCollection
+	collection mongo.DbCollection
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
 ) Store {
 	return &store{
-		collection:     dbClient.Collection(mongo.UserPreferencesMongoCollection),
-		viewCollection: dbClient.Collection(mongo.ViewMongoCollection),
+		collection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
 	}
 }
 
 func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, error) {
-	ok, err := s.existWidget(ctx, widgetId)
-	if err != nil || !ok {
-		return nil, err
-	}
-
 	res := Response{
 		Widget:  widgetId,
 		Content: map[string]interface{}{},
 	}
-	err = s.collection.FindOne(ctx, bson.M{
-		"user":   userId,
-		"widget": widgetId,
-	}).Decode(&res)
-	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"user":   userId,
+			"widget": widgetId,
+		}},
+	})
+	if err != nil {
 		return nil, err
+	}
+
+	if cursor.Next(ctx) {
+		err := cursor.Decode(&res)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &res, nil
 }
 
 func (s *store) Update(ctx context.Context, userId string, request EditRequest) (*Response, bool, error) {
-	ok, err := s.existWidget(ctx, request.Widget)
-	if err != nil || !ok {
-		return nil, false, err
-	}
-
 	res, err := s.collection.UpdateOne(ctx, bson.M{
 		"user":   userId,
 		"widget": request.Widget,
@@ -77,21 +73,10 @@ func (s *store) Update(ctx context.Context, userId string, request EditRequest) 
 	}
 
 	isNew := res.UpsertedCount > 0
-
-	return &Response{
-		Widget:  request.Widget,
-		Content: request.Content,
-	}, isNew, nil
-}
-
-func (s *store) existWidget(ctx context.Context, widgetId string) (bool, error) {
-	err := s.viewCollection.FindOne(ctx, bson.M{"tabs.widgets._id": widgetId}).Err()
+	response, err := s.Find(ctx, userId, request.Widget)
 	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return false, nil
-		}
-		return false, err
+		return nil, false, err
 	}
 
-	return true, nil
+	return response, isNew, nil
 }

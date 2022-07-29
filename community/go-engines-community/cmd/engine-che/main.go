@@ -27,12 +27,6 @@ func main() {
 		logger.Info().Msg("Context creation DISABLED")
 	}
 
-	if opts.FeatureContextEnrich {
-		logger.Info().Msg("Context enrichment ENABLED")
-	} else {
-		logger.Info().Msg("Context enrichment DISABLED")
-	}
-
 	// Graceful shutdown.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()

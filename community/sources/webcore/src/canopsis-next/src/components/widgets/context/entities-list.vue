@@ -13,7 +13,7 @@
       expand,
       no-pagination
     )
-      template(slot="toolbar", slot-scope="props")
+      template(#toolbar="")
         v-flex
           c-advanced-search-field(
             :query.sync="query",
@@ -23,20 +23,24 @@
         v-flex(v-if="hasAccessToCategory")
           c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
         v-flex
-          filter-selector(
-            :label="$t('settings.selectAFilter')",
-            :filters="viewFilters",
-            :locked-filters="widgetViewFilters",
-            :value="mainFilter",
-            :condition="mainFilterCondition",
-            :has-access-to-edit-filter="hasAccessToEditFilter",
-            :has-access-to-user-filter="hasAccessToUserFilter",
-            :has-access-to-list-filters="hasAccessToListFilters",
-            :entities-type="$constants.ENTITIES_TYPES.entity",
-            @input="updateSelectedFilter",
-            @update:condition="updateSelectedCondition",
-            @update:filters="updateFilters"
-          )
+          v-layout(row, wrap, align-center)
+            filter-selector(
+              :label="$t('settings.selectAFilter')",
+              :filters="userPreference.filters",
+              :locked-filters="widget.filters",
+              :value="mainFilter",
+              :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
+              @input="updateSelectedFilter"
+            )
+            filters-list-btn(
+              :widget-id="widget._id",
+              :addable="hasAccessToAddFilter",
+              :editable="hasAccessToEditFilter",
+              private,
+              with-alarm,
+              with-entity,
+              with-pbehavior
+            )
         v-flex
           v-checkbox(
             :input-value="query.no_events",
@@ -58,7 +62,7 @@
           v-layout(row, wrap, align-center)
             c-pagination(
               :page="query.page",
-              :limit="query.rowsPerPage",
+              :limit="query.limit",
               :total="contextEntitiesMeta.total_count",
               type="top",
               @input="updateQueryPage"
@@ -69,17 +73,17 @@
           :column="column",
           :columns-filters="columnsFilters"
         )
-      template(slot="actions", slot-scope="props")
-        actions-panel(:item="props.item", :editing="editing")
-      template(slot="expand", slot-scope="props")
+      template(#actions="{ item }")
+        actions-panel(:item="item", :editing="editing")
+      template(#expand="{ item }")
         entities-list-expand-panel(
-          :item="props.item",
+          :item="item",
           :widget="widget",
           :tab-id="tabId",
           :columns-filters="columnsFilters"
         )
-      template(slot="mass-actions", slot-scope="props")
-        mass-actions-panel.ml-3(:items="props.selected")
+      template(#mass-actions="{ selected, clearSelected }")
+        mass-actions-panel.ml-3(:items="selected", @clear:items="clearSelected")
 
     c-table-pagination(
       :total-items="contextEntitiesMeta.total_count",
@@ -91,11 +95,9 @@
 </template>
 
 <script>
-import { omit, isString, isObject } from 'lodash';
+import { omit, isObject } from 'lodash';
 
 import { USERS_PERMISSIONS } from '@/constants';
-
-import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -107,7 +109,8 @@ import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-
 import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
 import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
 
-import FilterSelector from '@/components/forms/filters/filter-selector.vue';
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 
 import EntityColumnCell from './columns-formatting/entity-column-cell.vue';
 import EntitiesListExpandPanel from './partials/entities-list-expand-panel.vue';
@@ -118,6 +121,7 @@ import MassActionsPanel from './actions/mass-actions-panel.vue';
 export default {
   components: {
     FilterSelector,
+    FiltersListBtn,
     EntitiesListExpandPanel,
     ContextFab,
     EntityColumnCell,
@@ -214,43 +218,15 @@ export default {
       };
     },
 
-    updateQueryBySelectedFilterAndCondition(filter, condition) {
-      this.query = {
-        ...this.query,
-
-        page: 1,
-        mainFilter: prepareMainFilterToQueryFilter(filter, condition),
-      };
-    },
-
-    getQuery() {
+    getQuery() { // TODO: move this logic to helpers
       const query = omit(this.query, [
         'sortKey',
         'sortDir',
-        'mainFilter',
-        'searchFilter',
-        'typesFilter',
       ]);
 
       if (this.query.sortKey) {
         query.sort = this.query.sortDir.toLowerCase();
         query.sort_by = this.query.sortKey;
-      }
-
-      const filters = ['mainFilter', 'typesFilter'].reduce((acc, filterKey) => {
-        const queryFilter = isString(this.query[filterKey]) ? JSON.parse(this.query[filterKey]) : this.query[filterKey];
-
-        if (queryFilter) {
-          acc.push(queryFilter);
-        }
-
-        return acc;
-      }, []);
-
-      if (filters.length) {
-        query.filter = {
-          $and: filters,
-        };
       }
 
       return query;

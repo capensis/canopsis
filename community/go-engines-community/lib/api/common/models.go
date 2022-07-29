@@ -80,6 +80,8 @@ type ErrorResponse struct {
 	Error string `json:"error"`
 }
 
+// NewErrorResponse
+// @Failure 500 {object} ErrorResponse
 func NewErrorResponse(err error) ErrorResponse {
 	return ErrorResponse{Error: err.Error()}
 }
@@ -89,7 +91,7 @@ var MethodNotAllowedResponse = ErrorResponse{Error: http.StatusText(http.StatusM
 var UnauthorizedResponse = ErrorResponse{Error: http.StatusText(http.StatusUnauthorized)}
 var InternalServerErrorResponse = ErrorResponse{Error: "Internal server error"}
 var ForbiddenResponse = ErrorResponse{Error: http.StatusText(http.StatusForbidden)}
-var ErrTimeoutResponse = ErrorResponse{Error: "Request timeout reached"}
+var RequestTimeoutResponse = ErrorResponse{Error: http.StatusText(http.StatusRequestTimeout)}
 
 // ValidationErrorResponse is response for failed validation.
 type ValidationErrorResponse struct {
@@ -97,6 +99,7 @@ type ValidationErrorResponse struct {
 }
 
 // NewValidationErrorResponse creates response by validation errors.
+// @Failure 400 {object} ValidationErrorResponse
 func NewValidationErrorResponse(err error, request interface{}) interface{} {
 	var errs validator.ValidationErrors
 	if errors.As(err, &errs) {
@@ -203,4 +206,23 @@ loop:
 	}
 
 	return strings.Join(res, ".")
+}
+
+type ValidationError struct {
+	field string
+	err   error
+}
+
+func NewValidationError(field string, err error) ValidationError {
+	return ValidationError{field: field, err: err}
+}
+
+func (v ValidationError) Error() string {
+	return v.err.Error()
+}
+
+func (v ValidationError) ValidationErrorResponse() ValidationErrorResponse {
+	return ValidationErrorResponse{
+		Errors: map[string]string{v.field: v.Error()},
+	}
 }

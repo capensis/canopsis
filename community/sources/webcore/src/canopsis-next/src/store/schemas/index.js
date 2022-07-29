@@ -19,16 +19,11 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {}, {
   processStrategy: parentProcessStrategy,
 });
 
-alarmSchema.define({
-  consequences: {
-    data: [alarmSchema],
-  },
-  causes: {
-    data: [alarmSchema],
-  },
-});
-
 alarmSchema.disabledCache = true;
+
+export const alarmDetailsSchema = new schema.Entity(ENTITIES_TYPES.alarmDetails, {}, {
+  idAttribute: '_id',
+});
 
 export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {
   pbehaviors: [pbehaviorSchema],
@@ -152,7 +147,7 @@ export const resolveRulesSchema = new schema.Entity(ENTITIES_TYPES.resolveRules,
 
 export const filterSchema = new schema.Entity(ENTITIES_TYPES.filter, {}, { idAttribute: '_id' });
 
-export const ratingSettingsSchema = new schema.Entity(ENTITIES_TYPES.ratingSettings, {}, { idAttribute: '_id' });
+export const ratingSettingsSchema = new schema.Entity(ENTITIES_TYPES.ratingSettings, {}, { idAttribute: 'label' });
 
 export const patternSchema = new schema.Entity(ENTITIES_TYPES.pattern, {}, { idAttribute: '_id' });
 
@@ -160,6 +155,7 @@ export const mapSchema = new schema.Entity(ENTITIES_TYPES.map, {}, { idAttribute
 
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
+  [ENTITIES_TYPES.alarmDetails]: alarmDetailsSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
   [ENTITIES_TYPES.service]: serviceSchema,
   [ENTITIES_TYPES.weatherService]: weatherServiceSchema,

@@ -2,6 +2,7 @@
   c-pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
+    :readonly="readonly",
     :name="name",
     :required="required",
     :attributes="eventFilterAttributes"
@@ -9,7 +10,14 @@
 </template>
 
 <script>
-import { BASIC_ENTITY_TYPES, EVENT_FILTER_PATTERN_FIELDS, PATTERN_OPERATORS, PATTERN_RULE_TYPES } from '@/constants';
+import {
+  BASIC_ENTITY_TYPES,
+  EVENT_ENTITY_TYPES,
+  EVENT_FILTER_PATTERN_FIELDS,
+  EVENT_FILTER_SOURCE_TYPES,
+  PATTERN_OPERATORS,
+  PATTERN_RULE_TYPES,
+} from '@/constants';
 
 export default {
   model: {
@@ -33,14 +41,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     entitiesOperators() {
       return [
         PATTERN_OPERATORS.equal,
         PATTERN_OPERATORS.notEqual,
-        PATTERN_OPERATORS.hasOneOf,
-        PATTERN_OPERATORS.hasNot,
+        PATTERN_OPERATORS.isOneOf,
+        PATTERN_OPERATORS.isNotOneOf,
       ];
     },
 
@@ -89,8 +101,82 @@ export default {
       };
     },
 
+    eventTypes() {
+      return [
+        EVENT_ENTITY_TYPES.ack,
+        EVENT_ENTITY_TYPES.ackRemove,
+        EVENT_ENTITY_TYPES.assocTicket,
+        EVENT_ENTITY_TYPES.declareTicket,
+        EVENT_ENTITY_TYPES.cancel,
+        EVENT_ENTITY_TYPES.uncancel,
+        EVENT_ENTITY_TYPES.changeState,
+        EVENT_ENTITY_TYPES.check,
+        EVENT_ENTITY_TYPES.comment,
+        EVENT_ENTITY_TYPES.snooze,
+      ].map(value => ({
+        value,
+        text: this.$t(`common.entityEventTypes.${value}`),
+      }));
+    },
+
+    eventTypeOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-select-field',
+          props: {
+            items: this.eventTypes,
+            ellipsis: true,
+          },
+        },
+      };
+    },
+
+    sourceTypes() {
+      return [
+        {
+          value: EVENT_FILTER_SOURCE_TYPES.component,
+          text: this.$t('common.component'),
+        },
+        {
+          value: EVENT_FILTER_SOURCE_TYPES.connector,
+          text: this.$t('common.connector'),
+        },
+        {
+          value: EVENT_FILTER_SOURCE_TYPES.connectorName,
+          text: this.$t('common.connectorName'),
+        },
+        {
+          value: EVENT_FILTER_SOURCE_TYPES.resource,
+          text: this.$t('common.resource'),
+        },
+      ];
+    },
+
+    sourceTypeOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-select-field',
+          props: {
+            items: this.sourceTypes,
+          },
+        },
+      };
+    },
+
     eventFilterAttributes() {
       return [
+        {
+          text: this.$t('common.eventType'),
+          value: EVENT_FILTER_PATTERN_FIELDS.eventType,
+          options: this.eventTypeOptions,
+        },
+        {
+          text: this.$t('common.sourceType'),
+          value: EVENT_FILTER_PATTERN_FIELDS.sourceType,
+          options: this.sourceTypeOptions,
+        },
         {
           text: this.$t('common.component'),
           value: EVENT_FILTER_PATTERN_FIELDS.component,

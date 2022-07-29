@@ -256,11 +256,13 @@ Feature: Get and update data storage config
       "remediation": {
         "accumulate_after": {
           "value": 10,
-          "unit": "d"
+          "unit": "d",
+          "enabled": true
         },
         "delete_after": {
           "value": 10,
-          "unit": "d"
+          "unit": "d",
+          "enabled": true
         }
       }
     }
@@ -280,11 +282,13 @@ Feature: Get and update data storage config
       "alarm": {
         "archive_after": {
           "value": 10,
-          "unit": "d"
+          "unit": "d",
+          "enabled": true
         },
         "delete_after": {
           "value": 10,
-          "unit": "d"
+          "unit": "d",
+          "enabled": true
         }
       }
     }

@@ -84,18 +84,25 @@
  * @property {AlarmEvent} ticket
  * @property {AlarmEvent} snooze
  * @property {AlarmEvent} canceled
- * @property {AlarmEvent} lastComment
+ * @property {AlarmEvent} last_comment
  * @property {AlarmEvent[]} [steps]
  * @property {AlarmValuePbehaviorInfo} [pbehavior_info]
+ */
+
+/**
+ * @typedef {Pbehavior} AlarmPbehavior
+ * @property {Comment} last_comment
  */
 
 /**
  * @typedef {Object} Alarm
  * @property {string} _id
  * @property {Entity} entity
- * @property {boolean} metaalarm
+ * @property {boolean} is_meta_alarm
  * @property {AlarmAssignedInstruction[]} [assigned_instructions]
+ * @property {boolean} [is_auto_instruction_failed]
  * @property {boolean} [is_auto_instruction_running]
+ * @property {boolean} [is_manual_instruction_running]
  * @property {boolean} [is_manual_instruction_waiting_result]
  * @property {boolean} [is_all_auto_instructions_completed]
  * @property {boolean} [children_instructions]
@@ -103,7 +110,7 @@
  * @property {AlarmRule} rule
  * @property {Correlation} consequences
  * @property {Correlation} causes
- * @property {Pbehavior} pbehavior
+ * @property {AlarmPbehavior} pbehavior
  * @property {string} links
  * @property {number} t
  * @property {AlarmValue} v

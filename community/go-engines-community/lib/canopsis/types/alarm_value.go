@@ -123,12 +123,17 @@ type AlarmSteps []AlarmStep
 
 // Add handle adding a step to the list
 func (s *AlarmSteps) Add(step AlarmStep) error {
-	if len(*s) >= AlarmStepsHardLimit {
-		return fmt.Errorf("max number of steps reached: %v", AlarmStepsHardLimit)
+	if len(*s) < AlarmStepsHardLimit ||
+		step.Type == AlarmStepStateDecrease && step.Value == AlarmStateOK ||
+		step.Type == AlarmStepStatusDecrease && step.Value == AlarmStateOK ||
+		step.Type == AlarmStepCancel ||
+		step.Type == AlarmStepStatusIncrease && step.Value == AlarmStatusCancelled {
+
+		*s = append(*s, step)
+		return nil
 	}
 
-	*s = append(*s, step)
-	return nil
+	return fmt.Errorf("max number of steps reached: %v", AlarmStepsHardLimit)
 }
 
 // Crop steps by replacing stateinc and statedec steps after the current status with a statecounter step
@@ -253,7 +258,7 @@ func (s ByTimestamp) Less(i, j int) bool {
 type PbehaviorInfo struct {
 	// Timestamp is time when entity enters pbehavior.
 	// Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
-	Timestamp *CpsTime `bson:"timestamp" json:"timestamp"`
+	Timestamp *CpsTime `bson:"timestamp" json:"timestamp" swaggertype:"integer"`
 	// ID is ID of pbehavior.PBehavior.
 	ID string `bson:"id" json:"id"`
 	// Name is Name of pbehavior.PBehavior.
@@ -310,14 +315,16 @@ func (i PbehaviorInfo) Same(v PbehaviorInfo) bool {
 
 // AlarmValue represents a full description of an alarm.
 type AlarmValue struct {
-	ACK               *AlarmStep    `bson:"ack,omitempty" json:"ack,omitempty"`
-	Canceled          *AlarmStep    `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done              *AlarmStep    `bson:"done,omitempty" json:"done,omitempty"`
-	Snooze            *AlarmStep    `bson:"snooze,omitempty" json:"snooze,omitempty"`
-	State             *AlarmStep    `bson:"state,omitempty" json:"state,omitempty"`
-	Status            *AlarmStep    `bson:"status,omitempty" json:"status,omitempty"`
-	Ticket            *AlarmTicket  `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	Steps             AlarmSteps    `bson:"steps" json:"steps"`
+	ACK         *AlarmStep   `bson:"ack,omitempty" json:"ack,omitempty"`
+	Canceled    *AlarmStep   `bson:"canceled,omitempty" json:"canceled,omitempty"`
+	Done        *AlarmStep   `bson:"done,omitempty" json:"done,omitempty"`
+	Snooze      *AlarmStep   `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	State       *AlarmStep   `bson:"state,omitempty" json:"state,omitempty"`
+	Status      *AlarmStep   `bson:"status,omitempty" json:"status,omitempty"`
+	LastComment *AlarmStep   `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+	Ticket      *AlarmTicket `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	Steps       AlarmSteps   `bson:"steps" json:"steps"`
+
 	Component         string        `bson:"component" json:"component"`
 	Connector         string        `bson:"connector" json:"connector"`
 	ConnectorName     string        `bson:"connector_name" json:"connector_name"`

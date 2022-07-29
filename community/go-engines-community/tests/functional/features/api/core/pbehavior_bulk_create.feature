@@ -22,6 +22,7 @@ Feature: Bulk create pbehaviors
         "name": "test-pbehavior-to-bulk-create-1-1-name",
         "tstart": 1591172881,
         "tstop": 1591536400,
+        "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-1",
         "filter": {
@@ -46,6 +47,7 @@ Feature: Bulk create pbehaviors
         "name": "test-pbehavior-to-bulk-create-1-1-name",
         "tstart": 1591172881,
         "tstop": 1591536400,
+        "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-1",
         "filter": {
@@ -78,6 +80,7 @@ Feature: Bulk create pbehaviors
         "name": "test-pbehavior-to-bulk-create-1-2-name",
         "tstart": 1591172881,
         "tstop": 1591536400,
+        "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-1",
         "filter": {
@@ -111,6 +114,7 @@ Feature: Bulk create pbehaviors
           "name": "test-pbehavior-to-bulk-create-1-1-name",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-1",
           "filter": {
@@ -138,6 +142,7 @@ Feature: Bulk create pbehaviors
           "name": "test-pbehavior-to-bulk-create-1-1-name",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-1",
           "filter": {
@@ -168,6 +173,7 @@ Feature: Bulk create pbehaviors
           "name": "Name is missing.",
           "filter": "Filter is missing.",
           "tstart": "Start is missing.",
+          "color": "Color is missing.",
           "reason": "Reason is missing.",
           "type": "Type is missing."
         }
@@ -203,6 +209,7 @@ Feature: Bulk create pbehaviors
           "name": "test-pbehavior-to-bulk-create-1-2-name",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-1",
           "filter": {
@@ -237,6 +244,7 @@ Feature: Bulk create pbehaviors
           "name": "test-pbehavior-to-bulk-create-1-1-name",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFF",
           "type": {
             "_id": "test-type-to-pbh-edit-1"
           },
@@ -271,6 +279,7 @@ Feature: Bulk create pbehaviors
           "name": "test-pbehavior-to-bulk-create-1-2-name",
           "tstart": 1591172881,
           "tstop": 1591536400,
+          "color": "#FFFFFF",
           "type": {
             "_id": "test-type-to-pbh-edit-1"
           },

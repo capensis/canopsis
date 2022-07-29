@@ -1,7 +1,6 @@
 package scenario
 
 import (
-	"encoding/json"
 	libaction "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 )
 
@@ -18,17 +17,10 @@ type modelTransformer struct{}
 func (modelTransformer) TransformEditRequestToModel(r EditRequest) libaction.Scenario {
 	actions := make([]libaction.Action, len(r.Actions))
 	for i := range actions {
-		var params map[string]interface{}
-
-		if r.Actions[i].Parameters != nil {
-			b, _ := json.Marshal(r.Actions[i].Parameters)
-			_ = json.Unmarshal(b, &params)
-		}
-
 		actions[i] = libaction.Action{
 			Type:                     r.Actions[i].Type,
 			Comment:                  r.Actions[i].Comment,
-			Parameters:               params,
+			Parameters:               r.Actions[i].Parameters,
 			AlarmPatterns:            r.Actions[i].AlarmPatterns,
 			EntityPatterns:           r.Actions[i].EntityPatterns,
 			DropScenarioIfNotMatched: *r.Actions[i].DropScenarioIfNotMatched,

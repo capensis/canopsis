@@ -9,8 +9,8 @@ import (
 )
 
 // PartialUpdateAck add ack step to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateAck(timestamp CpsTime, author, output, userID, role, initiator string) error {
-	if a.Value.ACK != nil {
+func (a *Alarm) PartialUpdateAck(timestamp CpsTime, author, output, userID, role, initiator string, allowDouble bool) error {
+	if !allowDouble && a.Value.ACK != nil {
 		return nil
 	}
 
@@ -146,12 +146,15 @@ func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, userID,
 		for i := len(a.Value.Steps) - 2; i >= 0; i-- {
 			if a.Value.Steps[i].Type == AlarmStepPbhEnter {
 				enterTimestamp = a.Value.Steps[i].Timestamp
+				break
 			}
 		}
 
-		d := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
-		a.Value.PbehaviorInactiveDuration += d
-		a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
+		if !enterTimestamp.IsZero() {
+			d := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
+			a.Value.PbehaviorInactiveDuration += d
+			a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
+		}
 	}
 
 	return nil
@@ -199,12 +202,15 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 		for i := len(a.Value.Steps) - 3; i >= 0; i-- {
 			if a.Value.Steps[i].Type == AlarmStepPbhEnter {
 				enterTimestamp = a.Value.Steps[i].Timestamp
+				break
 			}
 		}
 
-		d := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
-		a.Value.PbehaviorInactiveDuration += d
-		a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
+		if !enterTimestamp.IsZero() {
+			d := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
+			a.Value.PbehaviorInactiveDuration += d
+			a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
+		}
 	}
 
 	return nil
@@ -280,12 +286,13 @@ func (a *Alarm) PartialUpdateDone(timestamp CpsTime, author, output, userID, rol
 
 func (a *Alarm) PartialUpdateComment(timestamp CpsTime, author, output, userID, role, initiator string) error {
 	newStep := NewAlarmStep(AlarmStepComment, timestamp, author, output, userID, role, initiator)
+	a.Value.LastComment = &newStep
 	err := a.Value.Steps.Add(newStep)
 	if err != nil {
 		return err
 	}
-
-	a.AddUpdate("$push", bson.M{"v.steps": newStep})
+	a.AddUpdate("$set", bson.M{"v.last_comment": a.Value.LastComment})
+	a.AddUpdate("$push", bson.M{"v.steps": a.Value.LastComment})
 
 	return nil
 }

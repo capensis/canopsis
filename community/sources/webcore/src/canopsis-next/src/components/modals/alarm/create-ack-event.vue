@@ -21,7 +21,7 @@
           :loading="submitting",
           :disabled="isDisabled || submittingWithTicket",
           type="submit"
-        ) {{ $t('common.actions.ack') }}
+        ) {{ $t('common.acknowledge') }}
         v-btn.warning(
           :loading="submittingWithTicket",
           :disabled="isDisabledWithTicket || submitting",
@@ -34,7 +34,7 @@ import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -82,8 +82,8 @@ export default {
 
     submitWithTicketBtnLabel() {
       return this.form.ticket
-        ? this.$t('common.actions.acknowledgeAndAssociateTicket')
-        : this.$t('common.actions.acknowledgeAndDeclareTicket');
+        ? this.$t('common.acknowledgeAndAssociateTicket')
+        : this.$t('common.acknowledgeAndDeclareTicket');
     },
   },
   methods: {
