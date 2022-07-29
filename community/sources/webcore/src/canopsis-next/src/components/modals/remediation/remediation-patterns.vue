@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { MODALS, PATTERNS_FIELDS } from '@/constants';
+import { MODALS, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
@@ -58,7 +58,11 @@ export default {
 
     return {
       form: {
-        ...filterPatternsToForm(instruction, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+        ...filterPatternsToForm(
+          instruction,
+          [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
+          [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
+        ),
         active_on_pbh: instruction?.active_on_pbh ?? [],
         disabled_on_pbh: instruction?.disabled_on_pbh ?? [],
       },

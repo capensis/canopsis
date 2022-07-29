@@ -2,11 +2,13 @@
   c-pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
+    :readonly="readonly",
     :name="name",
     :type="$constants.PATTERN_TYPES.pbehavior",
     :required="required",
     :attributes="pbehaviorAttributes",
-    :with-type="withType"
+    :with-type="withType",
+    :check-count-name="checkCountName"
   )
 </template>
 
@@ -42,6 +44,14 @@ export default {
       default: false,
     },
     withType: {
+      type: Boolean,
+      default: false,
+    },
+    checkCountName: {
+      type: String,
+      required: false,
+    },
+    readonly: {
       type: Boolean,
       default: false,
     },
@@ -122,6 +132,11 @@ export default {
         {
           text: this.$t('common.type'),
           value: PBEHAVIOR_PATTERN_FIELDS.type,
+          options: this.typeOptions,
+        },
+        {
+          text: this.$t('common.canonicalType'),
+          value: PBEHAVIOR_PATTERN_FIELDS.canonicalType,
           options: this.typeOptions,
         },
       ];

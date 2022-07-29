@@ -37,7 +37,8 @@ Feature: no update service when entity is inactive
       "enabled": true,
       "name": "test-pbehavior-service-1",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -116,7 +117,8 @@ Feature: no update service when entity is inactive
       "enabled": true,
       "name": "test-pbehavior-service-2",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -222,6 +224,7 @@ Feature: no update service when entity is inactive
       "name": "test-pbehavior-service-3",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2s" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -234,9 +237,7 @@ Feature: no update service when entity is inactive
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
-    When I wait 2s
-    When I wait the end of 2 events processing
+    When I wait the end of 4 events processing
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
@@ -344,6 +345,7 @@ Feature: no update service when entity is inactive
       "name": "test-pbehavior-service-4-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2s" }},
+      "color": "#FFFFFF",
       "type": "test-inactive-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -362,7 +364,8 @@ Feature: no update service when entity is inactive
       "enabled": true,
       "name": "test-pbehavior-service-4-2",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -375,9 +378,7 @@ Feature: no update service when entity is inactive
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
-    When I wait 2s
-    When I wait the end of 2 events processing
+    When I wait the end of 4 events processing
     When I send an event:
     """json
     {

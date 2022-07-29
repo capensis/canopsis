@@ -1,6 +1,7 @@
 package alarm
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -91,16 +92,19 @@ type Alarm struct {
 		Data  []string `bson:"data"`
 		Total int      `bson:"total"`
 	} `bson:"children_ids,omitempty" json:"-"`
-	Children                         *Children               `bson:"children,omitempty" json:"consequences,omitempty"`
-	Causes                           *Causes                 `bson:"causes,omitempty" json:"causes,omitempty"`
-	FilteredChildrenIDs              []string                `bson:"filtered_children_ids,omitempty" json:"filtered_children,omitempty"`
+	Children            *Children `bson:"children,omitempty" json:"consequences,omitempty"`
+	Causes              *Causes   `bson:"causes,omitempty" json:"causes,omitempty"`
+	FilteredChildrenIDs []string  `bson:"filtered_children_ids,omitempty" json:"filtered_children,omitempty"`
+
 	AssignedInstructions             []InstructionWithAlarms `bson:"assigned_instructions,omitempty" json:"assigned_instructions,omitempty"`
 	IsAutoInstructionRunning         *bool                   `bson:"-" json:"is_auto_instruction_running,omitempty"`
 	IsAllAutoInstructionsCompleted   *bool                   `bson:"-" json:"is_all_auto_instructions_completed,omitempty"`
 	IsAutoInstructionFailed          *bool                   `bson:"-" json:"is_auto_instruction_failed,omitempty"`
+	IsManualInstructionRunning       *bool                   `bson:"-" json:"is_manual_instruction_running,omitempty"`
 	IsManualInstructionWaitingResult *bool                   `bson:"-" json:"is_manual_instruction_waiting_result,omitempty"`
-	Links                            map[string]interface{}  `bson:"-" json:"links"`
-	ImpactState                      int64                   `bson:"impact_state" json:"impact_state"`
+
+	Links       map[string]interface{} `bson:"-" json:"links"`
+	ImpactState int64                  `bson:"impact_state" json:"impact_state"`
 }
 
 type MetaAlarmRule struct {
@@ -119,15 +123,16 @@ type Children struct {
 }
 
 type AlarmValue struct {
-	ACK                           *AlarmStep            `bson:"ack,omitempty" json:"ack,omitempty"`
-	Canceled                      *AlarmStep            `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done                          *AlarmStep            `bson:"done,omitempty" json:"done,omitempty"`
-	Snooze                        *AlarmStep            `bson:"snooze,omitempty" json:"snooze,omitempty"`
-	State                         *AlarmStep            `bson:"state,omitempty" json:"state,omitempty"`
-	Status                        *AlarmStep            `bson:"status,omitempty" json:"status,omitempty"`
-	Ticket                        *AlarmTicket          `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	LastComment                   *AlarmStep            `bson:"last_comment,omitempty" json:"lastComment,omitempty"`
-	Steps                         []AlarmStep           `bson:"steps,omitempty" json:"steps,omitempty"`
+	ACK         *AlarmStep   `bson:"ack,omitempty" json:"ack,omitempty"`
+	Canceled    *AlarmStep   `bson:"canceled,omitempty" json:"canceled,omitempty"`
+	Done        *AlarmStep   `bson:"done,omitempty" json:"done,omitempty"`
+	Snooze      *AlarmStep   `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	State       *AlarmStep   `bson:"state,omitempty" json:"state,omitempty"`
+	Status      *AlarmStep   `bson:"status,omitempty" json:"status,omitempty"`
+	Ticket      *AlarmTicket `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	LastComment *AlarmStep   `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+	Steps       []AlarmStep  `bson:"steps,omitempty" json:"steps,omitempty"`
+
 	Component                     string                `bson:"component" json:"component"`
 	Connector                     string                `bson:"connector" json:"connector"`
 	ConnectorName                 string                `bson:"connector_name" json:"connector_name"`
@@ -165,7 +170,7 @@ type AlarmStep struct {
 	Type         string             `bson:"_t" json:"_t"`
 	Timestamp    *types.CpsTime     `bson:"t" json:"t" swaggertype:"integer"`
 	Author       string             `bson:"a" json:"a"`
-	UserID       string             `bson:"user_id,omitempty" json:"user_id,omitempty"`
+	UserID       string             `bson:"user_id,omitempty" json:"user_id"`
 	Message      string             `bson:"m" json:"m"`
 	Value        types.CpsNumber    `bson:"val" json:"val"`
 	Initiator    string             `bson:"initiator" json:"initiator"`
@@ -185,12 +190,13 @@ type AlarmTicket struct {
 
 type Pbehavior struct {
 	ID       string             `bson:"_id" json:"_id"`
-	Author   string             `bson:"author" json:"author"`
+	Author   common.User        `bson:"author" json:"author"`
 	Name     string             `bson:"name" json:"name"`
 	RRule    string             `bson:"rrule" json:"rrule"`
 	Start    *types.CpsTime     `bson:"tstart" json:"tstart" swaggertype:"integer"`
 	Stop     *types.CpsTime     `bson:"tstop" json:"tstop" swaggertype:"integer"`
 	Type     *pbehavior.Type    `bson:"type" json:"type"`
+	Reason   *pbehavior.Reason  `bson:"reason" json:"reason"`
 	Comments pbehavior.Comments `bson:"comments" json:"comments"`
 }
 
@@ -207,11 +213,12 @@ type InstructionWithAlarms struct {
 }
 
 type ExecutionStatus struct {
-	ID               string `bson:"_id"`
-	AutoRunning      *bool  `bson:"auto_running"`
-	ManualRunning    *bool  `bson:"manual_running"`
-	AutoFailed       *bool  `bson:"auto_failed"`
-	AutoAllCompleted *bool  `bson:"auto_all_completed"`
+	ID                  string `bson:"_id"`
+	AutoRunning         *bool  `bson:"auto_running"`
+	ManualRunning       *bool  `bson:"manual_running"`
+	ManualWaitingResult *bool  `bson:"manual_waiting_result"`
+	AutoFailed          *bool  `bson:"auto_failed"`
+	AutoAllCompleted    *bool  `bson:"auto_all_completed"`
 }
 
 type Execution struct {

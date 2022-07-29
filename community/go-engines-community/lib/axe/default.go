@@ -3,6 +3,8 @@ package axe
 import (
 	"context"
 	"flag"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -27,7 +29,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type Options struct {
@@ -133,8 +134,17 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		rpcPublishQueues = append(rpcPublishQueues, canopsis.RemediationRPCQueueServerName)
 	}
 
+	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		libengine.NewRunInfoManager(runInfoRedisClient),
+		libengine.NewInstanceRunInfo(canopsis.AxeEngineName, canopsis.AxeQueueName, options.PublishToQueue, nil, rpcPublishQueues),
+		amqpChannel,
+		logger,
+	)
+
 	engineAxe := libengine.New(
 		func(ctx context.Context) error {
+			runInfoPeriodicalWorker.Work(ctx)
 			return alarmStatusService.Load(ctx)
 		},
 		func(ctx context.Context) {
@@ -218,6 +228,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		&rpcMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			ServiceRpc:               serviceRpcClient,
+			RMQChannel:               amqpChannel,
 			PbhRpc:                   pbhRpcClient,
 			RemediationRpc:           remediationRpcClient,
 			AlarmAdapter:             alarm.NewAdapter(dbClient),
@@ -230,13 +241,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	))
 	engineAxe.AddConsumer(serviceRpcClient)
 	engineAxe.AddConsumer(pbhRpcClient)
-	engineAxe.AddPeriodicalWorker("run info", libengine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		libengine.NewRunInfoManager(runInfoRedisClient),
-		libengine.NewInstanceRunInfo(canopsis.AxeEngineName, canopsis.AxeQueueName, options.PublishToQueue, nil, rpcPublishQueues),
-		amqpChannel,
-		logger,
-	))
+	engineAxe.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		AlarmStatusService: alarmStatusService,
@@ -335,7 +340,6 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypeAutoInstructionStarted, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeAutoInstructionCompleted, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeAutoInstructionFailed, executor.NewInstructionExecutor(metricsSender))
-	container.Set(types.EventTypeAutoInstructionAlreadyRunning, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionJobStarted, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionJobCompleted, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionJobAborted, executor.NewInstructionExecutor(metricsSender))

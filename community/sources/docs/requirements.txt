@@ -1,5 +1,5 @@
 # https://www.mkdocs.org/about/release-notes
-# warning: the doc.canopsis.net machine has Python 3.7 by default
+# warning: the documentation build machine has Python 3.7 by default
 mkdocs==1.2.3 ; python_version >= '3.7'
 
 # https://squidfunk.github.io/mkdocs-material/changelog/

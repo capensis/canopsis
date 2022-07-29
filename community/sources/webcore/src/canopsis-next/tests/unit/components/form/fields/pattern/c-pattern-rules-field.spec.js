@@ -104,7 +104,10 @@ describe('c-pattern-rules-field', () => {
     expect(eventData).toEqual([
       rules[0],
       rules[1],
-      updatedRule,
+      {
+        ...updatedRule,
+        value: undefined,
+      },
     ]);
   });
 
@@ -135,7 +138,7 @@ describe('c-pattern-rules-field', () => {
       {
         ...updatedRule,
         operator: '',
-        value: '',
+        value: undefined,
       },
       rules[2],
     ]);
