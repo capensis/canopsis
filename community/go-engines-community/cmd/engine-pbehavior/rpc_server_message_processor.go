@@ -12,8 +12,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
@@ -55,6 +55,8 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 
 	if pbhEvent == nil {
 		pbhEvent = &types.Event{}
+	} else {
+		pbhEvent.Entity = event.Entity
 	}
 
 	return p.getRpcEvent(types.RPCPBehaviorResultEvent{
@@ -79,7 +81,7 @@ func (p *createPbehaviorMessageProcessor) Process(
 	ctx context.Context,
 	alarm *types.Alarm,
 	entity *types.Entity,
-	params types.ActionPBehaviorParameters,
+	params types.RPCPBehaviorParameters,
 	_ []byte,
 ) (*types.Event, error) {
 	pbehavior, err := p.createPbehavior(ctx, params, entity)
@@ -116,41 +118,39 @@ func (p *createPbehaviorMessageProcessor) Process(
 		return nil, nil
 	}
 
-	pbhEvent.Entity = entity
-
 	return &pbhEvent, nil
 }
 
 func (p *createPbehaviorMessageProcessor) createPbehavior(
 	ctx context.Context,
-	params types.ActionPBehaviorParameters,
+	params types.RPCPBehaviorParameters,
 	entity *types.Entity,
 ) (*libpbehavior.PBehavior, error) {
 	typeCollection := p.DbClient.Collection(mongo.PbehaviorTypeMongoCollection)
-	res := typeCollection.FindOne(ctx, bson.M{"_id": params.Type})
-	if err := res.Err(); err != nil {
+	err := typeCollection.FindOne(ctx, bson.M{"_id": params.Type}).Err()
+	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, fmt.Errorf("pbehavior type not exist: %q", params.Type)
-		} else {
-			return nil, fmt.Errorf("cannot get pbehavior type: %w", err)
 		}
+
+		return nil, fmt.Errorf("cannot get pbehavior type: %w", err)
 	}
 
 	reasonCollection := p.DbClient.Collection(mongo.PbehaviorReasonMongoCollection)
-	res = reasonCollection.FindOne(ctx, bson.M{"_id": params.Reason})
-	if err := res.Err(); err != nil {
+	err = reasonCollection.FindOne(ctx, bson.M{"_id": params.Reason}).Err()
+	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, fmt.Errorf("pbehavior reason not exist: %q", params.Reason)
-		} else {
-			return nil, fmt.Errorf("cannot get pbehavior reason: %w", err)
 		}
+
+		return nil, fmt.Errorf("cannot get pbehavior reason: %w", err)
 	}
 
 	now := types.NewCpsTime()
 	var start, stop types.CpsTime
 	if params.Tstart != nil && params.Tstop != nil {
-		start = types.NewCpsTime(*params.Tstart)
-		stop = types.NewCpsTime(*params.Tstop)
+		start = *params.Tstart
+		stop = *params.Tstop
 	} else if params.StartOnTrigger != nil && *params.StartOnTrigger &&
 		params.Duration != nil && params.Duration.Value > 0 {
 		start = now
@@ -163,7 +163,6 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 
 	pbehavior := libpbehavior.PBehavior{
 		ID:      utils.NewID(),
-		Author:  params.UserID,                       // since author now contains username, we should use user_id in author
 		Enabled: true,
 		Filter:  fmt.Sprintf(`{"_id": "%s"}`, entity.ID),
 		Name:    params.Name,
@@ -172,12 +171,13 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 		Start:   &start,
 		Stop:    &stop,
 		Type:    params.Type,
+		Color:   types.ActionPbehaviorColor,
 		Created: now,
 		Updated: now,
 	}
 
 	collection := p.DbClient.Collection(mongo.PbehaviorMongoCollection)
-	_, err := collection.InsertOne(ctx, pbehavior)
+	_, err = collection.InsertOne(ctx, pbehavior)
 	if err != nil {
 		return nil, fmt.Errorf("create new pbehavior failed: %w", err)
 	}

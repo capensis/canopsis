@@ -5,7 +5,7 @@ const { mapActions } = createNamespacedHelpers('event');
 /**
  * @mixin
  */
-export default {
+export const eventActionsMixin = {
   methods: {
     ...mapActions({
       createEventAction: 'create',

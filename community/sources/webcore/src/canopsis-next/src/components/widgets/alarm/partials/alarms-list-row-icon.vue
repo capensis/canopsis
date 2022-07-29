@@ -19,20 +19,36 @@ export default {
   },
   computed: {
     iconData() {
-      if (this.alarm.is_auto_instruction_running || this.alarm.is_manual_instruction_waiting_result) {
+      let tooltip;
+
+      if (this.alarm.is_manual_instruction_running) {
+        tooltip = this.$t('alarmList.tooltips.hasManualInstructionInRunning');
+      } else if (this.alarm.is_manual_instruction_waiting_result) {
+        tooltip = this.$t('alarmList.tooltips.awaitingInstructionComplete');
+      } else if (this.alarm.is_auto_instruction_running) {
+        tooltip = this.$t('alarmList.tooltips.hasAutoInstructionInRunning');
+      }
+
+      if (tooltip) {
         return {
+          tooltip,
+
           icon: 'assignment',
           class: 'instruction-icon--auto-running',
-          tooltip: this.alarm.is_manual_instruction_waiting_result
-            ? this.$t('alarmList.tooltips.awaitingInstructionComplete')
-            : this.$t('alarmList.tooltips.hasAutoInstructionInRunning'),
+        };
+      }
+
+      if (this.alarm.is_auto_instruction_failed) {
+        return {
+          icon: 'assignment_late',
+          class: 'error--text',
+          tooltip: this.$t('alarmList.tooltips.autoInstructionsFailed'),
         };
       }
 
       if (this.alarm.is_all_auto_instructions_completed) {
         return {
-          icon: 'assignment_late',
-          class: 'error--text',
+          icon: 'warning',
           tooltip: this.$t('alarmList.tooltips.allAutoInstructionExecuted'),
         };
       }

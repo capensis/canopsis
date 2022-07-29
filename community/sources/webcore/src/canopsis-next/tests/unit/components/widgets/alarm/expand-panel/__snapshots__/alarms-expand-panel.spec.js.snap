@@ -1,0 +1,860 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1`] = `
+<div
+  class="v-tabs expand-panel secondary lighten-2"
+>
+  <div
+    class="v-tabs__bar theme--dark secondary lighten-1"
+  >
+    <transition-stub
+      name="fade-transition"
+    />
+    <div
+      class="v-tabs__wrapper"
+    >
+      <div
+        class="v-tabs__container v-tabs__container--centered"
+      >
+        <div
+          class="v-tabs__slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs__slider primary"
+          />
+        </div>
+        <div
+          class="v-tabs__div v-tour-alarmsExpandPanel-step-2"
+        >
+          <a
+            class="v-tabs__item v-tabs__item--active"
+          >
+            More infos
+          </a>
+        </div>
+        <div
+          class="v-tabs__div v-tour-alarmsExpandPanel-step-3"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Timeline
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Pbehaviors
+          </a>
+        </div>
+        <!---->
+        <!---->
+        <!---->
+        <!---->
+      </div>
+    </div>
+    <transition-stub
+      name="fade-transition"
+    />
+  </div>
+  <div
+    class="v-window"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+        >
+          <div
+            class="layout pa-3 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <div
+                    class="more-infos"
+                  >
+                    <!---->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  aria-valuemax="100"
+                  aria-valuemin="0"
+                  class="v-progress-linear"
+                  role="progressbar"
+                  style="height: 3px;"
+                >
+                  <div
+                    class="v-progress-linear__background primary"
+                    style="height: 0px; opacity: 0.3; width: 100%;"
+                  />
+                  <div
+                    class="v-progress-linear__bar"
+                    style="height: 0px;"
+                  >
+                    <transition-stub
+                      name="fade-transition"
+                    >
+                      <div
+                        class="v-progress-linear__bar__indeterminate"
+                      >
+                        <div
+                          class="v-progress-linear__bar__indeterminate long primary"
+                        />
+                        <div
+                          class="v-progress-linear__bar__indeterminate short primary"
+                        />
+                      </div>
+                    </transition-stub>
+                    <transition-stub
+                      name="slide-x-transition"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="v-card__text"
+                >
+                  <time-line-stub
+                    steps="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehaviors-simple-list-stub
+                    entity="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`] = `
+<div
+  class="v-tabs expand-panel secondary lighten-2"
+>
+  <div
+    class="v-tabs__bar theme--dark secondary lighten-1"
+  >
+    <transition-stub
+      name="fade-transition"
+    />
+    <div
+      class="v-tabs__wrapper"
+    >
+      <div
+        class="v-tabs__container v-tabs__container--centered"
+      >
+        <div
+          class="v-tabs__slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs__slider primary"
+          />
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item v-tabs__item--active"
+          >
+            More infos
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Timeline
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Pbehaviors
+          </a>
+        </div>
+        <!---->
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Track source
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Impact chain
+          </a>
+        </div>
+        <!---->
+      </div>
+    </div>
+    <transition-stub
+      name="fade-transition"
+    />
+  </div>
+  <div
+    class="v-window"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+        >
+          <div
+            class="layout pa-3 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <div
+                    class="more-infos"
+                  >
+                    <!---->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  aria-valuemax="100"
+                  aria-valuemin="0"
+                  class="v-progress-linear"
+                  role="progressbar"
+                  style="height: 3px;"
+                >
+                  <div
+                    class="v-progress-linear__background primary"
+                    style="height: 0px; opacity: 0.3; width: 100%;"
+                  />
+                  <div
+                    class="v-progress-linear__bar"
+                    style="height: 0px;"
+                  >
+                    <transition-stub
+                      name="fade-transition"
+                    >
+                      <div
+                        class="v-progress-linear__bar__indeterminate"
+                      >
+                        <div
+                          class="v-progress-linear__bar__indeterminate long primary"
+                        />
+                        <div
+                          class="v-progress-linear__bar__indeterminate short primary"
+                        />
+                      </div>
+                    </transition-stub>
+                    <transition-stub
+                      name="slide-x-transition"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="v-card__text"
+                >
+                  <time-line-stub
+                    steps="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehaviors-simple-list-stub
+                    entity="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <service-dependencies-stub
+                    columns="[object Object]"
+                    includeroot="true"
+                    openableroot="true"
+                    root="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <service-dependencies-stub
+                    columns="[object Object]"
+                    impact="true"
+                    includeroot="true"
+                    openableroot="true"
+                    root="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
+<div
+  class="v-tabs expand-panel secondary lighten-2"
+>
+  <div
+    class="v-tabs__bar theme--dark secondary lighten-1"
+  >
+    <transition-stub
+      name="fade-transition"
+    />
+    <div
+      class="v-tabs__wrapper"
+    >
+      <div
+        class="v-tabs__container v-tabs__container--centered"
+      >
+        <div
+          class="v-tabs__slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs__slider primary"
+          />
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item v-tabs__item--active"
+          >
+            More infos
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Timeline
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Pbehaviors
+          </a>
+        </div>
+        <!---->
+        <!---->
+        <!---->
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Gantt chart
+          </a>
+        </div>
+      </div>
+    </div>
+    <transition-stub
+      name="fade-transition"
+    />
+  </div>
+  <div
+    class="v-window"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+        >
+          <div
+            class="layout pa-3 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <div
+                    class="more-infos"
+                  >
+                    <!---->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  aria-valuemax="100"
+                  aria-valuemin="0"
+                  class="v-progress-linear"
+                  role="progressbar"
+                  style="height: 3px;"
+                >
+                  <div
+                    class="v-progress-linear__background primary"
+                    style="height: 0px; opacity: 0.3; width: 100%;"
+                  />
+                  <div
+                    class="v-progress-linear__bar"
+                    style="height: 0px;"
+                  >
+                    <transition-stub
+                      name="fade-transition"
+                    >
+                      <div
+                        class="v-progress-linear__bar__indeterminate"
+                      >
+                        <div
+                          class="v-progress-linear__bar__indeterminate long primary"
+                        />
+                        <div
+                          class="v-progress-linear__bar__indeterminate short primary"
+                        />
+                      </div>
+                    </transition-stub>
+                    <transition-stub
+                      name="slide-x-transition"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="v-card__text"
+                >
+                  <time-line-stub
+                    steps="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehaviors-simple-list-stub
+                    entity="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        />
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props 1`] = `
+<div
+  class="v-tabs expand-panel secondary lighten-2"
+>
+  <div
+    class="v-tabs__bar theme--dark secondary lighten-1"
+  >
+    <transition-stub
+      name="fade-transition"
+    />
+    <div
+      class="v-tabs__wrapper"
+    >
+      <div
+        class="v-tabs__container v-tabs__container--centered"
+      >
+        <div
+          class="v-tabs__slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs__slider primary"
+          />
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item v-tabs__item--active"
+          >
+            More infos
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Timeline
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Pbehaviors
+          </a>
+        </div>
+        <!---->
+        <!---->
+        <!---->
+        <!---->
+      </div>
+    </div>
+    <transition-stub
+      name="fade-transition"
+    />
+  </div>
+  <div
+    class="v-window"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+        >
+          <div
+            class="layout pa-3 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <div
+                    class="more-infos"
+                  >
+                    <!---->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  aria-valuemax="100"
+                  aria-valuemin="0"
+                  class="v-progress-linear"
+                  role="progressbar"
+                  style="height: 3px;"
+                >
+                  <div
+                    class="v-progress-linear__background primary"
+                    style="height: 0px; opacity: 0.3; width: 100%;"
+                  />
+                  <div
+                    class="v-progress-linear__bar"
+                    style="height: 0px;"
+                  >
+                    <transition-stub
+                      name="fade-transition"
+                    >
+                      <div
+                        class="v-progress-linear__bar__indeterminate"
+                      >
+                        <div
+                          class="v-progress-linear__bar__indeterminate long primary"
+                        />
+                        <div
+                          class="v-progress-linear__bar__indeterminate short primary"
+                        />
+                      </div>
+                    </transition-stub>
+                    <transition-stub
+                      name="slide-x-transition"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="v-card__text"
+                >
+                  <time-line-stub
+                    steps="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 secondary lighten-2 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehaviors-simple-list-stub
+                    entity="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;

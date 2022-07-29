@@ -9,16 +9,21 @@ exports[`alarms-list Renders \`alarms-list\` 1`] = `
     class="title"
   >
     <span>
-      Alarms list
+      Alarm list
     </span>
   </div>
    
   <div
     class="text"
   >
-    <alarms-list-widget-stub
-      localwidget="true"
-      tabid=""
+    <alarms-list-table-with-pagination-stub
+      alarms=""
+      columns=""
+      expandable="true"
+      meta="[object Object]"
+      query="[object Object]"
+      refreshalarmslist="[Function]"
+      selectable="true"
       widget="[object Object]"
     />
   </div>

@@ -12,10 +12,12 @@
         )
       v-flex(:class="datePickerFlexClass")
         c-date-picker-field(
-          :value="value | date('datePicker', null)",
+          :value="value | date('vuetifyDatePicker', null)",
           :label="!reverse || fullDay ? label : ''",
           :error="errors.has(name)",
           :disabled="disabled",
+          :min="min",
+          :max="max",
           hide-details,
           @input="updateDate"
         )
@@ -87,6 +89,14 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    min: {
+      type: String,
+      required: false,
+    },
+    max: {
+      type: String,
+      required: false,
     },
   },
   computed: {

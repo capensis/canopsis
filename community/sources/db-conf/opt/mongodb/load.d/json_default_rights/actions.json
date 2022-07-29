@@ -336,13 +336,6 @@
         "desc": "Rights on listalarm: Manual meta alarm actions"
     },
     {
-        "_id": "listalarm_listPbehavior",
-        "loader_id": "listalarm_listPbehavior",
-        "crecord_name": "listalarm_listPbehavior",
-        "crecord_type": "action",
-        "desc": "Rights on listalarm: list pbehavior"
-    },
-    {
         "_id": "listalarm_listFilters",
         "loader_id": "listalarm_listFilters",
         "crecord_name": "listalarm_listFilters",
@@ -629,6 +622,20 @@
         "crecord_name": "crudcontext_exportAsCsv",
         "desc": "Rights on context: Export as csv"
     },
+    {
+        "_id": "crudcontext_massEnable",
+        "loader_id": "crudcontext_massEnable",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_massEnable",
+        "desc": "Rights on context: Mass enable"
+    },
+    {
+        "_id": "crudcontext_massDisable",
+        "loader_id": "crudcontext_massDisable",
+        "crecord_type": "action",
+        "crecord_name": "crudcontext_massDisable",
+        "desc": "Rights on context: Mass disable"
+    },    
     {
         "_id": "875df4c2-027b-4549-8add-e20ed7ff7d4f",
         "loader_id": "875df4c2-027b-4549-8add-e20ed7ff7d4f",
