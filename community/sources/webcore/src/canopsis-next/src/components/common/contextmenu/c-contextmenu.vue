@@ -11,7 +11,7 @@
       offset-x,
       absolute
     )
-      slot(name="menu", :position="position")
+      slot(name="menu", :position="position", :data="data")
 </template>
 
 <script>
@@ -30,12 +30,14 @@ export default {
         x: 0,
         y: 0,
       },
+      data: undefined,
     };
   },
   methods: {
-    openContextmenu({ x, y }) {
+    openContextmenu({ x, y, data }) {
       this.position.x = x;
       this.position.y = y;
+      this.data = data;
 
       this.shown = true;
     },
