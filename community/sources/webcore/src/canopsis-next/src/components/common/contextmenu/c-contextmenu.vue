@@ -18,7 +18,9 @@
 export default {
   provide() {
     return {
-      $openContextmenu: this.openContextmenu,
+      $contextmenu: {
+        open: this.openContextmenu,
+      },
     };
   },
   data() {
