@@ -19,7 +19,12 @@
 </template>
 
 <script>
-import { MODALS, MAP_TYPES, MAP_ICON_BY_TYPES, MAP_CREATE_MODAL_NAMES_BY_TYPE } from '@/constants';
+import {
+  MODALS,
+  MAP_TYPES,
+  MAP_ICON_BY_TYPES,
+  CREATE_MAP_MODAL_NAMES_BY_TYPE,
+} from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 
@@ -45,7 +50,7 @@ export default {
 
     selectType(type) {
       this.$modals.show({
-        name: MAP_CREATE_MODAL_NAMES_BY_TYPE[type],
+        name: CREATE_MAP_MODAL_NAMES_BY_TYPE[type],
         config: {
           action: async (map) => {
             await this.config.action(map);
