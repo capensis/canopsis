@@ -64,6 +64,23 @@ export default {
           is: 'c-entity-field',
           props: {
             entityTypes: [BASIC_ENTITY_TYPES.connector],
+            itemText: 'name',
+            itemValue: 'name',
+          },
+        },
+      };
+    },
+
+    connectorNameOptions() {
+      return {
+        operators: this.entitiesOperators,
+        defaultValue: '',
+        valueField: {
+          is: 'c-entity-field',
+          props: {
+            entityTypes: [BASIC_ENTITY_TYPES.connector],
+            itemText: 'connector_type',
+            itemValue: 'connector_type',
           },
         },
       };
@@ -90,6 +107,8 @@ export default {
           is: 'c-entity-field',
           props: {
             entityTypes: [BASIC_ENTITY_TYPES.resource],
+            itemText: 'name',
+            itemValue: 'name',
           },
         },
       };
@@ -142,14 +161,6 @@ export default {
           value: EVENT_FILTER_SOURCE_TYPES.connector,
           text: this.$t('common.connector'),
         },
-        {
-          value: EVENT_FILTER_SOURCE_TYPES.connectorName,
-          text: this.$t('common.connectorName'),
-        },
-        {
-          value: EVENT_FILTER_SOURCE_TYPES.resource,
-          text: this.$t('common.resource'),
-        },
       ];
     },
 
@@ -190,7 +201,7 @@ export default {
         {
           text: this.$t('common.connectorName'),
           value: EVENT_FILTER_PATTERN_FIELDS.connectorName,
-          options: this.connectorOptions,
+          options: this.connectorNameOptions,
         },
         {
           text: this.$t('common.resource'),

@@ -34,11 +34,11 @@ export default {
           options: { disabled: true },
         },
         {
-          value: ENTITY_PATTERN_FIELDS.impact,
+          value: ENTITY_PATTERN_FIELDS.component,
           options: { disabled: true },
         },
         {
-          value: ENTITY_PATTERN_FIELDS.depends,
+          value: ENTITY_PATTERN_FIELDS.connector,
           options: { disabled: true },
         },
       ];

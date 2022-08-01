@@ -208,7 +208,7 @@ export const getOperatorsByFieldType = (fieldType) => {
         PATTERN_OPERATORS.isNotEmpty,
       ];
     case PATTERN_FIELD_TYPES.boolean:
-      return PATTERN_BOOLEAN_OPERATORS;
+      return [PATTERN_OPERATORS.equal];
     default:
       return PATTERN_STRING_OPERATORS;
   }

@@ -220,9 +220,9 @@ export default {
 
     hasEntityGantt() {
       /**
-       * We have junit feature only on `cat` version of canopsis
+       * We have junit feature only on `pro` version of canopsis
        */
-      return this.isCatVersion
+      return this.isProVersion
         && this.alarm.v.connector === JUNIT_ALARM_CONNECTOR
         && [ENTITY_TYPES.component, ENTITY_TYPES.resource].includes(this.alarm.entity.type);
     },
