@@ -30,12 +30,10 @@
 </template>
 
 <script>
-import { isDate } from 'lodash';
-
 import { DATETIME_FORMATS } from '@/constants';
 
 import { getDateObjectByDate, getDateObjectByTime } from '@/helpers/date/date-time-picker';
-import { convertDateToString } from '@/helpers/date/date';
+import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -63,10 +61,8 @@ export default {
     },
   },
   data() {
-    const milliseconds = isDate(this.value) ? this.value.getTime() : this.value;
-
     return {
-      localValue: milliseconds ? new Date(milliseconds) : null,
+      localValue: this.value ? convertDateToDateObject(this.value) : null,
     };
   },
   computed: {

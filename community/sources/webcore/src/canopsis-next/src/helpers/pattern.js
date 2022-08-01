@@ -16,7 +16,9 @@ import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
   EVENT_FILTER_PATTERN_FIELDS,
+  PATTERN_OPERATORS,
 } from '@/constants';
+
 import { isValidDateInterval } from '@/helpers/date/date';
 import { isValidDuration } from '@/helpers/date/duration';
 
@@ -57,7 +59,7 @@ export const isOperatorForArray = operator => PATTERN_ARRAY_OPERATORS.includes(o
 export const isOperatorForString = operator => PATTERN_STRING_OPERATORS.includes(operator);
 
 /**
- * Check is operator for string
+ * Check is operator for number
  *
  * @param {string} operator
  * @return {boolean}
@@ -175,7 +177,7 @@ export const convertValueByType = (value, type, defaultValue) => {
     case PATTERN_FIELD_TYPES.boolean:
       return Boolean(preparedValue);
     case PATTERN_FIELD_TYPES.string:
-      return (isNan(preparedValue) || isNull(preparedValue))
+      return (isNan(preparedValue) || isNull(preparedValue) || isUndefined(preparedValue))
         ? ''
         : String(preparedValue);
     case PATTERN_FIELD_TYPES.null:
@@ -198,9 +200,15 @@ export const getOperatorsByFieldType = (fieldType) => {
     case PATTERN_FIELD_TYPES.number:
       return PATTERN_NUMBER_OPERATORS;
     case PATTERN_FIELD_TYPES.stringArray:
-      return PATTERN_ARRAY_OPERATORS;
+      return [
+        PATTERN_OPERATORS.hasEvery,
+        PATTERN_OPERATORS.hasOneOf,
+        PATTERN_OPERATORS.hasNot,
+        PATTERN_OPERATORS.isEmpty,
+        PATTERN_OPERATORS.isNotEmpty,
+      ];
     case PATTERN_FIELD_TYPES.boolean:
-      return PATTERN_BOOLEAN_OPERATORS;
+      return [PATTERN_OPERATORS.equal];
     default:
       return PATTERN_STRING_OPERATORS;
   }
@@ -231,30 +239,32 @@ export const getOperatorsByRule = (rule, ruleType) => {
  * Get value type by operator
  *
  * @param {string} operator
- * @return {PatternFieldType | undefined}
+ * @return {PatternFieldType[]}
  */
-export const getValueTypeByOperator = (operator) => {
+export const getValueTypesByOperator = (operator) => {
+  const operators = [];
+
   if (isOperatorForArray(operator)) {
-    return PATTERN_FIELD_TYPES.stringArray;
+    operators.push(PATTERN_FIELD_TYPES.stringArray);
   }
 
   if (isOperatorForString(operator)) {
-    return PATTERN_FIELD_TYPES.string;
+    operators.push(PATTERN_FIELD_TYPES.string);
   }
 
   if (isOperatorForNumber(operator)) {
-    return PATTERN_FIELD_TYPES.number;
+    operators.push(PATTERN_FIELD_TYPES.number);
   }
 
   if (isOperatorForBoolean(operator)) {
-    return PATTERN_FIELD_TYPES.boolean;
+    operators.push(PATTERN_FIELD_TYPES.boolean);
   }
 
   if (isOperatorForNull(operator)) {
-    return PATTERN_FIELD_TYPES.null;
+    operators.push(PATTERN_FIELD_TYPES.null);
   }
 
-  return undefined;
+  return operators;
 };
 
 /**
@@ -266,13 +276,13 @@ export const getValueTypeByOperator = (operator) => {
  */
 export const convertValueByOperator = (value, operator) => {
   const valueType = getFieldType(value);
-  const operatorValueType = getValueTypeByOperator(operator);
+  const operatorsValueType = getValueTypesByOperator(operator);
 
-  if (valueType === operatorValueType) {
+  if (operatorsValueType.includes(valueType)) {
     return value;
   }
 
-  return convertValueByType(value, operatorValueType);
+  return convertValueByType(value, operatorsValueType[0]);
 };
 
 /**
@@ -298,6 +308,8 @@ export const isArrayCondition = condition => [
   PATTERN_CONDITIONS.isEmpty,
   PATTERN_CONDITIONS.hasNot,
   PATTERN_CONDITIONS.hasOneOf,
+  PATTERN_CONDITIONS.isOneOf,
+  PATTERN_CONDITIONS.isNotOneOf,
   PATTERN_CONDITIONS.hasEvery,
 ].includes(condition);
 
@@ -337,6 +349,26 @@ export const isNumberPatternRuleField = value => [
 ].includes(value);
 
 /**
+ * Check pattern field is array
+ *
+ * @param {string} value
+ * @return {boolean}
+ */
+export const isArrayPatternRuleField = value => [
+  ALARM_PATTERN_FIELDS.component,
+  ALARM_PATTERN_FIELDS.connector,
+  ALARM_PATTERN_FIELDS.connectorName,
+  ALARM_PATTERN_FIELDS.resource,
+  ENTITY_PATTERN_FIELDS.id,
+  ENTITY_PATTERN_FIELDS.impact,
+  ENTITY_PATTERN_FIELDS.depends,
+  EVENT_FILTER_PATTERN_FIELDS.component,
+  EVENT_FILTER_PATTERN_FIELDS.connector,
+  EVENT_FILTER_PATTERN_FIELDS.connectorName,
+  EVENT_FILTER_PATTERN_FIELDS.resource,
+].includes(value);
+
+/**
  * Check pattern field is infos
  *
  * @param {string} value
@@ -344,6 +376,7 @@ export const isNumberPatternRuleField = value => [
  */
 export const isInfosPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.infos,
+  ENTITY_PATTERN_FIELDS.componentInfos,
   ENTITY_PATTERN_FIELDS.infos,
 ].some(field => value?.startsWith(field));
 
@@ -378,7 +411,7 @@ export const isValidRuleValueWithoutFieldType = (rule) => {
     }
 
     if (cond.type === PATTERN_CONDITIONS.relativeTime) {
-      return isNumber(cond.value) && cond.value >= 0;
+      return isValidDuration(cond.value);
     }
   }
 
@@ -388,6 +421,12 @@ export const isValidRuleValueWithoutFieldType = (rule) => {
 
   if (isNumberPatternRuleField(field)) {
     return isNumber(cond.value);
+  }
+
+  if (isArrayPatternRuleField(field)) {
+    if (isArrayCondition(cond.type)) {
+      return isArray(cond.value);
+    }
   }
 
   if (isBoolean(cond.value)) {
@@ -407,9 +446,12 @@ export const isValidRuleValueWithFieldType = (rule) => {
   const { field, cond, field_type: fieldType } = rule;
 
   if (isStringArrayFieldType(fieldType)) {
-    return isArrayCondition(cond.type)
-      && isArray(cond.value)
-      && cond.value.every(isString);
+    if (isArrayCondition(cond.type)) {
+      return (isArray(cond.value) && cond.value.every(isString))
+        || (isBoolean(cond.value) && cond.type === PATTERN_CONDITIONS.isEmpty);
+    }
+
+    return false;
   }
 
   const isInfos = isInfosPatternRuleField(field) || isExtraInfosPatternRuleField(field);
@@ -441,3 +483,17 @@ export const isValidPatternRule = rule => !!rule?.field
   && (!rule.field_type || isValidRuleFieldType(rule.field_type))
   && isValidPatternCondition(rule.cond.type)
   && isValidRuleValue(rule);
+
+/**
+ * Create id pattern rule for entity patterns
+ *
+ * @param {string | string[]} value
+ * @returns {PatternGroups}
+ */
+export const createEntityIdPatternByValue = value => [[{
+  field: ENTITY_PATTERN_FIELDS.id,
+  cond: {
+    type: isArray(value) ? PATTERN_CONDITIONS.isOneOf : PATTERN_CONDITIONS.equal,
+    value,
+  },
+}]];

@@ -40,6 +40,7 @@ function build_for_distribution() {
 
         docker tag canopsis/canopsis-core:${full_tag} canopsis/canopsis-core:${tag}
         docker tag canopsis/canopsis-prov:${full_tag} canopsis/canopsis-prov:${tag}
+        docker tag canopsis/canopsis-prov-openshift:${full_tag} canopsis/canopsis-prov-openshift:${tag}
     fi
 
     if [ "${CANOPSIS_DOCKER_MODE}" == "test" ]||[ "${CANOPSIS_DOCKER_MODE}" == "test-ci" ]; then

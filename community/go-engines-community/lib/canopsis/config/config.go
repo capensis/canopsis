@@ -25,6 +25,7 @@ type SectionAlarm struct {
 	DisableActionSnoozeDelayOnPbh bool `toml:"DisableActionSnoozeDelayOnPbh"`
 	// TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
 	TimeToKeepResolvedAlarms string `toml:"TimeToKeepResolvedAlarms"`
+	AllowDoubleAck           bool   `toml:"AllowDoubleAck"`
 }
 
 // SectionGlobal ...
@@ -66,6 +67,18 @@ type SectionApi struct {
 	BulkMaxSize        int    `toml:"BulkMaxSize"`
 }
 
+type SectionLogger struct {
+	Writer        string        `toml:"Writer"`
+	ConsoleWriter ConsoleWriter `toml:"console_writer"`
+}
+
+type ConsoleWriter struct {
+	Enabled    bool     `toml:"Enabled"`
+	NoColor    bool     `toml:"NoColor"`
+	TimeFormat string   `toml:"TimeFormat"`
+	PartsOrder []string `toml:"PartsOrder"`
+}
+
 type SectionMetrics struct {
 	SliInterval string `toml:"SliInterval"`
 }
@@ -79,6 +92,7 @@ type CanopsisConf struct {
 	ImportCtx   SectionImportCtx   `bson:"import_ctx" toml:"import_ctx"`
 	File        SectionFile        `bson:"file" toml:"file"`
 	DataStorage SectionDataStorage `bson:"data_storage" toml:"data_storage"`
+	Logger      SectionLogger      `bson:"logger" toml:"logger"`
 	API         SectionApi         `bson:"api" toml:"api"`
 	Metrics     SectionMetrics     `bson:"metrics" toml:"metrics"`
 }

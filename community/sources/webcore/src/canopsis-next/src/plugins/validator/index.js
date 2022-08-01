@@ -10,6 +10,20 @@ import { isEvent } from './helpers/is-event';
 import { findField } from './helpers/find-field';
 import { isValidPicker } from './helpers/is-valid-picker';
 
+const getParentValidatorOptions = (vnode) => {
+  const validateOptions = vnode.$options.$_veeValidate;
+
+  if (validateOptions?.validator === 'new') {
+    return validateOptions;
+  }
+
+  if (!vnode?.$parent) {
+    return {};
+  }
+
+  return getParentValidatorOptions(vnode.$parent);
+};
+
 Validator.prototype.remove = (name) => {
   delete Rules[name];
 };
@@ -47,9 +61,14 @@ export default {
 
       /* eslint-disable */
       bind(el, binding, vnode) {
+        const validatorOptions = getParentValidatorOptions(vnode.context)
         sourceDirective.bind.call(this, el, binding, vnode);
 
         const field = findField(el, vnode.context);
+
+        if (validatorOptions.delay) {
+          field.delay = validatorOptions.delay;
+        }
 
         if (field && isObject(field.initialValue)) {
           field.__proto__.addValueListeners = function addValueListeners() {

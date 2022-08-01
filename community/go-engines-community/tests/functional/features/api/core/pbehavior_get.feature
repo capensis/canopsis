@@ -27,6 +27,7 @@ Feature: get a PBehavior
               "message": "asdasd"
             }
           ],
+          "color": "#FFFFFF",
           "created": 1592215337,
           "updated": 1592215337,
           "enabled": true,
@@ -96,6 +97,7 @@ Feature: get a PBehavior
           "_id": "test-pbehavior-to-get-by-name-2",
           "author": "root",
           "comments": [],
+          "color": "#FFFFFF",
           "created": 1592215337,
           "updated": 1592215337,
           "enabled": true,
@@ -162,6 +164,7 @@ Feature: get a PBehavior
               "message": "asdasd"
             }
           ],
+          "color": "#FFFFFF",
           "created": 1592215338,
           "updated": 1592215338,
           "enabled": true,
@@ -248,6 +251,7 @@ Feature: get a PBehavior
           "_id": "test-pbehavior-to-get-by-type",
           "author": "root",
           "comments": [],
+          "color": "#FFFFFF",
           "created": 1592215337,
           "enabled": true,
           "exceptions": [],
@@ -291,6 +295,7 @@ Feature: get a PBehavior
           "_id": "test-pbehavior-to-get-by-type",
           "author": "root",
           "comments": [],
+          "color": "#FFFFFF",
           "created": 1592215337,
           "enabled": true,
           "exceptions": [],
@@ -337,6 +342,7 @@ Feature: get a PBehavior
           "_id": "test-pbehavior-to-get-by-reason",
           "author": "root",
           "comments": [],
+          "color": "#FFFFFF",
           "created": 1592215337,
           "enabled": true,
           "exceptions": [],
@@ -380,6 +386,7 @@ Feature: get a PBehavior
           "_id": "test-pbehavior-to-get-by-reason",
           "author": "root",
           "comments": [],
+          "color": "#FFFFFF",
           "created": 1592215337,
           "enabled": true,
           "exceptions": [],
@@ -470,6 +477,7 @@ Feature: get a PBehavior
           "message": "asdasd"
         }
       ],
+      "color": "#FFFFFF",
       "created": 1592215337,
       "updated": 1592215337,
       "enabled": true,

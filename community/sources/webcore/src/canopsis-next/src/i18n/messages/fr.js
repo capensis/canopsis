@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -30,12 +32,15 @@ import {
   PATTERN_OPERATORS,
   PATTERN_TYPES,
   PATTERN_FIELD_TYPES,
+  PBEHAVIOR_TYPE_TYPES,
+  SCENARIO_TRIGGERS,
+  WEATHER_ACTIONS_TYPES,
+  MAP_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
-import { MAP_TYPES } from '@/constants/map';
 
-export default {
+export default merge({
   common: {
     ok: 'Ok',
     undefined: 'Non défini',
@@ -69,6 +74,7 @@ export default {
     by: 'Par',
     date: 'Date',
     comment: 'Commentaire | Commentaires',
+    lastComment: 'Dernier commentaire',
     end: 'Fin',
     start: 'Début',
     message: 'Message',
@@ -163,6 +169,7 @@ export default {
     entityPatterns: 'Modèles des entités',
     pbehaviorPatterns: 'Modèles de comportement',
     totalEntityPatterns: 'Total des modèles d\'entité',
+    serviceWeatherPatterns: 'Modèles météorologiques de service',
     addFilter: 'Ajouter un filtre',
     id: 'Identifiant',
     reset: 'Réinitialiser',
@@ -227,6 +234,7 @@ export default {
     dictionary: 'Dictionnaire',
     condition: 'Condition | Conditions',
     template: 'Template',
+    pbehaviorList: 'Lister les comportements périodiques',
     canceled: 'Annulé',
     snoozed: 'En attente',
     impact: 'Impact | Impacts',
@@ -239,13 +247,17 @@ export default {
     extraDetails: 'Détails supplémentaires',
     acked: 'Acked',
     ackedAt: 'Acked at',
+    ackedBy: 'Acked by',
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Personnalisé',
     eventType: 'Type d\'événement',
     sourceType: 'Type de Source',
+    cycleDependency: 'Dépendance au cycle',
+    checkPattern: 'Motif à carreaux',
+    itemFound: '{count} article trouvé | {count} articles trouvés',
+    canonicalType: 'Type canonique',
     actions: {
-      close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
       saveChanges: 'Sauvegarder',
@@ -259,8 +271,13 @@ export default {
       [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
       [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
-      [EVENT_ENTITY_TYPES.executeInstruction]: 'Exécuter l\'instruction',
+      [EVENT_ENTITY_TYPES.executeInstruction]: 'Exécuter la consigne',
     },
+    acknowledge: 'Acquitter',
+    acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
+    acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
+    saveChanges: 'Sauvegarder',
+    reportIncident: 'Signaler un incident',
     times: {
       second: 'seconde | secondes',
       minute: 'minute | minutes',
@@ -330,7 +347,9 @@ export default {
 
       [PATTERN_OPERATORS.hasEvery]: 'A chaque',
       [PATTERN_OPERATORS.hasOneOf]: 'A l\'un des',
+      [PATTERN_OPERATORS.isOneOf]: 'Fait partie de',
       [PATTERN_OPERATORS.hasNot]: 'N\'a pas',
+      [PATTERN_OPERATORS.isNotOneOf]: 'N\'est pas l\'un des',
       [PATTERN_OPERATORS.isEmpty]: 'Est vide',
       [PATTERN_OPERATORS.isNotEmpty]: 'N\'est pas vide',
 
@@ -351,6 +370,9 @@ export default {
 
       [PATTERN_OPERATORS.acked]: 'Acquis',
       [PATTERN_OPERATORS.notAcked]: 'Non confirmé',
+
+      [PATTERN_OPERATORS.isGrey]: 'Carrelage gris',
+      [PATTERN_OPERATORS.isNotGrey]: 'Pas de carreaux gris',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
@@ -363,6 +385,85 @@ export default {
       [EVENT_ENTITY_TYPES.check]: 'Vérifier',
       [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
       [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
+    },
+    scenarioTriggers: {
+      [SCENARIO_TRIGGERS.create]: {
+        text: 'Création d\'alarme',
+      },
+      [SCENARIO_TRIGGERS.statedec]: {
+        text: 'Diminution de la criticité',
+      },
+      [SCENARIO_TRIGGERS.changestate]: {
+        text: 'Changement et verrouillage de la criticité',
+      },
+      [SCENARIO_TRIGGERS.stateinc]: {
+        text: 'Augmentation de la criticité',
+      },
+      [SCENARIO_TRIGGERS.changestatus]: {
+        text: 'Changement de statut (flapping, bagot, ...)',
+      },
+      [SCENARIO_TRIGGERS.ack]: {
+        text: 'Acquittement d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.ackremove]: {
+        text: 'Suppression de l\'acquittement d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.cancel]: {
+        text: 'Annulation d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.uncancel]: {
+        text: 'Annulation de l\'annulation d\'une alarme',
+        helpText: 'L\'annulation ne peut se faire que par un événement posté sur l\'API',
+      },
+      [SCENARIO_TRIGGERS.comment]: {
+        text: 'Commentaire sur une alarme',
+      },
+      [SCENARIO_TRIGGERS.done]: {
+        text: 'Alarme en statut "done"',
+        helpText: 'Ne peut s\'obtenir que par un événement posté sur l\'API',
+      },
+      [SCENARIO_TRIGGERS.declareticket]: {
+        text: 'Déclaration de ticket depuis l\'interface graphique',
+      },
+      [SCENARIO_TRIGGERS.declareticketwebhook]: {
+        text: 'Déclaration de ticket depuis un webhook',
+      },
+      [SCENARIO_TRIGGERS.assocticket]: {
+        text: 'Association de ticket sur une alarme',
+      },
+      [SCENARIO_TRIGGERS.snooze]: {
+        text: 'Mise en veille d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.unsnooze]: {
+        text: 'Sortie de veille d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.resolve]: {
+        text: 'Résolution d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.activate]: {
+        text: 'Activation d\'une alarme',
+      },
+      [SCENARIO_TRIGGERS.pbhenter]: {
+        text: 'Comportement périodique démarré',
+      },
+      [SCENARIO_TRIGGERS.pbhleave]: {
+        text: 'Comportement périodique terminé',
+      },
+      [SCENARIO_TRIGGERS.instructionfail]: {
+        text: 'Consigne manuelle en erreur',
+      },
+      [SCENARIO_TRIGGERS.autoinstructionfail]: {
+        text: 'Consigne automatique en erreur',
+      },
+      [SCENARIO_TRIGGERS.instructionjobfail]: {
+        text: 'Job de remédiation en erreur',
+      },
+      [SCENARIO_TRIGGERS.instructioncomplete]: {
+        text: 'Consigne manuelle terminée',
+      },
+      [SCENARIO_TRIGGERS.autoinstructioncomplete]: {
+        text: 'Consigne automatique terminée',
+      },
     },
   },
   variableTypes: {
@@ -389,10 +490,9 @@ export default {
         deleteEntity: 'Supprimer l\'entité',
         pbehavior: 'Comportement périodique',
         variablesHelp: 'Liste des variables disponibles',
+        massEnable: 'Activer les entités',
+        massDisable: 'Désactiver les entités',
       },
-    },
-    entityInfo: {
-      valueAsList: 'Changer le type de valeur en liste',
     },
     fab: {
       common: 'Ajouter une nouvelle entité',
@@ -465,7 +565,6 @@ export default {
         ackRemove: 'Annuler l\'acquittement',
         pbehavior: 'Définir un comportement périodique',
         snooze: 'Mettre en veille',
-        pbehaviorList: 'Lister les comportements périodiques',
         declareTicket: 'Déclarer un incident',
         associateTicket: 'Associer un ticket',
         cancel: 'Annuler l\'alarme',
@@ -490,8 +589,8 @@ export default {
       },
       iconsFields: {
         ticketNumber: 'Numéro de ticket',
-        causes: 'Causes',
-        consequences: 'Conséquences',
+        parents: 'Causes',
+        children: 'Conséquences',
         rule: 'Règle | Règles',
       },
     },
@@ -531,10 +630,10 @@ export default {
         [EVENT_ENTITY_TYPES.instructionJobComplete]: 'L\'exécution de la tâche de remédiation est terminée',
         [EVENT_ENTITY_TYPES.instructionJobAbort]: 'L\'exécution de la tâche de remédiation a été abandonnée',
         [EVENT_ENTITY_TYPES.instructionJobFail]: 'L\'exécution de la tâche de remédiation a échouée',
-        [EVENT_ENTITY_TYPES.autoInstructionStart]: 'L\'instruction a été lancée automatiquement',
-        [EVENT_ENTITY_TYPES.autoInstructionComplete]: 'L\'instruction a été complétée automatiquement',
-        [EVENT_ENTITY_TYPES.autoInstructionFail]: 'L\'instruction a échoué automatiquement',
-        [EVENT_ENTITY_TYPES.autoInstructionAlreadyRunning]: 'L\'instruction a été lancée automatiquement pour une autre alarme',
+        [EVENT_ENTITY_TYPES.autoInstructionStart]: 'La consigne automatique a été lancée',
+        [EVENT_ENTITY_TYPES.autoInstructionComplete]: 'La consigne automatique a été complétée',
+        [EVENT_ENTITY_TYPES.autoInstructionFail]: 'La consigne automatique a échoué',
+        [EVENT_ENTITY_TYPES.autoInstructionAlreadyRunning]: 'La consigne automatique a déjà été lancée pour une autre alarme',
         [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: 'La suite de tests a été mise à jour',
         [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: 'Le cas de test a été mis à jour',
       },
@@ -542,8 +641,7 @@ export default {
     tabs: {
       moreInfos: 'Plus d\'infos',
       timeLine: 'Chronologie',
-      alarmsConsequences: 'Alarmes liées',
-      alarmsCauses: 'Causes des alarmes',
+      alarmsChildren: 'Alarmes liées',
       trackSource: 'Source de la piste',
       impactChain: 'Chaîne d\'impact',
       entityGantt: 'Diagramme de Gantt',
@@ -554,16 +652,18 @@ export default {
     infoPopup: 'Info popup',
     tooltips: {
       priority: 'Le paramètre de priorité est dérivé de la gravité de l\'alarme multipliée par le niveau d\'impact de l\'entité sur laquelle l\'alarme est déclenchée',
-      hasInstruction: 'Au moins une consigne est attachée à cette alarme',
-      hasAutoInstructionInRunning: 'Instruction automatique en cours',
-      allAutoInstructionExecuted: 'Toutes les instructions automatiques ont été exécutées',
-      awaitingInstructionComplete: 'En attente de l\'instruction pour terminer',
+      hasInstruction: 'Au moins une consigne de remédiation est attachée à cette alarme',
+      hasManualInstructionInRunning: 'Consigne manuelle en cours',
+      hasAutoInstructionInRunning: 'Consigne automatique en cours',
+      allAutoInstructionExecuted: 'Toutes les consignes automatiques ont été exécutées',
+      awaitingInstructionComplete: 'En attente de la fin de la consigne pour terminer',
+      autoInstructionsFailed: 'Les instructions automatiques ont échoué',
     },
     metrics: {
       [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Nombre d\'alarmes créées',
       [ALARM_METRIC_PARAMETERS.activeAlarms]: 'Nombre d\'alarmes actives',
       [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Nombre d\'alarmes non affichées',
-      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Nombre d\'alarmes en cours de correction automatique',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Nombre d\'alarmes en cours de remédiation automatique',
       [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Nombre d\'alarmes avec PBehavior',
       [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Nombre d\'alarmes corrélées',
       [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Nombre d\'alarmes avec acquittement',
@@ -572,7 +672,7 @@ export default {
       [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Nombre d\'alarmes actives avec acks',
       [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: 'Nombre d\'alarmes actives sans tickets',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% d\'alarmes corrélées',
-      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% d\'alarmes avec correction automatique',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% d\'alarmes avec remédiation automatique',
       [ALARM_METRIC_PARAMETERS.ratioTickets]: '% d\'alarmes avec tickets créés',
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% d\'alarmes non affichées',
       [ALARM_METRIC_PARAMETERS.averageAck]: 'Délai moyen d\'acquittement des alarmes',
@@ -595,6 +695,9 @@ export default {
     created: 'Date de création',
     updated: 'Date de dernière modification',
     lastAlarmDate: 'Date de la dernière alarme',
+    massRemove: 'Supprimer les comportements',
+    massEnable: 'Activer les comportements',
+    massDisable: 'Désactiver les comportements',
     searchHelp: '<span>Aide sur la recherche avancée :</span>\n'
       + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
       + '<p>Le "-" avant la recherche est obligatoire</p>\n'
@@ -615,8 +718,6 @@ export default {
       + '  <dd>Le nom de la raison du comportement périodique est "reason_name_1"</dd>'
       + '</dl>',
     tabs: {
-      filter: 'Filtre',
-      comments: 'Commentaires',
       entities: 'Entités',
     },
   },
@@ -659,6 +760,7 @@ export default {
     linksCategoriesAsList: 'Afficher les liens sous forme de liste ?',
     linksCategoriesLimit: 'Nombre d\'éléments de catégorie',
     isMultiAckEnabled: 'Acquittement multiple',
+    isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
     fastAckOutput: 'Commentaire d\'acquittement rapide',
     isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
     isCorrelationEnabled: 'Corrélation activée ?',
@@ -669,6 +771,7 @@ export default {
     selectAFilter: 'Sélectionner un filtre',
     exportAsCsv: 'Exporter le widget sous forme de fichier csv',
     criticityLevels: 'Niveaux de criticité',
+    isPriorityEnabled: 'Afficher la priorité',
     exportCsv: {
       title: 'Exporter CSV',
       fields: {
@@ -798,6 +901,11 @@ export default {
         + '<dd>Par exemple:</dd>\n'
         + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
         + '</dl>',
+    },
+    density: {
+      title: 'Vue par défaut',
+      comfort: 'Vue confort',
+      compact: 'Vue compacte',
     },
   },
   modals: {
@@ -1030,7 +1138,7 @@ export default {
       copyToClipboard: 'Copier dans le presse-papier',
     },
     service: {
-      actionPending: 'action(s) en attente',
+      actionPending: 'action en attente | actions en attente',
       refreshEntities: 'Rafraîchir la liste des entités',
       editPbehaviors: 'Éditer les comportements périodiques',
       entity: {
@@ -1116,6 +1224,7 @@ export default {
     },
     alarmsList: {
       title: 'Bac à alarmes',
+      prefixTitle: '{prefix} - bac à alarmes',
     },
     createUser: {
       create: {
@@ -1215,11 +1324,11 @@ export default {
       },
       errors: {
         invalid: 'Invalide',
+        emptyInfos: 'Au moins une information doit être ajoutée.',
       },
       steps: {
         infos: {
           title: 'Informations',
-          validationError: 'Toutes les valeurs doivent être saisies',
         },
         patterns: {
           title: 'Modèles',
@@ -1232,10 +1341,6 @@ export default {
     createDynamicInfoInformation: {
       create: {
         title: 'Ajouter une information à la règle d\'information dynamique',
-      },
-      fields: {
-        name: 'Nom',
-        value: 'Valeur',
       },
     },
     dynamicInfoTemplatesList: {
@@ -1276,9 +1381,6 @@ export default {
     },
     createCommentEvent: {
       title: 'Ajouter un commentaire',
-      fields: {
-        comment: 'Commentaire',
-      },
     },
     createPlaylist: {
       create: {
@@ -1322,7 +1424,6 @@ export default {
         type: 'Type',
         priority: 'Priorité',
         iconName: 'Nom de l\'icône',
-        isSpecialColor: 'Utiliser une couleur spéciale pour le type ?',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -1353,7 +1454,6 @@ export default {
       noData: 'Aucune méta-alarme correspondante. Appuyez sur <kbd>Entrée</kbd> pour en créer un nouveau',
       fields: {
         metaAlarm: 'Méta-alarme manuelle',
-        output: 'Note',
       },
     },
     createRemediationInstruction: {
@@ -1405,6 +1505,7 @@ export default {
         configuration: 'Configuration',
         jobId: 'Identifiant de la tâche',
         query: 'Requête',
+        multipleExecutions: 'Autoriser l\'exécution parallèle',
       },
       errors: {
         invalidJSON: 'JSON non valide',
@@ -1484,7 +1585,7 @@ export default {
       },
     },
     remediationInstructionApproval: {
-      title: 'Approbation des instructions',
+      title: 'Approbation des consignes',
       requested: 'demandé pour approbation',
       tabs: {
         updated: 'Mise à jour',
@@ -1574,6 +1675,12 @@ export default {
           + '<strong>Les opérations de suppression sont irreversibles.</strong>',
         phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
         phrase: 'archiver ou supprimer',
+      },
+    },
+    pbehaviorsCalendar: {
+      title: 'Comportements périodiques',
+      entity: {
+        title: 'Comportements périodiques - {name}',
       },
     },
     createAlarmPattern: {
@@ -1738,7 +1845,7 @@ export default {
     JSONNotValid: 'JSON non valide',
     versionNotFound: 'Erreur dans la récupération du numéro de version...',
     statsRequestProblem: 'Erreur dans la récupération des statistiques',
-    statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
+    statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'community' de Canopsis",
     socketConnectionProblem: 'Problème de connexion aux websockets',
     endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
     unknownWidgetType: 'Type de widget inconnu: {type}',
@@ -2019,6 +2126,28 @@ export default {
   },
   serviceWeather: {
     seeAlarms: 'Voir les alarmes',
+    grey: 'Gris',
+    primaryIcon: 'Icône principale',
+    secondaryIcon: 'Icône secondaire',
+    massActions: 'Actions de masse',
+    cannotBeApplied: 'Cette action ne peut pas être appliquée',
+    actions: {
+      [WEATHER_ACTIONS_TYPES.entityAck]: 'Acquitter',
+      [WEATHER_ACTIONS_TYPES.entityValidate]: 'Valider',
+      [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalider',
+      [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',
+      [WEATHER_ACTIONS_TYPES.entityPlay]: 'Supprimer la pause',
+      [WEATHER_ACTIONS_TYPES.entityCancel]: 'Annuler',
+      [WEATHER_ACTIONS_TYPES.entityAssocTicket]: 'Associer un ticket',
+      [WEATHER_ACTIONS_TYPES.entityComment]: 'Commenter l\'alarme',
+      [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Exécuter l\'instruction',
+      [WEATHER_ACTIONS_TYPES.declareTicket]: 'Déclarer un incident',
+    },
+    iconTypes: {
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
+    },
   },
   contextGeneralTable: {
     addSelection: 'Ajouter une sélection',
@@ -2095,8 +2224,14 @@ export default {
   },
 
   pbehaviorTypes: {
-    usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation/',
+    usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
     defaultType: 'Le type par défaut ne peut pas être modifié.',
+    types: {
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Actif par défaut',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif par défaut',
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
+    },
   },
 
   pbehaviorReasons: {
@@ -2112,6 +2247,7 @@ export default {
   },
 
   healthcheck: {
+    systemIsDown: 'Le système est en panne',
     notRunning: '{name} n\'est pas disponible',
     queueOverflow: 'Débordement de file d\'attente',
     lackOfInstances: 'Manque d\'instances',
@@ -2221,7 +2357,7 @@ export default {
 
       [HEALTHCHECK_ENGINES_NAMES.remediation]: {
         name: 'Remédiation',
-        description: 'Déclenche les instructions',
+        description: 'Déclenche les consignes',
       },
     },
   },
@@ -2251,9 +2387,9 @@ export default {
     emptySteps: 'Aucune étape ajoutée pour le moment',
     emptyOperations: 'Aucune opération ajoutée pour le moment',
     emptyJobs: 'Aucune tâche ajoutée pour le moment',
-    timeoutAfterExecution: 'Délai d\'attente après l\'exécution de l\'instruction',
+    timeoutAfterExecution: 'Délai d\'attente après l\'exécution de la consigne',
     requestApproval: 'Demande d\'approbation',
-    type: 'Type d\'instruction',
+    type: 'Type de consigne',
     approvalPending: 'En attente d\'approbation',
     needApprove: 'Une approbation est nécessaire',
     types: {
@@ -2298,11 +2434,12 @@ export default {
     failedAt: 'Échec à {time}',
     startedAt: 'Commencé à {time}\n(Date de lancement Canopsis)',
     closeConfirmationText: 'Souhaitez-vous reprendre cette consigne plus tard ?',
+    queueNumber: '{number} {name} travaux sont dans la file d\'attente',
     popups: {
       success: '{instructionName} a été exécutée avec succès',
       failed: '{instructionName} a échoué. Veuillez faire remonter ce problème',
       connectionError: 'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
-      wasAborted: '{instructionName} a été abandonné',
+      wasAborted: '{instructionName} a été abandonnée',
       wasPaused: 'La consigne {instructionName} sur l\'alarme {alarmName} a été interrompue à {date}. Vous pouvez la reprendre manuellement.',
     },
     jobs: {
@@ -2319,12 +2456,12 @@ export default {
   },
 
   remediationInstructionsFilters: {
-    button: 'Créer un filtre de consignes',
+    button: 'Créer un filtre sur les consignes de remédiation',
     with: 'Avec les consignes sélectionnées',
     without: 'Sans les consignes sélectionnées',
     selectAll: 'Tout sélectionner',
     selectedInstructions: 'Consignes sélectionnées',
-    selectedInstructionsHelp: 'Les instructions du type sélectionné sont exclues de la liste',
+    selectedInstructionsHelp: 'Les consignes du type sélectionné sont exclues de la liste',
     chip: {
       with: 'AVEC',
       without: 'SANS',
@@ -2338,12 +2475,12 @@ export default {
     executedOn: 'Exécuté sur',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
-    averageCompletionTime: 'Temps moyen\n\'achèvement',
-    executionCount: 'Nombre de\nexécutions',
+    averageCompletionTime: 'Temps moyen\nd\'achèvement',
+    executionCount: 'Nombre\nd\'exécutions',
     alarmStates: 'Alarmes affectées par l\'état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
     notAvailable: 'Indisponible',
-    instructionChanged: 'L\'instruction a été modifiée',
+    instructionChanged: 'La consigne a été modifiée',
     actions: {
       needRate: 'Notez-le!',
       rate: 'Évaluer',
@@ -2379,6 +2516,7 @@ export default {
     addAction: 'Ajouter une action',
     emptyActions: 'Aucune action ajoutée pour le moment',
     output: 'Format d\'action de sortie',
+    forwardAuthor: 'Transmettre l\'auteur à l\'étape suivante',
     urlHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>'
       + '<i>Quelques exemples :</i>'
       + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
@@ -2434,9 +2572,10 @@ export default {
     emptyInfos: 'Aucune information',
     availabilityState: 'État de haute disponibilité',
     types: {
-      connector: 'type de connecteur',
-      component: 'composant',
-      resource: 'ressource',
+      [ENTITY_TYPES.component]: 'Composant',
+      [ENTITY_TYPES.connector]: 'Connecteur',
+      [ENTITY_TYPES.resource]: 'Ressource',
+      [ENTITY_TYPES.service]: 'Service',
     },
   },
 
@@ -2534,10 +2673,10 @@ export default {
       deleteAfterHelpText: 'Lorsque cette option est activée, les données des suites de tests JUnit (XML, captures d\'écran et vidéos) sont supprimées après la période définie.',
     },
     remediation: {
-      title: 'Instructions de stockage des données',
-      accumulateAfter: 'Accumuler les statistiques des instructions après',
-      deleteAfter: 'Supprimer les données des instructions après',
-      deleteAfterHelpText: 'Lorsque cette option est activée, les données statistiques des instructions sont supprimées après la période de temps définie.',
+      title: 'Stockage des données de consigne',
+      accumulateAfter: 'Accumuler les statistiques des consignes après',
+      deleteAfter: 'Supprimer les données des consignes après',
+      deleteAfterHelpText: 'Lorsque cette option est activée, les données statistiques des consignes sont supprimées après la période de temps définie.',
     },
     entity: {
       title: 'Stockage des données des entités',
@@ -2573,7 +2712,7 @@ export default {
   notificationSettings: {
     instruction: {
       header: 'Instructions',
-      rate: 'Notifications "Évaluer l\'instruction"',
+      rate: 'Notifications "Évaluer les consignes"',
       rateFrequency: 'La fréquence',
       duration: 'Intervalle de temps',
     },
@@ -2733,26 +2872,15 @@ export default {
     },
     [USERS_PERMISSIONS.technical.remediation]: {
       title: 'Consignes',
-      message: 'La fonction de remédiation de Canopsis peut être utilisée pour créer des plans ou des instructions visant à corriger des situations.',
+      message: 'La fonction de remédiation de Canopsis peut être utilisée pour créer des plans ou des consignes visant à corriger des situations.',
     },
 
     /**
      * Notifications
      */
     [USERS_PERMISSIONS.technical.notification.instructionStats]: {
-      title: 'Évaluation de l\'instruction',
-      message: 'Cette page contient les statistiques sur l\'exécution des instructions. Les utilisateurs peuvent noter les instructions en fonction de leurs performances.',
-    },
-  },
-
-  entitiesCountAlerts: {
-    filter: {
-      countOverLimit: 'Le filtre que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr ?',
-      countRequestError: 'Le calcul du nombre d\'entités ciblées par le filtre s\'est terminée avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr ?',
-    },
-    patterns: {
-      countOverLimit: 'Le modèle que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr ?',
-      countRequestError: 'Le calcul du nombre d\'entités ciblées par le modèle s\'est terminé avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr ?',
+      title: 'Évaluation des consignes',
+      message: 'Cette page contient les statistiques sur l\'exécution des consignes. Les utilisateurs peuvent noter les consignes en fonction de leurs performances.',
     },
   },
 
@@ -2796,7 +2924,7 @@ export default {
       [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} alarmes actives avec acks',
       [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: '{value} alarmes actives sans tickets',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% d\'alarmes avec correction automatique',
-      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% d\'alarmes avec instructions',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% d\'alarmes avec consigne',
       [ALARM_METRIC_PARAMETERS.ratioTickets]: '{value}% d\'alarmes avec tickets créés',
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% des alarmes non affichées',
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} accuser les alarmes',
@@ -2841,6 +2969,7 @@ export default {
     simpleEditor: 'Éditeur simple',
     noData: 'Aucun modèle. Cliquez sur \'@:pattern.addGroup\' pour ajouter des champs au modèle',
     noDataDisabled: 'Aucun modèle.',
+    discard: 'Jeter le motif',
     types: {
       [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
       [PATTERN_TYPES.entity]: 'Modèle d\'entité',
@@ -2850,6 +2979,8 @@ export default {
       ruleRequired: 'Veuillez ajouter au moins une règle',
       groupRequired: 'Veuillez ajouter au moins un groupe',
       invalidPatterns: 'Les modèles ne sont pas valides ou il y a un champ de modèle désactivé',
+      countOverLimit: 'Le modèle que vous avez défini cible {count} éléments. Cela peut affecter les performances, en êtes-vous sûr ?',
+      oldPattern: 'Le modèle de filtre actuel est défini dans l\'ancien format. Veuillez utiliser l\'éditeur avancé pour l\'afficher. Les filtres dans l\'ancien format seront bientôt obsolètes. Veuillez créer de nouveaux modèles dans notre interface mise à jour.',
     },
   },
 
@@ -2865,6 +2996,4 @@ export default {
       [MAP_TYPES.treeOfDependencies]: 'Arbre des dépendances',
     },
   },
-
-  ...featureService.get('i18n.fr'),
-};
+}, featureService.get('i18n.fr'));
