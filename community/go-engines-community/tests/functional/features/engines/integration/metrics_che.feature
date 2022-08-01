@@ -37,6 +37,59 @@ Feature: Entities should be synchronized in metrics db
     """
     Then the response code should be 201
     When I save response filter2ID={{ .lastResponse._id }}
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "resource": "test-resource-metrics-che-1"
+      }],
+      "external_data": {
+        "entity": {
+          "type": "entity"
+        }
+      },
+      "actions": [
+        {
+          "type": "copy",
+          "from": "ExternalData.entity",
+          "to": "Entity"
+        }
+      ],
+      "on_success": "pass",
+      "on_failure": "pass",
+      "description": "test-eventfilter-metrics-che-1-description",
+      "enabled": true,
+      "priority": 1
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "resource": "test-resource-metrics-che-1"
+      }],
+      "actions": [
+        {
+          "type": "set_entity_info_from_template",
+          "name": "client",
+          "description": "Client",
+          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+        }
+      ],
+      "priority": 2,
+      "on_success": "pass",
+      "on_failure": "pass",
+      "description": "test-eventfilter-metrics-che-1-description",
+      "enabled": true
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
     When I send an event:
     """json
     {
@@ -81,9 +134,7 @@ Feature: Entities should be synchronized in metrics db
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter2ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter2ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -99,9 +150,7 @@ Feature: Entities should be synchronized in metrics db
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -154,6 +203,61 @@ Feature: Entities should be synchronized in metrics db
     """
     Then the response code should be 201
     When I save response filter2ID={{ .lastResponse._id }}
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "source_type": "component",
+        "component": "test-component-metrics-che-2"
+      }],
+      "external_data": {
+        "entity": {
+          "type": "entity"
+        }
+      },
+      "actions": [
+        {
+          "type": "copy",
+          "from": "ExternalData.entity",
+          "to": "Entity"
+        }
+      ],
+      "on_success": "pass",
+      "on_failure": "pass",
+      "description": "test-eventfilter-metrics-che-2-description",
+      "enabled": true,
+      "priority": 1
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "source_type": "component",
+        "component": "test-component-metrics-che-2"
+      }],
+      "actions": [
+        {
+          "type": "set_entity_info_from_template",
+          "name": "client",
+          "description": "Client",
+          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+        }
+      ],
+      "priority": 2,
+      "on_success": "pass",
+      "on_failure": "pass",
+      "description": "test-eventfilter-metrics-che-2-description",
+      "enabled": true
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
     When I send an event:
     """json
     {
@@ -210,9 +314,7 @@ Feature: Entities should be synchronized in metrics db
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter2ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter2ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -228,9 +330,7 @@ Feature: Entities should be synchronized in metrics db
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [

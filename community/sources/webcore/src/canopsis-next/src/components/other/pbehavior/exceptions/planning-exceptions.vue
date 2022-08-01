@@ -82,7 +82,6 @@ export default {
             await Promise.all(selected.map(({ _id: id }) => this.tryRemovePbehaviorException(id)));
 
             await this.fetchList();
-            this.selected = [];
           },
         },
       });

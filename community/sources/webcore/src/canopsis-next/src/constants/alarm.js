@@ -20,7 +20,6 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   fastAck: 'fastAck',
   ackRemove: 'ackRemove',
   pbehaviorAdd: 'pbehaviorAdd',
-  pbehaviorList: 'pbehaviorList',
   moreInfos: 'moreInfos',
   snooze: 'snooze',
   declareTicket: 'declareTicket',
@@ -155,11 +154,6 @@ export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
   },
 ];
 
-export const ALARMS_GROUP_PREFIX = {
-  CAUSES: 'causes_',
-  CONSEQUENCES: 'consequences_',
-};
-
 export const MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS = {
   component: 'metaalarm',
   connector: 'engine',
@@ -223,8 +217,10 @@ export const ALARM_PATTERN_FIELDS = {
   lastUpdateDate: 'v.last_update_date',
   ack: 'v.ack',
   ackAt: 'v.ack.t',
-  resolvedAt: 'resolved',
+  ackBy: 'v.ack.a',
+  resolvedAt: 'v.resolved',
   ticket: 'v.ticket',
   canceled: 'v.canceled',
-  snooze: 'v.snoozed',
+  snooze: 'v.snooze',
+  lastComment: 'v.last_comment.m',
 };

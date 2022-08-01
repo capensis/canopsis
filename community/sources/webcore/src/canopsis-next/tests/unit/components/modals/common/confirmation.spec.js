@@ -25,8 +25,8 @@ const snapshotFactory = (options = {}) => mount(Confirmation, {
   ...options,
 });
 
-const selectSubmitButton = wrapper => wrapper.findAll('v-btn-stub').at(0);
-const selectCancelButton = wrapper => wrapper.findAll('v-btn-stub').at(1);
+const selectSubmitButton = wrapper => wrapper.findAll('v-btn-stub').at(1);
+const selectCancelButton = wrapper => wrapper.findAll('v-btn-stub').at(0);
 
 describe('confirmation', () => {
   const $modals = mockModals();

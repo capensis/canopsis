@@ -74,6 +74,7 @@ describe('remediation-patterns', () => {
 
   const entityPattern = {
     id: 'entity-pattern',
+    is_corporate: true,
     groups: [],
   };
 
@@ -288,6 +289,7 @@ describe('remediation-patterns', () => {
       active_on_pbh: newForm.active_on_pbh,
       disabled_on_pbh: newForm.disabled_on_pbh,
       corporate_entity_pattern: newForm.entity_pattern.id,
+      entity_pattern: newForm.entity_pattern.groups,
       alarm_pattern: newForm.alarm_pattern.groups,
     });
     expect($modals.hide).toBeCalled();

@@ -12,6 +12,7 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	pgconn "github.com/jackc/pgconn"
 	pgx "github.com/jackc/pgx/v4"
+	pgxpool "github.com/jackc/pgx/v4/pgxpool"
 )
 
 // MockBasePool is a mock of BasePool interface.
@@ -137,6 +138,20 @@ func (mr *MockBasePoolMockRecorder) SendBatch(arg0, arg1 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendBatch", reflect.TypeOf((*MockBasePool)(nil).SendBatch), arg0, arg1)
 }
 
+// Stat mocks base method.
+func (m *MockBasePool) Stat() *pgxpool.Stat {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Stat")
+	ret0, _ := ret[0].(*pgxpool.Stat)
+	return ret0
+}
+
+// Stat indicates an expected call of Stat.
+func (mr *MockBasePoolMockRecorder) Stat() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Stat", reflect.TypeOf((*MockBasePool)(nil).Stat))
+}
+
 // MockPool is a mock of Pool interface.
 type MockPool struct {
 	ctrl     *gomock.Controller
@@ -255,6 +270,20 @@ func (m *MockPool) SetRetry(arg0 int, arg1 time.Duration) {
 func (mr *MockPoolMockRecorder) SetRetry(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetRetry", reflect.TypeOf((*MockPool)(nil).SetRetry), arg0, arg1)
+}
+
+// Stat mocks base method.
+func (m *MockPool) Stat() *pgxpool.Stat {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Stat")
+	ret0, _ := ret[0].(*pgxpool.Stat)
+	return ret0
+}
+
+// Stat indicates an expected call of Stat.
+func (mr *MockPoolMockRecorder) Stat() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Stat", reflect.TypeOf((*MockPool)(nil).Stat))
 }
 
 // WithTransaction mocks base method.

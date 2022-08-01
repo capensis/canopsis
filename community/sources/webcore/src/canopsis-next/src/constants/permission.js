@@ -1,7 +1,7 @@
 import featuresService from '@/services/features';
 
 import { ALARM_LIST_ACTIONS_TYPES } from './alarm';
-import { CONTEXT_ACTIONS_TYPES, WEATHER_ACTIONS_TYPES, COUNTER_ACTIONS_TYPES } from './context';
+import { CONTEXT_ACTIONS_TYPES, WEATHER_ACTIONS_TYPES, COUNTER_ACTIONS_TYPES } from './entity';
 
 export const CRUD_ACTIONS = {
   can: 'can',
@@ -36,26 +36,26 @@ export const CANOPSIS_STACK = {
 };
 
 export const CANOPSIS_EDITION = {
-  core: 'core',
-  cat: 'cat',
+  community: 'community',
+  pro: 'pro',
 };
 
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
-  snmpRule: { edition: CANOPSIS_EDITION.cat },
-  dynamicInfo: { edition: CANOPSIS_EDITION.cat },
-  metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  snmpRule: { edition: CANOPSIS_EDITION.pro },
+  dynamicInfo: { edition: CANOPSIS_EDITION.pro },
+  metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   scenario: { stack: CANOPSIS_STACK.go },
 };
 
 export const ADMIN_PAGES_RULES = {
-  remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
-  healthcheck: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
-  kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  healthcheck: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
 };
 
 export const NOTIFICATIONS_PAGES_RULES = {
-  instructionStats: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  instructionStats: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
 };
 
 export const USER_PERMISSIONS_PREFIXES = {
@@ -126,7 +126,6 @@ export const USERS_PERMISSIONS = {
         ackRemove: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_cancelAck`,
         pbehaviorAdd: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_pbehavior`,
         snooze: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_snoozeAlarm`,
-        pbehaviorList: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_listPbehavior`,
         declareTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_declareanIncident`,
         associateTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_assignTicketNumber`,
         cancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeAlarm`,
@@ -176,6 +175,8 @@ export const USERS_PERMISSIONS = {
         pbehaviorAdd: `${USER_PERMISSIONS_PREFIXES.business.context}_pbehavior`,
         pbehaviorList: `${USER_PERMISSIONS_PREFIXES.business.context}_listPbehavior`,
         pbehaviorDelete: `${USER_PERMISSIONS_PREFIXES.business.context}_deletePbehavior`,
+        massEnable: `${USER_PERMISSIONS_PREFIXES.business.context}_massEnable`,
+        massDisable: `${USER_PERMISSIONS_PREFIXES.business.context}_massDisable`,
 
         listFilters: `${USER_PERMISSIONS_PREFIXES.business.context}_listFilters`,
         editFilter: `${USER_PERMISSIONS_PREFIXES.business.context}_editFilter`,
@@ -252,6 +253,10 @@ export const USERS_PERMISSIONS = {
       broadcastMessage: `${USER_PERMISSIONS_PREFIXES.api}_broadcast_message`,
       junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
       notifications: `${USER_PERMISSIONS_PREFIXES.api}_notification`,
+      metrics: `${USER_PERMISSIONS_PREFIXES.api}_metrics`,
+      ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
+      filter: `${USER_PERMISSIONS_PREFIXES.api}_kpi_filter`,
+      corporatePattern: `${USER_PERMISSIONS_PREFIXES.api}_corporate_pattern`,
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
@@ -279,9 +284,6 @@ export const USERS_PERMISSIONS = {
       pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
       pbehaviorType: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviortype`,
     },
-    metrics: `${USER_PERMISSIONS_PREFIXES.api}_metrics`,
-    ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
-    filter: `${USER_PERMISSIONS_PREFIXES.api}_filter`,
   },
 };
 
@@ -296,7 +298,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.fastAck]: USERS_PERMISSIONS.business.alarmsList.actions.fastAck,
     [ALARM_LIST_ACTIONS_TYPES.ackRemove]: USERS_PERMISSIONS.business.alarmsList.actions.ackRemove,
     [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: USERS_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd,
-    [ALARM_LIST_ACTIONS_TYPES.pbehaviorList]: USERS_PERMISSIONS.business.alarmsList.actions.pbehaviorList,
     [ALARM_LIST_ACTIONS_TYPES.snooze]: USERS_PERMISSIONS.business.alarmsList.actions.snooze,
     [ALARM_LIST_ACTIONS_TYPES.declareTicket]: USERS_PERMISSIONS.business.alarmsList.actions.declareTicket,
     [ALARM_LIST_ACTIONS_TYPES.associateTicket]: USERS_PERMISSIONS.business.alarmsList.actions.associateTicket,
@@ -344,6 +345,9 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [CONTEXT_ACTIONS_TYPES.pbehaviorAdd]: USERS_PERMISSIONS.business.context.actions.pbehaviorAdd,
     [CONTEXT_ACTIONS_TYPES.pbehaviorList]: USERS_PERMISSIONS.business.context.actions.pbehaviorList,
     [CONTEXT_ACTIONS_TYPES.pbehaviorDelete]: USERS_PERMISSIONS.business.context.actions.pbehaviorDelete,
+    [CONTEXT_ACTIONS_TYPES.pbehaviorDelete]: USERS_PERMISSIONS.business.context.actions.pbehaviorDelete,
+    [CONTEXT_ACTIONS_TYPES.massEnable]: USERS_PERMISSIONS.business.context.actions.massEnable,
+    [CONTEXT_ACTIONS_TYPES.massDisable]: USERS_PERMISSIONS.business.context.actions.massDisable,
 
     [CONTEXT_ACTIONS_TYPES.listFilters]: USERS_PERMISSIONS.business.context.actions.listFilters,
     [CONTEXT_ACTIONS_TYPES.editFilter]: USERS_PERMISSIONS.business.context.actions.editFilter,

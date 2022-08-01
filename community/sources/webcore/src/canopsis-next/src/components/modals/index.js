@@ -69,6 +69,10 @@ export const PbehaviorPlanning = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-planning.vue'),
   loading: LoaderOverlay,
 });
+export const PbehaviorsCalendar = () => ({
+  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehaviors-calendar.vue'),
+  loading: LoaderOverlay,
+});
 export const PbehaviorRecurrenceRule = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-recurrence-rule.vue'),
   loading: LoaderOverlay,
@@ -99,6 +103,10 @@ export const CreatePbehaviorReason = () => ({
 });
 export const CreatePbehaviorException = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-pbehavior-exception.vue'),
+  loading: LoaderOverlay,
+});
+export const PbehaviorPatterns = () => ({
+  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-patterns.vue'),
   loading: LoaderOverlay,
 });
 export const Confirmation = () => ({
@@ -221,10 +229,6 @@ export const CreatePattern = () => ({
   component: import(/* webpackChunkName: "Pattern" */ './pattern/create-pattern.vue'),
   loading: LoaderOverlay,
 });
-export const CreatePatternRule = () => ({
-  component: import(/* webpackChunkName: "Pattern" */ './pattern/create-pattern-rule.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateSnmpRule = () => ({
   component: import(/* webpackChunkName: "SnmpRule" */ './snmp-rule/create-snmp-rule.vue'),
   loading: LoaderOverlay,
@@ -281,10 +285,6 @@ export const Rate = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './common/rate.vue'),
   loading: LoaderOverlay,
 });
-export const Patterns = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/patterns.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateRemediationInstructionsFilter = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './remediation/create-remediation-instructions-filter.vue'),
   loading: LoaderOverlay,
@@ -315,6 +315,10 @@ export const CreateScenario = () => ({
 });
 export const CreateAlarmStatusRule = () => ({
   component: import(/* webpackChunkName: "AlarmStatusRule" */ './alarm-status-rule/create-alarm-status-rule.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateKpiFilter = () => ({
+  component: import(/* webpackChunkName: "KPI" */ './kpi/create-kpi-filter.vue'),
   loading: LoaderOverlay,
 });
 export const CreateMap = () => ({

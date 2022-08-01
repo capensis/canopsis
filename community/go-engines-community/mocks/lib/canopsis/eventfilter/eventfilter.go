@@ -38,17 +38,17 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // LoadDataSourceFactories mocks base method.
-func (m *MockService) LoadDataSourceFactories(arg0 context0.EnrichmentCenter, arg1 context0.EnrichFields, arg2 string) error {
+func (m *MockService) LoadDataSourceFactories(arg0 context0.EnrichmentCenter, arg1 string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "LoadDataSourceFactories", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "LoadDataSourceFactories", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // LoadDataSourceFactories indicates an expected call of LoadDataSourceFactories.
-func (mr *MockServiceMockRecorder) LoadDataSourceFactories(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) LoadDataSourceFactories(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadDataSourceFactories", reflect.TypeOf((*MockService)(nil).LoadDataSourceFactories), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadDataSourceFactories", reflect.TypeOf((*MockService)(nil).LoadDataSourceFactories), arg0, arg1)
 }
 
 // LoadRules mocks base method.

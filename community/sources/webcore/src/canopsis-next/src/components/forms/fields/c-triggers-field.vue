@@ -10,10 +10,17 @@
     multiple,
     chips
   )
+    template(#item="{ item, tile, parent }")
+      v-list-tile(v-bind="tile.props", v-on="tile.on")
+        v-list-tile-action
+          v-checkbox(:input-value="tile.props.value", :color="parent.color")
+        v-list-tile-content {{ item.text }}
+        v-list-tile-action(v-if="item.helpText")
+          c-help-icon(:text="item.helpText", size="20", top)
 </template>
 
 <script>
-import { SCENARIO_TRIGGERS, CAT_SCENARIO_TRIGGERS } from '@/constants';
+import { SCENARIO_TRIGGERS, PRO_SCENARIO_TRIGGERS } from '@/constants';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
@@ -45,7 +52,19 @@ export default {
   computed: {
     availableTriggers() {
       return Object.values(SCENARIO_TRIGGERS)
-        .filter(type => !CAT_SCENARIO_TRIGGERS.includes(type) || this.isCatVersion);
+        .reduce((acc, type) => {
+          if (!PRO_SCENARIO_TRIGGERS.includes(type) || this.isProVersion) {
+            const { text, helpText } = this.$t(`common.scenarioTriggers.${type}`);
+
+            acc.push({
+              text,
+              helpText,
+              value: type,
+            });
+          }
+
+          return acc;
+        }, []);
     },
   },
 };

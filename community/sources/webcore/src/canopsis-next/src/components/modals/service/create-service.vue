@@ -17,7 +17,7 @@
 <script>
 import { get } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { serviceToForm, formToService } from '@/helpers/forms/service';
 
@@ -34,6 +34,7 @@ export default {
   name: MODALS.createService,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { ServiceForm, ModalWrapper },
   mixins: [

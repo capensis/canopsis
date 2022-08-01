@@ -25,7 +25,6 @@ const localVue = createVueInstance();
 
 const stubs = {
   'field-title': createInputStub('field-title'),
-  'field-filter-editor': createInputStub('field-filter-editor'),
   'field-text-editor': createInputStub('field-text-editor'),
   'field-stats-selector': createInputStub('field-stats-selector'),
   'field-date-interval': createInputStub('field-date-interval'),
@@ -34,7 +33,6 @@ const stubs = {
 
 const snapshotStubs = {
   'field-title': true,
-  'field-filter-editor': true,
   'field-text-editor': true,
   'field-stats-selector': true,
   'field-date-interval': true,

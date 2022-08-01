@@ -7,7 +7,7 @@ import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"time"
 )
 
@@ -17,6 +17,8 @@ type Engine interface {
 	AddConsumer(Consumer)
 	// AddPeriodicalWorker adds periodical worker to engine.
 	AddPeriodicalWorker(name string, worker PeriodicalWorker)
+	// AddRoutine adds a long-running goroutine to engine.
+	AddRoutine(Routine)
 	// Run starts goroutines for all consumers and periodical workers.
 	// Engine stops if one of consumer or periodical worker return error.
 	Run(context.Context) error
@@ -27,6 +29,10 @@ type Engine interface {
 type Consumer interface {
 	Consume(context.Context) error
 }
+
+// Routine interface is used to implement long-running goroutine of engine.
+// If Routine returns error engine will be stopped.
+type Routine func(context.Context) error
 
 // MessageProcessor interface is used to implement AMQP message processor of consumer.
 // If Process returns error engine will be stopped.

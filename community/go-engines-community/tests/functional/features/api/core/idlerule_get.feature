@@ -7,7 +7,7 @@ Feature: Get a idle rule
     When I do GET /api/v4/idle-rules?search=test-idle-rule-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -37,8 +37,6 @@ Feature: Get a idle rule
           "name": "test-idle-rule-to-get-1-name",
           "operation": {
             "parameters": {
-              "author": "test-idle-rule-to-get-1-operation-author",
-              "user": "test-idle-rule-to-get-1-operation-user",
               "duration": {
                 "value": 3,
                 "unit": "s"
@@ -88,7 +86,7 @@ Feature: Get a idle rule
     When I do GET /api/v4/idle-rules?search=test-idle-rule-to-get&sort_by=duration&sort=desc
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -121,7 +119,7 @@ Feature: Get a idle rule
     When I do GET /api/v4/idle-rules/test-idle-rule-to-get-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-idle-rule-to-get-1",
       "alarm_condition": "last_event",
@@ -149,8 +147,6 @@ Feature: Get a idle rule
       "name": "test-idle-rule-to-get-1-name",
       "operation": {
         "parameters": {
-          "author": "test-idle-rule-to-get-1-operation-author",
-          "user": "test-idle-rule-to-get-1-operation-user",
           "duration": {
             "value": 3,
             "unit": "s"

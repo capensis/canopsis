@@ -72,7 +72,7 @@ export default {
   computed: {
     headers() {
       return [
-        { text: this.$t('common.title'), value: 'name' },
+        { text: this.$t('common.name'), value: 'name' },
         { text: this.$t('common.created'), value: 'created' },
         { text: this.$t('common.lastModifiedOn'), value: 'updated' },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },

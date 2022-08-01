@@ -11,7 +11,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -50,19 +50,11 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
         rrule
       </div>
       <div>
-        Comments:
+        Last comment:
         <div
           class="ml-2"
         >
           - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        Comments:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
         </div>
       </div>
       <hr
@@ -84,7 +76,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text material-icons theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text material-icons theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -121,19 +113,11 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
         rrule
       </div>
       <div>
-        Comments:
+        Last comment:
         <div
           class="ml-2"
         >
           - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        Comments:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
         </div>
       </div>
       <hr
@@ -155,7 +139,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -193,6 +177,14 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
       <div>
         rrule
       </div>
+      <div>
+        Last comment:
+        <div
+          class="ml-2"
+        >
+          - pbehavior-comment-1-author: pbehavior-comment-1-message
+        </div>
+      </div>
       <hr
         class="v-divider theme--light"
       />
@@ -212,7 +204,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -249,19 +241,11 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
         rrule
       </div>
       <div>
-        Comments:
+        Last comment:
         <div
           class="ml-2"
         >
           - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        Comments:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
         </div>
       </div>
       <hr
@@ -283,7 +267,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -320,19 +304,11 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
       </div>
       <!---->
       <div>
-        Comments:
+        Last comment:
         <div
           class="ml-2"
         >
           - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        Comments:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
         </div>
       </div>
       <hr
@@ -354,7 +330,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -394,19 +370,11 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
         rrule
       </div>
       <div>
-        Comments:
+        Last comment:
         <div
           class="ml-2"
         >
           - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        Comments:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
         </div>
       </div>
       <hr

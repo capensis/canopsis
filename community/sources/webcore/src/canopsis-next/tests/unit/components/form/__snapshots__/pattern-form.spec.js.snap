@@ -11,6 +11,8 @@ exports[`pattern-form Renders \`pattern-form\` with alarm type 1`] = `
     name="title"
   />
   <c-alarm-patterns-field-stub
+    check-count-name="alarm_pattern"
+    name="alarm_pattern"
     value="[object Object]"
   />
 </div>
@@ -41,6 +43,8 @@ exports[`pattern-form Renders \`pattern-form\` with entity type 1`] = `
     name="title"
   />
   <c-entity-patterns-field-stub
+    check-count-name="entity_pattern"
+    name="entity_pattern"
     value="[object Object]"
   />
 </div>
@@ -57,6 +61,8 @@ exports[`pattern-form Renders \`pattern-form\` with entity type 2`] = `
     name="title"
   />
   <c-pbehavior-patterns-field-stub
+    check-count-name="pbehavior_pattern"
+    name="pbehavior_pattern"
     value="[object Object]"
   />
 </div>

@@ -2,7 +2,8 @@
   service-dependencies.pa-2(
     :root="dependency",
     :columns="columns",
-    light
+    light,
+    openable-root
   )
 </template>
 

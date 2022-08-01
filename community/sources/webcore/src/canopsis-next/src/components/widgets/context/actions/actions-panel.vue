@@ -1,13 +1,14 @@
 <template lang="pug">
-  shared-actions-panel(:actions="actions")
+  shared-actions-panel(:actions="actions.inline", :drop-down-actions="actions.dropDown")
 </template>
 
 <script>
-import { pickBy } from 'lodash';
+import { compact, pickBy } from 'lodash';
 
 import { MODALS, CONTEXT_ACTIONS_TYPES, ENTITY_TYPES } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
@@ -82,7 +83,7 @@ export default {
     actions() {
       const { filteredActionsMap } = this;
 
-      const actions = [
+      let actions = [
         filteredActionsMap.editEntity,
       ];
 
@@ -94,13 +95,18 @@ export default {
         actions.push(filteredActionsMap.deleteEntity);
       }
 
-      actions.push(filteredActionsMap.pbehavior);
+      actions.push(filteredActionsMap.pbehavior, filteredActionsMap.variablesHelp);
 
       if (this.editing) {
         actions.push(filteredActionsMap.variablesHelp);
       }
 
-      return actions.filter(action => !!action);
+      actions = compact(actions);
+
+      return {
+        inline: actions.slice(0, 3),
+        dropDown: actions.slice(3),
+      };
     },
   },
   methods: {
@@ -175,9 +181,7 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: [this.item._id] },
-          },
+          entityPattern: createEntityIdPatternByValue(this.item._id),
         },
       });
     },

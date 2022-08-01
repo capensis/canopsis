@@ -85,11 +85,19 @@ export const API_ROUTES = {
   loggedUserCount: '/api/v4/logged-user-count',
   currentUser: '/api/v4/account/me',
   alarmList: '/api/v4/alarms',
+  componentAlarms: '/api/v4/component-alarms',
+  resolvedAlarms: '/api/v4/resolved-alarms',
+  alarmDetails: '/api/v4/alarm-details',
+  manualMetaAlarm: '/api/v4/manual-meta-alarms',
   entity: '/api/v4/entities',
+  bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
+  bulkEntitiesDisable: '/api/v4/bulk/entities/disable',
   entityBasics: '/api/v4/entitybasics',
   service: '/api/v4/entityservices',
   serviceDependencies: '/api/v4/entityservice-dependencies',
   serviceImpacts: '/api/v4/entityservice-impacts',
+  serviceAlarms: '/api/v4/entityservice-alarms',
+  entityInfosKeys: '/api/v4/entity-infos-dictionary/keys',
   weatherService: '/api/v4/weather-services',
   alarmListExport: '/api/v4/alarm-export',
   contextExport: '/api/v4/entity-export',
@@ -146,10 +154,12 @@ export const API_ROUTES = {
     exceptions: '/api/v4/pbehavior-exceptions',
     types: '/api/v4/pbehavior-types',
     pbehaviors: '/api/v4/pbehaviors',
-    pbehaviorsCount: '/api/v4/pbehaviors/count',
+    bulkPbehaviors: '/api/v4/bulk/pbehaviors',
     pbehaviorComments: '/api/v4/pbehavior-comments',
-    pbehaviorById: '/api/v4/entities/pbehaviors',
+    entities: '/api/v4/entities/pbehaviors',
+    entitiesCalendar: '/api/v4/entities/pbehavior-calendar',
     reasons: '/api/v4/pbehavior-reasons',
+    calendar: '/api/v4/pbehavior-calendar',
   },
   engineRunInfo: '/api/v4/engine-runinfo',
   cas: {
@@ -169,22 +179,23 @@ export const API_ROUTES = {
   dataStorage: '/api/v4/data-storage',
   notification: '/api/v4/notification',
   idleRules: '/api/v4/idle-rules',
-  idleRulesCount: '/api/v4/idle-rules/count',
   flappingRules: '/api/v4/flapping-rules',
   resolveRules: '/api/v4/resolve-rules',
   messageRateStats: '/api/v4/message-rate-stats',
   patterns: '/api/v4/patterns',
   bulkPatterns: '/api/v4/bulk/patterns',
+  patternsCount: '/api/v4/patterns-count',
   maps: '/api/v4/maps',
   bulkMaps: '/api/v4/bulk/maps',
 
   /**
    * Cat routes
    */
-  filters: '/api/v4/cat/filters',
+  filters: '/api/v4/cat/kpi-filters',
   ratingSettings: '/api/v4/cat/rating-settings',
   bulkRatingSettings: '/api/v4/cat/rating-settings/bulk',
   dynamicInfo: '/api/v4/cat/dynamic-infos',
+  dynamicInfosDictionaryKeys: '/api/v4/cat/dynamic-infos-dictionary/keys',
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
   remediation: {
     instructions: '/api/v4/cat/instructions',
@@ -331,6 +342,8 @@ export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
 export const EXPORT_FETCHING_INTERVAL = 2000;
 
 export const DEFAULT_CATEGORIES_LIMIT = 3;
+
+export const MAX_PBEHAVIOR_DATES_DIFF_YEARS = 5;
 
 export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-';
 

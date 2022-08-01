@@ -77,6 +77,7 @@ func (t *modelTransformer) TransformCreateRequestToModel(ctx context.Context, re
 		Type:       pbhType,
 		Exdates:    exdates,
 		Exceptions: exceptions,
+		Color:      request.Color,
 	}, nil
 }
 
@@ -205,6 +206,9 @@ func (t *modelTransformer) Patch(ctx context.Context, req PatchRequest, model *R
 	}
 	if req.RRule != nil {
 		model.RRule = *req.RRule
+	}
+	if req.Color != nil {
+		model.Color = *req.Color
 	}
 	if req.Start != nil {
 		model.Start = req.Start

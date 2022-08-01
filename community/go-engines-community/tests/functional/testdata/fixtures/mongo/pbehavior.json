@@ -23,6 +23,7 @@
     "rrule": "",
     "tstart": 1591172881,
     "tstop": 1591536400,
+    "color": "#FFFFFF",
     "type_": "test-type-to-pbh-edit-1",
     "exdates": [
       {
@@ -47,6 +48,7 @@
     "rrule": "",
     "tstart": 1591172881,
     "tstop": 1591536400,
+    "color": "#FFFFFF",
     "type_": "test-type-to-pbh-edit-2",
     "created": 1592215337,
     "updated": 1592215337
@@ -75,6 +77,7 @@
     "rrule": "",
     "tstart": 1591172881,
     "tstop": 1591536400,
+    "color": "#FFFFFF",
     "type_": "test-type-to-pbh-edit-1",
     "exdates": [
       {
@@ -108,7 +111,7 @@
     ],
     "enabled": true,
     "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
-    "name": "1",
+    "name": "test-pbehavior-which-reason-should-be-updated-name",
     "reason": "test-reason-to-update",
     "rrule": "",
     "tstart": 1591172881,
@@ -128,70 +131,42 @@
   {
     "_id": "test-pbehavior-to-delete-1",
     "author": "root",
-    "comments": [
-      {
-        "_id": "test-comment-1",
-        "author": "root",
-        "ts": 1592215337,
-        "message": "qwerty"
-      },
-      {
-        "_id": "test-comment-2",
-        "author": "root",
-        "ts": 1592215337,
-        "message": "asdasd"
-      }
-    ],
     "enabled": true,
     "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
-    "name": "1",
+    "name": "test-pbehavior-to-delete-1-name",
     "reason": "test-reason-1",
     "rrule": "",
     "tstart": 1591172881,
     "tstop": 1591536400,
     "type_": "test-type-to-pbh-edit-1",
-    "exdates": [
-      {
-        "begin": 1591164001,
-        "end": 1591167601,
-        "type": "test-type-to-pbh-edit-1"
-      }
-    ],
     "created": 1592215337,
     "updated": 1592215337
   },
   {
     "_id": "test-pbehavior-to-delete-2",
     "author": "root",
-    "comments": [
-      {
-        "_id": "test-comment-1",
-        "author": "root",
-        "ts": 1592215337,
-        "message": "qwerty"
-      },
-      {
-        "_id": "test-comment-2",
-        "author": "root",
-        "ts": 1592215337,
-        "message": "asdasd"
-      }
-    ],
     "enabled": true,
     "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
-    "name": "1",
+    "name": "test-pbehavior-to-delete-2-name",
     "reason": "test-reason-1",
     "rrule": "",
     "tstart": 1591172881,
     "tstop": 1591536400,
     "type_": "test-type-to-pbh-edit-1",
-    "exdates": [
-      {
-        "begin": 1591164001,
-        "end": 1591167601,
-        "type": "test-type-to-pbh-edit-1"
-      }
-    ],
+    "created": 1592215337,
+    "updated": 1592215337
+  },
+  {
+    "_id": "test-pbehavior-to-delete-3",
+    "author": "root",
+    "enabled": true,
+    "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
+    "name": "test-pbehavior-to-delete-3-name",
+    "reason": "test-reason-1",
+    "rrule": "",
+    "tstart": 1591172881,
+    "tstop": 1591536400,
+    "type_": "test-type-to-pbh-edit-1",
     "created": 1592215337,
     "updated": 1592215337
   },
@@ -214,7 +189,7 @@
     ],
     "enabled": true,
     "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
-    "name": "1",
+    "name": "test-pbehavior-to-update-name",
     "reason": "test-reason-1",
     "rrule": "",
     "tstart": 1591172881,
@@ -253,7 +228,7 @@
     ],
     "enabled": true,
     "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
-    "name": "1",
+    "name": "test-pbehavior-to-update-invalid-name",
     "reason": "test-reason-1",
     "rrule": "",
     "tstart": 1591172881,
@@ -283,7 +258,7 @@
     ],
     "enabled": true,
     "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
-    "name": "1",
+    "name": "test-pbehavior-to-delete-exception-name",
     "reason": "test-reason-1",
     "rrule": "",
     "tstart": 1591172881,
@@ -321,7 +296,7 @@
     ],
     "enabled": true,
     "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
-    "name": "1",
+    "name": "test-pbehavior-to-delete-reason-name",
     "reason": "test-reason-to-delete-linked-to-pbehavior",
     "rrule": "",
     "tstart": 1591172881,
@@ -359,7 +334,7 @@
     ],
     "enabled": true,
     "filter": "{\"$and\":[{\"name\":\"ccccc\"}]}",
-    "name": "1",
+    "name": "test-pbehavior-to-get-reason-name",
     "reason": "test-reason-to-get-2",
     "rrule": "",
     "tstart": 1591172881,
@@ -381,7 +356,7 @@
     "author": "root",
     "enabled": true,
     "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
-    "name": "Delete type",
+    "name": "test-pbehavior-to-delete-type-1-name",
     "reason": "test-reason-1",
     "rrule": "",
     "tstart": 1591172881,
@@ -395,7 +370,7 @@
     "author": "root",
     "enabled": true,
     "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
-    "name": "Delete type",
+    "name": "test-pbehavior-to-delete-type-2-name",
     "reason": "test-reason-1",
     "rrule": "",
     "tstart": 1591172881,
@@ -416,7 +391,7 @@
     "author": "root",
     "enabled": true,
     "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
-    "name": "Create comment",
+    "name": "test-pbehavior-to-create-comment-name",
     "reason": "test-reason-1",
     "rrule": "",
     "tstart": 1591172881,
@@ -445,7 +420,7 @@
     "author": "root",
     "enabled": true,
     "filter": "{\"$and\":[{\"name\":\"test filter\"}]}",
-    "name": "Create comment",
+    "name": "test-pbehavior-to-delete-comment-name",
     "reason": "test-reason-1",
     "rrule": "",
     "tstart": 1591172881,
@@ -479,6 +454,7 @@
     "rrule": "",
     "tstart": 1591172881,
     "tstop": 1591536400,
+    "color": "#FFFFFF",
     "type_": "test-type-to-pbh-edit-1",
     "created": 1592215337,
     "updated": 1592215337,
@@ -496,6 +472,7 @@
     "rrule": "",
     "tstart": 1591172881,
     "tstop": 1591536400,
+    "color": "#FFFFFF",
     "type_": "test-type-to-get-pbehavior",
     "exdates": [],
     "exceptions": [],
@@ -513,6 +490,7 @@
     "rrule": "",
     "tstart": 1591172881,
     "tstop": 1591536400,
+    "color": "#FFFFFF",
     "type_": "test-type-to-pbh-edit-1",
     "exdates": [],
     "exceptions": [],
@@ -659,5 +637,57 @@
     "type_": "test-type-to-pbh-edit-1",
     "created": 1592215337,
     "updated": 1592215337
+  },
+  {
+    "_id": "test-pbehavior-to-calendar-get-by-entity-1",
+    "author": "root",
+    "enabled": true,
+    "filter": "{\"$and\":[{\"name\":\"test-resource-to-calendar-get-by-entity\"}]}",
+    "name": "test-pbehavior-to-calendar-get-by-entity-1-name",
+    "reason": "test-reason-1",
+    "rrule": "",
+    "tstart": 1664704800,
+    "tstop": 1664712000,
+    "color": "#FFFFFF",
+    "type_": "test-default-maintenance-type",
+    "created": 1664708400,
+    "updated": 1664708400
+  },
+  {
+    "_id": "test-pbehavior-to-calendar-get-by-entity-2",
+    "author": "root",
+    "enabled": true,
+    "filter": "{\"$and\":[{\"name\":\"test-resource-to-calendar-get-by-entity\"}]}",
+    "name": "test-pbehavior-to-calendar-get-by-entity-2-name",
+    "reason": "test-reason-1",
+    "rrule": "FREQ=WEEKLY",
+    "tstart": 1664704800,
+    "tstop": 1664712000,
+    "color": "#FFFFFF",
+    "type_": "test-default-active-type",
+    "exdates": [
+      {
+        "begin": 1664701200,
+        "end": 1664708400,
+        "type": "test-default-maintenance-type"
+      }
+    ],
+    "created": 1664704800,
+    "updated": 1664704800
+  },
+  {
+    "_id": "test-pbehavior-to-calendar-get-by-entity-3",
+    "author": "root",
+    "enabled": true,
+    "filter": "{\"$and\":[{\"name\":\"test-resource-to-calendar-get-by-entity\"}]}",
+    "name": "test-pbehavior-to-calendar-get-by-entity-3-name",
+    "reason": "test-reason-1",
+    "rrule": "",
+    "tstart": 1664794800,
+    "tstop": 1664802000,
+    "color": "#FFFFFF",
+    "type_": "test-default-maintenance-type",
+    "created": 1664794800,
+    "updated": 1664794800
   }
 ]

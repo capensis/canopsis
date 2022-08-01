@@ -294,6 +294,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Initiator = string(in.String())
 		case "delayed_scenario_id":
 			out.DelayedScenarioID = string(in.String())
+		case "delayed_scenario_data":
+			out.DelayedScenarioData = string(in.String())
 		case "added_to_services":
 			if in.IsNull() {
 				in.Skip()
@@ -641,6 +643,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"delayed_scenario_id\":"
 		out.RawString(prefix)
 		out.String(string(in.DelayedScenarioID))
+	}
+	if in.DelayedScenarioData != "" {
+		const prefix string = ",\"delayed_scenario_data\":"
+		out.RawString(prefix)
+		out.String(string(in.DelayedScenarioData))
 	}
 	if len(in.AddedToServices) != 0 {
 		const prefix string = ",\"added_to_services\":"
@@ -1496,6 +1503,16 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, out.Status)
 			}
+		case "last_comment":
+			if in.IsNull() {
+				in.Skip()
+				out.LastComment = nil
+			} else {
+				if out.LastComment == nil {
+					out.LastComment = new(AlarmStep)
+				}
+				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, out.LastComment)
+			}
 		case "ticket":
 			if in.IsNull() {
 				in.Skip()
@@ -1853,6 +1870,16 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString(prefix)
 		}
 		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, *in.Status)
+	}
+	if in.LastComment != nil {
+		const prefix string = ",\"last_comment\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, *in.LastComment)
 	}
 	if in.Ticket != nil {
 		const prefix string = ",\"ticket\":"

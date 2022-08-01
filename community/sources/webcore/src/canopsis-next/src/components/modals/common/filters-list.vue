@@ -1,32 +1,29 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(data-test="filtersListModal", close)
-      template(slot="title")
-        span {{ $t('common.filters') }}
-      template(slot="text")
-        filters-list-form(
-          v-model="form.filters",
-          :with-pbehavior="config.withPbehavior",
-          :with-alarm="config.withAlarm",
-          :with-event="config.withEvent",
-          :addable="config.hasAccessToAddFilter",
-          :editable="config.hasAccessToEditFilter"
-        )
-      template(slot="actions")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
+  modal-wrapper(close)
+    template(#title="")
+      span {{ $t('common.filters') }}
+    template(#text="")
+      filters-list-component(
+        :filters="filters",
+        :pending="pending",
+        :addable="config.hasAccessToAddFilter",
+        :editable="config.hasAccessToEditFilter",
+        @add="showCreateFilterModal",
+        @edit="showEditFilterModal",
+        @delete="showDeleteFilterModal"
+      )
 </template>
 
 <script>
+import { pick } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
+import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
-import { filtersToForm, formToFilters } from '@/helpers/forms/filter';
-
-import FiltersListForm from '@/components/forms/filters/filters-list-form.vue';
+import FiltersListComponent from '@/components/other/filter/filters-list.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -35,28 +32,108 @@ import ModalWrapper from '../modal-wrapper.vue';
  */
 export default {
   name: MODALS.filtersList,
-  components: { FiltersListForm, ModalWrapper },
+  components: { FiltersListComponent, ModalWrapper },
   mixins: [
     modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
+    entitiesWidgetMixin,
+    entitiesUserPreferenceMixin,
   ],
   data() {
-    const { filters = [] } = this.modal.config;
-
     return {
-      form: {
-        filters: filtersToForm(filters),
-      },
+      pending: false,
     };
   },
-  methods: {
-    async submit() {
-      if (this.config.action) {
-        await this.config.action(formToFilters(this.form.filters));
-      }
+  computed: {
+    widgetId() {
+      return this.config.widgetId;
+    },
 
-      this.$modals.hide();
+    userPreference() {
+      return this.getUserPreferenceByWidgetId(this.widgetId);
+    },
+
+    filters() {
+      return this.userPreference?.filters ?? [];
+    },
+
+    modalConfig() {
+      return {
+        ...pick(this.config, ['withAlarm', 'withEntity', 'withPbehavior', 'withServiceWeather', 'entityTypes']),
+
+        withTitle: true,
+      };
+    },
+  },
+  mounted() {
+    this.refreshFilters();
+  },
+  methods: {
+    refreshFilters() {
+      return this.fetchUserPreference({ id: this.config.widgetId });
+    },
+
+    showCreateFilterModal() {
+      this.$modals.show({
+        name: MODALS.createFilter,
+        config: {
+          ...this.modalConfig,
+
+          title: this.$t('modals.createFilter.create.title'),
+          corporate: true,
+          action: async (newFilter) => {
+            await this.createWidgetFilter({
+              data: {
+                ...newFilter,
+
+                widget: this.widgetId,
+                is_private: true,
+              },
+            });
+
+            return this.refreshFilters();
+          },
+        },
+      });
+    },
+
+    showEditFilterModal(filter) {
+      this.$modals.show({
+        name: MODALS.createFilter,
+        config: {
+          ...this.modalConfig,
+
+          filter,
+          title: this.$t('modals.createFilter.edit.title'),
+          corporate: true,
+          action: async (newFilter) => {
+            await this.updateWidgetFilter({
+              id: filter._id,
+              data: {
+                ...newFilter,
+
+                widget: this.widgetId,
+              },
+            });
+
+            return this.refreshFilters();
+          },
+        },
+      });
+    },
+
+    showDeleteFilterModal(filter) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await this.removeWidgetFilter({
+              id: filter._id,
+            });
+
+            return this.refreshFilters();
+          },
+        },
+      });
     },
   },
 };

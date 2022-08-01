@@ -7,7 +7,7 @@ const localVue = createVueInstance();
 
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
-  'alarms-list-widget': true,
+  'alarms-list-table-with-pagination': true,
 };
 
 const snapshotFactory = (options = {}) => mount(AlarmsList, {
@@ -23,7 +23,11 @@ describe('alarms-list', () => {
       propsData: {
         modal: {
           config: {
-            widget: {},
+            widget: {
+              parameters: {
+                widgetColumns: [],
+              },
+            },
           },
         },
       },

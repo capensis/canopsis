@@ -5,7 +5,6 @@ package executor
 
 import (
 	"context"
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -35,17 +34,15 @@ func (e *ackExecutor) Exec(
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	var params types.OperationParameters
-	var ok bool
-	if params, ok = operation.Parameters.(types.OperationParameters); !ok {
-		return "", fmt.Errorf("invalid parameters")
-	}
+	params := operation.Parameters
 
 	if userID == "" {
 		userID = params.User
 	}
 
-	if alarm.Value.ACK != nil {
+	allowDoubleAck := e.configProvider.Get().AllowDoubleAck
+	doubleAck := alarm.Value.ACK != nil
+	if doubleAck && !allowDoubleAck {
 		return "", nil
 	}
 
@@ -56,19 +53,24 @@ func (e *ackExecutor) Exec(
 		userID,
 		role,
 		initiator,
+		allowDoubleAck,
 	)
 
 	if err != nil {
 		return "", err
 	}
 
-	go func() {
-		metricsUserID := ""
-		if initiator == types.InitiatorUser {
-			metricsUserID = userID
-		}
-		e.metricsSender.SendAck(context.Background(), *alarm, metricsUserID, time.Time)
-	}()
+	if !doubleAck {
+		go func() {
+			metricsUserID := ""
+			if initiator == types.InitiatorUser {
+				metricsUserID = userID
+			}
+			e.metricsSender.SendAck(context.Background(), *alarm, metricsUserID, time.Time)
+		}()
 
-	return types.AlarmChangeTypeAck, nil
+		return types.AlarmChangeTypeAck, nil
+	}
+
+	return types.AlarmChangeTypeDoubleAck, nil
 }
