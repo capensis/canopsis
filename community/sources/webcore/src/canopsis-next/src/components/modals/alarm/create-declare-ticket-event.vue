@@ -20,15 +20,15 @@
           :loading="submitting",
           :disabled="isDisabled",
           type="submit"
-        ) {{ $t('common.actions.reportIncident') }}
+        ) {{ $t('common.reportIncident') }}
 </template>
 
 <script>
-import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+import { MODALS, EVENT_ENTITY_TYPES, DECLARE_TICKET_OUTPUT } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
@@ -50,7 +50,7 @@ export default {
   methods: {
     async submit() {
       await this.createEvent(EVENT_ENTITY_TYPES.declareTicket, this.items, {
-        output: 'declare ticket',
+        output: DECLARE_TICKET_OUTPUT,
       });
 
       this.$modals.hide();

@@ -6,7 +6,6 @@
     :total-items="totalItems",
     :pagination="pagination",
     select-all,
-    expand,
     search,
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"

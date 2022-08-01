@@ -29,9 +29,9 @@ import { get, isEmpty, omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
 
-import { DATETIME_FORMATS, MODALS, MAX_LIMIT } from '@/constants';
+import { MODALS, MAX_LIMIT } from '@/constants';
 
-import { convertDateToString } from '@/helpers/date/date';
+import { convertDateToTimestamp } from '@/helpers/date/date';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/calendar/dayspan';
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 
@@ -157,34 +157,41 @@ export default {
       this.showAlarmsListModal(meta);
     },
 
+    getCommonQuery() {
+      return omit(this.query, ['filters', 'considerPbehaviors']);
+    },
+
     showAlarmsListModal(meta) {
       const widget = generateDefaultAlarmListWidget();
 
-      const widgetParameters = {
+      widget.parameters = {
+        ...widget.parameters,
         ...this.widget.parameters.alarmsList,
-
-        opened: this.widget.parameters.opened,
-        liveReporting: {
-          tstart: convertDateToString(meta.tstart, DATETIME_FORMATS.dateTimePicker),
-          tstop: convertDateToString(meta.tstop, DATETIME_FORMATS.dateTimePicker),
-        },
       };
-
-      if (!isEmpty(meta.filter)) {
-        widgetParameters.viewFilters = [meta.filter];
-        widgetParameters.mainFilter = meta.filter;
-      }
 
       this.$modals.show({
         name: MODALS.alarmsList,
         config: {
-          widget: {
-            ...widget,
+          widget,
+          title: this.$t('modals.alarmsList.prefixTitle', {
+            prefix: meta.filter.title,
+          }),
+          fetchList: (params) => {
+            const newParams = {
+              ...this.getCommonQuery(),
+              ...params,
 
-            parameters: {
-              ...widget.parameters,
-              ...widgetParameters,
-            },
+              tstart: convertDateToTimestamp(meta.tstart),
+              tstop: convertDateToTimestamp(meta.tstop),
+            };
+
+            if (meta.filter) {
+              newParams.filter = meta.filter._id;
+            }
+
+            return this.fetchAlarmsListWithoutStore({
+              params: newParams,
+            });
           },
         },
       });
@@ -196,10 +203,11 @@ export default {
 
     async fetchList() {
       try {
-        const query = omit(this.query, ['filters', 'considerPbehaviors']);
+        const { start, end } = this.calendar.filled;
+        const query = this.getCommonQuery();
 
-        query.tstart = this.calendar.start.date.unix();
-        query.tstop = this.calendar.end.date.unix();
+        query.tstart = start.date.unix();
+        query.tstop = end.date.unix();
         query.limit = MAX_LIMIT;
 
         this.pending = true;
@@ -217,10 +225,11 @@ export default {
           this.alarms = alarms;
           this.alarmsCollections = [];
         } else {
-          const results = await Promise.all(this.query.filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
+          const results = await Promise.all(this.query.filters.map(({ _id: id }) => this.fetchAlarmsListWithoutStore({
             params: {
               ...query,
-              filter,
+
+              filter: id,
             },
           })));
 

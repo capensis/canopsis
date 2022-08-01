@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { patternToForm, formToPattern } from '@/helpers/forms/pattern';
 
@@ -31,6 +31,7 @@ export default {
   name: MODALS.createPattern,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     PatternForm,

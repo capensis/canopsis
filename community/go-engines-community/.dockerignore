@@ -9,3 +9,7 @@
 !go.sum
 !lib/
 !Makefile
+!tests/
+!fixtures/
+!mocks/
+!.env

@@ -1,4 +1,4 @@
-import { find, get } from 'lodash';
+import { find } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions } = createNamespacedHelpers('pbehavior/comment');
@@ -6,7 +6,7 @@ const { mapActions } = createNamespacedHelpers('pbehavior/comment');
 /**
  * @mixin
  */
-export default {
+export const entitiesPbehaviorCommentMixin = {
   methods: {
     ...mapActions({
       createPbehaviorComment: 'create',
@@ -31,7 +31,7 @@ export default {
     },
 
     async updateSeveralPbehaviorComments({ pbehavior, comments }) {
-      const oldComments = get(pbehavior, 'comments', []);
+      const oldComments = pbehavior?.comments ?? [];
 
       /**
        * We are finding comments for creation (without _id field)

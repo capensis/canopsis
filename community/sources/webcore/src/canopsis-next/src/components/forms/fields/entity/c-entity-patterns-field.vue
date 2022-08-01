@@ -2,11 +2,13 @@
   c-pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
+    :readonly="readonly",
     :name="name",
     :type="$constants.PATTERN_TYPES.entity",
     :required="required",
     :attributes="availableEntityAttributes",
-    :with-type="withType"
+    :with-type="withType",
+    :check-count-name="checkCountName"
   )
 </template>
 
@@ -15,15 +17,17 @@ import { keyBy, merge } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
+  BASIC_ENTITY_TYPES,
   ENTITY_PATTERN_FIELDS,
+  ENTITY_TYPES,
   MAX_LIMIT,
-  PATTERN_ARRAY_OPERATORS,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
 } from '@/constants';
 
 const { mapActions: entityCategoryMapActions } = createNamespacedHelpers('entityCategory');
+const { mapActions: serviceMapActions } = createNamespacedHelpers('service');
 
 export default {
   model: {
@@ -55,11 +59,24 @@ export default {
       type: Boolean,
       default: false,
     },
+    entityTypes: {
+      type: Array,
+      required: false,
+    },
+    checkCountName: {
+      type: String,
+      required: false,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       categories: [],
       categoriesPending: false,
+      infos: [],
     };
   },
   computed: {
@@ -67,14 +84,27 @@ export default {
       return [
         PATTERN_OPERATORS.equal,
         PATTERN_OPERATORS.notEqual,
+        PATTERN_OPERATORS.isOneOf,
+        PATTERN_OPERATORS.isNotOneOf,
+      ];
+    },
+
+    dependenciesOperators() {
+      return [
+        PATTERN_OPERATORS.hasEvery,
         PATTERN_OPERATORS.hasOneOf,
         PATTERN_OPERATORS.hasNot,
+        PATTERN_OPERATORS.isEmpty,
+        PATTERN_OPERATORS.isNotEmpty,
       ];
     },
 
     entitiesValueField() {
       return {
         is: 'c-entity-field',
+        props: {
+          entityTypes: this.entityTypes,
+        },
       };
     },
 
@@ -86,26 +116,45 @@ export default {
       };
     },
 
-    impactOptions() {
+    componentOptions() {
       return {
-        operators: PATTERN_ARRAY_OPERATORS,
+        operators: [
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+        ],
         defaultValue: [],
-        valueField: this.entitiesValueField,
+        valueField: {
+          is: 'c-entity-field',
+          props: {
+            entityTypes: this.entityTypes ?? [BASIC_ENTITY_TYPES.component],
+          },
+        },
       };
     },
 
-    dependsOptions() {
+    connectorOptions() {
       return {
-        operators: PATTERN_ARRAY_OPERATORS,
+        operators: [
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+        ],
         defaultValue: [],
-        valueField: this.entitiesValueField,
+        valueField: {
+          is: 'c-entity-field',
+          props: {
+            entityTypes: this.entityTypes ?? [BASIC_ENTITY_TYPES.connector],
+          },
+        },
       };
     },
 
     infosOptions() {
       return {
-        // TODO: Should be replaced on API data
-        infos: ['infos 1', 'infos 2'],
+        infos: this.infos,
         type: PATTERN_RULE_TYPES.infos,
       };
     },
@@ -144,6 +193,18 @@ export default {
       };
     },
 
+    typeOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-entity-type-field',
+          props: {
+            types: Object.values(ENTITY_TYPES),
+          },
+        },
+      };
+    },
+
     entityAttributes() {
       return [
         {
@@ -156,14 +217,19 @@ export default {
           value: ENTITY_PATTERN_FIELDS.name,
         },
         {
-          text: this.$tc('common.impact', 2),
-          value: ENTITY_PATTERN_FIELDS.impact,
-          options: this.impactOptions,
+          text: this.$t('common.type'),
+          value: ENTITY_PATTERN_FIELDS.type,
+          options: this.typeOptions,
         },
         {
-          text: this.$tc('common.depend', 2),
-          value: ENTITY_PATTERN_FIELDS.depends,
-          options: this.dependsOptions,
+          text: this.$t('common.component'),
+          value: ENTITY_PATTERN_FIELDS.component,
+          options: this.componentOptions,
+        },
+        {
+          text: this.$t('common.connector'),
+          value: ENTITY_PATTERN_FIELDS.connector,
+          options: this.connectorOptions,
         },
         {
           text: this.$t('common.infos'),
@@ -213,9 +279,11 @@ export default {
   },
   mounted() {
     this.fetchCategories();
+    this.fetchInfos();
   },
   methods: {
     ...entityCategoryMapActions({ fetchCategoriesListWithoutStore: 'fetchListWithoutStore' }),
+    ...serviceMapActions({ fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
 
     async fetchCategories() {
       this.categoriesPending = true;
@@ -226,6 +294,14 @@ export default {
 
       this.categories = categories;
       this.categoriesPending = false;
+    },
+
+    async fetchInfos() {
+      const { data: infos } = await this.fetchEntityInfosKeysWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
+
+      this.infos = infos;
     },
   },
 };
