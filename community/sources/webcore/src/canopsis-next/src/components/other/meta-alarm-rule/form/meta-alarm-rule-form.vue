@@ -26,7 +26,8 @@
     meta-alarm-rule-patterns-form(
       v-if="isPatternsFormShown",
       v-field="form.patterns",
-      :with-total-entity="withTotalEntityPattern"
+      :with-total-entity="withTotalEntityPattern",
+      :some-required="patternsRequired"
     )
 </template>
 
@@ -135,6 +136,10 @@ export default {
 
     isCorelType() {
       return isCorelMetaAlarmRuleType(this.form.type);
+    },
+
+    patternsRequired() {
+      return !this.isValueGroupType;
     },
   },
 };

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { ACTION_TYPES, CAT_ACTION_TYPES } from '@/constants';
+import { ACTION_TYPES, PRO_ACTION_TYPES } from '@/constants';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
@@ -44,7 +44,7 @@ export default {
       const types = this.types || Object.values(ACTION_TYPES);
 
       return types
-        .filter(type => !CAT_ACTION_TYPES.includes(type) || this.isCatVersion)
+        .filter(type => !PRO_ACTION_TYPES.includes(type) || this.isProVersion)
         .map(type => ({
           value: type,
           text: this.$t(`scenario.actions.${type}`),

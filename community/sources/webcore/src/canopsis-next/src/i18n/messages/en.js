@@ -494,9 +494,6 @@ export default merge({
         massDisable: 'Disable entities',
       },
     },
-    entityInfo: {
-      valueAsList: 'Change value type to list',
-    },
     fab: {
       common: 'Add a new entity',
       addService: 'Add a new service entity',
@@ -1848,7 +1845,7 @@ export default merge({
     JSONNotValid: 'Invalid JSON',
     versionNotFound: 'Unable to get application version',
     statsRequestProblem: 'An error occurred while retrieving stats data',
-    statsWrongEditionError: "Stats widgets are not available with 'core' edition",
+    statsWrongEditionError: "Stats widgets are not available with 'community' edition",
     socketConnectionProblem: 'Problem with connection to socket server',
     endDateLessOrEqualStartDate: 'End date should be after start date',
     unknownWidgetType: 'Unknown widget type: {type}',
@@ -2146,6 +2143,11 @@ export default merge({
       [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Execute instruction',
       [WEATHER_ACTIONS_TYPES.declareTicket]: 'Declare ticket',
     },
+    iconTypes: {
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+    },
   },
   contextGeneralTable: {
     addSelection: 'Add selection',
@@ -2225,8 +2227,9 @@ export default merge({
     usingType: 'Cannot be deleted since it is in use',
     defaultType: 'Type is default, because cannot be edited',
     types: {
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Default active',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Default inactive',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
-      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
     },
   },
