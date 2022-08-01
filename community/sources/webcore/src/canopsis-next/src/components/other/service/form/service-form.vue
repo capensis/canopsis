@@ -36,7 +36,7 @@
     v-tabs(slider-color="primary", centered)
       v-tab(:class="{ 'error--text': errors.has('entity_patterns') }") {{ $t('common.entityPatterns') }}
       v-tab-item
-        c-patterns-field.mt-2(v-field="form.patterns", with-entity)
+        c-patterns-field.mt-2(v-field="form.patterns", :entity-attributes="entityAttributes", with-entity)
       v-tab.validation-header(:disabled="advancedJsonWasChanged") {{ $t('entity.manageInfos') }}
       v-tab-item
         manage-infos(v-field="form.infos")
@@ -44,6 +44,8 @@
 
 <script>
 import { get } from 'lodash';
+
+import { ENTITY_PATTERN_FIELDS } from '@/constants';
 
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 
@@ -69,6 +71,23 @@ export default {
 
     advancedJsonWasChanged() {
       return get(this.fields, ['advancedJson', 'changed']);
+    },
+
+    entityAttributes() {
+      return [
+        {
+          value: ENTITY_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+        {
+          value: ENTITY_PATTERN_FIELDS.connector,
+          options: { disabled: true },
+        },
+        {
+          value: ENTITY_PATTERN_FIELDS.componentInfos,
+          options: { disabled: true },
+        },
+      ];
     },
   },
 };

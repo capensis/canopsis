@@ -493,9 +493,6 @@ export default merge({
         massDisable: 'Désactiver les entités',
       },
     },
-    entityInfo: {
-      valueAsList: 'Changer le type de valeur en liste',
-    },
     fab: {
       common: 'Ajouter une nouvelle entité',
       addService: 'Ajouter une nouvelle entité de service',
@@ -1800,7 +1797,7 @@ export default merge({
     JSONNotValid: 'JSON non valide',
     versionNotFound: 'Erreur dans la récupération du numéro de version...',
     statsRequestProblem: 'Erreur dans la récupération des statistiques',
-    statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
+    statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'community' de Canopsis",
     socketConnectionProblem: 'Problème de connexion aux websockets',
     endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
     unknownWidgetType: 'Type de widget inconnu: {type}',
@@ -2098,6 +2095,11 @@ export default merge({
       [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Exécuter l\'instruction',
       [WEATHER_ACTIONS_TYPES.declareTicket]: 'Déclarer un incident',
     },
+    iconTypes: {
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
+    },
   },
   contextGeneralTable: {
     addSelection: 'Ajouter une sélection',
@@ -2177,8 +2179,9 @@ export default merge({
     usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
     defaultType: 'Le type par défaut ne peut pas être modifié.',
     types: {
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Actif par défaut',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif par défaut',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
-      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
     },
   },

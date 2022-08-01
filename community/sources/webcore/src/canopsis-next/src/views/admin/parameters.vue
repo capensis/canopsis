@@ -15,7 +15,7 @@
             v-tab-item(lazy)
               v-card-text
                 state-settings
-            template(v-if="isCatVersion")
+            template(v-if="isProVersion")
               v-tab {{ $t('parameters.tabs.notificationsSettings') }}
               v-tab-item(lazy)
                 v-card-text
