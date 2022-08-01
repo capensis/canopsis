@@ -185,6 +185,8 @@ export const API_ROUTES = {
   patterns: '/api/v4/patterns',
   bulkPatterns: '/api/v4/bulk/patterns',
   patternsCount: '/api/v4/patterns-count',
+  maps: '/api/v4/maps',
+  bulkMaps: '/api/v4/bulk/maps',
 
   /**
    * Cat routes
