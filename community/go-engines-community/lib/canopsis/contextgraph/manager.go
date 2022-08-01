@@ -393,6 +393,10 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 		return types.Entity{}, nil, err
 	}
 
+	if query == nil || negativeQuery == nil {
+		return types.Entity{}, nil, fmt.Errorf("can't get queries from patterns")
+	}
+
 	if len(service.Depends) != 0 {
 		var entitiesToRemove []types.Entity
 
@@ -716,6 +720,15 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 				IsNew:         true,
 				LastEventDate: &now,
 			})
+
+			_, err := m.collection.UpdateOne(
+				ctx,
+				bson.M{"_id": connectorID},
+				bson.M{"$addToSet": bson.M{"depends": event.Component}},
+			)
+			if err != nil {
+				return types.Entity{}, nil, err
+			}
 		} else {
 			_, err := m.collection.UpdateOne(
 				ctx,
@@ -938,7 +951,7 @@ func (m *manager) UpdateLastEventDate(ctx context.Context, eventType string, ent
 //}
 
 func (m *manager) entityExist(ctx context.Context, id string) (bool, error) {
-	err := m.collection.FindOne(ctx, bson.M{"_id": id}).Err()
+	err := m.collection.FindOne(ctx, bson.M{"_id": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return false, nil

@@ -76,17 +76,23 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	var updatedEntities []types.Entity
 
 	err = p.DbClient.WithTransaction(ctx, func(tCtx context.Context) error {
+		if event.EventType == types.EventManualMetaAlarmGroup ||
+			event.EventType == types.EventManualMetaAlarmUngroup ||
+			event.EventType == types.EventManualMetaAlarmUpdate {
+			return nil
+		}
+
 		if event.EventType == types.EventTypeRecomputeEntityService {
 			eventEntity, updatedEntities, err := p.ContextGraphManager.RecomputeService(tCtx, event.GetEID())
 			if err != nil {
-				return fmt.Errorf("cannot recompute service: %w", err)
+				return fmt.Errorf("cannot recompute service %s: %w", event.Component, err)
 			}
 
 			event.Entity = &eventEntity
 
 			_, err = p.ContextGraphManager.UpdateEntities(tCtx, "", updatedEntities)
 			if err != nil {
-				return fmt.Errorf("cannot update entities: %w", err)
+				return fmt.Errorf("cannot update entities %s: %w", event.Component, err)
 			}
 
 			return nil

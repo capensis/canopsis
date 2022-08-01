@@ -547,8 +547,9 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event type
 	}
 
 	counters = EntityServiceCounters{
-		ID:             event.Entity.ID,
-		OutputTemplate: counters.OutputTemplate,
+		ID:                event.Entity.ID,
+		OutputTemplate:    counters.OutputTemplate,
+		PbehaviorCounters: make(map[string]int64),
 	}
 
 	if len(event.Entity.Depends) == 0 {
