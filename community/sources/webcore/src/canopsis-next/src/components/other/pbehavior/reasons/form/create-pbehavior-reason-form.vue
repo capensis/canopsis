@@ -1,21 +1,13 @@
 <template lang="pug">
-  div
-    v-layout(row)
-      v-text-field(
-        v-field="form.name",
-        v-validate="'required'",
-        :label="$t('modals.createPbehaviorReason.fields.name')",
-        :error-messages="errors.collect('name')",
-        name="name"
-      )
-    v-layout(row)
-      v-text-field(
-        v-field="form.description",
-        v-validate="'required'",
-        :label="$t('modals.createPbehaviorReason.fields.description')",
-        :error-messages="errors.collect('description')",
-        name="description"
-      )
+  v-layout(column)
+    c-name-field(v-field="form.name")
+    v-text-field(
+      v-field="form.description",
+      v-validate="'required'",
+      :label="$t('modals.createPbehaviorReason.fields.description')",
+      :error-messages="errors.collect('description')",
+      name="description"
+    )
 </template>
 
 <script>
