@@ -99,6 +99,23 @@ export default {
           is: 'c-entity-field',
           props: {
             entityTypes: [BASIC_ENTITY_TYPES.connector],
+            itemText: 'name',
+            itemValue: 'name',
+          },
+        },
+      };
+    },
+
+    connectorNameOptions() {
+      return {
+        operators: this.entitiesOperators,
+        defaultValue: '',
+        valueField: {
+          is: 'c-entity-field',
+          props: {
+            entityTypes: [BASIC_ENTITY_TYPES.connector],
+            itemText: 'connector_type',
+            itemValue: 'connector_type',
           },
         },
       };
@@ -125,6 +142,8 @@ export default {
           is: 'c-entity-field',
           props: {
             entityTypes: [BASIC_ENTITY_TYPES.resource],
+            itemText: 'name',
+            itemValue: 'name',
           },
         },
       };
@@ -259,7 +278,7 @@ export default {
         {
           text: this.$t('common.connectorName'),
           value: ALARM_PATTERN_FIELDS.connectorName,
-          options: this.connectorOptions,
+          options: this.connectorNameOptions,
         },
         {
           text: this.$t('common.created'),
@@ -351,7 +370,7 @@ export default {
     },
   },
   mounted() {
-    if (this.isCatVersion) {
+    if (this.isProVersion) {
       this.fetchInfos();
     }
   },

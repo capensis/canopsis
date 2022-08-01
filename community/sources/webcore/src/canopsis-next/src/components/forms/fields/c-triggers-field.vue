@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { SCENARIO_TRIGGERS, CAT_SCENARIO_TRIGGERS } from '@/constants';
+import { SCENARIO_TRIGGERS, PRO_SCENARIO_TRIGGERS } from '@/constants';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
@@ -53,7 +53,7 @@ export default {
     availableTriggers() {
       return Object.values(SCENARIO_TRIGGERS)
         .reduce((acc, type) => {
-          if (!CAT_SCENARIO_TRIGGERS.includes(type) || this.isCatVersion) {
+          if (!PRO_SCENARIO_TRIGGERS.includes(type) || this.isProVersion) {
             const { text, helpText } = this.$t(`common.scenarioTriggers.${type}`);
 
             acc.push({
