@@ -26,7 +26,7 @@
 <script>
 import { omit } from 'lodash';
 
-import { MODALS, MAP_TYPES } from '@/constants';
+import { MODALS, MAP_TYPES, MAP_CREATE_MODAL_NAMES_BY_TYPE } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import { permissionsTechnicalMapMixin } from '@/mixins/permissions/technical/map';
@@ -49,33 +49,6 @@ export default {
     this.fetchList();
   },
   methods: {
-    getCreateMapModalName(map) {
-      return {
-        [MAP_TYPES.geo]: MODALS.createGeoMap,
-        [MAP_TYPES.flowchart]: MODALS.createFlowchartMap,
-        [MAP_TYPES.mermaid]: MODALS.createMermaidMap,
-        [MAP_TYPES.treeOfDependencies]: MODALS.createTreeOfDependenciesMap,
-      }[map.type];
-    },
-
-    getEditMapModalTitle(map) {
-      return {
-        [MAP_TYPES.geo]: this.$t('modals.createGeoMap.edit.title'),
-        [MAP_TYPES.flowchart]: this.$t('modals.createFlowchartMap.edit.title'),
-        [MAP_TYPES.mermaid]: this.$t('modals.createMermaidMap.edit.title'),
-        [MAP_TYPES.treeOfDependencies]: this.$t('modals.createTreeOfDependenciesMap.edit.title'),
-      }[map.type];
-    },
-
-    getDuplicateMapModalTitle(map) {
-      return {
-        [MAP_TYPES.geo]: this.$t('modals.createGeoMap.duplicate.title'),
-        [MAP_TYPES.flowchart]: this.$t('modals.createFlowchartMap.duplicate.title'),
-        [MAP_TYPES.mermaid]: this.$t('modals.createMermaidMap.duplicate.title'),
-        [MAP_TYPES.treeOfDependencies]: this.$t('modals.createTreeOfDependenciesMap.duplicate.title'),
-      }[map.type];
-    },
-
     showCreateMapModal() {
       this.$modals.show({
         name: MODALS.createMap,
@@ -90,11 +63,18 @@ export default {
     },
 
     showEditMapModal(map) {
+      const title = {
+        [MAP_TYPES.geo]: this.$t('modals.createGeoMap.edit.title'),
+        [MAP_TYPES.flowchart]: this.$t('modals.createFlowchartMap.edit.title'),
+        [MAP_TYPES.mermaid]: this.$t('modals.createMermaidMap.edit.title'),
+        [MAP_TYPES.treeOfDependencies]: this.$t('modals.createTreeOfDependenciesMap.edit.title'),
+      }[map.type];
+
       this.$modals.show({
-        name: this.getCreateMapModalName(map),
+        name: MAP_CREATE_MODAL_NAMES_BY_TYPE[map.type],
         config: {
           map,
-          title: this.getEditMapModalTitle(map),
+          title,
           action: async (newMap) => {
             await this.updateMap({ id: map._id, data: newMap });
 
@@ -105,11 +85,18 @@ export default {
     },
 
     showDuplicateMapModal(map) {
+      const title = {
+        [MAP_TYPES.geo]: this.$t('modals.createGeoMap.duplicate.title'),
+        [MAP_TYPES.flowchart]: this.$t('modals.createFlowchartMap.duplicate.title'),
+        [MAP_TYPES.mermaid]: this.$t('modals.createMermaidMap.duplicate.title'),
+        [MAP_TYPES.treeOfDependencies]: this.$t('modals.createTreeOfDependenciesMap.duplicate.title'),
+      }[map.type];
+
       this.$modals.show({
-        name: this.getCreateMapModalName(map),
+        name: MAP_CREATE_MODAL_NAMES_BY_TYPE[map.type],
         config: {
           map: omit(map, ['_id']),
-          title: this.getDuplicateMapModalTitle(map),
+          title,
           action: async (newMap) => {
             await this.createMap({ data: newMap });
 
