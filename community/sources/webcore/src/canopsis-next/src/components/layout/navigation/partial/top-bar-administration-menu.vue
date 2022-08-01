@@ -110,6 +110,11 @@ export default {
           icon: 'stacked_bar_chart',
           permission: USERS_PERMISSIONS.technical.kpi,
         },
+        {
+          route: { name: ROUTES_NAMES.adminMaps },
+          icon: 'edit_location',
+          permission: USERS_PERMISSIONS.technical.map,
+        },
       ];
 
       const enginesLink = this.isProVersion

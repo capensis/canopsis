@@ -35,6 +35,7 @@ import {
   PBEHAVIOR_TYPE_TYPES,
   SCENARIO_TRIGGERS,
   WEATHER_ACTIONS_TYPES,
+  MAP_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1730,6 +1731,53 @@ export default merge({
         title: 'Modifier le filtre de comportement partagé',
       },
     },
+    createMap: {
+      title: 'Créer une carte',
+    },
+    createGeoMap: {
+      create: {
+        title: 'Créer une carte géographique',
+      },
+      edit: {
+        title: 'Modifier une carte géographique',
+      },
+      duplicate: {
+        title: 'Dupliquer une carte géographique',
+      },
+    },
+    createFlowchartMap: {
+      create: {
+        title: 'Créer un flowchart',
+      },
+      edit: {
+        title: 'Modifier un flowchart',
+      },
+      duplicate: {
+        title: 'Dupliquer un flowchart',
+      },
+    },
+    createMermaidMap: {
+      create: {
+        title: 'Créer un diagramme de mermaid',
+      },
+      edit: {
+        title: 'Modifier un diagramme de mermaid',
+      },
+      duplicate: {
+        title: 'Dupliquer un diagramme de diagram',
+      },
+    },
+    createTreeOfDependenciesMap: {
+      create: {
+        title: 'Créer un arbre de diagramme de dépendances',
+      },
+      edit: {
+        title: 'Modifier un diagramme d\'arborescence de dépendances',
+      },
+      duplicate: {
+        title: 'Dupliquer un diagramme d\'arborescence de dépendances',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -2807,6 +2855,10 @@ export default merge({
       title: 'KPI',
       message: '', // TODO: add correct message
     },
+    [USERS_PERMISSIONS.technical.map]: {
+      title: 'Plans',
+      message: '', // TODO: add correct message
+    },
 
     /**
      * Admin general
@@ -2934,5 +2986,14 @@ export default merge({
 
   filter: {
     oldPattern: 'Ancien format de motif',
+  },
+
+  map: {
+    types: {
+      [MAP_TYPES.geo]: 'Géo',
+      [MAP_TYPES.flowchart]: 'Flowchart',
+      [MAP_TYPES.mermaid]: 'Mermaid',
+      [MAP_TYPES.treeOfDependencies]: 'Arbre des dépendances',
+    },
   },
 }, featureService.get('i18n.fr'));
