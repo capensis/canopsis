@@ -40,6 +40,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    types: {
+      type: Array,
+      default: () => [
+        PBEHAVIOR_TYPE_TYPES.maintenance,
+        PBEHAVIOR_TYPE_TYPES.inactive,
+        PBEHAVIOR_TYPE_TYPES.pause,
+      ],
+    },
   },
   computed: {
     rules() {
@@ -49,14 +57,10 @@ export default {
     },
 
     availableIcons() {
-      return [
-        PBEHAVIOR_TYPE_TYPES.maintenance,
-        PBEHAVIOR_TYPE_TYPES.inactive,
-        PBEHAVIOR_TYPE_TYPES.pause,
-      ].map(type => ({
+      return this.types.map(type => ({
         value: type,
         icon: WEATHER_ICONS[type],
-        text: this.$t(`pbehaviorTypes.types.${type}`),
+        text: this.$t(`serviceWeather.iconTypes.${type}`),
       }));
     },
   },
