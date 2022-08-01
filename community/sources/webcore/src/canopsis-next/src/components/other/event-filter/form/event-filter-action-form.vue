@@ -12,14 +12,7 @@
       :label="$t('common.description')",
       key="description"
     )
-    v-text-field(
-      v-field="form.name",
-      v-validate="'required'",
-      :label="$t('common.name')",
-      :error-messages="errors.collect('name')",
-      name="name",
-      key="name"
-    )
+    c-name-field(v-field="form.name", key="name")
     v-text-field(
       v-if="isCopyActionType",
       v-field="form.value",
