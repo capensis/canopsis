@@ -52,6 +52,7 @@ export default {
       this.$modals.show({
         name: CREATE_MAP_MODAL_NAMES_BY_TYPE[type],
         config: {
+          map: { type },
           action: async (map) => {
             await this.config.action(map);
 

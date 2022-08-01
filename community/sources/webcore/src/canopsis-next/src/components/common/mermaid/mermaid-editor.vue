@@ -1,0 +1,79 @@
+<template lang="pug">
+  v-layout.mermaid-editor
+    v-flex.mermaid-editor__field(xs4)
+      v-textarea.mt-0.pa-0(v-model="form.code", :error="!isValidMermaid", rows="27", hide-details)
+    v-flex(xs8)
+      v-layout.fill-height(column)
+        v-flex.mermaid-editor__toolbar
+          v-layout(row, align-center, justify-end)
+            v-flex(xs4)
+              mermaid-theme-field.my-2(v-field="form.theme")
+        v-flex
+          mermaid-preview(:value="form.code", :config="config", :error="!isValidMermaid")
+</template>
+
+<script>
+import { MERMAID_THEME_PROPERTIES_BY_NAME } from '@/constants';
+
+import { isValidMermaidDiagram } from '@/helpers/mermaid';
+
+import MermaidThemeField from './partials/mermaid-theme-field.vue';
+import MermaidPreview from './mermaid-preview.vue';
+
+export default {
+  components: { MermaidThemeField, MermaidPreview },
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
+  props: {
+    form: {
+      type: Object,
+      required: true,
+    },
+  },
+  computed: {
+    isValidMermaid() {
+      return isValidMermaidDiagram(this.form.code);
+    },
+
+    config() {
+      const themeProperties = MERMAID_THEME_PROPERTIES_BY_NAME[this.form.theme] ?? {};
+
+      return {
+        theme: this.form.theme,
+        ...themeProperties,
+
+        er: {
+          useMaxWidth: false,
+        },
+        sequence: {
+          useMaxWidth: false,
+        },
+        flowchart: {
+          useMaxWidth: false,
+        },
+      };
+    },
+  },
+};
+</script>
+
+<style lang="scss">
+$borderColor: #e5e5e5;
+
+.mermaid-editor {
+  border: 1px solid $borderColor;
+  min-height: 500px;
+
+  &__field {
+    border-right: 1px solid $borderColor;
+  }
+
+  &__toolbar {
+    height: 60px;
+    max-height: 60px;
+    border-bottom: 1px solid $borderColor;
+  }
+}
+</style>
