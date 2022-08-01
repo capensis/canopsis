@@ -26,7 +26,7 @@
 <script>
 import { omit } from 'lodash';
 
-import { MODALS, MAP_TYPES, MAP_CREATE_MODAL_NAMES_BY_TYPE } from '@/constants';
+import { MODALS, MAP_TYPES, CREATE_MAP_MODAL_NAMES_BY_TYPE } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import { permissionsTechnicalMapMixin } from '@/mixins/permissions/technical/map';
@@ -71,7 +71,7 @@ export default {
       }[map.type];
 
       this.$modals.show({
-        name: MAP_CREATE_MODAL_NAMES_BY_TYPE[map.type],
+        name: CREATE_MAP_MODAL_NAMES_BY_TYPE[map.type],
         config: {
           map,
           title,
@@ -93,7 +93,7 @@ export default {
       }[map.type];
 
       this.$modals.show({
-        name: MAP_CREATE_MODAL_NAMES_BY_TYPE[map.type],
+        name: CREATE_MAP_MODAL_NAMES_BY_TYPE[map.type],
         config: {
           map: omit(map, ['_id']),
           title,

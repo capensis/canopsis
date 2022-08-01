@@ -7,7 +7,7 @@ export const MAP_TYPES = {
   treeOfDependencies: 'treeOfDependencies',
 };
 
-export const MAP_CREATE_MODAL_NAMES_BY_TYPE = {
+export const CREATE_MAP_MODAL_NAMES_BY_TYPE = {
   [MAP_TYPES.geo]: MODALS.createGeoMap,
   [MAP_TYPES.flowchart]: MODALS.createFlowchartMap,
   [MAP_TYPES.mermaid]: MODALS.createMermaidMap,
