@@ -17,6 +17,7 @@ import { keyBy, merge } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
+  BASIC_ENTITY_TYPES,
   ENTITY_PATTERN_FIELDS,
   ENTITY_TYPES,
   MAX_LIMIT,
@@ -117,17 +118,37 @@ export default {
 
     componentOptions() {
       return {
-        operators: [PATTERN_OPERATORS.hasOneOf, PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        operators: [
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+        ],
         defaultValue: [],
-        valueField: this.entitiesValueField,
+        valueField: {
+          is: 'c-entity-field',
+          props: {
+            entityTypes: this.entityTypes ?? [BASIC_ENTITY_TYPES.component],
+          },
+        },
       };
     },
 
     connectorOptions() {
       return {
-        operators: [PATTERN_OPERATORS.hasOneOf, PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        operators: [
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+        ],
         defaultValue: [],
-        valueField: this.entitiesValueField,
+        valueField: {
+          is: 'c-entity-field',
+          props: {
+            entityTypes: this.entityTypes ?? [BASIC_ENTITY_TYPES.connector],
+          },
+        },
       };
     },
 

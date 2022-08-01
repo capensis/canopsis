@@ -43,7 +43,7 @@ describe('widget-wrapper', () => {
       store: createMockedStoreModules([{
         name: 'info',
         getters: {
-          edition: CANOPSIS_EDITION.cat,
+          edition: CANOPSIS_EDITION.pro,
         },
       }]),
     });
@@ -65,7 +65,7 @@ describe('widget-wrapper', () => {
       store: createMockedStoreModules([{
         name: 'info',
         getters: {
-          edition: CANOPSIS_EDITION.core,
+          edition: CANOPSIS_EDITION.community,
         },
       }]),
     });
@@ -87,7 +87,7 @@ describe('widget-wrapper', () => {
       store: createMockedStoreModules([{
         name: 'info',
         getters: {
-          edition: CANOPSIS_EDITION.cat,
+          edition: CANOPSIS_EDITION.pro,
         },
       }]),
     });
@@ -110,7 +110,7 @@ describe('widget-wrapper', () => {
       store: createMockedStoreModules([{
         name: 'info',
         getters: {
-          edition: CANOPSIS_EDITION.cat,
+          edition: CANOPSIS_EDITION.pro,
         },
       }]),
     });
@@ -132,7 +132,7 @@ describe('widget-wrapper', () => {
       store: createMockedStoreModules([{
         name: 'info',
         getters: {
-          edition: CANOPSIS_EDITION.cat,
+          edition: CANOPSIS_EDITION.pro,
         },
       }]),
     });
@@ -155,7 +155,7 @@ describe('widget-wrapper', () => {
       store: createMockedStoreModules([{
         name: 'info',
         getters: {
-          edition: CANOPSIS_EDITION.cat,
+          edition: CANOPSIS_EDITION.pro,
         },
       }]),
     });

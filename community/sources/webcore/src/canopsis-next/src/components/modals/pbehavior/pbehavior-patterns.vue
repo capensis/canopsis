@@ -63,7 +63,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form.patterns);
+          await this.config.action(this.form);
         }
 
         this.$modals.hide();

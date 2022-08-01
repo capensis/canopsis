@@ -147,6 +147,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(this.items.map(({ _id: id }) => id)),
+          afterSubmit: this.afterSubmit,
         },
       });
     },
