@@ -87,7 +87,7 @@ export default {
     },
 
     getUpdatedRule(rule, newRule) {
-      const { defaultValue } = this.getRuleProps(newRule);
+      const { defaultValue, operators } = this.getRuleProps(newRule);
 
       const updatedRule = { ...newRule };
 
@@ -96,6 +96,10 @@ export default {
         updatedRule.value = defaultValue;
       } else if (updatedRule.operator !== rule.operator) {
         updatedRule.value = convertValueByOperator(updatedRule.value, updatedRule.operator);
+      }
+
+      if (updatedRule.value !== rule.value && operators?.length === 1) {
+        [updatedRule.operator] = operators;
       }
 
       return updatedRule;

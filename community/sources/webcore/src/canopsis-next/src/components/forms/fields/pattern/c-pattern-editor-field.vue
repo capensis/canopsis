@@ -224,6 +224,7 @@ export default {
 
       this.updateModel({
         ...this.patterns,
+        is_corporate: pattern.is_corporate,
         id: pattern._id,
         groups,
       });

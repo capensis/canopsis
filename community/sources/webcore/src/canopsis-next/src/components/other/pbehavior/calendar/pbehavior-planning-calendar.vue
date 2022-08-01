@@ -38,7 +38,7 @@
     template(#menuRight="")
       pbehavior-planning-calendar-legend(
         :exception-types="exceptionTypes",
-        :colors-to-types="colorsToTypes"
+        :colors-to-types="colorsToPbehaviors"
       )
 </template>
 
@@ -265,7 +265,7 @@ export default {
         /**
          * If there is `type` field in timespan it means that timespan is exception date with a `type`
          */
-        const color = pbehavior.color ?? this.getColorForPbehavior(pbehavior);
+        const color = pbehavior.color || this.getColorForPbehavior(pbehavior);
         const forecolor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
         const daySpan = getSpanForTimestamps({
