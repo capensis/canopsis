@@ -82,4 +82,9 @@ export const MODALS = {
   healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
   info: 'info',
   createKpiFilter: 'create-kpi-filter',
+  createMap: 'create-map',
+  createGeoMap: 'create-geo-map',
+  createFlowchartMap: 'create-flowchart-map',
+  createMermaidMap: 'create-mermaid-map',
+  createTreeOfDependenciesMap: 'create-tree-of-dependencies-map',
 };

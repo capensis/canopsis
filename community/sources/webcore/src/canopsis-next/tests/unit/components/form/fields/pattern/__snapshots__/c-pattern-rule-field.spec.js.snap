@@ -163,6 +163,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with default prop
       >
         <c-pattern-operator-field-stub
           name="rule.operator"
+          operators=""
           required="required"
           value="equal"
         />
@@ -219,6 +220,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with duration typ
       >
         <c-pattern-operator-field-stub
           name="rule.operator"
+          operators=""
           required="required"
           value="not_equal"
         />
@@ -288,6 +290,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with extra infos 
       >
         <c-pattern-operator-field-stub
           name="rule.operator"
+          operators=""
           required="required"
           value="equal"
         />
@@ -352,6 +355,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with infos type a
       >
         <c-pattern-operator-field-stub
           name="rule.operator"
+          operators=""
           required="required"
           value="equal"
         />

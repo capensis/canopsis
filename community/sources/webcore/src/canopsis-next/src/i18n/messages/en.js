@@ -35,6 +35,7 @@ import {
   PBEHAVIOR_TYPE_TYPES,
   SCENARIO_TRIGGERS,
   WEATHER_ACTIONS_TYPES,
+  MAP_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -493,9 +494,6 @@ export default merge({
         massEnable: 'Enable entities',
         massDisable: 'Disable entities',
       },
-    },
-    entityInfo: {
-      valueAsList: 'Change value type to list',
     },
     fab: {
       common: 'Add a new entity',
@@ -1734,6 +1732,53 @@ export default merge({
         title: 'Edit shared pbehavior filter',
       },
     },
+    createMap: {
+      title: 'Create a map',
+    },
+    createGeoMap: {
+      create: {
+        title: 'Create a geomap',
+      },
+      edit: {
+        title: 'Edit a geomap',
+      },
+      duplicate: {
+        title: 'Duplicate a geomap',
+      },
+    },
+    createFlowchartMap: {
+      create: {
+        title: 'Create a flowchart',
+      },
+      edit: {
+        title: 'Edit a flowchart',
+      },
+      duplicate: {
+        title: 'Duplicate a flowchart',
+      },
+    },
+    createMermaidMap: {
+      create: {
+        title: 'Create a mermaid diagram',
+      },
+      edit: {
+        title: 'Edit a mermaid diagram',
+      },
+      duplicate: {
+        title: 'Duplicate a mermaid diagram',
+      },
+    },
+    createTreeOfDependenciesMap: {
+      create: {
+        title: 'Create a tree of dependencies diagram',
+      },
+      edit: {
+        title: 'Edit a tree of dependencies diagram',
+      },
+      duplicate: {
+        title: 'Duplicate a tree of dependencies diagram',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1801,7 +1846,7 @@ export default merge({
     JSONNotValid: 'Invalid JSON',
     versionNotFound: 'Unable to get application version',
     statsRequestProblem: 'An error occurred while retrieving stats data',
-    statsWrongEditionError: "Stats widgets are not available with 'core' edition",
+    statsWrongEditionError: "Stats widgets are not available with 'community' edition",
     socketConnectionProblem: 'Problem with connection to socket server',
     endDateLessOrEqualStartDate: 'End date should be after start date',
     unknownWidgetType: 'Unknown widget type: {type}',
@@ -2099,6 +2144,11 @@ export default merge({
       [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Execute instruction',
       [WEATHER_ACTIONS_TYPES.declareTicket]: 'Declare ticket',
     },
+    iconTypes: {
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+    },
   },
   contextGeneralTable: {
     addSelection: 'Add selection',
@@ -2178,8 +2228,9 @@ export default merge({
     usingType: 'Cannot be deleted since it is in use',
     defaultType: 'Type is default, because cannot be edited',
     types: {
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Default active',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Default inactive',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
-      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
     },
   },
@@ -2805,6 +2856,10 @@ export default merge({
       title: 'KPI',
       message: '', // TODO: add correct message
     },
+    [USERS_PERMISSIONS.technical.map]: {
+      title: 'Maps',
+      message: '', // TODO: add correct message
+    },
 
     /**
      * Admin general
@@ -2937,5 +2992,11 @@ export default merge({
   map: {
     defineEntity: 'Define entity',
     addLink: 'Add link',
+    types: {
+      [MAP_TYPES.geo]: 'Geo',
+      [MAP_TYPES.flowchart]: 'Flowchart',
+      [MAP_TYPES.mermaid]: 'Mermaid',
+      [MAP_TYPES.treeOfDependencies]: 'Tree of dependencies',
+    },
   },
 }, featureService.get('i18n.en'));

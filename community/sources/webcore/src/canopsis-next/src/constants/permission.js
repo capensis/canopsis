@@ -36,26 +36,26 @@ export const CANOPSIS_STACK = {
 };
 
 export const CANOPSIS_EDITION = {
-  core: 'core',
-  cat: 'cat',
+  community: 'community',
+  pro: 'pro',
 };
 
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
-  snmpRule: { edition: CANOPSIS_EDITION.cat },
-  dynamicInfo: { edition: CANOPSIS_EDITION.cat },
-  metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  snmpRule: { edition: CANOPSIS_EDITION.pro },
+  dynamicInfo: { edition: CANOPSIS_EDITION.pro },
+  metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   scenario: { stack: CANOPSIS_STACK.go },
 };
 
 export const ADMIN_PAGES_RULES = {
-  remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
-  healthcheck: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
-  kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  healthcheck: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
 };
 
 export const NOTIFICATIONS_PAGES_RULES = {
-  instructionStats: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  instructionStats: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
 };
 
 export const USER_PERMISSIONS_PREFIXES = {
@@ -99,6 +99,7 @@ export const USERS_PERMISSIONS = {
     kpi: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpi`,
     kpiFilters: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiFilters`,
     kpiRatingSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiRatingSettings`,
+    map: `${USER_PERMISSIONS_PREFIXES.technical.admin}_map`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,

@@ -51,7 +51,7 @@ export default {
         },
         {
           value: ALARM_PATTERN_FIELDS.resolvedAt,
-          options: this.intervalOptions,
+          options: { disabled: true },
         },
         {
           value: ALARM_PATTERN_FIELDS.lastUpdateDate,

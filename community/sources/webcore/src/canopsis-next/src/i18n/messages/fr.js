@@ -35,6 +35,7 @@ import {
   PBEHAVIOR_TYPE_TYPES,
   SCENARIO_TRIGGERS,
   WEATHER_ACTIONS_TYPES,
+  MAP_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -493,9 +494,6 @@ export default merge({
         massEnable: 'Activer les entités',
         massDisable: 'Désactiver les entités',
       },
-    },
-    entityInfo: {
-      valueAsList: 'Changer le type de valeur en liste',
     },
     fab: {
       common: 'Ajouter une nouvelle entité',
@@ -1734,6 +1732,53 @@ export default merge({
         title: 'Modifier le filtre de comportement partagé',
       },
     },
+    createMap: {
+      title: 'Créer une carte',
+    },
+    createGeoMap: {
+      create: {
+        title: 'Créer une carte géographique',
+      },
+      edit: {
+        title: 'Modifier une carte géographique',
+      },
+      duplicate: {
+        title: 'Dupliquer une carte géographique',
+      },
+    },
+    createFlowchartMap: {
+      create: {
+        title: 'Créer un flowchart',
+      },
+      edit: {
+        title: 'Modifier un flowchart',
+      },
+      duplicate: {
+        title: 'Dupliquer un flowchart',
+      },
+    },
+    createMermaidMap: {
+      create: {
+        title: 'Créer un diagramme de mermaid',
+      },
+      edit: {
+        title: 'Modifier un diagramme de mermaid',
+      },
+      duplicate: {
+        title: 'Dupliquer un diagramme de diagram',
+      },
+    },
+    createTreeOfDependenciesMap: {
+      create: {
+        title: 'Créer un arbre de diagramme de dépendances',
+      },
+      edit: {
+        title: 'Modifier un diagramme d\'arborescence de dépendances',
+      },
+      duplicate: {
+        title: 'Dupliquer un diagramme d\'arborescence de dépendances',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1801,7 +1846,7 @@ export default merge({
     JSONNotValid: 'JSON non valide',
     versionNotFound: 'Erreur dans la récupération du numéro de version...',
     statsRequestProblem: 'Erreur dans la récupération des statistiques',
-    statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
+    statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'community' de Canopsis",
     socketConnectionProblem: 'Problème de connexion aux websockets',
     endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
     unknownWidgetType: 'Type de widget inconnu: {type}',
@@ -2099,6 +2144,11 @@ export default merge({
       [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Exécuter l\'instruction',
       [WEATHER_ACTIONS_TYPES.declareTicket]: 'Déclarer un incident',
     },
+    iconTypes: {
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
+    },
   },
   contextGeneralTable: {
     addSelection: 'Ajouter une sélection',
@@ -2178,8 +2228,9 @@ export default merge({
     usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
     defaultType: 'Le type par défaut ne peut pas être modifié.',
     types: {
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Actif par défaut',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif par défaut',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
-      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
     },
   },
@@ -2805,6 +2856,10 @@ export default merge({
       title: 'KPI',
       message: '', // TODO: add correct message
     },
+    [USERS_PERMISSIONS.technical.map]: {
+      title: 'Plans',
+      message: '', // TODO: add correct message
+    },
 
     /**
      * Admin general
@@ -2937,5 +2992,11 @@ export default merge({
   map: {
     defineEntity: 'Définir l\'entité',
     addLink: 'Ajouter un lien',
+    types: {
+      [MAP_TYPES.geo]: 'Géo',
+      [MAP_TYPES.flowchart]: 'Flowchart',
+      [MAP_TYPES.mermaid]: 'Mermaid',
+      [MAP_TYPES.treeOfDependencies]: 'Arbre des dépendances',
+    },
   },
 }, featureService.get('i18n.fr'));
