@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { MODALS, MAP_TYPES, MAP_ICON_BY_TYPES } from '@/constants';
+import { MODALS, MAP_TYPES, MAP_ICON_BY_TYPES, MAP_CREATE_MODAL_NAMES_BY_TYPE } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 
@@ -44,15 +44,8 @@ export default {
     },
 
     selectType(type) {
-      const modalName = {
-        [MAP_TYPES.geo]: MODALS.createGeoMap,
-        [MAP_TYPES.flowchart]: MODALS.createFlowchartMap,
-        [MAP_TYPES.mermaid]: MODALS.createMermaidMap,
-        [MAP_TYPES.treeOfDependencies]: MODALS.createTreeOfDependenciesMap,
-      }[type];
-
       this.$modals.show({
-        name: modalName,
+        name: MAP_CREATE_MODAL_NAMES_BY_TYPE[type],
         config: {
           action: async (map) => {
             await this.config.action(map);
