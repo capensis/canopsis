@@ -35,10 +35,10 @@ import {
   PBEHAVIOR_TYPE_TYPES,
   SCENARIO_TRIGGERS,
   WEATHER_ACTIONS_TYPES,
+  MAP_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
-import { MAP_TYPES } from '@/constants/map';
 
 export default merge({
   common: {
