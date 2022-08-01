@@ -4,45 +4,9 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with custom p
 <div
   class="layout column"
 >
-  <div
-    class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-text-field__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Name
-          </label>
-          <input
-            aria-label="Name"
-            name="name"
-            type="text"
-          />
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <div
-            class="v-messages__wrapper"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <c-name-field-stub
+    value="name"
+  />
   <c-duration-field-stub
     required="required"
     value="[object Object]"
@@ -72,45 +36,7 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with default 
 <div
   class="layout column"
 >
-  <div
-    class="v-input v-text-field theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-text-field__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Name
-          </label>
-          <input
-            aria-label="Name"
-            name="name"
-            type="text"
-          />
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <div
-            class="v-messages__wrapper"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <c-name-field-stub />
   <c-duration-field-stub
     required="required"
   />
