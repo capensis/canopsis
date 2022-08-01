@@ -1,19 +1,9 @@
 db.default_entities.createIndex({enabled: 1}, {name: "enabled_1"});
+db.default_entities.createIndex({type: 1}, {name: "type_1"});
 
 db.periodical_alarm.createIndex({t: 1}, {name: "t_1"});
 db.periodical_alarm.createIndex({d: 1}, {name: "d_1"});
-db.periodical_alarm.createIndex(
-    {
-        "v.meta": 1,
-        "v.creation_date": 1,
-    },
-    {
-        name: "v.meta_1_v.creation_date_1",
-        partialFilterExpression: {
-            "v.meta": {$exists: true}
-        }
-    }
-);
+db.periodical_alarm.createIndex({"v.meta": 1, "v.creation_date": 1},{name: "v.meta_1_v.creation_date_1", partialFilterExpression: {"v.meta": {$exists: true}}});
 db.periodical_alarm.createIndex({"v.resolved": 1}, {name: "v.resolved_1"});
 db.periodical_alarm.createIndex({"v.creation_date": 1}, {name: "v.creation_date_1"});
 db.periodical_alarm.createIndex({"v.last_event_date": 1}, {name: "v.last_event_date_1"});
@@ -21,18 +11,7 @@ db.periodical_alarm.createIndex({"v.last_update_date": 1}, {name: "v.last_update
 
 db.resolved_alarms.createIndex({t: 1}, {name: "t_1"});
 db.resolved_alarms.createIndex({d: 1}, {name: "d_1"});
-db.resolved_alarms.createIndex(
-    {
-        "v.meta": 1,
-        "v.creation_date": 1,
-    },
-    {
-        name: "v.meta_1_v.creation_date_1",
-        partialFilterExpression: {
-            "v.meta": {$exists: true}
-        }
-    }
-);
+db.resolved_alarms.createIndex({"v.meta": 1, "v.creation_date": 1}, {name: "v.meta_1_v.creation_date_1", partialFilterExpression: {"v.meta": {$exists: true}}});
 db.resolved_alarms.createIndex({"v.creation_date": 1}, {name: "v.creation_date_1"});
 db.resolved_alarms.createIndex({"v.last_event_date": 1}, {name: "v.last_event_date_1"});
 db.resolved_alarms.createIndex({"v.last_update_date": 1}, {name: "v.last_update_date_1"});
