@@ -49,15 +49,8 @@
           color="primary",
           hide-details
         )
-    pbehavior-reasons-field(
-      v-field="form.reason",
-      v-validate="'required'"
-    )
-    pbehavior-type-field(
-      v-field="form.type",
-      v-validate="'required'",
-      return-object
-    )
+    c-pbehavior-reason-field(v-field="form.reason", required, return-object)
+    c-pbehavior-type-field(v-field="form.type", required, return-object)
     c-color-picker-field(v-field="form.color")
 </template>
 

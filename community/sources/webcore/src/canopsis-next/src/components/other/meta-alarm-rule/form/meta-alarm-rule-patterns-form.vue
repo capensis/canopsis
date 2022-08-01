@@ -5,6 +5,7 @@
     :alarm-attributes="alarmAttributes",
     :entity-attributes="entityAttributes",
     :with-total-entity="withTotalEntity",
+    :some-required="someRequired",
     with-alarm,
     with-entity
   )
@@ -29,6 +30,10 @@ export default {
       default: false,
     },
     withTotalEntity: {
+      type: Boolean,
+      default: false,
+    },
+    someRequired: {
       type: Boolean,
       default: false,
     },
@@ -61,7 +66,7 @@ export default {
         },
         {
           value: ALARM_PATTERN_FIELDS.resolvedAt,
-          options: this.intervalOptions,
+          options: { disabled: true },
         },
         {
           value: ALARM_PATTERN_FIELDS.lastUpdateDate,

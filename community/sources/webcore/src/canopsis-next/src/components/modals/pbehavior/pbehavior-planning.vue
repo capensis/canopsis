@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(fill-height, close)
+    modal-wrapper(close)
       template(#title="")
         span {{ $t('modals.pbehaviorPlanning.title') }}
       template(#text="")
@@ -74,9 +74,11 @@ export default {
       const updatedPbehaviors = Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest);
       const removedPbehaviors = Object.values(this.form.removedPbehaviorsById);
 
-      await this.createPbehaviorsWithComments(createdPbehaviors);
-      await this.updatePbehaviorsWithComments(updatedPbehaviors);
-      await this.removePbehaviors(removedPbehaviors);
+      await Promise.all([
+        createdPbehaviors.length && this.createPbehaviorsWithComments(createdPbehaviors),
+        updatedPbehaviors.length && this.updatePbehaviorsWithComments(updatedPbehaviors),
+        removedPbehaviors.length && this.removePbehaviors(removedPbehaviors),
+      ]);
 
       if (this.config.afterSubmit) {
         await this.config.afterSubmit();

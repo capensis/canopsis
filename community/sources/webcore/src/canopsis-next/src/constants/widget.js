@@ -43,8 +43,8 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
 };
 
 export const WIDGET_TYPES_RULES = {
-  [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.cat },
-  [WIDGET_TYPES.testingWeather]: { edition: CANOPSIS_EDITION.cat },
+  [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.pro },
+  [WIDGET_TYPES.testingWeather]: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const WIDGET_GRID_SIZES_KEYS = {
