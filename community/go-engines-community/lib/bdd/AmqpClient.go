@@ -5,6 +5,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math/rand"
+	"net/url"
+	"text/template"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -14,10 +19,6 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
-	"math/rand"
-	"net/url"
-	"text/template"
-	"time"
 )
 
 // stepTimeout is used to limit waiting time for wait steps.
@@ -149,6 +150,43 @@ func (c *AmqpClient) IWaitTheEndOfEventsProcessing(count int) error {
 			}
 		case <-done:
 			return fmt.Errorf("reached timeout: waiting for %d events, but got %d", count, msgsCount)
+		}
+	}
+}
+
+/**
+Step example:
+	When I wait the end of 2-3 events processing
+*/
+func (c *AmqpClient) IWaitTheEndOfMinMaxEvents(minCount int, maxCount int) error {
+	done := time.After(3 * time.Second)
+	msgsCount := 0
+
+	for {
+		select {
+		case d, ok := <-c.mainStreamAckMsgs:
+			if !ok {
+				return errors.New("consume chan is closed")
+			}
+
+			msgsCount++
+
+			event := &types.Event{}
+			err := c.decoder.Decode(d.Body, event)
+			c.eventLogger.Info().Err(err).
+				Str("event_type", event.EventType).
+				Str("entity", event.GetEID()).
+				RawJSON("body", d.Body).Msg("received event")
+
+			if msgsCount == maxCount {
+				return nil
+			}
+		case <-done:
+			if msgsCount >= minCount {
+				return nil
+			}
+
+			return fmt.Errorf("reached timeout: waiting for at least %d events, but got %d", minCount, msgsCount)
 		}
 	}
 }

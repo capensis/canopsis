@@ -4268,28 +4268,28 @@ Feature: get service weather
     """json
     [
       {
-        "_id": "test-pbehavior-weather-service-26"
+        "_id": "test-resource-pbehavior-weather-service-26-1/test-component-pbehavior-weather-service-26"
       },
       {
-        "_id": "test-resource-pbehavior-weather-service-26-1/test-component-pbehavior-weather-service-26"
+        "_id": "test-pbehavior-weather-service-26"
       }
     ]
     """
     Then the response code should be 207
-    When I wait the end of 2 events processing
+    When I wait the end of 2-3 events processing
     When I do PUT /api/v4/bulk/entities/enable:
     """json
     [
       {
-        "_id": "test-pbehavior-weather-service-26"
+        "_id": "test-resource-pbehavior-weather-service-26-1/test-component-pbehavior-weather-service-26"
       },
       {
-        "_id": "test-resource-pbehavior-weather-service-26-1/test-component-pbehavior-weather-service-26"
+        "_id": "test-pbehavior-weather-service-26"
       }
     ]
     """
     Then the response code should be 207
-    When I wait the end of 3 events processing
+    When I wait the end of 3-4 events processing
     When I do GET /api/v4/weather-services?filter={{ .filterID }}
     Then the response code should be 200
     Then the response body should contain:

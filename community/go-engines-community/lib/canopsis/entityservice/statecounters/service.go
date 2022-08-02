@@ -579,10 +579,22 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event type
 		},
 		{
 			"$lookup": bson.M{
-				"from":         mongo.AlarmMongoCollection,
-				"localField":   "entity._id",
-				"foreignField": "d",
-				"as":           "alarm",
+				"from": mongo.AlarmMongoCollection,
+				"let":  bson.M{"id": "$entity._id"},
+				"pipeline": []bson.M{
+					{
+						"$match": bson.M{
+							"$and": []bson.M{
+								{"$expr": bson.M{"$eq": bson.A{"$d", "$$id"}}},
+								{"v.resolved": nil},
+							},
+						},
+					},
+					{
+						"$limit": 1,
+					},
+				},
+				"as": "alarm",
 			},
 		},
 		{
@@ -590,9 +602,6 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event type
 				"path":                       "$alarm",
 				"preserveNullAndEmptyArrays": true,
 			},
-		},
-		{
-			"$match": bson.M{"alarm.v.resolved": nil},
 		},
 	})
 	if err != nil {
@@ -609,6 +618,10 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event type
 		}
 
 		if depEnt.Alarm.ID != "" {
+			if depEnt.Alarm.IsResolved() {
+				continue
+			}
+
 			counters.All++
 			if depEnt.Alarm.IsInActivePeriod() {
 				counters.IncrementAlarmCounters(int(depEnt.Alarm.CurrentState()), depEnt.Alarm.IsAck())
