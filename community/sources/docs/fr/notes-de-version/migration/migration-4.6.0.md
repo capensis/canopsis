@@ -120,22 +120,29 @@ Assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes 
     
     N'hésitez pas à nous signaler tout problème d'exécution que vous pourriez rencontrer lors de cette étape.
 
-### Synchronisation du fichier de configuration `canopsis.toml`
+### Migration des configurations `canopsis.toml` personnalisées vers `canopsis-override.toml`
 
-Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fichier de référence, notamment dans le cas où vous auriez apporté des modifications locales à ce fichier :
+Canopsis 4.6.0 intègre un nouveau système de surchargement du fichier canopsis.toml.
+Toutes vos configurations personnalisées doivent maintenant utiliser ce système.
+Vous pouvez trouver sa documentation sur la page [Modification du fichier de configuration toml canopsis.toml](../../guide-administration/administration-avancee/modification-canopsis-toml.md#canopsis-460_1)
+
+Lien vers les fichiers de configuration par défaut de Canopsis :
 
 * [`canopsis.toml` pour Canopsis Community 4.6.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/4.6.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml)
 * [`canopsis.toml` pour Canopsis Pro 4.6.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/4.6.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml)
 
+
 === "Paquets CentOS 7"
 
-    Le fichier à synchroniser est `/opt/canopsis/etc/canopsis.toml`.
+    Si vous avez des configuration personalisées dans `/opt/canopsis/etc/canopsis.toml`, reportez les dans `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
+	Restorez ensuite `/opt/canopsis/etc/canopsis.toml` à son état initial.
 
 === "Docker Compose"
 
     Si vous n'avez pas apporté de modification locale, ce fichier est directement intégré et mise à jour dans les conteneurs, et vous n'avez donc pas de modification à apporter.
     
-    Si vous modifiez ce fichier à l'aide d'un volume surchargeant `canopsis.toml`, c'est ce fichier local qui doit être synchronisé.
+    Si vous modifiez ce fichier à l'aide d'un volume surchargeant `canopsis.toml`, reportez toutes vos modifications dans `/opt/canopsis/etc/conf.d/canopsis-override.toml` du conteneur `reconfigure` (à l'aide d'un volume).
+    Supprimez ensuite tout volume pointant sur `/canopsis.toml`, `/canopsis-pro.toml` ou `/canopsis-community.toml`.
 
 ### Lancement du provisioning et de `canopsis-reconfigure`
 
