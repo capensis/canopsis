@@ -10565,6 +10565,23 @@ moment@2.22.1, "moment@>= 2.9.0", moment@^2.22.2:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
 
+monaco-editor-webpack-plugin@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/monaco-editor-webpack-plugin/-/monaco-editor-webpack-plugin-6.0.0.tgz#628956ce1851afa2a5f6c88d0ecbb24e9a444898"
+  integrity sha512-vC886Mzpd2AkSM35XLkfQMjH+Ohz6RISVwhAejDUzZDheJAiz6G34lky1vyO8fZ702v7IrcKmsGwL1rRFnwvUA==
+  dependencies:
+    loader-utils "^2.0.0"
+
+monaco-editor@0.30.*:
+  version "0.30.1"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.30.1.tgz#47f8d18a0aa2264fc5654581741ab8d7bec01689"
+  integrity sha512-B/y4+b2O5G2gjuxIFtCE2EkM17R2NM7/3F8x0qcPsqy4V83bitJTIO4TIeZpYlzu/xy6INiY/+84BEm6+7Cmzg==
+
+monaco-mermaid@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/monaco-mermaid/-/monaco-mermaid-1.0.6.tgz#2f0db5b38cb0c6539a28d5e5758dc24f88d931f3"
+  integrity sha512-ntPXb1DPQ9k4/3pV3GLXF39KZOXrpns9nfB5On77nFATuUwN81N/clOR9SvGnoQhcP7n8A0ppE8JVNeYfVF97g==
+
 move-concurrently@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/move-concurrently/-/move-concurrently-1.0.1.tgz#be2c005fda32e0b29af1f05d7c4b33214c701f92"
