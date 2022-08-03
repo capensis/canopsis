@@ -6,12 +6,16 @@
       v-layout.fill-height(column)
         v-flex.mermaid-editor__toolbar
           v-layout(row, align-center, justify-end)
+            v-btn-toggle.mr-2
+              v-btn.ma-0(v-model="addOnClick", flat, large)
+                v-icon(left) add_location
+                span {{ $t('mermaid.addPoint') }}
             v-flex(xs4)
               mermaid-theme-field.my-2(v-field="form.theme")
         v-flex
           div.position-relative
             mermaid-preview(:value="form.code", :config="config", :error="!isValidMermaid")
-            mermaid-points.mermaid-editor__points(v-field="form.points")
+            mermaid-points.mermaid-editor__points(v-field="form.points", :add-on-click="addOnClick")
 </template>
 
 <script>
@@ -37,6 +41,11 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      addOnClick: false,
+    };
   },
   computed: {
     isValidMermaid() {

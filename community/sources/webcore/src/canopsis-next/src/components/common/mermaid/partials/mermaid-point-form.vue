@@ -1,14 +1,10 @@
 <template lang="pug">
-  v-form(@submit.prevent.stop="submit")
+  v-form(v-click-outside.zIndex="showConfirmationModal", @submit.prevent.stop="submit")
     v-card(width="400")
       v-card-title.primary.pa-2.white--text
         v-layout(justify-space-between, align-center)
-          h4 {{ title || $t('mermaid.addPoint') }}
-          v-btn.ma-0.ml-3(
-            icon,
-            small,
-            @click="close"
-          )
+          h4 {{ title }}
+          v-btn.ma-0.ml-3(icon, small, @click="close")
             v-icon(color="white") close
       point-form(v-field="form")
       v-layout(justify-end)
@@ -19,11 +15,11 @@
           @click="close"
         ) {{ $t('common.cancel') }}
         v-btn.error(
-          v-if="removable",
+          v-if="editing",
           :disabled="submitting",
           depressed,
           flat,
-          @click="$emit('remove')"
+          @click.stop="$emit('remove')"
         ) {{ $t('common.delete') }}
         v-btn.primary(
           :disabled="isDisabled",
@@ -33,8 +29,9 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 export default {
   $_veeValidate: {
@@ -42,20 +39,13 @@ export default {
   },
   mixins: [
     submittableMixinCreator(),
-    confirmableModalMixinCreator({
-      closeMethod: 'close',
-    }),
   ],
   props: {
     point: {
       type: Object,
       required: true,
     },
-    title: {
-      type: String,
-      required: false,
-    },
-    removable: {
+    editing: {
       type: Boolean,
       required: false,
     },
@@ -64,6 +54,20 @@ export default {
     return {
       form: { ...this.point },
     };
+  },
+  computed: {
+    title() {
+      if (this.editing) {
+        return this.$t('mermaid.editPoint');
+      }
+
+      return this.$t('mermaid.addPoint');
+    },
+  },
+  watch: {
+    point(point) {
+      this.form = { ...point };
+    },
   },
   methods: {
     close() {
@@ -76,6 +80,25 @@ export default {
       if (isFormValid) {
         this.$emit('submit', this.form);
       }
+    },
+
+    showConfirmationModal() {
+      this.$modals.show({
+        id: this.point._id,
+        name: MODALS.clickOutsideConfirmation,
+        dialogProps: {
+          persistent: true,
+        },
+        config: {
+          action: (confirmed) => {
+            if (confirmed) {
+              return this.submit();
+            }
+
+            return this.close();
+          },
+        },
+      });
     },
   },
 };
