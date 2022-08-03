@@ -1,7 +1,9 @@
 <template lang="pug">
   div.mermaid-points(
     ref="container",
+    :class="{ 'mermaid-points--addable': addOnClick && !isFormOpened }",
     @contextmenu.stop.prevent="openContextmenu",
+    @click="openAddPointFormByClick",
     @dblclick="openAddPointFormByDoubleClick"
   )
     v-icon.mermaid-points__point(
@@ -9,7 +11,8 @@
       :key="point._id",
       :style="getPointStyles(point)",
       @contextmenu.stop.prevent="openEditContextmenu(point)",
-      @click.stop.prevent="openEditContextmenu(point)"
+      @dblclick.stop="openEditPointFormByDoubleClick(point)",
+      @click.stop=""
     ) location_on
 
     v-menu(
@@ -37,7 +40,7 @@
       mermaid-point-form(
         v-if="editingPoint || addingPoint",
         :point="editingPoint || addingPoint",
-        :removable="editing",
+        :editing="!!editingPoint",
         @cancel="clearMenuData",
         @submit="submitPointForm",
         @remove="showRemovePointModal"
@@ -66,6 +69,10 @@ export default {
       type: Array,
       required: true,
     },
+    addOnClick: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -82,6 +89,11 @@ export default {
       pageX: 0,
       pageY: 0,
     };
+  },
+  computed: {
+    isFormOpened() {
+      return this.adding || this.editing || this.shownMenu;
+    },
   },
   methods: {
     getPointStyles(point) {
@@ -103,7 +115,7 @@ export default {
     },
 
     openContextmenu(event) {
-      if (this.shownMenu || this.adding || this.editing) {
+      if (this.isFormOpened) {
         return;
       }
 
@@ -115,11 +127,14 @@ export default {
       this.shownMenu = true;
     },
 
-    openEditContextmenu(point) {
-      if (this.shownMenu || this.adding || this.editing) {
-        return;
-      }
+    setOffsetsByEvent(event) {
+      this.pageX = event.pageX;
+      this.pageY = event.pageY;
+      this.offsetX = event.offsetX;
+      this.offsetY = event.offsetY;
+    },
 
+    setOffsetsByPoint(point) {
       const { x, y, width, height } = this.$refs.container.getBoundingClientRect();
 
       const offsetX = point.x * width;
@@ -129,13 +144,21 @@ export default {
       this.pageY = y + offsetY;
       this.offsetX = offsetX;
       this.offsetY = offsetY;
+    },
+
+    openEditContextmenu(point) {
+      if (this.isFormOpened) {
+        return;
+      }
+
+      this.setOffsetsByPoint(point);
 
       this.shownMenu = true;
       this.editingPoint = point;
     },
 
     openAddPointForm() {
-      if (this.adding || this.editing) {
+      if (this.isFormOpened) {
         return;
       }
 
@@ -151,17 +174,29 @@ export default {
       this.adding = true;
     },
 
-    openAddPointFormByDoubleClick(event) {
-      if (this.adding || this.editing) {
+    openAddPointFormByClick(event) {
+      if (!this.addOnClick || this.isFormOpened) {
         return;
       }
 
-      this.pageX = event.pageX;
-      this.pageY = event.pageY;
-      this.offsetX = event.offsetX;
-      this.offsetY = event.offsetY;
-
+      this.setOffsetsByEvent(event);
       this.openAddPointForm();
+    },
+
+    openAddPointFormByDoubleClick(event) {
+      if (this.isFormOpened) {
+        return;
+      }
+
+      this.setOffsetsByEvent(event);
+      this.openAddPointForm();
+    },
+
+    openEditPointFormByDoubleClick(point) {
+      this.setOffsetsByPoint(point);
+
+      this.editingPoint = point;
+      this.editing = true;
     },
 
     openEditPointForm() {
@@ -202,6 +237,10 @@ export default {
     transform: translate(-50%, -100%);
     user-select: none;
     cursor: pointer;
+  }
+
+  &--addable {
+    cursor: crosshair;
   }
 }
 </style>
