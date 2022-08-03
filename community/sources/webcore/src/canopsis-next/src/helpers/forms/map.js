@@ -97,6 +97,7 @@ export const mapFlowchartPropertiesToForm = properties => ({ ...properties });
 export const mapMermaidPropertiesToForm = (properties = {}) => ({
   theme: properties.theme ?? MERMAID_THEMES.default,
   code: properties.code ?? 'graph TB\na-->b',
+  points: properties.code ?? [],
 });
 
 /**

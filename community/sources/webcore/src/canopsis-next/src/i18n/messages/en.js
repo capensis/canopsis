@@ -3000,6 +3000,9 @@ export default merge({
 
   mermaid: {
     theme: 'Color theme',
+    addPoint: 'Add point',
+    editPoint: 'Edit point',
+    removePoint: 'Remove point',
     themes: {
       [MERMAID_THEMES.default]: 'Default',
       [MERMAID_THEMES.base]: 'Base',
