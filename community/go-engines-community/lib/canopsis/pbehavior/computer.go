@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -15,8 +18,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"sync"
-	"time"
 )
 
 const calculateAll = "all"
@@ -48,6 +49,8 @@ type cancelableComputer struct {
 
 	tasksMx sync.Mutex
 	tasks   []string
+
+	isTest bool
 }
 
 // NewCancelableComputer creates new computer.
@@ -60,6 +63,7 @@ func NewCancelableComputer(
 	encoder encoding.Encoder,
 	queue string,
 	logger zerolog.Logger,
+	isTest bool,
 ) Computer {
 	return &cancelableComputer{
 		logger:              logger,
@@ -157,6 +161,10 @@ func (c *cancelableComputer) computePbehaviors(
 
 	if err != nil {
 		c.logger.Err(err).Msgf("API pbehavior recompute failed")
+		return
+	}
+
+	if c.isTest {
 		return
 	}
 
