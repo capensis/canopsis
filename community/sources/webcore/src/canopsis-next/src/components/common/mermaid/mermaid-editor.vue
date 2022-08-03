@@ -9,7 +9,9 @@
             v-flex(xs4)
               mermaid-theme-field.my-2(v-field="form.theme")
         v-flex
-          mermaid-preview(:value="form.code", :config="config", :error="!isValidMermaid")
+          div.position-relative
+            mermaid-preview(:value="form.code", :config="config", :error="!isValidMermaid")
+            mermaid-points.mermaid-editor__points(v-field="form.points")
 </template>
 
 <script>
@@ -17,11 +19,15 @@ import { MERMAID_THEME_PROPERTIES_BY_NAME } from '@/constants';
 
 import { isValidMermaidDiagram } from '@/helpers/mermaid';
 
+import { formMixin } from '@/mixins/form';
+
 import MermaidThemeField from './partials/mermaid-theme-field.vue';
 import MermaidPreview from './mermaid-preview.vue';
+import MermaidPoints from './mermaid-points.vue';
 
 export default {
-  components: { MermaidThemeField, MermaidPreview },
+  components: { MermaidPoints, MermaidThemeField, MermaidPreview },
+  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -47,10 +53,16 @@ export default {
         er: {
           useMaxWidth: false,
         },
+        pie: {
+          useMaxWidth: false,
+        },
         sequence: {
           useMaxWidth: false,
         },
         flowchart: {
+          useMaxWidth: false,
+        },
+        requirement: {
           useMaxWidth: false,
         },
       };
@@ -74,6 +86,14 @@ $borderColor: #e5e5e5;
     height: 60px;
     max-height: 60px;
     border-bottom: 1px solid $borderColor;
+  }
+
+  &__points {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
 }
 </style>
