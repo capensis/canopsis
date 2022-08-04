@@ -1850,6 +1850,7 @@ export default merge({
     endDateLessOrEqualStartDate: 'End date should be after start date',
     unknownWidgetType: 'Unknown widget type: {type}',
     unique: 'Field must be unique',
+    codeEditorProblem: 'Problem with code-editor',
   },
   warnings: {
     authTokenExpired: 'Authentication token was expired',
