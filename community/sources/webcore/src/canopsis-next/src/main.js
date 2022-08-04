@@ -156,6 +156,7 @@ import CCollapsePanel from '@/components/common/block/c-collapse-panel.vue';
 import CServiceWeatherPatternsField from '@/components/forms/fields/service-weather/c-service-weather-patterns-field.vue';
 import CServiceWeatherIconField from '@/components/forms/fields/service-weather/c-service-weather-icon-field.vue';
 import CContextmenu from '@/components/common/contextmenu/c-contextmenu.vue';
+import CMapField from '@/components/forms/fields/map/c-map-field.vue';
 
 /**
  * Patterns
@@ -399,6 +400,7 @@ Vue.component('c-entity-field', CEntityField);
 Vue.component('c-pbehavior-reason-field', CPbehaviorReasonField);
 Vue.component('c-pbehavior-type-field', CPbehaviorTypeField);
 Vue.component('c-collapse-panel', CCollapsePanel);
+Vue.component('c-contextmenu', CContextmenu);
 
 Vue.component('c-pattern-attribute-field', CPatternAttributeField);
 Vue.component('c-pattern-infos-attribute-field', CPatternInfosAttributeField);
@@ -420,8 +422,10 @@ Vue.component('c-entity-patterns-field', CEntityPatternsField);
 Vue.component('c-pbehavior-patterns-field', CPbehaviorPatternsField);
 Vue.component('c-event-filter-patterns-field', CEventFilterPatternsField);
 Vue.component('c-service-weather-patterns-field', CServiceWeatherPatternsField);
+
 Vue.component('c-service-weather-icon-field', CServiceWeatherIconField);
-Vue.component('c-contextmenu', CContextmenu);
+
+Vue.component('c-map-field', CMapField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
