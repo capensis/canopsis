@@ -16,5 +16,9 @@ export default createEntityModule({
     bulkRemove(context, { data }) {
       return request.delete(API_ROUTES.bulkMaps, { data });
     },
+
+    fetchListWithoutStore() {
+      return request.get(API_ROUTES.maps);
+    },
   },
 });
