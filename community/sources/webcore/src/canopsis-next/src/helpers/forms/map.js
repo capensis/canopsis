@@ -1,5 +1,7 @@
 import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
 
+import uuid from '@/helpers/uuid';
+
 /**
  * @typedef {Object} MapCommonFields
  * @property {string} name
@@ -7,9 +9,19 @@ import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
  */
 
 /**
+ * @typedef {MapCommonFields} MapMermaidPoint
+ * @property {string} _id
+ * @property {string} link
+ * @property {string} entity
+ * @property {number} x
+ * @property {number} y
+ */
+
+/**
  * @typedef {MapCommonFields} MapMermaidProperties
  * @property {string} theme
  * @property {string} code
+ * @property {MapMermaidPoint[]} points
  */
 
 /**
@@ -71,6 +83,20 @@ import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
 /**
  * @typedef {MapMermaid} MapForm
  */
+
+/**
+ * Convert mermaid point to form object
+ *
+ * @param {MapMermaidPoint} [point = {}]
+ * @returns {MapMermaidPoint}
+ */
+export const mermaidPointToForm = (point = {}) => ({
+  x: point.x,
+  y: point.Y,
+  entity: point.entity ?? '',
+  link: point.link,
+  _id: uuid(),
+});
 
 /**
  * Convert map geo properties object to form
