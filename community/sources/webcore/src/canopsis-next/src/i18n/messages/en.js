@@ -258,6 +258,7 @@ export default merge({
     checkPattern: 'Check pattern',
     itemFound: '{count} item found | {count} items found',
     canonicalType: 'Canonical type',
+    map: 'Map | Maps',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -2991,6 +2992,8 @@ export default merge({
   },
 
   map: {
+    defineEntity: 'Define entity',
+    addLink: 'Add link',
     types: {
       [MAP_TYPES.geo]: 'Geo',
       [MAP_TYPES.flowchart]: 'Flowchart',
