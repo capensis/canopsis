@@ -77,6 +77,7 @@ func NewCancelableComputer(
 		encoder:             encoder,
 		publisher:           publisher,
 		queue:               queue,
+		isTest:              isTest,
 	}
 }
 
