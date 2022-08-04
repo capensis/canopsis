@@ -180,6 +180,6 @@ Feature: update alarm on pbehavior
     When I save response pbhInactiveDuration={{ ( index .lastResponse.data 0 ).v.pbh_inactive_duration }}
     When I save response activeDuration={{ ( index .lastResponse.data 0 ).v.active_duration }}
     When I save response expectedPbhInactiveDuration=2
-    When I save response expectedActiveDuration=1
+    When I save response expectedActiveDuration=2
     Then "pbhInactiveDuration" >= "expectedPbhInactiveDuration"
     Then "activeDuration" <= "expectedActiveDuration"
