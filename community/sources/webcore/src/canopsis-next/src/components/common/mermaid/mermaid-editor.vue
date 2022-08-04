@@ -1,27 +1,26 @@
 <template lang="pug">
   v-layout.mermaid-editor
-    v-flex.mermaid-editor__field(xs4)
-      v-textarea.mt-0.pa-0(v-model="form.code", :error="!isValidMermaid", rows="27", hide-details)
-    v-flex(xs8)
+    v-flex.mermaid-editor__sidebar
+      mermaid-code-field.fill-height(v-field="form.code")
+    v-flex.mermaid-editor__content
       v-layout.fill-height(column)
         v-flex.mermaid-editor__toolbar
           v-layout(row, align-center, justify-end)
             v-flex(xs4)
               mermaid-theme-field.my-2(v-field="form.theme")
         v-flex
-          mermaid-preview(:value="form.code", :config="config", :error="!isValidMermaid")
+          mermaid-preview(:value="form.code", :config="config")
 </template>
 
 <script>
 import { MERMAID_THEME_PROPERTIES_BY_NAME } from '@/constants';
 
-import { isValidMermaidDiagram } from '@/helpers/mermaid';
-
+import MermaidCodeField from './partials/mermaid-code-field.vue';
 import MermaidThemeField from './partials/mermaid-theme-field.vue';
 import MermaidPreview from './mermaid-preview.vue';
 
 export default {
-  components: { MermaidThemeField, MermaidPreview },
+  components: { MermaidCodeField, MermaidThemeField, MermaidPreview },
   model: {
     prop: 'form',
     event: 'input',
@@ -33,10 +32,6 @@ export default {
     },
   },
   computed: {
-    isValidMermaid() {
-      return isValidMermaidDiagram(this.form.code);
-    },
-
     config() {
       const themeProperties = MERMAID_THEME_PROPERTIES_BY_NAME[this.form.theme] ?? {};
 
@@ -61,13 +56,25 @@ export default {
 
 <style lang="scss">
 $borderColor: #e5e5e5;
+$sideBarWidth: 500px;
+$sideBarHeight: 500px;
+$contentWidth: 800px;
 
 .mermaid-editor {
-  border: 1px solid $borderColor;
   min-height: 500px;
 
-  &__field {
-    border-right: 1px solid $borderColor;
+  &__sidebar {
+    width: $sideBarWidth;
+    max-width: $sideBarWidth;
+    height: $sideBarHeight;
+    border: 1px solid $borderColor;
+    border-right: none;
+  }
+
+  &__content {
+    width: $contentWidth;
+    max-width: $contentWidth;
+    border: 1px solid $borderColor;
   }
 
   &__toolbar {
