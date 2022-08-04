@@ -53,7 +53,7 @@ export default {
     }
 
     if (!this.$monaco) {
-      this.$popups.error({ text: 'Problem with code-editor' });
+      this.$popups.error({ text: this.$t('errors.codeEditorProblem') });
 
       return;
     }
