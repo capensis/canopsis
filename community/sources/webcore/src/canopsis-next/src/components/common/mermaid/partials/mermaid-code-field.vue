@@ -29,6 +29,7 @@ export default {
       return {
         overviewRulerLanes: 0,
         theme: 'mermaid',
+        automaticLayout: true,
         minimap: {
           enabled: false,
         },

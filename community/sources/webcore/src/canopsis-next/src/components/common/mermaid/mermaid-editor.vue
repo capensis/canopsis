@@ -57,7 +57,6 @@ export default {
 <style lang="scss">
 $borderColor: #e5e5e5;
 $sideBarWidth: 500px;
-$sideBarHeight: 500px;
 $contentWidth: 800px;
 
 .mermaid-editor {
@@ -66,7 +65,6 @@ $contentWidth: 800px;
   &__sidebar {
     width: $sideBarWidth;
     max-width: $sideBarWidth;
-    height: $sideBarHeight;
     border: 1px solid $borderColor;
     border-right: none;
   }
