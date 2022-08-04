@@ -6,7 +6,8 @@
           h4 {{ title }}
           v-btn.ma-0.ml-3(icon, small, @click="close")
             v-icon(color="white") close
-      point-form(v-field="form")
+      v-card-text
+        point-form(v-model="form")
       v-layout(justify-end)
         v-btn(
           :disabled="submitting",
@@ -33,10 +34,13 @@ import { MODALS } from '@/constants';
 
 import { submittableMixinCreator } from '@/mixins/submittable';
 
+import PointForm from '@/components/other/map/partials/point-form.vue';
+
 export default {
   $_veeValidate: {
     validator: 'new',
   },
+  components: { PointForm },
   mixins: [
     submittableMixinCreator(),
   ],

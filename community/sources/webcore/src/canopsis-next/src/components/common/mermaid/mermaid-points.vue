@@ -53,6 +53,7 @@ import { MODALS } from '@/constants';
 import { formBaseMixin } from '@/mixins/form';
 
 import { waitVuetifyAnimation } from '@/helpers/vuetify';
+import { mermaidPointToForm } from '@/helpers/forms/map';
 
 import MermaidContextmenu from './partials/mermaid-contextmenu.vue';
 import MermaidPointForm from './partials/mermaid-point-form.vue';
@@ -159,11 +160,10 @@ export default {
         return;
       }
 
-      this.addingPoint = {
+      this.addingPoint = mermaidPointToForm({
         x: this.offsetX,
         y: this.offsetY,
-        _id: Date.now(),
-      };
+      });
 
       this.shownMenu = false;
       this.adding = true;
