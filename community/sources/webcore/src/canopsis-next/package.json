@@ -99,7 +99,6 @@
     "jest-image-snapshot": "^4.5.1",
     "jest-localstorage-mock": "^2.2.0",
     "lint-staged": "^6.0.0",
-    "monaco-editor-webpack-plugin": "^6.0.0",
     "mutation-observer": "^1.0.3",
     "nightwatch": "1.3.5",
     "nightwatch-record": "^0.2.0",
