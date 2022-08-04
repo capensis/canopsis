@@ -69,7 +69,6 @@ export default {
           useMaxWidth: false,
         },
         flowchart: {
-          useMaxWidth: false,
         },
         requirement: {
           useMaxWidth: false,

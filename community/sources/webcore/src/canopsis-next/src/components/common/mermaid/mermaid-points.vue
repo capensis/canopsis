@@ -92,14 +92,14 @@ export default {
   },
   computed: {
     isFormOpened() {
-      return this.adding || this.editing || this.shownMenu;
+      return this.adding || this.editing;
     },
   },
   methods: {
     getPointStyles(point) {
       return {
-        top: `${point.y * 100}%`,
-        left: `${point.x * 100}%`,
+        top: `${point.y}px`,
+        left: `${point.x}px`,
       };
     },
 
@@ -115,7 +115,7 @@ export default {
     },
 
     openContextmenu(event) {
-      if (this.isFormOpened) {
+      if (this.shownMenu || this.isFormOpened) {
         return;
       }
 
@@ -135,19 +135,16 @@ export default {
     },
 
     setOffsetsByPoint(point) {
-      const { x, y, width, height } = this.$refs.container.getBoundingClientRect();
+      const { x, y } = this.$refs.container.getBoundingClientRect();
 
-      const offsetX = point.x * width;
-      const offsetY = point.y * height;
-
-      this.pageX = x + offsetX;
-      this.pageY = y + offsetY;
-      this.offsetX = offsetX;
-      this.offsetY = offsetY;
+      this.pageX = x + point.x;
+      this.pageY = y + point.y;
+      this.offsetX = point.x;
+      this.offsetY = point.y;
     },
 
     openEditContextmenu(point) {
-      if (this.isFormOpened) {
+      if (this.shownMenu || this.isFormOpened) {
         return;
       }
 
@@ -162,11 +159,9 @@ export default {
         return;
       }
 
-      const { width, height } = this.$refs.container.getBoundingClientRect();
-
       this.addingPoint = {
-        x: this.offsetX / width,
-        y: this.offsetY / height,
+        x: this.offsetX,
+        y: this.offsetY,
         _id: Date.now(),
       };
 
@@ -175,7 +170,7 @@ export default {
     },
 
     openAddPointFormByClick(event) {
-      if (!this.addOnClick || this.isFormOpened) {
+      if (!this.addOnClick || this.shownMenu || this.isFormOpened) {
         return;
       }
 

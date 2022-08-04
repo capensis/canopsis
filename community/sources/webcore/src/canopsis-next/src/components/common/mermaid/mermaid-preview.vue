@@ -54,7 +54,8 @@ export default {
   background-color: #F9F9F9;
 
   svg {
-    width: 100%;
+    width: 800px;
+    max-width: 800px !important;
   }
 
   &--error svg {
