@@ -16,7 +16,7 @@ L'emplacement du fichier de configuration diffère entre les différents types d
 | Type d'environnement | Emplacement du fichier            |
 |----------------------|-----------------------------------|
 | Paquets RPM                                         | `/opt/canopsis/etc/canopsis.toml` |
-| Docker Compose ( Canopsis < 4.4.0 )                 | `/canopsis.toml` dans le conteneur `reconfigure` |
+| Docker Compose ( Canopsis < 4.4.0 )                 | `/canopsis.toml` dans le service `reconfigure` |
 | Docker Compose ( Canopsis Pro >= 4.4.0 )            | `/canopsis-pro.toml` dans le conteneur `reconfigure` |
 | Docker Compose ( Canopsis Community >= 4.4.0 )      | `/canopsis-community.toml` dans le conteneur `reconfigure` |
 
@@ -59,7 +59,7 @@ Ce fichier ne contiens donc que les configuration qui diffèrent avec la configu
 === "En environnement Docker Compose"
 
     Le fichier est situé dans le conteneur `reconfigure` au chemin suivant : `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
-    Montez y votre ficher personnalisé a l'aide d'un volume.
+    Montez y votre ficiher personnalisé a l'aide d'un volume.
 
     Lors de la mise à jour de Canopsis, vos modifications seront préservées.
 
