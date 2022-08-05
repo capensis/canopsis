@@ -16,7 +16,7 @@
         @remove-selected="showDeleteSelectedMapsModal"
       )
     c-fab-btn(
-      v-if="hasCreateAnyMapAccess",
+      :has-access="hasCreateAnyMapAccess",
       @refresh="fetchList",
       @create="showCreateMapModal"
     )

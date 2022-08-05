@@ -7,12 +7,15 @@
     @dblclick="openAddPointFormByDoubleClick"
   )
     v-icon.mermaid-points__point(
-      v-for="point in points",
+      v-for="point in pointsData",
       :key="point._id",
       :style="getPointStyles(point)",
+      :size="markerSize",
+      color="grey darken-2",
       @contextmenu.stop.prevent="openEditContextmenu(point)",
       @dblclick.stop="openEditPointFormByDoubleClick(point)",
-      @click.stop=""
+      @click.stop="",
+      @mousedown.stop.prevent="startMoving(point)"
     ) location_on
 
     v-menu(
@@ -48,6 +51,8 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
@@ -74,9 +79,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    markerSize: {
+      type: Number,
+      default: 24,
+    },
   },
   data() {
     return {
+      pointsData: [],
+
       shownMenu: false,
 
       editing: false,
@@ -84,6 +95,7 @@ export default {
 
       addingPoint: undefined,
       editingPoint: undefined,
+      movingPointId: undefined,
 
       offsetX: 0,
       offsetY: 0,
@@ -96,36 +108,28 @@ export default {
       return this.adding || this.editing;
     },
   },
+  watch: {
+    points: {
+      immediate: true,
+      handler() {
+        this.pointsData = cloneDeep(this.points);
+      },
+    },
+  },
   methods: {
     getPointStyles(point) {
       return {
         top: `${point.y}px`,
         left: `${point.x}px`,
+        'pointer-events': this.movingPointId === point._id ? 'none' : 'all',
       };
     },
 
-    async clearMenuData() {
-      this.shownMenu = false;
-      this.editing = false;
-      this.adding = false;
-
-      await waitVuetifyAnimation();
-
-      this.editingPoint = undefined;
-      this.addingPoint = undefined;
-    },
-
-    openContextmenu(event) {
-      if (this.shownMenu || this.isFormOpened) {
-        return;
-      }
-
-      this.pageX = event.pageX;
-      this.pageY = event.pageY;
-      this.offsetX = event.offsetX;
-      this.offsetY = event.offsetY;
-
-      this.shownMenu = true;
+    normalizePosition({ x, y }) {
+      return {
+        x,
+        y: Math.max(this.markerSize, y),
+      };
     },
 
     setOffsetsByEvent(event) {
@@ -144,6 +148,27 @@ export default {
       this.offsetY = point.y;
     },
 
+    async clearMenuData() {
+      this.shownMenu = false;
+      this.editing = false;
+      this.adding = false;
+
+      await waitVuetifyAnimation();
+
+      this.editingPoint = undefined;
+      this.addingPoint = undefined;
+    },
+
+    openContextmenu(event) {
+      if (this.shownMenu || this.isFormOpened) {
+        return;
+      }
+
+      this.setOffsetsByEvent(event);
+
+      this.shownMenu = true;
+    },
+
     openEditContextmenu(point) {
       if (this.shownMenu || this.isFormOpened) {
         return;
@@ -160,10 +185,12 @@ export default {
         return;
       }
 
-      this.addingPoint = mermaidPointToForm({
-        x: this.offsetX,
-        y: this.offsetY,
-      });
+      this.addingPoint = mermaidPointToForm(
+        this.normalizePosition({
+          x: this.offsetX,
+          y: this.offsetY,
+        }),
+      );
 
       this.shownMenu = false;
       this.adding = true;
@@ -221,6 +248,34 @@ export default {
         },
       });
     },
+
+    movePointByEvent(event) {
+      const index = this.pointsData.findIndex(point => point._id === this.movingPointId);
+
+      const { x, y } = this.normalizePosition({
+        x: event.offsetX,
+        y: event.offsetY,
+      });
+
+      this.pointsData[index].x = x;
+      this.pointsData[index].y = y;
+    },
+
+    startMoving(point) {
+      this.movingPointId = point._id;
+
+      this.$refs.container.addEventListener('mousemove', this.movePointByEvent);
+      document.addEventListener('mouseup', this.finishMoving);
+    },
+
+    finishMoving() {
+      this.movingPointId = undefined;
+
+      this.$refs.container.removeEventListener('mousemove', this.movePointByEvent);
+      document.removeEventListener('mouseup', this.finishMoving);
+
+      this.updateModel(this.pointsData);
+    },
   },
 };
 </script>
@@ -232,6 +287,11 @@ export default {
     transform: translate(-50%, -100%);
     user-select: none;
     cursor: pointer;
+    transition: none;
+
+    &--no-events {
+      pointer-events: none;
+    }
   }
 
   &--addable {
