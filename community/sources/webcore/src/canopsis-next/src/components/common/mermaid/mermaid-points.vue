@@ -7,15 +7,16 @@
     @dblclick="openAddPointFormByDoubleClick"
   )
     v-icon.mermaid-points__point(
-      v-for="point in pointsData",
+      v-for="(point, index) in pointsData",
       :key="point._id",
+      :class="{ 'mermaid-points__point--no-events': moving }",
       :style="getPointStyles(point)",
       :size="markerSize",
       color="grey darken-2",
       @contextmenu.stop.prevent="openEditContextmenu(point)",
       @dblclick.stop="openEditPointFormByDoubleClick(point)",
       @click.stop="",
-      @mousedown.stop.prevent="startMoving(point)"
+      @mousedown.stop.prevent="startMoving(point, index)"
     ) location_on
 
     v-menu(
@@ -33,7 +34,7 @@
         @remove:point="showRemovePointModal"
       )
     v-menu(
-      :value="editing || adding",
+      :value="isFormOpened",
       :position-x="pageX",
       :position-y="pageY",
       :close-on-content-click="false",
@@ -41,8 +42,8 @@
       absolute
     )
       mermaid-point-form(
-        v-if="editingPoint || addingPoint",
-        :point="editingPoint || addingPoint",
+        v-if="formPoint",
+        :point="formPoint",
         :editing="!!editingPoint",
         @cancel="clearMenuData",
         @submit="submitPointForm",
@@ -55,10 +56,10 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { formBaseMixin } from '@/mixins/form';
-
 import { waitVuetifyAnimation } from '@/helpers/vuetify';
 import { mermaidPointToForm } from '@/helpers/forms/map';
+
+import { formBaseMixin } from '@/mixins/form';
 
 import MermaidContextmenu from './partials/mermaid-contextmenu.vue';
 import MermaidPointForm from './partials/mermaid-point-form.vue';
@@ -92,10 +93,11 @@ export default {
 
       editing: false,
       adding: false,
+      moving: false,
 
       addingPoint: undefined,
       editingPoint: undefined,
-      movingPointId: undefined,
+      movingPointIndex: undefined,
 
       offsetX: 0,
       offsetY: 0,
@@ -106,6 +108,10 @@ export default {
   computed: {
     isFormOpened() {
       return this.adding || this.editing;
+    },
+
+    formPoint() {
+      return this.addingPoint || this.editingPoint;
     },
   },
   watch: {
@@ -121,7 +127,6 @@ export default {
       return {
         top: `${point.y}px`,
         left: `${point.x}px`,
-        'pointer-events': this.movingPointId === point._id ? 'none' : 'all',
       };
     },
 
@@ -250,25 +255,25 @@ export default {
     },
 
     movePointByEvent(event) {
-      const index = this.pointsData.findIndex(point => point._id === this.movingPointId);
-
       const { x, y } = this.normalizePosition({
         x: event.offsetX,
         y: event.offsetY,
       });
 
-      this.pointsData[index].x = x;
-      this.pointsData[index].y = y;
+      this.pointsData[this.movingPointIndex].x = x;
+      this.pointsData[this.movingPointIndex].y = y;
     },
 
-    startMoving(point) {
-      this.movingPointId = point._id;
+    startMoving(point, index) {
+      this.moving = true;
+      this.movingPointIndex = index;
 
       this.$refs.container.addEventListener('mousemove', this.movePointByEvent);
       document.addEventListener('mouseup', this.finishMoving);
     },
 
     finishMoving() {
+      this.moving = false;
       this.movingPointId = undefined;
 
       this.$refs.container.removeEventListener('mousemove', this.movePointByEvent);
