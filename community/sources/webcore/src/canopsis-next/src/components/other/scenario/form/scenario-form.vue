@@ -1,12 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    v-text-field(
-      v-field="form.name",
-      v-validate="'required'",
-      :label="$t('common.name')",
-      :error-messages="errors.collect('name')",
-      name="name"
-    )
+    c-name-field(v-field="form.name")
     c-duration-field(
       v-field="form.delay",
       :label="$t('common.delay')",

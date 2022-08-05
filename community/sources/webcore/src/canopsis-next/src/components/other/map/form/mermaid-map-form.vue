@@ -1,15 +1,15 @@
 <template lang="pug">
   v-layout(column)
     c-name-field(v-field="form.name")
-    kpi-filter-patterns-form(v-field="form.patterns")
+    mermaid-editor(v-model="form.properties")
 </template>
 
 <script>
-import KpiFilterPatternsForm from './partials/kpi-filter-patterns-form.vue';
+import MermaidEditor from '@/components/common/mermaid/mermaid-editor.vue';
 
 export default {
   inject: ['$validator'],
-  components: { KpiFilterPatternsForm },
+  components: { MermaidEditor },
   model: {
     prop: 'form',
     event: 'input',
@@ -17,7 +17,7 @@ export default {
   props: {
     form: {
       type: Object,
-      default: () => ({}),
+      required: true,
     },
   },
 };

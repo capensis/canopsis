@@ -1,4 +1,6 @@
-import { MODALS } from '@/constants/modal';
+import { COLORS } from '@/config';
+
+import { MODALS } from './modal';
 
 export const MAP_TYPES = {
   flowchart: 'flowchart',
@@ -19,4 +21,20 @@ export const CREATE_MAP_MODAL_NAMES_BY_TYPE = {
   [MAP_TYPES.flowchart]: MODALS.createFlowchartMap,
   [MAP_TYPES.mermaid]: MODALS.createMermaidMap,
   [MAP_TYPES.treeOfDependencies]: MODALS.createTreeOfDependenciesMap,
+};
+
+export const MERMAID_THEMES = {
+  default: 'default',
+  base: 'base',
+  forest: 'forest',
+  dark: 'dark',
+  neutral: 'neutral',
+  canopsis: 'canopsis',
+};
+
+export const MERMAID_THEME_PROPERTIES_BY_NAME = {
+  [MERMAID_THEMES.canopsis]: {
+    theme: MERMAID_THEMES.base,
+    themeVariables: COLORS.mermaid,
+  },
 };

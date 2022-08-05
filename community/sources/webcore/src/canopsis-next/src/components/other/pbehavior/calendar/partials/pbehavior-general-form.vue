@@ -1,12 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    v-text-field(
-      v-field="form.name",
-      v-validate="'required'",
-      :label="$t('modals.createPbehavior.steps.general.fields.name')",
-      :error-messages="errors.collect('name')",
-      name="name"
-    )
+    c-name-field(v-field="form.name")
     c-enabled-field(v-if="!noEnabled", v-field="form.enabled", hide-details)
     v-flex.mt-3(xs12)
       c-enabled-field.mt-0.mb-1(
