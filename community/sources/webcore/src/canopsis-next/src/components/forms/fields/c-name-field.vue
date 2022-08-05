@@ -36,7 +36,7 @@ export default {
     },
     browserAutocomplete: {
       type: String,
-      default: 'name',
+      required: false,
     },
   },
 };
