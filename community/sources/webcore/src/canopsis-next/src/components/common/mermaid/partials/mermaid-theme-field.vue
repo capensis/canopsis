@@ -2,7 +2,7 @@
   v-select(
     v-field="value",
     v-validate="'required'",
-    :items="actionTypes",
+    :items="themes",
     :error-messages="errors.collect(name)",
     :label="$t('mermaid.theme')",
     :name="name",
@@ -41,7 +41,7 @@ export default {
     },
   },
   computed: {
-    actionTypes() {
+    themes() {
       return Object.values(MERMAID_THEMES).map(value => ({
         value,
         text: this.$t(`mermaid.themes.${value}`),
