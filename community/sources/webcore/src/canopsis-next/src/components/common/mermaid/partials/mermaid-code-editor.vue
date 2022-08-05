@@ -37,7 +37,7 @@ export default {
     },
 
     errorMarkers() {
-      return this.editorError ? [this.editorError] : undefined;
+      return this.editorError ? [this.editorError] : [];
     },
   },
   watch: {
