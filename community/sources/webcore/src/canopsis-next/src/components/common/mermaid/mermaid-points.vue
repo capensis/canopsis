@@ -1,7 +1,7 @@
 <template lang="pug">
   div.mermaid-points(
     ref="container",
-    :class="{ 'mermaid-points--addable': addOnClick && !isFormOpened }",
+    :class="{ 'mermaid-points--addable': addOnClick && !moving && !isFormOpened }",
     @contextmenu.stop.prevent="openContextmenu",
     @click="openAddPointFormByClick",
     @dblclick="openAddPointFormByDoubleClick"
@@ -13,10 +13,10 @@
       :style="getPointStyles(point)",
       :size="markerSize",
       color="grey darken-2",
+      @click.stop="",
       @contextmenu.stop.prevent="openEditContextmenu(point)",
       @dblclick.stop="openEditPointFormByDoubleClick(point)",
-      @click.stop="",
-      @mousedown.stop.prevent="startMoving(point, index)"
+      @mousedown.stop.prevent.left="startMoving(point, index)"
     ) location_on
 
     v-menu(
@@ -202,7 +202,7 @@ export default {
     },
 
     openAddPointFormByClick(event) {
-      if (!this.addOnClick || this.shownMenu || this.isFormOpened) {
+      if (!this.addOnClick || this.shownMenu || this.isFormOpened || this.moving) {
         return;
       }
 
@@ -211,7 +211,7 @@ export default {
     },
 
     openAddPointFormByDoubleClick(event) {
-      if (this.isFormOpened) {
+      if (this.isFormOpened || this.moving) {
         return;
       }
 
@@ -265,16 +265,27 @@ export default {
     },
 
     startMoving(point, index) {
-      this.moving = true;
-      this.movingPointIndex = index;
+      if (this.isFormOpened) {
+        return;
+      }
 
-      this.$refs.container.addEventListener('mousemove', this.movePointByEvent);
+      this.movingTimer = setTimeout(() => {
+        this.moving = true;
+        this.movingPointIndex = index;
+
+        this.$refs.container.addEventListener('mousemove', this.movePointByEvent);
+      }, 200);
+
       document.addEventListener('mouseup', this.finishMoving);
     },
 
     finishMoving() {
-      this.moving = false;
-      this.movingPointId = undefined;
+      clearTimeout(this.movingTimer);
+
+      setTimeout(() => {
+        this.moving = false;
+        this.movingPointIndex = undefined;
+      });
 
       this.$refs.container.removeEventListener('mousemove', this.movePointByEvent);
       document.removeEventListener('mouseup', this.finishMoving);
