@@ -191,7 +191,7 @@ instruction_mod_stats:
     date: 1596712203
     avg_complete_time: 400
     execution_count: 6
-    successful: 6
+    successful: 5
     init_critical: 2
     init_major: 2
     init_minor: 1
