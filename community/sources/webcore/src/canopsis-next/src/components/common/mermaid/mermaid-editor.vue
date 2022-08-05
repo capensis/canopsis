@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout.mermaid-editor
     v-flex.mermaid-editor__sidebar
-      mermaid-code-field.fill-height(v-field="form.code")
+      mermaid-code-editor.fill-height(v-field="form.code")
     v-flex.mermaid-editor__content
       v-layout.fill-height(column)
         v-flex.mermaid-editor__toolbar
@@ -15,12 +15,12 @@
 <script>
 import { MERMAID_THEME_PROPERTIES_BY_NAME } from '@/constants';
 
-import MermaidCodeField from './partials/mermaid-code-field.vue';
+import MermaidCodeEditor from './partials/mermaid-code-editor.vue';
 import MermaidThemeField from './partials/mermaid-theme-field.vue';
 import MermaidPreview from './mermaid-preview.vue';
 
 export default {
-  components: { MermaidCodeField, MermaidThemeField, MermaidPreview },
+  components: { MermaidCodeEditor, MermaidThemeField, MermaidPreview },
   model: {
     prop: 'form',
     event: 'input',
