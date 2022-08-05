@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.mermaid-preview(:class="{ 'mermaid-preview--error': error }", v-html="svg")
+  div.mermaid-preview(:class="{ 'mermaid-preview--error': !parsed }", v-html="svg")
 </template>
 
 <script>
@@ -19,14 +19,11 @@ export default {
       type: String,
       default: 'mermaid',
     },
-    error: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
       svg: '',
+      parsed: false,
     };
   },
   watch: {
@@ -40,8 +37,10 @@ export default {
     renderMermaid() {
       try {
         this.svg = renderMermaid(this.value, this.config);
+
+        this.parsed = true;
       } catch (err) {
-        console.warn(err);
+        this.parsed = false;
       }
     },
   },
