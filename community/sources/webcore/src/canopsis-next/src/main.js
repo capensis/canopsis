@@ -157,6 +157,7 @@ import CServiceWeatherPatternsField from '@/components/forms/fields/service-weat
 import CServiceWeatherIconField from '@/components/forms/fields/service-weather/c-service-weather-icon-field.vue';
 import CContextmenu from '@/components/common/contextmenu/c-contextmenu.vue';
 import CMapField from '@/components/forms/fields/map/c-map-field.vue';
+import CNameField from '@/components/forms/fields/c-name-field.vue';
 
 /**
  * Patterns
@@ -391,6 +392,7 @@ Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-operator-field', COperatorField);
 Vue.component('c-icon-field', CIconField);
 Vue.component('c-id-field', CIdField);
+Vue.component('c-name-field', CNameField);
 Vue.component('c-description-field', CDescriptionField);
 Vue.component('c-event-filter-type-field', CEventFilterTypeField);
 Vue.component('c-draggable-list-field', CDraggableListField);
@@ -481,6 +483,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.createAlarmStatusRule]: { maxWidth: 1280 },
     [MODALS.createService]: { maxWidth: 1280 },
     [MODALS.createMap]: { maxWidth: 500, lazy: true },
+    [MODALS.createMermaidMap]: { maxWidth: 1280 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

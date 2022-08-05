@@ -333,6 +333,14 @@ export const COLORS = {
     averageResolve: '#1afd01',
     totalUserActivity: '#1fbbd1',
   },
+  mermaid: {
+    primaryColor: '#bfe4ce',
+    primaryBorderColor: '#2faa62',
+    textColor: '#323232',
+    lineColor: '#323232',
+    noteBkgColor: '#75818c',
+    noteTextColor: '#fdfdfd',
+  },
 };
 
 export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;

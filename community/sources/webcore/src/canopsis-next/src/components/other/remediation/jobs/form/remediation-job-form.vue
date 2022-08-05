@@ -6,13 +6,7 @@
         v-field="form.multiple_executions",
         :label="$t('modals.createRemediationJob.fields.multipleExecutions')"
       )
-    v-text-field(
-      v-field="form.name",
-      v-validate="'required'",
-      :label="$t('common.name')",
-      :error-messages="errors.collect('name')",
-      name="name"
-    )
+    c-name-field(v-field="form.name")
     remediation-job-configuration-field(v-field="form.config")
     v-text-field(
       v-field="form.job_id",

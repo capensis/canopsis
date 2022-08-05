@@ -4,15 +4,11 @@
     v-layout(row)
       c-id-field(v-field="form._id", :disabled="onlyUserPrefs || !isNew")
     v-layout(row)
-      v-text-field(
+      c-name-field(
         v-field="form.name",
-        v-validate="'required'",
         :label="$t('users.username')",
         :disabled="onlyUserPrefs",
-        :error-messages="errors.collect('name')",
-        name="name",
-        browser-autocomplete="new-password",
-        data-test="username"
+        browser-autocomplete="new-password"
       )
     v-layout(row)
       v-text-field(

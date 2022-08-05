@@ -2,13 +2,7 @@
   v-layout(column)
     template(v-if="!isEntityType")
       idle-rule-alarm-type-field.mb-2(v-field="form.alarm_condition", :label="$t('common.type')")
-    v-text-field(
-      v-field="form.name",
-      v-validate="'required'",
-      :label="$t('common.name')",
-      :error-messages="errors.collect('name')",
-      name="name"
-    )
+    c-name-field(v-field="form.name")
     c-description-field(v-field="form.description", required)
     v-layout(row, justify-space-between)
       v-flex(xs7)

@@ -36,6 +36,7 @@ import {
   SCENARIO_TRIGGERS,
   WEATHER_ACTIONS_TYPES,
   MAP_TYPES,
+  MERMAID_THEMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2998,6 +2999,18 @@ export default merge({
       [MAP_TYPES.flowchart]: 'Flowchart',
       [MAP_TYPES.mermaid]: 'Mermaid',
       [MAP_TYPES.treeOfDependencies]: 'Arbre des dépendances',
+    },
+  },
+
+  mermaid: {
+    theme: 'Thème de couleur',
+    themes: {
+      [MERMAID_THEMES.default]: 'Défaut',
+      [MERMAID_THEMES.base]: 'Base',
+      [MERMAID_THEMES.dark]: 'Sombre',
+      [MERMAID_THEMES.forest]: 'Forêt',
+      [MERMAID_THEMES.neutral]: 'Neutre',
+      [MERMAID_THEMES.canopsis]: 'Canopsis',
     },
   },
 }, featureService.get('i18n.fr'));
