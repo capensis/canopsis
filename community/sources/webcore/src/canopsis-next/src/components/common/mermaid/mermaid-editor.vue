@@ -4,11 +4,8 @@
       mermaid-code-editor.fill-height(v-field="form.code")
     v-flex.mermaid-editor__content
       v-layout.mermaid-editor__toolbar.px-2(row, align-center, justify-end)
-        v-btn-toggle.mr-2
-          v-btn.ma-0(v-model="addOnClick", flat, large)
-            v-icon(left) add_location
-            span {{ $t('mermaid.addPoint') }}
-        mermaid-theme-field.my-2.mermaid-editor__theme-picker(v-field="form.theme")
+        mermaid-add-location-btn.mr-2(v-model="addOnClick")
+        mermaid-theme-field.mermaid-editor__theme-picker(v-field="form.theme")
       div.mermaid-editor__preview
         mermaid-preview(:value="form.code", :theme="form.theme")
         mermaid-points.mermaid-editor__points(v-field="form.points", :add-on-click="addOnClick")
@@ -18,12 +15,13 @@
 import { formMixin } from '@/mixins/form';
 
 import MermaidCodeEditor from './partials/mermaid-code-editor.vue';
+import MermaidAddLocationBtn from './partials/mermaid-add-location-btn.vue';
 import MermaidThemeField from './partials/mermaid-theme-field.vue';
 import MermaidPreview from './mermaid-preview.vue';
 import MermaidPoints from './mermaid-points.vue';
 
 export default {
-  components: { MermaidCodeEditor, MermaidThemeField, MermaidPreview, MermaidPoints },
+  components: { MermaidAddLocationBtn, MermaidCodeEditor, MermaidThemeField, MermaidPreview, MermaidPoints },
   mixins: [formMixin],
   model: {
     prop: 'form',
