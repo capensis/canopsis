@@ -92,7 +92,7 @@ import uuid from '@/helpers/uuid';
  */
 export const mermaidPointToForm = (point = {}) => ({
   x: point.x,
-  y: point.Y,
+  y: point.y,
   entity: point.entity ?? '',
   link: point.link,
   _id: uuid(),
