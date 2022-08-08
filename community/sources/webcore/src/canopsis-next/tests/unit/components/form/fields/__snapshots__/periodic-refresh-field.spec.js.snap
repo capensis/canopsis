@@ -17,8 +17,8 @@ exports[`periodic-refresh-field Renders \`periodic-refresh-field\` with custom p
     class="flex xs7"
   >
     <c-duration-field-stub
-      min="0"
-      name="customName.duration"
+      min="1"
+      name="customName"
       required="true"
       value="[object Object]"
     />
@@ -43,8 +43,8 @@ exports[`periodic-refresh-field Renders \`periodic-refresh-field\` with default 
     class="flex xs7"
   >
     <c-duration-field-stub
-      min="0"
-      name="periodic_refresh.duration"
+      min="1"
+      name="periodic_refresh"
       required="true"
       value="[object Object]"
     />

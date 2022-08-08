@@ -6,7 +6,6 @@ import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
-  CRUD_ACTIONS,
   ENTITIES_STATUSES,
   ENTITIES_TYPES,
   EVENT_DEFAULT_ORIGIN,
@@ -17,8 +16,11 @@ import {
   QUICK_RANGES,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
-import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
+
 import featuresService from '@/services/features';
+
+import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';
 
 const localVue = createVueInstance();
@@ -419,119 +421,6 @@ describe('actions-panel', () => {
     );
   });
 
-  it('Pbehavior list modal showed after trigger pbehavior list action with unresolved alarm', () => {
-    const widgetData = {
-      _id: Faker.datatype.string(),
-      parameters: {},
-    };
-    const entity = {
-      _id: Faker.datatype.string(),
-    };
-    const pbehavior = {
-      _id: Faker.datatype.string(),
-    };
-
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        authModuleWithAccess,
-        alarmModule,
-      ]),
-      propsData: {
-        item: { ...alarm, entity, pbehavior },
-        widget: widgetData,
-        parentAlarm,
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    const pbehaviorListAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.pbehaviorList);
-
-    pbehaviorListAction.trigger('click');
-
-    expect($modals.show).toBeCalledWith(
-      {
-        name: MODALS.pbehaviorList,
-        config: {
-          itemsIds: [alarm._id],
-          itemsType: ENTITIES_TYPES.alarm,
-          afterSubmit: expect.any(Function),
-          pbehaviors: [pbehavior],
-          entityId: entity._id,
-          availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
-        },
-      },
-    );
-
-    const [{ config }] = $modals.show.mock.calls[0];
-
-    config.afterSubmit();
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
-  });
-
-  it('Pbehavior list modal showed after trigger pbehavior list action with resolved alarm', () => {
-    const widgetData = {
-      _id: Faker.datatype.string(),
-      parameters: {},
-    };
-    const entity = {
-      _id: Faker.datatype.string(),
-    };
-    const pbehavior = {
-      _id: Faker.datatype.string(),
-    };
-
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        authModuleWithAccess,
-        alarmModule,
-      ]),
-      propsData: {
-        item: { ...alarm, entity, pbehavior },
-        widget: widgetData,
-        parentAlarm,
-        isResolvedAlarm: true,
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    const pbehaviorListAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.pbehaviorList);
-
-    pbehaviorListAction.trigger('click');
-
-    expect($modals.show).toBeCalledWith(
-      {
-        name: MODALS.pbehaviorList,
-        config: {
-          itemsIds: [alarm._id],
-          itemsType: ENTITIES_TYPES.alarm,
-          afterSubmit: expect.any(Function),
-          pbehaviors: [pbehavior],
-          entityId: entity._id,
-          availableActions: [],
-        },
-      },
-    );
-
-    const [{ config }] = $modals.show.mock.calls[0];
-
-    config.afterSubmit();
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
-  });
-
   it('Declare ticket modal showed after trigger declare action', () => {
     const widgetData = {
       _id: Faker.datatype.string(),
@@ -842,6 +731,7 @@ describe('actions-panel', () => {
       {
         name: MODALS.alarmsList,
         config: {
+          title: `modals.alarmsList.prefixTitle:${JSON.stringify({ prefix: entity._id })}`,
           widget: {
             ...defaultWidget,
             _id: expect.any(String),

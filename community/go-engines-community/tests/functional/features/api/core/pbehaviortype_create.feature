@@ -41,7 +41,7 @@ Feature: Create a pbehavior type
     """json
     {
       "errors": {
-        "type": "type must be one of [active inactive maintenance pause]."
+        "type": "Type must be one of [active inactive maintenance pause]."
       }
     }
     """
@@ -120,32 +120,5 @@ Feature: Create a pbehavior type
       "errors": {
         "priority": "Priority already exists."
       }
-    }
-    """
-
-  Scenario: given create request should return ok to get request
-    When I am admin
-    When I do POST /api/v4/pbehavior-types:
-    """json
-    {
-      "name": "Active State 2",
-      "description": "Active state type",
-      "type": "active",
-      "priority": 188,
-      "icon_name": "exclamation-mark.png",
-      "color": "green"
-    }
-    """
-    When I do GET /api/v4/pbehavior-types/{{ .lastResponse._id}}
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "name": "Active State 2",
-      "description": "Active state type",
-      "type": "active",
-      "priority": 188,
-      "icon_name": "exclamation-mark.png",
-      "color": "green"
     }
     """

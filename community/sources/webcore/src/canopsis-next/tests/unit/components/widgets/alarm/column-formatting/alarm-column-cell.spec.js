@@ -2,6 +2,7 @@ import flushPromises from 'flush-promises';
 
 import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
 import { DATETIME_FORMATS } from '@/constants';
+import { DEFAULT_LOCALE } from '@/config';
 
 import AlarmColumnCell from '@/components/widgets/alarm/columns-formatting/alarm-column-cell.vue';
 
@@ -21,6 +22,11 @@ const stubs = {
 const factory = (options = {}) => shallowMount(AlarmColumnCell, {
   localVue,
   stubs,
+  mocks: {
+    $i18n: {
+      locale: DEFAULT_LOCALE,
+    },
+  },
 
   ...options,
 });
@@ -28,6 +34,11 @@ const factory = (options = {}) => shallowMount(AlarmColumnCell, {
 const snapshotFactory = (options = {}) => mount(AlarmColumnCell, {
   localVue,
   stubs,
+  mocks: {
+    $i18n: {
+      locale: DEFAULT_LOCALE,
+    },
+  },
 
   ...options,
 });
@@ -39,6 +50,9 @@ const selectAlarmColumnPopupBody = wrapper => wrapper.find('alarm-column-cell-po
 describe('alarm-column-cell', () => {
   const timestamp = 1641768553245;
   const duration = 164176;
+  const widget = {
+    parameters: {},
+  };
 
   it.each([
     'v.last_update_date',
@@ -49,9 +63,6 @@ describe('alarm-column-cell', () => {
     'v.status.t',
     'v.resolved',
     't',
-    'v.active_duration',
-    'v.snooze_duration',
-    'v.pbh_inactive_duration',
   ])('Default filter for date field: "%s" converted value to time', async (field) => {
     const column = {
       value: field,
@@ -63,10 +74,7 @@ describe('alarm-column-cell', () => {
           t: timestamp,
           v: {
             last_update_date: timestamp,
-            active_duration: timestamp,
-            snooze_duration: timestamp,
             creation_date: timestamp,
-            pbh_inactive_duration: timestamp,
             last_event_date: timestamp,
             activation_date: timestamp,
             resolved: timestamp,
@@ -78,7 +86,7 @@ describe('alarm-column-cell', () => {
             },
           },
         },
-        widget: {},
+        widget,
         column,
       },
     });
@@ -91,6 +99,9 @@ describe('alarm-column-cell', () => {
   it.each([
     'v.duration',
     'v.current_state_duration',
+    'v.active_duration',
+    'v.snooze_duration',
+    'v.pbh_inactive_duration',
   ])('Default filter for duration field: "%s" converted value to duration', async (field) => {
     const column = {
       value: field,
@@ -100,11 +111,14 @@ describe('alarm-column-cell', () => {
       propsData: {
         alarm: {
           v: {
-            current_state_duration: duration,
             duration,
+            current_state_duration: duration,
+            active_duration: duration,
+            snooze_duration: duration,
+            pbh_inactive_duration: duration,
           },
         },
-        widget: {},
+        widget,
         column,
       },
     });
@@ -129,7 +143,7 @@ describe('alarm-column-cell', () => {
           filter: 'date',
           attributes: [DATETIME_FORMATS.short],
         }],
-        widget: {},
+        widget,
         column,
       },
     });
@@ -151,7 +165,7 @@ describe('alarm-column-cell', () => {
             creation_date: timestamp,
           },
         },
-        widget: {},
+        widget,
         column,
       },
     });
@@ -168,7 +182,7 @@ describe('alarm-column-cell', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {},
-        widget: {},
+        widget,
         column,
       },
     });
@@ -185,7 +199,7 @@ describe('alarm-column-cell', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {},
-        widget: {},
+        widget,
         column,
       },
     });
@@ -204,7 +218,7 @@ describe('alarm-column-cell', () => {
         alarm: {
           entity: {},
         },
-        widget: {},
+        widget,
         column,
       },
     });
@@ -223,7 +237,7 @@ describe('alarm-column-cell', () => {
         alarm: {
           entity: {},
         },
-        widget: {},
+        widget,
         column,
       },
     });
@@ -242,8 +256,11 @@ describe('alarm-column-cell', () => {
         alarm: {
           links: {},
         },
-        widget: {},
+        widget,
         column,
+      },
+      listeners: {
+        activate: jest.fn(),
       },
     });
 
@@ -262,12 +279,17 @@ describe('alarm-column-cell', () => {
           links: {},
         },
         widget: {
-          linksCategoriesAsList: {
-            enabled: true,
-            limit: 2,
+          parameters: {
+            linksCategoriesAsList: {
+              enabled: true,
+              limit: 2,
+            },
           },
         },
         column,
+      },
+      listeners: {
+        activate: jest.fn(),
       },
     });
 
@@ -287,7 +309,7 @@ describe('alarm-column-cell', () => {
             test: [],
           },
         },
-        widget: {},
+        widget,
         column,
       },
     });
@@ -304,7 +326,7 @@ describe('alarm-column-cell', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {},
-        widget: {},
+        widget,
         column,
       },
     });
@@ -326,7 +348,7 @@ describe('alarm-column-cell', () => {
             test: '<div Name',
           },
         },
-        widget: {},
+        widget,
         column,
       },
     });
@@ -345,15 +367,12 @@ describe('alarm-column-cell', () => {
         alarm: {
           name: 'Name',
         },
-        widget: {
-          parameters: {
-            infoPopups: [{
-              column: column.value,
-              template: 'template',
-            }],
-          },
+        widget,
+        column: {
+          ...column,
+
+          popupTemplate: 'template',
         },
-        column,
       },
     });
 
@@ -378,15 +397,12 @@ describe('alarm-column-cell', () => {
         alarm: {
           name: 'Name',
         },
-        widget: {
-          parameters: {
-            infoPopups: [{
-              column: column.value,
-              template: 'template',
-            }],
-          },
+        widget,
+        column: {
+          ...column,
+
+          popupTemplate: 'template',
         },
-        column,
       },
     });
 
@@ -420,17 +436,16 @@ describe('alarm-column-cell', () => {
             name: '<div class="custom-html-value" data-test="123">Name</div>',
           },
         },
-        widget: {
-          parameters: {
-            infoPopups: [{
-              column: column.value,
-              template: 'template',
-            }],
-          },
+        widget,
+        column: {
+          ...column,
+
+          popupTemplate: 'template',
         },
-        column,
       },
     });
+
+    await flushPromises();
 
     const openButton = selectOpenButton(wrapper);
 

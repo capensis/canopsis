@@ -1,9 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(fill-height, close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.pbehaviorPlanning.title') }}
-      template(slot="text")
+      template(#text="")
         pbehavior-planning-calendar(
           :pbehaviors-by-id.sync="form.pbehaviorsById",
           :added-pbehaviors-by-id.sync="form.addedPbehaviorsById",
@@ -12,7 +12,7 @@
           :read-only="readOnly",
           :filter="filter"
         )
-      template(slot="actions")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
@@ -29,7 +29,7 @@ import { MODALS } from '@/constants';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 
 import { pbehaviorToDuplicateForm, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 
@@ -74,8 +74,8 @@ export default {
       const updatedPbehaviors = Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest);
       const removedPbehaviors = Object.values(this.form.removedPbehaviorsById);
 
-      await this.createPbehaviors(createdPbehaviors);
-      await this.updatePbehaviors(updatedPbehaviors);
+      await this.createPbehaviorsWithComments(createdPbehaviors);
+      await this.updatePbehaviorsWithComments(updatedPbehaviors);
       await this.removePbehaviors(removedPbehaviors);
 
       if (this.config.afterSubmit) {
