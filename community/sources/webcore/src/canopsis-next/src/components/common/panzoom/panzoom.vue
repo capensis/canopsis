@@ -3,9 +3,9 @@
     div(:style="containerStyles")
       slot
     v-layout.panzoom__top-left-actions(column)
-      v-btn.secondary.ma-0.mb-1(icon, @click="handleScaleIn")
+      v-btn.secondary.ma-0.mb-1(:disabled="scale === maxZoom", icon, dark, @click="handleScaleIn")
         v-icon add
-      v-btn.secondary.ma-0(icon, @click="handleScaleOut")
+      v-btn.secondary.ma-0(:disabled="scale === minZoom", dark, icon, @click="handleScaleOut")
         v-icon remove
     v-layout.panzoom__bottom-right-actions(v-if="helpText", column)
       v-tooltip(top)
@@ -20,6 +20,15 @@ export default {
     zoomStep: {
       type: Number,
       default: 0.1,
+    },
+    maxZoom: {
+      type: Number,
+      default: 4,
+    },
+    minZoom: {
+      type: Number,
+      default: 0.1,
+      validator: value => value >= 0,
     },
     moveStep: {
       type: Number,
@@ -55,11 +64,11 @@ export default {
     },
 
     handleScaleIn() {
-      this.scale += this.zoomStep;
+      this.scale = Math.min(this.maxZoom, this.scale + this.zoomStep);
     },
 
     handleScaleOut() {
-      this.scale -= this.zoomStep;
+      this.scale = Math.max(this.minZoom, this.scale - this.zoomStep);
     },
 
     handleScale(event) {
