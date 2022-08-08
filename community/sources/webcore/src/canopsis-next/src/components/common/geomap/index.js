@@ -5,7 +5,7 @@ import iconUrl from 'leaflet/dist/images/marker-icon.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 
 import 'leaflet/dist/leaflet.css';
-import './styles/index.scss';
+import './style.scss';
 
 Map.mergeOptions({
   attributionControl: false,
@@ -19,15 +19,10 @@ Icon.Default.mergeOptions({
   shadowUrl,
 });
 
-export default {
-  install(Vue) {
-    Vue.component('c-map', LMap);
-    Vue.component('c-map-tile-layer', LTileLayer);
-    Vue.component('c-map-marker', LMarker);
-    Vue.component('c-map-control', LControl);
-    Vue.component('c-map-control', LControl);
-    Vue.component('c-map-icon', LIcon);
-    Vue.component('c-map-layer-group', LLayerGroup);
-    Vue.component('c-map-popup', LPopup);
-  },
-};
+export const Geomap = LMap;
+export const GeomapTileLayer = LTileLayer;
+export const GeomapMarker = LMarker;
+export const GeomapControl = LControl;
+export const GeomapIcon = LIcon;
+export const GeomapLayerGroup = LLayerGroup;
+export const GeomapPopup = LPopup;
