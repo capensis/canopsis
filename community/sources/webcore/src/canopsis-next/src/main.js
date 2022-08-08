@@ -37,7 +37,6 @@ import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
 import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 import GridPlugin from '@/plugins/grid';
 import SocketPlugin from '@/plugins/socket';
-import LeafletPlugin from '@/plugins/leaflet';
 
 import { setSeveralFields } from '@/helpers/immutable';
 
@@ -464,7 +463,6 @@ Vue.use(UpdateFieldPlugin);
 Vue.use(ToursPlugin);
 Vue.use(VuetifyReplacerPlugin);
 Vue.use(SocketPlugin);
-Vue.use(LeafletPlugin);
 
 Vue.config.productionTip = false;
 

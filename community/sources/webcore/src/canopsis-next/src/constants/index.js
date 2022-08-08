@@ -22,4 +22,3 @@ export * from './widget';
 export * from './kpi';
 export * from './user';
 export * from './service-weather';
-export * from './map';
