@@ -17,6 +17,11 @@ export const SOCKET_ROUTE = '/api/v4/ws';
 
 export const SOCKET_URL = removeTrailingSlashes(`${SOCKET_HOST}${SOCKET_ROUTE}`);
 
+/**
+ * TODO: Should be fixed after backend integration
+ */
+export const OPEN_STREET_LAYER_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
 export const ROUTER_MODE = 'history';
 
 export const ROUTER_ACCESS_TOKEN_KEY = 'access_token';

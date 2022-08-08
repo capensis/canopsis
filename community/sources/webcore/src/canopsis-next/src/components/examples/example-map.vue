@@ -1,18 +1,18 @@
 <template lang="pug">
-  c-map(style="height: 300px")
-    c-map-tile-layer(:url="$constants.MAP_LAYERS.openStreetMap")
-    c-map-control(position="bottomleft")
+  geomap(style="height: 300px")
+    geomap-tile-layer(:url="$config.OPEN_STREET_LAYER_URL")
+    geomap-control(position="bottomleft")
       v-btn.ma-0.primary(small) Bottom left
-    c-map-control(position="topright")
+    geomap-control(position="topright")
       v-btn.ma-0.primary(small) Top right
-    c-map-control(position="topleft")
+    geomap-control(position="topleft")
       v-btn.ma-0.primary(small) Top left
-    c-map-control(position="bottomright")
+    geomap-control(position="bottomright")
       v-btn.ma-0.primary(small) Bottom right
 
-    c-map-layer-group(name="markers-layer")
-      c-map-popup Layer layer
-      c-map-marker(
+    geomap-layer-group(name="markers-layer")
+      geomap-popup Layer layer
+      geomap-marker(
         v-for="marker in markers",
         :key="marker.id",
         :lat-lng="marker.coordinate",
@@ -20,10 +20,10 @@
         @click="showInformationModal"
       )
 
-    c-map-marker(:lat-lng="[-50, 0]")
-      c-map-icon(:icon-size="[100, 38]", :icon-anchor="[50, 0]")
+    geomap-marker(:lat-lng="[-50, 0]")
+      geomap-icon(:icon-size="[100, 38]", :icon-anchor="[50, 0]")
         v-img(:src="logo", height="20")
-      c-map-popup Canopsis
+      geomap-popup Canopsis
 </template>
 
 <script>
@@ -33,7 +33,29 @@ import defaultLogo from '@/assets/canopsis.png';
 
 import { MODALS } from '@/constants';
 
+import {
+  Geomap,
+  GeomapPopup,
+  GeomapControl,
+  GeomapIcon,
+  GeomapMarker,
+  GeomapLayerGroup,
+  GeomapTileLayer,
+} from '@/components/common/geomap';
+
+/**
+ * TODO: Component should be removed in the end feature development
+ */
 export default {
+  components: {
+    Geomap,
+    GeomapPopup,
+    GeomapControl,
+    GeomapIcon,
+    GeomapMarker,
+    GeomapLayerGroup,
+    GeomapTileLayer,
+  },
   computed: {
     logo() {
       return defaultLogo;
