@@ -1,5 +1,4 @@
 import flushPromises from 'flush-promises';
-import Faker from 'faker';
 
 import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
 
@@ -83,7 +82,6 @@ describe('grid-edit-widgets', () => {
         tab: {
           widgets: [],
         },
-        updateTabMethod: jest.fn(),
       },
     });
 
@@ -105,7 +103,6 @@ describe('grid-edit-widgets', () => {
         tab: {
           widgets: [widget],
         },
-        updateTabMethod: jest.fn(),
       },
     });
 
@@ -119,7 +116,7 @@ describe('grid-edit-widgets', () => {
 
     gridLayout.vm.$emit('layout-updated');
 
-    const updateWidgetsEvents = wrapper.emitted('update:widgets-fields');
+    const updateWidgetsEvents = wrapper.emitted('update:widgets-grid');
 
     expect(updateWidgetsEvents).toHaveLength(1);
 
@@ -127,41 +124,15 @@ describe('grid-edit-widgets', () => {
 
     expect(updateWidgets).toEqual({
       [widget._id]: {
-        'grid_parameters.mobile': expect.any(Function),
-        'grid_parameters.tablet': expect.any(Function),
-        'grid_parameters.desktop': expect.any(Function),
-      },
-    });
-    const updateWidgetParameterFunction = updateWidgets[widget._id]['grid_parameters.desktop'];
-    const { desktop } = widget.grid_parameters;
+        ...widget.grid_parameters,
 
-    expect(updateWidgetParameterFunction()).toEqual({
-      ...desktop,
-      autoHeight: !desktop.autoHeight,
-    });
-  });
+        desktop: {
+          ...widget.grid_parameters.desktop,
 
-  it('Update tab method called', () => {
-    const updateTabMethod = jest.fn();
-    const wrapper = factory({
-      propsData: {
-        tab: {
-          widgets,
+          autoHeight: false,
         },
-        updateTabMethod,
       },
     });
-
-    const widget = { id: Faker.datatype.string() };
-
-    const widgetWrapperMenu = selectGridItems(wrapper)
-      .at(0)
-      .find('widget-wrapper-menu-stub');
-
-    widgetWrapperMenu.vm.updateTabMethod(widget);
-
-    expect(updateTabMethod).toHaveBeenCalledTimes(1);
-    expect(updateTabMethod).toHaveBeenCalledWith(widget);
   });
 
   it('Renders `grid-edit-widgets` with default props', async () => {
@@ -170,7 +141,6 @@ describe('grid-edit-widgets', () => {
         tab: {
           widgets: [],
         },
-        updateTabMethod: jest.fn(),
       },
     });
 
@@ -185,7 +155,6 @@ describe('grid-edit-widgets', () => {
         tab: {
           widgets,
         },
-        updateTabMethod: jest.fn(),
       },
     });
 
@@ -200,7 +169,6 @@ describe('grid-edit-widgets', () => {
         tab: {
           widgets,
         },
-        updateTabMethod: jest.fn(),
       },
       mocks: {
         $mq: size,

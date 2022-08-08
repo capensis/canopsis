@@ -24,14 +24,20 @@ export const pbehaviorToTimespanRequest = ({
   const viewFrom = (tstartBeforeFrom && tstopAfterFrom) ? pbehavior.tstart : from;
   const viewTo = (tstartBeforeTo && tstopAfterTo) ? pbehavior.tstop : to;
 
-  return {
+  const request = {
     rrule: pbehavior.rrule,
     start_at: pbehavior.tstart,
-    end_at: pbehavior.tstop,
+    type: pbehavior.type._id,
     view_from: viewFrom,
     view_to: viewTo,
     exdates: exdatesToRequest(pbehavior.exdates),
     exceptions: exceptionsToRequest(pbehavior.exceptions),
     by_date: byDate,
   };
+
+  if (pbehavior.tstop) {
+    request.end_at = pbehavior.tstop;
+  }
+
+  return request;
 };

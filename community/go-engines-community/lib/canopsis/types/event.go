@@ -30,7 +30,8 @@ const (
 	SourceTypeMetaAlarm = "metaalarm"
 )
 
-//Event types
+// Event types.
+// Add each new event type to isValidEventType func.
 const (
 	EventTypeAck         = "ack"
 	EventTypeAckremove   = "ackremove"
@@ -47,7 +48,6 @@ const (
 	EventTypeDone              = "done"
 	EventTypeChangestate       = "changestate"
 	EventTypeKeepstate         = "keepstate"
-	EventTypePBehavior         = "pbehavior"
 	EventTypePerf              = "perf"
 	EventTypeSnooze            = "snooze"
 	EventTypeUnsnooze          = "unsnooze"
@@ -115,6 +115,8 @@ const (
 
 	// EventTypeNoEvents is used to create alarm for entity by idle rule.
 	EventTypeNoEvents = "noevents"
+	// EventTypeTrigger is used in axe rpc to send autoinstruction triggers
+	EventTypeTrigger = "trigger"
 )
 
 const (
@@ -184,7 +186,8 @@ type Event struct {
 	Initiator string `bson:"initiator" json:"initiator"`
 
 	// Only for EventTypeRunDelayedScenario
-	DelayedScenarioID string `bson:"delayed_scenario_id,omitempty" json:"delayed_scenario_id,omitempty"`
+	DelayedScenarioID   string `bson:"delayed_scenario_id,omitempty" json:"delayed_scenario_id,omitempty"`
+	DelayedScenarioData string `bson:"delayed_scenario_data,omitempty" json:"delayed_scenario_data,omitempty"`
 
 	// AddedToServices contains ids of entity services to which entity has been added as dependency.
 	AddedToServices []string `bson:"added_to_services,omitempty" json:"added_to_services,omitempty"`
@@ -305,10 +308,19 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 }
 
 // IsContextable tells you if the given event can lead to context enrichment.
-func (e Event) IsContextable() bool {
+func (e *Event) IsContextable() bool {
 	switch e.EventType {
 	case EventTypeCheck, EventTypePerf, EventTypeDeclareTicket, EventTypeMetaAlarm,
 		EventTypeEntityToggled, EventTypeEntityUpdated:
+		return true
+	default:
+		return false
+	}
+}
+
+func (e *Event) IsOnlyServiceUpdate() bool {
+	switch e.EventType {
+	case EventTypeEntityToggled, EventTypeEntityUpdated:
 		return true
 	default:
 		return false
@@ -347,6 +359,10 @@ func (e Event) IsValid() error {
 		}
 	default:
 		return errt.NewUnknownError(fmt.Errorf("wrong source type: %v", e.SourceType))
+	}
+
+	if !isValidEventType(e.EventType) {
+		return errt.NewUnknownError(fmt.Errorf("wrong event type: %v", e.EventType))
 	}
 
 	switch e.EventType {
@@ -575,8 +591,71 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 }
 
 func (e *Event) IsPbehaviorEvent() bool {
-	return e.EventType == EventTypePBehavior ||
-		e.EventType == EventTypePbhEnter ||
+	return e.EventType == EventTypePbhEnter ||
 		e.EventType == EventTypePbhLeave ||
 		e.EventType == EventTypePbhLeaveAndEnter
+}
+
+func isValidEventType(t string) bool {
+	switch t {
+	case EventTypeCheck,
+		EventTypeActivate,
+		EventTypeAck,
+		EventTypeAckremove,
+		EventTypeAssocTicket,
+		EventTypeCancel,
+		EventTypeComment,
+		EventTypeDeclareTicket,
+		EventTypeDeclareTicketWebhook,
+		EventTypeDone,
+		EventTypeChangestate,
+		EventTypeSnooze,
+		EventTypeUnsnooze,
+		EventTypeUncancel,
+		EventTypeResolveDone,
+		EventTypeResolveCancel,
+		EventTypeResolveClose,
+		EventTypePbhEnter,
+		EventTypePbhLeaveAndEnter,
+		EventTypePbhLeave,
+		EventTypePbhCreate,
+		EventTypeUpdateStatus,
+		EventTypeMetaAlarm,
+		EventTypeMetaAlarmUpdated,
+		EventManualMetaAlarmGroup,
+		EventManualMetaAlarmUngroup,
+		EventManualMetaAlarmUpdate,
+		EventTypeRecomputeEntityService,
+		EventTypeUpdateEntityService,
+		EventTypeEntityUpdated,
+		EventTypeEntityToggled,
+		EventTypeNoEvents,
+		EventTypeRunDelayedScenario,
+		EventTypeInstructionStarted,
+		EventTypeInstructionPaused,
+		EventTypeInstructionResumed,
+		EventTypeInstructionCompleted,
+		EventTypeInstructionFailed,
+		EventTypeInstructionAborted,
+		EventTypeAutoInstructionStarted,
+		EventTypeAutoInstructionCompleted,
+		EventTypeAutoInstructionFailed,
+		EventTypeInstructionJobStarted,
+		EventTypeInstructionJobCompleted,
+		EventTypeInstructionJobAborted,
+		EventTypeInstructionJobFailed,
+		EventTypeAlarmSkipped,
+		EventTypeJunitTestSuiteUpdated,
+		EventTypeJunitTestCaseUpdated,
+		EventTypeKeepstate,
+		EventTypePerf,
+		EventTypeStateIncrease,
+		EventTypeStateDecrease,
+		EventTypeStatusIncrease,
+		EventTypeStatusDecrease,
+		EventTypeTrigger:
+		return true
+	}
+
+	return false
 }

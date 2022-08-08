@@ -53,19 +53,8 @@ func NewApi(
 	}
 }
 
-// Find all alarms
-// @Summary Find all alarms
-// @Description Get paginated list of alarms. Use parameters "multi_sort[]=field_1,asc&multi_sort[]=field_2,desc&multi_sort[]=field_3,asc" to sort list by multiple fields. "sort_key", "sort_dir" are left for compatibility with older ways of sorting
-// @Tags alarms
-// @ID alarms-find-all
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param request query ListRequestWithPagination true "request"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /alarms [get]
 func (a *api) List(c *gin.Context) {
 	var r ListRequestWithPagination
 	r.Query = pagination.GetDefaultQuery()
@@ -94,19 +83,8 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Count alarms
-// @Summary Count alarms
-// @Description Get counts of alarms
-// @Tags alarms
-// @ID alarms-get-counts
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param request query FilterRequest true "request"
+// Count
 // @Success 200 {object} Count
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /alarm-counters [get]
 func (a *api) Count(c *gin.Context) {
 	var r FilterRequest
 
@@ -123,18 +101,9 @@ func (a *api) Count(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Start export alarms
-// @Summary Start export alarms
-// @Description Start export alarms
-// @Tags alarms
-// @ID alarms-export-start
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// StartExport
 // @Param request body ExportRequest true "request"
 // @Success 200 {object} ExportResponse
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /alarm-export [post]
 func (a *api) StartExport(c *gin.Context) {
 	var r ExportRequest
 	if err := c.ShouldBind(&r); err != nil {
@@ -170,19 +139,8 @@ func (a *api) StartExport(c *gin.Context) {
 	})
 }
 
-// Get status of export alarms
-// @Summary Get status of export alarms
-// @Description Get status of export alarms
-// @Tags alarms
-// @ID alarms-export-get
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "export task id"
+// GetExport
 // @Success 200 {object} ExportResponse
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /alarm-export/{id} [get]
 func (a *api) GetExport(c *gin.Context) {
 	id := c.Param("id")
 	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
@@ -201,19 +159,6 @@ func (a *api) GetExport(c *gin.Context) {
 	})
 }
 
-// Get result of export alarms
-// @Summary Get result of export alarms
-// @Description Get result of export alarms
-// @Tags alarms
-// @ID alarms-export-download
-// @Produce text/csv
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "export task id"
-// @Success 200 {object} http.Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /alarm-export/{id}/download [get]
 func (a *api) DownloadExport(c *gin.Context) {
 	id := c.Param("id")
 	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)

@@ -15,6 +15,7 @@ const (
 	AlarmChangeTypeCreate            AlarmChangeType = "create"
 	AlarmChangeTypeCreateAndPbhEnter AlarmChangeType = "createandpbhenter"
 	AlarmChangeTypeAck               AlarmChangeType = "ack"
+	AlarmChangeTypeDoubleAck         AlarmChangeType = "doubleack"
 	AlarmChangeTypeAckremove         AlarmChangeType = "ackremove"
 	AlarmChangeTypeCancel            AlarmChangeType = "cancel"
 	AlarmChangeTypeUncancel          AlarmChangeType = "uncancel"
@@ -58,6 +59,9 @@ const (
 	// Following change types are used for junit.
 	AlarmChangeTypeJunitTestSuiteUpdate AlarmChangeType = "junittestsuiteupdate"
 	AlarmChangeTypeJunitTestCaseUpdate  AlarmChangeType = "junittestcaseupdate"
+
+	// AlarmChangeTypeEntityToggled is used to update entity service's counters on disable/enable entity actions.
+	AlarmChangeTypeEntityToggled AlarmChangeType = "entitytoggled"
 )
 
 // AlarmChange is a struct containing the type of change that occured on an
@@ -90,6 +94,8 @@ func (ac *AlarmChange) GetTriggers() []string {
 		triggers = append(triggers, string(AlarmChangeTypeCreate), string(AlarmChangeTypePbhEnter))
 	case AlarmChangeTypePbhLeaveAndEnter:
 		triggers = append(triggers, string(AlarmChangeTypePbhEnter), string(AlarmChangeTypePbhLeave))
+	case AlarmChangeTypeDoubleAck:
+		triggers = append(triggers, string(AlarmChangeTypeAck))
 	default:
 		t := string(ac.Type)
 		if t != "" {

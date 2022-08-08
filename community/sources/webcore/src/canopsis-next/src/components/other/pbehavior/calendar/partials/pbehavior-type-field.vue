@@ -21,7 +21,7 @@
 <script>
 import { MAX_LIMIT } from '@/constants';
 
-import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
+import { entitiesPbehaviorTypesMixin } from '@/mixins/entities/pbehavior/types';
 
 export default {
   $_veeValidate: {
