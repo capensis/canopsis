@@ -33,15 +33,13 @@ import defaultLogo from '@/assets/canopsis.png';
 
 import { MODALS } from '@/constants';
 
-import {
-  Geomap,
-  GeomapPopup,
-  GeomapControl,
-  GeomapIcon,
-  GeomapMarker,
-  GeomapLayerGroup,
-  GeomapTileLayer,
-} from '@/components/common/geomap';
+import Geomap from '@/components/common/geomap/geomap.vue';
+import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
+import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
+import GeomapLayerGroup from '@/components/common/geomap/geomap-layer-group.vue';
+import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
+import GeomapControl from '@/components/common/geomap/geomap-control.vue';
+import GeomapPopup from '@/components/common/geomap/geomap-popup.vue';
 
 /**
  * TODO: Component should be removed in the end feature development
