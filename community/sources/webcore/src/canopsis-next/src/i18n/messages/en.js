@@ -2179,8 +2179,8 @@ export default merge({
     usingType: 'Cannot be deleted since it is in use',
     defaultType: 'Type is default, because cannot be edited',
     types: {
-      [PBEHAVIOR_TYPE_TYPES.active]: 'Default active',
-      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Default inactive',
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
     },
@@ -2929,6 +2929,7 @@ export default merge({
       invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
       countOverLimit: 'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
       oldPattern: 'The current filter pattern is defined in old format. Please use the Advanced editor to view it. Filters in old format will be deprecated soon. Please create new patterns in our updated interface.',
+      existExcluded: 'The rules include excluded rule.',
     },
   },
 
