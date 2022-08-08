@@ -3007,6 +3007,13 @@ export default merge({
     addPoint: 'Add point',
     editPoint: 'Edit point',
     removePoint: 'Remove point',
+    panzoom: {
+      helpText: 'Useful shortcuts:\n'
+        + 'Ctrl + mouse weel - zoom in/out\n'
+        + 'Shift + mouse weel - horizontal scroll\n'
+        + 'Alt + mouse weel - vertical scroll\n'
+        + 'Ctrl + Left mouse click + drag - pan the area',
+    },
     themes: {
       [MERMAID_THEMES.default]: 'Default',
       [MERMAID_THEMES.base]: 'Base',
