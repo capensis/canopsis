@@ -36,6 +36,7 @@ Feature: SLI metrics should be added on alarm changes
       "name": "test-pbehavior-metrics-pbehavior-axe-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2s" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -96,7 +97,8 @@ Feature: SLI metrics should be added on alarm changes
       "enabled": true,
       "name": "test-pbehavior-metrics-pbehavior-axe-2",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "2s" }},
+      "tstop": {{ nowAdd "3s" }},
+      "color": "#FFFFFF",
       "type": "test-pause-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -157,7 +159,8 @@ Feature: SLI metrics should be added on alarm changes
       "enabled": true,
       "name": "test-pbehavior-metrics-pbehavior-axe-3",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "2s" }},
+      "tstop": {{ nowAdd "3s" }},
+      "color": "#FFFFFF",
       "type": "test-inactive-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -219,6 +222,7 @@ Feature: SLI metrics should be added on alarm changes
       "name": "test-pbehavior-metrics-pbehavior-axe-4",
       "tstart": {{ nowAdd "2s" }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -280,6 +284,7 @@ Feature: SLI metrics should be added on alarm changes
       "name": "test-pbehavior-metrics-pbehavior-axe-5",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2s" }},
+      "color": "#FFFFFF",
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -293,10 +298,7 @@ Feature: SLI metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I wait 1s
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": []
@@ -449,10 +451,7 @@ Feature: SLI metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I wait 1s
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -557,10 +556,7 @@ Feature: SLI metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I wait 1s
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": []

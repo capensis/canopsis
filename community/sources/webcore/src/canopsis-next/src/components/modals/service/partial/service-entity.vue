@@ -2,18 +2,22 @@
   div.weather-service-entity-expansion-panel
     v-expansion-panel(v-model="opened", dark)
       v-expansion-panel-content(:style="{ backgroundColor: color }")
-        entity-header(
-          slot="header",
-          :entity="entity",
-          :entity-name-field="entityNameField"
-        )
+        template(#header="")
+          entity-header(
+            :selected="selected",
+            :entity="entity",
+            :entity-name-field="entityNameField",
+            :last-action-unavailable="lastActionUnavailable",
+            @select="$listeners.select",
+            @remove-unavailable="$listeners['remove-unavailable']"
+          )
         v-card(color="white black--text")
           v-card-text
             entity-info-tab(
               v-if="!isService",
               :entity="entity",
               :template="template",
-              @add:event="$listeners['add:event']",
+              @add:action="$listeners['add:action']",
               @refresh="$listeners.refresh"
             )
             v-tabs(
@@ -29,7 +33,8 @@
                 entity-info-tab(
                   :entity="entity",
                   :template="template",
-                  @add:event="$listeners['add:event']"
+                  @add:action="$listeners['add:action']",
+                  @refresh="$listeners.refresh"
                 )
               v-tab {{ $t('modals.service.entity.tabs.treeOfDependencies') }}
               v-tab-item(lazy)
@@ -46,14 +51,14 @@ import { ENTITY_TYPES } from '@/constants';
 
 import { getEntityColor } from '@/helpers/color';
 
-import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
+import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
 
 import EntityHeader from './service-entity-header.vue';
 import EntityInfoTab from './service-entity-info-tab.vue';
 import EntityTreeOfDependenciesTab from './service-entity-tree-of-dependencies-tab.vue';
 
 export default {
-  inject: ['$eventsQueue'],
+  inject: ['$actionsQueue'],
   components: {
     EntityHeader,
     EntityInfoTab,
@@ -64,6 +69,14 @@ export default {
     entity: {
       type: Object,
       required: true,
+    },
+    selected: {
+      type: Boolean,
+      default: false,
+    },
+    lastActionUnavailable: {
+      type: Boolean,
+      default: false,
     },
     entityNameField: {
       type: String,
@@ -113,7 +126,7 @@ export default {
 
 <style lang="scss" scoped>
   .weather-service-entity-expansion-panel /deep/ .v-expansion-panel__header {
-    padding: 0 12px;
+    padding: 0 16px;
     height: auto;
   }
 </style>

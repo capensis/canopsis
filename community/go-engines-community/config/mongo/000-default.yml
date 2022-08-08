@@ -137,6 +137,14 @@ indexes:
       keys:
         filename: 1
 
+  pbehavior:
+    name:
+      keys:
+        name: 1
+      options:
+        unique: true
+        background: true
+
   junit_test_case_media:
     relative_filepath_1:
       keys:
@@ -167,8 +175,61 @@ indexes:
         instruction: 1
         date: 1
 
+  job_history:
+    job_1_status_1:
+      keys:
+        job: 1
+        status: 1
+    next_exec_1_status_1:
+      keys:
+        next_exec: 1
+        status: 1
+    execution_1:
+      keys:
+        execution: 1
+
   default_rights:
     crecord_type_1_role_1:
       keys:
         crecord_type: 1
         role: 1
+
+  action_scenario:
+    priority_1:
+      keys:
+        priority: 1
+
+  entity_category:
+    name_1:
+      keys:
+        name: 1
+
+  idle_rule:
+    priority_1:
+      keys:
+        priority: 1
+
+  job_config:
+    created_1:
+      keys:
+        created: 1
+
+  job:
+    created_1:
+      keys:
+        created: 1
+
+  instruction:
+    created_1:
+      keys:
+        created: 1
+
+  flapping_rule:
+    priority_1:
+      keys:
+        priority: 1
+
+  resolve_rule:
+    priority_1:
+      keys:
+        priority: 1

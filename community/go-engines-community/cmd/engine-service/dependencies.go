@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -54,10 +55,18 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		json.NewEncoder(),
 		entityservice.NewAdapter(mongoClient),
 		entity.NewAdapter(mongoClient),
+		alarm.NewAdapter(mongoClient),
 		entityservice.NewCountersCache(redisSession, logger),
 		entityservice.NewStorage(entityservice.NewAdapter(mongoClient), redisSession, json.NewEncoder(), json.NewDecoder(), logger),
 		serviceLockClient,
 		redisSession,
+		logger,
+	)
+	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		engine.NewRunInfoManager(runInfoRedisSession),
+		engine.NewInstanceRunInfo(canopsis.ServiceEngineName, canopsis.ServiceQueueName, options.PublishToQueue),
+		amqpChannel,
 		logger,
 	)
 
@@ -65,6 +74,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		func(ctx context.Context) error {
 			ctx, task := trace.NewTask(ctx, "service.Initialize")
 			defer task.End()
+			runInfoPeriodicalWorker.Work(ctx)
 
 			// Lock periodical, do not release lock to not allow another instance start periodical.
 			_, err := periodicalLockClient.Obtain(ctx, redis.ServiceIdleSincePeriodicalLockKey,
@@ -182,13 +192,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		},
 		logger,
 	))
-	engineService.AddPeriodicalWorker("run info", engine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		engine.NewRunInfoManager(runInfoRedisSession),
-		engine.NewInstanceRunInfo(canopsis.ServiceEngineName, canopsis.ServiceQueueName, options.PublishToQueue),
-		amqpChannel,
-		logger,
-	))
+	engineService.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	if options.AutoRecomputeAll {
 		engineService.AddPeriodicalWorker("recompute all", engine.NewLockedPeriodicalWorker(
 			periodicalLockClient,

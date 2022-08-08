@@ -3,6 +3,8 @@ package context
 import (
 	"context"
 	"errors"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -12,13 +14,11 @@ import (
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 func NewEnrichmentCenter(
 	adapter libentity.Adapter,
 	dbClient libmongo.DbClient,
-	enableEnrich bool,
 	entityServiceManager entityservice.Manager,
 	metricMetaUpdater metrics.MetaUpdater,
 ) EnrichmentCenter {
@@ -26,7 +26,6 @@ func NewEnrichmentCenter(
 		dbClient:             dbClient,
 		dbCollection:         dbClient.Collection(libmongo.EntityMongoCollection),
 		adapter:              adapter,
-		enableEnrich:         enableEnrich,
 		entityServiceManager: entityServiceManager,
 		metricMetaUpdater:    metricMetaUpdater,
 	}
@@ -36,16 +35,25 @@ type center struct {
 	dbClient             libmongo.DbClient
 	dbCollection         libmongo.DbCollection
 	adapter              libentity.Adapter
-	enableEnrich         bool
 	entityServiceManager entityservice.Manager
 	metricMetaUpdater    metrics.MetaUpdater
 }
 
-func (c *center) Handle(ctx context.Context, event types.Event, fields EnrichFields) (*types.Entity, UpdatedEntityServices, error) {
+func (c *center) Handle(ctx context.Context, event types.Event) (*types.Entity, UpdatedEntityServices, error) {
 	updatedServices := UpdatedEntityServices{}
-	eventEntity, entities, err := c.createEntities(ctx, event, fields)
-	if err != nil {
-		return nil, updatedServices, err
+	var eventEntity *types.Entity
+	var entities []types.Entity
+	var err error
+	if event.IsOnlyServiceUpdate() {
+		eventEntity, err = c.findEntityByID(ctx, event.GetEID())
+		if err != nil {
+			return nil, updatedServices, err
+		}
+	} else {
+		eventEntity, entities, err = c.createEntities(ctx, event)
+		if err != nil {
+			return nil, updatedServices, err
+		}
 	}
 
 	if eventEntity == nil {
@@ -84,10 +92,6 @@ func (c *center) Handle(ctx context.Context, event types.Event, fields EnrichFie
 	updatedEntities = append(updatedEntities, resources...)
 	if len(updatedEntities) > 0 {
 		go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
-	}
-
-	if !eventEntity.Enabled {
-		return eventEntity, updatedServices, nil
 	}
 
 	found := false
@@ -390,7 +394,7 @@ func (c *center) updateComponentInfos(ctx context.Context, event types.Event, en
 }
 
 // createEntities creates connection, component, resource entities if they don't exist.
-func (c *center) createEntities(ctx context.Context, event types.Event, fields EnrichFields) (*types.Entity, []types.Entity, error) {
+func (c *center) createEntities(ctx context.Context, event types.Event) (*types.Entity, []types.Entity, error) {
 	if event.SourceType != types.SourceTypeResource && event.SourceType != types.SourceTypeComponent {
 		return nil, nil, nil
 	}
@@ -478,27 +482,6 @@ func (c *center) createEntities(ctx context.Context, event types.Event, fields E
 		entities = []types.Entity{connector, component, *entity}
 	}
 
-	if c.enableEnrich {
-		set, err := c.setExtraInfos(event, entity, fields)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		if set {
-			found := false
-			for _, v := range entities {
-				if entity.ID == v.ID {
-					found = true
-					break
-				}
-			}
-
-			if !found {
-				entities = append(entities, *entity)
-			}
-		}
-	}
-
 	insertedIDs, err := c.adapter.UpsertMany(ctx, entities)
 	if err != nil {
 		return nil, nil, err
@@ -535,25 +518,4 @@ func (c *center) createEntities(ctx context.Context, event types.Event, fields E
 	}
 
 	return entity, inserted, nil
-}
-
-// setExtraInfos sets infos from event to entity if they are allowed by enrich fields.
-func (c *center) setExtraInfos(event types.Event, entity *types.Entity, fields EnrichFields) (bool, error) {
-	set := false
-	for key, val := range event.ExtraInfos {
-		if !fields.Allow(key) {
-			continue
-		}
-
-		value, err := types.InterfaceToString(val)
-		if err != nil {
-			return false, err
-		}
-
-		info := types.NewInfo(key, "", value)
-		entity.Infos[info.Name] = info
-		set = true
-	}
-
-	return set, nil
 }

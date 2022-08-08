@@ -22,6 +22,8 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links 1`] =
 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links as list 1`] = `
 <alarm-column-value-categories-stub
+  aslist="true"
+  limit="2"
   links="[object Object]"
 />
 `;

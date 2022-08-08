@@ -164,8 +164,8 @@ services:
     <<: *app_service_base
     image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}nginx:${CANOPSIS_IMAGE_TAG}
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:8080"
+      - "443:8443"
     volumes:
       - nginxcerts:/etc/nginx/ssl
 

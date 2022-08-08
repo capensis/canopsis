@@ -45,6 +45,7 @@ type ScenarioStorage interface {
 		triggers []string,
 		alarm types.Alarm,
 		entity types.Entity,
+		additionalData AdditionalData,
 	) error
 
 	// GetScenario returns scenario.
@@ -68,6 +69,8 @@ type ScenarioExecution struct {
 	Tries            int64                  `json:"t"`
 	Header           map[string]string      `json:"h,omitempty"`
 	Response         map[string]interface{} `json:"r,omitempty"`
+	ResponseMap      map[string]interface{} `json:"rm,omitempty"`
+	ResponseCount    int                    `json:"rc"`
 	AdditionalData   AdditionalData         `json:"ad"`
 }
 
@@ -90,7 +93,9 @@ type ExecuteScenariosTask struct {
 type AdditionalData struct {
 	AlarmChangeType types.AlarmChangeType `json:"alarm_change_type"`
 	Author          string                `json:"author"`
+	User            string                `json:"user"`
 	Initiator       string                `json:"initiator"`
+	Output          string                `json:"event_output"`
 }
 
 type Execution struct {

@@ -1,7 +1,7 @@
 <template lang="pug">
   c-action-btn(
     v-if="hasReadAnyPbehaviorAccess",
-    :tooltip="$t('alarmList.actions.titles.pbehaviorList')",
+    :tooltip="$t('common.pbehaviorList')",
     icon="list",
     @click="showPbehaviorsListModal"
   )
@@ -10,7 +10,7 @@
 <script>
 import { CRUD_ACTIONS, MODALS } from '@/constants';
 
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 export default {

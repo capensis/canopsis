@@ -5006,5 +5006,105 @@
     "measurements": null,
     "name": "test-service-weather-entity-6",
     "type": "service"
+  },
+  {
+    "_id": "test-resource-to-calendar-get-by-entity/test-component-to-calendar-get-by-entity",
+    "depends": ["test-connector/test-connector-name"],
+    "enabled": true,
+    "impact": ["test-component-to-calendar-get-by-entity"],
+    "name": "test-resource-to-calendar-get-by-entity",
+    "type": "resource",
+    "component": "test-component-to-calendar-get-by-entity",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-entity-to-bulk-toggle-connector/test-entity-to-bulk-toggle-connector-name",
+    "category": null,
+    "depends": [
+      "test-entity-to-bulk-toggle-component-1"
+    ],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [
+      "test-entity-to-bulk-toggle-resource-1/test-entity-to-bulk-toggle-component-1",
+      "test-entity-to-bulk-toggle-resource-2/test-entity-to-bulk-toggle-component-1"
+    ],
+    "impact_level": 5,
+    "infos": {},
+    "measurements": null,
+    "name": "test-entity-to-bulk-toggle-connector-name",
+    "description": "test-entity-to-bulk-toggle-connector-description",
+    "type": "connector"
+  },
+  {
+    "_id": "test-entity-to-bulk-toggle-component-1",
+    "category": "test-category-to-entity-edit",
+    "depends": [
+      "test-entity-to-bulk-toggle-resource-1/test-entity-to-bulk-toggle-component-1",
+      "test-entity-to-bulk-toggle-resource-2/test-entity-to-bulk-toggle-component-1"
+    ],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [
+      "test-entity-to-bulk-toggle-connector/test-entity-to-bulk-toggle-connector-name"
+    ],
+    "impact_level": 4,
+    "infos": {},
+    "measurements": null,
+    "name": "test-entity-to-bulk-toggle-component-1",
+    "description": "test-entity-to-bulk-toggle-component-1-description",
+    "type": "component"
+  },
+  {
+    "_id": "test-entity-to-bulk-toggle-resource-1/test-entity-to-bulk-toggle-component-1",
+    "category": "test-category-to-entity-edit",
+    "depends": [
+      "test-entity-to-bulk-toggle-connector/test-entity-to-bulk-toggle-connector-name"
+    ],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [
+      "test-entity-to-bulk-toggle-component-1"
+    ],
+    "impact_level": 3,
+    "infos": {},
+    "measurements": null,
+    "name": "test-entity-to-bulk-toggle-resource-1",
+    "description": "test-entity-to-bulk-toggle-resource-1-description",
+    "type": "resource"
+  },
+  {
+    "_id": "test-entity-to-bulk-toggle-resource-2/test-entity-to-bulk-toggle-component-1",
+    "category": "test-category-to-entity-edit",
+    "depends": [
+      "test-entity-to-bulk-toggle-connector/test-entity-to-bulk-toggle-connector-name"
+    ],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [
+      "test-entity-to-bulk-toggle-component-1"
+    ],
+    "impact_level": 2,
+    "infos": {},
+    "measurements": null,
+    "name": "test-entity-to-bulk-toggle-resource-1",
+    "description": "test-entity-to-bulk-toggle-resource-1-description",
+    "type": "resource"
+  },
+  {
+    "_id": "test-entity-to-bulk-toggle-service",
+    "category": "",
+    "depends": [],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [],
+    "impact_level": 1,
+    "infos": {},
+    "entity_patterns": [
+      {"name": {"regex_match": "some_weird_pattern"}}
+    ],
+    "measurements": null,
+    "name": "test-entity-to-bulk-toggle-service-name",
+    "type": "service"
   }
 ]

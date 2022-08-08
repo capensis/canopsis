@@ -43,8 +43,7 @@
                   ) lock
               widget-wrapper-menu(
                 :widget="layoutItem.widget",
-                :tab="tab",
-                :update-tab-method="updateTabMethod"
+                :tab="tab"
               )
           slot(:widget="layoutItem.widget")
 </template>
@@ -73,10 +72,6 @@ export default {
       type: Object,
       required: true,
     },
-    updateTabMethod: {
-      type: Function,
-      required: true,
-    },
   },
   data() {
     const layouts = this.getLayoutsForAllSizes(this.tab.widgets);
@@ -96,6 +91,8 @@ export default {
   watch: {
     'tab.widgets': function tabWidgets(widgets) {
       this.layouts = this.getLayoutsForAllSizes(widgets);
+
+      this.updatedLayout();
     },
 
     $mq: {
@@ -132,24 +129,22 @@ export default {
     },
 
     /**
-     * Emit 'update:tab' event when layout will be updated
+     * Emit 'update:widgets-grid' event when layout will be updated
      */
     updatedLayout() {
-      const widgetsFields = Object.entries(this.layouts).reduce((acc, [size, layout]) => {
+      const widgetsGrid = Object.entries(this.layouts).reduce((acc, [size, layout]) => {
         layout.forEach((layoutItem) => {
           if (!acc[layoutItem.i]) {
             acc[layoutItem.i] = {};
           }
 
-          acc[layoutItem.i][`grid_parameters.${size}`] = value => ({
-            ...value,
-            ...omit(layoutItem, ['i', 'widget', 'moved']),
-          });
+          acc[layoutItem.i][size] = omit(layoutItem, ['i', 'widget', 'moved']);
         });
+
         return acc;
       }, {});
 
-      this.$emit('update:widgets-fields', widgetsFields);
+      this.$emit('update:widgets-grid', widgetsGrid);
     },
   },
 };

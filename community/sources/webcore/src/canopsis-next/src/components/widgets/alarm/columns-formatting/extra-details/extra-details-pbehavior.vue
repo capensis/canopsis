@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-tooltip.c-extra-details(top)
-      v-icon.c-extra-details__badge.cyan.accent-2.white--text(
+      v-icon.c-extra-details__badge.secondary.accent-2.white--text(
         small,
         slot="activator"
       ) {{ pbehaviorInfo.icon_name }}
@@ -9,7 +9,7 @@
         strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
         div
           div.mt-2.font-weight-bold {{ pbehavior.name }}
-          div {{ $t('common.author') }}: {{ pbehavior.author }}
+          div {{ $t('common.author') }}: {{ pbehavior.author.name }}
           div(v-if="pbehaviorInfo.type_name") {{ $t('common.type') }}: {{ pbehaviorInfo.type_name }}
           div(v-if="pbehavior.reason") {{ $t('common.reason') }}: {{ pbehavior.reason.name }}
           div {{ tstart }}

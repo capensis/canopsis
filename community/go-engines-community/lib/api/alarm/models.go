@@ -1,6 +1,7 @@
 package alarm
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -122,15 +123,16 @@ type Children struct {
 }
 
 type AlarmValue struct {
-	ACK                           *AlarmStep            `bson:"ack,omitempty" json:"ack,omitempty"`
-	Canceled                      *AlarmStep            `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done                          *AlarmStep            `bson:"done,omitempty" json:"done,omitempty"`
-	Snooze                        *AlarmStep            `bson:"snooze,omitempty" json:"snooze,omitempty"`
-	State                         *AlarmStep            `bson:"state,omitempty" json:"state,omitempty"`
-	Status                        *AlarmStep            `bson:"status,omitempty" json:"status,omitempty"`
-	Ticket                        *AlarmTicket          `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	LastComment                   *AlarmStep            `bson:"last_comment,omitempty" json:"lastComment,omitempty"`
-	Steps                         []AlarmStep           `bson:"steps,omitempty" json:"steps,omitempty"`
+	ACK         *AlarmStep   `bson:"ack,omitempty" json:"ack,omitempty"`
+	Canceled    *AlarmStep   `bson:"canceled,omitempty" json:"canceled,omitempty"`
+	Done        *AlarmStep   `bson:"done,omitempty" json:"done,omitempty"`
+	Snooze      *AlarmStep   `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	State       *AlarmStep   `bson:"state,omitempty" json:"state,omitempty"`
+	Status      *AlarmStep   `bson:"status,omitempty" json:"status,omitempty"`
+	Ticket      *AlarmTicket `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	LastComment *AlarmStep   `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+	Steps       []AlarmStep  `bson:"steps,omitempty" json:"steps,omitempty"`
+
 	Component                     string                `bson:"component" json:"component"`
 	Connector                     string                `bson:"connector" json:"connector"`
 	ConnectorName                 string                `bson:"connector_name" json:"connector_name"`
@@ -168,7 +170,7 @@ type AlarmStep struct {
 	Type         string             `bson:"_t" json:"_t"`
 	Timestamp    *types.CpsTime     `bson:"t" json:"t" swaggertype:"integer"`
 	Author       string             `bson:"a" json:"a"`
-	UserID       string             `bson:"user_id,omitempty" json:"user_id,omitempty"`
+	UserID       string             `bson:"user_id,omitempty" json:"user_id"`
 	Message      string             `bson:"m" json:"m"`
 	Value        types.CpsNumber    `bson:"val" json:"val"`
 	Initiator    string             `bson:"initiator" json:"initiator"`
@@ -188,12 +190,13 @@ type AlarmTicket struct {
 
 type Pbehavior struct {
 	ID       string             `bson:"_id" json:"_id"`
-	Author   string             `bson:"author" json:"author"`
+	Author   common.User        `bson:"author" json:"author"`
 	Name     string             `bson:"name" json:"name"`
 	RRule    string             `bson:"rrule" json:"rrule"`
 	Start    *types.CpsTime     `bson:"tstart" json:"tstart" swaggertype:"integer"`
 	Stop     *types.CpsTime     `bson:"tstop" json:"tstop" swaggertype:"integer"`
 	Type     *pbehavior.Type    `bson:"type" json:"type"`
+	Reason   *pbehavior.Reason  `bson:"reason" json:"reason"`
 	Comments pbehavior.Comments `bson:"comments" json:"comments"`
 }
 

@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    component(v-model="value", :is="component", :name="name")
+    component(v-field="value", :is="component", :name="name")
 </template>
 
 <script>
@@ -25,13 +25,17 @@ export default {
   },
   mixins: [formMixin, formValidationHeaderMixin],
   model: {
-    prop: 'action',
+    prop: 'value',
     event: 'input',
   },
   props: {
-    action: {
+    value: {
       type: Object,
       default: () => ({}),
+    },
+    type: {
+      type: String,
+      default: ACTION_TYPES.ack,
     },
     name: {
       type: String,
@@ -39,16 +43,6 @@ export default {
     },
   },
   computed: {
-    value: {
-      get() {
-        const { type, parameters } = this.action;
-
-        return parameters[type];
-      },
-      set(value) {
-        this.updateField(`parameters.${this.action.type}`, value);
-      },
-    },
     component() {
       return {
         [ACTION_TYPES.changeState]: 'c-change-state-field',
@@ -59,7 +53,7 @@ export default {
         [ACTION_TYPES.ackremove]: 'action-note-form',
         [ACTION_TYPES.cancel]: 'action-note-form',
         [ACTION_TYPES.webhook]: 'action-webhook-form',
-      }[this.action.type];
+      }[this.type];
     },
   },
 };

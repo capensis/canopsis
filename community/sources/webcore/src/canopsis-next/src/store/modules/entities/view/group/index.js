@@ -12,18 +12,14 @@ export const types = {
 
 export default createEntityModule({
   types,
-  route: API_ROUTES.viewGroup,
+  route: API_ROUTES.view.groups,
   entityType: ENTITIES_TYPES.group,
   dataPreparer: d => d.data,
   withMeta: true,
 }, {
   actions: {
     fetchListWithoutStore(context, { params }) {
-      return request.get(API_ROUTES.viewGroup, { params });
-    },
-
-    bulkCreateWithoutStore(context, { data }) {
-      return request.post(API_ROUTES.bulkViewGroup, data);
+      return request.get(API_ROUTES.view.groups, { params });
     },
   },
 });

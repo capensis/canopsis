@@ -225,7 +225,7 @@ func RegisterTranslations(v *validator.Validate) {
 	_ = v.RegisterTranslation("must_be_empty", trans, func(ut ut.Translator) error {
 		return ut.Add("must_be_empty", "{0} is not empty.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("must_be_empty", fe.Field())
+		t, _ := ut.T("must_be_empty", fe.StructField())
 		return t
 	})
 	_ = v.RegisterTranslation("ltefield", trans, func(ut ut.Translator) error {
@@ -243,7 +243,7 @@ func RegisterTranslations(v *validator.Validate) {
 	_ = v.RegisterTranslation("filemask", trans, func(ut ut.Translator) error {
 		return ut.Add("filemask", "{0} is not a valid file mask.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("filemask", fe.Field())
+		t, _ := ut.T("filemask", fe.StructField())
 		return t
 	})
 	_ = v.RegisterTranslation("iscolor", trans, func(ut ut.Translator) error {
@@ -289,12 +289,6 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("time_format", fe.StructField())
 		return t
 	})
-	_ = v.RegisterTranslation("must_be_empty", trans, func(ut ut.Translator) error {
-		return ut.Add("must_be_empty", "{0} is not empty.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("must_be_empty", fe.Field())
-		return t
-	})
 	_ = v.RegisterTranslation("multi_sort_invalid", trans, func(ut ut.Translator) error {
 		return ut.Add("multi_sort_invalid", "Invalid multi_sort value.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -302,7 +296,7 @@ func RegisterTranslations(v *validator.Validate) {
 		return t
 	})
 	_ = v.RegisterTranslation("regexp", trans, func(ut ut.Translator) error {
-		return ut.Add("regexp", "Invalid regexp.", true)
+		return ut.Add("regexp", "{0} is invalid regexp.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("regexp", fe.StructField())
 		return t
