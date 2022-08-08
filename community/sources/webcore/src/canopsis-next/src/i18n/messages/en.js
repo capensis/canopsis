@@ -3009,9 +3009,9 @@ export default merge({
     removePoint: 'Remove point',
     panzoom: {
       helpText: 'Useful shortcuts:\n'
-        + 'Ctrl + mouse weel - zoom in/out\n'
-        + 'Shift + mouse weel - horizontal scroll\n'
-        + 'Alt + mouse weel - vertical scroll\n'
+        + 'Ctrl + mouse wheel - zoom in/out\n'
+        + 'Shift + mouse wheel - horizontal scroll\n'
+        + 'Alt + mouse wheel - vertical scroll\n'
         + 'Ctrl + Left mouse click + drag - pan the area',
     },
     themes: {
