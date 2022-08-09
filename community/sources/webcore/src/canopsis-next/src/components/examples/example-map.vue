@@ -1,16 +1,22 @@
 <template lang="pug">
   geomap(style="height: 300px")
-    geomap-tile-layer(:url="$config.OPEN_STREET_LAYER_URL")
-    geomap-control(position="bottomleft")
-      v-btn.ma-0.primary(small) Bottom left
-    geomap-control(position="topright")
-      v-btn.ma-0.primary(small) Top right
-    geomap-control(position="topleft")
-      v-btn.ma-0.primary(small) Top left
-    geomap-control(position="bottomright")
-      v-btn.ma-0.primary(small) Bottom right
+    geomap-control-zoom(position="topleft")
+    geomap-control-layers(position="topright")
 
-    geomap-layer-group(name="markers-layer")
+    geomap-tile-layer(
+      name="Open street map",
+      :url="$config.OPEN_STREET_LAYER_URL",
+      :visible="true",
+      layer-type="base"
+    )
+    geomap-tile-layer(
+      name="Open topo map",
+      url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+      :visible="false",
+      layer-type="base"
+    )
+
+    geomap-layer-group(name="Markers", layer-type="overlay")
       geomap-popup Layer layer
       geomap-marker(
         v-for="marker in markers",
@@ -40,6 +46,8 @@ import GeomapLayerGroup from '@/components/common/geomap/geomap-layer-group.vue'
 import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
 import GeomapControl from '@/components/common/geomap/geomap-control.vue';
 import GeomapPopup from '@/components/common/geomap/geomap-popup.vue';
+import GeomapControlZoom from '@/components/common/geomap/geomap-control-zoom.vue';
+import GeomapControlLayers from '@/components/common/geomap/geomap-control-layers.vue';
 
 /**
  * TODO: Component should be removed in the end feature development
@@ -53,6 +61,8 @@ export default {
     GeomapMarker,
     GeomapLayerGroup,
     GeomapTileLayer,
+    GeomapControlZoom,
+    GeomapControlLayers,
   },
   computed: {
     logo() {
@@ -62,7 +72,7 @@ export default {
     markers() {
       return range(5).map(value => ({
         id: value,
-        coordinate: [0 + value * 10, 50 + value * 10],
+        coordinate: [value * 10, 50 + value * 10],
         data: { id: value },
       }));
     },

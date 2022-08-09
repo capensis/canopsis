@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(close)
+    modal-wrapper(close, text-class="pa-0")
       template(#title="")
         span {{ title }}
       template(#text="")
