@@ -123,14 +123,6 @@ export default {
           value: ENTITY_PATTERN_FIELDS.lastEventDate,
           options: { disabled: true },
         },
-        {
-          value: ENTITY_PATTERN_FIELDS.component,
-          options: { disabled: true },
-        },
-        {
-          value: ENTITY_PATTERN_FIELDS.connector,
-          options: { disabled: true },
-        },
       ];
     },
   },

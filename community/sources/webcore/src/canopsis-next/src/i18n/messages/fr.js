@@ -2179,8 +2179,8 @@ export default merge({
     usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
     defaultType: 'Le type par défaut ne peut pas être modifié.',
     types: {
-      [PBEHAVIOR_TYPE_TYPES.active]: 'Actif par défaut',
-      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif par défaut',
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
     },
@@ -2929,6 +2929,7 @@ export default merge({
       invalidPatterns: 'Les modèles ne sont pas valides ou il y a un champ de modèle désactivé',
       countOverLimit: 'Le modèle que vous avez défini cible {count} éléments. Cela peut affecter les performances, en êtes-vous sûr ?',
       oldPattern: 'Le modèle de filtre actuel est défini dans l\'ancien format. Veuillez utiliser l\'éditeur avancé pour l\'afficher. Les filtres dans l\'ancien format seront bientôt obsolètes. Veuillez créer de nouveaux modèles dans notre interface mise à jour.',
+      existExcluded: 'Les règles incluent la règle exclue.',
     },
   },
 
