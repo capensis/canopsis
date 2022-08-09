@@ -60,6 +60,7 @@ describe('service-dependencies', () => {
       alarm: null,
       impact_state: 0,
       has_impacts: false,
+      cycle: false,
     },
     {
       _id: 'data-alarm-2',
@@ -259,6 +260,7 @@ describe('service-dependencies', () => {
         root: {
           ...alarmWithDeps,
           _id: alarmWithDeps.entity._id,
+          cycle: false,
           entity: {
             ...alarmWithDeps.entity,
             impact_state: 0,

@@ -13,6 +13,8 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
 *  [Limitations de Canopsis](limitations/index.md)
 
 ### Menu **Exploitation**
+  * [Informations dynamiques](menu-exploitation/informations-dynamiques.md)
   * [Règles d'inactivité](menu-exploitation/regles-inactivite.md)
   * [Règles de bagot](menu-exploitation/regles-bagot.md)
   * [Règles de résolution](menu-exploitation/regles-resolution.md)
+  * [Scenarios](menu-exploitation/scenarios.md)

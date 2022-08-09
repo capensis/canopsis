@@ -16,7 +16,7 @@ type Service interface {
 
 	// LoadDataSourceFactories loads the data source factories and adds them to
 	// the service.
-	LoadDataSourceFactories(enrichmentCenter libcontext.EnrichmentCenter, enrichFields libcontext.EnrichFields, dataSourceDirectory string) error
+	LoadDataSourceFactories(enrichmentCenter libcontext.EnrichmentCenter, dataSourceDirectory string) error
 
 	// ProcessEvent processes an event with the rules of the event filter. It
 	// returns a DropError if the event should be dropped by the eventfilter.

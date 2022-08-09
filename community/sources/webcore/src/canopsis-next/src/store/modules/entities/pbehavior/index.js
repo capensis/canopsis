@@ -25,6 +25,7 @@ export default {
   state: {
     allIds: [],
     pending: false,
+    fetchingParams: {},
     meta: {},
   },
   getters: {
@@ -41,8 +42,9 @@ export default {
     meta: state => state.meta,
   },
   mutations: {
-    [types.FETCH_LIST](state) {
+    [types.FETCH_LIST](state, { params } = {}) {
       state.pending = true;
+      state.fetchingParams = params;
     },
     [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
       state.allIds = allIds;
@@ -66,7 +68,7 @@ export default {
   actions: {
     async fetchList({ dispatch, commit }, { params } = {}) {
       try {
-        commit(types.FETCH_LIST);
+        commit(types.FETCH_LIST, { params });
 
         const { data, normalizedData } = await dispatch('entities/fetch', {
           route: API_ROUTES.pbehavior.pbehaviors,
@@ -85,16 +87,20 @@ export default {
       }
     },
 
+    fetchListWithPreviousParams({ dispatch, state }) {
+      dispatch('fetchList', { params: state.fetchingParams });
+    },
+
     fetchListWithoutStore(context, { params }) {
       return request.get(API_ROUTES.pbehavior.pbehaviors, { params });
     },
 
-    async fetchListByEntityId({ commit, dispatch }, { id }) {
+    async fetchListByEntityId({ commit, dispatch }, { params }) {
       try {
         const { normalizedData } = await dispatch('entities/fetch', {
-          route: API_ROUTES.pbehavior.pbehaviorById,
+          route: API_ROUTES.pbehavior.entities,
           schema: [schemas.pbehavior],
-          params: { id },
+          params,
         }, { root: true });
 
         commit(types.FETCH_BY_ID_COMPLETED, { allIds: normalizedData.result });
@@ -106,7 +112,7 @@ export default {
     },
 
     fetchListByEntityIdWithoutStore(context, { id }) {
-      return request.get(API_ROUTES.pbehavior.pbehaviorById, { params: { id } });
+      return request.get(API_ROUTES.pbehavior.entities, { params: { _id: id } });
     },
 
     async create({ dispatch }, { data }) {
@@ -124,12 +130,20 @@ export default {
       }
     },
 
+    bulkCreate(context, { data }) {
+      return request.post(API_ROUTES.pbehavior.bulkPbehaviors, data);
+    },
+
     async update({ dispatch }, { data, id }) {
       await dispatch('entities/update', {
         route: `${API_ROUTES.pbehavior.pbehaviors}/${id}`,
         schema: schemas.pbehavior,
         body: data,
       }, { root: true });
+    },
+
+    bulkUpdate(context, { data }) {
+      return request.put(API_ROUTES.pbehavior.bulkPbehaviors, data);
     },
 
     async remove({ dispatch }, { id }) {
@@ -144,8 +158,16 @@ export default {
       }
     },
 
-    fetchEntitiesCountWithoutStore(context, { data }) {
-      return request.post(API_ROUTES.pbehavior.pbehaviorsCount, data);
+    bulkRemove(context, { data }) {
+      return request.delete(API_ROUTES.pbehavior.bulkPbehaviors, { data });
+    },
+
+    fetchPbehaviorsCalendarWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.pbehavior.calendar, { params });
+    },
+
+    fetchEntitiesPbehaviorsCalendarWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.pbehavior.entitiesCalendar, { params });
     },
   },
 };

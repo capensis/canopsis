@@ -1,15 +1,7 @@
 <template lang="pug">
   div
-    div
-      v-layout(wrap, justify-center)
-        v-flex
-          v-text-field(
-            v-field="form.name",
-            v-validate="'required'",
-            :label="$t('common.name')",
-            :error-messages="errors.collect('name')",
-            name="name"
-          )
+    v-layout(column)
+      c-name-field(v-field="form.name")
       v-layout
         v-flex.pr-3(xs6)
           c-entity-category-field(v-field="form.category", addable, required)
@@ -21,22 +13,18 @@
           )
         v-flex(xs2)
           c-impact-level-field(v-field="form.impact_level", required)
-      v-layout(wrap, justify-center)
-        v-flex
-          v-textarea(
-            v-field="form.output_template",
-            v-validate="'required'",
-            :label="$t('service.outputTemplate')",
-            :error-messages="errors.collect('output_template')",
-            name="output_template"
-          )
-      v-layout(wrap, justify-center)
-        v-flex
-          c-enabled-field(v-field="form.enabled")
+      v-textarea(
+        v-field="form.output_template",
+        v-validate="'required'",
+        :label="$t('service.outputTemplate')",
+        :error-messages="errors.collect('output_template')",
+        name="output_template"
+      )
+      c-enabled-field(v-field="form.enabled")
     v-tabs(slider-color="primary", centered)
       v-tab(:class="{ 'error--text': errors.has('entity_patterns') }") {{ $t('common.entityPatterns') }}
       v-tab-item
-        patterns-list(v-field="form.entity_patterns", v-validate="'required'", name="entity_patterns")
+        c-patterns-field.mt-2(v-field="form.patterns", :entity-attributes="entityAttributes", with-entity)
       v-tab.validation-header(:disabled="advancedJsonWasChanged") {{ $t('entity.manageInfos') }}
       v-tab-item
         manage-infos(v-field="form.infos")
@@ -45,13 +33,13 @@
 <script>
 import { get } from 'lodash';
 
-import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
+import { ENTITY_PATTERN_FIELDS } from '@/constants';
+
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    PatternsList,
     ManageInfos,
   },
   model: {
@@ -71,6 +59,23 @@ export default {
 
     advancedJsonWasChanged() {
       return get(this.fields, ['advancedJson', 'changed']);
+    },
+
+    entityAttributes() {
+      return [
+        {
+          value: ENTITY_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+        {
+          value: ENTITY_PATTERN_FIELDS.connector,
+          options: { disabled: true },
+        },
+        {
+          value: ENTITY_PATTERN_FIELDS.componentInfos,
+          options: { disabled: true },
+        },
+      ];
     },
   },
 };

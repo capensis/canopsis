@@ -20,5 +20,13 @@ export const entitiesPbehaviorTypeMixin = {
       removePbehaviorType: 'remove',
       fetchPbehaviorTypeByEntityId: 'fetchListByEntityId',
     }),
+
+    async fetchDefaultPbehaviorTypes() {
+      const { data } = await this.fetchPbehaviorTypesListWithoutStore({
+        params: { default: true },
+      });
+
+      return data;
+    },
   },
 };

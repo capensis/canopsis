@@ -14,7 +14,7 @@ Feature: Bulk create scenarios
   Scenario: given bulk create request should return multi status and should be handled independently
     When I am admin
     When I do POST /api/v4/bulk/scenarios:
-    """
+    """json
     [
       {
         "_id": "bulk-create-scenario-1",
@@ -1066,7 +1066,6 @@ Feature: Bulk create scenarios
       {
         "status": 400,
         "errors": {
-          "actions.0.parameters.output": "Output is missing.",
           "actions.0.parameters.state": "State is missing."
         },
         "item": {
@@ -1133,8 +1132,7 @@ Feature: Bulk create scenarios
       {
         "status": 400,
         "errors": {
-          "actions.0.parameters.request.method": "Method is missing.",
-          "actions.0.parameters.request.url": "URL is missing."
+          "actions.0.parameters.request": "Request is missing."
         },
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
@@ -1306,7 +1304,7 @@ Feature: Bulk create scenarios
     When I do GET /api/v4/scenarios?search=test-scenario-to-bulk-create&sort=asc&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1330,8 +1328,6 @@ Feature: Bulk create scenarios
               ],
               "type": "snooze",
               "parameters": {
-                "author": "root",
-                "user": "root",
                 "output": "test-scenario-to-bulk-create-1-action-1-output",
                 "duration": {
                   "value": 3,
@@ -1392,8 +1388,6 @@ Feature: Bulk create scenarios
               ],
               "type": "pbehavior",
               "parameters": {
-                "author": "root",
-                "user": "root",
                 "duration": {
                   "value": 3,
                   "unit": "s"
@@ -1406,8 +1400,6 @@ Feature: Bulk create scenarios
                 },
                 "rrule": "FREQ=DAILY",
                 "start_on_trigger": true,
-                "tstart": null,
-                "tstop": null,
                 "type": {
                   "_id": "test-type-to-edit-scenario",
                   "description": "test-type-to-edit-scenario-description",
@@ -1443,8 +1435,6 @@ Feature: Bulk create scenarios
               ],
               "type": "snooze",
               "parameters": {
-                "author": "root",
-                "user": "root",
                 "output": "test-scenario-to-bulk-create-2-action-1-output",
                 "duration": {
                   "value": 3,
@@ -1505,8 +1495,6 @@ Feature: Bulk create scenarios
               ],
               "type": "pbehavior",
               "parameters": {
-                "author": "root",
-                "user": "root",
                 "duration": {
                   "value": 3,
                   "unit": "s"
@@ -1519,8 +1507,6 @@ Feature: Bulk create scenarios
                 },
                 "rrule": "FREQ=DAILY",
                 "start_on_trigger": true,
-                "tstart": null,
-                "tstop": null,
                 "type": {
                   "_id": "test-type-to-edit-scenario",
                   "description": "test-type-to-edit-scenario-description",

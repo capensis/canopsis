@@ -4,11 +4,13 @@
       mass-actions-panel(
         :items-ids="selectedIds",
         :widget="widget",
+        :refresh-alarms-list="refreshAlarmsList",
         @clear:items="clearSelected"
       )
     c-empty-data-table-columns(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
+        ref="dataTable",
         v-model="selected",
         :class="vDataTableClass",
         :items="alarms",
@@ -18,7 +20,7 @@
         :select-all="selectable",
         :loading="loading || columnsFiltersPending",
         :expand="expandable",
-        ref="dataTable",
+        :dense="dense",
         item-key="_id",
         hide-actions,
         multi-sort,
@@ -39,15 +41,15 @@
             :widget="widget",
             :columns="columns",
             :columns-filters="columnsFilters",
-            :hide-groups="hideGroups",
             :parent-alarm="parentAlarm",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)"
+            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
+            :refresh-alarms-list="refreshAlarmsList"
           )
         template(#expand="{ item, index }")
           alarms-expand-panel(
             :alarm="item",
             :widget="widget",
-            :hide-groups="hideGroups",
+            :hide-children="hideChildren",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
           )
     slot
@@ -64,14 +66,13 @@ import { ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
 import { isResolvedAlarm } from '@/helpers/entities';
 
-import Observer from '@/services/observer';
 import featuresService from '@/services/features';
 
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 import MassActionsPanel from '../actions/mass-actions-panel.vue';
-import AlarmsExpandPanel from './alarms-expand-panel.vue';
+import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
 import AlarmsListRow from './alarms-list-row.vue';
 
 /**
@@ -80,16 +81,11 @@ import AlarmsListRow from './alarms-list-row.vue';
    * @module alarm
    */
 export default {
-  inject: {
-    $periodicRefresh: {
-      default: new Observer(),
-    },
-  },
   components: {
-    AlarmsListRow,
-    AlarmsExpandPanel,
-    MassActionsPanel,
     AlarmHeaderCell,
+    MassActionsPanel,
+    AlarmsExpandPanel,
+    AlarmsListRow,
 
     ...featuresService.get('components.alarmListTable.components', {}),
   },
@@ -127,15 +123,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    hasColumns: {
-      type: Boolean,
-      default: false,
-    },
     selectable: {
       type: Boolean,
       default: false,
     },
-    hideGroups: {
+    hideChildren: {
       type: Boolean,
       default: false,
     },
@@ -147,9 +139,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    dense: {
+      type: Boolean,
+      default: false,
+    },
     parentAlarm: {
       type: Object,
       default: null,
+    },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
     },
   },
   data() {
@@ -167,6 +167,10 @@ export default {
   },
 
   computed: {
+    hasColumns() {
+      return this.columns.length > 0;
+    },
+
     expanded() {
       return this.$refs.dataTable.expanded;
     },
@@ -379,7 +383,6 @@ export default {
   .alarms-list-table {
     tbody {
       position: relative;
-      z-index: 1;
     }
 
     thead {
@@ -399,57 +402,51 @@ export default {
       }
     }
 
-    &.columns-lg {
-      table.v-table {
-        tbody, thead {
-          td, th {
-            padding: 0 8px;
-          }
+    &.columns-lg .v-table {
+      &:not(.v-datatable--dense) {
+        td, th {
+          padding: 0 8px;
+        }
+      }
 
-          @media screen and (max-width: 1600px) {
-            td, th {
-              padding: 0 4px;
-            }
-          }
+      @media screen and (max-width: 1600px) {
+        td, th {
+          padding: 0 4px;
+        }
+      }
 
-          @media screen and (max-width: 1450px) {
-            td, th {
-              font-size: 0.85em;
-            }
+      @media screen and (max-width: 1450px) {
+        td, th {
+          font-size: 0.85em;
+        }
 
-            .badge {
-              font-size: inherit;
-            }
-          }
+        .badge {
+          font-size: inherit;
         }
       }
     }
 
-    &.columns-md {
-      table.v-table {
-        tbody, thead {
-          @media screen and (max-width: 1700px) {
-            td, th {
-              padding: 0 12px;
-            }
-          }
+    &.columns-md .v-table {
+      @media screen and (max-width: 1700px) {
+        td, th {
+          padding: 0 12px;
+        }
+      }
 
-          @media screen and (max-width: 1250px) {
-            td, th {
-              padding: 0 8px;
-            }
-          }
+      @media screen and (max-width: 1250px) {
+        td, th {
+          padding: 0 8px;
+        }
+      }
 
-          @media screen and (max-width: 1150px) {
-            td, th {
-              font-size: 0.85em;
-              padding: 0 4px;
-            }
+      @media screen and (max-width: 1150px) {
+        td, th {
+          font-size: 0.85em;
+          padding: 0 4px;
+        }
 
-            .badge {
-              font-size: inherit;
-            }
-          }
+        .badge {
+          font-size: inherit;
         }
       }
     }

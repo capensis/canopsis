@@ -13,18 +13,6 @@ import (
 	"unicode"
 )
 
-// Download pbehavior ICS by id
-// @Summary Get pbehavior ICS by id
-// @Description Get pbehavior ICS by id
-// @Tags pbehavior-ics
-// @ID pbehavior-ics-get-by-id
-// @Produce octet-stream
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "pbehavior id"
-// @Success 200
-// @Failure 404 {object} common.ErrorResponse
-// @Router /pbehavior-ics/{id} [get]
 func GetICS(store Store, service Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")

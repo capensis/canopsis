@@ -54,11 +54,10 @@ func NewEngine(
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
-
 	eventFilterService := eventfilter.NewService(mongoClient, eventFilterAdapter, timezoneConfigProvider, logger)
 	enrichmentCenter := libcontext.NewEnrichmentCenter(
 		entityAdapter,
-		options.FeatureContextEnrich,
+		mongoClient,
 		entityservice.NewManager(
 			entityServiceAdapter,
 			entityAdapter,
@@ -67,13 +66,21 @@ func NewEngine(
 		),
 		metricsEntityMetaUpdater,
 	)
-	enrichFields := libcontext.NewEnrichFields(options.EnrichInclude, options.EnrichExclude)
+
+	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		libengine.NewRunInfoManager(runInfoRedisSession),
+		libengine.NewInstanceRunInfo(canopsis.CheEngineName, options.ConsumeFromQueue, options.PublishToQueue),
+		amqpChannel,
+		logger,
+	)
 
 	engine := libengine.New(
 		func(ctx context.Context) error {
+			runInfoPeriodicalWorker.Work(ctx)
+
 			err := eventFilterService.LoadDataSourceFactories(
 				enrichmentCenter,
-				enrichFields,
 				options.DataSourceDirectory,
 			)
 			if err != nil {
@@ -161,7 +168,6 @@ func NewEngine(
 			AlarmConfigProvider:      alarmConfigProvider,
 			EventFilterService:       eventFilterService,
 			EnrichmentCenter:         enrichmentCenter,
-			EnrichFields:             enrichFields,
 			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
 			AlarmAdapter:             alarm.NewAdapter(mongoClient),
 			Encoder:                  json.NewEncoder(),
@@ -176,13 +182,7 @@ func NewEngine(
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
 	})
-	engine.AddPeriodicalWorker("run info", libengine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		libengine.NewRunInfoManager(runInfoRedisSession),
-		libengine.NewInstanceRunInfo(canopsis.CheEngineName, options.ConsumeFromQueue, options.PublishToQueue),
-		amqpChannel,
-		logger,
-	))
+	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engine.AddPeriodicalWorker("alarm config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),

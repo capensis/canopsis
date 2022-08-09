@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -30,11 +32,16 @@ import {
   PATTERN_OPERATORS,
   PATTERN_TYPES,
   PATTERN_FIELD_TYPES,
+  PBEHAVIOR_TYPE_TYPES,
+  SCENARIO_TRIGGERS,
+  WEATHER_ACTIONS_TYPES,
+  MAP_TYPES,
+  MERMAID_THEMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
 
-export default {
+export default merge({
   common: {
     ok: 'Ok',
     undefined: 'Not defined',
@@ -68,6 +75,7 @@ export default {
     by: 'By',
     date: 'Date',
     comment: 'Comment | Comments',
+    lastComment: 'Last comment',
     start: 'Start',
     end: 'End',
     message: 'Message',
@@ -162,6 +170,7 @@ export default {
     entityPatterns: 'Entity patterns',
     pbehaviorPatterns: 'Pbehavior patterns',
     totalEntityPatterns: 'Total entity patterns',
+    serviceWeatherPatterns: 'Service weather patterns',
     addFilter: 'Add filter',
     id: 'Id',
     reset: 'Reset',
@@ -226,6 +235,7 @@ export default {
     dictionary: 'Dictionary',
     condition: 'Condition | Conditions',
     template: 'Template',
+    pbehaviorList: 'List periodic behaviors',
     canceled: 'Canceled',
     snoozed: 'Snoozed',
     impact: 'Impact | Impacts',
@@ -238,13 +248,18 @@ export default {
     extraDetail: 'Extra detail | Extra details',
     acked: 'Acked',
     ackedAt: 'Acked at',
+    ackedBy: 'Acked by',
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Custom',
     eventType: 'Event type',
     sourceType: 'Source type',
+    cycleDependency: 'Cycle dependency',
+    checkPattern: 'Check pattern',
+    itemFound: '{count} item found | {count} items found',
+    canonicalType: 'Canonical type',
+    map: 'Map | Maps',
     actions: {
-      close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
       saveChanges: 'Save changes',
@@ -260,6 +275,11 @@ export default {
       [EVENT_ENTITY_TYPES.comment]: 'Comment',
       [EVENT_ENTITY_TYPES.executeInstruction]: 'Execute instruction',
     },
+    acknowledge: 'Acknowledge',
+    acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
+    acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
+    saveChanges: 'Save changes',
+    reportIncident: 'Report an incident',
     times: {
       second: 'second | seconds',
       minute: 'minute | minutes',
@@ -329,7 +349,9 @@ export default {
 
       [PATTERN_OPERATORS.hasEvery]: 'Has every',
       [PATTERN_OPERATORS.hasOneOf]: 'Has one of',
+      [PATTERN_OPERATORS.isOneOf]: 'Is one of',
       [PATTERN_OPERATORS.hasNot]: 'Has not',
+      [PATTERN_OPERATORS.isNotOneOf]: 'Is not one of',
       [PATTERN_OPERATORS.isEmpty]: 'Is empty',
       [PATTERN_OPERATORS.isNotEmpty]: 'Is not empty',
 
@@ -350,6 +372,9 @@ export default {
 
       [PATTERN_OPERATORS.acked]: 'Acked',
       [PATTERN_OPERATORS.notAcked]: 'Not acked',
+
+      [PATTERN_OPERATORS.isGrey]: 'Gray tiles',
+      [PATTERN_OPERATORS.isNotGrey]: 'Not gray tiles',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Ack',
@@ -362,6 +387,85 @@ export default {
       [EVENT_ENTITY_TYPES.check]: 'Check',
       [EVENT_ENTITY_TYPES.comment]: 'Comment',
       [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
+    },
+    scenarioTriggers: {
+      [SCENARIO_TRIGGERS.create]: {
+        text: 'Alarm creation',
+      },
+      [SCENARIO_TRIGGERS.statedec]: {
+        text: 'Alarm state decrease',
+      },
+      [SCENARIO_TRIGGERS.changestate]: {
+        text: 'Alarm state has been changed by "change state" action',
+      },
+      [SCENARIO_TRIGGERS.stateinc]: {
+        text: 'Alarm state increase',
+      },
+      [SCENARIO_TRIGGERS.changestatus]: {
+        text: 'Alarm status changes eg. flapping',
+      },
+      [SCENARIO_TRIGGERS.ack]: {
+        text: 'Alarm has been acked',
+      },
+      [SCENARIO_TRIGGERS.ackremove]: {
+        text: 'Alarm has been unacked',
+      },
+      [SCENARIO_TRIGGERS.cancel]: {
+        text: 'Alarm has been cancelled',
+      },
+      [SCENARIO_TRIGGERS.uncancel]: {
+        text: 'Alarm has been uncancelled',
+        helpText: 'Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it\'s possible to send an uncancel event via API',
+      },
+      [SCENARIO_TRIGGERS.comment]: {
+        text: 'Alarm has been commented',
+      },
+      [SCENARIO_TRIGGERS.done]: {
+        text: 'Alarm is "done"',
+        helpText: 'Probably legacy, because there is no such action in the UI, but it\'s possible to send a done event via API',
+      },
+      [SCENARIO_TRIGGERS.declareticket]: {
+        text: 'Ticket has been declared by the UI action',
+      },
+      [SCENARIO_TRIGGERS.declareticketwebhook]: {
+        text: 'Ticket has been declared by the webhook',
+      },
+      [SCENARIO_TRIGGERS.assocticket]: {
+        text: 'Ticket has been associated with an alarm',
+      },
+      [SCENARIO_TRIGGERS.snooze]: {
+        text: 'Alarm has been snoozed',
+      },
+      [SCENARIO_TRIGGERS.unsnooze]: {
+        text: 'Alarm has been unsnoozed',
+      },
+      [SCENARIO_TRIGGERS.resolve]: {
+        text: 'Alarm has been resolved',
+      },
+      [SCENARIO_TRIGGERS.activate]: {
+        text: 'Alarm has been activated',
+      },
+      [SCENARIO_TRIGGERS.pbhenter]: {
+        text: 'Alarm enters a periodic behavior',
+      },
+      [SCENARIO_TRIGGERS.pbhleave]: {
+        text: 'Alarm leaves a periodic behavior',
+      },
+      [SCENARIO_TRIGGERS.instructionfail]: {
+        text: 'Manual instruction has failed',
+      },
+      [SCENARIO_TRIGGERS.autoinstructionfail]: {
+        text: 'Auto instruction has failed',
+      },
+      [SCENARIO_TRIGGERS.instructionjobfail]: {
+        text: 'Manual or auto instruction\'s job is failed',
+      },
+      [SCENARIO_TRIGGERS.instructioncomplete]: {
+        text: 'Manual instruction is completed',
+      },
+      [SCENARIO_TRIGGERS.autoinstructioncomplete]: {
+        text: 'Auto instruction is completed',
+      },
     },
   },
   variableTypes: {
@@ -388,10 +492,9 @@ export default {
         deleteEntity: 'Delete entity',
         pbehavior: 'Periodical behavior',
         variablesHelp: 'List of available variables',
+        massEnable: 'Enable entities',
+        massDisable: 'Disable entities',
       },
-    },
-    entityInfo: {
-      valueAsList: 'Change value type to list',
     },
     fab: {
       common: 'Add a new entity',
@@ -464,7 +567,6 @@ export default {
         ackRemove: 'Cancel ack',
         pbehavior: 'Periodical behavior',
         snooze: 'Snooze alarm',
-        pbehaviorList: 'List periodic behaviors',
         declareTicket: 'Declare ticket',
         associateTicket: 'Associate ticket',
         cancel: 'Cancel alarm',
@@ -489,8 +591,8 @@ export default {
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
-        causes: 'Causes',
-        consequences: 'Consequences',
+        parents: 'Causes',
+        children: 'Consequences',
         rule: 'Rule | Rules',
       },
     },
@@ -541,8 +643,7 @@ export default {
     tabs: {
       moreInfos: 'More infos',
       timeLine: 'Timeline',
-      alarmsConsequences: 'Alarms consequences',
-      alarmsCauses: 'Alarms causes',
+      alarmsChildren: 'Alarms consequences',
       trackSource: 'Track source',
       impactChain: 'Impact chain',
       entityGantt: 'Gantt chart',
@@ -554,9 +655,11 @@ export default {
     tooltips: {
       priority: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
       hasInstruction: 'There is an instruction for this type of incidents',
+      hasManualInstructionInRunning: 'Manual instruction in progress',
       hasAutoInstructionInRunning: 'Automatic instruction in progress',
       allAutoInstructionExecuted: 'All automatic instructions has been executed',
       awaitingInstructionComplete: 'Awaiting for the instruction to complete',
+      autoInstructionsFailed: 'Automatic instructions failed',
     },
     metrics: {
       [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',
@@ -594,6 +697,9 @@ export default {
     created: 'Creation date',
     updated: 'Last update date',
     lastAlarmDate: 'Last alarm date',
+    massRemove: 'Remove pbehaviors',
+    massEnable: 'Enable pbehaviors',
+    massDisable: 'Disable pbehaviors',
     searchHelp: '<span>Help on the advanced research :</span>\n'
       + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
       + '<p>The "-" before the research is required</p>\n'
@@ -614,8 +720,6 @@ export default {
       + '  <dd>Pbehavior reason name are "reason_name_1"</dd>'
       + '</dl>',
     tabs: {
-      filter: 'Filter',
-      comments: 'Comments',
       entities: 'Entities',
     },
   },
@@ -658,6 +762,7 @@ export default {
     linksCategoriesAsList: 'Display links as a list?',
     linksCategoriesLimit: 'Number of category items',
     isMultiAckEnabled: 'Multiple ack',
+    isMultiDeclareTicketEnabled: 'Multiple declare ticket',
     fastAckOutput: 'Fast-ack output',
     isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',
     isCorrelationEnabled: 'Is correlation enabled?',
@@ -668,6 +773,7 @@ export default {
     selectAFilter: 'Select a filter',
     exportAsCsv: 'Export widget as csv file',
     criticityLevels: 'Criticity levels',
+    isPriorityEnabled: 'Show priority',
     exportCsv: {
       title: 'Export CSV',
       fields: {
@@ -797,6 +903,11 @@ export default {
         + '<dd>For example:</dd>\n'
         + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
         + '</dl>',
+    },
+    density: {
+      title: 'Default view',
+      comfort: 'Comfort view',
+      compact: 'Compact view',
     },
   },
   modals: {
@@ -1029,7 +1140,7 @@ export default {
       copyToClipboard: 'Copy to clipboard',
     },
     service: {
-      actionPending: 'action(s) pending',
+      actionPending: 'action pending | actions pending',
       refreshEntities: 'Refresh entities list',
       editPbehaviors: 'Edit pbehaviors',
       entity: {
@@ -1114,7 +1225,8 @@ export default {
       },
     },
     alarmsList: {
-      title: 'Alarms list',
+      title: 'Alarm list',
+      prefixTitle: '{prefix} - alarm list',
     },
     createUser: {
       create: {
@@ -1214,11 +1326,11 @@ export default {
       },
       errors: {
         invalid: 'Invalid',
+        emptyInfos: 'At least one info must be added.',
       },
       steps: {
         infos: {
           title: 'Informations',
-          validationError: 'Every value must be filled',
         },
         patterns: {
           title: 'Patterns',
@@ -1231,10 +1343,6 @@ export default {
     createDynamicInfoInformation: {
       create: {
         title: 'Add an information to the dynamic information rule',
-      },
-      fields: {
-        name: 'Name',
-        value: 'Value',
       },
     },
     dynamicInfoTemplatesList: {
@@ -1275,9 +1383,6 @@ export default {
     },
     createCommentEvent: {
       title: 'Add comment',
-      fields: {
-        comment: 'Comment',
-      },
     },
     createPlaylist: {
       create: {
@@ -1321,7 +1426,6 @@ export default {
         type: 'Type',
         priority: 'Priority',
         iconName: 'Icon name',
-        isSpecialColor: 'Use special color for the type?',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -1352,7 +1456,6 @@ export default {
       noData: 'No meta alarm corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
         metaAlarm: 'Manual meta alarm',
-        output: 'Note',
       },
     },
     createRemediationInstruction: {
@@ -1404,6 +1507,7 @@ export default {
         configuration: 'Configuration',
         jobId: 'Job ID',
         query: 'Query',
+        multipleExecutions: 'Allow parallel execution',
       },
       errors: {
         invalidJSON: 'Invalid JSON',
@@ -1575,6 +1679,12 @@ export default {
         phrase: 'archive or delete',
       },
     },
+    pbehaviorsCalendar: {
+      title: 'Periodic behaviors',
+      entity: {
+        title: 'Periodic behaviors - {name}',
+      },
+    },
     createAlarmPattern: {
       create: {
         title: 'Create alarm filter',
@@ -1621,6 +1731,53 @@ export default {
       },
       edit: {
         title: 'Edit shared pbehavior filter',
+      },
+    },
+    createMap: {
+      title: 'Create a map',
+    },
+    createGeoMap: {
+      create: {
+        title: 'Create a geomap',
+      },
+      edit: {
+        title: 'Edit a geomap',
+      },
+      duplicate: {
+        title: 'Duplicate a geomap',
+      },
+    },
+    createFlowchartMap: {
+      create: {
+        title: 'Create a flowchart',
+      },
+      edit: {
+        title: 'Edit a flowchart',
+      },
+      duplicate: {
+        title: 'Duplicate a flowchart',
+      },
+    },
+    createMermaidMap: {
+      create: {
+        title: 'Create a mermaid diagram',
+      },
+      edit: {
+        title: 'Edit a mermaid diagram',
+      },
+      duplicate: {
+        title: 'Duplicate a mermaid diagram',
+      },
+    },
+    createTreeOfDependenciesMap: {
+      create: {
+        title: 'Create a tree of dependencies diagram',
+      },
+      edit: {
+        title: 'Edit a tree of dependencies diagram',
+      },
+      duplicate: {
+        title: 'Duplicate a tree of dependencies diagram',
       },
     },
   },
@@ -1690,11 +1847,12 @@ export default {
     JSONNotValid: 'Invalid JSON',
     versionNotFound: 'Unable to get application version',
     statsRequestProblem: 'An error occurred while retrieving stats data',
-    statsWrongEditionError: "Stats widgets are not available with 'core' edition",
+    statsWrongEditionError: "Stats widgets are not available with 'community' edition",
     socketConnectionProblem: 'Problem with connection to socket server',
     endDateLessOrEqualStartDate: 'End date should be after start date',
     unknownWidgetType: 'Unknown widget type: {type}',
     unique: 'Field must be unique',
+    codeEditorProblem: 'Problem with code-editor',
   },
   warnings: {
     authTokenExpired: 'Authentication token was expired',
@@ -1971,6 +2129,28 @@ export default {
   },
   serviceWeather: {
     seeAlarms: 'See alarms',
+    grey: 'Gray',
+    primaryIcon: 'Primary icon',
+    secondaryIcon: 'Secondary icon',
+    massActions: 'Mass actions',
+    cannotBeApplied: 'This action cannot be applied',
+    actions: {
+      [WEATHER_ACTIONS_TYPES.entityAck]: 'Acknowledge',
+      [WEATHER_ACTIONS_TYPES.entityValidate]: 'Validate',
+      [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalidate',
+      [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',
+      [WEATHER_ACTIONS_TYPES.entityPlay]: 'Play',
+      [WEATHER_ACTIONS_TYPES.entityCancel]: 'Cancel',
+      [WEATHER_ACTIONS_TYPES.entityAssocTicket]: 'Associate ticket',
+      [WEATHER_ACTIONS_TYPES.entityComment]: 'Comment',
+      [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Execute instruction',
+      [WEATHER_ACTIONS_TYPES.declareTicket]: 'Declare ticket',
+    },
+    iconTypes: {
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+    },
   },
   contextGeneralTable: {
     addSelection: 'Add selection',
@@ -2049,6 +2229,12 @@ export default {
   pbehaviorTypes: {
     usingType: 'Cannot be deleted since it is in use',
     defaultType: 'Type is default, because cannot be edited',
+    types: {
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Default active',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Default inactive',
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+    },
   },
 
   pbehaviorReasons: {
@@ -2064,6 +2250,7 @@ export default {
   },
 
   healthcheck: {
+    systemIsDown: 'The system is down',
     notRunning: '{name} is unavailable',
     queueOverflow: 'Queue overflow',
     lackOfInstances: 'Lack of instances',
@@ -2250,6 +2437,7 @@ export default {
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
     closeConfirmationText: 'Would you like to resume this instruction later?',
+    queueNumber: '{number} {name} jobs are in the queue',
     popups: {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
@@ -2331,6 +2519,7 @@ export default {
     addAction: 'Add action',
     emptyActions: 'No actions added yet',
     output: 'Output Action Format',
+    forwardAuthor: 'Forward author to the next step',
     urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
       + '<i>For example:</i>'
       + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
@@ -2386,9 +2575,10 @@ export default {
     emptyInfos: 'No information',
     availabilityState: 'Hi availability state',
     types: {
-      connector: 'connector type',
-      component: 'component',
-      resource: 'resource',
+      [ENTITY_TYPES.component]: 'Component',
+      [ENTITY_TYPES.connector]: 'Connector',
+      [ENTITY_TYPES.resource]: 'Resource',
+      [ENTITY_TYPES.service]: 'Service',
     },
   },
 
@@ -2668,6 +2858,10 @@ export default {
       title: 'KPI',
       message: '', // TODO: add correct message
     },
+    [USERS_PERMISSIONS.technical.map]: {
+      title: 'Maps',
+      message: '', // TODO: add correct message
+    },
 
     /**
      * Admin general
@@ -2690,17 +2884,6 @@ export default {
     [USERS_PERMISSIONS.technical.notification.instructionStats]: {
       title: 'Instruction rating',
       message: 'This page contains the statistics on the instructions execution. Users can rate instructions based on their performance.',
-    },
-  },
-
-  entitiesCountAlerts: {
-    filter: {
-      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
-      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
-    },
-    patterns: {
-      countOverLimit: 'The patterns you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
-      countRequestError: 'The request to entities count by the patterns was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
     },
   },
 
@@ -2789,6 +2972,7 @@ export default {
     simpleEditor: 'Simple editor',
     noData: 'No pattern set. Click \'@:pattern.addGroup\' button to start adding fields to the pattern',
     noDataDisabled: 'No pattern set.',
+    discard: 'Discard pattern',
     types: {
       [PATTERN_TYPES.alarm]: 'Alarm pattern',
       [PATTERN_TYPES.entity]: 'Entity pattern',
@@ -2798,6 +2982,8 @@ export default {
       ruleRequired: 'Please add at least one rule',
       groupRequired: 'Please add at least one group',
       invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
+      countOverLimit: 'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
+      oldPattern: 'The current filter pattern is defined in old format. Please use the Advanced editor to view it. Filters in old format will be deprecated soon. Please create new patterns in our updated interface.',
     },
   },
 
@@ -2805,5 +2991,26 @@ export default {
     oldPattern: 'Old pattern format',
   },
 
-  ...featureService.get('i18n.en'),
-};
+  map: {
+    defineEntity: 'Define entity',
+    addLink: 'Add link',
+    types: {
+      [MAP_TYPES.geo]: 'Geo',
+      [MAP_TYPES.flowchart]: 'Flowchart',
+      [MAP_TYPES.mermaid]: 'Mermaid',
+      [MAP_TYPES.treeOfDependencies]: 'Tree of dependencies',
+    },
+  },
+
+  mermaid: {
+    theme: 'Color theme',
+    themes: {
+      [MERMAID_THEMES.default]: 'Default',
+      [MERMAID_THEMES.base]: 'Base',
+      [MERMAID_THEMES.dark]: 'Dark',
+      [MERMAID_THEMES.forest]: 'Forest',
+      [MERMAID_THEMES.neutral]: 'Neutral',
+      [MERMAID_THEMES.canopsis]: 'Canopsis',
+    },
+  },
+}, featureService.get('i18n.en'));
