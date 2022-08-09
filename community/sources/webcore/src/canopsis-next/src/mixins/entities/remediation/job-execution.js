@@ -9,6 +9,7 @@ export const entitiesRemediationJobExecutionMixin = {
   methods: {
     ...mapActions({
       createRemediationJobExecution: 'create',
+      cancelRemediationJobExecution: 'cancel',
     }),
   },
 };

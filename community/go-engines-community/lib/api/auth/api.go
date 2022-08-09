@@ -69,16 +69,9 @@ type api struct {
 	sessionStore session.Store
 }
 
-// Log in
-// @Summary Log in
-// @Description Log in
-// @Tags auth
-// @ID auth-login
-// @Accept json
-// @Produce json
+// Login
 // @Param body body loginRequest true "body"
 // @Success 200 {object} loginResponse
-// @Router /login [post]
 func (a *api) Login(c *gin.Context) {
 	var request loginRequest
 
@@ -131,16 +124,6 @@ func (a *api) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// Log out
-// @Summary Log out
-// @Description Log out
-// @Tags auth
-// @ID auth-logout
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Success 204
-// @Router /logout [post]
 func (a *api) Logout(c *gin.Context) {
 	tokenString := getToken(c)
 	if tokenString == "" {
@@ -164,17 +147,6 @@ func (a *api) Logout(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// Get logged user count
-// @Summary Get logged user count
-// @Description Get logged user count
-// @Tags auth
-// @ID auth-logged-user-count
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Accept json
-// @Produce json
-// @Success 204
-// @Router /logged-user-count [get]
 func (a *api) GetLoggedUserCount(c *gin.Context) {
 	count, err := a.fetchLoggedUserCount(c.Request.Context())
 	if err != nil {
@@ -186,16 +158,6 @@ func (a *api) GetLoggedUserCount(c *gin.Context) {
 	})
 }
 
-// Get file access
-// @Summary Get file access
-// @Description Get file access
-// @Tags auth
-// @ID auth-get-file-access
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Success 204
-// @Router /file-access [get]
 func (a *api) GetFileAccess(c *gin.Context) {
 	tokenString := getToken(c)
 	if tokenString == "" {

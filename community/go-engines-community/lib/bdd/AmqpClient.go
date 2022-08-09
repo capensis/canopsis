@@ -11,8 +11,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/cucumber/godog"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson"
 	"math/rand"
 	"net/url"
@@ -363,7 +363,7 @@ func (c *AmqpClient) executeRPC(queue string, body []byte) ([]byte, error) {
 }
 
 func (c *AmqpClient) executeTemplate(tpl string) (*bytes.Buffer, error) {
-	t, err := template.New("tpl").Parse(tpl)
+	t, err := template.New("tpl").Option("missingkey=error").Parse(tpl)
 	if err != nil {
 		return nil, err
 	}

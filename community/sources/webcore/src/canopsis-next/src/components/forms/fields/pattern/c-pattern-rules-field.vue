@@ -11,12 +11,12 @@
         )
       c-action-btn(
         :tooltip="$t('pattern.removeRule')",
-        :disabled="disabled",
+        :disabled="readonly || disabled",
         type="delete",
         color="black",
         @click="removeItemFromArray(index)"
       )
-    v-layout(row, align-center)
+    v-layout(v-if="!readonly", row, align-center)
       v-btn.mx-0(
         :disabled="disabled",
         color="primary",
@@ -56,6 +56,10 @@ export default {
       type: String,
       default: 'rules',
     },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     rulesMap() {
@@ -76,22 +80,26 @@ export default {
 
       return {
         ...props,
-        disabled: disabled || this.disabled,
+        disabled: disabled || this.readonly || this.disabled,
         type,
         operators: operators ?? getOperatorsByRule(rule, type),
       };
     },
 
     getUpdatedRule(rule, newRule) {
-      const { defaultValue } = this.getRuleProps(newRule);
+      const { defaultValue, operators } = this.getRuleProps(newRule);
 
       const updatedRule = { ...newRule };
 
       if (updatedRule.attribute !== rule.attribute) {
         updatedRule.operator = '';
-        updatedRule.value = defaultValue ?? '';
+        updatedRule.value = defaultValue;
       } else if (updatedRule.operator !== rule.operator) {
         updatedRule.value = convertValueByOperator(updatedRule.value, updatedRule.operator);
+      }
+
+      if (updatedRule.value !== rule.value && operators?.length === 1) {
+        [updatedRule.operator] = operators;
       }
 
       return updatedRule;

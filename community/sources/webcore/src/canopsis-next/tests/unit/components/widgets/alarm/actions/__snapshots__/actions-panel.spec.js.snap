@@ -1,5 +1,80 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`actions-panel Renders \`actions-panel\` with auto instruction in running 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    Cancel alarm|delete|cancel
+  </button>
+   
+  <button
+    class="drop-down-action-ackRemove"
+  >
+    Cancel ack|not_interested|ackRemove
+  </button>
+  <button
+    class="drop-down-action-changeState"
+  >
+    Change and lock severity|thumbs_up_down|changeState
+  </button>
+  <button
+    class="drop-down-action-ack"
+  >
+    Ack|playlist_add_check|ack
+  </button>
+  <button
+    class="drop-down-action-snooze"
+  >
+    Snooze alarm|alarm|snooze
+  </button>
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    Periodical behavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    History|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    List of available variables|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    Resume Running instruction|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    Execute New instruction|assignment|executeInstruction
+  </button>
+</div>
+`;
+
 exports[`actions-panel Renders \`actions-panel\` with full unresolved alarm, but without access 1`] = `
 <div
   class="shared-actions-panel"
@@ -8,15 +83,234 @@ exports[`actions-panel Renders \`actions-panel\` with full unresolved alarm, but
 </div>
 `;
 
-exports[`actions-panel Renders \`actions-panel\` with resolved alarm 1`] = `
+exports[`actions-panel Renders \`actions-panel\` with manual instruction in running 1`] = `
 <div
   class="shared-actions-panel"
 >
   <button
-    class="action-pbehaviorList"
+    class="action-declareTicket"
   >
-    List periodic behaviors|list|pbehaviorList
+    Declare ticket|report_problem|declareTicket
   </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    Cancel alarm|delete|cancel
+  </button>
+   
+  <button
+    class="drop-down-action-ackRemove"
+  >
+    Cancel ack|not_interested|ackRemove
+  </button>
+  <button
+    class="drop-down-action-changeState"
+  >
+    Change and lock severity|thumbs_up_down|changeState
+  </button>
+  <button
+    class="drop-down-action-ack"
+  >
+    Ack|playlist_add_check|ack
+  </button>
+  <button
+    class="drop-down-action-snooze"
+  >
+    Snooze alarm|alarm|snooze
+  </button>
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    Periodical behavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    History|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    List of available variables|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    Resume Running instruction|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    Execute New instruction|assignment|executeInstruction
+  </button>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with manual instruction in waiting result 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    Cancel alarm|delete|cancel
+  </button>
+   
+  <button
+    class="drop-down-action-ackRemove"
+  >
+    Cancel ack|not_interested|ackRemove
+  </button>
+  <button
+    class="drop-down-action-changeState"
+  >
+    Change and lock severity|thumbs_up_down|changeState
+  </button>
+  <button
+    class="drop-down-action-ack"
+  >
+    Ack|playlist_add_check|ack
+  </button>
+  <button
+    class="drop-down-action-snooze"
+  >
+    Snooze alarm|alarm|snooze
+  </button>
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    Periodical behavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    History|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    List of available variables|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    Resume Running instruction|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    Execute New instruction|assignment|executeInstruction
+  </button>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    Cancel alarm|delete|cancel
+  </button>
+   
+  <button
+    class="drop-down-action-ackRemove"
+  >
+    Cancel ack|not_interested|ackRemove
+  </button>
+  <button
+    class="drop-down-action-changeState"
+  >
+    Change and lock severity|thumbs_up_down|changeState
+  </button>
+  <button
+    class="drop-down-action-ack"
+  >
+    Ack|playlist_add_check|ack
+  </button>
+  <button
+    class="drop-down-action-snooze"
+  >
+    Snooze alarm|alarm|snooze
+  </button>
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    Periodical behavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    History|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    List of available variables|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    Execute New instruction|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+  >
+    Resume Paused instruction|assignment|executeInstruction
+  </button>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with resolved alarm 1`] = `
+<div
+  class="shared-actions-panel"
+>
   <button
     class="action-variablesHelp"
   >
@@ -72,11 +366,6 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
     Periodical behavior|pause|pbehaviorAdd
   </button>
   <button
-    class="drop-down-action-pbehaviorList"
-  >
-    List periodic behaviors|list|pbehaviorList
-  </button>
-  <button
     class="drop-down-action-comment"
   >
     Comment|comment|comment
@@ -98,19 +387,14 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
   </button>
   <button
     class="drop-down-action-executeInstruction"
-    disabled="disabled"
   >
     Resume Running instruction|assignment|executeInstruction
   </button>
   <button
     class="drop-down-action-executeInstruction"
+    disabled="disabled"
   >
     Execute New instruction|assignment|executeInstruction
-  </button>
-  <button
-    class="drop-down-action-executeInstruction"
-  >
-    Resume Paused instruction|assignment|executeInstruction
   </button>
 </div>
 `;
@@ -141,11 +425,6 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
     Periodical behavior|pause|pbehaviorAdd
   </button>
   <button
-    class="drop-down-action-pbehaviorList"
-  >
-    List periodic behaviors|list|pbehaviorList
-  </button>
-  <button
     class="drop-down-action-comment"
   >
     Comment|comment|comment
@@ -167,19 +446,14 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
   </button>
   <button
     class="drop-down-action-executeInstruction"
-    disabled="disabled"
   >
     Resume Running instruction|assignment|executeInstruction
   </button>
   <button
     class="drop-down-action-executeInstruction"
+    disabled="disabled"
   >
     Execute New instruction|assignment|executeInstruction
-  </button>
-  <button
-    class="drop-down-action-executeInstruction"
-  >
-    Resume Paused instruction|assignment|executeInstruction
   </button>
 </div>
 `;

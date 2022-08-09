@@ -21,10 +21,19 @@ export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
 };
 
 export const EVENT_FILTER_PATTERN_FIELDS = {
+  sourceType: 'source_type',
+  eventType: 'event_type',
   component: 'component',
   connector: 'connector',
   connectorName: 'connector_name',
   resource: 'resource',
   output: 'output',
-  extraInfos: 'extra_infos',
+  extraInfos: 'extra',
+};
+
+export const EVENT_FILTER_SOURCE_TYPES = {
+  component: 'component',
+  connector: 'connector',
+  connectorName: 'connector_name',
+  resource: 'resource',
 };

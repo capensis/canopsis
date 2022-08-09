@@ -19,7 +19,7 @@ type ListRequestWithPagination struct {
 type ListRequest struct {
 	BaseFilterRequest
 	Sort     string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
-	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=_id name type category impact_level category.name idle_since infos.*"`
+	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=_id name type category impact_level category.name idle_since infos.* last_event_date enabled"`
 	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
 }
 
@@ -68,7 +68,7 @@ type Entity struct {
 	Deletable      *bool                    `bson:"deletable,omitempty" json:"deletable,omitempty"`
 	IdleSince      *types.CpsTime           `bson:"idle_since,omitempty" json:"idle_since,omitempty" swaggertype:"integer"`
 	PbehaviorInfo  *PbehaviorInfo           `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	LastEventDate  *types.CpsTime           `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
+	LastEventDate  *types.CpsTime           `bson:"last_event_date,omitempty" json:"last_event_date,omitempty" swaggertype:"integer"`
 	OKEvents       int                      `bson:"ok_events" json:"ok_events"`
 	KOEvents       int                      `bson:"ko_events" json:"ko_events"`
 	State          int                      `bson:"state" json:"state"`
@@ -118,4 +118,23 @@ func (r AggregationResult) GetTotal() int64 {
 
 func (r AggregationResult) GetData() interface{} {
 	return r.Data
+}
+
+type BulkToggleRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}
+
+type SimplifiedEntity struct {
+	ID      string `bson:"_id"`
+	Type    string `bson:"type"`
+	Enabled bool   `bson:"enabled"`
+}
+
+// for swagger
+type BulkToggleResponseItem struct {
+	ID     string                `json:"id,omitempty"`
+	Item   BulkToggleRequestItem `json:"item"`
+	Status int                   `json:"status"`
+	Error  string                `json:"error,omitempty"`
+	Errors map[string]string     `json:"errors,omitempty"`
 }

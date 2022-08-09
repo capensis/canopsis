@@ -1,18 +1,13 @@
 <template lang="pug">
-  div
-    v-layout(wrap)
-      v-flex(xs12)
-        pbehavior-general-form(
-          v-field="form",
-          :no-enabled="noEnabled",
-          :with-start-on-trigger="withStartOnTrigger"
-        )
-      v-flex(v-if="!noComments", xs12)
-        pbehavior-comments-form(v-field="form.comments")
-      v-flex(v-if="!noFilter", xs12)
-        pbehavior-filter-field(v-field="form")
-      v-flex(xs12)
-        pbehavior-recurrence-rule-field(v-field="form")
+  v-layout(column)
+    pbehavior-general-form(
+      v-field="form",
+      :no-enabled="noEnabled",
+      :with-start-on-trigger="withStartOnTrigger"
+    )
+    pbehavior-comments-form(v-if="!noComments", v-field="form.comments")
+    pbehavior-filter-field(v-if="!noPattern", v-field="form.patterns")
+    pbehavior-recurrence-rule-field(v-field="form")
 </template>
 
 <script>
@@ -41,7 +36,7 @@ export default {
       type: Object,
       required: true,
     },
-    noFilter: {
+    noPattern: {
       type: Boolean,
       default: false,
     },

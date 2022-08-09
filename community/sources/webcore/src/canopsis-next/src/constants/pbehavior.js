@@ -24,17 +24,11 @@ export const PBEHAVIOR_TYPE_TYPES = {
   pause: 'pause',
 };
 
-/**
- * 19/01/2038 @ 3:14am (UTC) in unix timestamp
- *
- * @type {number}
- */
-export const MAX_PBEHAVIOR_DEFAULT_TSTOP = 2147483647;
-
 export const WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE = 'downtime';
 
 export const PBEHAVIOR_PATTERN_FIELDS = {
-  name: 'pbehavior_info._id',
+  name: 'pbehavior_info.id',
   reason: 'pbehavior_info.reason',
   type: 'pbehavior_info.type',
+  canonicalType: 'pbehavior_info.canonical_type',
 };

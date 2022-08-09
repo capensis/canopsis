@@ -9,7 +9,7 @@
     c-description-field(v-field="form.description", required)
     c-priority-field(v-field="form.priority")
     c-enabled-field(v-field="form.enabled")
-    c-patterns-field(v-field="form.patterns", with-entity, with-event)
+    c-patterns-field(v-field="form.patterns", with-entity, with-event, some-required)
 
     template(v-if="isChangeEntityType || isEnrichmentType")
       v-divider.my-3
@@ -23,15 +23,12 @@
 <script>
 import { EVENT_FILTER_TYPES } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
-
 import EventFilterEnrichmentForm from '@/components/other/event-filter/form/event-filter-enrichment-form.vue';
 import EventFilterChangeEntityForm from '@/components/other/event-filter/form/event-filter-change-entity-form.vue';
 
 export default {
   inject: ['$validator'],
   components: { EventFilterEnrichmentForm, EventFilterChangeEntityForm },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',

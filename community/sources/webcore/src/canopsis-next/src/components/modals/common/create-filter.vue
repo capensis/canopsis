@@ -4,14 +4,7 @@
       template(#title="")
         span {{ title }}
       template(#text="")
-        patterns-form(
-          v-model="form",
-          :with-title="config.withTitle",
-          :with-entity="config.withEntity",
-          :with-pbehavior="config.withPbehavior",
-          :with-alarm="config.withAlarm",
-          :with-event="config.withEvent"
-        )
+        patterns-form(v-model="form", v-bind="patternsProps")
       template(#actions="")
         v-btn(
           depressed,
@@ -26,6 +19,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import { MODALS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterToForm, formToFilter } from '@/helpers/forms/filter';
@@ -51,32 +46,41 @@ export default {
   ],
   data() {
     return {
-      form: filterToForm(this.modal.config.filter),
+      form: filterToForm(this.modal.config.filter, this.getPatternsFields()),
     };
   },
   computed: {
+    title() {
+      return this.config.title ?? this.$t('modals.createFilter.create.title');
+    },
+
+    patternsProps() {
+      return omit(this.config, ['title', 'action']);
+    },
+
     patternsFields() {
-      const { withAlarm, withEntity, withPbehavior, withEvent } = this.config;
+      return this.getPatternsFields();
+    },
+  },
+  methods: {
+    getPatternsFields() {
+      const { withAlarm, withEntity, withPbehavior, withEvent, withServiceWeather } = this.modal.config;
 
       return [
         withAlarm && PATTERNS_FIELDS.alarm,
         withEntity && PATTERNS_FIELDS.entity,
         withPbehavior && PATTERNS_FIELDS.pbehavior,
         withEvent && PATTERNS_FIELDS.event,
+        withServiceWeather && PATTERNS_FIELDS.serviceWeather,
       ].filter(Boolean);
     },
 
-    title() {
-      return this.config.title ?? this.$t('modals.createFilter.create.title');
-    },
-  },
-  methods: {
     async submit() {
       const isFormValid = await this.$validator.validate();
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToFilter(this.form, this.patternsFields));
+          await this.config.action(formToFilter(this.form, this.patternsFields, this.config.corporate));
         }
 
         this.$modals.hide();

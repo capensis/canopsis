@@ -1,14 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
-        event-filter-form(
-          v-model="form",
-          :is-disabled-id-field="isDisabledIdField"
-        )
-      template(slot="actions")
+      template(#text="")
+        event-filter-form(v-model="form", :is-disabled-id-field="config.isDisabledIdField")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
@@ -18,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { eventFilterToForm, formToEventFilter } from '@/helpers/forms/event-filter';
 
@@ -34,6 +31,7 @@ export default {
   name: MODALS.createEventFilter,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { EventFilterForm, ModalWrapper },
   mixins: [
@@ -48,11 +46,7 @@ export default {
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.createEventFilter.create.title');
-    },
-
-    isDisabledIdField() {
-      return this.config.isDisabledIdField;
+      return this.config.title ?? this.$t('modals.createEventFilter.create.title');
     },
   },
   methods: {

@@ -5,10 +5,12 @@
         v-field="value.alarm_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
-        :name="alarmPatternsFieldName",
+        :readonly="readonly",
+        :name="alarmFieldName",
+        :check-count-name="$constants.PATTERNS_FIELDS.alarm",
         :attributes="alarmAttributes",
         with-type,
-        @input="errors.remove(alarmPatternsFieldName)"
+        @input="errors.remove(alarmFieldName)"
       )
 
     c-pattern-panel.mb-2(v-if="withEntity", :title="$t('common.entityPatterns')")
@@ -16,10 +18,13 @@
         v-field="value.entity_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
-        :name="entityPatternsFieldName",
+        :readonly="readonly",
+        :name="entityFieldName",
+        :check-count-name="$constants.PATTERNS_FIELDS.entity",
         :attributes="entityAttributes",
+        :entity-types="entityTypes",
         with-type,
-        @input="errors.remove(entityPatternsFieldName)"
+        @input="errors.remove(entityFieldName)"
       )
 
     c-pattern-panel.mb-2(v-if="withPbehavior", :title="$t('common.pbehaviorPatterns')")
@@ -27,22 +32,47 @@
         v-field="value.pbehavior_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
-        :name="entityPbehaviorFieldName",
+        :readonly="readonly",
+        :name="pbehaviorFieldName",
+        :check-count-name="$constants.PATTERNS_FIELDS.pbehavior",
         with-type,
-        @input="errors.remove(entityPbehaviorFieldName)"
+        @input="errors.remove(pbehaviorFieldName)"
       )
 
-    c-pattern-panel(v-if="withEvent", :title="$t('common.eventPatterns')")
+    c-pattern-panel.mb-2(v-if="withEvent", :title="$t('common.eventPatterns')")
       c-event-filter-patterns-field(
         v-field="value.event_pattern",
         :required="isPatternRequired",
         :disabled="disabled",
-        :name="eventPatternsFieldName",
-        @input="errors.remove(eventPatternsFieldName)"
+        :readonly="readonly",
+        :name="eventFieldName",
+        @input="errors.remove(eventFieldName)"
+      )
+
+    c-pattern-panel.mb-2(v-if="withTotalEntity", :title="$t('common.totalEntityPatterns')")
+      c-entity-patterns-field(
+        v-field="value.total_entity_pattern",
+        :required="isPatternRequired",
+        :disabled="disabled",
+        :readonly="readonly",
+        :name="totalEntityFieldName",
+        with-type,
+        @input="errors.remove(totalEntityFieldName)"
+      )
+
+    c-pattern-panel.mb-2(v-if="withServiceWeather", :title="$t('common.serviceWeatherPatterns')")
+      c-service-weather-patterns-field(
+        v-field="value.weather_service_pattern",
+        :required="isPatternRequired",
+        :disabled="disabled",
+        :name="serviceWeatherFieldName",
+        @input="errors.remove(serviceWeatherFieldName)"
       )
 </template>
 
 <script>
+import { PATTERNS_FIELDS } from '@/constants';
+
 export default {
   inject: ['$validator'],
   model: {
@@ -82,9 +112,17 @@ export default {
       type: Boolean,
       default: false,
     },
-    totalEntity: {
+    withTotalEntity: {
       type: Boolean,
       default: false,
+    },
+    withServiceWeather: {
+      type: Boolean,
+      default: false,
+    },
+    entityTypes: {
+      type: Array,
+      required: false,
     },
     required: {
       type: Boolean,
@@ -98,6 +136,10 @@ export default {
       type: String,
       default: '',
     },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -106,37 +148,35 @@ export default {
   },
   computed: {
     hasPatterns() {
-      const {
-        alarm_pattern: alarmPattern,
-        entity_pattern: entityPattern,
-        pbehavior_pattern: pbehaviorPattern,
-        event_pattern: eventPattern,
-      } = this.value;
-
-      return alarmPattern?.groups?.length
-        || entityPattern?.groups?.length
-        || pbehaviorPattern?.groups?.length
-        || eventPattern?.groups?.length;
+      return Object.values(PATTERNS_FIELDS).some(key => this.value[key]?.groups?.length);
     },
 
     isPatternRequired() {
       return this.someRequired ? !this.hasPatterns : this.required;
     },
 
-    alarmPatternsFieldName() {
-      return this.preparePatternsFieldName('alarm_pattern');
+    alarmFieldName() {
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.alarm);
     },
 
-    eventPatternsFieldName() {
-      return this.preparePatternsFieldName('event_pattern');
+    eventFieldName() {
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.event);
     },
 
-    entityPatternsFieldName() {
-      return this.preparePatternsFieldName('entity_pattern');
+    entityFieldName() {
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.entity);
     },
 
-    entityPbehaviorFieldName() {
-      return this.preparePatternsFieldName('pbehavior_pattern');
+    pbehaviorFieldName() {
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.pbehavior);
+    },
+
+    totalEntityFieldName() {
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.totalEntity);
+    },
+
+    serviceWeatherFieldName() {
+      return this.preparePatternsFieldName(PATTERNS_FIELDS.serviceWeather);
     },
   },
   methods: {

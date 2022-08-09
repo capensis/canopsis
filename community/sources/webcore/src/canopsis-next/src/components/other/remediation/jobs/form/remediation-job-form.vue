@@ -2,24 +2,19 @@
   v-layout(column)
     v-layout(row)
       c-enabled-field(v-field="form.enabled")
-    v-layout(row)
-      v-text-field(
-        v-field="form.name",
-        v-validate="'required'",
-        :label="$t('common.name')",
-        :error-messages="errors.collect('name')",
-        name="name"
+      c-enabled-field(
+        v-field="form.multiple_executions",
+        :label="$t('modals.createRemediationJob.fields.multipleExecutions')"
       )
-    v-layout(row)
-      remediation-job-configuration-field(v-field="form.config")
-    v-layout(row)
-      v-text-field(
-        v-field="form.job_id",
-        v-validate="'required'",
-        :label="$t('modals.createRemediationJob.fields.jobId')",
-        :error-messages="errors.collect('job_id')",
-        name="job_id"
-      )
+    c-name-field(v-field="form.name")
+    remediation-job-configuration-field(v-field="form.config")
+    v-text-field(
+      v-field="form.job_id",
+      v-validate="'required'",
+      :label="$t('modals.createRemediationJob.fields.jobId')",
+      :error-messages="errors.collect('job_id')",
+      name="job_id"
+    )
     v-layout(row)
       v-btn.ml-0(
         v-if="!form.payload",
@@ -35,18 +30,20 @@
           name="payload",
           variables
         )
-        v-tooltip(bottom)
-          v-btn(slot="activator", icon, @click="removePayload")
-            v-icon(color="error") delete
-          span {{ $t('modals.createRemediationJob.deletePayload') }}
-    v-layout(row)
-      c-text-pairs-field(
-        v-field="form.query",
-        :title="$t('modals.createRemediationJob.fields.query')",
-        :text-label="$t('common.field')",
-        :value-label="$t('common.value')",
-        name="query"
-      )
+        c-action-btn(
+          :tooltip="$t('modals.createRemediationJob.deletePayload')",
+          icon="delete",
+          color="error",
+          bottom,
+          @click="removePayload"
+        )
+    c-text-pairs-field(
+      v-field="form.query",
+      :title="$t('modals.createRemediationJob.fields.query')",
+      :text-label="$t('common.field')",
+      :value-label="$t('common.value')",
+      name="query"
+    )
 </template>
 
 <script>

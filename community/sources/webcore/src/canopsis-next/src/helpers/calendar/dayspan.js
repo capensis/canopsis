@@ -145,7 +145,9 @@ export function getSpanForTimestamps({
   timezone,
 }) {
   const startMoment = convertDateToMomentByTimezone(start, timezone);
-  const endMoment = convertDateToMomentByTimezone(end, timezone);
+  const endMoment = convertDateToMomentByTimezone(end, timezone)
+    .add(Constants.MILLIS_MAX, 'milliseconds');
+
   const startDay = new Day(startMoment);
   const endDay = new Day(endMoment);
 

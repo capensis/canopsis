@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import VRuntimeTemplate from 'v-runtime-template';
 
 import {
@@ -37,6 +38,8 @@ import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { authMixin } from '@/mixins/auth';
+
+const { mapActions } = createNamespacedHelpers('alarm');
 
 export default {
   components: {
@@ -117,22 +120,26 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
+    }),
+
     async showAlarmListModal() {
       const widget = generateDefaultAlarmListWidget();
 
       widget.parameters = {
         ...widget.parameters,
         ...this.widget.parameters.alarmsList,
-
-        opened: this.widget.parameters.opened,
-        mainFilter: this.counter.filter,
-        viewFilters: [this.counter.filter],
       };
 
       this.$modals.show({
         name: MODALS.alarmsList,
         config: {
           widget,
+          title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.counter.filter?.title }),
+          fetchList: params => this.fetchAlarmsListWithoutStore({
+            params: { ...params, filter: this.counter.filter?._id },
+          }),
         },
       });
     },

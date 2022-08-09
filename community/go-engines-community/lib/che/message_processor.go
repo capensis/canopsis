@@ -17,8 +17,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 )
 
 type messageProcessor struct {
@@ -28,7 +28,6 @@ type messageProcessor struct {
 	AlarmConfigProvider      config.AlarmConfigProvider
 	EventFilterService       eventfilter.Service
 	EnrichmentCenter         libcontext.EnrichmentCenter
-	EnrichFields             libcontext.EnrichFields
 	AmqpPublisher            libamqp.Publisher
 	AlarmAdapter             alarm.Adapter
 	Encoder                  encoding.Encoder
@@ -111,7 +110,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	// Enrich the event with the entity and create the context if this has not
 	// been done by the event filter.
 	if event.Entity == nil && p.FeatureContextCreation && event.IsContextable() {
-		entity, updated, err := p.EnrichmentCenter.Handle(ctx, event, p.EnrichFields)
+		entity, updated, err := p.EnrichmentCenter.Handle(ctx, event)
 		if err != nil {
 			if engine.IsConnectionError(err) {
 				return nil, err
@@ -148,9 +147,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 		if updated != nil {
 			updatedEntityServices = updatedEntityServices.Add(*updated)
-		} else {
-			// If context graph is not updated do not recompute service state.
-			event.EventType = types.EventTypeUpdateEntityService
 		}
 	}
 
@@ -171,6 +167,11 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			p.logError(err, "cannot find entity", d.Body)
 			return nil, nil
 		}
+	}
+
+	if event.Entity == nil && event.EventType == types.EventTypeCheck {
+		p.Logger.Warn().Str("entity", event.GetEID()).Msg("entity doesn't exist")
+		return nil, nil
 	}
 
 	event.AddedToServices = append(event.AddedToServices, updatedEntityServices.AddedTo...)
