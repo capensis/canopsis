@@ -1,5 +1,7 @@
 export const ENTITIES_TYPES = {
   alarm: 'alarm',
+  alarmDetails: 'alarmDetails',
+  alarmDetailsSteps: 'alarmDetailsSteps',
   entity: 'entity',
   service: 'entityservices',
   weatherService: 'weatherService',
@@ -38,4 +40,5 @@ export const ENTITIES_TYPES = {
   filter: 'filter',
   ratingSettings: 'ratingSettings',
   pattern: 'pattern',
+  map: 'map',
 };

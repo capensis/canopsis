@@ -4,6 +4,7 @@ import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
   EVENT_FILTER_ENRICHMENT_AFTER_TYPES,
   EVENT_FILTER_TYPES,
+  OLD_PATTERNS_FIELDS,
   PATTERNS_FIELDS,
 } from '@/constants';
 
@@ -56,11 +57,10 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filt
  */
 
 /**
- * @typedef {Patterns} EventFilter
+ * @typedef {FilterPatterns} EventFilter
  * @property {string} _id
  * @property {EventFilterType} type
  * @property {string} description
- * @property {Array} patterns
  * @property {number} priority
  * @property {boolean} enabled
  * @property {EventFilterConfig} config
@@ -77,33 +77,37 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filt
 /**
  * Convert event filter to form
  *
- * @param {EventFilterConfig} eventFilterConfig
+ * @param {EventFilterConfig | {}} [eventFilterConfig = {}]
  * @returns {EventFilterConfigForm}
  */
-export const eventFilterConfigToForm = eventFilterConfig => ({
-  actions: eventFilterConfig?.actions ? cloneDeep(eventFilterConfig.actions) : [],
-  on_success: eventFilterConfig?.on_success ?? EVENT_FILTER_ENRICHMENT_AFTER_TYPES.pass,
-  on_failure: eventFilterConfig?.on_failure ?? EVENT_FILTER_ENRICHMENT_AFTER_TYPES.pass,
-  resource: eventFilterConfig?.resource ?? '',
-  component: eventFilterConfig?.component ?? '',
-  connector: eventFilterConfig?.connector ?? '',
-  connector_name: eventFilterConfig?.connector_name ?? '',
+export const eventFilterConfigToForm = (eventFilterConfig = {}) => ({
+  actions: eventFilterConfig.actions ? cloneDeep(eventFilterConfig.actions) : [],
+  on_success: eventFilterConfig.on_success ?? EVENT_FILTER_ENRICHMENT_AFTER_TYPES.pass,
+  on_failure: eventFilterConfig.on_failure ?? EVENT_FILTER_ENRICHMENT_AFTER_TYPES.pass,
+  resource: eventFilterConfig.resource ?? '',
+  component: eventFilterConfig.component ?? '',
+  connector: eventFilterConfig.connector ?? '',
+  connector_name: eventFilterConfig.connector_name ?? '',
 });
 
 /**
  * Convert event filter to form
  *
- * @param {EventFilter} eventFilter
+ * @param {EventFilter | {}} [eventFilter = {}]
  * @returns {EventFilterForm}
  */
-export const eventFilterToForm = eventFilter => ({
-  _id: eventFilter?._id ?? '',
-  type: eventFilter?.type ?? EVENT_FILTER_TYPES.drop,
-  description: eventFilter?.description ?? '',
-  patterns: filterPatternsToForm(eventFilter),
-  priority: eventFilter?.priority ?? 0,
-  enabled: eventFilter?.enabled ?? true,
-  config: eventFilterConfigToForm(eventFilter?.config),
+export const eventFilterToForm = (eventFilter = {}) => ({
+  _id: eventFilter._id ?? '',
+  type: eventFilter.type ?? EVENT_FILTER_TYPES.drop,
+  description: eventFilter.description ?? '',
+  priority: eventFilter.priority ?? 0,
+  enabled: eventFilter.enabled ?? true,
+  config: eventFilterConfigToForm(eventFilter.config),
+  patterns: filterPatternsToForm(
+    eventFilter,
+    [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
+    [OLD_PATTERNS_FIELDS.patterns],
+  ),
 });
 
 /**
@@ -112,11 +116,11 @@ export const eventFilterToForm = eventFilter => ({
  * @param {EventFilterAction} eventFilterAction
  * @return {EventFilterActionForm}
  */
-export const eventFilterActionToForm = eventFilterAction => ({
-  type: eventFilterAction?.type ?? EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
-  name: eventFilterAction?.name ?? '',
-  value: eventFilterAction?.value ?? '',
-  description: eventFilterAction?.description ?? '',
+export const eventFilterActionToForm = (eventFilterAction = {}) => ({
+  type: eventFilterAction.type ?? EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
+  name: eventFilterAction.name ?? '',
+  value: eventFilterAction.value ?? '',
+  description: eventFilterAction.description ?? '',
 });
 
 /**

@@ -2,9 +2,9 @@ package executor
 
 import (
 	"context"
+
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"time"
 )
 
 func NewResolveCancelExecutor() operationlib.Executor {
@@ -18,15 +18,17 @@ func (e *resolveCancelExecutor) Exec(
 	_ context.Context,
 	_ types.Operation,
 	alarm *types.Alarm,
-	_ *types.Entity,
+	entity *types.Entity,
 	_ types.CpsTime,
 	_, _, _ string,
 ) (types.AlarmChangeType, error) {
 	if alarm.Value.Resolved != nil || alarm.Value.Canceled == nil {
 		return "", nil
 	}
+	entity.IdleSince = nil
+	entity.LastIdleRuleApply = ""
 
-	err := alarm.PartialUpdateResolve(types.CpsTime{Time: time.Now()})
+	err := alarm.PartialUpdateResolve(types.NewCpsTime())
 	if err != nil {
 		return "", err
 	}

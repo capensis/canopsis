@@ -38,7 +38,8 @@ Feature: get service entities
       "enabled": true,
       "name": "test-pbehavior-weather-service-entity-1",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -70,7 +71,22 @@ Feature: get service entities
           },
           "pbehaviors": [
             {
-              "name": "test-pbehavior-weather-service-entity-1"
+              "name": "test-pbehavior-weather-service-entity-1",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "reason": {
+                "_id": "test-reason-to-engine",
+                "name": "Test Engine",
+                "description": "Test Engine"
+              },
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "icon_name": "test-maintenance-to-engine-icon",
+                "name": "Engine maintenance",
+                "type": "maintenance"
+              }
             }
           ]
         }
@@ -121,7 +137,8 @@ Feature: get service entities
       "enabled": true,
       "name": "test-pbehavior-weather-service-entity-2",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -153,7 +170,22 @@ Feature: get service entities
           },
           "pbehaviors": [
             {
-              "name": "test-pbehavior-weather-service-entity-2"
+              "name": "test-pbehavior-weather-service-entity-2",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "reason": {
+                "_id": "test-reason-to-engine",
+                "name": "Test Engine",
+                "description": "Test Engine"
+              },
+              "type": {
+                "_id": "test-active-type-to-engine",
+                "icon_name": "test-active-to-engine-icon",
+                "name": "Engine active",
+                "type": "active"
+              }
             }
           ]
         }
@@ -221,7 +253,8 @@ Feature: get service entities
       "enabled": true,
       "name": "test-pbehavior-weather-service-entity-3-1",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -253,7 +286,22 @@ Feature: get service entities
           },
           "pbehaviors": [
             {
-              "name": "test-pbehavior-weather-service-entity-3-1"
+              "name": "test-pbehavior-weather-service-entity-3-1",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "reason": {
+                "_id": "test-reason-to-engine",
+                "name": "Test Engine",
+                "description": "Test Engine"
+              },
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "icon_name": "test-maintenance-to-engine-icon",
+                "name": "Engine maintenance",
+                "type": "maintenance"
+              }
             }
           ]
         },
@@ -315,7 +363,8 @@ Feature: get service entities
       "enabled": true,
       "name": "test-pbehavior-weather-service-entity-4",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -393,7 +442,8 @@ Feature: get service entities
       "enabled": true,
       "name": "test-pbehavior-weather-service-entity-5",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -471,7 +521,8 @@ Feature: get service entities
       "enabled": true,
       "name": "test-pbehavior-weather-service-entity-6",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -503,7 +554,22 @@ Feature: get service entities
           },
           "pbehaviors": [
             {
-              "name": "test-pbehavior-weather-service-entity-6"
+              "name": "test-pbehavior-weather-service-entity-6",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "reason": {
+                "_id": "test-reason-to-engine",
+                "name": "Test Engine",
+                "description": "Test Engine"
+              },
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "icon_name": "test-maintenance-to-engine-icon",
+                "name": "Engine maintenance",
+                "type": "maintenance"
+              }
             }
           ]
         }

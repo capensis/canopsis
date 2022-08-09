@@ -5,6 +5,9 @@
 <script>
 import { MODALS, CONTEXT_ACTIONS_TYPES } from '@/constants';
 
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { pickIds } from '@/helpers/entities';
+
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
@@ -41,6 +44,20 @@ export default {
           title: this.$t('context.actions.titles.pbehavior'),
           method: this.showAddPbehaviorsModal,
         },
+        massEnable: {
+          type: CONTEXT_ACTIONS_TYPES.massEnable,
+          icon: 'check_circle',
+          iconColor: 'primary',
+          title: this.$t('context.actions.titles.massEnable'),
+          method: this.showEnableEntitiesModal,
+        },
+        massDisable: {
+          type: CONTEXT_ACTIONS_TYPES.massDisable,
+          icon: 'cancel',
+          iconColor: 'error',
+          title: this.$t('context.actions.titles.massDisable'),
+          method: this.showDisableEntitiesModal,
+        },
       },
     };
   },
@@ -48,15 +65,65 @@ export default {
     actions() {
       const actions = [this.actionsMap.pbehavior];
       const someOneDeletable = this.items.some(({ deletable }) => deletable);
+      const someOneEnable = this.items.some(({ enabled }) => enabled);
+      const someOneDisable = this.items.some(({ enabled }) => !enabled);
 
       if (someOneDeletable) {
         actions.unshift(this.actionsMap.deleteEntity);
+      }
+
+      if (someOneDisable) {
+        actions.push(this.actionsMap.massEnable);
+      }
+
+      if (someOneEnable) {
+        actions.push(this.actionsMap.massDisable);
       }
 
       return actions.filter(this.actionsAccessFilterHandler);
     },
   },
   methods: {
+    clearItems() {
+      this.$emit('clear:items');
+    },
+
+    afterSubmit() {
+      this.clearItems();
+
+      return this.fetchContextEntitiesListWithPreviousParams();
+    },
+
+    showEnableEntitiesModal() {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await this.bulkEnableEntities({
+              data: pickIds(this.items),
+            });
+
+            return this.afterSubmit();
+          },
+        },
+      });
+    },
+
+    showDisableEntitiesModal() {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await this.bulkDisableEntities({
+              data: pickIds(this.items),
+            });
+
+            return this.afterSubmit();
+          },
+        },
+      });
+    },
+
     showDeleteEntitiesModal() {
       const deletableItems = this.items.filter(({ deletable }) => deletable);
 
@@ -69,7 +136,7 @@ export default {
           action: async () => {
             await Promise.all(deletableItems.map(this.removeContextEntityOrService));
 
-            await this.fetchContextEntitiesListWithPreviousParams();
+            return this.afterSubmit();
           },
         },
       });
@@ -79,9 +146,8 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: this.items.map(({ _id: id }) => id) },
-          },
+          entityPattern: createEntityIdPatternByValue(this.items.map(({ _id: id }) => id)),
+          afterSubmit: this.afterSubmit,
         },
       });
     },
