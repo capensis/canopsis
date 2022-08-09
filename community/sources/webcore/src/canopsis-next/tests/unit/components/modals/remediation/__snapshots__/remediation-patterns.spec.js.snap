@@ -22,7 +22,7 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with empty modal 
     >
       <c-patterns-field-stub
         alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object]"
-        entity-attributes="[object Object],[object Object],[object Object]"
+        entity-attributes="[object Object]"
         value="[object Object]"
         with-alarm="with-alarm"
         with-entity="with-entity"
@@ -94,7 +94,7 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with instruction 
     >
       <c-patterns-field-stub
         alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object]"
-        entity-attributes="[object Object],[object Object],[object Object]"
+        entity-attributes="[object Object]"
         value="[object Object]"
         with-alarm="with-alarm"
         with-entity="with-entity"
@@ -166,7 +166,7 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with title 1`] = 
     >
       <c-patterns-field-stub
         alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object]"
-        entity-attributes="[object Object],[object Object],[object Object]"
+        entity-attributes="[object Object]"
         value="[object Object]"
         with-alarm="with-alarm"
         with-entity="with-entity"
