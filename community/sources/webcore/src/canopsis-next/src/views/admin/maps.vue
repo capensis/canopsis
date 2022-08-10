@@ -135,7 +135,7 @@ export default {
     },
 
     fetchList() {
-      return this.fetchMapsList({ params: this.getQuery() });
+      // return this.fetchMapsList({ params: this.getQuery() });
     },
   },
 };

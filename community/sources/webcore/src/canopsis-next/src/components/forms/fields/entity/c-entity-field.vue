@@ -14,7 +14,9 @@
     :small-chips="isMultiply",
     :error-messages="errors.collect(name)",
     :disabled="disabled",
-    :return-object="false",
+    :clearable="clearable",
+    :return-object="returnObject",
+    :item-disabled="itemDisabled",
     :menu-props="{ contentClass: 'c-entity-field__list' }",
     dense,
     combobox,
@@ -54,7 +56,7 @@ export default {
   },
   props: {
     value: {
-      type: [Array, String],
+      type: [Array, String, Object],
       default: '',
     },
     name: {
@@ -84,6 +86,18 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    returnObject: {
+      type: Boolean,
+      default: false,
+    },
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
+    itemDisabled: {
+      type: [String, Array, Function],
+      required: false,
     },
   },
   data() {
