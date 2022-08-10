@@ -84,6 +84,18 @@ Les options `-enrichContext` et `-enrichIncludeè ont été retirées du moteur 
 
     Supprimez toute éventuelle utilisation des options `-enrichContext` et `-enrichInclude` dans vos fichiers de référence Docker Compose.
 
+### Contournement d'un problème empêchant nginx de démarrer en docker-compose.
+
+Une erreur s'étant glissée dans la version 4.6.0 (elle sera corrigée en 4.6.1), il est nécéssaire d'ajouter les 3 variables suivantes a votre `compose.env` :
+
+```
+ENABLE_RUNDECK=false
+RUNDECK_GRAILS_URL=
+NGINX_URL=
+```
+
+Ce contournement pourra être supprimé en 4.6.1 et n'a aucun impact fonctionnel.
+
 ### Lancement des scripts de migration
 
 Assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes suivantes, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
