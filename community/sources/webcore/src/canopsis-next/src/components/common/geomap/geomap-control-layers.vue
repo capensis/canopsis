@@ -2,7 +2,7 @@
   v-expansion-panel.geomap-layers-control(color="grey")
     v-expansion-panel-content
       template(#header="")
-        v-label {{ $t('geomap.layers') }}
+        span.v-label.theme--light {{ $t('geomap.layers') }}
       v-divider
       v-layout.pa-2(column, @click.stop="", @dblclick.stop="", @mousemove.stop="")
         v-radio-group.ma-0(:value="activeLayer", color="primary", column, hide-details, @change="enableLayer")
@@ -171,11 +171,5 @@ export default {
 <style lang="scss">
 .geomap-layers-control {
   min-width: 200px;
-
-  .layers-list, .overlays-list {
-    &__action {
-      min-width: unset;
-    }
-  }
 }
 </style>
