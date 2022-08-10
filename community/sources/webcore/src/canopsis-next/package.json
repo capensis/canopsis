@@ -20,6 +20,7 @@
     "chartjs-plugin-zoom": "^1.1.1",
     "core-js": "^3.6.5",
     "cytoscape": "^3.19.0",
+    "cytoscape-cise": "^1.0.0",
     "cytoscape-dagre": "^2.3.2",
     "cytoscape-node-html-label": "^1.2.2",
     "dayspan": "^0.12.2",
