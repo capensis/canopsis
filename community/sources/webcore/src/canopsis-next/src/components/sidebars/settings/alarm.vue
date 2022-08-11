@@ -18,6 +18,7 @@
           field-columns(
             v-model="form.parameters.widgetColumns",
             :label="$t('settings.columnNames')",
+            with-template,
             with-html,
             with-color-indicator
           )
