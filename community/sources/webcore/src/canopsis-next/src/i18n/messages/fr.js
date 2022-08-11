@@ -2994,6 +2994,9 @@ export default merge({
   map: {
     defineEntity: 'Définir l\'entité',
     addLink: 'Ajouter un lien',
+    addPoint: 'Ajouter un point',
+    editPoint: 'Modifier le point',
+    removePoint: 'Supprimer le point',
     types: {
       [MAP_TYPES.geo]: 'Géo',
       [MAP_TYPES.flowchart]: 'Flowchart',
@@ -3004,9 +3007,6 @@ export default merge({
 
   mermaid: {
     theme: 'Thème de couleur',
-    addPoint: 'Ajouter un point',
-    editPoint: 'Modifier le point',
-    removePoint: 'Supprimer le point',
     themes: {
       [MERMAID_THEMES.default]: 'Défaut',
       [MERMAID_THEMES.base]: 'Base',

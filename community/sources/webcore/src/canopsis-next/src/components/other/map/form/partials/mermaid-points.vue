@@ -41,7 +41,7 @@
       ignore-click-outside,
       absolute
     )
-      mermaid-point-form(
+      point-form-dialog(
         v-if="formPoint",
         :point="formPoint",
         :editing="!!editingPoint",
@@ -61,11 +61,11 @@ import { mermaidPointToForm } from '@/helpers/forms/map';
 
 import { formBaseMixin } from '@/mixins/form';
 
-import MermaidContextmenu from './partials/mermaid-contextmenu.vue';
-import MermaidPointForm from './partials/mermaid-point-form.vue';
+import MermaidContextmenu from './mermaid-contextmenu.vue';
+import PointFormDialog from './point-form-dialog.vue';
 
 export default {
-  components: { MermaidPointForm, MermaidContextmenu },
+  components: { MermaidContextmenu, PointFormDialog },
   mixins: [formBaseMixin],
   model: {
     prop: 'points',
