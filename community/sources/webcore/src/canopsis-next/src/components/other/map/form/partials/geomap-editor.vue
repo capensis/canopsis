@@ -8,7 +8,7 @@
     @click="openAddingPointDialogByClick",
     @dblclick="openAddingPointDialog"
   )
-    geomap-control-zoom(position="topleft")
+    geomap-control-zoom(position="topleft", :disabled="shown")
     geomap-control-layers(position="topright")
 
     geomap-contextmenu(
@@ -21,10 +21,12 @@
     geomap-control(position="topleft")
       v-tooltip(attach, right, max-width="unset", min-width="max-content")
         template(#activator="{ on }")
-          v-btn.ma-0(
+          v-btn.secondary.ma-0(
             v-on="on",
-            :color="addOnClick ? 'primary' : 'secondary'",
+            :class="{ 'lighten-4': !addOnClick }",
+            :disabled="shown",
             icon,
+            dark,
             @click="toggleAddingMode"
           )
             v-icon add_location
@@ -52,11 +54,12 @@
         @dragend="finishMovingMarker",
         @click=""
       )
-        geomap-icon(
-          :icon-url="marker.icon.url",
-          :icon-anchor="marker.icon.anchor",
-          :icon-size="marker.icon.size"
-        )
+        geomap-icon(:icon-anchor="marker.icon.anchor")
+          v-icon(
+            :style="marker.icon.style",
+            :size="marker.icon.size",
+            color="grey darken-2"
+          ) {{ marker.icon.name }}
 
     v-menu(
       v-model="shown",
@@ -81,9 +84,6 @@
 
 <script>
 import { MODALS } from '@/constants';
-
-import locationUrl from '@/assets/images/location.svg';
-import locationLinkUrl from '@/assets/images/location-link.svg';
 
 import { geomapPointToForm } from '@/helpers/forms/map';
 
@@ -128,6 +128,10 @@ export default {
       type: Number,
       default: 2,
     },
+    iconSize: {
+      type: Number,
+      default: 34,
+    },
   },
   data() {
     return {
@@ -154,28 +158,27 @@ export default {
       };
     },
 
-    entityIcon() {
-      return {
-        url: locationUrl,
-        anchor: [17, 31],
-        size: [34, 34],
-      };
-    },
-
-    linkIcon() {
-      return {
-        url: locationLinkUrl,
-        anchor: [17, 17],
-        size: [34, 34],
-      };
-    },
-
     markers() {
+      const halfIconSize = this.iconSize / 2;
+      const pixelSize = `${this.iconSize}px`;
+
       return this.form.points.map(point => ({
         id: point._id,
         coordinate: [point.coordinate.lat, point.coordinate.lng],
         data: point,
-        icon: point.entity ? this.entityIcon : this.linkIcon,
+        icon: {
+          name: point.entity ? 'location_on' : 'link',
+          style: {
+            width: pixelSize,
+            height: pixelSize,
+            maxWidth: 'unset',
+            maxHeight: 'unset',
+          },
+          size: this.iconSize,
+          anchor: point.entity
+            ? [halfIconSize, this.iconSize]
+            : [halfIconSize, halfIconSize],
+        },
       }));
     },
 
