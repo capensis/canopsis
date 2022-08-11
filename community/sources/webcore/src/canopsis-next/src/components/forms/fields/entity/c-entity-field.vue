@@ -16,6 +16,7 @@
     :disabled="disabled",
     :return-object="false",
     :menu-props="{ contentClass: 'c-entity-field__list' }",
+    :clearable="clearable",
     dense,
     combobox,
     @focus="onFocus",
@@ -86,6 +87,10 @@ export default {
       default: false,
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    clearable: {
       type: Boolean,
       default: false,
     },

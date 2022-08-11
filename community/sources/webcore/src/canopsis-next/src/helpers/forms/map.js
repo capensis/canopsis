@@ -1,5 +1,4 @@
 import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
-
 import uuid from '@/helpers/uuid';
 
 /**
