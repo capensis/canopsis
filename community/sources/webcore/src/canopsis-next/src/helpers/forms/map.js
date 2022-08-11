@@ -1,4 +1,5 @@
 import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
+
 import uuid from '@/helpers/uuid';
 
 /**
@@ -33,7 +34,7 @@ import uuid from '@/helpers/uuid';
 
 /**
  * @typedef {Object} MapGeoProperties
- * @property {MapGeoPoint} points
+ * @property {MapGeoPoint[]} points
  */
 
 /**
