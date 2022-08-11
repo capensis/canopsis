@@ -2,12 +2,12 @@
   v-layout(column)
     v-tooltip(attach, right, max-width="unset", min-width="max-content")
       template(#activator="{ on }")
-        v-btn.secondary.ma-0.mb-1(v-on="on", :disabled="zoomInDisabled", icon, dark, @click="zoomIn")
+        v-btn.secondary.ma-0.mb-1(v-on="on", :disabled="disabled || zoomInDisabled", icon, dark, @click="zoomIn")
           v-icon add
       span {{ $t('geomap.zoomIn') }}
     v-tooltip(attach, right, max-width="unset", min-width="max-content")
       template(#activator="{ on }")
-        v-btn.secondary.ma-0.mb-1(v-on="on", :disabled="zoomOutDisabled", dark, icon, @click="zoomOut")
+        v-btn.secondary.ma-0.mb-1(v-on="on", :disabled="disabled || zoomOutDisabled", dark, icon, @click="zoomOut")
           v-icon remove
       span {{ $t('geomap.zoomOut') }}
 </template>
@@ -17,6 +17,12 @@ import GeomapControl from './geomap-control.vue';
 
 export default {
   extends: GeomapControl,
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       mapObject: undefined,
