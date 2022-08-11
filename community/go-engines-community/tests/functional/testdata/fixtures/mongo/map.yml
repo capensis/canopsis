@@ -1,0 +1,143 @@
+template:
+  - &map_mermaid {
+    _id: <UUID()>,
+    name: <LoremIpsumWord()>,
+    type: mermaid,
+    code: <LoremIpsumParagraph(1, 3, 12, \n)>,
+    theme: default,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    points: [
+      {
+        x: 0,
+        y: 0,
+        entity: test-resource-to-map-edit-1/test-component-default
+      }
+    ]
+  }
+
+map:
+  map_to_delete_1:
+    <<: *map_mermaid
+    _id: test-map-to-delete-1
+
+  map_to_delete_2:
+    <<: *map_mermaid
+    _id: test-map-to-delete-2
+
+  map_to_update_1:
+    <<: *map_mermaid
+    _id: test-map-to-update-1
+    created: 1605263992
+
+  map_to_get_1:
+    <<: *map_mermaid
+    _id: test-map-to-get-1
+    name: test-map-to-get-1-name
+    created: 1605263992
+    updated: 1605263992
+    parameters:
+      code: test-map-to-get-1-code
+      theme: test-map-to-get-1-theme
+      points:
+        - _id: test-map-to-get-1-point-1
+          x: 0
+          y: 0
+          entity: test-resource-to-map-edit-1/test-component-default
+        - _id: test-map-to-get-1-point-2
+          x: 100
+          y: 100
+          map: test-map-to-map-edit-1
+        - _id: test-map-to-get-1-point-3
+          x: 200
+          y: 200
+          entity: test-resource-to-map-edit-2/test-component-default
+          map: test-map-to-map-edit-2
+
+  map_to_map_edit_1:
+    <<: *map_mermaid
+    _id: test-map-to-map-edit-1
+    name: test-map-to-map-edit-1-name
+
+  map_to_map_edit_2:
+    <<: *map_mermaid
+    _id: test-map-to-map-edit-2
+    name: test-map-to-map-edit-2-name
+
+  map_to_state_get_1:
+    <<: *map_mermaid
+    _id: test-map-to-state-get-1
+    name: test-map-to-state-get-1-name
+    created: 1605263992
+    updated: 1605263992
+    parameters:
+      code: test-map-to-state-get-1-code
+      theme: test-map-to-state-get-1-theme
+      points:
+        - _id: test-map-to-state-get-1-point-1
+          x: 0
+          y: 0
+          entity: test-resource-to-map-state-get-1/test-component-default
+        - _id: test-map-to-state-get-1-point-2
+          x: 100
+          y: 100
+          map: test-map-to-map-edit-1
+        - _id: test-map-to-state-get-1-point-3
+          x: 200
+          y: 200
+          entity: test-resource-to-map-state-get-2/test-component-default
+          map: test-map-to-map-edit-2
+
+  map_to_state_get_2:
+    <<: *map_mermaid
+    _id: test-map-to-state-get-2
+    name: test-map-to-state-get-2-name
+    created: 1605263992
+    updated: 1605263992
+    parameters:
+      code: test-map-to-state-get-2-code
+      theme: test-map-to-state-get-2-theme
+      points:
+        - _id: test-map-to-state-get-2-point-1
+          x: 0
+          y: 0
+          entity: test-resource-to-map-state-get-2/test-component-default
+        - _id: test-map-to-state-get-2-point-2
+          x: 200
+          y: 200
+          entity: test-resource-to-map-state-get-3/test-component-default
+          map: test-map-to-map-edit-1
+
+  map_to_alarm_get_1:
+    <<: *map_mermaid
+    _id: test-map-to-alarm-get-1
+    parameters:
+      code: test-map-to-alarm-get-1-code
+      theme: test-map-to-alarm-get-1-theme
+      points:
+        - _id: test-map-to-alarm-get-1-point-1
+          x: 0
+          y: 0
+          entity: test-resource-to-map-alarm-get-1/test-component-default
+        - _id: test-map-to-alarm-get-1-point-2
+          x: 100
+          y: 100
+          map: test-map-to-map-edit-1
+        - _id: test-map-to-alarm-get-1-point-3
+          x: 200
+          y: 200
+          entity: test-resource-to-map-alarm-get-2/test-component-default
+          map: test-map-to-map-edit-2
+
+  map_to_alarm_get_2:
+    <<: *map_mermaid
+    _id: test-map-to-alarm-get-2
+    parameters:
+      code: test-map-to-alarm-get-2-code
+      theme: test-map-to-alarm-get-2-theme
+      points:
+        - _id: test-map-to-alarm-get-2-point-1
+          x: 200
+          y: 200
+          map: test-map-to-map-edit-1

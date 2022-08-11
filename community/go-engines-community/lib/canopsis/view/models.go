@@ -2,16 +2,18 @@ package view
 
 import (
 	"encoding/json"
+	"reflect"
+	"strings"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
-	"reflect"
-	"strings"
 )
 
 const (
 	WidgetTypeJunit = "Junit"
+	WidgetTypeMap   = "Map"
 
 	WidgetInternalParamJunitTestSuites = "test_suites"
 
@@ -75,6 +77,9 @@ type Parameters struct {
 	VideoDirectories      []string `bson:"video_directories,omitempty" json:"video_directories,omitempty"`
 	ScreenshotFilemask    string   `bson:"screenshot_filemask,omitempty" json:"screenshot_filemask,omitempty"`
 	VideoFilemask         string   `bson:"video_filemask,omitempty" json:"video_filemask,omitempty"`
+
+	// Map
+	Map string `bson:"map,omitempty" json:"map,omitempty"`
 
 	RemainParameters map[string]interface{} `bson:",inline" json:"-"`
 }
