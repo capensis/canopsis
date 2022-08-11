@@ -73,6 +73,11 @@ type ListByComponentRequest struct {
 	ID string `form:"_id" json:"_id" binding:"required"`
 }
 
+type ListByMapRequest struct {
+	pagination.Query
+	SortRequest
+}
+
 type ResolvedListRequest struct {
 	pagination.Query
 	SortRequest

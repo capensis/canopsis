@@ -25,6 +25,7 @@ type API interface {
 	ListManual(c *gin.Context)
 	ListByService(c *gin.Context)
 	ListByComponent(c *gin.Context)
+	ListByMap(c *gin.Context)
 	ResolvedList(c *gin.Context)
 	Count(c *gin.Context)
 	StartExport(c *gin.Context)
@@ -277,6 +278,37 @@ func (a *api) ListByComponent(c *gin.Context) {
 
 	apiKey := c.MustGet(auth.ApiKey).(string)
 	aggregationResult, err := a.store.FindByComponent(c.Request.Context(), r, apiKey)
+	if err != nil {
+		panic(err)
+	}
+
+	if aggregationResult == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// ListByMap
+// @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
+func (a *api) ListByMap(c *gin.Context) {
+	r := ListByMapRequest{
+		Query: pagination.GetDefaultQuery(),
+	}
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	apiKey := c.MustGet(auth.ApiKey).(string)
+	aggregationResult, err := a.store.FindByMap(c.Request.Context(), c.Param("id"), apiKey, r)
 	if err != nil {
 		panic(err)
 	}

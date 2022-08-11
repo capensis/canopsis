@@ -1,10 +1,10 @@
 template:
   - &category {
-      _id: <UUID>,
-      name: <UniqueName()>,
-      author: root,
-      created: <NowUnix()>,
-      updated: <Current().created>
+    _id: <UUID>,
+    name: <UniqueName()>,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>
   }
 
 entity_category:
@@ -131,4 +131,10 @@ entity_category:
     author: test-category-to-entitybasic-edit-author
     created: 1592215337
     name: test-category-to-entitybasic-edit-name
+    updated: 1592215337
+  category_to_map_state_get_1:
+    <<: *category
+    _id: test-category-to-map-state-get-1
+    name: test-category-to-map-state-get-1-name
+    created: 1592215337
     updated: 1592215337
