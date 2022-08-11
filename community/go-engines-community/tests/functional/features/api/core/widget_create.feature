@@ -373,6 +373,26 @@ Feature: Create a widget
     }
     """
 
+  Scenario: given Map invalid create request should return errors
+    When I am admin
+    When I do POST /api/v4/widgets:
+    """json
+    {
+      "title": "test-widget-to-create-2-title",
+      "tab": "test-tab-to-widget-edit",
+      "type": "Map"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "parameters.map": "Map is missing."
+      }
+    }
+    """
+
   Scenario: given create request and auth user without view permission should not allow access
     When I am admin
     When I do POST /api/v4/widgets:
