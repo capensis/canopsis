@@ -1,6 +1,7 @@
 <template lang="pug">
   v-layout(column)
-    c-entity-field(v-field="form.entity", :label="$t('map.defineEntity')")
+    c-entity-field(v-field="form.entity", :label="$t('map.defineEntity')", :required="!isLinked")
+    c-coordinate-field(v-if="coordinate", v-field="form.coordinate")
     c-enabled-field(v-model="isLinked", :label="$t('map.addLink')")
     c-map-field(v-show="isLinked", v-field="form.link")
 </template>
@@ -18,6 +19,10 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    coordinate: {
+      type: Boolean,
+      required: false,
     },
   },
   computed: {

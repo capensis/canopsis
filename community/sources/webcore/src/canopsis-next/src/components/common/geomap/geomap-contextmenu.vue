@@ -28,6 +28,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -62,6 +66,10 @@ export default {
 
   methods: {
     open({ latlng, originalEvent, marker }) {
+      if (this.disabled) {
+        return;
+      }
+
       if (this.shown) {
         this.shown = false;
         return;

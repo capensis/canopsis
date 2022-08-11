@@ -1,16 +1,18 @@
 <template lang="pug">
-  v-layout(column)
+  v-layout.geomap-map-form(column)
     c-name-field.mx-4(v-field="form.name")
-    example-map(style="height: 600px;")
+    div.geomap-map-form__editor
+      geomap-editor(v-field="form.properties")
 </template>
 
 <script>
 import MermaidEditor from '@/components/common/mermaid/mermaid-editor.vue';
-import ExampleMap from '@/components/examples/example-map.vue';
+
+import GeomapEditor from './partials/geomap-editor.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ExampleMap, MermaidEditor },
+  components: { GeomapEditor, MermaidEditor },
   model: {
     prop: 'form',
     event: 'input',
@@ -23,3 +25,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.geomap-map-form {
+  &__editor {
+    height: 800px;
+  }
+}
+</style>
