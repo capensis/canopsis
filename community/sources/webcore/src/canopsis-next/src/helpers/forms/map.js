@@ -1,5 +1,7 @@
 import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
 
+import uuid from '@/helpers/uuid';
+
 /**
  * @typedef {Object} MapCommonFields
  * @property {string} name
@@ -23,7 +25,16 @@ import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
  */
 
 /**
+ * @typedef {MapCommonFields} MapGeoPoint
+ * @property {string} _id
+ * @property {string} link
+ * @property {string} entity
+ * @property {Object} coordinate
+ */
+
+/**
  * @typedef {Object} MapGeoProperties
+ * @property {MapGeoPoint} points
  */
 
 /**
@@ -73,12 +84,30 @@ import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
  */
 
 /**
+ * Convert geomap point to form object
+ *
+ * @param {MapGeoPoint} [point = {}]
+ * @returns {MapGeoPoint}
+ */
+export const geomapPointToForm = (point = {}) => ({
+  coordinate: point.coordinate ?? {
+    lat: 0,
+    lng: 0,
+  },
+  entity: point.entity ?? '',
+  link: point.link,
+  _id: uuid(),
+});
+
+/**
  * Convert map geo properties object to form
  *
  * @param {MapGeoProperties} [properties = {}]
  * @returns {MapGeoPropertiesForm}
  */
-export const mapGeoPropertiesToForm = properties => ({ ...properties });
+export const mapGeoPropertiesToForm = (properties = {}) => ({
+  points: properties.points ?? [],
+});
 
 /**
  * Convert map flowchart properties object to form

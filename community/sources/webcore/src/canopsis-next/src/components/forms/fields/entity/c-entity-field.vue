@@ -1,7 +1,7 @@
 <template lang="pug">
   c-select-field.c-entity-field(
     v-field="value",
-    v-validate="'required'",
+    v-validate="rules",
     :search-input="query.search",
     :label="selectLabel",
     :loading="entitiesPending",
@@ -85,6 +85,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -100,6 +104,12 @@ export default {
     };
   },
   computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+
     entities() {
       return Object.values(this.entitiesById);
     },
