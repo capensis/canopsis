@@ -162,7 +162,7 @@ func NewEngine(
 		canopsis.FIFOAckQueueName,
 		amqpConnection,
 		&messageProcessor{
-			FeaturePrintEventOnError: false,
+			FeaturePrintEventOnError: options.PrintEventOnError,
 			FeatureEventProcessing:   options.FeatureEventProcessing,
 			FeatureContextCreation:   options.FeatureContextCreation,
 			AlarmConfigProvider:      alarmConfigProvider,
