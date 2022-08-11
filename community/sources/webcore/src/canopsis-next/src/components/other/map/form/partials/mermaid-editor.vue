@@ -14,9 +14,9 @@
 <script>
 import { formMixin } from '@/mixins/form';
 
-import MermaidCodeEditor from './partials/mermaid-code-editor.vue';
-import MermaidAddLocationBtn from './partials/mermaid-add-location-btn.vue';
-import MermaidThemeField from './partials/mermaid-theme-field.vue';
+import MermaidCodeEditor from './mermaid-code-editor.vue';
+import MermaidAddLocationBtn from './mermaid-add-location-btn.vue';
+import MermaidThemeField from './mermaid-theme-field.vue';
 import MermaidPreview from './mermaid-preview.vue';
 import MermaidPoints from './mermaid-points.vue';
 
