@@ -1,5 +1,5 @@
 <template lang="pug">
-  geomap(ref="map")
+  geomap(ref="map", :min-zoom="minZoom")
     geomap-control-zoom(position="topleft")
     geomap-control-layers(position="topright")
 
