@@ -17,7 +17,7 @@
     )
       geomap-marker(v-for="marker in markers", :key="marker.id", :lat-lng="marker.coordinate")
         geomap-tooltip(:options="markerTooltipOptions") {{ marker.data.entity || marker.data.link }}
-        geomap-icon(:icon-anchor="marker.icon.anchor")
+        geomap-icon(:icon-anchor="marker.icon.anchor", :tooltip-anchor="marker.icon.tooltipAnchor")
           v-icon(
             :style="marker.icon.style",
             :size="marker.icon.size",

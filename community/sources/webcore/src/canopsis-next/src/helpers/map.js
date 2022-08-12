@@ -18,6 +18,7 @@ export const getGeomapMarkerIcon = (point, size) => {
       maxHeight: 'unset',
     },
     size,
+    tooltipAnchor: point.entity ? [0, 0] : [0, halfIconSize],
     anchor: point.entity
       ? [halfIconSize, size]
       : [halfIconSize, halfIconSize],
