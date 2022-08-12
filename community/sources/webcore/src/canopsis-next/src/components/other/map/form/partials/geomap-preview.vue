@@ -16,6 +16,7 @@
       layer-type="overlay"
     )
       geomap-marker(v-for="marker in markers", :key="marker.id", :lat-lng="marker.coordinate")
+        geomap-tooltip(:options="markerTooltipOptions") {{ marker.data.entity || marker.data.link }}
         geomap-icon(:icon-anchor="marker.icon.anchor")
           v-icon(
             :style="marker.icon.style",
@@ -34,6 +35,7 @@ import GeomapControlLayers from '@/components/common/geomap/geomap-control-layer
 import GeomapFeatureGroup from '@/components/common/geomap/geomap-feature-group.vue';
 import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
 import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
+import GeomapTooltip from '@/components/common/geomap/geomap-tooltip.vue';
 
 export default {
   components: {
@@ -44,6 +46,7 @@ export default {
     GeomapFeatureGroup,
     GeomapMarker,
     GeomapIcon,
+    GeomapTooltip,
   },
   props: {
     points: {
@@ -60,6 +63,13 @@ export default {
     },
   },
   computed: {
+    markerTooltipOptions() {
+      return {
+        offset: [0, -this.iconSize],
+        direction: 'top',
+      };
+    },
+
     markers() {
       return this.points.map(point => ({
         id: point._id,
