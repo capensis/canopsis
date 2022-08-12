@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { omit, range, random } from 'lodash';
+import { omit } from 'lodash';
 
 import { MODALS, MAP_TYPES, CREATE_MAP_MODAL_NAMES_BY_TYPE } from '@/constants';
 
@@ -45,23 +45,6 @@ export default {
     permissionsTechnicalMapMixin,
     entitiesMapMixin,
   ],
-  computed: {
-    maps() {
-      return [{
-        _id: 'geo',
-        name: 'Name',
-        type: 'geo',
-        properties: {
-          points: range(200).map(index => ({
-            coordinate: { lat: random(43, 48, true), lng: random(-1, 5, true) },
-            entity: index % 5 !== 0 ? `entity_${index}` : undefined,
-            link: index % 5 === 0 ? `link_${index}` : undefined,
-            _id: `7e56ee9a-25fa-44ed-9a94-95ad035d4e${index}`,
-          })),
-        },
-      }];
-    },
-  },
   mounted() {
     this.fetchList();
   },
