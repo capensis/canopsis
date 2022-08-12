@@ -86,6 +86,7 @@
 import { MODALS } from '@/constants';
 
 import { geomapPointToForm } from '@/helpers/forms/map';
+import { getGeomapMarkerIcon } from '@/helpers/map';
 
 import { formMixin } from '@/mixins/form';
 
@@ -159,26 +160,11 @@ export default {
     },
 
     markers() {
-      const halfIconSize = this.iconSize / 2;
-      const pixelSize = `${this.iconSize}px`;
-
       return this.form.points.map(point => ({
         id: point._id,
         coordinate: [point.coordinate.lat, point.coordinate.lng],
         data: point,
-        icon: {
-          name: point.entity ? 'location_on' : 'link',
-          style: {
-            width: pixelSize,
-            height: pixelSize,
-            maxWidth: 'unset',
-            maxHeight: 'unset',
-          },
-          size: this.iconSize,
-          anchor: point.entity
-            ? [halfIconSize, this.iconSize]
-            : [halfIconSize, halfIconSize],
-        },
+        icon: getGeomapMarkerIcon(point, this.iconSize),
       }));
     },
 
