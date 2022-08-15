@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { mapToForm, formToMap } from '@/helpers/forms/map';
 
@@ -35,6 +35,7 @@ export default {
   name: MODALS.createMermaidMap,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { MermaidMapForm, ModalWrapper },
   mixins: [

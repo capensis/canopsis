@@ -6,18 +6,19 @@
     @click="openAddPointFormByClick",
     @dblclick="openAddPointFormByDoubleClick"
   )
-    v-icon.mermaid-points__point(
+    mermaid-point-marker.mermaid-points__point(
       v-for="(point, index) in pointsData",
       :key="point._id",
-      :class="{ 'mermaid-points__point--no-events': moving }",
-      :style="getPointStyles(point)",
+      :x="point.x",
+      :y="point.y",
+      :entity="point.entity",
       :size="markerSize",
-      color="grey darken-2",
+      :class="{ 'mermaid-points__point--no-events': moving }",
       @click.stop="",
       @contextmenu.stop.prevent="openEditContextmenu(point)",
       @dblclick.stop="openEditPointFormByDoubleClick(point)",
       @mousedown.stop.prevent.left="startMoving(point, index)"
-    ) location_on
+    )
 
     v-menu(
       :value="shownMenu",
@@ -63,9 +64,10 @@ import { formBaseMixin } from '@/mixins/form';
 
 import MermaidContextmenu from './mermaid-contextmenu.vue';
 import PointFormDialog from './point-form-dialog.vue';
+import MermaidPointMarker from './mermaid-point-marker.vue';
 
 export default {
-  components: { MermaidContextmenu, PointFormDialog },
+  components: { MermaidContextmenu, PointFormDialog, MermaidPointMarker },
   mixins: [formBaseMixin],
   model: {
     prop: 'points',
@@ -123,13 +125,6 @@ export default {
     },
   },
   methods: {
-    getPointStyles(point) {
-      return {
-        top: `${point.y}px`,
-        left: `${point.x}px`,
-      };
-    },
-
     normalizePosition({ x, y }) {
       return {
         x,
@@ -299,12 +294,6 @@ export default {
 <style lang="scss">
 .mermaid-points {
   &__point {
-    position: absolute;
-    transform: translate(-50%, -100%);
-    user-select: none;
-    cursor: pointer;
-    transition: none;
-
     &--no-events {
       pointer-events: none;
     }
