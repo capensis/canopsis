@@ -1,13 +1,13 @@
 <template lang="pug">
   panzoom.mermaid-expand-panel(:style="containerStyles", :help-text="$t('mermaid.panzoom.helpText')")
-    mermaid-preview.mermaid-expand-panel__preview(:value="map.properties.code")
-    mermaid-points-preview.mermaid-expand-panel__points(:points="map.properties.points")
+    mermaid-preview.mermaid-expand-panel__preview(:value="map.parameters.code")
+    mermaid-points-preview.mermaid-expand-panel__points(:points="map.parameters.points")
 </template>
 
 <script>
 import Panzoom from '@/components/common/panzoom/panzoom.vue';
-import MermaidPreview from '@/components/common/mermaid/mermaid-preview.vue';
-import MermaidPointsPreview from '@/components/common/mermaid/mermaid-points-preview.vue';
+import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
+import MermaidPointsPreview from '@/components/other/map/partials/mermaid-points-preview.vue';
 
 export default {
   components: { Panzoom, MermaidPointsPreview, MermaidPreview },
@@ -19,7 +19,7 @@ export default {
   },
   computed: {
     containerStyles() {
-      const minHeight = Math.max.apply(null, this.map.properties.points.map(({ y }) => y));
+      const minHeight = Math.max.apply(null, this.map.parameters.points.map(({ y }) => y));
 
       return {
         minHeight: `${minHeight}px`,
