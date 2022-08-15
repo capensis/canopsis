@@ -2994,6 +2994,9 @@ export default merge({
   map: {
     defineEntity: 'Define entity',
     addLink: 'Add link',
+    addPoint: 'Add point',
+    editPoint: 'Edit point',
+    removePoint: 'Remove point',
     types: {
       [MAP_TYPES.geo]: 'Geo',
       [MAP_TYPES.flowchart]: 'Flowchart',
@@ -3004,9 +3007,6 @@ export default merge({
 
   mermaid: {
     theme: 'Color theme',
-    addPoint: 'Add point',
-    editPoint: 'Edit point',
-    removePoint: 'Remove point',
     panzoom: {
       helpText: 'Useful shortcuts:\n'
         + 'Ctrl + mouse wheel - zoom in/out\n'
@@ -3021,6 +3021,9 @@ export default merge({
       [MERMAID_THEMES.forest]: 'Forest',
       [MERMAID_THEMES.neutral]: 'Neutral',
       [MERMAID_THEMES.canopsis]: 'Canopsis',
+    },
+    errors: {
+      emptyMermaid: 'The diagram and points must be added',
     },
   },
 }, featureService.get('i18n.en'));

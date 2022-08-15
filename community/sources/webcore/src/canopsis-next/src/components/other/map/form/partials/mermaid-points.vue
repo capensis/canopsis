@@ -11,6 +11,7 @@
       :key="point._id",
       :x="point.x",
       :y="point.y",
+      :entity="point.entity",
       :size="markerSize",
       :class="{ 'mermaid-points__point--no-events': moving }",
       @click.stop="",
@@ -41,7 +42,7 @@
       ignore-click-outside,
       absolute
     )
-      mermaid-point-form(
+      point-form-dialog(
         v-if="formPoint",
         :point="formPoint",
         :editing="!!editingPoint",
@@ -61,12 +62,12 @@ import { mermaidPointToForm } from '@/helpers/forms/map';
 
 import { formBaseMixin } from '@/mixins/form';
 
-import MermaidContextmenu from './partials/mermaid-contextmenu.vue';
-import MermaidPointForm from './partials/mermaid-point-form.vue';
-import MermaidPointMarker from './partials/mermaid-point-marker.vue';
+import MermaidContextmenu from './mermaid-contextmenu.vue';
+import PointFormDialog from './point-form-dialog.vue';
+import MermaidPointMarker from './mermaid-point-marker.vue';
 
 export default {
-  components: { MermaidPointMarker, MermaidPointForm, MermaidContextmenu },
+  components: { MermaidContextmenu, PointFormDialog, MermaidPointMarker },
   mixins: [formBaseMixin],
   model: {
     prop: 'points',
@@ -124,13 +125,6 @@ export default {
     },
   },
   methods: {
-    getPointStyles(point) {
-      return {
-        top: `${point.y}px`,
-        left: `${point.x}px`,
-      };
-    },
-
     normalizePosition({ x, y }) {
       return {
         x,

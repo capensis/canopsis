@@ -62,7 +62,9 @@ export default {
       });
     },
 
-    showEditMapModal(map) {
+    async showEditMapModal({ _id: id }) {
+      const map = await this.fetchMapWithoutStore({ id });
+
       const title = {
         [MAP_TYPES.geo]: this.$t('modals.createGeoMap.edit.title'),
         [MAP_TYPES.flowchart]: this.$t('modals.createFlowchartMap.edit.title'),
@@ -135,7 +137,10 @@ export default {
     },
 
     fetchList() {
-      return this.fetchMapsList({ params: this.getQuery() });
+      const params = this.getQuery();
+      params.with_flags = true;
+
+      return this.fetchMapsList({ params });
     },
   },
 };

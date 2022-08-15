@@ -1,11 +1,11 @@
 <template lang="pug">
   v-layout(column)
     c-name-field(v-field="form.name")
-    mermaid-editor(v-model="form.properties")
+    mermaid-editor(v-model="form.parameters")
 </template>
 
 <script>
-import MermaidEditor from '@/components/common/mermaid/mermaid-editor.vue';
+import MermaidEditor from './partials/mermaid-editor.vue';
 
 export default {
   inject: ['$validator'],
