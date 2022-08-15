@@ -68,7 +68,9 @@ export default {
     form: {
       deep: true,
       handler() {
-        this.$validator.validate(this.name);
+        if (this.hasChildrenError) {
+          this.$validator.validate(this.name);
+        }
       },
     },
   },
