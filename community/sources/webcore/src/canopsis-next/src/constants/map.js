@@ -38,3 +38,20 @@ export const MERMAID_THEME_PROPERTIES_BY_NAME = {
     themeVariables: COLORS.mermaid,
   },
 };
+
+export const TREE_OF_DEPENDENCIES_GRAPH_OPTIONS = {
+  fitPadding: 15,
+  wheelSensitivity: 0.5,
+  minZoom: 0.05,
+  maxZoom: 1.5,
+};
+
+export const TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS = {
+  name: 'cise',
+  animate: 'end',
+  fit: true,
+  padding: 50,
+  nodeSeparation: 80,
+  nodeRepulsion: 150,
+  idealInterClusterEdgeLengthCoefficient: 2,
+};

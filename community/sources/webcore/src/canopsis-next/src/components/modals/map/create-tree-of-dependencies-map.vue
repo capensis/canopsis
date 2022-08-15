@@ -48,6 +48,7 @@ export default {
       form: {
         name: '',
         entities: [],
+        impact: false,
       },
     };
   },

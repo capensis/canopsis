@@ -1,11 +1,26 @@
 <template lang="pug">
-  v-layout(column)
-    c-name-field(v-field="form.name")
-    cluster-graph-editor(v-field="form")
+  v-layout.cluster-graph-editor
+    v-flex.cluster-graph-editor__sidebar
+      cluster-graph-entities-type.mb-3(
+        v-field="form.impact",
+        @change="clearPinnedEntities"
+      )
+      cluster-graph-entities-list(
+        v-field="form.entities",
+        :impact="form.impact",
+        @remove="removeEntity",
+        @update:data="updateEntityData",
+        @update:pinned="updatePinnedEntities"
+      )
+    v-flex.cluster-graph-editor__content
+      network-graph.fill-height(
+        ref="networkGraph",
+        :options="options",
+        :node-html-label-options="nodeHtmlLabelsOptions"
+      )
 </template>
 
 <script>
-import { get } from 'lodash';
 import { COLORS } from '@/config';
 
 import {
@@ -13,21 +28,21 @@ import {
   TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
 } from '@/constants';
 
+import { toById } from '@/helpers/entities';
+
 import { formMixin } from '@/mixins/form';
 
-import ClusterGraphEditor from '@/components/common/cluster-graph/cluster-graph-editor.vue';
+import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
-// TODO: move to helpers
-const toById = (entities = [], idKey = '_id') => entities.reduce((acc, entity) => {
-  acc[get(entity, idKey)] = entity;
-
-  return acc;
-}, {});
+import ClusterGraphEntitiesType from './partials/cluster-graph-entities-type.vue';
+import ClusterGraphEntitiesList from './partials/cluster-graph-entities-list.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    ClusterGraphEditor,
+    NetworkGraph,
+    ClusterGraphEntitiesType,
+    ClusterGraphEntitiesList,
   },
   mixins: [formMixin],
   model: {
@@ -115,7 +130,7 @@ export default {
           tpl: data => `<div>${data.entity.name}</div>`,
         },
         {
-          query: 'node[!main]',
+          query: 'node[!root]',
           valign: 'top',
           halign: 'center',
           valignBox: 'top',
@@ -126,6 +141,9 @@ export default {
     },
   },
   methods: {
+    /**
+     * Run 'cise' layout for rerender clusters
+     */
     runLayout() {
       if (this.$refs.networkGraph.$cy.nodes().empty()) {
         return;
@@ -138,6 +156,12 @@ export default {
       }).run();
     },
 
+    /**
+     * Add pinned elements to cytoscape
+     *
+     * @param {Object[]} items
+     * @param {string} sourceId
+     */
     addPinnedElements(items = [], sourceId) {
       if (!items.length) {
         return;
@@ -164,6 +188,12 @@ export default {
       this.$refs.networkGraph.$cy.add(addedItems);
     },
 
+    /**
+     * Remove pinned elements from cytoscape
+     *
+     * @param {Object[]} items
+     * @param {string} sourceId
+     */
     removePinnedElements(items = [], sourceId) {
       if (!items.length) {
         return;
@@ -178,7 +208,12 @@ export default {
       this.$refs.networkGraph.$cy.elements(elementsForRemoveSelector).remove();
     },
 
-    addMainElement(data) {
+    /**
+     * Add cluster root to cytoscape
+     *
+     * @param {Object} data
+     */
+    addRootElement(data) {
       const elements = this.$refs.networkGraph.$cy.getElementById(data._id);
 
       if (elements.length) {
@@ -190,20 +225,35 @@ export default {
       this.$refs.networkGraph.$cy.add([
         {
           group: 'nodes',
-          data: { id: data._id, entity: data, main: true },
+          data: {
+            id: data._id,
+            entity: data,
+            root: true,
+          },
         },
       ]);
     },
 
-    updateMainElement(data) {
+    /**
+     * Update cluster root data in cytoscape
+     *
+     * @param {Object} data
+     */
+    updateRootElement(data) {
       this.$refs.networkGraph.$cy.getElementById(data._id).data({
         id: data._id,
         entity: data,
-        main: true,
+        root: true,
       });
     },
 
-    removeMainElement(data, pinned) {
+    /**
+     * Remove cluster root from cytoscape
+     *
+     * @param {Object} data
+     * @param {Object[]} pinned
+     */
+    removeRootElement(data, pinned) {
       this.removePinnedElements(pinned, data._id);
 
       if (!this.allEntitiesById[data._id]) {
@@ -211,30 +261,34 @@ export default {
       }
     },
 
+    /**
+     * Remove special entity
+     *
+     * @param {Object} data
+     * @param {Object[]} pinned
+     * @returns {Promise<void>}
+     */
     async removeEntity({ data, pinned }) {
+      /**
+       * @desc We've added nextTick to avoid problem with v-field usage
+       */
       await this.$nextTick();
 
-      this.removeMainElement(data, pinned);
+      this.removeRootElement(data, pinned);
       this.runLayout();
     },
 
-    async clearEntities() {
-      await this.$nextTick();
-
-      const newEntities = this.form.entities.forEach(entity => ({
-        ...entity,
-
-        pinned: [],
-      }));
-
-      this.updateModel(newEntities);
-
-      this.$refs.networkGraph.$cy.elements('edge, node[!main]').remove();
-
-      this.runLayout();
-    },
-
+    /**
+     * Update entity data for special entity
+     *
+     * @param {Object | undefined} newEntity
+     * @param {Object | undefined} oldEntity
+     * @returns {Promise<void>}
+     */
     async updateEntityData(newEntity, oldEntity) {
+      /**
+       * @desc We've added nextTick to avoid problem with v-field usage
+       */
       await this.$nextTick();
 
       const { data: oldData, pinned: oldPinned } = oldEntity;
@@ -242,7 +296,7 @@ export default {
 
       if (!newData) {
         if (oldData) {
-          this.removeMainElement(oldData, oldPinned);
+          this.removeRootElement(oldData, oldPinned);
         }
 
         return;
@@ -250,17 +304,27 @@ export default {
 
       if (oldData) {
         if (oldData._id !== newData._id) {
-          this.removeMainElement(oldData, oldPinned);
+          this.removeRootElement(oldData, oldPinned);
         } else {
-          this.updateMainElement(newData);
+          this.updateRootElement(newData);
         }
       }
 
-      this.addMainElement(newData);
+      this.addRootElement(newData);
       this.runLayout();
     },
 
-    async updateEntityPinned(newEntity, oldEntity) {
+    /**
+     * Update pinned entities for special entity
+     *
+     * @param {Object | undefined} newEntity
+     * @param {Object | undefined} oldEntity
+     * @returns {Promise<void>}
+     */
+    async updatePinnedEntities(newEntity, oldEntity) {
+      /**
+       * @desc We've added nextTick to avoid problem with v-field usage
+       */
       await this.$nextTick();
 
       const { data, pinned: oldPinned } = oldEntity;
@@ -275,6 +339,30 @@ export default {
       this.removePinnedElements(removed, data._id);
       this.runLayout();
     },
+
+    /**
+     * Clear pinned entities on change entities type
+     *
+     * @returns {Promise<void>}
+     */
+    async clearPinnedEntities() {
+      /**
+       * @desc We've added nextTick to avoid problem with v-field usage
+       */
+      await this.$nextTick();
+
+      const newEntities = this.form.entities.forEach(entity => ({
+        ...entity,
+
+        pinned: [],
+      }));
+
+      this.updateModel(newEntities);
+
+      this.$refs.networkGraph.$cy.elements('edge, node[!root]').remove();
+
+      this.runLayout();
+    },
   },
 };
 </script>
@@ -285,7 +373,7 @@ $sideBarWidth: 500px;
 $contentWidth: 800px;
 $borderColor: #e5e5e5;
 
-.tree-of-deps-editor {
+.cluster-graph-editor {
   &__sidebar, &__content {
     height: $height;
     border: 1px solid $borderColor;
