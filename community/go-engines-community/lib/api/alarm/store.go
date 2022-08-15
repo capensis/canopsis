@@ -40,7 +40,6 @@ type Store interface {
 	FindManual(ctx context.Context, search string) ([]ManualResponse, error)
 	FindByService(ctx context.Context, id, apiKey string, r ListByServiceRequest) (*AggregationResult, error)
 	FindByComponent(ctx context.Context, r ListByComponentRequest, apiKey string) (*AggregationResult, error)
-	FindByMap(ctx context.Context, id, apiKey string, r ListByMapRequest) (*AggregationResult, error)
 	FindResolved(ctx context.Context, r ResolvedListRequest, apiKey string) (*AggregationResult, error)
 	GetDetails(ctx context.Context, apiKey string, r DetailsRequest) (*Details, error)
 }
@@ -52,7 +51,6 @@ type store struct {
 	dbInstructionCollection          mongo.DbCollection
 	dbInstructionExecutionCollection mongo.DbCollection
 	dbEntityCollection               mongo.DbCollection
-	dbMapCollection                  mongo.DbCollection
 
 	queryBuilder *MongoQueryBuilder
 
@@ -69,7 +67,6 @@ func NewStore(dbClient mongo.DbClient, linksFetcher common.LinksFetcher, logger 
 		dbInstructionCollection:          dbClient.Collection(mongo.InstructionMongoCollection),
 		dbInstructionExecutionCollection: dbClient.Collection(mongo.InstructionExecutionMongoCollection),
 		dbEntityCollection:               dbClient.Collection(mongo.EntityMongoCollection),
-		dbMapCollection:                  dbClient.Collection(mongo.MapMongoCollection),
 
 		queryBuilder: NewMongoQueryBuilder(dbClient),
 
@@ -303,74 +300,6 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, a
 
 	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(bson.M{
 		"d":          bson.M{"$in": component.Depends},
-		"v.resolved": nil,
-	}, r.Query, r.SortRequest, now)
-	if err != nil {
-		return nil, err
-	}
-
-	cursor, err := s.mainDbCollection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
-	if err != nil {
-		return nil, err
-	}
-	defer cursor.Close(ctx)
-
-	var result AggregationResult
-	for cursor.Next(ctx) {
-		err = cursor.Decode(&result)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	_, err = s.fillAssignedInstructions(ctx, &result, now)
-	if err != nil {
-		return nil, err
-	}
-	err = s.fillInstructionFlags(ctx, &result)
-	if err != nil {
-		return nil, err
-	}
-
-	err = s.fillLinks(ctx, apiKey, &result)
-	if err != nil {
-		s.logger.Err(err).Msg("cannot fill links")
-	}
-
-	return &result, nil
-}
-
-func (s *store) FindByMap(ctx context.Context, id, apiKey string, r ListByMapRequest) (*AggregationResult, error) {
-	now := types.NewCpsTime()
-	mapCursor, err := s.dbMapCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"_id": id}},
-		{"$project": bson.M{
-			"ids": bson.M{"$map": bson.M{
-				"input": bson.M{"$filter": bson.M{
-					"input": "$parameters.points",
-					"cond":  "$$this.entity",
-				}},
-				"in": "$$this.entity",
-			}},
-		}},
-	})
-	if err != nil {
-		return nil, err
-	}
-	defer mapCursor.Close(ctx)
-	if !mapCursor.Next(ctx) {
-		return nil, nil
-	}
-	ids := struct {
-		Ids []string `bson:"ids"`
-	}{}
-	err = mapCursor.Decode(&ids)
-	if err != nil {
-		return nil, err
-	}
-
-	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(bson.M{
-		"d":          bson.M{"$in": ids.Ids},
 		"v.resolved": nil,
 	}, r.Query, r.SortRequest, now)
 	if err != nil {

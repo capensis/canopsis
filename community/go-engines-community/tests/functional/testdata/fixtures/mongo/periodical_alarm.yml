@@ -481,21 +481,6 @@ periodical_alarm:
         initiator: user
         val: 0
 
-  alarm_to_map_alarm_get_1:
-    <<: *alarm
-    _id: test-alarm-to-map-alarm-get-1
-    d: test-resource-to-map-alarm-get-1/test-component-default
-    v:
-      <<: *alarm_value
-      resource: test-resource-to-map-alarm-get-1
-  alarm_to_map_alarm_get_2:
-    <<: *alarm
-    _id: test-alarm-to-map-alarm-get-2
-    d: test-resource-to-map-alarm-get-2/test-component-default
-    v:
-      <<: *alarm_value
-      resource: test-resource-to-map-alarm-get-2
-
   periodical_alarm_18:
     _id: test-instruction-execution-next-1
     d: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
