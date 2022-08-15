@@ -19,7 +19,9 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, MAP_TYPES } from '@/constants';
+
+import { mapToForm, formToMap } from '@/helpers/forms/map';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -44,12 +46,10 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
+    const { map = { type: MAP_TYPES.treeOfDependencies } } = this.modal.config;
+
     return {
-      form: {
-        name: '',
-        entities: [],
-        impact: false,
-      },
+      form: mapToForm(map),
     };
   },
   computed: {
@@ -63,7 +63,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          await this.config.action(formToMap(this.form));
         }
 
         this.$modals.hide();

@@ -124,7 +124,8 @@ export const mapMermaidPropertiesToForm = (properties = {}) => ({
 export const mapTreeOfDependenciesPropertiesToForm = (properties = {}) => ({
   ...properties,
 
-  entities: addKeyInEntities(properties.entities),
+  impact: properties.impact ?? false,
+  entities: addKeyInEntities(properties.entities ?? []),
 });
 
 /**
