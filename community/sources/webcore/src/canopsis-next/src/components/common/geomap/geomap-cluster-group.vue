@@ -5,8 +5,8 @@
 
 <script>
 import { MarkerClusterGroup } from 'leaflet.markercluster';
-import { LayerGroupMixin, findRealParent, propsBinder } from 'vue2-leaflet';
-import { DomEvent } from 'leaflet';
+import { LayerGroupMixin, optionsMerger, findRealParent, propsBinder } from 'vue2-leaflet';
+import { DivIcon, Point, DomEvent } from 'leaflet';
 
 export default {
   mixins: [LayerGroupMixin],
@@ -17,14 +17,30 @@ export default {
         color: '#5a6D80',
       }),
     },
+    clusterClassName: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
       ready: false,
     };
   },
+  watch: {
+    clusterClassName() {
+      this.mapObject.refreshClusters();
+    },
+  },
   mounted() {
-    this.mapObject = new MarkerClusterGroup(this.$options.props);
+    const options = optionsMerger(
+      {
+        polygonOptions: this.polygonOptions,
+        iconCreateFunction: this.createIcon,
+      },
+      this,
+    );
+    this.mapObject = new MarkerClusterGroup(options);
     propsBinder(this, this.mapObject, this.$options.props);
     DomEvent.on(this.mapObject, this.$listeners);
     this.ready = true;
@@ -40,6 +56,17 @@ export default {
        */
       this.$emit('ready', this.mapObject);
     });
+  },
+  methods: {
+    createIcon(cluster) {
+      const count = cluster.getChildCount();
+
+      return new DivIcon({
+        html: `<div><span>${count}</span></div>`,
+        className: `marker-cluster ${this.clusterClassName}`,
+        iconSize: new Point(40, 40),
+      });
+    },
   },
 };
 </script>
