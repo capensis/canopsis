@@ -6,9 +6,9 @@
       :required="!isLinked",
       :clearable="isLinked"
     )
-    c-coordinate-field(v-if="coordinate", v-field="form.coordinate")
+    c-coordinates-field(v-if="coordinates", v-field="form.coordinates")
     c-enabled-field(v-model="isLinked", :label="$t('map.addLink')")
-    c-map-field(v-show="isLinked", v-field="form.link", :required="isLinked")
+    c-map-field(v-show="isLinked", v-field="form.map", :required="isLinked")
 </template>
 
 <script>
@@ -25,7 +25,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    coordinate: {
+    coordinates: {
       type: Boolean,
       required: false,
     },
@@ -33,10 +33,10 @@ export default {
   computed: {
     isLinked: {
       set(value) {
-        this.updateField('link', value ? '' : undefined);
+        this.updateField('map', value ? '' : undefined);
       },
       get() {
-        return this.form.link !== undefined;
+        return this.form.map !== undefined && this.form.map !== null;
       },
     },
   },
