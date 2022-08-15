@@ -1,5 +1,5 @@
 <template lang="pug">
-  geomap-preview.geomap-expand-panel(:points="map.properties.points")
+  geomap-preview.geomap-expand-panel(:points="map.parameters.points")
 </template>
 
 <script>
