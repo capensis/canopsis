@@ -3015,5 +3015,8 @@ export default merge({
       [MERMAID_THEMES.neutral]: 'Neutre',
       [MERMAID_THEMES.canopsis]: 'Canopsis',
     },
+    errors: {
+      emptyMermaid: 'Le diagramme et les points doivent être ajoutés',
+    },
   },
 }, featureService.get('i18n.fr'));
