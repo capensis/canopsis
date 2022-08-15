@@ -1,5 +1,7 @@
 import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
 
+import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
+
 /**
  * @typedef {Object} MapCommonFields
  * @property {string} name
@@ -51,11 +53,25 @@ import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
  */
 
 /**
+ * @typedef {Object} MapTreeOfDependenciesEntity
+ * @property {Entity} data
+ * @property {Entity[]} pinned
+ */
+
+/**
+ * @typedef {MapTreeOfDependenciesEntity} MapTreeOfDependenciesEntityForm
+ * @property {string} key
+ */
+
+/**
  * @typedef {Object} MapTreeOfDependenciesProperties
+ * @property {MapTreeOfDependenciesEntity[]} entities
+ * @property {boolean} impact
  */
 
 /**
  * @typedef {MapTreeOfDependenciesProperties} MapTreeOfDependenciesPropertiesForm
+ * @property {MapTreeOfDependenciesEntityForm[]} entities
  */
 
 /**
@@ -105,7 +121,11 @@ export const mapMermaidPropertiesToForm = (properties = {}) => ({
  * @param {MapTreeOfDependenciesProperties} [properties = {}]
  * @returns {MapTreeOfDependenciesPropertiesForm}
  */
-export const mapTreeOfDependenciesPropertiesToForm = properties => ({ ...properties });
+export const mapTreeOfDependenciesPropertiesToForm = (properties = {}) => ({
+  ...properties,
+
+  entities: addKeyInEntities(properties.entities),
+});
 
 /**
  * Convert map object to map form
@@ -124,11 +144,23 @@ export const mapToForm = (map = {}) => {
   }[type];
 
   return {
-    name: map.name ?? '',
     type,
+    name: map.name ?? '',
     properties: prepare(map.properties),
   };
 };
+
+/**
+ * Convert form to tree of dependencies map
+ *
+ * @param {MapTreeOfDependenciesPropertiesForm} form
+ * @returns {MapTreeOfDependenciesProperties}
+ */
+export const formToMapTreeOfDependenciesProperties = form => ({
+  ...form,
+
+  entities: removeKeyFromEntities(form.entities),
+});
 
 /**
  * Convert map form to map
@@ -136,4 +168,14 @@ export const mapToForm = (map = {}) => {
  * @param {MapForm} form
  * @returns {Map}
  */
-export const formToMap = form => ({ ...form });
+export const formToMap = (form) => {
+  const prepare = {
+    [MAP_TYPES.treeOfDependencies]: formToMapTreeOfDependenciesProperties,
+  }[form.type];
+
+  return {
+    ...form,
+
+    properties: prepare ? prepare(form.properties) : form.properties,
+  };
+};

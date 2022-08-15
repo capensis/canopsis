@@ -1,4 +1,4 @@
-import { omit, pick, isObject, groupBy, map } from 'lodash';
+import { omit, pick, isObject, groupBy, map, get } from 'lodash';
 
 import i18n from '@/i18n';
 import {
@@ -100,7 +100,7 @@ export const mapIds = (entities, idKey = '_id') => map(entities, idKey);
 export const pickIds = (entities = [], idKey = '_id') => entities.map(entity => pick(entity, [idKey]));
 
 /**
- * Return entities ids
+ * Filter entities by ids
  *
  * @param {Object[]} items
  * @param {Object} item
@@ -108,6 +108,18 @@ export const pickIds = (entities = [], idKey = '_id') => entities.map(entity => 
  */
 export const filterById = (items, item, idKey = '_id') => items
   .filter(({ [idKey]: itemId }) => item[idKey] !== itemId);
+
+/**
+ * Return entities map
+ *
+ * @param {Object[]} items
+ * @param {string} [idKey = '_id']
+ */
+export const toById = (items = [], idKey = '_id') => items.reduce((acc, entity) => {
+  acc[get(entity, idKey)] = entity;
+
+  return acc;
+}, {});
 
 /**
  * Generate alarm list widget form with default parameters.
