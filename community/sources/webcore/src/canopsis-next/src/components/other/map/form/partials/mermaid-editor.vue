@@ -1,18 +1,25 @@
 <template lang="pug">
-  v-layout.mermaid-editor(:style="editorStyles")
-    v-flex.mermaid-editor__sidebar
-      mermaid-code-editor.fill-height(v-field="form.code")
-    v-flex.mermaid-editor__content
-      v-layout.mermaid-editor__toolbar.px-2(row, align-center, justify-end)
-        mermaid-add-location-btn.mr-2(v-model="addOnClick")
-        mermaid-theme-field.mermaid-editor__theme-picker(v-field="form.theme")
-      div.mermaid-editor__preview
-        mermaid-preview(:value="form.code", :theme="form.theme")
-        mermaid-points.mermaid-editor__points(v-field="form.points", :add-on-click="addOnClick")
+  v-layout(column)
+    v-layout.mermaid-editor.mb-2(:style="editorStyles")
+      v-flex.mermaid-editor__sidebar
+        mermaid-code-editor.fill-height(v-field="form.code")
+      v-flex.mermaid-editor__content
+        v-layout.mermaid-editor__toolbar.px-2(row, align-center, justify-end)
+          mermaid-add-location-btn.mr-2(v-model="addOnClick")
+          mermaid-theme-field.mermaid-editor__theme-picker(v-field="form.theme")
+        div.mermaid-editor__preview
+          mermaid-preview(:value="form.code", :theme="form.theme")
+          mermaid-points.mermaid-editor__points(v-field="form.points", :add-on-click="addOnClick")
+    div.text-editor__details(v-if="hasChildrenError")
+      div.v-messages.theme--light.error--text
+        div.v-messages__wrapper
+          div.v-messages__message {{ $t('mermaid.errors.emptyMermaid') }}
 </template>
 
 <script>
-import { formMixin } from '@/mixins/form';
+import { COLORS } from '@/config';
+
+import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
 import MermaidCodeEditor from './mermaid-code-editor.vue';
 import MermaidAddLocationBtn from './mermaid-add-location-btn.vue';
@@ -21,8 +28,9 @@ import MermaidPreview from './mermaid-preview.vue';
 import MermaidPoints from './mermaid-points.vue';
 
 export default {
+  inject: ['$validator'],
   components: { MermaidAddLocationBtn, MermaidCodeEditor, MermaidThemeField, MermaidPreview, MermaidPoints },
-  mixins: [formMixin],
+  mixins: [formMixin, validationChildrenMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -36,6 +44,10 @@ export default {
       type: Number,
       default: 500,
     },
+    name: {
+      type: String,
+      default: 'parameters',
+    },
   },
   data() {
     return {
@@ -48,7 +60,37 @@ export default {
 
       return {
         minHeight: `${minHeight}px`,
+        borderColor: this.hasChildrenError ? COLORS.error : undefined,
       };
+    },
+  },
+  watch: {
+    form: {
+      deep: true,
+      handler() {
+        this.$validator.validate(this.name);
+      },
+    },
+  },
+  mounted() {
+    this.attachRequiredRule();
+  },
+  beforeDestroy() {
+    this.detachRules();
+  },
+  methods: {
+    attachRequiredRule() {
+      this.$validator.attach({
+        name: this.name,
+        rules: 'required:true',
+        getter: () => !!this.form.code && !!this.form.points.length,
+        context: () => this,
+        vm: this,
+      });
+    },
+
+    detachRules() {
+      this.$validator.detach(this.name);
     },
   },
 };

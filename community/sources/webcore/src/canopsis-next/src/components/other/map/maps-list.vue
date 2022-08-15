@@ -6,6 +6,7 @@
     :total-items="totalItems",
     :pagination="pagination",
     :select-all="removable",
+    :is-disabled-item="isDisabledMap",
     advanced-pagination,
     expand,
     search,
@@ -99,6 +100,11 @@ export default {
           sortable: false,
         },
       ];
+    },
+  },
+  methods: {
+    isDisabledMap({ deletable }) {
+      return !deletable;
     },
   },
 };
