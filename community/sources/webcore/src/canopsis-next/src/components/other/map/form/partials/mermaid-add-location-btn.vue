@@ -2,7 +2,7 @@
   v-btn-toggle(:value="value", @change="inputHandler")
     v-btn.ma-0(:value="true", flat, large)
       v-icon(left) add_location
-      span {{ $t('mermaid.addPoint') }}
+      span {{ $t('map.addPoint') }}
 </template>
 
 <script>

@@ -18,11 +18,11 @@ export default {
       if (this.editing) {
         return [
           {
-            text: this.$t('mermaid.editPoint'),
+            text: this.$t('map.editPoint'),
             event: 'edit:point',
           },
           {
-            text: this.$t('mermaid.removePoint'),
+            text: this.$t('map.removePoint'),
             event: 'remove:point',
           },
         ];
@@ -30,7 +30,7 @@ export default {
 
       return [
         {
-          text: this.$t('mermaid.addPoint'),
+          text: this.$t('map.addPoint'),
           event: 'add:point',
         },
       ];

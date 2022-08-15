@@ -62,10 +62,10 @@ export default {
   computed: {
     title() {
       if (this.editing) {
-        return this.$t('mermaid.editPoint');
+        return this.$t('map.editPoint');
       }
 
-      return this.$t('mermaid.addPoint');
+      return this.$t('map.addPoint');
     },
   },
   watch: {
