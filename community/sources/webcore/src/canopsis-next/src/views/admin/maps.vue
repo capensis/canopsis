@@ -86,7 +86,9 @@ export default {
       });
     },
 
-    showDuplicateMapModal(map) {
+    async showDuplicateMapModal({ _id: id }) {
+      const map = await this.fetchMapWithoutStore({ id });
+
       const title = {
         [MAP_TYPES.geo]: this.$t('modals.createGeoMap.duplicate.title'),
         [MAP_TYPES.flowchart]: this.$t('modals.createFlowchartMap.duplicate.title'),
