@@ -185,8 +185,6 @@ export const API_ROUTES = {
   patterns: '/api/v4/patterns',
   bulkPatterns: '/api/v4/bulk/patterns',
   patternsCount: '/api/v4/patterns-count',
-  maps: '/api/v4/maps',
-  bulkMaps: '/api/v4/bulk/maps',
 
   /**
    * Cat routes
@@ -229,11 +227,14 @@ export const API_ROUTES = {
     sli: '/api/v4/cat/metrics/sli',
     rating: '/api/v4/cat/metrics/rating',
   },
+  maps: '/api/v4/cat/maps',
+  bulkMaps: '/api/v4/cat/maps/bulk',
 };
 
 export const COLORS = {
   primary: '#2fab63',
   secondary: '#2b3e4f',
+  error: '#ff5252',
   state: {
     ok: '#00a65a',
     minor: '#fcdc00',
