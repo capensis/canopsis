@@ -144,16 +144,22 @@ export default {
     /**
      * Run 'cise' layout for rerender clusters
      */
-    runLayout() {
+    async runLayout() {
+      await this.$nextTick();
+
       if (this.$refs.networkGraph.$cy.nodes().empty()) {
         return;
       }
 
-      this.$refs.networkGraph.$cy.layout({
-        ...TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
+      try {
+        this.$refs.networkGraph.$cy.layout({
+          ...TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
 
-        clusters: this.cytoscapeClusters,
-      }).run();
+          clusters: this.cytoscapeClusters,
+        }).run();
+      } catch (err) {
+        console.warn(err);
+      }
     },
 
     /**
@@ -351,13 +357,13 @@ export default {
        */
       await this.$nextTick();
 
-      const newEntities = this.form.entities.forEach(entity => ({
+      const newEntities = this.form.entities.map(entity => ({
         ...entity,
 
         pinned: [],
       }));
 
-      this.updateModel(newEntities);
+      this.updateField('entities', newEntities);
 
       this.$refs.networkGraph.$cy.elements('edge, node[!root]').remove();
 
