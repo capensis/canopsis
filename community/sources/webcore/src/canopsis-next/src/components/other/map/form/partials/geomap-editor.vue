@@ -48,7 +48,7 @@
       geomap-marker(
         v-for="marker in markers",
         :key="marker.id",
-        :lat-lng="marker.coordinate",
+        :lat-lng="marker.coordinates",
         :options="{ data: marker.data }",
         :draggable="!shown",
         @dragend="finishMovingMarker",
@@ -75,7 +75,7 @@
         v-if="addingPoint || editingPoint",
         :point="addingPoint || editingPoint",
         :editing="!!editingPoint",
-        coordinate,
+        coordinates,
         @cancel="closePointDialog",
         @submit="submitPointDialog",
         @remove="showRemovePointModal"
@@ -162,7 +162,7 @@ export default {
     markers() {
       return this.form.points.map(point => ({
         id: point._id,
-        coordinate: [point.coordinate.lat, point.coordinate.lng],
+        coordinates: [point.coordinates.lat, point.coordinates.lng],
         data: point,
         icon: getGeomapMarkerIcon(point, this.iconSize),
       }));
@@ -210,10 +210,10 @@ export default {
       );
     },
 
-    setMenuPositionByLatLng(coordinate) {
-      if (coordinate) {
+    setMenuPositionByLatLng(coordinates) {
+      if (coordinates) {
         const { x: containerX, y: containerY } = this.$refs.map.$el.getBoundingClientRect();
-        const { x, y } = this.$refs.map.mapObject.latLngToContainerPoint(coordinate);
+        const { x, y } = this.$refs.map.mapObject.latLngToContainerPoint(coordinates);
 
         this.pageX = x + containerX;
         this.pageY = y + containerY;
@@ -250,13 +250,13 @@ export default {
       this.shown = true;
 
       this.addingPoint = geomapPointToForm({
-        coordinate: {
+        coordinates: {
           lat: latlng.lat,
           lng: latlng.lng,
         },
       });
 
-      this.setMenuPositionByLatLng(this.addingPoint.coordinate);
+      this.setMenuPositionByLatLng(this.addingPoint.coordinates);
     },
 
     addPoint({ latlng }) {
@@ -272,7 +272,7 @@ export default {
 
       this.closeContextMenu();
 
-      this.setMenuPositionByLatLng(this.editingPoint.coordinate);
+      this.setMenuPositionByLatLng(this.editingPoint.coordinates);
     },
 
     submitPointDialog(data) {
@@ -290,7 +290,7 @@ export default {
 
       this.updatePointInModel({
         ...target.options.data,
-        coordinate: { lat, lng },
+        coordinates: { lat, lng },
       });
     },
 
