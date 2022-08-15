@@ -38,7 +38,7 @@ export default {
     },
     name: {
       type: String,
-      default: 'coordinate',
+      default: 'coordinates',
     },
     disabled: {
       type: Boolean,

@@ -2,7 +2,7 @@
   v-layout.geomap-map-form(column)
     c-name-field.mx-4(v-field="form.name")
     div.geomap-map-form__editor
-      geomap-editor(v-field="form.properties")
+      geomap-editor(v-field="form.parameters")
 </template>
 
 <script>

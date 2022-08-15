@@ -9,70 +9,76 @@ import uuid from '@/helpers/uuid';
  */
 
 /**
- * @typedef {MapCommonFields} MapMermaidProperties
+ * @typedef {MapCommonFields} MapMermaidParameters
  * @property {string} theme
  * @property {string} code
  */
 
 /**
- * @typedef {MapMermaidProperties} MapMermaidPropertiesForm
+ * @typedef {MapMermaidParameters} MapMermaidParametersForm
  */
 
 /**
  * @typedef {MapCommonFields} MapMermaid
  * @property {'mermaid'} type
- * @property {MapMermaidProperties} properties
+ * @property {MapMermaidParameters} parameters
  */
 
 /**
- * @typedef {MapCommonFields} MapGeoPoint
+ * @typedef {Object} MapGeoPoint
  * @property {string} _id
- * @property {string} link
- * @property {string} entity
- * @property {Object} coordinate
+ * @property {MapCommonFields} map
+ * @property {Entity} entity
+ * @property {Object} coordinates
  */
 
 /**
- * @typedef {Object} MapGeoProperties
+ * @typedef {MapGeoPoint} MapGeoPointForm
+ * @property {string} map
+ * @property {string} entity
+ */
+
+/**
+ * @typedef {Object} MapGeoParameters
  * @property {MapGeoPoint[]} points
  */
 
 /**
- * @typedef {MapGeoProperties} MapGeoPropertiesForm
+ * @typedef {MapGeoParameters} MapGeoParametersForm
  */
 
 /**
  * @typedef {MapCommonFields} MapGeo
  * @property {'geo'} type
- * @property {MapGeoProperties} properties
+ * @property {MapGeoParameters} parameters
  */
 
 /**
- * @typedef {Object} MapFlowchartProperties
+ * @typedef {Object} MapFlowchartParameters
  */
 
 /**
- * @typedef {MapFlowchartProperties} MapFlowchartPropertiesForm
+ * @typedef {MapFlowchartParameters} MapFlowchartParametersForm
  */
 
 /**
  * @typedef {MapCommonFields} MapFlowchart
  * @property {'flowchart'} type
- * @property {MapFlowchartProperties} properties
+ * @property {MapFlowchartParameters} parameters
  */
 
 /**
- * @typedef {Object} MapTreeOfDependenciesProperties
+ * @typedef {Object} MapTreeOfDependenciesParameters
  */
 
 /**
- * @typedef {MapTreeOfDependenciesProperties} MapTreeOfDependenciesPropertiesForm
+ * @typedef {MapTreeOfDependenciesParameters} MapTreeOfDependenciesParametersForm
  */
 
 /**
  * @typedef {MapCommonFields} MapTreeOfDependencies
  * @property {'treeOfDependencies'} type
- * @property {MapTreeOfDependenciesProperties} properties
+ * @property {MapTreeOfDependenciesParameters} parameters
  */
 
 /**
@@ -90,51 +96,59 @@ import uuid from '@/helpers/uuid';
  * @returns {MapGeoPoint}
  */
 export const geomapPointToForm = (point = {}) => ({
-  coordinate: point.coordinate ?? {
+  coordinates: point.coordinates ?? {
     lat: 0,
     lng: 0,
   },
   entity: point.entity ?? '',
-  link: point.link,
+  map: point.map,
   _id: uuid(),
 });
 
 /**
- * Convert map geo properties object to form
+ * Convert geomap points to form array
  *
- * @param {MapGeoProperties} [properties = {}]
- * @returns {MapGeoPropertiesForm}
+ * @param {MapGeoPoint[]} [points = {}]
+ * @returns {MapGeoPointForm[]}
  */
-export const mapGeoPropertiesToForm = (properties = {}) => ({
-  points: properties.points ?? [],
+export const geomapPointsToForm = (points = []) => points.map(geomapPointToForm);
+
+/**
+ * Convert map geo parameters object to form
+ *
+ * @param {MapGeoParameters} [parameters = {}]
+ * @returns {MapGeoParametersForm}
+ */
+export const mapGeoParametersToForm = (parameters = {}) => ({
+  points: geomapPointsToForm(parameters.points),
 });
 
 /**
- * Convert map flowchart properties object to form
+ * Convert map flowchart parameters object to form
  *
- * @param {MapFlowchartProperties} [properties = {}]
- * @returns {MapFlowchartPropertiesForm}
+ * @param {MapFlowchartParameters} [parameters = {}]
+ * @returns {MapFlowchartParametersForm}
  */
-export const mapFlowchartPropertiesToForm = properties => ({ ...properties });
+export const mapFlowchartParametersToForm = parameters => ({ ...parameters });
 
 /**
- * Convert map mermaid properties object to form
+ * Convert map mermaid parameters object to form
  *
- * @param {MapMermaidProperties} [properties = {}]
- * @returns {MapMermaidPropertiesForm}
+ * @param {MapMermaidParameters} [parameters = {}]
+ * @returns {MapMermaidParametersForm}
  */
-export const mapMermaidPropertiesToForm = (properties = {}) => ({
-  theme: properties.theme ?? MERMAID_THEMES.default,
-  code: properties.code ?? 'graph TB\na-->b',
+export const mapMermaidParametersToForm = (parameters = {}) => ({
+  theme: parameters.theme ?? MERMAID_THEMES.default,
+  code: parameters.code ?? 'graph TB\na-->b',
 });
 
 /**
- * Convert map mermaid properties object to form
+ * Convert map mermaid parameters object to form
  *
- * @param {MapTreeOfDependenciesProperties} [properties = {}]
- * @returns {MapTreeOfDependenciesPropertiesForm}
+ * @param {MapTreeOfDependenciesParameters} [parameters = {}]
+ * @returns {MapTreeOfDependenciesParametersForm}
  */
-export const mapTreeOfDependenciesPropertiesToForm = properties => ({ ...properties });
+export const mapTreeOfDependenciesParametersToForm = parameters => ({ ...parameters });
 
 /**
  * Convert map object to map form
@@ -146,16 +160,16 @@ export const mapToForm = (map = {}) => {
   const type = map.type ?? MAP_TYPES.flowchart;
 
   const prepare = {
-    [MAP_TYPES.geo]: mapGeoPropertiesToForm,
-    [MAP_TYPES.flowchart]: mapFlowchartPropertiesToForm,
-    [MAP_TYPES.mermaid]: mapMermaidPropertiesToForm,
-    [MAP_TYPES.treeOfDependencies]: mapTreeOfDependenciesPropertiesToForm,
+    [MAP_TYPES.geo]: mapGeoParametersToForm,
+    [MAP_TYPES.flowchart]: mapFlowchartParametersToForm,
+    [MAP_TYPES.mermaid]: mapMermaidParametersToForm,
+    [MAP_TYPES.treeOfDependencies]: mapTreeOfDependenciesParametersToForm,
   }[type];
 
   return {
     name: map.name ?? '',
     type,
-    properties: prepare(map.properties),
+    parameters: prepare(map.parameters),
   };
 };
 
