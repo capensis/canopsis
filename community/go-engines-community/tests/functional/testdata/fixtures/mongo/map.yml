@@ -108,36 +108,3 @@ map:
           y: 200
           entity: test-resource-to-map-state-get-3/test-component-default
           map: test-map-to-map-edit-1
-
-  map_to_alarm_get_1:
-    <<: *map_mermaid
-    _id: test-map-to-alarm-get-1
-    parameters:
-      code: test-map-to-alarm-get-1-code
-      theme: test-map-to-alarm-get-1-theme
-      points:
-        - _id: test-map-to-alarm-get-1-point-1
-          x: 0
-          y: 0
-          entity: test-resource-to-map-alarm-get-1/test-component-default
-        - _id: test-map-to-alarm-get-1-point-2
-          x: 100
-          y: 100
-          map: test-map-to-map-edit-1
-        - _id: test-map-to-alarm-get-1-point-3
-          x: 200
-          y: 200
-          entity: test-resource-to-map-alarm-get-2/test-component-default
-          map: test-map-to-map-edit-2
-
-  map_to_alarm_get_2:
-    <<: *map_mermaid
-    _id: test-map-to-alarm-get-2
-    parameters:
-      code: test-map-to-alarm-get-2-code
-      theme: test-map-to-alarm-get-2-theme
-      points:
-        - _id: test-map-to-alarm-get-2-point-1
-          x: 200
-          y: 200
-          map: test-map-to-map-edit-1
