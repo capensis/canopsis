@@ -3026,4 +3026,8 @@ export default merge({
       emptyMermaid: 'The diagram and points must be added',
     },
   },
+
+  geomap: {
+    layers: 'Layers',
+  },
 }, featureService.get('i18n.en'));
