@@ -2996,6 +2996,9 @@ export default merge({
   map: {
     defineEntity: 'Définir l\'entité',
     addLink: 'Ajouter un lien',
+    addPoint: 'Ajouter un point',
+    editPoint: 'Modifier le point',
+    removePoint: 'Supprimer le point',
     types: {
       [MAP_TYPES.geo]: 'Géo',
       [MAP_TYPES.flowchart]: 'Flowchart',
@@ -3006,6 +3009,13 @@ export default merge({
 
   mermaid: {
     theme: 'Thème de couleur',
+    panzoom: {
+      helpText: 'Raccourcis utiles :\n'
+        + 'Ctrl + molette de la souris - zoom avant/arrière\n'
+        + 'Maj + molette de la souris - défilement horizontal\n'
+        + 'Alt + molette de la souris - défilement vertical\n'
+        + 'Clic gauche de la souris + glisser - déplacer la zone',
+    },
     themes: {
       [MERMAID_THEMES.default]: 'Défaut',
       [MERMAID_THEMES.base]: 'Base',
@@ -3013,6 +3023,9 @@ export default merge({
       [MERMAID_THEMES.forest]: 'Forêt',
       [MERMAID_THEMES.neutral]: 'Neutre',
       [MERMAID_THEMES.canopsis]: 'Canopsis',
+    },
+    errors: {
+      emptyMermaid: 'Le diagramme et les points doivent être ajoutés',
     },
   },
 

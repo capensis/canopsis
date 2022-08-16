@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-select(
+  v-select.my-0(
     v-field="value",
     v-validate="'required'",
     :items="themes",

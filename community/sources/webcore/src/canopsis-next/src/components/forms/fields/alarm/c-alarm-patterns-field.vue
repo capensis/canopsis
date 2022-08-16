@@ -88,6 +88,9 @@ export default {
     entitiesValueField() {
       return {
         is: 'c-entity-field',
+        props: {
+          required: true,
+        },
       };
     },
 
@@ -98,6 +101,7 @@ export default {
         valueField: {
           is: 'c-entity-field',
           props: {
+            required: true,
             entityTypes: [BASIC_ENTITY_TYPES.connector],
             itemText: 'name',
             itemValue: 'name',
@@ -113,6 +117,7 @@ export default {
         valueField: {
           is: 'c-entity-field',
           props: {
+            required: true,
             entityTypes: [BASIC_ENTITY_TYPES.connector],
             itemText: 'connector_type',
             itemValue: 'connector_type',
@@ -128,6 +133,7 @@ export default {
         valueField: {
           is: 'c-entity-field',
           props: {
+            required: true,
             entityTypes: [BASIC_ENTITY_TYPES.component],
           },
         },
@@ -141,6 +147,7 @@ export default {
         valueField: {
           is: 'c-entity-field',
           props: {
+            required: true,
             entityTypes: [BASIC_ENTITY_TYPES.resource],
             itemText: 'name',
             itemValue: 'name',
