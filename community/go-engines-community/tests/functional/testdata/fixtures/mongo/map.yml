@@ -3,18 +3,39 @@ template:
     _id: <UUID()>,
     name: <LoremIpsumWord()>,
     type: mermaid,
-    code: <LoremIpsumParagraph(1, 3, 12, \n)>,
-    theme: default,
     author: root,
     created: <NowUnix()>,
     updated: <Current().created>,
-    points: [
-      {
-        x: 0,
-        y: 0,
-        entity: test-resource-to-map-edit-1/test-component-default
-      }
-    ]
+    parameters: {
+      code: "<LoremIpsumParagraph(1,3,12,'\n')>",
+      theme: default,
+      points: [
+        {
+          x: 0,
+          y: 0,
+          entity: test-resource-to-map-edit-1/test-component-default
+        }
+      ]
+    }
+  }
+  - &map_geo {
+    _id: <UUID()>,
+    name: <LoremIpsumWord()>,
+    type: geo,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    parameters: {
+      points: [
+        {
+          coordinates: {
+            lat: <Latitude()>,
+            lng: <Longitude()>
+          },
+          entity: test-resource-to-map-edit-1/test-component-default
+        }
+      ]
+    }
   }
 
 map:
