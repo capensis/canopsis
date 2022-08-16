@@ -313,6 +313,18 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("info_value", fe.StructField())
 		return t
 	})
+	_ = v.RegisterTranslation("latitude", trans, func(ut ut.Translator) error {
+		return ut.Add("latitude", "{0} must contain valid latitude coordinates.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("latitude", fe.StructField())
+		return t
+	})
+	_ = v.RegisterTranslation("longitude", trans, func(ut ut.Translator) error {
+		return ut.Add("longitude", "{0} must contain valid longitude coordinates.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("longitude", fe.StructField())
+		return t
+	})
 }
 
 // TranslateError returns custom validation error message.
