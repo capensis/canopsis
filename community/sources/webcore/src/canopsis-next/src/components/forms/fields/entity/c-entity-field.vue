@@ -37,7 +37,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { debounce, isEqual, keyBy, isArray, isString } from 'lodash';
+import { debounce, isEqual, keyBy, isArray, isString, isFunction } from 'lodash';
 
 import { BASIC_ENTITY_TYPES } from '@/constants';
 
@@ -68,7 +68,7 @@ export default {
       required: false,
     },
     itemText: {
-      type: String,
+      type: [String, Function],
       default: '_id',
     },
     itemValue: {
@@ -159,7 +159,11 @@ export default {
     ...entityMapActions({ fetchContextEntitiesListWithoutStore: 'fetchListWithoutStore' }),
 
     getItemText(item) {
-      return isString(item) ? item : item[this.itemText];
+      if (isString(item)) {
+        return item;
+      }
+
+      return isFunction(this.itemText) ? this.itemText(item) : item[this.itemText];
     },
 
     intersectionHandler(entries) {

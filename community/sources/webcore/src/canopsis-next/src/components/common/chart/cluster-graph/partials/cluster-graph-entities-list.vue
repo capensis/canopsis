@@ -8,7 +8,7 @@
           :name="`entity-${entity.key}`",
           :entity-types="entityTypes",
           :item-disabled="isItemDisabled",
-          item-text="name",
+          :item-text="getItemText",
           return-object,
           clearable,
           @input="updateData($event, index)"
@@ -20,8 +20,8 @@
             :items="pinnedListById[entity.data._id]",
             :loading="pinnedPendingById[entity.data._id]",
             :label="$t('modals.createTreeOfDependenciesMap.pinnedEntities')",
+            :item-text="getItemText",
             item-value="_id",
-            item-text="_id",
             deletable-chips,
             chips,
             multiple,
@@ -88,6 +88,10 @@ export default {
       fetchServiceDependenciesWithoutStore: 'fetchDependenciesWithoutStore',
       fetchServiceImpactsWithoutStore: 'fetchImpactsWithoutStore',
     }),
+
+    getItemText(item) {
+      return item.type === ENTITY_TYPES.service ? item.name : item._id;
+    },
 
     isItemDisabled(item) {
       return this.entities.some(({ data }) => data?._id === item._id);
