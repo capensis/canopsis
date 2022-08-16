@@ -5,12 +5,11 @@
 </template>
 
 <script>
-import MermaidEditor from '@/components/common/mermaid/mermaid-editor.vue';
 import ExampleMap from '@/components/examples/example-map.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ExampleMap, MermaidEditor },
+  components: { ExampleMap },
   model: {
     prop: 'form',
     event: 'input',

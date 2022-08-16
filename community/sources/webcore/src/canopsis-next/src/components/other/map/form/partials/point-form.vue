@@ -1,8 +1,18 @@
 <template lang="pug">
   v-layout(column)
-    c-entity-field(v-field="form.entity", :label="$t('map.defineEntity')")
+    c-entity-field(
+      v-field="form.entity",
+      :label="$t('map.defineEntity')",
+      :required="!isLinked",
+      :clearable="isLinked"
+    )
     c-enabled-field(v-model="isLinked", :label="$t('map.addLink')")
-    c-map-field(v-show="isLinked", v-field="form.link", hide-details)
+    c-map-field(
+      v-show="isLinked",
+      v-field="form.map",
+      :required="isLinked",
+      hide-details
+    )
 </template>
 
 <script>
@@ -23,10 +33,10 @@ export default {
   computed: {
     isLinked: {
       set(value) {
-        this.updateField('link', value ? '' : undefined);
+        this.updateField('map', value ? '' : undefined);
       },
       get() {
-        return this.form.link !== undefined;
+        return this.form.map !== undefined && this.form.map !== null;
       },
     },
   },
