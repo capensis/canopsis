@@ -104,7 +104,7 @@ func (e *instructionExecutor) Exec(
 		for _, assignedInstr := range alarm.KPIAssignedInstructions {
 			if assignedInstr == instrID {
 				assigned = true
-				continue
+				break
 			}
 		}
 
@@ -116,7 +116,7 @@ func (e *instructionExecutor) Exec(
 		for _, executedInstr := range alarm.KPIExecutedInstructions {
 			if executedInstr == instrID {
 				executed = true
-				continue
+				break
 			}
 		}
 
