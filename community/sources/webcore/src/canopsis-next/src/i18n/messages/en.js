@@ -3015,4 +3015,8 @@ export default merge({
       [MERMAID_THEMES.canopsis]: 'Canopsis',
     },
   },
+
+  geomap: {
+    layers: 'Layers',
+  },
 }, featureService.get('i18n.en'));
