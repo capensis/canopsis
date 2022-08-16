@@ -2208,6 +2208,7 @@ export default merge({
       [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: 'Rights for Service Weather',
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Rights for Counter',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Rights for Testing Weather',
+      [USER_PERMISSIONS_PREFIXES.business.map]: 'Rights for Mapping',
     },
     api: {
       general: 'General',
