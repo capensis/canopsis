@@ -32,9 +32,19 @@ import {
 import {
   textWidgetParametersToForm,
 } from './text';
+import { mapWidgetParametersToForm } from '@/helpers/forms/widgets/map';
 
 /**
- * @typedef { 'AlarmsList' | 'Context' | 'ServiceWeather' | 'StatsCalendar' | 'Text' | 'Counter' | 'Junit' } WidgetType
+ * @typedef {
+ *   'AlarmsList' |
+ *   'Context' |
+ *   'ServiceWeather' |
+ *   'StatsCalendar' |
+ *   'Text' |
+ *   'Counter' |
+ *   'Junit' |
+ *   'Map'
+ * } WidgetType
  */
 
 /**
@@ -130,7 +140,8 @@ import {
  *   StatsCalendarWidgetParameters |
  *   CounterWidgetParameters |
  *   TestingWeatherWidgetParametersForm |
- *   TextWidgetParameters
+ *   TextWidgetParameters |
+ *   MapWidgetParameters
  * } WidgetParametersForm
  */
 
@@ -177,6 +188,8 @@ export const widgetParametersToForm = ({ type, parameters } = {}) => {
       return testingWeatherWidgetParametersToForm(parameters);
     case WIDGET_TYPES.text:
       return textWidgetParametersToForm(parameters);
+    case WIDGET_TYPES.map:
+      return mapWidgetParametersToForm(parameters);
     default:
       return parameters ? cloneDeep(parameters) : {};
   }

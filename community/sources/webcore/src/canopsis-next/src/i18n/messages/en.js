@@ -732,6 +732,7 @@ export default merge({
       [SIDE_BARS.textSettings]: 'Text settings',
       [SIDE_BARS.counterSettings]: 'Counter settings',
       [SIDE_BARS.testingWeatherSettings]: 'Testing weather',
+      [SIDE_BARS.mapSettings]: 'Mapping widget settings',
     },
     openedTypes: {
       [ALARMS_OPENED_VALUES.opened]: 'Opened alarms',
@@ -739,6 +740,8 @@ export default merge({
       [ALARMS_OPENED_VALUES.all]: 'Opened and recent resolved alarms',
     },
     advancedSettings: 'Advanced settings',
+    entityDisplaySettings: 'Entity display settings',
+    entitiesUnderPbehaviorEnabled: 'Entities under PBh type inactive, Pause, Maintenance display',
     widgetTitle: 'Widget title',
     columnName: 'Column name',
     defaultSortColumn: 'Default sort column',
@@ -774,6 +777,9 @@ export default merge({
     exportAsCsv: 'Export widget as csv file',
     criticityLevels: 'Criticity levels',
     isPriorityEnabled: 'Show priority',
+    alarmsColumns: 'Alarm list columns',
+    entitiesColumns: 'Context explorer columns',
+    entityInfoPopup: 'Entity info popup',
     exportCsv: {
       title: 'Export CSV',
       fields: {
@@ -1194,6 +1200,9 @@ export default merge({
         },
         [WIDGET_TYPES.testingWeather]: {
           title: 'Junit scenarios',
+        },
+        [WIDGET_TYPES.map]: {
+          title: 'Mapping',
         },
       },
     },

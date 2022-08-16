@@ -1,14 +1,16 @@
 <template lang="pug">
   v-select(
+    v-validate,
     v-field="value",
     :items="items",
     :label="label || $tc('common.map')",
     :loading="pending",
     :disabled="disabled",
     :name="name",
+    :error-messages="errors.collect(name)",
+    :hide-details="hideDetails",
     item-text="name",
     item-value="_id",
-    hide-details,
     clearable
   )
 </template>
@@ -21,6 +23,7 @@ import { MAX_LIMIT } from '@/constants';
 const { mapActions } = createNamespacedHelpers('map');
 
 export default {
+  inject: ['$validator'],
   props: {
     value: {
       type: [Object, String],
@@ -35,6 +38,10 @@ export default {
       default: 'map',
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
       type: Boolean,
       default: false,
     },

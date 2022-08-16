@@ -38,3 +38,7 @@ export const MERMAID_THEME_PROPERTIES_BY_NAME = {
     themeVariables: COLORS.mermaid,
   },
 };
+
+export const DEFAULT_MAP_ENTITY_TEMPLATE = `<ul>
+    <li><strong>Libellé</strong> : {{entity.name}}</li>
+</ul>`;

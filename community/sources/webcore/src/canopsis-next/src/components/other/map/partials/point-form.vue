@@ -2,7 +2,7 @@
   v-layout(column)
     c-entity-field(v-field="form.entity", :label="$t('map.defineEntity')")
     c-enabled-field(v-model="isLinked", :label="$t('map.addLink')")
-    c-map-field(v-show="isLinked", v-field="form.link")
+    c-map-field(v-show="isLinked", v-field="form.link", hide-details)
 </template>
 
 <script>
