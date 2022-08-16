@@ -1920,3 +1920,265 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
+
+  Scenario: given manual instruction disabled in pbh and new event should not count assigned instruction metric if entity in pbh
+    When I am admin
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 0,
+      "name": "test-instruction-to-manual-metrics-9-name-1",
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-9"
+            }
+          }
+        ]
+      ],
+      "description": "test-instruction-to-manual-metrics-9-description",
+      "enabled": true,
+      "disabled_on_pbh": ["test-maintenance-type-to-engine"],
+      "timeout_after_execution": {
+        "value": 1,
+        "unit": "s"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-manual-metrics-9-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-manual-metrics-9-step-1-operation-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-manual-metrics-9-step-1-operation-1-description",
+              "jobs": []
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-manual-metrics-9-step-1-endpoint"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-to-manual-metrics-9",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-9"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I do POST /api/v4/cat/kpi-filters:
+    """json
+    {
+      "name": "test-filter-to-manual-instruction-metrics-9-name",
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-9"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-to-manual-instruction-metrics-9",
+      "connector_name" : "test-connector-name-to-manual-instruction-metrics-9",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-to-manual-instruction-metrics-9",
+      "resource" : "test-resource-to-manual-instruction-metrics-9",
+      "state" : 1
+    }
+    """
+    When I wait the end of event processing
+    When I wait 3s
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "title": "manual_instruction_assigned_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 0
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-9-name-1 until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "timestamp": {{ nowDate }},
+          "assigned": 0,
+          "executed": 0,
+          "ratio": 0
+        }
+      ]
+    }
+    """
+
+  Scenario: given manual disabled in pbh instruction and new event should not count assigned metric if entity in pbh
+    When I am admin
+    When I do POST /api/v4/cat/kpi-filters:
+    """json
+    {
+      "name": "test-filter-to-manual-instruction-metrics-10-name",
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-10"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-to-manual-metrics-10",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-10"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-to-manual-instruction-metrics-10",
+      "connector_name" : "test-connector-name-to-manual-instruction-metrics-10",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-to-manual-instruction-metrics-10",
+      "resource" : "test-resource-to-manual-instruction-metrics-10-1",
+      "state" : 1
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 0,
+      "name": "test-instruction-to-manual-metrics-10-name-1",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-10-1"
+            }
+          }
+        ]
+      ],
+      "disabled_on_pbh": ["test-maintenance-type-to-engine"],
+      "description": "test-instruction-to-manual-metrics-10-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 1,
+        "unit": "s"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-manual-metrics-10-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-manual-metrics-10-step-1-operation-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-manual-metrics-10-step-1-operation-1-description",
+              "jobs": []
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-manual-metrics-10-step-1-endpoint"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait 3s
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "title": "manual_instruction_assigned_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 0
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-10-name-1 until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "timestamp": {{ nowDate }},
+          "assigned": 0,
+          "executed": 0,
+          "ratio": 0
+        }
+      ]
+    }
+    """
