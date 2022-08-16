@@ -1,5 +1,6 @@
 import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
 
+import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
 import uuid from '@/helpers/uuid';
 
 /**
@@ -9,7 +10,7 @@ import uuid from '@/helpers/uuid';
  */
 
 /**
- * @typedef {MapCommonFields} MapMermaidPoint
+ * @typedef {Object} MapMermaidPoint
  * @property {string} _id
  * @property {MapCommonFields} map
  * @property {Entity} entity
@@ -69,11 +70,25 @@ import uuid from '@/helpers/uuid';
  */
 
 /**
+ * @typedef {Object} MapTreeOfDependenciesEntity
+ * @property {Entity} data
+ * @property {Entity[]} pinned
+ */
+
+/**
+ * @typedef {MapTreeOfDependenciesEntity} MapTreeOfDependenciesEntityForm
+ * @property {string} key
+ */
+
+/**
  * @typedef {Object} MapTreeOfDependenciesParameters
+ * @property {MapTreeOfDependenciesEntity[]} entities
+ * @property {boolean} impact
  */
 
 /**
  * @typedef {MapTreeOfDependenciesParameters} MapTreeOfDependenciesParametersForm
+ * @property {MapTreeOfDependenciesEntityForm[]} entities
  */
 
 /**
@@ -146,7 +161,12 @@ export const mapMermaidParametersToForm = (parameters = {}) => ({
  * @param {MapTreeOfDependenciesParameters} [parameters = {}]
  * @returns {MapTreeOfDependenciesParametersForm}
  */
-export const mapTreeOfDependenciesParametersToForm = parameters => ({ ...parameters });
+export const mapTreeOfDependenciesParametersToForm = (parameters = {}) => ({
+  ...parameters,
+
+  impact: parameters.impact ?? false,
+  entities: addKeyInEntities(parameters.entities ?? []),
+});
 
 /**
  * Convert map object to map form
@@ -165,11 +185,23 @@ export const mapToForm = (map = {}) => {
   }[type];
 
   return {
-    name: map.name ?? '',
     type,
+    name: map.name ?? '',
     parameters: prepare(map.parameters),
   };
 };
+
+/**
+ * Convert form to tree of dependencies map
+ *
+ * @param {MapTreeOfDependenciesParametersForm} form
+ * @returns {MapTreeOfDependenciesParameters}
+ */
+export const formToMapTreeOfDependenciesParameters = form => ({
+  ...form,
+
+  entities: removeKeyFromEntities(form.entities),
+});
 
 /**
  * Convert map form to map
@@ -177,4 +209,14 @@ export const mapToForm = (map = {}) => {
  * @param {MapForm} form
  * @returns {Map}
  */
-export const formToMap = form => ({ ...form });
+export const formToMap = (form) => {
+  const prepare = {
+    [MAP_TYPES.treeOfDependencies]: formToMapTreeOfDependenciesParameters,
+  }[form.type];
+
+  return {
+    ...form,
+
+    parameters: prepare ? prepare(form.parameters) : form.parameters,
+  };
+};
