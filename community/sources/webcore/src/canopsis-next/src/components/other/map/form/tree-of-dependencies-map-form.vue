@@ -1,15 +1,16 @@
 <template lang="pug">
   v-layout(column)
     c-name-field(v-field="form.name")
-    mermaid-editor(v-model="form.parameters")
+    cluster-graph-editor(v-field="form.parameters")
 </template>
 
 <script>
-import MermaidEditor from './partials/mermaid-editor.vue';
+import ClusterGraphEditor from '@/components/common/chart/cluster-graph/cluster-graph-editor.vue';
 
 export default {
-  inject: ['$validator'],
-  components: { MermaidEditor },
+  components: {
+    ClusterGraphEditor,
+  },
   model: {
     prop: 'form',
     event: 'input',
