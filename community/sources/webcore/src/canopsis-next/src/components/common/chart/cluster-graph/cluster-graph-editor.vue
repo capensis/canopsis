@@ -21,14 +21,13 @@
 </template>
 
 <script>
+import { keyBy } from 'lodash';
 import { COLORS } from '@/config';
 
 import {
   TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
-  TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
+  TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS, ENTITY_TYPES,
 } from '@/constants';
-
-import { toById } from '@/helpers/entities';
 
 import { formMixin } from '@/mixins/form';
 
@@ -61,7 +60,7 @@ export default {
     },
 
     rootEntitiesById() {
-      return toById(this.notEmptyEntities, 'data._id');
+      return keyBy(this.notEmptyEntities, 'data._id');
     },
 
     allPinnedEntitiesById() {
@@ -115,27 +114,17 @@ export default {
       };
     },
 
-    tooltipOptions() {
-      return {};
-    },
-
     nodeHtmlLabelsOptions() {
+      const tpl = ({ entity }) => `<div>${entity.type === ENTITY_TYPES.service ? entity.name : entity._id}</div>`;
+
       return [
         {
+          tpl,
           query: 'node',
           valign: 'top',
           halign: 'center',
           valignBox: 'top',
           halignBox: 'center',
-          tpl: data => `<div>${data.entity.name}</div>`,
-        },
-        {
-          query: 'node[!root]',
-          valign: 'top',
-          halign: 'center',
-          valignBox: 'top',
-          halignBox: 'center',
-          tpl: data => `<div>${data.entity._id}</div>`,
         },
       ];
     },
@@ -275,6 +264,10 @@ export default {
      * @returns {Promise<void>}
      */
     async removeEntity({ data, pinned }) {
+      if (!data) {
+        return;
+      }
+
       /**
        * @desc We've added nextTick to avoid problem with v-field usage
        */
@@ -287,8 +280,8 @@ export default {
     /**
      * Update entity data for special entity
      *
-     * @param {Object | undefined} newEntity
-     * @param {Object | undefined} oldEntity
+     * @param {Object} [newEntity]
+     * @param {Object} [oldEntity]
      * @returns {Promise<void>}
      */
     async updateEntityData(newEntity, oldEntity) {
@@ -323,8 +316,8 @@ export default {
     /**
      * Update pinned entities for special entity
      *
-     * @param {Object | undefined} newEntity
-     * @param {Object | undefined} oldEntity
+     * @param {Object} [newEntity]
+     * @param {Object} [oldEntity]
      * @returns {Promise<void>}
      */
     async updatePinnedEntities(newEntity, oldEntity) {
@@ -336,8 +329,8 @@ export default {
       const { data, pinned: oldPinned } = oldEntity;
       const { pinned: newPinned } = newEntity;
 
-      const newById = toById(newPinned);
-      const oldById = toById(oldPinned);
+      const newById = keyBy(newPinned, '_id');
+      const oldById = keyBy(oldPinned, '_id');
       const added = newPinned.filter(({ _id: id }) => !oldById[id]);
       const removed = oldPinned.filter(({ _id: id }) => !newById[id]);
 
