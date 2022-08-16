@@ -685,6 +685,35 @@ default_entities:
       old_info:
         value: "1"
 
+  entity_to_map_edit_1:
+    <<: *resource
+    _id: test-resource-to-map-edit-1/test-component-default
+    name: test-resource-to-map-edit-1
+  entity_to_map_edit_2:
+    <<: *resource
+    _id: test-resource-to-map-edit-2/test-component-default
+    name: test-resource-to-map-edit-2
+
+  entity_to_map_state_get_1:
+    <<: *resource
+    _id: test-resource-to-map-state-get-1/test-component-default
+    name: test-resource-to-map-state-get-1
+    category: test-category-to-map-state-get-1
+    last_event_date: 1605263992
+    infos:
+      test-resource-to-map-state-get-1-info-1-name:
+        name: test-resource-to-map-state-get-1-info-1-name
+        description: test-resource-to-map-state-get-1-info-1-description
+        value: test-resource-to-map-state-get-1-info-1-value
+  entity_to_map_state_get_2:
+    <<: *resource
+    _id: test-resource-to-map-state-get-2/test-component-default
+    name: test-resource-to-map-state-get-2
+  entity_to_map_state_get_3:
+    <<: *resource
+    _id: test-resource-to-map-state-get-3/test-component-default
+    name: test-resource-to-map-state-get-3
+
   default_entities_34:
     _id: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
     component: test-instruction-execution-next-component
