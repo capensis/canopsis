@@ -257,6 +257,7 @@ export const USERS_PERMISSIONS = {
       ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
       filter: `${USER_PERMISSIONS_PREFIXES.api}_kpi_filter`,
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.api}_corporate_pattern`,
+      api: `${USER_PERMISSIONS_PREFIXES.api}_api`,
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
