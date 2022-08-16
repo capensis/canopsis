@@ -485,6 +485,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.createMap]: { maxWidth: 500, lazy: true },
     [MODALS.createMermaidMap]: { maxWidth: 1334 },
     [MODALS.createTreeOfDependenciesMap]: { maxWidth: 1334 },
+    [MODALS.createGeoMap]: { maxWidth: '95%', lazy: true, persistent: true },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },
