@@ -16,8 +16,9 @@ import (
 )
 
 var (
-	MissingUserKeyPanicMsg     = "Key \"" + auth.UserKey + "\" does not exist"
-	MissingUsernameKeyPanicMsg = "Key \"" + auth.Username + "\" does not exist"
+	MissingUserKeyPanicMsg  = "Key \"" + auth.UserKey + "\" does not exist"
+	MissingUsernamePanicMsg = "Key \"" + auth.Username + "\" does not exist"
+	MissingApiKeyPanicMsg   = "Key \"" + auth.ApiKey + "\" does not exist"
 )
 
 // Recovery recovers from any panics and if there was one it logs error and writes InternalServerError response.
@@ -47,12 +48,8 @@ func Recovery(logger zerolog.Logger) gin.HandlerFunc {
 
 				if errMsg, ok := r.(string); ok {
 					// Handle unauth response
-					if errMsg == MissingUserKeyPanicMsg {
-						c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
-						return
-					}
-
-					if errMsg == MissingUsernameKeyPanicMsg {
+					switch errMsg {
+					case MissingUserKeyPanicMsg, MissingUsernamePanicMsg, MissingApiKeyPanicMsg:
 						c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 						return
 					}

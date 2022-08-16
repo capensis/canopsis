@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"sort"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
@@ -29,8 +28,6 @@ const (
 	InstructionTypeAuto                  = 1
 	InstructionStatusApproved            = 0
 )
-
-const linkFetchTimeout = 30 * time.Second
 
 const manualMetaAlarmsLimit = 100
 
@@ -57,12 +54,12 @@ type store struct {
 
 	queryBuilder *MongoQueryBuilder
 
-	links LinksFetcher
+	linksFetcher common.LinksFetcher
 
 	logger zerolog.Logger
 }
 
-func NewStore(dbClient mongo.DbClient, legacyURL string, logger zerolog.Logger) Store {
+func NewStore(dbClient mongo.DbClient, linksFetcher common.LinksFetcher, logger zerolog.Logger) Store {
 	return &store{
 		dbClient:                         dbClient,
 		mainDbCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
@@ -73,7 +70,7 @@ func NewStore(dbClient mongo.DbClient, legacyURL string, logger zerolog.Logger) 
 
 		queryBuilder: NewMongoQueryBuilder(dbClient),
 
-		links: NewLinksFetcher(legacyURL, linkFetchTimeout),
+		linksFetcher: linksFetcher,
 
 		logger: logger,
 	}
@@ -957,18 +954,18 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 		return nil
 	}
 
-	linksEntities := make([]AlarmEntity, len(result.Data))
+	reqEntities := make([]common.FetchLinksRequestItem, len(result.Data))
 	alarmIndexes := make(map[string]int, len(result.Data))
 
 	for i, item := range result.Data {
-		linksEntities[i] = AlarmEntity{
+		reqEntities[i] = common.FetchLinksRequestItem{
 			AlarmID:  item.ID,
 			EntityID: item.Entity.ID,
 		}
 		alarmIndexes[item.ID] = i
 	}
 
-	res, err := s.links.Fetch(ctx, apiKey, linksEntities)
+	res, err := s.linksFetcher.Fetch(ctx, apiKey, common.FetchLinksRequest{Entities: reqEntities})
 	if err != nil || res == nil {
 		return err
 	}
