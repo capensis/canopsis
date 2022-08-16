@@ -14,7 +14,6 @@
     :small-chips="isMultiply",
     :error-messages="errors.collect(name)",
     :disabled="disabled",
-    :clearable="clearable",
     :return-object="returnObject",
     :item-disabled="itemDisabled",
     :menu-props="{ contentClass: 'c-entity-field__list' }",
