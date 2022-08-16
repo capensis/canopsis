@@ -1788,6 +1788,8 @@ export default merge({
       duplicate: {
         title: 'Dupliquer un diagramme d\'arborescence de dépendances',
       },
+      addEntity: 'Ajouter une entité',
+      pinnedEntities: 'Entités épinglées',
     },
   },
   tables: {

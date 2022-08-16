@@ -39,6 +39,23 @@ export const MERMAID_THEME_PROPERTIES_BY_NAME = {
   },
 };
 
+export const TREE_OF_DEPENDENCIES_GRAPH_OPTIONS = {
+  fitPadding: 20,
+  wheelSensitivity: 0.3,
+  minZoom: 0.02,
+  maxZoom: 1.5,
+};
+
+export const TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS = {
+  name: 'cise',
+  animate: 'end',
+  fit: true,
+  padding: 50,
+  nodeSeparation: 110,
+  nodeRepulsion: 120,
+  idealInterClusterEdgeLengthCoefficient: 2,
+};
+
 export const DEFAULT_MAP_ENTITY_TEMPLATE = `<ul>
     <li><strong>Libellé</strong> : {{entity.name}}</li>
 </ul>`;
