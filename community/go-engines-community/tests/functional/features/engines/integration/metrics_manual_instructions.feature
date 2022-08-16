@@ -2020,7 +2020,7 @@ Feature: Metrics should be added on alarm changes
       "state" : 1
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I wait 3s
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
@@ -2110,7 +2110,7 @@ Feature: Metrics should be added on alarm changes
       "state" : 1
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do POST /api/v4/cat/instructions:
     """json
     {

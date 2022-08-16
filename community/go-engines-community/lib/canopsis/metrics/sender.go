@@ -25,7 +25,7 @@ type Sender interface {
 	SendUpdateState(ctx context.Context, alarm types.Alarm, entity types.Entity, previousState types.CpsNumber)
 	SendInstructionAssignForAlarm(ctx context.Context, entityID string, timestamp time.Time)
 	SendInstructionExecutionForAlarm(ctx context.Context, entityID string, timestamp time.Time)
-	SendInstructionAssignForInstruction(ctx context.Context, instructionID string, timestamp time.Time)
+	SendInstructionAssignForInstruction(ctx context.Context, instructionID string, timestamp time.Time, value int64)
 	SendInstructionExecutionForInstruction(ctx context.Context, instructionID string, timestamp time.Time)
 }
 
@@ -86,7 +86,7 @@ func (s *nullSender) SendInstructionExecutionForAlarm(_ context.Context, _ strin
 
 }
 
-func (s *nullSender) SendInstructionAssignForInstruction(_ context.Context, _ string, _ time.Time) {
+func (s *nullSender) SendInstructionAssignForInstruction(_ context.Context, _ string, _ time.Time, _ int64) {
 
 }
 
