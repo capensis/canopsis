@@ -103,6 +103,7 @@ export default {
       return {
         is: 'c-entity-field',
         props: {
+          required: true,
           entityTypes: this.entityTypes,
         },
       };
@@ -128,6 +129,7 @@ export default {
         valueField: {
           is: 'c-entity-field',
           props: {
+            required: true,
             entityTypes: this.entityTypes ?? [BASIC_ENTITY_TYPES.component],
           },
         },
@@ -146,6 +148,7 @@ export default {
         valueField: {
           is: 'c-entity-field',
           props: {
+            required: true,
             entityTypes: this.entityTypes ?? [BASIC_ENTITY_TYPES.connector],
           },
         },

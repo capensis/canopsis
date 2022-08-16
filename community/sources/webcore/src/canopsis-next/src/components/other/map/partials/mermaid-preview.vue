@@ -3,7 +3,11 @@
 </template>
 
 <script>
+import { merge } from 'lodash';
+
 import { renderMermaid } from '@/helpers/mermaid';
+
+import { MERMAID_THEME_PROPERTIES_BY_NAME } from '@/constants';
 
 export default {
   props: {
@@ -19,6 +23,10 @@ export default {
       type: String,
       default: 'mermaid',
     },
+    theme: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
@@ -26,17 +34,42 @@ export default {
       parsed: false,
     };
   },
+  computed: {
+    resultConfig() {
+      const themeProperties = MERMAID_THEME_PROPERTIES_BY_NAME[this.theme] ?? {};
+
+      return merge({
+        theme: this.theme,
+        ...themeProperties,
+
+        er: {
+          useMaxWidth: false,
+        },
+        pie: {
+          useMaxWidth: false,
+        },
+        sequence: {
+          useMaxWidth: false,
+        },
+        flowchart: {
+        },
+        requirement: {
+          useMaxWidth: false,
+        },
+      }, this.config);
+    },
+  },
   watch: {
     value: {
       immediate: true,
       handler: 'renderMermaid',
     },
-    config: 'renderMermaid',
+    resultConfig: 'renderMermaid',
   },
   methods: {
     renderMermaid() {
       try {
-        this.svg = renderMermaid(this.value, this.config);
+        this.svg = renderMermaid(this.value, this.resultConfig);
 
         this.parsed = true;
       } catch (err) {
@@ -50,10 +83,10 @@ export default {
 <style lang="scss">
 .mermaid-preview {
   height: 100%;
-  background-color: #F9F9F9;
 
   svg {
-    width: 100%;
+    width: 800px;
+    max-width: 800px !important;
   }
 
   &--error svg {
