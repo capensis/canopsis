@@ -22,11 +22,13 @@
 
 <script>
 import { keyBy } from 'lodash';
+
 import { COLORS } from '@/config';
 
 import {
   TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
-  TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS, ENTITY_TYPES,
+  TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
+  ENTITY_TYPES,
 } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
