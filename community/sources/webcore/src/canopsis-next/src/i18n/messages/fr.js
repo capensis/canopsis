@@ -3026,4 +3026,8 @@ export default merge({
       emptyMermaid: 'Le diagramme et les points doivent être ajoutés',
     },
   },
+
+  geomap: {
+    layers: 'Couches',
+  },
 }, featureService.get('i18n.fr'));
