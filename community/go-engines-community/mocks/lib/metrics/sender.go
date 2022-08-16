@@ -108,6 +108,54 @@ func (mr *MockSenderMockRecorder) SendCreateAndPbhEnter(arg0, arg1, arg2 interfa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCreateAndPbhEnter", reflect.TypeOf((*MockSender)(nil).SendCreateAndPbhEnter), arg0, arg1, arg2)
 }
 
+// SendInstructionAssignForAlarm mocks base method.
+func (m *MockSender) SendInstructionAssignForAlarm(arg0 context.Context, arg1 string, arg2 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendInstructionAssignForAlarm", arg0, arg1, arg2)
+}
+
+// SendInstructionAssignForAlarm indicates an expected call of SendInstructionAssignForAlarm.
+func (mr *MockSenderMockRecorder) SendInstructionAssignForAlarm(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionAssignForAlarm", reflect.TypeOf((*MockSender)(nil).SendInstructionAssignForAlarm), arg0, arg1, arg2)
+}
+
+// SendInstructionAssignForInstruction mocks base method.
+func (m *MockSender) SendInstructionAssignForInstruction(arg0 context.Context, arg1 string, arg2 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendInstructionAssignForInstruction", arg0, arg1, arg2)
+}
+
+// SendInstructionAssignForInstruction indicates an expected call of SendInstructionAssignForInstruction.
+func (mr *MockSenderMockRecorder) SendInstructionAssignForInstruction(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionAssignForInstruction", reflect.TypeOf((*MockSender)(nil).SendInstructionAssignForInstruction), arg0, arg1, arg2)
+}
+
+// SendInstructionExecutionForAlarm mocks base method.
+func (m *MockSender) SendInstructionExecutionForAlarm(arg0 context.Context, arg1 string, arg2 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendInstructionExecutionForAlarm", arg0, arg1, arg2)
+}
+
+// SendInstructionExecutionForAlarm indicates an expected call of SendInstructionExecutionForAlarm.
+func (mr *MockSenderMockRecorder) SendInstructionExecutionForAlarm(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionExecutionForAlarm", reflect.TypeOf((*MockSender)(nil).SendInstructionExecutionForAlarm), arg0, arg1, arg2)
+}
+
+// SendInstructionExecutionForInstruction mocks base method.
+func (m *MockSender) SendInstructionExecutionForInstruction(arg0 context.Context, arg1 string, arg2 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendInstructionExecutionForInstruction", arg0, arg1, arg2)
+}
+
+// SendInstructionExecutionForInstruction indicates an expected call of SendInstructionExecutionForInstruction.
+func (mr *MockSenderMockRecorder) SendInstructionExecutionForInstruction(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionExecutionForInstruction", reflect.TypeOf((*MockSender)(nil).SendInstructionExecutionForInstruction), arg0, arg1, arg2)
+}
+
 // SendPbhEnter mocks base method.
 func (m *MockSender) SendPbhEnter(arg0 context.Context, arg1 *types.Alarm, arg2 types.Entity) {
 	m.ctrl.T.Helper()
