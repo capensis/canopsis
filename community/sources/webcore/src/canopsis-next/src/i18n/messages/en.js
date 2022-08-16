@@ -1788,6 +1788,8 @@ export default merge({
       duplicate: {
         title: 'Duplicate a tree of dependencies diagram',
       },
+      addEntity: 'Add entity',
+      pinnedEntities: 'Pinned entities',
     },
   },
   tables: {
