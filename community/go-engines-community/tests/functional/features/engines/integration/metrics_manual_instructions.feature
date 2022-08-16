@@ -2182,3 +2182,255 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
+
+  Scenario: given manual instruction and new events should not count executed instruction metric if an alarm wasn't assigned before
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test manual instruction metrics 11",
+      "type": "enrichment",
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-11"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "test-infos-to-manual-metrics-11",
+            "value": "{{ `{{ .Event.Output }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 0,
+      "name": "test-instruction-to-manual-metrics-11-name-1",
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.test-infos-to-manual-metrics-11",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
+              "value": "test value"
+            }
+          }
+        ]
+      ],
+      "description": "test-instruction-to-manual-metrics-11-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 1,
+        "unit": "s"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-manual-metrics-11-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-manual-metrics-11-step-1-operation-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-manual-metrics-11-step-1-operation-1-description",
+              "jobs": []
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-manual-metrics-11-step-1-endpoint"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response instructionID={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/kpi-filters:
+    """json
+    {
+      "name": "test-filter-to-manual-instruction-metrics-11-name",
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-11"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I send an event:
+    """json
+    [
+      {
+        "connector" : "test-connector-to-manual-instruction-metrics-11",
+        "connector_name" : "test-connector-name-to-manual-instruction-metrics-11",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" : "test-component-to-manual-instruction-metrics-11",
+        "resource" : "test-resource-to-manual-instruction-metrics-11-1",
+        "output": "test value",
+        "state" : 1
+      },
+      {
+        "connector" : "test-connector-to-manual-instruction-metrics-11",
+        "connector_name" : "test-connector-name-to-manual-instruction-metrics-11",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" : "test-component-to-manual-instruction-metrics-11",
+        "resource" : "test-resource-to-manual-instruction-metrics-11-2",
+        "output": "test value 2",
+        "state" : 1
+      },
+      {
+        "connector" : "test-connector-to-manual-instruction-metrics-11",
+        "connector_name" : "test-connector-name-to-manual-instruction-metrics-11",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" : "test-component-to-manual-instruction-metrics-11",
+        "resource" : "test-resource-to-manual-instruction-metrics-11-3",
+        "output": "test value",
+        "state" : 1
+      }
+    ]
+    """
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "title": "manual_instruction_assigned_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_executed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "title": "manual_instruction_executed_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 0
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-11-name-1 until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "timestamp": {{ nowDate }},
+          "assigned": 2,
+          "executed": 0,
+          "ratio": 0
+        }
+      ]
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-to-manual-instruction-metrics-11",
+      "connector_name" : "test-connector-name-to-manual-instruction-metrics-11",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-to-manual-instruction-metrics-11",
+      "resource" : "test-resource-to-manual-instruction-metrics-11-2",
+      "output": "test value",
+      "state" : 1
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-manual-instruction-metrics-11-2
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "{{ .instructionID }}"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of event processing
+    When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/next-step
+    Then the response code should be 200
+    When I wait the end of event processing
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "title": "manual_instruction_assigned_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 2
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_executed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "title": "manual_instruction_executed_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 0
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-11-name-1 until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "timestamp": {{ nowDate }},
+          "assigned": 2,
+          "executed": 0,
+          "ratio": 0
+        }
+      ]
+    }
+    """
