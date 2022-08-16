@@ -1,10 +1,10 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(close)
+    modal-wrapper(close, text-class="pa-0")
       template(#title="")
         span {{ title }}
       template(#text="")
-        | Create geo map
+        geomap-map-form(v-model="form")
       template(#actions="")
         v-btn(
           depressed,
@@ -25,6 +25,8 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
+import GeomapMapForm from '@/components/other/map/form/geomap-map-form.vue';
+
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
@@ -32,7 +34,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { ModalWrapper },
+  components: { GeomapMapForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
     submittableMixinCreator(),
