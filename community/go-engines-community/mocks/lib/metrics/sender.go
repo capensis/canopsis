@@ -121,15 +121,15 @@ func (mr *MockSenderMockRecorder) SendInstructionAssignForAlarm(arg0, arg1, arg2
 }
 
 // SendInstructionAssignForInstruction mocks base method.
-func (m *MockSender) SendInstructionAssignForInstruction(arg0 context.Context, arg1 string, arg2 time.Time) {
+func (m *MockSender) SendInstructionAssignForInstruction(arg0 context.Context, arg1 string, arg2 time.Time, arg3 int64) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendInstructionAssignForInstruction", arg0, arg1, arg2)
+	m.ctrl.Call(m, "SendInstructionAssignForInstruction", arg0, arg1, arg2, arg3)
 }
 
 // SendInstructionAssignForInstruction indicates an expected call of SendInstructionAssignForInstruction.
-func (mr *MockSenderMockRecorder) SendInstructionAssignForInstruction(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockSenderMockRecorder) SendInstructionAssignForInstruction(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionAssignForInstruction", reflect.TypeOf((*MockSender)(nil).SendInstructionAssignForInstruction), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionAssignForInstruction", reflect.TypeOf((*MockSender)(nil).SendInstructionAssignForInstruction), arg0, arg1, arg2, arg3)
 }
 
 // SendInstructionExecutionForAlarm mocks base method.
