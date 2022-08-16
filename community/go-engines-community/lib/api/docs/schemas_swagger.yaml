@@ -4059,6 +4059,9 @@ definitions:
         type: boolean
       mainFilter:
         type: string
+      map:
+        description: Map
+        type: string
       report_fileregexp:
         type: string
       screenshot_directories:
