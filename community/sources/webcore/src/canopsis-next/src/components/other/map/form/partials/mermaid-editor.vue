@@ -21,10 +21,11 @@ import { COLORS } from '@/config';
 
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
+import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
+
 import MermaidCodeEditor from './mermaid-code-editor.vue';
 import MermaidAddLocationBtn from './mermaid-add-location-btn.vue';
 import MermaidThemeField from './mermaid-theme-field.vue';
-import MermaidPreview from './mermaid-preview.vue';
 import MermaidPoints from './mermaid-points.vue';
 
 export default {

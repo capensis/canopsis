@@ -62,9 +62,10 @@ import { mermaidPointToForm } from '@/helpers/forms/map';
 
 import { formBaseMixin } from '@/mixins/form';
 
+import MermaidPointMarker from '@/components/other/map/partials/mermaid-point-marker.vue';
+
 import MermaidContextmenu from './mermaid-contextmenu.vue';
 import PointFormDialog from './point-form-dialog.vue';
-import MermaidPointMarker from './mermaid-point-marker.vue';
 
 export default {
   components: { MermaidContextmenu, PointFormDialog, MermaidPointMarker },
