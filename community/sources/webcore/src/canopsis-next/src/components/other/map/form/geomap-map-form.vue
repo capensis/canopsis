@@ -27,7 +27,7 @@ export default {
 <style lang="scss">
 .geomap-map-form {
   &__editor {
-    height: 800px;
+    height: 500px;
   }
 }
 </style>
