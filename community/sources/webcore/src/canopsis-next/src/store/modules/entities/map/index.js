@@ -13,6 +13,10 @@ export default createEntityModule({
   withMeta: true,
 }, {
   actions: {
+    fetchItemWithoutStore(context, { id, params }) {
+      return request.get(`${API_ROUTES.maps}/${id}`, { params });
+    },
+
     bulkRemove(context, { data }) {
       return request.delete(API_ROUTES.bulkMaps, { data });
     },
