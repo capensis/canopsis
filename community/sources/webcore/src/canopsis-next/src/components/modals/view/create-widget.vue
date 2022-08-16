@@ -59,6 +59,7 @@ export default {
         WIDGET_TYPES.text,
         WIDGET_TYPES.counter,
         WIDGET_TYPES.testingWeather,
+        WIDGET_TYPES.map,
       ].filter((widgetType) => {
         const rules = WIDGET_TYPES_RULES[widgetType];
 
