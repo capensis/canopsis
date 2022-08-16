@@ -67,7 +67,7 @@
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
+import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/filters';
 
 import FieldTitle from './fields/common/title.vue';
 import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
@@ -95,7 +95,7 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
-    permissionsWidgetsAlarmsListFilters,
+    permissionsWidgetsMapFilters,
   ],
 };
 </script>
