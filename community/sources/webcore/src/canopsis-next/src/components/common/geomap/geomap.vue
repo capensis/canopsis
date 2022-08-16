@@ -4,6 +4,7 @@ import { Map } from 'leaflet';
 
 Map.mergeOptions({
   attributionControl: false,
+  zoomControl: false,
 });
 
 export default LMap;
