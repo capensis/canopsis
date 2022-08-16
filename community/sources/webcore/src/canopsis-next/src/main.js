@@ -485,7 +485,8 @@ Vue.use(ModalsPlugin, {
     [MODALS.createAlarmStatusRule]: { maxWidth: 1280 },
     [MODALS.createService]: { maxWidth: 1280 },
     [MODALS.createMap]: { maxWidth: 500, lazy: true },
-    [MODALS.createMermaidMap]: { maxWidth: 1334 },
+    [MODALS.createMermaidMap]: { maxWidth: 1600 },
+    [MODALS.createTreeOfDependenciesMap]: { maxWidth: 1334 },
     [MODALS.createGeoMap]: { maxWidth: '95%', lazy: true, persistent: true },
 
     ...featuresService.get('components.modals.dialogPropsMap'),

@@ -34,7 +34,7 @@ import { MODALS } from '@/constants';
 
 import { submittableMixinCreator } from '@/mixins/submittable';
 
-import PointForm from '@/components/other/map/partials/point-form.vue';
+import PointForm from './point-form.vue';
 
 export default {
   $_veeValidate: {
