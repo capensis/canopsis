@@ -14,9 +14,10 @@
     :small-chips="isMultiply",
     :error-messages="errors.collect(name)",
     :disabled="disabled",
-    :return-object="false",
-    :menu-props="{ contentClass: 'c-entity-field__list' }",
     :clearable="clearable",
+    :return-object="returnObject",
+    :item-disabled="itemDisabled",
+    :menu-props="{ contentClass: 'c-entity-field__list' }",
     dense,
     combobox,
     @focus="onFocus",
@@ -36,7 +37,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { debounce, isEqual, keyBy, isArray, isString } from 'lodash';
+import { debounce, isEqual, keyBy, isArray, isString, isFunction } from 'lodash';
 
 import { BASIC_ENTITY_TYPES } from '@/constants';
 
@@ -55,7 +56,7 @@ export default {
   },
   props: {
     value: {
-      type: [Array, String],
+      type: [Array, String, Object],
       default: '',
     },
     name: {
@@ -67,7 +68,7 @@ export default {
       required: false,
     },
     itemText: {
-      type: String,
+      type: [String, Function],
       default: '_id',
     },
     itemValue: {
@@ -86,11 +87,19 @@ export default {
       type: Boolean,
       default: false,
     },
-    required: {
+    returnObject: {
       type: Boolean,
       default: false,
     },
     clearable: {
+      type: Boolean,
+      default: false,
+    },
+    itemDisabled: {
+      type: [String, Array, Function],
+      required: false,
+    },
+    required: {
       type: Boolean,
       default: false,
     },
@@ -160,7 +169,11 @@ export default {
     ...entityMapActions({ fetchContextEntitiesListWithoutStore: 'fetchListWithoutStore' }),
 
     getItemText(item) {
-      return isString(item) ? item : item[this.itemText];
+      if (isString(item)) {
+        return item;
+      }
+
+      return isFunction(this.itemText) ? this.itemText(item) : item[this.itemText];
     },
 
     intersectionHandler(entries) {

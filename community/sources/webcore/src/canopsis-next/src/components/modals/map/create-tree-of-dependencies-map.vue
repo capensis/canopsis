@@ -4,7 +4,7 @@
       template(#title="")
         span {{ title }}
       template(#text="")
-        | Create tree of dependencies map
+        tree-of-dependencies-map-form(v-model="form")
       template(#actions="")
         v-btn(
           depressed,
@@ -19,11 +19,15 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, MAP_TYPES } from '@/constants';
+
+import { mapToForm, formToMap } from '@/helpers/forms/map';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+
+import TreeOfDependenciesMapForm from '@/components/other/map/form/tree-of-dependencies-map-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -32,15 +36,20 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { ModalWrapper },
+  components: {
+    TreeOfDependenciesMapForm,
+    ModalWrapper,
+  },
   mixins: [
     modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
   data() {
+    const { map = { type: MAP_TYPES.treeOfDependencies } } = this.modal.config;
+
     return {
-      form: { ...this.modal.config.map },
+      form: mapToForm(map),
     };
   },
   computed: {
@@ -54,7 +63,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          await this.config.action(formToMap(this.form));
         }
 
         this.$modals.hide();
