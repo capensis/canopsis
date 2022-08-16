@@ -6,13 +6,11 @@
 </template>
 
 <script>
-import MermaidEditor from '@/components/common/mermaid/mermaid-editor.vue';
-
 import GeomapEditor from './partials/geomap-editor.vue';
 
 export default {
   inject: ['$validator'],
-  components: { GeomapEditor, MermaidEditor },
+  components: { GeomapEditor },
   model: {
     prop: 'form',
     event: 'input',
@@ -29,7 +27,7 @@ export default {
 <style lang="scss">
 .geomap-map-form {
   &__editor {
-    height: 800px;
+    height: 500px;
   }
 }
 </style>
