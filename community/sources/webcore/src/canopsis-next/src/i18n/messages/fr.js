@@ -2208,6 +2208,7 @@ export default merge({
       [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: 'Droits pour le widget: Météo des services',
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Droits pour le widget : Compteur',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Droits pour le widget : Scénario des tests',
+      [USER_PERMISSIONS_PREFIXES.business.map]: 'Droits pour le widget : Cartographie',
     },
     api: {
       general: 'Général',

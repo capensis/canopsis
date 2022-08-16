@@ -24,7 +24,7 @@
         v-list.grey.lighten-4.px-2.py-0(expand)
           template(v-if="hasAccessToListFilters")
             field-filters(
-              v-model="form.parameters.main_filter",
+              v-model="form.parameters.mainFilter",
               :filters.sync="form.filters",
               :widget-id="widget._id",
               :addable="hasAccessToAddFilter",

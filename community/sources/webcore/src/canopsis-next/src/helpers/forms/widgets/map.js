@@ -17,7 +17,7 @@ import { formWidgetColumnsToColumns, widgetColumnsToForm } from '@/helpers/forms
  * @property {string} color_indicator
  * @property {string} entity_info_template
  * @property {boolean} entities_under_pbehavior_enabled
- * @property {string | null} main_filter
+ * @property {string | null} mainFilter
  * @property {WidgetColumn[]} alarms_columns
  * @property {WidgetColumn[]} entities_columns
  */
@@ -37,7 +37,7 @@ export const mapWidgetParametersToForm = (parameters = {}) => ({
   map: parameters.map ?? '',
   color_indicator: parameters.color_indicator ?? COLOR_INDICATOR_TYPES.state,
   entities_under_pbehavior_enabled: parameters.entities_under_pbehavior_enabled ?? true,
-  main_filter: parameters.main_filter ?? null,
+  mainFilter: parameters.mainFilter ?? null,
   entity_info_template: parameters.entity_info_template ?? DEFAULT_MAP_ENTITY_TEMPLATE,
   alarms_columns: parameters.alarms_columns
     ? widgetColumnsToForm(parameters.alarms_columns)
