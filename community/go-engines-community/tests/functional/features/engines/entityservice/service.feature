@@ -80,6 +80,11 @@ Feature: update service on event
     {
       "data": [
         {
+          "entity": {
+            "_id": "{{ .serviceID }}",
+            "depends_count": 3,
+            "impacts_count": 0
+          },
           "v": {
             "component": "{{ .serviceID }}",
             "connector": "service",
@@ -1876,51 +1881,67 @@ Feature: update service on event
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/entityservice-dependencies?_id=test-service-tree-1
+    When I do GET /api/v4/entityservice-dependencies?_id=test-service-tree-1&with_flags=true&sort_by=impact_state&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
+          "_id": "test-nested-service-2",
+          "name": "test-nested-service-2",
+          "type": "service",
+          "impact_level": 2,
+          "state": 3,
           "impact_state": 6,
-          "has_dependencies": true,
-          "alarm": {
-            "d": "test-nested-service-2",
-            "v": {
-              "state": {
-                "val": 3
-              }
-            }
-          },
-          "entity": {
-            "_id": "test-nested-service-2",
-            "impact_level": 2
+          "status": 1,
+          "enabled": true,
+          "ko_events": 1,
+          "ok_events": 1,
+          "deletable": true,
+          "depends_count": 2,
+          "impacts_count": 1,
+          "category": {
+            "_id": "test-category-service-weather",
+            "name": "test-category-service-weather-name"
           }
         },
         {
+          "_id": "test-nested-service-1",
+          "name": "test-nested-service-1",
+          "type": "service",
+          "impact_level": 1,
+          "state": 2,
           "impact_state": 2,
-          "has_dependencies": true,
-          "alarm": {
-            "d": "test-nested-service-1",
-            "v": {
-              "state": {
-                "val": 2
-              }
-            }
-          },
-          "entity": {
-            "_id": "test-nested-service-1",
-            "impact_level": 1
+          "status": 1,
+          "enabled": true,
+          "ko_events": 2,
+          "ok_events": 1,
+          "deletable": true,
+          "depends_count": 2,
+          "impacts_count": 1,
+          "category": {
+            "_id": "test-category-service-weather",
+            "name": "test-category-service-weather-name"
           }
         },
         {
+          "_id": "test-nested-service-3",
+          "name": "test-nested-service-3",
+          "type": "service",
+          "impact_level": 3,
+          "state": 0,
           "impact_state": 0,
-          "has_dependencies": true,
-          "alarm": null,
-          "entity": {
-            "_id": "test-nested-service-3",
-            "impact_level": 3
+          "status": 0,
+          "enabled": true,
+          "ko_events": 0,
+          "ok_events": 1,
+          "deletable": true,
+          "depends_count": 2,
+          "impacts_count": 1,
+          "category": {
+            "_id": "test-category-service-weather",
+            "name": "test-category-service-weather-name"
           }
         }
       ],
@@ -1932,43 +1953,43 @@ Feature: update service on event
       }
     }
     """
-    When I do GET /api/v4/entityservice-dependencies?_id=test-nested-service-1
+    When I do GET /api/v4/entityservice-dependencies?_id=test-nested-service-1&with_flags=true&sort_by=impact_state&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
+          "_id": "test-nested-service-resource-2/test-nested-service-component",
+          "name": "test-nested-service-resource-2",
+          "type": "resource",
+          "impact_level": 1,
+          "state": 2,
           "impact_state": 2,
-          "has_dependencies": false,
-          "alarm": {
-            "d": "test-nested-service-resource-2/test-nested-service-component",
-            "v": {
-              "state": {
-                "val": 2
-              }
-            }
-          },
-          "entity": {
-            "_id": "test-nested-service-resource-2/test-nested-service-component",
-            "impact_level": 1
-          }
+          "status": 1,
+          "enabled": true,
+          "ko_events": 1,
+          "ok_events": 0,
+          "deletable": false,
+          "depends_count": 0,
+          "impacts_count": 1,
+          "category": null
         },
         {
+          "_id": "test-nested-service-resource-1/test-nested-service-component",
+          "name": "test-nested-service-resource-1",
+          "type": "resource",
+          "impact_level": 1,
+          "state": 1,
           "impact_state": 1,
-          "has_dependencies": false,
-          "alarm": {
-            "d": "test-nested-service-resource-1/test-nested-service-component",
-            "v": {
-              "state": {
-                "val": 1
-              }
-            }
-          },
-          "entity": {
-            "_id": "test-nested-service-resource-1/test-nested-service-component",
-            "impact_level": 1
-          }
+          "status": 1,
+          "enabled": true,
+          "ko_events": 1,
+          "ok_events": 0,
+          "deletable": false,
+          "depends_count": 0,
+          "impacts_count": 1,
+          "category": null
         }
       ],
       "meta": {
@@ -1979,36 +2000,43 @@ Feature: update service on event
       }
     }
     """
-    When I do GET /api/v4/entityservice-dependencies?_id=test-nested-service-2
+    When I do GET /api/v4/entityservice-dependencies?_id=test-nested-service-2&with_flags=true&sort_by=impact_state&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
+          "_id": "test-nested-service-resource-3/test-nested-service-component",
+          "name": "test-nested-service-resource-3",
+          "type": "resource",
+          "impact_level": 1,
+          "state": 3,
           "impact_state": 3,
-          "has_dependencies": false,
-          "alarm": {
-            "d": "test-nested-service-resource-3/test-nested-service-component",
-            "v": {
-              "state": {
-                "val": 3
-              }
-            }
-          },
-          "entity": {
-            "_id": "test-nested-service-resource-3/test-nested-service-component",
-            "impact_level": 1
-          }
+          "status": 1,
+          "enabled": true,
+          "ko_events": 1,
+          "ok_events": 0,
+          "deletable": false,
+          "depends_count": 0,
+          "impacts_count": 1,
+          "category": null
         },
         {
+          "_id": "test-nested-service-resource-4/test-nested-service-component",
+          "name": "test-nested-service-resource-4",
+          "type": "resource",
+          "impact_level": 1,
+          "state": 0,
           "impact_state": 0,
-          "has_dependencies": false,
-          "alarm": null,
-          "entity": {
-            "_id": "test-nested-service-resource-4/test-nested-service-component",
-            "impact_level": 1
-          }
+          "status": 0,
+          "enabled": true,
+          "ko_events": 0,
+          "ok_events": 1,
+          "deletable": true,
+          "depends_count": 0,
+          "impacts_count": 1,
+          "category": null
         }
       ],
       "meta": {
@@ -2019,29 +2047,43 @@ Feature: update service on event
       }
     }
     """
-    When I do GET /api/v4/entityservice-dependencies?_id=test-nested-service-3
+    When I do GET /api/v4/entityservice-dependencies?_id=test-nested-service-3&with_flags=true&sort_by=impact_state&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
+          "_id": "test-nested-service-resource-5/test-nested-service-component",
+          "name": "test-nested-service-resource-5",
+          "type": "resource",
+          "impact_level": 1,
+          "state": 0,
           "impact_state": 0,
-          "has_dependencies": false,
-          "alarm": null,
-          "entity": {
-            "_id": "test-nested-service-resource-5/test-nested-service-component",
-            "impact_level": 1
-          }
+          "status": 0,
+          "enabled": true,
+          "ko_events": 0,
+          "ok_events": 1,
+          "deletable": true,
+          "depends_count": 0,
+          "impacts_count": 1,
+          "category": null
         },
         {
+          "_id": "test-nested-service-resource-6/test-nested-service-component",
+          "name": "test-nested-service-resource-6",
+          "type": "resource",
+          "impact_level": 1,
+          "state": 0,
           "impact_state": 0,
-          "has_dependencies": false,
-          "alarm": null,
-          "entity": {
-            "_id": "test-nested-service-resource-6/test-nested-service-component",
-            "impact_level": 1
-          }
+          "status": 0,
+          "enabled": true,
+          "ko_events": 0,
+          "ok_events": 1,
+          "deletable": true,
+          "depends_count": 0,
+          "impacts_count": 1,
+          "category": null
         }
       ],
       "meta": {
@@ -2068,26 +2110,29 @@ Feature: update service on event
       }
     }
     """
-    When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-1
+    When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-1&with_flags=true&sort_by=impact_state&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
+          "_id": "test-service-tree-1",
+          "name": "test-service-tree-1",
+          "type": "service",
+          "impact_level": 1,
+          "state": 3,
           "impact_state": 3,
-          "has_impacts": false,
-          "alarm": {
-            "d": "test-service-tree-1",
-            "v": {
-              "state": {
-                "val": 3
-              }
-            }
-          },
-          "entity": {
-            "_id": "test-service-tree-1",
-            "impact_level": 1
+          "status": 1,
+          "enabled": true,
+          "ko_events": 3,
+          "ok_events": 1,
+          "deletable": true,
+          "depends_count": 3,
+          "impacts_count": 0,
+          "category": {
+            "_id": "test-category-service-weather",
+            "name": "test-category-service-weather-name"
           }
         }
       ],
@@ -2099,26 +2144,29 @@ Feature: update service on event
       }
     }
     """
-    When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-2
+    When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-2&with_flags=true&sort_by=impact_state&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
+          "_id": "test-service-tree-1",
+          "name": "test-service-tree-1",
+          "type": "service",
+          "impact_level": 1,
+          "state": 3,
           "impact_state": 3,
-          "has_impacts": false,
-          "alarm": {
-            "d": "test-service-tree-1",
-            "v": {
-              "state": {
-                "val": 3
-              }
-            }
-          },
-          "entity": {
-            "_id": "test-service-tree-1",
-            "impact_level": 1
+          "status": 1,
+          "enabled": true,
+          "ko_events": 3,
+          "ok_events": 1,
+          "deletable": true,
+          "depends_count": 3,
+          "impacts_count": 0,
+          "category": {
+            "_id": "test-category-service-weather",
+            "name": "test-category-service-weather-name"
           }
         }
       ],
@@ -2130,26 +2178,29 @@ Feature: update service on event
       }
     }
     """
-    When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-3
+    When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-3&with_flags=true&sort_by=impact_state&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
+          "_id": "test-service-tree-1",
+          "name": "test-service-tree-1",
+          "type": "service",
+          "impact_level": 1,
+          "state": 3,
           "impact_state": 3,
-          "has_impacts": false,
-          "alarm": {
-            "d": "test-service-tree-1",
-            "v": {
-              "state": {
-                "val": 3
-              }
-            }
-          },
-          "entity": {
-            "_id": "test-service-tree-1",
-            "impact_level": 1
+          "status": 1,
+          "enabled": true,
+          "ko_events": 3,
+          "ok_events": 1,
+          "deletable": true,
+          "depends_count": 3,
+          "impacts_count": 0,
+          "category": {
+            "_id": "test-category-service-weather",
+            "name": "test-category-service-weather-name"
           }
         }
       ],
@@ -2161,26 +2212,29 @@ Feature: update service on event
       }
     }
     """
-    When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-resource-1/test-nested-service-component
+    When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-resource-1/test-nested-service-component&with_flags=true&sort_by=impact_state&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
+          "_id": "test-nested-service-1",
+          "name": "test-nested-service-1",
+          "type": "service",
+          "impact_level": 1,
+          "state": 2,
           "impact_state": 2,
-          "has_impacts": true,
-          "alarm": {
-            "d": "test-nested-service-1",
-            "v": {
-              "state": {
-                "val": 2
-              }
-            }
-          },
-          "entity": {
-            "_id": "test-nested-service-1",
-            "impact_level": 1
+          "status": 1,
+          "enabled": true,
+          "ko_events": 2,
+          "ok_events": 1,
+          "deletable": true,
+          "depends_count": 2,
+          "impacts_count": 1,
+          "category": {
+            "_id": "test-category-service-weather",
+            "name": "test-category-service-weather-name"
           }
         }
       ],
@@ -2192,26 +2246,29 @@ Feature: update service on event
       }
     }
     """
-    When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-resource-3/test-nested-service-component
+    When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-resource-3/test-nested-service-component&with_flags=true&sort_by=impact_state&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
+          "_id": "test-nested-service-2",
+          "name": "test-nested-service-2",
+          "type": "service",
+          "impact_level": 2,
+          "state": 3,
           "impact_state": 6,
-          "has_impacts": true,
-          "alarm": {
-            "d": "test-nested-service-2",
-            "v": {
-              "state": {
-                "val": 3
-              }
-            }
-          },
-          "entity": {
-            "_id": "test-nested-service-2",
-            "impact_level": 2
+          "status": 1,
+          "enabled": true,
+          "ko_events": 1,
+          "ok_events": 1,
+          "deletable": true,
+          "depends_count": 2,
+          "impacts_count": 1,
+          "category": {
+            "_id": "test-category-service-weather",
+            "name": "test-category-service-weather-name"
           }
         }
       ],
@@ -2223,19 +2280,29 @@ Feature: update service on event
       }
     }
     """
-    When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-resource-5/test-nested-service-component
+    When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-resource-5/test-nested-service-component&with_flags=true&sort_by=impact_state&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
+          "_id": "test-nested-service-3",
+          "name": "test-nested-service-3",
+          "type": "service",
+          "impact_level": 3,
+          "state": 0,
           "impact_state": 0,
-          "has_impacts": true,
-          "alarm": null,
-          "entity": {
-            "_id": "test-nested-service-3",
-            "impact_level": 3
+          "status": 0,
+          "enabled": true,
+          "ko_events": 0,
+          "ok_events": 1,
+          "deletable": true,
+          "depends_count": 2,
+          "impacts_count": 1,
+          "category": {
+            "_id": "test-category-service-weather",
+            "name": "test-category-service-weather-name"
           }
         }
       ],

@@ -66,7 +66,6 @@ Feature: Update entity basic
         "updated": 1592215337
       },
       "description": "test-entitybasic-to-update-connector-description-updated",
-      "enable_history": [],
       "enabled": true,
       "impact_level": 3,
       "infos": {
@@ -101,7 +100,6 @@ Feature: Update entity basic
           "value": ["test-entitybasic-to-update-info-6-value", false, 1022, 10.45, null]
         }
       },
-      "measurements": null,
       "name": "test-entitybasic-to-update-connector-name",
       "sli_avail_state": 1,
       "type": "connector"
@@ -121,6 +119,8 @@ Feature: Update entity basic
       "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
     ]
     """
+    When I do GET /api/v4/entities/context-graph?_id=test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
+    Then the response code should be 200
     Then the response array key "depends" should contain:
     """json
     [
@@ -144,7 +144,14 @@ Feature: Update entity basic
       "changeable_depends": [
         "test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2"
       ],
-      "changeable_impact": [],
+      "changeable_impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-entitybasic-to-update-component-2
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
       "depends": [
         "test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2"
       ],
@@ -162,7 +169,14 @@ Feature: Update entity basic
       ],
       "changeable_impact": [
         "test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name"
-      ],
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-entitybasic-to-update-component-3
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
       "depends": [
         "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
       ],
@@ -180,7 +194,14 @@ Feature: Update entity basic
       "changeable_depends": [],
       "changeable_impact": [
         "test-entitybasic-to-update-component-2"
-      ],
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
       "depends": [],
       "impact": [
         "test-entitybasic-to-update-component-2"
@@ -198,7 +219,14 @@ Feature: Update entity basic
       ],
       "changeable_impact": [
         "test-entitybasic-to-update-component-3"
-      ],
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
       "depends": [
         "test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name"
       ],
@@ -212,7 +240,7 @@ Feature: Update entity basic
     When I am admin
     When I do PUT /api/v4/entitybasics?_id=test-entitybasic-not-found:
     """json
-    {}
+    { }
     """
     Then the response code should be 400
     Then the response body should be:

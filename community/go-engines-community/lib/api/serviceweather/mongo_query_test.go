@@ -2,6 +2,8 @@ package serviceweather
 
 import (
 	"context"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -13,7 +15,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/bson"
-	"testing"
 )
 
 func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_ShouldBuildQueryWithLookupsAfterLimit(t *testing.T) {
@@ -40,6 +41,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
+		"depends": 0,
+		"impact":  0,
+	}})
 	expected := []bson.M{
 		{"$match": bson.M{
 			"type":    types.EntityTypeService,
@@ -98,6 +103,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
+		"depends": 0,
+		"impact":  0,
+	}})
 	expected := []bson.M{
 		{"$match": bson.M{
 			"type":    types.EntityTypeService,
@@ -156,6 +165,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
+		"depends": 0,
+		"impact":  0,
+	}})
 	expected := []bson.M{
 		{"$match": bson.M{
 			"type":    types.EntityTypeService,
@@ -216,6 +229,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
+		"depends": 0,
+		"impact":  0,
+	}})
 	expected := []bson.M{
 		{"$match": bson.M{
 			"type":    types.EntityTypeService,
@@ -270,6 +287,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$skip": 0},
 		{"$limit": 10},
 	}
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
+		"depends": 0,
+		"impact":  0,
+	}})
 	expected := []bson.M{
 		{"$match": bson.M{
 			"type":    types.EntityTypeService,
@@ -326,6 +347,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSortByS
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
+		"depends": 0,
+		"impact":  0,
+	}})
 	expected := []bson.M{
 		{"$match": bson.M{
 			"type":    types.EntityTypeService,

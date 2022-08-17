@@ -39,6 +39,7 @@ Feature: Get a map's state
               "_id": "test-resource-to-map-state-get-1/test-component-default",
               "name": "test-resource-to-map-state-get-1",
               "type": "resource",
+              "enabled": true,
               "category": {
                 "_id": "test-category-to-map-state-get-1",
                 "name": "test-category-to-map-state-get-1-name",
@@ -46,10 +47,8 @@ Feature: Get a map's state
                 "created": 1592215337,
                 "updated": 1592215337
               },
-              "connector": "test-connector-default",
-              "connector_name": "test-connector-default-name",
+              "connector": "test-connector-default/test-connector-default-name",
               "component": "test-component-default",
-              "resource": "test-resource-to-map-state-get-1",
               "infos": {
                 "test-resource-to-map-state-get-1-info-1-name": {
                   "name": "test-resource-to-map-state-get-1-info-1-name",
@@ -58,28 +57,11 @@ Feature: Get a map's state
                 }
               },
               "last_event_date": 1605263992,
-              "pbehavior_info": null,
               "impact_level": 1,
-              "last_update_date": 1605263992,
+              "alarm_last_update_date": 1605263992,
               "impact_state": 3,
-              "state": {
-                "_t": "stateinc",
-                "a": "test-connector-default/test-connector-default-name",
-                "user_id": "",
-                "m": "test-alarm-to-map-state-get-1-state-message",
-                "t": 1605263992,
-                "initiator": "external",
-                "val": 3
-              },
-              "status": {
-                "_t": "stateinc",
-                "a": "test-connector-default/test-connector-default-name",
-                "user_id": "",
-                "m": "test-alarm-to-map-state-get-1-status-message",
-                "t": 1605263992,
-                "initiator": "external",
-                "val": 0
-              },
+              "state": 3,
+              "status": 1,
               "ack": {
                 "_t": "ack",
                 "a": "root",
@@ -89,7 +71,8 @@ Feature: Get a map's state
                 "initiator": "user",
                 "val": 0
               },
-              "snooze": null
+              "ko_events": 0,
+              "ok_events": 0
             },
             "map": null
           },
@@ -111,37 +94,17 @@ Feature: Get a map's state
               "_id": "test-resource-to-map-state-get-2/test-component-default",
               "name": "test-resource-to-map-state-get-2",
               "type": "resource",
+              "enabled": true,
               "category": null,
-              "connector": "test-connector-default",
-              "connector_name": "test-connector-default-name",
+              "connector": "test-connector-default/test-connector-default-name",
               "component": "test-component-default",
-              "resource": "test-resource-to-map-state-get-2",
               "infos": {},
-              "last_event_date": null,
-              "pbehavior_info": null,
               "impact_level": 1,
-              "last_update_date": null,
               "impact_state": 0,
-              "state": {
-                "_t": "",
-                "a": "",
-                "user_id": "",
-                "m": "",
-                "t": null,
-                "initiator": "",
-                "val": 0
-              },
-              "status": {
-                "_t": "",
-                "a": "",
-                "user_id": "",
-                "m": "",
-                "t": null,
-                "initiator": "",
-                "val": 0
-              },
-              "ack": null,
-              "snooze": null
+              "state": 0,
+              "status": 0,
+              "ko_events": 0,
+              "ok_events": 0
             },
             "map": {
               "_id": "test-map-to-map-edit-2",
