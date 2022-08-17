@@ -1,7 +1,7 @@
 <template lang="pug">
   v-select(
-    v-validate,
     v-field="value",
+    v-validate="rules",
     :items="items",
     :label="label || $tc('common.map')",
     :loading="pending",
@@ -45,12 +45,23 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       pending: false,
       items: [],
     };
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
   },
   mounted() {
     this.fetchList();
