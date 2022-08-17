@@ -1,7 +1,7 @@
 <template lang="pug">
   c-select-field.c-entity-field(
     v-field="value",
-    v-validate="'required'",
+    v-validate="rules",
     :search-input="query.search",
     :label="selectLabel",
     :loading="entitiesPending",
@@ -14,27 +14,30 @@
     :small-chips="isMultiply",
     :error-messages="errors.collect(name)",
     :disabled="disabled",
+    :return-object="returnObject",
+    :item-disabled="itemDisabled",
     :menu-props="{ contentClass: 'c-entity-field__list' }",
+    :clearable="clearable",
     dense,
-    autocomplete,
+    combobox,
     @focus="onFocus",
     @blur="onBlur",
     @update:searchInput="debouncedUpdateSearch"
   )
     template(#item="{ item, tile }")
       v-list-tile.c-entity-field--tile(v-bind="tile.props", v-on="tile.on")
-        v-list-tile-content {{ item[itemText] }}
-        span.ml-4.grey--text(v-if="shownType") {{ item.type }}
+        v-list-tile-content {{ getItemText(item) }}
+        span.ml-4.grey--text {{ item.type }}
     template(#append-item="")
       div.c-entity-field__append(ref="append")
     template(v-if="isMultiply", #selection="{ item, index }")
       v-chip.c-entity-field__chip(small, close, @input="removeItemFromArray(index)")
-        span.ellipsis {{ item[itemText] }}
+        span.ellipsis {{ getItemText(item) }}
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { debounce, isEqual, keyBy, isArray } from 'lodash';
+import { debounce, isEqual, keyBy, isArray, isString, isFunction } from 'lodash';
 
 import { BASIC_ENTITY_TYPES } from '@/constants';
 
@@ -53,7 +56,7 @@ export default {
   },
   props: {
     value: {
-      type: [Array, String],
+      type: [Array, String, Object],
       default: '',
     },
     name: {
@@ -65,7 +68,7 @@ export default {
       required: false,
     },
     itemText: {
-      type: String,
+      type: [String, Function],
       default: '_id',
     },
     itemValue: {
@@ -84,6 +87,22 @@ export default {
       type: Boolean,
       default: false,
     },
+    returnObject: {
+      type: Boolean,
+      default: false,
+    },
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
+    itemDisabled: {
+      type: [String, Array, Function],
+      required: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -99,12 +118,14 @@ export default {
     };
   },
   computed: {
-    entities() {
-      return Object.values(this.entitiesById);
+    rules() {
+      return {
+        required: this.required,
+      };
     },
 
-    shownType() {
-      return this.entityTypes.length !== 1;
+    entities() {
+      return Object.values(this.entitiesById);
     },
 
     isMultiply() {
@@ -140,16 +161,20 @@ export default {
     this.observer = new IntersectionObserver(this.intersectionHandler);
 
     this.observer.observe(this.$refs.append);
-
-    if (this.value.length) {
-      this.fetchEntities(this.value);
-    }
   },
   beforeDestroy() {
     this.observer.unobserve(this.$refs.append);
   },
   methods: {
     ...entityMapActions({ fetchContextEntitiesListWithoutStore: 'fetchListWithoutStore' }),
+
+    getItemText(item) {
+      if (isString(item)) {
+        return item;
+      }
+
+      return isFunction(this.itemText) ? this.itemText(item) : item[this.itemText];
+    },
 
     intersectionHandler(entries) {
       const [entry] = entries;
@@ -163,6 +188,7 @@ export default {
     },
 
     updateSearch(value) {
+      this.pageCount = Infinity;
       this.query = {
         page: 1,
         search: value,
@@ -181,26 +207,20 @@ export default {
       this.isFocused = false;
     },
 
-    getQuery(ids) {
-      const params = {
+    getQuery() {
+      return {
         limit: this.limit,
         page: this.query.page,
         search: this.query.search,
-        filter: { type: { $in: this.entityTypes } },
+        type: this.entityTypes,
       };
-
-      if (ids) {
-        params.filter._id = { $in: isArray(ids) ? ids : [ids] };
-      }
-
-      return params;
     },
 
-    async fetchEntities(ids) {
+    async fetchEntities() {
       this.entitiesPending = true;
 
       const { data: entities, meta } = await this.fetchContextEntitiesListWithoutStore({
-        params: this.getQuery(ids),
+        params: this.getQuery(),
       });
 
       this.pageCount = meta.page_count;

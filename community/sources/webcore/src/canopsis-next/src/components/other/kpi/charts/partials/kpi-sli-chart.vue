@@ -135,6 +135,7 @@ export default {
               source: 'data',
               font: {
                 size: 11,
+                family: 'Arial, sans-serif',
               },
               callback: this.getChartTimeTickLabel,
             },
@@ -146,6 +147,7 @@ export default {
             ticks: {
               font: {
                 size: 11,
+                family: 'Arial, sans-serif',
               },
               callback: this.getChartValueTickLabel,
             },

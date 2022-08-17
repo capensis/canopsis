@@ -1,19 +1,25 @@
+import { OLD_PATTERNS_FIELDS, PATTERN_CUSTOM_ITEM_VALUE, PATTERNS_FIELDS } from '@/constants';
+
 import { formGroupsToPatternRules, patternToForm } from '@/helpers/forms/pattern';
-
-import { PATTERN_CUSTOM_ITEM_VALUE, PATTERNS_FIELDS } from '@/constants';
-
-import { addKeyInEntities, removeKeyFromEntities } from '../entities';
 
 /**
  * @typedef {Object} FilterPatterns
  * @property {PatternGroups} [alarm_pattern]
  * @property {string} [corporate_alarm_pattern]
+ *
  * @property {PatternGroups} [entity_pattern]
  * @property {string} [corporate_entity_pattern]
+ *
  * @property {PatternGroups} [pbehavior_pattern]
  * @property {string} [corporate_pbehavior_pattern]
+ *
  * @property {PatternGroups} [event_pattern]
  * @property {string} [corporate_event_pattern]
+ *
+ * @property {PatternGroups} [total_entity_pattern]
+ * @property {string} [corporate_total_entity_pattern]
+ *
+ * @property {PatternGroups} [weather_service_pattern]
  * @property {Object} [old_mongo_query]
  */
 
@@ -46,16 +52,28 @@ import { addKeyInEntities, removeKeyFromEntities } from '../entities';
  * Convert filter patterns to form
  *
  * @param {Filter} filter
- * @param {PatternsFields} [fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity]]
+ * @param {PatternsFields} [fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior]]
+ * @param {string[]} [oldFields = []]
  * @return {FilterPatterns}
  */
 export const filterPatternsToForm = (
   filter = {},
-  fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity],
-) => fields.reduce((acc, field) => {
-  const { [`corporate_${field}`]: id, [field]: pattern } = filter;
+  fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior],
+  oldFields = [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
+) => fields.reduce((acc, field, index) => {
+  const oldField = oldFields[index];
+  const {
+    [`corporate_${field}`]: id,
+    [field]: pattern,
+    [oldField]: oldMongoQuery,
+  } = filter;
 
-  acc[field] = patternToForm({ [field]: pattern, id });
+  acc[field] = patternToForm({
+    [field]: pattern,
+    old_mongo_query: oldMongoQuery,
+    is_corporate: !!id && id !== PATTERN_CUSTOM_ITEM_VALUE,
+    id,
+  });
 
   return acc;
 }, {});
@@ -64,29 +82,32 @@ export const filterPatternsToForm = (
  * Convert filter object to filter form
  *
  * @param {Object} [filter = {}]
+ * @param {Array} [fields]
  * @returns {FilterForm}
  */
-export const filterToForm = (filter = {}) => ({
+export const filterToForm = (filter = {}, fields) => ({
   title: filter.title ?? '',
   old_mongo_query: filter.old_mongo_query,
   is_private: filter.is_private ?? false,
-  ...filterPatternsToForm(filter),
+  ...filterPatternsToForm(filter, fields),
 });
 
 /**
  * Convert patterns form to patterns
  *
- * @param {FilterPatternsForm} form
+ * @param {FilterPatternsForm} [form = {}]
  * @param {PatternsFields} [fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity]]
+ * @param {boolean} [corporate = false]
  * @return {{}}
  */
 export const formFilterToPatterns = (
-  form,
+  form = {},
   fields = [
     PATTERNS_FIELDS.alarm,
     PATTERNS_FIELDS.entity,
     PATTERNS_FIELDS.pbehavior,
   ],
+  corporate = false,
 ) => fields.reduce((acc, field) => {
   const patterns = form[field];
 
@@ -94,10 +115,8 @@ export const formFilterToPatterns = (
     return acc;
   }
 
-  if (patterns.id !== PATTERN_CUSTOM_ITEM_VALUE) {
+  if ((corporate || patterns.is_corporate) && patterns.id !== PATTERN_CUSTOM_ITEM_VALUE) {
     acc[`corporate_${field}`] = patterns.id;
-
-    return acc;
   }
 
   if (patterns.groups) {
@@ -111,27 +130,12 @@ export const formFilterToPatterns = (
  * Convert filter form to filter
  *
  * @param {FilterForm} form
- * @param {PatternsFields} fields
+ * @param {PatternsFields} [fields]
+ * @param {boolean} [corporate]
  * @returns {Filter}
  */
-export const formToFilter = (form, fields) => ({
+export const formToFilter = (form, fields, corporate) => ({
   title: form.title,
   is_private: form.is_private,
-  ...formFilterToPatterns(form, fields),
+  ...formFilterToPatterns(form, fields, corporate),
 });
-
-/**
- * Convert filters to filters form
- *
- * @param {Array} [filters = []]
- * @returns {Array}
- */
-export const filtersToForm = (filters = []) => addKeyInEntities(filters);
-
-/**
- * Convert filters form to filters object
- *
- * @param {Array} [filters = []]
- * @returns {Array}
- */
-export const formToFilters = (filters = []) => removeKeyFromEntities(filters);

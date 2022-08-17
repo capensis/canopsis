@@ -4,7 +4,13 @@
       template(#title="")
         span {{ title }}
       template(#text="")
-        c-patterns-field(v-model="form", with-alarm, with-entity)
+        c-patterns-field(
+          v-model="form",
+          :alarm-attributes="alarmAttributes",
+          :entity-attributes="entityAttributes",
+          with-alarm,
+          with-entity
+        )
         c-collapse-panel(color="grey")
           template(#header="")
             span.white--text {{ $t('remediationPatterns.tabs.pbehaviorTypes.title') }}
@@ -26,7 +32,14 @@
 </template>
 
 <script>
-import { MODALS, PATTERNS_FIELDS } from '@/constants';
+import {
+  ALARM_PATTERN_FIELDS,
+  ENTITY_PATTERN_FIELDS,
+  MODALS,
+  OLD_PATTERNS_FIELDS,
+  PATTERNS_FIELDS,
+  QUICK_RANGES,
+} from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
@@ -58,7 +71,11 @@ export default {
 
     return {
       form: {
-        ...filterPatternsToForm(instruction, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+        ...filterPatternsToForm(
+          instruction,
+          [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
+          [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
+        ),
         active_on_pbh: instruction?.active_on_pbh ?? [],
         disabled_on_pbh: instruction?.disabled_on_pbh ?? [],
       },
@@ -67,6 +84,54 @@ export default {
   computed: {
     title() {
       return this.config.title ?? this.$t('modals.patterns.title');
+    },
+
+    intervalOptions() {
+      return {
+        intervalRanges: [QUICK_RANGES.custom],
+      };
+    },
+
+    alarmAttributes() {
+      return [
+        {
+          value: ALARM_PATTERN_FIELDS.creationDate,
+          options: this.intervalOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.ackAt,
+          options: this.intervalOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.lastUpdateDate,
+          options: { disabled: true },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.resolvedAt,
+          options: { disabled: true },
+        },
+      ];
+    },
+
+    entityAttributes() {
+      return [
+        {
+          value: ENTITY_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+        {
+          value: ENTITY_PATTERN_FIELDS.component,
+          options: { disabled: true },
+        },
+        {
+          value: ENTITY_PATTERN_FIELDS.connector,
+          options: { disabled: true },
+        },
+      ];
     },
   },
   methods: {

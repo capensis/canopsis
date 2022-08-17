@@ -3,6 +3,7 @@ package engine_test
 import (
 	"context"
 	"errors"
+	"sync"
 	"testing"
 	"time"
 
@@ -13,8 +14,8 @@ import (
 )
 
 const waitTimeout = time.Second
-const interval = time.Millisecond * 100
-const inaccuracy = interval / 100
+const interval = 100 * time.Millisecond
+const inaccuracy = 5 * time.Millisecond
 
 func TestEngine_Run_GivenPeriodicalProcess_ShouldRunIt(t *testing.T) {
 	const timesToRun = 2
@@ -63,7 +64,7 @@ func TestEngine_Run_GivenPeriodicalProcess_ShouldRunIt(t *testing.T) {
 
 	for _, date := range workTimes {
 		sub := date.Sub(start)
-		if sub < interval-inaccuracy || sub >= 2*(interval-inaccuracy) {
+		if sub < interval-inaccuracy || sub > interval+inaccuracy {
 			t.Errorf("expected %v between periodical executions but got %v", interval, sub)
 			return
 		}
@@ -128,6 +129,67 @@ func TestEngine_Run_GivenErrorOnConsumer_ShouldStopEngine(t *testing.T) {
 	if !errors.As(err, &testErr) || testErr.Error() != expectedErr.Error() {
 		t.Errorf("expected error %v but got %v", expectedErr, err)
 	}
+}
+
+func TestEngine_Run_GivenRoutine_ShouldRunIt(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	expectedDuration := 100 * time.Millisecond
+	ctx, cancel := context.WithTimeout(context.Background(), expectedDuration)
+	defer cancel()
+	done := make(chan bool)
+	defer close(done)
+
+	var duration1Mx, duration2Mx sync.Mutex
+	var duration1, duration2 time.Duration
+	engine := libengine.New(nil, nil, zerolog.Nop())
+	engine.AddRoutine(func(ctx context.Context) error {
+		started := time.Now()
+		defer func() {
+			duration1Mx.Lock()
+			duration1 = time.Since(started)
+			duration1Mx.Unlock()
+		}()
+
+		<-ctx.Done()
+		return nil
+	})
+	engine.AddRoutine(func(ctx context.Context) error {
+		started := time.Now()
+		defer func() {
+			duration2Mx.Lock()
+			duration2 = time.Since(started)
+			duration2Mx.Unlock()
+		}()
+
+		<-ctx.Done()
+		return nil
+	})
+
+	var err error
+
+	go func() {
+		err = engine.Run(ctx)
+		done <- true
+	}()
+
+	waitDone(t, done)
+
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+		return
+	}
+
+	duration1Mx.Lock()
+	if duration1 < expectedDuration-inaccuracy || duration1 > expectedDuration+inaccuracy {
+		t.Errorf("expected %s but got %s", expectedDuration, duration1)
+	}
+	duration1Mx.Unlock()
+	duration2Mx.Lock()
+	if duration2 < expectedDuration-inaccuracy || duration2 > expectedDuration+inaccuracy {
+		t.Errorf("expected %s but got %s", expectedDuration, duration2)
+	}
+	duration2Mx.Unlock()
 }
 
 func waitDone(t *testing.T, done <-chan bool) {

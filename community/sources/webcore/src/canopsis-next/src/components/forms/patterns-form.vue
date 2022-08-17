@@ -13,7 +13,12 @@
       :with-alarm="withAlarm",
       :with-entity="withEntity",
       :with-pbehavior="withPbehavior",
-      :with-event="withEvent"
+      :with-event="withEvent",
+      :with-service-weather="withServiceWeather",
+      :alarm-attributes="alarmAttributes",
+      :entity-attributes="entityAttributes",
+      :entity-types="entityTypes",
+      some-required
     )
 </template>
 
@@ -48,6 +53,22 @@ export default {
     withPbehavior: {
       type: Boolean,
       default: false,
+    },
+    withServiceWeather: {
+      type: Boolean,
+      default: false,
+    },
+    alarmAttributes: {
+      type: Array,
+      required: false,
+    },
+    entityAttributes: {
+      type: Array,
+      required: false,
+    },
+    entityTypes: {
+      type: Array,
+      required: false,
     },
   },
   computed: {

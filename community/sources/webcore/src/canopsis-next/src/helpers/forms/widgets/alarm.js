@@ -7,7 +7,6 @@ import {
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
-  FILTER_DEFAULT_VALUES,
   GRID_SIZES,
   SORT_ORDERS,
 } from '@/constants';
@@ -15,6 +14,14 @@ import { DEFAULT_CATEGORIES_LIMIT, PAGINATION_LIMIT } from '@/config';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
+
+/**
+ * @typedef {Object} AlarmsListDataTableColumn
+ * @property {string} value
+ * @property {string} text
+ * @property {boolean} [isHtml]
+ * @property {boolean} [colorIndicator]
+ */
 
 /**
  * @typedef {Object} WidgetFastAckOutput
@@ -62,17 +69,17 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {boolean} isAckNoteRequired
  * @property {boolean} isSnoozeNoteRequired
  * @property {boolean} isMultiAckEnabled
+ * @property {boolean} isMultiDeclareTicketEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
  * @property {boolean} sticky_header
+ * @property {boolean} dense
  */
 
 /**
  * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
- * @property {WidgetFilter[]} viewFilters
  * @property {string | null} mainFilter
  * @property {number} mainFilterUpdatedAt
- * @property {WidgetFilterCondition} mainFilterCondition
  * @property {WidgetLiveReporting} liveReporting
  * @property {WidgetSort} sort
  * @property {boolean | null} opened
@@ -158,8 +165,10 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isAckNoteRequired: !!parameters.isAckNoteRequired,
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
+  isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
   sticky_header: !!parameters.sticky_header,
+  dense: !!parameters.dense,
   fastAckOutput: parameters.fastAckOutput
     ? { ...parameters.fastAckOutput }
     : {
@@ -194,11 +203,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   ...alarmListWidgetDefaultParametersToForm(parameters),
 
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
-  viewFilters: parameters.viewFilters
-    ? cloneDeep(parameters.viewFilters)
-    : [],
   mainFilter: parameters.mainFilter ?? null,
-  mainFilterCondition: parameters.mainFilterCondition ?? FILTER_DEFAULT_VALUES.condition,
   mainFilterUpdatedAt: parameters.mainFilterUpdatedAt || 0,
   liveReporting: parameters.liveReporting
     ? cloneDeep(parameters.liveReporting)
@@ -277,3 +282,15 @@ export const formToAlarmListWidgetParameters = form => ({
   infoPopups: formInfoPopupsToInfoPopups(form.infoPopups),
   sort: formSortToWidgetSort(form.sort),
 });
+
+/**
+ * Convert alarms list columns to data table columns
+ *
+ * @param {WidgetColumn[]} [columns = []]
+ * @returns {AlarmsListDataTableColumn[]}
+ */
+export const alarmsListColumnsToTableColumns = (columns = []) => columns.map(({ label, ...column }) => ({
+  ...column,
+
+  text: label,
+}));

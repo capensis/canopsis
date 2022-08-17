@@ -28,7 +28,8 @@
           remediation-instruction-execute-assigned-jobs.mt-4(
             v-if="operation.jobs.length",
             :jobs="operation.jobs",
-            @execute-job="executeJob"
+            @execute-job="executeJob",
+            @cancel-job-execution="cancelJobExecution"
           )
           v-layout.mb-2(row, justify-end)
             v-btn.accent(
@@ -88,6 +89,10 @@ export default {
   methods: {
     executeJob(job) {
       this.$emit('execute-job', { job, operation: this.operation });
+    },
+
+    cancelJobExecution(job) {
+      this.$emit('cancel-job-execution', { job, operation: this.operation });
     },
   },
 };

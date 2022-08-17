@@ -12,8 +12,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 	"strings"
 	"time"
 )
@@ -62,8 +62,8 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 			ctx,
 			types.Operation{
 				Type: event.PbhEvent.EventType,
-				Parameters: types.OperationPbhParameters{
-					PbehaviorInfo: event.PbhEvent.PbehaviorInfo,
+				Parameters: types.OperationParameters{
+					PbehaviorInfo: &event.PbhEvent.PbehaviorInfo,
 					Author:        event.PbhEvent.Author,
 					Output:        event.PbhEvent.Output,
 				},
