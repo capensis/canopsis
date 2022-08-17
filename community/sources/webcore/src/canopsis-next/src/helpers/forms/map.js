@@ -62,6 +62,7 @@ import uuid from '@/helpers/uuid';
 
 /**
  * @typedef {MapGeoParameters} MapGeoParametersForm
+ * @property {MapGeoPointForm[]} points
  */
 
 /**
@@ -130,7 +131,7 @@ export const mermaidPointToForm = (point = {}) => ({
   x: point.x,
   y: point.y,
   entity: point.entity?._id ?? '',
-  map: point.map,
+  map: point.map?._id,
   _id: uuid(),
 });
 
@@ -153,8 +154,8 @@ export const geomapPointToForm = (point = {}) => ({
     lat: 0,
     lng: 0,
   },
-  entity: point.entity ?? '',
-  map: point.map,
+  entity: point.entity?._id ?? '',
+  map: point.map?._id,
   _id: uuid(),
 });
 
