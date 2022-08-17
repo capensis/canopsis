@@ -135,7 +135,7 @@ export default {
 
     setOffsetsByEvent(event) {
       this.pageX = event.pageX;
-      this.pageY = event.pageY;
+      this.pageY = event.pageY - window.scrollY;
       this.offsetX = event.offsetX;
       this.offsetY = event.offsetY;
     },
