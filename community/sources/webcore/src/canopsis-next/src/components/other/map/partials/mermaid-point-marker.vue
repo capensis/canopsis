@@ -1,7 +1,7 @@
 <template lang="pug">
   point-icon.mermaid-point(
     v-on="$listeners",
-    :class="{ 'mermaid-point--centered': isEntityObject }",
+    :class="{ 'mermaid-point--centered': isFullEntity }",
     :style="{ top: `${y}px`, left: `${x}px` }",
     :entity="entity",
     :size="size",
@@ -10,8 +10,6 @@
 </template>
 
 <script>
-import { isObject } from 'lodash';
-
 import PointIcon from './point-icon.vue';
 
 export default {
@@ -39,8 +37,8 @@ export default {
     },
   },
   computed: {
-    isEntityObject() {
-      return isObject(this.entity);
+    isFullEntity() {
+      return this.entity?.state;
     },
   },
 };
