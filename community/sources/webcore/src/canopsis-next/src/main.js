@@ -157,6 +157,7 @@ import CServiceWeatherPatternsField from '@/components/forms/fields/service-weat
 import CServiceWeatherIconField from '@/components/forms/fields/service-weather/c-service-weather-icon-field.vue';
 import CContextmenu from '@/components/common/contextmenu/c-contextmenu.vue';
 import CMapField from '@/components/forms/fields/map/c-map-field.vue';
+import CCoordinatesField from '@/components/forms/fields/map/c-coordinates-field.vue';
 import CNameField from '@/components/forms/fields/c-name-field.vue';
 
 /**
@@ -428,6 +429,7 @@ Vue.component('c-service-weather-patterns-field', CServiceWeatherPatternsField);
 Vue.component('c-service-weather-icon-field', CServiceWeatherIconField);
 
 Vue.component('c-map-field', CMapField);
+Vue.component('c-coordinates-field', CCoordinatesField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
@@ -485,7 +487,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.createMap]: { maxWidth: 500, lazy: true },
     [MODALS.createMermaidMap]: { maxWidth: 1600 },
     [MODALS.createTreeOfDependenciesMap]: { maxWidth: 1334 },
-    [MODALS.createGeoMap]: { maxWidth: '95%', lazy: true, persistent: true },
+    [MODALS.createGeoMap]: { maxWidth: 1280 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },
