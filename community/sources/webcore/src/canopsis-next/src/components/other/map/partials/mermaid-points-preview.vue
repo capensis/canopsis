@@ -7,24 +7,52 @@
       :y="point.y",
       :entity="point.entity",
       :size="markerSize",
-      @mouseenter="onMouseEnter(point, $event)",
-      @mouseleave="onMouseLeave"
+      :color-indicator="colorIndicator",
+      ref="points",
+      @click="openPopup(point, $event)"
     )
-    v-tooltip(
-      v-if="tooltipContent",
+    v-menu(
+      v-if="activePoint",
       :value="true",
       :position-x="positionX",
       :position-y="positionY",
+      :close-on-content-click="false",
+      ignore-click-outside,
+      offset-overflow,
+      offset-x,
+      absolute,
       top
     )
-      span {{ tooltipContent }}
+      mermaid-point-popup(
+        v-click-outside="clickOutsideDirective",
+        :point="activePoint",
+        :template="popupTemplate",
+        :actions="popupActions",
+        :color="getPointEntityColor(activePoint)",
+        @show:alarms="showAlarmListModal",
+        @show:map="showLinkedMap",
+        @close="closePopup"
+      )
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
+import { MODALS } from '@/constants';
+
+import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+
+import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
+
 import MermaidPointMarker from './mermaid-point-marker.vue';
+import MermaidPointPopup from './mermaid-point-popup.vue';
+import { getEntityColor } from '@/helpers/color';
+
+const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
 export default {
-  components: { MermaidPointMarker },
+  components: { MermaidPointMarker, MermaidPointPopup },
+  mixins: [entitiesServiceEntityMixin],
   props: {
     points: {
       type: Array,
@@ -34,27 +62,83 @@ export default {
       type: Number,
       default: 24,
     },
+    popupTemplate: {
+      type: String,
+      required: false,
+    },
+    popupActions: {
+      type: Boolean,
+      default: false,
+    },
+    alarmsColumns: {
+      type: Array,
+      required: false,
+    },
+    colorIndicator: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
       positionX: 0,
       positionY: 0,
-      tooltipContent: undefined,
+      activePoint: undefined,
     };
   },
+  computed: {
+    clickOutsideDirective() {
+      return {
+        handler: this.closePopup,
+        include: () => this.$refs.points.map(({ $el }) => $el),
+        closeConditional: () => true,
+      };
+    },
+  },
   methods: {
-    onMouseEnter(point, event) {
-      const { entity, map } = point;
+    ...mapAlarmActions({
+      fetchComponentAlarmsListWithoutStore: 'fetchComponentAlarmsListWithoutStore',
+    }),
 
+    getPointEntityColor(point) {
+      return point.entity ? getEntityColor(point.entity, this.colorIndicator) : undefined;
+    },
+
+    openPopup(point, event) {
       const { top, left, width } = event.target.getBoundingClientRect();
 
       this.positionY = top;
       this.positionX = left + width / 2;
-      this.tooltipContent = entity ? entity.name : map.name;
+      this.activePoint = point;
     },
 
-    onMouseLeave() {
-      this.tooltipContent = undefined;
+    closePopup() {
+      this.activePoint = undefined;
+    },
+
+    showLinkedMap() {
+      this.$emit('show:map', this.activePoint.map);
+      this.closePopup();
+    },
+
+    showAlarmListModal() {
+      try {
+        const widget = generateDefaultAlarmListWidget();
+
+        widget.parameters.widgetColumns = this.alarmsColumns;
+
+        this.$modals.show({
+          name: MODALS.alarmsList,
+          config: {
+            widget,
+            fetchList: params => this.fetchComponentAlarmsListWithoutStore({
+              params: { ...params, _id: this.activePoint.entity._id },
+            }),
+          },
+        });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('errors.default') });
+      }
     },
   },
 };

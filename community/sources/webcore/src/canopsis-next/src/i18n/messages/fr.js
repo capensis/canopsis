@@ -134,7 +134,7 @@ export default merge({
     emptyObject: 'Objet vide',
     startDate: 'Date de début',
     endDate: 'Date de fin',
-    links: 'Liens',
+    link: 'Lien | Liens',
     stack: 'Pile',
     edition: 'Édition',
     icon: 'Icône',

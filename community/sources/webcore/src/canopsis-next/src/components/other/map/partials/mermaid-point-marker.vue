@@ -1,15 +1,21 @@
 <template lang="pug">
-  v-icon.mermaid-point(
+  point-icon.mermaid-point(
     v-on="$listeners",
-    :class="{ 'mermaid-point--linked': !entity }",
+    :class="{ 'mermaid-point--centered': isEntityObject }",
     :style="{ top: `${y}px`, left: `${x}px` }",
+    :entity="entity",
     :size="size",
-    color="grey darken-2"
-    ) {{ icon }}
+    :color-indicator="colorIndicator"
+  )
 </template>
 
 <script>
+import { isObject } from 'lodash';
+
+import PointIcon from './point-icon.vue';
+
 export default {
+  components: { PointIcon },
   props: {
     x: {
       type: Number,
@@ -27,10 +33,14 @@ export default {
       type: Number,
       default: 24,
     },
+    colorIndicator: {
+      type: String,
+      required: false,
+    },
   },
   computed: {
-    icon() {
-      return this.entity ? 'location_on' : 'link';
+    isEntityObject() {
+      return isObject(this.entity);
     },
   },
 };
@@ -44,7 +54,7 @@ export default {
   cursor: pointer;
   transition: none;
 
-  &--linked {
+  &--centered {
     transform: translate(-50%, -50%);
   }
 }

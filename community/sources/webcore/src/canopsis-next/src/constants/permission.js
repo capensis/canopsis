@@ -232,6 +232,8 @@ export const USERS_PERMISSIONS = {
     },
     map: {
       actions: {
+        alarmsList: `${USER_PERMISSIONS_PREFIXES.business.map}_alarmsList`,
+
         listFilters: `${USER_PERMISSIONS_PREFIXES.business.map}_listFilters`,
         editFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_editFilter`,
         addFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_addFilter`,
