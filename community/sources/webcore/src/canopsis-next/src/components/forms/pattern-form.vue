@@ -7,9 +7,24 @@
       :error-messages="errors.collect('title')",
       name="title"
     )
-    c-alarm-patterns-field(v-if="isAlarmPattern", v-field="form")
-    c-entity-patterns-field(v-else-if="isEntityPattern", v-field="form")
-    c-pbehavior-patterns-field(v-else-if="isPbehaviorPattern", v-field="form")
+    c-alarm-patterns-field(
+      v-if="isAlarmPattern",
+      v-field="form",
+      :name="$constants.PATTERNS_FIELDS.alarm",
+      :check-count-name="$constants.PATTERNS_FIELDS.alarm"
+    )
+    c-entity-patterns-field(
+      v-else-if="isEntityPattern",
+      v-field="form",
+      :name="$constants.PATTERNS_FIELDS.entity",
+      :check-count-name="$constants.PATTERNS_FIELDS.entity"
+    )
+    c-pbehavior-patterns-field(
+      v-else-if="isPbehaviorPattern",
+      v-field="form",
+      :name="$constants.PATTERNS_FIELDS.pbehavior",
+      :check-count-name="$constants.PATTERNS_FIELDS.pbehavior"
+    )
 </template>
 
 <script>

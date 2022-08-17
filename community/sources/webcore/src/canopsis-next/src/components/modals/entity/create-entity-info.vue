@@ -1,15 +1,15 @@
 <template lang="pug">
   v-form(@submit.stop.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
+      template(#text="")
         entity-info-form(
           v-model="form",
           :entity-info="config.entityInfo",
           :infos="config.infos"
         )
-      template(slot="actions")
+      template(#actions="")
         v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
@@ -21,7 +21,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { entityInfoToForm, formToEntityInfo } from '@/helpers/forms/entity-info';
+import { entityInfoToForm } from '@/helpers/forms/entity-info';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -49,7 +49,7 @@ export default {
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.createEntityInfo.create.title');
+      return this.config.title ?? this.$t('modals.createEntityInfo.create.title');
     },
   },
   methods: {
@@ -57,7 +57,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.config.action(formToEntityInfo(this.form));
+        await this.config.action(this.form);
 
         this.$modals.hide();
       }

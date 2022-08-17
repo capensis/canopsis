@@ -5,7 +5,15 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, ALARM_LIST_ACTIONS_TYPES } from '@/constants';
+import {
+  MODALS,
+  ENTITIES_TYPES,
+  EVENT_ENTITY_TYPES,
+  EVENT_ENTITY_STYLE,
+  ALARM_LIST_ACTIONS_TYPES,
+} from '@/constants';
+
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 
@@ -31,6 +39,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
     },
   },
   computed: {
@@ -113,7 +125,7 @@ export default {
     },
 
     hasMetaAlarm() {
-      return this.items.some(item => item.metaalarm);
+      return this.items.some(item => item.is_meta_alarm);
     },
 
     modalConfig() {
@@ -133,16 +145,14 @@ export default {
     afterSubmit() {
       this.clearItems();
 
-      return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
+      return this.refreshAlarmsList();
     },
 
     showAddPbehaviorModal() {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: this.items.map(item => item.entity._id) },
-          },
+          entityPattern: createEntityIdPatternByValue(this.items.map(item => item.entity._id)),
           afterSubmit: this.clearItems,
         },
       });

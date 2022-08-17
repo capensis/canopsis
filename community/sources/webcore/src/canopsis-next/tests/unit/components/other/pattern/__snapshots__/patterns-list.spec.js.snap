@@ -193,9 +193,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -246,9 +244,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -299,9 +295,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -352,9 +346,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -405,9 +397,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -458,9 +448,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -511,9 +499,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -564,9 +550,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -617,9 +601,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -670,9 +652,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -723,9 +703,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -915,9 +893,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -965,9 +941,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -1015,9 +989,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -1065,9 +1037,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -1115,9 +1085,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -1165,9 +1133,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -1215,9 +1181,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -1265,9 +1229,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -1315,9 +1277,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -1365,9 +1325,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>
@@ -1415,9 +1373,7 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                   label=""
                   primary="primary"
                 />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <!---->
               </div>
             </td>
             <td>

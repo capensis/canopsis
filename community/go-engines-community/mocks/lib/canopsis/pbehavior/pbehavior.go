@@ -172,40 +172,40 @@ func (m *MockModelProvider) EXPECT() *MockModelProviderMockRecorder {
 }
 
 // GetEnabledPbehaviors mocks base method.
-func (m *MockModelProvider) GetEnabledPbehaviors(arg0 context.Context) (map[string]*pbehavior.PBehavior, error) {
+func (m *MockModelProvider) GetEnabledPbehaviors(arg0 context.Context, arg1 timespan.Span) (map[string]pbehavior.PBehavior, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEnabledPbehaviors", arg0)
-	ret0, _ := ret[0].(map[string]*pbehavior.PBehavior)
+	ret := m.ctrl.Call(m, "GetEnabledPbehaviors", arg0, arg1)
+	ret0, _ := ret[0].(map[string]pbehavior.PBehavior)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetEnabledPbehaviors indicates an expected call of GetEnabledPbehaviors.
-func (mr *MockModelProviderMockRecorder) GetEnabledPbehaviors(arg0 interface{}) *gomock.Call {
+func (mr *MockModelProviderMockRecorder) GetEnabledPbehaviors(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabledPbehaviors", reflect.TypeOf((*MockModelProvider)(nil).GetEnabledPbehaviors), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabledPbehaviors", reflect.TypeOf((*MockModelProvider)(nil).GetEnabledPbehaviors), arg0, arg1)
 }
 
 // GetEnabledPbehaviorsByIds mocks base method.
-func (m *MockModelProvider) GetEnabledPbehaviorsByIds(arg0 context.Context, arg1 []string) (map[string]*pbehavior.PBehavior, error) {
+func (m *MockModelProvider) GetEnabledPbehaviorsByIds(arg0 context.Context, arg1 []string, arg2 timespan.Span) (map[string]pbehavior.PBehavior, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEnabledPbehaviorsByIds", arg0, arg1)
-	ret0, _ := ret[0].(map[string]*pbehavior.PBehavior)
+	ret := m.ctrl.Call(m, "GetEnabledPbehaviorsByIds", arg0, arg1, arg2)
+	ret0, _ := ret[0].(map[string]pbehavior.PBehavior)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetEnabledPbehaviorsByIds indicates an expected call of GetEnabledPbehaviorsByIds.
-func (mr *MockModelProviderMockRecorder) GetEnabledPbehaviorsByIds(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockModelProviderMockRecorder) GetEnabledPbehaviorsByIds(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabledPbehaviorsByIds", reflect.TypeOf((*MockModelProvider)(nil).GetEnabledPbehaviorsByIds), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabledPbehaviorsByIds", reflect.TypeOf((*MockModelProvider)(nil).GetEnabledPbehaviorsByIds), arg0, arg1, arg2)
 }
 
 // GetExceptions mocks base method.
-func (m *MockModelProvider) GetExceptions(arg0 context.Context) (map[string]*pbehavior.Exception, error) {
+func (m *MockModelProvider) GetExceptions(arg0 context.Context) (map[string]pbehavior.Exception, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetExceptions", arg0)
-	ret0, _ := ret[0].(map[string]*pbehavior.Exception)
+	ret0, _ := ret[0].(map[string]pbehavior.Exception)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -217,10 +217,10 @@ func (mr *MockModelProviderMockRecorder) GetExceptions(arg0 interface{}) *gomock
 }
 
 // GetReasons mocks base method.
-func (m *MockModelProvider) GetReasons(arg0 context.Context) (map[string]*pbehavior.Reason, error) {
+func (m *MockModelProvider) GetReasons(arg0 context.Context) (map[string]pbehavior.Reason, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetReasons", arg0)
-	ret0, _ := ret[0].(map[string]*pbehavior.Reason)
+	ret0, _ := ret[0].(map[string]pbehavior.Reason)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -232,10 +232,10 @@ func (mr *MockModelProviderMockRecorder) GetReasons(arg0 interface{}) *gomock.Ca
 }
 
 // GetTypes mocks base method.
-func (m *MockModelProvider) GetTypes(arg0 context.Context) (map[string]*pbehavior.Type, error) {
+func (m *MockModelProvider) GetTypes(arg0 context.Context) (map[string]pbehavior.Type, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTypes", arg0)
-	ret0, _ := ret[0].(map[string]*pbehavior.Type)
+	ret0, _ := ret[0].(map[string]pbehavior.Type)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

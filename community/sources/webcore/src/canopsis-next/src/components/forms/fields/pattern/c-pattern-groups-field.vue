@@ -5,18 +5,19 @@
         v-if="!groups.length",
         :value="true",
         type="info"
-      ) {{ disabled ? $t('pattern.noDataDisabled') : $t('pattern.noData') }}
+      ) {{ disabled || readonly ? $t('pattern.noDataDisabled') : $t('pattern.noData') }}
     v-layout(v-for="(group, index) in groups", :key="group.key", wrap, row)
       v-flex(xs12)
         c-pattern-group-field(
           v-field="groups[index]",
           :attributes="attributes",
           :disabled="disabled",
+          :readonly="readonly",
           @remove="removeItemFromArray(index)"
         )
       v-layout(v-show="index !== groups.length - 1", justify-center)
         c-pattern-operator-chip {{ $t('common.or') }}
-    v-layout(row, align-center)
+    v-layout(v-if="!readonly", row, align-center)
       v-btn.ml-0(
         :color="hasGroupsErrors ? 'error' : 'primary'",
         :disabled="disabled",
@@ -58,6 +59,10 @@ export default {
       type: String,
       default: 'groups',
     },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     hasGroupsErrors() {
@@ -65,6 +70,13 @@ export default {
     },
   },
   watch: {
+    groups() {
+      this.$nextTick(() => {
+        if (this.required) {
+          this.$validator.validate(this.name);
+        }
+      });
+    },
     required: {
       immediate: true,
       handler(value) {

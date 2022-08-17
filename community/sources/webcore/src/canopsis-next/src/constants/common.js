@@ -15,6 +15,7 @@ export const ROUTES_NAMES = {
   adminHealthcheck: 'admin-healthcheck',
   adminEngines: 'admin-engines',
   adminKPI: 'admin-kpi',
+  adminMaps: 'admin-maps',
   exploitationPbehaviors: 'exploitation-pbehaviors',
   exploitationEventFilters: 'exploitation-event-filters',
   exploitationSnmpRules: 'exploitation-snmp-rules',
@@ -46,6 +47,7 @@ export const ROUTES = {
   adminHealthcheck: '/admin/healthcheck',
   adminEngines: '/admin/engines',
   adminKPI: '/admin/kpi',
+  adminMaps: '/admin/maps',
   exploitationPbehaviors: '/exploitation/pbehaviors',
   exploitationEventFilters: '/exploitation/event-filters',
   exploitationSnmpRules: '/exploitation/snmp-rules',
@@ -234,7 +236,7 @@ export const WORKFLOW_TYPES = {
   continue: false,
 };
 
-export const PAYLOAD_VARIABLE_REGEXP = /[^"]({{\s?(\w|\s|\.){2,}\s?}})[^"]/g;
+export const PAYLOAD_VARIABLE_REGEXP = /({{(.){2,}}})/g;
 
 export const PATTERNS_TYPES = {
   alarm: 'alarm',
@@ -254,3 +256,5 @@ export const ASSOCIATIVE_TABLES_NAMES = {
 };
 
 export const DEFAULT_COLUMN_TEMPLATE_VALUE = '{{ value }}';
+
+export const VALIDATION_DELAY = 300;

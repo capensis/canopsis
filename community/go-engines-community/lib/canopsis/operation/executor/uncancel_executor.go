@@ -2,8 +2,6 @@ package executor
 
 import (
 	"context"
-	"fmt"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -29,11 +27,7 @@ func (e *uncancelExecutor) Exec(
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	var params types.OperationParameters
-	var ok bool
-	if params, ok = operation.Parameters.(types.OperationParameters); !ok {
-		return "", fmt.Errorf("invalid parameters")
-	}
+	params := operation.Parameters
 
 	if userID == "" {
 		userID = params.User

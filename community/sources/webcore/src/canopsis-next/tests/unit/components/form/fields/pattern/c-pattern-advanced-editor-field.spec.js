@@ -287,7 +287,10 @@ describe('c-pattern-advanced-editor-field', () => {
         field: ALARM_PATTERN_FIELDS.creationDate,
         cond: {
           type: PATTERN_CONDITIONS.relativeTime,
-          value: 200,
+          value: {
+            value: 200,
+            unit: TIME_UNITS.second,
+          },
         },
       },
       {
