@@ -3009,11 +3009,18 @@ export default merge({
     addPoint: 'Add point',
     editPoint: 'Edit point',
     removePoint: 'Remove point',
+    latitude: 'Latitude',
+    longitude: 'Longitude',
+    toggleAddingPointMode: 'Toggle adding point mode',
     types: {
       [MAP_TYPES.geo]: 'Geo',
       [MAP_TYPES.flowchart]: 'Flowchart',
       [MAP_TYPES.mermaid]: 'Mermaid',
       [MAP_TYPES.treeOfDependencies]: 'Tree of dependencies',
+    },
+    layers: {
+      openStreetMap: 'Open street map',
+      points: 'Points',
     },
   },
 
@@ -3041,5 +3048,7 @@ export default merge({
 
   geomap: {
     layers: 'Layers',
+    zoomIn: 'Zoom in',
+    zoomOut: 'Zoom out',
   },
 }, featureService.get('i18n.en'));
