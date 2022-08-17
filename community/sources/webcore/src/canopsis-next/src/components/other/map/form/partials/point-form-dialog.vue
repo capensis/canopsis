@@ -7,7 +7,7 @@
           v-btn.ma-0.ml-3(icon, small, @click="close")
             v-icon(color="white") close
       v-card-text
-        point-form(v-model="form")
+        point-form(v-model="form", :coordinates="coordinates")
       v-layout(justify-end)
         v-btn(
           :disabled="submitting",
@@ -50,6 +50,10 @@ export default {
       required: true,
     },
     editing: {
+      type: Boolean,
+      required: false,
+    },
+    coordinates: {
       type: Boolean,
       required: false,
     },
