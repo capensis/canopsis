@@ -2,18 +2,25 @@
   c-pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
+    :readonly="readonly",
     :name="name",
     :type="$constants.PATTERN_TYPES.pbehavior",
     :required="required",
     :attributes="pbehaviorAttributes",
-    :with-type="withType"
+    :with-type="withType",
+    :check-count-name="checkCountName"
   )
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MAX_LIMIT, PATTERN_OPERATORS, PBEHAVIOR_PATTERN_FIELDS } from '@/constants';
+import {
+  MAX_LIMIT,
+  PATTERN_OPERATORS,
+  PBEHAVIOR_PATTERN_FIELDS,
+  PBEHAVIOR_TYPE_TYPES,
+} from '@/constants';
 
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
 const { mapActions: pbehaviorReasonMapActions } = createNamespacedHelpers('pbehaviorReasons');
@@ -42,6 +49,14 @@ export default {
       default: false,
     },
     withType: {
+      type: Boolean,
+      default: false,
+    },
+    checkCountName: {
+      type: String,
+      required: false,
+    },
+    readonly: {
       type: Boolean,
       default: false,
     },
@@ -107,6 +122,25 @@ export default {
       };
     },
 
+    availablePbehaviorTypeTypes() {
+      return Object.values(PBEHAVIOR_TYPE_TYPES).map(type => ({
+        value: type,
+        text: this.$t(`pbehaviorTypes.types.${type}`),
+      }));
+    },
+
+    canonicalTypeOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-select-field',
+          props: {
+            items: this.availablePbehaviorTypeTypes,
+          },
+        },
+      };
+    },
+
     pbehaviorAttributes() {
       return [
         {
@@ -123,6 +157,11 @@ export default {
           text: this.$t('common.type'),
           value: PBEHAVIOR_PATTERN_FIELDS.type,
           options: this.typeOptions,
+        },
+        {
+          text: this.$t('common.canonicalType'),
+          value: PBEHAVIOR_PATTERN_FIELDS.canonicalType,
+          options: this.canonicalTypeOptions,
         },
       ];
     },

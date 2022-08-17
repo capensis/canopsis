@@ -2,27 +2,36 @@
   c-pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
+    :readonly="readonly",
     :name="name",
     :type="$constants.PATTERN_TYPES.alarm",
     :required="required",
     :attributes="availableAlarmAttributes",
-    :with-type="withType"
+    :with-type="withType",
+    :check-count-name="checkCountName"
   )
 </template>
 
 <script>
 import { keyBy, merge } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
 import {
   ALARM_PATTERN_FIELDS,
   BASIC_ENTITY_TYPES,
   ENTITIES_STATES,
   ENTITIES_STATUSES,
+  MAX_LIMIT,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
 } from '@/constants';
 
+import { entitiesInfoMixin } from '@/mixins/entities/info';
+
+const { mapActions: dynamicInfoMapActions } = createNamespacedHelpers('dynamicInfo');
+
 export default {
+  mixins: [entitiesInfoMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -52,20 +61,36 @@ export default {
       type: Boolean,
       default: false,
     },
+    checkCountName: {
+      type: String,
+      required: false,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      infos: [],
+    };
   },
   computed: {
     entitiesOperators() {
       return [
         PATTERN_OPERATORS.equal,
         PATTERN_OPERATORS.notEqual,
-        PATTERN_OPERATORS.hasOneOf,
-        PATTERN_OPERATORS.hasNot,
+        PATTERN_OPERATORS.isOneOf,
+        PATTERN_OPERATORS.isNotOneOf,
       ];
     },
 
     entitiesValueField() {
       return {
         is: 'c-entity-field',
+        props: {
+          required: true,
+        },
       };
     },
 
@@ -76,7 +101,26 @@ export default {
         valueField: {
           is: 'c-entity-field',
           props: {
+            required: true,
             entityTypes: [BASIC_ENTITY_TYPES.connector],
+            itemText: 'name',
+            itemValue: 'name',
+          },
+        },
+      };
+    },
+
+    connectorNameOptions() {
+      return {
+        operators: this.entitiesOperators,
+        defaultValue: '',
+        valueField: {
+          is: 'c-entity-field',
+          props: {
+            required: true,
+            entityTypes: [BASIC_ENTITY_TYPES.connector],
+            itemText: 'connector_type',
+            itemValue: 'connector_type',
           },
         },
       };
@@ -89,6 +133,7 @@ export default {
         valueField: {
           is: 'c-entity-field',
           props: {
+            required: true,
             entityTypes: [BASIC_ENTITY_TYPES.component],
           },
         },
@@ -102,7 +147,10 @@ export default {
         valueField: {
           is: 'c-entity-field',
           props: {
+            required: true,
             entityTypes: [BASIC_ENTITY_TYPES.resource],
+            itemText: 'name',
+            itemValue: 'name',
           },
         },
       };
@@ -118,8 +166,7 @@ export default {
 
     infosOptions() {
       return {
-        // TODO: Should be replaced on API data
-        infos: ['infos 1', 'infos 2'],
+        infos: this.infos,
         type: PATTERN_RULE_TYPES.infos,
       };
     },
@@ -151,6 +198,7 @@ export default {
 
     stateOptions() {
       return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
         defaultValue: ENTITIES_STATES.ok,
         valueField: {
           is: 'c-entity-state-field',
@@ -194,6 +242,15 @@ export default {
       };
     },
 
+    ackByOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-user-picker-field',
+        },
+      };
+    },
+
     alarmAttributes() {
       return [
         {
@@ -228,7 +285,7 @@ export default {
         {
           text: this.$t('common.connectorName'),
           value: ALARM_PATTERN_FIELDS.connectorName,
-          options: this.connectorOptions,
+          options: this.connectorNameOptions,
         },
         {
           text: this.$t('common.created'),
@@ -270,6 +327,11 @@ export default {
           options: this.dateOptions,
         },
         {
+          text: this.$t('common.ackedBy'),
+          value: ALARM_PATTERN_FIELDS.ackBy,
+          options: this.ackByOptions,
+        },
+        {
           text: this.$t('common.resolvedAt'),
           value: ALARM_PATTERN_FIELDS.resolvedAt,
           options: this.dateOptions,
@@ -288,6 +350,10 @@ export default {
           text: this.$t('common.canceled'),
           value: ALARM_PATTERN_FIELDS.canceled,
           options: this.canceledOptions,
+        },
+        {
+          text: this.$t('common.lastComment'),
+          value: ALARM_PATTERN_FIELDS.lastComment,
         },
       ];
     },
@@ -308,6 +374,22 @@ export default {
       );
 
       return Object.values(mergedAttributes);
+    },
+  },
+  mounted() {
+    if (this.isProVersion) {
+      this.fetchInfos();
+    }
+  },
+  methods: {
+    ...dynamicInfoMapActions({ fetchDynamicInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
+
+    async fetchInfos() {
+      const { data: infos } = await this.fetchDynamicInfosKeysWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
+
+      this.infos = infos;
     },
   },
 };

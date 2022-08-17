@@ -1,11 +1,16 @@
-import { cloneDeep, omit, pick, isNumber } from 'lodash';
+import { omit, pick, isNumber } from 'lodash';
 
-import { DEFAULT_TIME_INTERVAL, META_ALARMS_RULE_TYPES, META_ALARMS_THRESHOLD_TYPES } from '@/constants';
+import {
+  DEFAULT_TIME_INTERVAL,
+  META_ALARMS_RULE_TYPES,
+  META_ALARMS_THRESHOLD_TYPES,
+  OLD_PATTERNS_FIELDS,
+  PATTERNS_FIELDS,
+} from '@/constants';
 
 import { durationToForm } from '@/helpers/date/duration';
-import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
-import { getConditionsForRemovingEmptyPatterns } from './shared/patterns';
 import { formToPrimitiveArray, primitiveArrayToForm } from './shared/common';
 
 /**
@@ -21,13 +26,10 @@ import { formToPrimitiveArray, primitiveArrayToForm } from './shared/common';
 
 /**
  * @typedef {Object} MetaAlarmRuleAttributeConfig
- * @property {Object} alarm_patterns
- * @property {Object} entity_patterns
- * @property {Object} event_patterns
  */
 
 /**
- * @typedef {MetaAlarmRuleAttributeConfig} MetaAlarmRuleAttributeConfigForm
+ * @typedef {Object} MetaAlarmRuleAttributeConfigForm
  */
 
 /**
@@ -44,7 +46,6 @@ import { formToPrimitiveArray, primitiveArrayToForm } from './shared/common';
  * @typedef {MetaAlarmRuleTimeBasedConfig & MetaAlarmRuleAttributeConfig} MetaAlarmRuleComplexConfig
  * @property {number} [threshold_rate]
  * @property {number} [threshold_count]
- * @property {Object} total_entity_patterns
  */
 
 /**
@@ -99,7 +100,7 @@ import { formToPrimitiveArray, primitiveArrayToForm } from './shared/common';
  */
 
 /**
- * @typedef {Object} MetaAlarmRule
+ * @typedef {FilterPatterns} MetaAlarmRule
  * @property {string} _id
  * @property {MetaAlarmRuleType} type
  * @property {string} name
@@ -110,8 +111,89 @@ import { formToPrimitiveArray, primitiveArrayToForm } from './shared/common';
 
 /**
  * @typedef {MetaAlarmRule} MetaAlarmRuleForm
+ * @property {FilterPatternsForm} patterns
  * @property {MetaAlarmRuleConfigForm} [config]
  */
+
+/**
+ * Check meta alarm type is attribute
+ *
+ * @param {MetaAlarmRuleType} type
+ * @return {boolean}
+ */
+export const isAttributeMetaAlarmRuleType = type => type === META_ALARMS_RULE_TYPES.attribute;
+
+/**
+ * Check meta alarm type is timebased
+ *
+ * @param {MetaAlarmRuleType} type
+ * @return {boolean}
+ */
+export const isTimebasedMetaAlarmRuleType = type => type === META_ALARMS_RULE_TYPES.timebased;
+
+/**
+ * Check meta alarm type is complex
+ *
+ * @param {MetaAlarmRuleType} type
+ * @return {boolean}
+ */
+export const isComplexMetaAlarmRuleType = type => type === META_ALARMS_RULE_TYPES.complex;
+
+/**
+ * Check meta alarm type is valuegroup
+ *
+ * @param {MetaAlarmRuleType} type
+ * @return {boolean}
+ */
+export const isValueGroupMetaAlarmRuleType = type => type === META_ALARMS_RULE_TYPES.valuegroup;
+
+/**
+ * Check meta alarm type is corel
+ *
+ * @param {MetaAlarmRuleType} type
+ * @return {boolean}
+ */
+export const isCorelMetaAlarmRuleType = type => type === META_ALARMS_RULE_TYPES.corel;
+
+/**
+ * Check meta alarm type is manualgroup
+ *
+ * @param {MetaAlarmRuleType} type
+ * @return {boolean}
+ */
+export const isManualGroupMetaAlarmRuleType = type => type === META_ALARMS_RULE_TYPES.manualgroup;
+
+/**
+ * Check meta alarm type has a patterns
+ *
+ * @param {MetaAlarmRuleType} type
+ * @return {boolean}
+ */
+export const isMetaAlarmRuleTypeHasPatterns = type => isAttributeMetaAlarmRuleType(type)
+  || isComplexMetaAlarmRuleType(type)
+  || isValueGroupMetaAlarmRuleType(type)
+  || isCorelMetaAlarmRuleType(type);
+
+/**
+ * Check meta alarm type has a total entity patterns
+ *
+ * @param {MetaAlarmRuleType} type
+ * @return {boolean}
+ */
+export const isMetaAlarmRuleTypeHasTotalEntityPatterns = type => isComplexMetaAlarmRuleType(type)
+  || isValueGroupMetaAlarmRuleType(type);
+
+/**
+ * Convert meta alarm rule to patterns
+ *
+ * @param {MetaAlarmRule} rule
+ * @return {FilterPatterns}
+ */
+export const metaAlarmFilterPatternsToForm = rule => filterPatternsToForm(
+  rule,
+  [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.event, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.totalEntity],
+  [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.event, OLD_PATTERNS_FIELDS.entity, OLD_PATTERNS_FIELDS.totalEntity],
+);
 
 /**
  * Convert meta alarm rule to form
@@ -120,26 +202,23 @@ import { formToPrimitiveArray, primitiveArrayToForm } from './shared/common';
  * @returns {MetaAlarmRuleForm}
  */
 export const metaAlarmRuleToForm = (rule = {}) => {
-  const config = rule.config || {};
+  const config = rule.config ?? {};
 
   return {
-    _id: rule._id || '',
-    type: rule.type || META_ALARMS_RULE_TYPES.attribute,
-    name: rule.name || '',
+    _id: rule._id ?? '',
+    type: rule.type ?? META_ALARMS_RULE_TYPES.attribute,
+    name: rule.name ?? '',
     auto_resolve: !!rule.auto_resolve,
-    output_template: rule.output_template || '{{ .Children.Alarm.Value.State.Message }}',
+    output_template: rule.output_template ?? '{{ .Children.Alarm.Value.State.Message }}',
+    patterns: metaAlarmFilterPatternsToForm(rule),
     config: {
       value_paths: config.value_paths ? primitiveArrayToForm(config.value_paths) : [],
-      alarm_patterns: config.alarm_patterns ? cloneDeep(config.alarm_patterns) : [],
-      entity_patterns: config.entity_patterns ? cloneDeep(config.entity_patterns) : [],
-      event_patterns: config.event_patterns ? cloneDeep(config.event_patterns) : [],
-      total_entity_patterns: config.total_entity_patterns ? cloneDeep(config.total_entity_patterns) : [],
       threshold_rate: config.threshold_rate ? config.threshold_rate * 100 : 100,
-      threshold_count: config.threshold_count || 1,
-      corel_id: config.corel_id || '',
-      corel_status: config.corel_status || '',
-      corel_parent: config.corel_parent || '',
-      corel_child: config.corel_child || '',
+      threshold_count: config.threshold_count ?? 1,
+      corel_id: config.corel_id ?? '',
+      corel_status: config.corel_status ?? '',
+      corel_parent: config.corel_parent ?? '',
+      corel_child: config.corel_child ?? '',
       threshold_type: isNumber(config.threshold_count)
         ? META_ALARMS_THRESHOLD_TYPES.thresholdCount
         : META_ALARMS_THRESHOLD_TYPES.thresholdRate,
@@ -155,31 +234,30 @@ export const metaAlarmRuleToForm = (rule = {}) => {
  * @returns {MetaAlarmRule}
  */
 export const formToMetaAlarmRule = (form = {}) => {
-  const metaAlarmRule = omit(form, ['config']);
+  const metaAlarmRule = omit(form, ['config', 'patterns']);
 
   switch (form.type) {
     case META_ALARMS_RULE_TYPES.attribute: {
-      const config = pick(form.config, ['alarm_patterns', 'entity_patterns', 'event_patterns']);
-
-      metaAlarmRule.config = unsetSeveralFieldsWithConditions(
-        config,
-        getConditionsForRemovingEmptyPatterns(),
-      );
-      break;
+      return {
+        ...metaAlarmRule,
+        ...formFilterToPatterns(
+          form.patterns,
+          [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
+        ),
+      };
     }
     case META_ALARMS_RULE_TYPES.corel:
     case META_ALARMS_RULE_TYPES.complex:
     case META_ALARMS_RULE_TYPES.valuegroup: {
-      const isComplex = form.type === META_ALARMS_RULE_TYPES.complex;
-      const isValueGroup = form.type === META_ALARMS_RULE_TYPES.valuegroup;
-      const isCorel = form.type === META_ALARMS_RULE_TYPES.corel;
+      const isComplex = isComplexMetaAlarmRuleType(form.type);
+      const isValueGroup = isValueGroupMetaAlarmRuleType(form.type);
+      const isCorel = isCorelMetaAlarmRuleType(form.type);
 
       const thresholdField = isCorel || form.config.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdCount
         ? 'threshold_rate'
         : 'threshold_count';
 
       const fields = ['threshold_type', thresholdField];
-      const patternsKeys = ['alarm_patterns', 'entity_patterns', 'event_patterns', 'total_entity_patterns'];
 
       if (isComplex || isCorel) {
         fields.push('value_paths');
@@ -195,11 +273,15 @@ export const formToMetaAlarmRule = (form = {}) => {
         config.threshold_rate /= 100;
       }
 
-      metaAlarmRule.config = unsetSeveralFieldsWithConditions(
+      return {
         config,
-        getConditionsForRemovingEmptyPatterns(patternsKeys),
-      );
-      break;
+        ...metaAlarmRule,
+        ...formFilterToPatterns(form.patterns, [
+          PATTERNS_FIELDS.alarm,
+          PATTERNS_FIELDS.entity,
+          PATTERNS_FIELDS.totalEntity,
+        ]),
+      };
     }
     case META_ALARMS_RULE_TYPES.timebased:
       metaAlarmRule.config = pick(form.config, ['time_interval']);

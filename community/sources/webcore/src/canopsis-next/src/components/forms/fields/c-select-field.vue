@@ -42,12 +42,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    combobox: {
+      type: Boolean,
+      default: false,
+    },
     ellipsis: {
       type: Boolean,
       default: false,
     },
     itemText: {
-      type: String,
+      type: [String, Function],
       default: 'text',
     },
     itemValue: {
@@ -61,6 +65,10 @@ export default {
     },
 
     component() {
+      if (this.combobox) {
+        return 'v-combobox';
+      }
+
       return this.autocomplete ? 'v-autocomplete' : 'v-select';
     },
 

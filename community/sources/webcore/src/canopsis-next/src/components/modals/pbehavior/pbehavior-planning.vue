@@ -1,18 +1,18 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(fill-height, close)
-      template(slot="title")
+    modal-wrapper(close)
+      template(#title="")
         span {{ $t('modals.pbehaviorPlanning.title') }}
-      template(slot="text")
+      template(#text="")
         pbehavior-planning-calendar(
           :pbehaviors-by-id.sync="form.pbehaviorsById",
           :added-pbehaviors-by-id.sync="form.addedPbehaviorsById",
           :changed-pbehaviors-by-id.sync="form.changedPbehaviorsById",
           :removed-pbehaviors-by-id.sync="form.removedPbehaviorsById",
           :read-only="readOnly",
-          :filter="filter"
+          :entity-pattern="entityPattern"
         )
-      template(slot="actions")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
@@ -63,8 +63,8 @@ export default {
       return !!this.config.readOnly;
     },
 
-    filter() {
-      return this.config.filter;
+    entityPattern() {
+      return this.config.entityPattern;
     },
   },
   methods: {
@@ -74,9 +74,11 @@ export default {
       const updatedPbehaviors = Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest);
       const removedPbehaviors = Object.values(this.form.removedPbehaviorsById);
 
-      await this.createPbehaviors(createdPbehaviors);
-      await this.updatePbehaviors(updatedPbehaviors);
-      await this.removePbehaviors(removedPbehaviors);
+      await Promise.all([
+        createdPbehaviors.length && this.createPbehaviorsWithComments(createdPbehaviors),
+        updatedPbehaviors.length && this.updatePbehaviorsWithComments(updatedPbehaviors),
+        removedPbehaviors.length && this.removePbehaviors(removedPbehaviors),
+      ]);
 
       if (this.config.afterSubmit) {
         await this.config.afterSubmit();

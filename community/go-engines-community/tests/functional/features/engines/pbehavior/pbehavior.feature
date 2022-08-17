@@ -23,7 +23,8 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-1",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -82,12 +83,23 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-1. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
           },
           "pbehavior": {
             "name": "test-pbehavior-1",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "reason": {
+              "_id": "test-reason-to-engine",
+              "name": "Test Engine",
+              "description": "Test Engine"
+            },
             "type": {
               "_id": "test-maintenance-type-to-engine",
               "icon_name": "test-maintenance-to-engine-icon",
@@ -153,7 +165,8 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-2",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -198,6 +211,8 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-2. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
@@ -235,7 +250,8 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-3",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -283,6 +299,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-4",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2s" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -322,7 +339,8 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-5",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -369,7 +387,8 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-6",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -407,10 +426,14 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-6. Type: Engine maintenance. Reason: Test Engine."
               },
               {
                 "_t": "pbhleave",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-6. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
@@ -448,7 +471,8 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-7",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -469,6 +493,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-7",
       "tstart": {{ .lastResponse.tstart }},
       "tstop": {{ .lastResponse.tstop }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -503,10 +528,14 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-7. Type: Engine maintenance. Reason: Test Engine."
               },
               {
                 "_t": "pbhleave",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-7. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
@@ -544,7 +573,8 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-8",
       "tstart": {{ nowAdd "2s" }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -613,6 +643,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-9",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -624,8 +655,8 @@ Feature: update alarm on pbehavior
       }
     }
     """
-    When I wait 1s
     Then the response code should be 201
+    When I wait 1s
     When I send an event:
     """json
     {
@@ -671,12 +702,23 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-9. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
           },
           "pbehavior": {
             "name": "test-pbehavior-9",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "reason": {
+              "_id": "test-reason-to-engine",
+              "name": "Test Engine",
+              "description": "Test Engine"
+            },
             "type": {
               "_id": "test-maintenance-type-to-engine",
               "icon_name": "test-maintenance-to-engine-icon",
@@ -708,6 +750,69 @@ Feature: update alarm on pbehavior
             "icon_name": "test-maintenance-to-engine-icon",
             "type": "test-maintenance-type-to-engine",
             "type_name": "Engine maintenance"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given pbehavior with pause type and without stop should create alarm with pbehavior info
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-10",
+      "connector_name" : "test-connector-name-pbehavior-10",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-pbehavior-10",
+      "resource" : "test-resource-pbehavior-10",
+      "state" : 0,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-10",
+      "tstart": {{ now }},
+      "tstop": null,
+      "color": "#FFFFFF",
+      "type": "test-pause-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "filter":{
+        "$and":[
+          {
+            "name": "test-resource-pbehavior-10"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-pbehavior-10
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "pbehavior_info": {
+            "name": "test-pbehavior-10",
+            "reason": "Test Engine",
+            "canonical_type": "pause",
+            "icon_name": "test-pause-to-engine-icon",
+            "type": "test-pause-type-to-engine",
+            "type_name": "Engine pause"
           }
         }
       ],

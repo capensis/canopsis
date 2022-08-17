@@ -108,7 +108,7 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `acked` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.ack,
-      cond: { type: PATTERN_CONDITIONS.equal, value: true },
+      cond: { type: PATTERN_CONDITIONS.exist, value: true },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -124,7 +124,7 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `not acked` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.ack,
-      cond: { type: PATTERN_CONDITIONS.equal, value: false },
+      cond: { type: PATTERN_CONDITIONS.exist, value: false },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -140,7 +140,7 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `snoozed` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.snooze,
-      cond: { type: PATTERN_CONDITIONS.equal, value: true },
+      cond: { type: PATTERN_CONDITIONS.exist, value: true },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -156,7 +156,7 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `not snoozed` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.snooze,
-      cond: { type: PATTERN_CONDITIONS.equal, value: false },
+      cond: { type: PATTERN_CONDITIONS.exist, value: false },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -172,7 +172,7 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `canceled` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.canceled,
-      cond: { type: PATTERN_CONDITIONS.equal, value: true },
+      cond: { type: PATTERN_CONDITIONS.exist, value: true },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -188,7 +188,7 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `not canceled` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.canceled,
-      cond: { type: PATTERN_CONDITIONS.equal, value: false },
+      cond: { type: PATTERN_CONDITIONS.exist, value: false },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -204,7 +204,7 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `ticket associated` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.ticket,
-      cond: { type: PATTERN_CONDITIONS.equal, value: true },
+      cond: { type: PATTERN_CONDITIONS.exist, value: true },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -220,7 +220,7 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `ticket not associated` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.ticket,
-      cond: { type: PATTERN_CONDITIONS.equal, value: false },
+      cond: { type: PATTERN_CONDITIONS.exist, value: false },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -393,7 +393,6 @@ describe('pattern form converters', () => {
     const value = [Faker.lorem.word()];
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.hasEvery, value },
     };
 
@@ -412,7 +411,6 @@ describe('pattern form converters', () => {
     const value = [Faker.lorem.word()];
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.hasOneOf, value },
     };
 
@@ -431,7 +429,6 @@ describe('pattern form converters', () => {
     const value = [Faker.lorem.word()];
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.hasNot, value },
     };
 
@@ -449,7 +446,6 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `is empty` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.isEmpty, value: true },
     };
 
@@ -459,6 +455,7 @@ describe('pattern form converters', () => {
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.connectorName,
       operator: PATTERN_OPERATORS.isEmpty,
+      value: [],
     });
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
@@ -466,7 +463,6 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `is not empty` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.isEmpty, value: false },
     };
 
@@ -476,6 +472,7 @@ describe('pattern form converters', () => {
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.connectorName,
       operator: PATTERN_OPERATORS.isNotEmpty,
+      value: [],
     });
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
@@ -562,7 +559,13 @@ describe('pattern form converters', () => {
     const lastHour = 3600;
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.creationDate,
-      cond: { type: PATTERN_CONDITIONS.relativeTime, value: lastHour },
+      cond: {
+        type: PATTERN_CONDITIONS.relativeTime,
+        value: {
+          value: lastHour,
+          unit: TIME_UNITS.second,
+        },
+      },
     };
 
     const form = patternRuleToForm(patternRule);

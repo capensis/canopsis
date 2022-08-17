@@ -20,6 +20,7 @@
     "chartjs-plugin-zoom": "^1.1.1",
     "core-js": "^3.6.5",
     "cytoscape": "^3.19.0",
+    "cytoscape-cise": "^1.0.0",
     "cytoscape-dagre": "^2.3.2",
     "cytoscape-node-html-label": "^1.2.2",
     "dayspan": "^0.12.2",
@@ -30,10 +31,14 @@
     "flat": "^4.1.0",
     "handlebars": "^4.0.11",
     "jodit": "^3.2.38",
+    "leaflet": "^1.8.0",
     "lodash": "^4.17.5",
+    "mermaid": "^9.1.3",
     "moment": "^2.22.2",
     "moment-duration-format": "^2.2.2",
     "moment-timezone": "^0.5.21",
+    "monaco-editor": "0.30.*",
+    "monaco-mermaid": "^1.0.6",
     "nightwatch-xhr": "^0.4.6",
     "normalizr": "^3.2.4",
     "portal-vue": "^2.1.7",
@@ -60,6 +65,7 @@
     "vue-resize-text": "^0.1.0",
     "vue-router": "^3.0.1",
     "vue-tour": "^1.3.0",
+    "vue2-leaflet": "^2.7.1",
     "vuedraggable": "^2.17.0",
     "vuetify": "1.5.22",
     "vuex": "^3.0.1",
@@ -97,6 +103,7 @@
     "jest-image-snapshot": "^4.5.1",
     "jest-localstorage-mock": "^2.2.0",
     "lint-staged": "^6.0.0",
+    "monaco-editor-webpack-plugin": "^6.0.0",
     "mutation-observer": "^1.0.3",
     "nightwatch": "1.3.5",
     "nightwatch-record": "^0.2.0",
@@ -141,6 +148,7 @@
     ]
   },
   "resolutions": {
-    "dayspan/moment": "^2.22.2"
+    "dayspan/moment": "^2.22.2",
+    "moment-timezone/moment": "^2.22.2"
   }
 }

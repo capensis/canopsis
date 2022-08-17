@@ -3,44 +3,57 @@ package context
 import (
 	"context"
 	"errors"
+	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
+	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
-
-const bulkMaxSize = 10000
 
 func NewEnrichmentCenter(
 	adapter libentity.Adapter,
-	enableEnrich bool,
+	dbClient libmongo.DbClient,
 	entityServiceManager entityservice.Manager,
 	metricMetaUpdater metrics.MetaUpdater,
 ) EnrichmentCenter {
 	return &center{
+		dbClient:             dbClient,
+		dbCollection:         dbClient.Collection(libmongo.EntityMongoCollection),
 		adapter:              adapter,
-		enableEnrich:         enableEnrich,
 		entityServiceManager: entityServiceManager,
 		metricMetaUpdater:    metricMetaUpdater,
 	}
 }
 
 type center struct {
+	dbClient             libmongo.DbClient
+	dbCollection         libmongo.DbCollection
 	adapter              libentity.Adapter
-	enableEnrich         bool
 	entityServiceManager entityservice.Manager
 	metricMetaUpdater    metrics.MetaUpdater
 }
 
-func (c *center) Handle(ctx context.Context, event types.Event, fields EnrichFields) (*types.Entity, UpdatedEntityServices, error) {
+func (c *center) Handle(ctx context.Context, event types.Event) (*types.Entity, UpdatedEntityServices, error) {
 	updatedServices := UpdatedEntityServices{}
-	eventEntity, entities, err := c.createEntities(ctx, event, fields)
-	if err != nil {
-		return nil, updatedServices, err
+	var eventEntity *types.Entity
+	var entities []types.Entity
+	var err error
+	if event.IsOnlyServiceUpdate() {
+		eventEntity, err = c.findEntityByID(ctx, event.GetEID())
+		if err != nil {
+			return nil, updatedServices, err
+		}
+	} else {
+		eventEntity, entities, err = c.createEntities(ctx, event)
+		if err != nil {
+			return nil, updatedServices, err
+		}
 	}
 
 	if eventEntity == nil {
@@ -79,10 +92,6 @@ func (c *center) Handle(ctx context.Context, event types.Event, fields EnrichFie
 	updatedEntities = append(updatedEntities, resources...)
 	if len(updatedEntities) > 0 {
 		go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
-	}
-
-	if !eventEntity.Enabled {
-		return eventEntity, updatedServices, nil
 	}
 
 	found := false
@@ -208,42 +217,127 @@ func (c *center) UpdateEntityInfos(ctx context.Context, entity *types.Entity) (U
 	return updatedServices, nil
 }
 
+func (c *center) getConnectorImpactedServices(ctx context.Context, dependencies []string) ([]string, error) {
+	cursor, err := c.dbCollection.Aggregate(
+		ctx,
+		[]bson.M{
+			{
+				"$match": bson.M{
+					"type":    types.EntityTypeService,
+					"depends": bson.M{"$in": dependencies},
+				},
+			},
+			{
+				"$project": bson.M{
+					"_id": 1,
+				},
+			},
+		},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+
+	var ids []string
+	for cursor.Next(ctx) {
+		var serviceIdDoc struct {
+			ID string `bson:"_id"`
+		}
+
+		err = cursor.Decode(&serviceIdDoc)
+		if err != nil {
+			return nil, err
+		}
+
+		ids = append(ids, serviceIdDoc.ID)
+	}
+
+	return ids, nil
+}
+
 func (c *center) UpdateImpactedServices(ctx context.Context) error {
-	cursor, err := c.adapter.GetImpactedServicesInfo(ctx)
+	cursor, err := c.dbCollection.Aggregate(
+		ctx,
+		[]bson.M{
+			{
+				"$match": bson.M{"type": types.EntityTypeConnector},
+			},
+			{
+				"$project": bson.M{
+					"_id":     1,
+					"impact":  1,
+					"depends": 1,
+				},
+			},
+		},
+	)
 	if err != nil {
 		return err
 	}
 
-	writeModels := make([]mongo.WriteModel, 0, bulkMaxSize)
-
 	defer cursor.Close(ctx)
+
+	var newModel mongo.WriteModel
+	writeModels := make([]mongo.WriteModel, 0, canopsis.DefaultBulkSize)
+	bulkBytesSize := 0
+
 	for cursor.Next(ctx) {
 		var info struct {
-			ID               string   `bson:"_id"`
-			ImpactedServices []string `bson:"impacted_services"`
+			ID      string   `bson:"_id"`
+			Impact  []string `bson:"impact"`
+			Depends []string `bson:"depends"`
 		}
-		err := cursor.Decode(&info)
+
+		err = cursor.Decode(&info)
 		if err != nil {
 			return err
 		}
 
-		if len(info.ImpactedServices) > 0 {
-			writeModels = append(writeModels, mongo.NewUpdateOneModel().SetFilter(bson.M{"_id": info.ID}).SetUpdate(bson.M{
-				"$set": bson.M{"impacted_services": info.ImpactedServices},
-			}))
-		} else {
-			writeModels = append(writeModels, mongo.NewUpdateOneModel().SetFilter(bson.M{"_id": info.ID}).SetUpdate(bson.M{
-				"$unset": bson.M{"impacted_services": ""},
-			}))
+		impServs, err := c.getConnectorImpactedServices(ctx, append(info.Impact, info.Depends...))
+		if err != nil {
+			return err
 		}
 
-		if len(writeModels) == entityservice.BulkMaxSize {
+		if len(impServs) > 0 {
+			newModel = mongo.NewUpdateOneModel().SetFilter(bson.M{"_id": info.ID}).SetUpdate(bson.M{
+				"$set": bson.M{"impacted_services": impServs},
+			})
+		} else {
+			newModel = mongo.NewUpdateOneModel().SetFilter(bson.M{"_id": info.ID}).SetUpdate(bson.M{
+				"$unset": bson.M{"impacted_services": ""},
+			})
+		}
+
+		b, err := bson.Marshal(newModel)
+		if err != nil {
+			return err
+		}
+
+		newModelLen := len(b)
+		if bulkBytesSize+newModelLen > canopsis.DefaultBulkBytesSize {
 			err := c.adapter.Bulk(ctx, writeModels)
 			if err != nil {
 				return err
 			}
 
 			writeModels = writeModels[:0]
+			bulkBytesSize = 0
+		}
+
+		bulkBytesSize += newModelLen
+		writeModels = append(writeModels, newModel)
+
+		if len(writeModels) == canopsis.DefaultBulkSize {
+			err := c.adapter.Bulk(ctx, writeModels)
+			if err != nil {
+				return err
+			}
+
+			writeModels = writeModels[:0]
+			bulkBytesSize = 0
 		}
 	}
 
@@ -300,7 +394,7 @@ func (c *center) updateComponentInfos(ctx context.Context, event types.Event, en
 }
 
 // createEntities creates connection, component, resource entities if they don't exist.
-func (c *center) createEntities(ctx context.Context, event types.Event, fields EnrichFields) (*types.Entity, []types.Entity, error) {
+func (c *center) createEntities(ctx context.Context, event types.Event) (*types.Entity, []types.Entity, error) {
 	if event.SourceType != types.SourceTypeResource && event.SourceType != types.SourceTypeComponent {
 		return nil, nil, nil
 	}
@@ -388,27 +482,6 @@ func (c *center) createEntities(ctx context.Context, event types.Event, fields E
 		entities = []types.Entity{connector, component, *entity}
 	}
 
-	if c.enableEnrich {
-		set, err := c.setExtraInfos(event, entity, fields)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		if set {
-			found := false
-			for _, v := range entities {
-				if entity.ID == v.ID {
-					found = true
-					break
-				}
-			}
-
-			if !found {
-				entities = append(entities, *entity)
-			}
-		}
-	}
-
 	insertedIDs, err := c.adapter.UpsertMany(ctx, entities)
 	if err != nil {
 		return nil, nil, err
@@ -445,25 +518,4 @@ func (c *center) createEntities(ctx context.Context, event types.Event, fields E
 	}
 
 	return entity, inserted, nil
-}
-
-// setExtraInfos sets infos from event to entity if they are allowed by enrich fields.
-func (c *center) setExtraInfos(event types.Event, entity *types.Entity, fields EnrichFields) (bool, error) {
-	set := false
-	for key, val := range event.ExtraInfos {
-		if !fields.Allow(key) {
-			continue
-		}
-
-		value, err := types.InterfaceToString(val)
-		if err != nil {
-			return false, err
-		}
-
-		info := types.NewInfo(key, "", value)
-		entity.Infos[info.Name] = info
-		set = true
-	}
-
-	return set, nil
 }
