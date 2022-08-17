@@ -1,9 +1,9 @@
 <template lang="pug">
   div.pa-2
     v-layout.mx-1(wrap)
-      v-flex(v-if="hasAccessToCategory", xs3)
+      v-flex(xs3)
         c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
-      v-flex(v-if="hasAccessToUserFilter", xs4)
+      v-flex(xs4)
         v-layout(row, wrap, align-center)
           filter-selector(
             :label="$t('settings.selectAFilter')",
@@ -21,16 +21,36 @@
             with-service-weather,
             private
           )
+
     template(v-if="mapState")
       v-fade-transition(v-if="pending", key="progress", mode="out-in")
         v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
     template(v-else)
       v-layout.pa-4(v-if="pending", justify-center)
         v-progress-circular(color="primary", indeterminate)
-    component(v-if="mapState", :is="component", :map="mapState")
+
+    map-breadcrumbs(
+      v-if="previousMaps.length",
+      :previous-maps="previousMaps",
+      :active-map="mapState",
+      :pending="pending",
+      @click="backToBreadcrumb"
+    )
+    component(
+      v-if="mapState",
+      :is="component",
+      :map="mapState",
+      :popup-template="widget.parameters.entity_info_template",
+      :alarms-columns="widget.parameters.alarms_columns",
+      :color-indicator="widget.parameters.color_indicator",
+      popup-actions,
+      @show:map="showMap"
+    )
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import { MAP_TYPES } from '@/constants';
 
 import { permissionsWidgetsMapCategory } from '@/mixins/permissions/widgets/map/category';
@@ -38,15 +58,22 @@ import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/f
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import { entitiesMapMixin } from '@/mixins/entities/map';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
+import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
+
+import MapBreadcrumbs from './partials/map-breadcrumbs.vue';
+
+const { mapActions: mapMapActions } = createNamespacedHelpers('map');
+const { mapActions: mapActiveViewActions } = createNamespacedHelpers('activeView');
 
 export default {
   components: {
+    MapBreadcrumbs,
     FilterSelector,
     FiltersListBtn,
+    MermaidPreview,
   },
   mixins: [
     permissionsWidgetsMapCategory,
@@ -54,7 +81,6 @@ export default {
     widgetPeriodicRefreshMixin,
     widgetFilterSelectMixin,
     widgetFetchQueryMixin,
-    entitiesMapMixin,
   ],
   props: {
     widget: {
@@ -66,6 +92,8 @@ export default {
     return {
       pending: false,
       mapState: undefined,
+      previousMaps: [],
+      activeMapId: this.widget.parameters.map,
     };
   },
   computed: {
@@ -73,15 +101,51 @@ export default {
       return {
         [MAP_TYPES.geo]: 'span',
         [MAP_TYPES.flowchart]: 'span',
-        [MAP_TYPES.mermaid]: 'span',
+        [MAP_TYPES.mermaid]: 'mermaid-preview',
         [MAP_TYPES.treeOfDependencies]: 'span',
       }[this.mapState.type];
     },
   },
+  watch: {
+    activeMapId: 'fetchList',
+  },
+  created() {
+    this.registerEditingOffHandler(this.clearPreviousMaps);
+  },
+  beforeDestroy() {
+    this.unregisterEditingOffHandler(this.clearPreviousMaps);
+  },
   mounted() {
-    this.fetchList();
+    if (this.editing) {
+      this.fetchList();
+    }
   },
   methods: {
+    ...mapMapActions({
+      fetchMapStateWithoutStore: 'fetchItemStateWithoutStore',
+    }),
+    ...mapActiveViewActions({
+      registerEditingOffHandler: 'registerEditingOffHandler',
+      unregisterEditingOffHandler: 'unregisterEditingOffHandler',
+    }),
+
+    showMap(map) {
+      this.activeMapId = map._id;
+      this.previousMaps.push({ ...this.mapState });
+    },
+
+    clearPreviousMaps() {
+      this.activeMapId = this.widget.parameters.map;
+      this.previousMaps = [];
+    },
+
+    backToBreadcrumb({ index }) {
+      this.mapState = this.previousMaps[index];
+      this.activeMapId = this.mapState._id;
+
+      this.previousMaps = this.previousMaps.slice(0, index);
+    },
+
     updateCategory(category) {
       const categoryId = category && category._id;
 
@@ -100,7 +164,7 @@ export default {
       this.pending = true;
 
       this.mapState = await this.fetchMapStateWithoutStore({
-        id: this.widget.parameters.map,
+        id: this.activeMapId,
         params: this.query,
       });
 

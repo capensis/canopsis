@@ -1,80 +1,62 @@
 <template lang="pug">
-  div.mermaid-preview(:class="{ 'mermaid-preview--error': !parsed }", v-html="svg")
+  panzoom.mermaid-preview(
+    ref="panzoom",
+    :style="containerStyles",
+    :help-text="$t('mermaid.panzoom.helpText')"
+  )
+    mermaid-code-preview.mermaid-preview__preview(:value="map.parameters.code")
+    mermaid-points-preview.mermaid-preview__points(
+      :points="map.parameters.points",
+      :popup-template="popupTemplate",
+      :popup-actions="popupActions",
+      :alarms-columns="alarmsColumns",
+      :color-indicator="colorIndicator",
+      @show:map="$emit('show:map', $event)"
+    )
 </template>
 
 <script>
-import { merge } from 'lodash';
+import Panzoom from '@/components/common/panzoom/panzoom.vue';
 
-import { renderMermaid } from '@/helpers/mermaid';
-
-import { MERMAID_THEME_PROPERTIES_BY_NAME } from '@/constants';
+import MermaidPointsPreview from './mermaid-points-preview.vue';
+import MermaidCodePreview from './mermaid-code-preview.vue';
 
 export default {
+  components: { Panzoom, MermaidPointsPreview, MermaidCodePreview },
   props: {
-    value: {
-      type: String,
-      required: false,
-    },
-    config: {
+    map: {
       type: Object,
-      default: () => ({}),
+      required: true,
     },
-    name: {
-      type: String,
-      default: 'mermaid',
-    },
-    theme: {
+    popupTemplate: {
       type: String,
       required: false,
     },
-  },
-  data() {
-    return {
-      svg: '',
-      parsed: false,
-    };
+    popupActions: {
+      type: Boolean,
+      default: false,
+    },
+    alarmsColumns: {
+      type: Array,
+      required: false,
+    },
+    colorIndicator: {
+      type: String,
+      required: false,
+    },
   },
   computed: {
-    resultConfig() {
-      const themeProperties = MERMAID_THEME_PROPERTIES_BY_NAME[this.theme] ?? {};
+    containerStyles() {
+      const minHeight = Math.max.apply(null, this.map.parameters.points.map(({ y }) => y));
 
-      return merge({
-        theme: this.theme,
-        ...themeProperties,
-
-        er: {
-          useMaxWidth: false,
-        },
-        pie: {
-          useMaxWidth: false,
-        },
-        sequence: {
-          useMaxWidth: false,
-        },
-        flowchart: {
-        },
-        requirement: {
-          useMaxWidth: false,
-        },
-      }, this.config);
+      return {
+        minHeight: `${minHeight}px`,
+      };
     },
   },
   watch: {
-    value: {
-      immediate: true,
-      handler: 'renderMermaid',
-    },
-    resultConfig: 'renderMermaid',
-  },
-  methods: {
-    renderMermaid() {
-      try {
-        this.svg = renderMermaid(this.value, this.resultConfig);
-
-        this.parsed = true;
-      } catch (err) {
-        this.parsed = false;
-      }
+    map() {
+      this.$refs.panzoom.reset();
     },
   },
 };
@@ -82,15 +64,16 @@ export default {
 
 <style lang="scss">
 .mermaid-preview {
-  height: 100%;
-
-  svg {
+  &__preview {
     width: 800px;
-    max-width: 800px !important;
   }
 
-  &--error svg {
-    opacity: 0.5;
+  &__points {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
   }
 }
 </style>
