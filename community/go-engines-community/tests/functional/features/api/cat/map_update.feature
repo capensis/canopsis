@@ -143,7 +143,7 @@ Feature: Update a map
     """json
     {
       "errors": {
-        "type": "Type must be one of [mermaid]."
+        "type": "Type must be one of [mermaid geo]."
       }
     }
     """
