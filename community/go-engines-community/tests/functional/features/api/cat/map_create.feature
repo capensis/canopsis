@@ -140,6 +140,147 @@ Feature: Create a map
     }
     """
 
+  Scenario: given create geo map request should return ok
+    When I am admin
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "name": "test-map-to-create-2-name",
+      "type": "geo",
+      "parameters": {
+        "points": [
+          {
+            "coordinates": {
+              "lat": 62.34960927573042,
+              "lng": 74.02834455685206
+            },
+            "entity": "test-resource-to-map-edit-1/test-component-default"
+          },
+          {
+            "coordinates": {
+              "lat": 63.93737246791484,
+              "lng": 34.991989666087385
+            },
+            "map": "test-map-to-map-edit-1"
+          },
+          {
+            "coordinates": {
+              "lat": 61.52269494598361,
+              "lng": 55.037685420804365
+            },
+            "entity": "test-resource-to-map-edit-2/test-component-default",
+            "map": "test-map-to-map-edit-2"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-map-to-create-2-name",
+      "type": "geo",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "parameters": {
+        "points": [
+          {
+            "coordinates": {
+              "lat": 62.34960927573042,
+              "lng": 74.02834455685206
+            },
+            "entity": {
+              "_id": "test-resource-to-map-edit-1/test-component-default",
+              "name": "test-resource-to-map-edit-1"
+            },
+            "map": null
+          },
+          {
+            "coordinates": {
+              "lat": 63.93737246791484,
+              "lng": 34.991989666087385
+            },
+            "entity": null,
+            "map": {
+              "_id": "test-map-to-map-edit-1",
+              "name": "test-map-to-map-edit-1-name"
+            }
+          },
+          {
+            "coordinates": {
+              "lat": 61.52269494598361,
+              "lng": 55.037685420804365
+            },
+            "entity": {
+              "_id": "test-resource-to-map-edit-2/test-component-default",
+              "name": "test-resource-to-map-edit-2"
+            },
+            "map": {
+              "_id": "test-map-to-map-edit-2",
+              "name": "test-map-to-map-edit-2-name"
+            }
+          }
+        ]
+      }
+    }
+    """
+    When I do GET /api/v4/cat/maps/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-map-to-create-2-name",
+      "type": "geo",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "parameters": {
+        "points": [
+          {
+            "coordinates": {
+              "lat": 62.34960927573042,
+              "lng": 74.02834455685206
+            },
+            "entity": {
+              "_id": "test-resource-to-map-edit-1/test-component-default",
+              "name": "test-resource-to-map-edit-1"
+            },
+            "map": null
+          },
+          {
+            "coordinates": {
+              "lat": 63.93737246791484,
+              "lng": 34.991989666087385
+            },
+            "entity": null,
+            "map": {
+              "_id": "test-map-to-map-edit-1",
+              "name": "test-map-to-map-edit-1-name"
+            }
+          },
+          {
+            "coordinates": {
+              "lat": 61.52269494598361,
+              "lng": 55.037685420804365
+            },
+            "entity": {
+              "_id": "test-resource-to-map-edit-2/test-component-default",
+              "name": "test-resource-to-map-edit-2"
+            },
+            "map": {
+              "_id": "test-map-to-map-edit-2",
+              "name": "test-map-to-map-edit-2-name"
+            }
+          }
+        ]
+      }
+    }
+    """
+
   Scenario: given create request with missing fields should return bad request error
     When I am admin
     When I do POST /api/v4/cat/maps:
@@ -168,7 +309,7 @@ Feature: Create a map
     """json
     {
       "errors": {
-        "type": "Type must be one of [mermaid]."
+        "type": "Type must be one of [mermaid geo]."
       }
     }
     """
@@ -215,10 +356,7 @@ Feature: Create a map
       "type": "mermaid",
       "parameters": {
         "points": [
-          {
-            "x": 0,
-            "y": 0
-          }
+          {}
         ]
       }
     }
@@ -230,6 +368,121 @@ Feature: Create a map
       "errors": {
         "name": "Name is missing.",
         "parameters.code": "Code is missing.",
+        "parameters.points.0.x": "X is missing.",
+        "parameters.points.0.y": "Y is missing.",
+        "parameters.points.0.entity": "Entity is required when Map is not present.",
+        "parameters.points.0.map": "Map is required when Entity is not present."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "geo"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.points": "Points is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "geo",
+      "parameters": {
+        "points": []
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.points": "Points is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "geo",
+      "parameters": {
+        "points": [
+          {}
+        ]
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.points.0.coordinates": "Coordinates is missing.",
+        "parameters.points.0.entity": "Entity is required when Map is not present.",
+        "parameters.points.0.map": "Map is required when Entity is not present."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "geo",
+      "parameters": {
+        "points": [
+          {
+            "coordinates": {}
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.points.0.coordinates.lat": "Lat is missing.",
+        "parameters.points.0.coordinates.lng": "Lng is missing.",
+        "parameters.points.0.entity": "Entity is required when Map is not present.",
+        "parameters.points.0.map": "Map is required when Entity is not present."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "geo",
+      "parameters": {
+        "points": [
+          {
+            "coordinates": {
+              "lat": 10000,
+              "lng": 10000
+            }
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.points.0.coordinates.lat": "Lat must contain valid latitude coordinates.",
+        "parameters.points.0.coordinates.lng": "Lng must contain valid longitude coordinates.",
         "parameters.points.0.entity": "Entity is required when Map is not present.",
         "parameters.points.0.map": "Map is required when Entity is not present."
       }
