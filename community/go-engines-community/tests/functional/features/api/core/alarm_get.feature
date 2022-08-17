@@ -14,19 +14,15 @@ Feature: Get alarms
           "entity": {
             "_id": "test-resource-to-alarm-get-3/test-component-to-alarm-get",
             "category": null,
+            "connector": "test-connector-default/test-connector-default-name",
             "component": "test-component-to-alarm-get",
-            "depends": [
-              "test-connector-default/test-connector-default-name"
-            ],
             "enabled": true,
-            "impact": [
-              "test-component-to-alarm-get"
-            ],
             "impact_level": 1,
             "infos": {},
-            "measurements": null,
             "name": "test-resource-to-alarm-get-3",
-            "type": "resource"
+            "type": "resource",
+            "depends_count": 0,
+            "impacts_count": 0
           },
           "impact_state": 0,
           "infos": {},
@@ -58,6 +54,7 @@ Feature: Get alarms
             "state": {
               "_t": "statedec",
               "a": "test-connector-default.test-connector-default-name",
+              "user_id": "",
               "m": "test-alarm-to-get-3-output",
               "t": 1597030241,
               "initiator": "external",
@@ -66,6 +63,7 @@ Feature: Get alarms
             "status": {
               "_t": "statusdec",
               "a": "test-connector-default.test-connector-default-name",
+              "user_id": "",
               "m": "test-alarm-to-get-3-output",
               "t": 1597030241,
               "initiator": "external",
@@ -86,19 +84,15 @@ Feature: Get alarms
               "created": 1592215337,
               "updated": 1592215337
             },
+            "connector": "test-connector-default/test-connector-default-name",
             "component": "test-component-to-alarm-get",
-            "depends": [
-              "test-connector-default/test-connector-default-name"
-            ],
             "enabled": true,
-            "impact": [
-              "test-component-to-alarm-get"
-            ],
             "impact_level": 1,
             "infos": {},
-            "measurements": null,
             "name": "test-resource-to-alarm-get-2",
-            "type": "resource"
+            "type": "resource",
+            "depends_count": 0,
+            "impacts_count": 0
           },
           "impact_state": 1,
           "infos": {},
@@ -128,6 +122,7 @@ Feature: Get alarms
             "state": {
               "_t": "stateinc",
               "a": "test-connector-default.test-connector-default-name",
+              "user_id": "",
               "m": "test-alarm-to-get-2-output",
               "t": 1597030220,
               "initiator": "external",
@@ -136,6 +131,7 @@ Feature: Get alarms
             "status": {
               "_t": "statusinc",
               "a": "test-connector-default.test-connector-default-name",
+              "user_id": "",
               "m": "test-alarm-to-get-2-output",
               "t": 1597030220,
               "initiator": "external",
@@ -156,14 +152,9 @@ Feature: Get alarms
               "created": 1592215337,
               "updated": 1592215337
             },
+            "connector": "test-connector-default/test-connector-default-name",
             "component": "test-component-to-alarm-get",
-            "depends": [
-              "test-connector-default/test-connector-default-name"
-            ],
             "enabled": true,
-            "impact": [
-              "test-component-to-alarm-get"
-            ],
             "impact_level": 1,
             "infos": {
               "test-resource-to-alarm-get-1-info-1": {
@@ -197,9 +188,10 @@ Feature: Get alarms
                 "value": ["test-resource-to-alarm-get-1-info-6-value"]
               }
             },
-            "measurements": null,
             "name": "test-resource-to-alarm-get-1",
-            "type": "resource"
+            "type": "resource",
+            "depends_count": 0,
+            "impacts_count": 0
           },
           "impact_state": 3,
           "infos": {},
@@ -218,6 +210,7 @@ Feature: Get alarms
             "last_comment": {
               "_t": "comment",
               "a": "root",
+              "user_id": "",
               "m": "test-alarm-to-get-1-comment-2",
               "t": 1597030221,
               "initiator": "user",
@@ -237,6 +230,7 @@ Feature: Get alarms
             "state": {
               "_t": "stateinc",
               "a": "test-connector-default.test-connector-default-name",
+              "user_id": "",
               "m": "test-alarm-to-get-1-output",
               "t": 1597030219,
               "initiator": "external",
@@ -245,6 +239,7 @@ Feature: Get alarms
             "status": {
               "_t": "statusinc",
               "a": "test-connector-default.test-connector-default-name",
+              "user_id": "",
               "m": "test-alarm-to-get-1-output",
               "t": 1597030219,
               "initiator": "external",
@@ -718,14 +713,9 @@ Feature: Get alarms
           "created": 1592215337,
           "updated": 1592215337
         },
+        "connector": "test-connector-default/test-connector-default-name",
         "component": "test-component-to-alarm-get",
-        "depends": [
-          "test-connector-default/test-connector-default-name"
-        ],
         "enabled": true,
-        "impact": [
-          "test-component-to-alarm-get"
-        ],
         "impact_level": 1,
         "infos": {
           "test-resource-to-alarm-get-1-info-1": {
@@ -759,9 +749,10 @@ Feature: Get alarms
             "value": ["test-resource-to-alarm-get-1-info-6-value"]
           }
         },
-        "measurements": null,
         "name": "test-resource-to-alarm-get-1",
-        "type": "resource"
+        "type": "resource",
+        "depends_count": 0,
+        "impacts_count": 0
       },
       "impact_state": 3,
       "infos": {},
@@ -780,6 +771,7 @@ Feature: Get alarms
         "last_comment": {
           "_t": "comment",
           "a": "root",
+          "user_id": "",
           "m": "test-alarm-to-get-1-comment-2",
           "t": 1597030221,
           "initiator": "user",
@@ -799,6 +791,7 @@ Feature: Get alarms
         "state": {
           "_t": "stateinc",
           "a": "test-connector-default.test-connector-default-name",
+          "user_id": "",
           "m": "test-alarm-to-get-1-output",
           "t": 1597030219,
           "initiator": "external",
@@ -807,6 +800,7 @@ Feature: Get alarms
         "status": {
           "_t": "statusinc",
           "a": "test-connector-default.test-connector-default-name",
+          "user_id": "",
           "m": "test-alarm-to-get-1-output",
           "t": 1597030219,
           "initiator": "external",
@@ -819,26 +813,22 @@ Feature: Get alarms
     """
     When I do GET /api/v4/alarms/test-alarm-to-get-4
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
       "_id": "test-alarm-to-get-4",
       "entity": {
         "_id": "test-resource-to-alarm-get-3/test-component-to-alarm-get",
         "category": null,
+        "connector": "test-connector-default/test-connector-default-name",
         "component": "test-component-to-alarm-get",
-        "depends": [
-          "test-connector-default/test-connector-default-name"
-        ],
         "enabled": true,
-        "impact": [
-          "test-component-to-alarm-get"
-        ],
         "impact_level": 1,
         "infos": {},
-        "measurements": null,
         "name": "test-resource-to-alarm-get-3",
-        "type": "resource"
+        "type": "resource",
+        "depends_count": 0,
+        "impacts_count": 0
       },
       "impact_state": 0,
       "infos": {},
@@ -872,6 +862,7 @@ Feature: Get alarms
         "state": {
           "_t": "statedec",
           "a": "test-connector-default.test-connector-default-name",
+          "user_id": "",
           "m": "test-alarm-to-get-4-output",
           "t": 1597030141,
           "initiator": "external",
@@ -880,6 +871,7 @@ Feature: Get alarms
         "status": {
           "_t": "statusdec",
           "a": "test-connector-default.test-connector-default-name",
+          "user_id": "",
           "m": "test-alarm-to-get-4-output",
           "t": 1597030141,
           "initiator": "external",

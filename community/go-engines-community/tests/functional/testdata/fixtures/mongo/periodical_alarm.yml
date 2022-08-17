@@ -414,6 +414,7 @@ periodical_alarm:
       connector_name: test-connector-name-to-entity-get
       component: test-component-to-entity-get
       resource: test-resource-to-entity-get-1
+      last_update_date: 1597030219
       state:
         _t: stateinc
         a: test-connector-to-entity-get.test-connector-name-to-entity-get
@@ -471,7 +472,7 @@ periodical_alarm:
         m: test-alarm-to-map-state-get-1-status-message
         t: 1605263992
         initiator: external
-        val: 0
+        val: 1
       ack:
         _t: ack
         a: root

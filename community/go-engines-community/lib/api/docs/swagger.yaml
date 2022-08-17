@@ -2546,6 +2546,34 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entities/context-graph:
+    get:
+      tags:
+        - entities
+      summary: Get context graph by id
+      description: Get context graph by id
+      operationId: entities-get-context-graph
+      parameters:
+        - name: _id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/entity.ContextGraphResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /entities/pbehavior-calendar:
     get:
       tags:
@@ -3133,8 +3161,15 @@ paths:
           required: true
           schema:
             type: string
+        - $ref: '#/components/parameters/withFlags'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          description: sort query
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -3148,7 +3183,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/entityservice.AlarmWithEntity'
+                          $ref: 'schemas_swagger.yaml#/definitions/entity.Entity'
         404:
           description: Not Found
           content:
@@ -3169,8 +3204,15 @@ paths:
           required: true
           schema:
             type: string
+        - $ref: '#/components/parameters/withFlags'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          description: sort query
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -3184,7 +3226,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/entityservice.AlarmWithEntity'
+                          $ref: 'schemas_swagger.yaml#/definitions/entity.Entity'
         404:
           description: Not Found
           content:
@@ -10017,6 +10059,13 @@ components:
         enum:
           - asc
           - desc
+    withFlags:
+      name: with_flags
+      in: query
+      description: with flags
+      required: false
+      schema:
+        type: boolean
   
   schemas:
     event.Event:

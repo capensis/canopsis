@@ -84,6 +84,11 @@ Feature: Get alarms
     {
       "data": [
         {
+          "entity": {
+            "_id": "test-resource-to-alarm-service-get-1-1/test-component-to-alarm-service-get-1",
+            "depends_count": 0,
+            "impacts_count": 1
+          },
           "v": {
             "connector": "test-connector-to-alarm-service-get-1",
             "connector_name": "test-connector-name-to-alarm-service-get-1",
@@ -92,6 +97,11 @@ Feature: Get alarms
           }
         },
         {
+          "entity": {
+            "_id": "test-resource-to-alarm-service-get-1-2/test-component-to-alarm-service-get-1",
+            "depends_count": 0,
+            "impacts_count": 1
+          },
           "v": {
             "connector": "test-connector-to-alarm-service-get-1",
             "connector_name": "test-connector-name-to-alarm-service-get-1",
@@ -100,6 +110,11 @@ Feature: Get alarms
           }
         },
         {
+          "entity": {
+            "_id": "test-resource-to-alarm-service-get-1-3/test-component-to-alarm-service-get-1",
+            "depends_count": 0,
+            "impacts_count": 1
+          },
           "v": {
             "connector": "test-connector-to-alarm-service-get-1",
             "connector_name": "test-connector-name-to-alarm-service-get-1",
