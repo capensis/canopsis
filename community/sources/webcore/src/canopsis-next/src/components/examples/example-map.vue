@@ -26,7 +26,7 @@
       geomap-marker(
         v-for="marker in markers",
         :key="marker.id",
-        :lat-lng="marker.coordinate",
+        :lat-lng="marker.coordinates",
         :options="{ data: marker.data }",
         draggable,
         @dragend="finishMovingMarker",
@@ -79,7 +79,7 @@ export default {
     return {
       markers: range(5).map(value => ({
         id: value,
-        coordinate: [value * 10, 50 + value * 10],
+        coordinates: [value * 10, 50 + value * 10],
         data: { id: uuid() },
       })),
     };
@@ -107,7 +107,7 @@ export default {
 
       const { lat, lng } = target.getLatLng();
 
-      this.markers[index].coordinate = [lat, lng];
+      this.markers[index].coordinates = [lat, lng];
     },
 
     addPoint({ latlng }) {
@@ -115,7 +115,7 @@ export default {
 
       this.markers.push({
         id,
-        coordinate: [latlng.lat, latlng.lng],
+        coordinates: [latlng.lat, latlng.lng],
         data: { id },
       });
 
