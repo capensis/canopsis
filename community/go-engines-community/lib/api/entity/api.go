@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
@@ -18,7 +20,6 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/valyala/fastjson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"net/http"
 )
 
 type API interface {
@@ -29,6 +30,7 @@ type API interface {
 	GetExport(c *gin.Context)
 	DownloadExport(c *gin.Context)
 	Clean(c *gin.Context)
+	GetContextGraph(c *gin.Context)
 }
 
 type api struct {
@@ -85,7 +87,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	entities, err := a.store.Find(c.Request.Context(), query)
+	entities, err := a.store.Find(c, query)
 	if err != nil {
 		panic(err)
 	}
@@ -116,7 +118,7 @@ func (a *api) StartExport(c *gin.Context) {
 	}
 
 	fields := exportFields.Fields()
-	taskID, err := a.exportExecutor.StartExecute(c.Request.Context(), export.Task{
+	taskID, err := a.exportExecutor.StartExecute(c, export.Task{
 		Filename:     "entities",
 		ExportFields: exportFields,
 		Separator:    separator,
@@ -154,13 +156,13 @@ func (a *api) StartExport(c *gin.Context) {
 // @Success 200 {object} ExportResponse
 func (a *api) GetExport(c *gin.Context) {
 	id := c.Param("id")
-	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
+	t, err := a.exportExecutor.GetStatus(c, id)
 	if err != nil {
 		panic(err)
 	}
 
 	if t == nil {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
@@ -172,13 +174,13 @@ func (a *api) GetExport(c *gin.Context) {
 
 func (a *api) DownloadExport(c *gin.Context) {
 	id := c.Param("id")
-	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
+	t, err := a.exportExecutor.GetStatus(c, id)
 	if err != nil {
 		panic(err)
 	}
 
 	if t == nil || t.Status != export.TaskStatusSucceeded {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
@@ -221,6 +223,28 @@ func (a *api) BulkDisable(c *gin.Context) {
 	a.toggle(c, false)
 }
 
+// GetContextGraph
+// @Success 200 {object} ContextGraphResponse
+func (a *api) GetContextGraph(c *gin.Context) {
+	var r ContextGraphRequest
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	res, err := a.store.GetContextGraph(c, r.ID)
+	if err != nil {
+		panic(err)
+	}
+
+	if res == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
 func (a *api) toggle(c *gin.Context, enabled bool) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -243,7 +267,6 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 		return
 	}
 
-	ctx := c.Request.Context()
 	response := ar.NewArray()
 
 	for idx, rawObject := range rawObjects {
@@ -267,7 +290,7 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 			continue
 		}
 
-		isToggled, simplifiedEntity, err := a.store.Toggle(ctx, request.ID, enabled)
+		isToggled, simplifiedEntity, err := a.store.Toggle(c, request.ID, enabled)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
@@ -304,7 +327,7 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 			a.actionLogger.Err(err, "failed to log action")
 		}
 
-		a.metricMetaUpdater.UpdateById(c.Request.Context(), simplifiedEntity.ID)
+		a.metricMetaUpdater.UpdateById(c, simplifiedEntity.ID)
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))

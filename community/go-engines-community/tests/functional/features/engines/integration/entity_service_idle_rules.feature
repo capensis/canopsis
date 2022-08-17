@@ -121,10 +121,8 @@ Feature: entity_service idle_rules integration
     {
       "data": [
         {
-          "entity": {
-            "_id": "test-idle-since-integration-resource-1/test-idle-since-integration-component",
-            "idle_since": {{ .idleSince }}
-          }
+          "_id": "test-idle-since-integration-resource-1/test-idle-since-integration-component",
+          "idle_since": {{ .idleSince }}
         }
       ],
       "meta": {
@@ -360,10 +358,8 @@ Feature: entity_service idle_rules integration
     {
       "data": [
         {
-          "entity": {
-            "_id": "test-entityservice-idle-since-integration-3",
-            "idle_since": {{ .idleSince }}
-          }
+          "_id": "test-entityservice-idle-since-integration-3",
+          "idle_since": {{ .idleSince }}
         }
       ],
       "meta": {

@@ -479,6 +479,12 @@ func RegisterRoutes(
 			)
 
 			entityRouter.GET(
+				"/context-graph",
+				middleware.Authorize(authObjEntity, permRead, enforcer),
+				entityAPI.GetContextGraph,
+			)
+
+			entityRouter.GET(
 				"/pbehaviors",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
 				middleware.Authorize(authObjPbh, permRead, enforcer),
@@ -514,8 +520,8 @@ func RegisterRoutes(
 			)
 		}
 
-		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
-			common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
+		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient, linksFetcher, logger), entityPublChan,
+			metricsEntityMetaUpdater, common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
 		entityserviceRouter := protected.Group("/entityservices")
 		{
 			entityserviceRouter.POST(
