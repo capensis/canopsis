@@ -3609,42 +3609,38 @@ Feature: get service weather
     Given I am admin
     When I send an event:
     """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-24",
-      "connector_name": "test-connector-name-pbehavior-weather-service-24",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-24",
-      "resource" : "test-resource-pbehavior-weather-service-24-1",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-24",
-      "connector_name": "test-connector-name-pbehavior-weather-service-24",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-24",
-      "resource" : "test-resource-pbehavior-weather-service-24-2",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-24",
-      "connector_name": "test-connector-name-pbehavior-weather-service-24",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-24",
-      "resource" : "test-resource-pbehavior-weather-service-24-3",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
+    [
+      {
+        "connector" : "test-connector-pbehavior-weather-service-24",
+        "connector_name": "test-connector-name-pbehavior-weather-service-24",
+        "source_type": "resource",
+        "event_type": "check",
+        "component" :  "test-component-pbehavior-weather-service-24",
+        "resource" : "test-resource-pbehavior-weather-service-24-1",
+        "state" : 2,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-pbehavior-weather-service-24",
+        "connector_name": "test-connector-name-pbehavior-weather-service-24",
+        "source_type": "resource",
+        "event_type": "check",
+        "component" :  "test-component-pbehavior-weather-service-24",
+        "resource" : "test-resource-pbehavior-weather-service-24-2",
+        "state" : 2,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-pbehavior-weather-service-24",
+        "connector_name": "test-connector-name-pbehavior-weather-service-24",
+        "source_type": "resource",
+        "event_type": "check",
+        "component" :  "test-component-pbehavior-weather-service-24",
+        "resource" : "test-resource-pbehavior-weather-service-24-3",
+        "state" : 2,
+        "output" : "noveo alarm"
+      }
+    ]
     """
     When I wait the end of 3 events processing
     When I do POST /api/v4/entityservices:
@@ -3871,42 +3867,38 @@ Feature: get service weather
     Given I am admin
     When I send an event:
     """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-25",
-      "connector_name": "test-connector-name-pbehavior-weather-service-25",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-25",
-      "resource" : "test-resource-pbehavior-weather-service-25-1",
-      "state" : 0,
-      "output" : "noveo alarm"
-    }
-    """
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-25",
-      "connector_name": "test-connector-name-pbehavior-weather-service-25",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-25",
-      "resource" : "test-resource-pbehavior-weather-service-25-2",
-      "state" : 0,
-      "output" : "noveo alarm"
-    }
-    """
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-25",
-      "connector_name": "test-connector-name-pbehavior-weather-service-25",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-25",
-      "resource" : "test-resource-pbehavior-weather-service-25-3",
-      "state" : 0,
-      "output" : "noveo alarm"
-    }
+    [
+      {
+        "connector" : "test-connector-pbehavior-weather-service-25",
+        "connector_name": "test-connector-name-pbehavior-weather-service-25",
+        "source_type": "resource",
+        "event_type": "check",
+        "component" :  "test-component-pbehavior-weather-service-25",
+        "resource" : "test-resource-pbehavior-weather-service-25-1",
+        "state" : 0,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-pbehavior-weather-service-25",
+        "connector_name": "test-connector-name-pbehavior-weather-service-25",
+        "source_type": "resource",
+        "event_type": "check",
+        "component" :  "test-component-pbehavior-weather-service-25",
+        "resource" : "test-resource-pbehavior-weather-service-25-2",
+        "state" : 0,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-pbehavior-weather-service-25",
+        "connector_name": "test-connector-name-pbehavior-weather-service-25",
+        "source_type": "resource",
+        "event_type": "check",
+        "component" :  "test-component-pbehavior-weather-service-25",
+        "resource" : "test-resource-pbehavior-weather-service-25-3",
+        "state" : 0,
+        "output" : "noveo alarm"
+      }
+    ]
     """
     When I wait the end of 3 events processing
     When I do POST /api/v4/entityservices:
@@ -4119,42 +4111,38 @@ Feature: get service weather
     Given I am admin
     When I send an event:
     """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-26",
-      "connector_name": "test-connector-name-pbehavior-weather-service-26",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-26",
-      "resource" : "test-resource-pbehavior-weather-service-26-1",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-26",
-      "connector_name": "test-connector-name-pbehavior-weather-service-26",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-26",
-      "resource" : "test-resource-pbehavior-weather-service-26-2",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-pbehavior-weather-service-26",
-      "connector_name": "test-connector-name-pbehavior-weather-service-26",
-      "source_type": "resource",
-      "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-26",
-      "resource" : "test-resource-pbehavior-weather-service-26-3",
-      "state" : 3,
-      "output" : "noveo alarm"
-    }
+    [
+      {
+        "connector" : "test-connector-pbehavior-weather-service-26",
+        "connector_name": "test-connector-name-pbehavior-weather-service-26",
+        "source_type": "resource",
+        "event_type": "check",
+        "component" :  "test-component-pbehavior-weather-service-26",
+        "resource" : "test-resource-pbehavior-weather-service-26-1",
+        "state" : 2,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-pbehavior-weather-service-26",
+        "connector_name": "test-connector-name-pbehavior-weather-service-26",
+        "source_type": "resource",
+        "event_type": "check",
+        "component" :  "test-component-pbehavior-weather-service-26",
+        "resource" : "test-resource-pbehavior-weather-service-26-2",
+        "state" : 2,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-pbehavior-weather-service-26",
+        "connector_name": "test-connector-name-pbehavior-weather-service-26",
+        "source_type": "resource",
+        "event_type": "check",
+        "component" :  "test-component-pbehavior-weather-service-26",
+        "resource" : "test-resource-pbehavior-weather-service-26-3",
+        "state" : 3,
+        "output" : "noveo alarm"
+      }
+    ]
     """
     When I wait the end of 3 events processing
     When I do POST /api/v4/entityservices:
@@ -4268,28 +4256,42 @@ Feature: get service weather
     """json
     [
       {
-        "_id": "test-pbehavior-weather-service-26"
-      },
-      {
         "_id": "test-resource-pbehavior-weather-service-26-1/test-component-pbehavior-weather-service-26"
       }
     ]
     """
     Then the response code should be 207
     When I wait the end of 2 events processing
-    When I do PUT /api/v4/bulk/entities/enable:
+    When I do PUT /api/v4/bulk/entities/disable:
     """json
     [
       {
         "_id": "test-pbehavior-weather-service-26"
-      },
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of event processing
+    When I do PUT /api/v4/bulk/entities/enable:
+    """json
+    [
       {
         "_id": "test-resource-pbehavior-weather-service-26-1/test-component-pbehavior-weather-service-26"
       }
     ]
     """
     Then the response code should be 207
-    When I wait the end of 3 events processing
+    When I wait the end of event processing
+    When I do PUT /api/v4/bulk/entities/enable:
+    """json
+    [
+      {
+        "_id": "test-pbehavior-weather-service-26"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of 2 events processing
     When I do GET /api/v4/weather-services?filter={{ .filterID }}
     Then the response code should be 200
     Then the response body should contain:
