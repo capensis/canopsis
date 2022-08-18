@@ -40,7 +40,9 @@ type BulkDeleteRequestItem struct {
 type ContextGraphRequest struct {
 	pagination.Query
 	entity.SortRequest
-	ID        string `form:"_id"`
+	ID        string `form:"_id" json:"_id"`
+	Search    string `form:"search" json:"search"`
+	Category  string `form:"category" json:"category"`
 	WithFlags bool   `form:"with_flags" json:"with_flags"`
 }
 

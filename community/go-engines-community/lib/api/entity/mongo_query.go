@@ -119,12 +119,21 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 	match bson.M,
 	paginationQuery pagination.Query,
 	sortRequest SortRequest,
+	category, search string,
 	withFlags bool,
 	now types.CpsTime,
 ) []bson.M {
 	q.clear(now)
 
-	q.entityMatch = append(q.entityMatch, bson.M{"$match": match})
+	and := []bson.M{match}
+	if category != "" {
+		and = append(and, bson.M{"category": bson.M{"$eq": category}})
+	}
+	if search != "" {
+		and = append(and, common.GetSearchQuery(search, q.defaultSearchByFields))
+	}
+
+	q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{"$and": and}})
 	q.handleSort(sortRequest)
 
 	if withFlags {
