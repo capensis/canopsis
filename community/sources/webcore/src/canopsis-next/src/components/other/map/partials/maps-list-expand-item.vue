@@ -39,6 +39,9 @@ export default {
       }[this.map.type];
     },
   },
+  watch: {
+    map: 'fetchMapDetails',
+  },
   mounted() {
     this.fetchMapDetails();
   },

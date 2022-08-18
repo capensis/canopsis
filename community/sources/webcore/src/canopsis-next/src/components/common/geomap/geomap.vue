@@ -84,7 +84,7 @@ export default {
   &-control,
   &-top,
   &-bottom {
-    z-index: 7;
+    z-index: 5;
   }
 }
 </style>

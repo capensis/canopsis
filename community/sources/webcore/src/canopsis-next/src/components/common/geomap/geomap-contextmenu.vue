@@ -79,7 +79,7 @@ export default {
       this.latlng = latlng;
       this.marker = marker;
       this.pageX = originalEvent.pageX;
-      this.pageY = originalEvent.pageY;
+      this.pageY = originalEvent.pageY - window.scrollY;
       this.shown = true;
     },
 

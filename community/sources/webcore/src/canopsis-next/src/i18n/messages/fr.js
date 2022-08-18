@@ -3040,5 +3040,8 @@ export default merge({
     layers: 'Couches',
     zoomIn: 'Zoom in',
     zoomOut: 'Zoom out',
+    errors: {
+      pointsRequired: 'The points must be added',
+    },
   },
 }, featureService.get('i18n.fr'));
