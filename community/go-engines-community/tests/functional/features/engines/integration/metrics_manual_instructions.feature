@@ -6,6 +6,7 @@ Feature: Metrics should be added on alarm changes
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-1-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-1-name-1",
       "entity_pattern": [
@@ -46,6 +47,7 @@ Feature: Metrics should be added on alarm changes
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-1-2",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-1-name-2",
       "entity_pattern": [
@@ -86,6 +88,7 @@ Feature: Metrics should be added on alarm changes
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-1-3",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-1-name-3",
       "entity_pattern": [
@@ -171,7 +174,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-1-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-1-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -184,7 +187,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-1-name-2 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-1-2 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -197,7 +200,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-1-name-3 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-1-3 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -284,6 +287,7 @@ Feature: Metrics should be added on alarm changes
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-2-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-2-name-1",
       "entity_pattern": [
@@ -346,7 +350,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-2-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-2-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -362,6 +366,7 @@ Feature: Metrics should be added on alarm changes
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-2-2",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-2-name-2",
       "entity_pattern": [
@@ -424,7 +429,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-2-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-2-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -437,7 +442,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-2-name-2 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-2-2 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -456,6 +461,7 @@ Feature: Metrics should be added on alarm changes
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-3-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-3-name-1",
       "entity_pattern": [
@@ -561,7 +567,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-3-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-3-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -629,7 +635,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-3-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-3-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -648,6 +654,7 @@ Feature: Metrics should be added on alarm changes
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-4-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-4-name-1",
       "entity_pattern": [
@@ -685,10 +692,10 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I save response instructionID1={{ .lastResponse._id }}
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-4-2",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-4-name-2",
       "entity_pattern": [
@@ -726,7 +733,6 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I save response instructionID2={{ .lastResponse._id }}
     When I do POST /api/v4/cat/kpi-filters:
     """json
     {
@@ -798,7 +804,7 @@ Feature: Metrics should be added on alarm changes
     """json
     {
       "alarm": "{{ .alarmID }}",
-      "instruction": "{{ .instructionID1 }}"
+      "instruction": "test-instruction-to-manual-metrics-4-1"
     }
     """
     Then the response code should be 200
@@ -838,7 +844,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-4-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-4-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -851,7 +857,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-4-name-2 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-4-2 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -869,7 +875,7 @@ Feature: Metrics should be added on alarm changes
     """json
     {
       "alarm": "{{ .alarmID }}",
-      "instruction": "{{ .instructionID2 }}"
+      "instruction": "test-instruction-to-manual-metrics-4-2"
     }
     """
     Then the response code should be 200
@@ -909,7 +915,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-4-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-4-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -922,7 +928,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-4-name-2 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-4-2 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -941,6 +947,7 @@ Feature: Metrics should be added on alarm changes
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-5-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-5-name-1",
       "entity_pattern": [
@@ -978,7 +985,6 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I save response instructionID={{ .lastResponse._id }}
     When I do POST /api/v4/cat/kpi-filters:
     """json
     {
@@ -1063,7 +1069,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-5-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-5-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1083,7 +1089,7 @@ Feature: Metrics should be added on alarm changes
     """json
     {
       "alarm": "{{ .alarmID }}",
-      "instruction": "{{ .instructionID }}"
+      "instruction": "test-instruction-to-manual-metrics-5-1"
     }
     """
     Then the response code should be 200
@@ -1098,7 +1104,7 @@ Feature: Metrics should be added on alarm changes
     """json
     {
       "alarm": "{{ .alarmID }}",
-      "instruction": "{{ .instructionID }}"
+      "instruction": "test-instruction-to-manual-metrics-5-1"
     }
     """
     Then the response code should be 200
@@ -1138,7 +1144,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-5-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-5-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1222,7 +1228,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-5-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-5-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1274,6 +1280,7 @@ Feature: Metrics should be added on alarm changes
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-6-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-6-name-1",
       "entity_pattern": [
@@ -1311,10 +1318,10 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I save response instructionID={{ .lastResponse._id }}
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-6-2",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-6-name-2",
       "entity_pattern": [
@@ -1387,7 +1394,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-6-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-6-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1400,7 +1407,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-manual-metrics-6-1:
     """json
     {
       "type": 0,
@@ -1465,7 +1472,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-6-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-6-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1552,6 +1559,7 @@ Feature: Metrics should be added on alarm changes
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-7-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-7-name-1",
       "entity_pattern": [
@@ -1602,7 +1610,6 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I save response instructionID={{ .lastResponse._id }}
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
@@ -1619,7 +1626,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-7-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-7-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1633,7 +1640,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I am role-to-instruction-approve-1
-    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-manual-metrics-7-1/approval:
     """json
     {
       "approve": true
@@ -1657,7 +1664,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-7-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-7-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1744,6 +1751,7 @@ Feature: Metrics should be added on alarm changes
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-8-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-8-name-1",
       "entity_pattern": [
@@ -1790,7 +1798,6 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I save response instructionID={{ .lastResponse._id }}
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
@@ -1807,7 +1814,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-8-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-8-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1820,7 +1827,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-manual-metrics-8-1:
     """json
     {
       "type": 0,
@@ -1883,7 +1890,7 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response code should be 200
     When I am role-to-instruction-approve-1
-    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-manual-metrics-8-1/approval:
     """json
     {
       "approve": true
@@ -1907,7 +1914,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-8-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-8-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1926,6 +1933,7 @@ Feature: Metrics should be added on alarm changes
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-9-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-9-name-1",
       "entity_pattern": [
@@ -2038,7 +2046,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-9-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-9-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -2114,6 +2122,7 @@ Feature: Metrics should be added on alarm changes
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-10-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-10-name-1",
       "entity_pattern": [
@@ -2169,7 +2178,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-10-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-10-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -2221,6 +2230,7 @@ Feature: Metrics should be added on alarm changes
     When I do POST /api/v4/cat/instructions:
     """json
     {
+      "_id": "test-instruction-to-manual-metrics-11-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-11-name-1",
       "entity_pattern": [
@@ -2259,7 +2269,6 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I save response instructionID={{ .lastResponse._id }}
     When I do POST /api/v4/cat/kpi-filters:
     """json
     {
@@ -2347,7 +2356,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-11-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-11-1 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -2381,7 +2390,7 @@ Feature: Metrics should be added on alarm changes
     """json
     {
       "alarm": "{{ .alarmID }}",
-      "instruction": "{{ .instructionID }}"
+      "instruction": "test-instruction-to-manual-metrics-11-1"
     }
     """
     Then the response code should be 200
@@ -2421,7 +2430,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-11-name-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-11-1 until response code is 200 and body contains:
     """json
     {
       "data": [
