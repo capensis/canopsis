@@ -4,6 +4,7 @@
     :position-x="pageX",
     :position-y="pageY",
     :close-on-content-click="false",
+    :disabled="disabled",
     ignore-click-upper-outside,
     offset-overflow,
     offset-x,
@@ -78,7 +79,7 @@ export default {
       this.latlng = latlng;
       this.marker = marker;
       this.pageX = originalEvent.pageX;
-      this.pageY = originalEvent.pageY;
+      this.pageY = originalEvent.pageY - window.scrollY;
       this.shown = true;
     },
 
