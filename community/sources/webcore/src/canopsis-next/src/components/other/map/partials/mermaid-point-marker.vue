@@ -5,7 +5,8 @@
     :style="{ top: `${y}px`, left: `${x}px` }",
     :entity="entity",
     :size="size",
-    :color-indicator="colorIndicator"
+    :color-indicator="colorIndicator",
+    :pbehavior-enabled="pbehaviorEnabled"
   )
 </template>
 
@@ -33,6 +34,10 @@ export default {
     },
     colorIndicator: {
       type: String,
+      required: false,
+    },
+    pbehaviorEnabled: {
+      type: Boolean,
       required: false,
     },
   },

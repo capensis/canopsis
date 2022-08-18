@@ -11,6 +11,7 @@
       :popup-actions="popupActions",
       :alarms-columns="alarmsColumns",
       :color-indicator="colorIndicator",
+      :pbehavior-enabled="pbehaviorEnabled",
       @show:map="$emit('show:map', $event)"
     )
 </template>
@@ -43,6 +44,10 @@ export default {
     colorIndicator: {
       type: String,
       required: false,
+    },
+    pbehaviorEnabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
