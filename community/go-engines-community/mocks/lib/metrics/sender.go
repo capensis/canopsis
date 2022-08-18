@@ -120,6 +120,18 @@ func (mr *MockSenderMockRecorder) SendInstructionAssignForAlarm(arg0, arg1, arg2
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionAssignForAlarm", reflect.TypeOf((*MockSender)(nil).SendInstructionAssignForAlarm), arg0, arg1, arg2)
 }
 
+// SendInstructionAssignForAlarmBatch mocks base method.
+func (m *MockSender) SendInstructionAssignForAlarmBatch(arg0 context.Context, arg1 []string, arg2 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendInstructionAssignForAlarmBatch", arg0, arg1, arg2)
+}
+
+// SendInstructionAssignForAlarmBatch indicates an expected call of SendInstructionAssignForAlarmBatch.
+func (mr *MockSenderMockRecorder) SendInstructionAssignForAlarmBatch(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionAssignForAlarmBatch", reflect.TypeOf((*MockSender)(nil).SendInstructionAssignForAlarmBatch), arg0, arg1, arg2)
+}
+
 // SendInstructionAssignForInstruction mocks base method.
 func (m *MockSender) SendInstructionAssignForInstruction(arg0 context.Context, arg1 string, arg2 time.Time, arg3 int64) {
 	m.ctrl.T.Helper()
@@ -130,6 +142,18 @@ func (m *MockSender) SendInstructionAssignForInstruction(arg0 context.Context, a
 func (mr *MockSenderMockRecorder) SendInstructionAssignForInstruction(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionAssignForInstruction", reflect.TypeOf((*MockSender)(nil).SendInstructionAssignForInstruction), arg0, arg1, arg2, arg3)
+}
+
+// SendInstructionAssignForInstructionBatch mocks base method.
+func (m *MockSender) SendInstructionAssignForInstructionBatch(arg0 context.Context, arg1 []string, arg2 time.Time, arg3 int64) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendInstructionAssignForInstructionBatch", arg0, arg1, arg2, arg3)
+}
+
+// SendInstructionAssignForInstructionBatch indicates an expected call of SendInstructionAssignForInstructionBatch.
+func (mr *MockSenderMockRecorder) SendInstructionAssignForInstructionBatch(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionAssignForInstructionBatch", reflect.TypeOf((*MockSender)(nil).SendInstructionAssignForInstructionBatch), arg0, arg1, arg2, arg3)
 }
 
 // SendInstructionExecutionForAlarm mocks base method.
