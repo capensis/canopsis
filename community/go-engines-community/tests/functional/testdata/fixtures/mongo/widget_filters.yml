@@ -800,7 +800,7 @@ widget_filters:
   filter_to_map_state_get_1:
     <<: *filter
     _id: test-widgetfilter-to-map-state-get-1
-    widget: test-widget-to-map-edit
+    widget: test-widget-to-map-edit-1
     entity_pattern:
       - - field: _id
           cond:

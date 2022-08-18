@@ -1200,7 +1200,7 @@ func RegisterRoutes(
 			{
 				patternRouter.DELETE(
 					"",
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					patternAPI.BulkDelete,
 				)
 			}
@@ -1222,7 +1222,7 @@ func RegisterRoutes(
 				scenarioRouter.DELETE(
 					"",
 					middleware.Authorize(authObjAction, permDelete, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					scenarioAPI.BulkDelete,
 				)
 			}
@@ -1244,7 +1244,7 @@ func RegisterRoutes(
 				idleruleRouter.DELETE(
 					"",
 					middleware.Authorize(authObjIdleRule, permDelete, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					idleRuleAPI.BulkDelete,
 				)
 			}
@@ -1266,7 +1266,7 @@ func RegisterRoutes(
 				eventFilterRouter.DELETE(
 					"",
 					middleware.Authorize(authEventFilter, permDelete, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					eventFilterApi.BulkDelete,
 				)
 			}
@@ -1332,6 +1332,7 @@ func RegisterRoutes(
 				pbehaviorRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
 					pbehaviorApi.BulkDelete,
 				)
 			}
@@ -1341,13 +1342,13 @@ func RegisterRoutes(
 				entityRouter.PUT(
 					"/enable",
 					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					entityAPI.BulkEnable,
 				)
 				entityRouter.PUT(
 					"/disable",
 					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					entityAPI.BulkDisable,
 				)
 			}
