@@ -20,6 +20,7 @@ module.exports = {
     '^@unit/(.*)$': '<rootDir>/tests/unit/$1',
     '^@/(.*)$': '<rootDir>/src/$1',
     '^vue$': 'vue/dist/vue.common.dev.js',
+    mermaid: '<rootDir>/node_modules/mermaid/dist/mermaid.js',
   },
   snapshotSerializers: [
     'jest-serializer-vue',
