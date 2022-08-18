@@ -15,8 +15,8 @@
       :name="$t('map.layers.points')",
       layer-type="overlay"
     )
-      geomap-marker(v-for="marker in markers", :key="marker.id", :lat-lng="marker.coordinate")
-        geomap-tooltip(:options="markerTooltipOptions") {{ marker.data.entity || marker.data.link }}
+      geomap-marker(v-for="marker in markers", :key="marker.id", :lat-lng="marker.coordinates")
+        geomap-tooltip(:options="markerTooltipOptions") {{ getTooltipContent(marker.data) }}
         geomap-icon(:icon-anchor="marker.icon.anchor", :tooltip-anchor="marker.icon.tooltipAnchor")
           v-icon(
             :style="marker.icon.style",
@@ -73,10 +73,15 @@ export default {
     markers() {
       return this.points.map(point => ({
         id: point._id,
-        coordinate: [point.coordinate.lat, point.coordinate.lng],
+        coordinates: [point.coordinates.lat, point.coordinates.lng],
         data: point,
         icon: getGeomapMarkerIcon(point, this.iconSize),
       }));
+    },
+  },
+  watch: {
+    points() {
+      this.$nextTick(this.fitMap);
     },
   },
   mounted() {
@@ -87,6 +92,14 @@ export default {
       const pointsBounds = this.$refs.pointsFeatureGroup.mapObject.getBounds();
 
       this.$refs.map.mapObject.fitBounds(pointsBounds);
+    },
+
+    getTooltipContent({ entity, map }) {
+      if (entity) {
+        return entity.name;
+      }
+
+      return map.name;
     },
   },
 };

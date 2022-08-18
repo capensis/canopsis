@@ -1779,6 +1779,8 @@ export default merge({
       duplicate: {
         title: 'Dupliquer un diagramme d\'arborescence de dépendances',
       },
+      addEntity: 'Ajouter une entité',
+      pinnedEntities: 'Entités épinglées',
     },
   },
   tables: {
@@ -3014,6 +3016,13 @@ export default merge({
 
   mermaid: {
     theme: 'Thème de couleur',
+    panzoom: {
+      helpText: 'Raccourcis utiles :\n'
+        + 'Ctrl + molette de la souris - zoom avant/arrière\n'
+        + 'Maj + molette de la souris - défilement horizontal\n'
+        + 'Alt + molette de la souris - défilement vertical\n'
+        + 'Clic gauche de la souris + glisser - déplacer la zone',
+    },
     themes: {
       [MERMAID_THEMES.default]: 'Défaut',
       [MERMAID_THEMES.base]: 'Base',
@@ -3022,11 +3031,17 @@ export default merge({
       [MERMAID_THEMES.neutral]: 'Neutre',
       [MERMAID_THEMES.canopsis]: 'Canopsis',
     },
+    errors: {
+      emptyMermaid: 'Le diagramme et les points doivent être ajoutés',
+    },
   },
 
   geomap: {
     layers: 'Couches',
     zoomIn: 'Zoom in',
     zoomOut: 'Zoom out',
+    errors: {
+      pointsRequired: 'The points must be added',
+    },
   },
 }, featureService.get('i18n.fr'));

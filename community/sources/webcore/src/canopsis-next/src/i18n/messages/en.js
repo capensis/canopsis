@@ -1779,6 +1779,8 @@ export default merge({
       duplicate: {
         title: 'Duplicate a tree of dependencies diagram',
       },
+      addEntity: 'Add entity',
+      pinnedEntities: 'Pinned entities',
     },
   },
   tables: {
@@ -3014,6 +3016,13 @@ export default merge({
 
   mermaid: {
     theme: 'Color theme',
+    panzoom: {
+      helpText: 'Useful shortcuts:\n'
+        + 'Ctrl + mouse wheel - zoom in/out\n'
+        + 'Shift + mouse wheel - horizontal scroll\n'
+        + 'Alt + mouse wheel - vertical scroll\n'
+        + 'Ctrl + Left mouse click + drag - pan the area',
+    },
     themes: {
       [MERMAID_THEMES.default]: 'Default',
       [MERMAID_THEMES.base]: 'Base',
@@ -3022,11 +3031,17 @@ export default merge({
       [MERMAID_THEMES.neutral]: 'Neutral',
       [MERMAID_THEMES.canopsis]: 'Canopsis',
     },
+    errors: {
+      emptyMermaid: 'The diagram and points must be added',
+    },
   },
 
   geomap: {
     layers: 'Layers',
     zoomIn: 'Zoom in',
     zoomOut: 'Zoom out',
+    errors: {
+      pointsRequired: 'The points must be added',
+    },
   },
 }, featureService.get('i18n.en'));

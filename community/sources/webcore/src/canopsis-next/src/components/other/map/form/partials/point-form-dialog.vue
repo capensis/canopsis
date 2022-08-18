@@ -7,7 +7,7 @@
           v-btn.ma-0.ml-3(icon, small, @click="close")
             v-icon(color="white") close
       v-card-text
-        point-form(v-model="form", :coordinate="coordinate")
+        point-form(v-model="form", :coordinates="coordinates")
       v-layout(justify-end)
         v-btn(
           :disabled="submitting",
@@ -34,7 +34,7 @@ import { MODALS } from '@/constants';
 
 import { submittableMixinCreator } from '@/mixins/submittable';
 
-import PointForm from '@/components/other/map/partials/point-form.vue';
+import PointForm from './point-form.vue';
 
 export default {
   $_veeValidate: {
@@ -53,7 +53,7 @@ export default {
       type: Boolean,
       required: false,
     },
-    coordinate: {
+    coordinates: {
       type: Boolean,
       required: false,
     },

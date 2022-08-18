@@ -1,5 +1,5 @@
 <template lang="pug">
-  geomap-preview.geomap-expand-panel(:points="map.properties.points")
+  geomap-preview.geomap-expand-panel(:points="map.parameters.points")
 </template>
 
 <script>
@@ -18,6 +18,6 @@ export default {
 
 <style lang="scss">
 .geomap-expand-panel {
-  min-height: 600px;
+  min-height: 700px;
 }
 </style>
