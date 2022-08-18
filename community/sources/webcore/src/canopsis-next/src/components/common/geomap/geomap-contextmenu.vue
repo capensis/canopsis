@@ -4,6 +4,7 @@
     :position-x="pageX",
     :position-y="pageY",
     :close-on-content-click="false",
+    :disabled="disabled",
     ignore-click-upper-outside,
     offset-overflow,
     offset-x,
