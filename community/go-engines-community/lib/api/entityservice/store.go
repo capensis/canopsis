@@ -101,7 +101,8 @@ func (s *store) GetDependencies(ctx context.Context, apiKey string, r ContextGra
 	}
 	now := types.NewCpsTime()
 	match := bson.M{"_id": bson.M{"$in": service.Depends}}
-	pipeline := s.queryBuilder.CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.WithFlags, now)
+	pipeline := s.queryBuilder.CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
+		r.WithFlags, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -142,7 +143,8 @@ func (s *store) GetImpacts(ctx context.Context, apiKey string, r ContextGraphReq
 		"type": types.EntityTypeService,
 	}
 	now := types.NewCpsTime()
-	pipeline := s.queryBuilder.CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.WithFlags, now)
+	pipeline := s.queryBuilder.CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
+		r.WithFlags, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err

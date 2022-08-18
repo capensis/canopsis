@@ -3161,6 +3161,12 @@ paths:
           required: true
           schema:
             type: string
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        - $ref: '#/components/parameters/search'
         - $ref: '#/components/parameters/withFlags'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
@@ -3204,6 +3210,12 @@ paths:
           required: true
           schema:
             type: string
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        - $ref: '#/components/parameters/search'
         - $ref: '#/components/parameters/withFlags'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
