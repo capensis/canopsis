@@ -86,6 +86,14 @@ map:
     _id: test-map-to-map-edit-2
     name: test-map-to-map-edit-2-name
 
+  map_to_bulk_delete_1:
+    <<: *map_mermaid
+    _id: test-map-to-bulk-delete-1
+
+  map_to_bulk_delete_2:
+    <<: *map_mermaid
+    _id: test-map-to-bulk-delete-2
+
   map_to_state_get_1:
     <<: *map_mermaid
     _id: test-map-to-state-get-1
