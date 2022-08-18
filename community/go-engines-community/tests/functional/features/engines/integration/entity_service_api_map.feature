@@ -239,7 +239,7 @@ Feature: Get a map's state and alarms
     }
     """
     When I save response mapId={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/map-state/{{ .mapId }}
+    When I do GET /api/v4/cat/map-state/{{ .mapId }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -645,7 +645,7 @@ Feature: Get a map's state and alarms
     }
     """
     When I save response mapId={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/map-state/{{ .mapId }}
+    When I do GET /api/v4/cat/map-state/{{ .mapId }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -926,7 +926,7 @@ Feature: Get a map's state and alarms
       }
     }
     """
-    When I do POST /api/v4/cat/map-state/{{ .mapId }}
+    When I do GET /api/v4/cat/map-state/{{ .mapId }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1098,7 +1098,7 @@ Feature: Get a map's state and alarms
       }
     }
     """
-    When I do POST /api/v4/cat/map-state/{{ .mapId }}
+    When I do GET /api/v4/cat/map-state/{{ .mapId }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1267,17 +1267,7 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response mapId={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/map-state/{{ .mapId }}:
-    """json
-    {
-      "expanded_entities": {
-        "{{ .serviceId1 }}": 10,
-        "{{ .serviceId2 }}": 10,
-        "{{ .serviceId3 }}": 10,
-        "test-resource-service-api-map-5-2/test-component-service-api-map-5": 10
-      }
-    }
-    """
+    When I do GET /api/v4/cat/map-state/{{ .mapId }}?expanded_entities[]={{ .serviceId1 }}&expanded_entities[]={{ .serviceId2 }}&expanded_entities[]={{ .serviceId3 }}&expanded_entities[]=test-resource-service-api-map-5-2/test-component-service-api-map-5
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1550,17 +1540,7 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response mapId={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/map-state/{{ .mapId }}:
-    """json
-    {
-      "expanded_entities": {
-        "test-resource-service-api-map-6-1/test-component-service-api-map-6": 10,
-        "test-resource-service-api-map-6-3/test-component-service-api-map-6": 10,
-        "{{ .serviceId2 }}": 10,
-        "{{ .serviceId3 }}": 10
-      }
-    }
-    """
+    When I do GET /api/v4/cat/map-state/{{ .mapId }}?expanded_entities[]={{ .serviceId2 }}&expanded_entities[]={{ .serviceId3 }}&expanded_entities[]=test-resource-service-api-map-6-1/test-component-service-api-map-6&expanded_entities[]=test-resource-service-api-map-6-3/test-component-service-api-map-6
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1805,16 +1785,8 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response mapId={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/map-state/{{ .mapId }}:
-    """json
-    {
-      "filter": "test-widgetfilter-entity-service-api-map-7",
-      "expanded_entities": {
-        "{{ .serviceId1 }}": 10,
-        "{{ .serviceId3 }}": 10
-      }
-    }
-    """
+    When I save response mapCreated={{ .lastResponse.created }}
+    When I do GET /api/v4/cat/map-state/{{ .mapId }}?filter=test-widgetfilter-entity-service-api-map-7-1&expanded_entities[]={{ .serviceId1 }}&expanded_entities[]={{ .serviceId3 }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1863,6 +1835,25 @@ Feature: Get a map's state and alarms
           ]
         }
       }
+    }
+    """
+    When I do GET /api/v4/cat/map-state/{{ .mapId }}?filter=test-widgetfilter-entity-service-api-map-7-2&expanded_entities[]={{ .serviceId1 }}&expanded_entities[]={{ .serviceId3 }}
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "_id": "{{ .mapId }}",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "name": "test-map-service-api-map-7-name",
+      "type": "treeofdeps",
+      "parameters": {
+        "type": "treeofdeps"
+      },
+      "created": {{ .mapCreated }},
+      "updated": {{ .mapCreated }}
     }
     """
 
@@ -2014,16 +2005,7 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response mapId={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/map-state/{{ .mapId }}:
-    """json
-    {
-      "filter": "test-widgetfilter-entity-service-api-map-8",
-      "expanded_entities": {
-        "test-resource-service-api-map-8-2/test-component-service-api-map-8": 10,
-        "{{ .serviceId2 }}": 10
-      }
-    }
-    """
+    When I do GET /api/v4/cat/map-state/{{ .mapId }}?filter=test-widgetfilter-entity-service-api-map-8&expanded_entities[]={{ .serviceId2 }}&expanded_entities[]=test-resource-service-api-map-8-2/test-component-service-api-map-8
     Then the response code should be 200
     Then the response body should contain:
     """json
