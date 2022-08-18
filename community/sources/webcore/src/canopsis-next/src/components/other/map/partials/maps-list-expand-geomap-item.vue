@@ -18,6 +18,6 @@ export default {
 
 <style lang="scss">
 .geomap-expand-panel {
-  min-height: 600px;
+  min-height: 700px;
 }
 </style>
