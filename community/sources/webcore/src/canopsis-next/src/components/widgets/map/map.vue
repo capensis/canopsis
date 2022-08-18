@@ -43,6 +43,7 @@
       :popup-template="widget.parameters.entity_info_template",
       :alarms-columns="widget.parameters.alarms_columns",
       :color-indicator="widget.parameters.color_indicator",
+      :pbehavior-enabled="widget.parameters.entities_under_pbehavior_enabled",
       popup-actions,
       @show:map="showMap"
     )

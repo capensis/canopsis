@@ -8,6 +8,7 @@
       :entity="point.entity",
       :size="markerSize",
       :color-indicator="colorIndicator",
+      :pbehavior-enabled="pbehaviorEnabled",
       ref="points",
       @click="openPopup(point, $event)"
     )
@@ -77,6 +78,10 @@ export default {
     colorIndicator: {
       type: String,
       required: false,
+    },
+    pbehaviorEnabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

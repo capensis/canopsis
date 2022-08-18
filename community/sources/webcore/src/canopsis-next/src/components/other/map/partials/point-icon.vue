@@ -1,14 +1,16 @@
 <template lang="pug">
-  v-icon.point-icon(
-    v-on="$listeners",
-    :style="{ backgroundColor: icon.backgroundColor }",
-    :size="size",
-    :color="icon.color"
-    ) {{ icon.name }}
+  span.point-icon(:style="pointStyles")
+    v-icon(
+      v-on="$listeners",
+      :size="icon.size || size",
+      :color="icon.color"
+      ) {{ icon.name }}
 </template>
 
 <script>
-import { ENTITIES_STATES } from '@/constants';
+import { isNumber } from 'lodash';
+
+import { ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import { getEntityColor } from '@/helpers/color';
 
@@ -28,8 +30,43 @@ export default {
       type: String,
       required: false,
     },
+    pbehaviorEnabled: {
+      type: Boolean,
+      required: false,
+    },
   },
   computed: {
+    pointStyles() {
+      return {
+        width: `${this.size}px`,
+        height: `${this.size}px`,
+        backgroundColor: this.icon.backgroundColor,
+      };
+    },
+
+    entityIcon() {
+      if (this.entity.state === ENTITIES_STATES.ok) {
+        return {
+          name: 'check_circle_outline',
+          color: 'white',
+          backgroundColor: COLORS.primary,
+        };
+      }
+
+      return {
+        color: getEntityColor(this.entity, this.colorIndicator),
+        name: 'warning',
+      };
+    },
+
+    isNotActivePbehavior() {
+      return [
+        PBEHAVIOR_TYPE_TYPES.pause,
+        PBEHAVIOR_TYPE_TYPES.inactive,
+        PBEHAVIOR_TYPE_TYPES.maintenance,
+      ].includes(this.entity.pbehavior_info?.canonical_type);
+    },
+
     icon() {
       if (!this.entity) {
         return {
@@ -38,21 +75,17 @@ export default {
         };
       }
 
-      if (this.entity?.state) {
-        const state = this.entity.state.val;
-
-        if (state === ENTITIES_STATES.ok) {
-          return {
-            name: 'check_circle_outline',
-            color: 'white',
-            backgroundColor: COLORS.primary,
-          };
-        }
-
+      if (this.pbehaviorEnabled && this.isNotActivePbehavior) {
         return {
-          color: getEntityColor(this.entity, this.colorIndicator),
-          name: 'warning',
+          name: this.entity.pbehavior_info.icon_name,
+          color: 'white',
+          size: 16,
+          backgroundColor: COLORS.secondary,
         };
+      }
+
+      if (isNumber(this.entity?.state)) {
+        return this.entityIcon;
       }
 
       return {
@@ -66,6 +99,9 @@ export default {
 
 <style lang="scss">
 .point-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
 }
 </style>
