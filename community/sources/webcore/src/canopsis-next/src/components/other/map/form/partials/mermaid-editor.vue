@@ -10,10 +10,7 @@
         div.mermaid-editor__preview
           mermaid-preview(:value="form.code", :theme="form.theme")
           mermaid-points.mermaid-editor__points(v-field="form.points", :add-on-click="addOnClick")
-    div.text-editor__details(v-if="hasChildrenError")
-      div.v-messages.theme--light.error--text
-        div.v-messages__wrapper
-          div.v-messages__message {{ $t('mermaid.errors.emptyMermaid') }}
+    v-messages(v-if="hasChildrenError", :value="errorMessages", color="error")
 </template>
 
 <script>
@@ -56,6 +53,10 @@ export default {
     };
   },
   computed: {
+    errorMessages() {
+      return [this.$t('mermaid.errors.emptyMermaid')];
+    },
+
     editorStyles() {
       const minHeight = Math.max(...this.form.points.map(({ y }) => y), this.minHeight);
 
