@@ -3259,6 +3259,21 @@ paths:
           required: true
           schema:
             type: string
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: with_category
+          in: query
+          required: false
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
       responses:
@@ -4917,6 +4932,35 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /open-alarms:
+    get:
+      tags:
+        - alarms
+      summary: Get open alarm by entity
+      description: Get open alarm by entity
+      operationId: alarms-get-open-by-entity
+      parameters:
+        - name: _id
+          in: query
+          description: entity id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
+        204:
+          description: OK
         404:
           description: Not Found
           content:
