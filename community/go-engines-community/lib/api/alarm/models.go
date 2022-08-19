@@ -65,6 +65,9 @@ func (r FilterRequest) GetOpenedFilter() int {
 type ListByServiceRequest struct {
 	pagination.Query
 	SortRequest
+	Search      string `form:"search" json:"search"`
+	Category    string `form:"category" json:"category"`
+	WithService bool   `form:"with_service" json:"with_service"`
 }
 
 type ListByComponentRequest struct {
@@ -337,4 +340,8 @@ type Count struct {
 	TotalAck       int `bson:"total_ack" json:"ack"`
 	TotalTicket    int `bson:"total_ticket" json:"ticket"`
 	TotalPbehavior int `bson:"total_pbehavior" json:"pbehavior_active"`
+}
+
+type GetOpenRequest struct {
+	ID string `form:"_id" json:"_id" binding:"required"`
 }

@@ -162,13 +162,13 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 }
 
 func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
-	id string,
+	match bson.M,
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
 
 	q.alarmMatch = append(q.alarmMatch,
-		bson.M{"$match": bson.M{"_id": id}},
+		bson.M{"$match": match},
 	)
 
 	query := pagination.Query{
@@ -179,14 +179,22 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 }
 
 func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
+	ctx context.Context,
 	match bson.M,
 	paginationQuery pagination.Query,
 	sortRequest SortRequest,
+	filterRequest FilterRequest,
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
-	err := q.handleSort(sortRequest)
+
+	err := q.handleFilter(ctx, filterRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	err = q.handleSort(sortRequest)
 	if err != nil {
 		return nil, err
 	}
