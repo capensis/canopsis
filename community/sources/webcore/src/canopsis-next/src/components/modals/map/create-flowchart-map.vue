@@ -4,7 +4,7 @@
       template(#title="")
         span {{ title }}
       template(#text="")
-        | Create flowchart map
+        flowchart-map-form(v-model="form")
       template(#actions="")
         v-btn(
           depressed,
@@ -21,9 +21,13 @@
 <script>
 import { MODALS } from '@/constants';
 
+import { mapToForm } from '@/helpers/forms/map';
+
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+
+import FlowchartMapForm from '@/components/other/map/form/flowchart-map-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -32,7 +36,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { ModalWrapper },
+  components: { FlowchartMapForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
     submittableMixinCreator(),
@@ -40,7 +44,7 @@ export default {
   ],
   data() {
     return {
-      form: { ...this.modal.config.map },
+      form: mapToForm(this.modal.config.map),
     };
   },
   computed: {
