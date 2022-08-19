@@ -1,13 +1,16 @@
 <template lang="pug">
-  v-layout(row, justify-between, align-center)
+  v-layout(row, justify-space-between, align-center)
     v-checkbox.mt-0(
+      v-if="!hideCheckbox",
       :input-value="isFilled",
       :label="label || $t('flowchart.color')",
+      color="primary",
       hide-details,
       @change="updateIsFilled"
     )
+    span.v-label.theme--light(v-else) {{ label }}
     v-btn.ma-0(
-      v-show="isFilled",
+      v-show="isFilled || hideCheckbox",
       :style="style",
       small,
       @click="showColorPickerModal"
@@ -33,6 +36,10 @@ export default {
     label: {
       type: String,
       required: false,
+    },
+    hideCheckbox: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

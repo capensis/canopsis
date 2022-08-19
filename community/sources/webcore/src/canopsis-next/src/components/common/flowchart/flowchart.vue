@@ -1,15 +1,18 @@
 <template lang="pug">
   div.flowchart.fill-height
     flowchart-sidebar(
-      v-model="shapes",
+      v-field="shapes",
       :view-box="viewBox",
-      :selected.sync="selected"
+      :selected.sync="selected",
+      :background-color="backgroundColor",
+      @update:backgroundColor="$emit('update:backgroundColor', $event)"
     )
     div.flowchart__editor
       flowchart-editor(
-        v-model="shapes",
+        v-field="shapes",
         :view-box.sync="viewBox",
-        :selected.sync="selected"
+        :selected.sync="selected",
+        :background-color="backgroundColor"
       )
     div.flowchart__properties(v-show="selected.length")
       flowchart-properties(v-model="shapes", :selected="selected")
@@ -26,9 +29,22 @@ export default {
     FlowchartEditor,
     FlowchartProperties,
   },
+  model: {
+    prop: 'shapes',
+    event: 'input',
+  },
+  props: {
+    shapes: {
+      type: Object,
+      required: true,
+    },
+    backgroundColor: {
+      type: String,
+      required: false,
+    },
+  },
   data() {
     return {
-      shapes: {},
       selected: [],
       viewBox: {
         x: 0,

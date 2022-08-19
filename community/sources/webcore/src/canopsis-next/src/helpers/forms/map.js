@@ -71,11 +71,30 @@ import uuid from '@/helpers/uuid';
  */
 
 /**
+ * @typedef {Object} MapFlowchartPoint
+ * @property {string} _id
+ * @property {MapCommonFields} map
+ * @property {Entity} entity
+ * @property {number} x
+ * @property {number} y
+ */
+
+/**
  * @typedef {Object} MapFlowchartParameters
+ * @property {MapFlowchartPoint[]} shapes
+ * @property {string} background_color
+ * @property {MapFlowchartPoint[]} points
+ */
+
+/**
+ * @typedef {Object} MapFlowchartPointForm
+ * @property {string} map
+ * @property {string} entity
  */
 
 /**
  * @typedef {MapFlowchartParameters} MapFlowchartParametersForm
+ * @property {MapFlowchartPointForm[]} points
  */
 
 /**
@@ -137,6 +156,20 @@ export const mermaidPointToForm = (point = {}) => ({
 /**
  * Convert mermaid point to form object
  *
+ * @param {MapFlowchartPoint} [point = {}]
+ * @returns {MapFlowchartPointForm}
+ */
+export const flowchartPointToForm = (point = {}) => ({
+  x: point.x,
+  y: point.y,
+  entity: point.entity?._id ?? '',
+  map: point.map,
+  _id: uuid(),
+});
+
+/**
+ * Convert mermaid point to form object
+ *
  * @param {MapMermaidPoint[]} [points = []]
  * @returns {MapMermaidPointForm[]}
  */
@@ -167,6 +200,14 @@ export const geomapPointToForm = (point = {}) => ({
 export const geomapPointsToForm = (points = []) => points.map(geomapPointToForm);
 
 /**
+ * Convert flowchart points to form array
+ *
+ * @param {MapFlowchartPoint[]} [points = {}]
+ * @returns {MapFlowchartPointForm[]}
+ */
+export const flowchartPointsToForm = (points = []) => points.map(flowchartPointToForm);
+
+/**
  * Convert map geo parameters object to form
  *
  * @param {MapGeoParameters} [parameters = {}]
@@ -182,7 +223,11 @@ export const mapGeoParametersToForm = (parameters = {}) => ({
  * @param {MapFlowchartParameters} [parameters = {}]
  * @returns {MapFlowchartParametersForm}
  */
-export const mapFlowchartParametersToForm = parameters => ({ ...parameters });
+export const mapFlowchartParametersToForm = (parameters = {}) => ({
+  shapes: parameters.shapes ?? {},
+  background_color: parameters.background_color ?? 'white',
+  points: flowchartPointsToForm(parameters.points),
+});
 
 /**
  * Convert map mermaid parameters object to form
