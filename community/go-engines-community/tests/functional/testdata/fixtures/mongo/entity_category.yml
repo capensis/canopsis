@@ -141,3 +141,6 @@ entity_category:
   category_to_entityservice_entity_get_2:
     <<: *category
     _id: test-category-to-entityservice-entity-get-2
+  category_to_entityservice_alarm_get_2:
+    <<: *category
+    _id: test-category-to-entityservice-alarm-get-2
