@@ -3056,6 +3056,7 @@ export default merge({
     fontSize: 'Font size',
     fontBackgroundColor: 'Font background color',
     lineType: 'Line type',
+    backgroundColor: 'Background color',
     lineTypes: {
       [LINE_TYPES.curve]: 'Curve',
       [LINE_TYPES.sharp]: 'Sharp',

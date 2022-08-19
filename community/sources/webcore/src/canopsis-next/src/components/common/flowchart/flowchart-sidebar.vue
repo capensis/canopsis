@@ -1,9 +1,16 @@
 <template lang="pug">
-  v-navigation-drawer.flowchart-sidebar(permanent, width="300")
+  v-navigation-drawer.flowchart-sidebar(permanent, width="320")
     v-expansion-panel(color="grey", expand)
+      v-layout(column)
+        flowchart-color-field.flowchart-sidebar__additional-item.px-4(
+          :value="backgroundColor",
+          :label="$t('flowchart.backgroundColor')",
+          hide-checkbox,
+          @input="$emit('update:backgroundColor', $event)"
+        )
       v-expansion-panel-content
         template(#header="")
-          span.white {{ $t('flowchart.shapes') }}
+          span.v-label.theme--light {{ $t('flowchart.shapes') }}
         v-divider
         v-layout(row, wrap)
           v-btn.ma-0.pa-0.flowchart-sidebar__button(
@@ -20,10 +27,15 @@
                 image-shape-icon.grey--text.text--darken-3
       v-expansion-panel-content
         template(#header="")
-          span.white {{ $t('flowchart.icons') }}
+          span.v-label.theme--light {{ $t('flowchart.icons') }}
         v-divider
         v-layout(row, wrap)
-          v-btn.ma-0(v-for="icon in icons", :key="icon.src", flat, fab, small, @click="addIconAsset(icon.src)")
+          v-btn.flowchart-sidebar__button-icon.ma-0(
+            v-for="icon in icons",
+            :key="icon.src",
+            flat,
+            @click="addIconAsset(icon.src)"
+          )
             img(:src="icon.src")
 </template>
 
@@ -52,6 +64,7 @@ import { formBaseMixin } from '@/mixins/form';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 
+import FlowchartColorField from './partials/flowchart-color-field.vue';
 import RectShapeIcon from './icons/rect-shape.vue';
 import RoundedRectShapeIcon from './icons/rounded-rect-shape.vue';
 import SquareShapeIcon from './icons/square-shape.vue';
@@ -75,7 +88,7 @@ import TextboxShapeIcon from './icons/textbox-shape.vue';
 import assets from './assets';
 
 export default {
-  components: { FileSelector, ImageShapeIcon },
+  components: { FlowchartColorField, FileSelector, ImageShapeIcon },
   mixins: [formBaseMixin],
   model: {
     prop: 'shapes',
@@ -93,6 +106,10 @@ export default {
     selected: {
       type: Array,
       default: () => [],
+    },
+    backgroundColor: {
+      type: String,
+      required: false,
     },
   },
   computed: {
@@ -549,6 +566,17 @@ export default {
 .flowchart-sidebar {
   &__button {
     min-width: 75px !important;
+  }
+
+  &__button-icon {
+    min-width: unset !important;
+    width: 50px !important;
+    height: 50px !important;
+    padding: 0 !important;
+  }
+
+  &__additional-item {
+    height: 51px;
   }
 }
 </style>

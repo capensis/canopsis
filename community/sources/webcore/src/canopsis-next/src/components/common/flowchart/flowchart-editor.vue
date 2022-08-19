@@ -1,8 +1,9 @@
 <template lang="pug">
-  svg.grey.lighten-3(
+  svg(
     ref="svg",
-    v-resize="setViewBox",
+    v-resize.quiet="setViewBox",
     :viewBox="viewBoxString",
+    :style="svgStyles",
     width="100%",
     height="100%",
     @mousemove="onContainerMouseMove",
@@ -29,17 +30,17 @@
 </template>
 
 <script>
-import { cloneDeep, isEqual, isObject, isString, omit } from 'lodash';
+import { cloneDeep, isEqual, omit } from 'lodash';
 
 import Observer from '@/services/observer';
 
-import { SHAPES } from '@/constants';
-
 import { roundByStep } from '@/helpers/flowchart/round';
 import { calculateConnectorPointBySide } from '@/helpers/flowchart/connectors';
-import uid from '@/helpers/uid';
 
 import { selectedShapesMixin } from '@/mixins/flowchart/selected';
+import { copyPasteShapesMixin } from '@/mixins/flowchart/copy-paste';
+import { moveShapesMixin } from '@/mixins/flowchart/move-shape';
+import { viewBoxMixin } from '@/mixins/flowchart/view-box';
 
 import RectShape from './rect-shape/rect-shape.vue';
 import LineShape from './line-shape/line-shape.vue';
@@ -75,7 +76,12 @@ export default {
     ProcessShape,
     DocumentShape,
   },
-  mixins: [selectedShapesMixin],
+  mixins: [
+    selectedShapesMixin,
+    copyPasteShapesMixin,
+    moveShapesMixin,
+    viewBoxMixin,
+  ],
   model: {
     event: 'input',
     prop: 'shapes',
@@ -85,10 +91,6 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    viewBox: {
-      type: Object,
-      required: true,
-    },
     gridSize: {
       type: Number,
       default: 5,
@@ -97,14 +99,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    backgroundColor: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
-      editorSize: {
-        width: 0,
-        height: 0,
-      },
-
       data: {},
 
       cursor: {
@@ -126,24 +127,15 @@ export default {
         x: 0,
         y: 0,
       },
-      viewBoxObject: this.viewBox,
 
       panning: false,
     };
   },
   computed: {
-    viewBoxString() {
-      const { x, y, width, height } = this.viewBoxObject;
-
-      return `${x} ${y} ${width} ${height}`;
-    },
-
-    widthScale() {
-      return this.viewBoxObject.width / this.editorSize.width;
-    },
-
-    heightScale() {
-      return this.viewBoxObject.height / this.editorSize.height;
+    svgStyles() {
+      return {
+        backgroundColor: this.backgroundColor,
+      };
     },
   },
   watch: {
@@ -162,17 +154,11 @@ export default {
   },
   mounted() {
     document.addEventListener('keydown', this.onKeyDown);
-    this.$refs.svg.addEventListener('wheel', this.onWheel);
   },
   beforeDestroy() {
     document.removeEventListener('keydown', this.onKeyDown);
-    this.$refs.svg.removeEventListener('wheel', this.onWheel);
   },
   methods: {
-    updateViewBox() {
-      this.$emit('update:viewBox', this.viewBoxObject);
-    },
-
     normalizeCursor({ x, y }) {
       const point = this.$refs.svg.createSVGPoint();
 
@@ -180,65 +166,6 @@ export default {
       point.y = y;
 
       return point.matrixTransform(this.$refs.svg.getScreenCTM().inverse());
-    },
-
-    setViewBox(event) {
-      const { width, height } = this.$refs.svg.getBoundingClientRect();
-
-      if (event) {
-        const widthDiff = (this.editorSize.width - width) * this.widthScale;
-        const heightDiff = (this.editorSize.height - height) * this.heightScale;
-
-        this.viewBoxObject.width -= widthDiff;
-        this.viewBoxObject.height -= heightDiff;
-      } else {
-        this.viewBoxObject.width = width;
-        this.viewBoxObject.height = height;
-      }
-
-      this.updateViewBox();
-
-      this.editorSize.width = width;
-      this.editorSize.height = height;
-    },
-
-    onWheel(event) {
-      event.preventDefault();
-
-      const delta = event.deltaY;
-
-      if (event.ctrlKey) {
-        const percent = delta < 0 ? 0.05 : -0.05;
-
-        const scaleWidth = this.viewBoxObject.width * percent;
-        const scaleHeight = this.viewBoxObject.height * percent;
-
-        const deltaWidth = scaleWidth * 2;
-        const deltaHeight = scaleHeight * 2;
-
-        const { x, y } = this.normalizeCursor({ x: event.clientX, y: event.clientY });
-
-        const cursorPercentX = (x - this.viewBoxObject.x) / this.viewBoxObject.width;
-        const cursorPercentY = (y - this.viewBoxObject.y) / this.viewBoxObject.height;
-
-        const offsetX = deltaWidth * cursorPercentX;
-        const offsetY = deltaHeight * cursorPercentY;
-        const offsetWidth = scaleWidth + deltaWidth - offsetX;
-        const offsetHeight = scaleHeight + deltaHeight - offsetY;
-
-        this.viewBoxObject.x += offsetX;
-        this.viewBoxObject.y += offsetY;
-        this.viewBoxObject.width -= offsetWidth;
-        this.viewBoxObject.height -= offsetHeight;
-      }
-
-      if (event.shiftKey) {
-        this.viewBoxObject.x += delta;
-      }
-
-      if (event.altKey) {
-        this.viewBoxObject.y += delta;
-      }
     },
 
     updateShape(shape, data) {
@@ -355,6 +282,29 @@ export default {
       }
     },
 
+    clearConnectedTo(id) {
+      const line = this.data[id];
+
+      if (line.connectedTo) {
+        const connectedTo = [];
+
+        line.connectedTo.forEach((shapeId) => {
+          const connectedShape = this.data[shapeId];
+
+          if (this.isSelected(connectedShape._id)) {
+            connectedTo.push(shapeId);
+            return;
+          }
+
+          connectedShape.connections = connectedShape.connections.filter(
+            connection => connection.shapeId !== id,
+          );
+        });
+
+        line.connectedTo = connectedTo;
+      }
+    },
+
     onContainerMouseUp() {
       if (this.panning) {
         this.updateViewBox();
@@ -390,8 +340,7 @@ export default {
 
     onContainerMouseMove(event) {
       if (this.panning) {
-        this.viewBoxObject.x -= event.movementX * this.widthScale;
-        this.viewBoxObject.y -= event.movementY * this.heightScale;
+        this.moveViewBox({ x: event.movementX, y: event.movementY });
 
         return;
       }
@@ -415,165 +364,10 @@ export default {
       }
     },
 
-    clearConnectedTo(id) {
-      const line = this.data[id];
-
-      if (line.connectedTo) {
-        const connectedTo = [];
-
-        line.connectedTo.forEach((shapeId) => {
-          const connectedShape = this.data[shapeId];
-
-          if (this.isSelected(connectedShape._id)) {
-            connectedTo.push(shapeId);
-            return;
-          }
-
-          connectedShape.connections = connectedShape.connections.filter(
-            connection => connection.shapeId !== id,
-          );
-        });
-
-        line.connectedTo = connectedTo;
-      }
-    },
-
-    moveShapeById(id, offset) {
-      const shape = this.data[id];
-
-      switch (shape.type) {
-        case SHAPES.storage:
-        case SHAPES.parallelogram:
-        case SHAPES.image:
-        case SHAPES.circle:
-        case SHAPES.rhombus:
-        case SHAPES.ellipse:
-        case SHAPES.process:
-        case SHAPES.document:
-        case SHAPES.rect: {
-          this.updateShape(shape, { x: shape.x + offset.x, y: shape.y + offset.y });
-          break;
-        }
-        case SHAPES.arrowLine:
-        case SHAPES.bidirectionalArrowLine:
-        case SHAPES.line: {
-          this.updateShape(shape, {
-            points: shape.points.map(point => ({
-              ...point,
-              x: point.x + offset.x,
-              y: point.y + offset.y,
-            })),
-          });
-          break;
-        }
-      }
-    },
-
-    moveSelected(offset) {
-      this.selectedIds.forEach((id) => {
-        this.moveShapeById(id, offset);
-
-        this.clearConnectedTo(id);
-      });
-    },
-
-    handleShapeMove(event) {
-      const { x, y } = this.normalizeCursor({ x: event.clientX, y: event.clientY });
-
-      const newMovingOffsetX = roundByStep(
-        x - this.movingStart.x,
-        this.gridSize,
-      );
-      const newMovingOffsetY = roundByStep(
-        y - this.movingStart.y,
-        this.gridSize,
-      );
-
-      this.moveSelected({
-        x: newMovingOffsetX - this.movingOffset.x,
-        y: newMovingOffsetY - this.movingOffset.y,
-      });
-
-      this.movingOffset.x = newMovingOffsetX;
-      this.movingOffset.y = newMovingOffsetY;
-    },
-
-    moveSelectedDown() {
-      this.moveSelected({ x: 0, y: this.gridSize });
-
-      this.updateShapes(this.data);
-    },
-
-    moveSelectedTop() {
-      this.moveSelected({ x: 0, y: -this.gridSize });
-
-      this.updateShapes(this.data);
-    },
-
-    moveSelectedRight() {
-      this.moveSelected({ x: this.gridSize, y: 0 });
-
-      this.updateShapes(this.data);
-    },
-
-    moveSelectedLeft() {
-      this.moveSelected({ x: -this.gridSize, y: 0 });
-
-      this.updateShapes(this.data);
-    },
-
     removeSelectedShapes() {
       if (this.hasSelected) {
         this.updateShapes(omit(this.data, this.selectedIds));
         this.clearSelected();
-      }
-    },
-
-    copySelectedShapes(event) {
-      if (!event.ctrlKey) {
-        return;
-      }
-
-      const data = this.selectedIds.reduce((acc, id) => {
-        acc[id] = this.data[id];
-
-        return acc;
-      }, {});
-
-      navigator.clipboard.writeText(JSON.stringify(data));
-    },
-
-    async pasteShapes(event) {
-      if (!event.ctrlKey) {
-        return;
-      }
-
-      const data = await navigator.clipboard.readText();
-
-      if (isString(data)) {
-        const shapes = JSON.parse(data);
-
-        if (isObject(shapes)) {
-          const preparedShapes = Object.entries(shapes)
-            .reduce((acc, [id, shape]) => {
-              const resultId = this.data[id] || acc[id] ? `${id}_${uid()}` : id;
-
-              acc[resultId] = {
-                ...shape,
-                _id: resultId,
-              };
-
-              return acc;
-            }, {});
-
-          this.data = {
-            ...this.data,
-            ...preparedShapes,
-          };
-
-          this.setSelected(Object.keys(preparedShapes));
-          this.updateShapes(this.data);
-        }
       }
     },
 

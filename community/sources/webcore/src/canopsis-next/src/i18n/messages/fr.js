@@ -3056,6 +3056,7 @@ export default merge({
     fontSize: 'Taille de police',
     fontBackgroundColor: 'Couleur de fond de la police',
     lineType: 'Type de ligne',
+    backgroundColor: 'Couleur de l\'arrière plan',
     lineTypes: {
       [LINE_TYPES.curve]: 'Courbe',
       [LINE_TYPES.sharp]: 'Tranchant',
