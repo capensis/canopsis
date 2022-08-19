@@ -3,7 +3,11 @@ package fifo
 import (
 	"context"
 	"flag"
+	"fmt"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -61,6 +65,12 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
+
+	postgresPool, err := postgres.NewPool(ctx, 0, 0)
+	if err != nil {
+		panic(fmt.Errorf("postgresPool: %w", err))
+	}
+
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
 	engineLockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)
@@ -209,6 +219,18 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 			LimitConfigAdapter:        datastorage.NewAdapter(mongoClient),
 			RateLimitAdapter:          ratelimit.NewAdapter(mongoClient),
 			Logger:                    logger,
+		},
+		logger,
+	))
+	engine.AddPeriodicalWorker("fifo queue metrics", libengine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(engineLockRedisClient),
+		redis.FifoQueueMetricsLockKey,
+		&fifoQueueMetricsWorker{
+			techMetricsSender:  metrics.NewTechMetricsSender(postgresPool, logger),
+			periodicalInterval: canopsis.PeriodicalWaitTime,
+			channel:            amqpChannel,
+			logger:             logger,
+			consumeQueue:       canopsis.FIFOAckQueueName,
 		},
 		logger,
 	))
