@@ -8,7 +8,8 @@ import {
 
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 import { defaultColumnsToColumns } from '@/helpers/entities';
-import { formWidgetColumnsToColumns, widgetColumnsToForm } from '@/helpers/forms/widgets/alarm';
+
+import { formWidgetColumnsToColumns, widgetColumnsToForm } from './alarm';
 
 /**
  * @typedef {Object} MapWidgetParameters

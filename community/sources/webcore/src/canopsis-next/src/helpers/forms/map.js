@@ -42,11 +42,27 @@ import uuid from '@/helpers/uuid';
  */
 
 /**
+ * @typedef {Object} MapGeoPoint
+ * @property {string} _id
+ * @property {MapCommonFields} map
+ * @property {Entity} entity
+ * @property {Object} coordinates
+ */
+
+/**
+ * @typedef {MapGeoPoint} MapGeoPointForm
+ * @property {string} map
+ * @property {string} entity
+ */
+
+/**
  * @typedef {Object} MapGeoParameters
+ * @property {MapGeoPoint[]} points
  */
 
 /**
  * @typedef {MapGeoParameters} MapGeoParametersForm
+ * @property {MapGeoPointForm[]} points
  */
 
 /**
@@ -115,7 +131,7 @@ export const mermaidPointToForm = (point = {}) => ({
   x: point.x,
   y: point.y,
   entity: point.entity?._id ?? '',
-  map: point.map,
+  map: point.map?._id,
   _id: uuid(),
 });
 
@@ -128,12 +144,38 @@ export const mermaidPointToForm = (point = {}) => ({
 export const mermaidPointsToForm = (points = []) => points.map(mermaidPointToForm);
 
 /**
+ * Convert geomap point to form object
+ *
+ * @param {MapGeoPoint} [point = {}]
+ * @returns {MapGeoPoint}
+ */
+export const geomapPointToForm = (point = {}) => ({
+  coordinates: point.coordinates ?? {
+    lat: 0,
+    lng: 0,
+  },
+  entity: point.entity?._id ?? '',
+  map: point.map?._id,
+  _id: uuid(),
+});
+
+/**
+ * Convert geomap points to form array
+ *
+ * @param {MapGeoPoint[]} [points = {}]
+ * @returns {MapGeoPointForm[]}
+ */
+export const geomapPointsToForm = (points = []) => points.map(geomapPointToForm);
+
+/**
  * Convert map geo parameters object to form
  *
  * @param {MapGeoParameters} [parameters = {}]
  * @returns {MapGeoParametersForm}
  */
-export const mapGeoParametersToForm = parameters => ({ ...parameters });
+export const mapGeoParametersToForm = (parameters = {}) => ({
+  points: geomapPointsToForm(parameters.points),
+});
 
 /**
  * Convert map flowchart parameters object to form

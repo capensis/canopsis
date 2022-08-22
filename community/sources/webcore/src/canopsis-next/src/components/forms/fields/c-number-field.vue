@@ -1,6 +1,7 @@
 <template lang="pug">
   v-text-field(
     v-bind="$attrs",
+    v-on="$listeners",
     v-field.number="value",
     v-validate="rules",
     :label="label",
@@ -9,6 +10,7 @@
     :name="name",
     :min="min",
     :max="max",
+    :step="step",
     type="number"
   )
     template(#append="")
@@ -51,12 +53,17 @@ export default {
       type: Number,
       default: undefined,
     },
+    step: {
+      type: Number,
+      default: undefined,
+    },
   },
   computed: {
     rules() {
       return {
         required: this.required,
-        numeric: true,
+        numeric: !this.step,
+        decimal: !!this.step,
         min_value: this.min ?? false,
         max_value: this.max ?? false,
       };

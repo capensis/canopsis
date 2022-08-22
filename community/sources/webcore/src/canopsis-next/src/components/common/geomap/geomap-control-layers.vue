@@ -1,28 +1,29 @@
 <template lang="pug">
-  v-expansion-panel.geomap-layers-control(color="grey")
-    v-expansion-panel-content
-      template(#header="")
-        span.v-label.theme--light {{ $t('geomap.layers') }}
-      v-divider
-      v-layout.pa-2(column, @click.stop="", @dblclick.stop="", @mousemove.stop="")
-        v-radio-group.ma-0(:value="activeLayer", color="primary", column, hide-details, @change="enableLayer")
-          v-radio(
-            v-for="layer in layers",
-            :key="layer.name",
-            :label="layer.name",
-            :value="layer",
-            color="primary"
-          )
-        template(v-if="overlays.length")
-          v-divider.my-2
-          v-checkbox-functional.mt-0.pt-0(
-            v-for="overlay in overlays",
-            :key="overlay.name",
-            :input-value="isLayerActive(overlay.layer)",
-            :label="overlay.name",
-            hide-details,
-            @change="enableOverlay(overlay, $event)"
-          )
+  div(@contextmenu.stop="", @click.stop="", @dblclick.stop="", @mousemove.stop="")
+    v-expansion-panel.geomap-layers-control(color="grey")
+      v-expansion-panel-content
+        template(#header="")
+          span.v-label.theme--light {{ $t('geomap.layers') }}
+        v-divider
+        v-layout.pa-2(column)
+          v-radio-group.ma-0(:value="activeLayer", color="primary", column, hide-details, @change="enableLayer")
+            v-radio(
+              v-for="layer in layers",
+              :key="layer.name",
+              :label="layer.name",
+              :value="layer",
+              color="primary"
+            )
+          template(v-if="overlays.length")
+            v-divider.my-2
+            v-checkbox-functional.mt-0.pt-0(
+              v-for="overlay in overlays",
+              :key="overlay.name",
+              :input-value="isLayerActive(overlay.layer)",
+              :label="overlay.name",
+              hide-details,
+              @change="enableOverlay(overlay, $event)"
+            )
 </template>
 
 <script>

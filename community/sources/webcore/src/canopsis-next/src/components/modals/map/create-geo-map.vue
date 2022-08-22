@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(close, text-class="pa-0")
+    modal-wrapper(close)
       template(#title="")
         span {{ title }}
       template(#text="")
@@ -20,6 +20,8 @@
 
 <script>
 import { MODALS } from '@/constants';
+
+import { mapToForm, formToMap } from '@/helpers/forms/map';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -42,7 +44,7 @@ export default {
   ],
   data() {
     return {
-      form: { ...this.modal.config.map },
+      form: mapToForm(this.modal.config.map),
     };
   },
   computed: {
@@ -56,7 +58,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          await this.config.action(formToMap(this.form));
         }
 
         this.$modals.hide();
