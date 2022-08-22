@@ -57,6 +57,6 @@ export const mapWidgetParametersToForm = (parameters = {}) => ({
 export const formToMapWidgetParameters = form => ({
   ...form,
 
-  alarms_columns: formWidgetColumnsToColumns(form.parameters.alarms_columns),
-  entities_columns: formWidgetColumnsToColumns(form.parameters.entities_columns),
+  alarms_columns: formWidgetColumnsToColumns(form.alarms_columns),
+  entities_columns: formWidgetColumnsToColumns(form.entities_columns),
 });
