@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-navigation-drawer.flowchart-sidebar(permanent, width="320")
+  v-navigation-drawer.flowchart-sidebar(permanent, touchless, width="320")
     v-expansion-panel(color="grey", expand)
       v-layout(column)
         flowchart-color-field.flowchart-sidebar__additional-item.px-4(

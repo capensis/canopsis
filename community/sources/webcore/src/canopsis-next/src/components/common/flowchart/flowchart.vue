@@ -1,10 +1,12 @@
 <template lang="pug">
   div.flowchart.fill-height
     flowchart-sidebar(
+      v-if="!readonly",
       v-field="shapes",
       :view-box="viewBox",
       :selected.sync="selected",
       :background-color="backgroundColor",
+      :readonly="readonly",
       @update:backgroundColor="$emit('update:backgroundColor', $event)"
     )
     div.flowchart__editor
@@ -12,10 +14,11 @@
         v-field="shapes",
         :view-box.sync="viewBox",
         :selected.sync="selected",
-        :background-color="backgroundColor"
+        :background-color="backgroundColor",
+        :readonly="readonly"
       )
     div.flowchart__properties(v-show="selected.length")
-      flowchart-properties(v-model="shapes", :selected="selected")
+      flowchart-properties(v-if="!readonly", v-model="shapes", :selected="selected")
 </template>
 
 <script>
@@ -41,6 +44,10 @@ export default {
     backgroundColor: {
       type: String,
       required: false,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
