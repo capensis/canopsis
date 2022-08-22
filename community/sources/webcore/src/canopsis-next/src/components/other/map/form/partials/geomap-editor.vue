@@ -1,93 +1,98 @@
 <template lang="pug">
-  geomap(
-    ref="map",
-    :style="mapStyles",
-    :disabled="shown",
-    :min-zoom="minZoom",
-    :options="mapOptions",
-    @click="openAddingPointDialogByClick",
-    @dblclick="openAddingPointDialog"
-  )
-    geomap-control-zoom(position="topleft", :disabled="shown")
-    geomap-control-layers(position="topright")
-
-    geomap-contextmenu(
-      ref="contextmenu",
+  v-layout.geomap-editor(column)
+    geomap.geomap-editor__map.mb-2(
+      ref="map",
+      :style="mapStyles",
       :disabled="shown",
-      :items="mapItems",
-      :marker-items="markerItems"
+      :min-zoom="minZoom",
+      :options="mapOptions",
+      @click="openAddingPointDialogByClick",
+      @dblclick="openAddingPointDialog"
     )
+      geomap-control-zoom(position="topleft", :disabled="shown")
+      geomap-control-layers(position="topright")
 
-    geomap-control(position="topleft")
-      v-tooltip(attach, right, max-width="unset", min-width="max-content")
-        template(#activator="{ on }")
-          v-btn.secondary.ma-0(
-            v-on="on",
-            :class="{ 'lighten-4': !addOnClick }",
-            :disabled="shown",
-            icon,
-            dark,
-            @click="toggleAddingMode"
-          )
-            v-icon add_location
-        span {{ $t('map.toggleAddingPointMode') }}
-
-    geomap-tile-layer(
-      :name="$t('map.layers.openStreetMap')",
-      :url="$config.OPEN_STREET_LAYER_URL",
-      :visible="true",
-      layer-type="base",
-      no-wrap
-    )
-
-    geomap-feature-group(
-      ref="pointsFeatureGroup",
-      :name="$t('map.layers.points')",
-      layer-type="overlay"
-    )
-      geomap-marker(
-        v-for="marker in markers",
-        :key="marker.id",
-        :lat-lng="marker.coordinates",
-        :options="{ data: marker.data }",
-        :draggable="!shown",
-        @dragend="finishMovingMarker",
-        @click=""
+      geomap-contextmenu(
+        ref="contextmenu",
+        :disabled="shown",
+        :items="mapItems",
+        :marker-items="markerItems"
       )
-        geomap-icon(:icon-anchor="marker.icon.anchor")
-          v-icon(
-            :style="marker.icon.style",
-            :size="marker.icon.size",
-            color="grey darken-2"
-          ) {{ marker.icon.name }}
 
-    v-menu(
-      v-model="shown",
-      :position-x="pageX",
-      :position-y="pageY",
-      :close-on-content-click="false",
-      ignore-click-outside,
-      offset-overflow,
-      offset-x,
-      absolute
-    )
-      point-form-dialog(
-        v-if="addingPoint || editingPoint",
-        :point="addingPoint || editingPoint",
-        :editing="!!editingPoint",
-        coordinates,
-        @cancel="closePointDialog",
-        @submit="submitPointDialog",
-        @remove="showRemovePointModal"
+      geomap-control(position="topleft")
+        v-tooltip(right, max-width="unset", min-width="max-content")
+          template(#activator="{ on }")
+            v-btn.secondary.ma-0(
+              v-on="on",
+              :class="{ 'lighten-4': !addOnClick }",
+              :disabled="shown",
+              icon,
+              dark,
+              @click="toggleAddingMode"
+            )
+              v-icon add_location
+          span {{ $t('map.toggleAddingPointMode') }}
+
+      geomap-tile-layer(
+        :name="$t('map.layers.openStreetMap')",
+        :url="$config.OPEN_STREET_LAYER_URL",
+        :visible="true",
+        layer-type="base",
+        no-wrap
       )
+
+      geomap-feature-group(
+        ref="pointsFeatureGroup",
+        :name="$t('map.layers.points')",
+        layer-type="overlay"
+      )
+        geomap-marker(
+          v-for="marker in markers",
+          :key="marker.id",
+          :lat-lng="marker.coordinates",
+          :options="{ data: marker.data }",
+          :draggable="!shown",
+          @dragend="finishMovingMarker",
+          @click=""
+        )
+          geomap-icon(:icon-anchor="marker.icon.anchor")
+            v-icon(
+              :style="marker.icon.style",
+              :size="marker.icon.size",
+              color="grey darken-2"
+            ) {{ marker.icon.name }}
+
+      v-menu(
+        v-model="shown",
+        :position-x="pageX",
+        :position-y="pageY",
+        :close-on-content-click="false",
+        ignore-click-outside,
+        offset-overflow,
+        offset-x,
+        absolute
+      )
+        point-form-dialog(
+          v-if="addingPoint || editingPoint",
+          :point="addingPoint || editingPoint",
+          :editing="!!editingPoint",
+          coordinates,
+          @cancel="closePointDialog",
+          @submit="submitPointDialog",
+          @remove="showRemovePointModal"
+        )
+    v-messages(v-if="hasChildrenError", :value="errorMessages", color="error")
 </template>
 
 <script>
+import { COLORS } from '@/config';
+
 import { MODALS } from '@/constants';
 
 import { geomapPointToForm } from '@/helpers/forms/map';
+import { getGeomapMarkerIcon } from '@/helpers/map';
 
-import { formMixin } from '@/mixins/form';
+import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
 import Geomap from '@/components/common/geomap/geomap.vue';
 import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
@@ -102,6 +107,7 @@ import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
 import PointFormDialog from './point-form-dialog.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     Geomap,
     GeomapTileLayer,
@@ -114,7 +120,7 @@ export default {
     PointFormDialog,
     GeomapIcon,
   },
-  mixins: [formMixin],
+  mixins: [formMixin, validationChildrenMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -132,6 +138,10 @@ export default {
       type: Number,
       default: 34,
     },
+    name: {
+      type: String,
+      default: 'parameters',
+    },
   },
   data() {
     return {
@@ -146,6 +156,10 @@ export default {
     };
   },
   computed: {
+    errorMessages() {
+      return [this.$t('geomap.errors.pointsRequired')];
+    },
+
     mapOptions() {
       return {
         doubleClickZoom: false,
@@ -155,30 +169,16 @@ export default {
     mapStyles() {
       return {
         cursor: this.addOnClick ? 'crosshair' : '',
+        borderColor: this.hasChildrenError ? COLORS.error : undefined,
       };
     },
 
     markers() {
-      const halfIconSize = this.iconSize / 2;
-      const pixelSize = `${this.iconSize}px`;
-
       return this.form.points.map(point => ({
         id: point._id,
         coordinates: [point.coordinates.lat, point.coordinates.lng],
         data: point,
-        icon: {
-          name: point.entity ? 'location_on' : 'link',
-          style: {
-            width: pixelSize,
-            height: pixelSize,
-            maxWidth: 'unset',
-            maxHeight: 'unset',
-          },
-          size: this.iconSize,
-          anchor: point.entity
-            ? [halfIconSize, this.iconSize]
-            : [halfIconSize, halfIconSize],
-        },
+        icon: getGeomapMarkerIcon(point, this.iconSize),
       }));
     },
 
@@ -192,11 +192,43 @@ export default {
         { text: this.$t('map.removePoint'), action: this.removePoint },
       ];
     },
+
+    pointsFieldName() {
+      return `${this.name}.points`;
+    },
+  },
+  watch: {
+    form: {
+      deep: true,
+      handler() {
+        if (this.hasChildrenError) {
+          this.$validator.validate(this.pointsFieldName);
+        }
+      },
+    },
+  },
+  beforeDestroy() {
+    this.detachRules();
   },
   mounted() {
+    this.attachRequiredRule();
     this.$nextTick(this.fitMap);
   },
   methods: {
+    attachRequiredRule() {
+      this.$validator.attach({
+        name: this.pointsFieldName,
+        rules: 'required:true',
+        getter: () => !!this.form.points.length,
+        context: () => this,
+        vm: this,
+      });
+    },
+
+    detachRules() {
+      this.$validator.detach(this.pointsFieldName);
+    },
+
     fitMap() {
       const { pointsFeatureGroup, map } = this.$refs;
 
@@ -329,3 +361,14 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+$borderColor: #e5e5e5;
+
+.geomap-editor {
+  &__map {
+    min-height: 500px;
+    border: 1px solid $borderColor;
+  }
+}
+</style>
