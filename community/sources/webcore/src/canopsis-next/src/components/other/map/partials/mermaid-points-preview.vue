@@ -24,35 +24,26 @@
       absolute,
       top
     )
-      mermaid-point-popup(
+      point-popup(
         v-click-outside="clickOutsideDirective",
         :point="activePoint",
         :template="popupTemplate",
+        :color-indicator="colorIndicator",
         :actions="popupActions",
-        :color="getPointEntityColor(activePoint)",
-        @show:alarms="showAlarmListModal",
+        @show:alarms="showAlarms",
         @show:map="showLinkedMap",
         @close="closePopup"
       )
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-import { MODALS } from '@/constants';
-
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
-import { getEntityColor } from '@/helpers/color';
-
 import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
 
 import MermaidPointMarker from './mermaid-point-marker.vue';
-import MermaidPointPopup from './mermaid-point-popup.vue';
-
-const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
+import PointPopup from './point-popup.vue';
 
 export default {
-  components: { MermaidPointMarker, MermaidPointPopup },
+  components: { MermaidPointMarker, PointPopup },
   mixins: [entitiesServiceEntityMixin],
   props: {
     points: {
@@ -70,10 +61,6 @@ export default {
     popupActions: {
       type: Boolean,
       default: false,
-    },
-    alarmsColumns: {
-      type: Array,
-      required: false,
     },
     colorIndicator: {
       type: String,
@@ -101,14 +88,6 @@ export default {
     },
   },
   methods: {
-    ...mapAlarmActions({
-      fetchComponentAlarmsListWithoutStore: 'fetchComponentAlarmsListWithoutStore',
-    }),
-
-    getPointEntityColor(point) {
-      return point.entity ? getEntityColor(point.entity, this.colorIndicator) : undefined;
-    },
-
     openPopup(point, event) {
       const { top, left, width } = event.target.getBoundingClientRect();
 
@@ -126,24 +105,9 @@ export default {
       this.closePopup();
     },
 
-    showAlarmListModal() {
-      try {
-        const widget = generateDefaultAlarmListWidget();
-
-        widget.parameters.widgetColumns = this.alarmsColumns;
-
-        this.$modals.show({
-          name: MODALS.alarmsList,
-          config: {
-            widget,
-            fetchList: params => this.fetchComponentAlarmsListWithoutStore({
-              params: { ...params, _id: this.activePoint.entity._id },
-            }),
-          },
-        });
-      } catch (err) {
-        this.$popups.error({ text: this.$t('errors.default') });
-      }
+    showAlarms() {
+      this.$emit('show:alarms', this.activePoint);
+      this.closePopup();
     },
   },
 };
