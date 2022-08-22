@@ -3038,8 +3038,6 @@ export default merge({
 
   geomap: {
     layers: 'Layers',
-    zoomIn: 'Zoom in',
-    zoomOut: 'Zoom out',
     errors: {
       pointsRequired: 'The points must be added',
     },
