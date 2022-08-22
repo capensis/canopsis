@@ -34,7 +34,6 @@
 import { isNumber } from 'lodash';
 import VRuntimeTemplate from 'v-runtime-template';
 
-import { isNumber } from 'lodash';
 import { COLORS } from '@/config';
 
 import { USERS_PERMISSIONS } from '@/constants';
@@ -45,7 +44,6 @@ import { getEntityColor } from '@/helpers/color';
 import { authMixin } from '@/mixins/auth';
 
 import MermaidPointMarker from './mermaid-point-marker.vue';
-import { getEntityColor } from '@/helpers/color';
 
 export default {
   components: { VRuntimeTemplate, MermaidPointMarker },

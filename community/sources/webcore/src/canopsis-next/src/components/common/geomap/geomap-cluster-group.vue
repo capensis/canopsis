@@ -21,6 +21,10 @@ export default {
       type: String,
       required: false,
     },
+    disableClusteringAtZoom: {
+      type: Number,
+      required: false,
+    },
   },
   data() {
     return {
@@ -35,6 +39,7 @@ export default {
   mounted() {
     const options = optionsMerger(
       {
+        disableClusteringAtZoom: this.disableClusteringAtZoom,
         polygonOptions: this.polygonOptions,
         iconCreateFunction: this.createIcon,
       },
