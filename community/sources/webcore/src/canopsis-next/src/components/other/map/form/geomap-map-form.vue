@@ -1,15 +1,15 @@
 <template lang="pug">
   v-layout(column)
-    c-name-field.mx-4(v-field="form.name")
-    example-map(style="height: 600px;")
+    c-name-field(v-field="form.name")
+    geomap-editor(v-field="form.parameters")
 </template>
 
 <script>
-import ExampleMap from '@/components/examples/example-map.vue';
+import GeomapEditor from './partials/geomap-editor.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ExampleMap },
+  components: { GeomapEditor },
   model: {
     prop: 'form',
     event: 'input',

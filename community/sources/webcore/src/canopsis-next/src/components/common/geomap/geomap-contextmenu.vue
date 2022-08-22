@@ -4,6 +4,7 @@
     :position-x="pageX",
     :position-y="pageY",
     :close-on-content-click="false",
+    :disabled="disabled",
     ignore-click-upper-outside,
     offset-overflow,
     offset-x,
@@ -27,6 +28,10 @@ export default {
     markerItems: {
       type: Array,
       default: () => [],
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -62,6 +67,10 @@ export default {
 
   methods: {
     open({ latlng, originalEvent, marker }) {
+      if (this.disabled) {
+        return;
+      }
+
       if (this.shown) {
         this.shown = false;
         return;
@@ -70,7 +79,7 @@ export default {
       this.latlng = latlng;
       this.marker = marker;
       this.pageX = originalEvent.pageX;
-      this.pageY = originalEvent.pageY;
+      this.pageY = originalEvent.pageY - window.scrollY;
       this.shown = true;
     },
 
