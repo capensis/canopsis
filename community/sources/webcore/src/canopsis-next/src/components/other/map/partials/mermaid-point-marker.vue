@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import { isNumber } from 'chart.js/helpers';
+
 import PointIcon from './point-icon.vue';
 
 export default {
@@ -43,7 +45,7 @@ export default {
   },
   computed: {
     isFullEntity() {
-      return this.entity?.state;
+      return isNumber(this.entity?.state);
     },
   },
 };
