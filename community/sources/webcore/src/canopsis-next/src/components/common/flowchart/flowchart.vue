@@ -14,6 +14,7 @@
         v-field="shapes",
         :view-box.sync="viewBox",
         :selected.sync="selected",
+        :points.sync="points",
         :background-color="backgroundColor",
         :readonly="readonly"
       )
@@ -53,6 +54,7 @@ export default {
   data() {
     return {
       selected: [],
+      points: [],
       viewBox: {
         x: 0,
         y: 0,
