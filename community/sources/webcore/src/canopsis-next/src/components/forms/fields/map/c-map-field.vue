@@ -8,6 +8,7 @@
     :disabled="disabled",
     :name="name",
     :error-messages="errors.collect(name)",
+    :hide-details="hideDetails",
     item-text="name",
     item-value="_id",
     clearable
@@ -37,6 +38,10 @@ export default {
       default: 'map',
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
       type: Boolean,
       default: false,
     },

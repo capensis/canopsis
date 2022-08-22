@@ -16,6 +16,7 @@ const stubs = {
   'text-widget': true,
   'counter-widget': true,
   'testing-weather-widget': true,
+  'map-widget': true,
 };
 
 const snapshotFactory = (options = {}) => mount(WidgetWrapper, {
