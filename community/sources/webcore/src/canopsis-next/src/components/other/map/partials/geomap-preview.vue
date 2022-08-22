@@ -16,16 +16,16 @@
       layer-type="overlay"
     )
       geomap-marker(
-        v-for="marker in markers",
-        :key="marker.id",
-        :lat-lng="marker.coordinates",
-        @click="openPopup(marker.data, $event)"
+        v-for="{ coordinates, id, data, icon } in markers",
+        :key="id",
+        :lat-lng="coordinates",
+        @click="openPopup(data, $event)"
       )
-        geomap-icon(:icon-anchor="marker.icon.anchor", :tooltip-anchor="marker.icon.tooltipAnchor")
+        geomap-icon(:icon-anchor="icon.anchor")
           point-icon(
-            :style="marker.icon.style",
-            :entity="marker.data.entity",
-            :size="marker.icon.size",
+            :style="icon.style",
+            :entity="data.entity",
+            :size="icon.size",
             :color-indicator="colorIndicator",
             :pbehavior-enabled="pbehaviorEnabled"
           )
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { getGeomapMarkerIcon } from '@/helpers/map';
+import { getGeomapMarkerIconOptions } from '@/helpers/map';
 
 import Geomap from '@/components/common/geomap/geomap.vue';
 import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
@@ -121,7 +121,7 @@ export default {
         id: point._id,
         coordinates: [point.coordinates.lat, point.coordinates.lng],
         data: point,
-        icon: getGeomapMarkerIcon(point, this.iconSize),
+        icon: getGeomapMarkerIconOptions(point, this.iconSize),
       }));
     },
   },
