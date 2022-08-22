@@ -41,7 +41,7 @@ Feature: create service entity
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-first&sort_by=name
+    When I do GET /api/v4/entities?search=che-service-first&sort_by=name&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -49,68 +49,36 @@ Feature: create service entity
       "data": [
         {
           "_id": "test-component-che-service-first",
-          "category": null,
-          "component": "test-component-che-service-first",
-          "depends": [
-            "test-resource-che-service-first/test-component-che-service-first"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-service-first/test-connector-name-che-service-first"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-component-che-service-first",
-          "type": "component"
+          "depends_count": 0,
+          "impacts_count": 0
         },
         {
           "_id": "test-connector-che-service-first/test-connector-name-che-service-first",
-          "category": null,
-          "depends": [
-            "test-component-che-service-first"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-service-first/test-component-che-service-first"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-service-first",
-          "type": "connector"
+          "depends_count": 0,
+          "impacts_count": 0
         },
         {
           "_id": "{{ .serviceID }}",
           "category": null,
-          "depends": [
-            "test-resource-che-service-first/test-component-che-service-first"
-          ],
           "enabled": true,
-          "impact": [],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-entityservice-che-service-first-name",
-          "type": "service"
+          "type": "service",
+          "depends_count": 1,
+          "impacts_count": 0
         },
         {
           "_id": "test-resource-che-service-first/test-component-che-service-first",
           "category": null,
           "component": "test-component-che-service-first",
-          "depends": [
-            "test-connector-che-service-first/test-connector-name-che-service-first"
-          ],
           "enabled": true,
-          "impact": [
-            "test-component-che-service-first",
-            "{{ .serviceID }}"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-resource-che-service-first",
-          "type": "resource"
+          "type": "resource",
+          "depends_count": 0,
+          "impacts_count": 1
         }
       ],
       "meta": {
@@ -119,6 +87,31 @@ Feature: create service entity
         "per_page": 10,
         "total_count": 4
       }
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-resource-che-service-first/test-component-che-service-first"
+      ],
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-first/test-component-che-service-first
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-first/test-connector-name-che-service-first"
+      ],
+      "impact": [
+        "test-component-che-service-first",
+        "{{ .serviceID }}"
+      ]
     }
     """
 
@@ -169,49 +162,17 @@ Feature: create service entity
     {
       "data": [
         {
-          "_id": "test-component-che-service-2",
-          "category": null,
-          "component": "test-component-che-service-2",
-          "depends": [
-            "test-resource-che-service-2/test-component-che-service-2"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-service-2/test-connector-name-che-service-2"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-component-che-service-2",
-          "type": "component"
+          "_id": "test-component-che-service-2"
         },
         {
-          "_id": "test-connector-che-service-2/test-connector-name-che-service-2",
-          "category": null,
-          "depends": [
-            "test-component-che-service-2"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-service-2/test-component-che-service-2"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-service-2",
-          "type": "connector"
+          "_id": "test-connector-che-service-2/test-connector-name-che-service-2"
         },
         {
           "_id": "{{ .serviceID }}",
           "category": null,
-          "depends": [
-            "test-resource-che-service-2/test-component-che-service-2"
-          ],
           "enabled": true,
-          "impact": [],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-entityservice-che-service-2-name",
           "type": "service"
         },
@@ -219,17 +180,9 @@ Feature: create service entity
           "_id": "test-resource-che-service-2/test-component-che-service-2",
           "category": null,
           "component": "test-component-che-service-2",
-          "depends": [
-            "test-connector-che-service-2/test-connector-name-che-service-2"
-          ],
           "enabled": true,
-          "impact": [
-            "test-component-che-service-2",
-            "{{ .serviceID }}"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-resource-che-service-2",
           "type": "resource"
         }
@@ -240,6 +193,31 @@ Feature: create service entity
         "per_page": 10,
         "total_count": 4
       }
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-resource-che-service-2/test-component-che-service-2"
+      ],
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-2/test-component-che-service-2
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-2/test-connector-name-che-service-2"
+      ],
+      "impact": [
+        "test-component-che-service-2",
+        "{{ .serviceID }}"
+      ]
     }
     """
 
@@ -297,70 +275,29 @@ Feature: create service entity
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-3&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-3",
-          "depends": [
-            "test-resource-che-service-3-1/test-component-che-service-3",
-            "test-resource-che-service-3-2/test-component-che-service-3"
-          ],
-          "impact": [
-            "test-connector-che-service-3/test-connector-name-che-service-3"
-          ],
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-3/test-connector-name-che-service-3",
-          "depends": [
-            "test-component-che-service-3"
-          ],
-          "impact": [
-            "test-resource-che-service-3-1/test-component-che-service-3",
-            "test-resource-che-service-3-2/test-component-che-service-3"
-          ],
-          "type": "connector"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-resource-che-service-3-1/test-component-che-service-3"
-          ],
-          "impact": [],
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-3-1/test-component-che-service-3",
-          "depends": [
-            "test-connector-che-service-3/test-connector-name-che-service-3"
-          ],
-          "impact": [
-            "test-component-che-service-3",
-            "{{ .serviceID }}"
-          ],
-          "type": "resource"
-        },
-        {
-          "_id": "test-resource-che-service-3-2/test-component-che-service-3",
-          "depends": [
-            "test-connector-che-service-3/test-connector-name-che-service-3"
-          ],
-          "impact": [
-            "test-component-che-service-3"
-          ],
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-3-1/test-component-che-service-3"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 5
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-3-1/test-component-che-service-3
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-3/test-connector-name-che-service-3"
+      ],
+      "impact": [
+        "test-component-che-service-3",
+        "{{ .serviceID }}"
+      ]
     }
     """
     When I do PUT /api/v4/entityservices/{{ .serviceID }}:
@@ -387,70 +324,42 @@ Feature: create service entity
     """
     Then the response code should be 200
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-3&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-3",
-          "depends": [
-            "test-resource-che-service-3-1/test-component-che-service-3",
-            "test-resource-che-service-3-2/test-component-che-service-3"
-          ],
-          "impact": [
-            "test-connector-che-service-3/test-connector-name-che-service-3"
-          ],
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-3/test-connector-name-che-service-3",
-          "depends": [
-            "test-component-che-service-3"
-          ],
-          "impact": [
-            "test-resource-che-service-3-1/test-component-che-service-3",
-            "test-resource-che-service-3-2/test-component-che-service-3"
-          ],
-          "type": "connector"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-resource-che-service-3-2/test-component-che-service-3"
-          ],
-          "impact": [],
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-3-1/test-component-che-service-3",
-          "depends": [
-            "test-connector-che-service-3/test-connector-name-che-service-3"
-          ],
-          "impact": [
-            "test-component-che-service-3"
-          ],
-          "type": "resource"
-        },
-        {
-          "_id": "test-resource-che-service-3-2/test-component-che-service-3",
-          "depends": [
-            "test-connector-che-service-3/test-connector-name-che-service-3"
-          ],
-          "impact": [
-            "test-component-che-service-3",
-            "{{ .serviceID }}"
-          ],
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-3-2/test-component-che-service-3"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 5
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-3-1/test-component-che-service-3
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-3/test-connector-name-che-service-3"
+      ],
+      "impact": [
+        "test-component-che-service-3"
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-3-2/test-component-che-service-3
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-3/test-connector-name-che-service-3"
+      ],
+      "impact": [
+        "test-component-che-service-3",
+        "{{ .serviceID }}"
+      ]
     }
     """
 
@@ -547,58 +456,29 @@ Feature: create service entity
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-6&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-6",
-          "depends": [
-            "test-resource-che-service-6/test-component-che-service-6"
-          ],
-          "impact": [
-            "test-connector-che-service-6/test-connector-name-che-service-6"
-          ],
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-6/test-connector-name-che-service-6",
-          "depends": [
-            "test-component-che-service-6"
-          ],
-          "impact": [
-            "test-resource-che-service-6/test-component-che-service-6"
-          ],
-          "type": "connector"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-resource-che-service-6/test-component-che-service-6"
-          ],
-          "impact": [],
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-6/test-component-che-service-6",
-          "depends": [
-            "test-connector-che-service-6/test-connector-name-che-service-6"
-          ],
-          "impact": [
-            "test-component-che-service-6",
-            "{{ .serviceID }}"
-          ],
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-6/test-component-che-service-6"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 4
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-6/test-component-che-service-6
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-6/test-connector-name-che-service-6"
+      ],
+      "impact": [
+        "test-component-che-service-6",
+        "{{ .serviceID }}"
+      ]
     }
     """
 
@@ -696,58 +576,29 @@ Feature: create service entity
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-7&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-7",
-          "depends": [
-            "test-resource-che-service-7/test-component-che-service-7"
-          ],
-          "impact": [
-            "test-connector-che-service-7/test-connector-name-che-service-7"
-          ],
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-7/test-connector-name-che-service-7",
-          "depends": [
-            "test-component-che-service-7"
-          ],
-          "impact": [
-            "test-resource-che-service-7/test-component-che-service-7"
-          ],
-          "type": "connector"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-resource-che-service-7/test-component-che-service-7"
-          ],
-          "impact": [],
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-7/test-component-che-service-7",
-          "depends": [
-            "test-connector-che-service-7/test-connector-name-che-service-7"
-          ],
-          "impact": [
-            "test-component-che-service-7",
-            "{{ .serviceID }}"
-          ],
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-7/test-component-che-service-7"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 4
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-7/test-component-che-service-7
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-7/test-connector-name-che-service-7"
+      ],
+      "impact": [
+        "test-component-che-service-7",
+        "{{ .serviceID }}"
+      ]
     }
     """
     When I do PUT /api/v4/eventfilter/rules/{{ .ruleID }}:
@@ -805,55 +656,26 @@ Feature: create service entity
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-7&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-7",
-          "depends": [
-            "test-resource-che-service-7/test-component-che-service-7"
-          ],
-          "impact": [
-            "test-connector-che-service-7/test-connector-name-che-service-7"
-          ],
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-7/test-connector-name-che-service-7",
-          "depends": [
-            "test-component-che-service-7"
-          ],
-          "impact": [
-            "test-resource-che-service-7/test-component-che-service-7"
-          ],
-          "type": "connector"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [],
-          "impact": [],
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-7/test-component-che-service-7",
-          "depends": [
-            "test-connector-che-service-7/test-connector-name-che-service-7"
-          ],
-          "impact": [
-            "test-component-che-service-7"
-          ],
-          "type": "resource"
-        }
+      "depends": [],
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-7/test-component-che-service-7
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-7/test-connector-name-che-service-7"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 4
-      }
+      "impact": [
+        "test-component-che-service-7"
+      ]
     }
     """
 
@@ -897,58 +719,29 @@ Feature: create service entity
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/entities?search=che-service-8&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-8",
-          "depends": [
-            "test-resource-che-service-8/test-component-che-service-8"
-          ],
-          "impact": [
-            "test-connector-che-service-8/test-connector-name-che-service-8",
-            "{{ .serviceID }}"
-          ],
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-8/test-connector-name-che-service-8",
-          "depends": [
-            "test-component-che-service-8"
-          ],
-          "impact": [
-            "test-resource-che-service-8/test-component-che-service-8"
-          ],
-          "type": "connector"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-component-che-service-8"
-          ],
-          "impact": [],
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-8/test-component-che-service-8",
-          "depends": [
-            "test-connector-che-service-8/test-connector-name-che-service-8"
-          ],
-          "impact": [
-            "test-component-che-service-8"
-          ],
-          "type": "resource"
-        }
+      "depends": [
+        "test-component-che-service-8"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 4
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-component-che-service-8
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-resource-che-service-8/test-component-che-service-8"
+      ],
+      "impact": [
+        "test-connector-che-service-8/test-connector-name-che-service-8",
+        "{{ .serviceID }}"
+      ]
     }
     """
 
@@ -992,212 +785,29 @@ Feature: create service entity
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/entities?search=che-service-9&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-9",
-          "depends": [
-            "test-resource-che-service-9/test-component-che-service-9"
-          ],
-          "impact": [
-            "test-connector-che-service-9/test-connector-name-che-service-9"
-          ],
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-9/test-connector-name-che-service-9",
-          "depends": [
-            "test-component-che-service-9"
-          ],
-          "impact": [
-            "test-resource-che-service-9/test-component-che-service-9",
-            "{{ .serviceID }}"
-          ],
-          "type": "connector"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-connector-che-service-9/test-connector-name-che-service-9"
-          ],
-          "impact": [],
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-9/test-component-che-service-9",
-          "depends": [
-            "test-connector-che-service-9/test-connector-name-che-service-9"
-          ],
-          "impact": [
-            "test-component-che-service-9"
-          ],
-          "type": "resource"
-        }
+      "depends": [
+        "test-connector-che-service-9/test-connector-name-che-service-9"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 4
-      }
+      "impact": []
     }
     """
-
-  Scenario: given service entity and enrichment event filter and new component entity on resource event should add component to service
-    Given I am admin
-    When I do POST /api/v4/entityservices:
-    """json
-    {
-      "name": "test-entityservice-che-service-10-name",
-      "output_template": "test-entityservice-che-service-10-output",
-      "impact_level": 1,
-      "enabled": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-che-service-10"
-            }
-          }
-        ]
-      ],
-      "sli_avail_state": 0
-    }
-    """
-    Then the response code should be 201
-    When I save response serviceID={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "event_pattern": [
-        [
-          {
-            "field": "resource",
-            "cond": {
-              "type": "eq",
-              "value": "test-resource-che-service-10"
-            }
-          },
-          {
-            "field": "event_type",
-            "cond": {
-              "type": "eq",
-              "value": "check"
-            }
-          }
-        ]
-      ],
-      "entity_pattern": [
-        [
-          {
-            "field": "infos.manager",
-            "cond": {
-              "type": "exist",
-              "value": false
-            }
-          }
-        ]
-      ],
-      "config": {
-        "actions": [
-          {
-            "type": "set_entity_info_from_template",
-            "name": "manager",
-            "description": "Manager",
-            "value": "test-manager-che-service-10"
-          }
-        ],
-        "on_success": "pass",
-        "on_failure": "pass"
-      },
-      "priority": 2,
-      "description": "test-eventfilter-che-service-10-description",
-      "enabled": true
-    }
-    """
-    Then the response code should be 201
-    When I wait the next periodical process
-    When I send an event:
-    """json
-    {
-      "connector": "test-connector-che-service-10",
-      "connector_name": "test-connector-name-che-service-10",
-      "source_type": "resource",
-      "event_type": "check",
-      "component": "test-component-che-service-10",
-      "resource": "test-resource-che-service-10",
-      "state": 2,
-      "output": "test-output-che-service-10"
-    }
-    """
-    When I wait the end of event processing
-    When I do GET /api/v4/entities?search=che-service-10&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id=test-connector-che-service-9/test-connector-name-che-service-9
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-10",
-          "depends": [
-            "test-resource-che-service-10/test-component-che-service-10"
-          ],
-          "impact": [
-            "test-connector-che-service-10/test-connector-name-che-service-10",
-            "{{ .serviceID }}"
-          ],
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-10/test-connector-name-che-service-10",
-          "depends": [
-            "test-component-che-service-10"
-          ],
-          "impact": [
-            "test-resource-che-service-10/test-component-che-service-10"
-          ],
-          "type": "connector"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-component-che-service-10"
-          ],
-          "impact": [],
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-10/test-component-che-service-10",
-          "depends": [
-            "test-connector-che-service-10/test-connector-name-che-service-10"
-          ],
-          "impact": [
-            "test-component-che-service-10"
-          ],
-          "infos": {
-            "manager": {
-              "description": "Manager",
-              "name": "manager",
-              "value": "test-manager-che-service-10"
-            }
-          },
-          "type": "resource"
-        }
+      "depends": [
+        "test-component-che-service-9"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 4
-      }
+      "impact": [
+        "test-resource-che-service-9/test-component-che-service-9",
+        "{{ .serviceID }}"
+      ]
     }
     """
 
@@ -1265,58 +875,29 @@ Feature: create service entity
     """
     Then the response code should be 200
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-16&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-16",
-          "depends": [
-            "test-resource-che-service-16/test-component-che-service-16"
-          ],
-          "impact": [
-            "test-connector-che-service-16/test-connector-name-che-service-16"
-          ],
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-16/test-connector-name-che-service-16",
-          "depends": [
-            "test-component-che-service-16"
-          ],
-          "impact": [
-            "test-resource-che-service-16/test-component-che-service-16"
-          ],
-          "type": "connector"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-resource-che-service-16/test-component-che-service-16"
-          ],
-          "impact": [],
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-16/test-component-che-service-16",
-          "depends": [
-            "test-connector-che-service-16/test-connector-name-che-service-16"
-          ],
-          "impact": [
-            "test-component-che-service-16",
-            "{{ .serviceID }}"
-          ],
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-16/test-component-che-service-16"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 4
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-16/test-component-che-service-16
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-16/test-connector-name-che-service-16"
+      ],
+      "impact": [
+        "test-component-che-service-16",
+        "{{ .serviceID }}"
+      ]
     }
     """
 
@@ -1384,94 +965,67 @@ Feature: create service entity
     }
     """
     When I wait the end of 3 events processing
-    When I do GET /api/v4/entities?search=che-service-17&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-17"
-        },
-        {
-          "_id": "test-connector-che-service-17/test-connector-name-che-service-17"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-resource-che-service-17/test-component-che-service-17"
-          ],
-          "impact": [
-            "{{ .impactServiceID }}"
-          ],
-          "type": "service"
-        },
-        {
-          "_id": "{{ .impactServiceID }}",
-          "depends": [
-            "{{ .serviceID }}"
-          ],
-          "impact": [],
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-17/test-component-che-service-17",
-          "depends": [
-            "test-connector-che-service-17/test-connector-name-che-service-17"
-          ],
-          "impact": [
-            "test-component-che-service-17",
-            "{{ .serviceID }}"
-          ],
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-17/test-component-che-service-17"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 5
-      }
+      "impact": [
+        "{{ .impactServiceID }}"
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id={{ .impactServiceID }}
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "{{ .serviceID }}"
+      ],
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-17/test-component-che-service-17
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-17/test-connector-name-che-service-17"
+      ],
+      "impact": [
+        "test-component-che-service-17",
+        "{{ .serviceID }}"
+      ]
     }
     """
     When I do DELETE /api/v4/entityservices/{{ .serviceID }}
     Then the response code should be 204
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-17&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id={{ .impactServiceID }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-17"
-        },
-        {
-          "_id": "test-connector-che-service-17/test-connector-name-che-service-17"
-        },
-        {
-          "_id": "{{ .impactServiceID }}",
-          "depends": [],
-          "impact": [],
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-17/test-component-che-service-17",
-          "depends": [
-            "test-connector-che-service-17/test-connector-name-che-service-17"
-          ],
-          "impact": [
-            "test-component-che-service-17"
-          ],
-          "type": "resource"
-        }
+      "depends": [],
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-17/test-component-che-service-17
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-17/test-connector-name-che-service-17"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 4
-      }
+      "impact": [
+        "test-component-che-service-17"
+      ]
     }
     """
 
@@ -1518,44 +1072,29 @@ Feature: create service entity
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-18&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-18"
-        },
-        {
-          "_id": "test-connector-che-service-18/test-connector-name-che-service-18"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-resource-che-service-18-1/test-component-che-service-18"
-          ],
-          "impact": [],
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-18-1/test-component-che-service-18",
-          "depends": [
-            "test-connector-che-service-18/test-connector-name-che-service-18"
-          ],
-          "impact": [
-            "test-component-che-service-18",
-            "{{ .serviceID }}"
-          ],
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-18-1/test-component-che-service-18"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 4
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-18-1/test-component-che-service-18
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-18/test-connector-name-che-service-18"
+      ],
+      "impact": [
+        "test-component-che-service-18",
+        "{{ .serviceID }}"
+      ]
     }
     """
     When I do PUT /api/v4/entityservices/{{ .serviceID }}:
@@ -1595,54 +1134,29 @@ Feature: create service entity
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/entities?search=che-service-18&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-18"
-        },
-        {
-          "_id": "test-connector-che-service-18/test-connector-name-che-service-18"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-resource-che-service-18-1/test-component-che-service-18"
-          ],
-          "impact": [],
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-18-1/test-component-che-service-18",
-          "depends": [
-            "test-connector-che-service-18/test-connector-name-che-service-18"
-          ],
-          "impact": [
-            "test-component-che-service-18",
-            "{{ .serviceID }}"
-          ],
-          "type": "resource"
-        },
-        {
-          "_id": "test-resource-che-service-18-2/test-component-che-service-18",
-          "depends": [
-            "test-connector-che-service-18/test-connector-name-che-service-18"
-          ],
-          "impact": [
-            "test-component-che-service-18"
-          ],
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-18-1/test-component-che-service-18"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 5
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-18-1/test-component-che-service-18
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-18/test-connector-name-che-service-18"
+      ],
+      "impact": [
+        "test-component-che-service-18",
+        "{{ .serviceID }}"
+      ]
     }
     """
 
@@ -1674,68 +1188,29 @@ Feature: create service entity
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-19&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id=test-entityservice-che-service-19
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-19",
-          "component": "test-component-che-service-19",
-          "depends": [
-            "test-resource-che-service-19/test-component-che-service-19"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-service-19/test-connector-name-che-service-19"
-          ],
-          "name": "test-component-che-service-19",
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-19/test-connector-name-che-service-19",
-          "depends": [
-            "test-component-che-service-19"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-service-19/test-component-che-service-19"
-          ],
-          "name": "test-connector-name-che-service-19",
-          "type": "connector"
-        },
-        {
-          "_id": "test-entityservice-che-service-19",
-          "depends": [
-            "test-resource-che-service-19/test-component-che-service-19"
-          ],
-          "enabled": true,
-          "impact": [],
-          "name": "test-entityservice-che-service-19-name",
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-19/test-component-che-service-19",
-          "component": "test-component-che-service-19",
-          "depends": [
-            "test-connector-che-service-19/test-connector-name-che-service-19"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-service-19",
-            "test-entityservice-che-service-19"
-          ],
-          "name": "test-resource-che-service-19",
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-19/test-component-che-service-19"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 4
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-19/test-component-che-service-19
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-19/test-connector-name-che-service-19"
+      ],
+      "impact": [
+        "test-component-che-service-19",
+        "test-entityservice-che-service-19"
+      ]
     }
     """
 
@@ -1802,62 +1277,29 @@ Feature: create service entity
     ]
     """
     When I wait the end of 3 events processing
-    When I do GET /api/v4/entities?search=che-service-20&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-20"
-        },
-        {
-          "_id": "test-connector-che-service-20/test-connector-name-che-service-20"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-resource-che-service-20-1/test-component-che-service-20"
-          ],
-          "enabled": true,
-          "impact": [],
-          "name": "test-entityservice-che-service-20-name",
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-20-1/test-component-che-service-20",
-          "component": "test-component-che-service-20",
-          "depends": [
-            "test-connector-che-service-20/test-connector-name-che-service-20"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-service-20",
-            "{{ .serviceID }}"
-          ],
-          "name": "test-resource-che-service-20-1",
-          "type": "resource"
-        },
-        {
-          "_id": "test-resource-che-service-20-2/test-component-che-service-20",
-          "component": "test-component-che-service-20",
-          "depends": [
-            "test-connector-che-service-20/test-connector-name-che-service-20"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-service-20"
-          ],
-          "name": "test-resource-che-service-20-2",
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-20-1/test-component-che-service-20"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 5
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-20-1/test-component-che-service-20
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-20/test-connector-name-che-service-20"
+      ],
+      "impact": [
+        "test-component-che-service-20",
+        "{{ .serviceID }}"
+      ]
     }
     """
     When I do PUT /api/v4/patterns/{{ .patternID }}:
@@ -1884,64 +1326,44 @@ Feature: create service entity
     """
     Then the response code should be 200
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-20&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-20"
-        },
-        {
-          "_id": "test-connector-che-service-20/test-connector-name-che-service-20"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-resource-che-service-20-1/test-component-che-service-20",
-            "test-resource-che-service-20-2/test-component-che-service-20"
-          ],
-          "enabled": true,
-          "impact": [],
-          "name": "test-entityservice-che-service-20-name",
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-20-1/test-component-che-service-20",
-          "component": "test-component-che-service-20",
-          "depends": [
-            "test-connector-che-service-20/test-connector-name-che-service-20"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-service-20",
-            "{{ .serviceID }}"
-          ],
-          "name": "test-resource-che-service-20-1",
-          "type": "resource"
-        },
-        {
-          "_id": "test-resource-che-service-20-2/test-component-che-service-20",
-          "component": "test-component-che-service-20",
-          "depends": [
-            "test-connector-che-service-20/test-connector-name-che-service-20"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-service-20",
-            "{{ .serviceID }}"
-          ],
-          "name": "test-resource-che-service-20-2",
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-20-1/test-component-che-service-20",
+        "test-resource-che-service-20-2/test-component-che-service-20"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 5
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-20-1/test-component-che-service-20
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-20/test-connector-name-che-service-20"
+      ],
+      "impact": [
+        "test-component-che-service-20",
+        "{{ .serviceID }}"
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-20-2/test-component-che-service-20
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-20/test-connector-name-che-service-20"
+      ],
+      "impact": [
+        "test-component-che-service-20",
+        "{{ .serviceID }}"
+      ]
     }
     """
 
@@ -1985,84 +1407,29 @@ Feature: create service entity
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-21&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id=test-entityservice-che-service-21
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-21",
-          "category": null,
-          "component": "test-component-che-service-21",
-          "depends": [
-            "test-resource-che-service-21/test-component-che-service-21"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-service-21/test-connector-name-che-service-21"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-component-che-service-21",
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-21/test-connector-name-che-service-21",
-          "category": null,
-          "depends": [
-            "test-component-che-service-21"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-service-21/test-component-che-service-21"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-service-21",
-          "type": "connector"
-        },
-        {
-          "_id": "test-entityservice-che-service-21",
-          "category": null,
-          "depends": [
-            "test-resource-che-service-21/test-component-che-service-21"
-          ],
-          "enabled": true,
-          "impact": [],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-entityservice-che-service-21-name",
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-21/test-component-che-service-21",
-          "category": null,
-          "component": "test-component-che-service-21",
-          "depends": [
-            "test-connector-che-service-21/test-connector-name-che-service-21"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-service-21",
-            "test-entityservice-che-service-21"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-service-21",
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-21/test-component-che-service-21"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 4
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-21/test-component-che-service-21
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-21/test-connector-name-che-service-21"
+      ],
+      "impact": [
+        "test-component-che-service-21",
+        "test-entityservice-che-service-21"
+      ]
     }
     """
     When I do PUT /api/v4/entitybasics?_id=test-resource-che-service-21/test-component-che-service-21:
@@ -2081,81 +1448,26 @@ Feature: create service entity
     """
     Then the response code should be 200
     When I wait the end of event processing
-    When I do GET /api/v4/entities?search=che-service-21&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id=test-entityservice-che-service-21
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-21",
-          "category": null,
-          "component": "test-component-che-service-21",
-          "depends": [
-            "test-resource-che-service-21/test-component-che-service-21"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-service-21/test-connector-name-che-service-21"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-component-che-service-21",
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-21/test-connector-name-che-service-21",
-          "category": null,
-          "depends": [
-            "test-component-che-service-21"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-service-21/test-component-che-service-21"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-service-21",
-          "type": "connector"
-        },
-        {
-          "_id": "test-entityservice-che-service-21",
-          "category": null,
-          "depends": [],
-          "enabled": true,
-          "impact": [],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-entityservice-che-service-21-name",
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-21/test-component-che-service-21",
-          "category": null,
-          "component": "test-component-che-service-21",
-          "depends": [
-            "test-connector-che-service-21/test-connector-name-che-service-21"
-          ],
-          "enabled": false,
-          "impact": [
-            "test-component-che-service-21"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-service-21",
-          "type": "resource"
-        }
+      "depends": [],
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-21/test-component-che-service-21
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-21/test-connector-name-che-service-21"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 4
-      }
+      "impact": [
+        "test-component-che-service-21"
+      ]
     }
     """
     When I do PUT /api/v4/entitybasics?_id=test-resource-che-service-21/test-component-che-service-21:
@@ -2174,84 +1486,29 @@ Feature: create service entity
     """
     Then the response code should be 200
     When I wait the end of event processing
-    When I do GET /api/v4/entities?search=che-service-21&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id=test-entityservice-che-service-21
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-21",
-          "category": null,
-          "component": "test-component-che-service-21",
-          "depends": [
-            "test-resource-che-service-21/test-component-che-service-21"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-service-21/test-connector-name-che-service-21"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-component-che-service-21",
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-21/test-connector-name-che-service-21",
-          "category": null,
-          "depends": [
-            "test-component-che-service-21"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-service-21/test-component-che-service-21"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-service-21",
-          "type": "connector"
-        },
-        {
-          "_id": "test-entityservice-che-service-21",
-          "category": null,
-          "depends": [
-            "test-resource-che-service-21/test-component-che-service-21"
-          ],
-          "enabled": true,
-          "impact": [],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-entityservice-che-service-21-name",
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-21/test-component-che-service-21",
-          "category": null,
-          "component": "test-component-che-service-21",
-          "depends": [
-            "test-connector-che-service-21/test-connector-name-che-service-21"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-service-21",
-            "test-entityservice-che-service-21"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-service-21",
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-21/test-component-che-service-21"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 4
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-21/test-component-che-service-21
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-21/test-connector-name-che-service-21"
+      ],
+      "impact": [
+        "test-component-che-service-21",
+        "test-entityservice-che-service-21"
+      ]
     }
     """
 
@@ -2312,105 +1569,44 @@ Feature: create service entity
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-22&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id=test-entityservice-che-service-22
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-22",
-          "category": null,
-          "component": "test-component-che-service-22",
-          "depends": [
-            "test-resource-che-service-22-1/test-component-che-service-22",
-            "test-resource-che-service-22-2/test-component-che-service-22"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-service-22/test-connector-name-che-service-22"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-component-che-service-22",
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-22/test-connector-name-che-service-22",
-          "category": null,
-          "depends": [
-            "test-component-che-service-22"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-service-22-1/test-component-che-service-22",
-            "test-resource-che-service-22-2/test-component-che-service-22"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-service-22",
-          "type": "connector"
-        },
-        {
-          "_id": "test-entityservice-che-service-22",
-          "category": null,
-          "depends": [
-            "test-resource-che-service-22-1/test-component-che-service-22",
-            "test-resource-che-service-22-2/test-component-che-service-22"
-          ],
-          "enabled": true,
-          "impact": [],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-entityservice-che-service-22-name",
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-22-1/test-component-che-service-22",
-          "category": null,
-          "component": "test-component-che-service-22",
-          "depends": [
-            "test-connector-che-service-22/test-connector-name-che-service-22"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-service-22",
-            "test-entityservice-che-service-22"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-service-22-1",
-          "type": "resource"
-        },
-        {
-          "_id": "test-resource-che-service-22-2/test-component-che-service-22",
-          "category": null,
-          "component": "test-component-che-service-22",
-          "depends": [
-            "test-connector-che-service-22/test-connector-name-che-service-22"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-service-22",
-            "test-entityservice-che-service-22"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-service-22-2",
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-22-1/test-component-che-service-22",
+        "test-resource-che-service-22-2/test-component-che-service-22"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 5
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-22-1/test-component-che-service-22
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-22/test-connector-name-che-service-22"
+      ],
+      "impact": [
+        "test-component-che-service-22",
+        "test-entityservice-che-service-22"
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-22-2/test-component-che-service-22
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-22/test-connector-name-che-service-22"
+      ],
+      "impact": [
+        "test-component-che-service-22",
+        "test-entityservice-che-service-22"
+      ]
     }
     """
     When I do PUT /api/v4/bulk/entities/disable:
@@ -2426,100 +1622,39 @@ Feature: create service entity
     """
     Then the response code should be 207
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-22&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id=test-entityservice-che-service-22
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-22",
-          "category": null,
-          "component": "test-component-che-service-22",
-          "depends": [
-            "test-resource-che-service-22-1/test-component-che-service-22",
-            "test-resource-che-service-22-2/test-component-che-service-22"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-service-22/test-connector-name-che-service-22"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-component-che-service-22",
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-22/test-connector-name-che-service-22",
-          "category": null,
-          "depends": [
-            "test-component-che-service-22"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-service-22-1/test-component-che-service-22",
-            "test-resource-che-service-22-2/test-component-che-service-22"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-service-22",
-          "type": "connector"
-        },
-        {
-          "_id": "test-entityservice-che-service-22",
-          "category": null,
-          "depends": [],
-          "enabled": true,
-          "impact": [],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-entityservice-che-service-22-name",
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-22-1/test-component-che-service-22",
-          "category": null,
-          "component": "test-component-che-service-22",
-          "depends": [
-            "test-connector-che-service-22/test-connector-name-che-service-22"
-          ],
-          "enabled": false,
-          "impact": [
-            "test-component-che-service-22"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-service-22-1",
-          "type": "resource"
-        },
-        {
-          "_id": "test-resource-che-service-22-2/test-component-che-service-22",
-          "category": null,
-          "component": "test-component-che-service-22",
-          "depends": [
-            "test-connector-che-service-22/test-connector-name-che-service-22"
-          ],
-          "enabled": false,
-          "impact": [
-            "test-component-che-service-22"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-service-22-2",
-          "type": "resource"
-        }
+      "depends": [],
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-22-1/test-component-che-service-22
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-22/test-connector-name-che-service-22"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 5
-      }
+      "impact": [
+        "test-component-che-service-22"
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-22-2/test-component-che-service-22
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-22/test-connector-name-che-service-22"
+      ],
+      "impact": [
+        "test-component-che-service-22"
+      ]
     }
     """
     When I do PUT /api/v4/bulk/entities/enable:
@@ -2535,104 +1670,43 @@ Feature: create service entity
     """
     Then the response code should be 207
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-22&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id=test-entityservice-che-service-22
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-che-service-22",
-          "category": null,
-          "component": "test-component-che-service-22",
-          "depends": [
-            "test-resource-che-service-22-1/test-component-che-service-22",
-            "test-resource-che-service-22-2/test-component-che-service-22"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-service-22/test-connector-name-che-service-22"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-component-che-service-22",
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-service-22/test-connector-name-che-service-22",
-          "category": null,
-          "depends": [
-            "test-component-che-service-22"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-service-22-1/test-component-che-service-22",
-            "test-resource-che-service-22-2/test-component-che-service-22"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-service-22",
-          "type": "connector"
-        },
-        {
-          "_id": "test-entityservice-che-service-22",
-          "category": null,
-          "depends": [
-            "test-resource-che-service-22-1/test-component-che-service-22",
-            "test-resource-che-service-22-2/test-component-che-service-22"
-          ],
-          "enabled": true,
-          "impact": [],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-entityservice-che-service-22-name",
-          "type": "service"
-        },
-        {
-          "_id": "test-resource-che-service-22-1/test-component-che-service-22",
-          "category": null,
-          "component": "test-component-che-service-22",
-          "depends": [
-            "test-connector-che-service-22/test-connector-name-che-service-22"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-service-22",
-            "test-entityservice-che-service-22"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-service-22-1",
-          "type": "resource"
-        },
-        {
-          "_id": "test-resource-che-service-22-2/test-component-che-service-22",
-          "category": null,
-          "component": "test-component-che-service-22",
-          "depends": [
-            "test-connector-che-service-22/test-connector-name-che-service-22"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-service-22",
-            "test-entityservice-che-service-22"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-service-22-2",
-          "type": "resource"
-        }
+      "depends": [
+        "test-resource-che-service-22-1/test-component-che-service-22",
+        "test-resource-che-service-22-2/test-component-che-service-22"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 5
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-22-1/test-component-che-service-22
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-22/test-connector-name-che-service-22"
+      ],
+      "impact": [
+        "test-component-che-service-22",
+        "test-entityservice-che-service-22"
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-22-2/test-component-che-service-22
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-che-service-22/test-connector-name-che-service-22"
+      ],
+      "impact": [
+        "test-component-che-service-22",
+        "test-entityservice-che-service-22"
+      ]
     }
     """

@@ -281,6 +281,73 @@ Feature: Create a map
     }
     """
 
+  Scenario: given create treeofdeps map request should return ok
+    When I am admin
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "name": "test-map-to-create-2-name",
+      "type": "treeofdeps",
+      "parameters": {
+        "type": "treeofdeps",
+        "entities": [
+          {
+            "entity": "test-resource-to-map-edit-1/test-component-default"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-map-to-create-2-name",
+      "type": "treeofdeps",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "parameters": {
+        "type": "treeofdeps",
+        "entities": [
+          {
+            "entity": {
+              "_id": "test-resource-to-map-edit-1/test-component-default",
+              "name": "test-resource-to-map-edit-1",
+              "depends_count": 0
+            }
+          }
+        ]
+      }
+    }
+    """
+    When I do GET /api/v4/cat/maps/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-map-to-create-2-name",
+      "type": "treeofdeps",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "parameters": {
+        "type": "treeofdeps",
+        "entities": [
+          {
+            "entity": {
+              "_id": "test-resource-to-map-edit-1/test-component-default",
+              "name": "test-resource-to-map-edit-1",
+              "depends_count": 0
+            }
+          }
+        ]
+      }
+    }
+    """
+
   Scenario: given create request with missing fields should return bad request error
     When I am admin
     When I do POST /api/v4/cat/maps:
@@ -309,7 +376,7 @@ Feature: Create a map
     """json
     {
       "errors": {
-        "type": "Type must be one of [mermaid geo]."
+        "type": "Type must be one of [mermaid geo treeofdeps]."
       }
     }
     """
@@ -485,6 +552,67 @@ Feature: Create a map
         "parameters.points.0.coordinates.lng": "Lng must contain valid longitude coordinates.",
         "parameters.points.0.entity": "Entity is required when Map is not present.",
         "parameters.points.0.map": "Map is required when Entity is not present."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "treeofdeps"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.type": "Type is missing.",
+        "parameters.entities": "Entities is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "treeofdeps",
+      "parameters": {
+        "type": "unknown",
+        "entities": []
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.type": "Type must be one of [treeofdeps impactchain] or empty.",
+        "parameters.entities": "Entities is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "treeofdeps",
+      "parameters": {
+        "entities": [
+          {
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.type": "Type is missing.",
+        "parameters.entities.0.entity": "Entity is missing."
       }
     }
     """

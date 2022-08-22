@@ -17,8 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const linkFetchTimeout = 30 * time.Second
-
 type Store interface {
 	Find(context.Context, ListRequest) (*AggregationResult, error)
 	FindEntities(ctx context.Context, id, apiKey string, query EntitiesListRequest) (*EntityAggregationResult, error)
