@@ -16,9 +16,7 @@ Feature: Get entity service
         "created": 1592215337,
         "updated": 1592215337
       },
-      "depends": [],
       "enabled": true,
-      "enable_history": null,
       "entity_pattern": [
         [
           {
@@ -31,7 +29,6 @@ Feature: Get entity service
         ]
       ],
       "old_entity_patterns": null,
-      "impact": [],
       "impact_level": 3,
       "infos": {
         "test-entityservice-to-get-1-info-1": {
@@ -70,7 +67,6 @@ Feature: Get entity service
           "value": "test-entityservice-to-get-1-info-7-value"
         }
       },
-      "measurements": null,
       "name": "test-entityservice-to-get-1-name",
       "output_template": "test-entityservice-to-get-1-output",
       "sli_avail_state": 0,
@@ -87,14 +83,10 @@ Feature: Get entity service
     {
       "_id": "test-entityservice-to-get-2",
       "category": null,
-      "depends": [],
       "enabled": true,
-      "enable_history": null,
       "old_entity_patterns": [{"name": "test-entityservice-to-get-2-pattern"}],
-      "impact": [],
       "impact_level": 1,
       "infos": {},
-      "measurements": null,
       "name": "test-entityservice-to-get-2-name",
       "output_template": "test-entityservice-to-get-2-output",
       "sli_avail_state": 0,

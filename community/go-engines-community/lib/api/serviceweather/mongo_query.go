@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	pbehaviorlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -13,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 type MongoQueryBuilder struct {
@@ -34,6 +35,8 @@ type MongoQueryBuilder struct {
 	sort    bson.M
 
 	computedFields bson.M
+	// excludedFields is used to remove redundant data from result
+	excludedFields []string
 }
 
 type lookupWithKey struct {
@@ -59,6 +62,7 @@ func (q *MongoQueryBuilder) clear() {
 
 	q.sort = bson.M{}
 	q.computedFields = bson.M{}
+	q.excludedFields = []string{"depends", "impact"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequest) ([]bson.M, error) {
@@ -141,6 +145,12 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	if len(addFields) > 0 {
 		afterLimit = append(afterLimit, bson.M{"$addFields": addFields})
 	}
+
+	project := bson.M{}
+	for _, v := range q.excludedFields {
+		project[v] = 0
+	}
+	afterLimit = append(afterLimit, bson.M{"$project": project})
 
 	return beforeLimit, afterLimit
 }
@@ -626,6 +636,11 @@ func getListDependenciesComputedFields() bson.M {
 				stateVals...,
 			),
 			"default": defaultVal,
+		}},
+		"depends_count": bson.M{"$cond": bson.M{
+			"if":   bson.M{"$eq": bson.A{"$type", types.EntityTypeService}},
+			"then": bson.M{"$size": "$depends"},
+			"else": 0,
 		}},
 	}
 }
