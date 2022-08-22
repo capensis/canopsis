@@ -29,18 +29,29 @@
         @update="updateShape(shape, $event)"
       )
 
-    v-menu(
+    flowchart-contextmenu(
       :value="shownMenu",
       :position-x="pageX",
       :position-y="pageY",
-      :close-on-content-click="false",
-      absolute,
-      @input="closeContextmenu"
+      :items="contextmenuItems",
+      @close="closeContextmenu"
     )
-      v-list(dense)
-        v-list-tile(v-for="item in contextmenuItems", :key="item.text", @click="item.action")
-          v-list-tile-content
-            v-list-tile-title {{ item.text }}
+    v-menu(
+      :value="isDialogOpened",
+      :position-x="pageX",
+      :position-y="pageY",
+      :close-on-content-click="false",
+      ignore-click-outside,
+      absolute
+    )
+      point-form-dialog(
+        v-if="addingPoint || editingPoint",
+        :point="addingPoint || editingPoint",
+        :editing="!!editingPoint",
+        @cancel="closePointDialog",
+        @submit="submitPointDialog",
+        @remove=""
+      )
 </template>
 
 <script>
@@ -55,7 +66,9 @@ import { selectedShapesMixin } from '@/mixins/flowchart/selected';
 import { copyPasteShapesMixin } from '@/mixins/flowchart/copy-paste';
 import { moveShapesMixin } from '@/mixins/flowchart/move-shape';
 import { viewBoxMixin } from '@/mixins/flowchart/view-box';
-import { contextmenuMixin } from '@/mixins/flowchart/contextmenu';
+import { pointsMixin } from '@/mixins/flowchart/points';
+
+import PointFormDialog from '@/components/other/map/form/partials/point-form-dialog.vue';
 
 import RectShape from './rect-shape/rect-shape.vue';
 import LineShape from './line-shape/line-shape.vue';
@@ -69,6 +82,7 @@ import ParallelogramShape from './parallelogram-shape/parallelogram-shape.vue';
 import StorageShape from './storage-shape/storage-shape.vue';
 import ProcessShape from './process-shape/process-shape.vue';
 import DocumentShape from './document-shape/document-shape.vue';
+import FlowchartContextmenu from './partials/flowchart-contextmenu.vue';
 
 export default {
   provide() {
@@ -78,6 +92,8 @@ export default {
     };
   },
   components: {
+    FlowchartContextmenu,
+    PointFormDialog,
     RectShape,
     LineShape,
     ArrowLineShape,
@@ -96,7 +112,7 @@ export default {
     copyPasteShapesMixin,
     moveShapesMixin,
     viewBoxMixin,
-    contextmenuMixin,
+    pointsMixin,
   ],
   model: {
     event: 'input',

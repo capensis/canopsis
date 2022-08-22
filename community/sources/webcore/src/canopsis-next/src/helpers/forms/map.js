@@ -73,6 +73,7 @@ import uuid from '@/helpers/uuid';
 /**
  * @typedef {Object} MapFlowchartPoint
  * @property {string} _id
+ * @property {string} shape_id
  * @property {MapCommonFields} map
  * @property {Entity} entity
  * @property {number} x
@@ -163,6 +164,7 @@ export const flowchartPointToForm = (point = {}) => ({
   x: point.x,
   y: point.y,
   entity: point.entity?._id ?? '',
+  shape_id: point.shape_id ?? '',
   map: point.map,
   _id: uuid(),
 });
