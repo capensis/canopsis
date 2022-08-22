@@ -4,7 +4,7 @@
       v-on="$listeners",
       :size="icon.size || size",
       :color="icon.color"
-      ) {{ icon.name }}
+    ) {{ icon.name }}
 </template>
 
 <script>
