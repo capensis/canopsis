@@ -28,7 +28,8 @@
             :size="marker.icon.size",
             :color-indicator="colorIndicator",
             :pbehavior-enabled="pbehaviorEnabled",
-            @show:map="$emit('show:map', $event)"
+            @show:map="$emit('show:map', $event)",
+            @show:alarms="$emit('show:alarms', $event)"
           )
     v-menu(
       v-if="activePoint",
@@ -37,14 +38,13 @@
       :position-y="positionY",
       :close-on-content-click="false",
       ignore-click-outside,
-      offset-overflow,
-      offset-x,
       absolute,
       top
     )
       point-popup(
         :point="activePoint",
         :template="popupTemplate",
+        :color-indicator="colorIndicator",
         :actions="popupActions",
         @show:map="showLinkedMap",
         @close="closePopup"
@@ -99,10 +99,6 @@ export default {
     popupActions: {
       type: Boolean,
       default: false,
-    },
-    alarmsColumns: {
-      type: Array,
-      required: false,
     },
     colorIndicator: {
       type: String,
