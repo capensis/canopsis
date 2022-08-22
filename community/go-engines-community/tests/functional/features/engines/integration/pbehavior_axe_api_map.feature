@@ -75,34 +75,22 @@ Feature: Get a map's state
               "name": "test-resource-pbehavior-axe-api-map-1",
               "type": "resource",
               "category": null,
-              "connector": "test-connector-pbehavior-axe-api-map-1",
-              "connector_name": "test-connector-name-pbehavior-axe-api-map-1",
+              "connector": "test-connector-pbehavior-axe-api-map-1/test-connector-name-pbehavior-axe-api-map-1",
               "component":  "test-component-pbehavior-axe-api-map-1",
-              "resource": "test-resource-pbehavior-axe-api-map-1",
               "infos": {},
-              "pbehavior_info": null,
               "impact_level": 1,
               "impact_state": 2,
-              "state": {
-                "_t": "stateinc",
-                "a": "test-connector-pbehavior-axe-api-map-1.test-connector-name-pbehavior-axe-api-map-1",
-                "m": "test-output-pbehavior-axe-api-map-1",
-                "val": 2
-              },
-              "status": {
-                "_t": "statusinc",
-                "a": "test-connector-pbehavior-axe-api-map-1.test-connector-name-pbehavior-axe-api-map-1",
-                "m": "test-output-pbehavior-axe-api-map-1",
-                "val": 1
-              },
-              "ack": null,
+              "state": 2,
+              "status": 1,
               "snooze": {
                 "_t": "snooze",
                 "a": "root",
                 "user_id": "root",
                 "m": "test-output-pbehavior-axe-api-map-1-snooze",
                 "initiator": "user"
-              }
+              },
+              "ko_events": 1,
+              "ok_events": 0
             },
             "map": null
           }
@@ -183,27 +171,13 @@ Feature: Get a map's state
               "name": "test-resource-pbehavior-axe-api-map-2",
               "type": "resource",
               "category": null,
-              "connector": "test-connector-pbehavior-axe-api-map-2",
-              "connector_name": "test-connector-name-pbehavior-axe-api-map-2",
+              "connector": "test-connector-pbehavior-axe-api-map-2/test-connector-name-pbehavior-axe-api-map-2",
               "component":  "test-component-pbehavior-axe-api-map-2",
-              "resource": "test-resource-pbehavior-axe-api-map-2",
               "infos": {},
-              "pbehavior_info": null,
               "impact_level": 1,
               "impact_state": 2,
-              "state": {
-                "_t": "stateinc",
-                "a": "test-connector-pbehavior-axe-api-map-2.test-connector-name-pbehavior-axe-api-map-2",
-                "m": "test-output-pbehavior-axe-api-map-2",
-                "val": 2
-              },
-              "status": {
-                "_t": "statusinc",
-                "a": "test-connector-pbehavior-axe-api-map-2.test-connector-name-pbehavior-axe-api-map-2",
-                "m": "test-output-pbehavior-axe-api-map-2",
-                "val": 1
-              },
-              "snooze": null,
+              "state": 2,
+              "status": 1,
               "ack": {
                 "_t": "ack",
                 "a": "root",
@@ -211,7 +185,9 @@ Feature: Get a map's state
                 "m": "test-output-pbehavior-axe-api-map-2-ack",
                 "initiator": "user",
                 "val": 0
-              }
+              },
+              "ko_events": 1,
+              "ok_events": 0
             },
             "map": null
           }
@@ -303,10 +279,8 @@ Feature: Get a map's state
               "name": "test-resource-pbehavior-axe-api-map-3",
               "type": "resource",
               "category": null,
-              "connector": "test-connector-pbehavior-axe-api-map-3",
-              "connector_name": "test-connector-name-pbehavior-axe-api-map-3",
+              "connector": "test-connector-pbehavior-axe-api-map-3/test-connector-name-pbehavior-axe-api-map-3",
               "component":  "test-component-pbehavior-axe-api-map-3",
-              "resource": "test-resource-pbehavior-axe-api-map-3",
               "infos": {},
               "pbehavior_info": {
                 "canonical_type": "maintenance",
@@ -318,20 +292,10 @@ Feature: Get a map's state
               },
               "impact_level": 1,
               "impact_state": 2,
-              "state": {
-                "_t": "stateinc",
-                "a": "test-connector-pbehavior-axe-api-map-3.test-connector-name-pbehavior-axe-api-map-3",
-                "m": "test-output-pbehavior-axe-api-map-3",
-                "val": 2
-              },
-              "status": {
-                "_t": "statusinc",
-                "a": "test-connector-pbehavior-axe-api-map-3.test-connector-name-pbehavior-axe-api-map-3",
-                "m": "test-output-pbehavior-axe-api-map-3",
-                "val": 1
-              },
-              "snooze": null,
-              "ack": null
+              "state": 2,
+              "status": 1,
+              "ko_events": 1,
+              "ok_events": 0
             },
             "map": null
           }

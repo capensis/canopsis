@@ -68,9 +68,7 @@ Feature: Create entity service
         "created": 1592215337,
         "updated": 1592215337
       },
-      "depends": [],
       "enabled": true,
-      "enable_history": [],
       "entity_pattern": [
         [
           {
@@ -82,7 +80,6 @@ Feature: Create entity service
           }
         ]
       ],
-      "impact": [],
       "impact_level": 1,
       "infos": {
         "test-entityservice-to-create-1-info-1-name": {
@@ -116,7 +113,6 @@ Feature: Create entity service
           "value": ["test-entityservice-to-create-1-info-6-value", false, 1022, 10.45, null]
         }
       },
-      "measurements": null,
       "name": "test-entityservice-to-create-1-name",
       "output_template": "test-entityservice-to-create-1-output",
       "sli_avail_state": 1,
@@ -168,9 +164,7 @@ Feature: Create entity service
         "created": 1592215337,
         "updated": 1592215337
       },
-      "depends": [],
       "enabled": true,
-      "enable_history": [],
       "entity_pattern": [
         [
           {
@@ -182,7 +176,6 @@ Feature: Create entity service
           }
         ]
       ],
-      "impact": [],
       "impact_level": 2,
       "infos": {
         "test-entityservice-to-create-2-customer-name": {
@@ -191,7 +184,6 @@ Feature: Create entity service
           "value": "test-entityservice-to-create-2-customer-value"
         }
       },
-      "measurements": null,
       "name": "test-entityservice-to-create-2-name",
       "output_template": "test-entityservice-to-create-2-output",
       "sli_avail_state": 1,
