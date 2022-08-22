@@ -5,6 +5,7 @@
         flowchart-color-field.flowchart-sidebar__additional-item.px-4(
           :value="backgroundColor",
           :label="$t('flowchart.backgroundColor')",
+          :palette="backgroundColors",
           hide-checkbox,
           @input="$emit('update:backgroundColor', $event)"
         )
@@ -40,6 +41,8 @@
 </template>
 
 <script>
+import { COLORS } from '@/config';
+
 import { LINE_TYPES } from '@/constants';
 
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
@@ -210,6 +213,10 @@ export default {
           y: this.viewBoxCenter.y - halfSize,
         }),
       ];
+    },
+
+    backgroundColors() {
+      return COLORS.flowchart.background;
     },
   },
   methods: {

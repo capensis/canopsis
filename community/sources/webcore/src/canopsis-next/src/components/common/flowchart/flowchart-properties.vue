@@ -10,12 +10,14 @@
             v-if="showFill",
             :label="$t('flowchart.fill')",
             :value="fillValue",
+            :palette="shapesColors",
             @input="updateFill"
           )
           flowchart-color-field.my-1(
             v-if="showStroke",
             :label="$t('flowchart.stroke')",
             :value="stroke",
+            :palette="borderColors",
             @input="updateStroke"
           )
           template(v-if="showStroke && isStrokeEnabled")
@@ -39,11 +41,13 @@
           flowchart-color-field.my-1(
             :label="$t('flowchart.fontColor')",
             :value="textColor",
+            :palette="textColors",
             @input="updateTextColor"
           )
           flowchart-color-field.my-1(
             :label="$t('flowchart.fontBackgroundColor')",
             :value="textBackgroundColor",
+            :palette="backgroundColors",
             @input="updateTextBackgroundColor"
           )
           flowchart-number-field.my-2(
@@ -55,6 +59,8 @@
 
 <script>
 import { merge, get } from 'lodash';
+
+import { COLORS } from '@/config';
 
 import { STROKE_TYPES } from '@/constants';
 
@@ -88,6 +94,22 @@ export default {
     },
   },
   computed: {
+    shapesColors() {
+      return COLORS.flowchart.shapes;
+    },
+
+    borderColors() {
+      return COLORS.flowchart.border;
+    },
+
+    textColors() {
+      return COLORS.flowchart.text;
+    },
+
+    backgroundColors() {
+      return COLORS.flowchart.background;
+    },
+
     selectedShapes() {
       return this.selected.map(id => this.shapes[id]);
     },
