@@ -10,7 +10,7 @@
       no-wrap
     )
 
-    geomap-feature-group(
+    geomap-cluster-group(
       ref="pointsFeatureGroup",
       :name="$t('map.layers.points')",
       layer-type="overlay"
@@ -32,7 +32,7 @@ import Geomap from '@/components/common/geomap/geomap.vue';
 import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
 import GeomapControlZoom from '@/components/common/geomap/geomap-control-zoom.vue';
 import GeomapControlLayers from '@/components/common/geomap/geomap-control-layers.vue';
-import GeomapFeatureGroup from '@/components/common/geomap/geomap-feature-group.vue';
+import GeomapClusterGroup from '@/components/common/geomap/geomap-cluster-group.vue';
 import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
 import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
 import GeomapTooltip from '@/components/common/geomap/geomap-tooltip.vue';
@@ -43,7 +43,7 @@ export default {
     GeomapTileLayer,
     GeomapControlZoom,
     GeomapControlLayers,
-    GeomapFeatureGroup,
+    GeomapClusterGroup,
     GeomapMarker,
     GeomapIcon,
     GeomapTooltip,
