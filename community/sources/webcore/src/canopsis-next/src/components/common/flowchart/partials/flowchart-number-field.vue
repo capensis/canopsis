@@ -2,10 +2,16 @@
   v-layout(row, justify-space-between, align-center)
     v-label {{ label }}
     v-flex(xs2)
-      c-number-field.mt-0.pt-0(v-field="value", :min="min", hide-details)
+      v-select.mt-0.pt-0(
+        v-field="value",
+        :items="numbers",
+        hide-details
+      )
 </template>
 
 <script>
+import { range } from 'lodash';
+
 export default {
   model: {
     prop: 'value',
@@ -22,7 +28,16 @@ export default {
     },
     min: {
       type: Number,
-      default: 0,
+      default: 1,
+    },
+  },
+  computed: {
+    numbers() {
+      return [
+        ...range(1, 12, 1),
+        ...range(12, 24, 2),
+        ...range(24, 52, 4),
+      ];
     },
   },
 };
