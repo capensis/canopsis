@@ -1015,6 +1015,11 @@ default_rights:
     _id: "@view_context_explorer"
     crecord_name: <Current()._id>
     desc: "Rights on view: Explorateur de Contexte"
+  permission_models_remediation_statistics:
+    <<: *permission
+    _id: models_remediationStatistic
+    crecord_name: <Current()._id>
+    desc: Remediation statistics
 
   role_admin:
     <<: *role
@@ -1357,6 +1362,9 @@ default_rights:
         crecord_type: right
       "@permission_view_context_explorer":
         checksum: 15
+        crecord_type: right
+      "@permission_models_remediation_statistics":
+        checksum: 1
         crecord_type: right
 
   user_admin:
