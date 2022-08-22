@@ -12,7 +12,7 @@
       )
       v-layout(v-else, column)
         span(v-if="point.entity") {{ $tc('common.entity') }}: {{ point.entity.name }}
-        span(v-if="point.map") {{ $tc('common.link') }}: {{ point.map.name }}
+        span(v-if="point.map") {{ $tc('common.map') }}: {{ point.map.name }}
     v-layout.ma-0.grey.lighten-3(v-if="actions")
       v-btn.ma-0(
         v-if="!hasAlarmsListAccess && point.entity",
@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { isNumber } from 'lodash';
 import VRuntimeTemplate from 'v-runtime-template';
 
 import { COLORS } from '@/config';
@@ -38,6 +39,7 @@ import { COLORS } from '@/config';
 import { USERS_PERMISSIONS } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
+import { getEntityColor } from '@/helpers/color';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -55,9 +57,9 @@ export default {
       type: String,
       required: false,
     },
-    color: {
+    colorIndicator: {
       type: String,
-      default: COLORS.primary,
+      required: false,
     },
     actions: {
       type: Boolean,
@@ -76,6 +78,12 @@ export default {
     },
   },
   computed: {
+    color() {
+      return isNumber(this.point.entity?.state)
+        ? getEntityColor(this.point.entity, this.colorIndicator)
+        : COLORS.primary;
+    },
+
     title() {
       return this.point.entity ? this.point.entity.name : '';
     },
