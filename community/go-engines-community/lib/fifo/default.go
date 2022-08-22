@@ -112,6 +112,10 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		logger,
 	)
 
+	techMetricsSender := metrics.NewTechMetricsSender(postgresPool, logger)
+	fifoEventMetricsChan := make(chan metrics.FifoEventMetric)
+	eventMetricsListener := fifoEventMetricsListener{metricsSender: techMetricsSender, flushInterval: time.Second * 10}
+
 	engine := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
@@ -122,6 +126,7 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 				return err
 			}
 
+			go eventMetricsListener.Listen(ctx, fifoEventMetricsChan)
 			go statsListener.Listen(ctx, statsCh)
 
 			return nil
@@ -176,6 +181,7 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		amqpConnection,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.PrintEventOnError,
+			EventsMetricsChan:        fifoEventMetricsChan,
 			EventFilterService:       eventFilterService,
 			Scheduler:                scheduler,
 			StatsSender:              statsSender,
@@ -226,7 +232,7 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		redis.NewLockClient(engineLockRedisClient),
 		redis.FifoQueueMetricsLockKey,
 		&fifoQueueMetricsWorker{
-			techMetricsSender:  metrics.NewTechMetricsSender(postgresPool, logger),
+			techMetricsSender:  techMetricsSender,
 			periodicalInterval: canopsis.PeriodicalWaitTime,
 			channel:            amqpChannel,
 			logger:             logger,
