@@ -30,7 +30,7 @@
         :template="popupTemplate",
         :color-indicator="colorIndicator",
         :actions="popupActions",
-        @show:alarms="showAlarmListModal",
+        @show:alarms="showAlarms",
         @show:map="showLinkedMap",
         @close="closePopup"
       )
@@ -105,7 +105,7 @@ export default {
       this.closePopup();
     },
 
-    showAlarmListModal() {
+    showAlarms() {
       this.$emit('show:alarms', this.activePoint);
       this.closePopup();
     },
