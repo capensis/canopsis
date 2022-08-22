@@ -14,6 +14,7 @@ export const entitiesMapMixin = {
     ...mapActions({
       fetchMapsList: 'fetchList',
       fetchMapWithoutStore: 'fetchItemWithoutStore',
+      fetchMapStateWithoutStore: 'fetchItemStateWithoutStore',
       createMap: 'create',
       updateMap: 'update',
       removeMap: 'remove',

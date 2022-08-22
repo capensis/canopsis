@@ -8,7 +8,12 @@
     )
     c-coordinates-field(v-if="coordinates", v-field="form.coordinates")
     c-enabled-field(v-model="isLinked", :label="$t('map.addLink')")
-    c-map-field(v-show="isLinked", v-field="form.map", :required="isLinked")
+    c-map-field(
+      v-show="isLinked",
+      v-field="form.map",
+      :required="isLinked",
+      hide-details
+    )
 </template>
 
 <script>

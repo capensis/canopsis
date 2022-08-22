@@ -24,5 +24,9 @@ export default createEntityModule({
     fetchListWithoutStore() {
       return request.get(API_ROUTES.maps);
     },
+
+    fetchItemStateWithoutStore(context, { id, params }) {
+      return request.get(`${API_ROUTES.mapState}/${id}`, { params });
+    },
   },
 });

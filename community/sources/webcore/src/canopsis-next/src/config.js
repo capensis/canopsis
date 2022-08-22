@@ -234,6 +234,7 @@ export const API_ROUTES = {
   },
   maps: '/api/v4/cat/maps',
   bulkMaps: '/api/v4/cat/maps/bulk',
+  mapState: '/api/v4/cat/map-state',
 };
 
 export const COLORS = {
