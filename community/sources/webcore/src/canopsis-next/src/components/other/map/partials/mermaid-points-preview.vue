@@ -42,12 +42,12 @@ import { createNamespacedHelpers } from 'vuex';
 import { MODALS } from '@/constants';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { getEntityColor } from '@/helpers/color';
 
 import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
 
 import MermaidPointMarker from './mermaid-point-marker.vue';
 import MermaidPointPopup from './mermaid-point-popup.vue';
-import { getEntityColor } from '@/helpers/color';
 
 const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
