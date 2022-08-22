@@ -33,6 +33,7 @@
 <script>
 import VRuntimeTemplate from 'v-runtime-template';
 
+import { isNumber } from 'lodash';
 import { COLORS } from '@/config';
 
 import { USERS_PERMISSIONS } from '@/constants';
@@ -42,6 +43,7 @@ import { compile } from '@/helpers/handlebars';
 import { authMixin } from '@/mixins/auth';
 
 import MermaidPointMarker from './mermaid-point-marker.vue';
+import { getEntityColor } from '@/helpers/color';
 
 export default {
   components: { VRuntimeTemplate, MermaidPointMarker },
@@ -55,9 +57,9 @@ export default {
       type: String,
       required: false,
     },
-    color: {
+    colorIndicator: {
       type: String,
-      default: COLORS.primary,
+      required: false,
     },
     actions: {
       type: Boolean,
@@ -76,6 +78,12 @@ export default {
     },
   },
   computed: {
+    color() {
+      return isNumber(this.point.entity?.state)
+        ? getEntityColor(this.point.entity, this.colorIndicator)
+        : COLORS.primary;
+    },
+
     title() {
       return this.point.entity ? this.point.entity.name : '';
     },

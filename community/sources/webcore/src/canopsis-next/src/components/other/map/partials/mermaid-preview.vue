@@ -9,10 +9,10 @@
       :points="map.parameters.points",
       :popup-template="popupTemplate",
       :popup-actions="popupActions",
-      :alarms-columns="alarmsColumns",
       :color-indicator="colorIndicator",
       :pbehavior-enabled="pbehaviorEnabled",
-      @show:map="$emit('show:map', $event)"
+      @show:map="$emit('show:map', $event)",
+      @show:alarms="$emit('show:alarms', $event)"
     )
 </template>
 
@@ -36,10 +36,6 @@ export default {
     popupActions: {
       type: Boolean,
       default: false,
-    },
-    alarmsColumns: {
-      type: Array,
-      required: false,
     },
     colorIndicator: {
       type: String,

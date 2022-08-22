@@ -10,7 +10,6 @@ export const getGeomapMarkerIcon = (point, size) => {
   const pixelSize = `${size}px`;
 
   return {
-    name: point.entity ? 'location_on' : 'link',
     style: {
       width: pixelSize,
       height: pixelSize,
