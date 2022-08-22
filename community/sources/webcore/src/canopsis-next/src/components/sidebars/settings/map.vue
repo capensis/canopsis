@@ -14,7 +14,7 @@
           field-color-indicator(v-model="form.parameters.color_indicator")
           v-divider
           field-switcher(
-            v-field="form.parameters.entities_under_pbehavior_enabled",
+            v-model="form.parameters.entities_under_pbehavior_enabled",
             :title="$t('settings.entitiesUnderPbehaviorEnabled')"
           )
       v-divider
@@ -82,7 +82,7 @@ import FieldColumns from './fields/common/columns.vue';
  * Component to regroup the map settings fields
  */
 export default {
-  name: SIDE_BARS.alarmSettings,
+  name: SIDE_BARS.mapSettings,
   components: {
     FieldTitle,
     FieldPeriodicRefresh,

@@ -32,7 +32,7 @@ import {
 import {
   textWidgetParametersToForm,
 } from './text';
-import { mapWidgetParametersToForm } from '@/helpers/forms/widgets/map';
+import { mapWidgetParametersToForm } from './map';
 
 /**
  * @typedef {

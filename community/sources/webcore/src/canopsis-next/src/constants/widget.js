@@ -21,6 +21,7 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.text]: 'view_headline',
   [WIDGET_TYPES.counter]: 'view_module',
   [WIDGET_TYPES.testingWeather]: 'view_module',
+  [WIDGET_TYPES.map]: 'location_on',
 };
 
 export const SIDE_BARS = {
