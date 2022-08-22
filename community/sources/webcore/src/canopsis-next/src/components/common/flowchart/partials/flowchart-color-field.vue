@@ -21,6 +21,7 @@
 import { MODALS } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
+import { COLORS } from '@/config';
 
 export default {
   mixins: [formBaseMixin],
@@ -32,6 +33,10 @@ export default {
     value: {
       type: String,
       default: 'transparent',
+    },
+    palette: {
+      type: Array,
+      default: COLORS.flowchart.shapes,
     },
     label: {
       type: String,
@@ -55,7 +60,7 @@ export default {
   },
   methods: {
     updateIsFilled(checked) {
-      this.updateModel(checked ? 'white' : 'transparent');
+      this.updateModel(checked ? this.palette[0] : 'transparent');
     },
 
     showColorPickerModal() {
@@ -63,6 +68,7 @@ export default {
         name: MODALS.colorPicker,
         config: {
           color: this.value,
+          palette: this.palette,
           action: color => this.updateModel(color),
         },
       });

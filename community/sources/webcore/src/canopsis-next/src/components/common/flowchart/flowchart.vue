@@ -19,7 +19,7 @@
         :readonly="readonly"
       )
     div.flowchart__properties(v-show="selected.length")
-      flowchart-properties(v-if="!readonly", v-model="shapes", :selected="selected")
+      flowchart-properties(v-if="!readonly", v-field="shapes", :selected="selected")
 </template>
 
 <script>
