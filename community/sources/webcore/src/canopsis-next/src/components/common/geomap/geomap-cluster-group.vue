@@ -41,13 +41,18 @@ export default {
       this,
     );
     this.mapObject = new MarkerClusterGroup(options);
+
     propsBinder(this, this.mapObject, this.$options.props);
     DomEvent.on(this.mapObject, this.$listeners);
+
     this.ready = true;
+
     this.parentContainer = findRealParent(this.$parent, true);
+
     if (this.visible) {
       this.parentContainer.addLayer(this);
     }
+
     this.$nextTick(() => {
       /**
        * Triggers when the component is ready
