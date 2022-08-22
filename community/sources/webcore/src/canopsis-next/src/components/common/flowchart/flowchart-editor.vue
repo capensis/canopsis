@@ -1,32 +1,46 @@
 <template lang="pug">
-  svg(
-    ref="svg",
-    v-resize.quiet="setViewBox",
-    :viewBox="viewBoxString",
-    :style="svgStyles",
-    width="100%",
-    height="100%",
-    @mousemove="onContainerMouseMove",
-    @mouseup="onContainerMouseUp",
-    @mousedown="onContainerMouseDown",
-    @contextmenu.stop.prevent=""
-  )
-    component(
-      v-for="shape in data",
-      :shape="shape",
-      :key="shape._id",
-      :is="`${shape.type}-shape`",
-      :selected="isSelected(shape._id)",
-      :readonly="readonly",
-      :connecting="editing",
-      @mousedown="onShapeMouseDown(shape, $event)",
-      @mouseup="onShapeMouseUp(shape, $event)",
-      @connecting="onConnectMove($event)",
-      @connected="onConnectFinish(shape, $event)",
-      @unconnect="onUnconnect(shape)",
-      @edit:point="startEditPoint(shape, $event)",
-      @update="updateShape(shape, $event)"
+  div.flowchart-editor
+    svg(
+      ref="svg",
+      v-resize.quiet="setViewBox",
+      :viewBox="viewBoxString",
+      :style="svgStyles",
+      width="100%",
+      height="100%",
+      @mousemove="onContainerMouseMove",
+      @mouseup="onContainerMouseUp",
+      @mousedown="onContainerMouseDown",
+      @contextmenu.stop.prevent="handleContextmenu"
     )
+      component(
+        v-for="shape in data",
+        :shape="shape",
+        :key="shape._id",
+        :is="`${shape.type}-shape`",
+        :selected="isSelected(shape._id)",
+        :readonly="readonly",
+        :connecting="editing",
+        @mousedown="onShapeMouseDown(shape, $event)",
+        @mouseup="onShapeMouseUp(shape, $event)",
+        @connecting="onConnectMove($event)",
+        @connected="onConnectFinish(shape, $event)",
+        @unconnect="onUnconnect(shape)",
+        @edit:point="startEditPoint(shape, $event)",
+        @update="updateShape(shape, $event)"
+      )
+
+    v-menu(
+      :value="shownMenu",
+      :position-x="pageX",
+      :position-y="pageY",
+      :close-on-content-click="false",
+      absolute,
+      @input="closeContextmenu"
+    )
+      v-list(dense)
+        v-list-tile(v-for="item in contextmenuItems", :key="item.text", @click="item.action")
+          v-list-tile-content
+            v-list-tile-title {{ item.text }}
 </template>
 
 <script>
@@ -41,6 +55,7 @@ import { selectedShapesMixin } from '@/mixins/flowchart/selected';
 import { copyPasteShapesMixin } from '@/mixins/flowchart/copy-paste';
 import { moveShapesMixin } from '@/mixins/flowchart/move-shape';
 import { viewBoxMixin } from '@/mixins/flowchart/view-box';
+import { contextmenuMixin } from '@/mixins/flowchart/contextmenu';
 
 import RectShape from './rect-shape/rect-shape.vue';
 import LineShape from './line-shape/line-shape.vue';
@@ -81,6 +96,7 @@ export default {
     copyPasteShapesMixin,
     moveShapesMixin,
     viewBoxMixin,
+    contextmenuMixin,
   ],
   model: {
     event: 'input',
@@ -392,3 +408,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.flowchart-editor {
+  height: 100%;
+  width: 100%;
+}
+</style>
