@@ -27,9 +27,7 @@
             :entity="marker.data.entity",
             :size="marker.icon.size",
             :color-indicator="colorIndicator",
-            :pbehavior-enabled="pbehaviorEnabled",
-            @show:map="$emit('show:map', $event)",
-            @show:alarms="$emit('show:alarms', $event)"
+            :pbehavior-enabled="pbehaviorEnabled"
           )
     v-menu(
       v-if="activePoint",
@@ -46,6 +44,7 @@
         :template="popupTemplate",
         :color-indicator="colorIndicator",
         :actions="popupActions",
+        @show:alarms="showAlarms",
         @show:map="showLinkedMap",
         @close="closePopup"
       )
@@ -158,6 +157,11 @@ export default {
 
     showLinkedMap() {
       this.$emit('show:map', this.activePoint.map);
+      this.closePopup();
+    },
+
+    showAlarms() {
+      this.$emit('show:alarms', this.activePoint);
       this.closePopup();
     },
 
