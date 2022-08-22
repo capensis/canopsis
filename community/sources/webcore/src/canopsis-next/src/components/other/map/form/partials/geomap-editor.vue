@@ -20,7 +20,7 @@
       )
 
       geomap-control(position="topleft")
-        v-tooltip(attach, right, max-width="unset", min-width="max-content")
+        v-tooltip(right, max-width="unset", min-width="max-content")
           template(#activator="{ on }")
             v-btn.secondary.ma-0(
               v-on="on",

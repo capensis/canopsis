@@ -1,15 +1,9 @@
 <template lang="pug">
   v-layout(column)
-    v-tooltip(attach, right, max-width="unset", min-width="max-content")
-      template(#activator="{ on }")
-        v-btn.secondary.ma-0.mb-1(v-on="on", :disabled="disabled || zoomInDisabled", icon, dark, @click="zoomIn")
-          v-icon add
-      span {{ $t('geomap.zoomIn') }}
-    v-tooltip(attach, right, max-width="unset", min-width="max-content")
-      template(#activator="{ on }")
-        v-btn.secondary.ma-0.mb-1(v-on="on", :disabled="disabled || zoomOutDisabled", dark, icon, @click="zoomOut")
-          v-icon remove
-      span {{ $t('geomap.zoomOut') }}
+    v-btn.secondary.ma-0.mb-1(:disabled="disabled || zoomInDisabled", icon, dark, @click="zoomIn")
+      v-icon add
+    v-btn.secondary.ma-0.mb-1(:disabled="disabled || zoomOutDisabled", dark, icon, @click="zoomOut")
+      v-icon remove
 </template>
 
 <script>
