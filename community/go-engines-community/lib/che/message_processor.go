@@ -40,13 +40,13 @@ type messageProcessor struct {
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
-	ctx, task := trace.NewTask(parentCtx, "che.WorkerProcess")
-	defer task.End()
-
 	startProcTime := time.Now()
 	eventMetric := metrics.CheEventMetric{
 		Timestamp: startProcTime,
 	}
+
+	ctx, task := trace.NewTask(parentCtx, "che.WorkerProcess")
+	defer task.End()
 
 	trace.Logf(ctx, "event_size", "%d", len(d.Body))
 	var event types.Event
@@ -76,9 +76,19 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, nil
 	}
 
+	updatedEntityServices := libcontext.UpdatedEntityServices{}
+
 	defer func() {
 		if p.MetricsConfigProvider.Get().EnableTechMetrics {
+			if event.Entity != nil {
+				eventMetric.EntityType = event.Entity.Type
+				eventMetric.IsNewEntity = event.Entity.IsNew
+			}
+
+			eventMetric.IsInfosUpdated = event.IsEntityUpdated
+			eventMetric.IsServicesUpdated = len(updatedEntityServices.AddedTo) > 0 || len(updatedEntityServices.RemovedFrom) > 0
 			eventMetric.Interval = time.Since(startProcTime).Microseconds()
+
 			p.EventsMetricsChan <- eventMetric
 		}
 	}()
@@ -88,7 +98,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	alarmConfig := p.AlarmConfigProvider.Get()
 	event.Output = utils.TruncateString(event.Output, alarmConfig.OutputLength)
 	event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.LongOutputLength)
-	updatedEntityServices := libcontext.UpdatedEntityServices{}
 
 	// Enrich the event with the entity and create the context.
 	if p.FeatureContextCreation && event.IsContextable() {
@@ -180,11 +189,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			updatedEntityServices = updatedEntityServices.Add(*updated)
 		}
 	}
-
-	eventMetric.EntityType = event.Entity.Type
-	eventMetric.IsNewEntity = event.Entity.IsNew
-	eventMetric.IsInfosUpdated = event.IsEntityUpdated
-	eventMetric.IsServicesUpdated = len(updatedEntityServices.AddedTo) > 0 || len(updatedEntityServices.RemovedFrom) > 0
 
 	if !p.FeatureEventProcessing {
 		return nil, nil

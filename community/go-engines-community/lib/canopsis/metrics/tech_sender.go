@@ -17,6 +17,7 @@ type TechSender interface {
 	SendFifoRate(ctx context.Context, timestamp time.Time, length int64)
 	SendFifoEventBatch(ctx context.Context, metrics []FifoEventMetric)
 	SendCheEventBatch(ctx context.Context, metrics []CheEventMetric)
+	SendAxeEventBatch(ctx context.Context, metrics []AxeEventMetric)
 }
 
 type techSender struct {
@@ -101,6 +102,39 @@ func (s *techSender) SendCheEventBatch(ctx context.Context, metrics []CheEventMe
 		err := s.pool.SendBatch(ctx, batch)
 		if err != nil {
 			s.logger.Err(err).Msgf("failed to send %s metric: unable to send batch", CheEvent)
+		}
+	}
+}
+
+func (s *techSender) SendAxeEventBatch(ctx context.Context, metrics []AxeEventMetric) {
+	query := fmt.Sprintf(`
+		INSERT INTO %s (time, type, interval, entity_type, alarm_change_type) 
+		VALUES ($1, $2, $3, $4, $5)`,
+		AxeEvent)
+
+	batch := &pgx.Batch{}
+
+	inserts := 0
+	for _, metric := range metrics {
+		batch.Queue(query, metric.Timestamp.UTC(), metric.EventType, metric.Interval, metric.EntityType, metric.AlarmChangeType)
+		inserts++
+
+		if inserts >= canopsis.DefaultBulkSize {
+			err := s.pool.SendBatch(ctx, batch)
+			if err != nil {
+				s.logger.Err(err).Msgf("failed to send %s metric: unable to send batch", AxeEvent)
+				break
+			}
+
+			inserts = 0
+			batch = &pgx.Batch{}
+		}
+	}
+
+	if inserts > 0 {
+		err := s.pool.SendBatch(ctx, batch)
+		if err != nil {
+			s.logger.Err(err).Msgf("failed to send %s metric: unable to send batch", AxeEvent)
 		}
 	}
 }

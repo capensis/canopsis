@@ -17,3 +17,11 @@ type CheEventMetric struct {
 	IsInfosUpdated    bool
 	IsServicesUpdated bool
 }
+
+type AxeEventMetric struct {
+	Timestamp       time.Time
+	EventType       string
+	Interval        int64
+	EntityType      string
+	AlarmChangeType string
+}

@@ -30,4 +30,15 @@ CREATE TABLE IF NOT EXISTS che_event
 SELECT create_hypertable('che_event', 'time', if_not_exists => TRUE);
 SELECT add_retention_policy('che_event', INTERVAL '1 day');
 
+CREATE TABLE IF NOT EXISTS axe_event
+(
+    time              TIMESTAMP   NOT NULL,
+    interval          INT         NOT NULL,
+    type              VARCHAR(30) NOT NULL,
+    entity_type       VARCHAR(30) NOT NULL,
+    alarm_change_type VARCHAR(30) NOT NULL
+);
+SELECT create_hypertable('axe_event', 'time', if_not_exists => TRUE);
+SELECT add_retention_policy('axe_event', INTERVAL '1 day');
+
 COMMIT;

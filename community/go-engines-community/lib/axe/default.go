@@ -162,9 +162,17 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
 		metricsSender, logger)
 
+	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
+	techMetricsSender := metrics.NewTechMetricsSender(pgPool, logger)
+	eventMetricsChan := make(chan metrics.AxeEventMetric)
+	eventMetricsListener := axeEventMetricsListener{metricsSender: techMetricsSender, flushInterval: time.Second * 10}
+
 	engineAxe := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
+
+			go eventMetricsListener.Listen(ctx, eventMetricsChan)
+
 			return alarmStatusService.Load(ctx)
 		},
 		func(ctx context.Context) {
@@ -212,6 +220,8 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		amqpConnection,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+			MetricsConfigProvider:    metricsConfigProvider,
+			EventsMetricsChan:        eventMetricsChan,
 			EventProcessor: alarm.NewEventProcessor(
 				dbClient,
 				alarm.NewAdapter(dbClient),
