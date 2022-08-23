@@ -177,7 +177,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 	if request.SliAvailState != nil {
 		sliAvailState = *request.SliAvailState
 	}
-	entity := entityservice.EntityService{
+	service := entityservice.EntityService{
 		Entity: types.Entity{
 			ID:            utils.NewID(),
 			Name:          request.Name,
@@ -195,20 +195,23 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 		EntityPatternFields: request.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection)),
 		OutputTemplate:      request.OutputTemplate,
 	}
+	if request.Coordinates != nil {
+		service.Coordinates = *request.Coordinates
+	}
 
 	if request.ID == "" {
 		request.ID = utils.NewID()
 	}
 
-	entity.ID = request.ID
+	service.ID = request.ID
 	var response *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		_, err := s.dbCollection.InsertOne(ctx, entity)
+		_, err := s.dbCollection.InsertOne(ctx, service)
 		if err != nil {
 			return err
 		}
-		response, err = s.GetOneBy(ctx, entity.ID)
+		response, err = s.GetOneBy(ctx, service.ID)
 		return err
 	})
 
@@ -216,29 +219,42 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 }
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error) {
+	pattern := request.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection))
+	set := bson.M{
+		"name":            request.Name,
+		"output_template": request.OutputTemplate,
+		"category":        request.Category,
+		"impact_level":    request.ImpactLevel,
+		"enabled":         request.Enabled,
+		"infos":           transformInfos(request.EditRequest),
+		"sli_avail_state": request.SliAvailState,
+
+		"entity_pattern":                 pattern.EntityPattern,
+		"corporate_entity_pattern":       pattern.CorporateEntityPattern,
+		"corporate_entity_pattern_title": pattern.CorporateEntityPatternTitle,
+	}
+	unset := bson.M{}
+
+	if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 {
+		unset["old_entity_patterns"] = ""
+	}
+	if request.Coordinates == nil {
+		unset["coordinates"] = ""
+	} else {
+		set["coordinates"] = request.Coordinates
+	}
+
+	update := bson.M{"$set": set}
+	if len(unset) > 0 {
+		update["$unset"] = unset
+	}
+
 	var service *Response
 	serviceChanges := ServiceChanges{}
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		service = nil
 		serviceChanges = ServiceChanges{}
 		oldValues := &entityservice.EntityService{}
-		pattern := request.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection))
-		update := bson.M{"$set": bson.M{
-			"name":            request.Name,
-			"output_template": request.OutputTemplate,
-			"category":        request.Category,
-			"impact_level":    request.ImpactLevel,
-			"enabled":         request.Enabled,
-			"infos":           transformInfos(request.EditRequest),
-			"sli_avail_state": request.SliAvailState,
-
-			"entity_pattern":                 pattern.EntityPattern,
-			"corporate_entity_pattern":       pattern.CorporateEntityPattern,
-			"corporate_entity_pattern_title": pattern.CorporateEntityPatternTitle,
-		}}
-		if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 {
-			update["$unset"] = bson.M{"old_entity_patterns": ""}
-		}
 		err := s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{

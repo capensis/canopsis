@@ -37,12 +37,27 @@ template:
       ]
     }
   }
+  - &map_treeofdeps {
+    _id: <UUID()>,
+    name: <LoremIpsumWord()>,
+    type: treeofdeps,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    parameters: {
+      type: treeofdeps,
+      entities: [
+        {
+          entity: test-resource-to-map-edit-1/test-component-default
+        }
+      ]
+    }
+  }
 
 map:
   map_to_delete_1:
     <<: *map_mermaid
     _id: test-map-to-delete-1
-
   map_to_delete_2:
     <<: *map_mermaid
     _id: test-map-to-delete-2
@@ -75,12 +90,67 @@ map:
           y: 200
           entity: test-resource-to-map-edit-2/test-component-default
           map: test-map-to-map-edit-2
+        - _id: test-map-to-get-1-point-4
+          x: 300
+          y: 300
+          entity: test-resource-to-map-edit-4/test-component-default
+        - _id: test-map-to-get-1-point-5
+          x: 400
+          y: 400
+          entity: test-entity-not-exist
+  map_to_get_2:
+    <<: *map_geo
+    _id: test-map-to-get-2
+    name: test-map-to-get-2-name
+    created: 1605263992
+    updated: 1605263992
+    parameters:
+      points:
+        - _id: test-map-to-get-2-point-1
+          coordinates:
+            lat: 10.52269494598361
+            lng: 10.037685420804365
+          entity: test-resource-to-map-edit-1/test-component-default
+        - _id: test-map-to-get-2-point-2
+          coordinates:
+            lat: 63.93737246791484
+            lng: 34.991989666087385
+          map: test-map-to-map-edit-1
+        - _id: test-map-to-get-2-point-3
+          entity: test-resource-to-map-edit-2/test-component-default
+          map: test-map-to-map-edit-2
+        - _id: test-map-to-get-2-point-4
+          coordinates:
+            lat: 64.52269494598361
+            lng: 54.037685420804365
+          entity: test-resource-to-map-edit-3/test-component-default
+        - _id: test-map-to-get-2-point-5
+          coordinates:
+            lat: 60.52269494598361
+            lng: 50.037685420804365
+          entity: test-resource-to-map-edit-4/test-component-default
+        - _id: test-map-to-get-2-point-6
+          coordinates:
+            lat: 67.52269494598361
+            lng: 57.037685420804365
+          entity: test-entity-not-exist
+  map_to_get_3:
+    <<: *map_treeofdeps
+    _id: test-map-to-get-3
+    name: test-map-to-get-3-name
+    created: 1605263992
+    updated: 1605263992
+    parameters:
+      type: treeofdeps
+      entities:
+        - entity: test-resource-to-map-edit-1/test-component-default
+        - entity: test-resource-to-map-edit-4/test-component-default
+        - entity: test-entity-not-exist
 
   map_to_map_edit_1:
     <<: *map_mermaid
     _id: test-map-to-map-edit-1
     name: test-map-to-map-edit-1-name
-
   map_to_map_edit_2:
     <<: *map_mermaid
     _id: test-map-to-map-edit-2
@@ -89,7 +159,6 @@ map:
   map_to_bulk_delete_1:
     <<: *map_mermaid
     _id: test-map-to-bulk-delete-1
-
   map_to_bulk_delete_2:
     <<: *map_mermaid
     _id: test-map-to-bulk-delete-2
@@ -117,7 +186,15 @@ map:
           y: 200
           entity: test-resource-to-map-state-get-2/test-component-default
           map: test-map-to-map-edit-2
-
+        - _id: test-map-to-state-get-1-point-4
+          x: 300
+          y: 300
+          entity: test-resource-to-map-state-get-4/test-component-default
+          map: test-map-to-map-edit-2
+        - _id: test-map-to-state-get-1-point-5
+          x: 400
+          y: 400
+          entity: test-entity-not-exist
   map_to_state_get_2:
     <<: *map_mermaid
     _id: test-map-to-state-get-2
@@ -137,3 +214,39 @@ map:
           y: 200
           entity: test-resource-to-map-state-get-3/test-component-default
           map: test-map-to-map-edit-1
+  map_to_state_get_3:
+    <<: *map_geo
+    _id: test-map-to-state-get-3
+    name: test-map-to-state-get-3-name
+    created: 1605263992
+    updated: 1605263992
+    parameters:
+      points:
+        - _id: test-map-to-state-get-3-point-1
+          coordinates:
+            lat: 10.52269494598361
+            lng: 10.037685420804365
+          entity: test-resource-to-map-state-get-1/test-component-default
+        - _id: test-map-to-state-get-3-point-2
+          coordinates:
+            lat: 63.93737246791484
+            lng: 34.991989666087385
+          map: test-map-to-map-edit-1
+        - _id: test-map-to-state-get-3-point-3
+          entity: test-resource-to-map-state-get-2/test-component-default
+          map: test-map-to-map-edit-2
+        - _id: test-map-to-state-get-3-point-4
+          coordinates:
+            lat: 64.52269494598361
+            lng: 54.037685420804365
+          entity: test-resource-to-map-state-get-3/test-component-default
+        - _id: test-map-to-state-get-3-point-5
+          coordinates:
+            lat: 60.52269494598361
+            lng: 50.037685420804365
+          entity: test-resource-to-map-state-get-4/test-component-default
+        - _id: test-map-to-state-get-3-point-6
+          coordinates:
+            lat: 67.52269494598361
+            lng: 57.037685420804365
+          entity: test-entity-not-exist
