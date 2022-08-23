@@ -1,6 +1,7 @@
 <template lang="pug">
   div
     mermaid-point-marker(
+      ref="points",
       v-for="point in points",
       :key="point._id",
       :x="point.x",
@@ -9,7 +10,6 @@
       :size="markerSize",
       :color-indicator="colorIndicator",
       :pbehavior-enabled="pbehaviorEnabled",
-      ref="points",
       @click="openPopup(point, $event)"
     )
     v-menu(
