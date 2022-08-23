@@ -8,9 +8,10 @@ const (
 
 // tech metrics
 const (
-	FIFOQueue     = "fifo_queue"
-	FIFOEvent     = "fifo_event"
-	CheEvent      = "che_event"
-	AxeEvent      = "axe_event"
-	AxePeriodical = "axe_periodical"
+	FIFOQueue           = "fifo_queue"
+	FIFOEvent           = "fifo_event"
+	CheEvent            = "che_event"
+	AxeEvent            = "axe_event"
+	AxePeriodical       = "axe_periodical"
+	PBehaviorPeriodical = "pbehavior_periodical"
 )

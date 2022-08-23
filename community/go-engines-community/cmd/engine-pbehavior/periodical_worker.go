@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -21,6 +23,8 @@ import (
 )
 
 type periodicalWorker struct {
+	TechMetricsSender      metrics.TechSender
+	MetricsConfigProvider  config.MetricsConfigProvider
 	ChannelPub             libamqp.Channel
 	PeriodicalInterval     time.Duration
 	PbhService             pbehavior.Service
@@ -38,6 +42,13 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *periodicalWorker) Work(ctx context.Context) {
+	startProcTime := time.Now()
+	defer func() {
+		if w.MetricsConfigProvider.Get().EnableTechMetrics {
+			go w.TechMetricsSender.SendPBehaviorPeriodical(ctx, time.Now(), time.Since(startProcTime).Microseconds())
+		}
+	}()
+
 	now := time.Now().In(w.TimezoneConfigProvider.Get().Location)
 	newSpan := timespan.New(now, now.Add(w.FrameDuration))
 
