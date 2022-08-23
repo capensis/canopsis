@@ -33,6 +33,10 @@
               v-icon add_location
           span {{ $t('map.toggleAddingPointMode') }}
 
+      geomap-control(position="bottomright")
+        c-help-icon(size="32", color="secondary", icon="help", top)
+          div.pre-wrap(v-html="$t('geomap.panzoom.helpText')")
+
       geomap-tile-layer(
         :name="$t('map.layers.openStreetMap')",
         :url="$config.OPEN_STREET_LAYER_URL",
