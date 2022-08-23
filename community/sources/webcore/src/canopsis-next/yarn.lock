@@ -10298,10 +10298,10 @@ lcid@^1.0.0:
   dependencies:
     invert-kv "^1.0.0"
 
-leaflet.featuregroup.subgroup@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/leaflet.featuregroup.subgroup/-/leaflet.featuregroup.subgroup-1.0.2.tgz#ffbc96ea6db41893b6d5fb60ba09f13876c45d28"
-  integrity sha512-9nCVg8nUe686+BtPbUT7ALOe/IA+8Mum+rkA8pfPpCkH0WvKevRrH+JMcMTjAoNQKVI0uxrWrLV5w298SS3ESA==
+leaflet-gesture-handling@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/leaflet-gesture-handling/-/leaflet-gesture-handling-1.2.2.tgz#ea10afb94f2d477d77d47beb21e409ed327df07a"
+  integrity sha512-Blf5V4PoNphWkzL7Y1qge+Spkd4OCQ2atjwUNhMhLIcjKzPcBH++x/lwOinaR9jSqLWqJ6oKYO8d0XdTffy4hQ==
 
 leaflet.markercluster@^1.5.3:
   version "1.5.3"

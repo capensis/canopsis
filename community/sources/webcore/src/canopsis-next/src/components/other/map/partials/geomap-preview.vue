@@ -10,6 +10,10 @@
       no-wrap
     )
 
+    geomap-control(position="bottomright")
+      c-help-icon(size="32", color="secondary", icon="help", top)
+        div.pre-wrap(v-html="$t('geomap.panzoom.helpText')")
+
     geomap-cluster-group(
       v-for="{ markers, name, style } in layers",
       :name="name",
@@ -65,17 +69,16 @@ import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
 import GeomapControlZoom from '@/components/common/geomap/geomap-control-zoom.vue';
 import GeomapControlLayers from '@/components/common/geomap/geomap-control-layers.vue';
 import GeomapClusterGroup from '@/components/common/geomap/geomap-cluster-group.vue';
-import GeomapClusterSubGroup from '@/components/common/geomap/geomap-cluster-sub-group.vue';
 import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
 import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
 import GeomapTooltip from '@/components/common/geomap/geomap-tooltip.vue';
+import GeomapControl from '@/components/common/geomap/geomap-control.vue';
 
 import PointIcon from './point-icon.vue';
 import PointPopup from './point-popup.vue';
 
 export default {
   components: {
-    GeomapClusterSubGroup,
     Geomap,
     GeomapTileLayer,
     GeomapControlZoom,
@@ -84,6 +87,7 @@ export default {
     GeomapMarker,
     GeomapIcon,
     GeomapTooltip,
+    GeomapControl,
     PointIcon,
     PointPopup,
   },
