@@ -70,7 +70,11 @@ Feature: Get entity service
       "name": "test-entityservice-to-get-1-name",
       "output_template": "test-entityservice-to-get-1-output",
       "sli_avail_state": 0,
-      "type": "service"
+      "type": "service",
+      "coordinates": {
+        "lat": 64.52269494598361,
+        "lng": 54.037685420804365
+      }
     }
     """
 

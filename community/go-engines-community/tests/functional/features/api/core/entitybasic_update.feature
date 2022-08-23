@@ -50,7 +50,11 @@ Feature: Update entity basic
       "depends": [
         "test-entitybasic-to-update-component-1",
         "test-entitybasic-to-update-component-3"
-      ]
+      ],
+      "coordinates": {
+        "lat": 62.34960927573042,
+        "lng": 74.02834455685206
+      }
     }
     """
     Then the response code should be 200
@@ -102,7 +106,11 @@ Feature: Update entity basic
       },
       "name": "test-entitybasic-to-update-connector-name",
       "sli_avail_state": 1,
-      "type": "connector"
+      "type": "connector",
+      "coordinates": {
+        "lat": 62.34960927573042,
+        "lng": 74.02834455685206
+      }
     }
     """
     Then the response array key "changeable_depends" should contain:
@@ -335,6 +343,44 @@ Feature: Update entity basic
     {
       "errors": {
         "depends": "Depends contains duplicate values with Impacts."
+      }
+    }
+    """
+
+  Scenario: given invalid update request should return errors
+    When I am admin
+    When I do PUT /api/v4/entitybasics?_id=test-entitybasic-to-update:
+    """json
+    {
+      "coordinates": {}
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "coordinates.lat": "Lat is missing.",
+        "coordinates.lng": "Lng is missing."
+      }
+    }
+    """
+    When I do PUT /api/v4/entitybasics?_id=test-entitybasic-to-update:
+    """json
+    {
+      "coordinates": {
+        "lat": 214983904,
+        "lng": 214983904
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "coordinates.lat": "Lat must contain valid latitude coordinates.",
+        "coordinates.lng": "Lng must contain valid longitude coordinates."
       }
     }
     """

@@ -54,7 +54,11 @@ Feature: Update entity service
           "name": "test-entityservice-to-update-1-info-6-name",
           "value": ["test-entityservice-to-update-1-info-6-value", false, 1022, 10.45, null]
         }
-      ]
+      ],
+      "coordinates": {
+        "lat": 62.34960927573042,
+        "lng": 74.02834455685206
+      }
     }
     """
     Then the response code should be 200
@@ -118,7 +122,11 @@ Feature: Update entity service
       "name": "test-entityservice-to-update-1-name",
       "output_template": "test-entityservice-to-update-1-output-updated",
       "sli_avail_state": 1,
-      "type": "service"
+      "type": "service",
+      "coordinates": {
+        "lat": 62.34960927573042,
+        "lng": 74.02834455685206
+      }
     }
     """
 
