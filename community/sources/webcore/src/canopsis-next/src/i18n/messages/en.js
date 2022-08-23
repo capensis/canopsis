@@ -256,6 +256,7 @@ export default merge({
     checkPattern: 'Check pattern',
     itemFound: '{count} item found | {count} items found',
     canonicalType: 'Canonical type',
+    instructions: 'Instructions',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -674,8 +675,11 @@ export default merge({
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% of alarms with auto remediation',
       [ALARM_METRIC_PARAMETERS.ratioTickets]: '% of alarms with tickets created',
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms]: '% of manually remediated alarms',
       [ALARM_METRIC_PARAMETERS.averageAck]: 'Average time to ack alarms',
       [ALARM_METRIC_PARAMETERS.averageResolve]: 'Average time to resolve alarms',
+      [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Number of manually remediated alarms',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Number of alarms with manual instructions',
     },
   },
   weather: {
@@ -2179,8 +2183,8 @@ export default merge({
     usingType: 'Cannot be deleted since it is in use',
     defaultType: 'Type is default, because cannot be edited',
     types: {
-      [PBEHAVIOR_TYPE_TYPES.active]: 'Default active',
-      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Default inactive',
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
     },
@@ -2316,9 +2320,9 @@ export default merge({
 
   remediation: {
     tabs: {
-      instructions: 'Instructions',
       configurations: 'Configurations',
       jobs: 'Jobs',
+      statistics: 'Remediation statistics',
     },
   },
 
@@ -2448,6 +2452,21 @@ export default merge({
           disabledOnTypes: 'Disabled on types',
         },
       },
+    },
+  },
+
+  remediationStatistic: {
+    remediation: 'Remediation',
+    fields: {
+      all: 'All',
+    },
+    labels: {
+      remediated: 'Remediated',
+      notRemediated: 'Not remediated',
+    },
+    tooltips: {
+      remediated: '{value} alarms remediated',
+      assigned: '{value} alarms with instructions',
     },
   },
 
@@ -2874,9 +2893,12 @@ export default merge({
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% of alarms with auto remediation',
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% alarms with instructions',
       [ALARM_METRIC_PARAMETERS.ratioTickets]: '{value}% of alarms with tickets created',
+      [ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms]: '{value}% of manually remediated alarms',
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% of non-displayed alarms',
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} to ack alarms',
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} to resolve alarms',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarms with manual instructions',
+      [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: '{value} manually remediated alarms',
     },
   },
 
@@ -2929,6 +2951,7 @@ export default merge({
       invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
       countOverLimit: 'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
       oldPattern: 'The current filter pattern is defined in old format. Please use the Advanced editor to view it. Filters in old format will be deprecated soon. Please create new patterns in our updated interface.',
+      existExcluded: 'The rules include excluded rule.',
     },
   },
 
