@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -32,6 +35,10 @@ type DependencyMaker struct {
 
 func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Logger) engine.Engine {
 	m := DependencyMaker{}
+	postgresPool, err := postgres.NewPool(ctx, 0, 0)
+	if err != nil {
+		panic(fmt.Errorf("postgresPool: %w", err))
+	}
 	dbClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
@@ -54,6 +61,9 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		amqpChannel,
 		logger,
 	)
+
+	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
+	techMetricsSender := metrics.NewTechMetricsSender(postgresPool, logger)
 
 	enginePbehavior := engine.New(
 		func(ctx context.Context) error {
@@ -129,6 +139,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		redis.NewLockClient(lockRedisSession),
 		redis.PbehaviorPeriodicalLockKey,
 		&periodicalWorker{
+			MetricsConfigProvider:  metricsConfigProvider,
+			TechMetricsSender:      techMetricsSender,
 			ChannelPub:             amqpChannel,
 			PeriodicalInterval:     options.PeriodicalWaitTime,
 			PbhService:             pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
