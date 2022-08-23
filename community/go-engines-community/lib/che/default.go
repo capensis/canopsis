@@ -92,12 +92,18 @@ func NewEngine(
 		logger,
 	)
 
+	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
+	techMetricsSender := metrics.NewTechMetricsSender(pgPool, logger)
+	eventMetricsChan := make(chan metrics.CheEventMetric)
+	eventMetricsListener := cheEventMetricsListener{metricsSender: techMetricsSender, flushInterval: time.Second * 10}
+
 	engine := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
 
 			// run in goroutine because it may take some time to process heavy dbs, don't want to slow down the engine startup
 			go infosDictLockedPeriodicalWorker.Work(ctx)
+			go eventMetricsListener.Listen(ctx, eventMetricsChan)
 
 			logger.Debug().Msg("Loading event filter rules")
 			err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
@@ -181,6 +187,8 @@ func NewEngine(
 			AlarmConfigProvider:      alarmConfigProvider,
 			EventFilterService:       eventfilterService,
 			EnrichmentCenter:         enrichmentCenter,
+			EventsMetricsChan:        eventMetricsChan,
+			MetricsConfigProvider:    metricsConfigProvider,
 			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
 			AlarmAdapter:             alarm.NewAdapter(mongoClient),
 			Encoder:                  json.NewEncoder(),

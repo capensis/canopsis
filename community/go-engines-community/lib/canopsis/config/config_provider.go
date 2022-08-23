@@ -51,6 +51,10 @@ type UserInterfaceConfigProvider interface {
 	Get() UserInterfaceConf
 }
 
+type MetricsConfigProvider interface {
+	Get() MetricsConfig
+}
+
 type AlarmConfig struct {
 	StealthyInterval      time.Duration
 	EnableLastEventDate   bool
@@ -85,6 +89,10 @@ type RemediationConfig struct {
 	ExternalAPI                    map[string]ExternalApiConfig
 }
 
+type MetricsConfig struct {
+	EnableTechMetrics bool
+}
+
 type DataStorageConfig struct {
 	TimeToExecute *ScheduledTime
 }
@@ -96,6 +104,44 @@ type ScheduledTime struct {
 
 func (t ScheduledTime) String() string {
 	return fmt.Sprintf("%v,%v", t.Weekday, t.Hour)
+}
+
+type BaseMetricsConfigProvider struct {
+	conf   MetricsConfig
+	mx     sync.RWMutex
+	logger zerolog.Logger
+}
+
+func NewMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseMetricsConfigProvider {
+	sectionName := "metrics"
+	conf := MetricsConfig{
+		EnableTechMetrics: parseBool(cfg.Metrics.EnableTechMetrics, "EnableTechMetrics", sectionName, logger),
+	}
+
+	return &BaseMetricsConfigProvider{
+		conf:   conf,
+		mx:     sync.RWMutex{},
+		logger: logger,
+	}
+}
+
+func (p *BaseMetricsConfigProvider) Update(cfg CanopsisConf) {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
+	sectionName := "metrics"
+
+	b, ok := parseUpdatedBool(cfg.Metrics.EnableTechMetrics, p.conf.EnableTechMetrics, "EnableLastEventDate", sectionName, p.logger)
+	if ok {
+		p.conf.EnableTechMetrics = b
+	}
+}
+
+func (p *BaseMetricsConfigProvider) Get() MetricsConfig {
+	p.mx.RLock()
+	defer p.mx.RUnlock()
+
+	return p.conf
 }
 
 func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmConfigProvider {

@@ -80,7 +80,8 @@ type ConsoleWriter struct {
 }
 
 type SectionMetrics struct {
-	SliInterval string `toml:"SliInterval"`
+	SliInterval       string `toml:"SliInterval"`
+	EnableTechMetrics bool   `toml:"EnableTechMetrics"`
 }
 
 // CanopsisConf represents a generic configuration object.
