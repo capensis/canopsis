@@ -38,7 +38,6 @@ export default {
     getMetaByWidgetId: state => widgetId => get(state.widgets[widgetId], 'meta', {}),
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending', false),
     getExportByWidgetId: state => widgetId => get(state.widgets[widgetId], 'exportData'),
-    getFetchingParamsByWidgetId: state => widgetId => get(state.widgets[widgetId], 'fetchingParams', {}),
 
     getItem: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](
       ENTITIES_TYPES.alarm,
