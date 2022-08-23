@@ -54,6 +54,12 @@ export default {
     },
   },
   methods: {
+    reset() {
+      this.scale = 1;
+      this.translateX = 0;
+      this.translateY = 0;
+    },
+
     handleMove(event) {
       if (event.ctrlKey && event.buttons === 1) {
         this.translateX += event.movementX / this.scale;

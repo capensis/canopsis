@@ -32,7 +32,7 @@ import {
 import {
   textWidgetParametersToForm,
 } from './text';
-import { mapWidgetParametersToForm } from './map';
+import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
 
 /**
  * @typedef {
@@ -128,7 +128,8 @@ import { mapWidgetParametersToForm } from './map';
  *   StatsCalendarWidgetParameters |
  *   CounterWidgetParameters |
  *   TestingWeatherWidgetParameters |
- *   TextWidgetParameters
+ *   TextWidgetParameters |
+ *   MapWidgetParameters
  * } WidgetParameters
  */
 
@@ -254,6 +255,8 @@ export const formToWidgetParameters = ({ type, parameters }) => {
       return formToCounterWidgetParameters(parameters);
     case WIDGET_TYPES.testingWeather:
       return formToTestingWeatherWidgetParameters(parameters);
+    case WIDGET_TYPES.map:
+      return formToMapWidgetParameters(parameters);
     default:
       return parameters;
   }

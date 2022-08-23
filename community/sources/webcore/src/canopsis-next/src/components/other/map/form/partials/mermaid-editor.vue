@@ -8,7 +8,7 @@
           mermaid-add-location-btn.mr-2(v-model="addOnClick")
           mermaid-theme-field.mermaid-editor__theme-picker(v-field="form.theme")
         div.mermaid-editor__preview
-          mermaid-preview(:value="form.code", :theme="form.theme")
+          mermaid-code-preview(:value="form.code", :theme="form.theme")
           mermaid-points.mermaid-editor__points(v-field="form.points", :add-on-click="addOnClick")
     v-messages(v-if="hasChildrenError", :value="errorMessages", color="error")
 </template>
@@ -18,7 +18,7 @@ import { COLORS } from '@/config';
 
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
-import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
+import MermaidCodePreview from '@/components/other/map/partials/mermaid-code-preview.vue';
 
 import MermaidCodeEditor from './mermaid-code-editor.vue';
 import MermaidAddLocationBtn from './mermaid-add-location-btn.vue';
@@ -27,7 +27,13 @@ import MermaidPoints from './mermaid-points.vue';
 
 export default {
   inject: ['$validator'],
-  components: { MermaidAddLocationBtn, MermaidCodeEditor, MermaidThemeField, MermaidPreview, MermaidPoints },
+  components: {
+    MermaidAddLocationBtn,
+    MermaidCodeEditor,
+    MermaidThemeField,
+    MermaidCodePreview,
+    MermaidPoints,
+  },
   mixins: [formMixin, validationChildrenMixin],
   model: {
     prop: 'form',
