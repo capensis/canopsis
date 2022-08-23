@@ -252,14 +252,6 @@ export default {
       this.$emit('show:alarms', this.activePoint);
       this.closePopup();
     },
-
-    getTooltipContent({ entity, map }) {
-      if (entity) {
-        return entity.name;
-      }
-
-      return map.name;
-    },
   },
 };
 </script>
