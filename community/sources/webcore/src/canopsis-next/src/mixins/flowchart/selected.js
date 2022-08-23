@@ -7,12 +7,20 @@ export const selectedShapesMixin = {
   },
   data() {
     return {
-      selectedIds: [...this.selected],
+      selectedIds: [],
     };
   },
   computed: {
     hasSelected() {
       return !!this.selectedIds.length;
+    },
+  },
+  watch: {
+    selected: {
+      immediate: true,
+      handler(selected) {
+        this.selectedIds = [...selected];
+      },
     },
   },
   methods: {
