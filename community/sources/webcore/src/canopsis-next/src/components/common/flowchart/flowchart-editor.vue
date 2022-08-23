@@ -25,32 +25,43 @@
         @connecting="onConnectMove($event)",
         @connected="onConnectFinish(shape, $event)",
         @unconnect="onUnconnect(shape)",
-        @edit:point="startEditPoint(shape, $event)",
+        @edit:point="startEditLinePoint(shape, $event)",
         @update="updateShape(shape, $event)"
       )
+      component.flowchart-editor__point(
+        v-for="point in points",
+        :key="point._id",
+        :x="point.x - pointSize / 2",
+        :y="point.y - pointSize",
+        :width="pointSize",
+        :height="pointSize",
+        is="foreignObject",
+        @contextmenu.stop.prevent="handleEditContextmenu(point)"
+      )
+        v-icon {{ point.entity ? 'location_on' : 'link' }}
 
     flowchart-contextmenu(
       :value="shownMenu",
-      :position-x="pageX",
-      :position-y="pageY",
+      :position-x="clientX",
+      :position-y="clientY",
       :items="contextmenuItems",
       @close="closeContextmenu"
     )
     v-menu(
       :value="isDialogOpened",
-      :position-x="pageX",
-      :position-y="pageY",
+      :position-x="clientX",
+      :position-y="clientY",
       :close-on-content-click="false",
       ignore-click-outside,
       absolute
     )
       point-form-dialog(
-        v-if="addingPoint || editingPoint",
+        v-if="isDialogOpened",
         :point="addingPoint || editingPoint",
         :editing="!!editingPoint",
         @cancel="closePointDialog",
         @submit="submitPointDialog",
-        @remove=""
+        @remove="showRemovePointModal"
       )
 </template>
 
@@ -135,6 +146,10 @@ export default {
       type: String,
       required: false,
     },
+    pointSize: {
+      type: Number,
+      default: 24,
+    },
   },
   data() {
     return {
@@ -148,7 +163,7 @@ export default {
 
       editing: false,
       editingShape: false,
-      editingPoint: false,
+      editingLinePoint: false,
 
       moving: false,
       movingStart: {
@@ -256,10 +271,10 @@ export default {
       }
     },
 
-    startEditPoint(shape, point) {
+    startEditLinePoint(shape, point) {
       this.editing = true;
       this.editingShape = shape;
-      this.editingPoint = point;
+      this.editingLinePoint = point;
     },
 
     onConnectMove({ x, y }) {
@@ -271,7 +286,7 @@ export default {
 
       connectingShape.connections.push({
         shapeId: this.editingShape._id,
-        pointId: this.editingPoint._id,
+        pointId: this.editingLinePoint._id,
         side,
       });
 
@@ -285,7 +300,7 @@ export default {
 
       connectingShape.connections = connectingShape.connections.filter(
         connection => connection.shapeId !== this.editingShape._id
-        || connection.pointId !== this.editingPoint._id,
+        || connection.pointId !== this.editingLinePoint._id,
       );
 
       const editingShape = this.data[this.editingShape._id];
@@ -353,7 +368,7 @@ export default {
       if (this.editing) {
         this.editing = false;
         this.editingShape = undefined;
-        this.editingPoint = undefined;
+        this.editingLinePoint = undefined;
       }
 
       this.$mouseUp.notify();
@@ -429,5 +444,10 @@ export default {
 .flowchart-editor {
   height: 100%;
   width: 100%;
+
+  &__point {
+    user-select: none;
+    cursor: pointer;
+  }
 }
 </style>

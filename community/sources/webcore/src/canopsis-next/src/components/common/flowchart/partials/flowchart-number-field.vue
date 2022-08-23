@@ -1,12 +1,8 @@
 <template lang="pug">
   v-layout(row, justify-space-between, align-center)
     v-label {{ label }}
-    v-flex(xs2)
-      v-select.mt-0.pt-0(
-        v-field="value",
-        :items="numbers",
-        hide-details
-      )
+    v-flex(xs3)
+      v-select.mt-0.pt-0(v-field="value", :items="numbers", hide-details)
 </template>
 
 <script>

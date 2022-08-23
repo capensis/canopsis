@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(row, justify-space-between, align-center)
+  v-layout.flowchart-color-field(row, justify-space-between, align-center)
     v-checkbox.mt-0(
       v-if="!hideCheckbox",
       :input-value="isFilled",
@@ -9,12 +9,13 @@
       @change="updateIsFilled"
     )
     span.v-label.theme--light(v-else) {{ label }}
-    v-btn.ma-0(
-      v-show="isFilled || hideCheckbox",
-      :style="style",
-      small,
-      @click="showColorPickerModal"
-    )
+    v-flex(v-show="isFilled || hideCheckbox", xs3)
+      v-btn.flowchart-color-field__button.ma-0.pa-0(
+        :style="style",
+        small,
+        block,
+        @click="showColorPickerModal"
+      )
 </template>
 
 <script>
@@ -76,3 +77,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.flowchart-color-field {
+  &__button {
+    min-width: unset;
+  }
+}
+</style>

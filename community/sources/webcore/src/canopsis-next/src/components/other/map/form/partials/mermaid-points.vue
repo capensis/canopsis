@@ -238,6 +238,8 @@ export default {
     },
 
     showRemovePointModal() {
+      this.shownMenu = false;
+
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
