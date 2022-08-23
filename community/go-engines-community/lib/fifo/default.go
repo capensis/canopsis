@@ -112,8 +112,9 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		logger,
 	)
 
+	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
 	techMetricsSender := metrics.NewTechMetricsSender(postgresPool, logger)
-	fifoEventMetricsChan := make(chan metrics.FifoEventMetric)
+	eventMetricsChan := make(chan metrics.FifoEventMetric)
 	eventMetricsListener := fifoEventMetricsListener{metricsSender: techMetricsSender, flushInterval: time.Second * 10}
 
 	engine := libengine.New(
@@ -126,7 +127,7 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 				return err
 			}
 
-			go eventMetricsListener.Listen(ctx, fifoEventMetricsChan)
+			go eventMetricsListener.Listen(ctx, eventMetricsChan)
 			go statsListener.Listen(ctx, statsCh)
 
 			return nil
@@ -181,8 +182,9 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		amqpConnection,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.PrintEventOnError,
-			EventsMetricsChan:        fifoEventMetricsChan,
+			EventsMetricsChan:        eventMetricsChan,
 			EventFilterService:       eventFilterService,
+			MetricsConfigProvider:    metricsConfigProvider,
 			Scheduler:                scheduler,
 			StatsSender:              statsSender,
 			Decoder:                  json.NewDecoder(),
@@ -244,6 +246,12 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		canopsis.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
 		timezoneConfigProvider,
+		logger,
+	))
+	engine.AddPeriodicalWorker("metrics config", libengine.NewLoadConfigPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		config.NewAdapter(mongoClient),
+		metricsConfigProvider,
 		logger,
 	))
 
