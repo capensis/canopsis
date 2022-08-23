@@ -33,13 +33,13 @@ type messageProcessor struct {
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
-	ctx, task := trace.NewTask(parentCtx, "fifo.WorkerProcess")
-	defer task.End()
-
 	startProcTime := time.Now()
 	eventMetric := metrics.FifoEventMetric{
 		Timestamp: startProcTime,
 	}
+
+	ctx, task := trace.NewTask(parentCtx, "fifo.WorkerProcess")
+	defer task.End()
 
 	msg := d.Body
 	trace.Logf(ctx, "event_size", "%d", len(msg))
@@ -68,12 +68,11 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	defer func() {
 		if p.MetricsConfigProvider.Get().EnableTechMetrics {
+			eventMetric.EventType = event.EventType
 			eventMetric.Interval = time.Since(startProcTime).Microseconds()
 			p.EventsMetricsChan <- eventMetric
 		}
 	}()
-
-	eventMetric.EventType = event.EventType
 
 	event.Format()
 	p.StatsSender.Add(event.Timestamp.Unix(), true)
