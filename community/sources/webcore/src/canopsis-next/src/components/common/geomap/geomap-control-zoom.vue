@@ -1,15 +1,9 @@
 <template lang="pug">
   v-layout(column)
-    v-tooltip(attach, right, max-width="unset", min-width="max-content")
-      template(#activator="{ on }")
-        v-btn.secondary.ma-0.mb-1(v-on="on", :disabled="disabled || zoomInDisabled", icon, dark, @click="zoomIn")
-          v-icon add
-      span {{ $t('geomap.zoomIn') }}
-    v-tooltip(attach, right, max-width="unset", min-width="max-content")
-      template(#activator="{ on }")
-        v-btn.secondary.ma-0.mb-1(v-on="on", :disabled="disabled || zoomOutDisabled", dark, icon, @click="zoomOut")
-          v-icon remove
-      span {{ $t('geomap.zoomOut') }}
+    v-btn.secondary.ma-0.mb-1(:disabled="disabled || zoomInDisabled", icon, dark, @click="zoomIn")
+      v-icon add
+    v-btn.secondary.ma-0.mb-1(:disabled="disabled || zoomOutDisabled", dark, icon, @click="zoomOut")
+      v-icon remove
 </template>
 
 <script>
@@ -25,6 +19,7 @@ export default {
   },
   data() {
     return {
+      zoom: 0,
       mapObject: undefined,
     };
   },
@@ -39,7 +34,7 @@ export default {
         return false;
       }
 
-      return this.map.getZoom() === this.map.getMaxZoom();
+      return this.zoom === this.map.getMaxZoom();
     },
 
     zoomOutDisabled() {
@@ -47,18 +42,32 @@ export default {
         return false;
       }
 
-      return this.map.getZoom() === this.map.getMinZoom();
+      return this.zoom === this.map.getMinZoom();
     },
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.zoom = this.map.getZoom();
+
+      this.map.on('zoom', this.setCurrentZoom);
+    });
+  },
+  beforeDestroy() {
+    this.map.off('zoom', this.setCurrentZoom);
+  },
   methods: {
+    setCurrentZoom({ target }) {
+      this.zoom = target.getZoom();
+    },
+
     zoomIn(event) {
-      if (this.map.getZoom() < this.map.getMaxZoom()) {
+      if (this.zoom < this.map.getMaxZoom()) {
         this.map.zoomIn(this.map.options.zoomDelta * (event.shiftKey ? 3 : 1));
       }
     },
 
     zoomOut(event) {
-      if (this.map.getZoom() > this.map.getMinZoom()) {
+      if (this.zoom > this.map.getMinZoom()) {
         this.map.zoomOut(this.map.options.zoomDelta * (event.shiftKey ? 3 : 1));
       }
     },

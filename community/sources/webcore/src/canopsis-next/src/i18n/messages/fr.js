@@ -135,7 +135,7 @@ export default merge({
     emptyObject: 'Objet vide',
     startDate: 'Date de début',
     endDate: 'Date de fin',
-    links: 'Liens',
+    link: 'Lien | Liens',
     stack: 'Pile',
     edition: 'Édition',
     icon: 'Icône',
@@ -733,6 +733,7 @@ export default merge({
       [SIDE_BARS.textSettings]: 'Paramètres du widget de texte',
       [SIDE_BARS.counterSettings]: 'Paramètres du widget de compteur',
       [SIDE_BARS.testingWeatherSettings]: 'Paramètres du widget scénario des tests',
+      [SIDE_BARS.mapSettings]: 'Paramètres du widget de mappage',
     },
     openedTypes: {
       [ALARMS_OPENED_VALUES.opened]: 'Alarmes ouvertes',
@@ -740,6 +741,8 @@ export default merge({
       [ALARMS_OPENED_VALUES.all]: 'Alarmes ouvertes et récemment résolues',
     },
     advancedSettings: 'Paramètres avancés',
+    entityDisplaySettings: 'Paramètres d\'affichage des entités',
+    entitiesUnderPbehaviorEnabled: 'Entités sous type PBh inactives, Pause, Maintenance display',
     widgetTitle: 'Titre du widget',
     columnName: 'Nom de la colonne',
     defaultSortColumn: 'Colonne de tri par défaut',
@@ -775,6 +778,9 @@ export default merge({
     exportAsCsv: 'Exporter le widget sous forme de fichier csv',
     criticityLevels: 'Niveaux de criticité',
     isPriorityEnabled: 'Afficher la priorité',
+    alarmsColumns: 'Colonnes de la liste des alarmes',
+    entitiesColumns: 'Colonnes de l\'explorateur de contexte',
+    entityInfoPopup: 'Fenêtre contextuelle d\'informations sur l\'entité',
     exportCsv: {
       title: 'Exporter CSV',
       fields: {
@@ -1195,6 +1201,9 @@ export default merge({
         },
         [WIDGET_TYPES.testingWeather]: {
           title: 'Scénarios Junit',
+        },
+        [WIDGET_TYPES.map]: {
+          title: 'Cartographie',
         },
       },
     },
@@ -2202,6 +2211,7 @@ export default merge({
       [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: 'Droits pour le widget: Météo des services',
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Droits pour le widget : Compteur',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Droits pour le widget : Scénario des tests',
+      [USER_PERMISSIONS_PREFIXES.business.map]: 'Droits pour le widget : Cartographie',
     },
     api: {
       general: 'Général',
@@ -3039,8 +3049,9 @@ export default merge({
 
   geomap: {
     layers: 'Couches',
-    zoomIn: 'Zoom in',
-    zoomOut: 'Zoom out',
+    errors: {
+      pointsRequired: 'The points must be added',
+    },
   },
 
   flowchart: {
