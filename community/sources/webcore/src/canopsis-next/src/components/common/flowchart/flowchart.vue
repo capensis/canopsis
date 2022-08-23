@@ -14,10 +14,14 @@
         v-field="shapes",
         :view-box.sync="viewBox",
         :selected.sync="selected",
-        :points.sync="points",
+        :points="points",
         :background-color="backgroundColor",
-        :readonly="readonly"
+        :readonly="readonly",
+        @update:points="$emit('update:points', $event)"
       )
+        template(#layers="")
+          slot(name="layers")
+      portal-target(name="flowchartDiv")
     div.flowchart__properties(v-show="selected.length")
       flowchart-properties(v-if="!readonly", v-field="shapes", :selected="selected")
 </template>
@@ -42,6 +46,10 @@ export default {
       type: Object,
       required: true,
     },
+    points: {
+      type: Array,
+      required: false,
+    },
     backgroundColor: {
       type: String,
       required: false,
@@ -54,7 +62,6 @@ export default {
   data() {
     return {
       selected: [],
-      points: [],
       viewBox: {
         x: 0,
         y: 0,
