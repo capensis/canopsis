@@ -14,4 +14,5 @@ const (
 	AxeEvent            = "axe_event"
 	AxePeriodical       = "axe_periodical"
 	PBehaviorPeriodical = "pbehavior_periodical"
+	CheInfos            = "che_infos"
 )

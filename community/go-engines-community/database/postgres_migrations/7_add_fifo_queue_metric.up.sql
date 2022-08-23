@@ -57,4 +57,12 @@ CREATE TABLE IF NOT EXISTS pbehavior_periodical
 SELECT create_hypertable('pbehavior_periodical', 'time', if_not_exists => TRUE);
 SELECT add_retention_policy('pbehavior_periodical', INTERVAL '7 days');
 
+CREATE TABLE IF NOT EXISTS che_infos
+(
+    time TIMESTAMP   NOT NULL,
+    name VARCHAR(30) NOT NULL
+);
+SELECT create_hypertable('che_infos', 'time', if_not_exists => TRUE);
+SELECT add_retention_policy('che_infos', INTERVAL '1 day');
+
 COMMIT;
