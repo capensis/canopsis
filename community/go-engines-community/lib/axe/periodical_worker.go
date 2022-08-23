@@ -6,6 +6,8 @@ import (
 	"runtime/trace"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -19,14 +21,16 @@ import (
 )
 
 type periodicalWorker struct {
-	PeriodicalInterval  time.Duration
-	ChannelPub          libamqp.Channel
-	AlarmService        libalarm.Service
-	AlarmAdapter        libalarm.Adapter
-	Encoder             encoding.Encoder
-	IdleAlarmService    idlealarm.Service
-	AlarmConfigProvider config.AlarmConfigProvider
-	Logger              zerolog.Logger
+	TechMetricsSender     metrics.TechSender
+	MetricsConfigProvider config.MetricsConfigProvider
+	PeriodicalInterval    time.Duration
+	ChannelPub            libamqp.Channel
+	AlarmService          libalarm.Service
+	AlarmAdapter          libalarm.Adapter
+	Encoder               encoding.Encoder
+	IdleAlarmService      idlealarm.Service
+	AlarmConfigProvider   config.AlarmConfigProvider
+	Logger                zerolog.Logger
 }
 
 func (w *periodicalWorker) GetInterval() time.Duration {
@@ -34,6 +38,13 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *periodicalWorker) Work(parentCtx context.Context) {
+	startProcTime := time.Now()
+	defer func() {
+		if w.MetricsConfigProvider.Get().EnableTechMetrics {
+			go w.TechMetricsSender.SendAxePeriodical(parentCtx, time.Now(), time.Since(startProcTime).Microseconds())
+		}
+	}()
+
 	ctx, task := trace.NewTask(parentCtx, "axe.PeriodicalProcess")
 	defer task.End()
 
