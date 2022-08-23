@@ -19,6 +19,7 @@ type TechSender interface {
 	SendCheEventBatch(ctx context.Context, metrics []CheEventMetric)
 	SendAxeEventBatch(ctx context.Context, metrics []AxeEventMetric)
 	SendAxePeriodical(ctx context.Context, timestamp time.Time, length int64)
+	SendPBehaviorPeriodical(ctx context.Context, timestamp time.Time, length int64)
 }
 
 type techSender struct {
@@ -145,5 +146,13 @@ func (s *techSender) SendAxePeriodical(ctx context.Context, timestamp time.Time,
 	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), length)
 	if err != nil {
 		s.logger.Err(err).Msgf("failed to send %s metric: unable to execute insert", AxePeriodical)
+	}
+}
+
+func (s *techSender) SendPBehaviorPeriodical(ctx context.Context, timestamp time.Time, length int64) {
+	query := fmt.Sprintf("INSERT INTO %s (time, interval) VALUES($1, $2);", PBehaviorPeriodical)
+	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), length)
+	if err != nil {
+		s.logger.Err(err).Msgf("failed to send %s metric: unable to execute insert", PBehaviorPeriodical)
 	}
 }
