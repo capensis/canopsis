@@ -1,15 +1,22 @@
 <template lang="pug">
-  v-icon.mermaid-point(
+  point-icon.mermaid-point(
     v-on="$listeners",
-    :class="{ 'mermaid-point--linked': !entity }",
+    :class="{ 'mermaid-point--centered': isFullEntity }",
     :style="{ top: `${y}px`, left: `${x}px` }",
+    :entity="entity",
     :size="size",
-    color="grey darken-2"
-    ) {{ icon }}
+    :color-indicator="colorIndicator",
+    :pbehavior-enabled="pbehaviorEnabled"
+  )
 </template>
 
 <script>
+import { isNumber } from 'chart.js/helpers';
+
+import PointIcon from './point-icon.vue';
+
 export default {
+  components: { PointIcon },
   props: {
     x: {
       type: Number,
@@ -27,10 +34,18 @@ export default {
       type: Number,
       default: 24,
     },
+    colorIndicator: {
+      type: String,
+      required: false,
+    },
+    pbehaviorEnabled: {
+      type: Boolean,
+      required: false,
+    },
   },
   computed: {
-    icon() {
-      return this.entity ? 'location_on' : 'link';
+    isFullEntity() {
+      return isNumber(this.entity?.state);
     },
   },
 };
@@ -44,7 +59,7 @@ export default {
   cursor: pointer;
   transition: none;
 
-  &--linked {
+  &--centered {
     transform: translate(-50%, -50%);
   }
 }
