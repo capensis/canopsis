@@ -322,6 +322,12 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		timezoneConfigProvider,
 		logger,
 	))
+	engineAxe.AddPeriodicalWorker("metrics config", libengine.NewLoadConfigPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		config.NewAdapter(dbClient),
+		metricsConfigProvider,
+		logger,
+	))
 
 	return engineAxe
 }

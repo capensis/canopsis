@@ -179,6 +179,12 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		dataStorageConfigProvider,
 		logger,
 	))
+	enginePbehavior.AddPeriodicalWorker("metrics config", engine.NewLoadConfigPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		config.NewAdapter(dbClient),
+		metricsConfigProvider,
+		logger,
+	))
 
 	return enginePbehavior
 }
