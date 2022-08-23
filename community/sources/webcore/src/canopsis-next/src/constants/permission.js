@@ -72,6 +72,7 @@ export const USER_PERMISSIONS_PREFIXES = {
     serviceWeather: 'serviceweather',
     testingWeather: 'testingweather',
     counter: 'counter',
+    map: 'map',
   },
   api: 'api',
 };
@@ -227,6 +228,18 @@ export const USERS_PERMISSIONS = {
     testingWeather: {
       actions: {
         alarmsList: `${USER_PERMISSIONS_PREFIXES.business.testingWeather}_alarmsList`,
+      },
+    },
+    map: {
+      actions: {
+        alarmsList: `${USER_PERMISSIONS_PREFIXES.business.map}_alarmsList`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.map}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_userFilter`,
+
+        category: `${USER_PERMISSIONS_PREFIXES.business.map}_category`,
       },
     },
   },

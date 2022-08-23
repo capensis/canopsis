@@ -4,6 +4,7 @@ import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 export const widgetSettingsMixin = {
   $_veeValidate: {
@@ -20,11 +21,11 @@ export const widgetSettingsMixin = {
     activeViewMixin,
     entitiesWidgetMixin,
     confirmableModalMixinCreator({ field: 'form', closeMethod: '$sidebar.hide' }),
+    submittableMixinCreator(),
   ],
   data() {
     return {
       form: widgetToForm(this.sidebar.config?.widget),
-      submitting: false,
     };
   },
   computed: {
@@ -54,33 +55,25 @@ export const widgetSettingsMixin = {
      * @returns {Promise<void>}
      */
     async submit() {
-      try {
-        this.submitting = true;
+      const isFormValid = await this.$validator.validateAll();
 
-        const isFormValid = await this.$validator.validateAll();
+      if (isFormValid) {
+        const { _id: widgetId, tab: tabId } = this.widget;
+        const data = formToWidget(this.form);
 
-        if (isFormValid) {
-          const { _id: widgetId, tab: tabId } = this.widget;
-          const data = formToWidget(this.form);
+        data.tab = tabId;
 
-          data.tab = tabId;
-
-          if (this.duplicate) {
-            await this.copyWidget({ id: widgetId, data });
-          } else if (widgetId) {
-            await this.updateWidget({ id: widgetId, data });
-          } else {
-            await this.createWidget({ data });
-          }
-
-          await this.fetchActiveView();
-
-          this.$sidebar.hide();
+        if (this.duplicate) {
+          await this.copyWidget({ id: widgetId, data });
+        } else if (widgetId) {
+          await this.updateWidget({ id: widgetId, data });
+        } else {
+          await this.createWidget({ data });
         }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        this.submitting = false;
+
+        await this.fetchActiveView();
+
+        this.$sidebar.hide();
       }
     },
   },
