@@ -3031,7 +3031,7 @@ export default merge({
         + 'Ctrl + molette de la souris - zoom avant/arrière\n'
         + 'Maj + molette de la souris - défilement horizontal\n'
         + 'Alt + molette de la souris - défilement vertical\n'
-        + 'Clic gauche de la souris + glisser - déplacer la zone',
+        + 'Ctrl + Clic gauche de la souris + glisser - déplacer la zone',
     },
     themes: {
       [MERMAID_THEMES.default]: 'Défaut',
@@ -3048,6 +3048,11 @@ export default merge({
 
   geomap: {
     layers: 'Couches',
+    panzoom: {
+      helpText: 'Raccourcis utiles :\n'
+        + 'Ctrl + molette de la souris - zoom avant/arrière\n'
+        + 'Clic gauche de la souris + glisser - déplacer la zone',
+    },
     errors: {
       pointsRequired: 'The points must be added',
     },
