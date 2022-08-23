@@ -15,7 +15,8 @@
 import {
   QUICK_RANGES,
   SAMPLINGS,
-  REMEDIATION_STATISTICS_CHART_DATA_TYPE, DATETIME_FORMATS,
+  REMEDIATION_STATISTICS_CHART_DATA_TYPE,
+  DATETIME_FORMATS,
 } from '@/constants';
 
 import {
@@ -111,9 +112,8 @@ export default {
       return {
         ...this.interval,
 
-        parameters: this.query.parameters,
+        instruction: this.query.instruction,
         sampling: this.query.sampling,
-        filter: this.query.filter,
       };
     },
 

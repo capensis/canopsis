@@ -134,8 +134,8 @@ export const isMetricsQueryChanged = (query, oldQuery, minDate) => {
  * Convert metrics timestamps to local timezone
  *
  * @param {Metric[]} metrics
- * @param timezone
- * @returns {*}
+ * @param {string} timezone
+ * @returns {Metric[]}
  */
 export const convertMetricsToTimezone = (metrics, timezone) => metrics.map(metric => ({
   ...metric,
