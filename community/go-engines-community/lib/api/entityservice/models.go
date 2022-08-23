@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type Response struct {
@@ -55,6 +56,8 @@ type EditRequest struct {
 	ImpactLevel    int64                     `json:"impact_level" binding:"required,min=1,max=10"`
 	Infos          []entitybasic.InfoRequest `json:"infos" binding:"dive"`
 	SliAvailState  *int64                    `json:"sli_avail_state" binding:"required,min=0,max=3"`
+
+	Coordinates *types.Coordinates `json:"coordinates"`
 
 	common.EntityPatternFieldsRequest
 }
