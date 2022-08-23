@@ -5,6 +5,8 @@ import (
 	"runtime/trace"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -18,6 +20,8 @@ import (
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
 	EventProcessor           alarm.EventProcessor
+	MetricsConfigProvider    config.MetricsConfigProvider
+	EventsMetricsChan        chan metrics.AxeEventMetric
 	RemediationRpcClient     engine.RPCClient
 	TimezoneConfigProvider   config.TimezoneConfigProvider
 	Encoder                  encoding.Encoder
@@ -27,6 +31,11 @@ type messageProcessor struct {
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
+	startProcTime := time.Now()
+	eventMetric := metrics.AxeEventMetric{
+		Timestamp: startProcTime,
+	}
+
 	ctx, task := trace.NewTask(parentCtx, "axe.WorkerProcess")
 	defer task.End()
 
@@ -49,6 +58,19 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	trace.Log(ctx, "event.connector_name", event.ConnectorName)
 	trace.Log(ctx, "event.component", event.Component)
 	trace.Log(ctx, "event.resource", event.Resource)
+
+	defer func() {
+		if p.MetricsConfigProvider.Get().EnableTechMetrics {
+			eventMetric.EventType = event.EventType
+			eventMetric.AlarmChangeType = string(event.AlarmChange.Type)
+			if event.Entity != nil {
+				eventMetric.EntityType = event.Entity.Type
+			}
+
+			eventMetric.Interval = time.Since(startProcTime).Microseconds()
+			p.EventsMetricsChan <- eventMetric
+		}
+	}()
 
 	alarmChange, err := p.EventProcessor.Process(ctx, &event)
 	if err != nil {
