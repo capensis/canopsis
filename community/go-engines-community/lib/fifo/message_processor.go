@@ -7,6 +7,8 @@ import (
 	"runtime/trace"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -22,6 +24,7 @@ import (
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
 	EventsMetricsChan        chan metrics.FifoEventMetric
+	MetricsConfigProvider    config.MetricsConfigProvider
 	EventFilterService       eventfilter.Service
 	Scheduler                scheduler.Scheduler
 	StatsSender              ratelimit.StatsSender
@@ -34,6 +37,9 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	defer task.End()
 
 	startProcTime := time.Now()
+	eventMetric := metrics.FifoEventMetric{
+		Timestamp: startProcTime,
+	}
 
 	msg := d.Body
 	trace.Logf(ctx, "event_size", "%d", len(msg))
@@ -44,14 +50,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		p.logError(err, "cannot decode event", msg)
 		return nil, nil
 	}
-
-	defer func() {
-		p.EventsMetricsChan <- metrics.FifoEventMetric{
-			Timestamp: time.Now(),
-			EventType: event.EventType,
-			Interval:  time.Since(startProcTime).Microseconds(),
-		}
-	}()
 
 	p.Logger.Debug().Msgf("valid input event: %v", string(msg))
 	trace.Log(ctx, "event.event_type", event.EventType)
@@ -67,6 +65,15 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		p.logError(err, "invalid event", msg)
 		return nil, nil
 	}
+
+	defer func() {
+		if p.MetricsConfigProvider.Get().EnableTechMetrics {
+			eventMetric.Interval = time.Since(startProcTime).Microseconds()
+			p.EventsMetricsChan <- eventMetric
+		}
+	}()
+
+	eventMetric.EventType = event.EventType
 
 	event.Format()
 	p.StatsSender.Add(event.Timestamp.Unix(), true)

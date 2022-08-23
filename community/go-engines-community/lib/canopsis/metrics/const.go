@@ -8,6 +8,7 @@ const (
 
 // tech metrics
 const (
-	FIFOQueue  = "fifo_queue"
-	FIFOEvents = "fifo_event"
+	FIFOQueue = "fifo_queue"
+	FIFOEvent = "fifo_event"
+	CheEvent  = "che_event"
 )

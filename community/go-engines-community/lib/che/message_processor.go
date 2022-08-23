@@ -6,6 +6,8 @@ import (
 	"runtime/trace"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -26,6 +28,8 @@ type messageProcessor struct {
 	FeatureEventProcessing   bool
 	FeatureContextCreation   bool
 	AlarmConfigProvider      config.AlarmConfigProvider
+	EventsMetricsChan        chan metrics.CheEventMetric
+	MetricsConfigProvider    config.MetricsConfigProvider
 	EventFilterService       eventfilter.Service
 	EnrichmentCenter         libcontext.EnrichmentCenter
 	AmqpPublisher            libamqp.Publisher
@@ -38,6 +42,11 @@ type messageProcessor struct {
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
 	ctx, task := trace.NewTask(parentCtx, "che.WorkerProcess")
 	defer task.End()
+
+	startProcTime := time.Now()
+	eventMetric := metrics.CheEventMetric{
+		Timestamp: startProcTime,
+	}
 
 	trace.Logf(ctx, "event_size", "%d", len(d.Body))
 	var event types.Event
@@ -66,6 +75,15 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		p.logError(err, "invalid event", d.Body)
 		return nil, nil
 	}
+
+	defer func() {
+		if p.MetricsConfigProvider.Get().EnableTechMetrics {
+			eventMetric.Interval = time.Since(startProcTime).Microseconds()
+			p.EventsMetricsChan <- eventMetric
+		}
+	}()
+
+	eventMetric.EventType = event.EventType
 
 	alarmConfig := p.AlarmConfigProvider.Get()
 	event.Output = utils.TruncateString(event.Output, alarmConfig.OutputLength)
@@ -162,6 +180,11 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			updatedEntityServices = updatedEntityServices.Add(*updated)
 		}
 	}
+
+	eventMetric.EntityType = event.Entity.Type
+	eventMetric.IsNewEntity = event.Entity.IsNew
+	eventMetric.IsInfosUpdated = event.IsEntityUpdated
+	eventMetric.IsServicesUpdated = len(updatedEntityServices.AddedTo) > 0 || len(updatedEntityServices.RemovedFrom) > 0
 
 	if !p.FeatureEventProcessing {
 		return nil, nil
