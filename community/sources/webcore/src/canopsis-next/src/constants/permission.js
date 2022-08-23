@@ -364,8 +364,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [WEATHER_ACTIONS_TYPES.entityPause]: USERS_PERMISSIONS.business.serviceWeather.actions.entityPause,
     [WEATHER_ACTIONS_TYPES.entityPlay]: USERS_PERMISSIONS.business.serviceWeather.actions.entityPlay,
     [WEATHER_ACTIONS_TYPES.entityCancel]: USERS_PERMISSIONS.business.serviceWeather.actions.entityCancel,
-    [WEATHER_ACTIONS_TYPES.entityManagePbehaviors]:
-      USERS_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors, // TODO: remove it
     [WEATHER_ACTIONS_TYPES.executeInstruction]:
       USERS_PERMISSIONS.business.serviceWeather.actions.executeInstruction,
 
