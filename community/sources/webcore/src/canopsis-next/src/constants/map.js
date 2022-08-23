@@ -55,3 +55,7 @@ export const TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS = {
   nodeRepulsion: 120,
   idealInterClusterEdgeLengthCoefficient: 2,
 };
+
+export const DEFAULT_MAP_ENTITY_TEMPLATE = `<ul>
+    <li><strong>Libellé</strong> : {{entity.name}}</li>
+</ul>`;

@@ -135,7 +135,7 @@ export default merge({
     emptyObject: 'Empty object',
     startDate: 'Start date',
     endDate: 'End date',
-    links: 'Links',
+    link: 'Link | Links',
     stack: 'Stack',
     edition: 'Edition',
     icon: 'Icon',
@@ -733,6 +733,7 @@ export default merge({
       [SIDE_BARS.textSettings]: 'Text settings',
       [SIDE_BARS.counterSettings]: 'Counter settings',
       [SIDE_BARS.testingWeatherSettings]: 'Testing weather',
+      [SIDE_BARS.mapSettings]: 'Mapping widget settings',
     },
     openedTypes: {
       [ALARMS_OPENED_VALUES.opened]: 'Opened alarms',
@@ -740,6 +741,8 @@ export default merge({
       [ALARMS_OPENED_VALUES.all]: 'Opened and recent resolved alarms',
     },
     advancedSettings: 'Advanced settings',
+    entityDisplaySettings: 'Entity display settings',
+    entitiesUnderPbehaviorEnabled: 'Entities under PBh type inactive, Pause, Maintenance display',
     widgetTitle: 'Widget title',
     columnName: 'Column name',
     defaultSortColumn: 'Default sort column',
@@ -775,6 +778,9 @@ export default merge({
     exportAsCsv: 'Export widget as csv file',
     criticityLevels: 'Criticity levels',
     isPriorityEnabled: 'Show priority',
+    alarmsColumns: 'Alarm list columns',
+    entitiesColumns: 'Context explorer columns',
+    entityInfoPopup: 'Entity info popup',
     exportCsv: {
       title: 'Export CSV',
       fields: {
@@ -1195,6 +1201,9 @@ export default merge({
         },
         [WIDGET_TYPES.testingWeather]: {
           title: 'Junit scenarios',
+        },
+        [WIDGET_TYPES.map]: {
+          title: 'Mapping',
         },
       },
     },
@@ -2202,6 +2211,7 @@ export default merge({
       [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: 'Rights for Service Weather',
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Rights for Counter',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Rights for Testing Weather',
+      [USER_PERMISSIONS_PREFIXES.business.map]: 'Rights for Mapping',
     },
     api: {
       general: 'General',
@@ -3039,8 +3049,9 @@ export default merge({
 
   geomap: {
     layers: 'Layers',
-    zoomIn: 'Zoom in',
-    zoomOut: 'Zoom out',
+    errors: {
+      pointsRequired: 'The points must be added',
+    },
   },
 
   flowchart: {

@@ -14,9 +14,10 @@ import { MAP_TYPES } from '@/constants';
 import { entitiesMapMixin } from '@/mixins/entities/map';
 
 import MapsListExpandMermaidItem from './maps-list-expand-mermaid-item.vue';
+import MapsListExpandGeomapItem from './maps-list-expand-geomap-item.vue';
 
 export default {
-  components: { MapsListExpandMermaidItem },
+  components: { MapsListExpandMermaidItem, MapsListExpandGeomapItem },
   mixins: [entitiesMapMixin],
   props: {
     map: {
@@ -33,9 +34,13 @@ export default {
   computed: {
     component() {
       return {
+        [MAP_TYPES.geo]: 'maps-list-expand-geomap-item',
         [MAP_TYPES.mermaid]: 'maps-list-expand-mermaid-item',
       }[this.map.type];
     },
+  },
+  watch: {
+    map: 'fetchMapDetails',
   },
   mounted() {
     this.fetchMapDetails();
