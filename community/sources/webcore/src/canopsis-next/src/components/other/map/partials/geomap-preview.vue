@@ -11,8 +11,9 @@
     )
 
     geomap-cluster-group(
-      ref="pointsFeatureGroup",
-      :name="$t('map.layers.points')",
+      v-for="{ markers, name, style } in layers",
+      :name="name",
+      :cluster-style="style",
       layer-type="overlay"
     )
       geomap-marker(
@@ -51,13 +52,20 @@
 </template>
 
 <script>
+import { groupBy } from 'lodash';
+import { LatLngBounds, LatLng } from 'leaflet';
+
+import { COLOR_INDICATOR_TYPES } from '@/constants';
+
 import { getGeomapMarkerIconOptions } from '@/helpers/map';
+import { getEntityColor } from '@/helpers/color';
 
 import Geomap from '@/components/common/geomap/geomap.vue';
 import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
 import GeomapControlZoom from '@/components/common/geomap/geomap-control-zoom.vue';
 import GeomapControlLayers from '@/components/common/geomap/geomap-control-layers.vue';
 import GeomapClusterGroup from '@/components/common/geomap/geomap-cluster-group.vue';
+import GeomapClusterSubGroup from '@/components/common/geomap/geomap-cluster-sub-group.vue';
 import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
 import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
 import GeomapTooltip from '@/components/common/geomap/geomap-tooltip.vue';
@@ -67,6 +75,7 @@ import PointPopup from './point-popup.vue';
 
 export default {
   components: {
+    GeomapClusterSubGroup,
     Geomap,
     GeomapTileLayer,
     GeomapControlZoom,
@@ -116,6 +125,10 @@ export default {
     };
   },
   computed: {
+    isStateColorIndicator() {
+      return this.colorIndicator === COLOR_INDICATOR_TYPES.state;
+    },
+
     markers() {
       return this.map.parameters?.points?.map(point => ({
         id: point._id,
@@ -123,6 +136,73 @@ export default {
         data: point,
         icon: getGeomapMarkerIconOptions(point, this.iconSize),
       }));
+    },
+
+    groupedMarkers() {
+      return groupBy(this.markers ?? [], ({ data }) => {
+        const { entity } = data;
+
+        if (!entity) {
+          return 'map';
+        }
+
+        if (this.pbehaviorEnabled && entity.pbehavior_info) {
+          return 'pbehavior';
+        }
+
+        if (this.isStateColorIndicator) {
+          return entity.state;
+        }
+
+        return entity.impact_state;
+      });
+    },
+
+    layers() {
+      const layers = {};
+
+      if (!this.colorIndicator) {
+        return {
+          points: {
+            name: this.$t('map.layers.points'),
+            markers: this.markers,
+          },
+        };
+      }
+
+      const {
+        map: mapMarkers,
+        pbehavior: pbehaviorMarkers,
+        ...restGroups
+      } = this.groupedMarkers;
+
+      if (mapMarkers) {
+        layers.map = {
+          name: this.$tc('common.map', mapMarkers.length),
+          markers: mapMarkers,
+        };
+      }
+
+      if (pbehaviorMarkers) {
+        layers.pbehavior = {
+          name: this.$tc('common.pbehavior'),
+          markers: pbehaviorMarkers,
+        };
+      }
+
+      Object.entries(restGroups).forEach(([key, markers]) => {
+        const [firstMarker] = markers;
+
+        layers[key] = {
+          style: { backgroundColor: getEntityColor(firstMarker.data.entity, this.colorIndicator) },
+          name: this.isStateColorIndicator
+            ? this.$t(`common.stateTypes.${key}`)
+            : `${this.$t('common.impactLevel')}: ${key}`,
+          markers,
+        };
+      });
+
+      return layers;
     },
   },
   watch: {
@@ -136,9 +216,13 @@ export default {
   methods: {
     fitMap() {
       if (this.map.parameters?.points) {
-        const pointsBounds = this.$refs.pointsFeatureGroup.mapObject.getBounds();
+        const bounds = new LatLngBounds();
 
-        this.$refs.map.mapObject.fitBounds(pointsBounds);
+        this.map.parameters.points.forEach(({ coordinates }) => {
+          bounds.extend(new LatLng(coordinates.lat, coordinates.lng));
+        });
+
+        this.$refs.map.mapObject.fitBounds(bounds);
       }
     },
 
