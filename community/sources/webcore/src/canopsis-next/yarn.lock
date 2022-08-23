@@ -10298,6 +10298,11 @@ lcid@^1.0.0:
   dependencies:
     invert-kv "^1.0.0"
 
+leaflet.featuregroup.subgroup@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/leaflet.featuregroup.subgroup/-/leaflet.featuregroup.subgroup-1.0.2.tgz#ffbc96ea6db41893b6d5fb60ba09f13876c45d28"
+  integrity sha512-9nCVg8nUe686+BtPbUT7ALOe/IA+8Mum+rkA8pfPpCkH0WvKevRrH+JMcMTjAoNQKVI0uxrWrLV5w298SS3ESA==
+
 leaflet.markercluster@^1.5.3:
   version "1.5.3"
   resolved "https://registry.yarnpkg.com/leaflet.markercluster/-/leaflet.markercluster-1.5.3.tgz#9cdb52a4eab92671832e1ef9899669e80efc4056"
