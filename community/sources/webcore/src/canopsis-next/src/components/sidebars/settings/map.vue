@@ -35,11 +35,11 @@
               @input="updateMainFilterUpdatedAt"
             )
             v-divider
-            field-text-editor(
-              v-model="form.parameters.entity_info_template",
-              :title="$t('settings.entityInfoPopup')"
-            )
-            v-divider
+          field-text-editor(
+            v-model="form.parameters.entity_info_template",
+            :title="$t('settings.entityInfoPopup')"
+          )
+          v-divider
 
           field-columns(
             v-model="form.parameters.alarms_columns",

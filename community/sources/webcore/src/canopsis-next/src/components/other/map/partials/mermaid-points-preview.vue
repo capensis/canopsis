@@ -1,30 +1,50 @@
 <template lang="pug">
   div
     mermaid-point-marker(
+      ref="points",
       v-for="point in points",
       :key="point._id",
       :x="point.x",
       :y="point.y",
       :entity="point.entity",
       :size="markerSize",
-      @mouseenter="onMouseEnter(point, $event)",
-      @mouseleave="onMouseLeave"
+      :color-indicator="colorIndicator",
+      :pbehavior-enabled="pbehaviorEnabled",
+      @click="openPopup(point, $event)"
     )
-    v-tooltip(
-      v-if="tooltipContent",
+    v-menu(
+      v-if="activePoint",
       :value="true",
       :position-x="positionX",
       :position-y="positionY",
+      :close-on-content-click="false",
+      ignore-click-outside,
+      offset-overflow,
+      offset-x,
+      absolute,
       top
     )
-      span {{ tooltipContent }}
+      point-popup(
+        v-click-outside="clickOutsideDirective",
+        :point="activePoint",
+        :template="popupTemplate",
+        :color-indicator="colorIndicator",
+        :actions="popupActions",
+        @show:alarms="showAlarms",
+        @show:map="showLinkedMap",
+        @close="closePopup"
+      )
 </template>
 
 <script>
+import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
+
 import MermaidPointMarker from './mermaid-point-marker.vue';
+import PointPopup from './point-popup.vue';
 
 export default {
-  components: { MermaidPointMarker },
+  components: { MermaidPointMarker, PointPopup },
+  mixins: [entitiesServiceEntityMixin],
   props: {
     points: {
       type: Array,
@@ -34,27 +54,60 @@ export default {
       type: Number,
       default: 24,
     },
+    popupTemplate: {
+      type: String,
+      required: false,
+    },
+    popupActions: {
+      type: Boolean,
+      default: false,
+    },
+    colorIndicator: {
+      type: String,
+      required: false,
+    },
+    pbehaviorEnabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       positionX: 0,
       positionY: 0,
-      tooltipContent: undefined,
+      activePoint: undefined,
     };
   },
+  computed: {
+    clickOutsideDirective() {
+      return {
+        handler: this.closePopup,
+        include: () => this.$refs.points.map(({ $el }) => $el),
+        closeConditional: () => true,
+      };
+    },
+  },
   methods: {
-    onMouseEnter(point, event) {
-      const { entity, map } = point;
-
+    openPopup(point, event) {
       const { top, left, width } = event.target.getBoundingClientRect();
 
       this.positionY = top;
       this.positionX = left + width / 2;
-      this.tooltipContent = entity ? entity.name : map.name;
+      this.activePoint = point;
     },
 
-    onMouseLeave() {
-      this.tooltipContent = undefined;
+    closePopup() {
+      this.activePoint = undefined;
+    },
+
+    showLinkedMap() {
+      this.$emit('show:map', this.activePoint.map);
+      this.closePopup();
+    },
+
+    showAlarms() {
+      this.$emit('show:alarms', this.activePoint);
+      this.closePopup();
     },
   },
 };
