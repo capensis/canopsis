@@ -67,9 +67,14 @@ func NewEngine(
 		metricsEntityMetaUpdater,
 	)
 
+	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
+	techMetricsSender := metrics.NewTechMetricsSender(pgPool, logger)
+	eventMetricsChan := make(chan metrics.CheEventMetric)
+	eventMetricsListener := cheEventMetricsListener{metricsSender: techMetricsSender, flushInterval: time.Second * 10}
+
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer))
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externalDataContainer, eventfilter.NewActionProcessor()))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externalDataContainer, eventfilter.NewActionProcessor(metricsConfigProvider, techMetricsSender)))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
 
@@ -91,11 +96,6 @@ func NewEngine(
 		NewInfosDictionaryPeriodicalWorker(mongoClient, options.InfosDictionaryWaitTime, logger),
 		logger,
 	)
-
-	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-	techMetricsSender := metrics.NewTechMetricsSender(pgPool, logger)
-	eventMetricsChan := make(chan metrics.CheEventMetric)
-	eventMetricsListener := cheEventMetricsListener{metricsSender: techMetricsSender, flushInterval: time.Second * 10}
 
 	engine := libengine.New(
 		func(ctx context.Context) error {
@@ -214,6 +214,12 @@ func NewEngine(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
 		timezoneConfigProvider,
+		logger,
+	))
+	engine.AddPeriodicalWorker("metrics config", libengine.NewLoadConfigPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		config.NewAdapter(mongoClient),
+		metricsConfigProvider,
 		logger,
 	))
 	engine.AddPeriodicalWorker("impacted services", libengine.NewLockedPeriodicalWorker(
