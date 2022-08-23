@@ -32,6 +32,7 @@
     "handlebars": "^4.0.11",
     "jodit": "^3.2.38",
     "leaflet": "^1.8.0",
+    "leaflet.featuregroup.subgroup": "^1.0.2",
     "leaflet.markercluster": "^1.5.3",
     "lodash": "^4.17.5",
     "mermaid": "^9.1.3",
