@@ -1,4 +1,4 @@
-b.default_rights.deleteMany({
+db.default_rights.deleteMany({
     _id: {
         $in: ["models_remediationStatistic"],
     }
