@@ -41,4 +41,12 @@ CREATE TABLE IF NOT EXISTS axe_event
 SELECT create_hypertable('axe_event', 'time', if_not_exists => TRUE);
 SELECT add_retention_policy('axe_event', INTERVAL '1 day');
 
+CREATE TABLE IF NOT EXISTS axe_periodical
+(
+    time     TIMESTAMP NOT NULL,
+    interval INT       NOT NULL
+);
+SELECT create_hypertable('axe_periodical', 'time', if_not_exists => TRUE);
+SELECT add_retention_policy('axe_periodical', INTERVAL '7 days');
+
 COMMIT;

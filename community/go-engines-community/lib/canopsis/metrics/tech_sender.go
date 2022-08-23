@@ -14,10 +14,11 @@ import (
 )
 
 type TechSender interface {
-	SendFifoRate(ctx context.Context, timestamp time.Time, length int64)
+	SendFifoQueue(ctx context.Context, timestamp time.Time, length int64)
 	SendFifoEventBatch(ctx context.Context, metrics []FifoEventMetric)
 	SendCheEventBatch(ctx context.Context, metrics []CheEventMetric)
 	SendAxeEventBatch(ctx context.Context, metrics []AxeEventMetric)
+	SendAxePeriodical(ctx context.Context, timestamp time.Time, length int64)
 }
 
 type techSender struct {
@@ -35,7 +36,7 @@ func NewTechMetricsSender(
 	}
 }
 
-func (s *techSender) SendFifoRate(ctx context.Context, timestamp time.Time, length int64) {
+func (s *techSender) SendFifoQueue(ctx context.Context, timestamp time.Time, length int64) {
 	query := fmt.Sprintf("INSERT INTO %s (time, length) VALUES($1, $2);", FIFOQueue)
 	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), length)
 	if err != nil {
@@ -136,5 +137,13 @@ func (s *techSender) SendAxeEventBatch(ctx context.Context, metrics []AxeEventMe
 		if err != nil {
 			s.logger.Err(err).Msgf("failed to send %s metric: unable to send batch", AxeEvent)
 		}
+	}
+}
+
+func (s *techSender) SendAxePeriodical(ctx context.Context, timestamp time.Time, length int64) {
+	query := fmt.Sprintf("INSERT INTO %s (time, interval) VALUES($1, $2);", AxePeriodical)
+	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), length)
+	if err != nil {
+		s.logger.Err(err).Msgf("failed to send %s metric: unable to execute insert", AxePeriodical)
 	}
 }

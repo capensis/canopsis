@@ -1,7 +1,8 @@
 BEGIN;
 
-DROP TABLE fifo_queue;
-DROP TABLE fifo_event;
-DROP TABLE che_event;
+DROP TABLE IF EXISTS fifo_queue;
+DROP TABLE IF EXISTS fifo_event;
+DROP TABLE IF EXISTS che_event;
+DROP TABLE IF EXISTS axe_event;
 
 COMMIT;
