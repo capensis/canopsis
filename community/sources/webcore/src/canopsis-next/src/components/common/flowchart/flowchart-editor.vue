@@ -28,41 +28,7 @@
         @edit:point="startEditLinePoint(shape, $event)",
         @update="updateShape(shape, $event)"
       )
-      component.flowchart-editor__point(
-        v-for="point in points",
-        :key="point._id",
-        :x="point.x - pointSize / 2",
-        :y="point.y - pointSize",
-        :width="pointSize",
-        :height="pointSize",
-        is="foreignObject",
-        @contextmenu.stop.prevent="handleEditContextmenu(point)"
-      )
-        v-icon {{ point.entity ? 'location_on' : 'link' }}
-
-    flowchart-contextmenu(
-      :value="shownMenu",
-      :position-x="clientX",
-      :position-y="clientY",
-      :items="contextmenuItems",
-      @close="closeContextmenu"
-    )
-    v-menu(
-      :value="isDialogOpened",
-      :position-x="clientX",
-      :position-y="clientY",
-      :close-on-content-click="false",
-      ignore-click-outside,
-      absolute
-    )
-      point-form-dialog(
-        v-if="isDialogOpened",
-        :point="addingPoint || editingPoint",
-        :editing="!!editingPoint",
-        @cancel="closePointDialog",
-        @submit="submitPointDialog",
-        @remove="showRemovePointModal"
-      )
+      slot(name="layers")
 </template>
 
 <script>
@@ -77,7 +43,7 @@ import { selectedShapesMixin } from '@/mixins/flowchart/selected';
 import { copyPasteShapesMixin } from '@/mixins/flowchart/copy-paste';
 import { moveShapesMixin } from '@/mixins/flowchart/move-shape';
 import { viewBoxMixin } from '@/mixins/flowchart/view-box';
-import { pointsMixin } from '@/mixins/flowchart/points';
+import { contextmenuMixin } from '@/mixins/flowchart/contextmenu';
 
 import PointFormDialog from '@/components/other/map/form/partials/point-form-dialog.vue';
 
@@ -93,7 +59,8 @@ import ParallelogramShape from './parallelogram-shape/parallelogram-shape.vue';
 import StorageShape from './storage-shape/storage-shape.vue';
 import ProcessShape from './process-shape/process-shape.vue';
 import DocumentShape from './document-shape/document-shape.vue';
-import FlowchartContextmenu from './partials/flowchart-contextmenu.vue';
+
+import PointIcon from '@/components/other/map/partials/point-icon.vue';
 
 export default {
   provide() {
@@ -103,7 +70,7 @@ export default {
     };
   },
   components: {
-    FlowchartContextmenu,
+    PointIcon,
     PointFormDialog,
     RectShape,
     LineShape,
@@ -123,7 +90,7 @@ export default {
     copyPasteShapesMixin,
     moveShapesMixin,
     viewBoxMixin,
-    pointsMixin,
+    contextmenuMixin,
   ],
   model: {
     event: 'input',
@@ -363,6 +330,8 @@ export default {
         this.moving = false;
         this.movingStart = { x: 0, y: 0 };
         this.movingOffset = { x: 0, y: 0 };
+
+        this.updateShapes(this.data);
       }
 
       if (this.editing) {
@@ -372,8 +341,6 @@ export default {
       }
 
       this.$mouseUp.notify();
-
-      this.updateShapes(this.data);
     },
 
     onContainerMouseDown(event) {
@@ -444,10 +411,5 @@ export default {
 .flowchart-editor {
   height: 100%;
   width: 100%;
-
-  &__point {
-    user-select: none;
-    cursor: pointer;
-  }
 }
 </style>

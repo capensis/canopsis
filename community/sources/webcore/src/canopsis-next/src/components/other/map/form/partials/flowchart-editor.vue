@@ -5,6 +5,8 @@
       :background-color.sync="form.backgroundColor",
       :style="editorStyles"
     )
+      template(#layers="")
+        flowchart-points-editor(v-field="form.points")
     v-messages
 </template>
 
@@ -15,9 +17,11 @@ import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
 import Flowchart from '@/components/common/flowchart/flowchart.vue';
 
+import FlowchartPointsEditor from './flowchart-points-editor.vue';
+
 export default {
   inject: ['$validator'],
-  components: { Flowchart },
+  components: { Flowchart, FlowchartPointsEditor },
   mixins: [formMixin, validationChildrenMixin],
   model: {
     prop: 'form',
