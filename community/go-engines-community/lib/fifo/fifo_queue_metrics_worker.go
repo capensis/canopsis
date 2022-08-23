@@ -29,5 +29,5 @@ func (w *fifoQueueMetricsWorker) Work(ctx context.Context) {
 		return
 	}
 
-	w.techMetricsSender.SendFifoRate(ctx, time.Now(), int64(queue.Messages))
+	w.techMetricsSender.SendFifoQueue(ctx, time.Now(), int64(queue.Messages))
 }
