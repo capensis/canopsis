@@ -51,7 +51,7 @@ export const convertStringToDateInterval = (string, type) => {
 /**
  * Parse date in every format to moment object
  *
- * @param {number | string | moment.Moment } date
+ * @param {LocalDate} date
  * @param {string} type
  * @param {string} [format = DATETIME_FORMATS.datePicker]
  * @param {string} [unit]
@@ -82,7 +82,7 @@ export const convertDateIntervalToMoment = (
 /**
  * Parse date in every format to moment object by timezone
  *
- * @param {number | string | moment.Moment } date
+ * @param {LocalDate} date
  * @param {string} type
  * @param {string} [format = DATETIME_FORMATS.datePicker]
  * @param {string} [unit = SAMPLINGS.hour]

@@ -172,11 +172,6 @@ export default {
       };
     },
   },
-  watch: {
-    minDate() {
-
-    },
-  },
   methods: {
     getChartValueTickLabel(value) {
       return `${value}${this.isPercentDataType ? '%' : ''}`;
