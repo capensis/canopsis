@@ -256,6 +256,7 @@ export default merge({
     checkPattern: 'Motif à carreaux',
     itemFound: '{count} article trouvé | {count} articles trouvés',
     canonicalType: 'Type canonique',
+    instructions: 'Des instructions',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -673,9 +674,12 @@ export default merge({
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% d\'alarmes corrélées',
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% d\'alarmes avec remédiation automatique',
       [ALARM_METRIC_PARAMETERS.ratioTickets]: '% d\'alarmes avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms]: '% d\'alarmes corrigées manuellement',
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% d\'alarmes non affichées',
       [ALARM_METRIC_PARAMETERS.averageAck]: 'Délai moyen d\'acquittement des alarmes',
       [ALARM_METRIC_PARAMETERS.averageResolve]: 'Temps moyen pour résoudre les alarmes',
+      [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Nombre d\'alarmes corrigées manuellement',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Nombre d\'alarmes avec instructions manuelles',
     },
   },
   weather: {
@@ -2316,9 +2320,9 @@ export default merge({
 
   remediation: {
     tabs: {
-      instructions: 'Consignes',
       configurations: 'Configurations',
       jobs: 'Tâches',
+      statistics: 'Statistiques de remédiation',
     },
   },
 
@@ -2448,6 +2452,21 @@ export default merge({
           disabledOnTypes: 'Désactivé sur les types',
         },
       },
+    },
+  },
+
+  remediationStatistic: {
+    remediation: 'Remédiation',
+    fields: {
+      all: 'Tout',
+    },
+    labels: {
+      remediated: 'Corrigé',
+      notRemediated: 'Non corrigé',
+    },
+    tooltips: {
+      remediated: '{value} alarmes corrigées',
+      assigned: '{value} alarmes avec instructions',
     },
   },
 
@@ -2874,9 +2893,12 @@ export default merge({
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% d\'alarmes avec correction automatique',
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% d\'alarmes avec consigne',
       [ALARM_METRIC_PARAMETERS.ratioTickets]: '{value}% d\'alarmes avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms]: '{value}% d\'alarmes corrigées manuellement',
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% des alarmes non affichées',
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} accuser les alarmes',
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} pour résoudre les alarmes',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarmes avec instructions manuelles',
+      [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: '{value} alarmes corrigées manuellement',
     },
   },
 
