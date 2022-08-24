@@ -1,6 +1,6 @@
 <template lang="pug">
   div.flowchart.fill-height
-    flowchart-sidebar(
+    flowchart-sidebar.flowchart__sidebar(
       v-if="!readonly",
       v-field="shapes",
       :view-box="viewBox",
@@ -9,6 +9,8 @@
       :readonly="readonly",
       @update:backgroundColor="$emit('update:backgroundColor', $event)"
     )
+      template(#prepend="")
+        slot(name="sidebar-prepend")
     div.flowchart__editor
       flowchart-editor(
         v-field="shapes",
@@ -21,7 +23,6 @@
       )
         template(#layers="")
           slot(name="layers")
-      portal-target(name="flowchartDiv")
     div.flowchart__properties(v-show="selected.length")
       flowchart-properties(v-if="!readonly", v-field="shapes", :selected="selected")
 </template>
@@ -74,16 +75,22 @@ export default {
 </script>
 
 <style lang="scss">
+$sidebarWidth: 320px;
+
 .flowchart {
   position: relative;
   display: flex;
+
+  &__sidebar {
+    width: $sidebarWidth !important;
+  }
 
   &__editor {
     flex-grow: 1;
     height: 100%;
 
     position: absolute;
-    left: 300px;
+    left: $sidebarWidth;
     top: 0;
     right: 0;
     bottom: 0;
