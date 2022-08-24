@@ -330,22 +330,10 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker("alarm config", libengine.NewLoadConfigPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
-		alarmConfigProvider,
-		logger,
-	))
-	engineAxe.AddPeriodicalWorker("tz config", libengine.NewLoadConfigPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		config.NewAdapter(dbClient),
-		timezoneConfigProvider,
-		logger,
-	))
-	engineAxe.AddPeriodicalWorker("metrics config", libengine.NewLoadConfigPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		config.NewAdapter(dbClient),
-		metricsConfigProvider,
+		[]config.Updater{alarmConfigProvider, timezoneConfigProvider, metricsConfigProvider},
 		logger,
 	))
 

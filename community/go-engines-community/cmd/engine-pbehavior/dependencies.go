@@ -172,22 +172,10 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker("tz config", engine.NewLoadConfigPeriodicalWorker(
+	enginePbehavior.AddPeriodicalWorker("config", engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
-		timezoneConfigProvider,
-		logger,
-	))
-	enginePbehavior.AddPeriodicalWorker("data storage config", engine.NewLoadConfigPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		config.NewAdapter(dbClient),
-		dataStorageConfigProvider,
-		logger,
-	))
-	enginePbehavior.AddPeriodicalWorker("metrics config", engine.NewLoadConfigPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		config.NewAdapter(dbClient),
-		metricsConfigProvider,
+		[]config.Updater{timezoneConfigProvider, dataStorageConfigProvider, metricsConfigProvider},
 		logger,
 	))
 

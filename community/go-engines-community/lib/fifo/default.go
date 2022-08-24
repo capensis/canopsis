@@ -259,13 +259,7 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
 		canopsis.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
-		timezoneConfigProvider,
-		logger,
-	))
-	engine.AddPeriodicalWorker("metrics config", libengine.NewLoadConfigPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		config.NewAdapter(mongoClient),
-		metricsConfigProvider,
+		[]config.Updater{timezoneConfigProvider, metricsConfigProvider},
 		logger,
 	))
 
