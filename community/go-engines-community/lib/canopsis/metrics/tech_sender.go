@@ -39,6 +39,10 @@ func NewTechMetricsSender(
 }
 
 func (s *techSender) SendFifoQueue(ctx context.Context, timestamp time.Time, length int64) {
+	if s.pool == nil {
+		return
+	}
+
 	query := fmt.Sprintf("INSERT INTO %s (time, length) VALUES($1, $2);", FIFOQueue)
 	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), length)
 	if err != nil {
@@ -47,6 +51,10 @@ func (s *techSender) SendFifoQueue(ctx context.Context, timestamp time.Time, len
 }
 
 func (s *techSender) SendFifoEventBatch(ctx context.Context, metrics []FifoEventMetric) {
+	if s.pool == nil {
+		return
+	}
+
 	query := fmt.Sprintf("INSERT INTO %s (time, type, interval) VALUES ($1, $2, $3)", FIFOEvent)
 
 	batch := &pgx.Batch{}
@@ -77,6 +85,10 @@ func (s *techSender) SendFifoEventBatch(ctx context.Context, metrics []FifoEvent
 }
 
 func (s *techSender) SendCheEventBatch(ctx context.Context, metrics []CheEventMetric) {
+	if s.pool == nil {
+		return
+	}
+
 	query := fmt.Sprintf(`
 		INSERT INTO %s (time, type, interval, entity_type, is_new_entity, is_infos_updated, is_services_updated) 
 		VALUES ($1, $2, $3, $4, $5, $6, $7)`,
@@ -110,6 +122,10 @@ func (s *techSender) SendCheEventBatch(ctx context.Context, metrics []CheEventMe
 }
 
 func (s *techSender) SendAxeEventBatch(ctx context.Context, metrics []AxeEventMetric) {
+	if s.pool == nil {
+		return
+	}
+
 	query := fmt.Sprintf(`
 		INSERT INTO %s (time, type, interval, entity_type, alarm_change_type) 
 		VALUES ($1, $2, $3, $4, $5)`,
@@ -143,6 +159,10 @@ func (s *techSender) SendAxeEventBatch(ctx context.Context, metrics []AxeEventMe
 }
 
 func (s *techSender) SendAxePeriodical(ctx context.Context, timestamp time.Time, length int64) {
+	if s.pool == nil {
+		return
+	}
+
 	query := fmt.Sprintf("INSERT INTO %s (time, interval) VALUES($1, $2);", AxePeriodical)
 	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), length)
 	if err != nil {
@@ -151,6 +171,10 @@ func (s *techSender) SendAxePeriodical(ctx context.Context, timestamp time.Time,
 }
 
 func (s *techSender) SendPBehaviorPeriodical(ctx context.Context, timestamp time.Time, length int64) {
+	if s.pool == nil {
+		return
+	}
+
 	query := fmt.Sprintf("INSERT INTO %s (time, interval) VALUES($1, $2);", PBehaviorPeriodical)
 	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), length)
 	if err != nil {
@@ -159,6 +183,10 @@ func (s *techSender) SendPBehaviorPeriodical(ctx context.Context, timestamp time
 }
 
 func (s *techSender) SendCheEntityInfo(ctx context.Context, timestamp time.Time, name string) {
+	if s.pool == nil {
+		return
+	}
+
 	query := fmt.Sprintf("INSERT INTO %s (time, name) VALUES($1, $2);", CheInfos)
 	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), name)
 	if err != nil {
