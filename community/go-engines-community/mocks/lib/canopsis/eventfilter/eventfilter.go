@@ -270,16 +270,16 @@ func (m *MockActionProcessor) EXPECT() *MockActionProcessorMockRecorder {
 }
 
 // Process mocks base method.
-func (m *MockActionProcessor) Process(arg0 eventfilter.Action, arg1 types.Event, arg2 eventfilter.RegexMatchWrapper, arg3 map[string]interface{}, arg4 *config.TimezoneConfig) (types.Event, error) {
+func (m *MockActionProcessor) Process(arg0 context.Context, arg1 eventfilter.Action, arg2 types.Event, arg3 eventfilter.RegexMatchWrapper, arg4 map[string]interface{}, arg5 *config.TimezoneConfig) (types.Event, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Process", arg0, arg1, arg2, arg3, arg4)
+	ret := m.ctrl.Call(m, "Process", arg0, arg1, arg2, arg3, arg4, arg5)
 	ret0, _ := ret[0].(types.Event)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Process indicates an expected call of Process.
-func (mr *MockActionProcessorMockRecorder) Process(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
+func (mr *MockActionProcessorMockRecorder) Process(arg0, arg1, arg2, arg3, arg4, arg5 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Process", reflect.TypeOf((*MockActionProcessor)(nil).Process), arg0, arg1, arg2, arg3, arg4)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Process", reflect.TypeOf((*MockActionProcessor)(nil).Process), arg0, arg1, arg2, arg3, arg4, arg5)
 }
