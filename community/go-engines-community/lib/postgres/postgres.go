@@ -18,6 +18,7 @@ import (
 )
 
 const EnvURL = "CPS_POSTGRES_URL"
+const EnvTechURL = "CPS_POSTGRES_TECH_URL"
 
 const (
 	MetricsCriteria = "metrics_criteria"
@@ -45,17 +46,25 @@ func IsConnectionError(err error) bool {
 	return false
 }
 
-func GetConnStr() (string, error) {
-	connStr := os.Getenv(EnvURL)
+func GetConnStr(env string) (string, error) {
+	connStr := os.Getenv(env)
 	if connStr == "" {
-		return "", fmt.Errorf("environment variable %s empty", EnvURL)
+		return "", fmt.Errorf("environment variable %s empty", env)
 	}
 
 	return connStr, nil
 }
 
+func NewTechMetricsPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration) (Pool, error) {
+	return newPool(ctx, retryCount, minRetryTimeout, EnvTechURL)
+}
+
 func NewPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration) (Pool, error) {
-	connStr, err := GetConnStr()
+	return newPool(ctx, retryCount, minRetryTimeout, EnvURL)
+}
+
+func newPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration, env string) (Pool, error) {
+	connStr, err := GetConnStr(env)
 	if err != nil {
 		return nil, err
 	}

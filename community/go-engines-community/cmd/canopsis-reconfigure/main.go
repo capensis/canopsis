@@ -201,7 +201,7 @@ func main() {
 }
 
 func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
-	connStr, err := postgres.GetConnStr()
+	connStr, err := postgres.GetConnStr(postgres.EnvURL)
 	if err != nil {
 		return err
 	}

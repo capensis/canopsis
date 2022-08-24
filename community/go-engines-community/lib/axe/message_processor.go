@@ -60,7 +60,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	trace.Log(ctx, "event.resource", event.Resource)
 
 	defer func() {
-		if p.MetricsConfigProvider.Get().EnableTechMetrics {
+		if p.MetricsConfigProvider.Get().EnableTechMetrics && p.EventsMetricsChan != nil {
 			eventMetric.EventType = event.EventType
 			eventMetric.AlarmChangeType = string(event.AlarmChange.Type)
 			if event.Entity != nil {

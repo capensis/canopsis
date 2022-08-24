@@ -79,7 +79,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	updatedEntityServices := libcontext.UpdatedEntityServices{}
 
 	defer func() {
-		if p.MetricsConfigProvider.Get().EnableTechMetrics {
+		if p.MetricsConfigProvider.Get().EnableTechMetrics && p.EventsMetricsChan != nil {
 			if event.Entity != nil {
 				eventMetric.EntityType = event.Entity.Type
 				eventMetric.IsNewEntity = event.Entity.IsNew

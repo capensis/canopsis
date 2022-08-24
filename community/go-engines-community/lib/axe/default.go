@@ -3,6 +3,7 @@ package axe
 import (
 	"context"
 	"flag"
+	"fmt"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -162,16 +163,9 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
 		metricsSender, logger)
 
-	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-	techMetricsSender := metrics.NewTechMetricsSender(pgPool, logger)
-	eventMetricsChan := make(chan metrics.AxeEventMetric)
-	eventMetricsListener := axeEventMetricsListener{metricsSender: techMetricsSender, flushInterval: time.Second * 10}
-
 	engineAxe := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
-
-			go eventMetricsListener.Listen(ctx, eventMetricsChan)
 
 			return alarmStatusService.Load(ctx)
 		},
@@ -207,6 +201,32 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		},
 		logger,
 	)
+
+	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
+	techMetricsSender := metrics.NewNullTechMetricsSender()
+	var eventMetricsChan chan metrics.AxeEventMetric
+
+	if metricsConfigProvider.Get().EnableTechMetrics {
+		eventMetricsChan = make(chan metrics.AxeEventMetric)
+
+		techPostgresPool, err := postgres.NewTechMetricsPool(ctx, 0, 0)
+		if err != nil {
+			panic(fmt.Errorf("techPostgresPool: %w", err))
+		}
+
+		techMetricsSender = metrics.NewTechMetricsSender(techPostgresPool, logger)
+		eventMetricsListener := axeEventMetricsListener{
+			metricsSender: techMetricsSender,
+			flushInterval: canopsis.TechMetricsFlushInterval,
+		}
+
+		engineAxe.AddRoutine(func(ctx context.Context) error {
+			eventMetricsListener.Listen(ctx, eventMetricsChan)
+
+			return nil
+		})
+	}
+
 	engineAxe.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.AxeConsumerName,
 		canopsis.AxeQueueName,

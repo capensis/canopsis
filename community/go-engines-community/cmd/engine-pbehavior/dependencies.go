@@ -35,10 +35,6 @@ type DependencyMaker struct {
 
 func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Logger) engine.Engine {
 	m := DependencyMaker{}
-	postgresPool, err := postgres.NewPool(ctx, 0, 0)
-	if err != nil {
-		panic(fmt.Errorf("postgresPool: %w", err))
-	}
 	dbClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
@@ -62,8 +58,17 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		logger,
 	)
 
+	techMetricsSender := metrics.NewNullTechMetricsSender()
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-	techMetricsSender := metrics.NewTechMetricsSender(postgresPool, logger)
+
+	if metricsConfigProvider.Get().EnableTechMetrics {
+		techPostgresPool, err := postgres.NewTechMetricsPool(ctx, 0, 0)
+		if err != nil {
+			panic(fmt.Errorf("techPostgresPool: %w", err))
+		}
+
+		techMetricsSender = metrics.NewTechMetricsSender(techPostgresPool, logger)
+	}
 
 	enginePbehavior := engine.New(
 		func(ctx context.Context) error {
