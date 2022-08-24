@@ -63,4 +63,6 @@ const (
 	RemediationRPCConsumerName       = "remediation_rpc"
 	RemediationRPCQueueServerName    = "Engine_remediation_rpc_server"
 	RemediationRPCQueueServerJobName = "Engine_remediation_rpc_server_job"
+
+	TechMetricsFlushInterval = time.Second * 10
 )

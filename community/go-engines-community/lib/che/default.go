@@ -67,10 +67,17 @@ func NewEngine(
 		metricsEntityMetaUpdater,
 	)
 
+	techMetricsSender := metrics.NewNullTechMetricsSender()
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-	techMetricsSender := metrics.NewTechMetricsSender(pgPool, logger)
-	eventMetricsChan := make(chan metrics.CheEventMetric)
-	eventMetricsListener := cheEventMetricsListener{metricsSender: techMetricsSender, flushInterval: time.Second * 10}
+
+	if metricsConfigProvider.Get().EnableTechMetrics {
+		techPostgresPool, err := postgres.NewTechMetricsPool(ctx, 0, 0)
+		if err != nil {
+			panic(fmt.Errorf("techPostgresPool: %w", err))
+		}
+
+		techMetricsSender = metrics.NewTechMetricsSender(techPostgresPool, logger)
+	}
 
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer))
@@ -103,7 +110,6 @@ func NewEngine(
 
 			// run in goroutine because it may take some time to process heavy dbs, don't want to slow down the engine startup
 			go infosDictLockedPeriodicalWorker.Work(ctx)
-			go eventMetricsListener.Listen(ctx, eventMetricsChan)
 
 			logger.Debug().Msg("Loading event filter rules")
 			err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
@@ -169,6 +175,24 @@ func NewEngine(
 		},
 		logger,
 	)
+
+	var eventMetricsChan chan metrics.CheEventMetric
+
+	if metricsConfigProvider.Get().EnableTechMetrics {
+		eventMetricsChan = make(chan metrics.CheEventMetric)
+
+		eventMetricsListener := cheEventMetricsListener{
+			metricsSender: techMetricsSender,
+			flushInterval: canopsis.TechMetricsFlushInterval,
+		}
+
+		engine.AddRoutine(func(ctx context.Context) error {
+			eventMetricsListener.Listen(ctx, eventMetricsChan)
+
+			return nil
+		})
+	}
+
 	engine.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.CheConsumerName,
 		options.ConsumeFromQueue,
