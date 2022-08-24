@@ -1,8 +1,14 @@
 package eventfilter_test
 
 import (
+	"context"
 	"reflect"
 	"testing"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
+	"github.com/golang/mock/gomock"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -10,6 +16,9 @@ import (
 )
 
 func TestActionProcessor(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
 	dataSets := []struct {
 		testName      string
 		action        eventfilter.Action
@@ -1185,10 +1194,13 @@ func TestActionProcessor(t *testing.T) {
 		},
 	}
 
-	processor := eventfilter.NewActionProcessor()
+	mockMetricsConfigProvider := mock_config.NewMockMetricsConfigProvider(ctrl)
+	mockMetricsConfigProvider.EXPECT().Get().Return(config.MetricsConfig{EnableTechMetrics: false}).AnyTimes()
+
+	processor := eventfilter.NewActionProcessor(mockMetricsConfigProvider, metrics.NewNullTechMetricsSender())
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			resultEvent, resultErr := processor.Process(dataset.action, dataset.event, eventfilter.RegexMatchWrapper{
+			resultEvent, resultErr := processor.Process(context.Background(), dataset.action, dataset.event, eventfilter.RegexMatchWrapper{
 				BackwardCompatibility: false,
 				RegexMatch:            dataset.regexMatches,
 			}, dataset.externalData, nil)

@@ -3,12 +3,13 @@ package eventfilter_test
 import (
 	"context"
 	"fmt"
+	"reflect"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	"github.com/golang/mock/gomock"
-	"reflect"
-	"testing"
 )
 
 func TestEnrichmentApplyOnSuccess(t *testing.T) {
@@ -19,7 +20,7 @@ func TestEnrichmentApplyOnSuccess(t *testing.T) {
 	expectedEvent := types.Event{Resource: "updated"}
 
 	actionProcessor := mock_eventfilter.NewMockActionProcessor(ctrl)
-	actionProcessor.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(expectedEvent, nil)
+	actionProcessor.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(expectedEvent, nil)
 
 	applicator := eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), actionProcessor)
 	resOutcome, resEvent, resError := applicator.Apply(context.Background(), eventfilter.Rule{Config: eventfilter.RuleConfig{Actions: []eventfilter.Action{{}}, OnSuccess: expectedOutcome}}, types.Event{}, eventfilter.RegexMatchWrapper{}, nil)
@@ -44,7 +45,7 @@ func TestEnrichmentApplyOnFailed(t *testing.T) {
 	expectedEvent := types.Event{}
 
 	actionProcessor := mock_eventfilter.NewMockActionProcessor(ctrl)
-	actionProcessor.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(expectedEvent, fmt.Errorf("error"))
+	actionProcessor.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(expectedEvent, fmt.Errorf("error"))
 
 	applicator := eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), actionProcessor)
 	resOutcome, resEvent, resError := applicator.Apply(context.Background(), eventfilter.Rule{Config: eventfilter.RuleConfig{Actions: []eventfilter.Action{{}}, OnFailure: expectedOutcome}}, types.Event{}, eventfilter.RegexMatchWrapper{}, nil)
