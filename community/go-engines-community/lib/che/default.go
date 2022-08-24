@@ -228,22 +228,10 @@ func NewEngine(
 		Logger:             logger,
 	})
 	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
-	engine.AddPeriodicalWorker("alarm config", libengine.NewLoadConfigPeriodicalWorker(
+	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
-		alarmConfigProvider,
-		logger,
-	))
-	engine.AddPeriodicalWorker("tz config", libengine.NewLoadConfigPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		config.NewAdapter(mongoClient),
-		timezoneConfigProvider,
-		logger,
-	))
-	engine.AddPeriodicalWorker("metrics config", libengine.NewLoadConfigPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		config.NewAdapter(mongoClient),
-		metricsConfigProvider,
+		[]config.Updater{alarmConfigProvider, timezoneConfigProvider, metricsConfigProvider},
 		logger,
 	))
 	engine.AddPeriodicalWorker("impacted services", libengine.NewLockedPeriodicalWorker(

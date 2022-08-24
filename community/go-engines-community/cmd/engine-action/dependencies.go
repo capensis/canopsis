@@ -219,7 +219,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	engineAction.AddPeriodicalWorker("config", engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
-		timezoneConfigProvider,
+		[]config.Updater{timezoneConfigProvider},
 		logger,
 	))
 
