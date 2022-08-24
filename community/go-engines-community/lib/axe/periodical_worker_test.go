@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
@@ -22,14 +24,17 @@ func TestPeriodicalWorker_Work(t *testing.T) {
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockIdleAlarmService := mock_idlealarm.NewMockService(ctrl)
 	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
+	mockMetricsConfigProvider := mock_config.NewMockMetricsConfigProvider(ctrl)
 
 	interval := time.Minute
 	worker := periodicalWorker{
-		PeriodicalInterval:  interval,
-		AlarmService:        mockAlarmService,
-		AlarmAdapter:        mockAlarmAdapter,
-		IdleAlarmService:    mockIdleAlarmService,
-		AlarmConfigProvider: mockAlarmConfigProvider,
+		MetricsConfigProvider: mockMetricsConfigProvider,
+		TechMetricsSender:     metrics.NewNullTechMetricsSender(),
+		PeriodicalInterval:    interval,
+		AlarmService:          mockAlarmService,
+		AlarmAdapter:          mockAlarmAdapter,
+		IdleAlarmService:      mockIdleAlarmService,
+		AlarmConfigProvider:   mockAlarmConfigProvider,
 	}
 
 	alarmConfig := config.AlarmConfig{
@@ -40,6 +45,7 @@ func TestPeriodicalWorker_Work(t *testing.T) {
 		TimeToKeepResolvedAlarms: time.Second,
 	}
 	mockAlarmConfigProvider.EXPECT().Get().Return(alarmConfig)
+	mockMetricsConfigProvider.EXPECT().Get().Return(config.MetricsConfig{EnableTechMetrics: false})
 	mockAlarmAdapter.EXPECT().DeleteResolvedAlarms(gomock.Any(), gomock.Any())
 	mockAlarmService.EXPECT().ResolveClosed(gomock.Any())
 	mockAlarmService.EXPECT().ResolveSnoozes(gomock.Any(), gomock.Eq(alarmConfig))
