@@ -1,7 +1,8 @@
 <template lang="pug">
-  v-navigation-drawer.flowchart-sidebar(permanent, touchless, width="320")
+  v-navigation-drawer.flowchart-sidebar(permanent, touchless, width="100%")
     v-expansion-panel(color="grey", expand)
       v-layout(column)
+        slot(name="prepend")
         flowchart-color-field.flowchart-sidebar__additional-item.px-4(
           :value="backgroundColor",
           :label="$t('flowchart.backgroundColor')",
@@ -11,21 +12,26 @@
         )
       v-expansion-panel-content
         template(#header="")
-          span.v-label.theme--light {{ $t('flowchart.shapes') }}
+          span.v-label.theme--light {{ $tc('flowchart.shape', 2) }}
         v-divider
         v-layout(row, wrap)
-          v-btn.ma-0.pa-0.flowchart-sidebar__button(
-            v-for="(button, index) in buttons",
-            :key="index",
-            flat,
-            large,
-            @click="button.action"
-          )
-            component.grey--text.text--darken-3.pa-1(:is="button.icon")
+          v-tooltip(v-for="(button, index) in buttons", :key="index", z-index="230", top)
+            template(#activator="{ on }")
+              v-btn.ma-0.pa-0.flowchart-sidebar__button(
+                v-on="on",
+                flat,
+                large,
+                @click="button.action"
+              )
+                component.grey--text.text--darken-3.pa-1(:is="button.icon")
+            span {{ button.label }}
           file-selector(ref="fileSelector", hide-details, @change="addImage")
             template(#activator="{ on }")
-              v-btn.ma-0.pa-0.flowchart-sidebar__button(v-on="on", flat, large)
-                image-shape-icon.grey--text.text--darken-3
+              v-tooltip(z-index="230", top)
+                template(#activator="{ on: tooltipOn }")
+                  v-btn.ma-0.pa-0.flowchart-sidebar__button(v-on="{ ...on, ...tooltipOn }", flat, large)
+                    image-shape-icon.grey--text.text--darken-3
+                span {{ $t('flowchart.shapes.image') }}
       v-expansion-panel-content
         template(#header="")
           span.v-label.theme--light {{ $t('flowchart.icons') }}
@@ -118,24 +124,96 @@ export default {
   computed: {
     buttons() {
       return [
-        { icon: RectShapeIcon, action: this.addRectangle },
-        { icon: RoundedRectShapeIcon, action: this.addRoundedRectangle },
-        { icon: SquareShapeIcon, action: this.addSquare },
-        { icon: RhombusShapeIcon, action: this.addRhombus },
-        { icon: CircleShapeIcon, action: this.addCircle },
-        { icon: EllipseShapeIcon, action: this.addEllipse },
-        { icon: ParallelogramShapeIcon, action: this.addParallelogram },
-        { icon: ProcessShapeIcon, action: this.addProcess },
-        { icon: DocumentShapeIcon, action: this.addDocument },
-        { icon: StorageShapeIcon, action: this.addStorage },
-        { icon: CurveLineShapeIcon, action: this.addCurveLine },
-        { icon: CurveArrowLineShapeIcon, action: this.addCurveArrowLine },
-        { icon: BidirectionalCurveArrowLineShape, action: this.addBidirectionalCurveArrowLine },
-        { icon: LineShapeIcon, action: this.addLine },
-        { icon: ArrowLineShapeIcon, action: this.addArrowLine },
-        { icon: BidirectionalArrowLineShapeIcon, action: this.addBidirectionalArrowLine },
-        { icon: TextShapeIcon, action: this.addText },
-        { icon: TextboxShapeIcon, action: this.addTextbox },
+        {
+          icon: RectShapeIcon,
+          label: this.$t('flowchart.shapes.rectangle'),
+          action: this.addRectangle,
+        },
+        {
+          icon: RoundedRectShapeIcon,
+          label: this.$t('flowchart.shapes.roundedRectangle'),
+          action: this.addRoundedRectangle,
+        },
+        {
+          icon: SquareShapeIcon,
+          label: this.$t('flowchart.shapes.square'),
+          action: this.addSquare,
+        },
+        {
+          icon: RhombusShapeIcon,
+          label: this.$t('flowchart.shapes.rhombus'),
+          action: this.addRhombus,
+        },
+        {
+          icon: CircleShapeIcon,
+          label: this.$t('flowchart.shapes.circle'),
+          action: this.addCircle,
+        },
+        {
+          icon: EllipseShapeIcon,
+          label: this.$t('flowchart.shapes.ellipse'),
+          action: this.addEllipse,
+        },
+        {
+          icon: ParallelogramShapeIcon,
+          label: this.$t('flowchart.shapes.parallelogram'),
+          action: this.addParallelogram,
+        },
+        {
+          icon: ProcessShapeIcon,
+          label: this.$t('flowchart.shapes.process'),
+          action: this.addProcess,
+        },
+        {
+          icon: DocumentShapeIcon,
+          label: this.$t('flowchart.shapes.document'),
+          action: this.addDocument,
+        },
+        {
+          icon: StorageShapeIcon,
+          label: this.$t('flowchart.shapes.storage'),
+          action: this.addStorage,
+        },
+        {
+          icon: CurveLineShapeIcon,
+          label: this.$t('flowchart.shapes.curve'),
+          action: this.addCurveLine,
+        },
+        {
+          icon: CurveArrowLineShapeIcon,
+          label: this.$t('flowchart.shapes.curveArrow'),
+          action: this.addCurveArrowLine,
+        },
+        {
+          icon: BidirectionalCurveArrowLineShape,
+          label: this.$t('flowchart.shapes.bidirectionalCurve'),
+          action: this.addBidirectionalCurveArrowLine,
+        },
+        {
+          icon: LineShapeIcon,
+          label: this.$t('flowchart.shapes.line'),
+          action: this.addLine,
+        },
+        {
+          icon: ArrowLineShapeIcon,
+          label: this.$t('flowchart.shapes.arrowLine'),
+          action: this.addArrowLine,
+        },
+        {
+          icon: BidirectionalArrowLineShapeIcon,
+          label: this.$t('flowchart.shapes.bidirectionalArrowLine'),
+          action: this.addBidirectionalArrowLine,
+        },
+        {
+          icon: TextShapeIcon,
+          label: this.$t('flowchart.shapes.text'),
+          action: this.addText,
+        },
+        {
+          icon: TextboxShapeIcon,
+          label: this.$t('flowchart.shapes.textbox'),
+          action: this.addTextbox,
+        },
       ];
     },
 

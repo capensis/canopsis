@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    flowchart.flowchart-editor.mb-2(
+    flowchart.flowchart-map-editor.mb-2(
       v-field="form.shapes",
       :background-color.sync="form.backgroundColor",
       :style="editorStyles"
@@ -81,7 +81,7 @@ export default {
 <style lang="scss">
 $borderColor: #e5e5e5;
 
-.flowchart-editor {
+.flowchart-map-editor {
   border: 1px solid $borderColor;
   height: 800px;
 }

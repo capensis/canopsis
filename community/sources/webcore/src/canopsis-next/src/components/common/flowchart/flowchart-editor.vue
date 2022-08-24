@@ -1,34 +1,33 @@
 <template lang="pug">
-  div.flowchart-editor
-    svg(
-      ref="svg",
-      v-resize.quiet="setViewBox",
-      :viewBox="viewBoxString",
-      :style="svgStyles",
-      width="100%",
-      height="100%",
-      @mousemove="onContainerMouseMove",
-      @mouseup="onContainerMouseUp",
-      @mousedown="onContainerMouseDown",
-      @contextmenu.stop.prevent="handleContextmenu"
+  svg(
+    ref="svg",
+    v-resize.quiet="setViewBox",
+    :viewBox="viewBoxString",
+    :style="svgStyles",
+    width="100%",
+    height="100%",
+    @mousemove="onContainerMouseMove",
+    @mouseup="onContainerMouseUp",
+    @mousedown="onContainerMouseDown",
+    @contextmenu.stop.prevent="handleContextmenu"
+  )
+    component(
+      v-for="shape in data",
+      :shape="shape",
+      :key="shape._id",
+      :is="`${shape.type}-shape`",
+      :selected="isSelected(shape._id)",
+      :readonly="readonly",
+      :connecting="editing",
+      @mousedown="onShapeMouseDown(shape, $event)",
+      @mouseup="onShapeMouseUp(shape, $event)",
+      @connecting="onConnectMove($event)",
+      @connected="onConnectFinish(shape, $event)",
+      @unconnect="onUnconnect(shape)",
+      @edit:point="startEditLinePoint(shape, $event)",
+      @update="updateShape(shape, $event)"
     )
-      component(
-        v-for="shape in data",
-        :shape="shape",
-        :key="shape._id",
-        :is="`${shape.type}-shape`",
-        :selected="isSelected(shape._id)",
-        :readonly="readonly",
-        :connecting="editing",
-        @mousedown="onShapeMouseDown(shape, $event)",
-        @mouseup="onShapeMouseUp(shape, $event)",
-        @connecting="onConnectMove($event)",
-        @connected="onConnectFinish(shape, $event)",
-        @unconnect="onUnconnect(shape)",
-        @edit:point="startEditLinePoint(shape, $event)",
-        @update="updateShape(shape, $event)"
-      )
-      slot(name="layers")
+    slot(name="layers")
 </template>
 
 <script>
@@ -406,10 +405,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.flowchart-editor {
-  height: 100%;
-  width: 100%;
-}
-</style>

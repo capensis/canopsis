@@ -159,7 +159,7 @@ export default {
     },
 
     strokeType() {
-      return this.getShapesPropertyValue(this.shapesWithStroke, 'stroke-dasharray')
+      return this.getShapesPropertyValue(this.shapesWithStroke, 'properties.stroke-dasharray')
         ? STROKE_TYPES.dashed
         : STROKE_TYPES.solid;
     },
@@ -218,7 +218,7 @@ export default {
 
     updateStrokeType(strokeType) {
       this.updateSelectedShapesProperties({
-        'stroke-dasharray': strokeType === STROKE_TYPES.solid ? undefined : '4 4',
+        'stroke-dasharray': strokeType === STROKE_TYPES.solid ? '' : '4 4',
       });
     },
 
