@@ -718,9 +718,19 @@ db.widgets.find({"parameters.viewFilters": {$ne: null}}).forEach(function (widge
         var newFilter = migrateOldFilter(widget, filter);
         publicFilterIds[filter.title] = newFilter._id;
         newFilter.is_private = false;
-        newFilter.author = widget.author;
-        newFilter.created = widget.created;
-        newFilter.updated = widget.updated;
+        if (widget.author) {
+            newFilter.author = widget.author;
+        }
+        if (widget.created) {
+            newFilter.created = widget.created;
+        } else {
+            newFilter.created = now;
+        }
+        if (widget.updated) {
+            newFilter.updated = widget.updated;
+        } else {
+            newFilter.updated = now;
+        }
         publicFilters.push(newFilter);
 
         if (widgetMainFilter && widgetMainFilter.title === filter.title) {
