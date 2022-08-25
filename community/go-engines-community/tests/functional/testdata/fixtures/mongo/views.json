@@ -492,23 +492,24 @@
     ]
   },
   {
-    "_id": "test-view-to-update-user-preferences",
+    "_id": "test-view-to-update-user-preferences-1",
     "enabled": true,
-    "title": "test-view-to-update-user-preferences-title",
-    "description": "test-view-to-update-user-preferences-description",
-    "author": "test-view-to-update-user-preferences-author",
+    "title": "test-view-to-update-user-preferences-1-title",
+    "description": "test-view-to-update-user-preferences-1-description",
+    "author": "test-view-to-update-user-preferences-1-author",
+    "group_id": "test-viewgroup-to-view-edit",
     "position": 20,
     "created": 1611229670,
     "updated": 1611229670,
     "tabs": [
       {
-        "_id": "test-view-to-update-user-preferences-tab-1",
-        "title": "test-view-to-update-user-preferences-tab-1-title",
+        "_id": "test-view-to-update-user-preferences-1-tab-1",
+        "title": "test-view-to-update-user-preferences-1-tab-1-title",
         "widgets": [
           {
-            "_id": "test-view-to-update-user-preferences-tab-1-widget-1",
-            "title": "test-view-to-update-user-preferences-tab-1-widget-1-title",
-            "type": "test-view-to-update-user-preferences-tab-1-widget-1-type"
+            "_id": "test-view-to-update-user-preferences-1-tab-1-widget-1",
+            "title": "test-view-to-update-user-preferences-1-tab-1-widget-1-title",
+            "type": "test-view-to-update-user-preferences-1-tab-1-widget-1-type"
           }
         ]
       }
