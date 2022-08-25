@@ -78,12 +78,28 @@ func main() {
 
 		logger.Info().Msg("Start postgres migrations")
 
-		err = runPostgresMigrations(f.postgresMigrationDirectory, f.postgresMigrationMode, f.postgresMigrationSteps)
+		err = runPostgresMigrations(f.postgresMigrationDirectory, f.postgresMigrationMode, f.postgresMigrationSteps, postgres.EnvURL)
 		if err != nil {
 			utils.FailOnError(err, "Failed to migrate")
 		}
 
 		logger.Info().Msg("Finish postgres migrations")
+	}
+
+	if f.modeMigrateTechPostgres {
+		if f.techPostgresMigrationDirectory == "" {
+			logger.Error().Msg("-tech-postgres-migration-directory is not set")
+			os.Exit(ErrGeneral)
+		}
+
+		logger.Info().Msg("Start tech postgres migrations")
+
+		err = runPostgresMigrations(f.techPostgresMigrationDirectory, f.techPostgresMigrationMode, f.techPostgresMigrationSteps, postgres.EnvTechURL)
+		if err != nil {
+			utils.FailOnError(err, "Failed to migrate")
+		}
+
+		logger.Info().Msg("Finish tech postgres migrations")
 	}
 
 	amqpConn, err := amqp.NewConnection(logger, 0, 0)
@@ -200,8 +216,8 @@ func main() {
 	}
 }
 
-func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
-	connStr, err := postgres.GetConnStr(postgres.EnvURL)
+func runPostgresMigrations(migrationDirectory, mode string, steps int, env string) error {
+	connStr, err := postgres.GetConnStr(env)
 	if err != nil {
 		return err
 	}
