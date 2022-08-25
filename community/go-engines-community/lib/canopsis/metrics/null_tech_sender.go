@@ -35,6 +35,10 @@ func (s *nullTechSender) SendPBehaviorPeriodical(_ context.Context, _ time.Time,
 
 }
 
-func (s *nullTechSender) SendCheEntityInfo(_ context.Context, _ time.Time, name string) {
+func (s *nullTechSender) SendCheEntityInfo(_ context.Context, _ time.Time, _ string) {
+
+}
+
+func (s *nullTechSender) SendApiRequest(_ context.Context, _ time.Time, _ int64) {
 
 }

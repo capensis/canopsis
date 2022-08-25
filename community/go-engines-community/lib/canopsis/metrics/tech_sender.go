@@ -21,6 +21,7 @@ type TechSender interface {
 	SendAxePeriodical(ctx context.Context, timestamp time.Time, length int64)
 	SendPBehaviorPeriodical(ctx context.Context, timestamp time.Time, length int64)
 	SendCheEntityInfo(ctx context.Context, timestamp time.Time, name string)
+	SendApiRequest(ctx context.Context, timestamp time.Time, interval int64)
 }
 
 type techSender struct {
@@ -191,5 +192,17 @@ func (s *techSender) SendCheEntityInfo(ctx context.Context, timestamp time.Time,
 	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), name)
 	if err != nil {
 		s.logger.Err(err).Msgf("failed to send %s metric: unable to execute insert", CheInfos)
+	}
+}
+
+func (s *techSender) SendApiRequest(ctx context.Context, timestamp time.Time, interval int64) {
+	if s.pool == nil {
+		return
+	}
+
+	query := fmt.Sprintf("INSERT INTO %s (time, interval) VALUES($1, $2);", ApiRequests)
+	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), interval)
+	if err != nil {
+		s.logger.Err(err).Msgf("failed to send %s metric: unable to execute insert", ApiRequests)
 	}
 }
