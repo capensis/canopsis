@@ -15,4 +15,5 @@ const (
 	AxePeriodical       = "axe_periodical"
 	PBehaviorPeriodical = "pbehavior_periodical"
 	CheInfos            = "che_infos"
+	ApiRequests         = "api_requests"
 )

@@ -33,6 +33,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
@@ -201,6 +202,17 @@ func Default(
 
 	broadcastMessageChan := make(chan bool)
 
+	techMetricsSender := metrics.NewNullTechMetricsSender()
+	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
+	if metricsConfigProvider.Get().EnableTechMetrics {
+		techPostgresPool, err := postgres.NewTechMetricsPool(ctx, 0, 0)
+		if err != nil {
+			panic(fmt.Errorf("techPostgresPool: %w", err))
+		}
+
+		techMetricsSender = metrics.NewTechMetricsSender(techPostgresPool, logger)
+	}
+
 	// Create api.
 	api := New(
 		fmt.Sprintf(":%d", flags.Port),
@@ -238,6 +250,15 @@ func Default(
 	legacyUrl := GetLegacyURL(logger)
 	api.AddRouter(func(router gin.IRouter) {
 		router.Use(middleware.Cache())
+
+		router.Use(func(c *gin.Context) {
+			start := time.Now()
+			c.Next()
+
+			if metricsConfigProvider.Get().EnableTechMetrics {
+				go techMetricsSender.SendApiRequest(context.Background(), start, time.Since(start).Microseconds())
+			}
+		})
 
 		if flags.Test {
 			router.Use(devmiddleware.ReloadEnforcerPolicy(enforcer))
