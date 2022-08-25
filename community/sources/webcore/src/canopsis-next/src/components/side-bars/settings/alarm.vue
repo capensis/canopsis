@@ -124,7 +124,6 @@ import { SIDE_BARS } from '@/constants';
 import { alarmListWidgetToForm, formToAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { sideBarSettingsMainFilterIntersection } from '@/mixins/side-bar/settings/main-filter-intersection';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
@@ -174,7 +173,6 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
-    sideBarSettingsMainFilterIntersection,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
   ],
