@@ -164,8 +164,14 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		return nil
 	}
 
+	triggers := event.AlarmChange.GetTriggers()
+	if len(triggers) == 0 {
+		s.sendEventToFifoAck(event)
+		return nil
+	}
+
 	s.scenarioInputChannel <- ExecuteScenariosTask{
-		Triggers:       event.AlarmChange.GetTriggers(),
+		Triggers:       triggers,
 		Alarm:          alarm,
 		Entity:         entity,
 		AckResources:   event.AckResources,
