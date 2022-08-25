@@ -3,7 +3,6 @@ package axe
 import (
 	"context"
 	"flag"
-	"fmt"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -69,7 +68,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
 	if pgPool != nil {
-		config.SetPgPoolRetry(pgPool, cfg)
+		pgPool.SetRetry(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	}
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
@@ -203,29 +202,20 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	)
 
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-	techMetricsSender := metrics.NewNullTechMetricsSender()
-	var eventMetricsChan chan metrics.AxeEventMetric
+	techPostgresPoolProvider := postgres.NewTechMetricsPoolProvider(ctx, metricsConfigProvider, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+	techMetricsSender := metrics.NewTechMetricsSender(techPostgresPoolProvider, logger)
 
-	if metricsConfigProvider.Get().EnableTechMetrics {
-		eventMetricsChan = make(chan metrics.AxeEventMetric)
+	eventMetricsChan := make(chan metrics.AxeEventMetric)
 
-		techPostgresPool, err := postgres.NewTechMetricsPool(ctx, 0, 0)
-		if err != nil {
-			panic(fmt.Errorf("techPostgresPool: %w", err))
-		}
-
-		techMetricsSender = metrics.NewTechMetricsSender(techPostgresPool, logger)
-		eventMetricsListener := axeEventMetricsListener{
-			metricsSender: techMetricsSender,
-			flushInterval: canopsis.TechMetricsFlushInterval,
-		}
-
-		engineAxe.AddRoutine(func(ctx context.Context) error {
-			eventMetricsListener.Listen(ctx, eventMetricsChan)
-
-			return nil
-		})
+	eventMetricsListener := axeEventMetricsListener{
+		metricsSender: techMetricsSender,
+		flushInterval: canopsis.TechMetricsFlushInterval,
 	}
+
+	engineAxe.AddRoutine(func(ctx context.Context) error {
+		eventMetricsListener.Listen(ctx, eventMetricsChan)
+		return nil
+	})
 
 	engineAxe.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.AxeConsumerName,
@@ -240,7 +230,6 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		amqpConnection,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-			MetricsConfigProvider:    metricsConfigProvider,
 			EventsMetricsChan:        eventMetricsChan,
 			EventProcessor: alarm.NewEventProcessor(
 				dbClient,
@@ -297,13 +286,12 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		redis.NewLockClient(lockRedisClient),
 		redis.AxePeriodicalLockKey,
 		&periodicalWorker{
-			MetricsConfigProvider: metricsConfigProvider,
-			TechMetricsSender:     techMetricsSender,
-			PeriodicalInterval:    options.PeriodicalWaitTime,
-			ChannelPub:            amqpChannel,
-			AlarmService:          alarm.NewService(alarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, logger),
-			AlarmAdapter:          alarm.NewAdapter(dbClient),
-			Encoder:               json.NewEncoder(),
+			TechMetricsSender:  techMetricsSender,
+			PeriodicalInterval: options.PeriodicalWaitTime,
+			ChannelPub:         amqpChannel,
+			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, logger),
+			AlarmAdapter:       alarm.NewAdapter(dbClient),
+			Encoder:            json.NewEncoder(),
 			IdleAlarmService: idlealarm.NewService(
 				idlerule.NewRuleAdapter(dbClient),
 				alarm.NewAdapter(dbClient),

@@ -28,7 +28,6 @@ type messageProcessor struct {
 	FeatureContextCreation   bool
 	AlarmConfigProvider      config.AlarmConfigProvider
 	EventsMetricsChan        chan metrics.CheEventMetric
-	MetricsConfigProvider    config.MetricsConfigProvider
 	EventFilterService       eventfilter.Service
 	EnrichmentCenter         libcontext.EnrichmentCenter
 	AmqpPublisher            libamqp.Publisher
@@ -78,17 +77,18 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	updatedEntityServices := libcontext.UpdatedEntityServices{}
 
 	defer func() {
-		if p.MetricsConfigProvider.Get().EnableTechMetrics && p.EventsMetricsChan != nil {
-			if event.Entity != nil {
-				eventMetric.EntityType = event.Entity.Type
-				eventMetric.IsNewEntity = event.Entity.IsNew
-			}
+		if event.Entity != nil {
+			eventMetric.EntityType = event.Entity.Type
+			eventMetric.IsNewEntity = event.Entity.IsNew
+		}
 
-			eventMetric.IsInfosUpdated = event.IsEntityUpdated
-			eventMetric.IsServicesUpdated = len(updatedEntityServices.AddedTo) > 0 || len(updatedEntityServices.RemovedFrom) > 0
-			eventMetric.Interval = time.Since(startProcTime).Microseconds()
+		eventMetric.IsInfosUpdated = event.IsEntityUpdated
+		eventMetric.IsServicesUpdated = len(updatedEntityServices.AddedTo) > 0 || len(updatedEntityServices.RemovedFrom) > 0
+		eventMetric.Interval = time.Since(startProcTime).Microseconds()
 
-			p.EventsMetricsChan <- eventMetric
+		select {
+		case <-ctx.Done():
+		case p.EventsMetricsChan <- eventMetric:
 		}
 	}()
 

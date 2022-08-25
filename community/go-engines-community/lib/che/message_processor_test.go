@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_context "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/context"
@@ -31,8 +32,6 @@ func TestMessageProcessor_Process_GivenRecomputeEntityServiceEvent_ShouldPassItT
 	expectedBody := []byte("test-next-body")
 	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
 	mockAlarmConfigProvider.EXPECT().Get().Return(config.AlarmConfig{})
-	mockMetricsConfigProvider := mock_config.NewMockMetricsConfigProvider(ctrl)
-	mockMetricsConfigProvider.EXPECT().Get().Return(config.MetricsConfig{EnableTechMetrics: false})
 	mockEventFilterService := mock_eventfilter.NewMockService(ctrl)
 	mockEventFilterService.EXPECT().ProcessEvent(gomock.Any(), gomock.Any()).Return(event, nil)
 	mockEnrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
@@ -49,8 +48,12 @@ func TestMessageProcessor_Process_GivenRecomputeEntityServiceEvent_ShouldPassItT
 			t.Errorf("expected event %s but got %s", types.EventTypeRecomputeEntityService, event.EventType)
 		}
 	}).Return(expectedBody, nil)
+
+	metricsChan := make(chan metrics.CheEventMetric, 1)
+	defer close(metricsChan)
+
 	processor := &messageProcessor{
-		MetricsConfigProvider:  mockMetricsConfigProvider,
+		EventsMetricsChan:      metricsChan,
 		FeatureEventProcessing: true,
 		FeatureContextCreation: true,
 		AlarmConfigProvider:    mockAlarmConfigProvider,

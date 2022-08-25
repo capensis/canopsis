@@ -202,16 +202,9 @@ func Default(
 
 	broadcastMessageChan := make(chan bool)
 
-	techMetricsSender := metrics.NewNullTechMetricsSender()
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-	if metricsConfigProvider.Get().EnableTechMetrics {
-		techPostgresPool, err := postgres.NewTechMetricsPool(ctx, 0, 0)
-		if err != nil {
-			panic(fmt.Errorf("techPostgresPool: %w", err))
-		}
-
-		techMetricsSender = metrics.NewTechMetricsSender(techPostgresPool, logger)
-	}
+	techPostgresPoolProvider := postgres.NewTechMetricsPoolProvider(ctx, metricsConfigProvider, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+	techMetricsSender := metrics.NewTechMetricsSender(techPostgresPoolProvider, logger)
 
 	// Create api.
 	api := New(
@@ -255,9 +248,7 @@ func Default(
 			start := time.Now()
 			c.Next()
 
-			if metricsConfigProvider.Get().EnableTechMetrics {
-				go techMetricsSender.SendApiRequest(context.Background(), start, time.Since(start).Microseconds())
-			}
+			go techMetricsSender.SendApiRequest(context.Background(), start, time.Since(start).Microseconds())
 		})
 
 		if flags.Test {
@@ -357,7 +348,7 @@ func Default(
 	api.AddWorker("import job", func(ctx context.Context) {
 		importWorker.Run(ctx)
 	})
-	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.ApiConfigProvider,
+	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.ApiConfigProvider, metricsConfigProvider,
 		configAdapter, p.UserInterfaceConfigProvider, userInterfaceAdapter, flags.Test, logger))
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
@@ -399,6 +390,7 @@ func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.To
 func updateConfig(
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	apiConfigProvider *config.BaseApiConfigProvider,
+	metricsConfigProvider *config.BaseMetricsConfigProvider,
 	configAdapter config.Adapter,
 	userInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider,
 	userInterfaceAdapter config.UserInterfaceAdapter,
@@ -424,6 +416,7 @@ func updateConfig(
 
 				timezoneConfigProvider.Update(cfg)
 				apiConfigProvider.Update(cfg)
+				metricsConfigProvider.Update(cfg)
 
 				userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 				if err != nil {

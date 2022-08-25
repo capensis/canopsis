@@ -1,6 +1,6 @@
 package postgres
 
-//go:generate mockgen -destination=../../mocks/lib/postgres/postgres.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres BasePool,Pool
+//go:generate mockgen -destination=../../mocks/lib/postgres/postgres.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres BasePool,Pool,PoolProvider
 //go:generate mockgen -destination=../../mocks/github.com/jackc/pgx/pgx.go github.com/jackc/pgx/v4 Rows,Tx,BatchResults
 
 import (

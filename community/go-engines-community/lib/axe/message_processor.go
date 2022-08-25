@@ -20,7 +20,6 @@ import (
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
 	EventProcessor           alarm.EventProcessor
-	MetricsConfigProvider    config.MetricsConfigProvider
 	EventsMetricsChan        chan metrics.AxeEventMetric
 	RemediationRpcClient     engine.RPCClient
 	TimezoneConfigProvider   config.TimezoneConfigProvider
@@ -60,15 +59,16 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	trace.Log(ctx, "event.resource", event.Resource)
 
 	defer func() {
-		if p.MetricsConfigProvider.Get().EnableTechMetrics && p.EventsMetricsChan != nil {
-			eventMetric.EventType = event.EventType
-			eventMetric.AlarmChangeType = string(event.AlarmChange.Type)
-			if event.Entity != nil {
-				eventMetric.EntityType = event.Entity.Type
-			}
+		eventMetric.EventType = event.EventType
+		eventMetric.AlarmChangeType = string(event.AlarmChange.Type)
+		if event.Entity != nil {
+			eventMetric.EntityType = event.Entity.Type
+		}
 
-			eventMetric.Interval = time.Since(startProcTime).Microseconds()
-			p.EventsMetricsChan <- eventMetric
+		eventMetric.Interval = time.Since(startProcTime).Microseconds()
+		select {
+		case <-ctx.Done():
+		case p.EventsMetricsChan <- eventMetric:
 		}
 	}()
 
