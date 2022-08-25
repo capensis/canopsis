@@ -26,7 +26,12 @@ type AxeEventMetric struct {
 	AlarmChangeType string
 }
 
-type AxePeriodicalMetrics struct {
+type AxePeriodicalMetric struct {
+	Timestamp time.Time
+	Interval  int64
+}
+
+type ApiRequestMetric struct {
 	Timestamp time.Time
 	Interval  int64
 }

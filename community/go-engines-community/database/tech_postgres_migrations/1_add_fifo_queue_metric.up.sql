@@ -65,4 +65,12 @@ CREATE TABLE IF NOT EXISTS che_infos
 SELECT create_hypertable('che_infos', 'time', if_not_exists => TRUE);
 SELECT add_retention_policy('che_infos', INTERVAL '1 day');
 
+CREATE TABLE IF NOT EXISTS api_requests
+(
+    time     TIMESTAMP NOT NULL,
+    interval INT       NOT NULL
+);
+SELECT create_hypertable('api_requests', 'time', if_not_exists => TRUE);
+SELECT add_retention_policy('api_requests', INTERVAL '7 days');
+
 COMMIT;
