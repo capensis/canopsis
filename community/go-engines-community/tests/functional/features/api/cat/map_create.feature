@@ -150,10 +150,6 @@ Feature: Create a map
       "parameters": {
         "points": [
           {
-            "coordinates": {
-              "lat": 62.34960927573042,
-              "lng": 74.02834455685206
-            },
             "entity": "test-resource-to-map-edit-1/test-component-default"
           },
           {
@@ -170,6 +166,13 @@ Feature: Create a map
             },
             "entity": "test-resource-to-map-edit-2/test-component-default",
             "map": "test-map-to-map-edit-2"
+          },
+          {
+            "coordinates": {
+              "lat": 64.52269494598361,
+              "lng": 54.037685420804365
+            },
+            "entity": "test-resource-to-map-edit-3/test-component-default"
           }
         ]
       }
@@ -194,7 +197,11 @@ Feature: Create a map
             },
             "entity": {
               "_id": "test-resource-to-map-edit-1/test-component-default",
-              "name": "test-resource-to-map-edit-1"
+              "name": "test-resource-to-map-edit-1",
+              "coordinates": {
+                "lat": 62.34960927573042,
+                "lng": 74.02834455685206
+              }
             },
             "map": null
           },
@@ -222,6 +229,17 @@ Feature: Create a map
               "_id": "test-map-to-map-edit-2",
               "name": "test-map-to-map-edit-2-name"
             }
+          },
+          {
+            "coordinates": {
+              "lat": 64.52269494598361,
+              "lng": 54.037685420804365
+            },
+            "entity": {
+              "_id": "test-resource-to-map-edit-3/test-component-default",
+              "name": "test-resource-to-map-edit-3"
+            },
+            "map": null
           }
         ]
       }
@@ -247,7 +265,11 @@ Feature: Create a map
             },
             "entity": {
               "_id": "test-resource-to-map-edit-1/test-component-default",
-              "name": "test-resource-to-map-edit-1"
+              "name": "test-resource-to-map-edit-1",
+              "coordinates": {
+                "lat": 62.34960927573042,
+                "lng": 74.02834455685206
+              }
             },
             "map": null
           },
@@ -275,6 +297,17 @@ Feature: Create a map
               "_id": "test-map-to-map-edit-2",
               "name": "test-map-to-map-edit-2-name"
             }
+          },
+          {
+            "coordinates": {
+              "lat": 64.52269494598361,
+              "lng": 54.037685420804365
+            },
+            "entity": {
+              "_id": "test-resource-to-map-edit-3/test-component-default",
+              "name": "test-resource-to-map-edit-3"
+            },
+            "map": null
           }
         ]
       }
@@ -497,6 +530,29 @@ Feature: Create a map
         "parameters.points.0.coordinates": "Coordinates is missing.",
         "parameters.points.0.entity": "Entity is required when Map is not present.",
         "parameters.points.0.map": "Map is required when Entity is not present."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "geo",
+      "parameters": {
+        "points": [
+          {
+            "map": "test-map-to-map-edit-1"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.points.0.coordinates": "Coordinates is missing."
       }
     }
     """

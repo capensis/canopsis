@@ -100,6 +100,8 @@ type Entity struct {
 	DependsCount *int `bson:"depends_count" json:"depends_count,omitempty"`
 	// ImpactsCount contains only services
 	ImpactsCount *int `bson:"impacts_count" json:"impacts_count,omitempty"`
+
+	Coordinates *types.Coordinates `bson:"coordinates,omitempty" json:"coordinates,omitempty"`
 }
 
 func (e *Entity) fillConnectorType() {

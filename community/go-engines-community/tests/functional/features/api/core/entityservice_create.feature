@@ -54,7 +54,11 @@ Feature: Create entity service
           "name": "test-entityservice-to-create-1-info-6-name",
           "value": ["test-entityservice-to-create-1-info-6-value", false, 1022, 10.45, null]
         }
-      ]
+      ],
+      "coordinates": {
+        "lat": 62.34960927573042,
+        "lng": 74.02834455685206
+      }
     }
     """
     Then the response code should be 201
@@ -116,7 +120,11 @@ Feature: Create entity service
       "name": "test-entityservice-to-create-1-name",
       "output_template": "test-entityservice-to-create-1-output",
       "sli_avail_state": 1,
-      "type": "service"
+      "type": "service",
+      "coordinates": {
+        "lat": 62.34960927573042,
+        "lng": 74.02834455685206
+      }
     }
     """
 
@@ -211,9 +219,6 @@ Feature: Create entity service
       }
     }
     """
-
-  Scenario: given invalid create request should return errors
-    When I am admin
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -232,6 +237,41 @@ Feature: Create entity service
         "category": "Category doesn't exist.",
         "infos.0.name": "Name is missing.",
         "sli_avail_state": "SliAvailState should be 3 or less."
+      }
+    }
+    """
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "coordinates": {}
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "coordinates.lat": "Lat is missing.",
+        "coordinates.lng": "Lng is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "coordinates": {
+        "lat": 214983904,
+        "lng": 214983904
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "coordinates.lat": "Lat must contain valid latitude coordinates.",
+        "coordinates.lng": "Lng must contain valid longitude coordinates."
       }
     }
     """
