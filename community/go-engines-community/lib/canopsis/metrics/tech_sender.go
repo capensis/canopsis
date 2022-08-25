@@ -19,7 +19,7 @@ type TechSender interface {
 	SendAxePeriodical(ctx context.Context, timestamp time.Time, length int64)
 	SendPBehaviorPeriodical(ctx context.Context, timestamp time.Time, length int64)
 	SendCheEntityInfo(ctx context.Context, timestamp time.Time, name string)
-	SendApiRequest(ctx context.Context, timestamp time.Time, interval int64)
+	SendApiRequest(ctx context.Context, timestamp time.Time, url string, interval int64)
 	SendSimpleEventBatch(ctx context.Context, metrics []SimpleEventMetric, metric string)
 }
 
@@ -201,14 +201,14 @@ func (s *techSender) SendCheEntityInfo(ctx context.Context, timestamp time.Time,
 	}
 }
 
-func (s *techSender) SendApiRequest(ctx context.Context, timestamp time.Time, interval int64) {
+func (s *techSender) SendApiRequest(ctx context.Context, timestamp time.Time, url string, interval int64) {
 	pool := s.poolProvider.GetPool()
 	if pool == nil {
 		return
 	}
 
-	query := fmt.Sprintf("INSERT INTO %s (time, interval) VALUES($1, $2);", ApiRequests)
-	_, err := pool.Exec(ctx, query, timestamp.UTC(), interval)
+	query := fmt.Sprintf("INSERT INTO %s (time, url, interval) VALUES($1, $2, $3);", ApiRequests)
+	_, err := pool.Exec(ctx, query, timestamp.UTC(), url, interval)
 	if err != nil {
 		s.logger.Err(err).Msgf("failed to send %s metric: unable to execute insert", ApiRequests)
 	}
