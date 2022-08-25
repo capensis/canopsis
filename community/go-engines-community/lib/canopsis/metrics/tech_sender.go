@@ -25,34 +25,36 @@ type TechSender interface {
 }
 
 type techSender struct {
-	pool   postgres.Pool
-	logger zerolog.Logger
+	poolProvider postgres.PoolProvider
+	logger       zerolog.Logger
 }
 
 func NewTechMetricsSender(
-	pool postgres.Pool,
+	pool postgres.PoolProvider,
 	logger zerolog.Logger,
 ) TechSender {
 	return &techSender{
-		pool:   pool,
-		logger: logger,
+		poolProvider: pool,
+		logger:       logger,
 	}
 }
 
 func (s *techSender) SendFifoQueue(ctx context.Context, timestamp time.Time, length int64) {
-	if s.pool == nil {
+	pool := s.poolProvider.GetPool()
+	if pool == nil {
 		return
 	}
 
 	query := fmt.Sprintf("INSERT INTO %s (time, length) VALUES($1, $2);", FIFOQueue)
-	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), length)
+	_, err := pool.Exec(ctx, query, timestamp.UTC(), length)
 	if err != nil {
 		s.logger.Err(err).Msgf("failed to send %s metric: unable to execute insert", FIFOQueue)
 	}
 }
 
 func (s *techSender) SendFifoEventBatch(ctx context.Context, metrics []FifoEventMetric) {
-	if s.pool == nil {
+	pool := s.poolProvider.GetPool()
+	if pool == nil {
 		return
 	}
 
@@ -66,7 +68,7 @@ func (s *techSender) SendFifoEventBatch(ctx context.Context, metrics []FifoEvent
 		inserts++
 
 		if inserts >= canopsis.DefaultBulkSize {
-			err := s.pool.SendBatch(ctx, batch)
+			err := pool.SendBatch(ctx, batch)
 			if err != nil {
 				s.logger.Err(err).Msgf("failed to send %s metric: unable to send batch", FIFOEvent)
 				break
@@ -78,7 +80,7 @@ func (s *techSender) SendFifoEventBatch(ctx context.Context, metrics []FifoEvent
 	}
 
 	if inserts > 0 {
-		err := s.pool.SendBatch(ctx, batch)
+		err := pool.SendBatch(ctx, batch)
 		if err != nil {
 			s.logger.Err(err).Msgf("failed to send %s metric: unable to send batch", FIFOEvent)
 		}
@@ -86,7 +88,8 @@ func (s *techSender) SendFifoEventBatch(ctx context.Context, metrics []FifoEvent
 }
 
 func (s *techSender) SendCheEventBatch(ctx context.Context, metrics []CheEventMetric) {
-	if s.pool == nil {
+	pool := s.poolProvider.GetPool()
+	if pool == nil {
 		return
 	}
 
@@ -103,7 +106,7 @@ func (s *techSender) SendCheEventBatch(ctx context.Context, metrics []CheEventMe
 		inserts++
 
 		if inserts >= canopsis.DefaultBulkSize {
-			err := s.pool.SendBatch(ctx, batch)
+			err := pool.SendBatch(ctx, batch)
 			if err != nil {
 				s.logger.Err(err).Msgf("failed to send %s metric: unable to send batch", CheEvent)
 				break
@@ -115,7 +118,7 @@ func (s *techSender) SendCheEventBatch(ctx context.Context, metrics []CheEventMe
 	}
 
 	if inserts > 0 {
-		err := s.pool.SendBatch(ctx, batch)
+		err := pool.SendBatch(ctx, batch)
 		if err != nil {
 			s.logger.Err(err).Msgf("failed to send %s metric: unable to send batch", CheEvent)
 		}
@@ -123,7 +126,8 @@ func (s *techSender) SendCheEventBatch(ctx context.Context, metrics []CheEventMe
 }
 
 func (s *techSender) SendAxeEventBatch(ctx context.Context, metrics []AxeEventMetric) {
-	if s.pool == nil {
+	pool := s.poolProvider.GetPool()
+	if pool == nil {
 		return
 	}
 
@@ -140,7 +144,7 @@ func (s *techSender) SendAxeEventBatch(ctx context.Context, metrics []AxeEventMe
 		inserts++
 
 		if inserts >= canopsis.DefaultBulkSize {
-			err := s.pool.SendBatch(ctx, batch)
+			err := pool.SendBatch(ctx, batch)
 			if err != nil {
 				s.logger.Err(err).Msgf("failed to send %s metric: unable to send batch", AxeEvent)
 				break
@@ -152,7 +156,7 @@ func (s *techSender) SendAxeEventBatch(ctx context.Context, metrics []AxeEventMe
 	}
 
 	if inserts > 0 {
-		err := s.pool.SendBatch(ctx, batch)
+		err := pool.SendBatch(ctx, batch)
 		if err != nil {
 			s.logger.Err(err).Msgf("failed to send %s metric: unable to send batch", AxeEvent)
 		}
@@ -160,48 +164,52 @@ func (s *techSender) SendAxeEventBatch(ctx context.Context, metrics []AxeEventMe
 }
 
 func (s *techSender) SendAxePeriodical(ctx context.Context, timestamp time.Time, length int64) {
-	if s.pool == nil {
+	pool := s.poolProvider.GetPool()
+	if pool == nil {
 		return
 	}
 
 	query := fmt.Sprintf("INSERT INTO %s (time, interval) VALUES($1, $2);", AxePeriodical)
-	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), length)
+	_, err := pool.Exec(ctx, query, timestamp.UTC(), length)
 	if err != nil {
 		s.logger.Err(err).Msgf("failed to send %s metric: unable to execute insert", AxePeriodical)
 	}
 }
 
 func (s *techSender) SendPBehaviorPeriodical(ctx context.Context, timestamp time.Time, length int64) {
-	if s.pool == nil {
+	pool := s.poolProvider.GetPool()
+	if pool == nil {
 		return
 	}
 
 	query := fmt.Sprintf("INSERT INTO %s (time, interval) VALUES($1, $2);", PBehaviorPeriodical)
-	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), length)
+	_, err := pool.Exec(ctx, query, timestamp.UTC(), length)
 	if err != nil {
 		s.logger.Err(err).Msgf("failed to send %s metric: unable to execute insert", PBehaviorPeriodical)
 	}
 }
 
 func (s *techSender) SendCheEntityInfo(ctx context.Context, timestamp time.Time, name string) {
-	if s.pool == nil {
+	pool := s.poolProvider.GetPool()
+	if pool == nil {
 		return
 	}
 
 	query := fmt.Sprintf("INSERT INTO %s (time, name) VALUES($1, $2);", CheInfos)
-	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), name)
+	_, err := pool.Exec(ctx, query, timestamp.UTC(), name)
 	if err != nil {
 		s.logger.Err(err).Msgf("failed to send %s metric: unable to execute insert", CheInfos)
 	}
 }
 
 func (s *techSender) SendApiRequest(ctx context.Context, timestamp time.Time, interval int64) {
-	if s.pool == nil {
+	pool := s.poolProvider.GetPool()
+	if pool == nil {
 		return
 	}
 
 	query := fmt.Sprintf("INSERT INTO %s (time, interval) VALUES($1, $2);", ApiRequests)
-	_, err := s.pool.Exec(ctx, query, timestamp.UTC(), interval)
+	_, err := pool.Exec(ctx, query, timestamp.UTC(), interval)
 	if err != nil {
 		s.logger.Err(err).Msgf("failed to send %s metric: unable to execute insert", ApiRequests)
 	}

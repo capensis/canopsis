@@ -57,17 +57,9 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		logger,
 	)
 
-	techMetricsSender := metrics.NewNullTechMetricsSender()
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-
-	if metricsConfigProvider.Get().EnableTechMetrics {
-		techPostgresPool, err := postgres.NewTechMetricsPool(ctx, 0, 0)
-		if err != nil {
-			panic(fmt.Errorf("techPostgresPool: %w", err))
-		}
-
-		techMetricsSender = metrics.NewTechMetricsSender(techPostgresPool, logger)
-	}
+	techPostgresPoolProvider := postgres.NewTechMetricsPoolProvider(ctx, metricsConfigProvider, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+	techMetricsSender := metrics.NewTechMetricsSender(techPostgresPoolProvider, logger)
 
 	enginePbehavior := engine.New(
 		func(ctx context.Context) error {
@@ -143,7 +135,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		redis.NewLockClient(lockRedisSession),
 		redis.PbehaviorPeriodicalLockKey,
 		&periodicalWorker{
-			MetricsConfigProvider:  metricsConfigProvider,
 			TechMetricsSender:      techMetricsSender,
 			ChannelPub:             amqpChannel,
 			PeriodicalInterval:     options.PeriodicalWaitTime,

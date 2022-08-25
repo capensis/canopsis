@@ -5,6 +5,9 @@ import (
 	"testing"
 	"time"
 
+	mock_postgres "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/postgres"
+	"github.com/rs/zerolog"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
@@ -24,16 +27,17 @@ func TestPeriodicalWorker_Work(t *testing.T) {
 	mockIdleAlarmService := mock_idlealarm.NewMockService(ctrl)
 	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
 	mockMetricsConfigProvider := mock_config.NewMockMetricsConfigProvider(ctrl)
+	mockPoolProvider := mock_postgres.NewMockPoolProvider(ctrl)
+	mockPoolProvider.EXPECT().GetPool().Return(nil).AnyTimes()
 
 	interval := time.Minute
 	worker := periodicalWorker{
-		MetricsConfigProvider: mockMetricsConfigProvider,
-		TechMetricsSender:     metrics.NewNullTechMetricsSender(),
-		PeriodicalInterval:    interval,
-		AlarmService:          mockAlarmService,
-		AlarmAdapter:          mockAlarmAdapter,
-		IdleAlarmService:      mockIdleAlarmService,
-		AlarmConfigProvider:   mockAlarmConfigProvider,
+		TechMetricsSender:   metrics.NewTechMetricsSender(mockPoolProvider, zerolog.Logger{}),
+		PeriodicalInterval:  interval,
+		AlarmService:        mockAlarmService,
+		AlarmAdapter:        mockAlarmAdapter,
+		IdleAlarmService:    mockIdleAlarmService,
+		AlarmConfigProvider: mockAlarmConfigProvider,
 	}
 
 	alarmConfig := config.AlarmConfig{

@@ -65,10 +65,11 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 
 	defer func() {
-		if p.MetricsConfigProvider.Get().EnableTechMetrics && p.EventsMetricsChan != nil {
-			eventMetric.EventType = event.EventType
-			eventMetric.Interval = time.Since(startProcTime).Microseconds()
-			p.EventsMetricsChan <- eventMetric
+		eventMetric.EventType = event.EventType
+		eventMetric.Interval = time.Since(startProcTime).Microseconds()
+		select {
+		case <-ctx.Done():
+		case p.EventsMetricsChan <- eventMetric:
 		}
 	}()
 
