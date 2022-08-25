@@ -2,10 +2,11 @@ package action
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"github.com/rs/zerolog"
 	"strings"
 	"sync"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"github.com/rs/zerolog"
 )
 
 type scenarioStorage struct {
@@ -29,12 +30,7 @@ func NewScenarioStorage(
 }
 
 func (s *scenarioStorage) ReloadScenarios(ctx context.Context) error {
-	s.scenariosMx.Lock()
-	defer s.scenariosMx.Unlock()
-
-	var err error
 	scenarios, err := s.adapter.GetEnabled(ctx)
-
 	if err != nil {
 		return err
 	}
@@ -65,6 +61,9 @@ func (s *scenarioStorage) ReloadScenarios(ctx context.Context) error {
 			validScenariosIDs = append(validScenariosIDs, scenario.ID)
 		}
 	}
+
+	s.scenariosMx.Lock()
+	defer s.scenariosMx.Unlock()
 
 	s.scenarios = validScenarios
 	s.logger.Debug().Str("scenarios", strings.Join(validScenariosIDs, ", ")).Int("number", len(s.scenarios)).Msg("Successfully loaded scenarios")
