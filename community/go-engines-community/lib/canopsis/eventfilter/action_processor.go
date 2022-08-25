@@ -173,6 +173,7 @@ func (p *actionProcessor) setEntityInfo(ctx context.Context, entity types.Entity
 	valueChanged := !ok || info.Value != value
 	if valueChanged {
 		entityUpdated = true
+		go p.techMetricsSender.SendCheEntityInfo(ctx, time.Now(), name)
 	}
 
 	info.Name = name
@@ -184,8 +185,6 @@ func (p *actionProcessor) setEntityInfo(ctx context.Context, entity types.Entity
 	}
 
 	entity.Infos[name] = info
-
-	go p.techMetricsSender.SendCheEntityInfo(ctx, time.Now(), name)
 
 	return entity, entityUpdated
 }
