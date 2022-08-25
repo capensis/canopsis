@@ -73,7 +73,7 @@ func NewEngine(
 
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer))
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externalDataContainer, eventfilter.NewActionProcessor(metricsConfigProvider, techMetricsSender)))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externalDataContainer, eventfilter.NewActionProcessor(techMetricsSender)))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
 

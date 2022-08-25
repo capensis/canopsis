@@ -5,6 +5,9 @@ import (
 	"runtime/trace"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -157,6 +160,18 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		},
 		logger,
 	)
+
+	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
+	techPostgresPoolProvider := postgres.NewTechMetricsPoolProvider(ctx, metricsConfigProvider, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+	techMetricsSender := metrics.NewTechMetricsSender(techPostgresPoolProvider, logger)
+
+	eventMetricsChan := make(chan metrics.SimpleEventMetric)
+	eventMetricsListener := metrics.NewSimpleEventMetricsListener(techMetricsSender, canopsis.TechMetricsFlushInterval)
+	engineService.AddRoutine(func(ctx context.Context) error {
+		eventMetricsListener.Listen(ctx, eventMetricsChan, metrics.ServiceEvent)
+		return nil
+	})
+
 	engineService.AddConsumer(engine.NewDefaultConsumer(
 		canopsis.ServiceConsumerName,
 		canopsis.ServiceQueueName,
@@ -169,6 +184,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		canopsis.FIFOAckQueueName,
 		amqpConnection,
 		&messageProcessor{
+			EventsMetricsChan:        eventMetricsChan,
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			EntityServiceService:     entityServicesService,
 			Encoder:                  json.NewEncoder(),
@@ -213,6 +229,12 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 			PeriodicalInterval:   options.PeriodicalWaitTime,
 			Logger:               logger,
 		},
+		logger,
+	))
+	engineService.AddPeriodicalWorker("config", engine.NewLoadConfigPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		config.NewAdapter(mongoClient),
+		[]config.Updater{metricsConfigProvider},
 		logger,
 	))
 

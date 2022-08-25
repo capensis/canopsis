@@ -73,4 +73,49 @@ CREATE TABLE IF NOT EXISTS api_requests
 SELECT create_hypertable('api_requests', 'time', if_not_exists => TRUE);
 SELECT add_retention_policy('api_requests', INTERVAL '7 days');
 
+CREATE TABLE IF NOT EXISTS pbehavior_event
+(
+    time              TIMESTAMP   NOT NULL,
+    interval          INT         NOT NULL,
+    type              VARCHAR(30) NOT NULL
+);
+SELECT create_hypertable('pbehavior_event', 'time', if_not_exists => TRUE);
+SELECT add_retention_policy('pbehavior_event', INTERVAL '1 day');
+
+CREATE TABLE IF NOT EXISTS correlation_event
+(
+    time              TIMESTAMP   NOT NULL,
+    interval          INT         NOT NULL,
+    type              VARCHAR(30) NOT NULL
+);
+SELECT create_hypertable('correlation_event', 'time', if_not_exists => TRUE);
+SELECT add_retention_policy('correlation_event', INTERVAL '1 day');
+
+CREATE TABLE IF NOT EXISTS service_event
+(
+    time              TIMESTAMP   NOT NULL,
+    interval          INT         NOT NULL,
+    type              VARCHAR(30) NOT NULL
+);
+SELECT create_hypertable('service_event', 'time', if_not_exists => TRUE);
+SELECT add_retention_policy('service_event', INTERVAL '1 day');
+
+CREATE TABLE IF NOT EXISTS dynamic_infos_event
+(
+    time              TIMESTAMP   NOT NULL,
+    interval          INT         NOT NULL,
+    type              VARCHAR(30) NOT NULL
+);
+SELECT create_hypertable('dynamic_infos_event', 'time', if_not_exists => TRUE);
+SELECT add_retention_policy('dynamic_infos_event', INTERVAL '1 day');
+
+CREATE TABLE IF NOT EXISTS action_event
+(
+    time              TIMESTAMP   NOT NULL,
+    interval          INT         NOT NULL,
+    type              VARCHAR(30) NOT NULL
+    );
+SELECT create_hypertable('action_event', 'time', if_not_exists => TRUE);
+SELECT add_retention_policy('action_event', INTERVAL '1 day');
+
 COMMIT;
