@@ -3,6 +3,7 @@ package widget
 import (
 	"context"
 	"errors"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -156,7 +157,16 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		}
 
 		response, err = s.GetOneBy(ctx, widget.ID)
-		return err
+		if err != nil || response == nil {
+			return err
+		}
+
+		err = s.updateUserPreferences(ctx, *response)
+		if err != nil {
+			return err
+		}
+
+		return nil
 	})
 
 	return response, err
@@ -188,7 +198,7 @@ func (s *store) Copy(ctx context.Context, widget Response, r EditRequest) (*Resp
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 		var err error
-		response, err = s.copy(ctx, widget, r)
+		response, err = s.copy(ctx, r)
 		return err
 	})
 
@@ -209,7 +219,7 @@ func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string) 
 			return err
 		}
 
-		_, err = s.copy(ctx, w, EditRequest{
+		_, err = s.copy(ctx, EditRequest{
 			Tab:            newTabID,
 			Title:          w.Title,
 			Type:           w.Type,
@@ -225,7 +235,7 @@ func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string) 
 	return nil
 }
 
-func (s *store) copy(ctx context.Context, widget Response, r EditRequest) (*Response, error) {
+func (s *store) copy(ctx context.Context, r EditRequest) (*Response, error) {
 	now := types.NewCpsTime()
 	newWidget := view.Widget{
 		ID:             utils.NewID(),
@@ -311,6 +321,80 @@ func (s *store) deleteUserPreferences(ctx context.Context, widgetID string) erro
 	return err
 }
 
+func (s *store) updateUserPreferences(ctx context.Context, response Response) error {
+	if len(response.Parameters.ViewFilters) == 0 {
+		return nil
+	}
+
+	cursor, err := s.userPrefCollection.Find(ctx, bson.M{
+		"widget": response.ID,
+	})
+	if err != nil {
+		return err
+	}
+	defer cursor.Close(ctx)
+
+	writeModels := make([]mongodriver.WriteModel, 0)
+	for cursor.Next(ctx) {
+		userPref := struct {
+			ID      string `bson:"_id"`
+			Content struct {
+				MainFilter interface{} `bson:"mainFilter"`
+			} `bson:"content" json:"content"`
+		}{}
+		err = cursor.Decode(&userPref)
+		if err != nil {
+			return err
+		}
+
+		if userPref.Content.MainFilter == nil {
+			continue
+		}
+
+		if filters, ok := userPref.Content.MainFilter.(bson.A); ok {
+			newFilters := make([]interface{}, len(filters))
+			updated := false
+			for i, filter := range filters {
+				newFilter := adjustUserPreferenceFilter(filter, response.Parameters.ViewFilters)
+				if newFilter.Title == "" {
+					newFilters[i] = filter
+				} else {
+					newFilters[i] = newFilter
+					updated = true
+				}
+			}
+
+			if updated {
+				writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
+					SetFilter(bson.M{"_id": userPref.ID}).
+					SetUpdate(bson.M{"$set": bson.M{
+						"content.mainFilter": newFilters,
+					}}),
+				)
+			}
+		} else {
+			newFilter := adjustUserPreferenceFilter(userPref.Content.MainFilter, response.Parameters.ViewFilters)
+			if newFilter.Title != "" {
+				writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
+					SetFilter(bson.M{"_id": userPref.ID}).
+					SetUpdate(bson.M{"$set": bson.M{
+						"content.mainFilter": newFilter,
+					}}),
+				)
+			}
+		}
+	}
+
+	if len(writeModels) > 0 {
+		_, err = s.userPrefCollection.BulkWrite(ctx, writeModels)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func transformEditRequestToModel(request EditRequest) view.Widget {
 	return view.Widget{
 		Tab:            request.Tab,
@@ -320,4 +404,32 @@ func transformEditRequestToModel(request EditRequest) view.Widget {
 		Parameters:     request.Parameters,
 		Author:         request.Author,
 	}
+}
+
+func adjustUserPreferenceFilter(filter interface{}, viewFilters []view.Filter) view.Filter {
+	var title, value interface{}
+	if d, ok := filter.(bson.D); ok {
+		for _, e := range d {
+			switch e.Key {
+			case "title":
+				title = e.Value
+			case "filter":
+				value = e.Value
+			}
+		}
+	}
+
+	if title != nil {
+		for _, viewFilter := range viewFilters {
+			if title == viewFilter.Title {
+				if value != viewFilter.Filter {
+					return viewFilter
+				}
+
+				break
+			}
+		}
+	}
+
+	return view.Filter{}
 }
