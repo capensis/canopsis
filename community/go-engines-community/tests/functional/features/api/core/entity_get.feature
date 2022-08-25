@@ -102,6 +102,10 @@ Feature: Get entities
               "value": "test-resource-to-entity-get-1-info-7-value"
             }
           },
+          "coordinates": {
+            "lat": 64.52269494598361,
+            "lng": 54.037685420804365
+          },
           "name": "test-resource-to-entity-get-1",
           "type": "resource",
           "ok_events": 0,
