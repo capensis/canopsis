@@ -20,16 +20,15 @@ import (
 )
 
 type periodicalWorker struct {
-	TechMetricsSender     metrics.TechSender
-	MetricsConfigProvider config.MetricsConfigProvider
-	PeriodicalInterval    time.Duration
-	ChannelPub            libamqp.Channel
-	AlarmService          libalarm.Service
-	AlarmAdapter          libalarm.Adapter
-	Encoder               encoding.Encoder
-	IdleAlarmService      idlealarm.Service
-	AlarmConfigProvider   config.AlarmConfigProvider
-	Logger                zerolog.Logger
+	TechMetricsSender   metrics.TechSender
+	PeriodicalInterval  time.Duration
+	ChannelPub          libamqp.Channel
+	AlarmService        libalarm.Service
+	AlarmAdapter        libalarm.Adapter
+	Encoder             encoding.Encoder
+	IdleAlarmService    idlealarm.Service
+	AlarmConfigProvider config.AlarmConfigProvider
+	Logger              zerolog.Logger
 }
 
 func (w *periodicalWorker) GetInterval() time.Duration {
@@ -39,9 +38,7 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 func (w *periodicalWorker) Work(parentCtx context.Context) {
 	startProcTime := time.Now()
 	defer func() {
-		if w.MetricsConfigProvider.Get().EnableTechMetrics {
-			go w.TechMetricsSender.SendAxePeriodical(parentCtx, time.Now(), time.Since(startProcTime).Microseconds())
-		}
+		go w.TechMetricsSender.SendAxePeriodical(parentCtx, time.Now(), time.Since(startProcTime).Microseconds())
 	}()
 
 	ctx, task := trace.NewTask(parentCtx, "axe.PeriodicalProcess")

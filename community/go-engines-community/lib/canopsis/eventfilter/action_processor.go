@@ -14,16 +14,14 @@ import (
 )
 
 type actionProcessor struct {
-	buf                   bytes.Buffer
-	techMetricsSender     metrics.TechSender
-	metricsConfigProvider config.MetricsConfigProvider
+	buf               bytes.Buffer
+	techMetricsSender metrics.TechSender
 }
 
-func NewActionProcessor(provider config.MetricsConfigProvider, sender metrics.TechSender) ActionProcessor {
+func NewActionProcessor(sender metrics.TechSender) ActionProcessor {
 	return &actionProcessor{
-		buf:                   bytes.Buffer{},
-		techMetricsSender:     sender,
-		metricsConfigProvider: provider,
+		buf:               bytes.Buffer{},
+		techMetricsSender: sender,
 	}
 }
 
@@ -187,9 +185,7 @@ func (p *actionProcessor) setEntityInfo(ctx context.Context, entity types.Entity
 
 	entity.Infos[name] = info
 
-	if p.metricsConfigProvider.Get().EnableTechMetrics {
-		go p.techMetricsSender.SendCheEntityInfo(ctx, time.Now(), name)
-	}
+	go p.techMetricsSender.SendCheEntityInfo(ctx, time.Now(), name)
 
 	return entity, entityUpdated
 }

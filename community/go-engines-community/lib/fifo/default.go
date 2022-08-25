@@ -3,7 +3,6 @@ package fifo
 import (
 	"context"
 	"flag"
-	"fmt"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -157,42 +156,32 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 	)
 
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-	var eventMetricsChan chan metrics.FifoEventMetric
+	techPostgresPoolProvider := postgres.NewTechMetricsPoolProvider(ctx, metricsConfigProvider, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+	techMetricsSender := metrics.NewTechMetricsSender(techPostgresPoolProvider, logger)
+	eventMetricsChan := make(chan metrics.FifoEventMetric)
 
-	if metricsConfigProvider.Get().EnableTechMetrics {
-		eventMetricsChan = make(chan metrics.FifoEventMetric)
-
-		techPostgresPool, err := postgres.NewTechMetricsPool(ctx, 0, 0)
-		if err != nil {
-			panic(fmt.Errorf("techPostgresPool: %w", err))
-		}
-
-		techMetricsSender := metrics.NewTechMetricsSender(techPostgresPool, logger)
-		eventMetricsListener := fifoEventMetricsListener{
-			metricsSender: techMetricsSender,
-			flushInterval: canopsis.TechMetricsFlushInterval,
-		}
-
-		engine.AddRoutine(func(ctx context.Context) error {
-			eventMetricsListener.Listen(ctx, eventMetricsChan)
-
-			return nil
-		})
-
-		engine.AddPeriodicalWorker("fifo queue metrics", libengine.NewLockedPeriodicalWorker(
-			redis.NewLockClient(engineLockRedisClient),
-			redis.FifoQueueMetricsLockKey,
-			&fifoQueueMetricsWorker{
-				metricsConfigProvider: metricsConfigProvider,
-				techMetricsSender:     techMetricsSender,
-				periodicalInterval:    canopsis.PeriodicalWaitTime,
-				channel:               amqpChannel,
-				logger:                logger,
-				consumeQueue:          canopsis.FIFOAckQueueName,
-			},
-			logger,
-		))
+	eventMetricsListener := fifoEventMetricsListener{
+		metricsSender: techMetricsSender,
+		flushInterval: canopsis.TechMetricsFlushInterval,
 	}
+
+	engine.AddRoutine(func(ctx context.Context) error {
+		eventMetricsListener.Listen(ctx, eventMetricsChan)
+		return nil
+	})
+
+	engine.AddPeriodicalWorker("fifo queue metrics", libengine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(engineLockRedisClient),
+		redis.FifoQueueMetricsLockKey,
+		&fifoQueueMetricsWorker{
+			techMetricsSender:  techMetricsSender,
+			periodicalInterval: canopsis.PeriodicalWaitTime,
+			channel:            amqpChannel,
+			logger:             logger,
+			consumeQueue:       canopsis.FIFOAckQueueName,
+		},
+		logger,
+	))
 
 	engine.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.FIFOConsumerName,
@@ -256,7 +245,7 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		logger,
 	))
 	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
-		canopsis.PeriodicalWaitTime,
+		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
 		[]config.Updater{timezoneConfigProvider, metricsConfigProvider},
 		logger,

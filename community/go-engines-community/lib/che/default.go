@@ -42,7 +42,7 @@ func NewEngine(
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
 	if pgPool != nil {
-		config.SetPgPoolRetry(pgPool, cfg)
+		pgPool.SetRetry(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	}
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
@@ -67,17 +67,9 @@ func NewEngine(
 		metricsEntityMetaUpdater,
 	)
 
-	techMetricsSender := metrics.NewNullTechMetricsSender()
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-
-	if metricsConfigProvider.Get().EnableTechMetrics {
-		techPostgresPool, err := postgres.NewTechMetricsPool(ctx, 0, 0)
-		if err != nil {
-			panic(fmt.Errorf("techPostgresPool: %w", err))
-		}
-
-		techMetricsSender = metrics.NewTechMetricsSender(techPostgresPool, logger)
-	}
+	techPostgresPoolProvider := postgres.NewTechMetricsPoolProvider(ctx, metricsConfigProvider, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+	techMetricsSender := metrics.NewTechMetricsSender(techPostgresPoolProvider, logger)
 
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer))
@@ -176,22 +168,16 @@ func NewEngine(
 		logger,
 	)
 
-	var eventMetricsChan chan metrics.CheEventMetric
-
-	if metricsConfigProvider.Get().EnableTechMetrics {
-		eventMetricsChan = make(chan metrics.CheEventMetric)
-
-		eventMetricsListener := cheEventMetricsListener{
-			metricsSender: techMetricsSender,
-			flushInterval: canopsis.TechMetricsFlushInterval,
-		}
-
-		engine.AddRoutine(func(ctx context.Context) error {
-			eventMetricsListener.Listen(ctx, eventMetricsChan)
-
-			return nil
-		})
+	eventMetricsChan := make(chan metrics.CheEventMetric)
+	eventMetricsListener := cheEventMetricsListener{
+		metricsSender: techMetricsSender,
+		flushInterval: canopsis.TechMetricsFlushInterval,
 	}
+
+	engine.AddRoutine(func(ctx context.Context) error {
+		eventMetricsListener.Listen(ctx, eventMetricsChan)
+		return nil
+	})
 
 	engine.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.CheConsumerName,
@@ -212,7 +198,6 @@ func NewEngine(
 			EventFilterService:       eventfilterService,
 			EnrichmentCenter:         enrichmentCenter,
 			EventsMetricsChan:        eventMetricsChan,
-			MetricsConfigProvider:    metricsConfigProvider,
 			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
 			AlarmAdapter:             alarm.NewAdapter(mongoClient),
 			Encoder:                  json.NewEncoder(),
