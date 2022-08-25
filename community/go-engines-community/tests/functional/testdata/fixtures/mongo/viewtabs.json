@@ -135,6 +135,15 @@
     "updated": 1611229670
   },
   {
+    "_id": "test-tab-to-user-preferences-update-3",
+    "title": "test-tab-to-user-preferences-update-3-title",
+    "view": "test-view-to-user-preferences-update-3",
+    "position": 0,
+    "author": "test-author-to-user-preferences-update",
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
     "_id": "test-tab-to-update-position-2",
     "title": "test-tab-to-update-position-2-title",
     "view": "test-view-to-tab-update-position-2",
