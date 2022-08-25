@@ -19,20 +19,24 @@ type techMetricsPoolProvider struct {
 	pMx                 sync.RWMutex
 	logger              zerolog.Logger
 	configCheckDuration time.Duration
+	retries             int
+	timeout             time.Duration
 }
 
-func NewTechMetricsPoolProvider(ctx context.Context, configProvider config.MetricsConfigProvider, retries int, duration time.Duration, logger zerolog.Logger) PoolProvider {
+func NewTechMetricsPoolProvider(ctx context.Context, configProvider config.MetricsConfigProvider, retries int, timeout time.Duration, logger zerolog.Logger) PoolProvider {
 	var err error
 
 	p := &techMetricsPoolProvider{
 		configProvider:      configProvider,
 		pMx:                 sync.RWMutex{},
 		logger:              logger,
-		configCheckDuration: time.Second * 2,
+		configCheckDuration: time.Second * 10,
+		retries:             retries,
+		timeout:             timeout,
 	}
 
 	if configProvider.Get().EnableTechMetrics {
-		p.pool, err = NewTechMetricsPool(ctx, retries, duration)
+		p.pool, err = NewTechMetricsPool(ctx, retries, timeout)
 		if err != nil {
 			p.logger.Err(err).Msg("can't create postgres pool for tech metrics")
 		}
@@ -80,7 +84,7 @@ func (p *techMetricsPoolProvider) resolvePool(ctx context.Context) {
 			return
 		}
 
-		p.pool, err = NewTechMetricsPool(ctx, 0, 0)
+		p.pool, err = NewTechMetricsPool(ctx, p.retries, p.timeout)
 		if err != nil {
 			p.logger.Err(err).Msg("can't create postgres pool for tech metrics")
 		}

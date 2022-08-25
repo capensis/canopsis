@@ -26,7 +26,6 @@ func TestPeriodicalWorker_Work(t *testing.T) {
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockIdleAlarmService := mock_idlealarm.NewMockService(ctrl)
 	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
-	mockMetricsConfigProvider := mock_config.NewMockMetricsConfigProvider(ctrl)
 	mockPoolProvider := mock_postgres.NewMockPoolProvider(ctrl)
 	mockPoolProvider.EXPECT().GetPool().Return(nil).AnyTimes()
 
@@ -48,7 +47,6 @@ func TestPeriodicalWorker_Work(t *testing.T) {
 		TimeToKeepResolvedAlarms: time.Second,
 	}
 	mockAlarmConfigProvider.EXPECT().Get().Return(alarmConfig)
-	mockMetricsConfigProvider.EXPECT().Get().Return(config.MetricsConfig{EnableTechMetrics: false})
 	mockAlarmAdapter.EXPECT().DeleteResolvedAlarms(gomock.Any(), gomock.Any())
 	mockAlarmService.EXPECT().ResolveClosed(gomock.Any())
 	mockAlarmService.EXPECT().ResolveSnoozes(gomock.Any(), gomock.Eq(alarmConfig))
