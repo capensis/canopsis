@@ -70,6 +70,17 @@ type Entity struct {
 	PbehaviorInfo PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 
 	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`
+	// Coordinates is used only in api, add json tag if it's required in an event.
+	Coordinates Coordinates `bson:"coordinates,omitempty" json:"-"`
+}
+
+type Coordinates struct {
+	Lat float64 `bson:"lat" json:"lat" binding:"required,latitude"`
+	Lng float64 `bson:"lng" json:"lng" binding:"required,longitude"`
+}
+
+func (c Coordinates) IsZero() bool {
+	return c == Coordinates{}
 }
 
 // EnsureInitialized verifies that all complex structs are well initialized

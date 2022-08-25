@@ -809,6 +809,8 @@ definitions:
       connector_type:
         description: ConnectorType contains a part before "/" of connector id.
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       deletable:
         description: Flags
         type: boolean
@@ -925,6 +927,8 @@ definitions:
     properties:
       category:
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       depends:
         items:
           type: string
@@ -982,6 +986,8 @@ definitions:
       connector_type:
         description: ConnectorType contains a part before "/" of connector id.
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       deletable:
         description: Flags
         type: boolean
@@ -1081,6 +1087,8 @@ definitions:
         type: string
       category:
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       corporate_entity_pattern:
         type: string
       enabled:
@@ -1123,6 +1131,8 @@ definitions:
         type: string
       category:
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       corporate_entity_pattern:
         type: string
       enabled:
@@ -1177,6 +1187,8 @@ definitions:
       connector_type:
         description: ConnectorType contains a part before "/" of connector id.
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       corporate_entity_pattern:
         type: string
       corporate_entity_pattern_title:
@@ -1241,6 +1253,8 @@ definitions:
     properties:
       category:
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       corporate_entity_pattern:
         type: string
       enabled:
@@ -3481,6 +3495,16 @@ definitions:
         type: integer
       ok:
         type: integer
+    type: object
+  types.Coordinates:
+    properties:
+      lat:
+        type: number
+      lng:
+        type: number
+    required:
+    - lat
+    - lng
     type: object
   types.CpsTime:
     properties:
