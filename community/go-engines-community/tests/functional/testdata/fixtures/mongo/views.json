@@ -542,5 +542,16 @@
     "position": 48,
     "created": 1611229670,
     "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-user-preferences-update-3",
+    "enabled": true,
+    "title": "test-view-to-user-preferences-update-3-title",
+    "description": "test-view-to-user-preferences-update-3-description",
+    "author": "test-view-to-user-preferences-update-author",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 49,
+    "created": 1611229670,
+    "updated": 1611229670
   }
 ]
