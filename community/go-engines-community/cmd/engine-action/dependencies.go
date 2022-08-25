@@ -4,6 +4,9 @@ import (
 	"context"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -177,6 +180,18 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		},
 		logger,
 	)
+
+	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
+	techPostgresPoolProvider := postgres.NewTechMetricsPoolProvider(ctx, metricsConfigProvider, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+	techMetricsSender := metrics.NewTechMetricsSender(techPostgresPoolProvider, logger)
+
+	eventMetricsChan := make(chan metrics.SimpleEventMetric)
+	eventMetricsListener := metrics.NewSimpleEventMetricsListener(techMetricsSender, canopsis.TechMetricsFlushInterval)
+	engineAction.AddRoutine(func(ctx context.Context) error {
+		eventMetricsListener.Listen(ctx, eventMetricsChan, metrics.ActionEvent)
+		return nil
+	})
+
 	engineAction.AddConsumer(engine.NewDefaultConsumer(
 		canopsis.ActionConsumerName,
 		canopsis.ActionQueueName,
@@ -189,6 +204,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		"",
 		amqpConnection,
 		&messageProcessor{
+			EventsMetricsChan:        eventMetricsChan,
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			ActionService:            actionService,
 			Decoder:                  json.NewDecoder(),
@@ -219,7 +235,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	engineAction.AddPeriodicalWorker("config", engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
-		[]config.Updater{timezoneConfigProvider},
+		[]config.Updater{timezoneConfigProvider, metricsConfigProvider},
 		logger,
 	))
 

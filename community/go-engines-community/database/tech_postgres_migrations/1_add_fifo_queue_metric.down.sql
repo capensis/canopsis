@@ -8,5 +8,10 @@ DROP TABLE IF EXISTS axe_periodical;
 DROP TABLE IF EXISTS pbehavior_periodical;
 DROP TABLE IF EXISTS che_infos;
 DROP TABLE IF EXISTS api_requests;
+DROP TABLE IF EXISTS pbehavior_event;
+DROP TABLE IF EXISTS correlation_event;
+DROP TABLE IF EXISTS service_event;
+DROP TABLE IF EXISTS dynamic_infos_event;
+DROP TABLE IF EXISTS action_event;
 
 COMMIT;
