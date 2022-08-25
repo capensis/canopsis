@@ -168,10 +168,10 @@ func (s *scheduler) listen(ctx context.Context) {
 				parsedStr := strings.SplitN(msg.Channel, ":", 2)
 				lockID := parsedStr[1]
 
-				//s.logger.
-				//	Info().
-				//	Str("lockID", lockID).
-				//	Msg("alarm lock has been expired, processing next event")
+				s.logger.
+					Info().
+					Str("lockID", lockID).
+					Msg("alarm lock has been expired, processing next event")
 
 				s.processExpiredLock(ctx, lockID)
 			}
