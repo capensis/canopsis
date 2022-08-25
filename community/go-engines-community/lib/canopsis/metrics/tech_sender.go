@@ -6,10 +6,8 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-
-	"github.com/jackc/pgx/v4"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
+	"github.com/jackc/pgx/v4"
 	"github.com/rs/zerolog"
 )
 
@@ -22,6 +20,7 @@ type TechSender interface {
 	SendPBehaviorPeriodical(ctx context.Context, timestamp time.Time, length int64)
 	SendCheEntityInfo(ctx context.Context, timestamp time.Time, name string)
 	SendApiRequest(ctx context.Context, timestamp time.Time, interval int64)
+	SendSimpleEventBatch(ctx context.Context, metrics []SimpleEventMetric, metric string)
 }
 
 type techSender struct {
@@ -212,5 +211,43 @@ func (s *techSender) SendApiRequest(ctx context.Context, timestamp time.Time, in
 	_, err := pool.Exec(ctx, query, timestamp.UTC(), interval)
 	if err != nil {
 		s.logger.Err(err).Msgf("failed to send %s metric: unable to execute insert", ApiRequests)
+	}
+}
+
+func (s *techSender) SendSimpleEventBatch(ctx context.Context, metrics []SimpleEventMetric, metric string) {
+	pool := s.poolProvider.GetPool()
+	if pool == nil {
+		return
+	}
+
+	query := fmt.Sprintf(`
+		INSERT INTO %s (time, type, interval) 
+		VALUES ($1, $2, $3)`,
+		metric)
+
+	batch := &pgx.Batch{}
+
+	inserts := 0
+	for _, metric := range metrics {
+		batch.Queue(query, metric.Timestamp.UTC(), metric.EventType, metric.Interval)
+		inserts++
+
+		if inserts >= canopsis.DefaultBulkSize {
+			err := pool.SendBatch(ctx, batch)
+			if err != nil {
+				s.logger.Err(err).Msgf("failed to send %s metric: unable to send batch", metric)
+				break
+			}
+
+			inserts = 0
+			batch = &pgx.Batch{}
+		}
+	}
+
+	if inserts > 0 {
+		err := pool.SendBatch(ctx, batch)
+		if err != nil {
+			s.logger.Err(err).Msgf("failed to send %s metric: unable to send batch", metric)
+		}
 	}
 }

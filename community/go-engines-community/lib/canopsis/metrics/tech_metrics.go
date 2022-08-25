@@ -35,3 +35,9 @@ type ApiRequestMetric struct {
 	Timestamp time.Time
 	Interval  int64
 }
+
+type SimpleEventMetric struct {
+	Timestamp time.Time
+	EventType string
+	Interval  int64
+}
