@@ -248,7 +248,7 @@ func Default(
 			start := time.Now()
 			c.Next()
 
-			go techMetricsSender.SendApiRequest(context.Background(), start, time.Since(start).Microseconds())
+			go techMetricsSender.SendApiRequest(context.Background(), start, c.Request.URL.String(), time.Since(start).Microseconds())
 		})
 
 		if flags.Test {
