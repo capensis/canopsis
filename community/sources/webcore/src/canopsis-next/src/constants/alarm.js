@@ -198,8 +198,11 @@ export const ALARM_METRIC_PARAMETERS = {
   ratioInstructions: 'ratio_instructions',
   ratioTickets: 'ratio_tickets',
   ratioNonDisplayed: 'ratio_non_displayed',
+  ratioRemediatedAlarms: 'ratio_remediated_alarms',
   averageAck: 'average_ack',
   averageResolve: 'average_resolve',
+  manualInstructionAssignedAlarms: 'manual_instruction_assigned_alarms',
+  manualInstructionExecutedAlarms: 'manual_instruction_executed_alarms',
 };
 
 export const ALARMS_LIST_HEADER_OPACITY_DELAY = 500;
