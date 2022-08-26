@@ -118,6 +118,9 @@ export default {
         case REMEDIATION_TABS.jobs:
           this.fetchJobsList();
           break;
+        case REMEDIATION_TABS.statistics:
+          this.fetchStatisticsList();
+          break;
       }
     },
 
@@ -131,9 +134,6 @@ export default {
           break;
         case REMEDIATION_TABS.jobs:
           this.showCreateJobModal();
-          break;
-        case REMEDIATION_TABS.statistics:
-          this.fetchStatisticsList();
           break;
       }
     },
