@@ -13,7 +13,7 @@ export default createEntityModule({
   withMeta: true,
 }, {
   actions: {
-    async fetchListWithoutStore(context, { params } = {}) {
+    fetchListWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.remediation.instructions, { params });
     },
 

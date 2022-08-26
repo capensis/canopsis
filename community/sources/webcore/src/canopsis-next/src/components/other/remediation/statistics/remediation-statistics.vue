@@ -22,15 +22,12 @@ import {
 import {
   convertDateToStartOfDayTimestampByTimezone,
 } from '@/helpers/date/date';
-
 import {
   convertStartDateIntervalToTimestampByTimezone,
   convertStopDateIntervalToTimestampByTimezone,
 } from '@/helpers/date/date-intervals';
-
 import { isMetricsQueryChanged, convertMetricsToTimezone } from '@/helpers/metrics';
 
-import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationStatisticMixin } from '@/mixins/entities/remediation/statistic';
 
@@ -45,7 +42,6 @@ export default {
     RemediationStatisticsChart,
   },
   mixins: [
-    entitiesMetricsMixin,
     localQueryMixin,
     entitiesRemediationStatisticMixin,
   ],

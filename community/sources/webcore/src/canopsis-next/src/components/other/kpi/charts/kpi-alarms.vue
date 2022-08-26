@@ -24,6 +24,7 @@ import {
   DATETIME_FORMATS,
 } from '@/constants';
 
+import { saveFile } from '@/helpers/file/files';
 import {
   convertStartDateIntervalToTimestampByTimezone,
   convertStopDateIntervalToTimestampByTimezone,
@@ -32,7 +33,6 @@ import {
   convertDateToStartOfDayTimestampByTimezone,
   convertDateToString,
 } from '@/helpers/date/date';
-import { saveFile } from '@/helpers/file/files';
 import { convertMetricsToTimezone, isMetricsQueryChanged } from '@/helpers/metrics';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
