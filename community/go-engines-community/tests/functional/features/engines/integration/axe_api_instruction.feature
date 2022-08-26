@@ -4,7 +4,7 @@ Feature: instruction execution should be added to alarm steps
   Scenario: given instruction should add instruction start step to alarm steps
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-axe-api-instruction-1",
       "connector_name" : "test-connector-name-axe-api-instruction-1",
@@ -21,7 +21,7 @@ Feature: instruction execution should be added to alarm steps
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-axe-api-instruction-1-name",
@@ -54,7 +54,7 @@ Feature: instruction execution should be added to alarm steps
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "{{ .alarmID }}",
       "instruction": "{{ .lastResponse._id }}"
@@ -66,7 +66,7 @@ Feature: instruction execution should be added to alarm steps
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-1&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -92,7 +92,7 @@ Feature: instruction execution should be added to alarm steps
   Scenario: given instruction should add instruction complete step to alarm steps
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-axe-api-instruction-2",
       "connector_name" : "test-connector-name-axe-api-instruction-2",
@@ -109,7 +109,7 @@ Feature: instruction execution should be added to alarm steps
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-axe-api-instruction-2-name",
@@ -154,7 +154,7 @@ Feature: instruction execution should be added to alarm steps
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "{{ .alarmID }}",
       "instruction": "{{ .lastResponse._id }}"
@@ -170,7 +170,7 @@ Feature: instruction execution should be added to alarm steps
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-2&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -198,7 +198,7 @@ Feature: instruction execution should be added to alarm steps
   Scenario: given paused instruction by request should add instruction pause step to alarm steps
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-axe-api-instruction-3",
       "connector_name" : "test-connector-name-axe-api-instruction-3",
@@ -215,7 +215,7 @@ Feature: instruction execution should be added to alarm steps
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-axe-api-instruction-3-name",
@@ -248,7 +248,7 @@ Feature: instruction execution should be added to alarm steps
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "{{ .alarmID }}",
       "instruction": "{{ .lastResponse._id }}"
@@ -262,7 +262,7 @@ Feature: instruction execution should be added to alarm steps
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-3&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -290,7 +290,7 @@ Feature: instruction execution should be added to alarm steps
   Scenario: given instruction should add instruction resume step to alarm steps
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-axe-api-instruction-4",
       "connector_name" : "test-connector-name-axe-api-instruction-4",
@@ -307,7 +307,7 @@ Feature: instruction execution should be added to alarm steps
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-axe-api-instruction-4-name",
@@ -340,7 +340,7 @@ Feature: instruction execution should be added to alarm steps
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "{{ .alarmID }}",
       "instruction": "{{ .lastResponse._id }}"
@@ -358,7 +358,7 @@ Feature: instruction execution should be added to alarm steps
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-4&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -394,7 +394,7 @@ Feature: instruction execution should be added to alarm steps
   Scenario: given instruction should add instruction abort step to alarm steps
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-axe-api-instruction-5",
       "connector_name" : "test-connector-name-axe-api-instruction-5",
@@ -411,7 +411,7 @@ Feature: instruction execution should be added to alarm steps
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-axe-api-instruction-5-name",
@@ -444,7 +444,7 @@ Feature: instruction execution should be added to alarm steps
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "{{ .alarmID }}",
       "instruction": "{{ .lastResponse._id }}"
@@ -458,7 +458,7 @@ Feature: instruction execution should be added to alarm steps
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-5&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -486,7 +486,7 @@ Feature: instruction execution should be added to alarm steps
   Scenario: given instruction should add instruction fail step to alarm steps
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-axe-api-instruction-6",
       "connector_name" : "test-connector-name-axe-api-instruction-6",
@@ -503,7 +503,7 @@ Feature: instruction execution should be added to alarm steps
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-axe-api-instruction-6-name",
@@ -548,7 +548,7 @@ Feature: instruction execution should be added to alarm steps
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "{{ .alarmID }}",
       "instruction": "{{ .lastResponse._id }}"
@@ -559,7 +559,7 @@ Feature: instruction execution should be added to alarm steps
     When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/next-step
     Then the response code should be 200
     When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/next-step:
-    """
+    """json
     {
       "failed": true
     }
@@ -569,7 +569,7 @@ Feature: instruction execution should be added to alarm steps
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-6&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -597,7 +597,7 @@ Feature: instruction execution should be added to alarm steps
   Scenario: given aborted execution by instruction update should add instruction abort step to alarm steps
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-axe-api-instruction-8",
       "connector_name" : "test-connector-name-axe-api-instruction-8",
@@ -613,7 +613,7 @@ Feature: instruction execution should be added to alarm steps
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-8
     When the response code should be 200
     When the response body should contain:
-    """
+    """json
     {
       "meta": {
         "total_count": 1
@@ -622,17 +622,15 @@ Feature: instruction execution should be added to alarm steps
     """
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-axe-api-instruction-8-name",
-      "filter":{
-        "$and":[
-           {
-              "name": "test filter"
-           }
-        ]
-      },
+      "entity_patterns": [
+        {
+          "name": "test-resource-axe-api-instruction-8"
+        }
+      ],
       "description": "test-instruction-axe-api-instruction-8-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -658,7 +656,7 @@ Feature: instruction execution should be added to alarm steps
     Then the response code should be 201
     When I save response instructionID={{ .lastResponse._id }}
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "{{ .alarmID }}",
       "instruction": "{{ .instructionID }}"
@@ -667,17 +665,15 @@ Feature: instruction execution should be added to alarm steps
     Then the response code should be 200
     When I wait the end of event processing
     When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-axe-api-instruction-8-name",
-      "filter":{
-        "$and":[
-           {
-              "name": "test filter"
-           }
-        ]
-      },
+      "entity_patterns": [
+        {
+          "name": "test-resource-axe-api-instruction-8"
+        }
+      ],
       "description": "test-instruction-axe-api-instruction-8-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -705,7 +701,7 @@ Feature: instruction execution should be added to alarm steps
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-8&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
