@@ -1,4 +1,4 @@
-# Modification du fichier de configuration `canopsis.toml`
+# Modification du fichier de configuration toml `canopsis.toml`
 
 ## Description
 
@@ -15,11 +15,13 @@ L'emplacement du fichier de configuration diffère entre les différents types d
 
 | Type d'environnement | Emplacement du fichier            |
 |----------------------|-----------------------------------|
-| Paquets RPM          | `/opt/canopsis/etc/canopsis.toml` |
-| Docker Compose       | `/canopsis.toml` dans le conteneur `reconfigure` |
+| Paquets RPM                                         | `/opt/canopsis/etc/canopsis.toml` |
+| Docker Compose ( Canopsis < 4.4.0 )                 | `/canopsis.toml` dans le service `reconfigure` |
+| Docker Compose ( Canopsis Pro >= 4.4.0 )            | `/canopsis-pro.toml` dans le service `reconfigure` |
+| Docker Compose ( Canopsis Community >= 4.4.0 )      | `/canopsis-community.toml` dans le service `reconfigure` |
 
 !!! tip "Astuce"
-    Le fichier de configuration `canopsis.toml` peut être surchargé par un autre fichier défini grâce à l'option `-override` de la commande `canopsis-reconfigure`. Par défaut, ce fichier est `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
+    Le fichier de configuration `canopsis.toml` peut être surchargé par un autre fichier défini grâce à l'option `-override` de la commande `canopsis-reconfigure`.
 
 ### Variables d'environnement associées
 
@@ -28,6 +30,8 @@ La [variable d'environnement `CPS_DEFAULT_CFG`](variables-environnement.md) perm
 Il est recommandé de ne pas modifier cette valeur.
 
 ## Modification et maintenance du fichier
+
+### Canopsis < 4.6.0
 
 === "En environnement paquets RPM"
 
@@ -40,6 +44,26 @@ Il est recommandé de ne pas modifier cette valeur.
     Surchargez la totalité du fichier `/canopsis.toml` existant du conteneur `reconfigure`, à l'aide d'un volume.
 
     Lors des mises à jour de Canopsis, puisque vous effectuez une surcharge complète du fichier et que Docker Compose ne gère pas la mise à jour de fichiers de configuration, veillez tout particulièrement à comparer votre `canopsis.toml` surchargé localement avec la dernière version de `canopsis.toml` présente dans l'image de base.
+
+### Canopsis >= 4.6.0
+
+Depuis Canopsis 4.6.0, le fichier `canopsis-override.toml` permet de surcharger la configuration par défaut.
+Ce fichier ne contiens donc que les configuration qui diffèrent avec la configuration par défaut.
+
+=== "En environnement paquets RPM"
+
+    Le fichier est situé au chemin suivant : `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
+
+    Lors de la mise à jour de Canopsis, vos modifications seront préservées par le gestionnaire de paquets `yum`.
+
+=== "En environnement Docker Compose"
+
+    Le fichier est situé dans le conteneur `reconfigure` au chemin suivant : `/opt/canopsis/etc/conf.d/canopsis-override.toml`.
+    Montez y votre fichier personnalisé a l'aide d'un volume.
+
+    Lors de la mise à jour de Canopsis, vos modifications seront préservées.
+
+
 
 ## Étape obligatoire pour la prise en compte des modifications
 
@@ -153,4 +177,10 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | Attribut            | Exemple de valeur  | Description                           |
 | :------------------ | :------------------| :------------------------------------ |
 | SliInterval         | "1h"               | Les longs intervalles de SLI sont découpés en plus petits intervalles définis par cet attribut. <br />Une valeur faible augmente la précision des métriques mais nécessite plus d'espace disque. <br />Une valeur élevée diminue la précision des métriques mais nécessaite moins d'espace disque. <br /> "1h" est la valeur recommandée dans la mesure où l'intervalle le plus petit gérée par l'interface graphique correspond à 1 heure |
+
+### Section [HealthCheck]
+
+| Attribut            | Exemple de valeur  | Description                           |
+| :------------------ | :------------------| :------------------------------------ |
+| update_interval     | "10s"              | Intervalle de mise à jour des informations de HealthCheck | 
 

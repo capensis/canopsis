@@ -585,6 +585,9 @@ export default merge({
     created: 'Date de création',
     updated: 'Date de dernière modification',
     lastAlarmDate: 'Date de la dernière alarme',
+    massRemove: 'Supprimer les comportements',
+    massEnable: 'Activer les comportements',
+    massDisable: 'Désactiver les comportements',
     searchHelp: '<span>Aide sur la recherche avancée :</span>\n'
       + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
       + '<p>Le "-" avant la recherche est obligatoire</p>\n'
