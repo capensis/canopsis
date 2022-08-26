@@ -16,6 +16,7 @@
 
     geomap-cluster-group(
       v-for="{ markers, name, style } in layers",
+      :key="name",
       :name="name",
       :cluster-style="style",
       layer-type="overlay"
