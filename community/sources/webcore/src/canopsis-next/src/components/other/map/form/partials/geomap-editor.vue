@@ -55,7 +55,7 @@
           v-for="{ coordinates, id, data, icon } in markers",
           :key="id",
           :lat-lng="coordinates",
-          :options="{ data: data }",
+          :options="{ data }",
           :draggable="!shown",
           @dragend="finishMovingMarker",
           @click=""
