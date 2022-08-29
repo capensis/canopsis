@@ -82,6 +82,10 @@ const (
 	FilterMongoCollection = "filter"
 )
 
+const (
+	socketTimeout = 5 * time.Second
+)
+
 type SingleResultHelper interface {
 	Decode(v interface{}) error
 	DecodeBytes() (bson.Raw, error)
@@ -418,6 +422,9 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
+	if clientOptions.SocketTimeout == nil {
+		clientOptions.SetSocketTimeout(socketTimeout)
+	}
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, err
