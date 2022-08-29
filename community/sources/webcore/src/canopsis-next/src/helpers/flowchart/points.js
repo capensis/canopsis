@@ -34,20 +34,3 @@ export const calculateCenterBetweenPoint = (firstPoint, secondPoint) => ({
   x: (firstPoint.x + secondPoint.x) / 2,
   y: (firstPoint.y + secondPoint.y) / 2,
 });
-
-/**
- * Calculate points with ghosts points
- *
- * @param {Point[]} points
- * @returns {Point[]}
- */
-export const getGhostPoints = points => points.reduce((acc, point, index) => {
-  const nextIndex = index + 1;
-  const nextPoint = points[nextIndex];
-
-  if (nextPoint) {
-    acc.push(generatePoint(calculateCenterBetweenPoint(point, nextPoint)));
-  }
-
-  return acc;
-}, []);

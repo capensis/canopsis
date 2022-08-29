@@ -37,7 +37,6 @@ import {
   WEATHER_ACTIONS_TYPES,
   MAP_TYPES,
   MERMAID_THEMES,
-  LINE_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -3068,10 +3067,6 @@ export default merge({
     fontBackgroundColor: 'Font background color',
     lineType: 'Line type',
     backgroundColor: 'Background color',
-    lineTypes: {
-      [LINE_TYPES.curve]: 'Curve',
-      [LINE_TYPES.sharp]: 'Sharp',
-    },
     shapes: {
       rectangle: 'Rectangle',
       roundedRectangle: 'Rounded rectangle',

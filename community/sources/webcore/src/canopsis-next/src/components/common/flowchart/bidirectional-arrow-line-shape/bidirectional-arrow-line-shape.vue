@@ -5,12 +5,12 @@
     :selected="selected",
     :corner-offset="cornerOffset",
     :readonly="readonly",
-    :marker-start="`url(#${shape.id}-start)`",
-    :marker-end="`url(#${shape.id}-end)`",
+    :marker-start="`url(#${shape._id}-start)`",
+    :marker-end="`url(#${shape._id}-end)`",
     @update="$listeners.update"
   )
     marker(
-      :id="`${shape.id}-end`",
+      :id="`${shape._id}-end`",
       refX="20",
       refY="10",
       markerWidth="60",
@@ -20,7 +20,7 @@
     )
       arrow-figure(:fill="shape.properties['stroke']")
     marker(
-      :id="`${shape.id}-start`",
+      :id="`${shape._id}-start`",
       refX="20",
       refY="10",
       markerWidth="60",
