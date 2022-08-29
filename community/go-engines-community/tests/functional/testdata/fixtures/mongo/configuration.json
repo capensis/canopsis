@@ -55,6 +55,7 @@
       "bulkmaxsize": 10000
     },
     "metrics": {
+      "flushinterval": "1s",
       "sliinterval": "1h"
     }
   },
