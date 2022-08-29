@@ -114,9 +114,7 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -738,7 +736,8 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=average_resolve&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=average_resolve&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 1
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -1367,14 +1366,14 @@ Feature: Metrics should be added on alarm changes
           "title": "average_ack",
           "data": [
             {
-              "timestamp": {{ nowDate }},
-              "value": 1
+              "timestamp": {{ nowDate }}
             }
           ]
         }
       ]
     }
     """
+    Then the response key "data.1.data.0.value" should be greater or equal than 1
     When I send an event:
     """json
     {
@@ -1404,11 +1403,11 @@ Feature: Metrics should be added on alarm changes
           "title": "average_ack",
           "data": [
             {
-              "timestamp": {{ nowDate }},
-              "value": 1
+              "timestamp": {{ nowDate }}
             }
           ]
         }
       ]
     }
     """
+    Then the response key "data.1.data.0.value" should be greater or equal than 1

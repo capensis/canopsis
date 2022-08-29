@@ -4,7 +4,6 @@ package config
 
 import (
 	"fmt"
-	"github.com/golang-jwt/jwt"
 	"html/template"
 	"reflect"
 	"strconv"
@@ -12,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/rs/zerolog"
 )
 
@@ -87,6 +87,11 @@ type RemediationConfig struct {
 
 type DataStorageConfig struct {
 	TimeToExecute *ScheduledTime
+}
+
+type MetricsConfig struct {
+	FlushInterval time.Duration
+	SliInterval   time.Duration
 }
 
 type ScheduledTime struct {
@@ -374,13 +379,10 @@ type BaseUserInterfaceConfigProvider struct {
 	logger zerolog.Logger
 }
 
-const DefaultMaxMatchedItems = 10000
-const DefaultCheckCountRequestTimeout = 30
-
 func NewUserInterfaceConfigProvider(cfg UserInterfaceConf, logger zerolog.Logger) *BaseUserInterfaceConfigProvider {
 	maxMatchedItems := 0
 	if cfg.MaxMatchedItems <= 0 {
-		maxMatchedItems = DefaultMaxMatchedItems
+		maxMatchedItems = UserInterfaceMaxMatchedItems
 		logger.Error().
 			Int("default", maxMatchedItems).
 			Int("invalid", cfg.MaxMatchedItems).
@@ -394,7 +396,7 @@ func NewUserInterfaceConfigProvider(cfg UserInterfaceConf, logger zerolog.Logger
 
 	checkCountRequestTimeout := 0
 	if cfg.CheckCountRequestTimeout <= 0 {
-		checkCountRequestTimeout = DefaultCheckCountRequestTimeout
+		checkCountRequestTimeout = UserInterfaceCheckCountRequestTimeout
 		logger.Error().
 			Int("default", checkCountRequestTimeout).
 			Int("invalid", cfg.CheckCountRequestTimeout).
@@ -499,6 +501,13 @@ func (p *BaseDataStorageConfigProvider) Get() DataStorageConfig {
 	defer p.mx.RUnlock()
 
 	return p.conf
+}
+
+func GetMetricsConfig(cfg CanopsisConf, logger zerolog.Logger) MetricsConfig {
+	return MetricsConfig{
+		FlushInterval: parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", "metrics", logger),
+		SliInterval:   parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+	}
 }
 
 func parseScheduledTime(
@@ -615,8 +624,52 @@ func parseTimeDurationByStr(
 	return d
 }
 
+func parseTimeDurationByStrWithMax(
+	v string,
+	defaultVal time.Duration,
+	maxVal time.Duration,
+	name, sectionName string,
+	logger zerolog.Logger,
+) time.Duration {
+	if v == "" {
+		logger.Error().
+			Str("default", defaultVal.String()).
+			Str("invalid", v).
+			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
+	d, err := time.ParseDuration(v)
+	if err != nil {
+		logger.Err(err).
+			Str("default", defaultVal.String()).
+			Str("invalid", v).
+			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
+	if d > maxVal {
+		logger.Err(err).
+			Str("default", defaultVal.String()).
+			Str("max", maxVal.String()).
+			Str("invalid", v).
+			Msgf("%s of %s config section is greater than max value, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
+	logger.Info().
+		Str("value", d.String()).
+		Msgf("%s of %s config section is used", name, sectionName)
+
+	return d
+}
+
 func parseUpdatedTimeDurationByStr(
-	v string, oldVal time.Duration,
+	v string,
+	oldVal time.Duration,
 	name, sectionName string,
 	logger zerolog.Logger,
 ) (time.Duration, bool) {
