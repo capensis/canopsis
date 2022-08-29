@@ -2,6 +2,7 @@ package executor
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -53,7 +54,7 @@ func (e *ackRemoveExecutor) Exec(
 		return "", err
 	}
 
-	go e.metricsSender.SendCancelAck(context.Background(), *alarm, time.Time)
+	e.metricsSender.SendCancelAck(*alarm, time.Time)
 
 	return types.AlarmChangeTypeAckremove, nil
 }

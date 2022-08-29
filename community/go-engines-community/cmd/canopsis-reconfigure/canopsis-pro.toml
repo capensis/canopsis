@@ -322,6 +322,8 @@ NoColor = false
 TimeFormat = "2006-01-02T15:04:05Z07:00"
 PartsOrder = ["time", "level", "caller", "message"]
 [Canopsis.metrics]
+# FlushInterval defines how often metrics are flushed from memory to TimescaleDB.
+FlushInterval = "10s"
 # Long SLI intervals are splitted to short intervals which are defined by SliInterval paramter.
 # Lower value provides more accurate metrics but requires more disk space.
 # Higher value provides less accurate metrics but requires less disk space.

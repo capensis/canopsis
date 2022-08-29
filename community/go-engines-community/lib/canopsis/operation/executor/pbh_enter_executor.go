@@ -3,6 +3,7 @@ package executor
 import (
 	"context"
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -56,7 +57,7 @@ func (e *pbhEnterExecutor) Exec(
 
 	entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
 
-	go e.metricsSender.SendPbhEnter(context.Background(), alarm, *entity)
+	e.metricsSender.SendPbhEnter(alarm, *entity)
 
 	return types.AlarmChangeTypePbhEnter, nil
 }
