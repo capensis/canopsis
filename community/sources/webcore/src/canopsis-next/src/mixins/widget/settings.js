@@ -125,13 +125,15 @@ export const widgetSettingsMixin = {
         const userPreference = this.getPreparedUserPreference();
         const { view, widget } = this.getPreparedViewAndWidget();
 
-        await Promise.all([
-          this.updateUserPreference({ data: userPreference }),
-          this.updateView({ id: this.activeView._id, data: viewToRequest(view) }),
-        ]);
+        await this.updateUserPreference({ data: userPreference });
+        await this.updateView({ id: this.activeView._id, data: viewToRequest(view) });
+
+        if (!this.config.isNew) {
+          await this.fetchUserPreference({ id: this.widget._id });
+        }
 
         const oldQuery = this.getQueryById(widget._id);
-        const newQuery = prepareQuery(widget, userPreference);
+        const newQuery = prepareQuery(widget, this.userPreference);
 
         this.updateQuery({
           id: widget._id,
