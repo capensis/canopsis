@@ -1,5 +1,5 @@
 <template lang="pug">
-  g
+  g(@contextmenu="$listeners.contextmenu")
     ellipse(
       v-bind="shape.properties",
       :cx="centerX",

@@ -5,8 +5,8 @@
       :background-color.sync="form.backgroundColor",
       :style="editorStyles"
     )
-      template(#layers="")
-        flowchart-points-editor(v-field="form.points")
+      template(#layers="{ data }")
+        flowchart-points-editor(v-field="form.points", :shapes="data")
     v-messages
 </template>
 
