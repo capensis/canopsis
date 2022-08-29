@@ -30,24 +30,10 @@
         :pointer-events="moving ? 'none' : 'all'",
         @mousedown.stop="onStartMovePoint(index)"
       )
-      circle(
-        v-for="(point, index) in ghostPoints",
-        :key="`${point._id}_ghost`",
-        :cx="point.x",
-        :cy="point.y",
-        :fill="color",
-        :r="cornerRadius",
-        :opacity="0.4",
-        :pointer-events="moving ? 'none' : 'all'",
-        cursor="crosshair",
-        @mousedown.stop="onStartGhostMovePoint(index, point)"
-      )
 </template>
 
 <script>
 import { cloneDeep } from 'lodash';
-
-import { getGhostPoints } from '@/helpers/flowchart/points';
 
 import PointsPath from '../common/points-path.vue';
 
@@ -79,11 +65,6 @@ export default {
       movingPointIndex: undefined,
     };
   },
-  computed: {
-    ghostPoints() {
-      return getGhostPoints(this.editingPoints);
-    },
-  },
   watch: {
     'line.points': {
       immediate: true,
@@ -99,14 +80,6 @@ export default {
 
       point.x = x;
       point.y = y;
-    },
-
-    onStartGhostMovePoint(index, point) {
-      const newPointIndex = index + 1;
-
-      this.editingPoints.splice(newPointIndex, 0, point);
-
-      this.onStartMovePoint(newPointIndex);
     },
 
     onStartMovePoint(index) {

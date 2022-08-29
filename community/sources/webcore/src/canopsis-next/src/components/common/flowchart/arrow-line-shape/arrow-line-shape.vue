@@ -5,11 +5,12 @@
     :selected="selected",
     :corner-offset="cornerOffset",
     :readonly="readonly",
-    marker-end="url(#arrow-line-triangle)",
+    :marker-end="`url(#${shape._id}-end)`",
     @update="$listeners.update",
     @edit:point="$emit('edit:point', $event)"
   )
-    marker#arrow-line-triangle(
+    marker(
+      :id="`${shape._id}-end`",
       refX="20",
       refY="10",
       markerWidth="60",

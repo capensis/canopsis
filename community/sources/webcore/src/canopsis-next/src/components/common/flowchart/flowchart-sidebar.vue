@@ -280,14 +280,6 @@ export default {
         }),
         generatePoint({
           x: this.viewBoxCenter.x + halfSize,
-          y: this.viewBoxCenter.y + halfSize,
-        }),
-        generatePoint({
-          x: this.viewBoxCenter.x - halfSize,
-          y: this.viewBoxCenter.y - halfSize,
-        }),
-        generatePoint({
-          x: this.viewBoxCenter.x + halfSize,
           y: this.viewBoxCenter.y - halfSize,
         }),
       ];
@@ -361,7 +353,7 @@ export default {
     addCurveLine() {
       const line = generateLineShape({
         points: this.centerCurveLinePoints,
-        lineType: LINE_TYPES.curve,
+        lineType: LINE_TYPES.horizontalCurve,
         text: 'Curve line',
         properties: {
           stroke: 'black',
@@ -375,7 +367,7 @@ export default {
     addCurveArrowLine() {
       const arrowLine = generateArrowLineShape({
         points: this.centerCurveLinePoints,
-        lineType: LINE_TYPES.curve,
+        lineType: LINE_TYPES.horizontalCurve,
         text: 'Curve arrow line',
         properties: {
           stroke: 'black',
@@ -389,7 +381,7 @@ export default {
     addBidirectionalCurveArrowLine() {
       const bidirectionalArrowLine = generateBidirectionalArrowLineShape({
         points: this.centerCurveLinePoints,
-        lineType: LINE_TYPES.curve,
+        lineType: LINE_TYPES.horizontalCurve,
         text: 'Bidirectional arrow curve line',
         properties: {
           stroke: 'black',
@@ -595,7 +587,7 @@ export default {
         properties: {
           stroke: 'black',
           'stroke-width': 2,
-          fill: 'grey',
+          fill: 'white',
         },
       });
 
