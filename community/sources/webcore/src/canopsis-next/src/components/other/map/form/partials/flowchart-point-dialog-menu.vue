@@ -6,7 +6,7 @@
     :close-on-content-click="false",
     ignore-click-outside,
     absolute,
-    z-index="250"
+    z-index="230"
   )
     point-form-dialog(
       v-on="$listeners",

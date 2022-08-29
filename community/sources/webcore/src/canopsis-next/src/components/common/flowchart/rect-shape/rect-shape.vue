@@ -1,5 +1,5 @@
 <template lang="pug">
-  g
+  g(@contextmenu="$listeners.contextmenu")
     rect(
       v-bind="shape.properties",
       :x="shape.x",
@@ -37,8 +37,9 @@
 <script>
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
-import RectShapeSelection from './rect-shape-selection.vue';
 import TextEditor from '../common/text-editor.vue';
+
+import RectShapeSelection from './rect-shape-selection.vue';
 
 export default {
   components: { RectShapeSelection, TextEditor },

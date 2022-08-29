@@ -21,8 +21,8 @@
         :readonly="readonly",
         @update:points="$emit('update:points', $event)"
       )
-        template(#layers="")
-          slot(name="layers")
+        template(#layers="{ data }")
+          slot(name="layers", :data="data")
     div.flowchart__properties(v-show="selected.length")
       flowchart-properties(v-if="!readonly", v-field="shapes", :selected="selected")
 </template>

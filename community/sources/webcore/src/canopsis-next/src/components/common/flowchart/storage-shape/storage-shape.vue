@@ -1,5 +1,5 @@
 <template lang="pug">
-  g
+  g(@contextmenu="$listeners.contextmenu")
     storage-figure(
       v-bind="shape.properties",
       :width="shape.width",

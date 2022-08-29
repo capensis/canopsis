@@ -21,5 +21,9 @@ export const contextmenuMixin = {
 
       this.$contextmenu.notify({ event, x, y });
     },
+
+    handleShapeContextmenu(shape, event) {
+      this.$contextmenu.notify({ event, shape });
+    },
   },
 };

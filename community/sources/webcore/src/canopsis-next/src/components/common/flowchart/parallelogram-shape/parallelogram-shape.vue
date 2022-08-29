@@ -1,5 +1,5 @@
 <template lang="pug">
-  g
+  g(@contextmenu="$listeners.contextmenu")
     parallelogram-figure(
       v-bind="shape.properties",
       :width="shape.width",
