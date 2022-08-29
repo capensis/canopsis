@@ -1179,19 +1179,40 @@
     "enable": true
   },
   {
-    "_id": "test-role-to-user-preferences-update",
+    "_id": "test-role-to-user-preferences-update-1",
     "crecord_type": "role",
-    "crecord_name": "test-role-to-user-preferences-update",
+    "crecord_name": "test-role-to-user-preferences-update-1",
     "rights": {}
   },
   {
-    "_id": "test-user-to-user-preferences-update",
+    "_id": "test-user-to-user-preferences-update-1",
     "crecord_type": "user",
-    "crecord_name": "test-user-to-user-preferences-update",
-    "role": "test-role-to-user-preferences-update",
-    "mail": "test-user-to-user-preferences-update@canopsis.net",
+    "crecord_name": "test-user-to-user-preferences-update-1",
+    "role": "test-role-to-user-preferences-update-1",
+    "mail": "test-user-to-user-preferences-update-1@canopsis.net",
     "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
     "authkey": "2be1d0ee-7fs6-8mdn-9d80-e857e50f5202",
+    "enable": true
+  },
+  {
+    "_id": "test-role-to-user-preferences-update-2",
+    "crecord_type": "role",
+    "crecord_name": "test-role-to-user-preferences-update-2",
+    "rights": {
+      "api_view": {
+        "checksum": 15,
+        "crecord_type": "right"
+      }
+    }
+  },
+  {
+    "_id": "test-user-to-user-preferences-update-2",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-user-preferences-update-2",
+    "role": "test-role-to-user-preferences-update-2",
+    "mail": "test-user-to-user-preferences-update-2@canopsis.net",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "authkey": "2be1d0ee-7fs6-8mdn-9d80-e857e50f5203",
     "enable": true
   },
   {

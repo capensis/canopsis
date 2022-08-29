@@ -447,11 +447,13 @@ func (s *store) deletePermissions(ctx context.Context, viewIDs []string) error {
 }
 
 func (s *store) handleWidgets(ctx context.Context, oldTabs, newTabs []view.Tab) error {
-	widgetsByID := make(map[string]map[string]view.Widget)
+	widgetsByTabID := make(map[string]map[string]view.Widget, len(newTabs))
+	widgetsByID := make(map[string]view.Widget, len(newTabs))
 	for _, tab := range newTabs {
-		widgetsByID[tab.ID] = make(map[string]view.Widget, len(tab.Widgets))
+		widgetsByTabID[tab.ID] = make(map[string]view.Widget, len(tab.Widgets))
 		for _, widget := range tab.Widgets {
-			widgetsByID[tab.ID][widget.ID] = widget
+			widgetsByTabID[tab.ID][widget.ID] = widget
+			widgetsByID[widget.ID] = widget
 		}
 	}
 
@@ -459,7 +461,7 @@ func (s *store) handleWidgets(ctx context.Context, oldTabs, newTabs []view.Tab) 
 
 	for _, tab := range oldTabs {
 		for _, oldWidget := range tab.Widgets {
-			if newWidget, ok := widgetsByID[tab.ID][oldWidget.ID]; ok {
+			if newWidget, ok := widgetsByTabID[tab.ID][oldWidget.ID]; ok {
 				switch oldWidget.Type {
 				case view.WidgetTypeJunit:
 					err := s.handleJunitWidget(ctx, oldWidget, newWidget)
@@ -474,6 +476,11 @@ func (s *store) handleWidgets(ctx context.Context, oldTabs, newTabs []view.Tab) 
 	}
 
 	err := s.deleteUserPreferences(ctx, removedWidgets)
+	if err != nil {
+		return err
+	}
+
+	err = s.updateUserPreferences(ctx, widgetsByID)
 	if err != nil {
 		return err
 	}
@@ -636,6 +643,105 @@ func (s *store) deleteUserPreferences(ctx context.Context, widgetIDs []string) e
 	})
 
 	return err
+}
+
+func (s *store) updateUserPreferences(ctx context.Context, widgetsByID map[string]view.Widget) error {
+	if len(widgetsByID) == 0 {
+		return nil
+	}
+	widgetIds := make([]string, 0, len(widgetsByID))
+	viewFiltersByWidgetID := make(map[string][]map[string]interface{}, len(widgetIds))
+	for id, widget := range widgetsByID {
+		if v, ok := widget.Parameters["viewFilters"]; ok {
+			if filters, ok := v.([]interface{}); ok && len(filters) > 0 {
+				newFilters := make([]map[string]interface{}, len(filters))
+				for i, filter := range filters {
+					if m, ok := filter.(map[string]interface{}); ok {
+						newFilters[i] = m
+					} else {
+						newFilters = nil
+						break
+					}
+				}
+
+				if len(newFilters) > 0 {
+					viewFiltersByWidgetID[id] = newFilters
+					widgetIds = append(widgetIds, id)
+				}
+			}
+		}
+	}
+	if len(widgetIds) == 0 {
+		return nil
+	}
+	cursor, err := s.userPrefDbCollection.Find(ctx, bson.M{
+		"widget": bson.M{"$in": widgetIds},
+	})
+	if err != nil {
+		return err
+	}
+	defer cursor.Close(ctx)
+
+	writeModels := make([]mongodriver.WriteModel, 0)
+	for cursor.Next(ctx) {
+		userPref := struct {
+			ID      string `bson:"_id"`
+			Widget  string `bson:"widget"`
+			Content struct {
+				MainFilter interface{} `bson:"mainFilter"`
+			} `bson:"content" json:"content"`
+		}{}
+		err = cursor.Decode(&userPref)
+		if err != nil {
+			return err
+		}
+
+		if userPref.Content.MainFilter == nil {
+			continue
+		}
+
+		if filters, ok := userPref.Content.MainFilter.(bson.A); ok {
+			newFilters := make([]interface{}, len(filters))
+			updated := false
+			for i, filter := range filters {
+				newFilter := adjustUserPreferenceFilter(filter, viewFiltersByWidgetID[userPref.Widget])
+				if newFilter == nil {
+					newFilters[i] = filter
+				} else {
+					newFilters[i] = newFilter
+					updated = true
+				}
+			}
+
+			if updated {
+				writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
+					SetFilter(bson.M{"_id": userPref.ID}).
+					SetUpdate(bson.M{"$set": bson.M{
+						"content.mainFilter": newFilters,
+					}}),
+				)
+			}
+		} else {
+			newFilter := adjustUserPreferenceFilter(userPref.Content.MainFilter, viewFiltersByWidgetID[userPref.Widget])
+			if newFilter != nil {
+				writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
+					SetFilter(bson.M{"_id": userPref.ID}).
+					SetUpdate(bson.M{"$set": bson.M{
+						"content.mainFilter": newFilter,
+					}}),
+				)
+			}
+		}
+	}
+
+	if len(writeModels) > 0 {
+		_, err = s.userPrefDbCollection.BulkWrite(ctx, writeModels)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func getNestedObjectsPipeline() []bson.M {
@@ -826,4 +932,32 @@ func inverseStrSlice(slice []string) map[string]int {
 	}
 
 	return m
+}
+
+func adjustUserPreferenceFilter(filter interface{}, viewFilters []map[string]interface{}) interface{} {
+	var title, value interface{}
+	if d, ok := filter.(bson.D); ok {
+		for _, e := range d {
+			switch e.Key {
+			case "title":
+				title = e.Value
+			case "filter":
+				value = e.Value
+			}
+		}
+	}
+
+	if title != nil {
+		for _, viewFilter := range viewFilters {
+			if title == viewFilter["title"] {
+				if value != viewFilter["filter"] {
+					return viewFilter
+				}
+
+				break
+			}
+		}
+	}
+
+	return nil
 }
