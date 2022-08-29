@@ -3055,7 +3055,7 @@ export default merge({
   },
 
   flowchart: {
-    shapes: 'Formes',
+    shape: 'Forme | Formes',
     icons: 'Icônes',
     properties: 'Propriétés',
     color: 'Couleur',
@@ -3071,6 +3071,27 @@ export default merge({
     lineTypes: {
       [LINE_TYPES.curve]: 'Courbe',
       [LINE_TYPES.sharp]: 'Tranchant',
+    },
+    shapes: {
+      rectangle: 'Rectangle',
+      roundedRectangle: 'Rounded rectangle',
+      square: 'Square',
+      rhombus: 'Rhombus',
+      circle: 'Circle',
+      ellipse: 'Ellipse',
+      parallelogram: 'Parallelogram',
+      process: 'Process',
+      document: 'Document',
+      storage: 'Storage',
+      curve: 'Curve',
+      curveArrow: 'Curve arrow',
+      bidirectionalCurve: 'Bidirectional curve',
+      line: 'Line',
+      arrowLine: 'Arrow line',
+      bidirectionalArrowLine: 'Bidirectional arrow line',
+      text: 'Text',
+      textbox: 'Textbox',
+      image: 'Image',
     },
   },
 }, featureService.get('i18n.fr'));

@@ -1,5 +1,5 @@
 <template lang="pug">
-  g
+  g(@contextmenu="$listeners.contextmenu")
     rect(
       v-bind="shape.properties",
       :x="shape.x",

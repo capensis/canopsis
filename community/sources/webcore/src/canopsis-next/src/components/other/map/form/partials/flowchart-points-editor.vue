@@ -1,7 +1,7 @@
 <template lang="pug">
   g.flowchart-points-editor
     component.flowchart-points-editor__point(
-      v-for="(point, index) in pointsData",
+      v-for="(point, index) in nonShapesPoints",
       :key="point._id",
       :x="point.x - iconSize / 2",
       :y="point.y - iconSize",
@@ -12,6 +12,17 @@
       @mousedown.stop="startMoving(index)"
     )
       point-icon(:size="iconSize", :entity="point.entity")
+
+    template(v-for="(icon) in shapesIcons")
+      component.flowchart-points-editor__point(
+        is="foreignObject",
+        :height="iconSize",
+        :width="iconSize",
+        :x="icon.x - iconSize / 2",
+        :y="icon.y"
+      )
+        point-icon(:size="iconSize", :entity="icon.point.entity")
+
     component(is="foreignObject", style="overflow: visible;")
       flowchart-point-dialog-menu(
         v-if="isDialogOpened",
@@ -35,7 +46,7 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, SHAPES } from '@/constants';
 
 import { flowchartPointToForm } from '@/helpers/forms/map';
 
@@ -49,7 +60,12 @@ import FlowchartPointContextmenu from './flowchart-point-contextmenu.vue';
 
 export default {
   inject: ['$contextmenu', '$mouseMove', '$mouseUp'],
-  components: { FlowchartPointDialogMenu, FlowchartPointContextmenu, PointFormDialog, PointIcon },
+  components: {
+    FlowchartPointDialogMenu,
+    FlowchartPointContextmenu,
+    PointFormDialog,
+    PointIcon,
+  },
   mixins: [formMixin],
   model: {
     prop: 'points',
@@ -59,6 +75,10 @@ export default {
     points: {
       type: Array,
       required: true,
+    },
+    shapes: {
+      type: Object,
+      required: false,
     },
     iconSize: {
       type: Number,
@@ -75,6 +95,7 @@ export default {
       clientY: 0,
       pointX: 0,
       pointY: 0,
+      shapeId: undefined,
       addingPoint: undefined,
       editingPoint: undefined,
     };
@@ -82,6 +103,29 @@ export default {
   computed: {
     isDialogOpened() {
       return this.shownPointDialog;
+    },
+
+    nonShapesPoints() {
+      return this.points.filter(point => !point.shape_id);
+    },
+
+    shapesIcons() {
+      return this.points.reduce((acc, point) => {
+        const { shape_id: shapeId, entity } = point;
+
+        if (shapeId) {
+          const { x, y } = this.calculateIconPosition(shapeId);
+
+          acc[shapeId] = {
+            x,
+            y,
+            point,
+            name: entity ? 'location_on' : 'link',
+          };
+        }
+
+        return acc;
+      }, {});
     },
 
     contextmenuItems() {
@@ -167,13 +211,23 @@ export default {
       this.clientY = y + height;
     },
 
-    handleContextmenu({ event, x, y }) {
+    handleContextmenu({ event, x, y, shape }) {
       if (this.shownMenu || this.isDialogOpened) {
         return;
       }
 
-      this.pointX = x;
-      this.pointY = y;
+      if (shape) {
+        const editingPoint = this.points.find(point => point.shape_id === shape._id);
+
+        if (editingPoint) {
+          this.editingPoint = editingPoint;
+        } else {
+          this.shapeId = shape._id;
+        }
+      } else {
+        this.pointX = x;
+        this.pointY = y;
+      }
 
       this.setOffsetsByEvent(event);
       this.openContextmenu();
@@ -191,10 +245,11 @@ export default {
     },
 
     openAddPointDialog() {
-      this.addingPoint = flowchartPointToForm({
-        x: this.pointX,
-        y: this.pointY,
-      });
+      this.addingPoint = flowchartPointToForm(
+        this.shapeId
+          ? { shape_id: this.shapeId }
+          : { x: this.pointX, y: this.pointY },
+      );
 
       this.closeContextmenu();
       this.openPointDialog();
@@ -247,6 +302,40 @@ export default {
 
       this.$mouseMove.register(this.movePoint);
       this.$mouseUp.register(this.finishMoving);
+    },
+
+    calculateIconPosition(id) {
+      const shape = this.shapes[id];
+
+      switch (shape.type) {
+        case SHAPES.parallelogram:
+        case SHAPES.ellipse:
+        case SHAPES.process:
+        case SHAPES.document:
+        case SHAPES.storage:
+        case SHAPES.image:
+        case SHAPES.rect:
+          return {
+            x: shape.x + shape.width / 2,
+            y: shape.y,
+          };
+        case SHAPES.rhombus:
+          return {
+            x: shape.x + shape.width / 2,
+            y: shape.y + 5,
+          };
+        case SHAPES.circle:
+          return {
+            x: shape.x + shape.diameter / 2,
+            y: shape.y,
+          };
+        default: {
+          return {
+            x: shape.x,
+            y: shape.y,
+          };
+        }
+      }
     },
   },
 };

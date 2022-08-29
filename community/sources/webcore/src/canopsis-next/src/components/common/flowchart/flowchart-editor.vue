@@ -19,15 +19,16 @@
       :selected="isSelected(shape._id)",
       :readonly="readonly",
       :connecting="editing",
-      @mousedown="onShapeMouseDown(shape, $event)",
+      @mousedown.left="onShapeMouseDown(shape, $event)",
       @mouseup="onShapeMouseUp(shape, $event)",
       @connecting="onConnectMove($event)",
       @connected="onConnectFinish(shape, $event)",
       @unconnect="onUnconnect(shape)",
       @edit:point="startEditLinePoint(shape, $event)",
-      @update="updateShape(shape, $event)"
+      @update="updateShape(shape, $event)",
+      @contextmenu.stop.prevent="handleShapeContextmenu(shape, $event)"
     )
-    slot(name="layers")
+    slot(name="layers", :data="data")
 </template>
 
 <script>
@@ -44,8 +45,6 @@ import { moveShapesMixin } from '@/mixins/flowchart/move-shape';
 import { viewBoxMixin } from '@/mixins/flowchart/view-box';
 import { contextmenuMixin } from '@/mixins/flowchart/contextmenu';
 
-import PointFormDialog from '@/components/other/map/form/partials/point-form-dialog.vue';
-
 import RectShape from './rect-shape/rect-shape.vue';
 import LineShape from './line-shape/line-shape.vue';
 import ArrowLineShape from './arrow-line-shape/arrow-line-shape.vue';
@@ -59,8 +58,6 @@ import StorageShape from './storage-shape/storage-shape.vue';
 import ProcessShape from './process-shape/process-shape.vue';
 import DocumentShape from './document-shape/document-shape.vue';
 
-import PointIcon from '@/components/other/map/partials/point-icon.vue';
-
 export default {
   provide() {
     return {
@@ -69,8 +66,6 @@ export default {
     };
   },
   components: {
-    PointIcon,
-    PointFormDialog,
     RectShape,
     LineShape,
     ArrowLineShape,
@@ -337,6 +332,8 @@ export default {
         this.editing = false;
         this.editingShape = undefined;
         this.editingLinePoint = undefined;
+
+        this.updateShapes(this.data);
       }
 
       this.$mouseUp.notify();
