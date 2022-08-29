@@ -131,7 +131,7 @@ export const generateLineShape = shape => ({
   ...generateDefaultShape(shape),
 
   type: SHAPES.line,
-  lineType: shape.lineType ?? LINE_TYPES.sharp,
+  lineType: shape.lineType ?? LINE_TYPES.line,
   points: shape.points ?? [
     generatePoint({
       x: 0,

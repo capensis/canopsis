@@ -32,8 +32,15 @@ export const SHAPES = {
 };
 
 export const LINE_TYPES = {
-  curve: 'curve',
-  sharp: 'sharp',
+  line: 'line',
+  verticalCurve: 'verticalCurve',
+  horizontalCurve: 'horizontalCurve',
+  leftCurvedAngle: 'leftCurvedAngle',
+  rightCurvedAngle: 'rightCurvedAngle',
+  rightElbow: 'rightElbow',
+  leftElbow: 'leftElbow',
+  verticalStepped: 'verticalStepped',
+  horizontalStepped: 'horizontalStepped',
 };
 
 export const STROKE_TYPES = {
