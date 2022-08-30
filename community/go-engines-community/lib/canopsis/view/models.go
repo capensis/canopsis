@@ -2,9 +2,10 @@ package view
 
 import (
 	"encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
 	"strings"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 const (
@@ -71,7 +72,14 @@ type Parameters struct {
 	ScreenshotFilemask    string   `bson:"screenshot_filemask,omitempty" json:"screenshot_filemask,omitempty"`
 	VideoFilemask         string   `bson:"video_filemask,omitempty" json:"video_filemask,omitempty"`
 
+	ViewFilters []Filter `bson:"viewFilters,omitempty" json:"viewFilters,omitempty"`
+
 	RemainParameters map[string]interface{} `bson:",inline" json:"-"`
+}
+
+type Filter struct {
+	Title  string `bson:"title" json:"title"`
+	Filter string `bson:"filter" json:"filter"`
 }
 
 func (p Parameters) MarshalJSON() ([]byte, error) {
