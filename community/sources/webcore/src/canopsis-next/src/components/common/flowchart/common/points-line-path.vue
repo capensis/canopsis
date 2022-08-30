@@ -3,7 +3,7 @@
     ref="path",
     :d="path",
     :fill="fill",
-    pointer-events="all",
+    pointer-events="stroke",
     v-on="$listeners"
   )
 </template>

@@ -94,6 +94,8 @@ $sidebarWidth: 320px;
     top: 0;
     right: 0;
     bottom: 0;
+
+    user-select: none;
   }
 
   &__properties {

@@ -1,22 +1,11 @@
 <template lang="pug">
-  g(@dblclick="$emit('dblclick', $event)")
-    circle-figure(
-      :x="circle.x",
-      :y="circle.y",
-      :diameter="circle.diameter",
-      :pointer-events="pointerEvents",
-      fill="transparent",
-      cursor="move",
-      pointer-events="all",
-      @mousedown.stop="$listeners.mousedown",
-      @mouseup="$listeners.mouseup"
-    )
+  g
     rect-selection(
       v-if="selected",
-      :x="circle.x",
-      :y="circle.y",
-      :width="circle.diameter",
-      :height="circle.diameter",
+      :x="shape.x",
+      :y="shape.y",
+      :width="shape.diameter",
+      :height="shape.diameter",
       :padding="padding",
       :color="color",
       :corner-radius="cornerRadius",
@@ -26,10 +15,10 @@
     )
     rect-connectors(
       v-if="connecting",
-      :x="circle.x",
-      :y="circle.y",
-      :width="circle.diameter",
-      :height="circle.diameter",
+      :x="shape.x",
+      :y="shape.y",
+      :width="shape.diameter",
+      :height="shape.diameter",
       :padding="padding",
       :color="color",
       @connected="$listeners.connected",
@@ -40,13 +29,12 @@
 
 <script>
 import RectSelection from '../common/rect-selection.vue';
-import CircleFigure from '../common/circle-figure.vue';
 import RectConnectors from '../common/rect-connectors.vue';
 
 export default {
-  components: { RectConnectors, CircleFigure, RectSelection },
+  components: { RectConnectors, RectSelection },
   props: {
-    circle: {
+    shape: {
       type: Object,
       required: true,
     },
@@ -61,10 +49,6 @@ export default {
     color: {
       type: String,
       default: 'blue',
-    },
-    pointerEvents: {
-      type: String,
-      default: 'all',
     },
     cornerRadius: {
       type: Number,

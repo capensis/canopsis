@@ -1,23 +1,12 @@
 <template lang="pug">
-  g(@dblclick="$emit('dblclick', $event)")
-    rect(
-      :x="rect.x",
-      :y="rect.y",
-      :width="rect.width",
-      :height="rect.height",
-      :pointer-events="pointerEvents",
-      fill="transparent",
-      cursor="move",
-      @mousedown.stop="$listeners.mousedown",
-      @mouseup="$listeners.mouseup"
-    )
+  g
     rect-selection(
       v-if="selected",
-      :x="rect.x",
-      :y="rect.y",
-      :width="rect.width",
-      :height="rect.height",
-      :aspect-ratio="rect.aspectRatio",
+      :x="shape.x",
+      :y="shape.y",
+      :width="shape.width",
+      :height="shape.height",
+      :aspect-ratio="shape.aspectRatio",
       :padding="padding",
       :color="color",
       :corner-radius="cornerRadius",
@@ -26,10 +15,10 @@
     )
     rect-connectors(
       v-if="connecting",
-      :x="rect.x",
-      :y="rect.y",
-      :width="rect.width",
-      :height="rect.height",
+      :x="shape.x",
+      :y="shape.y",
+      :width="shape.width",
+      :height="shape.height",
       :color="color",
       @connected="$listeners.connected",
       @connecting="$listeners.connecting",
@@ -44,7 +33,7 @@ import RectConnectors from '../common/rect-connectors.vue';
 export default {
   components: { RectConnectors, RectSelection },
   props: {
-    rect: {
+    shape: {
       type: Object,
       required: true,
     },
