@@ -1,18 +1,9 @@
 <template lang="pug">
-  g(@dblclick="$emit('dblclick', $event)")
-    points-path(
-      :points="line.points",
-      :type="line.lineType",
-      :pointer-events="moving ? 'none' : 'stroke'",
-      cursor="move",
-      stroke-width="10",
-      @mousedown.stop="$emit('mousedown', $event)",
-      @mouseup="$emit('mouseup', $event)"
-    )
+  g
     template(v-if="selected")
-      points-path(
+      points-line-path(
         :points="editingPoints",
-        :type="line.lineType",
+        :type="shape.lineType",
         :stroke="color",
         fill="transparent",
         stroke-width="1",
@@ -35,13 +26,13 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import PointsPath from '../common/points-path.vue';
+import PointsLinePath from '../common/points-line-path.vue';
 
 export default {
   inject: ['$mouseMove', '$mouseUp'],
-  components: { PointsPath },
+  components: { PointsLinePath },
   props: {
-    line: {
+    shape: {
       type: Object,
       required: true,
     },
@@ -66,7 +57,7 @@ export default {
     };
   },
   watch: {
-    'line.points': {
+    'shape.points': {
       immediate: true,
       deep: true,
       handler(points) {

@@ -1,15 +1,9 @@
 <template lang="pug">
-  points-path(
-    :points="rhombusPoints",
-    v-on="$listeners"
-  )
+  path(v-on="$listeners", :d="rhombusPath")
 </template>
 
 <script>
-import PointsPath from './points-path.vue';
-
 export default {
-  components: { PointsPath },
   props: {
     width: {
       type: Number,
@@ -45,14 +39,14 @@ export default {
       return this.y + this.halfHeight;
     },
 
-    rhombusPoints() {
+    rhombusPath() {
       return [
-        { x: this.x, y: this.centerY },
-        { x: this.centerX, y: this.y },
-        { x: this.x + this.width, y: this.centerY },
-        { x: this.centerX, y: this.y + this.height },
-        { x: this.x, y: this.centerY },
-      ];
+        `M ${this.x} ${this.centerY}`,
+        `L ${this.centerX} ${this.y}`,
+        `L ${this.x + this.width} ${this.centerY}`,
+        `L ${this.centerX} ${this.y + this.height}`,
+        'Z',
+      ].join('');
     },
   },
 };

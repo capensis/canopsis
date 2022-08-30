@@ -13,26 +13,35 @@
   )
     component(
       v-for="shape in data",
+      :key="`${shape._id}-shape`",
       :shape="shape",
-      :key="shape._id",
       :is="`${shape.type}-shape`",
-      :selected="isSelected(shape._id)",
       :readonly="readonly",
-      :connecting="editing",
+      @contextmenu.stop.prevent="handleShapeContextmenu(shape, $event)",
       @mousedown.left="onShapeMouseDown(shape, $event)",
-      @mouseup="onShapeMouseUp(shape, $event)",
-      @connecting="onConnectMove($event)",
-      @connected="onConnectFinish(shape, $event)",
-      @unconnect="onUnconnect(shape)",
-      @edit:point="startEditLinePoint(shape, $event)",
-      @update="updateShape(shape, $event)",
-      @contextmenu.stop.prevent="handleShapeContextmenu(shape, $event)"
+      @mouseup="onShapeMouseUp(shape, $event)"
     )
+    template(v-if="!readonly")
+      component(
+        v-for="selection in selectionComponents",
+        :key="selection.key",
+        :is="selection.is",
+        :shape="selection.shape",
+        :selected="isSelected(selection.shape._id)",
+        :connecting="editing",
+        @connecting="onConnectMove($event)",
+        @connected="onConnectFinish(selection.shape, $event)",
+        @unconnect="onUnconnect(selection.shape)",
+        @edit:point="startEditLinePoint(selection.shape, $event)",
+        @update="updateShape(selection.shape, $event)"
+      )
     slot(name="layers", :data="data")
 </template>
 
 <script>
 import { cloneDeep, isEqual, omit } from 'lodash';
+
+import { SHAPES } from '@/constants';
 
 import Observer from '@/services/observer';
 
@@ -46,17 +55,20 @@ import { viewBoxMixin } from '@/mixins/flowchart/view-box';
 import { contextmenuMixin } from '@/mixins/flowchart/contextmenu';
 
 import RectShape from './rect-shape/rect-shape.vue';
+import RhombusShape from './rhombus-shape/rhombus-shape.vue';
+import CircleShape from './circle-shape/circle-shape.vue';
+import EllipseShape from './ellipse-shape/ellipse-shape.vue';
+import ParallelogramShape from './parallelogram-shape/parallelogram-shape.vue';
+import ProcessShape from './process-shape/process-shape.vue';
+import DocumentShape from './document-shape/document-shape.vue';
+import StorageShape from './storage-shape/storage-shape.vue';
 import LineShape from './line-shape/line-shape.vue';
 import ArrowLineShape from './arrow-line-shape/arrow-line-shape.vue';
 import BidirectionalArrowLineShape from './bidirectional-arrow-line-shape/bidirectional-arrow-line-shape.vue';
-import CircleShape from './circle-shape/circle-shape.vue';
-import EllipseShape from './ellipse-shape/ellipse-shape.vue';
 import ImageShape from './image-shape/image-shape.vue';
-import RhombusShape from './rhombus-shape/rhombus-shape.vue';
-import ParallelogramShape from './parallelogram-shape/parallelogram-shape.vue';
-import StorageShape from './storage-shape/storage-shape.vue';
-import ProcessShape from './process-shape/process-shape.vue';
-import DocumentShape from './document-shape/document-shape.vue';
+import RectShapeSelection from './rect-shape/rect-shape-selection.vue';
+import CircleShapeSelection from './circle-shape/circle-shape-selection.vue';
+import LineShapeSelection from './line-shape/line-shape-selection.vue';
 
 export default {
   provide() {
@@ -67,17 +79,20 @@ export default {
   },
   components: {
     RectShape,
+    RhombusShape,
+    CircleShape,
+    EllipseShape,
+    ParallelogramShape,
+    ProcessShape,
+    DocumentShape,
+    StorageShape,
     LineShape,
     ArrowLineShape,
     BidirectionalArrowLineShape,
-    CircleShape,
-    EllipseShape,
     ImageShape,
-    RhombusShape,
-    ParallelogramShape,
-    StorageShape,
-    ProcessShape,
-    DocumentShape,
+    RectShapeSelection,
+    CircleShapeSelection,
+    LineShapeSelection,
   },
   mixins: [
     selectedShapesMixin,
@@ -140,6 +155,33 @@ export default {
     };
   },
   computed: {
+    selectionComponents() {
+      return Object.values(this.data).map((shape) => {
+        const component = {
+          [SHAPES.rect]: 'rect-shape-selection',
+          [SHAPES.rhombus]: 'rect-shape-selection',
+          [SHAPES.ellipse]: 'rect-shape-selection',
+          [SHAPES.parallelogram]: 'rect-shape-selection',
+          [SHAPES.process]: 'rect-shape-selection',
+          [SHAPES.document]: 'rect-shape-selection',
+          [SHAPES.storage]: 'rect-shape-selection',
+          [SHAPES.image]: 'rect-shape-selection',
+
+          [SHAPES.circle]: 'circle-shape-selection',
+
+          [SHAPES.line]: 'line-shape-selection',
+          [SHAPES.arrowLine]: 'line-shape-selection',
+          [SHAPES.bidirectionalArrowLine]: 'line-shape-selection',
+        }[shape.type];
+
+        return {
+          shape,
+          is: component,
+          key: `${shape._id}-shape-selection`,
+        };
+      });
+    },
+
     svgStyles() {
       return {
         backgroundColor: this.backgroundColor,

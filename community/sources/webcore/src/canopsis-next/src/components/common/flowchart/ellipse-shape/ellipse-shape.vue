@@ -1,11 +1,14 @@
 <template lang="pug">
-  g(@contextmenu="$listeners.contextmenu")
+  g(@dblclick="enableEditingMode", @contextmenu="$listeners.contextmenu")
     ellipse(
       v-bind="shape.properties",
       :cx="centerX",
       :cy="centerY",
       :rx="radiusX",
-      :ry="radiusY"
+      :ry="radiusY",
+      :cursor="readonly ? '' : 'move'",
+      @mousedown.stop="$listeners.mousedown",
+      @mouseup="$listeners.mouseup"
     )
     text-editor(
       ref="editor",
@@ -18,30 +21,15 @@
       :editable="editing",
       @blur="disableEditingMode"
     )
-    rect-shape-selection(
-      v-if="!readonly",
-      :selected="selected",
-      :connecting="connecting",
-      :rect="shape",
-      :pointer-events="editing ? 'none' : 'all'",
-      @update="$listeners.update",
-      @dblclick="enableEditingMode",
-      @mousedown="$listeners.mousedown",
-      @mouseup="$listeners.mouseup",
-      @connected="$listeners.connected",
-      @connecting="$listeners.connecting",
-      @unconnect="$listeners.unconnect"
-    )
 </template>
 
 <script>
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
-import RectShapeSelection from '../rect-shape/rect-shape-selection.vue';
 import TextEditor from '../common/text-editor.vue';
 
 export default {
-  components: { RectShapeSelection, TextEditor },
+  components: { TextEditor },
   mixins: [flowchartTextEditorMixin],
   props: {
     shape: {
@@ -52,15 +40,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    cornerOffset: {
-      type: Number,
-      default: 0,
-    },
     readonly: {
-      type: Boolean,
-      default: false,
-    },
-    connecting: {
       type: Boolean,
       default: false,
     },

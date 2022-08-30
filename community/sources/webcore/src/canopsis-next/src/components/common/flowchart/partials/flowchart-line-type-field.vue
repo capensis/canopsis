@@ -5,16 +5,16 @@
       v-select.mt-0.pt-0(v-field="value", :items="types", hide-details)
         template(v-for="slotName in ['selection', 'item']", #[slotName]="{ item }")
           svg(viewBox="0 0 50 40", width="30", height="30")
-            points-path(:points="points", :type="item", stroke="black", stroke-width="2")
+            points-line-path(:points="points", :type="item", stroke="black", stroke-width="2")
 </template>
 
 <script>
 import { LINE_TYPES } from '@/constants';
 
-import PointsPath from '@/components/common/flowchart/common/points-path.vue';
+import PointsLinePath from '@/components/common/flowchart/common/points-line-path.vue';
 
 export default {
-  components: { PointsPath },
+  components: { PointsLinePath },
   model: {
     prop: 'value',
     event: 'input',

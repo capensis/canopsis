@@ -1,15 +1,9 @@
 <template lang="pug">
-  path(
-    v-on="$listeners",
-    :d="parallelogramPath"
-  )
+  path(v-on="$listeners", :d="parallelogramPath")
 </template>
 
 <script>
-import PointsPath from './points-path.vue';
-
 export default {
-  components: { PointsPath },
   props: {
     width: {
       type: Number,

@@ -2,12 +2,8 @@
   line-shape(
     v-on="$listeners",
     :shape="shape",
-    :selected="selected",
-    :corner-offset="cornerOffset",
     :readonly="readonly",
-    :marker-end="`url(#${shape._id}-end)`",
-    @update="$listeners.update",
-    @edit:point="$emit('edit:point', $event)"
+    :marker-end="`url(#${shape._id}-end)`"
   )
     marker(
       :id="`${shape._id}-end`",
@@ -31,14 +27,6 @@ export default {
     shape: {
       type: Object,
       required: true,
-    },
-    selected: {
-      type: Boolean,
-      default: false,
-    },
-    cornerOffset: {
-      type: Number,
-      default: 0,
     },
     readonly: {
       type: Boolean,
