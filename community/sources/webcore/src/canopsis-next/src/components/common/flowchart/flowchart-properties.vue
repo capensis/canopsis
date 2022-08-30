@@ -21,12 +21,12 @@
             @input="updateStroke"
           )
           template(v-if="showStroke && isStrokeEnabled")
-            flowchart-number-field.my-2(
+            flowchart-number-field.my-1(
               :label="$t('flowchart.strokeWidth')",
               :value="strokeWidth",
               @input="updateStrokeWidth"
             )
-            flowchart-stroke-type-field.my-2(
+            flowchart-stroke-type-field.my-1(
               :label="$t('flowchart.strokeType')",
               :value="strokeType",
               @input="updateStrokeType"
@@ -50,7 +50,7 @@
             :palette="backgroundColors",
             @input="updateTextBackgroundColor"
           )
-          flowchart-number-field.my-2(
+          flowchart-number-field.my-1(
             :label="$t('flowchart.fontSize')",
             :value="textFontSize",
             @input="updateFontSize"

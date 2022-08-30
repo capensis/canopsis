@@ -27,7 +27,7 @@
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
 import TextEditor from '../common/text-editor.vue';
-import ParallelogramFigure from '../common/parallelogram-figure.vue';
+import ParallelogramFigure from '../figures/parallelogram-figure.vue';
 
 export default {
   components: { ParallelogramFigure, TextEditor },
