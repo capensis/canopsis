@@ -9,7 +9,7 @@
       :height="iconSize",
       is="foreignObject",
       @contextmenu.stop.prevent="handleEditContextmenu($event, point)",
-      @mousedown.stop="startMoving(index)"
+      @mousedown.stop="startMoving(point)"
     )
       point-icon(:size="iconSize", :entity="point.entity")
 
@@ -19,7 +19,8 @@
         :height="iconSize",
         :width="iconSize",
         :x="icon.x - iconSize / 2",
-        :y="icon.y"
+        :y="icon.y",
+        pointer-events="none"
       )
         point-icon(:size="iconSize", :entity="icon.point.entity")
 
@@ -39,7 +40,7 @@
         :position-x="clientX",
         :position-y="clientY",
         :items="contextmenuItems",
-        @close="closeContextmenu"
+        @close="closeOnClickOutside"
       )
 </template>
 
@@ -49,6 +50,7 @@ import { cloneDeep } from 'lodash';
 import { MODALS, SHAPES } from '@/constants';
 
 import { flowchartPointToForm } from '@/helpers/forms/map';
+import { waitVuetifyAnimation } from '@/helpers/vuetify';
 
 import { formMixin } from '@/mixins/form';
 
@@ -195,8 +197,21 @@ export default {
 
     closePointDialog() {
       this.shownPointDialog = false;
+    },
+
+    clearPointDialog() {
       this.addingPoint = undefined;
       this.editingPoint = undefined;
+      this.shapeId = undefined;
+    },
+
+    async closeOnClickOutside() {
+      this.closeContextmenu();
+      this.closePointDialog();
+
+      await waitVuetifyAnimation();
+
+      this.clearPointDialog();
     },
 
     setOffsetsByEvent(event) {
@@ -268,6 +283,7 @@ export default {
       }
 
       this.closePointDialog();
+      this.clearPointDialog();
     },
 
     showRemovePointModal() {
@@ -280,6 +296,7 @@ export default {
             this.removePointFromModel(this.editingPoint);
 
             this.closePointDialog();
+            this.clearPointDialog();
           },
         },
       });
@@ -297,8 +314,8 @@ export default {
       this.$mouseUp.unregister(this.finishMoving);
     },
 
-    startMoving(index) {
-      this.movingPointIndex = index;
+    startMoving(point) {
+      this.movingPointIndex = this.pointsData.findIndex(({ _id: id }) => point._id === id);
 
       this.$mouseMove.register(this.movePoint);
       this.$mouseUp.register(this.finishMoving);

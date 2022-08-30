@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import ArrowFigure from '../common/arrow-figure.vue';
+import ArrowFigure from '../figures/arrow-figure.vue';
 import LineShape from '../line-shape/line-shape.vue';
 
 export default {

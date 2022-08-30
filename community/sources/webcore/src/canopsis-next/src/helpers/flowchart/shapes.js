@@ -115,8 +115,8 @@ export const generateRectShape = shape => ({
   ...generateDefaultShape(shape),
 
   type: SHAPES.rect,
-  width: shape.width ?? 100,
-  height: shape.height ?? 100,
+  width: shape.width ?? 130,
+  height: shape.height ?? 130,
   x: shape.x ?? 0,
   y: shape.y ?? 0,
 });

@@ -27,7 +27,7 @@
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
 import TextEditor from '../common/text-editor.vue';
-import ProcessFigure from '../common/process-figure.vue';
+import ProcessFigure from '../figures/process-figure.vue';
 
 export default {
   components: { ProcessFigure, TextEditor },

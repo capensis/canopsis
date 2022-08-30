@@ -26,7 +26,7 @@
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
 import TextEditor from '../common/text-editor.vue';
-import RhombusFigure from '../common/rhombus-figure.vue';
+import RhombusFigure from '../figures/rhombus-figure.vue';
 
 export default {
   components: { RhombusFigure, TextEditor },
