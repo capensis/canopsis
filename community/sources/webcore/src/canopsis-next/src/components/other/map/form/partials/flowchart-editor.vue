@@ -1,9 +1,10 @@
 <template lang="pug">
   v-layout(column)
     flowchart.flowchart-map-editor.mb-2(
-      v-field="form.shapes",
+      :shapes="form.shapes",
       :background-color.sync="form.backgroundColor",
-      :style="editorStyles"
+      :style="editorStyles",
+      @input="updateShapes"
     )
       template(#layers="{ data }")
         flowchart-points-editor(v-field="form.points", :shapes="data")
@@ -18,6 +19,7 @@ import { formMixin, validationChildrenMixin } from '@/mixins/form';
 import Flowchart from '@/components/common/flowchart/flowchart.vue';
 
 import FlowchartPointsEditor from './flowchart-points-editor.vue';
+import { mapIds } from '@/helpers/entities';
 
 export default {
   inject: ['$validator'],
@@ -82,6 +84,17 @@ export default {
 
     detachRules() {
       this.$validator.detach(this.name);
+    },
+
+    updateShapes(shapes) {
+      const shapesIds = mapIds(shapes);
+      const points = this.form.points.filter(point => (point.shape_id ? shapesIds.includes(point.shape_id) : true));
+
+      this.updateModel({
+        ...this.form,
+        shapes,
+        points,
+      });
     },
   },
 };
