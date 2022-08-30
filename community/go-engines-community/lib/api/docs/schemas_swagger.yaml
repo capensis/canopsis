@@ -4033,13 +4033,6 @@ definitions:
           $ref: '#/definitions/view.Response'
         type: array
     type: object
-  view.Filter:
-    properties:
-      filter:
-        type: string
-      title:
-        type: string
-    type: object
   view.ImportItemRequest:
     properties:
       _id:
@@ -4080,10 +4073,6 @@ definitions:
         type: array
       video_filemask:
         type: string
-      viewFilters:
-        items:
-          $ref: '#/definitions/view.Filter'
-        type: array
     type: object
   view.Response:
     properties:
