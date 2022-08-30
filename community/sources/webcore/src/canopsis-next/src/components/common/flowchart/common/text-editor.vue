@@ -15,13 +15,7 @@
 </template>
 
 <script>
-import { formBaseMixin } from '@/mixins/form';
-
-import RectShapeSelection from '../rect-shape/rect-shape-selection.vue';
-
 export default {
-  components: { RectShapeSelection },
-  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -151,6 +145,10 @@ export default {
 
   &--justify-center {
     justify-content: center;
+  }
+
+  &--editable {
+    pointer-events: all;
   }
 
   &:not(&--editable) {

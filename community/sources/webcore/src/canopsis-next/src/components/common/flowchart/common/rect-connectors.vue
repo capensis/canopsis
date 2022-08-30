@@ -1,9 +1,10 @@
 <template lang="pug">
   g
-    points-path(
+    path(
       v-for="connectorTriangle in connectorTriangles",
       :key="connectorTriangle.side",
-      :points="connectorTriangle.points",
+      :d="connectorTriangle.path",
+      fill="transparent",
       @mouseenter="onMouseEnter(connectorTriangle.side)",
       @mouseleave="onMouseLeave",
       @mouseup="onConnectFinish(connectorTriangle)",
@@ -16,10 +17,7 @@ import { CONNECTOR_SIDES } from '@/constants';
 
 import { calculateConnectorPointBySide } from '@/helpers/flowchart/connectors';
 
-import PointsPath from './points-path.vue';
-
 export default {
-  components: { PointsPath },
   props: {
     x: {
       type: Number,
@@ -100,54 +98,54 @@ export default {
       return { x: this.leftX, y: this.bottomY };
     },
 
-    topTrianglePoints() {
+    topTrianglePath() {
       return [
-        this.topLeftPoint,
-        this.topRightPoint,
-        this.centerPoint,
-      ];
+        `M ${this.topLeftPoint.x} ${this.topLeftPoint.y}`,
+        `L ${this.topRightPoint.x} ${this.topRightPoint.y}`,
+        `L ${this.centerPoint.x} ${this.centerPoint.y}`,
+      ].join('');
     },
 
-    rightTrianglePoints() {
+    rightTrianglePath() {
       return [
-        this.topRightPoint,
-        this.bottomRightPoint,
-        this.centerPoint,
-      ];
+        `M ${this.topRightPoint.x} ${this.topRightPoint.y}`,
+        `L ${this.bottomRightPoint.x} ${this.bottomRightPoint.y}`,
+        `L ${this.centerPoint.x} ${this.centerPoint.y}`,
+      ].join('');
     },
 
-    bottomTrianglePoints() {
+    bottomTrianglePath() {
       return [
-        this.bottomRightPoint,
-        this.bottomLeftPoint,
-        this.centerPoint,
-      ];
+        `M ${this.bottomRightPoint.x} ${this.bottomRightPoint.y}`,
+        `L ${this.bottomLeftPoint.x} ${this.bottomLeftPoint.y}`,
+        `L ${this.centerPoint.x} ${this.centerPoint.y}`,
+      ].join('');
     },
 
-    leftTrianglePoints() {
+    leftTrianglePath() {
       return [
-        this.bottomLeftPoint,
-        this.topLeftPoint,
-        this.centerPoint,
-      ];
+        `M ${this.bottomLeftPoint.x} ${this.bottomLeftPoint.y}`,
+        `L ${this.topLeftPoint.x} ${this.topLeftPoint.y}`,
+        `L ${this.centerPoint.x} ${this.centerPoint.y}`,
+      ].join('');
     },
 
     connectorTriangles() {
       return [
         {
-          points: this.topTrianglePoints,
+          path: this.topTrianglePath,
           side: CONNECTOR_SIDES.top,
         },
         {
-          points: this.rightTrianglePoints,
+          path: this.rightTrianglePath,
           side: CONNECTOR_SIDES.right,
         },
         {
-          points: this.bottomTrianglePoints,
+          path: this.bottomTrianglePath,
           side: CONNECTOR_SIDES.bottom,
         },
         {
-          points: this.leftTrianglePoints,
+          path: this.leftTrianglePath,
           side: CONNECTOR_SIDES.left,
         },
       ];
