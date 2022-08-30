@@ -1,7 +1,7 @@
 <template lang="pug">
   g.flowchart-points-editor
     component.flowchart-points-editor__point(
-      v-for="(point, index) in nonShapesPoints",
+      v-for="point in nonShapesPoints",
       :key="point._id",
       :x="point.x - iconSize / 2",
       :y="point.y - iconSize",

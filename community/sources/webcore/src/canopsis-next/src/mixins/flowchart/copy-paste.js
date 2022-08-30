@@ -4,11 +4,7 @@ import uid from '@/helpers/uid';
 
 export const copyPasteShapesMixin = {
   methods: {
-    copySelectedShapes(event) {
-      if (!event.ctrlKey) {
-        return;
-      }
-
+    copySelectedShapes() {
       const data = this.selectedIds.reduce((acc, id) => {
         const shape = this.data[id];
 
@@ -27,11 +23,7 @@ export const copyPasteShapesMixin = {
       navigator.clipboard.writeText(JSON.stringify(data));
     },
 
-    async pasteShapes(event) {
-      if (!event.ctrlKey) {
-        return;
-      }
-
+    async pasteShapes() {
       const data = await navigator.clipboard.readText();
 
       if (!isString(data)) {

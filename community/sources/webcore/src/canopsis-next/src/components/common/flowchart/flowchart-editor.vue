@@ -473,7 +473,8 @@ export default {
         86: this.pasteShapes,
       };
 
-      const handler = handlers[event.keyCode] || (event.ctrlKey && ctrlHandler[event.keyCode]);
+      const handler = handlers[event.keyCode]
+        || (event.ctrlKey && ctrlHandler[event.keyCode]);
 
       if (handler) {
         event.preventDefault();
