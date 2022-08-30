@@ -106,7 +106,7 @@ export default {
     },
 
     nonShapesPoints() {
-      return this.points.filter(point => !point.shape_id);
+      return this.pointsData.filter(point => !point.shape_id);
     },
 
     shapesIcons() {

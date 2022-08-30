@@ -3088,5 +3088,8 @@ export default merge({
       textbox: 'Textbox',
       image: 'Image',
     },
+    errors: {
+      pointsRequired: 'The points must be added',
+    },
   },
 }, featureService.get('i18n.fr'));

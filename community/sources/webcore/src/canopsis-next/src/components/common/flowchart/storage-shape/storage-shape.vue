@@ -1,15 +1,14 @@
 <template lang="pug">
-  g(@dblclick="enableEditingMode", @contextmenu="$listeners.contextmenu")
+  g(@dblclick="enableEditingMode")
     storage-figure(
       v-bind="shape.properties",
+      v-on="$listeners",
       :width="shape.width",
       :height="shape.height",
       :radius="shape.radius",
       :x="shape.x",
       :y="shape.y",
-      :cursor="readonly ? '' : 'move'",
-      @mousedown.stop="$listeners.mousedown",
-      @mouseup="$listeners.mouseup"
+      :cursor="readonly ? '' : 'move'"
     )
     text-editor(
       ref="editor",

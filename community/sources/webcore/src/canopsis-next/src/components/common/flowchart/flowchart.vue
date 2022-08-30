@@ -11,7 +11,7 @@
     )
       template(#prepend="")
         slot(name="sidebar-prepend")
-    div.flowchart__editor
+    div.flowchart__editor(:class="{ 'flowchart__editor--readonly': readonly }")
       flowchart-editor(
         v-field="shapes",
         :view-box.sync="viewBox",
@@ -96,6 +96,10 @@ $sidebarWidth: 320px;
     bottom: 0;
 
     user-select: none;
+
+    &--readonly {
+      left: 0;
+    }
   }
 
   &__properties {
