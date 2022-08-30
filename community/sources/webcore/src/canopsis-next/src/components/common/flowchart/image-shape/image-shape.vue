@@ -1,5 +1,5 @@
 <template lang="pug">
-  g(@dblclick="enableEditingMode", @contextmenu="$listeners.contextmenu")
+  g(@dblclick="enableEditingMode")
     rect(
       v-bind="shape.properties",
       :x="shape.x",
@@ -8,14 +8,13 @@
       :height="shape.height"
     )
     image(
+      v-on="$listeners",
       :href="shape.src",
       :x="shape.x",
       :y="shape.y",
       :width="shape.width",
       :height="shape.height",
-      :cursor="readonly ? '' : 'move'",
-      @mousedown.stop="$listeners.mousedown",
-      @mouseup="$listeners.mouseup"
+      :cursor="readonly ? '' : 'move'"
     )
     text-editor(
       ref="editor",

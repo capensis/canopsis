@@ -7,7 +7,7 @@
     )
       template(#layers="{ data }")
         flowchart-points-editor(v-field="form.points", :shapes="data")
-    v-messages
+    v-messages(v-if="hasChildrenError", :value="errorMessages", color="error")
 </template>
 
 <script>
@@ -37,7 +37,16 @@ export default {
       default: 'parameters',
     },
   },
+  data() {
+    return {
+      readonly: false,
+    };
+  },
   computed: {
+    errorMessages() {
+      return [this.$t('flowchart.errors.pointsRequired')];
+    },
+
     editorStyles() {
       return {
         borderColor: this.hasChildrenError ? COLORS.error : undefined,
@@ -65,7 +74,7 @@ export default {
       this.$validator.attach({
         name: this.name,
         rules: 'required:true',
-        getter: () => true,
+        getter: () => !!this.form.points.length,
         context: () => this,
         vm: this,
       });

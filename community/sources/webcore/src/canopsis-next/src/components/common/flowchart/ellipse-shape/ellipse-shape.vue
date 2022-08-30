@@ -1,14 +1,13 @@
 <template lang="pug">
-  g(@dblclick="enableEditingMode", @contextmenu="$listeners.contextmenu")
+  g(@dblclick="enableEditingMode")
     ellipse(
       v-bind="shape.properties",
+      v-on="$listeners",
       :cx="centerX",
       :cy="centerY",
       :rx="radiusX",
       :ry="radiusY",
-      :cursor="readonly ? '' : 'move'",
-      @mousedown.stop="$listeners.mousedown",
-      @mouseup="$listeners.mouseup"
+      :cursor="readonly ? '' : 'move'"
     )
     text-editor(
       ref="editor",

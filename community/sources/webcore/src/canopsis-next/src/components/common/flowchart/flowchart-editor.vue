@@ -229,6 +229,12 @@ export default {
     },
 
     onShapeMouseDown(shape, event) {
+      if (this.readonly) {
+        return;
+      }
+
+      event.stopPropagation();
+
       if (!this.hasSelected) {
         this.setSelectedShape(shape);
       }
@@ -394,6 +400,10 @@ export default {
       if (this.panning) {
         this.moveViewBox({ x: event.movementX, y: event.movementY });
 
+        return;
+      }
+
+      if (this.readonly) {
         return;
       }
 

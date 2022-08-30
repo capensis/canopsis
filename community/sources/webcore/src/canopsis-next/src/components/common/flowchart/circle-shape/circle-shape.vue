@@ -1,14 +1,12 @@
 <template lang="pug">
-  g(@dblclick="enableEditingMode", @contextmenu="$listeners.contextmenu")
+  g(@dblclick="enableEditingMode")
     circle-figure(
       v-bind="shape.properties",
+      v-on="$listeners",
       :x="shape.x",
       :y="shape.y",
       :diameter="shape.diameter",
-      :cursor="readonly ? '' : 'move'",
-      :pointer-events="editing ? 'none' : 'all'",
-      @mousedown.stop="$listeners.mousedown",
-      @mouseup="$listeners.mouseup"
+      :cursor="readonly ? '' : 'move'"
     )
     text-editor(
       ref="editor",

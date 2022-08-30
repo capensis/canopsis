@@ -1,4 +1,10 @@
 export const flowchartTextEditorMixin = {
+  props: {
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       editing: false,
@@ -6,6 +12,10 @@ export const flowchartTextEditorMixin = {
   },
   methods: {
     enableEditingMode() {
+      if (this.readonly) {
+        return;
+      }
+
       this.editing = true;
 
       if (this.$refs.editor) {
