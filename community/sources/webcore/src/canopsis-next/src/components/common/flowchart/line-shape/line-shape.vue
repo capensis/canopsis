@@ -1,5 +1,5 @@
 <template lang="pug">
-  g(@dblclick="enableEditingMode", @contextmenu="$listeners.contextmenu")
+  g(@dblclick="enableEditingMode")
     slot
     points-line-path(
       ref="path",
@@ -10,12 +10,11 @@
       :marker-start="markerStart"
     )
     points-line-path(
+      v-on="$listeners",
       :points="shape.points",
       :type="shape.lineType",
       :cursor="readonly ? '' : 'move'",
-      stroke-width="10",
-      @mousedown.stop="$listeners.mousedown",
-      @mouseup="$listeners.mouseup"
+      stroke-width="10"
     )
     text-editor(
       v-if="labelPosition",
