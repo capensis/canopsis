@@ -43,7 +43,7 @@
       absolute
     )
       point-form-dialog(
-        v-if="formPoint",
+        v-if="isFormOpened",
         :point="formPoint",
         :editing="!!editingPoint",
         @cancel="clearMenuData",

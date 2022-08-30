@@ -231,8 +231,8 @@ export default {
     },
 
     centerRectProperties() {
-      const width = 100;
-      const height = 100;
+      const width = 150;
+      const height = 150;
 
       return {
         x: this.viewBoxCenter.x - width / 2,
@@ -243,7 +243,7 @@ export default {
     },
 
     centerCircleProperties() {
-      const diameter = 100;
+      const diameter = 150;
       const halfDiameter = diameter / 2;
 
       return {
@@ -254,33 +254,17 @@ export default {
     },
 
     centerLinePoints() {
-      const length = 100;
+      const length = 150;
       const halfLength = length / 2;
 
       return [
         generatePoint({
           x: this.viewBoxCenter.x - halfLength,
-          y: this.viewBoxCenter.y,
+          y: this.viewBoxCenter.y + halfLength,
         }),
         generatePoint({
           x: this.viewBoxCenter.x + halfLength,
-          y: this.viewBoxCenter.y,
-        }),
-      ];
-    },
-
-    centerCurveLinePoints() {
-      const size = 100;
-      const halfSize = size / 2;
-
-      return [
-        generatePoint({
-          x: this.viewBoxCenter.x - halfSize,
-          y: this.viewBoxCenter.y + halfSize,
-        }),
-        generatePoint({
-          x: this.viewBoxCenter.x + halfSize,
-          y: this.viewBoxCenter.y - halfSize,
+          y: this.viewBoxCenter.y - halfLength,
         }),
       ];
     },
@@ -352,7 +336,7 @@ export default {
 
     addCurveLine() {
       const line = generateLineShape({
-        points: this.centerCurveLinePoints,
+        points: this.centerLinePoints,
         lineType: LINE_TYPES.horizontalCurve,
         text: 'Curve line',
         properties: {
@@ -366,7 +350,7 @@ export default {
 
     addCurveArrowLine() {
       const arrowLine = generateArrowLineShape({
-        points: this.centerCurveLinePoints,
+        points: this.centerLinePoints,
         lineType: LINE_TYPES.horizontalCurve,
         text: 'Curve arrow line',
         properties: {
@@ -380,7 +364,7 @@ export default {
 
     addBidirectionalCurveArrowLine() {
       const bidirectionalArrowLine = generateBidirectionalArrowLineShape({
-        points: this.centerCurveLinePoints,
+        points: this.centerLinePoints,
         lineType: LINE_TYPES.horizontalCurve,
         text: 'Bidirectional arrow curve line',
         properties: {

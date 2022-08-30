@@ -35,6 +35,14 @@
         @edit:point="startEditLinePoint(selection.shape, $event)",
         @update="updateShape(selection.shape, $event)"
       )
+      path(
+        v-if="selection",
+        :d="selectionPath",
+        fill="blue",
+        fill-opacity="0.1",
+        stroke="blue",
+        stroke-width="1"
+      )
     slot(name="layers", :data="data")
 </template>
 
@@ -361,7 +369,13 @@ export default {
       }
     },
 
-    onContainerMouseUp() {
+    onContainerMouseUp(event) {
+      if (this.selection) {
+        this.selectShapesByArea(this.selectionStart, this.cursor, event.shiftKey);
+        this.selection = false;
+        return;
+      }
+
       if (this.panning) {
         this.updateViewBox();
         this.panning = false;
@@ -388,12 +402,18 @@ export default {
     },
 
     onContainerMouseDown(event) {
-      if (event.ctrlKey || event.shiftKey || event.button === 1) {
+      if (event.ctrlKey || event.button === 1) {
         this.panning = true;
         return;
       }
 
-      this.clearSelected();
+      if (event.button === 0) {
+        this.selection = true;
+        this.selectionStart = {
+          x: this.cursor.x,
+          y: this.cursor.y,
+        };
+      }
     },
 
     onContainerMouseMove(event) {
@@ -434,17 +454,26 @@ export default {
     },
 
     onKeyDown(event) {
-      const handler = {
+      const tag = document.activeElement.tagName.toLowerCase();
+
+      if (['input', 'textarea', 'select'].includes(tag)) {
+        return;
+      }
+
+      const handlers = {
         37: this.moveSelectedLeft,
         38: this.moveSelectedTop,
         39: this.moveSelectedRight,
         40: this.moveSelectedDown,
 
         46: this.removeSelectedShapes,
-
+      };
+      const ctrlHandler = {
         67: this.copySelectedShapes,
         86: this.pasteShapes,
-      }[event.keyCode];
+      };
+
+      const handler = handlers[event.keyCode] || (event.ctrlKey && ctrlHandler[event.keyCode]);
 
       if (handler) {
         event.preventDefault();
