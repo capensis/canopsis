@@ -173,7 +173,10 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, err
 	}
 
-	alarmRes := s.alarmDbCollection.FindOne(ctx, bson.M{"d": entity.ID})
+	alarmRes := s.alarmDbCollection.FindOne(ctx, bson.M{
+		"d":          entity.ID,
+		"v.resolved": nil,
+	})
 	if err := alarmRes.Err(); err == nil {
 		return false, ErrLinkedEntityToAlarm
 	} else if err != mongodriver.ErrNoDocuments {
