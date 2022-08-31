@@ -1,30 +1,24 @@
 <template lang="pug">
   g(@dblclick="enableEditingMode")
-    rect(
+    storage-figure(
       v-bind="shape.properties",
-      :x="shape.x",
-      :y="shape.y",
-      :width="shape.width",
-      :height="shape.height"
-    )
-    image(
       v-on="$listeners",
-      :href="shape.src",
-      :x="shape.x",
-      :y="shape.y",
       :width="shape.width",
       :height="shape.height",
+      :radius="shape.radius",
+      :x="shape.x",
+      :y="shape.y",
       :cursor="readonly ? '' : 'move'"
     )
     text-editor(
       ref="editor",
       v-bind="shape.textProperties",
       :value="shape.text",
-      :y="shape.y + shape.height",
-      :x="shape.x + shape.width / 2",
+      :y="shape.y",
+      :x="shape.x",
+      :width="shape.width",
+      :height="shape.height",
       :editable="editing",
-      align-center,
-      justify-center,
       @blur="disableEditingMode"
     )
 </template>
@@ -32,10 +26,11 @@
 <script>
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
-import TextEditor from '../common/text-editor.vue';
+import TextEditor from '../..//common/text-editor.vue';
+import StorageFigure from '../..//figures/storage-figure.vue';
 
 export default {
-  components: { TextEditor },
+  components: { StorageFigure, TextEditor },
   mixins: [flowchartTextEditorMixin],
   props: {
     shape: {

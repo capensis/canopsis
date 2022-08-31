@@ -1,12 +1,12 @@
 <template lang="pug">
   g(@dblclick="enableEditingMode")
-    rect(
+    ellipse(
       v-bind="shape.properties",
       v-on="$listeners",
-      :x="shape.x",
-      :y="shape.y",
-      :width="shape.width",
-      :height="shape.height",
+      :cx="centerX",
+      :cy="centerY",
+      :rx="radiusX",
+      :ry="radiusY",
       :cursor="readonly ? '' : 'move'"
     )
     text-editor(
@@ -25,7 +25,7 @@
 <script>
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
-import TextEditor from '../common/text-editor.vue';
+import TextEditor from '../..//common/text-editor.vue';
 
 export default {
   components: { TextEditor },
@@ -35,9 +35,30 @@ export default {
       type: Object,
       required: true,
     },
+    selected: {
+      type: Boolean,
+      default: false,
+    },
     readonly: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    radiusX() {
+      return this.shape.width / 2;
+    },
+
+    radiusY() {
+      return this.shape.height / 2;
+    },
+
+    centerX() {
+      return this.shape.x + this.radiusX;
+    },
+
+    centerY() {
+      return this.shape.y + this.radiusY;
     },
   },
 };

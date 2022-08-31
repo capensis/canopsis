@@ -26,7 +26,7 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import PointsLinePath from '../common/points-line-path.vue';
+import PointsLinePath from '../..//common/points-line-path.vue';
 
 export default {
   inject: ['$mouseMove', '$mouseUp'],

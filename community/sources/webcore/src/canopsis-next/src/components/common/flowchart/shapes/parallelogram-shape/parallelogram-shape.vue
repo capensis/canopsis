@@ -1,11 +1,13 @@
 <template lang="pug">
   g(@dblclick="enableEditingMode")
-    circle-figure(
+    parallelogram-figure(
       v-bind="shape.properties",
       v-on="$listeners",
+      :width="shape.width",
+      :height="shape.height",
+      :offset="shape.offset",
       :x="shape.x",
       :y="shape.y",
-      :diameter="shape.diameter",
       :cursor="readonly ? '' : 'move'"
     )
     text-editor(
@@ -14,8 +16,8 @@
       :value="shape.text",
       :y="shape.y",
       :x="shape.x",
-      :width="shape.diameter",
-      :height="shape.diameter",
+      :width="shape.width",
+      :height="shape.height",
       :editable="editing",
       @blur="disableEditingMode"
     )
@@ -24,11 +26,11 @@
 <script>
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
-import TextEditor from '../common/text-editor.vue';
-import CircleFigure from '../figures/circle-figure.vue';
+import TextEditor from '../..//common/text-editor.vue';
+import ParallelogramFigure from '../..//figures/parallelogram-figure.vue';
 
 export default {
-  components: { CircleFigure, TextEditor },
+  components: { ParallelogramFigure, TextEditor },
   mixins: [flowchartTextEditorMixin],
   props: {
     shape: {

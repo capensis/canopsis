@@ -1,13 +1,12 @@
 <template lang="pug">
   g(@dblclick="enableEditingMode")
-    process-figure(
+    rhombus-figure(
       v-bind="shape.properties",
       v-on="$listeners",
       :width="shape.width",
       :height="shape.height",
       :x="shape.x",
       :y="shape.y",
-      :offset="shape.offset",
       :cursor="readonly ? '' : 'move'"
     )
     text-editor(
@@ -26,11 +25,11 @@
 <script>
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
-import TextEditor from '../common/text-editor.vue';
-import ProcessFigure from '../figures/process-figure.vue';
+import TextEditor from '../..//common/text-editor.vue';
+import RhombusFigure from '../..//figures/rhombus-figure.vue';
 
 export default {
-  components: { ProcessFigure, TextEditor },
+  components: { RhombusFigure, TextEditor },
   mixins: [flowchartTextEditorMixin],
   props: {
     shape: {

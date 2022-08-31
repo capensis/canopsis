@@ -33,8 +33,8 @@
 <script>
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
-import PointsLinePath from '../common/points-line-path.vue';
-import TextEditor from '../common/text-editor.vue';
+import PointsLinePath from '../..//common/points-line-path.vue';
+import TextEditor from '../..//common/text-editor.vue';
 
 export default {
   components: { TextEditor, PointsLinePath },

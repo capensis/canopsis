@@ -73,7 +73,7 @@ import { formBaseMixin } from '@/mixins/form';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 
-import FlowchartColorField from './partials/flowchart-color-field.vue';
+import FlowchartColorField from './fields/flowchart-color-field.vue';
 import RectShapeIcon from './icons/rect-shape.vue';
 import RoundedRectShapeIcon from './icons/rounded-rect-shape.vue';
 import SquareShapeIcon from './icons/square-shape.vue';
@@ -119,6 +119,10 @@ export default {
     backgroundColor: {
       type: String,
       required: false,
+    },
+    pointDistance: {
+      type: Number,
+      default: 150,
     },
   },
   computed: {
@@ -217,6 +221,10 @@ export default {
       ];
     },
 
+    halfPointDistance() {
+      return this.pointDistance / 2;
+    },
+
     icons() {
       return assets.map(assetPath => ({
         src: assetPath,
@@ -231,40 +239,31 @@ export default {
     },
 
     centerRectProperties() {
-      const width = 150;
-      const height = 150;
-
       return {
-        x: this.viewBoxCenter.x - width / 2,
-        y: this.viewBoxCenter.y - height / 2,
-        width,
-        height,
+        x: this.viewBoxCenter.x - this.halfPointDistance,
+        y: this.viewBoxCenter.y - this.halfPointDistance,
+        width: this.pointDistance,
+        height: this.pointDistance,
       };
     },
 
     centerCircleProperties() {
-      const diameter = 150;
-      const halfDiameter = diameter / 2;
-
       return {
-        x: this.viewBoxCenter.x - halfDiameter,
-        y: this.viewBoxCenter.y - halfDiameter,
-        diameter,
+        x: this.viewBoxCenter.x - this.halfPointDistance,
+        y: this.viewBoxCenter.y - this.halfPointDistance,
+        diameter: this.pointDistance,
       };
     },
 
     centerLinePoints() {
-      const length = 150;
-      const halfLength = length / 2;
-
       return [
         generatePoint({
-          x: this.viewBoxCenter.x - halfLength,
-          y: this.viewBoxCenter.y + halfLength,
+          x: this.viewBoxCenter.x - this.halfPointDistance,
+          y: this.viewBoxCenter.y + this.halfPointDistance,
         }),
         generatePoint({
-          x: this.viewBoxCenter.x + halfLength,
-          y: this.viewBoxCenter.y - halfLength,
+          x: this.viewBoxCenter.x + this.halfPointDistance,
+          y: this.viewBoxCenter.y - this.halfPointDistance,
         }),
       ];
     },
@@ -582,12 +581,28 @@ export default {
       const src = await getFileDataUrlContent(file);
       const { width, height } = await getImageProperties(src);
 
+      const maxImageWidth = this.viewBox.width * 0.75;
+      const maxImageHeight = this.viewBox.height * 0.75;
+
+      let imageWidth = width;
+      let imageHeight = height;
+
+      if (width > maxImageWidth) {
+        imageWidth = maxImageWidth;
+        imageHeight = height / (width / imageWidth);
+      }
+
+      if (imageHeight > maxImageHeight) {
+        imageHeight = maxImageHeight;
+        imageWidth = width / (height / imageHeight);
+      }
+
       const image = generateImageShape({
         ...this.centerRectProperties,
-        x: this.viewBoxCenter.x - width / 2,
-        y: this.viewBoxCenter.y - height / 2,
-        width,
-        height,
+        x: this.viewBoxCenter.x - imageWidth / 2,
+        y: this.viewBoxCenter.y - imageHeight / 2,
+        width: imageWidth,
+        height: imageHeight,
         src,
         text: file.name,
         aspectRatio: true,
