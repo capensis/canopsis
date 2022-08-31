@@ -9,39 +9,36 @@
     item-key="key"
   )
     template(#expand="{ item }")
+      v-tooltip(v-if="item.loadMore", right)
+        template(#activator="{ on }")
+          v-btn(
+            v-on="on",
+            :loading="pendingByIds[item.parentId]",
+            icon,
+            @click="loadMore(item.parentId)"
+          )
+            v-icon more_horiz
+        span {{ $t('common.loadMore') }}
       v-btn(
-        v-if="item.entity",
-        :color="getEntityColor(item)",
+        v-else,
+        :color="getEntityColor(item.entity)",
         icon,
         dark,
         @click="showTreeOfDependenciesModal(item)"
       )
-        v-icon {{ getIconByEntity(item.entity) }}
-      v-tooltip(v-else, right)
-        v-btn(
-          slot="activator",
-          :loading="pendingByIds[item.parentId]",
-          icon,
-          @click="loadMore(item.parentId)"
-        )
-          v-icon more_horiz
-        span {{ $t('common.loadMore') }}
+        v-icon {{ getIconByEntity(item) }}
       v-tooltip(v-if="item.cycle", top)
         template(#activator="{ on }")
           v-icon(v-on="on", color="error", size="14") autorenew
         span {{ $t('common.cycleDependency') }}
-    template(
-      slot="expand-append",
-      slot-scope="{ item }",
-      v-if="includeRoot && isInRootIds(item._id)"
-    )
-      div.expand-append
+    template(#expand-append="{ item }")
+      div.expand-append(v-if="includeRoot && isInRootIds(item._id)")
         v-icon arrow_right_alt
         v-chip.ma-0(
-          :color="getEntityColor(item)",
+          :color="getEntityColor(item.entity)",
           text-color="white"
         )
-          span.px-2.body-2.font-weight-bold {{ item.impact_state }}
+          span.px-2.body-2.font-weight-bold {{ item.entity.impact_state }}
     template(#items="{ item }")
       tr
         td(v-for="(header, index) in headers", :key="header.value")
@@ -49,7 +46,6 @@
           color-indicator-wrapper(
             v-else-if="item.entity",
             :entity="item.entity",
-            :alarm="item.alarm",
             :type="header.colorIndicator"
           ) {{ item | get(header.value) }}
 </template>
@@ -66,7 +62,6 @@ import { defaultColumnsToColumns } from '@/helpers/entities';
 import { getEntityColor } from '@/helpers/color';
 import {
   dependencyToTreeviewDependency,
-  treeviewDependencyToDependency,
   normalizeDependencies,
   getLoadMoreDenormalizedChild,
   dependenciesDenormalize,
@@ -113,7 +108,7 @@ export default {
     const rootIds = [];
 
     if (this.includeRoot) {
-      const treeviewRoot = dependencyToTreeviewDependency(this.root);
+      const treeviewRoot = dependencyToTreeviewDependency(this.root, this.impact);
 
       dependenciesByIds[treeviewRoot._id] = treeviewRoot;
       rootIds.push(treeviewRoot._id);
@@ -129,7 +124,7 @@ export default {
   },
   computed: {
     rootId() {
-      return this.root.entity._id;
+      return this.root._id;
     },
 
     rootHasNextPage() {
@@ -153,7 +148,7 @@ export default {
 
         sortable: false,
         text: label,
-        value: value.match(/entity.|alarm./) ? value : `entity.${value}`,
+        value: value.startsWith('entity.') ? value : `entity.${value}`,
       }));
 
       return [
@@ -215,7 +210,7 @@ export default {
       this.$modals.show({
         name: MODALS.serviceDependencies,
         config: {
-          root: treeviewDependencyToDependency(dependency),
+          root: dependency.entity,
           columns: this.columns,
           impact: this.impact,
         },
@@ -248,8 +243,16 @@ export default {
     async fetchDependenciesById(id, params = { limit: PAGINATION_LIMIT }) {
       this.$set(this.pendingByIds, id, true);
 
-      const { data, meta } = await this.fetchDependenciesList({ id, params });
-      const { dependencies, result } = normalizeDependencies(data);
+      const { data, meta } = await this.fetchDependenciesList({
+        id,
+        params: {
+          ...params,
+
+          with_flags: true,
+        },
+      });
+
+      const { dependencies, result } = normalizeDependencies(data, this.impact);
 
       Object.entries(dependencies).forEach(([dependencyId, dependency]) => {
         const children = this.getDependencyChildren(dependencyId) ?? dependency.children;

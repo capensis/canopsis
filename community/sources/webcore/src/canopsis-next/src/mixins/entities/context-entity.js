@@ -41,6 +41,7 @@ export const entitiesContextEntityMixin = {
       fetchContextEntitiesListWithPreviousParams: 'fetchListWithPreviousParams',
       fetchContextEntitiesWithoutStore: 'fetchListWithoutStore',
       fetchBasicContextEntityWithoutStore: 'fetchBasicEntityWithoutStore',
+      fetchContextEntityContextGraphWithoutStore: 'fetchContextGraphWithoutStore',
       createContextExport: 'createContextExport',
       fetchContextExport: 'fetchContextExport',
       fetchContextCsvFile: 'fetchContextCsvFile',

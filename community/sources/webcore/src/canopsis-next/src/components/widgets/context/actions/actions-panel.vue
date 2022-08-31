@@ -129,12 +129,20 @@ export default {
           },
         });
       } else {
-        const basicEntity = await this.fetchBasicContextEntityWithoutStore({ id: this.item._id });
+        const [basicEntity, { impact, depends }] = await Promise.all([
+          this.fetchBasicContextEntityWithoutStore({ id: this.item._id }),
+          this.fetchContextEntityContextGraphWithoutStore({ id: this.item._id }),
+        ]);
 
         this.$modals.show({
           name: MODALS.createEntity,
           config: {
-            entity: basicEntity,
+            entity: {
+              ...basicEntity,
+
+              impact,
+              depends,
+            },
             title: this.$t('modals.createEntity.edit.title'),
             action: async (data) => {
               await this.updateContextEntityWithPopup({ id: basicEntity._id, data });
