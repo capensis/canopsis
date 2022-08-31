@@ -66,6 +66,7 @@ import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
+import GeomapPreview from '@/components/other/map/partials/geomap-preview.vue';
 
 import MapBreadcrumbs from './partials/map-breadcrumbs.vue';
 
@@ -80,6 +81,7 @@ export default {
     FilterSelector,
     FiltersListBtn,
     MermaidPreview,
+    GeomapPreview,
   },
   mixins: [
     permissionsWidgetsMapCategory,
@@ -105,7 +107,7 @@ export default {
   computed: {
     component() {
       return {
-        [MAP_TYPES.geo]: 'span',
+        [MAP_TYPES.geo]: 'geomap-preview',
         [MAP_TYPES.flowchart]: 'span',
         [MAP_TYPES.mermaid]: 'mermaid-preview',
         [MAP_TYPES.treeOfDependencies]: 'span',

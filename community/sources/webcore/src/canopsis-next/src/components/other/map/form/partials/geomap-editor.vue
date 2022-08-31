@@ -33,6 +33,10 @@
               v-icon add_location
           span {{ $t('map.toggleAddingPointMode') }}
 
+      geomap-control(position="bottomright")
+        c-help-icon(size="32", color="secondary", icon="help", top)
+          div.pre-wrap(v-html="$t('geomap.panzoom.helpText')")
+
       geomap-tile-layer(
         :name="$t('map.layers.openStreetMap')",
         :url="$config.OPEN_STREET_LAYER_URL",
@@ -44,23 +48,20 @@
       geomap-cluster-group(
         ref="pointsFeatureGroup",
         :name="$t('map.layers.points')",
+        :disable-clustering-at-zoom="maxClusteringZoom",
         layer-type="overlay"
       )
         geomap-marker(
-          v-for="marker in markers",
-          :key="marker.id",
-          :lat-lng="marker.coordinates",
-          :options="{ data: marker.data }",
+          v-for="{ coordinates, id, data, icon } in markers",
+          :key="id",
+          :lat-lng="coordinates",
+          :options="{ data }",
           :draggable="!shown",
           @dragend="finishMovingMarker",
           @click=""
         )
-          geomap-icon(:icon-anchor="marker.icon.anchor")
-            v-icon(
-              :style="marker.icon.style",
-              :size="marker.icon.size",
-              color="grey darken-2"
-            ) {{ marker.icon.name }}
+          geomap-icon(:icon-anchor="icon.anchor")
+            point-icon(:style="icon.style", :entity="data.entity", :size="icon.size")
 
       v-menu(
         v-model="shown",
@@ -90,7 +91,7 @@ import { COLORS } from '@/config';
 import { MODALS } from '@/constants';
 
 import { geomapPointToForm } from '@/helpers/forms/map';
-import { getGeomapMarkerIcon } from '@/helpers/map';
+import { getGeomapMarkerIconOptions } from '@/helpers/map';
 
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
@@ -103,6 +104,7 @@ import GeomapContextmenu from '@/components/common/geomap/geomap-contextmenu.vue
 import GeomapClusterGroup from '@/components/common/geomap/geomap-cluster-group.vue';
 import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
 import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
+import PointIcon from '@/components/other/map/partials/point-icon.vue';
 
 import PointFormDialog from './point-form-dialog.vue';
 
@@ -119,6 +121,7 @@ export default {
     GeomapMarker,
     PointFormDialog,
     GeomapIcon,
+    PointIcon,
   },
   mixins: [formMixin, validationChildrenMixin],
   model: {
@@ -134,9 +137,13 @@ export default {
       type: Number,
       default: 2,
     },
+    maxClusteringZoom: {
+      type: Number,
+      default: 12,
+    },
     iconSize: {
       type: Number,
-      default: 34,
+      default: 24,
     },
     name: {
       type: String,
@@ -178,7 +185,7 @@ export default {
         id: point._id,
         coordinates: [point.coordinates.lat, point.coordinates.lng],
         data: point,
-        icon: getGeomapMarkerIcon(point, this.iconSize),
+        icon: getGeomapMarkerIconOptions(point, this.iconSize),
       }));
     },
 

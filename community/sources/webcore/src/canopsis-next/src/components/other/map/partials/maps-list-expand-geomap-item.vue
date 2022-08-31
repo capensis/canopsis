@@ -1,9 +1,9 @@
 <template lang="pug">
-  geomap-preview.geomap-expand-panel(:points="map.parameters.points")
+  geomap-preview(:map="map")
 </template>
 
 <script>
-import GeomapPreview from '@/components/other/map/form/partials/geomap-preview.vue';
+import GeomapPreview from '@/components/other/map/partials/geomap-preview.vue';
 
 export default {
   components: { GeomapPreview },
@@ -15,9 +15,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.geomap-expand-panel {
-  min-height: 700px;
-}
-</style>
