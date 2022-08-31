@@ -64,15 +64,23 @@ func (e EntityFields) AsMongoDriverQuery() bson.M {
 	}
 	if len(e.Infos) != 0 {
 		for key, value := range e.Infos {
-			for valueKey, valueValue := range value.AsMongoDriverQuery() {
-				query["infos."+key+"."+valueKey] = valueValue
+			if value.ShouldNotBeSet {
+				query["infos."+key] = nil
+			} else {
+				for valueKey, valueValue := range value.AsMongoDriverQuery() {
+					query["infos."+key+"."+valueKey] = valueValue
+				}
 			}
 		}
 	}
 	if len(e.ComponentInfos) != 0 {
 		for key, value := range e.ComponentInfos {
-			for valueKey, valueValue := range value.AsMongoDriverQuery() {
-				query["component_infos."+key+"."+valueKey] = valueValue
+			if value.ShouldNotBeSet {
+				query["component_infos."+key] = nil
+			} else {
+				for valueKey, valueValue := range value.AsMongoDriverQuery() {
+					query["component_infos."+key+"."+valueKey] = valueValue
+				}
 			}
 		}
 	}
