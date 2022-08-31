@@ -120,6 +120,12 @@ export default createEntityModule({
       });
     },
 
+    fetchContextGraphWithoutStore(context, { id } = {}) {
+      return request.get(API_ROUTES.entityContextGraph, {
+        params: { _id: id },
+      });
+    },
+
     fetchListWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.entity, { params });
     },
