@@ -63,6 +63,10 @@ const (
 	UserPreferencesMongoCollection = "userpreferences"
 )
 
+const (
+	socketTimeout = 5 * time.Second
+)
+
 type SingleResultHelper interface {
 	Decode(v interface{}) error
 	DecodeBytes() (bson.Raw, error)
@@ -385,6 +389,9 @@ func NewClient(retryCount int, minRetryTimeout time.Duration) (DbClient, error) 
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
+	if clientOptions.SocketTimeout == nil {
+		clientOptions.SetSocketTimeout(socketTimeout)
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
