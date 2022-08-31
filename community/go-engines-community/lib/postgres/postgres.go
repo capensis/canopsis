@@ -1,6 +1,6 @@
 package postgres
 
-//go:generate mockgen -destination=../../mocks/lib/postgres/postgres.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres BasePool,Pool,PoolProvider
+//go:generate mockgen -destination=../../mocks/lib/postgres/postgres.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres BasePool,Pool
 //go:generate mockgen -destination=../../mocks/github.com/jackc/pgx/pgx.go github.com/jackc/pgx/v4 Rows,Tx,BatchResults
 
 import (
@@ -46,29 +46,41 @@ func IsConnectionError(err error) bool {
 	return false
 }
 
-func GetConnStr(env string) (string, error) {
-	connStr := os.Getenv(env)
+func GetConnStr() (string, error) {
+	connStr := os.Getenv(EnvURL)
 	if connStr == "" {
-		return "", fmt.Errorf("environment variable %s empty", env)
+		return "", fmt.Errorf("environment variable %s empty", EnvURL)
 	}
 
 	return connStr, nil
 }
 
-func NewTechMetricsPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration) (Pool, error) {
-	return newPool(ctx, retryCount, minRetryTimeout, EnvTechURL)
+func GetTechConnStr() (string, error) {
+	connStr := os.Getenv(EnvTechURL)
+	if connStr == "" {
+		return "", fmt.Errorf("environment variable %s empty", EnvTechURL)
+	}
+
+	return connStr, nil
 }
 
 func NewPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration) (Pool, error) {
-	return newPool(ctx, retryCount, minRetryTimeout, EnvURL)
-}
-
-func newPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration, env string) (Pool, error) {
-	connStr, err := GetConnStr(env)
+	connStr, err := GetConnStr()
 	if err != nil {
 		return nil, err
 	}
+	return newPool(ctx, retryCount, minRetryTimeout, connStr)
+}
 
+func NewTechMetricsPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration) (Pool, error) {
+	connStr, err := GetTechConnStr()
+	if err != nil {
+		return nil, err
+	}
+	return newPool(ctx, retryCount, minRetryTimeout, connStr)
+}
+
+func newPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration, connStr string) (Pool, error) {
 	pgxPool, err := pgxpool.Connect(ctx, connStr)
 	if err != nil {
 		return nil, err
@@ -90,6 +102,7 @@ type BasePool interface {
 	Begin(ctx context.Context) (pgx.Tx, error)
 	Close()
 	Stat() *pgxpool.Stat
+	Ping(ctx context.Context) error
 }
 
 type Pool interface {
@@ -99,8 +112,7 @@ type Pool interface {
 	SendBatch(ctx context.Context, b *pgx.Batch) error
 	Close()
 	WithTransaction(ctx context.Context, f func(context.Context, pgx.Tx) error) error
-	SetRetry(count int, timeout time.Duration)
-	Stat() *pgxpool.Stat
+	Ping(ctx context.Context) error
 }
 
 type poolWithRetries struct {
@@ -108,11 +120,6 @@ type poolWithRetries struct {
 
 	retryCount      int
 	minRetryTimeout time.Duration
-}
-
-func (p *poolWithRetries) SetRetry(count int, timeout time.Duration) {
-	p.retryCount = count
-	p.minRetryTimeout = timeout
 }
 
 func (p *poolWithRetries) Exec(ctx context.Context, sql string, args ...interface{}) (pgconn.CommandTag, error) {
@@ -169,10 +176,6 @@ func (p *poolWithRetries) Close() {
 	p.pgxPool.Close()
 }
 
-func (p *poolWithRetries) Stat() *pgxpool.Stat {
-	return p.pgxPool.Stat()
-}
-
 func (p *poolWithRetries) WithTransaction(ctx context.Context, f func(context.Context, pgx.Tx) error) error {
 	var err error
 	p.retry(ctx, func() error {
@@ -202,6 +205,10 @@ func (p *poolWithRetries) WithTransaction(ctx context.Context, f func(context.Co
 	})
 
 	return err
+}
+
+func (p *poolWithRetries) Ping(ctx context.Context) error {
+	return p.pgxPool.Ping(ctx)
 }
 
 func (p *poolWithRetries) retry(ctx context.Context, f func() error) {

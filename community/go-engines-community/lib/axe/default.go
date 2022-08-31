@@ -5,6 +5,8 @@ import (
 	"flag"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -67,9 +69,6 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	dbClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
-	if pgPool != nil {
-		pgPool.SetRetry(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
-	}
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
@@ -201,19 +200,12 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		logger,
 	)
 
-	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-	techPostgresPoolProvider := postgres.NewTechMetricsPoolProvider(ctx, metricsConfigProvider, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsSender := metrics.NewTechMetricsSender(techPostgresPoolProvider, logger)
-
-	eventMetricsChan := make(chan metrics.AxeEventMetric)
-
-	eventMetricsListener := axeEventMetricsListener{
-		metricsSender: techMetricsSender,
-		flushInterval: canopsis.TechMetricsFlushInterval,
-	}
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 
 	engineAxe.AddRoutine(func(ctx context.Context) error {
-		eventMetricsListener.Listen(ctx, eventMetricsChan)
+		techMetricsSender.Run(ctx)
 		return nil
 	})
 
@@ -230,7 +222,8 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		amqpConnection,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-			EventsMetricsChan:        eventMetricsChan,
+
+			TechMetricsSender: techMetricsSender,
 			EventProcessor: alarm.NewEventProcessor(
 				dbClient,
 				alarm.NewAdapter(dbClient),
@@ -321,8 +314,10 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	engineAxe.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
-		[]config.Updater{alarmConfigProvider, timezoneConfigProvider, metricsConfigProvider},
 		logger,
+		alarmConfigProvider,
+		timezoneConfigProvider,
+		techMetricsConfigProvider,
 	))
 
 	return engineAxe

@@ -1,6 +1,6 @@
 package config
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/config/config.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider,MetricsConfigProvider
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/config/config.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider,TechMetricsConfigProvider
 
 import (
 	"fmt"
@@ -51,8 +51,8 @@ type UserInterfaceConfigProvider interface {
 	Get() UserInterfaceConf
 }
 
-type MetricsConfigProvider interface {
-	Get() MetricsConfig
+type TechMetricsConfigProvider interface {
+	Get() TechMetricsConfig
 }
 
 type AlarmConfig struct {
@@ -89,8 +89,8 @@ type RemediationConfig struct {
 	ExternalAPI                    map[string]ExternalApiConfig
 }
 
-type MetricsConfig struct {
-	EnableTechMetrics bool
+type TechMetricsConfig struct {
+	Enabled bool
 }
 
 type DataStorageConfig struct {
@@ -106,38 +106,38 @@ func (t ScheduledTime) String() string {
 	return fmt.Sprintf("%v,%v", t.Weekday, t.Hour)
 }
 
-type BaseMetricsConfigProvider struct {
-	conf   MetricsConfig
+type BaseTechMetricsConfigProvider struct {
+	conf   TechMetricsConfig
 	mx     sync.RWMutex
 	logger zerolog.Logger
 }
 
-func NewMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseMetricsConfigProvider {
-	sectionName := "metrics"
-	conf := MetricsConfig{
-		EnableTechMetrics: parseBool(cfg.Metrics.EnableTechMetrics, "EnableTechMetrics", sectionName, logger),
+func NewTechMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseTechMetricsConfigProvider {
+	sectionName := "tech_metrics"
+	conf := TechMetricsConfig{
+		Enabled: parseBool(cfg.TechMetrics.Enabled, "Enabled", sectionName, logger),
 	}
 
-	return &BaseMetricsConfigProvider{
+	return &BaseTechMetricsConfigProvider{
 		conf:   conf,
 		mx:     sync.RWMutex{},
 		logger: logger,
 	}
 }
 
-func (p *BaseMetricsConfigProvider) Update(cfg CanopsisConf) {
+func (p *BaseTechMetricsConfigProvider) Update(cfg CanopsisConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
-	sectionName := "metrics"
+	sectionName := "tech_metrics"
 
-	b, ok := parseUpdatedBool(cfg.Metrics.EnableTechMetrics, p.conf.EnableTechMetrics, "EnableLastEventDate", sectionName, p.logger)
+	b, ok := parseUpdatedBool(cfg.TechMetrics.Enabled, p.conf.Enabled, "Enabled", sectionName, p.logger)
 	if ok {
-		p.conf.EnableTechMetrics = b
+		p.conf.Enabled = b
 	}
 }
 
-func (p *BaseMetricsConfigProvider) Get() MetricsConfig {
+func (p *BaseTechMetricsConfigProvider) Get() TechMetricsConfig {
 	p.mx.RLock()
 	defer p.mx.RUnlock()
 

@@ -5,19 +5,19 @@ import (
 	"flag"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
 )
@@ -95,12 +95,16 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(ExternalDataContainer))
 	eventFilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, config.NewTimezoneConfigProvider(cfg, logger), logger)
-
-	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+	runInfoPeriodicalWorker := libengine.NewRunInfoMetricsPeriodicalWorker(
 		canopsis.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisClient),
 		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, options.ConsumeFromQueue, options.PublishToQueue),
 		amqpChannel,
+		techMetricsSender,
+		techmetrics.FIFOQueue,
 		logger,
 	)
 
@@ -155,33 +159,10 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		logger,
 	)
 
-	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-	techPostgresPoolProvider := postgres.NewTechMetricsPoolProvider(ctx, metricsConfigProvider, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsSender := metrics.NewTechMetricsSender(techPostgresPoolProvider, logger)
-	eventMetricsChan := make(chan metrics.FifoEventMetric)
-
-	eventMetricsListener := fifoEventMetricsListener{
-		metricsSender: techMetricsSender,
-		flushInterval: canopsis.TechMetricsFlushInterval,
-	}
-
 	engine.AddRoutine(func(ctx context.Context) error {
-		eventMetricsListener.Listen(ctx, eventMetricsChan)
+		techMetricsSender.Run(ctx)
 		return nil
 	})
-
-	engine.AddPeriodicalWorker("fifo queue metrics", libengine.NewLockedPeriodicalWorker(
-		redis.NewLockClient(engineLockRedisClient),
-		redis.FifoQueueMetricsLockKey,
-		&fifoQueueMetricsWorker{
-			techMetricsSender:  techMetricsSender,
-			periodicalInterval: canopsis.PeriodicalWaitTime,
-			channel:            amqpChannel,
-			logger:             logger,
-			consumeQueue:       canopsis.FIFOAckQueueName,
-		},
-		logger,
-	))
 
 	engine.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.FIFOConsumerName,
@@ -196,9 +177,8 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		amqpConnection,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.PrintEventOnError,
-			EventsMetricsChan:        eventMetricsChan,
 			EventFilterService:       eventFilterService,
-			MetricsConfigProvider:    metricsConfigProvider,
+			TechMetricsSender:        techMetricsSender,
 			Scheduler:                scheduler,
 			StatsSender:              statsSender,
 			Decoder:                  json.NewDecoder(),
@@ -219,9 +199,11 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		amqpConnection,
 		&ackMessageProcessor{
 			FeaturePrintEventOnError: options.PrintEventOnError,
-			Scheduler:                scheduler,
-			Decoder:                  json.NewDecoder(),
-			Logger:                   logger,
+
+			Scheduler:         scheduler,
+			TechMetricsSender: techMetricsSender,
+			Decoder:           json.NewDecoder(),
+			Logger:            logger,
 		},
 		logger,
 	))
@@ -247,8 +229,9 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
-		[]config.Updater{timezoneConfigProvider, metricsConfigProvider},
 		logger,
+		timezoneConfigProvider,
+		techMetricsConfigProvider,
 	))
 
 	return engine

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -41,9 +43,6 @@ func NewEngine(
 	m := DependencyMaker{}
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
-	if pgPool != nil {
-		pgPool.SetRetry(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
-	}
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
@@ -67,9 +66,9 @@ func NewEngine(
 		metricsEntityMetaUpdater,
 	)
 
-	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-	techPostgresPoolProvider := postgres.NewTechMetricsPoolProvider(ctx, metricsConfigProvider, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsSender := metrics.NewTechMetricsSender(techPostgresPoolProvider, logger)
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer))
@@ -168,14 +167,8 @@ func NewEngine(
 		logger,
 	)
 
-	eventMetricsChan := make(chan metrics.CheEventMetric)
-	eventMetricsListener := cheEventMetricsListener{
-		metricsSender: techMetricsSender,
-		flushInterval: canopsis.TechMetricsFlushInterval,
-	}
-
 	engine.AddRoutine(func(ctx context.Context) error {
-		eventMetricsListener.Listen(ctx, eventMetricsChan)
+		techMetricsSender.Run(ctx)
 		return nil
 	})
 
@@ -194,15 +187,16 @@ func NewEngine(
 			FeaturePrintEventOnError: false,
 			FeatureEventProcessing:   options.FeatureEventProcessing,
 			FeatureContextCreation:   options.FeatureContextCreation,
-			AlarmConfigProvider:      alarmConfigProvider,
-			EventFilterService:       eventfilterService,
-			EnrichmentCenter:         enrichmentCenter,
-			EventsMetricsChan:        eventMetricsChan,
-			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
-			AlarmAdapter:             alarm.NewAdapter(mongoClient),
-			Encoder:                  json.NewEncoder(),
-			Decoder:                  json.NewDecoder(),
-			Logger:                   logger,
+
+			AlarmConfigProvider: alarmConfigProvider,
+			EventFilterService:  eventfilterService,
+			EnrichmentCenter:    enrichmentCenter,
+			TechMetricsSender:   techMetricsSender,
+			AmqpPublisher:       m.DepAMQPChannelPub(amqpConnection),
+			AlarmAdapter:        alarm.NewAdapter(mongoClient),
+			Encoder:             json.NewEncoder(),
+			Decoder:             json.NewDecoder(),
+			Logger:              logger,
 		},
 		logger,
 	))
@@ -216,8 +210,10 @@ func NewEngine(
 	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
-		[]config.Updater{alarmConfigProvider, timezoneConfigProvider, metricsConfigProvider},
 		logger,
+		alarmConfigProvider,
+		timezoneConfigProvider,
+		techMetricsConfigProvider,
 	))
 	engine.AddPeriodicalWorker("impacted services", libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,

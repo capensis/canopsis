@@ -80,8 +80,11 @@ type ConsoleWriter struct {
 }
 
 type SectionMetrics struct {
-	SliInterval       string `toml:"SliInterval"`
-	EnableTechMetrics bool   `toml:"EnableTechMetrics"`
+	SliInterval string `toml:"SliInterval"`
+}
+
+type SectionTechMetrics struct {
+	Enabled bool `toml:"Enabled"`
 }
 
 // CanopsisConf represents a generic configuration object.
@@ -96,6 +99,7 @@ type CanopsisConf struct {
 	Logger      SectionLogger      `bson:"logger" toml:"logger"`
 	API         SectionApi         `bson:"api" toml:"api"`
 	Metrics     SectionMetrics     `bson:"metrics" toml:"metrics"`
+	TechMetrics SectionTechMetrics `bson:"tech_metrics" toml:"tech_metrics"`
 }
 
 // UserInterfaceConf represents a user interface configuration object.

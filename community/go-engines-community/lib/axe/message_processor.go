@@ -5,11 +5,12 @@ import (
 	"runtime/trace"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -18,21 +19,20 @@ import (
 
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
-	EventProcessor           alarm.EventProcessor
-	EventsMetricsChan        chan metrics.AxeEventMetric
-	RemediationRpcClient     engine.RPCClient
-	TimezoneConfigProvider   config.TimezoneConfigProvider
-	Encoder                  encoding.Encoder
-	Decoder                  encoding.Decoder
-	Logger                   zerolog.Logger
-	PbehaviorAdapter         pbehavior.Adapter
+
+	EventProcessor         alarm.EventProcessor
+	TechMetricsSender      techmetrics.Sender
+	RemediationRpcClient   engine.RPCClient
+	TimezoneConfigProvider config.TimezoneConfigProvider
+	Encoder                encoding.Encoder
+	Decoder                encoding.Decoder
+	Logger                 zerolog.Logger
+	PbehaviorAdapter       pbehavior.Adapter
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
-	startProcTime := time.Now()
-	eventMetric := metrics.AxeEventMetric{
-		Timestamp: startProcTime,
-	}
+	eventMetric := techmetrics.AxeEventMetric{}
+	eventMetric.Timestamp = time.Now()
 
 	ctx, task := trace.NewTask(parentCtx, "axe.WorkerProcess")
 	defer task.End()
@@ -64,11 +64,8 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			eventMetric.EntityType = event.Entity.Type
 		}
 
-		eventMetric.Interval = time.Since(startProcTime).Microseconds()
-		select {
-		case <-ctx.Done():
-		case p.EventsMetricsChan <- eventMetric:
-		}
+		eventMetric.Interval = time.Since(eventMetric.Timestamp)
+		p.TechMetricsSender.SendAxeEvent(eventMetric)
 	}()
 
 	alarmChange, err := p.EventProcessor.Process(ctx, &event)

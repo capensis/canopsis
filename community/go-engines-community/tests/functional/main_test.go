@@ -244,7 +244,7 @@ func clearStores(
 	}
 
 	logger.Info().Msg("MongoDB fixtures are applied")
-	pgConnStr, err := postgres.GetConnStr(postgres.EnvURL)
+	pgConnStr, err := postgres.GetConnStr()
 	if err != nil {
 		return err
 	}

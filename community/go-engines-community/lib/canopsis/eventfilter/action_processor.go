@@ -7,18 +7,19 @@ import (
 	"text/template"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 type actionProcessor struct {
 	buf               bytes.Buffer
-	techMetricsSender metrics.TechSender
+	techMetricsSender techmetrics.Sender
 }
 
-func NewActionProcessor(sender metrics.TechSender) ActionProcessor {
+func NewActionProcessor(sender techmetrics.Sender) ActionProcessor {
 	return &actionProcessor{
 		buf:               bytes.Buffer{},
 		techMetricsSender: sender,
@@ -59,7 +60,7 @@ func (p *actionProcessor) Process(ctx context.Context, action Action, event type
 			return event, types.ErrInvalidInfoType
 		}
 
-		*event.Entity, entityUpdated = p.setEntityInfo(ctx, *event.Entity, action.Value, action.Name, action.Description)
+		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, action.Value, action.Name, action.Description)
 
 		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
 
@@ -84,7 +85,7 @@ func (p *actionProcessor) Process(ctx context.Context, action Action, event type
 		}
 
 		entityUpdated := false
-		*event.Entity, entityUpdated = p.setEntityInfo(ctx, *event.Entity, value, action.Name, action.Description)
+		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
 
 		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
 
@@ -140,7 +141,7 @@ func (p *actionProcessor) Process(ctx context.Context, action Action, event type
 		}
 
 		entityUpdated := false
-		*event.Entity, entityUpdated = p.setEntityInfo(ctx, *event.Entity, value, action.Name, action.Description)
+		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
 
 		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
 
@@ -166,14 +167,14 @@ func (p *actionProcessor) executeTpl(tplText string, params TemplateGetter, cfgT
 	return p.buf.String(), nil
 }
 
-func (p *actionProcessor) setEntityInfo(ctx context.Context, entity types.Entity, value interface{}, name, description string) (types.Entity, bool) {
+func (p *actionProcessor) setEntityInfo(entity types.Entity, value interface{}, name, description string) (types.Entity, bool) {
 	info, ok := entity.Infos[name]
 
 	entityUpdated := false
 	valueChanged := !ok || info.Value != value
 	if valueChanged {
 		entityUpdated = true
-		go p.techMetricsSender.SendCheEntityInfo(ctx, time.Now(), name)
+		p.techMetricsSender.SendCheEntityInfo(time.Now(), name)
 	}
 
 	info.Name = name

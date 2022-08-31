@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -12,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
@@ -22,7 +23,7 @@ import (
 )
 
 type periodicalWorker struct {
-	TechMetricsSender      metrics.TechSender
+	TechMetricsSender      techmetrics.Sender
 	ChannelPub             libamqp.Channel
 	PeriodicalInterval     time.Duration
 	PbhService             pbehavior.Service
@@ -40,9 +41,11 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *periodicalWorker) Work(ctx context.Context) {
-	startProcTime := time.Now()
+	metric := techmetrics.PbehaviorPeriodicalMetric{}
+	metric.Timestamp = time.Now()
 	defer func() {
-		go w.TechMetricsSender.SendPBehaviorPeriodical(ctx, time.Now(), time.Since(startProcTime).Microseconds())
+		metric.Interval = time.Since(metric.Timestamp)
+		w.TechMetricsSender.SendPBehaviorPeriodical(metric)
 	}()
 
 	now := time.Now().In(w.TimezoneConfigProvider.Get().Location)

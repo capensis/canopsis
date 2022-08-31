@@ -6,13 +6,14 @@ import (
 	"runtime/trace"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -20,7 +21,7 @@ import (
 )
 
 type periodicalWorker struct {
-	TechMetricsSender   metrics.TechSender
+	TechMetricsSender   techmetrics.Sender
 	PeriodicalInterval  time.Duration
 	ChannelPub          libamqp.Channel
 	AlarmService        libalarm.Service
@@ -36,9 +37,11 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *periodicalWorker) Work(parentCtx context.Context) {
-	startProcTime := time.Now()
+	metric := techmetrics.AxePeriodicalMetric{}
+	metric.Timestamp = time.Now()
 	defer func() {
-		go w.TechMetricsSender.SendAxePeriodical(parentCtx, time.Now(), time.Since(startProcTime).Microseconds())
+		metric.Interval = time.Since(metric.Timestamp)
+		w.TechMetricsSender.SendAxePeriodical(metric)
 	}()
 
 	ctx, task := trace.NewTask(parentCtx, "axe.PeriodicalProcess")

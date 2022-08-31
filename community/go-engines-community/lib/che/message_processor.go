@@ -6,6 +6,8 @@ import (
 	"runtime/trace"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -14,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -26,22 +27,21 @@ type messageProcessor struct {
 	FeaturePrintEventOnError bool
 	FeatureEventProcessing   bool
 	FeatureContextCreation   bool
-	AlarmConfigProvider      config.AlarmConfigProvider
-	EventsMetricsChan        chan metrics.CheEventMetric
-	EventFilterService       eventfilter.Service
-	EnrichmentCenter         libcontext.EnrichmentCenter
-	AmqpPublisher            libamqp.Publisher
-	AlarmAdapter             alarm.Adapter
-	Encoder                  encoding.Encoder
-	Decoder                  encoding.Decoder
-	Logger                   zerolog.Logger
+
+	AlarmConfigProvider config.AlarmConfigProvider
+	TechMetricsSender   techmetrics.Sender
+	EventFilterService  eventfilter.Service
+	EnrichmentCenter    libcontext.EnrichmentCenter
+	AmqpPublisher       libamqp.Publisher
+	AlarmAdapter        alarm.Adapter
+	Encoder             encoding.Encoder
+	Decoder             encoding.Decoder
+	Logger              zerolog.Logger
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
-	startProcTime := time.Now()
-	eventMetric := metrics.CheEventMetric{
-		Timestamp: startProcTime,
-	}
+	eventMetric := techmetrics.CheEventMetric{}
+	eventMetric.Timestamp = time.Now()
 
 	ctx, task := trace.NewTask(parentCtx, "che.WorkerProcess")
 	defer task.End()
@@ -84,12 +84,9 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 		eventMetric.IsInfosUpdated = event.IsEntityUpdated
 		eventMetric.IsServicesUpdated = len(updatedEntityServices.AddedTo) > 0 || len(updatedEntityServices.RemovedFrom) > 0
-		eventMetric.Interval = time.Since(startProcTime).Microseconds()
+		eventMetric.Interval = time.Since(eventMetric.Timestamp)
 
-		select {
-		case <-ctx.Done():
-		case p.EventsMetricsChan <- eventMetric:
-		}
+		p.TechMetricsSender.SendCheEvent(eventMetric)
 	}()
 
 	eventMetric.EventType = event.EventType

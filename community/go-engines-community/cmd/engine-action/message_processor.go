@@ -5,17 +5,18 @@ import (
 	"runtime/trace"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 )
 
 type messageProcessor struct {
-	EventsMetricsChan        chan metrics.SimpleEventMetric
+	TechMetricsSender        techmetrics.Sender
 	ActionService            action.Service
 	Decoder                  encoding.Decoder
 	Logger                   zerolog.Logger
@@ -23,10 +24,8 @@ type messageProcessor struct {
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
-	startProcTime := time.Now()
-	eventMetric := metrics.SimpleEventMetric{
-		Timestamp: startProcTime,
-	}
+	eventMetric := techmetrics.EventMetric{}
+	eventMetric.Timestamp = time.Now()
 
 	ctx, task := trace.NewTask(parentCtx, "action.WorkerProcess")
 	defer task.End()
@@ -54,11 +53,8 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	defer func() {
 		eventMetric.EventType = event.EventType
-		eventMetric.Interval = time.Since(startProcTime).Microseconds()
-		select {
-		case <-ctx.Done():
-		case p.EventsMetricsChan <- eventMetric:
-		}
+		eventMetric.Interval = time.Since(eventMetric.Timestamp)
+		p.TechMetricsSender.SendSimpleEvent(techmetrics.ActionEvent, eventMetric)
 	}()
 
 	err = p.ActionService.Process(ctx, &event)
