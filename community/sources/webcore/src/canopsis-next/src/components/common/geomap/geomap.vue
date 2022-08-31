@@ -1,13 +1,16 @@
 <script>
 import { LMap } from 'vue2-leaflet';
 import { Map, Icon } from 'leaflet';
+import { GestureHandling } from 'leaflet-gesture-handling';
 
 import locationUrl from '@/assets/images/location.svg';
 
 Map.mergeOptions({
   attributionControl: false,
   zoomControl: false,
+  gestureHandling: true,
 });
+Map.addInitHook('addHandler', 'gestureHandling', GestureHandling);
 
 // eslint-disable-next-line no-underscore-dangle
 delete Icon.Default.prototype._getIconUrl;
