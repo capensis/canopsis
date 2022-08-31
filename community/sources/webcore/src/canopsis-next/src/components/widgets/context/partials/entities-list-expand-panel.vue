@@ -14,7 +14,7 @@
     template(v-if="item.type !== $constants.ENTITY_TYPES.service")
       v-tab {{ $t('context.impactDepends') }}
       v-tab-item(lazy)
-        impact-depends-tab(:impact="item.impact", :depends="item.depends")
+        impact-depends-tab(:entity="item")
 
     v-tab {{ $t('common.infos') }}
     v-tab-item(lazy)

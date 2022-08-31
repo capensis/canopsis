@@ -6,7 +6,7 @@ export const MAP_TYPES = {
   flowchart: 'flowchart',
   mermaid: 'mermaid',
   geo: 'geo',
-  treeOfDependencies: 'treeOfDependencies',
+  treeOfDependencies: 'treeofdeps',
 };
 
 export const MAP_ICON_BY_TYPES = {

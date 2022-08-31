@@ -273,7 +273,18 @@ table.v-datatable {
     color: rgba(0, 0, 0, .87);
   }
 
-  &--dense.v-datatable {
+  &--dense.v-datatable .service-dependencies {
+    .v-treeview-node__root {
+      min-height: $denseCellHeight;
+      height: $denseCellHeight;
+
+      .v-btn {
+        width: $denseCellHeight - 4;
+        height: $denseCellHeight - 4;
+        margin: 2px;
+      }
+    }
+
     tbody, thead {
       td, th {
         padding: 0 $densePadding;

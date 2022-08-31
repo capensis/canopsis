@@ -38,6 +38,76 @@ import NetworkGraph from '@/components/common/chart/network-graph.vue';
 import ClusterGraphEntitiesType from './partials/cluster-graph-entities-type.vue';
 import ClusterGraphEntitiesList from './partials/cluster-graph-entities-list.vue';
 
+/*
+function wheelHandler(e) {
+  const { _private: r } = this.$refs.networkGraph.$cy;
+
+  const inBoxSelection = () => r.selection[4] !== 0;
+
+  if (r.scrollingPage) {
+    return;
+  } // while scrolling, ignore wheel-to-zoom
+
+  const { cy } = r;
+  const zoom = cy.zoom();
+  const pan = cy.pan();
+  const pos = r.projectIntoViewport(e.clientX, e.clientY);
+  const rpos = [pos[0] * zoom + pan.x, pos[1] * zoom + pan.y];
+
+  if (r.hoverData.draggingEles || r.hoverData.dragging || r.hoverData.cxtStarted || inBoxSelection()) {
+    // if pan dragging or cxt dragging, wheel movements make no zoom
+    e.preventDefault();
+    return;
+  }
+
+  if (cy.panningEnabled() && cy.userPanningEnabled() && cy.zoomingEnabled() && cy.userZoomingEnabled()) {
+    e.preventDefault();
+    r.data.wheelZooming = true;
+
+    clearTimeout(r.data.wheelTimeout);
+
+    r.data.wheelTimeout = setTimeout(() => {
+      r.data.wheelZooming = false;
+      r.redrawHint('eles', true);
+      r.redraw();
+    }, 150);
+
+    let diff;
+
+    if (e.deltaY != null) {
+      diff = e.deltaY / -250;
+    } else if (e.wheelDeltaY != null) {
+      diff = e.wheelDeltaY / 1000;
+    } else {
+      diff = e.wheelDelta / 1000;
+    }
+
+    diff *= r.wheelSensitivity;
+    const needsWheelFix = e.deltaMode === 1;
+
+    if (needsWheelFix) {
+      // fixes slow wheel events on ff/linux and ff/windows
+      diff *= 33;
+    }
+
+    let newZoom = cy.zoom() * (10 ** diff);
+
+    if (e.type === 'gesturechange') {
+      newZoom = r.gestureStartZoom * e.scale;
+    }
+
+    cy.zoom({
+      level: newZoom,
+      renderedPosition: {
+        x: rpos[0],
+        y: rpos[1],
+      },
+    });
+    cy.emit(e.type === 'gesturechange' ? 'pinchzoom' : 'scrollzoom');
+  }
+}
+*/
+
 export default {
   inject: ['$validator'],
   components: {
@@ -112,6 +182,7 @@ export default {
       return {
         ...TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
 
+        // userZoomingEnabled: false,
         style: this.styleOption,
       };
     },

@@ -140,7 +140,7 @@ export default {
 
       const { data } = await this.fetchDependenciesList({ id, params });
 
-      this.$set(this.pinnedListById, id, data.map(({ entity }) => entity));
+      this.$set(this.pinnedListById, id, data);
       this.$set(this.pinnedPendingById, id, false);
     },
 
