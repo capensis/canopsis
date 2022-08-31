@@ -11,8 +11,8 @@ import (
 func NewLoadConfigPeriodicalWorker(
 	periodicalInterval time.Duration,
 	adapter config.Adapter,
-	updaters []config.Updater,
 	logger zerolog.Logger,
+	updaters ...config.Updater,
 ) PeriodicalWorker {
 	return &loadConfigPeriodicalWorker{
 		periodicalInterval: periodicalInterval,

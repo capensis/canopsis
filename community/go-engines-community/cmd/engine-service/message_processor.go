@@ -5,17 +5,18 @@ import (
 	"runtime/trace"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 )
 
 type messageProcessor struct {
-	EventsMetricsChan        chan metrics.SimpleEventMetric
+	TechMetricsSender        techmetrics.Sender
 	EntityServiceService     entityservice.Service
 	Encoder                  encoding.Encoder
 	Decoder                  encoding.Decoder
@@ -24,10 +25,8 @@ type messageProcessor struct {
 }
 
 func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte, error) {
-	startProcTime := time.Now()
-	eventMetric := metrics.SimpleEventMetric{
-		Timestamp: startProcTime,
-	}
+	eventMetric := techmetrics.EventMetric{}
+	eventMetric.Timestamp = time.Now()
 
 	ctx, task := trace.NewTask(ctx, "service.MessageProcessor")
 	defer task.End()
@@ -55,12 +54,11 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 	trace.Log(ctx, "event.resource", event.Resource)
 
 	defer func() {
-		eventMetric.EventType = event.EventType
-		eventMetric.Interval = time.Since(startProcTime).Microseconds()
-		select {
-		case <-ctx.Done():
-		case p.EventsMetricsChan <- eventMetric:
-		}
+		defer func() {
+			eventMetric.EventType = event.EventType
+			eventMetric.Interval = time.Since(eventMetric.Timestamp)
+			p.TechMetricsSender.SendSimpleEvent(techmetrics.ServiceEvent, eventMetric)
+		}()
 	}()
 
 	if event.EventType == types.EventTypeUpdateEntityService {

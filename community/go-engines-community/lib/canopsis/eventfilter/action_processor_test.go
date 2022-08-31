@@ -2,14 +2,12 @@ package eventfilter_test
 
 import (
 	"context"
-	"github.com/rs/zerolog"
 	"reflect"
 	"testing"
 
-	mock_postgres "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/postgres"
+	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/golang/mock/gomock"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -1194,10 +1192,9 @@ func TestActionProcessor(t *testing.T) {
 		},
 	}
 
-	mockPoolProvider := mock_postgres.NewMockPoolProvider(ctrl)
-	mockPoolProvider.EXPECT().GetPool().Return(nil).AnyTimes()
-
-	processor := eventfilter.NewActionProcessor(metrics.NewTechMetricsSender(mockPoolProvider, zerolog.Logger{}))
+	mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
+	mockTechMetricsSender.EXPECT().SendCheEntityInfo(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+	processor := eventfilter.NewActionProcessor(mockTechMetricsSender)
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
 			resultEvent, resultErr := processor.Process(context.Background(), dataset.action, dataset.event, eventfilter.RegexMatchWrapper{
