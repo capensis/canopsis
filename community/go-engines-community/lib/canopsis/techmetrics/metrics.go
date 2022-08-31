@@ -29,12 +29,14 @@ type PeriodicalMetric struct {
 
 type AxePeriodicalMetric struct {
 	PeriodicalMetric
-	//	todo
+	Events int64
 }
 
 type PbehaviorPeriodicalMetric struct {
 	PeriodicalMetric
-	//	todo
+	Events     int64
+	Entities   int64
+	Pbehaviors int64
 }
 
 type ApiRequestMetric struct {

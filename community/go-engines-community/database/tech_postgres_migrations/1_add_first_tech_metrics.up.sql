@@ -66,7 +66,8 @@ SELECT add_retention_policy('axe_event', INTERVAL '1 day');
 CREATE TABLE IF NOT EXISTS axe_periodical
 (
     time     TIMESTAMP NOT NULL,
-    interval INT       NOT NULL
+    interval INT       NOT NULL,
+    events   INT       NOT NULL
 );
 SELECT create_hypertable('axe_periodical', 'time', if_not_exists => TRUE);
 SELECT add_retention_policy('axe_periodical', INTERVAL '7 days');
@@ -75,8 +76,11 @@ SELECT add_retention_policy('axe_periodical', INTERVAL '7 days');
 -- PBEHAVIOR
 CREATE TABLE IF NOT EXISTS pbehavior_periodical
 (
-    time     TIMESTAMP NOT NULL,
-    interval INT       NOT NULL
+    time       TIMESTAMP NOT NULL,
+    interval   INT       NOT NULL,
+    events     INT       NOT NULL,
+    entities   INT       NOT NULL,
+    pbehaviors INT       NOT NULL
 );
 SELECT create_hypertable('pbehavior_periodical', 'time', if_not_exists => TRUE);
 SELECT add_retention_policy('pbehavior_periodical', INTERVAL '7 days');
@@ -141,4 +145,4 @@ SELECT add_retention_policy('api_requests', INTERVAL '7 days');
 COMMIT;
 
 -- todo material view
--- todo cps event
+
