@@ -1,13 +1,12 @@
 <template lang="pug">
   g(@dblclick="enableEditingMode")
-    document-figure(
+    rect(
       v-bind="shape.properties",
       v-on="$listeners",
-      :width="shape.width",
-      :height="shape.height",
       :x="shape.x",
       :y="shape.y",
-      :offset="shape.offset",
+      :width="shape.width",
+      :height="shape.height",
       :cursor="readonly ? '' : 'move'"
     )
     text-editor(
@@ -26,11 +25,10 @@
 <script>
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
-import TextEditor from '../common/text-editor.vue';
-import DocumentFigure from '../figures/document-figure.vue';
+import TextEditor from '../..//common/text-editor.vue';
 
 export default {
-  components: { DocumentFigure, TextEditor },
+  components: { TextEditor },
   mixins: [flowchartTextEditorMixin],
   props: {
     shape: {

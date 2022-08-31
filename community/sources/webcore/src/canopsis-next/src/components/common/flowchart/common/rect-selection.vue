@@ -129,22 +129,43 @@ export default {
       this.$mouseUp.unregister(this.finishResize);
     },
 
+    normalizeCursorByDirection(cursor) {
+      const newCursor = {
+        x: cursor.x,
+        y: cursor.y,
+      };
+
+      if (this.direction.includes(DIRECTIONS.north)) {
+        newCursor.y += this.padding;
+      } else if (this.direction.includes(DIRECTIONS.south)) {
+        newCursor.y -= this.padding;
+      }
+
+      if (this.direction.includes(DIRECTIONS.west)) {
+        newCursor.x += this.padding;
+      } else if (this.direction.includes(DIRECTIONS.east)) {
+        newCursor.x -= this.padding;
+      }
+
+      return newCursor;
+    },
+
     onResize(cursor) {
-      const { direction, rect } = resizeRectangleShape({
+      const normalizedCursor = this.normalizeCursorByDirection(cursor);
+
+      const rect = resizeRectangleShape({
         rect: {
           x: this.x,
           y: this.y,
           width: this.width,
           height: this.height,
         },
-        cursorX: cursor.x,
-        cursorY: cursor.y,
+        cursorX: normalizedCursor.x,
+        cursorY: normalizedCursor.y,
         direction: this.direction,
         ratio: this.ratio,
         aspectRatio: this.aspectRatio || cursor.shift,
       });
-
-      this.direction = direction;
 
       this.$emit('update', rect);
     },

@@ -29,19 +29,19 @@
         :shape="selection.shape",
         :selected="isSelected(selection.shape._id)",
         :connecting="editing",
+        :color="selectionColor",
+        :padding="selectionPadding",
         @connecting="onConnectMove($event)",
         @connected="onConnectFinish(selection.shape, $event)",
         @unconnect="onUnconnect(selection.shape)",
         @edit:point="startEditLinePoint(selection.shape, $event)",
         @update="updateShape(selection.shape, $event)"
       )
-      path(
-        v-if="selection",
-        :d="selectionPath",
-        fill="blue",
-        fill-opacity="0.1",
-        stroke="blue",
-        stroke-width="1"
+      flowchart-selection(
+        v-if="selecting",
+        :start="selectionStart",
+        :end="cursor",
+        :color="selectionColor"
       )
     slot(name="layers", :data="data")
 </template>
@@ -49,7 +49,9 @@
 <script>
 import { cloneDeep, isEqual, omit } from 'lodash';
 
-import { SHAPES } from '@/constants';
+import { COLORS } from '@/config';
+
+import { FLOWCHART_KEY_CODES, SHAPES } from '@/constants';
 
 import Observer from '@/services/observer';
 
@@ -62,21 +64,22 @@ import { moveShapesMixin } from '@/mixins/flowchart/move-shape';
 import { viewBoxMixin } from '@/mixins/flowchart/view-box';
 import { contextmenuMixin } from '@/mixins/flowchart/contextmenu';
 
-import RectShape from './rect-shape/rect-shape.vue';
-import RhombusShape from './rhombus-shape/rhombus-shape.vue';
-import CircleShape from './circle-shape/circle-shape.vue';
-import EllipseShape from './ellipse-shape/ellipse-shape.vue';
-import ParallelogramShape from './parallelogram-shape/parallelogram-shape.vue';
-import ProcessShape from './process-shape/process-shape.vue';
-import DocumentShape from './document-shape/document-shape.vue';
-import StorageShape from './storage-shape/storage-shape.vue';
-import LineShape from './line-shape/line-shape.vue';
-import ArrowLineShape from './arrow-line-shape/arrow-line-shape.vue';
-import BidirectionalArrowLineShape from './bidirectional-arrow-line-shape/bidirectional-arrow-line-shape.vue';
-import ImageShape from './image-shape/image-shape.vue';
-import RectShapeSelection from './rect-shape/rect-shape-selection.vue';
-import CircleShapeSelection from './circle-shape/circle-shape-selection.vue';
-import LineShapeSelection from './line-shape/line-shape-selection.vue';
+import FlowchartSelection from './partials/flowchart-selection.vue';
+import RectShape from './shapes/rect-shape/rect-shape.vue';
+import RhombusShape from './shapes/rhombus-shape/rhombus-shape.vue';
+import CircleShape from './shapes/circle-shape/circle-shape.vue';
+import EllipseShape from './shapes/ellipse-shape/ellipse-shape.vue';
+import ParallelogramShape from './shapes/parallelogram-shape/parallelogram-shape.vue';
+import ProcessShape from './shapes/process-shape/process-shape.vue';
+import DocumentShape from './shapes/document-shape/document-shape.vue';
+import StorageShape from './shapes/storage-shape/storage-shape.vue';
+import LineShape from './shapes/line-shape/line-shape.vue';
+import ArrowLineShape from './shapes/arrow-line-shape/arrow-line-shape.vue';
+import BidirectionalArrowLineShape from './shapes/bidirectional-arrow-line-shape/bidirectional-arrow-line-shape.vue';
+import ImageShape from './shapes/image-shape/image-shape.vue';
+import RectShapeSelection from './shapes/rect-shape/rect-shape-selection.vue';
+import CircleShapeSelection from './shapes/circle-shape/circle-shape-selection.vue';
+import LineShapeSelection from './shapes/line-shape/line-shape-selection.vue';
 
 export default {
   provide() {
@@ -86,6 +89,7 @@ export default {
     };
   },
   components: {
+    FlowchartSelection,
     RectShape,
     RhombusShape,
     CircleShape,
@@ -133,6 +137,14 @@ export default {
     pointSize: {
       type: Number,
       default: 24,
+    },
+    selectionColor: {
+      type: String,
+      default: COLORS.flowchart.selection,
+    },
+    selectionPadding: {
+      type: Number,
+      default: 5,
     },
   },
   data() {
@@ -370,9 +382,9 @@ export default {
     },
 
     onContainerMouseUp(event) {
-      if (this.selection) {
+      if (this.selecting) {
         this.selectShapesByArea(this.selectionStart, this.cursor, event.shiftKey);
-        this.selection = false;
+        this.selecting = false;
         return;
       }
 
@@ -408,7 +420,7 @@ export default {
       }
 
       if (event.button === 0) {
-        this.selection = true;
+        this.selecting = true;
         this.selectionStart = {
           x: this.cursor.x,
           y: this.cursor.y,
@@ -446,10 +458,32 @@ export default {
       }
     },
 
-    removeSelectedShapes() {
+    removeSelectedShapes(event) {
+      event.preventDefault();
+
       if (this.hasSelected) {
         this.updateShapes(omit(this.data, this.selectedIds));
         this.clearSelected();
+      }
+    },
+
+    handleCopyShapes(event) {
+      if (event.ctrlKey) {
+        if (window.getSelection().toString()) {
+          return;
+        }
+
+        event.preventDefault();
+
+        this.copySelectedShapes();
+      }
+    },
+
+    handlePasteShapes(event) {
+      if (event.ctrlKey) {
+        event.preventDefault();
+
+        this.pasteShapes();
       }
     },
 
@@ -460,24 +494,19 @@ export default {
         return;
       }
 
-      const handlers = {
-        37: this.moveSelectedLeft,
-        38: this.moveSelectedTop,
-        39: this.moveSelectedRight,
-        40: this.moveSelectedDown,
+      const handler = {
+        [FLOWCHART_KEY_CODES.arrowUp]: this.moveSelectedUp,
+        [FLOWCHART_KEY_CODES.arrowRight]: this.moveSelectedRight,
+        [FLOWCHART_KEY_CODES.arrowDown]: this.moveSelectedDown,
+        [FLOWCHART_KEY_CODES.arrowLeft]: this.moveSelectedLeft,
 
-        46: this.removeSelectedShapes,
-      };
-      const ctrlHandler = {
-        67: this.copySelectedShapes,
-        86: this.pasteShapes,
-      };
+        [FLOWCHART_KEY_CODES.delete]: this.removeSelectedShapes,
 
-      const handler = handlers[event.keyCode]
-        || (event.ctrlKey && ctrlHandler[event.keyCode]);
+        [FLOWCHART_KEY_CODES.keyC]: this.handleCopyShapes,
+        [FLOWCHART_KEY_CODES.keyV]: this.handlePasteShapes,
+      }[event.keyCode];
 
       if (handler) {
-        event.preventDefault();
         handler(event);
       }
     },

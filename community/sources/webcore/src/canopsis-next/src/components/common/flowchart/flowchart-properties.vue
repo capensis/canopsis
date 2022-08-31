@@ -66,10 +66,10 @@ import { STROKE_TYPES } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 
-import FlowchartColorField from './partials/flowchart-color-field.vue';
-import FlowchartNumberField from './partials/flowchart-number-field.vue';
-import FlowchartStrokeTypeField from './partials/flowchart-stroke-type-field.vue';
-import FlowchartLineTypeField from './partials/flowchart-line-type-field.vue';
+import FlowchartColorField from './fields/flowchart-color-field.vue';
+import FlowchartNumberField from './fields/flowchart-number-field.vue';
+import FlowchartStrokeTypeField from './fields/flowchart-stroke-type-field.vue';
+import FlowchartLineTypeField from './fields/flowchart-line-type-field.vue';
 
 export default {
   components: {

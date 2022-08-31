@@ -86,6 +86,23 @@ import { generatePoint } from './points';
  */
 
 /**
+ * @typedef {
+ *   RectShape |
+ *   CircleShape |
+ *   RhombusShape |
+ *   EllipseShape |
+ *   ParallelogramShape |
+ *   ImageShape |
+ *   StorageShape |
+ *   DocumentShape |
+ *   ProcessShape |
+ *   LineShape |
+ *   ArrowLineShape |
+ *   BidirectionalArrowLineShape
+ * } Shape
+ */
+
+/**
  * Generate default shape
  *
  * @param {DefaultShape} shape

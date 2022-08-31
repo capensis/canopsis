@@ -32,14 +32,20 @@ export default {
     },
 
     parallelogramPath() {
+      const width = this.width - this.parallelogramOffset;
+
       return [
-        `M${this.x + this.parallelogramOffset},${this.y}`,
-        `L${this.x + this.width},${this.y}`,
-        `L${this.x + this.width - this.parallelogramOffset},${this.y + this.height}`,
-        `L${this.x},${this.y + this.height}`,
-        `L${this.x + this.parallelogramOffset},${this.y}`,
+        /* Move to top left */
+        `M${this.x + this.parallelogramOffset} ${this.y}`,
+        /* Line to top right */
+        `l${this.width - this.parallelogramOffset} 0`,
+        /* Line to bottom right */
+        `l${-this.parallelogramOffset},${this.height}`,
+        /* Line to bottom left */
+        `l${-width} 0`,
+        /* Close path */
         'Z',
-      ].join(' ');
+      ].join('');
     },
   },
 };

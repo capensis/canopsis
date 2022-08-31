@@ -1,12 +1,11 @@
 <template lang="pug">
   g(@dblclick="enableEditingMode")
-    ellipse(
+    circle-figure(
       v-bind="shape.properties",
       v-on="$listeners",
-      :cx="centerX",
-      :cy="centerY",
-      :rx="radiusX",
-      :ry="radiusY",
+      :x="shape.x",
+      :y="shape.y",
+      :diameter="shape.diameter",
       :cursor="readonly ? '' : 'move'"
     )
     text-editor(
@@ -15,8 +14,8 @@
       :value="shape.text",
       :y="shape.y",
       :x="shape.x",
-      :width="shape.width",
-      :height="shape.height",
+      :width="shape.diameter",
+      :height="shape.diameter",
       :editable="editing",
       @blur="disableEditingMode"
     )
@@ -25,40 +24,20 @@
 <script>
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
-import TextEditor from '../common/text-editor.vue';
+import TextEditor from '../..//common/text-editor.vue';
+import CircleFigure from '../..//figures/circle-figure.vue';
 
 export default {
-  components: { TextEditor },
+  components: { CircleFigure, TextEditor },
   mixins: [flowchartTextEditorMixin],
   props: {
     shape: {
       type: Object,
       required: true,
     },
-    selected: {
-      type: Boolean,
-      default: false,
-    },
     readonly: {
       type: Boolean,
       default: false,
-    },
-  },
-  computed: {
-    radiusX() {
-      return this.shape.width / 2;
-    },
-
-    radiusY() {
-      return this.shape.height / 2;
-    },
-
-    centerX() {
-      return this.shape.x + this.radiusX;
-    },
-
-    centerY() {
-      return this.shape.y + this.radiusY;
     },
   },
 };

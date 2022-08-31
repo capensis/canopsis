@@ -21,11 +21,19 @@ export default {
   computed: {
     path() {
       const halfHeight = this.height / 2;
-      const firstPoint = '0 0';
-      const secondPoint = `0 ${this.height}`;
-      const thirdPoint = `${this.width} ${halfHeight}`;
 
-      return `M${firstPoint} ${this.width / 4} ${halfHeight} ${secondPoint} ${thirdPoint} ${firstPoint} Z`;
+      return [
+        /* Move to left bottom corner */
+        'M0 0',
+        /* Line to bottom center */
+        `L${this.width / 4} ${halfHeight}`,
+        /* Line to bottom right corner */
+        `L0 ${this.height}`,
+        /* Line to top corner */
+        `L${this.width} ${halfHeight}`,
+        /* Close path */
+        'Z',
+      ].join('');
     },
   },
 };

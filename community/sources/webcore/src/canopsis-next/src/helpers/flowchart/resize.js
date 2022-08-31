@@ -15,7 +15,7 @@ import { DIRECTIONS } from '@/constants';
  * @param {number} cursorX
  * @param {number} cursorY
  * @param {string} direction
- * @returns {{ rect: Rect, direction: string }}
+ * @returns {Rect}
  */
 export const resizeRectangleShapeWithoutAspectRatio = ({
   rect,
@@ -31,18 +31,13 @@ export const resizeRectangleShapeWithoutAspectRatio = ({
   };
   const directionArray = direction.split('');
 
-  directionArray.forEach((singleDirection, index) => {
+  directionArray.forEach((singleDirection) => {
     switch (singleDirection) {
       case DIRECTIONS.south: {
         const newHeight = cursorY - newRect.y;
 
-        if (newHeight > 0) {
+        if (newHeight >= 0) {
           newRect.height = newHeight;
-        } else {
-          newRect.height = Math.abs(newHeight);
-          newRect.y -= newRect.height;
-
-          directionArray[index] = DIRECTIONS.north;
         }
 
         break;
@@ -50,14 +45,9 @@ export const resizeRectangleShapeWithoutAspectRatio = ({
       case DIRECTIONS.north: {
         const newHeight = newRect.height + newRect.y - cursorY;
 
-        if (newHeight > 0) {
+        if (newHeight >= 0) {
           newRect.height = newHeight;
           newRect.y = cursorY;
-        } else {
-          newRect.height = Math.abs(newHeight);
-          newRect.y = cursorY - newRect.height;
-
-          directionArray[index] = DIRECTIONS.south;
         }
 
         break;
@@ -65,13 +55,8 @@ export const resizeRectangleShapeWithoutAspectRatio = ({
       case DIRECTIONS.east: {
         const newWidth = cursorX - newRect.x;
 
-        if (newWidth > 0) {
+        if (newWidth >= 0) {
           newRect.width = newWidth;
-        } else {
-          newRect.width = Math.abs(newWidth);
-          newRect.x = cursorX;
-
-          directionArray[index] = DIRECTIONS.west;
         }
 
         break;
@@ -79,14 +64,9 @@ export const resizeRectangleShapeWithoutAspectRatio = ({
       case DIRECTIONS.west: {
         const newWidth = newRect.width + newRect.x - cursorX;
 
-        if (newWidth > 0) {
+        if (newWidth >= 0) {
           newRect.width = newWidth;
           newRect.x = cursorX;
-        } else {
-          newRect.width = Math.abs(newWidth);
-          newRect.x = cursorX - newRect.width;
-
-          directionArray[index] = DIRECTIONS.east;
         }
 
         break;
@@ -94,10 +74,7 @@ export const resizeRectangleShapeWithoutAspectRatio = ({
     }
   });
 
-  return {
-    rect: newRect,
-    direction: directionArray.join(''),
-  };
+  return newRect;
 };
 
 /**
@@ -108,7 +85,7 @@ export const resizeRectangleShapeWithoutAspectRatio = ({
  * @param {number} cursorY
  * @param {string} direction
  * @param {number} ratio
- * @returns {{ rect: Rect, direction: string }}
+ * @returns {Rect}
  */
 export const resizeRectangleWithAspectRation = ({
   rect,
@@ -118,7 +95,6 @@ export const resizeRectangleWithAspectRation = ({
   ratio,
 }) => {
   const newRect = { ...rect };
-  let newDirection = direction;
 
   switch (direction) {
     case DIRECTIONS.west:
@@ -129,14 +105,6 @@ export const resizeRectangleWithAspectRation = ({
       if (newWidth >= 0) {
         newRect.width = newWidth;
         newRect.x = cursorX;
-      } else {
-        const absoluteNewWidth = Math.abs(newWidth);
-
-        newRect.x += rect.width;
-        newRect.y -= newRect.height;
-        newRect.width = absoluteNewWidth;
-
-        newDirection = DIRECTIONS.northEast;
       }
 
       break;
@@ -150,14 +118,6 @@ export const resizeRectangleWithAspectRation = ({
       if (newWidth >= 0) {
         newRect.y += rect.height - newRect.height;
         newRect.width = newWidth;
-      } else {
-        const absoluteNewWidth = Math.abs(newWidth);
-
-        newRect.y += rect.height;
-        newRect.x -= absoluteNewWidth;
-        newRect.width = absoluteNewWidth;
-
-        newDirection = DIRECTIONS.southWest;
       }
 
       break;
@@ -169,14 +129,6 @@ export const resizeRectangleWithAspectRation = ({
 
       if (newHeight >= 0) {
         newRect.height = newHeight;
-      } else {
-        const absoluteNewHeight = Math.abs(newHeight);
-
-        newRect.height = absoluteNewHeight;
-        newRect.x -= newRect.width;
-        newRect.y -= absoluteNewHeight;
-
-        newDirection = DIRECTIONS.northWest;
       }
 
       break;
@@ -190,52 +142,30 @@ export const resizeRectangleWithAspectRation = ({
         newRect.height = newHeight;
         newRect.y += rect.height - newHeight;
         newRect.x += rect.width - newRect.width;
-      } else {
-        const absoluteNewHeight = Math.abs(newHeight);
-
-        newRect.y += rect.height;
-        newRect.x += rect.width;
-        newRect.height = absoluteNewHeight;
-
-        newDirection = DIRECTIONS.southEast;
       }
 
       break;
     }
   }
 
-  return {
-    rect: newRect,
-    direction: newDirection,
-  };
+  return newRect;
 };
 
 /**
  * Resize rect by direction and cursor position
  *
  * @param {Rect} rect
- * @param {number} cursorX
- * @param {number} cursorY
- * @param {string} direction
- * @param {number} ratio
+ * @param {number} options.cursorX
+ * @param {number} options.cursorY
+ * @param {string} options.direction
+ * @param {number} options.ratio
  * @param {boolean} [aspectRatio]
- * @returns {{ rect: Rect, direction: string }}
+ * @returns {Rect}
  */
-export const resizeRectangleShape = ({
-  rect,
-  cursorX,
-  cursorY,
-  direction,
-  ratio,
-  aspectRatio,
-}) => {
-  const func = aspectRatio ? resizeRectangleWithAspectRation : resizeRectangleShapeWithoutAspectRatio;
+export const resizeRectangleShape = ({ aspectRatio, ...options }) => {
+  const func = aspectRatio
+    ? resizeRectangleWithAspectRation
+    : resizeRectangleShapeWithoutAspectRatio;
 
-  return func({
-    rect,
-    cursorX,
-    cursorY,
-    direction,
-    ratio,
-  });
+  return func(options);
 };

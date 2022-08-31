@@ -70,7 +70,7 @@ export const moveShapesMixin = {
       this.updateShapes(this.data);
     },
 
-    moveSelectedTop() {
+    moveSelectedUp() {
       this.moveSelected({ x: 0, y: -this.gridSize });
 
       this.updateShapes(this.data);

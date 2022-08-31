@@ -78,55 +78,35 @@ export default {
       return this.topY + this.height / 2;
     },
 
-    centerPoint() {
-      return { x: this.centerX, y: this.centerY };
-    },
-
-    topLeftPoint() {
-      return { x: this.leftX, y: this.topY };
-    },
-
-    topRightPoint() {
-      return { x: this.rightX, y: this.topY };
-    },
-
-    bottomRightPoint() {
-      return { x: this.rightX, y: this.bottomY };
-    },
-
-    bottomLeftPoint() {
-      return { x: this.leftX, y: this.bottomY };
-    },
-
     topTrianglePath() {
       return [
-        `M ${this.topLeftPoint.x} ${this.topLeftPoint.y}`,
-        `L ${this.topRightPoint.x} ${this.topRightPoint.y}`,
-        `L ${this.centerPoint.x} ${this.centerPoint.y}`,
+        `M ${this.leftX} ${this.topY}`,
+        `L ${this.rightX} ${this.topY}`,
+        `L ${this.centerX} ${this.centerY}`,
       ].join('');
     },
 
     rightTrianglePath() {
       return [
-        `M ${this.topRightPoint.x} ${this.topRightPoint.y}`,
-        `L ${this.bottomRightPoint.x} ${this.bottomRightPoint.y}`,
-        `L ${this.centerPoint.x} ${this.centerPoint.y}`,
+        `M ${this.rightX} ${this.topY}`,
+        `L ${this.rightX} ${this.bottomY}`,
+        `L ${this.centerX} ${this.centerY}`,
       ].join('');
     },
 
     bottomTrianglePath() {
       return [
-        `M ${this.bottomRightPoint.x} ${this.bottomRightPoint.y}`,
-        `L ${this.bottomLeftPoint.x} ${this.bottomLeftPoint.y}`,
-        `L ${this.centerPoint.x} ${this.centerPoint.y}`,
+        `M ${this.rightX} ${this.bottomY}`,
+        `L ${this.leftX} ${this.bottomY}`,
+        `L ${this.centerX} ${this.centerY}`,
       ].join('');
     },
 
     leftTrianglePath() {
       return [
-        `M ${this.bottomLeftPoint.x} ${this.bottomLeftPoint.y}`,
-        `L ${this.topLeftPoint.x} ${this.topLeftPoint.y}`,
-        `L ${this.centerPoint.x} ${this.centerPoint.y}`,
+        `M ${this.leftX} ${this.bottomY}`,
+        `L ${this.leftX} ${this.topY}`,
+        `L ${this.centerX} ${this.centerY}`,
       ].join('');
     },
 

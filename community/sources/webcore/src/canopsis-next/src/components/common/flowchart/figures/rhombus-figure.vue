@@ -31,20 +31,17 @@ export default {
       return this.height / 2;
     },
 
-    centerX() {
-      return this.x + this.halfWidth;
-    },
-
-    centerY() {
-      return this.y + this.halfHeight;
-    },
-
     rhombusPath() {
       return [
-        `M ${this.x} ${this.centerY}`,
-        `L ${this.centerX} ${this.y}`,
-        `L ${this.x + this.width} ${this.centerY}`,
-        `L ${this.centerX} ${this.y + this.height}`,
+        /* Move to left corner */
+        `M${this.x} ${this.y + this.halfHeight}`,
+        /* Line to top corner */
+        `l${this.halfWidth} ${-this.halfHeight}`,
+        /* Line to right corner */
+        `l${this.halfWidth} ${this.halfHeight}`,
+        /* Line to bottom corner */
+        `l${-this.halfWidth} ${this.halfHeight}`,
+        /* Close path */
         'Z',
       ].join('');
     },

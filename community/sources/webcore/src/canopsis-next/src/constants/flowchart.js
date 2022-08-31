@@ -47,3 +47,13 @@ export const STROKE_TYPES = {
   solid: 'solid',
   dashed: 'dashed',
 };
+
+export const FLOWCHART_KEY_CODES = {
+  arrowUp: 38,
+  arrowRight: 39,
+  arrowDown: 40,
+  arrowLeft: 37,
+  delete: 46,
+  keyC: 67,
+  keyV: 86,
+};

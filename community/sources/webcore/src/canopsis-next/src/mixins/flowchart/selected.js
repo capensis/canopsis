@@ -1,4 +1,4 @@
-import { SHAPES } from '@/constants';
+import { isAreaIncludeShape } from '@/helpers/flowchart/points';
 
 export const selectedShapesMixin = {
   props: {
@@ -11,7 +11,7 @@ export const selectedShapesMixin = {
     return {
       selectedIds: [],
 
-      selection: false,
+      selecting: false,
       selectionStart: {
         x: 0,
         y: 0,
@@ -19,16 +19,6 @@ export const selectedShapesMixin = {
     };
   },
   computed: {
-    selectionPath() {
-      return [
-        `M ${this.selectionStart.x} ${this.selectionStart.y}`,
-        `L ${this.selectionStart.x} ${this.cursor.y}`,
-        `L ${this.cursor.x} ${this.cursor.y}`,
-        `L ${this.cursor.x} ${this.selectionStart.y}`,
-        'Z',
-      ];
-    },
-
     hasSelected() {
       return !!this.selectedIds.length;
     },
@@ -73,39 +63,6 @@ export const selectedShapesMixin = {
       this.updateSelected();
     },
 
-    isAreaIncludeShape(start, end, shape) {
-      switch (shape.type) {
-        case SHAPES.storage:
-        case SHAPES.parallelogram:
-        case SHAPES.image:
-        case SHAPES.rhombus:
-        case SHAPES.ellipse:
-        case SHAPES.process:
-        case SHAPES.document:
-        case SHAPES.rect:
-          return shape.x > start.x
-            && shape.x + shape.width < end.x
-            && shape.y > start.y
-            && shape.y + shape.height < end.y;
-        case SHAPES.circle:
-          return shape.x > start.x
-            && shape.x + shape.diameter < end.x
-            && shape.y > start.y
-            && shape.y + shape.diameter < end.y;
-        case SHAPES.arrowLine:
-        case SHAPES.bidirectionalArrowLine:
-        case SHAPES.line:
-          return shape.points.every(
-            point => point.x > start.x
-              && point.x < end.x
-              && point.y > start.y
-              && point.y < end.y,
-          );
-      }
-
-      return false;
-    },
-
     selectShapesByArea(start, end, shiftKey) {
       const normalizedStart = {
         x: Math.min(start.x, end.x),
@@ -120,7 +77,7 @@ export const selectedShapesMixin = {
         /**
          * Selection area not include a shape
          */
-        if (!this.isAreaIncludeShape(normalizedStart, normalizedEnd, shape)) {
+        if (!isAreaIncludeShape(normalizedStart, normalizedEnd, shape)) {
           return acc;
         }
 

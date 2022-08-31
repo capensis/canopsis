@@ -41,11 +41,17 @@ export default {
 
     path() {
       return [
-        `M ${this.x},${this.y}`,
-        `l ${this.width},0`,
-        `l 0,${this.height - this.halfOffset}`,
-        `q ${-this.quarterWidth},${-this.offset}  ${-this.halfWidth},0`,
-        `q ${-this.quarterWidth},${this.offset}  ${-this.halfWidth},0`,
+        /* Move to top left */
+        `M ${this.x} ${this.y}`,
+        /* Move to top right */
+        `l ${this.width} 0`,
+        /* Move to bottom right */
+        `l 0 ${this.height - this.halfOffset}`,
+        /* Curve to bottom center */
+        `q ${-this.quarterWidth} ${-this.offset} ${-this.halfWidth} 0`,
+        /* Curve from bottom center to bottom left */
+        `q ${-this.quarterWidth},${this.offset} ${-this.halfWidth} 0`,
+        /* Close path */
         'Z',
       ].join('');
     },

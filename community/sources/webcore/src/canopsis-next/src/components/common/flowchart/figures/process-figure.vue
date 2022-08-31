@@ -1,6 +1,7 @@
 <template lang="pug">
   g
     rect(
+      v-on="$listeners",
       :x="x",
       :y="y",
       :rx="offset",
@@ -8,17 +9,16 @@
       :width="width",
       :height="height",
       :stroke="stroke",
-      :stroke-width="strokeWidth",
-      v-on="$listeners"
+      :stroke-width="strokeWidth"
     )
     rect(
+      v-on="$listeners",
       :x="insetX",
       :y="y",
       :width="insetWidth",
       :height="height",
       :stroke="stroke",
-      :stroke-width="strokeWidth",
-      v-on="$listeners"
+      :stroke-width="strokeWidth"
     )
 </template>
 
