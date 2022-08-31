@@ -5,7 +5,7 @@
         mermaid-code-editor.fill-height(v-field="form.code")
       v-flex.mermaid-editor__content
         v-layout.mermaid-editor__toolbar.px-2(row, align-center, justify-end)
-          mermaid-add-location-btn.mr-2(v-model="addOnClick")
+          add-location-btn.mr-2(v-model="addOnClick")
           mermaid-theme-field.mermaid-editor__theme-picker(v-field="form.theme")
         div.mermaid-editor__preview
           mermaid-code-preview(:value="form.code", :theme="form.theme")
@@ -20,15 +20,15 @@ import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
 import MermaidCodePreview from '@/components/other/map/partials/mermaid-code-preview.vue';
 
+import AddLocationBtn from './add-location-btn.vue';
 import MermaidCodeEditor from './mermaid-code-editor.vue';
-import MermaidAddLocationBtn from './mermaid-add-location-btn.vue';
 import MermaidThemeField from './mermaid-theme-field.vue';
 import MermaidPoints from './mermaid-points.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    MermaidAddLocationBtn,
+    AddLocationBtn,
     MermaidCodeEditor,
     MermaidThemeField,
     MermaidCodePreview,
