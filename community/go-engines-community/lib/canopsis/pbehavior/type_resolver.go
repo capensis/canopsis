@@ -19,6 +19,7 @@ type TypeResolver interface {
 	// An entity is matched to a pbehavior by an entity pattern or by cachedMatchedPbehaviorIds for old pbehaviors' queries.
 	Resolve(ctx context.Context, t time.Time, entity types.Entity, cachedMatchedPbehaviorIds []string) (ResolveResult, error)
 	GetPbehaviors(ctx context.Context, t time.Time, pbehaviorIDs []string) ([]ResolveResult, error)
+	GetPbehaviorsCount(ctx context.Context, t time.Time) (int, error)
 }
 
 // typeResolver resolves entity state by computed data.
@@ -121,6 +122,69 @@ func (r *typeResolver) GetPbehaviors(
 	workerCh := r.createWorkerCh(ctx, pbehaviorIDs)
 
 	return r.getPbehaviorIntervals(ctx, t, workerCh)
+}
+
+func (r *typeResolver) GetPbehaviorsCount(ctx context.Context, t time.Time) (int, error) {
+	if !r.Span.In(t) {
+		return 0, ErrRecomputeNeed
+	}
+
+	g, ctx := errgroup.WithContext(ctx)
+	workerCh := make(chan ComputedPbehavior)
+	resCh := make(chan struct{})
+
+	g.Go(func() error {
+		defer close(workerCh)
+
+		for _, computed := range r.ComputedPbehaviors {
+			select {
+			case <-ctx.Done():
+				return nil
+			default:
+				workerCh <- computed
+			}
+		}
+
+		return nil
+	})
+
+	for i := 0; i < r.workerPoolSize; i++ {
+		g.Go(func() error {
+			for {
+				select {
+				case <-ctx.Done():
+					return nil
+				case d, ok := <-workerCh:
+					if !ok {
+						return nil
+					}
+
+					for _, computedType := range d.Types {
+						if computedType.Span.In(t) {
+							resCh <- struct{}{}
+							break
+						}
+					}
+				}
+			}
+		})
+	}
+
+	go func() {
+		_ = g.Wait() // check error in wrapper func
+		close(resCh)
+	}()
+
+	count := 0
+	for range resCh {
+		count++
+	}
+
+	if err := g.Wait(); err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }
 
 func (r *typeResolver) getPbehaviorIntervals(
