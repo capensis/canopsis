@@ -202,6 +202,9 @@ type Event struct {
 
 	// Execution is used only for instruction events: EventTypeInstructionStarted, EventTypeInstructionCompleted, etc..
 	Execution string `bson:"execution,omitempty" json:"execution,omitempty"`
+
+	// Instruction is used only for manual instructions kpi metrics
+	Instruction string `bson:"instruction,omitempty" json:"instruction,omitempty"`
 }
 
 // ContextInformation regroup context values necessary for creating a new entity
