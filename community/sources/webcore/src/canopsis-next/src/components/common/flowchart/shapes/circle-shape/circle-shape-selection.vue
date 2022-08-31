@@ -1,5 +1,5 @@
 <template lang="pug">
-  g
+  g(@click.stop="")
     rect-selection(
       v-if="selected",
       :x="shape.x",
