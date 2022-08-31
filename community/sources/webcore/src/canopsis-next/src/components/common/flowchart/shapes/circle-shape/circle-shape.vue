@@ -1,5 +1,5 @@
 <template lang="pug">
-  g(@dblclick="enableEditingMode")
+  g(@dblclick.stop="enableEditingMode")
     circle-figure(
       v-bind="shape.properties",
       v-on="$listeners",
@@ -24,8 +24,8 @@
 <script>
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
-import TextEditor from '../..//common/text-editor.vue';
-import CircleFigure from '../..//figures/circle-figure.vue';
+import TextEditor from '../../common/text-editor.vue';
+import CircleFigure from '../../figures/circle-figure.vue';
 
 export default {
   components: { CircleFigure, TextEditor },

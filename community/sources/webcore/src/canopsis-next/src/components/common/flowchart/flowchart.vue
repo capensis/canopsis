@@ -19,6 +19,7 @@
         :points="points",
         :background-color="backgroundColor",
         :readonly="readonly",
+        :cursor-style="cursorStyle",
         @update:points="$emit('update:points', $event)"
       )
         template(#layers="{ data }")
@@ -49,6 +50,10 @@ export default {
     },
     points: {
       type: Array,
+      required: false,
+    },
+    cursorStyle: {
+      type: String,
       required: false,
     },
     backgroundColor: {

@@ -28,7 +28,7 @@ import { DIRECTIONS } from '@/constants';
 import { resizeRectangleShape } from '@/helpers/flowchart/resize';
 
 export default {
-  inject: ['$mouseMove', '$mouseUp'],
+  inject: ['$flowchart'],
   props: {
     x: {
       type: Number,
@@ -117,16 +117,16 @@ export default {
   },
   methods: {
     startResize(direction) {
-      this.$mouseMove.register(this.onResize);
-      this.$mouseUp.register(this.finishResize);
+      this.$flowchart.on('mousemove', this.onResize);
+      this.$flowchart.on('mouseup', this.finishResize);
 
       this.direction = direction;
-      this.ratio = this.width !== 0 ? this.height / this.width : 0;
+      this.ratio = this.width !== 0 ? this.height / this.width : 1;
     },
 
     finishResize() {
-      this.$mouseMove.unregister(this.onResize);
-      this.$mouseUp.unregister(this.finishResize);
+      this.$flowchart.off('mousemove', this.onResize);
+      this.$flowchart.off('mouseup', this.finishResize);
     },
 
     normalizeCursorByDirection(cursor) {
@@ -150,7 +150,7 @@ export default {
       return newCursor;
     },
 
-    onResize(cursor) {
+    onResize({ event, cursor }) {
       const normalizedCursor = this.normalizeCursorByDirection(cursor);
 
       const rect = resizeRectangleShape({
@@ -164,7 +164,7 @@ export default {
         cursorY: normalizedCursor.y,
         direction: this.direction,
         ratio: this.ratio,
-        aspectRatio: this.aspectRatio || cursor.shift,
+        aspectRatio: this.aspectRatio || event.shiftKey,
       });
 
       this.$emit('update', rect);

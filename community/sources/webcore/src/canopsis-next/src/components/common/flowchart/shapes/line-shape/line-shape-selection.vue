@@ -26,10 +26,10 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import PointsLinePath from '../..//common/points-line-path.vue';
+import PointsLinePath from '../../common/points-line-path.vue';
 
 export default {
-  inject: ['$mouseMove', '$mouseUp'],
+  inject: ['$flowchart'],
   components: { PointsLinePath },
   props: {
     shape: {
@@ -66,11 +66,11 @@ export default {
     },
   },
   methods: {
-    movePoint({ x, y }) {
+    movePoint({ cursor }) {
       const point = this.editingPoints[this.movingPointIndex];
 
-      point.x = x;
-      point.y = y;
+      point.x = cursor.x;
+      point.y = cursor.y;
     },
 
     onStartMovePoint(index) {
@@ -78,8 +78,8 @@ export default {
 
       this.movingPointIndex = index;
 
-      this.$mouseMove.register(this.movePoint);
-      this.$mouseUp.register(this.finishMovePoints);
+      this.$flowchart.on('mousemove', this.movePoint);
+      this.$flowchart.on('mouseup', this.finishMovePoints);
 
       this.$emit('edit:point', this.editingPoints[this.movingPointIndex]);
     },
@@ -87,8 +87,8 @@ export default {
     finishMovePoints() {
       this.$emit('update', { points: this.editingPoints });
 
-      this.$mouseMove.unregister(this.movePoint);
-      this.$mouseUp.unregister(this.onMouseUp);
+      this.$flowchart.off('mousemove', this.movePoint);
+      this.$flowchart.off('mouseup', this.onMouseUp);
 
       this.moving = false;
     },

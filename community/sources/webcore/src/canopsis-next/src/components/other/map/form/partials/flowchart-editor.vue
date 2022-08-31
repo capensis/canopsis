@@ -4,10 +4,18 @@
       :shapes="form.shapes",
       :background-color.sync="form.backgroundColor",
       :style="editorStyles",
+      :cursor-style="addOnClick ? 'crosshair' : undefined",
       @input="updateShapes"
     )
+      template(#sidebar-prepend="{ data }")
+        add-location-btn(v-model="addOnClick")
+        v-divider
       template(#layers="{ data }")
-        flowchart-points-editor(v-field="form.points", :shapes="data")
+        flowchart-points-editor(
+          v-field="form.points",
+          :shapes="data",
+          :add-on-click="addOnClick"
+        )
     v-messages(v-if="hasChildrenError", :value="errorMessages", color="error")
 </template>
 
@@ -21,10 +29,11 @@ import { formMixin, validationChildrenMixin } from '@/mixins/form';
 import Flowchart from '@/components/common/flowchart/flowchart.vue';
 
 import FlowchartPointsEditor from './flowchart-points-editor.vue';
+import AddLocationBtn from './add-location-btn.vue';
 
 export default {
   inject: ['$validator'],
-  components: { Flowchart, FlowchartPointsEditor },
+  components: { Flowchart, FlowchartPointsEditor, AddLocationBtn },
   mixins: [formMixin, validationChildrenMixin],
   model: {
     prop: 'form',
@@ -42,6 +51,7 @@ export default {
   },
   data() {
     return {
+      addOnClick: false,
       readonly: false,
     };
   },
