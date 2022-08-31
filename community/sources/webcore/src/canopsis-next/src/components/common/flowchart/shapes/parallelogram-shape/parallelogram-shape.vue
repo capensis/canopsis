@@ -1,5 +1,5 @@
 <template lang="pug">
-  g(@dblclick="enableEditingMode")
+  g(@dblclick.stop="enableEditingMode")
     parallelogram-figure(
       v-bind="shape.properties",
       v-on="$listeners",
@@ -26,8 +26,8 @@
 <script>
 import { flowchartTextEditorMixin } from '@/mixins/flowchart/text-editor';
 
-import TextEditor from '../..//common/text-editor.vue';
-import ParallelogramFigure from '../..//figures/parallelogram-figure.vue';
+import TextEditor from '../../common/text-editor.vue';
+import ParallelogramFigure from '../../figures/parallelogram-figure.vue';
 
 export default {
   components: { ParallelogramFigure, TextEditor },

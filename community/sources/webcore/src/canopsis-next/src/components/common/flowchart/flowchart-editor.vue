@@ -2,14 +2,11 @@
   svg(
     ref="svg",
     v-resize.quiet="setViewBox",
+    v-on="svgHandlers",
     :viewBox="viewBoxString",
     :style="svgStyles",
     width="100%",
-    height="100%",
-    @mousemove="onContainerMouseMove",
-    @mouseup="onContainerMouseUp",
-    @mousedown="onContainerMouseDown",
-    @contextmenu.stop.prevent="handleContextmenu"
+    height="100%"
   )
     component(
       v-for="shape in data",
@@ -17,6 +14,7 @@
       :shape="shape",
       :is="`${shape.type}-shape`",
       :readonly="readonly",
+      @click.stop="",
       @contextmenu.stop.prevent="handleShapeContextmenu(shape, $event)",
       @mousedown.left="onShapeMouseDown(shape, $event)",
       @mouseup="onShapeMouseUp(shape, $event)"
@@ -53,8 +51,6 @@ import { COLORS } from '@/config';
 
 import { FLOWCHART_KEY_CODES, SHAPES } from '@/constants';
 
-import Observer from '@/services/observer';
-
 import { roundByStep } from '@/helpers/flowchart/round';
 import { calculateConnectorPointBySide } from '@/helpers/flowchart/connectors';
 
@@ -62,7 +58,6 @@ import { selectedShapesMixin } from '@/mixins/flowchart/selected';
 import { copyPasteShapesMixin } from '@/mixins/flowchart/copy-paste';
 import { moveShapesMixin } from '@/mixins/flowchart/move-shape';
 import { viewBoxMixin } from '@/mixins/flowchart/view-box';
-import { contextmenuMixin } from '@/mixins/flowchart/contextmenu';
 
 import FlowchartSelection from './partials/flowchart-selection.vue';
 import RectShape from './shapes/rect-shape/rect-shape.vue';
@@ -84,8 +79,7 @@ import LineShapeSelection from './shapes/line-shape/line-shape-selection.vue';
 export default {
   provide() {
     return {
-      $mouseMove: this.$mouseMove,
-      $mouseUp: this.$mouseUp,
+      $flowchart: this.$flowchart,
     };
   },
   components: {
@@ -111,7 +105,6 @@ export default {
     copyPasteShapesMixin,
     moveShapesMixin,
     viewBoxMixin,
-    contextmenuMixin,
   ],
   model: {
     event: 'input',
@@ -146,10 +139,15 @@ export default {
       type: Number,
       default: 5,
     },
+    cursorStyle: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
       data: {},
+      handlers: {},
 
       cursor: {
         x: 0,
@@ -175,6 +173,22 @@ export default {
     };
   },
   computed: {
+    $flowchart() {
+      return {
+        on: this.addHandler,
+        off: this.removeHandler,
+        fire: this.callHandlers,
+      };
+    },
+
+    svgHandlers() {
+      return Object.keys(this.handlers).reduce((acc, event) => {
+        acc[event] = this.callHandlers;
+
+        return acc;
+      }, {});
+    },
+
     selectionComponents() {
       return Object.values(this.data).map((shape) => {
         const component = {
@@ -205,6 +219,7 @@ export default {
     svgStyles() {
       return {
         backgroundColor: this.backgroundColor,
+        cursor: this.cursorStyle,
       };
     },
   },
@@ -218,17 +233,47 @@ export default {
       },
     },
   },
-  beforeCreate() {
-    this.$mouseMove = new Observer();
-    this.$mouseUp = new Observer();
-  },
   mounted() {
+    this.$flowchart.on('mousemove', this.onContainerMouseMove);
+    this.$flowchart.on('mouseup', this.onContainerMouseUp);
+    this.$flowchart.on('mousedown', this.onContainerMouseDown);
+
     document.addEventListener('keydown', this.onKeyDown);
   },
   beforeDestroy() {
+    this.$flowchart.off('mousemove', this.onContainerMouseMove);
+    this.$flowchart.off('mouseup', this.onContainerMouseUp);
+    this.$flowchart.off('mousedown', this.onContainerMouseDown);
+
     document.removeEventListener('keydown', this.onKeyDown);
   },
   methods: {
+    addHandler(event, func) {
+      if (this.handlers[event]) {
+        this.handlers[event].push(func);
+      } else {
+        this.$set(this.handlers, event, [func]);
+      }
+    },
+
+    removeHandler(event, func) {
+      if (this.handlers[event]) {
+        this.handlers[event] = this.handlers[event].filter(handler => handler !== func);
+      }
+    },
+
+    callHandlers(event, data) {
+      this.handlers[event.type].forEach(func => func({
+        event,
+        cursor: this.normalizeCursor({ x: event.clientX, y: event.clientY }),
+        ...data,
+      }));
+    },
+
+    handleShapeContextmenu(shape, event) {
+      this.$flowchart.fire(event, { event, shape });
+    },
+
     normalizeCursor({ x, y }) {
       const point = this.$refs.svg.createSVGPoint();
 
@@ -307,7 +352,7 @@ export default {
     },
 
     onConnectMove({ x, y }) {
-      this.$mouseMove.notify({ x, y });
+      this.$flowchart.fire({ type: 'mousemove' }, { cursor: { x, y } });
     },
 
     onConnectFinish(shape, { side }) {
@@ -381,7 +426,7 @@ export default {
       }
     },
 
-    onContainerMouseUp(event) {
+    onContainerMouseUp({ event }) {
       if (this.selecting) {
         this.selectShapesByArea(this.selectionStart, this.cursor, event.shiftKey);
         this.selecting = false;
@@ -409,11 +454,9 @@ export default {
 
         this.updateShapes(this.data);
       }
-
-      this.$mouseUp.notify();
     },
 
-    onContainerMouseDown(event) {
+    onContainerMouseDown({ event }) {
       if (event.ctrlKey || event.button === 1) {
         this.panning = true;
         return;
@@ -428,7 +471,7 @@ export default {
       }
     },
 
-    onContainerMouseMove(event) {
+    onContainerMouseMove({ event }) {
       if (this.panning) {
         this.moveViewBox({ x: event.movementX, y: event.movementY });
 
@@ -445,17 +488,11 @@ export default {
 
       const { x, y } = this.normalizeCursor({ x: event.clientX, y: event.clientY });
 
-      const cursor = {
+      this.cursor = {
         x: roundByStep(x, this.gridSize),
         y: roundByStep(y, this.gridSize),
         shift: event.shiftKey,
       };
-
-      if (this.cursor.x !== cursor.x || this.cursor.y !== cursor.y) {
-        this.cursor = cursor;
-
-        this.$mouseMove.notify(cursor);
-      }
     },
 
     removeSelectedShapes(event) {

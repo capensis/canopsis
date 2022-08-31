@@ -29,7 +29,7 @@
 
 <script>
 import RectSelection from '../../common/rect-selection.vue';
-import RectConnectors from '../..//common/rect-connectors.vue';
+import RectConnectors from '../../common/rect-connectors.vue';
 
 export default {
   components: { RectConnectors, RectSelection },

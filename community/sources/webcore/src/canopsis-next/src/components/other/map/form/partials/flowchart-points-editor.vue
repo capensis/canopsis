@@ -4,11 +4,13 @@
       v-for="point in nonShapesPoints",
       :key="point._id",
       :x="point.x - iconSize / 2",
-      :y="point.y - iconSize",
+      :y="calculatePointY(point)",
       :width="iconSize",
       :height="iconSize",
       is="foreignObject",
+      @click.stop="",
       @contextmenu.stop.prevent="handleEditContextmenu($event, point)",
+      @dblclick.stop="openEditPointByClick($event, point)",
       @mousedown.stop="startMoving(point)"
     )
       point-icon(:size="iconSize", :entity="point.entity")
@@ -20,7 +22,11 @@
         :width="iconSize",
         :x="icon.x - iconSize / 2",
         :y="icon.y",
-        pointer-events="none"
+        @mouseup.prevent.stop="",
+        @mousedown.prevent.stop="",
+        @click.stop="",
+        @dblclick.stop="openEditPointByClick($event, icon.point)",
+        @contextmenu.stop.prevent="handleEditContextmenu($event, icon.point)"
       )
         point-icon(:size="iconSize", :entity="icon.point.entity")
 
@@ -31,7 +37,7 @@
         :position-y="clientY",
         :point="addingPoint || editingPoint",
         :editing="!!editingPoint",
-        @cancel="closePointDialog",
+        @cancel="cancelPointDialog",
         @submit="submitPointDialog",
         @remove="showRemovePointModal"
       )
@@ -40,7 +46,7 @@
         :position-x="clientX",
         :position-y="clientY",
         :items="contextmenuItems",
-        @close="closeOnClickOutside"
+        @close="cancelPointDialog"
       )
 </template>
 
@@ -61,7 +67,7 @@ import FlowchartPointDialogMenu from './flowchart-point-dialog-menu.vue';
 import FlowchartPointContextmenu from './flowchart-point-contextmenu.vue';
 
 export default {
-  inject: ['$contextmenu', '$mouseMove', '$mouseUp'],
+  inject: ['$flowchart'],
   components: {
     FlowchartPointDialogMenu,
     FlowchartPointContextmenu,
@@ -85,6 +91,10 @@ export default {
     iconSize: {
       type: Number,
       default: 24,
+    },
+    addOnClick: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -113,7 +123,7 @@ export default {
 
     shapesIcons() {
       return this.points.reduce((acc, point) => {
-        const { shape_id: shapeId, entity } = point;
+        const { shape_id: shapeId } = point;
 
         if (shapeId) {
           const { x, y } = this.calculateIconPosition(shapeId);
@@ -122,7 +132,6 @@ export default {
             x,
             y,
             point,
-            name: entity ? 'location_on' : 'link',
           };
         }
 
@@ -153,6 +162,16 @@ export default {
     },
   },
   watch: {
+    addOnClick: {
+      immediate: true,
+      handler(value) {
+        if (value) {
+          this.$flowchart.on('click', this.openAddPointDialogByClick);
+        } else {
+          this.$flowchart.off('click', this.openAddPointDialogByClick);
+        }
+      },
+    },
     points: {
       immediate: true,
       handler(value) {
@@ -160,11 +179,14 @@ export default {
       },
     },
   },
-  created() {
-    this.$contextmenu.register(this.handleContextmenu);
+  mounted() {
+    this.$flowchart.on('dblclick', this.openAddPointDialogByClick);
+    this.$flowchart.on('contextmenu', this.handleContextmenu);
   },
   beforeDestroy() {
-    this.$contextmenu.unregister(this.handleContextmenu);
+    this.$flowchart.off('contextmenu', this.handleContextmenu);
+    this.$flowchart.off('dblclick', this.openAddPointDialogByClick);
+    this.$flowchart.off('click', this.openAddPointDialogByClick);
   },
   methods: {
     updatePointInModel(data) {
@@ -205,7 +227,7 @@ export default {
       this.shapeId = undefined;
     },
 
-    async closeOnClickOutside() {
+    async cancelPointDialog() {
       this.closeContextmenu();
       this.closePointDialog();
 
@@ -226,7 +248,10 @@ export default {
       this.clientY = y + height;
     },
 
-    handleContextmenu({ event, x, y, shape }) {
+    handleContextmenu({ event, cursor, shape }) {
+      event.stopPropagation();
+      event.preventDefault();
+
       if (this.shownMenu || this.isDialogOpened) {
         return;
       }
@@ -240,8 +265,8 @@ export default {
           this.shapeId = shape._id;
         }
       } else {
-        this.pointX = x;
-        this.pointY = y;
+        this.pointX = cursor.x;
+        this.pointY = cursor.y;
       }
 
       this.setOffsetsByEvent(event);
@@ -270,9 +295,34 @@ export default {
       this.openPointDialog();
     },
 
+    openAddPointDialogByClick({ event, cursor }) {
+      if (this.isDialogOpened) {
+        return;
+      }
+
+      this.setOffsetsByEvent(event);
+
+      this.pointX = cursor.x;
+      this.pointY = cursor.y;
+
+      this.openAddPointDialog();
+    },
+
     openEditPointDialog() {
       this.closeContextmenu();
       this.openPointDialog();
+    },
+
+    openEditPointByClick(event, point) {
+      if (this.isDialogOpened) {
+        return;
+      }
+
+      this.setOffsetsByEvent(event);
+
+      this.editingPoint = point;
+
+      this.openEditPointDialog();
     },
 
     submitPointDialog(data) {
@@ -302,7 +352,7 @@ export default {
       });
     },
 
-    movePoint(cursor) {
+    movePoint({ cursor }) {
       this.pointsData[this.movingPointIndex].x = cursor.x;
       this.pointsData[this.movingPointIndex].y = cursor.y;
     },
@@ -310,15 +360,23 @@ export default {
     finishMoving() {
       this.updateModel(this.pointsData);
 
-      this.$mouseMove.unregister(this.movePoint);
-      this.$mouseUp.unregister(this.finishMoving);
+      this.$flowchart.off('mousemove', this.movePoint);
+      this.$flowchart.off('mouseup', this.finishMoving);
     },
 
     startMoving(point) {
       this.movingPointIndex = this.pointsData.findIndex(({ _id: id }) => point._id === id);
 
-      this.$mouseMove.register(this.movePoint);
-      this.$mouseUp.register(this.finishMoving);
+      this.$flowchart.on('mousemove', this.movePoint);
+      this.$flowchart.on('mouseup', this.finishMoving);
+    },
+
+    calculatePointY(point) {
+      if (point.entity) {
+        return point.y - this.iconSize;
+      }
+
+      return point.y - this.iconSize / 2;
     },
 
     calculateIconPosition(id) {

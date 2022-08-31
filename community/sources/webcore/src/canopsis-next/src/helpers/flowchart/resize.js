@@ -22,60 +22,28 @@ export const resizeRectangleShapeWithoutAspectRatio = ({
   cursorX,
   cursorY,
   direction,
-}) => {
-  const newRect = {
-    x: rect.x,
-    y: rect.y,
-    width: rect.width,
-    height: rect.height,
-  };
-  const directionArray = direction.split('');
-
-  directionArray.forEach((singleDirection) => {
+}) => direction
+  .split('')
+  .reduce((acc, singleDirection) => {
     switch (singleDirection) {
-      case DIRECTIONS.south: {
-        const newHeight = cursorY - newRect.y;
-
-        if (newHeight >= 0) {
-          newRect.height = newHeight;
-        }
-
+      case DIRECTIONS.south:
+        acc.height = Math.max(0, cursorY - acc.y);
         break;
-      }
-      case DIRECTIONS.north: {
-        const newHeight = newRect.height + newRect.y - cursorY;
-
-        if (newHeight >= 0) {
-          newRect.height = newHeight;
-          newRect.y = cursorY;
-        }
-
+      case DIRECTIONS.east:
+        acc.width = Math.max(0, cursorX - acc.x);
         break;
-      }
-      case DIRECTIONS.east: {
-        const newWidth = cursorX - newRect.x;
-
-        if (newWidth >= 0) {
-          newRect.width = newWidth;
-        }
-
+      case DIRECTIONS.north:
+        acc.height = Math.max(0, acc.height + acc.y - cursorY);
+        acc.y += rect.height - acc.height;
         break;
-      }
-      case DIRECTIONS.west: {
-        const newWidth = newRect.width + newRect.x - cursorX;
-
-        if (newWidth >= 0) {
-          newRect.width = newWidth;
-          newRect.x = cursorX;
-        }
-
+      case DIRECTIONS.west:
+        acc.width = Math.max(0, acc.width + acc.x - cursorX);
+        acc.x += rect.width - acc.width;
         break;
-      }
     }
-  });
 
-  return newRect;
-};
+    return acc;
+  }, { ...rect });
 
 /**
  * Resize rect by direction and cursor position
@@ -98,54 +66,32 @@ export const resizeRectangleWithAspectRation = ({
 
   switch (direction) {
     case DIRECTIONS.west:
-    case DIRECTIONS.southWest: {
-      const newWidth = rect.width + rect.x - cursorX;
-      newRect.height = Math.abs(newWidth * ratio);
-
-      if (newWidth >= 0) {
-        newRect.width = newWidth;
-        newRect.x = cursorX;
-      }
-
+    case DIRECTIONS.southWest:
+      newRect.width = Math.max(0, rect.width + rect.x - cursorX);
+      newRect.height = newRect.width * ratio;
+      newRect.x += rect.width - newRect.width;
       break;
-    }
+
     case DIRECTIONS.east:
-    case DIRECTIONS.northEast: {
-      const newWidth = cursorX - rect.x;
-
-      newRect.height = Math.abs(newWidth * ratio);
-
-      if (newWidth >= 0) {
-        newRect.y += rect.height - newRect.height;
-        newRect.width = newWidth;
-      }
-
+    case DIRECTIONS.northEast:
+      newRect.width = Math.max(0, cursorX - rect.x);
+      newRect.height = newRect.width * ratio;
+      newRect.y += rect.height - newRect.height;
       break;
-    }
+
     case DIRECTIONS.south:
-    case DIRECTIONS.southEast: {
-      const newHeight = cursorY - rect.y;
-      newRect.width = Math.abs(newHeight / ratio);
-
-      if (newHeight >= 0) {
-        newRect.height = newHeight;
-      }
-
+    case DIRECTIONS.southEast:
+      newRect.height = Math.max(0, cursorY - rect.y);
+      newRect.width = newRect.height / ratio;
       break;
-    }
+
     case DIRECTIONS.north:
-    case DIRECTIONS.northWest: {
-      const newHeight = rect.y + rect.height - cursorY;
-      newRect.width = Math.abs(newHeight / ratio);
-
-      if (newHeight >= 0) {
-        newRect.height = newHeight;
-        newRect.y += rect.height - newHeight;
-        newRect.x += rect.width - newRect.width;
-      }
-
+    case DIRECTIONS.northWest:
+      newRect.height = Math.max(0, rect.y + rect.height - cursorY);
+      newRect.width = newRect.height / ratio;
+      newRect.y += rect.height - newRect.height;
+      newRect.x += rect.width - newRect.width;
       break;
-    }
   }
 
   return newRect;
