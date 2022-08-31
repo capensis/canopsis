@@ -72,12 +72,14 @@ type ScenarioExecution struct {
 	ResponseMap      map[string]interface{} `json:"rm,omitempty"`
 	ResponseCount    int                    `json:"rc"`
 	AdditionalData   AdditionalData         `json:"ad"`
+	FifoAckEvent     types.Event            `json:"fev"`
 }
 
 type ScenarioResult struct {
 	Alarm            types.Alarm
 	Err              error
 	ActionExecutions []Execution
+	FifoAckEvent     types.Event
 }
 
 type ExecuteScenariosTask struct {
@@ -88,6 +90,7 @@ type ExecuteScenariosTask struct {
 	Alarm                types.Alarm
 	AckResources         bool
 	AdditionalData       AdditionalData
+	FifoAckEvent         types.Event
 }
 
 type AdditionalData struct {

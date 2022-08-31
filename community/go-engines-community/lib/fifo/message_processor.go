@@ -7,13 +7,12 @@ import (
 	"runtime/trace"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -21,19 +20,19 @@ import (
 
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
-	EventsMetricsChan        chan metrics.FifoEventMetric
-	MetricsConfigProvider    config.MetricsConfigProvider
-	EventFilterService       eventfilter.Service
-	Scheduler                scheduler.Scheduler
-	StatsSender              ratelimit.StatsSender
-	Decoder                  encoding.Decoder
-	Logger                   zerolog.Logger
+
+	EventFilterService eventfilter.Service
+	Scheduler          scheduler.Scheduler
+	StatsSender        ratelimit.StatsSender
+	Decoder            encoding.Decoder
+	Logger             zerolog.Logger
+
+	TechMetricsSender techmetrics.Sender
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
-	startProcTime := time.Now()
-	eventMetric := metrics.FifoEventMetric{
-		Timestamp: startProcTime,
+	eventMetric := techmetrics.EventMetric{
+		Timestamp: time.Now(),
 	}
 
 	ctx, task := trace.NewTask(parentCtx, "fifo.WorkerProcess")
@@ -66,11 +65,8 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	defer func() {
 		eventMetric.EventType = event.EventType
-		eventMetric.Interval = time.Since(startProcTime).Microseconds()
-		select {
-		case <-ctx.Done():
-		case p.EventsMetricsChan <- eventMetric:
-		}
+		eventMetric.Interval = time.Since(eventMetric.Timestamp)
+		p.TechMetricsSender.SendSimpleEvent(techmetrics.FIFOEvent, eventMetric)
 	}()
 
 	event.Format()

@@ -9,6 +9,8 @@ import (
 	"os"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -33,7 +35,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
@@ -202,9 +203,9 @@ func Default(
 
 	broadcastMessageChan := make(chan bool)
 
-	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-	techPostgresPoolProvider := postgres.NewTechMetricsPoolProvider(ctx, metricsConfigProvider, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsSender := metrics.NewTechMetricsSender(techPostgresPoolProvider, logger)
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 
 	// Create api.
 	api := New(
@@ -248,7 +249,12 @@ func Default(
 			start := time.Now()
 			c.Next()
 
-			go techMetricsSender.SendApiRequest(context.Background(), start, c.Request.URL.String(), time.Since(start).Microseconds())
+			techMetricsSender.SendApiRequest(techmetrics.ApiRequestMetric{
+				Timestamp: start,
+				Interval:  time.Since(start),
+				Method:    c.Request.Method,
+				Url:       c.Request.URL.String(),
+			})
 		})
 
 		if flags.Test {
@@ -320,6 +326,9 @@ func Default(
 	})
 	api.SetWebsocketHub(websocketHub)
 
+	api.AddWorker("tech metrics", func(ctx context.Context) {
+		techMetricsSender.Run(ctx)
+	})
 	api.AddWorker("session clean", func(ctx context.Context) {
 		security.GetSessionStore().StartAutoClean(ctx, sessionStoreAutoCleanInterval)
 	})
@@ -348,7 +357,7 @@ func Default(
 	api.AddWorker("import job", func(ctx context.Context) {
 		importWorker.Run(ctx)
 	})
-	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.ApiConfigProvider, metricsConfigProvider,
+	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.ApiConfigProvider, techMetricsConfigProvider,
 		configAdapter, p.UserInterfaceConfigProvider, userInterfaceAdapter, flags.Test, logger))
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
@@ -390,7 +399,7 @@ func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.To
 func updateConfig(
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	apiConfigProvider *config.BaseApiConfigProvider,
-	metricsConfigProvider *config.BaseMetricsConfigProvider,
+	techMetricsConfigProvider *config.BaseTechMetricsConfigProvider,
 	configAdapter config.Adapter,
 	userInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider,
 	userInterfaceAdapter config.UserInterfaceAdapter,
@@ -416,7 +425,7 @@ func updateConfig(
 
 				timezoneConfigProvider.Update(cfg)
 				apiConfigProvider.Update(cfg)
-				metricsConfigProvider.Update(cfg)
+				techMetricsConfigProvider.Update(cfg)
 
 				userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 				if err != nil {

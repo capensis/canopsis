@@ -20,7 +20,6 @@ const (
 	AxeResolvedArchiverPeriodicalLockKey = "axe-resolved-archiver-periodical-lock-key"
 
 	FifoDeleteOutdatedRatesLockKey = "fifo-delete-outdated-rates-lock-key"
-	FifoQueueMetricsLockKey        = "fifo-queue-metrics-lock-key"
 
 	ChePeriodicalLockKey = "che-periodical-lock-key"
 

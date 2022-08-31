@@ -4,15 +4,15 @@ import (
 	"context"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
 )
@@ -180,14 +180,12 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		logger,
 	)
 
-	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
-	techPostgresPoolProvider := postgres.NewTechMetricsPoolProvider(ctx, metricsConfigProvider, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsSender := metrics.NewTechMetricsSender(techPostgresPoolProvider, logger)
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 
-	eventMetricsChan := make(chan metrics.SimpleEventMetric)
-	eventMetricsListener := metrics.NewSimpleEventMetricsListener(techMetricsSender, canopsis.TechMetricsFlushInterval)
 	engineAction.AddRoutine(func(ctx context.Context) error {
-		eventMetricsListener.Listen(ctx, eventMetricsChan, metrics.ActionEvent)
+		techMetricsSender.Run(ctx)
 		return nil
 	})
 
@@ -203,7 +201,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		"",
 		amqpConnection,
 		&messageProcessor{
-			EventsMetricsChan:        eventMetricsChan,
+			TechMetricsSender:        techMetricsSender,
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			ActionService:            actionService,
 			Decoder:                  json.NewDecoder(),
@@ -234,8 +232,9 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	engineAction.AddPeriodicalWorker("config", engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
-		[]config.Updater{timezoneConfigProvider, metricsConfigProvider},
 		logger,
+		timezoneConfigProvider,
+		techMetricsConfigProvider,
 	))
 
 	return engineAction

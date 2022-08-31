@@ -78,7 +78,12 @@ func main() {
 
 		logger.Info().Msg("Start postgres migrations")
 
-		err = runPostgresMigrations(f.postgresMigrationDirectory, f.postgresMigrationMode, f.postgresMigrationSteps, postgres.EnvURL)
+		connStr, err := postgres.GetConnStr()
+		if err != nil {
+			utils.FailOnError(err, "Failed to migrate")
+		}
+
+		err = runPostgresMigrations(f.postgresMigrationDirectory, f.postgresMigrationMode, f.postgresMigrationSteps, connStr)
 		if err != nil {
 			utils.FailOnError(err, "Failed to migrate")
 		}
@@ -94,7 +99,12 @@ func main() {
 
 		logger.Info().Msg("Start tech postgres migrations")
 
-		err = runPostgresMigrations(f.techPostgresMigrationDirectory, f.techPostgresMigrationMode, f.techPostgresMigrationSteps, postgres.EnvTechURL)
+		connStr, err := postgres.GetTechConnStr()
+		if err != nil {
+			utils.FailOnError(err, "Failed to migrate")
+		}
+
+		err = runPostgresMigrations(f.techPostgresMigrationDirectory, f.techPostgresMigrationMode, f.techPostgresMigrationSteps, connStr)
 		if err != nil {
 			utils.FailOnError(err, "Failed to migrate")
 		}
@@ -216,12 +226,7 @@ func main() {
 	}
 }
 
-func runPostgresMigrations(migrationDirectory, mode string, steps int, env string) error {
-	connStr, err := postgres.GetConnStr(env)
-	if err != nil {
-		return err
-	}
-
+func runPostgresMigrations(migrationDirectory, mode string, steps int, connStr string) error {
 	p := &pgx.Postgres{}
 	driver, err := p.Open(connStr)
 	if err != nil {
