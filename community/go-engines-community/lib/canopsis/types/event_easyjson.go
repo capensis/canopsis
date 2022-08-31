@@ -349,6 +349,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.IdleRuleApply = string(in.String())
 		case "execution":
 			out.Execution = string(in.String())
+		case "instruction":
+			out.Instruction = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -700,6 +702,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"execution\":"
 		out.RawString(prefix)
 		out.String(string(in.Execution))
+	}
+	if in.Instruction != "" {
+		const prefix string = ",\"instruction\":"
+		out.RawString(prefix)
+		out.String(string(in.Instruction))
 	}
 	out.RawByte('}')
 }

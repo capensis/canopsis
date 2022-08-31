@@ -2,12 +2,13 @@ package view
 
 import (
 	"encoding/json"
+	"reflect"
+	"strings"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
-	"reflect"
-	"strings"
 )
 
 const (
