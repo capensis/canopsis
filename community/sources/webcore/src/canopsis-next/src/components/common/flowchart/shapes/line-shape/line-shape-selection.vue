@@ -18,7 +18,7 @@
         :fill="color",
         :r="cornerRadius",
         cursor="crosshair",
-        :pointer-events="moving ? 'none' : 'all'",
+        @click.stop="",
         @mousedown.stop="onStartMovePoint(index)"
       )
 </template>
