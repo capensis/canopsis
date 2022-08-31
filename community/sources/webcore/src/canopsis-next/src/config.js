@@ -350,6 +350,7 @@ export const COLORS = {
     noteTextColor: '#fdfdfd',
   },
   flowchart: {
+    selection: '#5b6e7f',
     shapes: [
       '#fd897f',
       '#fd7faa',

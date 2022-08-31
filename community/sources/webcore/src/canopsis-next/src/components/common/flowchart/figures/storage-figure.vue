@@ -36,13 +36,21 @@ export default {
     },
 
     path() {
+      const heightWithoutRadius = this.height - this.ellipseRadius;
+
       return [
-        `M ${this.x},${this.y + this.ellipseRadius}`,
+        /* Move to top left corner */
+        `M ${this.x} ${this.y + this.ellipseRadius}`,
+        /* Bottom arc to top left corner */
+        `a ${this.halfWidth} ${this.ellipseRadius} 0 1, 0 ${this.width}, 0`,
+        /* Top arc to top right corner */
+        `a ${this.halfWidth} ${this.ellipseRadius} 0 1, 0 ${-this.width}, 0`,
+        /* Line to bottom left corner */
+        `l 0 ${heightWithoutRadius}`,
+        /* Bottom arc to bottom right corner */
         `a ${this.halfWidth},${this.ellipseRadius} 0 1, 0 ${this.width}, 0`,
-        `a ${this.halfWidth},${this.ellipseRadius} 0 1, 0 ${-this.width}, 0`,
-        `L ${this.x},${this.y + this.height - this.ellipseRadius}`,
-        `a ${this.halfWidth},${this.ellipseRadius} 0 1, 0 ${this.width}, 0`,
-        `L ${this.x + this.width},${this.y + this.ellipseRadius}`,
+        /* Line to bottom right corner */
+        `l 0 ${-heightWithoutRadius}`,
       ].join('');
     },
   },

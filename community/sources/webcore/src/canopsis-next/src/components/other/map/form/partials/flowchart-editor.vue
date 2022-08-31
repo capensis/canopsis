@@ -14,12 +14,13 @@
 <script>
 import { COLORS } from '@/config';
 
+import { mapIds } from '@/helpers/entities';
+
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
 import Flowchart from '@/components/common/flowchart/flowchart.vue';
 
 import FlowchartPointsEditor from './flowchart-points-editor.vue';
-import { mapIds } from '@/helpers/entities';
 
 export default {
   inject: ['$validator'],
