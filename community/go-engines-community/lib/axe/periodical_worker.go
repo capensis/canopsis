@@ -39,8 +39,10 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 func (w *periodicalWorker) Work(parentCtx context.Context) {
 	metric := techmetrics.AxePeriodicalMetric{}
 	metric.Timestamp = time.Now()
+	eventsCount := 0
 	defer func() {
 		metric.Interval = time.Since(metric.Timestamp)
+		metric.Events = int64(eventsCount)
 		w.TechMetricsSender.SendAxePeriodical(metric)
 	}()
 
@@ -101,6 +103,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		return
 	}
 
+	eventsCount += len(statusUpdated)
 	for _, alarm := range statusUpdated {
 		eventUpdateStatus := types.Event{
 			Connector:     alarm.Value.Connector,
@@ -119,6 +122,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		}
 	}
 
+	eventsCount += len(closed)
 	for _, alarm := range closed {
 		eventResolveClosed := types.Event{
 			Connector:     alarm.Value.Connector,
@@ -135,6 +139,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		}
 	}
 
+	eventsCount += len(cancelResolved)
 	for _, alarm := range cancelResolved {
 		eventResolveCancel := types.Event{
 			Connector:     alarm.Value.Connector,
@@ -151,6 +156,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		}
 	}
 
+	eventsCount += len(doneResolved)
 	for _, alarm := range doneResolved {
 		eventResolveDone := types.Event{
 			Connector:     alarm.Value.Connector,
@@ -167,6 +173,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		}
 	}
 
+	eventsCount += len(unsnoozedAlarms)
 	for _, alarm := range unsnoozedAlarms {
 		eventUnsnooze := types.Event{
 			Connector:     alarm.Value.Connector,
@@ -187,6 +194,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot process idle rules")
 	}
+	eventsCount += len(events)
 	for _, event := range events {
 		err = w.publishToEngineFIFO(ctx, event)
 		if err != nil {

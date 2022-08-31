@@ -103,24 +103,28 @@ func (s *sender) SendQueue(metricName string, timestamp time.Time, length int64)
 
 func (s *sender) SendAxePeriodical(metric AxePeriodicalMetric) {
 	metricName := AxePeriodical
-	query := fmt.Sprintf("INSERT INTO %s (time, interval) VALUES($1, $2);", metricName)
+	query := fmt.Sprintf("INSERT INTO %s (time, interval, events) VALUES($1, $2, $3);", metricName)
 	s.addBatch(metricName, batchItem{
 		query: query,
 		arguments: []interface{}{
 			metric.Timestamp.UTC(),
 			metric.Interval.Microseconds(),
+			metric.Events,
 		},
 	})
 }
 
 func (s *sender) SendPBehaviorPeriodical(metric PbehaviorPeriodicalMetric) {
 	metricName := PBehaviorPeriodical
-	query := fmt.Sprintf("INSERT INTO %s (time, interval) VALUES($1, $2);", metricName)
+	query := fmt.Sprintf("INSERT INTO %s (time, interval, events, entities, pbehaviors) VALUES($1, $2, $3, $4, $5);", metricName)
 	s.addBatch(metricName, batchItem{
 		query: query,
 		arguments: []interface{}{
 			metric.Timestamp.UTC(),
 			metric.Interval.Microseconds(),
+			metric.Events,
+			metric.Entities,
+			metric.Pbehaviors,
 		},
 	})
 }
