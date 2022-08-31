@@ -8,11 +8,17 @@ import {
   TIME_UNITS,
   USER_METRIC_PARAMETERS,
 } from '@/constants';
-import { addUnitToDate, convertDateToString } from '@/helpers/date/date';
+
+import { addUnitToDate, convertDateToString, convertDateToTimestampByTimezone } from '@/helpers/date/date';
 import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
 
 /**
  * @typedef { 'hour' | 'day' | 'week' | 'month' } Sampling
+ */
+
+/**
+ * @typedef {Object} Metric
+ * @property {number} timestamp
  */
 
 /**
@@ -37,6 +43,7 @@ export const isRatioMetric = metric => [
   ALARM_METRIC_PARAMETERS.ratioInstructions,
   ALARM_METRIC_PARAMETERS.ratioTickets,
   ALARM_METRIC_PARAMETERS.ratioNonDisplayed,
+  ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms,
 ].includes(metric);
 
 /**
@@ -117,9 +124,22 @@ export const getAvailableMetricByCriteria = (metric, criteria) => {
  */
 export const isMetricsQueryChanged = (query, oldQuery, minDate) => {
   const isFromChanged = query.interval.from !== oldQuery.interval.from;
-  const isFromEqualDeletedBefore = query.interval.from === minDate;
+  const isFromEqualMinDate = query.interval.from === minDate;
   const isToChanged = query.interval.to !== oldQuery.interval.to;
   const isQueryWithoutIntervalChanged = !isOmitEqual(query, oldQuery, ['interval']);
 
-  return isQueryWithoutIntervalChanged || (isFromChanged && !isFromEqualDeletedBefore) || isToChanged;
+  return isQueryWithoutIntervalChanged || (isFromChanged && !isFromEqualMinDate) || isToChanged;
 };
+
+/**
+ * Convert metrics timestamps to local timezone
+ *
+ * @param {Metric[]} metrics
+ * @param {string} timezone
+ * @returns {Metric[]}
+ */
+export const convertMetricsToTimezone = (metrics, timezone) => metrics.map(metric => ({
+  ...metric,
+
+  timestamp: convertDateToTimestampByTimezone(metric.timestamp, timezone),
+}));
