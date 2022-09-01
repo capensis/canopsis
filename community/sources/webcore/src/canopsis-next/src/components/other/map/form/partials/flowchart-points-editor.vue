@@ -15,20 +15,20 @@
     )
       point-icon(:size="iconSize", :entity="point.entity")
 
-    template(v-for="(icon) in shapesIcons")
-      component.flowchart-points-editor__point(
-        is="foreignObject",
-        :height="iconSize",
-        :width="iconSize",
-        :x="icon.x - iconSize / 2",
-        :y="icon.y",
-        @mouseup.prevent.stop="",
-        @mousedown.prevent.stop="",
-        @click.stop="",
-        @dblclick.stop="openEditPointByClick($event, icon.point)",
-        @contextmenu.stop.prevent="handleEditContextmenu($event, icon.point)"
-      )
-        point-icon(:size="iconSize", :entity="icon.point.entity")
+    component.flowchart-points-editor__point(
+      v-for="{ point, x, y } in shapesIcons",
+      :height="iconSize",
+      :width="iconSize",
+      :x="x",
+      :y="y",
+      is="foreignObject",
+      @mouseup.prevent.stop="",
+      @mousedown.prevent.stop="",
+      @click.stop="",
+      @dblclick.stop="openEditPointByClick($event, point)",
+      @contextmenu.stop.prevent="handleEditContextmenu($event, point)"
+    )
+      point-icon(:size="iconSize", :entity="point.entity")
 
     component(is="foreignObject", style="overflow: visible;")
       flowchart-point-dialog-menu(

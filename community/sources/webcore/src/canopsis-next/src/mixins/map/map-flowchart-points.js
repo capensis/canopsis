@@ -29,7 +29,11 @@ export const mapFlowchartPoints = {
         if (shapeId) {
           const { x, y } = calculateShapeIconPosition(this.shapes[shapeId]);
 
-          acc.push({ x, y, point });
+          acc.push({
+            x: x - this.iconSize / 2,
+            y,
+            point,
+          });
         }
 
         return acc;
