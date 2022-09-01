@@ -1,12 +1,12 @@
 <template lang="pug">
   svg(
     ref="svg",
-    v-resize.quiet="setViewBox",
     v-on="svgHandlers",
     :viewBox="viewBoxString",
     :style="svgStyles",
     width="100%",
-    height="100%"
+    height="100%",
+    xmlns="http://www.w3.org/2000/svg"
   )
     component(
       v-for="shape in data",
@@ -217,10 +217,18 @@ export default {
       });
     },
 
+    svgCursor() {
+      if (this.panning) {
+        return 'move';
+      }
+
+      return this.cursorStyle;
+    },
+
     svgStyles() {
       return {
         backgroundColor: this.backgroundColor,
-        cursor: this.cursorStyle,
+        cursor: this.svgCursor,
       };
     },
   },
@@ -264,7 +272,7 @@ export default {
     },
 
     callHandlers(event, data) {
-      this.handlers[event.type].forEach(func => func({
+      this.handlers[event.type]?.forEach(func => func({
         event,
         cursor: this.normalizeCursor({ x: event.clientX, y: event.clientY }),
         ...data,

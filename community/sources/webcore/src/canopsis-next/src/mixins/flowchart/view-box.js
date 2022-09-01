@@ -1,8 +1,17 @@
+import { isEmpty } from 'lodash';
+
+import { calculateCenterBetweenPoint } from '@/helpers/flowchart/points';
+import { getShapesBounds } from '@/helpers/flowchart/shapes';
+
 export const viewBoxMixin = {
   props: {
     viewBox: {
       type: Object,
       required: true,
+    },
+    fitPaddingPercent: {
+      type: Number,
+      default: 0.1,
     },
   },
   data() {
@@ -29,57 +38,105 @@ export const viewBoxMixin = {
       return this.viewBoxObject.height / this.editorSize.height;
     },
   },
+  created() {
+    this.resizeObserver = new ResizeObserver(this.updateViewBoxByResize);
+  },
   mounted() {
-    this.$refs.svg.addEventListener('wheel', this.moveViewBoxByWheelEvent);
+    this.setViewBox();
+    this.fitToShapes();
 
+    this.$flowchart.on('wheel', this.moveViewBoxByWheelEvent);
     document.addEventListener('transitionend', this.setViewBoxAfterTransition);
+
+    this.resizeObserver.observe(this.$parent.$el);
   },
   beforeDestroy() {
-    this.$refs.svg.removeEventListener('wheel', this.moveViewBoxByWheelEvent);
-
+    this.$flowchart.off('wheel', this.moveViewBoxByWheelEvent);
     document.removeEventListener('transitionend', this.setViewBoxAfterTransition);
+
+    this.resizeObserver.unobserve(this.$parent.$el);
+    this.resizeObserver.disconnect();
   },
   methods: {
     updateViewBox() {
       this.$emit('update:viewBox', this.viewBoxObject);
     },
 
-    setViewBox(event) {
-      const { width, height } = this.$refs.svg.getBoundingClientRect();
-
-      if (event) {
-        const widthDiff = (this.editorSize.width - width) * this.widthScale;
-        const heightDiff = (this.editorSize.height - height) * this.heightScale;
-
-        this.viewBoxObject.width -= widthDiff;
-        this.viewBoxObject.height -= heightDiff;
-      } else {
-        this.viewBoxObject.width = width;
-        this.viewBoxObject.height = height;
-      }
-
-      this.updateViewBox();
-
+    updateEditorSize(width, height) {
       this.editorSize.width = width;
       this.editorSize.height = height;
+    },
+
+    fitToShapes() {
+      if (isEmpty(this.shapes)) {
+        return;
+      }
+
+      const { min, max } = getShapesBounds(this.shapes);
+
+      const paddingFactor = 1 + this.fitPaddingPercent;
+
+      const optimalHeight = (max.y - min.y) * paddingFactor;
+      const optimalWidth = (max.x - min.x) * paddingFactor;
+
+      if (optimalWidth > this.viewBoxObject.width) {
+        this.viewBoxObject.height *= this.viewBoxObject.width / optimalWidth;
+        this.viewBoxObject.width = optimalWidth;
+      }
+
+      if (optimalHeight > this.viewBoxObject.height) {
+        this.viewBoxObject.width *= this.viewBoxObject.height / optimalHeight;
+        this.viewBoxObject.height = optimalHeight;
+      }
+
+      const center = calculateCenterBetweenPoint(max, min);
+
+      this.viewBoxObject.x = center.x - this.viewBoxObject.width / 2;
+      this.viewBoxObject.y = center.y - this.viewBoxObject.height / 2;
+    },
+
+    setViewBox() {
+      const { width, height } = this.$refs.svg.getBoundingClientRect();
+
+      this.viewBoxObject.width = width;
+      this.viewBoxObject.height = height;
+
+      this.updateViewBox();
+      this.updateEditorSize(width, height);
+    },
+
+    updateViewBoxByResize() {
+      const { width, height } = this.$refs.svg.getBoundingClientRect();
+
+      const widthDiff = (this.editorSize.width - width) * this.widthScale;
+      const heightDiff = (this.editorSize.height - height) * this.heightScale;
+
+      this.viewBoxObject.width -= widthDiff;
+      this.viewBoxObject.x += widthDiff / 2;
+      this.viewBoxObject.height -= heightDiff;
+      this.viewBoxObject.y += heightDiff / 2;
+
+      this.updateEditorSize(width, height);
+      this.updateViewBox();
     },
 
     setViewBoxAfterTransition(event) {
       const isContainsSvg = event.target.contains(this.$refs.svg);
 
-      if (isContainsSvg && event.propertyName === 'transform') {
+      if (isContainsSvg && ['transform', 'height', 'width'].includes(event.propertyName)) {
         this.setViewBox();
+        this.fitToShapes();
 
         document.removeEventListener('transitionend', this.setViewBoxAfterTransition);
       }
     },
 
-    moveViewBoxByWheelEvent(event) {
-      event.preventDefault();
-
+    moveViewBoxByWheelEvent({ event }) {
       const delta = event.deltaY;
 
       if (event.ctrlKey) {
+        event.preventDefault();
+
         const percent = delta < 0 ? 0.05 : -0.05;
 
         const scaleWidth = this.viewBoxObject.width * percent;
@@ -105,10 +162,14 @@ export const viewBoxMixin = {
       }
 
       if (event.shiftKey) {
+        event.preventDefault();
+
         this.viewBoxObject.x += delta;
       }
 
       if (event.altKey) {
+        event.preventDefault();
+
         this.viewBoxObject.y += delta;
       }
     },

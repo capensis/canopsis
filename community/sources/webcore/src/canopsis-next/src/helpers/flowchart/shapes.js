@@ -1,3 +1,4 @@
+import { isArray } from 'lodash';
 import { LINE_TYPES, SHAPES } from '@/constants';
 
 import uid from '@/helpers/uid';
@@ -288,3 +289,133 @@ export const generateImageShape = shape => ({
   type: SHAPES.image,
   src: shape.src,
 });
+
+/**
+ * Calculate icon position for shape
+ *
+ * @param {Shape} shape
+ * @returns {Point}
+ */
+export const calculateShapeIconPosition = (shape) => {
+  switch (shape.type) {
+    case SHAPES.parallelogram:
+    case SHAPES.ellipse:
+    case SHAPES.process:
+    case SHAPES.document:
+    case SHAPES.storage:
+    case SHAPES.image:
+    case SHAPES.rect:
+      return {
+        x: shape.x + shape.width / 2,
+        y: shape.y,
+      };
+    case SHAPES.rhombus:
+      return {
+        x: shape.x + shape.width / 2,
+        y: shape.y + 5,
+      };
+    case SHAPES.circle:
+      return {
+        x: shape.x + shape.diameter / 2,
+        y: shape.y,
+      };
+    default: {
+      return {
+        x: shape.x,
+        y: shape.y,
+      };
+    }
+  }
+};
+
+/**
+ * Get shape x max and min
+ *
+ * @param {Shape} shape
+ * @returns {{ min: number, max: number }}
+ */
+export const getShapeXBounds = (shape) => {
+  if (shape.points) {
+    const xPoints = shape.points.map(({ x }) => x);
+
+    return {
+      min: Math.min.apply(null, xPoints),
+      max: Math.max.apply(null, xPoints),
+    };
+  }
+
+  return {
+    min: shape.x,
+    max: shape.x + (shape.width ?? shape.diameter),
+  };
+};
+
+/**
+ * Get shape y max and min
+ *
+ * @param {Shape} shape
+ * @returns {{ min: number, max: number }}
+ */
+export const getShapeYBounds = (shape) => {
+  if (shape.points) {
+    const yPoints = shape.points.map(({ y }) => y);
+
+    return {
+      min: Math.min.apply(null, yPoints),
+      max: Math.max.apply(null, yPoints),
+    };
+  }
+
+  return {
+    min: shape.y,
+    max: shape.y + (shape.width ?? shape.diameter),
+  };
+};
+
+/**
+ * Get shapes max and min coordinate
+ *
+ * @param {Shape[]} shapes
+ * @returns {Object}
+ */
+export const getShapesBounds = (shapes) => {
+  const shapesArray = isArray(shapes) ? shapes : Object.values(shapes);
+
+  return shapesArray.reduce((acc, shape) => {
+    const {
+      min: minX,
+      max: maxX,
+    } = getShapeXBounds(shape);
+    const {
+      min: minY,
+      max: maxY,
+    } = getShapeYBounds(shape);
+
+    if (minX < acc.min.x) {
+      acc.min.x = minX;
+    }
+
+    if (minY < acc.min.y) {
+      acc.min.y = minY;
+    }
+
+    if (maxX > acc.max.x) {
+      acc.max.x = maxX;
+    }
+
+    if (maxY > acc.max.y) {
+      acc.max.y = maxY;
+    }
+
+    return acc;
+  }, {
+    min: {
+      x: Infinity,
+      y: Infinity,
+    },
+    max: {
+      x: -Infinity,
+      y: -Infinity,
+    },
+  });
+};
