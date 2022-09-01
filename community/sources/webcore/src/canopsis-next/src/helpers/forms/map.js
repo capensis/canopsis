@@ -154,6 +154,7 @@ export const geomapPointToForm = (point = {}) => ({
     lat: 0,
     lng: 0,
   },
+  is_entity_coordinate: !!point.entity?.coordinates,
   entity: point.entity?._id ?? '',
   map: point.map?._id,
   _id: uuid(),

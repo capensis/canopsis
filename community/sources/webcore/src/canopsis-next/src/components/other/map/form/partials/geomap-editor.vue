@@ -6,6 +6,7 @@
       :disabled="shown",
       :min-zoom="minZoom",
       :options="mapOptions",
+      :center.sync="center",
       @click="openAddingPointDialogByClick",
       @dblclick="openAddingPointDialog"
     )
@@ -48,7 +49,6 @@
       geomap-cluster-group(
         ref="pointsFeatureGroup",
         :name="$t('map.layers.points')",
-        :disable-clustering-at-zoom="maxClusteringZoom",
         layer-type="overlay"
       )
         geomap-marker(
@@ -77,10 +77,12 @@
           v-if="addingPoint || editingPoint",
           :point="addingPoint || editingPoint",
           :editing="!!editingPoint",
+          :exist-entities="existEntities",
           coordinates,
           @cancel="closePointDialog",
           @submit="submitPointDialog",
-          @remove="showRemovePointModal"
+          @remove="showRemovePointModal",
+          @fly:coordinates="handleUpdateCoordinates"
         )
     v-messages(v-if="hasChildrenError", :value="errorMessages", color="error")
 </template>
@@ -202,6 +204,10 @@ export default {
 
     pointsFieldName() {
       return `${this.name}.points`;
+    },
+
+    existEntities() {
+      return this.form.points.map(({ entity }) => entity);
     },
   },
   watch: {
@@ -364,6 +370,17 @@ export default {
           },
         },
       });
+    },
+
+    handleUpdateCoordinates(coordinatesDiff) {
+      this.flyToCoordinates([
+        this.center.lat + coordinatesDiff.lat,
+        this.center.lng + coordinatesDiff.lng,
+      ]);
+    },
+
+    flyToCoordinates(coordinates) {
+      this.$refs.map.mapObject.panTo(coordinates, { animate: false });
     },
   },
 };
