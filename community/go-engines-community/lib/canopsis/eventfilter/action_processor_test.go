@@ -1193,7 +1193,7 @@ func TestActionProcessor(t *testing.T) {
 	}
 
 	mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
-	mockTechMetricsSender.EXPECT().SendCheEntityInfo(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+	mockTechMetricsSender.EXPECT().SendCheEntityInfo(gomock.Any(), gomock.Any()).AnyTimes()
 	processor := eventfilter.NewActionProcessor(mockTechMetricsSender)
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {

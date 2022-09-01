@@ -101,7 +101,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					(result.Err != nil && len(result.ActionExecutions) > 0 &&
 						result.ActionExecutions[len(result.ActionExecutions)-1].Action.Type == types.ActionTypeWebhook)) {
 					// Send activation event
-					ok, err = s.activationService.Process(ctx, alarm)
+					ok, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp)
 					if err != nil {
 						s.logger.Error().Err(err).Msg("failed to send activation")
 						break
