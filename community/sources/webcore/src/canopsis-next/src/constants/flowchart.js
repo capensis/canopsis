@@ -57,3 +57,7 @@ export const FLOWCHART_KEY_CODES = {
   keyC: 67,
   keyV: 86,
 };
+
+export const FLOWCHART_MAX_POSITION_DIFF = 10;
+
+export const FLOWCHART_MAX_TIMESTAMP_DIFF = 300;

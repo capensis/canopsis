@@ -17,7 +17,8 @@
       @click.stop="",
       @contextmenu.stop.prevent="handleShapeContextmenu(shape, $event)",
       @mousedown.left="onShapeMouseDown(shape, $event)",
-      @mouseup="onShapeMouseUp(shape, $event)"
+      @mouseup="onShapeMouseUp(shape, $event)",
+      @update="updateShape(shape, $event)"
     )
     template(v-if="!readonly")
       component(

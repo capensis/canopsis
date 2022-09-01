@@ -1,3 +1,4 @@
+import { keyBy, omit } from 'lodash';
 import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
 
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
@@ -74,11 +75,11 @@ import uuid from '@/helpers/uuid';
 /**
  * @typedef {Object} MapFlowchartPoint
  * @property {string} _id
- * @property {string} shape_id
+ * @property {string} [shape_id]
  * @property {MapCommonFields} map
  * @property {Entity} entity
- * @property {number} x
- * @property {number} y
+ * @property {number} [x]
+ * @property {number} [y]
  */
 
 /**
@@ -89,7 +90,7 @@ import uuid from '@/helpers/uuid';
  */
 
 /**
- * @typedef {Object} MapFlowchartPointForm
+ * @typedef {MapFlowchartPoint} MapFlowchartPointForm
  * @property {string} map
  * @property {string} entity
  */
@@ -227,7 +228,7 @@ export const mapGeoParametersToForm = (parameters = {}) => ({
  * @returns {MapFlowchartParametersForm}
  */
 export const mapFlowchartParametersToForm = (parameters = {}) => ({
-  shapes: parameters.shapes ?? {},
+  shapes: parameters.shapes ? keyBy(parameters.shapes, '_id') : {},
   background_color: parameters.background_color ?? 'white',
   points: flowchartPointsToForm(parameters.points),
 });
@@ -293,6 +294,32 @@ export const formToMapTreeOfDependenciesParameters = form => ({
 });
 
 /**
+ * Convert form parameters to flowchart map parameters
+ *
+ * @param {MapFlowchartPointForm[]} points
+ * @returns {MapFlowchartPoint[]}
+ */
+export const formPointsToMapFlowchartPoints = points => points.map(
+  point => omit(
+    point,
+    point.shape_id ? ['x', 'y'] : ['shape_id'],
+  ),
+);
+
+/**
+ * Convert form parameters to flowchart map parameters
+ *
+ * @param {MapFlowchartParametersForm} form
+ * @returns {MapFlowchartParameters}
+ */
+export const formToMapFlowchartParameters = form => ({
+  ...form,
+
+  points: formPointsToMapFlowchartPoints(form.points),
+  shapes: Object.values(form.shapes),
+});
+
+/**
  * Convert map form to map
  *
  * @param {MapForm} form
@@ -301,6 +328,7 @@ export const formToMapTreeOfDependenciesParameters = form => ({
 export const formToMap = (form) => {
   const prepare = {
     [MAP_TYPES.treeOfDependencies]: formToMapTreeOfDependenciesParameters,
+    [MAP_TYPES.flowchart]: formToMapFlowchartParameters,
   }[form.type];
 
   return {
