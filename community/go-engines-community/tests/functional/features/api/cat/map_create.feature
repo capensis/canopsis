@@ -314,12 +314,150 @@ Feature: Create a map
     }
     """
 
+  Scenario: given create flowchart map request should return ok
+    When I am admin
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "name": "test-map-to-create-3-name",
+      "type": "flowchart",
+      "parameters": {
+        "background_color": "rgb(241, 248, 233)",
+        "shapes": [
+          {
+            "_id": "test-map-to-create-3-shape-1",
+            "type": "rect",
+            "x": 200,
+            "y": 200
+          }
+        ],
+        "points": [
+          {
+            "x": 0,
+            "y": 0,
+            "entity": "test-resource-to-map-edit-1/test-component-default"
+          },
+          {
+            "x": 100,
+            "y": 100,
+            "map": "test-map-to-map-edit-1"
+          },
+          {
+            "shape": "test-map-to-create-3-shape-1",
+            "entity": "test-resource-to-map-edit-2/test-component-default"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-map-to-create-3-name",
+      "type": "flowchart",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "parameters": {
+        "background_color": "rgb(241, 248, 233)",
+        "shapes": [
+          {
+            "_id": "test-map-to-create-3-shape-1",
+            "type": "rect",
+            "x": 200,
+            "y": 200
+          }
+        ],
+        "points": [
+          {
+            "x": 0,
+            "y": 0,
+            "entity": {
+              "_id": "test-resource-to-map-edit-1/test-component-default",
+              "name": "test-resource-to-map-edit-1"
+            },
+            "map": null
+          },
+          {
+            "x": 100,
+            "y": 100,
+            "entity": null,
+            "map": {
+              "_id": "test-map-to-map-edit-1",
+              "name": "test-map-to-map-edit-1-name"
+            }
+          },
+          {
+            "shape": "test-map-to-create-3-shape-1",
+            "entity": {
+              "_id": "test-resource-to-map-edit-2/test-component-default",
+              "name": "test-resource-to-map-edit-2"
+            }
+          }
+        ]
+      }
+    }
+    """
+    When I do GET /api/v4/cat/maps/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-map-to-create-3-name",
+      "type": "flowchart",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "parameters": {
+        "background_color": "rgb(241, 248, 233)",
+        "shapes": [
+          {
+            "_id": "test-map-to-create-3-shape-1",
+            "type": "rect",
+            "x": 200,
+            "y": 200
+          }
+        ],
+        "points": [
+          {
+            "x": 0,
+            "y": 0,
+            "entity": {
+              "_id": "test-resource-to-map-edit-1/test-component-default",
+              "name": "test-resource-to-map-edit-1"
+            },
+            "map": null
+          },
+          {
+            "x": 100,
+            "y": 100,
+            "entity": null,
+            "map": {
+              "_id": "test-map-to-map-edit-1",
+              "name": "test-map-to-map-edit-1-name"
+            }
+          },
+          {
+            "shape": "test-map-to-create-3-shape-1",
+            "entity": {
+              "_id": "test-resource-to-map-edit-2/test-component-default",
+              "name": "test-resource-to-map-edit-2"
+            }
+          }
+        ]
+      }
+    }
+    """
+
   Scenario: given create treeofdeps map request should return ok
     When I am admin
     When I do POST /api/v4/cat/maps:
     """json
     {
-      "name": "test-map-to-create-2-name",
+      "name": "test-map-to-create-4-name",
       "type": "treeofdeps",
       "parameters": {
         "type": "treeofdeps",
@@ -335,7 +473,7 @@ Feature: Create a map
     Then the response body should contain:
     """json
     {
-      "name": "test-map-to-create-2-name",
+      "name": "test-map-to-create-4-name",
       "type": "treeofdeps",
       "author": {
         "_id": "root",
@@ -360,7 +498,7 @@ Feature: Create a map
     Then the response body should contain:
     """json
     {
-      "name": "test-map-to-create-2-name",
+      "name": "test-map-to-create-4-name",
       "type": "treeofdeps",
       "author": {
         "_id": "root",
@@ -409,10 +547,13 @@ Feature: Create a map
     """json
     {
       "errors": {
-        "type": "Type must be one of [mermaid geo treeofdeps]."
+        "type": "Type must be one of [mermaid geo treeofdeps flowchart]."
       }
     }
     """
+
+  Scenario: given create mermaid map request with missing fields should return bad request error
+    When I am admin
     When I do POST /api/v4/cat/maps:
     """json
     {
@@ -475,6 +616,9 @@ Feature: Create a map
       }
     }
     """
+
+  Scenario: given create geo map request with missing fields should return bad request error
+    When I am admin
     When I do POST /api/v4/cat/maps:
     """json
     {
@@ -611,6 +755,140 @@ Feature: Create a map
       }
     }
     """
+
+  Scenario: given create flowchart map request with missing fields should return bad request error
+    When I am admin
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "flowchart"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.points": "Points is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "flowchart",
+      "parameters": {
+        "points": []
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.points": "Points is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "flowchart",
+      "parameters": {
+        "points": [
+          {}
+        ]
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.points.0.x": "X is missing.",
+        "parameters.points.0.y": "Y is missing.",
+        "parameters.points.0.entity": "Entity is required when Map is not present.",
+        "parameters.points.0.map": "Map is required when Entity is not present."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "flowchart",
+      "parameters": {
+        "points": [
+          {
+            "shape": "not-exist"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.points.0.shape": "Shape is missing.",
+        "parameters.points.0.entity": "Entity is required when Map is not present.",
+        "parameters.points.0.map": "Map is required when Entity is not present."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "flowchart",
+      "parameters": {
+        "shapes": [
+          {
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.points": "Points is missing.",
+        "parameters.shapes.0._id": "ID is missing.",
+        "parameters.shapes.0.type": "Type is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/maps:
+    """json
+    {
+      "type": "flowchart",
+      "parameters": {
+        "background_color": "not-exist"
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "parameters.points": "Points is missing.",
+        "parameters.background_color": "BackgroundColor is not valid."
+      }
+    }
+    """
+
+  Scenario: given create treeofdeps map request with missing fields should return bad request error
+    When I am admin
     When I do POST /api/v4/cat/maps:
     """json
     {
