@@ -46,13 +46,11 @@ export const viewBoxMixin = {
     this.fitToShapes();
 
     this.$flowchart.on('wheel', this.moveViewBoxByWheelEvent);
-    document.addEventListener('transitionend', this.setViewBoxAfterTransition);
 
     this.resizeObserver.observe(this.$parent.$el);
   },
   beforeDestroy() {
     this.$flowchart.off('wheel', this.moveViewBoxByWheelEvent);
-    document.removeEventListener('transitionend', this.setViewBoxAfterTransition);
 
     this.resizeObserver.unobserve(this.$parent.$el);
     this.resizeObserver.disconnect();
@@ -65,6 +63,15 @@ export const viewBoxMixin = {
     updateEditorSize(width, height) {
       this.editorSize.width = width;
       this.editorSize.height = height;
+    },
+
+    getSvgSizes() {
+      const style = window.getComputedStyle(this.$refs.svg);
+
+      return {
+        width: parseInt(style.width, 10),
+        height: parseInt(style.height, 10),
+      };
     },
 
     fitToShapes() {
@@ -80,12 +87,12 @@ export const viewBoxMixin = {
       const optimalWidth = (max.x - min.x) * paddingFactor;
 
       if (optimalWidth > this.viewBoxObject.width) {
-        this.viewBoxObject.height *= this.viewBoxObject.width / optimalWidth;
+        this.viewBoxObject.height *= optimalWidth / this.viewBoxObject.width;
         this.viewBoxObject.width = optimalWidth;
       }
 
       if (optimalHeight > this.viewBoxObject.height) {
-        this.viewBoxObject.width *= this.viewBoxObject.height / optimalHeight;
+        this.viewBoxObject.width *= optimalHeight / this.viewBoxObject.height;
         this.viewBoxObject.height = optimalHeight;
       }
 
@@ -96,7 +103,7 @@ export const viewBoxMixin = {
     },
 
     setViewBox() {
-      const { width, height } = this.$refs.svg.getBoundingClientRect();
+      const { width, height } = this.getSvgSizes();
 
       this.viewBoxObject.width = width;
       this.viewBoxObject.height = height;
@@ -106,7 +113,7 @@ export const viewBoxMixin = {
     },
 
     updateViewBoxByResize() {
-      const { width, height } = this.$refs.svg.getBoundingClientRect();
+      const { width, height } = this.getSvgSizes();
 
       const widthDiff = (this.editorSize.width - width) * this.widthScale;
       const heightDiff = (this.editorSize.height - height) * this.heightScale;
@@ -118,17 +125,6 @@ export const viewBoxMixin = {
 
       this.updateEditorSize(width, height);
       this.updateViewBox();
-    },
-
-    setViewBoxAfterTransition(event) {
-      const isContainsSvg = event.target.contains(this.$refs.svg);
-
-      if (isContainsSvg && ['transform', 'height', 'width'].includes(event.propertyName)) {
-        this.setViewBox();
-        this.fitToShapes();
-
-        document.removeEventListener('transitionend', this.setViewBoxAfterTransition);
-      }
     },
 
     moveViewBoxByWheelEvent({ event }) {
