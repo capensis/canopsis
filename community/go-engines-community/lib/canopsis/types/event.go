@@ -155,8 +155,8 @@ type Event struct {
 	Author string `bson:"author" json:"author"`
 	UserID string `bson:"user_id" json:"user_id"`
 
-	Timestamp         CpsTime `bson:"timestamp" json:"timestamp"`
-	ReceivedTimestamp CpsTime `bson:"received_timestamp" json:"received_timestamp"`
+	Timestamp         CpsTime   `bson:"timestamp" json:"timestamp"`
+	ReceivedTimestamp MicroTime `bson:"received_timestamp" json:"received_timestamp"`
 
 	RK string `bson:"routing_key" json:"routing_key"`
 	// AckResources is used to ack all resource alarms on ack component alarm.
@@ -255,7 +255,7 @@ func (e *Event) Format() {
 	if e.Timestamp.IsZero() || e.Timestamp.Time.Before(now.Add(-MaxEventTimestampVariation)) || e.Timestamp.Time.After(now.Add(MaxEventTimestampVariation)) {
 		e.Timestamp = now
 	}
-	e.ReceivedTimestamp = now
+	e.ReceivedTimestamp = NewMicroTime()
 	if e.EventType == "" {
 		e.EventType = EventTypeCheck
 	}

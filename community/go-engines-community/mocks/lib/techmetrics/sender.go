@@ -49,15 +49,15 @@ func (mr *MockSenderMockRecorder) Run(arg0 interface{}) *gomock.Call {
 }
 
 // SendApiRequest mocks base method.
-func (m *MockSender) SendApiRequest(arg0 context.Context, arg1 techmetrics.ApiRequestMetric) {
+func (m *MockSender) SendApiRequest(arg0 techmetrics.ApiRequestMetric) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendApiRequest", arg0, arg1)
+	m.ctrl.Call(m, "SendApiRequest", arg0)
 }
 
 // SendApiRequest indicates an expected call of SendApiRequest.
-func (mr *MockSenderMockRecorder) SendApiRequest(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockSenderMockRecorder) SendApiRequest(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendApiRequest", reflect.TypeOf((*MockSender)(nil).SendApiRequest), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendApiRequest", reflect.TypeOf((*MockSender)(nil).SendApiRequest), arg0)
 }
 
 // SendAxeEvent mocks base method.
@@ -73,27 +73,27 @@ func (mr *MockSenderMockRecorder) SendAxeEvent(arg0 interface{}) *gomock.Call {
 }
 
 // SendAxePeriodical mocks base method.
-func (m *MockSender) SendAxePeriodical(arg0 context.Context, arg1 techmetrics.AxePeriodicalMetric) {
+func (m *MockSender) SendAxePeriodical(arg0 techmetrics.AxePeriodicalMetric) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendAxePeriodical", arg0, arg1)
+	m.ctrl.Call(m, "SendAxePeriodical", arg0)
 }
 
 // SendAxePeriodical indicates an expected call of SendAxePeriodical.
-func (mr *MockSenderMockRecorder) SendAxePeriodical(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockSenderMockRecorder) SendAxePeriodical(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendAxePeriodical", reflect.TypeOf((*MockSender)(nil).SendAxePeriodical), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendAxePeriodical", reflect.TypeOf((*MockSender)(nil).SendAxePeriodical), arg0)
 }
 
 // SendCheEntityInfo mocks base method.
-func (m *MockSender) SendCheEntityInfo(arg0 context.Context, arg1 time.Time, arg2 string) {
+func (m *MockSender) SendCheEntityInfo(arg0 time.Time, arg1 string) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendCheEntityInfo", arg0, arg1, arg2)
+	m.ctrl.Call(m, "SendCheEntityInfo", arg0, arg1)
 }
 
 // SendCheEntityInfo indicates an expected call of SendCheEntityInfo.
-func (mr *MockSenderMockRecorder) SendCheEntityInfo(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockSenderMockRecorder) SendCheEntityInfo(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCheEntityInfo", reflect.TypeOf((*MockSender)(nil).SendCheEntityInfo), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCheEntityInfo", reflect.TypeOf((*MockSender)(nil).SendCheEntityInfo), arg0, arg1)
 }
 
 // SendCheEvent mocks base method.
@@ -109,27 +109,27 @@ func (mr *MockSenderMockRecorder) SendCheEvent(arg0 interface{}) *gomock.Call {
 }
 
 // SendPBehaviorPeriodical mocks base method.
-func (m *MockSender) SendPBehaviorPeriodical(arg0 context.Context, arg1 techmetrics.PbehaviorPeriodicalMetric) {
+func (m *MockSender) SendPBehaviorPeriodical(arg0 techmetrics.PbehaviorPeriodicalMetric) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendPBehaviorPeriodical", arg0, arg1)
+	m.ctrl.Call(m, "SendPBehaviorPeriodical", arg0)
 }
 
 // SendPBehaviorPeriodical indicates an expected call of SendPBehaviorPeriodical.
-func (mr *MockSenderMockRecorder) SendPBehaviorPeriodical(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockSenderMockRecorder) SendPBehaviorPeriodical(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPBehaviorPeriodical", reflect.TypeOf((*MockSender)(nil).SendPBehaviorPeriodical), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPBehaviorPeriodical", reflect.TypeOf((*MockSender)(nil).SendPBehaviorPeriodical), arg0)
 }
 
 // SendQueue mocks base method.
-func (m *MockSender) SendQueue(arg0 context.Context, arg1 string, arg2 time.Time, arg3 int64) {
+func (m *MockSender) SendQueue(arg0 string, arg1 time.Time, arg2 int64) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendQueue", arg0, arg1, arg2, arg3)
+	m.ctrl.Call(m, "SendQueue", arg0, arg1, arg2)
 }
 
 // SendQueue indicates an expected call of SendQueue.
-func (mr *MockSenderMockRecorder) SendQueue(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+func (mr *MockSenderMockRecorder) SendQueue(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendQueue", reflect.TypeOf((*MockSender)(nil).SendQueue), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendQueue", reflect.TypeOf((*MockSender)(nil).SendQueue), arg0, arg1, arg2)
 }
 
 // SendSimpleEvent mocks base method.
