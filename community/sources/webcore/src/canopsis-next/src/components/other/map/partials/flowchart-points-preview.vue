@@ -22,7 +22,7 @@
       :key="point._id",
       :height="iconSize",
       :width="iconSize",
-      :x="x - iconSize / 2",
+      :x="x",
       :y="y",
       is="foreignObject",
       @click="openPopup(point, $event)"
