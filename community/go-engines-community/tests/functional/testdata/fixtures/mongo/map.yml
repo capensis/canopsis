@@ -37,6 +37,36 @@ template:
       ]
     }
   }
+  - &map_flowchart {
+    _id: <UUID()>,
+    name: <LoremIpsumWord()>,
+    type: flowchart,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    parameters: {
+      background_color: <HexColor()>,
+      points: [
+        {
+          x: 0,
+          y: 0,
+          entity: test-resource-to-map-edit-1/test-component-default
+        },
+        {
+          shape: shape-1,
+          entity: test-resource-to-map-edit-2/test-component-default
+        }
+      ],
+      shapes: [
+        {
+          _id: shape-1,
+          type: rect,
+          x: 1,
+          y: 1
+        }
+      ]
+    }
+  }
   - &map_treeofdeps {
     _id: <UUID()>,
     name: <LoremIpsumWord()>,
@@ -135,9 +165,69 @@ map:
             lng: 57.037685420804365
           entity: test-entity-not-exist
   map_to_get_3:
-    <<: *map_treeofdeps
+    <<: *map_flowchart
     _id: test-map-to-get-3
     name: test-map-to-get-3-name
+    created: 1605263992
+    updated: 1605263992
+    parameters:
+      background_color: "#efa8ca"
+      shapes:
+        - _id: test-map-to-get-1-shape-1
+          type: rect
+          x: 200
+          y: 200
+          width: 100
+          height: 100
+          connections:
+            - shape: test-map-to-get-1-shape-2
+          connectedTo: [ ]
+          text: test-map-to-get-1-shape-1-text
+          textProperties:
+            color: "#b61c1c"
+          properties:
+            fill: "#b61c1c"
+          aspectRatio: true
+        - _id: test-map-to-get-1-shape-2
+          type: rect
+          x: 300
+          y: 300
+          width: 100
+          height: 100
+          connections: [ ]
+          connectedTo:
+            - test-map-to-get-1-shape-1
+          text: test-map-to-get-1-shape-2-text
+          textProperties:
+            color: "#b61c1c"
+          properties:
+            fill: "#b61c1c"
+          aspectRatio: true
+      points:
+        - _id: test-map-to-get-1-point-1
+          x: 0
+          y: 0
+          entity: test-resource-to-map-edit-1/test-component-default
+        - _id: test-map-to-get-1-point-2
+          x: 100
+          y: 100
+          map: test-map-to-map-edit-1
+        - _id: test-map-to-get-1-point-3
+          shape: test-map-to-get-1-shape-1
+          entity: test-resource-to-map-edit-2/test-component-default
+          map: test-map-to-map-edit-2
+        - _id: test-map-to-get-1-point-4
+          x: 300
+          y: 300
+          entity: test-resource-to-map-edit-4/test-component-default
+        - _id: test-map-to-get-1-point-5
+          x: 400
+          y: 400
+          entity: test-entity-not-exist
+  map_to_get_4:
+    <<: *map_treeofdeps
+    _id: test-map-to-get-4
+    name: test-map-to-get-4-name
     created: 1605263992
     updated: 1605263992
     parameters:
@@ -249,4 +339,37 @@ map:
           coordinates:
             lat: 67.52269494598361
             lng: 57.037685420804365
+          entity: test-entity-not-exist
+  map_to_state_get_4:
+    <<: *map_flowchart
+    _id: test-map-to-state-get-4
+    name: test-map-to-state-get-4-name
+    created: 1605263992
+    updated: 1605263992
+    parameters:
+      background_color: "#efa8ca"
+      shapes:
+        - _id: test-map-to-state-get-4-shape-1
+          type: rect
+      points:
+        - _id: test-map-to-state-get-4-point-1
+          x: 0
+          y: 0
+          entity: test-resource-to-map-state-get-1/test-component-default
+        - _id: test-map-to-state-get-4-point-2
+          x: 100
+          y: 100
+          map: test-map-to-map-edit-1
+        - _id: test-map-to-state-get-4-point-3
+          shape: test-map-to-state-get-4-shape-1
+          entity: test-resource-to-map-state-get-2/test-component-default
+          map: test-map-to-map-edit-2
+        - _id: test-map-to-state-get-4-point-4
+          x: 300
+          y: 300
+          entity: test-resource-to-map-state-get-4/test-component-default
+          map: test-map-to-map-edit-2
+        - _id: test-map-to-state-get-4-point-5
+          x: 400
+          y: 400
           entity: test-entity-not-exist
