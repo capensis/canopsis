@@ -15,9 +15,14 @@ import { entitiesMapMixin } from '@/mixins/entities/map';
 
 import MapsListExpandMermaidItem from './maps-list-expand-mermaid-item.vue';
 import MapsListExpandGeomapItem from './maps-list-expand-geomap-item.vue';
+import MapsListExpandFlowchartItem from './maps-list-expand-flowchart-item.vue';
 
 export default {
-  components: { MapsListExpandMermaidItem, MapsListExpandGeomapItem },
+  components: {
+    MapsListExpandMermaidItem,
+    MapsListExpandGeomapItem,
+    MapsListExpandFlowchartItem,
+  },
   mixins: [entitiesMapMixin],
   props: {
     map: {
@@ -36,6 +41,7 @@ export default {
       return {
         [MAP_TYPES.geo]: 'maps-list-expand-geomap-item',
         [MAP_TYPES.mermaid]: 'maps-list-expand-mermaid-item',
+        [MAP_TYPES.flowchart]: 'maps-list-expand-flowchart-item',
       }[this.map.type];
     },
   },
