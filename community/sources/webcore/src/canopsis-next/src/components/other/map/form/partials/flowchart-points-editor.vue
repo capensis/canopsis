@@ -53,7 +53,7 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import { MODALS, SHAPES } from '@/constants';
+import { FLOWCHART_MAX_POSITION_DIFF, FLOWCHART_MAX_TIMESTAMP_DIFF, MODALS, SHAPES } from '@/constants';
 
 import { flowchartPointToForm } from '@/helpers/forms/map';
 import { waitVuetifyAnimation } from '@/helpers/vuetify';
@@ -166,9 +166,11 @@ export default {
       immediate: true,
       handler(value) {
         if (value) {
-          this.$flowchart.on('click', this.openAddPointDialogByClick);
+          this.$flowchart.on('mousedown', this.handleMouseDown);
+          this.$flowchart.on('mouseup', this.handleMouseUp);
         } else {
-          this.$flowchart.off('click', this.openAddPointDialogByClick);
+          this.$flowchart.off('mousedown', this.handleMouseDown);
+          this.$flowchart.off('mouseup', this.handleMouseUp);
         }
       },
     },
@@ -186,7 +188,8 @@ export default {
   beforeDestroy() {
     this.$flowchart.off('contextmenu', this.handleContextmenu);
     this.$flowchart.off('dblclick', this.openAddPointDialogByClick);
-    this.$flowchart.off('click', this.openAddPointDialogByClick);
+    this.$flowchart.off('mousedown', this.handleMouseDown);
+    this.$flowchart.off('mouseup', this.handleMouseUp);
   },
   methods: {
     updatePointInModel(data) {
@@ -293,6 +296,25 @@ export default {
 
       this.closeContextmenu();
       this.openPointDialog();
+    },
+
+    handleMouseDown({ event, cursor }) {
+      this.mouseDownTimestamp = event.timeStamp;
+      this.mouseDownCursorX = cursor.x;
+      this.mouseDownCursorY = cursor.y;
+    },
+
+    handleMouseUp({ event, cursor }) {
+      if (
+        Math.abs(cursor.x - this.mouseDownCursorX) < FLOWCHART_MAX_POSITION_DIFF
+        && Math.abs(cursor.y - this.mouseDownCursorY) < FLOWCHART_MAX_POSITION_DIFF
+        && (event.timeStamp - this.mouseDownTimestamp) < FLOWCHART_MAX_TIMESTAMP_DIFF
+      ) {
+        this.openAddPointDialogByClick({
+          event,
+          cursor,
+        });
+      }
     },
 
     openAddPointDialogByClick({ event, cursor }) {

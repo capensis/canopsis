@@ -21,7 +21,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { mapToForm } from '@/helpers/forms/map';
+import { formToMap, mapToForm } from '@/helpers/forms/map';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -58,7 +58,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          await this.config.action(formToMap(this.form));
         }
 
         this.$modals.hide();

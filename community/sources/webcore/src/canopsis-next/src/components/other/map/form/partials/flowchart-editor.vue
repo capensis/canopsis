@@ -2,7 +2,7 @@
   v-layout(column)
     flowchart.flowchart-map-editor.mb-2(
       :shapes="form.shapes",
-      :background-color.sync="form.backgroundColor",
+      :background-color.sync="form.background_color",
       :style="editorStyles",
       :cursor-style="addOnClick ? 'crosshair' : undefined",
       @input="updateShapes"
