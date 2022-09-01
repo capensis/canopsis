@@ -201,6 +201,9 @@ type Event struct {
 	// Execution is used only for instruction events: EventTypeInstructionStarted, EventTypeInstructionCompleted, etc..
 	Execution string `bson:"execution,omitempty" json:"execution,omitempty"`
 
+	// Instruction is used only for manual instructions kpi metrics
+	Instruction string `bson:"instruction,omitempty" json:"instruction,omitempty"`
+
 	// TODO: should be refactored
 	IsEntityUpdated bool `bson:"-" json:"-"`
 }
