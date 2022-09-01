@@ -2,6 +2,7 @@ export const REMEDIATION_TABS = {
   instructions: 'instructions',
   configurations: 'configurations',
   jobs: 'jobs',
+  statistics: 'statistics',
 };
 
 export const REMEDIATION_INSTRUCTION_TYPES = {
@@ -30,3 +31,10 @@ export const REMEDIATION_JOB_EXECUTION_STATUSES = {
 };
 
 export const REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME = ['basic-auth'];
+
+export const REMEDIATION_STATISTICS_CHART_DATA_TYPE = {
+  percent: 'percent',
+  remediation: 'remediation',
+};
+
+export const REMEDIATION_STATISTICS_BAR_PERCENTAGE = 0.5;

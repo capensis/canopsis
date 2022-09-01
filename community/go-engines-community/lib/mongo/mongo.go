@@ -93,6 +93,10 @@ const (
 	MapMongoCollection = "map"
 )
 
+const (
+	clientTimeout = 5 * time.Second
+)
+
 type SingleResultHelper interface {
 	Decode(v interface{}) error
 	DecodeBytes() (bson.Raw, error)
@@ -430,6 +434,9 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
+	if clientOptions.Timeout == nil {
+		clientOptions.SetTimeout(clientTimeout)
+	}
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, err

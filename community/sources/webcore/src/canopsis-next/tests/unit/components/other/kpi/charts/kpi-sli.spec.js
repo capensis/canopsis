@@ -20,6 +20,11 @@ const stubs = {
 const factory = (options = {}) => shallowMount(KpiSli, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
@@ -27,6 +32,11 @@ const factory = (options = {}) => shallowMount(KpiSli, {
 const snapshotFactory = (options = {}) => mount(KpiSli, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });

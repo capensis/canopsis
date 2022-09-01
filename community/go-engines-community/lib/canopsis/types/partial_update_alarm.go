@@ -365,6 +365,10 @@ func (a *Alarm) PartialUpdateAddInstructionStep(stepType string, timestamp CpsTi
 	return nil
 }
 
+func (a *Alarm) PartialUpdateAddExecutedInstruction(instructionID string) {
+	a.AddUpdate("$addToSet", bson.M{"kpi_executed_instructions": instructionID})
+}
+
 func (a *Alarm) PartialUpdateCropSteps() {
 	if a.CropSteps() {
 		a.AddUpdate("$set", bson.M{"v.steps": a.Value.Steps})
