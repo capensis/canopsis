@@ -4,8 +4,9 @@ package metrics
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type Sender interface {
@@ -22,6 +23,12 @@ type Sender interface {
 	SendPbhLeave(ctx context.Context, entity types.Entity, timestamp time.Time, prevCanonicalType string, prevTimestamp time.Time)
 	SendPbhLeaveAndEnter(ctx context.Context, alarm *types.Alarm, entity types.Entity, prevCanonicalType string, prevTimestamp time.Time)
 	SendUpdateState(ctx context.Context, alarm types.Alarm, entity types.Entity, previousState types.CpsNumber)
+	SendInstructionAssignForAlarm(ctx context.Context, entityID string, timestamp time.Time)
+	SendInstructionAssignForAlarmBatch(ctx context.Context, entityIDs []string, timestamp time.Time)
+	SendInstructionExecutionForAlarm(ctx context.Context, entityID string, timestamp time.Time)
+	SendInstructionAssignForInstruction(ctx context.Context, instructionID string, timestamp time.Time, value int64)
+	SendInstructionAssignForInstructionBatch(ctx context.Context, instructionIDs []string, timestamp time.Time, value int64)
+	SendInstructionExecutionForInstruction(ctx context.Context, instructionID string, timestamp time.Time)
 }
 
 type nullSender struct{}
@@ -70,5 +77,29 @@ func (s *nullSender) SendPbhLeaveAndEnter(_ context.Context, _ *types.Alarm, _ t
 }
 
 func (s *nullSender) SendUpdateState(_ context.Context, _ types.Alarm, _ types.Entity, _ types.CpsNumber) {
+
+}
+
+func (s *nullSender) SendInstructionAssignForAlarm(_ context.Context, _ string, _ time.Time) {
+
+}
+
+func (s *nullSender) SendInstructionAssignForAlarmBatch(_ context.Context, _ []string, _ time.Time) {
+
+}
+
+func (s *nullSender) SendInstructionExecutionForAlarm(_ context.Context, _ string, _ time.Time) {
+
+}
+
+func (s *nullSender) SendInstructionAssignForInstruction(_ context.Context, _ string, _ time.Time, _ int64) {
+
+}
+
+func (s *nullSender) SendInstructionAssignForInstructionBatch(_ context.Context, _ []string, _ time.Time, _ int64) {
+
+}
+
+func (s *nullSender) SendInstructionExecutionForInstruction(_ context.Context, _ string, _ time.Time) {
 
 }

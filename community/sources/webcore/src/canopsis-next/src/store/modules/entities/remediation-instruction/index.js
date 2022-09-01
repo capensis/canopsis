@@ -13,6 +13,10 @@ export default createEntityModule({
   withMeta: true,
 }, {
   actions: {
+    fetchListWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.remediation.instructions, { params });
+    },
+
     fetchItemApprovalWithoutStore(context, { id }) {
       return request.get(`${API_ROUTES.remediation.instructions}/${id}/approval`);
     },

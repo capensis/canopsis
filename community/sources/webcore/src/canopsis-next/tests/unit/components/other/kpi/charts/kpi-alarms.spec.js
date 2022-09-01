@@ -20,6 +20,11 @@ const stubs = {
 const factory = (options = {}) => shallowMount(KpiAlarms, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
@@ -27,6 +32,11 @@ const factory = (options = {}) => shallowMount(KpiAlarms, {
 const snapshotFactory = (options = {}) => mount(KpiAlarms, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });

@@ -24,10 +24,16 @@ import {
   DATETIME_FORMATS,
 } from '@/constants';
 
-import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
-import { convertDateToStartOfDayTimestamp, convertDateToString } from '@/helpers/date/date';
 import { saveFile } from '@/helpers/file/files';
-import { isMetricsQueryChanged } from '@/helpers/metrics';
+import {
+  convertStartDateIntervalToTimestampByTimezone,
+  convertStopDateIntervalToTimestampByTimezone,
+} from '@/helpers/date/date-intervals';
+import {
+  convertDateToStartOfDayTimestampByTimezone,
+  convertDateToString,
+} from '@/helpers/date/date';
+import { convertMetricsToTimezone, isMetricsQueryChanged } from '@/helpers/metrics';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
@@ -38,6 +44,7 @@ import KpiAlarmsFilters from './partials/kpi-alarms-filters.vue';
 const KpiAlarmsChart = () => import(/* webpackChunkName: "Charts" */'./partials/kpi-alarms-chart.vue');
 
 export default {
+  inject: ['$system'],
   components: { KpiAlarmsFilters, KpiAlarmsChart },
   mixins: [
     entitiesMetricsMixin,
@@ -68,8 +75,18 @@ export default {
   computed: {
     interval() {
       return {
-        from: convertStartDateIntervalToTimestamp(this.query.interval.from),
-        to: convertStopDateIntervalToTimestamp(this.query.interval.to),
+        from: convertStartDateIntervalToTimestampByTimezone(
+          this.query.interval.from,
+          DATETIME_FORMATS.datePicker,
+          SAMPLINGS.day,
+          this.$system.timezone,
+        ),
+        to: convertStopDateIntervalToTimestampByTimezone(
+          this.query.interval.to,
+          DATETIME_FORMATS.datePicker,
+          SAMPLINGS.day,
+          this.$system.timezone,
+        ),
       };
     },
   },
@@ -98,8 +115,8 @@ export default {
 
     getQuery() {
       return {
-        from: convertStartDateIntervalToTimestamp(this.query.interval.from),
-        to: convertStopDateIntervalToTimestamp(this.query.interval.to),
+        ...this.interval,
+
         parameters: this.query.parameters,
         sampling: this.query.sampling,
         filter: this.query.filter,
@@ -115,8 +132,8 @@ export default {
         meta: { min_date: minDate },
       } = await this.fetchAlarmsMetricsWithoutStore({ params });
 
-      this.alarmsMetrics = alarmsMetrics;
-      this.minDate = convertDateToStartOfDayTimestamp(minDate);
+      this.alarmsMetrics = convertMetricsToTimezone(alarmsMetrics, this.$system.timezone);
+      this.minDate = convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone);
 
       if (params.from < this.minDate) {
         this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
