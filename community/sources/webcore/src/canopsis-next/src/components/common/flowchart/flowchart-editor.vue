@@ -500,7 +500,14 @@ export default {
       event.preventDefault();
 
       if (this.hasSelected) {
-        this.updateShapes(omit(this.data, this.selectedIds));
+        const shapes = cloneDeep(omit(this.data, this.selectedIds));
+
+        Object.values(shapes).forEach((shape) => {
+          shapes[shape._id].connections = shape.connections.filter(connection => shapes[connection.shapeId]);
+          shapes[shape._id].connectedTo = shape.connectedTo.filter(shapeId => shapes[shapeId]);
+        });
+
+        this.updateShapes(shapes);
         this.clearSelected();
       }
     },

@@ -1,7 +1,11 @@
 import { keyBy, omit } from 'lodash';
+
+import { COLORS } from '@/config';
+
 import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
 
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
+import { shapeToForm } from '@/helpers/flowchart/shapes';
 import uuid from '@/helpers/uuid';
 
 /**
@@ -75,7 +79,7 @@ import uuid from '@/helpers/uuid';
 /**
  * @typedef {Object} MapFlowchartPoint
  * @property {string} _id
- * @property {string} [shape_id]
+ * @property {string} [shape]
  * @property {MapCommonFields} map
  * @property {Entity} entity
  * @property {number} [x]
@@ -84,7 +88,7 @@ import uuid from '@/helpers/uuid';
 
 /**
  * @typedef {Object} MapFlowchartParameters
- * @property {MapFlowchartPoint[]} shapes
+ * @property {Shape[]} shapes
  * @property {string} background_color
  * @property {MapFlowchartPoint[]} points
  */
@@ -166,7 +170,7 @@ export const flowchartPointToForm = (point = {}) => ({
   x: point.x,
   y: point.y,
   entity: point.entity?._id ?? '',
-  shape_id: point.shape_id ?? '',
+  shape: point.shape ?? '',
   map: point.map,
   _id: uuid(),
 });
@@ -212,6 +216,14 @@ export const geomapPointsToForm = (points = []) => points.map(geomapPointToForm)
 export const flowchartPointsToForm = (points = []) => points.map(flowchartPointToForm);
 
 /**
+ * Convert flowchart shapes to form
+ *
+ * @param {Shape[]} [shapes = []]
+ * @returns {Object.<string, Shape>}
+ */
+export const flowchartShapesToForm = (shapes = []) => keyBy(shapes.map(shapeToForm), '_id');
+
+/**
  * Convert map geo parameters object to form
  *
  * @param {MapGeoParameters} [parameters = {}]
@@ -228,8 +240,8 @@ export const mapGeoParametersToForm = (parameters = {}) => ({
  * @returns {MapFlowchartParametersForm}
  */
 export const mapFlowchartParametersToForm = (parameters = {}) => ({
-  shapes: parameters.shapes ? keyBy(parameters.shapes, '_id') : {},
-  background_color: parameters.background_color ?? 'white',
+  shapes: parameters.shapes ? flowchartShapesToForm(parameters.shapes) : {},
+  background_color: parameters.background_color ?? COLORS.flowchart.background[0],
   points: flowchartPointsToForm(parameters.points),
 });
 
@@ -302,7 +314,7 @@ export const formToMapTreeOfDependenciesParameters = form => ({
 export const formPointsToMapFlowchartPoints = points => points.map(
   point => omit(
     point,
-    point.shape_id ? ['x', 'y'] : ['shape_id'],
+    point.shape ? ['x', 'y'] : ['shape_id'],
   ),
 );
 

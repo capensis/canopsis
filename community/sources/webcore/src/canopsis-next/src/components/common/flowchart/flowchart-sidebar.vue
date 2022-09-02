@@ -53,18 +53,18 @@ import { LINE_TYPES } from '@/constants';
 
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
 import {
-  generateArrowLineShape,
-  generateBidirectionalArrowLineShape,
-  generateCircleShape,
-  generateEllipseShape,
-  generateImageShape,
-  generateLineShape,
-  generateParallelogramShape,
-  generateProcessShape,
-  generateDocumentShape,
-  generateRectShape,
-  generateRhombusShape,
-  generateStorageShape,
+  arrowLineShapeToForm,
+  bidirectionalArrowLineShapeToForm,
+  circleShapeToForm,
+  ellipseShapeToForm,
+  imageShapeToForm,
+  lineShapeToForm,
+  parallelogramShapeToForm,
+  processShapeToForm,
+  documentShapeToForm,
+  rectShapeToForm,
+  rhombusShapeToForm,
+  storageShapeToForm,
 } from '@/helpers/flowchart/shapes';
 import { generatePoint } from '@/helpers/flowchart/points';
 import { getImageProperties } from '@/helpers/file/image';
@@ -283,7 +283,7 @@ export default {
     },
 
     addRectangle() {
-      const rect = generateRectShape({
+      const rect = rectShapeToForm({
         ...this.centerRectProperties,
         text: 'Rectangle',
         textProperties: {
@@ -301,7 +301,7 @@ export default {
     },
 
     addRoundedRectangle() {
-      const rect = generateRectShape({
+      const rect = rectShapeToForm({
         ...this.centerRectProperties,
         text: 'Rounded rectangle',
         textProperties: {
@@ -321,7 +321,7 @@ export default {
     },
 
     addLine() {
-      const line = generateLineShape({
+      const line = lineShapeToForm({
         points: this.centerLinePoints,
         text: 'Line',
         properties: {
@@ -334,7 +334,7 @@ export default {
     },
 
     addCurveLine() {
-      const line = generateLineShape({
+      const line = lineShapeToForm({
         points: this.centerLinePoints,
         lineType: LINE_TYPES.horizontalCurve,
         text: 'Curve line',
@@ -348,7 +348,7 @@ export default {
     },
 
     addCurveArrowLine() {
-      const arrowLine = generateArrowLineShape({
+      const arrowLine = arrowLineShapeToForm({
         points: this.centerLinePoints,
         lineType: LINE_TYPES.horizontalCurve,
         text: 'Curve arrow line',
@@ -362,7 +362,7 @@ export default {
     },
 
     addBidirectionalCurveArrowLine() {
-      const bidirectionalArrowLine = generateBidirectionalArrowLineShape({
+      const bidirectionalArrowLine = bidirectionalArrowLineShapeToForm({
         points: this.centerLinePoints,
         lineType: LINE_TYPES.horizontalCurve,
         text: 'Bidirectional arrow curve line',
@@ -376,7 +376,7 @@ export default {
     },
 
     addArrowLine() {
-      const arrowLine = generateArrowLineShape({
+      const arrowLine = arrowLineShapeToForm({
         points: this.centerLinePoints,
         text: 'Arrow line',
         properties: {
@@ -389,7 +389,7 @@ export default {
     },
 
     addBidirectionalArrowLine() {
-      const bidirectionalArrowLine = generateBidirectionalArrowLineShape({
+      const bidirectionalArrowLine = bidirectionalArrowLineShapeToForm({
         points: this.centerLinePoints,
         text: 'Bidirectional arrow line',
         properties: {
@@ -402,7 +402,7 @@ export default {
     },
 
     addCircle() {
-      const circle = generateCircleShape({
+      const circle = circleShapeToForm({
         ...this.centerCircleProperties,
         text: 'Circle',
         textProperties: {
@@ -420,7 +420,7 @@ export default {
     },
 
     addEllipse() {
-      const ellipse = generateEllipseShape({
+      const ellipse = ellipseShapeToForm({
         ...this.centerRectProperties,
         text: 'Ellipse',
         textProperties: {
@@ -438,7 +438,7 @@ export default {
     },
 
     addRhombus() {
-      const rhombus = generateRhombusShape({
+      const rhombus = rhombusShapeToForm({
         ...this.centerRectProperties,
         text: 'Rhombus',
         textProperties: {
@@ -456,7 +456,7 @@ export default {
     },
 
     addParallelogram() {
-      const parallelogram = generateParallelogramShape({
+      const parallelogram = parallelogramShapeToForm({
         ...this.centerRectProperties,
         text: 'Parallelogram',
         textProperties: {
@@ -474,7 +474,7 @@ export default {
     },
 
     addProcess() {
-      const parallelogram = generateProcessShape({
+      const parallelogram = processShapeToForm({
         ...this.centerRectProperties,
         text: 'Process',
         textProperties: {
@@ -492,7 +492,7 @@ export default {
     },
 
     addDocument() {
-      const parallelogram = generateDocumentShape({
+      const parallelogram = documentShapeToForm({
         ...this.centerRectProperties,
         text: 'Document',
         textProperties: {
@@ -510,7 +510,7 @@ export default {
     },
 
     addSquare() {
-      const square = generateRectShape({
+      const square = rectShapeToForm({
         ...this.centerRectProperties,
         text: 'Square',
         textProperties: {
@@ -529,7 +529,7 @@ export default {
     },
 
     addText() {
-      const text = generateRectShape({
+      const text = rectShapeToForm({
         ...this.centerRectProperties,
         text: 'Text',
         textProperties: {
@@ -545,7 +545,7 @@ export default {
     },
 
     addTextbox() {
-      const textbox = generateRectShape({
+      const textbox = rectShapeToForm({
         ...this.centerRectProperties,
         text: '<h2>Heading</h2><p>Paragraph</p>',
         textProperties: {
@@ -560,7 +560,7 @@ export default {
     },
 
     addStorage() {
-      const storage = generateStorageShape({
+      const storage = storageShapeToForm({
         ...this.centerRectProperties,
         text: 'Storage',
         textProperties: {
@@ -597,7 +597,7 @@ export default {
         imageWidth = width / (height / imageHeight);
       }
 
-      const image = generateImageShape({
+      const image = imageShapeToForm({
         ...this.centerRectProperties,
         x: this.viewBoxCenter.x - imageWidth / 2,
         y: this.viewBoxCenter.y - imageHeight / 2,
@@ -620,7 +620,7 @@ export default {
     async addIconAsset(src) {
       const { width, height } = await getImageProperties(src);
 
-      const image = generateImageShape({
+      const image = imageShapeToForm({
         ...this.centerRectProperties,
         width,
         height,
