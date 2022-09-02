@@ -36,7 +36,7 @@ export default {
     },
 
     path() {
-      const heightWithoutRadius = this.height - this.ellipseRadius;
+      const heightWithoutRadius = this.height - (this.ellipseRadius * 2);
 
       return [
         /* Move to top left corner */
