@@ -51,6 +51,9 @@ func (e *engine) AddRoutine(v Routine) {
 }
 
 func (e *engine) AddDeferFunc(deferFunc func(ctx context.Context)) {
+	if deferFunc == nil {
+		return
+	}
 	if e.deferFunc == nil {
 		e.deferFunc = deferFunc
 		return
