@@ -99,7 +99,7 @@ export default {
 
     updateShapes(shapes) {
       const shapesIds = mapIds(shapes);
-      const points = this.form.points.filter(point => (point.shape_id ? shapesIds.includes(point.shape_id) : true));
+      const points = this.form.points.filter(point => (point.shape ? shapesIds.includes(point.shape) : true));
 
       this.updateModel({
         ...this.form,
