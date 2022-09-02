@@ -314,7 +314,7 @@ export const formToMapTreeOfDependenciesParameters = form => ({
 export const formPointsToMapFlowchartPoints = points => points.map(
   point => omit(
     point,
-    point.shape ? ['x', 'y'] : ['shape_id'],
+    point.shape ? ['x', 'y'] : ['shape'],
   ),
 );
 
