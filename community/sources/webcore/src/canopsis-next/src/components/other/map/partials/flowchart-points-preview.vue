@@ -40,6 +40,7 @@
         :point="activePoint",
         :position-x="positionX",
         :position-y="positionY",
+        :popup-actions="popupActions",
         :popup-template="popupTemplate",
         :color-indicator="colorIndicator",
         @show:alarms="showAlarms",

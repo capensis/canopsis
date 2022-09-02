@@ -118,3 +118,13 @@ export const getMetricColor = metric => COLORS.metrics[camelCase(metric)] || COL
  * @param {string} type
  */
 export const getEntityEventColor = type => EVENT_ENTITY_COLORS_BY_TYPE[type];
+
+/**
+ * Get darken color
+ *
+ * @param {string} color
+ * @param {number} amount
+ */
+export const getDarkenColor = (color, amount) => tinycolor(color)
+  .darken(amount)
+  .toString();
