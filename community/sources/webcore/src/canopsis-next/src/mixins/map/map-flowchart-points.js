@@ -24,7 +24,7 @@ export const mapFlowchartPoints = {
   computed: {
     shapesIcons() {
       return this.pointsData.reduce((acc, point) => {
-        const { shape_id: shapeId } = point;
+        const { shape: shapeId } = point;
 
         if (shapeId) {
           const { x, y } = calculateShapeIconPosition(this.shapes[shapeId]);
@@ -42,7 +42,7 @@ export const mapFlowchartPoints = {
 
     nonShapesIcons() {
       return this.pointsData.reduce((acc, point) => {
-        if (!point.shape_id) {
+        if (!point.shape) {
           acc.push({
             x: this.calculatePointX(point),
             y: this.calculatePointY(point),

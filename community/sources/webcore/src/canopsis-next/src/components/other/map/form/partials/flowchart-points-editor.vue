@@ -235,7 +235,7 @@ export default {
       }
 
       if (shape) {
-        const editingPoint = this.points.find(point => point.shape_id === shape._id);
+        const editingPoint = this.points.find(point => point.shape === shape._id);
 
         if (editingPoint) {
           this.editingPoint = editingPoint;
@@ -265,7 +265,7 @@ export default {
     openAddPointDialog() {
       this.addingPoint = flowchartPointToForm(
         this.shapeId
-          ? { shape_id: this.shapeId }
+          ? { shape: this.shapeId }
           : { x: this.pointX, y: this.pointY },
       );
 
