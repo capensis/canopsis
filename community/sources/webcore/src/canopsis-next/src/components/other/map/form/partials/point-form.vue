@@ -12,7 +12,7 @@
     )
       template(v-if="coordinates", #icon="{ item }")
         v-icon.mr-2(v-if="item.coordinates") pin_drop
-    c-coordinates-field(v-if="coordinates", v-field="form.coordinates", :disabled="form.is_entity_coordinate")
+    c-coordinates-field(v-if="coordinates", v-field="form.coordinates", :disabled="form.is_entity_coordinates")
     c-enabled-field(v-model="isLinked", :label="$t('map.addLink')")
     c-map-field(
       v-show="isLinked",
@@ -63,11 +63,8 @@ export default {
   },
   watch: {
     'form.coordinates': {
-      handler(value, oldValue) {
-        this.$emit('fly:coordinates', {
-          lat: value.lat - oldValue.lat,
-          lng: value.lng - oldValue.lng,
-        });
+      handler(value) {
+        this.$emit('fly:coordinates', value);
       },
     },
   },
@@ -77,11 +74,11 @@ export default {
         this.updateModel({
           ...this.form,
           entity: entity._id,
-          is_entity_coordinate: !!entity.coordinates,
+          is_entity_coordinates: !!entity.coordinates,
           coordinates: entity.coordinates ?? this.form.coordinates,
         });
       } else {
-        this.updateModel({ ...this.form, entity, is_entity_coordinate: false });
+        this.updateModel({ ...this.form, entity, is_entity_coordinates: false });
       }
     },
 
