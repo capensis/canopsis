@@ -42,7 +42,7 @@ export default {
       type: Boolean,
       required: false,
     },
-    existEntities: {
+    existsEntities: {
       type: Array,
       default: () => [],
     },
@@ -70,6 +70,11 @@ export default {
   },
   methods: {
     updateEntity(entity) {
+      if (!this.coordinates) {
+        this.updateField('entity', entity?._id);
+        return;
+      }
+
       if (entity) {
         this.updateModel({
           ...this.form,
@@ -83,7 +88,7 @@ export default {
     },
 
     isEntityExist(entity) {
-      return this.existEntities.some(id => id === entity._id);
+      return this.existsEntities.some(id => id === entity._id);
     },
   },
 };
