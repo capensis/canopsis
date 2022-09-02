@@ -1,10 +1,10 @@
 <template lang="pug">
   g.flowchart-points-editor
     component.flowchart-points-editor__point(
-      v-for="point in nonShapesPoints",
+      v-for="{ point, x, y } in nonShapesIcons",
       :key="point._id",
-      :x="point.x - iconSize / 2",
-      :y="calculatePointY(point)",
+      :x="x",
+      :y="y",
       :width="iconSize",
       :height="iconSize",
       is="foreignObject",
@@ -15,20 +15,20 @@
     )
       point-icon(:size="iconSize", :entity="point.entity")
 
-    template(v-for="(icon) in shapesIcons")
-      component.flowchart-points-editor__point(
-        is="foreignObject",
-        :height="iconSize",
-        :width="iconSize",
-        :x="icon.x - iconSize / 2",
-        :y="icon.y",
-        @mouseup.prevent.stop="",
-        @mousedown.prevent.stop="",
-        @click.stop="",
-        @dblclick.stop="openEditPointByClick($event, icon.point)",
-        @contextmenu.stop.prevent="handleEditContextmenu($event, icon.point)"
-      )
-        point-icon(:size="iconSize", :entity="icon.point.entity")
+    component.flowchart-points-editor__point(
+      v-for="{ point, x, y } in shapesIcons",
+      :height="iconSize",
+      :width="iconSize",
+      :x="x",
+      :y="y",
+      is="foreignObject",
+      @mouseup.prevent.stop="",
+      @mousedown.prevent.stop="",
+      @click.stop="",
+      @dblclick.stop="openEditPointByClick($event, point)",
+      @contextmenu.stop.prevent="handleEditContextmenu($event, point)"
+    )
+      point-icon(:size="iconSize", :entity="point.entity")
 
     component(is="foreignObject", style="overflow: visible;")
       flowchart-point-dialog-menu(
@@ -53,12 +53,13 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import { FLOWCHART_MAX_POSITION_DIFF, FLOWCHART_MAX_TIMESTAMP_DIFF, MODALS, SHAPES } from '@/constants';
+import { FLOWCHART_MAX_POSITION_DIFF, FLOWCHART_MAX_TIMESTAMP_DIFF, MODALS } from '@/constants';
 
 import { flowchartPointToForm } from '@/helpers/forms/map';
 import { waitVuetifyAnimation } from '@/helpers/vuetify';
 
 import { formMixin } from '@/mixins/form';
+import { mapFlowchartPoints } from '@/mixins/map/map-flowchart-points';
 
 import PointIcon from '@/components/other/map/partials/point-icon.vue';
 import PointFormDialog from '@/components/other/map/form/partials/point-form-dialog.vue';
@@ -74,7 +75,7 @@ export default {
     PointFormDialog,
     PointIcon,
   },
-  mixins: [formMixin],
+  mixins: [formMixin, mapFlowchartPoints],
   model: {
     prop: 'points',
     event: 'input',
@@ -83,10 +84,6 @@ export default {
     points: {
       type: Array,
       required: true,
-    },
-    shapes: {
-      type: Object,
-      required: false,
     },
     iconSize: {
       type: Number,
@@ -115,28 +112,6 @@ export default {
   computed: {
     isDialogOpened() {
       return this.shownPointDialog;
-    },
-
-    nonShapesPoints() {
-      return this.pointsData.filter(point => !point.shape_id);
-    },
-
-    shapesIcons() {
-      return this.points.reduce((acc, point) => {
-        const { shape_id: shapeId } = point;
-
-        if (shapeId) {
-          const { x, y } = this.calculateIconPosition(shapeId);
-
-          acc[shapeId] = {
-            x,
-            y,
-            point,
-          };
-        }
-
-        return acc;
-      }, {});
     },
 
     contextmenuItems() {
@@ -260,7 +235,7 @@ export default {
       }
 
       if (shape) {
-        const editingPoint = this.points.find(point => point.shape_id === shape._id);
+        const editingPoint = this.points.find(point => point.shape === shape._id);
 
         if (editingPoint) {
           this.editingPoint = editingPoint;
@@ -290,7 +265,7 @@ export default {
     openAddPointDialog() {
       this.addingPoint = flowchartPointToForm(
         this.shapeId
-          ? { shape_id: this.shapeId }
+          ? { shape: this.shapeId }
           : { x: this.pointX, y: this.pointY },
       );
 
@@ -391,48 +366,6 @@ export default {
 
       this.$flowchart.on('mousemove', this.movePoint);
       this.$flowchart.on('mouseup', this.finishMoving);
-    },
-
-    calculatePointY(point) {
-      if (point.entity) {
-        return point.y - this.iconSize;
-      }
-
-      return point.y - this.iconSize / 2;
-    },
-
-    calculateIconPosition(id) {
-      const shape = this.shapes[id];
-
-      switch (shape.type) {
-        case SHAPES.parallelogram:
-        case SHAPES.ellipse:
-        case SHAPES.process:
-        case SHAPES.document:
-        case SHAPES.storage:
-        case SHAPES.image:
-        case SHAPES.rect:
-          return {
-            x: shape.x + shape.width / 2,
-            y: shape.y,
-          };
-        case SHAPES.rhombus:
-          return {
-            x: shape.x + shape.width / 2,
-            y: shape.y + 5,
-          };
-        case SHAPES.circle:
-          return {
-            x: shape.x + shape.diameter / 2,
-            y: shape.y,
-          };
-        default: {
-          return {
-            x: shape.x,
-            y: shape.y,
-          };
-        }
-      }
     },
   },
 };
