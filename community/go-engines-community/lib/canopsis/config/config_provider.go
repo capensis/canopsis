@@ -545,8 +545,7 @@ func parseUpdatedScheduledTime(
 ) (*ScheduledTime, bool) {
 	if v == "" {
 		if oldVal != nil {
-			logger.Error().
-				Str("invalid", v).
+			logger.Warn().
 				Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
 		}
 		return nil, false
@@ -599,9 +598,8 @@ func parseTimeDurationByStr(
 	logger zerolog.Logger,
 ) time.Duration {
 	if v == "" {
-		logger.Error().
+		logger.Warn().
 			Str("default", defaultVal.String()).
-			Str("invalid", v).
 			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
 
 		return defaultVal
@@ -626,15 +624,13 @@ func parseTimeDurationByStr(
 
 func parseTimeDurationByStrWithMax(
 	v string,
-	defaultVal time.Duration,
-	maxVal time.Duration,
+	defaultVal, maxVal time.Duration,
 	name, sectionName string,
 	logger zerolog.Logger,
 ) time.Duration {
 	if v == "" {
-		logger.Error().
+		logger.Warn().
 			Str("default", defaultVal.String()).
-			Str("invalid", v).
 			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
 
 		return defaultVal
@@ -674,8 +670,7 @@ func parseUpdatedTimeDurationByStr(
 	logger zerolog.Logger,
 ) (time.Duration, bool) {
 	if v == "" {
-		logger.Error().
-			Str("invalid", v).
+		logger.Warn().
 			Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
 		return 0, false
 	}
@@ -809,9 +804,8 @@ func parseTemplate(
 		if err != nil {
 			panic(fmt.Errorf("invalid contant %s: %w", name, err))
 		}
-		logger.Error().
+		logger.Warn().
 			Str("default", defaultVal).
-			Str("invalid", v).
 			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
 
 		return tpl, defaultVal
@@ -845,8 +839,7 @@ func parseUpdatedTemplate(
 	logger zerolog.Logger,
 ) (*template.Template, string, bool) {
 	if v == "" {
-		logger.Error().
-			Str("invalid", v).
+		logger.Warn().
 			Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
 		return nil, "", false
 	}
@@ -906,9 +899,8 @@ func parseLocation(
 	logger zerolog.Logger,
 ) *time.Location {
 	if v == "" {
-		logger.Error().
+		logger.Warn().
 			Str("default", defaultVal.String()).
-			Str("invalid", v).
 			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
 		return defaultVal
 	}
@@ -936,8 +928,7 @@ func parseUpdatedLocation(
 	logger zerolog.Logger,
 ) (*time.Location, bool) {
 	if v == "" {
-		logger.Error().
-			Str("invalid", v).
+		logger.Warn().
 			Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
 		return nil, false
 	}
@@ -968,9 +959,8 @@ func parseJwtSigningMethod(
 	logger zerolog.Logger,
 ) jwt.SigningMethod {
 	if v == "" {
-		logger.Error().
+		logger.Warn().
 			Str("default", defaultVal.Alg()).
-			Str("invalid", v).
 			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
 
 		return defaultVal
@@ -1000,8 +990,7 @@ func parseUpdatedJwtSigningMethod(
 	logger zerolog.Logger,
 ) (jwt.SigningMethod, bool) {
 	if v == "" {
-		logger.Error().
-			Str("invalid", v).
+		logger.Warn().
 			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
 		return nil, false
 	}
