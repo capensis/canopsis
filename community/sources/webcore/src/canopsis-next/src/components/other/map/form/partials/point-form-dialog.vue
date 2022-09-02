@@ -7,7 +7,12 @@
           v-btn.ma-0.ml-3(icon, small, @click="close")
             v-icon(color="white") close
       v-card-text
-        point-form(v-model="form", :coordinates="coordinates")
+        point-form(
+          v-model="form",
+          :coordinates="coordinates",
+          :exists-entities="existsEntities",
+          @fly:coordinates="$emit('fly:coordinates', $event)"
+        )
       v-layout(justify-end)
         v-btn(
           :disabled="submitting",
@@ -56,6 +61,10 @@ export default {
     coordinates: {
       type: Boolean,
       required: false,
+    },
+    existsEntities: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {
