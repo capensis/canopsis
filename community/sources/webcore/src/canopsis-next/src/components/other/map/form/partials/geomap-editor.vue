@@ -85,7 +85,7 @@
           v-if="pointDialog",
           :point="pointDialog",
           :editing="!!editingPoint",
-          :exist-entities="existEntities",
+          :exists-entities="existsEntities",
           coordinates,
           @cancel="closePointDialog",
           @submit="submitPointDialog",
@@ -234,7 +234,7 @@ export default {
       return `${this.name}.points`;
     },
 
-    existEntities() {
+    existsEntities() {
       return this.form.points.map(({ entity }) => entity);
     },
   },
