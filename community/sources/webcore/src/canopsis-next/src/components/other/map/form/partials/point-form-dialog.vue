@@ -10,7 +10,7 @@
         point-form(
           v-model="form",
           :coordinates="coordinates",
-          :exist-entities="existEntities",
+          :exists-entities="existsEntities",
           @fly:coordinates="$emit('fly:coordinates', $event)"
         )
       v-layout(justify-end)
@@ -62,7 +62,7 @@ export default {
       type: Boolean,
       required: false,
     },
-    existEntities: {
+    existsEntities: {
       type: Array,
       default: () => [],
     },
