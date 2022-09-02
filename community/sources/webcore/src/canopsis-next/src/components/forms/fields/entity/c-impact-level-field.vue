@@ -1,6 +1,6 @@
 <template lang="pug">
   c-number-field(
-    v-field="value",
+    v-field.number="value",
     :label="label || $t('common.impactLevel')",
     :placeholder="placeholder",
     :single-line="singleLine",
