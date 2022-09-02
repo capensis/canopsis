@@ -54,7 +54,7 @@ func (e *engine) AddRoutine(v Routine) {
 func (e *engine) Run(ctx context.Context) error {
 	e.logger.Info().
 		Int("consumers", len(e.consumers)).
-		Int("periodical workers", len(e.periodicalWorkers)).
+		Int("periodical_workers", len(e.periodicalWorkers)).
 		Int("routines", len(e.routines)).
 		Msg("engine started")
 	defer e.logger.Info().Msg("engine stopped")
