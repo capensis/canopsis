@@ -9,8 +9,12 @@
       :value="remediationInstruction.last_modified | date"
     )
     remediation-instruction-stats-summary-row(
-      :label="$t('remediationInstructionStats.executionCount')",
+      :label="$t('remediationInstructionStats.totalExecutions')",
       :value="remediationInstruction.execution_count"
+    )
+    remediation-instruction-stats-summary-row(
+      :label="$t('remediationInstructionStats.successfulExecutions')",
+      :value="remediationInstruction.successful"
     )
     remediation-instruction-stats-summary-row(
       :label="$t('remediationInstructionStats.lastExecutedOn')",
