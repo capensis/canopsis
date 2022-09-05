@@ -293,9 +293,5 @@ table.v-datatable {
       }
     }
   }
-
-  th, td {
-    word-break: break-all;
-  }
 }
 </style>
