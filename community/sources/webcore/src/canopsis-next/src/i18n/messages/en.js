@@ -116,6 +116,7 @@ export default merge({
     tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'No results',
+    result: 'Result',
     exploitation: 'Exploitation',
     administration: 'Administration',
     forbidden: 'Forbidden',
@@ -1333,7 +1334,6 @@ export default merge({
       title: 'Import/Export views',
       groups: 'Groups',
       views: 'Views',
-      result: 'Result',
     },
     createBroadcastMessage: {
       create: {
@@ -1368,7 +1368,6 @@ export default merge({
         unit: 'Unit',
       },
       groups: 'Groups',
-      result: 'Result',
       manageTabs: 'Manage tabs',
     },
     pbehaviorPlanning: {
@@ -2297,10 +2296,14 @@ export default merge({
     modifiedOn: 'Modified on',
     averageCompletionTime: 'Average time\nof completion',
     executionCount: 'Number of\nexecutions',
+    totalExecutions: 'Total executions',
+    successfulExecutions: 'Successful executions',
     alarmStates: 'Alarms affected by state',
     okAlarmStates: 'Number of resulting\nOK states',
     notAvailable: 'N/a',
     instructionChanged: 'The instruction has been changed',
+    alarmResolvedDate: 'Alarm resolved date',
+    showFailedExecutions: 'Show failed instruction executions',
     actions: {
       needRate: 'Rate it!',
       rate: 'Rate',
