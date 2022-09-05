@@ -88,7 +88,7 @@ func RegisterTranslations(v *validator.Validate) {
 	_ = v.RegisterTranslation("gte", trans, func(ut ut.Translator) error {
 		return ut.Add("gte", "{0} should be greater or equal than {1}.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("gte", fe.Field(), fe.Param())
+		t, _ := ut.T("gte", fe.StructField(), fe.Param())
 		return t
 	})
 	_ = v.RegisterTranslation("ltfield", trans, func(ut ut.Translator) error {
@@ -106,13 +106,13 @@ func RegisterTranslations(v *validator.Validate) {
 	_ = v.RegisterTranslation("lt", trans, func(ut ut.Translator) error {
 		return ut.Add("lt", "{0} should be less than {1}.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("lt", fe.Field(), fe.Param())
+		t, _ := ut.T("lt", fe.StructField(), fe.Param())
 		return t
 	})
 	_ = v.RegisterTranslation("lte", trans, func(ut ut.Translator) error {
 		return ut.Add("lte", "{0} should be less or equal than {1}.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("lte", fe.Field(), fe.Param())
+		t, _ := ut.T("lte", fe.StructField(), fe.Param())
 		return t
 	})
 	_ = v.RegisterTranslation("max", trans, func(ut ut.Translator) error {
@@ -151,12 +151,6 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("unique", fe.StructField())
 		return t
 	})
-	_ = v.RegisterTranslation("filter", trans, func(ut ut.Translator) error {
-		return ut.Add("filter", "{0} is not valid mongo query.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("filter", fe.Field())
-		return t
-	})
 	_ = v.RegisterTranslation("oneof", trans, func(ut ut.Translator) error {
 		return ut.Add("oneof", "{0} must be one of [{1}].", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -169,12 +163,6 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("oneoforempty", fe.StructField(), fe.Param())
 		return t
 	})
-	_ = v.RegisterTranslation("entityfilter", trans, func(ut ut.Translator) error {
-		return ut.Add("entityfilter", "{0} is invalid entity filter.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("entityfilter", fe.StructField())
-		return t
-	})
 	_ = v.RegisterTranslation("url", trans, func(ut ut.Translator) error {
 		return ut.Add("url", "{0} is not an url.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -184,13 +172,13 @@ func RegisterTranslations(v *validator.Validate) {
 	_ = v.RegisterTranslation("json", trans, func(ut ut.Translator) error {
 		return ut.Add("json", "{0} is not a valid json.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("json", fe.Field())
+		t, _ := ut.T("json", fe.StructField())
 		return t
 	})
 	_ = v.RegisterTranslation("template", trans, func(ut ut.Translator) error {
 		return ut.Add("template", "{0} is not a valid template.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("template", fe.Field())
+		t, _ := ut.T("template", fe.StructField())
 		return t
 	})
 	_ = v.RegisterTranslation("has_duplicates", trans, func(ut ut.Translator) error {
@@ -220,13 +208,13 @@ func RegisterTranslations(v *validator.Validate) {
 	_ = v.RegisterTranslation("ltefield", trans, func(ut ut.Translator) error {
 		return ut.Add("ltefield", "{0} should be less or equal than {1}.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("ltefield", fe.Field(), fe.Param())
+		t, _ := ut.T("ltefield", fe.StructField(), fe.Param())
 		return t
 	})
 	_ = v.RegisterTranslation("email", trans, func(ut ut.Translator) error {
 		return ut.Add("email", "{0} is not a valid email address.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("email", fe.Field())
+		t, _ := ut.T("email", fe.StructField())
 		return t
 	})
 	_ = v.RegisterTranslation("filemask", trans, func(ut ut.Translator) error {
@@ -238,7 +226,7 @@ func RegisterTranslations(v *validator.Validate) {
 	_ = v.RegisterTranslation("iscolor", trans, func(ut ut.Translator) error {
 		return ut.Add("iscolor", "{0} is not valid.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("iscolor", fe.Field())
+		t, _ := ut.T("iscolor", fe.StructField())
 		return t
 	})
 	_ = v.RegisterTranslation("metaalarm_config_invalid", trans, func(ut ut.Translator) error {
@@ -251,12 +239,6 @@ func RegisterTranslations(v *validator.Validate) {
 		return ut.Add("metaalarm_config_invalid_with_type", "{0} config can not be in type {1}.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("metaalarm_config_invalid_with_type", fe.Value().(string), fe.Param())
-		return t
-	})
-	_ = v.RegisterTranslation("eventpatterns", trans, func(ut ut.Translator) error {
-		return ut.Add("eventpatterns", "Invalid event patterns.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("eventpatterns")
 		return t
 	})
 	_ = v.RegisterTranslation("time_format", trans, func(ut ut.Translator) error {

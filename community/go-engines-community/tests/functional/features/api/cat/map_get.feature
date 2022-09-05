@@ -44,6 +44,17 @@ Feature: Get a map
         {
           "_id": "test-map-to-get-3",
           "name": "test-map-to-get-3-name",
+          "type": "flowchart",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
+          "created": 1605263992,
+          "updated": 1605263992
+        },
+        {
+          "_id": "test-map-to-get-4",
+          "name": "test-map-to-get-4-name",
           "type": "treeofdeps",
           "author": {
             "_id": "root",
@@ -57,7 +68,7 @@ Feature: Get a map
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 4
       }
     }
     """
@@ -81,13 +92,17 @@ Feature: Get a map
         {
           "_id": "test-map-to-get-3",
           "deletable": true
+        },
+        {
+          "_id": "test-map-to-get-4",
+          "deletable": true
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 4
       }
     }
     """
@@ -222,7 +237,7 @@ Feature: Get a map
     }
     """
 
-  Scenario: given get request should return treeofdeps map
+  Scenario: given get request should return flowchart map
     When I am admin
     When I do GET /api/v4/cat/maps/test-map-to-get-3
     Then the response code should be 200
@@ -231,6 +246,104 @@ Feature: Get a map
     {
       "_id": "test-map-to-get-3",
       "name": "test-map-to-get-3-name",
+      "type": "flowchart",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "created": 1605263992,
+      "updated": 1605263992,
+      "parameters": {
+        "background_color": "#efa8ca",
+        "shapes": [
+          {
+            "_id": "test-map-to-get-1-shape-1",
+            "type": "rect",
+            "x": 200,
+            "y": 200,
+            "width": 100,
+            "height": 100,
+            "connections": [
+              {
+                "shape": "test-map-to-get-1-shape-2"
+              }
+            ],
+            "connectedTo": [],
+            "text": "test-map-to-get-1-shape-1-text",
+            "textProperties": {
+              "color": "#b61c1c"
+            },
+            "properties": {
+              "fill": "#b61c1c"
+            },
+            "aspectRatio": true
+          },
+          {
+            "_id": "test-map-to-get-1-shape-2",
+            "type": "rect",
+            "x": 300,
+            "y": 300,
+            "width": 100,
+            "height": 100,
+            "connections": [],
+            "connectedTo": ["test-map-to-get-1-shape-1"],
+            "text": "test-map-to-get-1-shape-2-text",
+            "textProperties": {
+              "color": "#b61c1c"
+            },
+            "properties": {
+              "fill": "#b61c1c"
+            },
+            "aspectRatio": true
+          }
+        ],
+        "points": [
+          {
+            "_id": "test-map-to-get-1-point-1",
+            "x": 0,
+            "y": 0,
+            "entity": {
+              "_id": "test-resource-to-map-edit-1/test-component-default",
+              "name": "test-resource-to-map-edit-1"
+            },
+            "map": null
+          },
+          {
+            "_id": "test-map-to-get-1-point-2",
+            "x": 100,
+            "y": 100,
+            "entity": null,
+            "map": {
+              "_id": "test-map-to-map-edit-1",
+              "name": "test-map-to-map-edit-1-name"
+            }
+          },
+          {
+            "_id": "test-map-to-get-1-point-3",
+            "shape": "test-map-to-get-1-shape-1",
+            "entity": {
+              "_id": "test-resource-to-map-edit-2/test-component-default",
+              "name": "test-resource-to-map-edit-2"
+            },
+            "map": {
+              "_id": "test-map-to-map-edit-2",
+              "name": "test-map-to-map-edit-2-name"
+            }
+          }
+        ]
+      }
+    }
+    """
+
+  Scenario: given get request should return treeofdeps map
+    When I am admin
+    When I do GET /api/v4/cat/maps/test-map-to-get-4
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "_id": "test-map-to-get-4",
+      "name": "test-map-to-get-4-name",
       "type": "treeofdeps",
       "author": {
         "_id": "root",
