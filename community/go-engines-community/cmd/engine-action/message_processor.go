@@ -5,22 +5,22 @@ import (
 	"runtime/trace"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 )
 
 type messageProcessor struct {
-	TechMetricsSender        techmetrics.Sender
-	ActionService            action.Service
-	Decoder                  encoding.Decoder
-	Logger                   zerolog.Logger
 	FeaturePrintEventOnError bool
+
+	TechMetricsSender techmetrics.Sender
+	ActionService     action.Service
+	Decoder           encoding.Decoder
+	Logger            zerolog.Logger
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
