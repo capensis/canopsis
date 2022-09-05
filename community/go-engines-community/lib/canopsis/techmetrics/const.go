@@ -4,7 +4,6 @@ const (
 	CanopsisEvent     = "cps_event"
 	FIFOEvent         = "fifo_event"
 	CheEvent          = "che_event"
-	PBehaviorEvent    = "pbehavior_event"
 	AxeEvent          = "axe_event"
 	CorrelationEvent  = "correlation_event"
 	ServiceEvent      = "service_event"

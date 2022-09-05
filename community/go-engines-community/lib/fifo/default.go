@@ -5,8 +5,6 @@ import (
 	"flag"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -16,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -177,12 +176,13 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		amqpConnection,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.PrintEventOnError,
-			EventFilterService:       eventFilterService,
-			TechMetricsSender:        techMetricsSender,
-			Scheduler:                scheduler,
-			StatsSender:              statsSender,
-			Decoder:                  json.NewDecoder(),
-			Logger:                   logger,
+
+			EventFilterService: eventFilterService,
+			TechMetricsSender:  techMetricsSender,
+			Scheduler:          scheduler,
+			StatsSender:        statsSender,
+			Decoder:            json.NewDecoder(),
+			Logger:             logger,
 		},
 		logger,
 	))
