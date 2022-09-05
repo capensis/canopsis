@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(align-center)
+  v-layout(:class="{ 'alarm-column-value-state--badge': badgeValue }", align-center)
     c-alarm-chip(:value="stateId", :badge-value="badgeValue")
     v-icon(v-if="showIcon", color="purple") account_circle
 </template>
@@ -39,3 +39,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.alarm-column-value-state {
+  &--badge {
+    margin-top: 12px;
+  }
+}
+</style>
