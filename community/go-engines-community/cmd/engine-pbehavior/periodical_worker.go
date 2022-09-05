@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
-
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -15,6 +13,7 @@ import (
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
@@ -45,12 +44,12 @@ func (w *periodicalWorker) Work(ctx context.Context) {
 	metric.Timestamp = time.Now()
 	eventsCount := 0
 	entitiesCount := 0
-	pbereaviorsCount := 0
+	pbehaviorsCount := 0
 	defer func() {
 		metric.Interval = time.Since(metric.Timestamp)
 		metric.Events = int64(eventsCount)
 		metric.Entities = int64(entitiesCount)
-		metric.Pbehaviors = int64(pbereaviorsCount)
+		metric.Pbehaviors = int64(pbehaviorsCount)
 		w.TechMetricsSender.SendPBehaviorPeriodical(metric)
 	}()
 
@@ -82,7 +81,7 @@ func (w *periodicalWorker) Work(ctx context.Context) {
 	processedEntityIds, eventsCount = w.processAlarms(ctx, now, computedEntityIDs, resolver)
 	eventsCount += w.processEntities(ctx, now, computedEntityIDs, processedEntityIds, resolver)
 
-	pbereaviorsCount, err = resolver.GetPbehaviorsCount(ctx, now)
+	pbehaviorsCount, err = resolver.GetPbehaviorsCount(ctx, now)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot get pbehaviors count")
 	}
