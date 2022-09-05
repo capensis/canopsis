@@ -226,6 +226,10 @@ export default {
       const selection = this.$editor.selection.sel;
       const { anchorNode } = selection;
 
+      if (!anchorNode) {
+        return;
+      }
+
       const variableGroup = matchPayloadVariableBySelection(anchorNode.nodeValue, selection);
 
       if (variableGroup) {
