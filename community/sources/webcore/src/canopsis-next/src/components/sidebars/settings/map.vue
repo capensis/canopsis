@@ -37,7 +37,8 @@
             v-divider
           field-text-editor(
             v-model="form.parameters.entity_info_template",
-            :title="$t('settings.entityInfoPopup')"
+            :title="$t('settings.entityInfoPopup')",
+            :variables="variables"
           )
           v-divider
 
@@ -64,7 +65,9 @@
 </template>
 
 <script>
-import { SIDE_BARS } from '@/constants';
+import { createNamespacedHelpers } from 'vuex';
+
+import { MAX_LIMIT, SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/filters';
@@ -77,6 +80,8 @@ import FieldSwitcher from './fields/common/switcher.vue';
 import FieldFilters from './fields/common/filters.vue';
 import FieldTextEditor from './fields/common/text-editor.vue';
 import FieldColumns from './fields/common/columns.vue';
+
+const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
 
 /**
  * Component to regroup the map settings fields
@@ -97,5 +102,116 @@ export default {
     widgetSettingsMixin,
     permissionsWidgetsMapFilters,
   ],
+  data() {
+    return {
+      infos: [],
+    };
+  },
+  computed: {
+    infosSubVariables() {
+      return [
+        {
+          text: this.$t('common.value'),
+          value: 'value',
+        },
+        {
+          text: this.$t('common.description'),
+          value: 'description',
+        },
+      ];
+    },
+
+    infosVariables() {
+      return this.infos.map(({ value }) => ({
+        text: value,
+        value,
+        variables: this.infosSubVariables,
+      }));
+    },
+
+    variables() {
+      return [
+        {
+          text: this.$t('common.id'),
+          value: 'entity._id',
+        },
+        {
+          text: this.$t('common.name'),
+          value: 'entity.name',
+        },
+        {
+          text: this.$t('common.infos'),
+          value: 'entity.infos',
+          variables: this.infosVariables,
+        },
+        {
+          text: this.$t('common.connector'),
+          value: 'entity.connector',
+        },
+        {
+          text: this.$t('common.connectorName'),
+          value: 'entity.connector_name',
+        },
+        {
+          text: this.$t('common.component'),
+          value: 'entity.component',
+        },
+        {
+          text: this.$t('common.resource'),
+          value: 'entity.resource',
+        },
+        {
+          text: this.$t('common.state'),
+          value: 'entity.state.val',
+        },
+        {
+          text: this.$t('common.status'),
+          value: 'entity.status.val',
+        },
+        {
+          text: this.$t('common.snooze'),
+          value: 'entity.snooze',
+        },
+        {
+          text: this.$t('common.ack'),
+          value: 'entity.ack',
+        },
+        {
+          text: this.$t('common.updated'),
+          value: 'entity.last_update_date',
+        },
+        {
+          text: this.$t('common.impactLevel'),
+          value: 'entity.impact_level',
+        },
+        {
+          text: this.$t('common.impactState'),
+          value: 'entity.impact_state',
+        },
+        {
+          text: this.$t('common.category'),
+          value: 'entity.category.name',
+        },
+        {
+          text: this.$tc('common.link', 2),
+          value: 'entity.links',
+        },
+      ];
+    },
+  },
+  mounted() {
+    this.fetchInfos();
+  },
+  methods: {
+    ...mapServiceActions({ fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
+
+    async fetchInfos() {
+      const { data: infos } = await this.fetchEntityInfosKeysWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
+
+      this.infos = infos;
+    },
+  },
 };
 </script>
