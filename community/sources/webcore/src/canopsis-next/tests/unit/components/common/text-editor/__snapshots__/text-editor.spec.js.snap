@@ -299,6 +299,7 @@ exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
         </p>
       </div>
     </div>
+    <!---->
     <div
       class="text-editor__details"
     >
@@ -776,6 +777,7 @@ exports[`text-editor Renders \`text-editor\` with default props 1`] = `
     <div
       style="display: none;"
     />
+    <!---->
     <div
       class="text-editor__details"
     >
@@ -1247,6 +1249,7 @@ exports[`text-editor Renders \`text-editor\` with files 1`] = `
     <div
       style="display: none;"
     />
+    <!---->
     <div
       class="text-editor__details"
     >
