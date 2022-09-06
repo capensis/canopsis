@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mermaid-code-preview Renders \`mermaid-code-preview\` with custom props 1`] = `
+<div
+  class="mermaid-code-preview"
+>
+  <svg>
+    <text>
+      graph TB
+  a--&gt;b
+    </text>
+    <text>
+      {"theme":"base","themeVariables":{"primaryColor":"#bfe4ce","primaryBorderColor":"#2faa62","textColor":"#323232","lineColor":"#323232","noteBkgColor":"#75818c","noteTextColor":"#fdfdfd"},"er":{"useMaxWidth":false},"pie":{"useMaxWidth":false},"sequence":{"useMaxWidth":false},"requirement":{"useMaxWidth":true}}
+    </text>
+  </svg>
+</div>
+`;
+
+exports[`mermaid-code-preview Renders \`mermaid-code-preview\` with default props 1`] = `
+<div
+  class="mermaid-code-preview"
+>
+  <svg>
+    <text>
+      undefined
+    </text>
+    <text>
+      {"er":{"useMaxWidth":false},"pie":{"useMaxWidth":false},"sequence":{"useMaxWidth":false},"requirement":{"useMaxWidth":false}}
+    </text>
+  </svg>
+</div>
+`;
+
+exports[`mermaid-code-preview Renders \`mermaid-code-preview\` with error 1`] = `
+<div
+  class="mermaid-code-preview mermaid-preview--error"
+/>
+`;
