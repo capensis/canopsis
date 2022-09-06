@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     c-name-field(v-field="form.name")
-    mermaid-editor(v-model="form.parameters")
+    mermaid-editor(v-field="form.parameters")
 </template>
 
 <script>
