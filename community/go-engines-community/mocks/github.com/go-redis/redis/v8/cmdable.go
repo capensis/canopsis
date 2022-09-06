@@ -50,6 +50,20 @@ func (mr *MockCmdableMockRecorder) Append(arg0, arg1, arg2 interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Append", reflect.TypeOf((*MockCmdable)(nil).Append), arg0, arg1, arg2)
 }
 
+// BLMove mocks base method.
+func (m *MockCmdable) BLMove(arg0 context.Context, arg1, arg2, arg3, arg4 string, arg5 time.Duration) *redis.StringCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BLMove", arg0, arg1, arg2, arg3, arg4, arg5)
+	ret0, _ := ret[0].(*redis.StringCmd)
+	return ret0
+}
+
+// BLMove indicates an expected call of BLMove.
+func (mr *MockCmdableMockRecorder) BLMove(arg0, arg1, arg2, arg3, arg4, arg5 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BLMove", reflect.TypeOf((*MockCmdable)(nil).BLMove), arg0, arg1, arg2, arg3, arg4, arg5)
+}
+
 // BLPop mocks base method.
 func (m *MockCmdable) BLPop(arg0 context.Context, arg1 time.Duration, arg2 ...string) *redis.StringSliceCmd {
 	m.ctrl.T.Helper()
@@ -726,6 +740,20 @@ func (mr *MockCmdableMockRecorder) ConfigSet(arg0, arg1, arg2 interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfigSet", reflect.TypeOf((*MockCmdable)(nil).ConfigSet), arg0, arg1, arg2)
 }
 
+// Copy mocks base method.
+func (m *MockCmdable) Copy(arg0 context.Context, arg1, arg2 string, arg3 int, arg4 bool) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Copy", arg0, arg1, arg2, arg3, arg4)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// Copy indicates an expected call of Copy.
+func (mr *MockCmdableMockRecorder) Copy(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Copy", reflect.TypeOf((*MockCmdable)(nil).Copy), arg0, arg1, arg2, arg3, arg4)
+}
+
 // DBSize mocks base method.
 func (m *MockCmdable) DBSize(arg0 context.Context) *redis.IntCmd {
 	m.ctrl.T.Helper()
@@ -912,6 +940,62 @@ func (m *MockCmdable) ExpireAt(arg0 context.Context, arg1 string, arg2 time.Time
 func (mr *MockCmdableMockRecorder) ExpireAt(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExpireAt", reflect.TypeOf((*MockCmdable)(nil).ExpireAt), arg0, arg1, arg2)
+}
+
+// ExpireGT mocks base method.
+func (m *MockCmdable) ExpireGT(arg0 context.Context, arg1 string, arg2 time.Duration) *redis.BoolCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExpireGT", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.BoolCmd)
+	return ret0
+}
+
+// ExpireGT indicates an expected call of ExpireGT.
+func (mr *MockCmdableMockRecorder) ExpireGT(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExpireGT", reflect.TypeOf((*MockCmdable)(nil).ExpireGT), arg0, arg1, arg2)
+}
+
+// ExpireLT mocks base method.
+func (m *MockCmdable) ExpireLT(arg0 context.Context, arg1 string, arg2 time.Duration) *redis.BoolCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExpireLT", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.BoolCmd)
+	return ret0
+}
+
+// ExpireLT indicates an expected call of ExpireLT.
+func (mr *MockCmdableMockRecorder) ExpireLT(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExpireLT", reflect.TypeOf((*MockCmdable)(nil).ExpireLT), arg0, arg1, arg2)
+}
+
+// ExpireNX mocks base method.
+func (m *MockCmdable) ExpireNX(arg0 context.Context, arg1 string, arg2 time.Duration) *redis.BoolCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExpireNX", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.BoolCmd)
+	return ret0
+}
+
+// ExpireNX indicates an expected call of ExpireNX.
+func (mr *MockCmdableMockRecorder) ExpireNX(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExpireNX", reflect.TypeOf((*MockCmdable)(nil).ExpireNX), arg0, arg1, arg2)
+}
+
+// ExpireXX mocks base method.
+func (m *MockCmdable) ExpireXX(arg0 context.Context, arg1 string, arg2 time.Duration) *redis.BoolCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExpireXX", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.BoolCmd)
+	return ret0
+}
+
+// ExpireXX indicates an expected call of ExpireXX.
+func (mr *MockCmdableMockRecorder) ExpireXX(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExpireXX", reflect.TypeOf((*MockCmdable)(nil).ExpireXX), arg0, arg1, arg2)
 }
 
 // FlushAll mocks base method.
@@ -4341,6 +4425,20 @@ func (mr *MockUniversalClientMockRecorder) Append(arg0, arg1, arg2 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Append", reflect.TypeOf((*MockUniversalClient)(nil).Append), arg0, arg1, arg2)
 }
 
+// BLMove mocks base method.
+func (m *MockUniversalClient) BLMove(arg0 context.Context, arg1, arg2, arg3, arg4 string, arg5 time.Duration) *redis.StringCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BLMove", arg0, arg1, arg2, arg3, arg4, arg5)
+	ret0, _ := ret[0].(*redis.StringCmd)
+	return ret0
+}
+
+// BLMove indicates an expected call of BLMove.
+func (mr *MockUniversalClientMockRecorder) BLMove(arg0, arg1, arg2, arg3, arg4, arg5 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BLMove", reflect.TypeOf((*MockUniversalClient)(nil).BLMove), arg0, arg1, arg2, arg3, arg4, arg5)
+}
+
 // BLPop mocks base method.
 func (m *MockUniversalClient) BLPop(arg0 context.Context, arg1 time.Duration, arg2 ...string) *redis.StringSliceCmd {
 	m.ctrl.T.Helper()
@@ -5045,6 +5143,20 @@ func (mr *MockUniversalClientMockRecorder) Context() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Context", reflect.TypeOf((*MockUniversalClient)(nil).Context))
 }
 
+// Copy mocks base method.
+func (m *MockUniversalClient) Copy(arg0 context.Context, arg1, arg2 string, arg3 int, arg4 bool) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Copy", arg0, arg1, arg2, arg3, arg4)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// Copy indicates an expected call of Copy.
+func (mr *MockUniversalClientMockRecorder) Copy(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Copy", reflect.TypeOf((*MockUniversalClient)(nil).Copy), arg0, arg1, arg2, arg3, arg4)
+}
+
 // DBSize mocks base method.
 func (m *MockUniversalClient) DBSize(arg0 context.Context) *redis.IntCmd {
 	m.ctrl.T.Helper()
@@ -5250,6 +5362,62 @@ func (m *MockUniversalClient) ExpireAt(arg0 context.Context, arg1 string, arg2 t
 func (mr *MockUniversalClientMockRecorder) ExpireAt(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExpireAt", reflect.TypeOf((*MockUniversalClient)(nil).ExpireAt), arg0, arg1, arg2)
+}
+
+// ExpireGT mocks base method.
+func (m *MockUniversalClient) ExpireGT(arg0 context.Context, arg1 string, arg2 time.Duration) *redis.BoolCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExpireGT", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.BoolCmd)
+	return ret0
+}
+
+// ExpireGT indicates an expected call of ExpireGT.
+func (mr *MockUniversalClientMockRecorder) ExpireGT(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExpireGT", reflect.TypeOf((*MockUniversalClient)(nil).ExpireGT), arg0, arg1, arg2)
+}
+
+// ExpireLT mocks base method.
+func (m *MockUniversalClient) ExpireLT(arg0 context.Context, arg1 string, arg2 time.Duration) *redis.BoolCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExpireLT", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.BoolCmd)
+	return ret0
+}
+
+// ExpireLT indicates an expected call of ExpireLT.
+func (mr *MockUniversalClientMockRecorder) ExpireLT(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExpireLT", reflect.TypeOf((*MockUniversalClient)(nil).ExpireLT), arg0, arg1, arg2)
+}
+
+// ExpireNX mocks base method.
+func (m *MockUniversalClient) ExpireNX(arg0 context.Context, arg1 string, arg2 time.Duration) *redis.BoolCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExpireNX", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.BoolCmd)
+	return ret0
+}
+
+// ExpireNX indicates an expected call of ExpireNX.
+func (mr *MockUniversalClientMockRecorder) ExpireNX(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExpireNX", reflect.TypeOf((*MockUniversalClient)(nil).ExpireNX), arg0, arg1, arg2)
+}
+
+// ExpireXX mocks base method.
+func (m *MockUniversalClient) ExpireXX(arg0 context.Context, arg1 string, arg2 time.Duration) *redis.BoolCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExpireXX", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.BoolCmd)
+	return ret0
+}
+
+// ExpireXX indicates an expected call of ExpireXX.
+func (mr *MockUniversalClientMockRecorder) ExpireXX(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExpireXX", reflect.TypeOf((*MockUniversalClient)(nil).ExpireXX), arg0, arg1, arg2)
 }
 
 // FlushAll mocks base method.

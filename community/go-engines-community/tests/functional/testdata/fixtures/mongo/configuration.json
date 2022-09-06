@@ -42,6 +42,10 @@
       "tokenexpiration": "24h",
       "tokensigningmethod": "HS256",
       "bulkmaxsize": 10000
+    },
+    "metrics": {
+      "flushinterval": "1s",
+      "sliinterval": "1h"
     }
   },
   {

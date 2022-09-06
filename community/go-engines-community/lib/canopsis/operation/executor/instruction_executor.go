@@ -2,6 +2,7 @@ package executor
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -97,7 +98,7 @@ func (e *instructionExecutor) Exec(
 
 	switch alarmChangeType {
 	case types.AlarmStepAutoInstructionStart:
-		go e.metricsSender.SendAutoInstructionStart(context.Background(), *alarm, time.Time)
+		e.metricsSender.SendAutoInstructionStart(*alarm, time.Time)
 	}
 
 	return alarmChangeType, nil
