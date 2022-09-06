@@ -5,7 +5,9 @@ import {
   selectRowRemoveButtonByIndex,
   selectRowEditButtonByIndex,
   selectRowCheckboxByIndex,
-  selectMassRemoveButton, selectRowDuplicateButtonByIndex, selectRowExpandButtonByIndex,
+  selectMassRemoveButton,
+  selectRowDuplicateButtonByIndex,
+  selectRowExpandButtonByIndex,
 } from '@unit/utils/table';
 
 import { MAP_TYPES } from '@/constants';
