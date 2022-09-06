@@ -49,10 +49,6 @@ export default {
   .chip-container {
     display: inline-block;
 
-    &__badge {
-      margin: 12px 0;
-    }
-
     .chip {
       padding: 3px 7px;
       font-size: 14px;
