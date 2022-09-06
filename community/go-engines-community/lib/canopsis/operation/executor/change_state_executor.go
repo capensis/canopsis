@@ -103,7 +103,7 @@ func (e *changeStateExecutor) Exec(
 	})
 	alarm.AddUpdate("$push", bson.M{"v.steps": bson.M{"$each": bson.A{alarm.Value.State, alarm.Value.Status}}})
 
-	go e.metricsSender.SendUpdateState(context.Background(), *alarm, *entity, currentState)
+	e.metricsSender.SendUpdateState(*alarm, *entity, currentState)
 
 	return types.AlarmChangeTypeChangeState, nil
 }
