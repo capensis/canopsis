@@ -31,6 +31,8 @@
         )
         c-action-btn(
           v-if="removable",
+          :tooltip="item.deletable ? $t('common.delete') : $t('map.usingMap')",
+          :disabled="!item.deletable",
           type="delete",
           @click="$emit('remove', item._id)"
         )

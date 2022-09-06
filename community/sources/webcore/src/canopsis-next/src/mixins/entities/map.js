@@ -13,6 +13,7 @@ export const entitiesMapMixin = {
   methods: {
     ...mapActions({
       fetchMapsList: 'fetchList',
+      fetchMapsListWithoutStore: 'fetchListWithoutStore',
       fetchMapWithoutStore: 'fetchItemWithoutStore',
       fetchMapStateWithoutStore: 'fetchItemStateWithoutStore',
       createMap: 'create',

@@ -3012,6 +3012,7 @@ export default merge({
     latitude: 'Latitude',
     longitude: 'Longitude',
     toggleAddingPointMode: 'Basculer le mode d\'ajout de point',
+    usingMap: 'La carte est liée',
     types: {
       [MAP_TYPES.geo]: 'Géo',
       [MAP_TYPES.flowchart]: 'Flowchart',
