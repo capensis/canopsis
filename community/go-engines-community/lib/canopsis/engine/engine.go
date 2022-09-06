@@ -51,6 +51,22 @@ func (e *engine) AddRoutine(v Routine) {
 	e.routines = append(e.routines, v)
 }
 
+func (e *engine) AddDeferFunc(deferFunc func(ctx context.Context)) {
+	if deferFunc == nil {
+		return
+	}
+	if e.deferFunc == nil {
+		e.deferFunc = deferFunc
+		return
+	}
+
+	prev := e.deferFunc
+	e.deferFunc = func(ctx context.Context) {
+		prev(ctx)
+		deferFunc(ctx)
+	}
+}
+
 func (e *engine) Run(ctx context.Context) error {
 	e.logger.Info().
 		Int("consumers", len(e.consumers)).

@@ -637,7 +637,7 @@ Step example:
 	When I do GET /api/v4/entitybasic/{{ .lastResponse._id}}
 */
 func (a *ApiClient) IDoRequest(method, uri string) error {
-	if strings.Contains(uri, "until response") {
+	if strings.Contains(uri, "until") {
 		return fmt.Errorf("step is wrongly matched to IDoRequest")
 	}
 
@@ -680,7 +680,7 @@ func (a *ApiClient) IDoRequestWithBody(method, uri string, doc string) error {
 	if doc == "" {
 		return fmt.Errorf("body is empty")
 	}
-	if strings.Contains(uri, "until response") {
+	if strings.Contains(uri, "until") {
 		return fmt.Errorf("step is wrongly matched to IDoRequestWithBody")
 	}
 
