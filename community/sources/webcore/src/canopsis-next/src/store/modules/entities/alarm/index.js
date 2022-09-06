@@ -42,6 +42,8 @@ export default {
       ENTITIES_TYPES.alarm,
       ids,
     ),
+
+    getFetchingParamsByWidgetId: state => widgetId => get(state.widgets[widgetId], 'fetchingParams'),
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId, params }) {
