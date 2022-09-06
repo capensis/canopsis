@@ -23,7 +23,7 @@
     )
       variables-list(
         :variables="parentVariable.variables",
-        :value="getSubVariablesValue(parentVariable)",
+        :value="subVariableValue",
         :z-index="zIndex + 1",
         @input="selectSubVariable(parentVariable, $event)"
       )
@@ -56,6 +56,11 @@ export default {
       },
     };
   },
+  computed: {
+    subVariableValue() {
+      return this.value.replace(`${this.parentVariable.value}.`, '');
+    },
+  },
   methods: {
     selectVariable(variable) {
       this.$emit('input', variable.value);
@@ -71,10 +76,6 @@ export default {
       }
 
       return this.value.startsWith(variable.value);
-    },
-
-    getSubVariablesValue(variable) {
-      return this.value.replace(`${variable.value}.`, '');
     },
 
     handleMouseEnter(variable, event) {
