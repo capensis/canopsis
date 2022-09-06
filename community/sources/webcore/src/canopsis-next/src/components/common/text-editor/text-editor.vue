@@ -224,7 +224,7 @@ export default {
   methods: {
     selectVariableValueByCursor() {
       const selection = this.$editor.selection.sel;
-      const { anchorNode } = selection;
+      const { anchorNode, anchorOffset, focusOffset } = selection;
 
       if (!anchorNode) {
         return;
@@ -232,17 +232,24 @@ export default {
 
       const variableGroup = matchPayloadVariableBySelection(anchorNode.nodeValue, selection);
 
-      if (variableGroup) {
-        const [variable,, value] = variableGroup;
+      if (!variableGroup) {
+        this.variablesMenuValue = undefined;
+        return;
+      }
 
-        if (value) {
-          this.variablesMenuValue = value;
-        }
+      const [variable,, value] = variableGroup;
 
+      this.variablesMenuValue = value;
+
+      const [currentStart, currentEnd] = [anchorOffset, focusOffset].sort();
+      const start = variableGroup.index;
+      const end = variableGroup.index + variable.length;
+
+      if (currentStart !== start || currentEnd !== end) {
         const range = document.createRange();
 
-        range.setStart(anchorNode, variableGroup.index);
-        range.setEnd(anchorNode, variableGroup.index + variable.length);
+        range.setStart(anchorNode, start);
+        range.setEnd(anchorNode, end);
 
         selection.removeAllRanges();
         selection.addRange(range);
@@ -259,10 +266,14 @@ export default {
         y: top + height,
       };
       this.variablesShown = true;
+
+      document.addEventListener('selectionchange', this.selectVariableValueByCursor);
     },
 
     closeVariablesMenu() {
       this.variablesShown = false;
+
+      document.removeEventListener('selectionchange', this.selectVariableValueByCursor);
     },
 
     pasteVariable(variable) {

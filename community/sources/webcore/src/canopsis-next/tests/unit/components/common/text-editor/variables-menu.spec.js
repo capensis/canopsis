@@ -28,7 +28,7 @@ const selectMenuNode = wrapper => wrapper.vm.$children[0];
 const selectVariablesList = wrapper => wrapper.find('variables-list-stub');
 
 describe('variables-menu', () => {
-  it('Input event emitted after trigger variables', () => {
+  test('Input event emitted after trigger variables', () => {
     const wrapper = factory();
 
     const variablesList = selectVariablesList(wrapper);
@@ -40,7 +40,7 @@ describe('variables-menu', () => {
     expect(wrapper).toEmit('input', value);
   });
 
-  it('Close event emitted after trigger menu', () => {
+  test('Close event emitted after trigger menu', () => {
     const wrapper = factory();
 
     const menuNode = selectMenuNode(wrapper);
@@ -50,14 +50,14 @@ describe('variables-menu', () => {
     expect(wrapper).toEmit('close');
   });
 
-  it('Renders `variables-menu` with default props', () => {
+  test('Renders `variables-menu` with default props', () => {
     const wrapper = snapshotFactory();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `variables-menu` with custom props', () => {
+  test('Renders `variables-menu` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         visible: true,
