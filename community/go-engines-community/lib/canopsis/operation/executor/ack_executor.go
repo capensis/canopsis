@@ -5,6 +5,7 @@ package executor
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -61,13 +62,11 @@ func (e *ackExecutor) Exec(
 	}
 
 	if !doubleAck {
-		go func() {
-			metricsUserID := ""
-			if initiator == types.InitiatorUser {
-				metricsUserID = userID
-			}
-			e.metricsSender.SendAck(context.Background(), *alarm, metricsUserID, time.Time)
-		}()
+		metricsUserID := ""
+		if initiator == types.InitiatorUser {
+			metricsUserID = userID
+		}
+		e.metricsSender.SendAck(*alarm, metricsUserID, time.Time)
 
 		return types.AlarmChangeTypeAck, nil
 	}

@@ -80,7 +80,8 @@ type ConsoleWriter struct {
 }
 
 type SectionMetrics struct {
-	SliInterval string `toml:"SliInterval"`
+	FlushInterval string `toml:"FlushInterval"`
+	SliInterval   string `toml:"SliInterval"`
 }
 
 type SectionTechMetrics struct {

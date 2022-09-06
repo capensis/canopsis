@@ -2,6 +2,7 @@ package executor
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -53,7 +54,7 @@ func (e *pbhLeaveExecutor) Exec(
 
 	entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
 
-	go e.metricsSender.SendPbhLeave(context.Background(), *entity, time.Time, currPbehaviorInfo.CanonicalType, currPbehaviorInfo.Timestamp.Time)
+	e.metricsSender.SendPbhLeave(*entity, time.Time, currPbehaviorInfo.CanonicalType, currPbehaviorInfo.Timestamp.Time)
 
 	return types.AlarmChangeTypePbhLeave, nil
 }

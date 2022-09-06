@@ -20,6 +20,7 @@ type Engine interface {
 	AddPeriodicalWorker(name string, worker PeriodicalWorker)
 	// AddRoutine adds a long-running goroutine to engine.
 	AddRoutine(Routine)
+	AddDeferFunc(deferFunc func(ctx context.Context))
 	// Run starts goroutines for all consumers and periodical workers.
 	// Engine stops if one of consumer or periodical worker return error.
 	Run(context.Context) error
