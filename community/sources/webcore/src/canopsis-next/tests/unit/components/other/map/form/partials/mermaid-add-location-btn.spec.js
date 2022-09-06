@@ -19,12 +19,6 @@ const snapshotFactory = (options = {}) => mount(MermaidAddLocationBtn, {
   localVue,
   stubs,
 
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
   ...options,
 });
 

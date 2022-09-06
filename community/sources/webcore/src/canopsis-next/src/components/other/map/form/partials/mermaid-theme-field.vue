@@ -13,11 +13,8 @@
 <script>
 import { MERMAID_THEMES } from '@/constants';
 
-import { entitiesInfoMixin } from '@/mixins/entities/info';
-
 export default {
   inject: ['$validator'],
-  mixins: [entitiesInfoMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -34,10 +31,6 @@ export default {
     name: {
       type: String,
       default: 'type',
-    },
-    types: {
-      type: Array,
-      required: false,
     },
   },
   computed: {
