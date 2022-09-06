@@ -11932,7 +11932,8 @@ var doc = `{
                     "type": "string"
                 },
                 "reason": {
-                    "type": "string"
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Reason"
                 },
                 "rrule": {
                     "type": "string"
@@ -11949,15 +11950,14 @@ var doc = `{
                     "type": "string"
                 },
                 "tstart": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.CpsTime"
+                    "type": "integer"
                 },
                 "tstop": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.CpsTime"
+                    "type": "integer"
                 },
                 "type": {
-                    "type": "string"
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Type"
                 }
             }
         },

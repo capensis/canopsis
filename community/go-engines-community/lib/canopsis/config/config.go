@@ -68,7 +68,8 @@ type SectionApi struct {
 }
 
 type SectionMetrics struct {
-	SliInterval string `toml:"SliInterval"`
+	FlushInterval string `toml:"FlushInterval"`
+	SliInterval   string `toml:"SliInterval"`
 }
 
 // CanopsisConf represents a generic configuration object.

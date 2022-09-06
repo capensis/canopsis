@@ -94,8 +94,8 @@ func (a *api) GetAppInfo(c *gin.Context) {
 // @Router /internal/user_interface [put]
 func (a *api) UpdateUserInterface(c *gin.Context) {
 	request := UserInterfaceConf{
-		MaxMatchedItems:          config.DefaultMaxMatchedItems,
-		CheckCountRequestTimeout: config.DefaultCheckCountRequestTimeout,
+		MaxMatchedItems:          config.UserInterfaceMaxMatchedItems,
+		CheckCountRequestTimeout: config.UserInterfaceCheckCountRequestTimeout,
 	}
 
 	if err := c.ShouldBind(&request); err != nil {

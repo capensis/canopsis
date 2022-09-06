@@ -1879,7 +1879,8 @@ definitions:
       output:
         type: string
       reason:
-        type: string
+        $ref: '#/definitions/pbehavior.Reason'
+        type: object
       rrule:
         type: string
       start_on_trigger:
@@ -1891,13 +1892,12 @@ definitions:
         description: AssocTicket
         type: string
       tstart:
-        $ref: '#/definitions/types.CpsTime'
-        type: object
+        type: integer
       tstop:
-        $ref: '#/definitions/types.CpsTime'
-        type: object
+        type: integer
       type:
-        type: string
+        $ref: '#/definitions/pbehavior.Type'
+        type: object
     type: object
   idlerule.Rule:
     properties:
