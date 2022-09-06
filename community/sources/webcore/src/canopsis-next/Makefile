@@ -16,7 +16,7 @@ CURRENT_BUILD_OUTPUT_DIR = $(CURRENT_ROOT_DIR)/build
 MONOREPO_ROOT := $(realpath $(dir $(CURRENT_MAKEFILE))/../../../../../)
 VPATH = $(dir $(CURRENT_MAKEFILE))
 
-include $(MONOREPO_ROOT)/community/go-engines-community/.env
+include $(MONOREPO_ROOT)/community/.env
 
 #
 # BUILD FLAGS
@@ -41,8 +41,8 @@ export NODE_OPTIONS="--max-old-space-size=6144" # canopsis/canopsis-pro#4066
 all: $(CURRENT_BUILD_OUTPUT_DIR)/www
 
 $(CURRENT_BUILD_OUTPUT_DIR)/www: jest.config.js package.json src/ vue.config.js
-	if test "$$(node -v | sed 's/v//')" != "$(DOCKER_NODE_VERSION)" ;then\
-		echo "ERROR: Couldn't find NodeJS $(DOCKER_NODE_VERSION) on your system";\
+	if test "$$(node -v | sed 's/v//')" != "$(NODE_VERSION)" ;then\
+		echo "ERROR: Couldn't find NodeJS $(NODE_VERSION) on your system";\
 		exit 1;\
 	fi
 	yarn install
@@ -88,8 +88,8 @@ DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
 define DOCKER_BUILD_ARGS
 --platform linux/amd64 \
---build-arg "NODE_VERSION=$(DOCKER_NODE_VERSION)-buster-slim" \
---build-arg "NGINX_VERSION=$(DOCKER_NGINX_VERSION)"
+--build-arg "NODE_VERSION=$(NODE_VERSION)-buster-slim" \
+--build-arg "NGINX_VERSION=$(NGINX_VERSION)"
 endef
 
 .PHONY: docker-check-version docker-images docker-nginx
