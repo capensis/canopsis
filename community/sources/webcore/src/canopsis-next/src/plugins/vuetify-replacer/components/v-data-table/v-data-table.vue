@@ -287,6 +287,10 @@ table.v-datatable {
           margin-bottom: 0;
         }
 
+        .c-action-btn__button {
+          margin: 0 !important;
+        }
+
         .color-indicator {
           padding: $denseColorIndicatorPadding;
         }
