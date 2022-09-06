@@ -1,7 +1,7 @@
 <template lang="pug">
   v-tooltip(:top="top", :right="right", :bottom="bottom", :left="left")
     slot(slot="activator", name="button")
-      v-btn.mx-1(
+      v-btn.mx-1.c-action-btn__button(
         :disabled="disabled",
         :data-test="$attrs['data-test']",
         :loading="loading",
