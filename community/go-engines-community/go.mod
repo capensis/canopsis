@@ -1,6 +1,6 @@
 module git.canopsis.net/canopsis/canopsis-community/community/go-engines-community
 
-// Needs to be synced with .env:DOCKER_GOLANG_VERSION and go.mod from Pro
+// Needs to be synced with .env:GOLANG_VERSION and go.mod from Pro
 // Only two integers are allowed here (https://golang.org/ref/mod#go-mod-file-go)
 go 1.17
 

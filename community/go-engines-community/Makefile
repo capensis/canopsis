@@ -19,7 +19,7 @@ CURRENT_BUILD_OUTPUT_DIR = $(CURRENT_ROOT_DIR)/build
 MONOREPO_ROOT := $(realpath $(dir $(COMMUNITY_MAKEFILE))/../..)
 VPATH = $(dir $(CURRENT_MAKEFILE))
 
-include $(MONOREPO_ROOT)/community/go-engines-community/.env
+include $(MONOREPO_ROOT)/community/.env
 
 # List of cmds/engines to build and install (eg: engine-che connector-junit...)
 CMDS = $(notdir $(wildcard $(CURRENT_ROOT_DIR)/cmd/*))
@@ -120,7 +120,7 @@ define DOCKER_BUILD_ARGS
 --platform linux/amd64 \
 --build-arg "ALPINE_VERSION=$(DOCKER_ALPINE_VERSION)" \
 --build-arg "ALPINE_BUILD_VERSION=$(DOCKER_ALPINE_BUILD_VERSION)" \
---build-arg "GOLANG_VERSION=$(DOCKER_GOLANG_VERSION)" \
+--build-arg "GOLANG_VERSION=$(GOLANG_VERSION)" \
 --build-arg "CANOPSIS_EDITION=$(CANOPSIS_EDITION)"
 endef
 
