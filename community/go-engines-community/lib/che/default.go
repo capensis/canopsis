@@ -18,7 +18,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
@@ -32,7 +31,7 @@ func NewEngine(
 	ctx context.Context,
 	options Options,
 	mongoClient mongo.DbClient,
-	pgPool postgres.Pool,
+	cfg config.CanopsisConf,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	externalDataContainer *eventfilter.ExternalDataContainer,
 	logger zerolog.Logger,
@@ -40,8 +39,6 @@ func NewEngine(
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
-	cfg := m.DepConfig(ctx, mongoClient)
-	config.SetDbClientRetry(mongoClient, cfg)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
@@ -134,12 +131,7 @@ func NewEngine(
 			return nil
 		},
 		func(ctx context.Context) {
-			err := mongoClient.Disconnect(ctx)
-			if err != nil {
-				logger.Error().Err(err).Msg("failed to close mongo connection")
-			}
-
-			err = amqpConnection.Close()
+			err := amqpConnection.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
@@ -157,10 +149,6 @@ func NewEngine(
 			err = runInfoRedisSession.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
-			}
-
-			if pgPool != nil {
-				pgPool.Close()
 			}
 		},
 		logger,

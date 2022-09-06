@@ -126,15 +126,13 @@ func (e *instructionExecutor) Exec(
 
 		alarm.PartialUpdateAddExecutedInstruction(instrID)
 
-		go func() {
-			if len(alarm.KPIExecutedInstructions) == 0 {
-				e.metricsSender.SendInstructionExecutionForAlarm(context.Background(), alarm.EntityID, time.Time)
-			}
+		if len(alarm.KPIExecutedInstructions) == 0 {
+			e.metricsSender.SendInstructionExecutionForAlarm(alarm.EntityID, time.Time)
+		}
 
-			e.metricsSender.SendInstructionExecutionForInstruction(context.Background(), instrID, time.Time)
-		}()
+		e.metricsSender.SendInstructionExecutionForInstruction(instrID, time.Time)
 	case types.AlarmStepAutoInstructionStart:
-		go e.metricsSender.SendAutoInstructionStart(context.Background(), *alarm, time.Time)
+		e.metricsSender.SendAutoInstructionStart(*alarm, time.Time)
 	}
 
 	return alarmChangeType, nil

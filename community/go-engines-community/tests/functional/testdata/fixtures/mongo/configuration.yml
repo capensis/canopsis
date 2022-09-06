@@ -49,6 +49,7 @@ configuration:
       thdcritminperimport: 60m
       thdwarnminperimport: 30m
     metrics:
+      flushinterval: 1s
       sliinterval: 1h
     tech_metrics:
       enabled: true

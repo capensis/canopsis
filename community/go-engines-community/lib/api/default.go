@@ -72,6 +72,11 @@ func Default(
 	deferFunc DeferFunc,
 	overrideDocs bool,
 ) (API, fs.ReadFileFS, error) {
+	configUpdateInterval := canopsis.PeriodicalWaitTime
+	if flags.Test {
+		configUpdateInterval = time.Second
+	}
+
 	// Retrieve config.
 	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
 	if err != nil {
@@ -357,7 +362,7 @@ func Default(
 		importWorker.Run(ctx)
 	})
 	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.ApiConfigProvider, techMetricsConfigProvider,
-		configAdapter, p.UserInterfaceConfigProvider, userInterfaceAdapter, flags.Test, logger))
+		configAdapter, p.UserInterfaceConfigProvider, userInterfaceAdapter, configUpdateInterval, logger))
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
 	})
@@ -402,15 +407,11 @@ func updateConfig(
 	configAdapter config.Adapter,
 	userInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider,
 	userInterfaceAdapter config.UserInterfaceAdapter,
-	test bool,
+	interval time.Duration,
 	logger zerolog.Logger,
 ) func(ctx context.Context) {
 	return func(ctx context.Context) {
-		timeout := canopsis.PeriodicalWaitTime
-		if test {
-			timeout = time.Second
-		}
-		ticker := time.NewTicker(timeout)
+		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
 
 		for {
