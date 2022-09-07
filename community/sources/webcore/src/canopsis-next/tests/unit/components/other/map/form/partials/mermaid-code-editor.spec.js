@@ -98,7 +98,7 @@ describe('mermaid-code-editor', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `mermaid-code-editor` with custom props ', () => {
+  test('Renders `mermaid-code-editor` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: 'custom_value',

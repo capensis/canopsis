@@ -375,7 +375,7 @@ describe('mermaid-points', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `mermaid-points` with custom props ', () => {
+  test('Renders `mermaid-points` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         points: [

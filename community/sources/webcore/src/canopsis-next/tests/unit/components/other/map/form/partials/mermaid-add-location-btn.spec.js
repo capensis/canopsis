@@ -39,7 +39,7 @@ describe('mermaid-add-location-btn', () => {
     expect(wrapper).toEmit('input', false);
   });
 
-  test('Renders `mermaid-add-location-btn` with custom props ', () => {
+  test('Renders `mermaid-add-location-btn` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: false,
