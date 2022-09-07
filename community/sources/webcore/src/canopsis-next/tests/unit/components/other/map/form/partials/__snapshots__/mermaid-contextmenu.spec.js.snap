@@ -1,47 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`mermaid-contextmenu Renders \`mermaid-contextmenu\` with custom props  1`] = `
-<div
-  class="v-list v-list--dense theme--light"
-  role="list"
->
-  <div
-    role="listitem"
-  >
-    <a
-      class="v-list__tile v-list__tile--link theme--light"
-    >
-      <div
-        class="v-list__tile__content"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          Edit point
-        </div>
-      </div>
-    </a>
-  </div>
-  <div
-    role="listitem"
-  >
-    <a
-      class="v-list__tile v-list__tile--link theme--light"
-    >
-      <div
-        class="v-list__tile__content"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          Remove point
-        </div>
-      </div>
-    </a>
-  </div>
-</div>
-`;
-
 exports[`mermaid-contextmenu Renders \`mermaid-contextmenu\` with custom props 1`] = `
 <div
   class="v-list v-list--dense theme--light"
@@ -77,31 +35,6 @@ exports[`mermaid-contextmenu Renders \`mermaid-contextmenu\` with custom props 1
           class="v-list__tile__title"
         >
           Remove point
-        </div>
-      </div>
-    </a>
-  </div>
-</div>
-`;
-
-exports[`mermaid-contextmenu Renders \`mermaid-contextmenu\` with default props  1`] = `
-<div
-  class="v-list v-list--dense theme--light"
-  role="list"
->
-  <div
-    role="listitem"
-  >
-    <a
-      class="v-list__tile v-list__tile--link theme--light"
-    >
-      <div
-        class="v-list__tile__content"
-      >
-        <div
-          class="v-list__tile__title"
-        >
-          Add point
         </div>
       </div>
     </a>
