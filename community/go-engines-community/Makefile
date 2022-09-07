@@ -1,11 +1,16 @@
-ifneq (3.81,$(firstword $(sort $(MAKE_VERSION) 3.81)))
-$(error This makefile requires GNU Make >= 3.81)
+COMMUNITY_MAKEFILE := $(abspath $(lastword $(MAKEFILE_LIST)))
+
+# Path of the monorepo
+MONOREPO_ROOT := $(realpath $(dir $(COMMUNITY_MAKEFILE))/../..)
+include $(MONOREPO_ROOT)/community/.env
+
+ifneq ($(REQUIRED_MAKE_VERSION),$(firstword $(sort $(MAKE_VERSION) $(REQUIRED_MAKE_VERSION))))
+$(error This makefile requires GNU Make >= $(REQUIRED_MAKE_VERSION))
 endif
 
 # Either community or pro
 CANOPSIS_EDITION = community
 
-COMMUNITY_MAKEFILE := $(abspath $(lastword $(MAKEFILE_LIST)))
 COMMUNITY_ROOT_DIR = $(realpath $(dir $(COMMUNITY_MAKEFILE)))
 COMMUNITY_BUILD_OUTPUT_DIR = $(COMMUNITY_ROOT_DIR)/build
 
@@ -15,11 +20,7 @@ CURRENT_ROOT_DIR = $(realpath $(dir $(CURRENT_MAKEFILE)))
 # Where to put the built binaries
 CURRENT_BUILD_OUTPUT_DIR = $(CURRENT_ROOT_DIR)/build
 
-# Path of the monorepo
-MONOREPO_ROOT := $(realpath $(dir $(COMMUNITY_MAKEFILE))/../..)
 VPATH = $(dir $(CURRENT_MAKEFILE))
-
-include $(MONOREPO_ROOT)/community/.env
 
 # List of cmds/engines to build and install (eg: engine-che connector-junit...)
 CMDS = $(notdir $(wildcard $(CURRENT_ROOT_DIR)/cmd/*))
@@ -65,11 +66,6 @@ export BUILDKIT_PROGRESS:=plain
 # If set to 1, previous build caches will be ignored
 DOCKER_NO_CACHE = 
 DOCKER_TAG = $(VERSION)
-# Alpine version used in final containers (https://hub.docker.com/_/alpine?tab=tags)
-DOCKER_ALPINE_VERSION = 3.14.3
-# Alpine version used in the Golang build container (https://hub.docker.com/_/golang?tab=tags&page=1&name=alpine)
-# note: the golang image only supports the latest two main release branches of Alpine!
-DOCKER_ALPINE_BUILD_VERSION = 3.14
 DOCKERFILE_PATH = $(COMMUNITY_ROOT_DIR)/Dockerfile
 DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
@@ -137,10 +133,9 @@ $(MONOREPO_ROOT)/.dockerignore:
 
 .PHONY: docker-check-version docker-go-builder $(DOCKER_CMD_TARGETS)
 
-# We require at least Docker 20.10 for the BuildKit features we use, and the usage of Alpine 3.14+
 docker-check-version:
-	@if test "$$(docker version --format '{{.Server.Version}}' 2>/dev/null | awk -F'.' '{print 0+$$1 $$2}')" -lt 2010 ; then\
-		echo "ERROR: Docker >= 20.10 is required";\
+	@if test "$$(docker version --format '{{.Server.Version}}' 2>/dev/null | awk -F'.' '{print 0+$$1 $$2}')" -lt "$$(echo $(REQUIRED_DOCKER_VERSION) | sed 's/\.//')" ; then\
+		echo "ERROR: Docker >= $(REQUIRED_DOCKER_VERSION) is required";\
 		exit 1;\
 	fi
 
