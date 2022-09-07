@@ -96,7 +96,7 @@ describe('mermaid-points-preview', () => {
     expect(selectPointPopupDialog(wrapper).element).toBeFalsy();
   });
 
-  test('Renders `mermaid-code-preview` with required props', () => {
+  test('Renders `mermaid-points-preview` with required props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         points: [mermaidPointToForm({ x: 1, y: 2 })],
@@ -106,7 +106,7 @@ describe('mermaid-points-preview', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `mermaid-code-preview` with custom props', async () => {
+  test('Renders `mermaid-points-preview` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         points: [mermaidPointToForm({ x: 1, y: 2 })],

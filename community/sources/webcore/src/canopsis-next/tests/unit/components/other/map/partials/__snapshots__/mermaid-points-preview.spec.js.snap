@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`mermaid-points-preview Renders \`mermaid-code-preview\` with custom props 1`] = `
+exports[`mermaid-points-preview Renders \`mermaid-points-preview\` with custom props 1`] = `
 <div>
   <mermaid-point-marker-stub
     color-indicator="impact_state"
@@ -21,7 +21,7 @@ exports[`mermaid-points-preview Renders \`mermaid-code-preview\` with custom pro
 </div>
 `;
 
-exports[`mermaid-points-preview Renders \`mermaid-code-preview\` with required props 1`] = `
+exports[`mermaid-points-preview Renders \`mermaid-points-preview\` with required props 1`] = `
 <div>
   <mermaid-point-marker-stub
     entity=""
