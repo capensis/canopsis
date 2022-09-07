@@ -96,7 +96,7 @@ describe('widget-wrapper', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `widget-wrapper` with widget title ', () => {
+  it('Renders `widget-wrapper` with widget title', () => {
     const wrapper = snapshotFactory({
       propsData: {
         widget: {
@@ -119,7 +119,7 @@ describe('widget-wrapper', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `widget-wrapper` with editing mode ', () => {
+  it('Renders `widget-wrapper` with editing mode', () => {
     const wrapper = snapshotFactory({
       propsData: {
         widget: {
@@ -141,7 +141,7 @@ describe('widget-wrapper', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `widget-wrapper` with title and editing mode ', () => {
+  it('Renders `widget-wrapper` with title and editing mode', () => {
     const wrapper = snapshotFactory({
       propsData: {
         widget: {

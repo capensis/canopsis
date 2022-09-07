@@ -40,7 +40,7 @@ describe('mermaid-theme-field', () => {
     expect(wrapper).toEmit('input', MERMAID_THEMES.default);
   });
 
-  test('Renders `mermaid-theme-field` with default props ', () => {
+  test('Renders `mermaid-theme-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: MERMAID_THEMES.canopsis,
@@ -51,7 +51,7 @@ describe('mermaid-theme-field', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  test('Renders `mermaid-theme-field` with custom props ', () => {
+  test('Renders `mermaid-theme-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: MERMAID_THEMES.dark,

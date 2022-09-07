@@ -159,7 +159,7 @@ describe('mermaid-editor', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `mermaid-editor` with custom props ', () => {
+  test('Renders `mermaid-editor` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         form: initialForm,
