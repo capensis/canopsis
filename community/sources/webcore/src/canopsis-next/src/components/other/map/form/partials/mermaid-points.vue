@@ -134,8 +134,8 @@ export default {
     },
 
     setOffsetsByEvent(event) {
-      this.pageX = event.pageX;
-      this.pageY = event.pageY - window.scrollY;
+      this.pageX = event.clientX;
+      this.pageY = event.clientY;
       this.offsetX = event.offsetX;
       this.offsetY = event.offsetY;
     },
@@ -182,10 +182,6 @@ export default {
     },
 
     openAddPointForm() {
-      if (this.isFormOpened) {
-        return;
-      }
-
       this.addingPoint = mermaidPointToForm(
         this.normalizePosition({
           x: this.offsetX,
