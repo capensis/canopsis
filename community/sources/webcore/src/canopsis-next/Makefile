@@ -1,22 +1,24 @@
-ifneq (3.81,$(firstword $(sort $(MAKE_VERSION) 3.81)))
-$(error This makefile requires GNU Make >= 3.81)
+CURRENT_MAKEFILE := $(abspath $(firstword $(MAKEFILE_LIST)))
+
+# Path of the monorepo
+MONOREPO_ROOT := $(realpath $(dir $(CURRENT_MAKEFILE))/../../../../../)
+include $(MONOREPO_ROOT)/community/.env
+
+ifneq ($(REQUIRED_MAKE_VERSION),$(firstword $(sort $(MAKE_VERSION) $(REQUIRED_MAKE_VERSION))))
+$(error This makefile requires GNU Make >= $(REQUIRED_MAKE_VERSION))
 endif
 
 # Either community or pro
 # note: the Canopsis frontend is identical between Community and Pro
 CANOPSIS_EDITION = community
 
-CURRENT_MAKEFILE := $(abspath $(firstword $(MAKEFILE_LIST)))
 # Directory containing the main Makefile (the Makefile that was executed)
 CURRENT_ROOT_DIR = $(realpath $(dir $(CURRENT_MAKEFILE)))
 # Where to put the built binaries
 CURRENT_BUILD_OUTPUT_DIR = $(CURRENT_ROOT_DIR)/build
 
 # Path of the monorepo
-MONOREPO_ROOT := $(realpath $(dir $(CURRENT_MAKEFILE))/../../../../../)
 VPATH = $(dir $(CURRENT_MAKEFILE))
-
-include $(MONOREPO_ROOT)/community/.env
 
 #
 # BUILD FLAGS
@@ -95,10 +97,9 @@ endef
 .PHONY: docker-check-version docker-images docker-nginx
 docker-images: docker-nginx docker-nginx-openshift
 
-# We require at least Docker 20.10 for the BuildKit features we use
 docker-check-version:
-	@if test "$$(docker version --format '{{.Server.Version}}' 2>/dev/null | awk -F'.' '{print 0+$$1 $$2}')" -lt 2010 ; then\
-		echo "ERROR: Docker >= 20.10 is required";\
+	@if test "$$(docker version --format '{{.Server.Version}}' 2>/dev/null | awk -F'.' '{print 0+$$1 $$2}')" -lt "$$(echo $(REQUIRED_DOCKER_VERSION) | sed 's/\.//')" ; then\
+		echo "ERROR: Docker >= $(REQUIRED_DOCKER_VERSION) is required";\
 		exit 1;\
 	fi
 
