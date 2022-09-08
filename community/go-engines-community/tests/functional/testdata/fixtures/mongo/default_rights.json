@@ -1212,6 +1212,10 @@
         "checksum": 4,
         "crecord_type": "right"
       },
+      "test-view-to-user-preferences-update-3": {
+        "checksum": 7,
+        "crecord_type": "right"
+      },
       "test-view-to-user-preferences-get": {
         "checksum": 4,
         "crecord_type": "right"
@@ -1268,6 +1272,13 @@
     "crecord_type": "action",
     "crecord_name": "test-view-to-user-preferences-update-2",
     "desc": "view test-view-to-user-preferences-update-2",
+    "type": "RW"
+  },
+  {
+    "_id": "test-view-to-user-preferences-update-3",
+    "crecord_type": "action",
+    "crecord_name": "test-view-to-user-preferences-update-3",
+    "desc": "view test-view-to-user-preferences-update-3",
     "type": "RW"
   },
   {

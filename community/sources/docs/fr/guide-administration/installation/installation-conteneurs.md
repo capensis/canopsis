@@ -40,90 +40,98 @@ Une fois Docker installé, vous devez ensuite [installer Docker Compose](https:/
 
 ## Lancement de Canopsis avec Docker Compose
 
-Les images Docker officielles de Canopsis sont hébergées sur notre propre registre Docker, `docker.canopsis.net`.
+Les images Docker officielles de Canopsis sont hébergées sur leur propre registre Docker, `docker.canopsis.net`.
 
-Le [dépôt Git de Canopsis](https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop) contient des fichiers Docker Compose d'exemple :
-```sh
-git clone -b develop https://git.canopsis.net/canopsis/canopsis-community.git && cd canopsis-community/community/docker-compose
-```
+### Récupération de l'environnement Docker-compose
+
+Les environnements docker compose de référence pour Canopsis sont disponible via
+git :
+
+=== "Canopsis Pro"
+	Pour Canopsis Pro, elle sont dans le [dépôt git dédié a celui-ci
+	](https://git.canopsis.net/sources/canopsis-pro-sources).
+
+	Récupération du dépôt via Git+HTTPS :
+	```
+	git clone https://git.canopsis.net/sources/canopsis-pro-sources.git
+	```
+	Récupération du dépôt via Git+SSH:
+	```
+	git clone git@git.canopsis.net:sources/canopsis-pro-sources.git
+	```
+
+	Déplacez vous ensuite dans le dossier contenant l'environement:
+	```
+	cd canopsis-pro-sources/pro/deployment/canopsis/docker
+	```
+
+=== "Canopsis Community"
+	Pour Canopsis Community, elle sont dans le [dépôt git dédié a celui-ci
+	](https://git.canopsis.net/canopsis/canopsis-community) :
+	```
+	git clone https://git.canopsis.net/canopsis/canopsis-community.git
+	```
+
+	Déplacez vous ensuite dans le dossier contenant l'environement:
+	```
+	cd canopsis-community/community/deployment/canopsis/docker
+	```
+
+### Lancement de l'environnement
 
 Récupérez les dernières images disponibles :
-```sh
-docker-compose pull
-```
+=== "Canopsis Pro"
+	```sh
+	CPS_EDITION=pro docker-compose pull
+	```
 
-Lancez ensuite la commande suivante, afin de démarrer un environnement Canopsis Community complet :
-```sh
-docker-compose up -d
-```
+=== "Canopsis Community"
+	```sh
+	CPS_EDITION=community docker-compose pull
+	```
+
+
+Lancez ensuite la commande suivante, afin de démarrer un environnement Canopsis
+complet :
+=== "Canopsis Pro"
+	```sh
+	CPS_EDITION=pro docker-compose up -d
+	```
+
+=== "Canopsis Community"
+	```sh
+	CPS_EDITION=community docker-compose up -d
+	```
 
 ## Vérification du bon fonctionnement
 
-La vérification va passer par la commande `docker-compose ps` :
+=== "Canopsis Pro"
+	```sh
+	CPS_EDITION=pro docker-compose ps
+	```
 
-```sh
-docker-compose ps
-
-             Name                           Command               State                Ports
---------------------------------------------------------------------------------------------------------
-docker-compose_action_1          /engine-action                   Up
-docker-compose_axe_1             /engine-axe                      Up
-docker-compose_che_1             /engine-che -d -publishQue ...   Up
-docker-compose_fifo_1            /engine-fifo                     Up
-docker-compose_heartbeat_1       /engine-heartbeat                Up
-docker-compose_init_1            /bin/sh -c /${_BINARY_NAME}      Exit 0
-docker-compose_mongodb_1         docker-entrypoint.sh --wir ...   Up       0.0.0.0:27027->27017/tcp
-docker-compose_nginx_1           /bin/sh -c /entrypoint.sh        Up       0.0.0.0:80->80/tcp
-docker-compose_pbehavior_1       /bin/sh -c /entrypoint.sh        Up       8082/tcp
-docker-compose_provisioning_1    /bin/sh -c /entrypoint-prov.sh   Exit 0
-docker-compose_rabbitmq_1        docker-entrypoint.sh rabbi ...   Up       15671/tcp,
-                                                                           0.0.0.0:15672->15672/tcp,
-                                                                           25672/tcp, 4369/tcp,
-                                                                           5671/tcp,
-                                                                           0.0.0.0:5672->5672/tcp
-docker-compose_redis_1           docker-entrypoint.sh redis ...   Up       0.0.0.0:6379->6379/tcp
-docker-compose_service_1         /bin/sh -c /${_BINARY_NAME}      Up
-docker-compose_watcher_1         /bin/sh -c /${_BINARY_NAME}      Up
-docker-compose_webserver_1       /bin/sh -c /entrypoint.sh        Up       0.0.0.0:8082->8082/tcp
-```
-
-Les services doivent être en état `Up` ou `Exit 0`. En fonction des ressources de votre machine, il peut être nécessaire d'attendre quelques minutes avant que l'ensemble des moteurs puissent passer en état `Up`.
+=== "Canopsis Community"
+	```sh
+	CPS_EDITION=community docker-compose ps
+	```
+Les services doivent être en état `Up`, `Up (healthy)` ou `Exit 0`. En fonction
+des ressources de votre machine, il peut être nécessaire d'attendre quelques
+minutes avant que l'ensemble des moteurs puissent passer en état `Up`.
 
 Vous pouvez alors procéder à votre [première connexion à l'interface Canopsis](premiere-connexion.md).
 
 ## Arrêt de l'environnement Docker Compose
 
-```sh
-docker-compose down
+=== "Canopsis Pro"
+	```sh
+	CPS_EDITION=pro docker-compose down
+	```
 
-Stopping docker-compose_nginx_1          ... done
-Stopping docker-compose_webserver_1      ... done
-Stopping docker-compose_pbehavior_1      ... done
-Stopping docker-compose_mongodb_1        ... done
-Stopping docker-compose_fifo_1           ... done
-Stopping docker-compose_action_1         ... done
-Stopping docker-compose_axe_1            ... done
-Stopping docker-compose_redis_1          ... done
-Stopping docker-compose_che_1            ... done
-Stopping docker-compose_heartbeat_1      ... done
-Stopping docker-compose_rabbitmq_1       ... done
-Stopping docker-compose_service_1        ... done
-Removing docker-compose_nginx_1          ... done
-Removing docker-compose_webserver_1      ... done
-Removing docker-compose_provisioning_1   ... done
-Removing docker-compose_pbehavior_1      ... done
-Removing docker-compose_init_1           ... done
-Removing docker-compose_mongodb_1        ... done
-Removing docker-compose_fifo_1           ... done
-Removing docker-compose_action_1         ... done
-Removing docker-compose_axe_1            ... done
-Removing docker-compose_redis_1          ... done
-Removing docker-compose_che_1            ... done
-Removing docker-compose_heartbeat_1      ... done
-Removing docker-compose_rabbitmq_1       ... done
-Removing docker-compose_service_1        ... done
-Removing network docker-compose_default
-```
+=== "Canopsis Community"
+	```sh
+	CPS_EDITION=community docker-compose down
+	```
+
 
 ## Rétention des logs
 

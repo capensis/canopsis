@@ -3,6 +3,8 @@ package entity
 import (
 	"context"
 	"encoding/json"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -11,7 +13,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 const bulkMaxSize = 10000
@@ -395,10 +396,16 @@ func getDeletablePipeline() []bson.M {
 	return []bson.M{
 		// Entity can be deleted if entity is service or if there aren't any alarm which is related to entity.
 		{"$lookup": bson.M{
-			"from":         mongo.AlarmMongoCollection,
-			"localField":   "_id",
-			"foreignField": "d",
-			"as":           "alarms",
+			"from": mongo.AlarmMongoCollection,
+			"let":  bson.M{"id": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$d", "$$id"}}},
+					{"v.resolved": nil},
+				}}},
+				{"$limit": 1},
+			},
+			"as": "alarms",
 		}},
 		{"$addFields": bson.M{
 			"deletable": bson.M{"$cond": bson.M{
