@@ -1,7 +1,51 @@
+template:
+  - &eventfilter {
+    _id: <UUID()>,
+    author: root,
+    config: {
+      actions: [
+        {
+          name: connector,
+          type: set_field,
+          value: <LoremIpsumWord()>
+        }
+      ],
+      on_failure: pass,
+      on_success: pass
+    },
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    description: <LoremIpsumSentence(3)>,
+    enabled: true,
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: <LoremIpsumWord()>
+          }
+        }
+      ]
+    ],
+    entity_pattern: [
+      [
+        {
+          field: name,
+          cond: {
+            type: eq,
+            value: <LoremIpsumWord()>
+          }
+        }
+      ]
+    ],
+    priority: <Index()>,
+    type: enrichment
+  }
 eventfilter:
   eventfilter_1:
+    <<: *eventfilter
     _id: test-eventfilter-to-get-1
-    author: root
     config:
       actions:
       - name: connector
@@ -9,9 +53,7 @@ eventfilter:
         value: kafka_connector
       on_failure: pass
       on_success: pass
-    created: 1608284568
     description: how it should have ended.
-    enabled: true
     external_data:
       entity:
         type: entity
@@ -26,15 +68,11 @@ eventfilter:
         }
       ]
     ]
-    priority: 0
-    type: enrichment
-    updated: 1608285370
   eventfilter_2:
+    <<: *eventfilter
     _id: test-eventfilter-to-get-2
-    author: root
-    created: 1608635535
     description: drop filter
-    enabled: true
+    config: {}
     event_pattern: [
       [
         {
@@ -46,15 +84,12 @@ eventfilter:
         }
       ]
     ]
-    priority: 1
     type: drop
-    updated: 1608635535
   eventfilter_3:
+    <<: *eventfilter
     _id: test-eventfilter-to-get-3
-    author: root
-    created: 1608635535
     description: break filter
-    enabled: true
+    config: {}
     event_pattern: [
       [
         {
@@ -66,208 +101,35 @@ eventfilter:
         }
       ]
     ]
-    priority: 2
     type: break
-    updated: 1608635535
   eventfilter_4:
+    <<: *eventfilter
     _id: test-eventfilter-to-update-1
-    author: root
-    created: 1608635535
-    description: break filter
-    enabled: true
-    event_pattern: [
-      [
-        {
-          field: resource,
-          cond: {
-            type: eq,
-            value: test-eventfilter-to-update-pattern
-          }
-        }
-      ]
-    ]
-    priority: 3
-    type: break
-    updated: 1608635535
   eventfilter_5:
+    <<: *eventfilter
     _id: test-eventfilter-to-update-2
-    author: root
-    created: 1608635535
-    description: break filter
-    enabled: true
-    event_pattern: [
-      [
-        {
-          field: resource,
-          cond: {
-            type: eq,
-            value: test-eventfilter-to-update-pattern
-          }
-        }
-      ]
-    ]
-    entity_pattern: [
-      [
-        {
-          field: name,
-          cond: {
-            type: eq,
-            value: test-eventfilter-update-2-pattern
-          }
-        }
-      ]
-    ]
-    priority: 3
-    type: break
-    updated: 1608635535
   eventfilter_6:
+    <<: *eventfilter
     _id: test-eventfilter-to-update-3
-    author: root
-    created: 1608635535
-    description: break filter
-    enabled: true
-    event_pattern: [
-      [
-        {
-          field: resource,
-          cond: {
-            type: eq,
-            value: test-eventfilter-to-update-pattern
-          }
-        }
-      ]
-    ]
-    entity_pattern: [
-      [
-        {
-          field: name,
-          cond: {
-            type: eq,
-            value: test-eventfilter-update-3-pattern
-          }
-        }
-      ]
-    ]
-    priority: 3
-    type: break
-    updated: 1608635535
   eventfilter_7:
+    <<: *eventfilter
     _id: test-eventfilter-to-update-4
-    author: root
-    created: 1608635535
-    description: break filter
-    enabled: true
-    event_pattern: [
-      [
-        {
-          field: resource,
-          cond: {
-            type: eq,
-            value: test-eventfilter-to-update-pattern
-          }
-        }
-      ]
-    ]
-    entity_pattern: [
-      [
-        {
-          field: name,
-          cond: {
-            type: eq,
-            value: test-eventfilter-update-4-pattern
-          }
-        }
-      ]
-    ]
-    priority: 3
-    type: break
-    updated: 1608635535
   eventfilter_8:
+    <<: *eventfilter
     _id: test-eventfilter-bulk-update-1
-    author: root
-    created: 1608635535
-    description: break filter
-    enabled: true
-    event_pattern: [
-      [
-        {
-          field: resource,
-          cond: {
-            type: eq,
-            value: test-eventfilter-bulk-update-1-pattern
-          }
-        }
-      ]
-    ]
-    priority: 3
-    type: break
-    updated: 1608635535
   eventfilter_9:
+    <<: *eventfilter
     _id: test-eventfilter-bulk-update-2
-    author: root
-    created: 1608635535
-    description: break filter
-    enabled: true
-    event_pattern: [
-      [
-        {
-          field: resource,
-          cond: {
-            type: eq,
-            value: test-eventfilter-bulk-update-2-pattern
-          }
-        }
-      ]
-    ]
-    priority: 3
-    type: break
-    updated: 1608635535
   eventfilter_10:
+    <<: *eventfilter
     _id: test-eventfilter-bulk-update-3
-    author: root
-    created: 1608635535
-    description: break filter
-    enabled: true
-    event_pattern: [
-      [
-        {
-          field: resource,
-          cond: {
-            type: eq,
-            value: test-eventfilter-bulk-update-3-pattern
-          }
-        }
-      ]
-    ]
-    priority: 3
-    type: break
-    updated: 1608635535
   eventfilter_11:
+    <<: *eventfilter
     _id: test-eventfilter-bulk-update-4
-    author: root
-    created: 1608635535
-    description: break filter
-    enabled: true
-    event_pattern: [
-      [
-        {
-          field: resource,
-          cond: {
-            type: eq,
-            value: test-eventfilter-bulk-update-4-pattern
-          }
-        }
-      ]
-    ]
-    priority: 3
-    type: break
-    updated: 1608635535
   eventfilter_12:
+    <<: *eventfilter
     _id: test-eventfilter-bulk-update-5
-    author: root
-    created: 1608635535
     description: break filter
-    enabled: true
     event_pattern: [
       [
         {
@@ -279,115 +141,43 @@ eventfilter:
         }
       ]
     ]
-    priority: 3
     type: break
-    updated: 1608635535
   eventfilter_13:
+    <<: *eventfilter
     _id: test-eventfilter-to-delete
-    author: root
-    created: 1608635535
-    description: break filter
-    enabled: true
-    event_pattern: [
-      [
-        {
-          field: resource,
-          cond: {
-            type: eq,
-            value: test-eventfilter-to-delete-pattern
-          }
-        }
-      ]
-    ]
-    priority: 4
-    type: break
-    updated: 1608635535
   eventfilter_14:
+    <<: *eventfilter
     _id: test-eventfilter-to-bulk-delete-1
-    author: root
-    created: 1608635535
-    description: break filter
-    enabled: true
-    event_pattern: [
-      [
-        {
-          field: resource,
-          cond: {
-            type: eq,
-            value: test-eventfilter-bulk-delete-1-pattern
-          }
-        }
-      ]
-    ]
-    priority: 4
-    type: break
-    updated: 1608635535
   eventfilter_15:
+    <<: *eventfilter
     _id: test-eventfilter-to-bulk-delete-2
-    author: root
-    created: 1608635535
-    description: break filter
-    enabled: true
-    event_pattern: [
-      [
-        {
-          field: resource,
-          cond: {
-            type: eq,
-            value: test-eventfilter-bulk-delete-2-pattern
-          }
-        }
-      ]
-    ]
-    priority: 4
-    type: break
-    updated: 1608635535
   eventfilter_16:
+    <<: *eventfilter
     _id: test-eventfilter-check-id
-    author: root
-    created: 1608635535
-    description: break filter
-    enabled: true
-    event_pattern: [
-      [
-        {
-          field: resource,
-          cond: {
-            type: eq,
-            value: test-eventfilter-check-id-pattern
-          }
-        }
-      ]
-    ]
-    priority: 5
-    type: break
-    updated: 1608635535
   eventfilter_17:
     _id: test-update-change-entity
-    author: root
     config:
       component: change_entity
-    created: 1608635535
-    description: update change_entity
-    enabled: true
-    event_pattern: [
-      [
-        {
-          field: resource,
-          cond: {
-            type: eq,
-            value: never be used change entity update test
-          }
-        }
-      ]
-    ]
-    priority: 5
     type: change_entity
-    updated: 1608635535
+  eventfilter_18:
+    <<: *eventfilter
+    _id: test-eventfilter-to-update-5
+  eventfilter_19:
+    <<: *eventfilter
+    _id: test-eventfilter-to-update-6
+  eventfilter_20:
+    <<: *eventfilter
+    _id: test-eventfilter-to-update-7
+  eventfilter_21:
+    <<: *eventfilter
+    _id: test-eventfilter-to-update-8
+  eventfilter_22:
+    <<: *eventfilter
+    _id: test-eventfilter-to-update-9
 
   eventfilter_backward_compatibility_1:
+    <<: *eventfilter
     _id: test-eventfilter-to-backward-compatibility-1
-    author: root
     config:
       actions:
         - name: customer
@@ -400,15 +190,12 @@ eventfilter:
           value: '{{ .RegexMatch.Resource.SI_CMDB }}'
       on_failure: pass
       on_success: pass
-    created: 1608284568
-    description: how it should have ended.
-    enabled: true
+    entity_pattern: []
+    event_pattern: []
     old_patterns:
       - resource:
           regex_match: 'CMDD:(?P<SI_CMDB>.*?)($|,)'
-    priority: 0
     type: enrichment
-    updated: 1608285370
 
   eventfilter_backward_compatibility_to_get:
     _id: test-eventfilter-to-backward-compatibility-to-get
@@ -432,14 +219,9 @@ eventfilter:
     updated: 1608285370
 
   eventfilter_backward_compatibility_to_update:
+    <<: *eventfilter
     _id: test-eventfilter-to-backward-compatibility-to-update
-    author: root
-    created: 1608284568
-    description: how it should have ended.
-    enabled: true
     old_patterns:
       - resource:
           regex_match: 'test-eventfilter-to-backward-compatibility-to-update'
-    priority: 0
     type: drop
-    updated: 1608285370

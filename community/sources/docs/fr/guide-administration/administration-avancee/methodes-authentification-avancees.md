@@ -245,9 +245,15 @@ Redémarrer le service `api` de Canopsis
 
 * Installation via Docker Compose
 
-```shell
-docker-compose restart api
-```
+=== "Canopsis Pro"
+	```sh
+	CPS_EDITION=pro docker-compose restart api
+	```
+
+=== "Canopsis Community"
+	```sh
+	CPS_EDITION=community docker-compose restart api
+	```
 
 * Installation Paquets
 
@@ -270,10 +276,15 @@ Observer les logs du service `api` et vérifier la non présence de pattern de t
 Redémarrer le service `api` de Canopsis
 
 * Installation via Docker Compose
+=== "Canopsis Pro"
+	```sh
+	CPS_EDITION=pro docker-compose logs -f api
+	```
 
-```shell
-$ docker-compose logs -f api
-```
+=== "Canopsis Community"
+	```sh
+	CPS_EDITION=community docker-compose logs -f api
+	```
 
 * Installation Paquets
 

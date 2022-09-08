@@ -3,6 +3,7 @@ import { widgetToForm, formToWidget } from '@/helpers/forms/widgets/common';
 import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
+import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 export const widgetSettingsMixin = {
@@ -19,6 +20,7 @@ export const widgetSettingsMixin = {
     queryMixin,
     activeViewMixin,
     entitiesWidgetMixin,
+    entitiesUserPreferenceMixin,
     confirmableModalMixinCreator({ field: 'form', closeMethod: '$sidebar.hide' }),
   ],
   data() {
@@ -67,6 +69,10 @@ export const widgetSettingsMixin = {
           await this.updateWidget({ id: widgetId, data });
         } else {
           await this.createWidget({ data });
+        }
+
+        if (widgetId) {
+          await this.fetchUserPreference({ id: widgetId });
         }
 
         await this.fetchActiveView();

@@ -3,6 +3,7 @@ package validator
 import (
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -298,6 +299,12 @@ func RegisterTranslations(v *validator.Validate) {
 		return ut.Add("weather_service_pattern", "{0} is invalid weather service pattern.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("weather_service_pattern", fe.StructField())
+		return t
+	})
+	_ = v.RegisterTranslation("info_value", trans, func(ut ut.Translator) error {
+		return ut.Add("info_value", types.ErrInvalidInfoType.Error(), true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("info_value", fe.StructField())
 		return t
 	})
 }
