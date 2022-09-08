@@ -44,8 +44,7 @@ Feature: Update an eventfilter
         ]
       ],
       "priority": 1,
-      "enabled": true,
-      "created": 1608635535
+      "enabled": true
     }
     """
 
@@ -113,8 +112,7 @@ Feature: Update an eventfilter
         ]
       ],
       "priority": 1,
-      "enabled": true,
-      "created": 1608635535
+      "enabled": true
     }
     """
 
@@ -182,8 +180,7 @@ Feature: Update an eventfilter
         ]
       ],
       "priority": 1,
-      "enabled": true,
-      "created": 1608635535
+      "enabled": true
     }
     """
 
@@ -243,8 +240,7 @@ Feature: Update an eventfilter
         ]
       ],
       "priority": 1,
-      "enabled": true,
-      "created": 1608635535
+      "enabled": true
     }
     """
 
@@ -610,5 +606,270 @@ Feature: Update an eventfilter
           }
         ]
       ]
+    }
+    """
+
+  Scenario: given create request with set_entity_info where info value is string value should return success
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-5:
+    """
+    {
+      "description": "test update 5",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-5-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 200
+
+  Scenario: given create request with set_entity_info where info value is int value should return success
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-6:
+    """
+    {
+      "description": "test update 6",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-6-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": 123
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 200
+
+  Scenario: given create request with set_entity_info where info value is bool value should return success
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-7:
+    """
+    {
+      "description": "test update 6",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-6-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": true
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 200
+
+  Scenario: given create request with set_entity_info where info value is array of strings value should return success
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-8:
+    """
+    {
+      "description": "test update 8",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-7-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": ["kafka_connector_1", "kafka_connector_2"]
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 200
+
+  Scenario: given create request with set_entity_info where info value is float should return error
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-9:
+    """
+    {
+      "description": "test update 9",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-9-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": 1.2
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """
+
+  Scenario: given create request with set_entity_info where info value is array of various types should return error
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-9:
+    """
+    {
+      "description": "test update 9",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-9-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": ["test", 1, "test 2", false]
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """
+
+  Scenario: given create request with set_entity_info where info value is object should return error
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-9:
+    """
+    {
+      "description": "test update 9",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-9-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": {
+              "test": "abc",
+              "test2": 1
+            }
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
     }
     """

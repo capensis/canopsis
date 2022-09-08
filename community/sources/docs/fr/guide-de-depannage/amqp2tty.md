@@ -41,8 +41,20 @@ Dans un environnement Docker Compose, il suffit de lancer le conteneur amqp2tty
 dans le réseau docker de Canopsis et de lui indiquer l'url de rabbitmq :
 
 
-```sh
-docker run --env CPS_AMQP_URL=amqp://cpsrabbit:canopsis@rabbitmq/canopsis \
-	--network=canopsis-pro_default \
-	docker.canopsis.net/docker/community/amqp2tty:<VERSION CANOPSIS>
-```
+=== "Docker Compose Community"
+
+    ```sh
+    docker run --env CPS_AMQP_URL=amqp://cpsrabbit:canopsis@rabbitmq/canopsis \
+    	--network=canopsis-community_default \
+    	docker.canopsis.net/docker/community/amqp2tty:<VERSION CANOPSIS>
+    ```
+
+=== "Docker Compose Pro"
+
+    ```sh
+    docker run --env CPS_AMQP_URL=amqp://cpsrabbit:canopsis@rabbitmq/canopsis \
+    	--network=canopsis-pro_default \
+    	docker.canopsis.net/docker/community/amqp2tty:<VERSION CANOPSIS>
+    ```
+
+

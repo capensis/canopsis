@@ -299,6 +299,7 @@ default_rights:
     <<: *role
     _id: manager
     crecord_name: <Current()._id>
+    description: Manager
     rights:
       "@permission_api_acl":
         checksum: 15

@@ -86,6 +86,9 @@ db.default_rights.createIndex({
 
 db.action_scenario.createIndex({priority: 1}, {name: "priority_1"});
 
+db.action_log.createIndex({"action": 1})
+db.action_log.createIndex({"value_type": 1, "value_id": 1})
+
 db.entity_category.createIndex({name: 1}, {name: "name_1"});
 
 db.idle_rule.createIndex({priority: 1}, {name: "priority_1"});

@@ -2416,6 +2416,177 @@ periodical_alarm:
           a: ""
           m: ""
           t: 1618280651
+  periodical_alarm_65:
+    _id: test-alarm-to-stats-executions-get-9
+    d: test-resource-to-stats-executions-get-9/test-component-to-stats-executions-get-9
+    t: 1618279310
+    v:
+      <<: *alarm_value
+      component: test-component-to-stats-executions-get-9
+      connector: test-connector-to-stats-executions-get-9
+      connector_name: test-connector-name-to-stats-executions-get-9
+      creation_date: 1618279310
+      resource: test-resource-to-stats-executions-get-9
+      state:
+        _t: statedec
+        a: ""
+        m: ""
+        t: 1618280650
+        val: 2
+      status:
+        _t: statusinc
+        a: ""
+        m: ""
+        t: 1618279310
+        val: 1
+      steps:
+        - _t: stateinc
+          a: ""
+          m: ""
+          t: 1618279310
+          val: 2
+        - _t: statusinc
+          a: ""
+          m: ""
+          t: 1618279310
+          val: 1
+        - _t: stateinc
+          a: ""
+          m: ""
+          t: 1618279510
+          val: 3
+        - _t: comment
+          a: ""
+          m: ""
+          t: 1618279511
+          val: 3
+        - _t: instructionstart
+          a: ""
+          exec: test-auto-instruction-execution-to-get-stats-4
+          m: ""
+          t: 1618279610
+        - _t: instructionfail
+          a: ""
+          exec: test-auto-instruction-execution-to-get-stats-4
+          m: ""
+          t: 1618280210
+        - _t: ack
+          a: ""
+          m: ""
+          t: 1618280220
+        - _t: statedec
+          a: ""
+          m: ""
+          t: 1618280222
+          val: 2
+  periodical_alarm_66:
+    _id: test-alarm-to-stats-executions-get-11-1
+    d: test-resource-to-stats-executions-get-11-1/test-component-to-stats-executions-get-11-1
+    t: 1618280213
+    v:
+      <<: *alarm_value
+      component: test-component-to-stats-executions-get-11-1
+      connector: test-connector-to-stats-executions-get-11-1
+      connector_name: test-connector-name-to-stats-executions-get-11-1
+      creation_date: 1596942720
+      resource: test-resource-to-stats-executions-get-11-1
+      display_name: RC-yN_tW
+      initial_output: ""
+      output: ""
+      initial_long_output: ""
+      long_output: ""
+      long_output_history:
+        - ""
+      last_update_date": 1596942720
+      last_event_date": 1596942720
+      total_state_changes: 1
+      state:
+        _t: stateinc
+        a: ""
+        m: ""
+        t: 1618280213
+        val: 3
+      status:
+        _t: statusinc
+        a: ""
+        m: ""
+        t: 1618280213
+        val: 1
+      steps:
+        - _t: stateinc
+          a: ""
+          m: ""
+          t: 1618280213
+          val: 3
+        - _t: statusinc
+          a: ""
+          m: ""
+          t: 1618280213
+          val: 1
+        - _t: instructionstart
+          a: ""
+          val: 1
+          m: ""
+          t: 1618280213
+        - _t: instructioncomplete
+          a: ""
+          val: 1
+          m: ""
+          t: 1618280218
+  periodical_alarm_67:
+    _id: test-alarm-to-stats-executions-get-11-2
+    d: test-resource-to-stats-executions-get-11-2/test-component-to-stats-executions-get-11-2
+    t: 1596942720
+    v:
+      <<: *alarm_value
+      component: test-component-to-stats-executions-get-11-2
+      connector: test-connector-to-stats-executions-get-11-2
+      connector_name: test-connector-name-to-stats-executions-get-11-2
+      creation_date: 1596942720
+      resource: test-resource-to-stats-executions-get-11-2
+      display_name: pO-MT_t1
+      initial_output: ""
+      output: ""
+      initial_long_output: ""
+      long_output: ""
+      long_output_history:
+        - ""
+      last_update_date": 1596942720
+      last_event_date": 1596942720
+      total_state_changes: 1
+      state:
+        _t: stateinc
+        a: ""
+        m: ""
+        t: 1596942720
+        val: 3
+      status:
+        _t: statusinc
+        a: ""
+        m: ""
+        t: 1596942720
+        val: 1
+      steps:
+        - _t: stateinc
+          a: ""
+          m: ""
+          t: 1596942720
+          val: 3
+        - _t: statusinc
+          a: ""
+          m: ""
+          t: 1596942720
+          val: 1
+        - _t: instructionstart
+          a: ""
+          val: 1
+          m: ""
+          t: 1596942720
+        - _t: instructioncomplete
+          a: ""
+          val: 1
+          m: ""
+          t: 1596942720
   periodical_alarm_84:
     _id: test-alarm-time-fields-search-get-1
     d: test-alarm-time-fields-search-get-resource-1/test-alarm-time-fields-search-get-component
