@@ -75,23 +75,13 @@ func (c *center) Handle(ctx context.Context, event types.Event) (*types.Entity, 
 		}
 	}
 
-	updatedEntities := make([]string, 0)
-	metaUpdated := false
-	for _, entity := range entities {
-		if eventEntity.ID == entity.ID {
-			// Update new event entity synchronously to update metrics in following engines.
-			c.metricMetaUpdater.UpdateById(context.Background(), eventEntity.ID)
-			metaUpdated = true
-		} else {
-			updatedEntities = append(updatedEntities, entity.ID)
-		}
+	updatedEntityIds := make([]string, len(entities))
+	for i, entity := range entities {
+		updatedEntityIds[i] = entity.ID
 	}
-	if !metaUpdated {
-		updatedEntities = append(updatedEntities, eventEntity.ID)
-	}
-	updatedEntities = append(updatedEntities, resources...)
-	if len(updatedEntities) > 0 {
-		go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
+	updatedEntityIds = append(updatedEntityIds, resources...)
+	if len(updatedEntityIds) > 0 {
+		c.metricMetaUpdater.UpdateById(ctx, updatedEntityIds...)
 	}
 
 	found := false
@@ -212,7 +202,7 @@ func (c *center) UpdateEntityInfos(ctx context.Context, entity *types.Entity) (U
 		}
 	}
 
-	go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
+	c.metricMetaUpdater.UpdateById(ctx, updatedEntities...)
 
 	return updatedServices, nil
 }

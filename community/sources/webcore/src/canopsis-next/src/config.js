@@ -226,6 +226,7 @@ export const API_ROUTES = {
     exportMetric: '/api/v4/cat/metrics-export',
     sli: '/api/v4/cat/metrics/sli',
     rating: '/api/v4/cat/metrics/rating',
+    remediation: '/api/v4/cat/metrics/remediation',
   },
 };
 
@@ -330,6 +331,11 @@ export const COLORS = {
     averageAck: '#f5c6ab',
     averageResolve: '#1afd01',
     totalUserActivity: '#1fbbd1',
+    manualInstructionExecutedAlarms: '#2FAB63',
+    ratioRemediatedAlarms: '#FFA800',
+    remediationStatisticAssignedRemediations: '#FFA800',
+    remediationStatisticExecutedRemediations: '#5B6E7F',
+    remediationStatisticRatioRemediations: '#5B6E7F',
   },
 };
 
