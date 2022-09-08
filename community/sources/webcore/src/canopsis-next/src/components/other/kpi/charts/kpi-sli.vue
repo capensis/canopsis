@@ -136,8 +136,6 @@ export default {
         if (params.from < this.minDate) {
           this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
         }
-
-        this.pending = false;
       } catch (err) {
         this.fetchError = true;
       } finally {
