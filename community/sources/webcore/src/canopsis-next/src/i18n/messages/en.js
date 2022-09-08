@@ -1503,20 +1503,6 @@ export default merge({
           success: '{jobName} has been successfully modified',
         },
       },
-      fields: {
-        configuration: 'Configuration',
-        jobId: 'Job ID',
-        query: 'Query',
-        multipleExecutions: 'Allow parallel execution',
-      },
-      errors: {
-        invalidJSON: 'Invalid JSON',
-      },
-      addPayload: 'Add payload',
-      deletePayload: 'Delete payload',
-      payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
-        + '<i>For example:</i>'
-        + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
     },
     clickOutsideConfirmation: {
       title: 'Are you sure?',
@@ -2455,6 +2441,23 @@ export default merge({
           disabledOnTypes: 'Disabled on types',
         },
       },
+    },
+  },
+
+  remediationJob: {
+    configuration: 'Configuration',
+    jobId: 'Job ID',
+    query: 'Query',
+    multipleExecutions: 'Allow parallel execution',
+    retryAmount: 'Retry amount',
+    retryInterval: 'Retry interval',
+    addPayload: 'Add payload',
+    deletePayload: 'Delete payload',
+    payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
+      + '<i>For example:</i>'
+      + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+    errors: {
+      invalidJSON: 'Invalid JSON',
     },
   },
 
