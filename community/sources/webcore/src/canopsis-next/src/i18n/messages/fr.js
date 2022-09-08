@@ -2060,7 +2060,7 @@ export default merge({
   },
 
   healthcheck: {
-    systemIsDown: 'Le système est en panne',
+    metricsUnavailable: 'Les métriques ne sont pas collectées',
     notRunning: '{name} n\'est pas disponible',
     queueOverflow: 'Débordement de file d\'attente',
     lackOfInstances: 'Manque d\'instances',
@@ -2071,6 +2071,7 @@ export default merge({
     queueOverflowed: 'La file d\'attente est débordée : {queueLength} messages sur {maxQueueLength}.\nVeuillez vérifier les instances.',
     engineDown: '{name} est en panne, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer le service.',
     engineDownOrSlow: '{name} est en panne ou répond trop lentement, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer l\'instance.',
+    timescaleDown: '{name} est en panne, les métriques et les KPI ne sont pas collectés.\nVeuillez vérifier le journal ou redémarrer l\'instance.',
     invalidEnginesOrder: 'Configuration des moteurs non valide',
     invalidInstancesConfiguration: 'Configuration des instances non valide : les instances du moteur lisent ou écrivent dans différentes files d\'attente.\nVeuillez vérifier les instances.',
     chainConfigurationInvalid: 'La configuration de la chaîne des moteurs n\'est pas valide.\nReportez-vous ci-dessous pour la séquence correcte des moteurs :',
@@ -2737,6 +2738,8 @@ export default merge({
   kpi: {
     alarmMetrics: 'Métriques d\'alarme',
     sli: 'SLI',
+    metricsNotAvailable: 'TimescaleDB ne fonctionne pas. Les métriques ne sont pas disponibles.',
+    noData: 'Pas de données disponibles',
   },
 
   kpiMetrics: {
