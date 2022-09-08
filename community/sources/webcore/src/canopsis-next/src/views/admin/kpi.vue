@@ -84,12 +84,12 @@ export default {
 
     this.$socket
       .join(SOCKET_ROOMS.healthcheck)
-      .addListener(this.setData);
+      .addListener(this.checkTimescaleIsAvailable);
   },
   beforeDestroy() {
     this.$socket
       .leave(SOCKET_ROOMS.healthcheck)
-      .removeListener(this.setData);
+      .removeListener(this.checkTimescaleIsAvailable);
   },
   methods: {
     ...mapActions({
