@@ -12,7 +12,7 @@ import (
 )
 
 type Adapter interface {
-	// Insert insert an alarm
+	// Insert inserts an alarm
 	Insert(ctx context.Context, alarm types.Alarm) error
 
 	// Update update an alarm

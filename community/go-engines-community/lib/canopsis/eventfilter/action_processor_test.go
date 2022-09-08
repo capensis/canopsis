@@ -1,10 +1,12 @@
 package eventfilter_test
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
 	"testing"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestActionProcessor(t *testing.T) {
@@ -172,6 +174,215 @@ func TestActionProcessor(t *testing.T) {
 				IsEntityUpdated: true,
 			},
 			expectedError: false,
+		},
+		{
+			testName: "given set_entity_info action should return success with string slice type",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       []string{"test", "test2"},
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       []string{"test", "test2"},
+						},
+					},
+				},
+				IsEntityUpdated: true,
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given set_entity_info action should return success with slice of interfaces but all items are strings",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       []interface{}{"test", "test2"},
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       []interface{}{"test", "test2"},
+						},
+					},
+				},
+				IsEntityUpdated: true,
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given set_entity_info action should return success with primitive.A",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       primitive.A{"test", "test2"},
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       primitive.A{"test", "test2"},
+						},
+					},
+				},
+				IsEntityUpdated: true,
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given set_entity_info action should return success with float64 as a whole number",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       float64(2),
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       float64(2),
+						},
+					},
+				},
+				IsEntityUpdated: true,
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given set_entity_info action should return success with float32 as a whole number",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       float32(2),
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       float32(2),
+						},
+					},
+				},
+				IsEntityUpdated: true,
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given set_entity_info action should return error with float value",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       1.2,
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+			},
+			expectedError: true,
+		},
+		{
+			testName: "given set_entity_info action should return error with slice of interfaces, where some are not strings",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       []interface{}{"test", 1, "test2"},
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+			},
+			expectedError: true,
+		},
+		{
+			testName: "given set_entity_info action should return error with primitive.A, where some are not strings",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       primitive.A{"test", 1, "test2"},
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+			},
+			expectedError: true,
+		},
+		{
+			testName: "given set_entity_info action should return error with structs",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value: struct {
+					test string
+				}{test: "test"},
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+			},
+			expectedError: true,
 		},
 		{
 			testName: "given set_entity_info action should return updated entity true, if infos is changed",
@@ -593,6 +804,271 @@ func TestActionProcessor(t *testing.T) {
 				IsEntityUpdated: true,
 			},
 			expectedError: false,
+		},
+		{
+			testName: "given copy_to_entity_info action should return success with string slice type",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.Test",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]interface{}{
+					"Test": []string{"test", "test2"},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       []string{"test", "test2"},
+						},
+					},
+				},
+				ExtraInfos: map[string]interface{}{
+					"Test": []string{"test", "test2"},
+				},
+				IsEntityUpdated: true,
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given copy_to_entity_info action should return success with slice of interfaces but all items are strings",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.Test",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]interface{}{
+					"Test": []interface{}{"test", "test2"},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       []interface{}{"test", "test2"},
+						},
+					},
+				},
+				ExtraInfos: map[string]interface{}{
+					"Test": []interface{}{"test", "test2"},
+				},
+				IsEntityUpdated: true,
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given copy_to_entity_info action should return success with primitive.A",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.Test",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]interface{}{
+					"Test": primitive.A{"test", "test2"},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       primitive.A{"test", "test2"},
+						},
+					},
+				},
+				ExtraInfos: map[string]interface{}{
+					"Test": primitive.A{"test", "test2"},
+				},
+				IsEntityUpdated: true,
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given copy_to_entity_info action should return success  with float64 as a whole number",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.Test",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]interface{}{
+					"Test": float64(2),
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       float64(2),
+						},
+					},
+				},
+				ExtraInfos: map[string]interface{}{
+					"Test": float64(2),
+				},
+				IsEntityUpdated: true,
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given copy_to_entity_info action should return success  with float32 as a whole number",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.Test",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]interface{}{
+					"Test": float32(2),
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       float32(2),
+						},
+					},
+				},
+				ExtraInfos: map[string]interface{}{
+					"Test": float32(2),
+				},
+				IsEntityUpdated: true,
+			},
+			expectedError: false,
+		},
+		{
+			testName: "given copy_to_entity_info action should return error with float value",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.Test",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]interface{}{
+					"Test": 1.2,
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]interface{}{
+					"Test": 1.2,
+				},
+			},
+			expectedError: true,
+		},
+		{
+			testName: "given copy_to_entity_info action should return error with slice of interfaces, where some are not strings",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.Test",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]interface{}{
+					"Test": []interface{}{"test1", 1, "test2"},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]interface{}{
+					"Test": []interface{}{"test1", 1, "test2"},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			testName: "given copy_to_entity_info action should return error with primitive.A, where some are not strings",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.Test",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]interface{}{
+					"Test": primitive.A{"test1", 1, "test2"},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]interface{}{
+					"Test": primitive.A{"test1", 1, "test2"},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			testName: "given copy_to_entity_info action should return error with structs",
+			action: eventfilter.Action{
+				Type:        eventfilter.ActionCopyToEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.Test",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]interface{}{
+					"Test": struct {
+						Test string
+					}{Test: "test"},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				ExtraInfos: map[string]interface{}{
+					"Test": struct {
+						Test string
+					}{Test: "test"},
+				},
+			},
+			expectedError: true,
 		},
 		{
 			testName: "given copy_to_entity_info action should change existing info",

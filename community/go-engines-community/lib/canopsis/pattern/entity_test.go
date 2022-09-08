@@ -3,11 +3,12 @@ package pattern_test
 import (
 	"errors"
 	"fmt"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/bson"
-	"testing"
 )
 
 func TestEntity_Match(t *testing.T) {
@@ -87,23 +88,30 @@ func BenchmarkEntity_Match_Regexp(b *testing.B) {
 }
 
 func BenchmarkEntity_Match_HasOneOf(b *testing.B) {
-	const valueSize = 100
-	const dependsSize = 1000
-	condValue := make([]string, valueSize)
-	for i := 0; i < valueSize; i++ {
-		condValue[i] = fmt.Sprintf("test-val-%d", i)
+	const condValueSize = 100
+	const valueSize = 1000
+	condValue := make([]string, condValueSize)
+	for i := 0; i < condValueSize; i++ {
+		condValue[i] = fmt.Sprintf("test-cond-val-%d", i)
 	}
-	depends := make([]string, dependsSize)
+	value := make([]string, valueSize)
 	for i := 0; i < valueSize; i++ {
-		depends[i] = fmt.Sprintf("depends-%d", i)
+		value[i] = fmt.Sprintf("test-val-%d", i)
 	}
 
 	cond := pattern.FieldCondition{
-		Field:     "depends",
+		Field:     "infos.test",
+		FieldType: pattern.FieldTypeStringArray,
 		Condition: pattern.NewStringArrayCondition(pattern.ConditionHasOneOf, condValue),
 	}
 	entity := types.Entity{
-		Depends: depends,
+		Infos: map[string]types.Info{
+			"test": {
+				Name:        "test",
+				Description: "test",
+				Value:       value,
+			},
+		},
 	}
 
 	benchmarkEntityMatch(b, cond, entity)
@@ -180,26 +188,33 @@ func BenchmarkEntity_UnmarshalBsonAndMatch_Regexp(b *testing.B) {
 }
 
 func BenchmarkEntity_UnmarshalBsonAndMatch_HasOneOf(b *testing.B) {
-	const valueSize = 100
-	const dependsSize = 1000
-	condValue := make([]string, valueSize)
-	for i := 0; i < valueSize; i++ {
-		condValue[i] = fmt.Sprintf("test-val-%d", i)
+	const condValueSize = 100
+	const valueSize = 1000
+	condValue := make([]string, condValueSize)
+	for i := 0; i < condValueSize; i++ {
+		condValue[i] = fmt.Sprintf("test-cond-val-%d", i)
 	}
-	depends := make([]string, dependsSize)
+	value := make([]string, valueSize)
 	for i := 0; i < valueSize; i++ {
-		depends[i] = fmt.Sprintf("depends-%d", i)
+		value[i] = fmt.Sprintf("test-val-%d", i)
 	}
 
 	cond := pattern.FieldCondition{
-		Field: "depends",
+		Field:     "infos.test",
+		FieldType: pattern.FieldTypeStringArray,
 		Condition: pattern.Condition{
 			Type:  pattern.ConditionHasOneOf,
 			Value: condValue,
 		},
 	}
 	entity := types.Entity{
-		Depends: depends,
+		Infos: map[string]types.Info{
+			"test": {
+				Name:        "test",
+				Description: "test",
+				Value:       value,
+			},
+		},
 	}
 
 	benchmarkEntityUnmarshalBsonAndMatch(b, cond, entity)

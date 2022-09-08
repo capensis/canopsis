@@ -198,7 +198,7 @@ func (s *pool) call(ctx context.Context, task Task, workerId int) error {
 		return err
 	}
 
-	err = rpcClient.Call(engine.RPCMessage{
+	err = rpcClient.Call(ctx, engine.RPCMessage{
 		CorrelationID: fmt.Sprintf("%s&&%d", task.ExecutionID, task.Step),
 		Body:          body,
 	})

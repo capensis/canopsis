@@ -91,6 +91,10 @@ const (
 	DynamicInfosDictionaryCollection = "dynamic_infos_dictionary"
 )
 
+const (
+	clientTimeout = 5 * time.Second
+)
+
 type SingleResultHelper interface {
 	Decode(v interface{}) error
 	DecodeBytes() (bson.Raw, error)
@@ -428,6 +432,9 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
+	if clientOptions.Timeout == nil {
+		clientOptions.SetTimeout(clientTimeout)
+	}
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, err
@@ -457,7 +464,7 @@ func NewClientWithOptions(
 	retryCount int,
 	minRetryTimeout time.Duration,
 	serverSelectionTimeout time.Duration,
-	socketTimeout time.Duration,
+	clientTimeout time.Duration,
 	logger zerolog.Logger,
 ) (DbClient, error) {
 	mongoURL, dbName, err := getURL()
@@ -470,7 +477,7 @@ func NewClientWithOptions(
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
 	clientOptions.SetServerSelectionTimeout(serverSelectionTimeout)
-	clientOptions.SetSocketTimeout(socketTimeout)
+	clientOptions.SetTimeout(clientTimeout)
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, err

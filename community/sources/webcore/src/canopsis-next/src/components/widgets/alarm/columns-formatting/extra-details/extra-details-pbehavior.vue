@@ -9,7 +9,7 @@
         strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
         div
           div.mt-2.font-weight-bold {{ pbehavior.name }}
-          div {{ $t('common.author') }}: {{ pbehavior.author }}
+          div {{ $t('common.author') }}: {{ pbehavior.author.name }}
           div(v-if="pbehaviorInfo.type_name") {{ $t('common.type') }}: {{ pbehaviorInfo.type_name }}
           div(v-if="pbehavior.reason") {{ $t('common.reason') }}: {{ pbehavior.reason.name }}
           div {{ tstart }}

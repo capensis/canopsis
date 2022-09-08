@@ -25,6 +25,7 @@ export default {
   state: {
     allIds: [],
     pending: false,
+    fetchingParams: {},
     meta: {},
   },
   getters: {
@@ -41,8 +42,9 @@ export default {
     meta: state => state.meta,
   },
   mutations: {
-    [types.FETCH_LIST](state) {
+    [types.FETCH_LIST](state, { params } = {}) {
       state.pending = true;
+      state.fetchingParams = params;
     },
     [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
       state.allIds = allIds;
@@ -66,7 +68,7 @@ export default {
   actions: {
     async fetchList({ dispatch, commit }, { params } = {}) {
       try {
-        commit(types.FETCH_LIST);
+        commit(types.FETCH_LIST, { params });
 
         const { data, normalizedData } = await dispatch('entities/fetch', {
           route: API_ROUTES.pbehavior.pbehaviors,
@@ -83,6 +85,10 @@ export default {
         await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
         commit(types.FETCH_LIST_FAILED);
       }
+    },
+
+    fetchListWithPreviousParams({ dispatch, state }) {
+      dispatch('fetchList', { params: state.fetchingParams });
     },
 
     async fetchListByEntityId({ commit, dispatch }, { id }) {

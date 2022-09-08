@@ -119,7 +119,7 @@ func (s *scheduler) ProcessEvent(ctx context.Context, event types.Event) error {
 		return err
 	}
 
-	return s.publishToNext(bevent)
+	return s.publishToNext(ctx, bevent)
 }
 
 func (s *scheduler) AckEvent(ctx context.Context, event types.Event) error {
@@ -136,11 +136,12 @@ func (s *scheduler) AckEvent(ctx context.Context, event types.Event) error {
 		return nil
 	}
 
-	return s.publishToNext(nextEvent)
+	return s.publishToNext(ctx, nextEvent)
 }
 
-func (s *scheduler) publishToNext(eventByte []byte) error {
-	return s.channelPub.Publish(
+func (s *scheduler) publishToNext(ctx context.Context, eventByte []byte) error {
+	return s.channelPub.PublishWithContext(
+		ctx,
 		"",
 		s.publishToQueue,
 		false,
@@ -192,7 +193,7 @@ func (s *scheduler) processExpiredLock(ctx context.Context, lockID string) {
 		return
 	}
 
-	err = s.publishToNext(nextEvent)
+	err = s.publishToNext(ctx, nextEvent)
 	if err != nil {
 		s.logger.
 			Err(err).

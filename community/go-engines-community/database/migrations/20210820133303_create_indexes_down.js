@@ -43,6 +43,9 @@ db.default_rights.dropIndex("crecord_type_1_role_1");
 
 db.action_scenario.dropIndex("priority_1");
 
+db.action_log.dropIndex( { "action" : 1 })
+db.action_log.dropIndex( { "value_type" : 1 , "value_id" : 1 })
+
 db.entity_category.dropIndex("name_1");
 
 db.idle_rule.dropIndex("priority_1");

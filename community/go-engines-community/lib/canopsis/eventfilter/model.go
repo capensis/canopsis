@@ -73,7 +73,7 @@ type RuleConfig struct {
 	ConnectorName string `bson:"connector_name,omitempty" json:"connector_name,omitempty"`
 
 	// enrichment fields
-	Actions   []Action `bson:"actions,omitempty" json:"actions,omitempty" binding:"required_if=Type enrichment"`
+	Actions   []Action `bson:"actions,omitempty" json:"actions,omitempty" binding:"dive,required_if=Type enrichment"`
 	OnSuccess string   `bson:"on_success,omitempty" json:"on_success,omitempty"`
 	OnFailure string   `bson:"on_failure,omitempty" json:"on_failure,omitempty"`
 }
@@ -82,7 +82,7 @@ type Action struct {
 	Type        string      `bson:"type" json:"type"`
 	Name        string      `bson:"name" json:"name"`
 	Description string      `bson:"description,omitempty" json:"description,omitempty"`
-	Value       interface{} `bson:"value" json:"value"`
+	Value       interface{} `bson:"value" json:"value" binding:"info_value"`
 }
 
 type RegexMatchWrapper struct {

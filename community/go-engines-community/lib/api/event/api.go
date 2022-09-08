@@ -286,13 +286,14 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	}
 
 	var alarm types.Alarm
-	err = api.alarmCollection.FindOne(c.Request.Context(), bson.M{"d": eid}).Decode(&alarm)
+	err = api.alarmCollection.FindOne(c, bson.M{"d": eid}).Decode(&alarm)
 	if err != nil && err != mongodriver.ErrNoDocuments {
 		api.logger.Err(err).Str("event", string(value.MarshalTo(nil))).Msg("Failed to get alarm from mongo")
 		return false
 	}
 
-	err = api.publisher.Publish(
+	err = api.publisher.PublishWithContext(
+		c,
 		canopsis.CanopsisEventsExchange,
 		"",
 		false,

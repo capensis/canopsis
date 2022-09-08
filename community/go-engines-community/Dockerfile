@@ -72,7 +72,7 @@ ARG CMD
 ENV CMD ${CMD}
 
 # note: CPS_EDITION is defined at Docker Compose runtime in the .env file
-CMD ["/bin/sh", "-c", "/${CMD} -conf /canopsis-${CPS_EDITION:-community}.toml -postgres-migration-directory=/opt/canopsis/share/migrations/postgres -migrate-postgres=true -postgres-migration-mode=up"]
+CMD ["/bin/sh", "-c", "/${CMD} -conf /canopsis-${CPS_EDITION:-community}.toml -postgres-migration-directory=/opt/canopsis/share/migrations/postgres -migrate-postgres=true -postgres-migration-mode=up -override /opt/canopsis/etc/conf.d/canopsis-override.toml"]
 
 #
 # engine-che override (Community and Pro)
