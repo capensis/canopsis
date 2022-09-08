@@ -12,6 +12,7 @@
       @export:csv="exportSliMetricsAsCsv",
       @export:png="exportSliMetricsAsPng"
     )
+    kpi-error-overlay(v-if="unavailable || fetchError")
 </template>
 
 <script>
@@ -39,12 +40,13 @@ import { localQueryMixin } from '@/mixins/query-local/query';
 import { exportCsvMixinCreator } from '@/mixins/widget/export';
 
 import KpiSliFilters from './partials/kpi-sli-filters.vue';
+import KpiErrorOverlay from './partials/kpi-error-overlay.vue';
 
 const KpiSliChart = () => import(/* webpackChunkName: "Charts" */ './partials/kpi-sli-chart.vue');
 
 export default {
   inject: ['$system'],
-  components: { KpiSliFilters, KpiSliChart },
+  components: { KpiErrorOverlay, KpiSliFilters, KpiSliChart },
   mixins: [
     entitiesMetricsMixin,
     localQueryMixin,
@@ -54,11 +56,18 @@ export default {
       fetchExportFile: 'fetchMetricCsvFile',
     }),
   ],
+  props: {
+    unavailable: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       sliMetrics: [],
       pending: false,
       downloading: false,
+      fetchError: false,
       minDate: null,
       query: {
         sampling: SAMPLINGS.day,
@@ -89,8 +98,15 @@ export default {
       };
     },
   },
-  mounted() {
-    this.fetchList();
+  watch: {
+    unavailable: {
+      immediate: true,
+      handler(unavailable) {
+        if (!unavailable) {
+          this.fetchList();
+        }
+      },
+    },
   },
   methods: {
     customQueryCondition(query, oldQuery) {
@@ -123,22 +139,27 @@ export default {
     },
 
     async fetchList() {
-      this.pending = true;
-      const params = this.getQuery();
+      try {
+        this.pending = true;
 
-      const {
-        data: sliMetrics,
-        meta: { min_date: minDate },
-      } = await this.fetchSliMetricsWithoutStore({ params });
+        const params = this.getQuery();
 
-      this.sliMetrics = convertMetricsToTimezone(sliMetrics, this.$system.timezone);
-      this.minDate = convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone);
+        const {
+          data: sliMetrics,
+          meta: { min_date: minDate },
+        } = await this.fetchSliMetricsWithoutStore({ params });
 
-      if (params.from < this.minDate) {
-        this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
+        this.sliMetrics = convertMetricsToTimezone(sliMetrics, this.$system.timezone);
+        this.minDate = convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone);
+
+        if (params.from < this.minDate) {
+          this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
+        }
+      } catch (err) {
+        this.fetchError = true;
+      } finally {
+        this.pending = false;
       }
-
-      this.pending = false;
     },
 
     async exportSliMetricsAsCsv() {
