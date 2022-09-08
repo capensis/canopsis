@@ -108,6 +108,10 @@ type Alarm struct {
 	childrenRemove []string
 	parentsUpdate  []string
 	parentsRemove  []string
+
+	// is used only for manual instructions KPI metrics
+	KPIAssignedInstructions []string `bson:"kpi_assigned_instructions,omitempty" json:"-"`
+	KPIExecutedInstructions []string `bson:"kpi_executed_instructions,omitempty" json:"-"`
 }
 
 // AlarmWithEntity is an encapsulated type, mostly to facilitate the alarm manipulation for the post-processors
