@@ -3,10 +3,11 @@ package eventfilter
 import (
 	"bytes"
 	"fmt"
+	"text/template"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"text/template"
 )
 
 type actionProcessor struct {
@@ -46,6 +47,11 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 		return event, err
 	case ActionSetEntityInfo:
 		entityUpdated := false
+
+		if !types.IsInfoValueValid(action.Value) {
+			return event, types.ErrInvalidInfoType
+		}
+
 		*event.Entity, entityUpdated = setEntityInfo(*event.Entity, action.Value, action.Name, action.Description)
 
 		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
@@ -120,6 +126,10 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 		)
 		if err != nil {
 			return event, err
+		}
+
+		if !types.IsInfoValueValid(value) {
+			return event, types.ErrInvalidInfoType
 		}
 
 		entityUpdated := false

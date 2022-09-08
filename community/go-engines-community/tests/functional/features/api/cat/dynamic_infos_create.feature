@@ -295,3 +295,240 @@ Feature: Create an dynamic-infos
       }
     }
     """
+
+  Scenario: given create request where info value is int value should return success
+    When I am admin
+    When I do POST /api/v4/cat/dynamic-infos:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.alert_name",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
+              "value": "test-dynamic-infos-to-create-3-pattern"
+            }
+          }
+        ]
+      ],
+      "name": "test-dynamic-infos-to-create-3-name",
+      "description": "test-dynamic-infos-to-create-3-description",
+      "enabled": true,
+      "infos": [
+        {
+          "name": "test-dynamic-infos-to-create-3-info-1-name",
+          "value": 123
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+
+  Scenario: given create request where info value is string value should return success
+    When I am admin
+    When I do POST /api/v4/cat/dynamic-infos:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.alert_name",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
+              "value": "test-dynamic-infos-to-create-4-pattern"
+            }
+          }
+        ]
+      ],
+      "name": "test-dynamic-infos-to-create-4-name",
+      "description": "test-dynamic-infos-to-create-4-description",
+      "enabled": true,
+      "infos": [
+        {
+          "name": "test-dynamic-infos-to-create-4-info-1-name",
+          "value": "test"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+
+  Scenario: given create request where info value is bool value should return success
+    When I am admin
+    When I do POST /api/v4/cat/dynamic-infos:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.alert_name",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
+              "value": "test-dynamic-infos-to-create-5-pattern"
+            }
+          }
+        ]
+      ],
+      "name": "test-dynamic-infos-to-create-5-name",
+      "description": "test-dynamic-infos-to-create-5-description",
+      "enabled": true,
+      "infos": [
+        {
+          "name": "test-dynamic-infos-to-create-5-info-1-name",
+          "value": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+
+  Scenario: given create request where info value is array of strings value should return success
+    When I am admin
+    When I do POST /api/v4/cat/dynamic-infos:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.alert_name",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
+              "value": "test-dynamic-infos-to-create-6-pattern"
+            }
+          }
+        ]
+      ],
+      "name": "test-dynamic-infos-to-create-6-name",
+      "description": "test-dynamic-infos-to-create-6-description",
+      "enabled": true,
+      "infos": [
+        {
+          "name": "test-dynamic-infos-to-create-6-info-1-name",
+          "value": ["test", "test2"]
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+
+  Scenario: given create request where info value is float should return error
+    When I am admin
+    When I do POST /api/v4/cat/dynamic-infos:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.alert_name",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
+              "value": "test-dynamic-infos-to-create-7-pattern"
+            }
+          }
+        ]
+      ],
+      "name": "test-dynamic-infos-to-create-7-name",
+      "description": "test-dynamic-infos-to-create-7-description",
+      "enabled": true,
+      "infos": [
+        {
+          "name": "test-dynamic-infos-to-create-7-info-1-name",
+          "value": 1.2
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "infos.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """
+
+  Scenario: given create request where info value is array of various types should return error
+    When I am admin
+    When I do POST /api/v4/cat/dynamic-infos:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.alert_name",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
+              "value": "test-dynamic-infos-to-create-8-pattern"
+            }
+          }
+        ]
+      ],
+      "name": "test-dynamic-infos-to-create-8-name",
+      "description": "test-dynamic-infos-to-create-8-description",
+      "enabled": true,
+      "infos": [
+        {
+          "name": "test-dynamic-infos-to-create-8-info-1-name",
+          "value": ["test 1", 1, "test 2"]
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "infos.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """
+
+  Scenario: given create request where info value is object should return error
+    When I am admin
+    When I do POST /api/v4/cat/dynamic-infos:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.alert_name",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
+              "value": "test-dynamic-infos-to-create-9-pattern"
+            }
+          }
+        ]
+      ],
+      "name": "test-dynamic-infos-to-create-9-name",
+      "description": "test-dynamic-infos-to-create-9-description",
+      "enabled": true,
+      "infos": [
+        {
+          "name": "test-dynamic-infos-to-create-9-info-1-name",
+          "value": {
+            "test": "abc",
+            "test2": 1
+          }
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "infos.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """

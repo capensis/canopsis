@@ -31,6 +31,8 @@ Voici une liste des principales données et la manière de les récupérer. De f
 | Message du ticket   | `{{ .Alarm.Value.Ticket.Message }}` |
 | Auteur de l'acquittement | `{{ .Alarm.Value.ACK.Author }}`     |
 | Message de l'acquittement | `{{ .Alarm.Value.ACK.Message }}`    |
+| Auteur du dernier commenataire    | `{{ .Alarm.Value.LastComment.Author }}`  |
+| Message du dernier commenataire    | `{{ .Alarm.Value.LastComment.Message }}`  |
 | `abc` dans l'entité | `{{ .Entity.Infos.abc.Value }}`     |
 
 Pour les champs de date, comme par exemple `{{ .Event.Timestamp }}`, il est possible de récupérer l'information de différents manières.
