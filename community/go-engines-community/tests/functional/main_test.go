@@ -81,7 +81,7 @@ func TestMain(m *testing.M) {
 	}
 	defer redisClient.Close()
 
-	loader := fixtures.NewLoader(dbClient, flags.mongoFixtures, true,
+	loader := fixtures.NewLoader(dbClient, flags.mongoFixtures,
 		fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), logger)
 	opts := godog.Options{
 		StopOnFailure:  true,
