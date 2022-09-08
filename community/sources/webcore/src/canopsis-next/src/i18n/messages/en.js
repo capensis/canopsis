@@ -1979,6 +1979,8 @@ export default merge({
       + '<p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p>'
       + '<p>A static informative message</p>'
       + '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
+    removeConfirmationText: 'When deleting a meta alarm rule, all corresponding meta alarms will be deleted as well.\n'
+      + 'Are you sure to proceed with it?\n',
     errors: {
       noValuePaths: 'You have to add at least 1 value path',
     },
