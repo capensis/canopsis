@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"sync/atomic"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -150,7 +151,7 @@ func (r *typeResolver) GetPbehaviorsCount(ctx context.Context, t time.Time) (int
 
 	g, ctx := errgroup.WithContext(ctx)
 	workerCh := make(chan ComputedPbehavior)
-	resCh := make(chan struct{})
+	var count int64
 
 	g.Go(func() error {
 		defer close(workerCh)
@@ -159,8 +160,7 @@ func (r *typeResolver) GetPbehaviorsCount(ctx context.Context, t time.Time) (int
 			select {
 			case <-ctx.Done():
 				return nil
-			default:
-				workerCh <- computed
+			case workerCh <- computed:
 			}
 		}
 
@@ -169,41 +169,24 @@ func (r *typeResolver) GetPbehaviorsCount(ctx context.Context, t time.Time) (int
 
 	for i := 0; i < r.workerPoolSize; i++ {
 		g.Go(func() error {
-			for {
-				select {
-				case <-ctx.Done():
-					return nil
-				case d, ok := <-workerCh:
-					if !ok {
-						return nil
-					}
-
-					for _, computedType := range d.Types {
-						if computedType.Span.In(t) {
-							resCh <- struct{}{}
-							break
-						}
+			for d := range workerCh {
+				for _, computedType := range d.Types {
+					if computedType.Span.In(t) {
+						atomic.AddInt64(&count, 1)
+						break
 					}
 				}
 			}
+
+			return nil
 		})
-	}
-
-	go func() {
-		_ = g.Wait() // check error in wrapper func
-		close(resCh)
-	}()
-
-	count := 0
-	for range resCh {
-		count++
 	}
 
 	if err := g.Wait(); err != nil {
 		return 0, err
 	}
 
-	return count, nil
+	return int(count), nil
 }
 
 func (r *typeResolver) getPbehaviorIntervals(
