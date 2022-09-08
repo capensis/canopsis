@@ -74,8 +74,8 @@ func (a *api) GetAppInfo(c *gin.Context) {
 // @Success 200 {object} UserInterfaceConf
 func (a *api) UpdateUserInterface(c *gin.Context) {
 	request := UserInterfaceConf{
-		MaxMatchedItems:          config.DefaultMaxMatchedItems,
-		CheckCountRequestTimeout: config.DefaultCheckCountRequestTimeout,
+		MaxMatchedItems:          config.UserInterfaceMaxMatchedItems,
+		CheckCountRequestTimeout: config.UserInterfaceCheckCountRequestTimeout,
 	}
 
 	if err := c.ShouldBind(&request); err != nil {

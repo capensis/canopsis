@@ -703,87 +703,201 @@ function migrateOldFilter(widget, oldFilter) {
     return newFilter;
 }
 
-db.widgets.find({"parameters.viewFilters": {$ne: null}}).forEach(function (widget) {
-    if (widget.parameters.viewFilters.length === 0) {
+function migrateOldMainFilter(widget, oldMainFilter) {
+    if (Array.isArray(oldMainFilter)) {
+        if (oldMainFilter.length === 0) {
+            return null;
+        }
+        var and = [];
+        var mergedTitle = "";
+        oldMainFilter.forEach(function (oldFilter, i) {
+            if (i > 0) {
+                mergedTitle += " and ";
+            }
+            mergedTitle += oldFilter.title;
+            and.push(JSON.parse(oldFilter.filter));
+        });
+        var mergedOldMainFilter = {
+            title: mergedTitle,
+            filter: JSON.stringify({$and: and}),
+        };
+        return migrateOldFilter(widget, mergedOldMainFilter);
+    }
+    if (!oldMainFilter || !oldMainFilter.filter) {
+        return null
+    }
+    return migrateOldFilter(widget, oldMainFilter);
+}
+
+db.widgets.find({
+        $or: [
+            {"parameters.mainFilter": {$ne: null}},
+            {"parameters.viewFilters": {$ne: null}}
+        ]
+    }
+).forEach(function (widget) {
+    var now = Math.ceil((new Date()).getTime() / 1000);
+    var author = widget.author;
+    if (!author) {
+        author = "root";
+    }
+    var created = widget.created;
+    if (!created) {
+        created = now;
+    }
+    var updated = widget.updated;
+    if (!updated) {
+        updated = now;
+    }
+
+    var mainFilter = widget.parameters.mainFilter;
+    var newMainFilter = null;
+    var newFilters = [];
+
+    if (widget.parameters.viewFilters) {
+        widget.parameters.viewFilters.forEach(function (filter) {
+            var newFilter = migrateOldFilter(widget, filter);
+            newFilter.is_private = false;
+            newFilter.author = author;
+            newFilter.created = created;
+            newFilter.updated = updated;
+            newFilters.push(newFilter);
+
+            if (mainFilter && mainFilter.title === newFilter.title && mainFilter.filter === newFilter.old_mongo_query) {
+                newMainFilter = newFilter._id;
+            }
+        });
+    }
+    if (mainFilter && !newMainFilter) {
+        var newFilter = migrateOldMainFilter(widget, mainFilter);
+        if (newFilter) {
+            newFilter.is_private = false;
+            newFilter.author = author;
+            newFilter.created = created;
+            newFilter.updated = updated;
+            newFilters.push(newFilter);
+            newMainFilter = newFilter._id;
+        }
+    }
+
+    db.widgets.updateOne({_id: widget._id}, {
+        $set: {"parameters.mainFilter": newMainFilter},
+        $unset: {"parameters.viewFilters": ""},
+    });
+    if (newFilters.length > 0) {
+        db.widget_filters.insertMany(newFilters);
+    }
+});
+
+db.userpreferences.aggregate([
+    {$sort: {updated: -1, _id: 1}},
+    {
+        $group: {
+            _id: {
+                widget: "$widget",
+                user: "$user",
+            },
+            userPref: {"$first": "$$ROOT"},
+            extraIds: {"$push": "$_id"}
+        }
+    },
+    {
+        $addFields: {
+            extraIds: {
+                $filter: {
+                    input: "$extraIds",
+                    cond: {$ne: ["$$this", "$userPref._id"]}
+                }
+            }
+        }
+    },
+    {
+        $lookup: {
+            from: "widgets",
+            localField: "userPref.widget",
+            foreignField: "_id",
+            as: "widget",
+        }
+    },
+    {$unwind: {path: "$widget", preserveNullAndEmptyArrays: true}},
+    {
+        $lookup: {
+            from: "widget_filters",
+            localField: "widget._id",
+            foreignField: "widget",
+            as: "widgetFilters",
+        }
+    },
+]).forEach(function (doc) {
+    if (doc.extraIds && doc.extraIds.length > 0) {
+        db.userpreferences.deleteMany({_id: {$in: doc.extraIds}});
+    }
+
+    var userPref = doc.userPref;
+    var widget = doc.widget;
+    var widgetFilters = doc.widgetFilters;
+    if (!widget) {
+        db.userpreferences.deleteOne({_id: userPref._id});
+        return;
+    }
+    if (!userPref.content) {
         return;
     }
 
-    var now = Math.ceil((new Date()).getTime() / 1000);
-    var publicFilters = [];
-    var publicFilterIds = {};
-    var widgetMainFilter = widget.parameters.mainFilter;
-    var newWidgetMainFilter = null;
+    var updated = userPref.updated;
+    if (!updated) {
+        updated = Math.ceil((new Date()).getTime() / 1000);
+    }
 
-    widget.parameters.viewFilters.forEach(function (filter, fi) {
-        var newFilter = migrateOldFilter(widget, filter);
-        publicFilterIds[filter.title] = newFilter._id;
-        newFilter.is_private = false;
-        newFilter.author = widget.author;
-        newFilter.created = widget.created;
-        newFilter.updated = widget.updated;
-        publicFilters.push(newFilter);
+    var mainFilter = userPref.content.mainFilter;
+    var viewFilters = userPref.content.viewFilters;
+    if (!mainFilter && !viewFilters) {
+        return;
+    }
 
-        if (widgetMainFilter && widgetMainFilter.title === filter.title) {
-            newWidgetMainFilter = newFilter._id;
+    var newFilters = [];
+    var newMainFilter = null;
+
+    if (viewFilters) {
+        viewFilters.forEach(function (filter) {
+            var newFilter = migrateOldFilter(widget, filter);
+            newFilter.is_private = true;
+            newFilter.author = userPref.user;
+            newFilter.created = updated;
+            newFilter.updated = updated;
+            newFilters.push(newFilter);
+
+            if (mainFilter && mainFilter.title === newFilter.title && mainFilter.filter === newFilter.old_mongo_query) {
+                newMainFilter = newFilter._id;
+            }
+        });
+    }
+
+    if (mainFilter && !newMainFilter && widgetFilters) {
+        widgetFilters.forEach(function (widgetFilter) {
+            if (mainFilter.title === widgetFilter.title && mainFilter.filter === widgetFilter.old_mongo_query) {
+                newMainFilter = widgetFilter._id;
+            }
+        });
+    }
+    if (mainFilter && !newMainFilter) {
+        var newFilter = migrateOldMainFilter(widget, mainFilter);
+        if (newFilter) {
+            newFilter.is_private = true;
+            newFilter.author = userPref.user;
+            newFilter.created = updated;
+            newFilter.updated = updated;
+            newFilters.push(newFilter);
+            newMainFilter = newFilter._id;
         }
+    }
+
+    db.userpreferences.updateOne({_id: userPref._id}, {
+        $set: {"content.mainFilter": newMainFilter},
+        $unset: {"content.viewFilters": ""}
     });
 
-    db.widgets.updateOne({_id: widget._id}, {
-        $set: {"parameters.mainFilter": newWidgetMainFilter},
-        $unset: {"parameters.viewFilters": ""},
-    });
-    db.widget_filters.insertMany(publicFilters);
-
-    var processedUserPref = {};
-    db.userpreferences.find({widget: widget._id}).sort({updated: -1, _id: 1}).forEach(function (userPref) {
-        if (processedUserPref[userPref.user]) {
-            // Delete duplicate
-            db.userpreferences.deleteOne({_id: userPref._id});
-            return;
-        }
-        processedUserPref[userPref.user] = true;
-
-        var userPrefUpdated = userPref.updated;
-        if (!userPrefUpdated) {
-            userPrefUpdated = now;
-        }
-
-        var privateFilters = [];
-        var userMainFilter = userPref.content.mainFilter;
-        var newUserMainFilter = null;
-
-        if (userPref.content && userPref.content.viewFilters) {
-            userPref.content.viewFilters.forEach(function (filter, fi) {
-                var newFilter = migrateOldFilter(widget, filter);
-                newFilter.is_private = true;
-                newFilter.author = userPref.user;
-                newFilter.created = userPrefUpdated;
-                newFilter.updated = userPrefUpdated;
-                privateFilters.push(newFilter);
-
-                if (userMainFilter && userMainFilter.title === filter.title) {
-                    newUserMainFilter = newFilter._id;
-                }
-            });
-        }
-
-        if (userMainFilter && !newUserMainFilter && publicFilterIds[userMainFilter.title]) {
-            newUserMainFilter = publicFilterIds[userMainFilter.title];
-        }
-
-        if (userMainFilter || privateFilters.length > 0) {
-            db.userpreferences.updateOne({_id: userPref._id}, {
-                $set: {
-                    "content.mainFilter": newUserMainFilter,
-                },
-                $unset: {
-                    "content.viewFilters": ""
-                }
-            });
-        }
-
-        if (privateFilters.length > 0) {
-            db.widget_filters.insertMany(privateFilters);
-        }
-    });
+    if (newFilters.length > 0) {
+        db.widget_filters.insertMany(newFilters);
+    }
 });

@@ -21,14 +21,14 @@ export const widgetFetchQueryMixin = {
         this.fetchList();
       }
     },
+
     tabQueryNonce(value, oldValue) {
       if (!this.editing && value > oldValue) {
         this.fetchList({ isQueryNonceUpdate: true });
       }
     },
-    widget() {
-      this.setQuery();
-    },
+
+    widget: 'setQuery',
   },
   async mounted() {
     if (!this.editing) {

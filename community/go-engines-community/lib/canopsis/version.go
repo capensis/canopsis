@@ -6,6 +6,7 @@ import (
 	"path"
 	"runtime/debug"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -16,7 +17,9 @@ var Version string
 var BuildDate string
 
 type BuildInfo struct {
+	Name        string
 	Version     string
+	Edition     string
 	Date        time.Time
 	VcsRevision string
 	GoVersion   string
@@ -26,57 +29,66 @@ type BuildInfo struct {
 func PrintVersionInfo() {
 	bi := GetBuildInfo()
 
-	fmt.Printf("%s version %s build %s %s %s %s\n", path.Base(os.Args[0]), bi.Version, bi.VcsRevision,
+	fmt.Printf("%s version %s %s build %s %s %s %s\n", bi.Name, bi.Edition, bi.Version, bi.VcsRevision,
 		bi.Date.Format(time.RFC3339), bi.GoVersion, bi.Os)
 }
 
 func GetBuildInfo() BuildInfo {
-	v := Version
-	if v == "" {
-		v = "development"
+	bi := BuildInfo{}
+
+	bi.Version = Version
+	if bi.Version == "" {
+		bi.Version = "development"
 	}
 
-	var buildDate time.Time
 	timestamp, err := strconv.ParseInt(BuildDate, 10, 64)
 	if err == nil {
-		buildDate = time.Unix(timestamp, 0).UTC()
+		bi.Date = time.Unix(timestamp, 0).UTC()
 	}
 
-	goVersion := ""
 	buildOs := ""
 	buildArch := ""
-	vcsRevision := ""
 	vcsModified := false
 	const revLen = 12
-	if bi, ok := debug.ReadBuildInfo(); ok {
-		goVersion = bi.GoVersion
-		for _, setting := range bi.Settings {
+	if runtimeBi, ok := debug.ReadBuildInfo(); ok {
+		bi.Name = path.Base(runtimeBi.Path)
+		editions := []string{"community", "pro"}
+		for _, edition := range editions {
+			if strings.Contains(runtimeBi.Path, edition) {
+				bi.Edition = edition
+				break
+			}
+		}
+
+		bi.GoVersion = runtimeBi.GoVersion
+		for _, setting := range runtimeBi.Settings {
 			switch setting.Key {
 			case "GOOS":
 				buildOs = setting.Value
 			case "GOARCH":
 				buildArch = setting.Value
 			case "vcs.revision":
-				vcsRevision = setting.Value
-				if len(vcsRevision) > revLen {
-					vcsRevision = vcsRevision[:revLen]
+				bi.VcsRevision = setting.Value
+				if len(bi.VcsRevision) > revLen {
+					bi.VcsRevision = bi.VcsRevision[:revLen]
 				}
 			case "vcs.modified":
 				vcsModified, _ = strconv.ParseBool(setting.Value)
 			}
 		}
 	}
-	if vcsRevision == "" {
-		vcsRevision = "unknown"
-	} else if vcsModified {
-		vcsRevision += " (dirty)"
+
+	if bi.Name == "" {
+		bi.Name = path.Base(os.Args[0])
 	}
 
-	return BuildInfo{
-		Version:     v,
-		Date:        buildDate,
-		VcsRevision: vcsRevision,
-		GoVersion:   goVersion,
-		Os:          fmt.Sprintf("%s/%s", buildOs, buildArch),
+	if bi.VcsRevision == "" {
+		bi.VcsRevision = "unknown"
+	} else if vcsModified {
+		bi.VcsRevision += " (dirty)"
 	}
+
+	bi.Os = fmt.Sprintf("%s/%s", buildOs, buildArch)
+
+	return bi
 }

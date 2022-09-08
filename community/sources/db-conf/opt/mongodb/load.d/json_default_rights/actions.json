@@ -244,6 +244,13 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_remediationStatistic",
+        "loader_id": "models_remediationStatistic",
+        "crecord_name": "models_remediationStatistic",
+        "crecord_type": "action",
+        "desc": "Remediation statistics"
+    },
+    {
         "_id": "listalarm_ack",
         "loader_id": "listalarm_ack",
         "crecord_name": "listalarm_ack",
