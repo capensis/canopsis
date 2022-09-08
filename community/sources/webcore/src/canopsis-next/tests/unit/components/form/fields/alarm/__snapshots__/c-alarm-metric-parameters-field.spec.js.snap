@@ -18,7 +18,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           class="v-select__selections"
         >
           <span>
-            17 parameters to display
+            20 parameters to display
           </span>
           <input
             aria-readonly="false"
@@ -1018,7 +1018,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_remediated_alarms
+              % of manually remediated alarms
             </div>
           </div>
         </a>
@@ -1198,7 +1198,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.manual_instruction_assigned_alarms
+              Number of alarms with manual instructions
             </div>
           </div>
         </a>
@@ -1258,7 +1258,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.manual_instruction_executed_alarms
+              Number of manually remediated alarms
             </div>
           </div>
         </a>
@@ -2276,7 +2276,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_remediated_alarms
+              % of manually remediated alarms
             </div>
           </div>
         </a>
@@ -2453,7 +2453,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.manual_instruction_assigned_alarms
+              Number of alarms with manual instructions
             </div>
           </div>
         </a>
@@ -2512,7 +2512,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.manual_instruction_executed_alarms
+              Number of manually remediated alarms
             </div>
           </div>
         </a>
@@ -3527,7 +3527,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_remediated_alarms
+              % of manually remediated alarms
             </div>
           </div>
         </a>
@@ -3704,7 +3704,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.manual_instruction_assigned_alarms
+              Number of alarms with manual instructions
             </div>
           </div>
         </a>
@@ -3763,7 +3763,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.manual_instruction_executed_alarms
+              Number of manually remediated alarms
             </div>
           </div>
         </a>
