@@ -122,6 +122,7 @@ export default merge({
     tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'No results',
+    result: 'Result',
     exploitation: 'Exploitation',
     administration: 'Administration',
     forbidden: 'Forbidden',
@@ -277,6 +278,7 @@ export default merge({
     acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
     saveChanges: 'Save changes',
     reportIncident: 'Report an incident',
+    instructions: 'Instructions',
     times: {
       second: 'second | seconds',
       minute: 'minute | minutes',
@@ -674,8 +676,11 @@ export default merge({
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% of alarms with auto remediation',
       [ALARM_METRIC_PARAMETERS.ratioTickets]: '% of alarms with tickets created',
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms]: '% of manually remediated alarms',
       [ALARM_METRIC_PARAMETERS.averageAck]: 'Average time to ack alarms',
       [ALARM_METRIC_PARAMETERS.averageResolve]: 'Average time to resolve alarms',
+      [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Number of manually remediated alarms',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Number of alarms with manual instructions',
     },
   },
   weather: {
@@ -1367,7 +1372,6 @@ export default merge({
       title: 'Import/Export views',
       groups: 'Groups',
       views: 'Views',
-      result: 'Result',
     },
     createBroadcastMessage: {
       create: {
@@ -1399,7 +1403,6 @@ export default merge({
         unit: 'Unit',
       },
       groups: 'Groups',
-      result: 'Result',
       manageTabs: 'Manage tabs',
     },
     pbehaviorPlanning: {
@@ -2316,9 +2319,9 @@ export default merge({
 
   remediation: {
     tabs: {
-      instructions: 'Instructions',
       configurations: 'Configurations',
       jobs: 'Jobs',
+      statistics: 'Remediation statistics',
     },
   },
 
@@ -2429,10 +2432,14 @@ export default merge({
     modifiedOn: 'Modified on',
     averageCompletionTime: 'Average time\nof completion',
     executionCount: 'Number of\nexecutions',
+    totalExecutions: 'Total executions',
+    successfulExecutions: 'Successful executions',
     alarmStates: 'Alarms affected by state',
     okAlarmStates: 'Number of resulting\nOK states',
     notAvailable: 'N/a',
     instructionChanged: 'The instruction has been changed',
+    alarmResolvedDate: 'Alarm resolved date',
+    showFailedExecutions: 'Show failed instruction executions',
     actions: {
       needRate: 'Rate it!',
       rate: 'Rate',
@@ -2448,6 +2455,21 @@ export default merge({
           disabledOnTypes: 'Disabled on types',
         },
       },
+    },
+  },
+
+  remediationStatistic: {
+    remediation: 'Remediation',
+    fields: {
+      all: 'All',
+    },
+    labels: {
+      remediated: 'Remediated',
+      notRemediated: 'Not remediated',
+    },
+    tooltips: {
+      remediated: '{value} alarms remediated',
+      assigned: '{value} alarms with instructions',
     },
   },
 
@@ -2875,8 +2897,11 @@ export default merge({
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% alarms with instructions',
       [ALARM_METRIC_PARAMETERS.ratioTickets]: '{value}% of alarms with tickets created',
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms]: '{value}% of manually remediated alarms',
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} to ack alarms',
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} to resolve alarms',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarms with manual instructions',
+      [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: '{value} manually remediated alarms',
     },
   },
 
