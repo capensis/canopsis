@@ -1,16 +1,16 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import MermaidContextmenu from '@/components/other/map/form/partials/mermaid-contextmenu.vue';
+import PointContextmenu from '@/components/other/map/form/partials/point-contextmenu.vue';
 
 const localVue = createVueInstance();
 
-const factory = (options = {}) => shallowMount(MermaidContextmenu, {
+const factory = (options = {}) => shallowMount(PointContextmenu, {
   localVue,
 
   ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(MermaidContextmenu, {
+const snapshotFactory = (options = {}) => mount(PointContextmenu, {
   localVue,
 
   ...options,
@@ -21,7 +21,12 @@ const selectListTileByIndex = (wrapper, index) => selectListTiles(wrapper).at(in
 
 describe('mermaid-contextmenu', () => {
   test('Add point event emitted after trigger click on add point', () => {
-    const wrapper = factory();
+    const wrapper = factory({
+      propsData: {
+        positionX: 1,
+        positionY: 2,
+      },
+    });
 
     const addPointTile = selectListTileByIndex(wrapper, 0);
 
@@ -33,6 +38,8 @@ describe('mermaid-contextmenu', () => {
   test('Edit point event emitted after trigger click on edit point', () => {
     const wrapper = factory({
       propsData: {
+        positionX: 1,
+        positionY: 2,
         editing: true,
       },
     });
@@ -47,6 +54,8 @@ describe('mermaid-contextmenu', () => {
   test('Remove point event emitted after trigger click on remove point', () => {
     const wrapper = factory({
       propsData: {
+        positionX: 1,
+        positionY: 2,
         editing: true,
       },
     });
@@ -58,8 +67,13 @@ describe('mermaid-contextmenu', () => {
     expect(wrapper).toEmit('remove:point');
   });
 
-  test('Renders `mermaid-contextmenu` with default props', () => {
-    const wrapper = snapshotFactory();
+  test('Renders `mermaid-contextmenu` with required props', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        positionX: 1,
+        positionY: 2,
+      },
+    });
 
     expect(wrapper.element).toMatchSnapshot();
   });

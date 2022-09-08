@@ -18,20 +18,14 @@ exports[`mermaid-points Renders \`mermaid-points\` with custom props 1`] = `
     x="150"
     y="150"
   />
-  <div
-    class="v-menu"
-  >
-    <transition-stub
-      name="v-menu-transition"
-    />
-  </div>
-  <div
-    class="v-menu"
-  >
-    <transition-stub
-      name="v-menu-transition"
-    />
-  </div>
+  <point-contextmenu-stub
+    positionx="0"
+    positiony="0"
+  />
+  <point-form-dialog-menu-stub
+    positionx="0"
+    positiony="0"
+  />
 </div>
 `;
 
@@ -39,19 +33,13 @@ exports[`mermaid-points Renders \`mermaid-points\` with required props 1`] = `
 <div
   class="mermaid-points"
 >
-  <div
-    class="v-menu"
-  >
-    <transition-stub
-      name="v-menu-transition"
-    />
-  </div>
-  <div
-    class="v-menu"
-  >
-    <transition-stub
-      name="v-menu-transition"
-    />
-  </div>
+  <point-contextmenu-stub
+    positionx="0"
+    positiony="0"
+  />
+  <point-form-dialog-menu-stub
+    positionx="0"
+    positiony="0"
+  />
 </div>
 `;

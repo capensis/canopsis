@@ -11,8 +11,8 @@ const localVue = createVueInstance();
 
 const stubs = {
   'mermaid-point-marker': true,
-  'mermaid-contextmenu': true,
-  'point-form-dialog': true,
+  'point-contextmenu': true,
+  'point-form-dialog-menu': true,
 };
 
 const factory = (options = {}) => shallowMount(MermaidPoints, {
@@ -32,16 +32,13 @@ const snapshotFactory = (options = {}) => mount(MermaidPoints, {
 });
 
 const selectRoot = wrapper => wrapper.find('div.mermaid-points');
-const selectMenus = wrapper => wrapper.findAll('v-menu-stub');
-const selectMermaidContextmenu = wrapper => wrapper.find('mermaid-contextmenu-stub');
-const selectPointFormDialog = wrapper => wrapper.find('point-form-dialog-stub');
+const selectPointContextmenu = wrapper => wrapper.find('point-contextmenu-stub');
+const selectPointFormDialogMenu = wrapper => wrapper.find('point-form-dialog-menu-stub');
 const selectPointMarkers = wrapper => wrapper.findAll('mermaid-point-marker-stub');
 const selectPointMarkerByIndex = (wrapper, index) => selectPointMarkers(wrapper).at(index);
-const selectMenuForContextmenu = wrapper => selectMenus(wrapper).at(0);
-const selectMenuForDialog = wrapper => selectMenus(wrapper).at(1);
 
 const checkContextMenuPosition = (wrapper, { x, y }) => {
-  const menu = selectMenuForContextmenu(wrapper);
+  const menu = selectPointContextmenu(wrapper);
 
   expect(menu.vm.value).toBe(true);
   expect(menu.vm.positionY).toBe(y);
@@ -49,11 +46,11 @@ const checkContextMenuPosition = (wrapper, { x, y }) => {
 };
 
 const checkDialogMenuPosition = (wrapper, { x, y }) => {
-  const dialogMenu = selectMenuForDialog(wrapper);
+  const pointFormDialog = selectPointFormDialogMenu(wrapper);
 
-  expect(dialogMenu.vm.value).toBe(true);
-  expect(dialogMenu.vm.positionY).toBe(y);
-  expect(dialogMenu.vm.positionX).toBe(x);
+  expect(pointFormDialog.vm.value).toBe(true);
+  expect(pointFormDialog.vm.positionY).toBe(y);
+  expect(pointFormDialog.vm.positionX).toBe(x);
 };
 
 const fillPointDialog = (
@@ -63,7 +60,7 @@ const fillPointDialog = (
     y: Faker.datatype.number(),
   }),
 ) => {
-  const pointFormDialog = selectPointFormDialog(wrapper);
+  const pointFormDialog = selectPointFormDialogMenu(wrapper);
 
   pointFormDialog.vm.$emit('submit', point);
 
@@ -78,7 +75,7 @@ const checkMenuIsClosed = async (wrapper) => {
 };
 
 const triggerContextMenuEvent = (wrapper, event) => {
-  const contextMenu = selectMermaidContextmenu(wrapper);
+  const contextMenu = selectPointContextmenu(wrapper);
 
   return contextMenu.vm.$emit(event);
 };
@@ -112,9 +109,9 @@ describe('mermaid-points', () => {
 
     checkContextMenuPosition(wrapper, { x: event.clientX, y: event.clientY });
 
-    const contextMenu = selectMermaidContextmenu(wrapper);
+    const contextMenu = selectPointContextmenu(wrapper);
 
-    expect(contextMenu.vm.$attrs.editing).toBe(false);
+    expect(contextMenu.vm.editing).toBe(false);
   });
 
   test('Contextmenu didn\'t change when menu already opened', async () => {
@@ -212,9 +209,9 @@ describe('mermaid-points', () => {
 
     await selectRoot(wrapper).trigger('click');
 
-    const pointFormDialog = selectPointFormDialog(wrapper);
+    const pointFormDialog = selectPointFormDialogMenu(wrapper);
 
-    expect(pointFormDialog.element).toBeFalsy();
+    expect(pointFormDialog.vm.value).toBeFalsy();
   });
 
   test('Point added after click with prop', async () => {
