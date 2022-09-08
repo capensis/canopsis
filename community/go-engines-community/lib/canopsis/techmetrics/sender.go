@@ -217,6 +217,8 @@ func (s *sender) send(ctx context.Context) {
 		return
 	}
 
+	batches := s.flushBatches()
+
 	if s.pool == nil {
 		var err error
 		s.pool, err = postgres.NewTechMetricsPool(ctx, s.poolRetryCount, s.poolRetryTimeout)
@@ -226,7 +228,6 @@ func (s *sender) send(ctx context.Context) {
 		}
 	}
 
-	batches := s.flushBatches()
 	batch := &pgx.Batch{}
 	count := 0
 	for _, items := range batches {
