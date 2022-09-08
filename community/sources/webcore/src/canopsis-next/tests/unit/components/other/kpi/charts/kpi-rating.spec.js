@@ -16,6 +16,7 @@ const stubs = {
   'c-progress-overlay': true,
   'kpi-rating-filters': true,
   'kpi-rating-chart': true,
+  'kpi-error-overlay': true,
 };
 
 const factory = (options = {}) => shallowMount(KpiRating, {
@@ -266,6 +267,21 @@ describe('kpi-rating', () => {
             data: [],
             meta: {},
           })),
+        },
+      }]),
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  test('Renders `kpi-rating` with fetching error', async () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([{
+        name: 'metrics',
+        actions: {
+          fetchRatingMetricsWithoutStore: jest.fn().mockRejectedValue(),
         },
       }]),
     });
