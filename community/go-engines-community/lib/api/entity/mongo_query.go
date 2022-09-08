@@ -436,10 +436,16 @@ func getDeletablePipeline() []bson.M {
 	return []bson.M{
 		// Entity can be deleted if entity is service or if there aren't any alarm which is related to entity.
 		{"$lookup": bson.M{
-			"from":         mongo.AlarmMongoCollection,
-			"localField":   "_id",
-			"foreignField": "d",
-			"as":           "alarms",
+			"from": mongo.AlarmMongoCollection,
+			"let":  bson.M{"id": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$d", "$$id"}}},
+					{"v.resolved": nil},
+				}}},
+				{"$limit": 1},
+			},
+			"as": "alarms",
 		}},
 		{"$addFields": bson.M{
 			"deletable": bson.M{"$cond": bson.M{

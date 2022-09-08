@@ -1125,6 +1125,52 @@ instruction:
     last_executed_on: 1618280210
     last_modified: 1596712203
 
+  instruction_to_stats_executions_get_11:
+    <<: *instruction_manual
+    _id: test-instruction-to-stats-executions-get-11
+    created: 1596712203
+    last_executed_on: 1618280210
+    last_modified: 1596712203
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test filter
+    alarm_pattern:
+    steps:
+      - _id: test-instruction-to-stats-executions-get-11-step-1
+        name: test-instruction-to-stats-executions-get-11-step-1-name
+        operations:
+          - _id: test-instruction-to-stats-executions-get-11-step-1-operation-1
+            name: test-instruction-to-stats-executions-get-11-step-1-operation-1-name
+            time_to_complete:
+              value: 1
+              unit: s
+            description: test-instruction-to-stats-executions-get-11-step-1-operation-1-description
+          - _id: test-instruction-to-stats-executions-get-11-step-1-operation-2
+            name: test-instruction-to-stats-executions-get-11-step-1-operation-2-name
+            time_to_complete:
+              value: 3
+              unit: s
+            description: test-instruction-to-stats-executions-get-11-step-1-operation-2-description
+        endpoint: test-instruction-to-stats-executions-get-11-step-1-endpoint
+      - _id: test-instruction-to-stats-executions-get-11-step-2
+        name: test-instruction-to-stats-executions-get-11-step-2-name
+        operations:
+          - _id: test-instruction-to-stats-executions-get-11-step-2-operation-1
+            name: test-instruction-to-stats-executions-get-11-step-2-operation-1-name
+            time_to_complete:
+              value: 1
+              unit: s
+            description: test-instruction-to-stats-executions-get-11-step-2-operation-1-description
+          - _id: test-instruction-to-stats-executions-get-11-step-2-operation-2
+            name: test-instruction-to-stats-executions-get-11-step-2-operation-2-name
+            time_to_complete:
+              value: 3
+              unit: s
+            description: test-instruction-to-stats-executions-get-11-step-2-operation-2-description
+        endpoint: test-instruction-to-stats-executions-get-11-step-2-endpoint
+
   instruction_to_stats_executions_get_with_resolved_alarms_1:
     <<: *instruction_manual
     _id: test-instruction-to-stats-executions-get-with-resolved-alarms-1
@@ -1612,3 +1658,28 @@ instruction:
     jobs:
       - job: test-job-action-remediation-triggers-3
         stop_on_fail: false
+
+  test-instruction-to-stats-summary-get-4:
+    <<: *instruction_manual
+    _id: test-instruction-to-stats-summary-get-4
+    name: test-instruction-to-stats-summary-get-4-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test filter
+    alarm_pattern:
+    description: test-instruction-to-stats-summary-get-4-description
+    jobs:
+      - job: test-job-to-instruction-edit-1
+        stop_on_fail: true
+      - job: test-job-to-instruction-edit-2
+    last_executed_on: 1596712209
+    last_modified: 1596712204
+    created: 1596712203
+    avg_complete_time: 401
+    timeout_after_execution:
+      unit: s
+      value: 2
+    priority: 16
+    author: test-user-author-1-id

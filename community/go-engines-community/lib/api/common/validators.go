@@ -226,3 +226,7 @@ func (v *existFieldValidator) Validate(ctx context.Context, sl validator.StructL
 		}
 	}
 }
+
+func ValidateInfoValue(fl validator.FieldLevel) bool {
+	return types.IsInfoValueValid(fl.Field().Interface())
+}

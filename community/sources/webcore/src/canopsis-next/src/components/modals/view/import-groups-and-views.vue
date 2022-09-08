@@ -18,7 +18,7 @@
           draggable-group-views(v-model="importedViews", pull)
         v-divider.ml-1.mr-1.secondary(vertical)
         v-flex(xs4)
-          v-flex.text-xs-center.mb-2 {{ $t('modals.importExportViews.result') }}
+          v-flex.text-xs-center.mb-2 {{ $t('common.result') }}
           draggable-groups(
             v-model="currentGroups",
             put,
