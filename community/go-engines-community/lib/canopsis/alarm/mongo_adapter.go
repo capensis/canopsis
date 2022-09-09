@@ -220,15 +220,10 @@ func (a mongoAdapter) GetAlarmByAlarmId(ctx context.Context, id string) (types.A
 	})
 }
 
-func (a mongoAdapter) GetOpenedAlarm(ctx context.Context, connector, connectorName, id string) (types.Alarm, error) {
+func (a mongoAdapter) GetOpenedAlarm(ctx context.Context, entityId string) (types.Alarm, error) {
 	return a.getAlarmWithErr(ctx, bson.M{
-		"d":                id,
-		"v.connector":      connector,
-		"v.connector_name": connectorName,
-		"$or": []bson.M{
-			{"v.resolved": nil},
-			{"v.resolved": bson.M{"$exists": false}},
-		},
+		"d":          entityId,
+		"v.resolved": nil,
 	})
 }
 
