@@ -2,9 +2,12 @@
 package log
 
 import (
+	"io"
 	"os"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 )
 
@@ -12,9 +15,47 @@ import (
 // engines.
 // The returned logger is thread-safe, and may be used in multiple goroutines.
 func NewLogger(debug bool) zerolog.Logger {
+	var (
+		logger       zerolog.Logger
+		loggerWriter io.Writer
+	)
+
 	logLevel := zerolog.InfoLevel
 	if debug {
 		logLevel = zerolog.DebugLevel
+	}
+
+	// Default
+	writer := os.Stdout
+	consoleWriter := zerolog.ConsoleWriter{
+		Out:        os.Stdout,
+		TimeFormat: time.RFC3339,
+	}
+	loggerWriter = consoleWriter
+
+	cfg, err := loadLoggerConfig()
+	if err != nil {
+		logger = zerolog.New(loggerWriter).Level(logLevel).With().Timestamp().Caller().Logger()
+		return logger
+	}
+
+	if cfg.Writer != "" {
+		if cfg.Writer == "stderr" {
+			writer = os.Stderr
+		}
+		loggerWriter = writer
+	}
+
+	if cfg.ConsoleWriter.Enabled {
+		consoleWriter.Out = writer
+		consoleWriter.NoColor = cfg.ConsoleWriter.NoColor
+		if cfg.ConsoleWriter.TimeFormat != "" {
+			consoleWriter.TimeFormat = cfg.ConsoleWriter.TimeFormat
+		}
+		if len(cfg.ConsoleWriter.PartsOrder) > 0 {
+			consoleWriter.PartsOrder = cfg.ConsoleWriter.PartsOrder
+		}
+		loggerWriter = consoleWriter
 	}
 
 	// The writer should be thread-safe so that the logger can be used in
@@ -23,15 +64,26 @@ func NewLogger(debug bool) zerolog.Logger {
 	// It may be necessary to wrap other writers with zerolog.SyncWriter.
 	// For more details, read :
 	// https://godoc.org/github.com/rs/zerolog#SyncWriter
-	writer := zerolog.ConsoleWriter{
-		Out:        os.Stdout,
-		TimeFormat: time.RFC3339,
-	}
-	return zerolog.New(writer).Level(logLevel).With().Timestamp().Caller().Logger()
+	logger = zerolog.New(loggerWriter).Level(logLevel).With().Timestamp().Caller().Logger()
+	return logger
 }
 
 // NewTestLogger returns the default test logger, that should be used by all
 // the engines.
 func NewTestLogger() zerolog.Logger {
 	return NewLogger(false)
+}
+
+func loadLoggerConfig() (*config.SectionLogger, error) {
+	dbClient, err := mongo.NewClient(0, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	cfg, err := config.NewAdapter(dbClient).GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.Logger, nil
 }
