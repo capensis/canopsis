@@ -156,7 +156,7 @@ type Event struct {
 	UserID string `bson:"user_id" json:"user_id"`
 
 	Timestamp         CpsTime   `bson:"timestamp" json:"timestamp"`
-	ReceivedTimestamp MicroTime `bson:"received_timestamp" json:"received_timestamp"`
+	ReceivedTimestamp MicroTime `bson:"rt" json:"rt"`
 
 	RK string `bson:"routing_key" json:"routing_key"`
 	// AckResources is used to ack all resource alarms on ack component alarm.

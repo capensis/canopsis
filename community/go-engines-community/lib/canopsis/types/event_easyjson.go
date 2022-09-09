@@ -151,7 +151,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.Timestamp).UnmarshalJSON(data))
 			}
-		case "received_timestamp":
+		case "rt":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.ReceivedTimestamp).UnmarshalJSON(data))
 			}
@@ -496,7 +496,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.Raw((in.Timestamp).MarshalJSON())
 	}
 	{
-		const prefix string = ",\"received_timestamp\":"
+		const prefix string = ",\"rt\":"
 		out.RawString(prefix)
 		out.Raw((in.ReceivedTimestamp).MarshalJSON())
 	}
