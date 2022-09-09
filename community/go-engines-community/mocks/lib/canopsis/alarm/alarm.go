@@ -307,18 +307,18 @@ func (mr *MockAdapterMockRecorder) GetLastAlarmWithEntity(arg0, arg1, arg2, arg3
 }
 
 // GetOpenedAlarm mocks base method.
-func (m *MockAdapter) GetOpenedAlarm(arg0 context.Context, arg1, arg2, arg3 string) (types.Alarm, error) {
+func (m *MockAdapter) GetOpenedAlarm(arg0 context.Context, arg1 string) (types.Alarm, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOpenedAlarm", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "GetOpenedAlarm", arg0, arg1)
 	ret0, _ := ret[0].(types.Alarm)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetOpenedAlarm indicates an expected call of GetOpenedAlarm.
-func (mr *MockAdapterMockRecorder) GetOpenedAlarm(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+func (mr *MockAdapterMockRecorder) GetOpenedAlarm(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarm", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarm), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarm", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarm), arg0, arg1)
 }
 
 // GetOpenedAlarmByAlarmId mocks base method.
