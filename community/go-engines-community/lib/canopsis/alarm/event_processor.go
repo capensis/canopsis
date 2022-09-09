@@ -95,7 +95,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		return alarmChange, err
 	}
 
-	alarm, err := s.adapter.GetOpenedAlarm(ctx, event.Connector, event.ConnectorName, event.GetEID())
+	alarm, err := s.adapter.GetOpenedAlarm(ctx, event.GetEID())
 	alarmNotFound := false
 	if _, ok := err.(errt.NotFound); ok {
 		alarmNotFound = true
@@ -654,9 +654,7 @@ func (s *eventProcessor) processMetaAlarmChildren(ctx context.Context, event *ty
 }
 
 func (s *eventProcessor) handleMetaAlarmChildResolve(ctx context.Context, event *types.Event, changeType types.AlarmChangeType) (bool, error) {
-	if event.Alarm.IsMetaAlarm() || changeType != types.AlarmChangeTypeResolve ||
-		len(event.Alarm.Value.Parents) == 0 {
-
+	if event.Alarm.IsMetaAlarm() || changeType != types.AlarmChangeTypeResolve || len(event.Alarm.Value.Parents) == 0 {
 		return false, nil
 	}
 
@@ -683,6 +681,8 @@ func (s *eventProcessor) handleMetaAlarmChildResolve(ctx context.Context, event 
 		}(alarm)
 	}
 	wg.Wait()
+
+	s.updateMetaChildrenState(ctx, event)
 
 	return true, nil
 }
@@ -744,6 +744,17 @@ func (s *eventProcessor) updateMetaChildrenState(ctx context.Context, event *typ
 	if !event.Alarm.IsMetaChildren() {
 		return
 	}
+
+	alarmState := event.Alarm.Value.State.Value
+	lastUpdateDate := event.Alarm.Value.LastUpdateDate
+	if event.Alarm.IsResolved() {
+		if alarmState == types.AlarmStateOK {
+			return
+		}
+		alarmState = types.AlarmStateOK
+		lastUpdateDate = *event.Alarm.Value.Resolved
+	}
+
 	var parents []types.AlarmWithEntity
 	err := s.adapter.GetOpenedAlarmsWithEntityByIDs(ctx, event.Alarm.Value.Parents, &parents)
 	if err != nil {
@@ -754,9 +765,8 @@ func (s *eventProcessor) updateMetaChildrenState(ctx context.Context, event *typ
 	updatedParents := make([]types.Alarm, 0, len(parents))
 	for _, metaAlarm := range parents {
 		maCurrentState := metaAlarm.Alarm.Value.State.Value
-		alarmState := event.Alarm.Value.State.Value
 		if alarmState > maCurrentState {
-			err := UpdateAlarmState(&metaAlarm.Alarm, metaAlarm.Entity, event.Alarm.Value.LastUpdateDate, alarmState, metaAlarm.Alarm.Value.Output, s.alarmStatusService)
+			err := UpdateAlarmState(&metaAlarm.Alarm, metaAlarm.Entity, lastUpdateDate, alarmState, metaAlarm.Alarm.Value.Output, s.alarmStatusService)
 			if err != nil {
 				s.logger.Error().Err(err).Str("alarm", metaAlarm.Alarm.ID).Msgf("cannot update alarm")
 				return
@@ -784,7 +794,7 @@ func (s *eventProcessor) updateMetaChildrenState(ctx context.Context, event *typ
 
 func (s *eventProcessor) resolveAlarmForDisabledEntity(ctx context.Context, event *types.Event) (types.AlarmChange, error) {
 	alarmChange := types.NewAlarmChange()
-	alarm, err := s.adapter.GetOpenedAlarm(ctx, event.Connector, event.ConnectorName, event.GetEID())
+	alarm, err := s.adapter.GetOpenedAlarm(ctx, event.GetEID())
 	event.Entity.IdleSince = nil
 	event.Entity.LastIdleRuleApply = ""
 
@@ -928,8 +938,11 @@ func (s *eventProcessor) updateMetaAlarmToWorstState(ctx context.Context, metaAl
 			// all children to update
 			for _, child := range updateChildren {
 				childState := child.CurrentState()
+				if child.IsResolved() {
+					childState = types.AlarmStateOK
+				}
 				if childState >= worstState {
-					worstState = child.Value.State.Value
+					worstState = childState
 					stepTs = child.Value.LastUpdateDate
 				}
 			}
@@ -944,6 +957,9 @@ func (s *eventProcessor) updateMetaAlarmToWorstState(ctx context.Context, metaAl
 					ts = uc.Value.LastUpdateDate
 					if uc.ID == child.ID {
 						childState = uc.CurrentState()
+						if uc.IsResolved() {
+							childState = types.AlarmStateOK
+						}
 						break
 					}
 				}
