@@ -58,6 +58,7 @@
           :options="{ data }",
           :draggable="!data.is_entity_coordinates && !shown",
           @dragend="finishMovingMarker",
+          @dblclick="openEditPointForm(data)",
           @click=""
         )
           geomap-icon(:icon-anchor="icon.anchor")
@@ -71,27 +72,19 @@
             :size="placeholderPoint.icon.size"
           )
 
-      v-menu(
-        v-model="shown",
-        :position-x="pageX",
-        :position-y="pageY",
-        :close-on-content-click="false",
-        ignore-click-outside,
-        offset-overflow,
-        offset-x,
-        absolute
+      point-form-dialog-menu(
+        :value="shown",
+        :point="pointDialog",
+        :position-x="clientX",
+        :position-y="clientY",
+        :editing="!!editingPoint",
+        :exists-entities="existsEntities",
+        coordinates,
+        @cancel="closePointDialog",
+        @submit="submitPointDialog",
+        @remove="showRemovePointModal",
+        @fly:coordinates="handleUpdateCoordinates"
       )
-        point-form-dialog(
-          v-if="pointDialog",
-          :point="pointDialog",
-          :editing="!!editingPoint",
-          :exists-entities="existsEntities",
-          coordinates,
-          @cancel="closePointDialog",
-          @submit="submitPointDialog",
-          @remove="showRemovePointModal",
-          @fly:coordinates="handleUpdateCoordinates"
-        )
     v-messages(v-if="hasChildrenError", :value="errorMessages", color="error")
 </template>
 
@@ -118,7 +111,7 @@ import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
 import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
 import PointIcon from '@/components/other/map/partials/point-icon.vue';
 
-import PointFormDialog from './point-form-dialog.vue';
+import PointFormDialogMenu from './point-form-dialog-menu.vue';
 
 export default {
   inject: ['$validator'],
@@ -131,7 +124,7 @@ export default {
     GeomapControl,
     GeomapClusterGroup,
     GeomapMarker,
-    PointFormDialog,
+    PointFormDialogMenu,
     GeomapIcon,
     PointIcon,
   },
@@ -168,8 +161,8 @@ export default {
       addOnClick: false,
 
       shown: false,
-      pageX: 0,
-      pageY: 0,
+      clientX: 0,
+      clientY: 0,
       addingPoint: undefined,
       editingPoint: undefined,
     };
@@ -298,13 +291,11 @@ export default {
     },
 
     setMenuPositionByLatLng(coordinates) {
-      if (coordinates) {
-        const { x: containerX, y: containerY } = this.$refs.map.$el.getBoundingClientRect();
-        const { x, y } = this.$refs.map.mapObject.latLngToContainerPoint(coordinates);
+      const { x: containerX, y: containerY } = this.$refs.map.$el.getBoundingClientRect();
+      const { x, y } = this.$refs.map.mapObject.latLngToContainerPoint(coordinates);
 
-        this.pageX = x + containerX;
-        this.pageY = y + containerY;
-      }
+      this.clientX = x + containerX;
+      this.clientY = y + containerY;
     },
 
     closeContextMenu() {
@@ -359,6 +350,14 @@ export default {
       this.shown = true;
 
       this.closeContextMenu();
+
+      this.flyToCoordinates(this.editingPoint.coordinates);
+      this.setMenuPositionByLatLng(this.editingPoint.coordinates);
+    },
+
+    openEditPointForm(point) {
+      this.editingPoint = point;
+      this.shown = true;
 
       this.flyToCoordinates(this.editingPoint.coordinates);
       this.setMenuPositionByLatLng(this.editingPoint.coordinates);

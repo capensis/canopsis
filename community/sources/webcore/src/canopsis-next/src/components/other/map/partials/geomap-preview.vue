@@ -25,7 +25,7 @@
         v-for="{ coordinates, id, data, icon } in markers",
         :key="id",
         :lat-lng="coordinates",
-        @click="openPopup(data, $event)"
+        @click="openMarkerPopup(data, $event)"
       )
         geomap-icon(:icon-anchor="icon.anchor")
           point-icon(
@@ -35,25 +35,18 @@
             :color-indicator="colorIndicator",
             :pbehavior-enabled="pbehaviorEnabled"
           )
-    v-menu(
+    point-popup-dialog(
       v-if="activePoint",
-      :value="true",
+      :point="activePoint",
       :position-x="positionX",
       :position-y="positionY",
-      :close-on-content-click="false",
-      ignore-click-outside,
-      absolute,
-      top
+      :popup-template="popupTemplate",
+      :color-indicator="colorIndicator",
+      :popup-actions="popupActions",
+      @show:alarms="showAlarms",
+      @show:map="showLinkedMap",
+      @close="closePopup"
     )
-      point-popup(
-        :point="activePoint",
-        :template="popupTemplate",
-        :color-indicator="colorIndicator",
-        :actions="popupActions",
-        @show:alarms="showAlarms",
-        @show:map="showLinkedMap",
-        @close="closePopup"
-      )
 </template>
 
 <script>
@@ -64,6 +57,8 @@ import { COLOR_INDICATOR_TYPES } from '@/constants';
 
 import { getGeomapMarkerIconOptions } from '@/helpers/map';
 import { getEntityColor } from '@/helpers/color';
+
+import { mapInformationPopup } from '@/mixins/map/map-information-popup';
 
 import Geomap from '@/components/common/geomap/geomap.vue';
 import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
@@ -76,10 +71,11 @@ import GeomapTooltip from '@/components/common/geomap/geomap-tooltip.vue';
 import GeomapControl from '@/components/common/geomap/geomap-control.vue';
 
 import PointIcon from './point-icon.vue';
-import PointPopup from './point-popup.vue';
+import PointPopupDialog from './point-popup-dialog.vue';
 
 export default {
   components: {
+    PointPopupDialog,
     Geomap,
     GeomapTileLayer,
     GeomapControlZoom,
@@ -90,8 +86,8 @@ export default {
     GeomapTooltip,
     GeomapControl,
     PointIcon,
-    PointPopup,
   },
+  mixins: [mapInformationPopup],
   props: {
     map: {
       type: Object,
@@ -101,33 +97,6 @@ export default {
       type: Number,
       default: 2,
     },
-    iconSize: {
-      type: Number,
-      default: 24,
-    },
-    popupTemplate: {
-      type: String,
-      required: false,
-    },
-    popupActions: {
-      type: Boolean,
-      default: false,
-    },
-    colorIndicator: {
-      type: String,
-      required: false,
-    },
-    pbehaviorEnabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      positionX: 0,
-      positionY: 0,
-      activePoint: undefined,
-    };
   },
   computed: {
     isStateColorIndicator() {
@@ -166,7 +135,7 @@ export default {
     layers() {
       const layers = {};
 
-      if (!this.colorIndicator) {
+      if (!this.colorIndicator && !this.pbehaviorEnabled) {
         return {
           points: {
             name: this.$t('map.layers.points'),
@@ -211,8 +180,10 @@ export default {
     },
   },
   watch: {
-    points() {
-      this.$nextTick(this.fitMap);
+    'map.parameters.points': {
+      handler() {
+        this.$nextTick(this.fitMap);
+      },
     },
   },
   mounted() {
@@ -231,27 +202,8 @@ export default {
       }
     },
 
-    openPopup(point) {
-      const { x: containerX, y: containerY } = this.$refs.map.$el.getBoundingClientRect();
-      const { x, y } = this.$refs.map.mapObject.latLngToContainerPoint(point.coordinates);
-
-      this.positionX = x + containerX;
-      this.positionY = y + containerY - this.iconSize;
-      this.activePoint = point;
-    },
-
-    closePopup() {
-      this.activePoint = undefined;
-    },
-
-    showLinkedMap() {
-      this.$emit('show:map', this.activePoint.map);
-      this.closePopup();
-    },
-
-    showAlarms() {
-      this.$emit('show:alarms', this.activePoint);
-      this.closePopup();
+    openMarkerPopup(point, { originalEvent }) {
+      this.openPopup(point, originalEvent);
     },
   },
 };
