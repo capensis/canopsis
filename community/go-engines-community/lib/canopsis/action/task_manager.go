@@ -60,7 +60,7 @@ func (e *redisBasedManager) Run(
 
 	go func() {
 		defer func() {
-			defer cancel()
+			cancel()
 			close(e.outputChannel)
 			close(e.taskChannel)
 		}()
