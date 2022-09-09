@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	redismod "github.com/go-redis/redis/v8"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -152,6 +153,7 @@ func (s *scheduler) ProcessMetaAlarm(ctx context.Context, lockID string, bevent 
 		lockIDList = append(lockIDList, *event.MetaAlarmChildren...)
 	}
 
+	lockIDList = utils.Unique(lockIDList)
 	locked, err := s.queueLock.LockMultipleOrPush(ctx, lockIDList, lockID, bevent)
 
 	if err != nil {
@@ -201,8 +203,10 @@ func (s *scheduler) AckEvent(ctx context.Context, event types.Event) error {
 func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, event types.Event) error {
 	lockID := event.GetEID()
 
-	if metaAlarmChildren := event.MetaAlarmChildren; metaAlarmChildren != nil && len(*metaAlarmChildren) > 0 {
-		nextEvents, err := s.queueLock.ExtendAndPopRelatedOrMultiple(ctx, *metaAlarmChildren, lockID)
+	if event.MetaAlarmChildren != nil && len(*event.MetaAlarmChildren) > 0 {
+		lockIDList := *event.MetaAlarmChildren
+		lockIDList = utils.Unique(lockIDList)
+		nextEvents, err := s.queueLock.ExtendAndPopRelatedOrMultiple(ctx, lockIDList, lockID)
 		if err != nil {
 			s.logger.Err(err).
 				Str("lockID", lockID).
@@ -346,5 +350,6 @@ func getChildren(b []byte) ([]string, error) {
 		}
 	}
 
+	children = utils.Unique(children)
 	return children, nil
 }
