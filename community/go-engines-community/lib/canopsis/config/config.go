@@ -61,6 +61,18 @@ type SectionDataStorage struct {
 	TimeToExecute string `toml:"TimeToExecute"`
 }
 
+type SectionLogger struct {
+	Writer        string        `toml:"Writer"`
+	ConsoleWriter ConsoleWriter `toml:"console_writer"`
+}
+
+type ConsoleWriter struct {
+	Enabled    bool     `toml:"Enabled"`
+	NoColor    bool     `toml:"NoColor"`
+	TimeFormat string   `toml:"TimeFormat"`
+	PartsOrder []string `toml:"PartsOrder"`
+}
+
 // CanopsisConf represents a generic configuration object.
 type CanopsisConf struct {
 	ID          string             `bson:"_id,omitempty" toml:"omitempty"`
@@ -71,6 +83,7 @@ type CanopsisConf struct {
 	ImportCtx   SectionImportCtx   `bson:"import_ctx" toml:"import_ctx"`
 	File        SectionFile        `bson:"file" toml:"file"`
 	DataStorage SectionDataStorage `bson:"data_storage" toml:"data_storage"`
+	Logger      SectionLogger      `bson:"logger" toml:"logger"`
 }
 
 // UserInterfaceConf represents a user interface configuration object.

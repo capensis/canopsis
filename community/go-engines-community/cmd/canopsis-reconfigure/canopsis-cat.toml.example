@@ -304,3 +304,16 @@ TimeToExecute = "Sunday,23"
 ThdWarnMinPerImport = "30m"
 ThdCritMinPerImport = "60m"
 FilePattern = "/tmp/import_%s.json"
+
+# It's required to restart api and engines after canopsis-reconfigure updates mongodb
+# to catch up following parameters.
+[Canopsis.logger]
+Writer = "stdout"
+
+# It's required to restart api and engines after canopsis-reconfigure updates mongodb
+# to catch up following parameters.
+[Canopsis.logger.console_writer]
+Enabled = true
+NoColor = false
+TimeFormat = "2006-01-02T15:04:05Z07:00"
+PartsOrder = ["time", "level", "caller", "message"]
