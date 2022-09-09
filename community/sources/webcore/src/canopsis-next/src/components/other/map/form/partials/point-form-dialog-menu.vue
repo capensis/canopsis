@@ -11,7 +11,8 @@
       v-on="$listeners",
       v-if="value && point",
       :point="point",
-      :editing="!!editing"
+      :editing="!!editing",
+      :exists-entities="existsEntities"
     )
 </template>
 
@@ -40,6 +41,10 @@ export default {
     editing: {
       type: Boolean,
       default: false,
+    },
+    existsEntities: {
+      type: Array,
+      required: false,
     },
   },
 };
