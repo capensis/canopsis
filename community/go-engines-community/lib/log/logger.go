@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/journald"
 )
 
 // NewLogger returns the default logger, that should be used by all the
@@ -16,8 +17,8 @@ import (
 // The returned logger is thread-safe, and may be used in multiple goroutines.
 func NewLogger(debug bool) zerolog.Logger {
 	var (
-		logger       zerolog.Logger
-		loggerWriter io.Writer
+		logger               zerolog.Logger
+		loggerWriter, writer io.Writer
 	)
 
 	logLevel := zerolog.InfoLevel
@@ -26,7 +27,7 @@ func NewLogger(debug bool) zerolog.Logger {
 	}
 
 	// Default
-	writer := os.Stdout
+	writer = os.Stdout
 	consoleWriter := zerolog.ConsoleWriter{
 		Out:        os.Stdout,
 		TimeFormat: time.RFC3339,
@@ -40,8 +41,11 @@ func NewLogger(debug bool) zerolog.Logger {
 	}
 
 	if cfg.Writer != "" {
-		if cfg.Writer == "stderr" {
+		switch cfg.Writer {
+		case "stderr":
 			writer = os.Stderr
+		case "journald":
+			writer = journald.NewJournalDWriter()
 		}
 		loggerWriter = writer
 	}
