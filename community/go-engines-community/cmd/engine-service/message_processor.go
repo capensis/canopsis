@@ -53,11 +53,9 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 	trace.Log(ctx, "event.resource", event.Resource)
 
 	defer func() {
-		defer func() {
-			eventMetric.EventType = event.EventType
-			eventMetric.Interval = time.Since(eventMetric.Timestamp)
-			p.TechMetricsSender.SendSimpleEvent(techmetrics.ServiceEvent, eventMetric)
-		}()
+		eventMetric.EventType = event.EventType
+		eventMetric.Interval = time.Since(eventMetric.Timestamp)
+		p.TechMetricsSender.SendSimpleEvent(techmetrics.ServiceEvent, eventMetric)
 	}()
 
 	if event.EventType == types.EventTypeUpdateEntityService {
