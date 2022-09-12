@@ -1,0 +1,49 @@
+configuration:
+  user_interface:
+    _id: user_interface
+    login_page_description: "<h1 style='margin-top: 0.5em; font-size: 40px;'>Hypervisez
+      votre SI</h1><p style='text-align: left; margin-top: 1.5em; font-size: 20px;'>Canopsis
+      est une solution d'hypervision Open Source couvrant l'ensemble des sources de données
+      de votre SI.<br> Avec l'hypervision Canopsis vous pouvez centraliser, traiter et
+      présenter l'ensemble des événements de votre SI en une console unique.</p>"
+    popup_timeout:
+      info:
+        value: 3
+        unit: s
+      error:
+        value: 3
+        unit: s
+    max_matched_items: 10000
+    check_count_request_timeout: 30
+    app_title: Canopsis
+
+state_settings:
+  junit:
+    _id: junit
+    type: junit
+    method: worst_of_share
+    junit_thresholds:
+      skipped:
+        minor: 10
+        major: 20
+        critical: 30
+        type: 1
+      errors:
+        minor: 10
+        major: 20
+        critical: 30
+        type: 1
+      failures:
+        minor: 10
+        major: 20
+        critical: 30
+        type: 1
+
+notification:
+  instruction:
+    _id: notification
+    instruction:
+      rate: true
+      rate_frequency:
+        value: 1
+        unit: w

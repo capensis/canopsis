@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`edit-live-reporting Renders \`edit-live-reporting\` with empty modal 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Live reporting
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <h3>
+        Date interval
+      </h3>
+      <date-interval-selector-stub
+        value="[object Object]"
+      />
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Apply
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`edit-live-reporting Renders \`edit-live-reporting\` with interval 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Live reporting
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <h3>
+        Date interval
+      </h3>
+      <date-interval-selector-stub
+        value="[object Object]"
+      />
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Apply
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;

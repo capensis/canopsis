@@ -34,18 +34,18 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
       class="text-md-center"
     >
       <strong>
-        alarmList.actions.iconsTitles.comment
+        Comment
       </strong>
       <div>
-        common.by: lastComment-author
+        By: lastComment-author
       </div>
       <div>
-        common.date: 07/08/2013 19:00:00
+        Date: 07/08/2013 19:00:00
       </div>
       <div
         class="c-extra-details__message"
       >
-        common.comment:undefined: 
+        Comment: 
         <span>
           lastComment-message
         </span>
@@ -89,18 +89,18 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
       class="text-md-center"
     >
       <strong>
-        alarmList.actions.iconsTitles.comment
+        Comment
       </strong>
       <div>
-        common.by: lastComment-author
+        By: lastComment-author
       </div>
       <div>
-        common.date: 6:00:00
+        Date: 6:00:00
       </div>
       <div
         class="c-extra-details__message"
       >
-        common.comment:undefined: 
+        Comment: 
         <span>
           lastComment-message
         </span>

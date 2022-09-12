@@ -2,13 +2,10 @@ package idlerule
 
 import (
 	"context"
-	"errors"
-	"sync"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -23,7 +20,6 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Rule, error)
 	Update(context.Context, UpdateRequest) (*Rule, error)
 	Delete(ctx context.Context, id string) (bool, error)
-	CountByPatterns(ctx context.Context, filter CountByPatternRequest, timeout int, overLimit int) (*CountByPatternResult, error)
 }
 
 type store struct {
@@ -33,13 +29,6 @@ type store struct {
 	alarmCollection       mongo.DbCollection
 	defaultSearchByFields []string
 	defaultSortBy         string
-}
-
-type countResult struct {
-	entities    int64
-	alarms      int64
-	entitiesErr error
-	alarmsErr   error
 }
 
 func NewStore(db mongo.DbClient) Store {
@@ -142,27 +131,41 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 }
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
-	prevRule, err := s.GetOneBy(ctx, r.ID)
-	if err != nil || prevRule == nil {
-		return nil, err
+	model := transformRequestToModel(r.EditRequest)
+	model.ID = r.ID
+	model.Updated = types.CpsTime{Time: time.Now()}
+
+	update := bson.M{"$set": model}
+
+	unset := bson.M{}
+	// check for type entity in case if we update an old alarm idle rule with old alarm patterns
+	if r.CorporateAlarmPattern != "" || len(r.AlarmPattern) > 0 || model.Type == idlerule.RuleTypeEntity {
+		unset["old_alarm_patterns"] = 1
 	}
 
-	now := types.CpsTime{Time: time.Now()}
-	rule := transformRequestToModel(r.EditRequest)
-	rule.ID = r.ID
-	rule.Created = prevRule.Created
-	rule.Updated = now
+	if r.CorporateEntityPattern != "" || len(r.EntityPattern) > 0 {
+		unset["old_entity_patterns"] = 1
+	}
+
+	if len(unset) > 0 {
+		update["$unset"] = unset
+	}
 
 	var idleRule *Rule
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
-		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": rule.ID}, bson.M{"$set": rule})
+		prevRule, err := s.GetOneBy(ctx, r.ID)
+		if err != nil || prevRule == nil {
+			return err
+		}
+
+		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
 		if err != nil {
 			return err
 		}
 
-		if prevRule.Priority != rule.Priority {
-			err := s.updateFollowingPriorities(ctx, rule.ID, rule.Priority)
+		if prevRule.Priority != model.Priority {
+			err := s.updateFollowingPriorities(ctx, model.ID, model.Priority)
 			if err != nil {
 				return err
 			}
@@ -185,123 +188,6 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 
 	return deleted > 0, nil
-}
-
-func (s store) countEntitiesCollection(ctx context.Context, entityPattern pattern.EntityPatternList) (int64, error) {
-	cursor, err := s.entityCollection.Aggregate(ctx, []bson.M{
-		{"$match": entityPattern.AsMongoDriverQuery()},
-		{"$count": "total_count"},
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	defer cursor.Close(ctx)
-
-	ar := AggregationResult{}
-	if cursor.Next(ctx) {
-		err = cursor.Decode(&ar)
-	}
-
-	return ar.GetTotal(), err
-}
-
-func (s store) countAlarmsCollection(ctx context.Context, alarmPattern pattern.AlarmPatternList) (int64, error) {
-	cursor, err := s.alarmCollection.Aggregate(ctx, []bson.M{
-		{"$match": alarmPattern.AsMongoDriverQuery()},
-		{"$count": "total_count"},
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	defer cursor.Close(ctx)
-
-	ar := AggregationResult{}
-	if cursor.Next(ctx) {
-		err = cursor.Decode(&ar)
-	}
-
-	return ar.GetTotal(), err
-}
-
-func (s store) count(ctx context.Context, request CountByPatternRequest, overLimit int) <-chan countResult {
-	v := make(chan countResult)
-
-	go func(v chan<- countResult) {
-		defer close(v)
-
-		var entitiesCount, alarmCount int64
-		var entitiesErr, alarmErr error
-
-		wg := sync.WaitGroup{}
-		wg.Add(2)
-
-		ctx, cancel := context.WithCancel(ctx)
-
-		go func(cancel context.CancelFunc) {
-			defer wg.Done()
-
-			if !request.EntityPatterns.IsSet() || !request.EntityPatterns.IsValid() || len(request.EntityPatterns.Patterns) == 0 {
-				return
-			}
-
-			entitiesCount, entitiesErr = s.countEntitiesCollection(ctx, request.EntityPatterns)
-			if entitiesErr != nil || entitiesCount > int64(overLimit) {
-				cancel()
-			}
-		}(cancel)
-
-		go func(cancel context.CancelFunc) {
-			defer wg.Done()
-
-			if !request.AlarmPatterns.IsSet() || !request.AlarmPatterns.IsValid() || len(request.AlarmPatterns.Patterns) == 0 {
-				return
-			}
-
-			alarmCount, alarmErr = s.countAlarmsCollection(ctx, request.AlarmPatterns)
-			if alarmErr != nil || alarmCount > int64(overLimit) {
-				cancel()
-			}
-		}(cancel)
-
-		wg.Wait()
-
-		res := countResult{
-			entities:    entitiesCount,
-			alarms:      alarmCount,
-			entitiesErr: entitiesErr,
-			alarmsErr:   alarmErr,
-		}
-
-		v <- res
-	}(v)
-
-	return v
-}
-
-func (s store) CountByPatterns(ctx context.Context, request CountByPatternRequest, timeout int, overLimit int) (*CountByPatternResult, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(timeout)*time.Second)
-	defer cancel()
-
-	res := <-s.count(ctx, request, overLimit)
-
-	if errors.Is(res.alarmsErr, context.DeadlineExceeded) || errors.Is(res.entitiesErr, context.DeadlineExceeded) {
-		return nil, context.DeadlineExceeded
-	}
-
-	if res.alarmsErr != nil && !errors.Is(res.alarmsErr, context.Canceled) {
-		return nil, res.alarmsErr
-	}
-
-	if res.entitiesErr != nil && !errors.Is(res.entitiesErr, context.Canceled) {
-		return nil, res.entitiesErr
-	}
-
-	return &CountByPatternResult{
-		TotalCountEntities: res.entities,
-		TotalCountAlarms:   res.alarms,
-	}, nil
 }
 
 func (s *store) updateFollowingPriorities(ctx context.Context, id string, priority int64) error {
@@ -358,11 +244,16 @@ func transformRequestToModel(r EditRequest) idlerule.Rule {
 		Type:                 r.Type,
 		Priority:             *r.Priority,
 		Duration:             r.Duration,
-		EntityPatterns:       r.EntityPatterns,
 		DisableDuringPeriods: r.DisableDuringPeriods,
-		AlarmPatterns:        r.AlarmPatterns,
 		AlarmCondition:       r.AlarmCondition,
 		Operation:            operation,
+		AlarmPatternFields: r.AlarmPatternFieldsRequest.ToModelWithoutFields(
+			common.GetForbiddenFieldsInAlarmPattern(mongo.IdleRuleMongoCollection),
+			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.IdleRuleMongoCollection),
+		),
+		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(
+			common.GetForbiddenFieldsInEntityPattern(mongo.IdleRuleMongoCollection),
+		),
 	}
 }
 

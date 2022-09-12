@@ -5,15 +5,13 @@ import { omit } from 'lodash';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
-import { createMockedStoreModules } from '@unit/utils/store';
-import { fakeStaticAlarms } from '@unit/data/alarm';
+import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
+import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
 
 import {
   CANOPSIS_EDITION,
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_STATUSES,
-  FILTER_DEFAULT_VALUES,
-  FILTER_MONGO_OPERATORS,
   MODALS,
   QUICK_RANGES,
   REMEDIATION_INSTRUCTION_TYPES,
@@ -35,6 +33,7 @@ const stubs = {
   'c-entity-category-field': true,
   'v-switch': true,
   'filter-selector': true,
+  'filters-list-btn': true,
   'alarms-list-remediation-instructions-filters': true,
   'c-action-btn': true,
   'c-pagination': true,
@@ -55,6 +54,7 @@ const snapshotStubs = {
   'c-entity-category-field': true,
   'v-switch': true,
   'filter-selector': true,
+  'filters-list-btn': true,
   'alarms-list-remediation-instructions-filters': true,
   'c-action-btn': true,
   'c-pagination': true,
@@ -123,7 +123,11 @@ describe('alarms-list', () => {
     status: EXPORT_STATUSES.failed,
   };
   const exportAlarmFile = 'exportAlarmFile';
-  const widget = generateDefaultAlarmListWidgetForm();
+  const widget = {
+    ...generateDefaultAlarmListWidgetForm(),
+
+    _id: '880c5d0c-3f31-477c-8365-2f90389326cc',
+  };
   const defaultQuery = {
     active_columns: widget.parameters.widgetColumns.map(v => v.value),
     correlation: userPreferences.content.isCorrelationEnabled,
@@ -162,6 +166,10 @@ describe('alarms-list', () => {
   const createAlarmsListExport = jest.fn().mockReturnValue(exportAlarmData);
   const fetchAlarmsListExport = jest.fn().mockReturnValue(exportAlarmData);
   const fetchAlarmsListCsvFile = jest.fn().mockReturnValue(exportAlarmFile);
+  const fetchAlarmDetails = jest.fn();
+  const fetchAlarmsDetailsList = jest.fn();
+  const updateAlarmDetailsQuery = jest.fn();
+  const removeAlarmDetailsQuery = jest.fn();
   const sideBarModule = {
     name: 'sideBar',
     actions: {
@@ -170,7 +178,7 @@ describe('alarms-list', () => {
   };
   const infoModule = {
     name: 'info',
-    getters: { edition: CANOPSIS_EDITION.cat },
+    getters: { edition: CANOPSIS_EDITION.pro },
   };
   const queryModule = {
     name: 'query',
@@ -195,7 +203,7 @@ describe('alarms-list', () => {
   const userPreferenceModule = {
     name: 'userPreference',
     getters: {
-      getItemByWidget: () => () => userPreferences,
+      getItemByWidgetId: () => () => userPreferences,
     },
     actions: {
       update: updateUserPreference,
@@ -209,8 +217,31 @@ describe('alarms-list', () => {
       currentUserPermissionsById: {},
     },
   };
+
+  const alarmDetailsModule = createMockedStoreModule({
+    name: 'details',
+    getters: {
+      getItem: () => () => fakeAlarmDetails(),
+      getPending: () => () => false,
+      getQuery: () => () => ({ page: 1, limit: 10 }),
+      getQueries: () => () => [
+        { page: 2, limit: 5 },
+        { page: 1, limit: 10 },
+      ],
+    },
+    actions: {
+      fetchItem: fetchAlarmDetails,
+      fetchList: fetchAlarmsDetailsList,
+      updateQuery: updateAlarmDetailsQuery,
+      removeQuery: removeAlarmDetailsQuery,
+    },
+  });
+
   const alarmModule = {
     name: 'alarm',
+    modules: {
+      details: alarmDetailsModule,
+    },
     getters: {
       getMetaByWidgetId: () => () => ({
         total_count: totalItems,
@@ -270,6 +301,7 @@ describe('alarms-list', () => {
           multiSortBy: [],
           page: 1,
           with_instructions: true,
+          with_links: true,
           opened: true,
         },
       },
@@ -299,6 +331,7 @@ describe('alarms-list', () => {
           multiSortBy: [],
           page: 1,
           with_instructions: true,
+          with_links: true,
           opened: true,
         },
       },
@@ -395,12 +428,13 @@ describe('alarms-list', () => {
 
     const filterSelectorField = selectFilterSelectorField(wrapper);
 
-    const newFilter = {
+    const selectedFilter = {
+      _id: Faker.datatype.string(),
       title: Faker.datatype.string(),
       filter: {},
     };
 
-    filterSelectorField.vm.$emit('input', newFilter);
+    filterSelectorField.vm.$emit('input', selectedFilter._id);
 
     await flushPromises();
 
@@ -410,7 +444,7 @@ describe('alarms-list', () => {
         data: {
           content: {
             ...userPreferences.content,
-            mainFilter: newFilter,
+            mainFilter: selectedFilter._id,
             mainFilterUpdatedAt: nowTimestamp,
           },
         },
@@ -424,7 +458,7 @@ describe('alarms-list', () => {
         query: {
           ...defaultQuery,
           page: 1,
-          filter: newFilter.filter,
+          filter: selectedFilter._id,
         },
       },
       undefined,
@@ -453,12 +487,13 @@ describe('alarms-list', () => {
 
     const filterSelectorField = selectFilterSelectorField(wrapper);
 
-    const newFilter = {
+    const selectedFilter = {
+      _id: Faker.datatype.string(),
       title: Faker.datatype.string(),
       filter: {},
     };
 
-    filterSelectorField.vm.$emit('input', newFilter);
+    filterSelectorField.vm.$emit('input', selectedFilter._id);
 
     await flushPromises();
 
@@ -470,198 +505,7 @@ describe('alarms-list', () => {
         query: {
           ...defaultQuery,
           page: 1,
-          filter: newFilter.filter,
-        },
-      },
-      undefined,
-    );
-  });
-
-  it('Filter condition updated after trigger filter field', async () => {
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        alarmModule,
-        sideBarModule,
-        infoModule,
-        queryModule,
-        viewModule,
-        userPreferenceModule,
-        {
-          ...authModule,
-          getters: {
-            currentUser: {},
-            currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
-            },
-          },
-        },
-      ]),
-      propsData: {
-        widget,
-      },
-    });
-
-    await flushPromises();
-
-    updateQuery.mockClear();
-
-    const filterSelectorField = selectFilterSelectorField(wrapper);
-
-    filterSelectorField.vm.$emit('update:condition', FILTER_MONGO_OPERATORS.or);
-
-    await flushPromises();
-
-    expect(updateUserPreference).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        data: {
-          content: {
-            ...userPreferences.content,
-            mainFilterCondition: FILTER_MONGO_OPERATORS.or,
-          },
-        },
-      },
-      undefined,
-    );
-    expect(updateQuery).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        id: widget._id,
-        query: {
-          ...defaultQuery,
-          page: 1,
-        },
-      },
-      undefined,
-    );
-  });
-
-  it('Filter condition updated after trigger filter field without value', async () => {
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        alarmModule,
-        sideBarModule,
-        infoModule,
-        queryModule,
-        viewModule,
-        userPreferenceModule,
-        {
-          ...authModule,
-          getters: {
-            currentUser: {},
-            currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
-            },
-          },
-        },
-      ]),
-      propsData: {
-        widget,
-      },
-    });
-
-    await flushPromises();
-
-    updateQuery.mockClear();
-
-    const filterSelectorField = selectFilterSelectorField(wrapper);
-
-    filterSelectorField.vm.$emit('update:condition');
-
-    await flushPromises();
-
-    expect(updateUserPreference).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        data: {
-          content: {
-            ...userPreferences.content,
-            mainFilterCondition: FILTER_DEFAULT_VALUES.condition,
-          },
-        },
-      },
-      undefined,
-    );
-    expect(updateQuery).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        id: widget._id,
-        query: {
-          ...defaultQuery,
-          page: 1,
-        },
-      },
-      undefined,
-    );
-  });
-
-  it('Filters updated after trigger filter field', async () => {
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        alarmModule,
-        sideBarModule,
-        infoModule,
-        queryModule,
-        viewModule,
-        userPreferenceModule,
-        {
-          ...authModule,
-          getters: {
-            currentUser: {},
-            currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
-            },
-          },
-        },
-      ]),
-      propsData: {
-        widget,
-      },
-    });
-
-    await flushPromises();
-
-    updateQuery.mockClear();
-
-    const mainFilter = {
-      title: 'main-filter',
-      filter: {},
-    };
-    const filters = [
-      {
-        title: Faker.datatype.string(),
-        filter: {},
-      },
-      mainFilter,
-    ];
-
-    const filterSelectorField = selectFilterSelectorField(wrapper);
-
-    filterSelectorField.vm.$emit('update:filters', filters, mainFilter);
-
-    await flushPromises();
-
-    expect(updateUserPreference).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        data: {
-          content: {
-            ...userPreferences.content,
-            viewFilters: filters,
-            mainFilter,
-          },
-        },
-      },
-      undefined,
-    );
-    expect(updateQuery).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        id: widget._id,
-        query: {
-          ...defaultQuery,
-          filter: mainFilter.filter,
-          page: 1,
+          filter: selectedFilter._id,
         },
       },
       undefined,
@@ -1501,7 +1345,7 @@ describe('alarms-list', () => {
     await flushPromises();
 
     expect($popups.error).toHaveBeenCalledWith({
-      text: 'errors.default',
+      text: 'Something went wrong...',
     });
 
     jest.useRealTimers();
@@ -1730,7 +1574,6 @@ describe('alarms-list', () => {
 
           tstart: expect.any(Number),
           tstop: expect.any(Number),
-          with_steps: true,
         },
       },
       undefined,

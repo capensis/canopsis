@@ -32,6 +32,7 @@ func NewEngine(
 	mongoClient mongo.DbClient,
 	cfg config.CanopsisConf,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
+	externalDataContainer *eventfilter.ExternalDataContainer,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	defer depmake.Catch(logger)
@@ -42,13 +43,12 @@ func NewEngine(
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	entityAdapter := entity.NewAdapter(mongoClient)
-	eventFilterAdapter := eventfilter.NewAdapter(mongoClient)
 	entityServiceAdapter := entityservice.NewAdapter(mongoClient)
 	redisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
-	eventFilterService := eventfilter.NewService(mongoClient, eventFilterAdapter, timezoneConfigProvider, logger)
+
 	enrichmentCenter := libcontext.NewEnrichmentCenter(
 		entityAdapter,
 		mongoClient,
@@ -61,6 +61,16 @@ func NewEngine(
 		metricsEntityMetaUpdater,
 	)
 
+	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externalDataContainer, eventfilter.NewActionProcessor()))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
+
+	ruleAdapter := eventfilter.NewRuleAdapter(mongoClient)
+
+	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, config.NewTimezoneConfigProvider(cfg, logger), logger)
+
 	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisSession),
@@ -69,19 +79,22 @@ func NewEngine(
 		logger,
 	)
 
+	infosDictLockedPeriodicalWorker := libengine.NewLockedPeriodicalWorker(
+		periodicalLockClient,
+		redis.CheEntityInfosDictionaryPeriodicalLockKey,
+		NewInfosDictionaryPeriodicalWorker(mongoClient, options.InfosDictionaryWaitTime, logger),
+		logger,
+	)
+
 	engine := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
 
-			err := eventFilterService.LoadDataSourceFactories(
-				enrichmentCenter,
-				options.DataSourceDirectory,
-			)
-			if err != nil {
-				return fmt.Errorf("unable to load data sources: %w", err)
-			}
+			// run in goroutine because it may take some time to process heavy dbs, don't want to slow down the engine startup
+			go infosDictLockedPeriodicalWorker.Work(ctx)
 
-			err = eventFilterService.LoadRules(ctx)
+			logger.Debug().Msg("Loading event filter rules")
+			err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
 			if err != nil {
 				return fmt.Errorf("unable to load rules: %w", err)
 			}
@@ -151,7 +164,7 @@ func NewEngine(
 			FeatureEventProcessing:   options.FeatureEventProcessing,
 			FeatureContextCreation:   options.FeatureContextCreation,
 			AlarmConfigProvider:      alarmConfigProvider,
-			EventFilterService:       eventFilterService,
+			EventFilterService:       eventfilterService,
 			EnrichmentCenter:         enrichmentCenter,
 			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
 			AlarmAdapter:             alarm.NewAdapter(mongoClient),
@@ -162,7 +175,7 @@ func NewEngine(
 		logger,
 	))
 	engine.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
-		EventFilterService: eventFilterService,
+		EventFilterService: eventfilterService,
 		EnrichmentCenter:   enrichmentCenter,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
@@ -190,6 +203,7 @@ func NewEngine(
 		},
 		logger,
 	))
+	engine.AddPeriodicalWorker("entity infos dictionary", infosDictLockedPeriodicalWorker)
 
 	return engine
 }

@@ -25,7 +25,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with all auto ins
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    alarmList.tooltips.allAutoInstructionExecuted
+    All automatic instructions has been executed
   </span>
 </div>
 `;
@@ -55,7 +55,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruc
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    alarmList.tooltips.autoInstructionsFailed
+    Automatic instructions failed
   </span>
 </div>
 `;
@@ -85,7 +85,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruc
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    alarmList.tooltips.hasAutoInstructionInRunning
+    Automatic instruction in progress
   </span>
 </div>
 `;
@@ -115,7 +115,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with instruction 
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    alarmList.tooltips.hasInstruction
+    There is an instruction for this type of incidents
   </span>
 </div>
 `;
@@ -145,7 +145,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instr
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    alarmList.tooltips.hasManualInstructionInRunning
+    Manual instruction in progress
   </span>
 </div>
 `;
@@ -175,7 +175,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instr
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    alarmList.tooltips.awaitingInstructionComplete
+    Awaiting for the instruction to complete
   </span>
 </div>
 `;

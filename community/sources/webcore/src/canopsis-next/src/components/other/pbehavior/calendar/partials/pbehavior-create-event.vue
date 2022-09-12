@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form.pa-3.pbehavior-form(v-click-outside.zIndex="clickOutsideDirective", @submit.prevent="submitHandler")
-    pbehavior-form(v-model="form", :no-filter="!!filter")
+    pbehavior-form(v-model="form", :no-pattern="!!entityPattern")
     v-layout(row, justify-end)
       v-btn.error(
         v-show="pbehavior",
@@ -25,7 +25,7 @@ import {
 
 import { MODALS } from '@/constants';
 
-import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
+import { isOmitEqual } from '@/helpers/equal';
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/dayspan';
 
 import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
@@ -42,15 +42,15 @@ export default {
       type: Object,
       required: false,
     },
-    filter: {
-      type: Object,
+    entityPattern: {
+      type: Array,
       required: false,
     },
   },
   data() {
     return {
       manualClose: false,
-      form: calendarEventToPbehaviorForm(this.calendarEvent, this.filter, this.$system.timezone),
+      form: calendarEventToPbehaviorForm(this.calendarEvent, this.entityPattern, this.$system.timezone),
     };
   },
   computed: {

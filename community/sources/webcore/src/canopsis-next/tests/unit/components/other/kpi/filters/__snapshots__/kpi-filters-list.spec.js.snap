@@ -36,14 +36,14 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               
             </th>
             <th
-              aria-label="common.title: Not sorted. Activate to sort ascending."
+              aria-label="Name: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
               role="columnheader"
               scope="col"
               tabindex="0"
             >
-              common.title
+              Name
               <i
                 aria-hidden="true"
                 class="v-icon material-icons theme--light"
@@ -53,14 +53,14 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               </i>
             </th>
             <th
-              aria-label="common.created: Sorted descending. Activate to remove sorting."
+              aria-label="Creation date: Sorted descending. Activate to remove sorting."
               aria-sort="descending"
               class="column active desc sortable text-xs-left"
               role="columnheader"
               scope="col"
               tabindex="0"
             >
-              common.created
+              Creation date
               <i
                 aria-hidden="true"
                 class="v-icon material-icons theme--light"
@@ -70,14 +70,14 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               </i>
             </th>
             <th
-              aria-label="common.lastModifiedOn: Not sorted. Activate to sort ascending."
+              aria-label="Last modified on: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
               role="columnheader"
               scope="col"
               tabindex="0"
             >
-              common.lastModifiedOn
+              Last modified on
               <i
                 aria-hidden="true"
                 class="v-icon material-icons theme--light"
@@ -87,13 +87,13 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               </i>
             </th>
             <th
-              aria-label="common.actionsLabel: Not sorted."
+              aria-label="Actions: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
               role="columnheader"
               scope="col"
             >
-              common.actionsLabel
+              Actions
             </th>
           </tr>
           <tr
@@ -681,14 +681,14 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               
             </th>
             <th
-              aria-label="common.title: Sorted ascending. Activate to sort descending."
+              aria-label="Name: Sorted ascending. Activate to sort descending."
               aria-sort="ascending"
               class="column active asc sortable text-xs-left"
               role="columnheader"
               scope="col"
               tabindex="0"
             >
-              common.title
+              Name
               <i
                 aria-hidden="true"
                 class="v-icon material-icons theme--light"
@@ -698,14 +698,14 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               </i>
             </th>
             <th
-              aria-label="common.created: Not sorted. Activate to sort ascending."
+              aria-label="Creation date: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
               role="columnheader"
               scope="col"
               tabindex="0"
             >
-              common.created
+              Creation date
               <i
                 aria-hidden="true"
                 class="v-icon material-icons theme--light"
@@ -715,14 +715,14 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               </i>
             </th>
             <th
-              aria-label="common.lastModifiedOn: Not sorted. Activate to sort ascending."
+              aria-label="Last modified on: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
               role="columnheader"
               scope="col"
               tabindex="0"
             >
-              common.lastModifiedOn
+              Last modified on
               <i
                 aria-hidden="true"
                 class="v-icon material-icons theme--light"
@@ -732,13 +732,13 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               </i>
             </th>
             <th
-              aria-label="common.actionsLabel: Not sorted."
+              aria-label="Actions: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
               role="columnheader"
               scope="col"
             >
-              common.actionsLabel
+              Actions
             </th>
           </tr>
           <tr
@@ -803,14 +803,14 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               
             </th>
             <th
-              aria-label="common.title: Not sorted. Activate to sort ascending."
+              aria-label="Name: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
               role="columnheader"
               scope="col"
               tabindex="0"
             >
-              common.title
+              Name
               <i
                 aria-hidden="true"
                 class="v-icon material-icons theme--light"
@@ -820,14 +820,14 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               </i>
             </th>
             <th
-              aria-label="common.created: Not sorted. Activate to sort ascending."
+              aria-label="Creation date: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
               role="columnheader"
               scope="col"
               tabindex="0"
             >
-              common.created
+              Creation date
               <i
                 aria-hidden="true"
                 class="v-icon material-icons theme--light"
@@ -837,14 +837,14 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               </i>
             </th>
             <th
-              aria-label="common.lastModifiedOn: Not sorted. Activate to sort ascending."
+              aria-label="Last modified on: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
               role="columnheader"
               scope="col"
               tabindex="0"
             >
-              common.lastModifiedOn
+              Last modified on
               <i
                 aria-hidden="true"
                 class="v-icon material-icons theme--light"
@@ -854,13 +854,13 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               </i>
             </th>
             <th
-              aria-label="common.actionsLabel: Not sorted."
+              aria-label="Actions: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
               role="columnheader"
               scope="col"
             >
-              common.actionsLabel
+              Actions
             </th>
           </tr>
           <tr

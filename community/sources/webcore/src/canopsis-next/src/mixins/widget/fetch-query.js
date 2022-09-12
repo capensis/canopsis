@@ -2,7 +2,7 @@ import { isEqual, isEmpty } from 'lodash';
 
 import { prepareQuery } from '@/helpers/query';
 
-import queryWidgetMixin from '@/mixins/widget/query';
+import { queryWidgetMixin } from '@/mixins/widget/query';
 
 /**
  * @mixin Add query logic with fetch
@@ -24,7 +24,7 @@ export const widgetFetchQueryMixin = {
 
     tabQueryNonce(value, oldValue) {
       if (!this.editing && value > oldValue) {
-        this.fetchList({ isQueryNonceUpdate: true });
+        this.fetchList();
       }
     },
 

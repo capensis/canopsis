@@ -1,30 +1,26 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(data-test="liveReportingModal", close)
-      template(slot="title")
+    modal-wrapper(close)
+      template(#title="")
         span {{ $t('modals.liveReporting.editLiveReporting') }}
-      template(slot="text")
+      template(#text="")
         h3 {{ $t('modals.liveReporting.dateInterval') }}
         date-interval-selector(v-model="form")
-      template(slot="actions")
+      template(#actions="")
         v-btn(
-          data-test="liveReportingCancelButton",
-          depressed,
           flat,
+          depressed,
           @click="$modals.hide"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
-          type="submit",
-          data-test="liveReportingApplyButton"
+          type="submit"
         ) {{ $t('common.apply') }}
 </template>
 
 <script>
-import { MODALS, DATETIME_FORMATS } from '@/constants';
-
-import { convertDateToString } from '@/helpers/date/date';
+import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -53,30 +49,11 @@ export default {
 
     return {
       form: {
-        tstart: config.tstart || '',
-        tstop: config.tstop || '',
-        time_field: config.time_field || '',
+        tstart: config.tstart ?? '',
+        tstop: config.tstop ?? '',
+        time_field: config.time_field ?? '',
       },
     };
-  },
-  computed: {
-    tstartRules() {
-      return {
-        required: true,
-        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
-      };
-    },
-
-    tstopRules() {
-      const rules = { required: true };
-
-      if (this.tstart) {
-        rules.after = [convertDateToString(this.tstart, DATETIME_FORMATS.dateTimePicker)];
-        rules.date_format = DATETIME_FORMATS.veeValidateDateTimeFormat;
-      }
-
-      return rules;
-    },
   },
   methods: {
     async submit() {

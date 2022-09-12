@@ -11,8 +11,8 @@ const stubs = {
   'extra-details-canceled': true,
   'extra-details-snooze': true,
   'extra-details-pbehavior': true,
-  'extra-details-causes': true,
-  'extra-details-consequences': true,
+  'extra-details-parents': true,
+  'extra-details-children': true,
 };
 
 const snapshotFactory = (options = {}) => mount(AlarmColumnValueExtraDetails, {
@@ -23,6 +23,45 @@ const snapshotFactory = (options = {}) => mount(AlarmColumnValueExtraDetails, {
 });
 
 describe('alarm-column-value-extra-details', () => {
+  const fullAlarm = {
+    rule: {},
+    pbehavior: {
+      name: 'pbehavior-name',
+      author: 'pbehavior-author',
+      tstart: '',
+      tstop: '',
+      rrule: 'rrule',
+      reason: {
+        name: 'pbehavior-reason-name',
+      },
+      comments: [
+        {
+          _id: 'pbehavior-comment-1-id',
+          author: 'pbehavior-comment-1-author',
+          message: 'pbehavior-comment-1-message',
+        },
+        {
+          _id: 'pbehavior-comment-2-id',
+          author: 'pbehavior-comment-2-author',
+          message: 'pbehavior-comment-2-message',
+        },
+      ],
+    },
+    v: {
+      ack: {},
+      last_comment: {
+        m: ' ',
+      },
+      ticket: {},
+      canceled: {},
+      snooze: {},
+      pbehavior_info: {
+        icon_name: 'icon',
+        type_name: 'type',
+      },
+    },
+  };
+
   it('Renders `alarm-column-value-extra-details` with empty alarm', () => {
     const wrapper = snapshotFactory({
       propsData: {
@@ -35,47 +74,44 @@ describe('alarm-column-value-extra-details', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarm-column-value-extra-details` with full alarm', () => {
+  it('Renders `alarm-column-value-extra-details` with full alarm (only parent)', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
-          rule: {},
-          pbehavior: {
-            name: 'pbehavior-name',
-            author: 'pbehavior-author',
-            tstart: '',
-            tstop: '',
-            rrule: 'rrule',
-            reason: {
-              name: 'pbehavior-reason-name',
+          ...fullAlarm,
+
+          parent: 3,
+          meta_alarm_rules: [
+            {
+              id: 'parent-rule-1-id',
+              name: 'parent-rule-1-name',
             },
-            comments: [
-              {
-                _id: 'pbehavior-comment-1-id',
-                author: 'pbehavior-comment-1-author',
-                message: 'pbehavior-comment-1-message',
-              },
-              {
-                _id: 'pbehavior-comment-2-id',
-                author: 'pbehavior-comment-2-author',
-                message: 'pbehavior-comment-2-message',
-              },
-            ],
-          },
-          causes: {},
-          consequences: {},
-          v: {
-            ack: {},
-            last_comment: {
-              m: ' ',
+            {
+              id: 'parent-rule-2-id',
+              name: 'parent-rule-2-name',
             },
-            ticket: {},
-            canceled: {},
-            snooze: {},
-            pbehavior_info: {
-              icon_name: 'icon',
-              type_name: 'type',
+            {
+              id: 'parent-rule-3-id',
+              name: 'parent-rule-3-name',
             },
+          ],
+        },
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `alarm-column-value-extra-details` with full alarm (only children)', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        alarm: {
+          ...fullAlarm,
+
+          children: 3,
+          meta_alarm_rule: {
+            id: 'child-rule-id',
+            name: 'child-rule-name',
           },
         },
       },

@@ -8,13 +8,25 @@ Feature: update an instruction statistics
     {
       "type": 0,
       "name": "test-instruction-to-stats-update-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-stats-update-1-1"
-        },
-        {
-          "name": "test-resource-to-stats-update-1-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-1-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-1-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-stats-update-1-description",
       "enabled": true,
@@ -278,13 +290,25 @@ Feature: update an instruction statistics
     {
       "type": 1,
       "name": "test-instruction-to-stats-update-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-stats-update-2-1"
-        },
-        {
-          "name": "test-resource-to-stats-update-2-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-2-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-2-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-stats-update-2-description",
       "enabled": true,
@@ -532,13 +556,25 @@ Feature: update an instruction statistics
     {
       "type": 0,
       "name": "test-instruction-to-stats-update-3-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-stats-update-3-1"
-        },
-        {
-          "name": "test-resource-to-stats-update-3-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-3-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-3-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-stats-update-3-description",
       "enabled": true,
@@ -784,13 +820,25 @@ Feature: update an instruction statistics
     {
       "type": 1,
       "name": "test-instruction-to-stats-update-4-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-stats-update-4-1"
-        },
-        {
-          "name": "test-resource-to-stats-update-4-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-4-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-4-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-stats-update-4-description",
       "enabled": true,
