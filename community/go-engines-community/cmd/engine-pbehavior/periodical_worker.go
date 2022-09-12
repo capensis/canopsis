@@ -24,7 +24,6 @@ type periodicalWorker struct {
 	ChannelPub             libamqp.Channel
 	PeriodicalInterval     time.Duration
 	PbhService             pbehavior.Service
-	PbhEntityMatcher       pbehavior.ComputedEntityMatcher
 	AlarmAdapter           libalarm.Adapter
 	EntityAdapter          libentity.Adapter
 	EventManager           pbehavior.EventManager
@@ -40,21 +39,9 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 
 func (w *periodicalWorker) Work(ctx context.Context) {
 	now := time.Now().In(w.TimezoneConfigProvider.Get().Location)
-	w.compute(ctx, now)
-
-	computedEntityIDs, err := w.PbhEntityMatcher.GetComputedEntityIDs(ctx)
-	if err != nil {
-		w.Logger.Err(err).Msg("cannot get entities which have pbehavior")
-		return
-	}
-
-	processedEntityIds := w.processAlarms(ctx, now, computedEntityIDs)
-	w.processEntities(ctx, now, computedEntityIDs, processedEntityIds)
-}
-
-func (w *periodicalWorker) compute(ctx context.Context, now time.Time) {
 	newSpan := timespan.New(now, now.Add(w.FrameDuration))
-	count, err := w.PbhService.Compute(ctx, newSpan)
+
+	resolver, count, err := w.PbhService.Compute(ctx, newSpan)
 	if err != nil {
 		w.Logger.Err(err).Msg("compute pbehavior's frames failed")
 		return
@@ -67,9 +54,22 @@ func (w *periodicalWorker) compute(ctx context.Context, now time.Time) {
 			Int("count", count).
 			Msg("pbehaviors are recomputed")
 	}
+
+	computedEntityIDs, err := resolver.GetComputedEntityIDs()
+	if err != nil {
+		w.Logger.Err(err).Msg("cannot get entities which have pbehavior")
+		return
+	}
+
+	processedEntityIds := w.processAlarms(ctx, now, computedEntityIDs, resolver)
+	w.processEntities(ctx, now, computedEntityIDs, processedEntityIds, resolver)
 }
 
-func (w *periodicalWorker) processAlarms(ctx context.Context, computedAt time.Time, computedEntityIDs []string) []string {
+func (w *periodicalWorker) processAlarms(
+	ctx context.Context, computedAt time.Time,
+	computedEntityIDs []string,
+	resolver pbehavior.ComputedEntityTypeResolver,
+) []string {
 	cursor, err := w.AlarmAdapter.FindToCheckPbehaviorInfo(ctx, types.CpsTime{Time: computedAt}, computedEntityIDs)
 	if err != nil {
 		w.Logger.Err(err).Msg("get alarms from mongo failed")
@@ -77,6 +77,10 @@ func (w *periodicalWorker) processAlarms(ctx context.Context, computedAt time.Ti
 	}
 
 	defer cursor.Close(ctx)
+
+	ech := make(chan PublishEventMsg, 1)
+	defer close(ech)
+	go w.publishToFifoChan("alarm", ech)
 
 	processedEntityIds := make([]string, 0)
 	for cursor.Next(ctx) {
@@ -100,7 +104,7 @@ func (w *periodicalWorker) processAlarms(ctx context.Context, computedAt time.Ti
 		}
 
 		now := time.Now()
-		resolveResult, err := w.PbhService.Resolve(ctx, entity.ID, now)
+		resolveResult, err := resolver.Resolve(ctx, entity, now)
 		if err != nil {
 			w.Logger.Err(err).Str("entity_id", entity.ID).Msg("resolve an entity failed")
 			return processedEntityIds
@@ -108,24 +112,25 @@ func (w *periodicalWorker) processAlarms(ctx context.Context, computedAt time.Ti
 
 		event := w.EventManager.GetEvent(resolveResult, alarm, now)
 		if event.EventType != "" {
-			err := w.publishToEngineFIFO(event)
-			if err != nil {
-				w.Logger.Err(err).Str("alarm", alarm.ID).Msgf("failed to send %s event", event.EventType)
-				return processedEntityIds
+			ech <- PublishEventMsg{
+				event:   event,
+				id:      alarm.ID,
+				pbhID:   resolveResult.ResolvedPbhID,
+				pbhType: resolveResult.ResolvedType,
 			}
-
-			w.Logger.Debug().
-				Str("resolve pbehavior", resolveResult.ResolvedPbhID).
-				Str("resolve type", fmt.Sprintf("%+v", resolveResult.ResolvedType)).
-				Str("alarm", alarm.ID).
-				Msgf("send %s event", event.EventType)
 		}
 	}
 
 	return processedEntityIds
 }
 
-func (w *periodicalWorker) processEntities(ctx context.Context, computedAt time.Time, computedEntityIDs, processedEntityIds []string) {
+func (w *periodicalWorker) processEntities(
+	ctx context.Context,
+	computedAt time.Time,
+	computedEntityIDs,
+	processedEntityIds []string,
+	resolver pbehavior.ComputedEntityTypeResolver,
+) {
 	cursor, err := w.EntityAdapter.FindToCheckPbehaviorInfo(ctx, computedEntityIDs, processedEntityIds)
 	if err != nil {
 		w.Logger.Err(err).Msg("get alarms from mongo failed")
@@ -135,6 +140,11 @@ func (w *periodicalWorker) processEntities(ctx context.Context, computedAt time.
 	defer cursor.Close(ctx)
 
 	eventGenerator := libevent.NewGenerator(w.EntityAdapter)
+
+	ech := make(chan PublishEventMsg, 1)
+	defer close(ech)
+
+	go w.publishToFifoChan("entity", ech)
 
 	for cursor.Next(ctx) {
 		var entity types.Entity
@@ -150,7 +160,7 @@ func (w *periodicalWorker) processEntities(ctx context.Context, computedAt time.
 		}
 
 		now := time.Now()
-		resolveResult, err := w.PbhService.Resolve(ctx, entity.ID, now)
+		resolveResult, err := resolver.Resolve(ctx, entity, now)
 		if err != nil {
 			w.Logger.Err(err).Str("entity_id", entity.ID).Msg("resolve an entity failed")
 			return
@@ -188,31 +198,49 @@ func (w *periodicalWorker) processEntities(ctx context.Context, computedAt time.
 		event.Output = output
 		event.Timestamp = types.CpsTime{Time: now}
 		event.PbehaviorInfo = pbehavior.NewPBehaviorInfo(event.Timestamp, resolveResult)
-		err = w.publishToEngineFIFO(event)
-		if err != nil {
-			w.Logger.Err(err).Str("entity", entity.ID).Msgf("failed to send %s event", eventType)
-			return
-		}
 
-		w.Logger.Debug().
-			Str("resolve pbehavior", resolveResult.ResolvedPbhID).
-			Str("resolve type", fmt.Sprintf("%+v", resolveResult.ResolvedType)).
-			Str("entity", entity.ID).
-			Msgf("send %s event", eventType)
+		ech <- PublishEventMsg{
+			event:   event,
+			id:      entity.ID,
+			pbhID:   resolveResult.ResolvedPbhID,
+			pbhType: resolveResult.ResolvedType,
+		}
 	}
 }
 
-func (w *periodicalWorker) publishToEngineFIFO(event types.Event) error {
-	return w.publishTo(event, canopsis.FIFOQueueName)
+type PublishEventMsg struct {
+	event     types.Event
+	pbhType   pbehavior.Type
+	id, pbhID string
 }
 
-func (w *periodicalWorker) publishTo(event types.Event, queue string) error {
+func (w *periodicalWorker) publishToFifoChan(idTitle string, msgs <-chan PublishEventMsg) {
+	for ms := range msgs {
+		err := w.publishToEngineFIFO(context.Background(), ms.event)
+		if err != nil {
+			w.Logger.Err(err).Str(idTitle, ms.id).Msgf("failed to send %s event", ms.event.EventType)
+		} else {
+			w.Logger.Debug().
+				Str("resolve pbehavior", ms.pbhID).
+				Str("resolve type", fmt.Sprintf("%+v", ms.pbhType)).
+				Str(idTitle, ms.id).
+				Msgf("send %s event", ms.event.EventType)
+		}
+	}
+}
+
+func (w *periodicalWorker) publishToEngineFIFO(ctx context.Context, event types.Event) error {
+	return w.publishTo(ctx, event, canopsis.FIFOQueueName)
+}
+
+func (w *periodicalWorker) publishTo(ctx context.Context, event types.Event, queue string) error {
 	bevent, err := w.Encoder.Encode(event)
 	if err != nil {
 		return fmt.Errorf("publishTo(): error while encoding event %+v", err)
 	}
 
-	return errt.NewIOError(w.ChannelPub.Publish(
+	return errt.NewIOError(w.ChannelPub.PublishWithContext(
+		ctx,
 		"",
 		queue,
 		false,

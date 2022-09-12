@@ -205,6 +205,16 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
+	_, err = s.dbCollection.UpdateMany(ctx, bson.M{"connector": id},
+		bson.M{"$unset": bson.M{"connector": ""}})
+	if err != nil {
+		return false, err
+	}
+	_, err = s.dbCollection.UpdateMany(ctx, bson.M{"component": id},
+		bson.M{"$unset": bson.M{"component": ""}})
+	if err != nil {
+		return false, err
+	}
 
 	return true, nil
 }

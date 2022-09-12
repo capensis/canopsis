@@ -1,7 +1,9 @@
 package importcontextgraph
 
 import (
+	"context"
 	"fmt"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -30,13 +32,14 @@ func NewEventPublisher(
 	}
 }
 
-func (p *eventPublisher) SendEvent(event types.Event) error {
+func (p *eventPublisher) SendEvent(ctx context.Context, event types.Event) error {
 	bevent, err := p.encoder.Encode(event)
 	if err != nil {
 		return fmt.Errorf("error while encoding event %+v", err)
 	}
 
-	return p.amqpPublisher.Publish(
+	return p.amqpPublisher.PublishWithContext(
+		ctx,
 		p.exchange,
 		p.queue,
 		false,

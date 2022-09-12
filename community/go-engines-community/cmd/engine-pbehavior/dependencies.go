@@ -22,11 +22,8 @@ import (
 type Options struct {
 	FeaturePrintEventOnError bool
 	ModeDebug                bool
-	ConsumeFromQueue         string
-	PublishToQueue           string
 	FrameDuration            int
 	PeriodicalWaitTime       time.Duration
-	FifoAckExchange          string
 }
 
 type DependencyMaker struct {
@@ -46,17 +43,14 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	pbhLockerClient := redis.NewLockClient(pbhRedisSession)
-
-	entityMatcher := pbehavior.NewComputedEntityMatcher(dbClient, pbhRedisSession,
-		json.NewEncoder(), json.NewDecoder())
 	pbhStore := pbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
-
+	pbhTypeComputer := pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient), json.NewDecoder())
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
 	eventManager := pbehavior.NewEventManager()
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisSession),
-		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, canopsis.PBehaviorQueueName, options.PublishToQueue),
+		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, "", "", []string{canopsis.PBehaviorRPCQueueServerName}),
 		amqpChannel,
 		logger,
 	)
@@ -64,12 +58,12 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	enginePbehavior := engine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
-			pbhService := pbehavior.NewService(pbehavior.NewModelProvider(dbClient), entityMatcher, pbhStore, pbhLockerClient)
+			pbhService := pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger)
 
 			now := time.Now().In(timezoneConfigProvider.Get().Location)
 			newSpan := timespan.New(now, now.Add(frameDuration))
 
-			count, err := pbhService.Compute(ctx, newSpan)
+			_, count, err := pbhService.Compute(ctx, newSpan)
 			if err != nil {
 				return fmt.Errorf("compute pbehavior's frames failed: %w", err)
 			}
@@ -112,37 +106,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	)
-	enginePbehavior.AddConsumer(engine.NewDefaultConsumer(
-		canopsis.PBehaviorConsumerName,
-		canopsis.PBehaviorQueueName,
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
-		false,
-		"",
-		options.PublishToQueue,
-		options.FifoAckExchange,
-		canopsis.FIFOAckQueueName,
-		amqpConnection,
-		&messageProcessor{
-			PbhService:               pbehavior.NewEntityTypeResolver(pbhStore, pbehavior.NewEntityMatcher(dbClient), entityMatcher),
-			TimezoneConfigProvider:   timezoneConfigProvider,
-			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-			Encoder:                  json.NewEncoder(),
-			Decoder:                  json.NewDecoder(),
-			CreatePbehaviorProcessor: createPbehaviorMessageProcessor{
-				FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-				DbClient:                 dbClient,
-				PbhService:               pbehavior.NewService(pbehavior.NewModelProvider(dbClient), entityMatcher, pbhStore, pbhLockerClient),
-				EventManager:             pbehavior.NewEventManager(),
-				AlarmAdapter:             alarm.NewAdapter(dbClient),
-				TimezoneConfigProvider:   timezoneConfigProvider,
-				Logger:                   logger,
-			},
-			ChannelPub: amqpChannel,
-			Logger:     logger,
-		},
-		logger,
-	))
 	enginePbehavior.AddConsumer(engine.NewRPCServer(
 		canopsis.PBehaviorRPCConsumerName,
 		canopsis.PBehaviorRPCQueueServerName,
@@ -151,18 +114,13 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		amqpConnection,
 		&rpcServerMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-			Processor: createPbehaviorMessageProcessor{
-				FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-				DbClient:                 dbClient,
-				PbhService:               pbehavior.NewService(pbehavior.NewModelProvider(dbClient), entityMatcher, pbhStore, pbhLockerClient),
-				EventManager:             pbehavior.NewEventManager(),
-				AlarmAdapter:             alarm.NewAdapter(dbClient),
-				TimezoneConfigProvider:   timezoneConfigProvider,
-				Logger:                   logger,
-			},
-			Decoder: json.NewDecoder(),
-			Encoder: json.NewEncoder(),
-			Logger:  logger,
+			DbClient:                 dbClient,
+			PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
+			EventManager:             pbehavior.NewEventManager(),
+			TimezoneConfigProvider:   timezoneConfigProvider,
+			Decoder:                  json.NewDecoder(),
+			Encoder:                  json.NewEncoder(),
+			Logger:                   logger,
 		},
 		logger,
 	))
@@ -173,8 +131,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		&periodicalWorker{
 			ChannelPub:             amqpChannel,
 			PeriodicalInterval:     options.PeriodicalWaitTime,
-			PbhService:             pbehavior.NewService(pbehavior.NewModelProvider(dbClient), entityMatcher, pbhStore, pbhLockerClient),
-			PbhEntityMatcher:       entityMatcher,
+			PbhService:             pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
 			AlarmAdapter:           alarm.NewAdapter(dbClient),
 			EntityAdapter:          entity.NewAdapter(dbClient),
 			EventManager:           eventManager,

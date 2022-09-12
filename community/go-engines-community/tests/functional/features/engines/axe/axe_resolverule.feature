@@ -9,16 +9,22 @@ Feature: resolve alarm on resolve rule
       "_id": "test-resolve-rule-axe-resolverule-1",
       "name": "test-resolve-rule-axe-resolverule-1-name",
       "description": "test-resolve-rule-axe-resolverule-1-desc",
-      "entity_patterns":[
-        {
-          "name": "test-resource-axe-resolverule-1"
-        }
+      "entity_pattern":[
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-resolverule-1"
+            }
+          }
+        ]
       ],
       "duration": {
         "value": 2,
         "unit": "s"
       },
-      "priority": 10
+      "priority": 1
     }
     """
     Then the response code should be 201
@@ -52,7 +58,7 @@ Feature: resolve alarm on resolve rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resolved":{"$gt":0}},{"v.resource":"test-resource-axe-resolverule-1"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-resolverule-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -69,8 +75,39 @@ Feature: resolve alarm on resolve rule
             },
             "status": {
               "val": 0
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "data.0.v.resolved" should be greater than 0
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -87,7 +124,68 @@ Feature: resolve alarm on resolve rule
                 "_t": "statusdec",
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  Scenario: given resolve rule with old patterns should resolve alarm
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "event_type" : "check",
+      "connector" : "test-resolve-rule-backward-compatibility-1-connector",
+      "connector_name" : "test-resolve-rule-backward-compatibility-1-connector-name",
+      "source_type" : "resource",
+      "component" :  "test-resolve-rule-backward-compatibility-1-component",
+      "resource" : "test-resolve-rule-backward-compatibility-1-resource",
+      "state" : 2,
+      "output" : "test-resolve-rule-backward-compatibility-1"
+    }
+    """
+    When I wait the end of event processing
+    When I wait 1s
+    When I send an event:
+    """json
+    {
+      "event_type" : "check",
+      "connector" : "test-resolve-rule-backward-compatibility-1-connector",
+      "connector_name" : "test-resolve-rule-backward-compatibility-1-connector-name",
+      "source_type" : "resource",
+      "component" :  "test-resolve-rule-backward-compatibility-1-component",
+      "resource" : "test-resolve-rule-backward-compatibility-1-resource",
+      "state" : 0,
+      "output" : "test-resolve-rule-backward-compatibility-1"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-resolve-rule-backward-compatibility-1-resource
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "connector" : "test-resolve-rule-backward-compatibility-1-connector",
+            "connector_name" : "test-resolve-rule-backward-compatibility-1-connector-name",
+            "component" :  "test-resolve-rule-backward-compatibility-1-component",
+            "resource" : "test-resolve-rule-backward-compatibility-1-resource",
+            "state": {
+              "val": 0
+            },
+            "status": {
+              "val": 0
+            }
           }
         }
       ],
@@ -98,4 +196,53 @@ Feature: resolve alarm on resolve rule
         "total_count": 1
       }
     }
+    """
+    Then the response key "data.0.v.resolved" should be greater than 0
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "statedec",
+                "val": 0
+              },
+              {
+                "_t": "statusdec",
+                "val": 0
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      }
+    ]
     """

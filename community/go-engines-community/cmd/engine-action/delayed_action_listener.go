@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type delayedScenarioListener struct {
@@ -31,7 +32,7 @@ func (l *delayedScenarioListener) Listen(ctx context.Context, ch <-chan action.D
 				return
 			}
 
-			err := l.publishRunDelayedScenarioEvent(task)
+			err := l.publishRunDelayedScenarioEvent(ctx, task)
 			if err != nil {
 				l.Logger.Err(err).Msg("cannot send run delayed scenario event")
 				continue
@@ -43,6 +44,7 @@ func (l *delayedScenarioListener) Listen(ctx context.Context, ch <-chan action.D
 }
 
 func (l *delayedScenarioListener) publishRunDelayedScenarioEvent(
+	ctx context.Context,
 	task action.DelayedScenarioTask,
 ) error {
 	b, err := l.Encoder.Encode(task.AdditionalData)
@@ -68,7 +70,9 @@ func (l *delayedScenarioListener) publishRunDelayedScenarioEvent(
 		return fmt.Errorf("cannot encode event: %w", err)
 	}
 
-	err = l.AmqpChannel.Publish("",
+	err = l.AmqpChannel.PublishWithContext(
+		ctx,
+		"",
 		l.Queue,
 		false,
 		false,
