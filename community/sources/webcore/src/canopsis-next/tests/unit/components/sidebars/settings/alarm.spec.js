@@ -16,9 +16,12 @@ import {
 
 import {
   ALARMS_OPENED_VALUES,
+
   EXPORT_CSV_DATETIME_FORMATS,
+
   EXPORT_CSV_SEPARATORS,
   SORT_ORDERS,
+  TIME_UNITS,
   USERS_PERMISSIONS,
   SIDE_BARS,
   COLOR_INDICATOR_TYPES,
@@ -1001,6 +1004,51 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'sticky_header', stickyHeader),
+      },
+    });
+  });
+
+  /**
+   * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4390
+   */
+  it('Invalid periodic refresh converted to valid object', async () => {
+    const periodicRefresh = {
+      value: 1,
+      unit: {},
+      enabled: false,
+    };
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar: {
+          ...sidebar,
+
+          config: {
+            widget: {
+              ...widget,
+              parameters: {
+                ...widget.parameters,
+                periodic_refresh: periodicRefresh,
+              },
+            },
+          },
+        },
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'periodic_refresh', {
+          ...periodicRefresh,
+          unit: TIME_UNITS.second,
+        }),
       },
     });
   });

@@ -2,176 +2,404 @@ Feature: Create an eventfilter
   I need to be able to create an eventfilter
   Only admin should be able to create an eventfilter
 
-  Scenario: given create request should return ok
+  Scenario: given create request with event pattern should return ok
     When I am admin
     When I do POST /api/v4/eventfilter/rules:
     """
     {
       "description": "test create 1",
       "type": "enrichment",
-      "patterns": [
-        {
-          "connector": "test-eventfilter-create-1-pattern"
-        }
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-1-pattern"
+            }
+          }
+        ]
       ],
       "priority": 0,
       "enabled": true,
-      "actions": [
-        {
-          "type": "set_field",
-          "name": "connector",
-          "value": "kafka_connector"
-        }
-      ],
-      "external_data": {
-        "clear": "sky",
-        "type": "no",
-        "arr": [
-          1,
-          2,
-          3
-        ]
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
       },
-      "on_success": "pass",
-      "on_failure": "pass"
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
-    """
-    {
-      "author": "root",
-      "description": "test create 1",
-      "type": "enrichment",
-      "patterns": [
-        {
-          "connector": "test-eventfilter-create-1-pattern"
-        }
-      ],
-      "priority": 0,
-      "enabled": true,
-      "actions": [
-        {
-          "type": "set_field",
-          "name": "connector",
-          "value": "kafka_connector"
-        }
-      ],
-      "external_data": {
-        "clear": "sky",
-        "type": "no",
-        "arr": [
-          1,
-          2,
-          3
-        ]
-      },
-      "on_success": "pass",
-      "on_failure": "pass"
-    }
-    """
     When I do GET /api/v4/eventfilter/rules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-  """
-  {
-    "author": "root",
-    "description": "test create 1",
-    "type": "enrichment",
-    "patterns": [
-      {
-        "connector": "test-eventfilter-create-1-pattern"
+    """
+    {
+      "author": "root",
+      "description": "test create 1",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-1-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
       }
-    ],
-    "priority": 0,
-    "enabled": true,
-    "actions": [
-      {
-        "type": "set_field",
-        "name": "connector",
-        "value": "kafka_connector"
-      }
-    ],
-    "external_data": {
-      "clear": "sky",
-      "type": "no",
-      "arr": [
-        1,
-        2,
-        3
-      ]
-    },
-    "on_success": "pass",
-    "on_failure": "pass"
-  }
-  """
+    }
+    """
 
-  Scenario: given create request with enabled is false should return ok
+  Scenario: given create request with entity pattern should return ok
     When I am admin
     When I do POST /api/v4/eventfilter/rules:
     """
     {
       "description": "test create 2",
       "type": "enrichment",
-      "patterns": [
-        {
-          "connector": "test-eventfilter-create-2-pattern"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-2-pattern"
+            }
+          }
+        ]
       ],
       "priority": 0,
-      "enabled": false,
-      "actions": [
-        {
-          "type": "set_field",
-          "name": "connector",
-          "value": "kafka_connector"
-        }
-      ],
-      "external_data": {
-        "clear": "sky",
-        "type": "no",
-        "arr": [
-          1,
-          2,
-          3
-        ]
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
       },
-      "on_success": "pass",
-      "on_failure": "pass"
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
     }
     """
     Then the response code should be 201
+    When I do GET /api/v4/eventfilter/rules/{{ .lastResponse._id }}
+    Then the response code should be 200
     Then the response body should contain:
     """
     {
       "author": "root",
       "description": "test create 2",
       "type": "enrichment",
-      "patterns": [
-        {
-          "connector": "test-eventfilter-create-2-pattern"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-2-pattern"
+            }
+          }
+        ]
       ],
       "priority": 0,
-      "enabled": false,
-      "actions": [
-        {
-          "type": "set_field",
-          "name": "connector",
-          "value": "kafka_connector"
-        }
-      ],
-      "external_data": {
-        "clear": "sky",
-        "type": "no",
-        "arr": [
-          1,
-          2,
-          3
-        ]
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
       },
-      "on_success": "pass",
-      "on_failure": "pass"
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+
+  Scenario: given create request with both patterns should return ok
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 3",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-3-pattern"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-4-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/eventfilter/rules/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "author": "root",
+      "description": "test create 3",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-3-pattern"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-4-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+
+  Scenario: given create request with corporate pattern should return ok
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 4",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-4-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/eventfilter/rules/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "author": "root",
+      "description": "test create 4",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-4-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-2-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+
+  Scenario: given create request with absent corporate pattern should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 4",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-4-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_entity_pattern": "test-pattern-not-exist",
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "corporate_entity_pattern": "CorporateEntityPattern doesn't exist."
+      }
     }
     """
 
@@ -188,7 +416,7 @@ Feature: Create an eventfilter
     """
     {
       "errors": {
-        "type": "Type must be one of [break drop enrichment]."
+        "type": "Type must be one of [break drop enrichment change_entity]."
       }
     }
     """
@@ -198,8 +426,11 @@ Feature: Create an eventfilter
     When I do POST /api/v4/eventfilter/rules:
     """
     {
-       "type": "enrichment",
-       "actions": []
+      "type": "enrichment",
+      "description": "some",
+      "config": {
+        "actions": []
+      }
     }
     """
     Then the response code should be 400
@@ -220,8 +451,19 @@ Feature: Create an eventfilter
     """
     {
       "type": "enrichment",
-      "on_failure": "continue",
-      "on_success": "continue"
+      "description": "some",
+      "config": {
+        "actions": [
+          {
+            "type":"set_entity_info_from_template",
+            "name":"test",
+            "value":"{{ `{{.ExternalData.test}}` }}",
+            "description":"test"
+          }
+        ],
+        "on_failure": "continue",
+        "on_success": "continue"
+      }
     }
     """
     Then the response code should be 400
@@ -262,116 +504,516 @@ Feature: Create an eventfilter
     }
     """
 
-  Scenario: create request with patterns: [null] should return ok
+  Scenario: create request with empty patterns should return error
     When I am admin
     When I do POST /api/v4/eventfilter/rules:
     """
     {
-      "type":"enrichment","description":"Recopie entite","patterns":[null],
-      "priority":0,"enabled":true,"actions":[{"from":"ExternalData.entity","to":"Entity","type":"copy"}],
-      "external_data":{"entity":{"type":"entity"}},"on_success":"pass","on_failure":"pass","author":"root"
-    }
-    """
-    Then the response code should be 201
-    Then the response body should contain:
-    """
-    {
-      "type":"enrichment","description":"Recopie entite","patterns":[ {} ],
-      "priority":0,"enabled":true,"actions":[{"from":"ExternalData.entity","to":"Entity","type":"copy"}],
-      "external_data":{"entity":{"type":"entity"}},"on_success":"pass","on_failure":"pass","author":"root"
-    }
-    """
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type":"enrichment","description":"Another entity copy","patterns":[ { } ],
-      "priority":0,"enabled":true,"actions":[{"from":"ExternalData.entity","to":"Entity","type":"copy"}],
-      "external_data":{"entity":{"type":"entity"}},"on_success":"pass","on_failure":"pass","author":"root"
-    }
-    """
-    Then the response code should be 201
-    Then the response body should contain:
-    """
-    {
-      "type":"enrichment","description":"Another entity copy","patterns":[ { } ],
-      "priority":0,"enabled":true,"actions":[{"from":"ExternalData.entity","to":"Entity","type":"copy"}],
-      "external_data":{"entity":{"type":"entity"}},"on_success":"pass","on_failure":"pass","author":"root"
-    }
-    """
-    When I do GET /api/v4/eventfilter/rules?search=Another%20entity%20copy
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "data": [
-        {
-          "type":"enrichment","description":"Another entity copy","patterns":[ { } ],
-          "priority":0,"enabled":true,"actions":[{"from":"ExternalData.entity","to":"Entity","type":"copy"}],
-          "external_data":{"entity":{"type":"entity"}},"on_success":"pass","on_failure":"pass","author":"root"
-        }
-      ]
-    }
-    """
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type":"enrichment","description":"More entity copy","patterns":null,
-      "priority":0,"enabled":true,"actions":[{"from":"ExternalData.entity","to":"Entity","type":"copy"}],
-      "external_data":{"entity":{"type":"entity"}},"on_success":"pass","on_failure":"pass"
-    }
-    """
-    Then the response code should be 201
-    Then the response body should contain:
-    """
-    {
-      "type":"enrichment","description":"More entity copy","patterns":null,
-      "priority":0,"enabled":true,"actions":[{"from":"ExternalData.entity","to":"Entity","type":"copy"}],
-      "external_data":{"entity":{"type":"entity"}},"on_success":"pass","on_failure":"pass","author":"root"
-    }
-    """
-    When I do GET /api/v4/eventfilter/rules?search=More%20entity%20copy
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "data": [
-        {
-          "type":"enrichment","description":"More entity copy","patterns":null,
-          "priority":0,"enabled":true,"actions":[{"from":"ExternalData.entity","to":"Entity","type":"copy"}],
-          "external_data":{"entity":{"type":"entity"}},"on_success":"pass","on_failure":"pass","author":"root"
-        }
-      ]
-    }
-    """
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type":"enrichment","description":"More entity copy","patterns":[4],
-      "priority":0,"enabled":true,"actions":[{"from":"ExternalData.entity","to":"Entity","type":"copy"}],
-      "external_data":{"entity":{"type":"entity"}},"on_success":"pass","on_failure":"pass","author":"root"
+      "type":"enrichment",
+      "description":"Another entity copy",
+      "event_pattern":[[]],
+      "entity_pattern": [[]],
+      "priority":0,
+      "enabled":true,
+      "config": {
+        "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+        "on_success":"pass",
+        "on_failure":"pass"
+      },
+      "external_data":{"entity":{"type":"entity"}}
     }
     """
     Then the response code should be 400
     Then the response body should contain:
     """
     {
-      "error":"request has invalid structure"
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern.",
+        "event_pattern": "EventPattern is invalid event pattern."
+      }
     }
     """
+
+  Scenario: create request with invalid event patterns should return error
+    When I am admin
     When I do POST /api/v4/eventfilter/rules:
     """
     {
-      "type":"enrichment","description":"Invalid pattern with empty document",
-      "patterns":[
-        {},{"connector": "test-eventfilter-create-1-pattern"}],
-      "priority":0,"enabled":true,"actions":[{"from":"ExternalData.entity","to":"Entity","type":"copy"}],
-      "external_data":{"entity":{"type":"entity"}},"on_success":"pass","on_failure":"pass","author":"root"
+      "type":"enrichment",
+      "description":"Another entity copy",
+      "event_pattern":[[
+        {
+          "field": "connector_bad",
+          "cond": {
+            "type": "eq",
+            "value": "some"
+          }
+        }
+      ]],
+      "priority":0,
+      "enabled":true,
+      "config": {
+        "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+        "on_success":"pass",
+        "on_failure":"pass"
+      },
+      "external_data":{"entity":{"type":"entity"}}
     }
     """
     Then the response code should be 400
     Then the response body should contain:
     """
     {
-      "error":"request has invalid structure"
+      "errors": {
+        "event_pattern": "EventPattern is invalid event pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "type":"enrichment",
+      "description":"Another entity copy",
+      "event_pattern":[[
+        {
+          "field": "connector",
+          "cond": {
+            "type": "gt",
+            "value": "some"
+          }
+        }
+      ]],
+      "priority":0,
+      "enabled":true,
+      "config": {
+        "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+        "on_success":"pass",
+        "on_failure":"pass"
+      },
+      "external_data":{"entity":{"type":"entity"}}
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "event_pattern": "EventPattern is invalid event pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "type":"enrichment",
+      "description":"Another entity copy",
+      "event_pattern":[[
+        {
+          "field": "extra.test",
+          "field_type": "string",
+          "cond": {
+            "type": "gt",
+            "value": "some"
+          }
+        }
+      ]],
+      "priority":0,
+      "enabled":true,
+      "config": {
+        "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+        "on_success":"pass",
+        "on_failure":"pass"
+      },
+      "external_data":{"entity":{"type":"entity"}}
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "event_pattern": "EventPattern is invalid event pattern."
+      }
+    }
+    """
+
+  Scenario: create request with empty patterns should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "type":"enrichment",
+      "description":"Another entity copy",
+      "priority":0,
+      "enabled":true,
+      "config": {
+        "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+        "on_success":"pass",
+        "on_failure":"pass"
+      },
+      "external_data":{"entity":{"type":"entity"}}
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "event_pattern": "EventPattern or EntityPattern is required.",
+        "entity_pattern": "EntityPattern or EventPattern is required."
+      }
+    }
+    """
+
+  Scenario: given POST change_entity rule requests should return error, because of empty config
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test",
+      "type": "change_entity",
+      "event_pattern":[[
+        {
+          "field": "connector",
+          "cond": {
+            "type": "eq",
+            "value": "test_connector"
+          }
+        }
+      ]],
+      "enabled": true
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config": "Config is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test",
+      "type": "change_entity",
+      "event_pattern":[[
+        {
+          "field": "connector",
+          "cond": {
+            "type": "eq",
+            "value": "test_connector"
+          }
+        }
+      ]],
+      "config": {
+        "component": "",
+        "connector": "",
+        "resource": "",
+        "connector_name": ""
+      },
+      "enabled": true
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config": "Config is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test",
+      "type": "change_entity",
+      "event_pattern":[[
+        {
+          "field": "connector",
+          "cond": {
+            "type": "eq",
+            "value": "test_connector"
+          }
+        }
+      ]],
+      "config": {},
+      "enabled": true
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config": "Config is missing."
+      }
+    }
+    """
+
+  Scenario: given create request with set_entity_info where info value is string value should return success
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 5",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-5-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+
+  Scenario: given create request with set_entity_info where info value is int value should return success
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 6",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-6-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": 123
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+
+  Scenario: given create request with set_entity_info where info value is bool value should return success
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 7",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-7-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": true
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+
+  Scenario: given create request with set_entity_info where info value is array of strings value should return success
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 8",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-8-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": ["kafka_connector_1", "kafka_connector_2"]
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+
+  Scenario: given create request with set_entity_info where info value is float should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 9",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-9-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": 1.2
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """
+
+  Scenario: given create request with set_entity_info where info value is array of various types should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 10",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-10-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": ["test", 1, "test 2", false]
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
+    }
+    """
+
+  Scenario: given create request with set_entity_info where info value is object should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 11",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-11-pattern"
+            }
+          }
+        ]
+      ],
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": {
+              "test": "abc",
+              "test2": 1
+            }
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config.actions.0.value": "info value should be int, string, bool or array of strings"
+      }
     }
     """

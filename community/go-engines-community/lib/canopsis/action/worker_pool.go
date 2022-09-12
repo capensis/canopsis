@@ -128,7 +128,12 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 
 						s.logger.Debug().Interface("task", task).Msgf("Worker %d got task", id)
 
-						if !task.Action.AlarmPatterns.Matches(&task.Alarm) || !task.Action.EntityPatterns.Matches(&task.Entity) {
+						match, err := task.Action.Match(task.Entity, task.Alarm)
+						if err != nil {
+							s.logger.Err(err).Msgf("match action %d from scenario %s returned error", task.Step, task.ScenarioID)
+						}
+
+						if !match {
 							resultChannel <- TaskResult{
 								Source:      source,
 								Alarm:       task.Alarm,
@@ -147,6 +152,7 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 									Status:      TaskRpcError,
 									Err:         err,
 								}
+
 								break
 							}
 
@@ -192,7 +198,7 @@ func (s *pool) call(ctx context.Context, task Task, workerId int) error {
 		return err
 	}
 
-	err = rpcClient.Call(engine.RPCMessage{
+	err = rpcClient.Call(ctx, engine.RPCMessage{
 		CorrelationID: fmt.Sprintf("%s&&%d", task.ExecutionID, task.Step),
 		Body:          body,
 	})

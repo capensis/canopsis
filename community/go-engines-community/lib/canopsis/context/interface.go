@@ -10,9 +10,6 @@ import (
 // EnrichmentCenter is the high level API for context management.
 type EnrichmentCenter interface {
 	// Handle context creation and update on received event.
-	// param source: the original event as byte slice.
-	// param ef: which fields are included/excluded from extra infos enrichment.
-	//     see EnrichFields doc for more infos.
 	Handle(ctx context.Context, event types.Event) (*types.Entity, UpdatedEntityServices, error)
 
 	// HandleEntityServiceUpdate updates context graph for entity service.

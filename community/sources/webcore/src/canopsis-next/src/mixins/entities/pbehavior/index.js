@@ -56,7 +56,7 @@ export const entitiesPbehaviorMixin = {
             });
           }
 
-          return Promise.resolve();
+          return Promise.reject(errors);
         }),
       );
 
