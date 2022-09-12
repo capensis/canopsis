@@ -10,13 +10,14 @@ import { isActionTypeAvailableForEntity } from '@/helpers/entities/entity';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
-import { entitiesPbehaviorTypesMixin } from '@/mixins/entities/pbehavior/types';
+import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
 
 export const widgetActionPanelServiceEntityMixin = {
   mixins: [
     authMixin,
-    entitiesPbehaviorTypesMixin,
+    entitiesPbehaviorTypeMixin,
     entitiesPbehaviorMixin,
+    entitiesPbehaviorTypeMixin,
   ],
   data() {
     return {
@@ -198,7 +199,7 @@ export const widgetActionPanelServiceEntityMixin = {
       this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
-          title: this.$t('common.output'),
+          title: this.$t('common.note'),
           action: (output) => {
             this.addActionToQueue({
               entities,

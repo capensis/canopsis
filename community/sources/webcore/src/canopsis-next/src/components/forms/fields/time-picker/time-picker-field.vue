@@ -87,13 +87,9 @@ export default {
 
       const activeTile = elements[index === -1 ? elements.length - 1 : index];
 
-      if (activeTile) {
-        const newScrollTop = (activeTile.offsetTop - (el.offsetHeight / 2)) + (activeTile.offsetHeight / 2);
+      const newScrollTop = (activeTile.offsetTop - (el.offsetHeight / 2)) + (activeTile.offsetHeight / 2);
 
-        return Math.min(maxScrollTop, Math.max(0, newScrollTop));
-      }
-
-      return el.scrollTop;
+      return Math.min(maxScrollTop, Math.max(0, newScrollTop));
     },
 
     filter(item, queryText, itemText) {

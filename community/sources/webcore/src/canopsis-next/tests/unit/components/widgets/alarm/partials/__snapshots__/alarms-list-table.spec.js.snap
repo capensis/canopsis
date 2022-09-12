@@ -10,6 +10,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
   >
     <mass-actions-panel-stub
       itemsids=""
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </div>
@@ -21,7 +22,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
         class="v-table__overflow"
       >
         <table
-          class="v-datatable v-table v-datatable--select-all theme--light"
+          class="v-datatable v-table v-datatable--select-all v-datatable--dense theme--light"
         >
           <thead
             style="transform: translateY(0px); opacity: 1;"
@@ -80,7 +81,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                 </i>
               </th>
               <th
-                aria-label="common.actionsLabel: Not sorted."
+                aria-label="Actions: Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
                 role="columnheader"
@@ -143,9 +144,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
-              hidegroups="true"
               istourenabled="true"
               parentalarm="[object Object]"
+              refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
               widget="[object Object]"
@@ -163,8 +164,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
-              hidegroups="true"
               parentalarm="[object Object]"
+              refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
               widget="[object Object]"
@@ -182,8 +183,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
-              hidegroups="true"
               parentalarm="[object Object]"
+              refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
               widget="[object Object]"
@@ -201,8 +202,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
-              hidegroups="true"
               parentalarm="[object Object]"
+              refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
               widget="[object Object]"
@@ -220,8 +221,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
-              hidegroups="true"
               parentalarm="[object Object]"
+              refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
               widget="[object Object]"
@@ -254,6 +255,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   >
     <mass-actions-panel-stub
       itemsids=""
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </div>
@@ -272,6 +274,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   >
     <mass-actions-panel-stub
       itemsids=""
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </div>
@@ -288,7 +291,26 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
           <thead>
             <tr>
               <th
-                aria-label="common.actionsLabel: Not sorted."
+                aria-label=""
+                aria-sort="none"
+                class="column sortable text-xs-left"
+                role="columnheader"
+                scope="col"
+                tabindex="0"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                />
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  arrow_upward
+                </i>
+              </th>
+              <th
+                aria-label="Actions: Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
                 role="columnheader"
@@ -304,7 +326,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
             >
               <th
                 class="column"
-                colspan="1"
+                colspan="2"
               />
             </tr>
           </thead>
@@ -312,7 +334,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
             <tr>
               <td
                 class="text-xs-center"
-                colspan="1"
+                colspan="2"
               >
                 No data available
               </td>
@@ -336,6 +358,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
   >
     <mass-actions-panel-stub
       itemsids=""
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </div>
@@ -363,7 +386,26 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 />
               </th>
               <th
-                aria-label="common.actionsLabel: Not sorted."
+                aria-label=""
+                aria-sort="none"
+                class="column sortable text-xs-left"
+                role="columnheader"
+                scope="col"
+                tabindex="0"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                />
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  arrow_upward
+                </i>
+              </th>
+              <th
+                aria-label="Actions: Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
                 role="columnheader"
@@ -379,15 +421,16 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
             >
               <th
                 class="column"
-                colspan="2"
+                colspan="3"
               />
             </tr>
           </thead>
           <tbody>
             <alarms-list-row-stub
-              columns=""
+              columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              refreshalarmslist="[Function]"
               row="[object Object]"
               widget="[object Object]"
             />
@@ -396,14 +439,15 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="2"
+                colspan="3"
                 tag="td"
               />
             </tr>
             <alarms-list-row-stub
-              columns=""
+              columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              refreshalarmslist="[Function]"
               row="[object Object]"
               widget="[object Object]"
             />
@@ -412,14 +456,15 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="2"
+                colspan="3"
                 tag="td"
               />
             </tr>
             <alarms-list-row-stub
-              columns=""
+              columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              refreshalarmslist="[Function]"
               row="[object Object]"
               widget="[object Object]"
             />
@@ -428,14 +473,15 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="2"
+                colspan="3"
                 tag="td"
               />
             </tr>
             <alarms-list-row-stub
-              columns=""
+              columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              refreshalarmslist="[Function]"
               row="[object Object]"
               widget="[object Object]"
             />
@@ -444,14 +490,15 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="2"
+                colspan="3"
                 tag="td"
               />
             </tr>
             <alarms-list-row-stub
-              columns=""
+              columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              refreshalarmslist="[Function]"
               row="[object Object]"
               widget="[object Object]"
             />
@@ -460,7 +507,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="2"
+                colspan="3"
                 tag="td"
               />
             </tr>

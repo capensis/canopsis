@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarms-list Renders \`alarms-list\` 1`] = `
+<div
+  class="modal-wrapper"
+  close="close"
+>
+  <div
+    class="title"
+  >
+    <span>
+      Alarm list
+    </span>
+  </div>
+   
+  <div
+    class="text"
+  >
+    <alarms-list-table-with-pagination-stub
+      alarms=""
+      columns=""
+      expandable="true"
+      meta="[object Object]"
+      query="[object Object]"
+      refreshalarmslist="[Function]"
+      selectable="true"
+      widget="[object Object]"
+    />
+  </div>
+   
+  <div
+    class="actions"
+  />
+</div>
+`;

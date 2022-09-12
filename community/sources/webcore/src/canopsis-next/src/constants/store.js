@@ -1,5 +1,7 @@
 export const ENTITIES_TYPES = {
   alarm: 'alarm',
+  alarmDetails: 'alarmDetails',
+  alarmDetailsSteps: 'alarmDetailsSteps',
   entity: 'entity',
   service: 'entityservices',
   weatherService: 'weatherService',
@@ -13,7 +15,7 @@ export const ENTITIES_TYPES = {
   stat: 'stat',
   user: 'user',
   role: 'role',
-  eventFilterRule: 'eventFilterRule',
+  eventFilter: 'eventFilter',
   metaAlarmRule: 'metaAlarmRule',
   snmpRule: 'snmpRule',
   dynamicInfo: 'dynamicInfo',
@@ -37,4 +39,5 @@ export const ENTITIES_TYPES = {
   resolveRules: 'resolveRules',
   filter: 'filter',
   ratingSettings: 'ratingSettings',
+  pattern: 'pattern',
 };

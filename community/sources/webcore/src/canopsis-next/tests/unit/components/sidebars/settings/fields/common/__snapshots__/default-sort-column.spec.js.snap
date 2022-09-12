@@ -13,7 +13,7 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 1
       <div
         class="v-list__tile theme--light"
       >
-        settings.defaultSortColumn
+        Default sort column
       </div>
     </div>
     <div
@@ -280,7 +280,7 @@ exports[`default-sort-column Renders \`default-sort-column\` with default props 
       <div
         class="v-list__tile theme--light"
       >
-        settings.defaultSortColumn
+        Default sort column
       </div>
     </div>
     <div

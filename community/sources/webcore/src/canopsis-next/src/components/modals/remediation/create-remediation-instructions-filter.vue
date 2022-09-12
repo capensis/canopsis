@@ -1,14 +1,14 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('common.filters') }}
-      template(slot="text")
+      template(#text="")
         remediation-instructions-filter-form(
           v-model="form",
           :filters="config.filters"
         )
-      template(slot="actions")
+      template(#actions="")
         v-btn(
           :disabled="submitting",
           depressed,

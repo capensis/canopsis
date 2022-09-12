@@ -13,7 +13,7 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
       <div
         class="v-list__tile theme--light"
       >
-        settings.filters
+        Filters
       </div>
     </div>
     <div
@@ -38,20 +38,19 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
       <div
         class="container"
       >
-        <filter-selector-stub
-          condition="$and"
-          entitiestype="entity"
-          filters="[object Object]"
-          hasaccesstouserfilter="true"
-          hideselect="true"
-          hideselecticon="true"
-          itemtext="title"
-          itemvalue="title"
-          label="filterSelector.defaultFilter"
-          lockedfilters=""
-          long="true"
-          value="[object Object]"
-        />
+        <div
+          class="layout column"
+        >
+          <filter-selector-stub
+            filters="[object Object]"
+            label="Default filter"
+            lockedfilters=""
+            value="filter-id"
+          />
+          <filters-list-stub
+            filters="[object Object]"
+          />
+        </div>
       </div>
     </div>
   </transition-stub>
@@ -71,7 +70,7 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
       <div
         class="v-list__tile theme--light"
       >
-        settings.filters
+        Filters
       </div>
     </div>
     <div
@@ -96,18 +95,18 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
       <div
         class="container"
       >
-        <filter-selector-stub
-          condition="$and"
-          entitiestype="alarm"
-          filters=""
-          hasaccesstouserfilter="true"
-          hideselecticon="true"
-          itemtext="title"
-          itemvalue="title"
-          label="filterSelector.defaultFilter"
-          lockedfilters=""
-          long="true"
-        />
+        <div
+          class="layout column"
+        >
+          <filter-selector-stub
+            filters=""
+            label="Default filter"
+            lockedfilters=""
+          />
+          <filters-list-stub
+            filters=""
+          />
+        </div>
       </div>
     </div>
   </transition-stub>

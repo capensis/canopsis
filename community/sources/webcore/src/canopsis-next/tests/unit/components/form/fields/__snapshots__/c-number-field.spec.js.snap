@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-number-field Renders \`c-number-field\` with custom props 1`] = `
+<div
+  class="v-input v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-text-field__slot"
+      >
+        <label
+          aria-hidden="true"
+          class="v-label v-label--active v-label--is-disabled theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Custom label
+        </label>
+        <input
+          aria-label="Custom label"
+          disabled="disabled"
+          max="21"
+          min="19"
+          name="customName"
+          type="number"
+        />
+      </div>
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-number-field Renders \`c-number-field\` with default props 1`] = `
+<div
+  class="v-input v-text-field theme--light"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-text-field__slot"
+      >
+        <input
+          aria-label=""
+          name="value"
+          type="number"
+        />
+      </div>
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

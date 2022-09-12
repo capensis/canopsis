@@ -28,24 +28,24 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` with date in prev
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.snooze
+      Snooze
     </strong>
     <div>
-      common.by : snooze-author
+      By : snooze-author
     </div>
     <div>
-      common.date : 07/08/2013 19:00:00
+      Date : 07/08/2013 19:00:00
     </div>
     <div>
-      common.end : 07/08/2013 19:00:00
+      End : 07/08/2013 19:00:00
     </div>
     <div>
-      common.initiator : snooze-initiator
+      Initiator : snooze-initiator
     </div>
     <div
       class="c-extra-details__message"
     >
-      common.comment:undefined : snooze-message
+      Comment : snooze-message
     </div>
   </div>
 </div>
@@ -79,24 +79,24 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` with full snooze 
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.snooze
+      Snooze
     </strong>
     <div>
-      common.by : snooze-author
+      By : snooze-author
     </div>
     <div>
-      common.date : 6:00:00
+      Date : 6:00:00
     </div>
     <div>
-      common.end : 6:00:00
+      End : 6:00:00
     </div>
     <div>
-      common.initiator : snooze-initiator
+      Initiator : snooze-initiator
     </div>
     <div
       class="c-extra-details__message"
     >
-      common.comment:undefined : snooze-message
+      Comment : snooze-message
     </div>
   </div>
 </div>
@@ -130,22 +130,22 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` without initiator
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.snooze
+      Snooze
     </strong>
     <div>
-      common.by : snooze-author
+      By : snooze-author
     </div>
     <div>
-      common.date : 6:00:00
+      Date : 6:00:00
     </div>
     <div>
-      common.end : 6:00:00
+      End : 6:00:00
     </div>
     <!---->
     <div
       class="c-extra-details__message"
     >
-      common.comment:undefined : snooze-message
+      Comment : snooze-message
     </div>
   </div>
 </div>
@@ -179,19 +179,19 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` without message 2
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.snooze
+      Snooze
     </strong>
     <div>
-      common.by : snooze-author
+      By : snooze-author
     </div>
     <div>
-      common.date : 6:00:00
+      Date : 6:00:00
     </div>
     <div>
-      common.end : 6:00:00
+      End : 6:00:00
     </div>
     <div>
-      common.initiator : snooze-initiator
+      Initiator : snooze-initiator
     </div>
     <!---->
   </div>

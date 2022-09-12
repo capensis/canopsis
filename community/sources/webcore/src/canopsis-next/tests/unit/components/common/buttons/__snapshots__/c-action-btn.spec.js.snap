@@ -71,7 +71,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    common.delete
+    Delete
   </span>
 </div>
 `;
@@ -109,7 +109,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type corre
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    common.duplicate
+    Duplicate
   </span>
 </div>
 `;
@@ -147,7 +147,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly.
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    common.edit
+    Edit
   </span>
 </div>
 `;
