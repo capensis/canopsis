@@ -97,7 +97,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		return alarmChange, err
 	}
 
-	alarm, err := s.adapter.GetOpenedAlarm(ctx, event.Connector, event.ConnectorName, event.GetEID())
+	alarm, err := s.adapter.GetOpenedAlarm(ctx, event.GetEID())
 	alarmNotFound := false
 	if _, ok := err.(errt.NotFound); ok {
 		alarmNotFound = true
@@ -507,7 +507,7 @@ func (s *eventProcessor) processAckResources(ctx context.Context, event types.Ev
 
 func (s *eventProcessor) resolveAlarmForDisabledEntity(ctx context.Context, event *types.Event) (types.AlarmChange, error) {
 	alarmChange := types.NewAlarmChange()
-	alarm, err := s.adapter.GetOpenedAlarm(ctx, event.Connector, event.ConnectorName, event.GetEID())
+	alarm, err := s.adapter.GetOpenedAlarm(ctx, event.GetEID())
 	event.Entity.IdleSince = nil
 	event.Entity.LastIdleRuleApply = ""
 
