@@ -2,19 +2,26 @@ package main
 
 import (
 	"context"
-	"fmt"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 )
 
 func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) engine.Engine {
-	mongoClient, err := mongo.NewClient(ctx, 0, 0, logger)
-	if err != nil {
-		panic(fmt.Errorf("cannot connect to MongoDb: %w", err))
-	}
+	m := che.DependencyMaker{}
+	dbClient := m.DepMongoClient(ctx, logger)
+	cfg := m.DepConfig(ctx, dbClient)
+	config.SetDbClientRetry(dbClient, cfg)
 
-	return che.NewEngine(ctx, opts, mongoClient, nil, metrics.NewNullMetaUpdater(), logger)
+	e := che.NewEngine(ctx, opts, dbClient, cfg, metrics.NewNullMetaUpdater(), logger)
+	e.AddDeferFunc(func(ctx context.Context) {
+		err := dbClient.Disconnect(ctx)
+		if err != nil {
+			logger.Err(err).Msg("failed to close mongo connection")
+		}
+	})
+	return e
 }

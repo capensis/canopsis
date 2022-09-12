@@ -144,21 +144,21 @@ export const convertDateToDateObject = (date, format) => convertDateToMoment(dat
  *
  * @param {LocalDate} timestamp
  * @param {string} sourceTimezone
- * @param {string} [localTimezone = getLocaleTimezone()]
+ * @param {string} [targetTimezone = getLocaleTimezone()]
  * @returns {Object}
  */
 export const convertDateToMomentByTimezone = (
   timestamp,
   sourceTimezone = getLocaleTimezone(),
-  localTimezone = getLocaleTimezone(),
+  targetTimezone = getLocaleTimezone(),
 ) => {
   const dateObject = convertDateToMoment(timestamp);
 
-  if (sourceTimezone === localTimezone) {
+  if (sourceTimezone === targetTimezone) {
     return dateObject;
   }
 
-  return dateObject.tz(sourceTimezone).tz(localTimezone, true);
+  return dateObject.tz(sourceTimezone).tz(targetTimezone, true);
 };
 
 /**
@@ -166,14 +166,14 @@ export const convertDateToMomentByTimezone = (
  *
  * @param {LocalDate} timestamp
  * @param {string} sourceTimezone
- * @param {string} [localTimezone]
+ * @param {string} [targetTimezone]
  * @return {Date}
  */
 export const convertDateToDateObjectByTimezone = (
   timestamp,
   sourceTimezone,
-  localTimezone,
-) => convertDateToMomentByTimezone(timestamp, sourceTimezone, localTimezone).toDate();
+  targetTimezone,
+) => convertDateToMomentByTimezone(timestamp, sourceTimezone, targetTimezone).toDate();
 
 /**
  * Convert date to timestamp with keep time
@@ -326,19 +326,6 @@ export const convertDateToEndOfUnitDateObject = (date, unit) => convertDateToDat
 );
 
 /**
- * Convert date to end of day as formatted string
- *
- * @param {LocalDate} date
- * @param {string} unit
- * @param {string} [format]
- * @return {string}
- */
-export const convertDateToEndOfUnitString = (date, unit, format) => convertDateToString(
-  convertDateToEndOfUnitMoment(date, unit),
-  format,
-);
-
-/**
  * Convert date to start of unit as formatted string
  *
  * @param {LocalDate} date
@@ -374,24 +361,23 @@ export const convertDateToStartOfDayMoment = (date) => {
 export const convertDateToStartOfDayTimestamp = date => convertDateToStartOfDayMoment(date).unix();
 
 /**
+ * Convert date to start of day as timestamp
+ *
+ * @param {LocalDate} date
+ * @param {string} [timezone = getLocaleTimezone()]
+ * @return {number}
+ */
+export const convertDateToStartOfDayTimestampByTimezone = (date, timezone = getLocaleTimezone()) => (
+  convertDateToMomentByTimezone(convertDateToStartOfDayMoment(date), timezone, getLocaleTimezone()).unix()
+);
+
+/**
  * Convert date to start of day as native date
  *
  * @param {LocalDate} date
  * @return {Date}
  */
 export const convertDateToStartOfDayDateObject = date => convertDateToStartOfDayMoment(date).toDate();
-
-/**
- * Convert date to start of day as formatted string
- *
- * @param {LocalDate} date
- * @param {string} [format]
- * @return {string}
- */
-export const convertDateToStartOfDayString = (date, format) => convertDateToString(
-  convertDateToStartOfDayMoment(date),
-  format,
-);
 
 /**
  * Return moment with end of day timestamp
@@ -422,23 +408,5 @@ export const convertDateToEndOfDayTimestamp = date => convertDateToEndOfDayMomen
  * @return {Date}
  */
 export const convertDateToEndOfDayDateObject = date => convertDateToEndOfDayMoment(date).toDate();
-
-/**
- * Check date is same day or before
- *
- * @param {LocalDate} left
- * @param {LocalDate} right
- * @return {boolean}
- */
-export const isSameOrBeforeDate = (left, right) => convertDateToMoment(left).isSameOrBefore(right);
-
-/**
- * Format date/timestamp/unix/moment to string format
- *
- * @param {Date|number|moment.Moment} date
- * @param {string} format
- * @return {string}
- */
-export const formatDate = (date, format) => convertDateToMoment(date).format(format);
 
 export default convertDateToMoment;
