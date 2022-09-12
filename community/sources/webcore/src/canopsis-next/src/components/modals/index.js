@@ -105,6 +105,10 @@ export const CreatePbehaviorException = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-pbehavior-exception.vue'),
   loading: LoaderOverlay,
 });
+export const PbehaviorPatterns = () => ({
+  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-patterns.vue'),
+  loading: LoaderOverlay,
+});
 export const Confirmation = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/confirmation.vue'),
   loading: LoaderOverlay,
@@ -209,28 +213,20 @@ export const CreateBroadcastMessage = () => ({
   component: import(/* webpackChunkName: "BroadcastMessage" */ './admin/create-broadcast-message.vue'),
   loading: LoaderOverlay,
 });
-export const CreateEventFilterRule = () => ({
-  component: import(/* webpackChunkName: "EventFilter" */ './event-filter/create-event-filter-rule.vue'),
+export const CreateEventFilter = () => ({
+  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter.vue'),
   loading: LoaderOverlay,
 });
-export const EventFilterRuleActions = () => ({
-  component: import(/* webpackChunkName: "EventFilter" */ './event-filter/event-filter-rule-actions.vue'),
+export const EventFilterActions = () => ({
+  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/event-filter-actions.vue'),
   loading: LoaderOverlay,
 });
-export const EventFilterRuleExternalData = () => ({
-  component: import(/* webpackChunkName: "EventFilter" */ './event-filter/event-filter-rule-external-data.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateEventFilterRuleAction = () => ({
-  component: import(/* webpackChunkName: "EventFilter" */ './event-filter/create-event-filter-rule-action.vue'),
+export const CreateEventFilterAction = () => ({
+  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter-action.vue'),
   loading: LoaderOverlay,
 });
 export const CreatePattern = () => ({
   component: import(/* webpackChunkName: "Pattern" */ './pattern/create-pattern.vue'),
-  loading: LoaderOverlay,
-});
-export const CreatePatternRule = () => ({
-  component: import(/* webpackChunkName: "Pattern" */ './pattern/create-pattern-rule.vue'),
   loading: LoaderOverlay,
 });
 export const CreateSnmpRule = () => ({
@@ -289,10 +285,6 @@ export const Rate = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './common/rate.vue'),
   loading: LoaderOverlay,
 });
-export const Patterns = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/patterns.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateRemediationInstructionsFilter = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './remediation/create-remediation-instructions-filter.vue'),
   loading: LoaderOverlay,
@@ -323,5 +315,9 @@ export const CreateScenario = () => ({
 });
 export const CreateAlarmStatusRule = () => ({
   component: import(/* webpackChunkName: "AlarmStatusRule" */ './alarm-status-rule/create-alarm-status-rule.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateKpiFilter = () => ({
+  component: import(/* webpackChunkName: "KPI" */ './kpi/create-kpi-filter.vue'),
   loading: LoaderOverlay,
 });

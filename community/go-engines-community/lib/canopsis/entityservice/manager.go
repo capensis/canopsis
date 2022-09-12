@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
@@ -100,14 +101,23 @@ func (m *manager) UpdateService(ctx context.Context, serviceID string) (bool, []
 		return true, nil, nil
 	}
 
-	removedIDs, err := m.entityAdapter.RemoveImpactByQuery(ctx, data.EntityPatterns.AsNegativeMongoDriverQuery(), data.ID)
+	query, negativeQuery, err := getServiceQueries(*data)
+	if err != nil {
+		m.logger.Err(err).Str("service", data.ID).Msgf("service has invalid pattern")
+	}
+	// Do not ignore empty negativeQuery to remove service from context graph.
+	removedIDs, err := m.entityAdapter.RemoveImpactByQuery(ctx, negativeQuery, data.ID)
 	if err != nil {
 		return false, nil, err
 	}
 
-	addedIDs, err := m.entityAdapter.AddImpactByQuery(ctx, data.EntityPatterns.AsMongoDriverQuery(), data.ID)
-	if err != nil {
-		return false, nil, err
+	var addedIDs []string
+	// Ignore empty query to not add service to context graph.
+	if query != nil {
+		addedIDs, err = m.entityAdapter.AddImpactByQuery(ctx, query, data.ID)
+		if err != nil {
+			return false, nil, err
+		}
 	}
 
 	if len(removedIDs) > 0 {
@@ -139,9 +149,15 @@ func (m *manager) HasEntityServiceByComponentInfos(ctx context.Context) (bool, e
 	}
 
 	for _, s := range services {
-		for _, p := range s.EntityPatterns.Patterns {
-			if len(p.ComponentInfos) > 0 {
+		if len(s.EntityPattern) > 0 {
+			if s.EntityPattern.HasComponentInfosField() {
 				return true, nil
+			}
+		} else if s.OldEntityPatterns.IsSet() && s.OldEntityPatterns.IsValid() {
+			for _, p := range s.OldEntityPatterns.Patterns {
+				if len(p.ComponentInfos) > 0 {
+					return true, nil
+				}
 			}
 		}
 	}
@@ -245,7 +261,22 @@ func (m *manager) processService(ctx context.Context, data ServiceData, entities
 			}
 		}
 
-		if data.EntityPatterns.Matches(&e) {
+		match := false
+		if len(data.EntityPattern) > 0 {
+			var err error
+			match, _, err = data.EntityPattern.Match(e)
+			if err != nil {
+				m.logger.Err(err).Str("service", data.ID).Msgf("service has invalid pattern")
+			}
+		} else if data.OldEntityPatterns.IsSet() {
+			if data.OldEntityPatterns.IsValid() {
+				match = data.OldEntityPatterns.Matches(&e)
+			} else {
+				m.logger.Err(pattern.ErrInvalidOldEntityPattern).Str("service", data.ID).Msgf("service has invalid pattern")
+			}
+		}
+
+		if match {
 			if !found && enabled {
 				added = append(added, e.ID)
 			}
@@ -330,4 +361,29 @@ func (m *manager) removeService(ctx context.Context, serviceID string) ([]string
 	}
 
 	return removedFromIDs, nil
+}
+
+func getServiceQueries(data ServiceData) (interface{}, interface{}, error) {
+	var query, negativeQuery interface{}
+	var err error
+
+	if len(data.EntityPattern) > 0 {
+		query, err = data.EntityPattern.ToMongoQuery("")
+		if err != nil {
+			return nil, nil, err
+		}
+
+		negativeQuery, err = data.EntityPattern.ToNegativeMongoQuery("")
+		if err != nil {
+			return nil, nil, err
+		}
+	} else if data.OldEntityPatterns.IsSet() {
+		if !data.OldEntityPatterns.IsValid() {
+			return nil, nil, pattern.ErrInvalidOldEntityPattern
+		}
+		query = data.OldEntityPatterns.AsMongoDriverQuery()
+		negativeQuery = data.OldEntityPatterns.AsNegativeMongoDriverQuery()
+	}
+
+	return query, negativeQuery, nil
 }

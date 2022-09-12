@@ -5,6 +5,7 @@
 <script>
 import { MODALS, CONTEXT_ACTIONS_TYPES } from '@/constants';
 
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
 import { pickIds } from '@/helpers/entities';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
@@ -145,9 +146,7 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: this.items.map(({ _id: id }) => id) },
-          },
+          entityPattern: createEntityIdPatternByValue(this.items.map(({ _id: id }) => id)),
           afterSubmit: this.afterSubmit,
         },
       });

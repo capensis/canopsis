@@ -1,42 +1,34 @@
 <template lang="pug">
   div
-    v-layout(align-center)
-      v-text-field(
-        v-field="form._id",
-        :label="$t('common.id')",
-        :error-messages="errors.collect('_id')",
-        :disabled="isDisabledIdField",
-        :readonly="isDisabledIdField",
-        name="_id",
-        @input="errors.remove('_id')"
-      )
-        v-tooltip(v-show="!isDisabledIdField", slot="append", left)
-          v-icon(slot="activator") help
-          span {{ $t('eventFilter.idHelp') }}
-    v-select(v-field="form.type", :items="ruleTypes", :label="$t('common.type')")
-    v-textarea(
-      v-field="form.description",
-      v-validate="'required'",
-      :label="$t('common.description')",
-      :error-messages="errors.collect('description')",
-      name="description"
+    c-id-field(
+      v-field="form._id",
+      :disabled="isDisabledIdField",
+      :help-text="$t('eventFilter.idHelp')"
     )
+    c-event-filter-type-field(v-field="form.type")
+    c-description-field(v-field="form.description", required)
     c-priority-field(v-field="form.priority")
     c-enabled-field(v-field="form.enabled")
-    patterns-list(v-field="form.patterns")
+    c-patterns-field(v-field="form.patterns", with-entity, with-event, some-required)
+
+    template(v-if="isChangeEntityType || isEnrichmentType")
+      v-divider.my-3
+      c-information-block(:title="$t('eventFilter.configuration')")
+        template(v-if="isChangeEntityType")
+          event-filter-change-entity-form(v-field="form.config")
+        template(v-if="isEnrichmentType")
+          event-filter-enrichment-form(v-field="form.config")
 </template>
 
 <script>
-import { EVENT_FILTER_RULE_TYPES } from '@/constants';
+import { EVENT_FILTER_TYPES } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
-
-import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
+import EventFilterEnrichmentForm from '@/components/other/event-filter/form/event-filter-enrichment-form.vue';
+import EventFilterChangeEntityForm from '@/components/other/event-filter/form/event-filter-change-entity-form.vue';
 
 export default {
   inject: ['$validator'],
-  components: { PatternsList },
-  mixins: [formMixin],
+  components: { EventFilterEnrichmentForm, EventFilterChangeEntityForm },
   model: {
     prop: 'form',
     event: 'input',
@@ -52,8 +44,12 @@ export default {
     },
   },
   computed: {
-    ruleTypes() {
-      return Object.values(EVENT_FILTER_RULE_TYPES);
+    isEnrichmentType() {
+      return this.form.type === EVENT_FILTER_TYPES.enrichment;
+    },
+
+    isChangeEntityType() {
+      return this.form.type === EVENT_FILTER_TYPES.changeEntity;
     },
   },
 };

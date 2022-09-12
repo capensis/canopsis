@@ -5,6 +5,7 @@
 package mock_correlation
 
 import (
+	context "context"
 	reflect "reflect"
 
 	correlation "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
@@ -35,60 +36,60 @@ func (m *MockRulesAdapter) EXPECT() *MockRulesAdapterMockRecorder {
 }
 
 // Get mocks base method.
-func (m *MockRulesAdapter) Get() ([]correlation.Rule, error) {
+func (m *MockRulesAdapter) Get(arg0 context.Context) ([]correlation.Rule, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get")
+	ret := m.ctrl.Call(m, "Get", arg0)
 	ret0, _ := ret[0].([]correlation.Rule)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockRulesAdapterMockRecorder) Get() *gomock.Call {
+func (mr *MockRulesAdapterMockRecorder) Get(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockRulesAdapter)(nil).Get))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockRulesAdapter)(nil).Get), arg0)
 }
 
 // GetManualRule mocks base method.
-func (m *MockRulesAdapter) GetManualRule() (correlation.Rule, error) {
+func (m *MockRulesAdapter) GetManualRule(arg0 context.Context) (correlation.Rule, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetManualRule")
+	ret := m.ctrl.Call(m, "GetManualRule", arg0)
 	ret0, _ := ret[0].(correlation.Rule)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetManualRule indicates an expected call of GetManualRule.
-func (mr *MockRulesAdapterMockRecorder) GetManualRule() *gomock.Call {
+func (mr *MockRulesAdapterMockRecorder) GetManualRule(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetManualRule", reflect.TypeOf((*MockRulesAdapter)(nil).GetManualRule))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetManualRule", reflect.TypeOf((*MockRulesAdapter)(nil).GetManualRule), arg0)
 }
 
 // GetRule mocks base method.
-func (m *MockRulesAdapter) GetRule(arg0 string) (correlation.Rule, error) {
+func (m *MockRulesAdapter) GetRule(arg0 context.Context, arg1 string) (correlation.Rule, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetRule", arg0)
+	ret := m.ctrl.Call(m, "GetRule", arg0, arg1)
 	ret0, _ := ret[0].(correlation.Rule)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetRule indicates an expected call of GetRule.
-func (mr *MockRulesAdapterMockRecorder) GetRule(arg0 interface{}) *gomock.Call {
+func (mr *MockRulesAdapterMockRecorder) GetRule(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRule", reflect.TypeOf((*MockRulesAdapter)(nil).GetRule), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRule", reflect.TypeOf((*MockRulesAdapter)(nil).GetRule), arg0, arg1)
 }
 
 // Save mocks base method.
-func (m *MockRulesAdapter) Save(arg0 correlation.Rule) error {
+func (m *MockRulesAdapter) Save(arg0 context.Context, arg1 correlation.Rule) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Save", arg0)
+	ret := m.ctrl.Call(m, "Save", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Save indicates an expected call of Save.
-func (mr *MockRulesAdapterMockRecorder) Save(arg0 interface{}) *gomock.Call {
+func (mr *MockRulesAdapterMockRecorder) Save(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockRulesAdapter)(nil).Save), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockRulesAdapter)(nil).Save), arg0, arg1)
 }

@@ -331,6 +331,36 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: changeState 1`] = `
 </div>
 `;
 
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: check 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="px-1"
+        >
+          check20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
 exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: comment 1`] = `
 <div
   class="chip-container"
@@ -1404,6 +1434,36 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statusinc 1`] = `
           class="px-1"
         >
           statusinc20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: uncancel 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="px-1"
+        >
+          uncancel20
         </span>
       </span>
     </transition-stub>

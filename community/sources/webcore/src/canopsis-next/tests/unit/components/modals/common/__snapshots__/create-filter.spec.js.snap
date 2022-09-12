@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`create-filter Renders \`create-filter\` with all parameters 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Create filter title
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <patterns-form-stub
+        form="[object Object]"
+        withalarm="true"
+        withentity="true"
+        withevent="true"
+        withpbehavior="true"
+        withtitle="true"
+      />
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`create-filter Renders \`create-filter\` with empty modal 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Create filter
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <patterns-form-stub
+        form="[object Object]"
+      />
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;

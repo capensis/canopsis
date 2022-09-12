@@ -63,7 +63,7 @@ exports[`c-enabled-field Renders \`c-enabled-field\` with default props correctl
       >
         <input
           aria-checked="true"
-          aria-label="common.enabled"
+          aria-label="Enabled"
           role="checkbox"
           type="checkbox"
           value=""
@@ -88,7 +88,7 @@ exports[`c-enabled-field Renders \`c-enabled-field\` with default props correctl
         class="v-label theme--light"
         style="left: 0px; position: relative;"
       >
-        common.enabled
+        Enabled
       </label>
     </div>
     <div

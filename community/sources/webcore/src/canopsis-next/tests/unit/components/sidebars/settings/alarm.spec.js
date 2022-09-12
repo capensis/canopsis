@@ -53,6 +53,7 @@ const stubs = {
   'field-switcher': createInputStub('field-switcher'),
   'field-fast-ack-output': createInputStub('field-fast-ack-output'),
   'field-enabled-limit': createInputStub('field-enabled-limit'),
+  'field-density': createInputStub('field-density'),
   'export-csv-form': createInputStub('export-csv-form'),
   'v-btn': createButtonStub('v-btn'),
 };
@@ -73,6 +74,7 @@ const snapshotStubs = {
   'field-switcher': true,
   'field-fast-ack-output': true,
   'field-enabled-limit': true,
+  'field-density': true,
   'export-csv-form': true,
 };
 
@@ -143,6 +145,7 @@ describe('alarm', () => {
   const widget = {
     ...generateDefaultAlarmListWidget(),
 
+    _id: '3f8dba7c-f39e-42ae-912c-e78cb39669c5',
     tab: Faker.datatype.string(),
   };
 
@@ -502,7 +505,51 @@ describe('alarm', () => {
     });
   });
 
-  it('Filters changed after trigger filters field', async () => {
+  it('Filters changed after trigger update:filters on filters field', async () => {
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        activeViewModule,
+        widgetModule,
+        {
+          ...authModule,
+          getters: {
+            currentUserPermissionsById: {
+              [USERS_PERMISSIONS.business.alarmsList.actions.listFilters]: {
+                actions: [],
+              },
+            },
+          },
+        },
+      ]),
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldFilters = selectFieldFilters(wrapper);
+
+    const filters = [{
+      title: Faker.datatype.string(),
+      filter: Faker.helpers.createTransaction(),
+    }];
+
+    fieldFilters.vm.$emit('update:filters', filters);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewProperty(widget, 'filters', filters),
+      },
+    });
+  });
+
+  it('Filter changed after trigger input on filters field', async () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         activeViewModule,

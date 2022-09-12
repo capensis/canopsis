@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 const (
@@ -90,7 +91,7 @@ func (w *worker) Run(ctx context.Context) {
 			if err != nil {
 				w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
 
-				err = w.publisher.SendImportResultEvent(job.ID, 0, types.AlarmStateCritical)
+				err = w.publisher.SendImportResultEvent(ctx, job.ID, 0, types.AlarmStateCritical)
 				if err != nil {
 					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send import result event")
 				}
@@ -132,14 +133,14 @@ func (w *worker) Run(ctx context.Context) {
 			}
 
 			if perfDataState != types.AlarmStateOK {
-				err = w.publisher.SendPerfDataEvent(job.ID, stats, types.CpsNumber(perfDataState))
+				err = w.publisher.SendPerfDataEvent(ctx, job.ID, stats, types.CpsNumber(perfDataState))
 				if err != nil {
 					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send perf data")
 				}
 			}
 
 			if resultState != types.AlarmStateOK {
-				err = w.publisher.SendImportResultEvent(job.ID, stats.ExecTime, types.CpsNumber(resultState))
+				err = w.publisher.SendImportResultEvent(ctx, job.ID, stats.ExecTime, types.CpsNumber(resultState))
 				if err != nil {
 					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send import result event")
 				}
