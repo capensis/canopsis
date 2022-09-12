@@ -84,12 +84,12 @@ export default {
 
     this.$socket
       .join(SOCKET_ROOMS.healthcheck)
-      .addListener(this.checkTimescaleIsAvailable);
+      .addListener(this.setTimescaleIsAvailable);
   },
   beforeDestroy() {
     this.$socket
       .leave(SOCKET_ROOMS.healthcheck)
-      .removeListener(this.checkTimescaleIsAvailable);
+      .removeListener(this.setTimescaleIsAvailable);
   },
   methods: {
     ...mapActions({
@@ -133,7 +133,7 @@ export default {
       });
     },
 
-    checkTimescaleIsAvailable({ services }) {
+    setTimescaleIsAvailable({ services }) {
       const timeScaleService = services.find(({ name }) => name === HEALTHCHECK_SERVICES_NAMES.timescaleDB);
 
       this.timescaleAvailable = !!timeScaleService?.is_running;
@@ -145,7 +145,7 @@ export default {
 
         const data = await this.fetchHealthcheckEnginesWithoutStore();
 
-        this.checkTimescaleIsAvailable(data);
+        this.setTimescaleIsAvailable(data);
       } catch (err) {
         this.timescaleAvailable = false;
       } finally {
