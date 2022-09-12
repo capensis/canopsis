@@ -106,7 +106,8 @@ export default {
         return;
       }
 
-      const element = document.getElementById(`view-tab-${this.activeTab._id}`);
+      const element = document.querySelector('[data-app]');
+      const viewElement = document.getElementById(`view-tab-${this.activeTab._id}`);
 
       if (!element) {
         return;
@@ -115,7 +116,15 @@ export default {
       this.$fullscreen.toggle(element, {
         fullscreenClass: 'full-screen',
         background: 'white',
-        callback: value => this.fullscreen = value,
+        callback: (value) => {
+          if (value) {
+            viewElement.classList.add('view-fullscreen');
+          } else {
+            viewElement.classList.remove('view-fullscreen');
+          }
+
+          this.fullscreen = value;
+        },
       });
     },
 
@@ -172,3 +181,18 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.view-fullscreen {
+  overflow: auto;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  z-index: 7;
+
+  background: white;
+}
+</style>
