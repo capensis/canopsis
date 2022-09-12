@@ -200,6 +200,16 @@
     "created": 1596712203
   },
   {
+    "_id": "test-job-to-run-auto-instruction-9",
+    "name": "test-job-to-run-auto-instruction-9-name",
+    "author": "test-user-author-1-id",
+    "config": "test-job-config-to-run-auto-instruction",
+    "external_id": "test-job-long-failed",
+    "payload": "{\"test-job-to-run-auto-instruction-9-key\": \"test-job-to-run-auto-instruction-9-val\"}",
+    "multiple_executions": false,
+    "created": 1596712203
+  },
+  {
     "_id": "test-job-to-get-running-job",
     "name": "test-job-to-get-running-job-name",
     "author": "test-job-to-get-running-job-author",
