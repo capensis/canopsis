@@ -2,16 +2,9 @@ import { COLORS } from '@/config';
 
 import { PBEHAVIOR_TYPE_TYPES, WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE } from '@/constants';
 
-import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import uid from '@/helpers/uid';
-
-/**
- * Check if pbehavior is active
- *
- * @param {Pbehavior} pbehavior
- * @return {boolean}
- */
-export const isActivePbehavior = pbehavior => pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.active;
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 
 /**
  * Check if pbehavior is paused
@@ -20,14 +13,6 @@ export const isActivePbehavior = pbehavior => pbehavior.type.type === PBEHAVIOR_
  * @return {boolean}
  */
 export const isPausedPbehavior = pbehavior => pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause;
-
-/**
- * Check if pbehaviors have a active type
- *
- * @param {Pbehavior[]} pbehaviors
- * @return {boolean}
- */
-export const hasActivePbehavior = pbehaviors => pbehaviors.some(isActivePbehavior);
 
 /**
  * Check if pbehaviors have a paused type
@@ -56,7 +41,5 @@ export const createDowntimePbehavior = ({ entity, reason, comment, type }) => pb
   comments: [{
     message: comment,
   }],
-  filter: {
-    _id: { $in: [entity._id] },
-  },
+  entityPattern: createEntityIdPatternByValue(entity._id),
 }));

@@ -1,0 +1,140 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-description-field Renders \`c-description-field\` with custom props 1`] = `
+<div
+  class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-text-field__slot"
+      >
+        <label
+          aria-hidden="true"
+          class="v-label v-label--active v-label--is-disabled theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Custom label
+        </label>
+        <textarea
+          aria-label="Custom label"
+          disabled="disabled"
+          name="customName"
+          rows="5"
+        />
+      </div>
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <transition-group-stub
+          class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-description-field Renders \`c-description-field\` with default props 1`] = `
+<div
+  class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-text-field__slot"
+      >
+        <label
+          aria-hidden="true"
+          class="v-label v-label--active theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Description
+        </label>
+        <textarea
+          aria-label="Description"
+          name="description"
+          rows="5"
+        />
+      </div>
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <transition-group-stub
+          class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-description-field Renders \`c-description-field\` with errors 1`] = `
+<div
+  class="v-input v-textarea v-text-field v-input--has-state theme--light error--text"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-text-field__slot"
+      >
+        <label
+          aria-hidden="true"
+          class="v-label theme--light error--text"
+          style="left: 0px; position: absolute;"
+        >
+          Description
+        </label>
+        <textarea
+          aria-label="Description"
+          name="description"
+          rows="5"
+        />
+      </div>
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light error--text"
+      >
+        <transition-group-stub
+          class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
+        >
+          <div
+            class="v-messages__message"
+          >
+            The field is required
+          </div>
+        </transition-group-stub>
+      </div>
+    </div>
+  </div>
+</div>
+`;

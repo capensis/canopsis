@@ -53,7 +53,7 @@ export default {
   },
   props: {
     value: {
-      type: [Object, String],
+      type: [Object, Array, String],
       default: () => ({}),
     },
     label: {

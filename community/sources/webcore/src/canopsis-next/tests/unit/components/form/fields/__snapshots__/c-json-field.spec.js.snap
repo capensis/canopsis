@@ -54,7 +54,7 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] =
       <div
         class="v-btn__content"
       >
-        common.parse
+        Parse
       </div>
     </button>
     <button
@@ -65,7 +65,7 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] =
       <div
         class="v-btn__content"
       >
-        common.reset
+        Reset
       </div>
     </button>
   </div>
@@ -201,7 +201,7 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] =
       <div
         class="v-btn__content"
       >
-        common.parse
+        Parse
       </div>
     </button>
     <button
@@ -212,7 +212,7 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] =
       <div
         class="v-btn__content"
       >
-        common.reset
+        Reset
       </div>
     </button>
   </div>
@@ -272,7 +272,7 @@ exports[`c-json-field Renders \`c-json-field\` with default props and changed va
       <div
         class="v-btn__content"
       >
-        common.parse
+        Parse
       </div>
     </button>
     <button
@@ -282,7 +282,7 @@ exports[`c-json-field Renders \`c-json-field\` with default props and changed va
       <div
         class="v-btn__content"
       >
-        common.reset
+        Reset
       </div>
     </button>
   </div>
@@ -330,7 +330,7 @@ exports[`c-json-field Renders \`c-json-field\` with default props and incorrect 
               <div
                 class="v-messages__message"
               >
-                errors.JSONNotValid
+                Invalid JSON
               </div>
             </transition-group-stub>
           </div>

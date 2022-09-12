@@ -56,6 +56,7 @@ import { convertActionsToEvents } from '@/helpers/entities/entity';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { eventActionsMixin } from '@/mixins/event-actions';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
@@ -77,6 +78,7 @@ export default {
   mixins: [
     localQueryMixin,
     modalInnerMixin,
+    eventActionsAlarmMixin,
     eventActionsMixin,
     entitiesPbehaviorMixin,
     entitiesServiceEntityMixin,

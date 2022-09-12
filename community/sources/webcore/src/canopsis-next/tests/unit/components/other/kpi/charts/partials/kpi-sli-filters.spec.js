@@ -13,7 +13,7 @@ const localVue = createVueInstance();
 
 const stubs = {
   'c-quick-date-interval-field': true,
-  'c-filters-field': true,
+  'c-filter-field': true,
   'c-sampling-field': true,
   'kpi-sli-show-mode-field': true,
 };
@@ -141,7 +141,7 @@ describe('kpi-sli-filters', () => {
       },
     });
 
-    const filtersField = wrapper.find('c-filters-field-stub');
+    const filtersField = wrapper.find('c-filter-field-stub');
 
     filtersField.vm.$emit('input', expectedFilter);
 
