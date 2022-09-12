@@ -142,7 +142,8 @@ Feature: Get a map
             "y": 0,
             "entity": {
               "_id": "test-resource-to-map-edit-1/test-component-default",
-              "name": "test-resource-to-map-edit-1"
+              "name": "test-resource-to-map-edit-1",
+              "type": "resource"
             },
             "map": null
           },
@@ -162,7 +163,8 @@ Feature: Get a map
             "y": 200,
             "entity": {
               "_id": "test-resource-to-map-edit-2/test-component-default",
-              "name": "test-resource-to-map-edit-2"
+              "name": "test-resource-to-map-edit-2",
+              "type": "resource"
             },
             "map": {
               "_id": "test-map-to-map-edit-2",
@@ -201,6 +203,7 @@ Feature: Get a map
             "entity": {
               "_id": "test-resource-to-map-edit-1/test-component-default",
               "name": "test-resource-to-map-edit-1",
+              "type": "resource",
               "coordinates": {
                 "lat": 62.34960927573042,
                 "lng": 74.02834455685206
@@ -228,7 +231,8 @@ Feature: Get a map
             },
             "entity": {
               "_id": "test-resource-to-map-edit-3/test-component-default",
-              "name": "test-resource-to-map-edit-3"
+              "name": "test-resource-to-map-edit-3",
+              "type": "resource"
             },
             "map": null
           }
@@ -304,7 +308,8 @@ Feature: Get a map
             "y": 0,
             "entity": {
               "_id": "test-resource-to-map-edit-1/test-component-default",
-              "name": "test-resource-to-map-edit-1"
+              "name": "test-resource-to-map-edit-1",
+              "type": "resource"
             },
             "map": null
           },
@@ -323,7 +328,8 @@ Feature: Get a map
             "shape": "test-map-to-get-1-shape-1",
             "entity": {
               "_id": "test-resource-to-map-edit-2/test-component-default",
-              "name": "test-resource-to-map-edit-2"
+              "name": "test-resource-to-map-edit-2",
+              "type": "resource"
             },
             "map": {
               "_id": "test-map-to-map-edit-2",
@@ -358,6 +364,7 @@ Feature: Get a map
             "entity": {
               "_id": "test-resource-to-map-edit-1/test-component-default",
               "name": "test-resource-to-map-edit-1",
+              "type": "resource",
               "depends_count": 0
             },
             "pinned_entities": []
