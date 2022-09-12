@@ -8,7 +8,11 @@
         :title="$t('settings.templateEditor')"
       )
       v-divider
-    v-btn.primary(@click="submit") {{ $t('common.save') }}
+    v-btn.primary(
+      :loading="submitting",
+      :disabled="submitting",
+      @click="submit"
+    ) {{ $t('common.save') }}
 </template>
 
 <script>

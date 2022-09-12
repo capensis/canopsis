@@ -4,12 +4,14 @@ import { PBEHAVIOR_TYPE_TYPES } from './pbehavior';
 
 export const EVENT_ENTITY_TYPES = {
   ack: 'ack',
+  check: 'check',
   fastAck: 'fastAck',
   ackRemove: 'ackremove',
   pbehaviorAdd: 'pbehaviorAdd',
   pbehaviorList: 'pbehaviorList',
   assocTicket: 'assocticket',
   cancel: 'cancel',
+  uncancel: 'uncancel',
   delete: 'delete',
   changeState: 'changestate',
   declareTicket: 'declareticket',
@@ -228,10 +230,10 @@ export const EVENT_ENTITY_STYLE = {
     color: COLORS.entitiesEvents.pbhleave,
     icon: 'play_arrow',
   },
-  groupConsequences: {
+  groupChildren: {
     icon: 'center_focus_strong',
   },
-  groupCauses: {
+  groupParents: {
     icon: 'center_focus_weak',
   },
   [EVENT_ENTITY_TYPES.comment]: {
@@ -514,3 +516,16 @@ export const CONTEXT_COLUMNS_WITH_SORTABLE = [ // TODO: We should receive it fro
   'enabled',
   'last_event_date',
 ];
+
+export const ENTITY_PATTERN_FIELDS = {
+  id: '_id',
+  name: 'name',
+  type: 'type',
+  component: 'component',
+  connector: 'connector',
+  infos: 'infos',
+  componentInfos: 'component_infos',
+  category: 'category',
+  impactLevel: 'impact_level',
+  lastEventDate: 'last_event_date',
+};

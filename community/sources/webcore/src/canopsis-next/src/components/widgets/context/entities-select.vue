@@ -53,18 +53,13 @@ export default {
     entitiesIds: 'validate',
   },
   created() {
-    const ruleName = `unique-entities-${this.name}`;
-
-    this.$validator.extend(ruleName, {
-      getMessage: () => this.$t('validator.unique'),
-      validate: entitiesIds => !(
-        this.existingEntitiesIds.length && entitiesIds.some(id => this.existingEntitiesIds.includes(id))
-      ),
-    });
-
     this.$validator.attach({
       name: this.name,
-      rules: ruleName,
+      rules: {
+        unique: {
+          values: this.existingEntitiesIds,
+        },
+      },
       getter: () => this.entitiesIds,
       context: () => this,
       vm: this,

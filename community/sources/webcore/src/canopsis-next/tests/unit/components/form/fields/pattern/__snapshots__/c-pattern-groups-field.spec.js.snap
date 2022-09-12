@@ -1,0 +1,183 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-pattern-groups-field Renders \`c-pattern-groups-field\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="flex xs12"
+  >
+    <!---->
+  </div>
+  <div
+    class="layout wrap row"
+  >
+    <div
+      class="flex xs12"
+    >
+      <c-pattern-group-field-stub
+        attributes="[object Object]"
+        disabled="true"
+        value="[object Object]"
+      />
+    </div>
+    <div
+      class="layout justify-center"
+    >
+      <c-pattern-operator-chip-stub>
+        Or
+      </c-pattern-operator-chip-stub>
+    </div>
+  </div>
+  <div
+    class="layout wrap row"
+  >
+    <div
+      class="flex xs12"
+    >
+      <c-pattern-group-field-stub
+        attributes="[object Object]"
+        disabled="true"
+        value="[object Object]"
+      />
+    </div>
+    <div
+      class="layout justify-center"
+    >
+      <c-pattern-operator-chip-stub>
+        Or
+      </c-pattern-operator-chip-stub>
+    </div>
+  </div>
+  <div
+    class="layout wrap row"
+  >
+    <div
+      class="flex xs12"
+    >
+      <c-pattern-group-field-stub
+        attributes="[object Object]"
+        disabled="true"
+        value="[object Object]"
+      />
+    </div>
+    <div
+      class="layout justify-center"
+      style="display: none;"
+    >
+      <c-pattern-operator-chip-stub>
+        Or
+      </c-pattern-operator-chip-stub>
+    </div>
+  </div>
+  <div
+    class="layout row align-center"
+  >
+    <button
+      class="ml-0 v-btn v-btn--disabled theme--light primary--text"
+      disabled="disabled"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Add group
+      </div>
+    </button>
+    <span
+      class="error--text"
+      style="display: none;"
+    >
+      Please add at least one group
+    </span>
+  </div>
+</div>
+`;
+
+exports[`c-pattern-groups-field Renders \`c-pattern-groups-field\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="flex xs12"
+  >
+    <div
+      class="v-alert info"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light v-alert__icon"
+      >
+        info
+      </i>
+      <div>
+        No pattern set. Click 'Add group' button to start adding fields to the pattern
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout row align-center"
+  >
+    <button
+      class="ml-0 v-btn theme--light primary"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Add group
+      </div>
+    </button>
+    <span
+      class="error--text"
+      style="display: none;"
+    >
+      Please add at least one group
+    </span>
+  </div>
+</div>
+`;
+
+exports[`c-pattern-groups-field Renders \`c-pattern-groups-field\` with errors 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="flex xs12"
+  >
+    <div
+      class="v-alert info"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light v-alert__icon"
+      >
+        info
+      </i>
+      <div>
+        No pattern set. Click 'Add group' button to start adding fields to the pattern
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout row align-center"
+  >
+    <button
+      class="ml-0 v-btn theme--light error"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Add group
+      </div>
+    </button>
+    <span
+      class="error--text"
+      style=""
+    >
+      Please add at least one group
+    </span>
+  </div>
+</div>
+`;

@@ -21,6 +21,11 @@ const snapshotFactory = (options = {}) => mount(KpiFiltersList, {
   ...options,
 });
 
+const selectExpandButtonByRow = (wrapper, index) => wrapper
+  .findAll('tbody > tr')
+  .at(index)
+  .find('c-expand-btn-stub');
+
 describe('kpi-filters-list', () => {
   const filtersItems = [
     {
@@ -139,10 +144,7 @@ describe('kpi-filters-list', () => {
       },
     });
 
-    const expandButton = wrapper
-      .findAll('tr > td')
-      .at(0)
-      .find('c-expand-btn-stub');
+    const expandButton = selectExpandButtonByRow(wrapper, 0);
 
     await expandButton.vm.$emit('expand');
 

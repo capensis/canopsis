@@ -1,11 +1,13 @@
-import { cloneDeep } from 'lodash';
+import { omit } from 'lodash';
 
-import { ENTITIES_STATES } from '@/constants';
+import { ENTITIES_STATES, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
 import { infosToArray } from './shared/common';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
 /**
- * @typedef {Object} ServiceForm
+ * @typedef {FilterPatterns} Service
+ * @property {string} [_id]
  * @property {string} name
  * @property {string} category
  * @property {boolean} enabled
@@ -17,12 +19,9 @@ import { infosToArray } from './shared/common';
  */
 
 /**
- * @typedef {ServiceForm} Service
- * @property {string} _id
- */
-
-/**
- * @typedef {Service} ServiceForm
+ * @typedef {ServiceForm} ServiceForm
+ * @property {FilterPatternsForm} patterns
+ * @property {Object} category
  */
 
 /**
@@ -37,9 +36,13 @@ export const serviceToForm = (service = {}) => ({
   category: service.category ?? '',
   enabled: service.enabled ?? true,
   infos: infosToArray(service.infos),
-  entity_patterns: service.entity_patterns ? cloneDeep(service.entity_patterns) : [],
   output_template: service.output_template ?? '',
   sli_avail_state: service.sli_avail_state ?? ENTITIES_STATES.ok,
+  patterns: filterPatternsToForm(
+    service,
+    [PATTERNS_FIELDS.entity],
+    [OLD_PATTERNS_FIELDS.entity],
+  ),
 });
 
 /**
@@ -49,6 +52,7 @@ export const serviceToForm = (service = {}) => ({
  * @returns {Service}
  */
 export const formToService = (form = {}) => ({
-  ...form,
+  ...omit(form, ['patterns']),
+  ...formFilterToPatterns(form.patterns, [PATTERNS_FIELDS.entity]),
   category: form.category._id,
 });

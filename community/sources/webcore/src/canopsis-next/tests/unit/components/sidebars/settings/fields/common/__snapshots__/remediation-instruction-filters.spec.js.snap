@@ -13,7 +13,7 @@ exports[`remediation-instructions-filters Renders \`remediation-instructions-fil
       <div
         class="v-list__tile theme--light"
       >
-        settings.remediationInstructionsFilters
+        Instructions filters
       </div>
     </div>
     <div
@@ -57,7 +57,7 @@ exports[`remediation-instructions-filters Renders \`remediation-instructions-fil
             <div
               class="v-btn__content"
             >
-              common.add
+              Add
             </div>
           </button>
         </div>
@@ -80,7 +80,7 @@ exports[`remediation-instructions-filters Renders \`remediation-instructions-fil
       <div
         class="v-list__tile theme--light"
       >
-        settings.remediationInstructionsFilters
+        Instructions filters
       </div>
     </div>
     <div

@@ -5,11 +5,12 @@ import (
 	"strconv"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"github.com/teambition/rrule-go"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 func ValidateActionRequest(sl validator.StructLevel) {
@@ -19,47 +20,24 @@ func ValidateActionRequest(sl validator.StructLevel) {
 		validateActionParametersRequest(sl, r.Type, r.Parameters)
 	}
 
-	// Validate patterns
-	alarmPatternsIsSet := false
-	if r.AlarmPatterns.IsSet() {
-		if !r.AlarmPatterns.IsValid() {
-			alarmPatternsIsSet = true
-			sl.ReportError(r.AlarmPatterns, "AlarmPatterns", "AlarmPatterns", "alarmpattern_invalid", "")
-		} else {
-			query := r.AlarmPatterns.AsMongoDriverQuery()["$or"].([]bson.M)
-			if len(query) > 0 {
-				alarmPatternsIsSet = true
-				for _, q := range query {
-					if len(q) == 0 {
-						sl.ReportError(r.AlarmPatterns, "AlarmPatterns", "AlarmPatterns", "alarmpattern_contains_empty", "")
-						break
-					}
-				}
-			}
-		}
-	}
-	entityPatternsIsSet := false
-	if r.EntityPatterns.IsSet() {
-		if !r.EntityPatterns.IsValid() {
-			entityPatternsIsSet = true
-			sl.ReportError(r.EntityPatterns, "EntityPatterns", "EntityPatterns", "entitypattern_invalid", "")
-		} else {
-			query := r.EntityPatterns.AsMongoDriverQuery()["$or"].([]bson.M)
-			if len(query) > 0 {
-				entityPatternsIsSet = true
-				for _, q := range query {
-					if len(q) == 0 {
-						sl.ReportError(r.EntityPatterns, "EntityPatterns", "EntityPatterns", "entitypattern_contains_empty", "")
-						break
-					}
-				}
-			}
-		}
+	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
+		!r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.ScenarioMongoCollection)) {
+		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 
-	if !entityPatternsIsSet && !alarmPatternsIsSet {
-		sl.ReportError(r.Type, "AlarmPatterns", "AlarmPatterns", "required", "")
-		sl.ReportError(r.Type, "EntityPatterns", "EntityPatterns", "required", "")
+	if r.CorporateAlarmPattern == "" && len(r.AlarmPattern) > 0 &&
+		!r.AlarmPattern.Validate(
+			common.GetForbiddenFieldsInAlarmPattern(mongo.ScenarioMongoCollection),
+			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ScenarioMongoCollection),
+		) {
+		sl.ReportError(r.EntityPattern, "AlarmPattern", "AlarmPattern", "alarm_pattern", "")
+	}
+
+	if !r.OldAlarmPatterns.IsSet() && !r.OldEntityPatterns.IsSet() &&
+		len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" &&
+		len(r.AlarmPattern) == 0 && r.CorporateAlarmPattern == "" {
+		sl.ReportError(r.AlarmPattern, "AlarmPattern", "AlarmPattern", "required_or", "EntityPattern")
+		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required_or", "AlarmPattern")
 	}
 }
 
