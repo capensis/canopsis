@@ -1,37 +1,12 @@
-import { FILTER_DEFAULT_VALUES } from '@/constants';
+import { getMainFilter } from '@/helpers/filter';
 
-import { prepareMainFilterToQueryFilter, getMainFilterAndCondition } from '@/helpers/filter';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 export const widgetFilterSelectMixin = {
+  mixins: [entitiesWidgetMixin],
   computed: {
-    mainFilterAndCondition() {
-      return getMainFilterAndCondition(this.widget, this.userPreference);
-    },
-
-    mainFilterCondition() {
-      const { condition } = this.mainFilterAndCondition;
-
-      return condition;
-    },
-
     mainFilter() {
-      const { mainFilter } = this.mainFilterAndCondition;
-
-      return mainFilter;
-    },
-
-    viewFilters() {
-      return this.userPreference.content.viewFilters || [];
-    },
-
-    widgetViewFilters() {
-      const { mainFilter, viewFilters } = this.widget.parameters;
-
-      if (!this.hasAccessToListFilters) {
-        return mainFilter ? [mainFilter] : [];
-      }
-
-      return viewFilters || [];
+      return getMainFilter(this.widget, this.userPreference);
     },
   },
   methods: {
@@ -45,27 +20,17 @@ export const widgetFilterSelectMixin = {
       return Promise.resolve();
     },
 
-    async updateFilters(viewFilters, mainFilter = this.mainFilter) {
-      await this.updateFieldsInWidgetPreferences({ viewFilters, mainFilter });
-      this.updateQueryBySelectedFilterAndCondition(mainFilter, this.mainFilterCondition);
+    async updateSelectedFilter(mainFilter = null) {
+      await this.updateFieldsInWidgetPreferences({ mainFilter, mainFilterUpdatedAt: Date.now() });
+      this.updateQueryBySelectedFilter(mainFilter);
     },
 
-    async updateSelectedCondition(condition = FILTER_DEFAULT_VALUES.condition) {
-      await this.updateFieldsInWidgetPreferences({ mainFilterCondition: condition });
-      this.updateQueryBySelectedFilterAndCondition(this.mainFilter, condition);
-    },
-
-    async updateSelectedFilter(filterObject) {
-      await this.updateFieldsInWidgetPreferences({ mainFilter: filterObject || {}, mainFilterUpdatedAt: Date.now() });
-      this.updateQueryBySelectedFilterAndCondition(filterObject || {}, this.mainFilterCondition);
-    },
-
-    updateQueryBySelectedFilterAndCondition(filter, condition) {
+    updateQueryBySelectedFilter(filter) {
       this.query = {
         ...this.query,
 
+        filter,
         page: 1,
-        filter: prepareMainFilterToQueryFilter(filter, condition),
       };
     },
   },

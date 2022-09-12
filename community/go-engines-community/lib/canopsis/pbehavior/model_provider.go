@@ -39,11 +39,10 @@ func (p *modelProvider) GetTypes(ctx context.Context) (map[string]Type, error) {
 	}
 
 	defer cursor.Close(ctx)
-	typesByID := map[string]Type{}
+	typesByID := make(map[string]Type)
 
 	for cursor.Next(ctx) {
 		var pbehaviorType Type
-
 		err = cursor.Decode(&pbehaviorType)
 		if err != nil {
 			return nil, err
@@ -71,10 +70,8 @@ func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context, span timespan.
 				},
 			},
 		}},
-		{"$addFields": bson.M{
-			"comments": bson.M{
-				"$slice": bson.A{bson.M{"$reverseArray": "$comments"}, 1},
-			},
+		{"$project": bson.M{
+			"comments": 0,
 		}},
 	})
 	if err != nil {
@@ -85,7 +82,6 @@ func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context, span timespan.
 	pbehaviorsByID := make(map[string]PBehavior)
 	for cursor.Next(ctx) {
 		var pbehavior PBehavior
-
 		err = cursor.Decode(&pbehavior)
 		if err != nil {
 			return nil, err
@@ -98,6 +94,9 @@ func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context, span timespan.
 }
 
 func (p *modelProvider) GetEnabledPbehaviorsByIds(ctx context.Context, ids []string, span timespan.Span) (map[string]PBehavior, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
 	coll := p.dbClient.Collection(mongo.PbehaviorMongoCollection)
 	cursor, err := coll.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
@@ -114,10 +113,8 @@ func (p *modelProvider) GetEnabledPbehaviorsByIds(ctx context.Context, ids []str
 				},
 			},
 		}},
-		{"$addFields": bson.M{
-			"comments": bson.M{
-				"$slice": bson.A{bson.M{"$reverseArray": "$comments"}, 1},
-			},
+		{"$project": bson.M{
+			"comments": 0,
 		}},
 	})
 	if err != nil {
@@ -128,7 +125,6 @@ func (p *modelProvider) GetEnabledPbehaviorsByIds(ctx context.Context, ids []str
 	pbehaviorsByID := make(map[string]PBehavior)
 	for cursor.Next(ctx) {
 		var pbehavior PBehavior
-
 		err = cursor.Decode(&pbehavior)
 		if err != nil {
 			return nil, err
@@ -150,7 +146,6 @@ func (p *modelProvider) GetExceptions(ctx context.Context) (map[string]Exception
 	exceptionsByID := make(map[string]Exception)
 	for cursor.Next(ctx) {
 		var exception Exception
-
 		err = cursor.Decode(&exception)
 		if err != nil {
 			return nil, err
@@ -172,7 +167,6 @@ func (p *modelProvider) GetReasons(ctx context.Context) (map[string]Reason, erro
 	reasonsByID := make(map[string]Reason)
 	for cursor.Next(ctx) {
 		var reason Reason
-
 		err = cursor.Decode(&reason)
 		if err != nil {
 			return nil, err

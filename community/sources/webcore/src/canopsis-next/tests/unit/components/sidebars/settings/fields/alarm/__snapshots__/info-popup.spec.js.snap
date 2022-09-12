@@ -10,7 +10,7 @@ exports[`info-popup Renders \`info-popup\` with custom props 1`] = `
     <div
       class="subheading"
     >
-      settings.infoPopup.title
+      Info popup
     </div>
     <div
       class="layout justify-end"
@@ -22,7 +22,7 @@ exports[`info-popup Renders \`info-popup\` with custom props 1`] = `
         <div
           class="v-btn__content"
         >
-          common.create/common.edit
+          Create/Edit
         </div>
       </button>
     </div>
@@ -40,7 +40,7 @@ exports[`info-popup Renders \`info-popup\` with default props 1`] = `
     <div
       class="subheading"
     >
-      settings.infoPopup.title
+      Info popup
     </div>
     <div
       class="layout justify-end"
@@ -52,7 +52,7 @@ exports[`info-popup Renders \`info-popup\` with default props 1`] = `
         <div
           class="v-btn__content"
         >
-          common.create/common.edit
+          Create/Edit
         </div>
       </button>
     </div>

@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-collapse-panel Renders \`c-collapse-panel\` with custom props 1`] = `
+<ul
+  class="v-expansion-panel c-collapse-panel theme--light"
+>
+  <li
+    class="v-expansion-panel__container"
+    style="background-color: grey;"
+    tabindex="0"
+  >
+    <transition-stub
+      mode="in-out"
+      name="expand-transition"
+    >
+      <div
+        class="v-expansion-panel__body"
+        style="display: none;"
+      />
+    </transition-stub>
+  </li>
+</ul>
+`;
+
+exports[`c-collapse-panel Renders \`c-collapse-panel\` with default props 1`] = `
+<ul
+  class="v-expansion-panel c-collapse-panel theme--light"
+>
+  <li
+    class="v-expansion-panel__container"
+    tabindex="0"
+  >
+    <transition-stub
+      mode="in-out"
+      name="expand-transition"
+    >
+      <div
+        class="v-expansion-panel__body"
+        style="display: none;"
+      >
+        <div
+          class="white"
+        />
+      </div>
+    </transition-stub>
+  </li>
+</ul>
+`;

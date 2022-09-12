@@ -19,12 +19,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"github.com/cucumber/godog"
 	redismod "github.com/go-redis/redis/v8"
 	"github.com/go-testfixtures/testfixtures/v3"
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/pgx"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/golang-migrate/migrate/v4/database/pgx"
 	"github.com/rs/zerolog"
 )
 
@@ -82,6 +81,8 @@ func TestMain(m *testing.M) {
 	}
 	defer redisClient.Close()
 
+	loader := fixtures.NewLoader(dbClient, flags.mongoFixtures,
+		fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), logger)
 	opts := godog.Options{
 		StopOnFailure:  true,
 		Format:         "pretty",
@@ -90,7 +91,7 @@ func TestMain(m *testing.M) {
 	}
 
 	if flags.onlyFixtures {
-		err := clearStores(ctx, flags, dbClient, redisClient, logger)
+		err := clearStores(ctx, flags, loader, redisClient, logger)
 		if err != nil {
 			logger.Fatal().Err(err).Msg("")
 		}
@@ -98,7 +99,7 @@ func TestMain(m *testing.M) {
 		return
 	}
 
-	testSuiteInitializer := InitializeTestSuite(ctx, flags, dbClient, redisClient, logger)
+	testSuiteInitializer := InitializeTestSuite(ctx, flags, loader, redisClient, logger)
 	scenarioInitializer, err := InitializeScenario(flags, dbClient, amqpConnection, eventLogger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("")
@@ -121,13 +122,13 @@ func TestMain(m *testing.M) {
 func InitializeTestSuite(
 	ctx context.Context,
 	flags Flags,
-	dbClient mongo.DbClient,
+	loader fixtures.Loader,
 	redisClient redismod.Cmdable,
 	logger zerolog.Logger,
 ) func(*godog.TestSuiteContext) {
 	return func(godogCtx *godog.TestSuiteContext) {
 		godogCtx.BeforeSuite(func() {
-			err := clearStores(ctx, flags, dbClient, redisClient, logger)
+			err := clearStores(ctx, flags, loader, redisClient, logger)
 			if err != nil {
 				logger.Fatal().Err(err).Msg("")
 			}
@@ -136,7 +137,7 @@ func InitializeTestSuite(
 			time.Sleep(flags.periodicalWaitTime)
 		})
 		godogCtx.AfterSuite(func() {
-			err := clearStores(ctx, flags, dbClient, redisClient, logger)
+			err := clearStores(ctx, flags, loader, redisClient, logger)
 			if err != nil {
 				logger.Fatal().Err(err).Msg("")
 			}
@@ -198,12 +199,14 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 		ctx.Step(`^the response body should be:$`, apiClient.TheResponseBodyShouldBe)
 		ctx.Step(`^the response body should contain:$`, apiClient.TheResponseBodyShouldContain)
 		ctx.Step(`^the response raw body should be:$`, apiClient.TheResponseRawBodyShouldBe)
+		ctx.Step(`^the response key \"([\w\.]+)\" should exist$`, apiClient.TheResponseKeyShouldExist)
 		ctx.Step(`^the response key \"([\w\.]+)\" should not exist$`, apiClient.TheResponseKeyShouldNotExist)
 		ctx.Step(`^the response key \"([\w\.]+)\" should not be \"([^\"]+)\"$`, apiClient.TheResponseKeyShouldNotBe)
 		ctx.Step(`^the difference between ([\w\.]+) ([\w\.]+) is in range (-?\d+\.?\d*),(-?\d+\.?\d*)$`, apiClient.TheDifferenceBetweenValues)
 		ctx.Step(`^the response key \"([\w\.]+)\" should be greater or equal than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterOrEqualThan)
+		ctx.Step(`^the response key \"([\w\.]+)\" should be greater than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterThan)
 		ctx.Step(`^the response array key \"([\w\.]+)\" should contain:$`, apiClient.TheResponseArrayKeyShouldContain)
-		ctx.Step(`^the response array key \"([\w\.]+)\" should contain only one:$`, apiClient.TheResponseArrayKeyShouldContainOnlyOne)
+		ctx.Step(`^the response array key \"([\w\.]+)\" should contain only:$`, apiClient.TheResponseArrayKeyShouldContainOnly)
 		ctx.Step(`^I save response ([\w]+)=(.+)$`, apiClient.ISaveResponse)
 		ctx.Step(`^\"([\w]+)\" (>|<|>=|<=) \"([\w]+)\"$`, apiClient.ValueShouldBeGteLteThan)
 		ctx.Step(`^an alarm (.+) should be in the db$`, mongoClient.AlarmShouldBeInTheDb)
@@ -231,11 +234,11 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 func clearStores(
 	ctx context.Context,
 	flags Flags,
-	dbClient mongo.DbClient,
+	loader fixtures.Loader,
 	redisClient redismod.Cmdable,
 	logger zerolog.Logger,
 ) error {
-	err := fixtures.Load(ctx, dbClient, flags.mongoFixtures)
+	err := loader.Load(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot load mongo fixtures: %w", err)
 	}
@@ -245,25 +248,6 @@ func clearStores(
 	if err != nil {
 		return err
 	}
-
-	p := &pgx.Postgres{}
-	driver, err := p.Open(pgConnStr)
-	if err != nil {
-		return fmt.Errorf("cannot connect to timescale for migrations: %w", err)
-	}
-	defer driver.Close()
-
-	m, err := migrate.NewWithDatabaseInstance(fmt.Sprintf("file://%s", flags.timescaleMigrations), "pgx", driver)
-	if err != nil {
-		return fmt.Errorf("cannot init timescale migrations: %w", err)
-	}
-
-	err = m.Up()
-	if err != nil && err != migrate.ErrNoChange {
-		return fmt.Errorf("cannot apply timescale migrations: %w", err)
-	}
-
-	logger.Info().Msg("PostgresSQL migrations are applied")
 
 	pgDb, err := sql.Open("pgx", pgConnStr)
 	if err != nil {

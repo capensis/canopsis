@@ -1,6 +1,6 @@
 package alarm
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/alarm/alarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm Adapter,Service,EventProcessor,ActivationService
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/alarm/alarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm Adapter,Service,EventProcessor,ActivationService,MetaAlarmEventProcessor
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 )
 
 type Adapter interface {
-	// Insert insert an alarm
+	// Insert inserts an alarm
 	Insert(ctx context.Context, alarm types.Alarm) error
 
 	// Update update an alarm
@@ -72,8 +72,6 @@ type Adapter interface {
 	GetOpenedAlarmsByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
 	GetOpenedAlarmsWithEntityByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.AlarmWithEntity) error
 
-	MassUpdate(ctx context.Context, alarms []types.Alarm, notUpdateResolved bool) error
-
 	// MassPartialUpdateOpen updates opened alarms matching by list of IDs, applying partial update from alarm
 	MassPartialUpdateOpen(context.Context, *types.Alarm, []string) error
 
@@ -99,7 +97,11 @@ type Adapter interface {
 	// ArchiveResolvedAlarms archives alarm to archived alarm collection.
 	ArchiveResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error)
 
-	FindToCheckPbehaviorInfo(ctx context.Context, createdAfter types.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
+	FindToCheckPbehaviorInfo(ctx context.Context, createdBefore types.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
+
+	GetWorstAlarmState(ctx context.Context, entityIds []string) (int64, error)
+
+	UpdateLastEventDate(ctx context.Context, entityIds []string, t types.CpsTime) error
 }
 
 type EventProcessor interface {
@@ -108,6 +110,19 @@ type EventProcessor interface {
 	// representing the change that occured on this alarm and its previous
 	// state.
 	Process(ctx context.Context, event *types.Event) (types.AlarmChange, error)
+}
+
+type MetaAlarmEventProcessor interface {
+	// Process handles related meta alarm parents and children after alarm change.
+	Process(ctx context.Context, event types.Event) error
+	// ProcessAxeRpc handles related meta alarm parents and children after alarm change.
+	ProcessAxeRpc(ctx context.Context, event types.RPCAxeEvent, eventRes types.RPCAxeResultEvent) error
+	// ProcessWebhookRpc handles related meta alarm parents and children after alarm change.
+	ProcessWebhookRpc(ctx context.Context, event types.RPCWebhookEvent, ticketId string, ticketData map[string]string) error
+	// CreateMetaAlarm creates meta alarm by event.
+	CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error)
+	// ProcessAckResources ackes resource after component ack.
+	ProcessAckResources(ctx context.Context, event types.Event) error
 }
 
 type Service interface {

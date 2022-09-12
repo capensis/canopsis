@@ -7,12 +7,18 @@ Feature: correlation feature - complex rule with threshold count
     {
       "name": "test-complex-correlation-1",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-complex-correlation-1"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-complex-correlation-1"
+            }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 10,
           "unit": "s"
@@ -72,50 +78,15 @@ Feature: correlation feature - complex rule with threshold count
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-1"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-1"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-1"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 3
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-complex-correlation-1"
           }
         }
@@ -128,6 +99,64 @@ Feature: correlation feature - complex rule with threshold count
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-complex-1",
+                  "connector_name": "test-complex-1-name",
+                  "component": "test-complex-correlation-1",
+                  "resource": "test-complex-correlation-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-1",
+                  "connector_name": "test-complex-1-name",
+                  "component": "test-complex-correlation-1",
+                  "resource": "test-complex-correlation-resource-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-1",
+                  "connector_name": "test-complex-1-name",
+                  "component": "test-complex-correlation-1",
+                  "resource": "test-complex-correlation-resource-3"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
 
   Scenario: given meta alarm rule with threshold count and events should create 2 meta alarms because of 2 separate time intervals
     Given I am admin
@@ -136,12 +165,18 @@ Feature: correlation feature - complex rule with threshold count
     {
       "name": "test-complex-correlation-2",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-complex-correlation-2"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-complex-correlation-2"
+            }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 3,
           "unit": "s"
@@ -266,101 +301,21 @@ Feature: correlation feature - complex rule with threshold count
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=desc
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 4
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-complex-correlation-2"
           }
         },
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 3
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-complex-correlation-2"
           }
         }
@@ -373,6 +328,119 @@ Feature: correlation feature - complex rule with threshold count
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 1)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-complex-2",
+                  "connector_name": "test-complex-2-name",
+                  "component": "test-complex-correlation-2",
+                  "resource": "test-complex-correlation-resource-4"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-2",
+                  "connector_name": "test-complex-2-name",
+                  "component": "test-complex-correlation-2",
+                  "resource": "test-complex-correlation-resource-5"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-2",
+                  "connector_name": "test-complex-2-name",
+                  "component": "test-complex-correlation-2",
+                  "resource": "test-complex-correlation-resource-6"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-2",
+                  "connector_name": "test-complex-2-name",
+                  "component": "test-complex-correlation-2",
+                  "resource": "test-complex-correlation-resource-7"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-complex-2",
+                  "connector_name": "test-complex-2-name",
+                  "component": "test-complex-correlation-2",
+                  "resource": "test-complex-correlation-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-2",
+                  "connector_name": "test-complex-2-name",
+                  "component": "test-complex-correlation-2",
+                  "resource": "test-complex-correlation-resource-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-2",
+                  "connector_name": "test-complex-2-name",
+                  "component": "test-complex-correlation-2",
+                  "resource": "test-complex-correlation-resource-3"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
 
   Scenario: given meta alarm rule with threshold count and events should create one single meta alarms because first group didn't reached threshold
     Given I am admin
@@ -381,12 +449,18 @@ Feature: correlation feature - complex rule with threshold count
     {
       "name": "test-complex-correlation-3",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-complex-correlation-3"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-complex-correlation-3"
+            }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 3,
           "unit": "s"
@@ -479,50 +553,15 @@ Feature: correlation feature - complex rule with threshold count
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=desc
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-3"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-3"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-3"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 3
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-complex-correlation-3"
           }
         }
@@ -535,6 +574,64 @@ Feature: correlation feature - complex rule with threshold count
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-complex-3",
+                  "connector_name": "test-complex-3-name",
+                  "component": "test-complex-correlation-3",
+                  "resource": "test-complex-correlation-resource-3"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-3",
+                  "connector_name": "test-complex-3-name",
+                  "component": "test-complex-correlation-3",
+                  "resource": "test-complex-correlation-resource-4"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-3",
+                  "connector_name": "test-complex-3-name",
+                  "component": "test-complex-correlation-3",
+                  "resource": "test-complex-correlation-resource-5"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
 
   Scenario: given meta alarm rule with threshold count and events should create one single meta alarm without first alarm, because interval shifting
     Given I am admin
@@ -543,12 +640,18 @@ Feature: correlation feature - complex rule with threshold count
     {
       "name": "test-complex-correlation-4",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-complex-correlation-4"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-complex-correlation-4"
+            }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 5,
           "unit": "s"
@@ -626,50 +729,15 @@ Feature: correlation feature - complex rule with threshold count
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=desc
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-4"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-4"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-4"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 3
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-complex-correlation-4"
           }
         }
@@ -681,4 +749,192 @@ Feature: correlation feature - complex rule with threshold count
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-complex-4",
+                  "connector_name": "test-complex-4-name",
+                  "component": "test-complex-correlation-4",
+                  "resource": "test-complex-correlation-resource-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-4",
+                  "connector_name": "test-complex-4-name",
+                  "component": "test-complex-correlation-4",
+                  "resource": "test-complex-correlation-resource-3"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-4",
+                  "connector_name": "test-complex-4-name",
+                  "component": "test-complex-correlation-4",
+                  "resource": "test-complex-correlation-resource-4"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  Scenario: given meta alarm rule with threshold count and events should create meta alarm
+    Given I am admin
+    When I send an event:
+    """
+    {
+      "connector": "test-metaalarm-rule-backward-compatibility-connector-1",
+      "connector_name": "test-metaalarm-rule-backward-compatibility-connector-name-1",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-metaalarm-rule-backward-compatibility-component-1",
+      "resource": "test-metaalarm-rule-backward-compatibility-resource-1",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-metaalarm-rule-backward-compatibility-connector-1",
+      "connector_name": "test-metaalarm-rule-backward-compatibility-connector-name-1",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-metaalarm-rule-backward-compatibility-component-1",
+      "resource": "test-metaalarm-rule-backward-compatibility-resource-2",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-metaalarm-rule-backward-compatibility-connector-1",
+      "connector_name": "test-metaalarm-rule-backward-compatibility-connector-name-1",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-metaalarm-rule-backward-compatibility-component-1",
+      "resource": "test-metaalarm-rule-backward-compatibility-resource-3",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-metaalarm-rule-backward-compatibility-1&active_columns[]=v.meta&correlation=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
+            "name": "test-metaalarm-rule-backward-compatibility-1-name"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-metaalarm-rule-backward-compatibility-connector-1",
+                  "connector_name": "test-metaalarm-rule-backward-compatibility-connector-name-1",
+                  "component":  "test-metaalarm-rule-backward-compatibility-component-1",
+                  "resource": "test-metaalarm-rule-backward-compatibility-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-metaalarm-rule-backward-compatibility-connector-1",
+                  "connector_name": "test-metaalarm-rule-backward-compatibility-connector-name-1",
+                  "component":  "test-metaalarm-rule-backward-compatibility-component-1",
+                  "resource": "test-metaalarm-rule-backward-compatibility-resource-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-metaalarm-rule-backward-compatibility-connector-1",
+                  "connector_name": "test-metaalarm-rule-backward-compatibility-connector-name-1",
+                  "component":  "test-metaalarm-rule-backward-compatibility-component-1",
+                  "resource": "test-metaalarm-rule-backward-compatibility-resource-3"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
     """

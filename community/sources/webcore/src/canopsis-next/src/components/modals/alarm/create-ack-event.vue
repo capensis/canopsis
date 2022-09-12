@@ -1,19 +1,18 @@
 <template lang="pug">
-  v-form(data-test="createAckEventModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createAckEvent.title') }}
-      template(slot="text")
+      template(#text="")
         v-container
           v-layout(row, align-center)
             v-flex.text-xs-center
               alarm-general-table(:items="items")
           v-layout(row)
             v-divider.my-3
-          ack-event-form(v-model="form", :isNoteRequired="isNoteRequired")
-      template(slot="actions")
+          ack-event-form(v-model="form", :is-note-required="isNoteRequired")
+      template(#actions="")
         v-btn(
-          data-test="createAckEventCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
@@ -21,13 +20,11 @@
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled || submittingWithTicket",
-          data-test="createAckEventSubmitButton",
           type="submit"
         ) {{ $t('common.acknowledge') }}
         v-btn.warning(
           :loading="submittingWithTicket",
           :disabled="isDisabledWithTicket || submitting",
-          data-test="createAckEventSubmitWithTicketButton",
           @click="submitWithTicket"
         ) {{ submitWithTicketBtnLabel }}
 </template>
@@ -37,7 +34,7 @@ import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -80,7 +77,7 @@ export default {
   },
   computed: {
     isNoteRequired() {
-      return this.config && this.config.isNoteRequired;
+      return this.config?.isNoteRequired;
     },
 
     submitWithTicketBtnLabel() {

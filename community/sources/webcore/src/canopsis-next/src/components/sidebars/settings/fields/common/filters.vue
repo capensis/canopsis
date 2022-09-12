@@ -3,50 +3,50 @@
     template(#activator="")
       v-list-tile {{ $t('settings.filters') }}
     v-container
-      filter-selector(
-        v-field="value",
-        :label="$t('filterSelector.defaultFilter')",
-        :entities-type="entitiesType",
-        :filters="filters",
-        :condition="condition",
-        :hide-select="hideSelect",
-        :has-access-to-add-filter="addable",
-        :has-access-to-edit-filter="editable",
-        hide-select-icon,
-        long,
-        @update:condition="$emit('update:condition', $event)",
-        @update:filters="updateFilters"
-      )
+      v-layout(column)
+        filter-selector(
+          v-if="!hideSelector",
+          v-field="value",
+          :label="$t('filterSelector.defaultFilter')",
+          :filters="filters"
+        )
+        filters-list(
+          :filters="filters",
+          :addable="addable",
+          :editable="editable",
+          @add="showCreateFilterModal",
+          @edit="showEditFilterModal",
+          @delete="showDeleteFilterModal"
+        )
 </template>
 
 <script>
-import { isUndefined } from 'lodash';
+import { pick } from 'lodash';
 
-import { FILTER_DEFAULT_VALUES, ENTITIES_TYPES } from '@/constants';
+import { MODALS } from '@/constants';
+
+import uuid from '@/helpers/uuid';
 
 import { authMixin } from '@/mixins/auth';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FiltersList from '@/components/other/filter/filters-list.vue';
 
 export default {
-  components: { FilterSelector },
+  components: { FilterSelector, FiltersList },
   mixins: [authMixin],
   props: {
+    widgetId: {
+      type: String,
+      required: false,
+    },
     filters: {
       type: Array,
       default: () => [],
     },
     value: {
-      type: [Object, Array],
-      default: null,
-    },
-    condition: {
       type: String,
-      default: FILTER_DEFAULT_VALUES.condition,
-    },
-    hideSelect: {
-      type: Boolean,
-      default: false,
+      default: null,
     },
     addable: {
       type: Boolean,
@@ -56,19 +56,106 @@ export default {
       type: Boolean,
       default: false,
     },
-    entitiesType: {
-      type: String,
-      default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
+    withAlarm: {
+      type: Boolean,
+      default: false,
+    },
+    withEntity: {
+      type: Boolean,
+      default: false,
+    },
+    withPbehavior: {
+      type: Boolean,
+      default: false,
+    },
+    withServiceWeather: {
+      type: Boolean,
+      default: false,
+    },
+    hideSelector: {
+      type: Boolean,
+      default: false,
+    },
+    entityTypes: {
+      type: Array,
+      required: false,
+    },
+  },
+  computed: {
+    modalConfig() {
+      return {
+        ...pick(this, ['withAlarm', 'withEntity', 'withPbehavior', 'withServiceWeather', 'entityTypes']),
+
+        withTitle: true,
+      };
     },
   },
   methods: {
-    updateFilters(filters, value) {
-      this.$emit('update:filters', filters);
+    showCreateFilterModal() {
+      this.$modals.show({
+        name: MODALS.createFilter,
+        config: {
+          ...this.modalConfig,
 
-      if (!isUndefined(value)) {
-        this.$emit('input', value);
-      }
+          title: this.$t('modals.createFilter.create.title'),
+          action: (newFilter) => {
+            const filters = [
+              ...this.filters,
+
+              {
+                ...newFilter,
+
+                _id: uuid('filter'),
+                widget: this.widgetId,
+                is_private: false,
+              },
+            ];
+
+            this.$emit('update:filters', filters);
+          },
+        },
+      });
+    },
+
+    showEditFilterModal(filter) {
+      this.$modals.show({
+        name: MODALS.createFilter,
+        config: {
+          ...this.modalConfig,
+
+          filter,
+          title: this.$t('modals.createFilter.edit.title'),
+          action: (newFilter) => {
+            const preparedNewFilter = {
+              ...newFilter,
+
+              widget: this.widgetId,
+              _id: filter._id,
+            };
+
+            const filters = this.filters.map(item => (item._id === filter._id ? preparedNewFilter : item));
+
+            this.$emit('update:filters', filters);
+          },
+        },
+      });
+    },
+
+    showDeleteFilterModal(filter) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: () => {
+            const filters = this.filters.filter(({ _id: id }) => id !== filter._id);
+
+            this.$emit('update:filters', filters);
+
+            if (this.value === filter._id) {
+              this.$emit('input', null);
+            }
+          },
+        },
+      });
     },
   },
 };

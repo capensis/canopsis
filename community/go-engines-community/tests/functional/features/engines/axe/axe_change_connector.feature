@@ -17,7 +17,7 @@ Feature: create and update alarm by main event stream
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-axe-change-connector-1&opened=true&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-change-connector-1&opened=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -31,8 +31,38 @@ Feature: create and update alarm by main event stream
             "component": "test-component-axe-change-connector-1",
             "connector": "test-connector-axe-change-connector-1",
             "connector_name": "test-connector-name-axe-change-connector-1-1",
-            "resource": "test-resource-axe-change-connector-1",
-            "steps": [
+            "resource": "test-resource-axe-change-connector-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "a": "test-connector-axe-change-connector-1.test-connector-name-axe-change-connector-1-1",
@@ -45,17 +75,17 @@ Feature: create and update alarm by main event stream
                 "m": "test-output-axe-change-connector-1",
                 "val": 1
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
     When I send an event:
     """json
@@ -71,7 +101,7 @@ Feature: create and update alarm by main event stream
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-axe-change-connector-1&opened=true&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-change-connector-1&opened=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -85,8 +115,38 @@ Feature: create and update alarm by main event stream
             "component": "test-component-axe-change-connector-1",
             "connector": "test-connector-axe-change-connector-1",
             "connector_name": "test-connector-name-axe-change-connector-1-1",
-            "resource": "test-resource-axe-change-connector-1",
-            "steps": [
+            "resource": "test-resource-axe-change-connector-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "a": "test-connector-axe-change-connector-1.test-connector-name-axe-change-connector-1-1",
@@ -99,17 +159,17 @@ Feature: create and update alarm by main event stream
                 "m": "test-output-axe-change-connector-1",
                 "val": 1
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
     When I send an event:
     """json
@@ -125,7 +185,7 @@ Feature: create and update alarm by main event stream
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-axe-change-connector-1&opened=true&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-change-connector-1&opened=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -139,8 +199,38 @@ Feature: create and update alarm by main event stream
             "component": "test-component-axe-change-connector-1",
             "connector": "test-connector-axe-change-connector-1",
             "connector_name": "test-connector-name-axe-change-connector-1-1",
-            "resource": "test-resource-axe-change-connector-1",
-            "steps": [
+            "resource": "test-resource-axe-change-connector-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "a": "test-connector-axe-change-connector-1.test-connector-name-axe-change-connector-1-1",
@@ -159,15 +249,15 @@ Feature: create and update alarm by main event stream
                 "m": "test-output-axe-change-connector-1",
                 "val": 3
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """

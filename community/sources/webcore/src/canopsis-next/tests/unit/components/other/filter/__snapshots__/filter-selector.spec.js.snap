@@ -1,423 +1,88 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`filter-selector Renders \`filter-selector\` with custom all rights 1`] = `
-<div
-  class="layout align-center row wrap"
->
-  <div
-    class="flex xs12"
-    style="display: none;"
-  >
-    <div
-      class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-      role="combobox"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-select__slot"
-          >
-            <div
-              class="v-select__selections"
-            >
-              <div
-                class="v-select__selection v-select__selection--comma"
-              >
-                Filter 1
-              </div>
-              <input
-                aria-label=""
-                aria-readonly="false"
-                autocomplete="on"
-                readonly="readonly"
-                type="text"
-              />
-            </div>
-            <div
-              class="v-input__append-inner"
-            >
-              <div
-                class="v-input__icon v-input__icon--clear"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon v-icon--link material-icons theme--light"
-                >
-                  clear
-                </i>
-              </div>
-            </div>
-            <div
-              class="v-input__append-inner"
-            >
-              <div
-                class="v-input__icon v-input__icon--append"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                >
-                  arrow_drop_down
-                </i>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-menu"
-          />
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
-    class="flex xs12"
-  >
-    <div>
-      <div
-        class="v-list theme--light"
-        role="list"
-      >
-        <div
-          class="pa-0 filter-item"
-          role="listitem"
-        >
-          <div
-            class="v-list__tile theme--light"
-          >
-            <div
-              class="layout"
-            >
-              <div
-                class="flex xs12"
-              >
-                <div
-                  class="v-list__tile__content"
-                >
-                  Filter 1
-                </div>
-              </div>
-              <div
-                class="v-list__tile__action"
-              >
-                <div
-                  class="layout"
-                >
-                  <c-action-btn-stub
-                    type="edit"
-                  />
-                  <c-action-btn-stub
-                    type="delete"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="pa-0 filter-item"
-          role="listitem"
-        >
-          <div
-            class="v-list__tile theme--light"
-          >
-            <div
-              class="layout"
-            >
-              <div
-                class="flex xs12"
-              >
-                <div
-                  class="v-list__tile__content"
-                >
-                  Filter 2
-                </div>
-              </div>
-              <div
-                class="v-list__tile__action"
-              >
-                <div
-                  class="layout"
-                >
-                  <c-action-btn-stub
-                    type="edit"
-                  />
-                  <c-action-btn-stub
-                    type="delete"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <button
-        class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
-        type="button"
-      >
-        <div
-          class="v-btn__content"
-        >
-          common.addFilter
-        </div>
-      </button>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`filter-selector Renders \`filter-selector\` with custom all rights 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        class="layout pl-3"
-      >
-        <div
-          class="flex xs6"
-          style="display: none;"
-        >
-          <c-enabled-field-stub
-            hide-details="hide-details"
-            label="filterSelector.fields.mixFilters"
-          />
-        </div>
-        <div
-          class="flex xs6"
-          style="display: none;"
-        >
-          <c-operator-field-stub
-            value="$or"
-          />
-        </div>
-      </div>
-      <hr
-        class="mt-3 v-divider theme--light"
-      />
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <!---->
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              <span>
-                Filter 1
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light primary--text"
-                style="font-size: 16px; display: none;"
-              >
-                person
-              </i>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <!---->
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              <span>
-                Filter 2
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light"
-                style="font-size: 16px; display: none;"
-              >
-                person
-              </i>
-            </div>
-          </div>
-        </a>
-      </div>
-      <hr
-        class="v-divider theme--light"
-      />
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <!---->
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              <span>
-                Locked filter 1
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light"
-                style="font-size: 16px; display: none;"
-              >
-                lock
-              </i>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <!---->
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              <span>
-                Locked filter 2
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light"
-                style="font-size: 16px; display: none;"
-              >
-                lock
-              </i>
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
 exports[`filter-selector Renders \`filter-selector\` with custom props 1`] = `
 <div
-  class="layout align-center row wrap"
+  class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+  long="true"
+  role="combobox"
 >
   <div
-    class="flex xs12"
-    style="display: none;"
+    class="v-input__control"
   >
     <div
-      class="v-input v-text-field v-select theme--light"
-      role="combobox"
+      class="v-input__slot"
     >
       <div
-        class="v-input__control"
+        class="v-select__slot"
       >
+        <label
+          aria-hidden="true"
+          class="v-label v-label--active theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Custom label
+        </label>
         <div
-          class="v-input__slot"
+          class="v-select__selections"
         >
           <div
-            class="v-select__slot"
+            class="v-select__selection v-select__selection--comma"
           >
-            <label
-              aria-hidden="true"
-              class="v-label theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Custom label
-            </label>
-            <div
-              class="v-select__selections"
-            >
-              <input
-                aria-label="Custom label"
-                aria-readonly="false"
-                autocomplete="on"
-                readonly="readonly"
-                type="text"
-              />
-            </div>
-            <div
-              class="v-input__append-inner"
-            >
-              <div
-                class="v-input__icon v-input__icon--"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon v-icon--link material-icons theme--light"
-                />
-              </div>
-            </div>
-            <div
-              class="v-input__append-inner"
-            >
-              <div
-                class="v-input__icon v-input__icon--append"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                >
-                  arrow_drop_down
-                </i>
-              </div>
-            </div>
+            Filter 1
           </div>
-          <div
-            class="v-menu"
+          <input
+            aria-label="Custom label"
+            aria-readonly="false"
+            autocomplete="on"
+            readonly="readonly"
+            type="text"
           />
         </div>
         <div
-          class="v-text-field__details"
+          class="v-input__append-inner"
         >
           <div
-            class="v-messages theme--light"
+            class="v-input__icon v-input__icon--clear"
           >
-            <div
-              class="v-messages__wrapper"
-            />
+            <i
+              aria-hidden="true"
+              class="v-icon v-icon--link material-icons theme--light"
+            >
+              clear
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
           </div>
         </div>
       </div>
+      <div
+        class="v-menu"
+      />
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
     </div>
   </div>
-  <!---->
 </div>
 `;
 
@@ -434,36 +99,12 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
       role="list"
     >
       <div
-        class="layout pl-3"
-      >
-        <div
-          class="flex xs6"
-          style="display: none;"
-        >
-          <c-enabled-field-stub
-            hide-details="hide-details"
-            label="filterSelector.fields.mixFilters"
-          />
-        </div>
-        <div
-          class="flex xs6"
-          style="display: none;"
-        >
-          <c-operator-field-stub
-            value="$or"
-          />
-        </div>
-      </div>
-      <hr
-        class="mt-3 v-divider theme--light"
-      />
-      <div
+        class="primary--text"
         role="listitem"
       >
         <a
-          class="v-list__tile v-list__tile--link theme--light"
+          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
         >
-          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -471,12 +112,191 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
               class="v-list__tile__title"
             >
               <span>
-                
+                Filter 1
+              </span>
+              <!---->
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              <span>
+                Filter 2
+              </span>
+              <!---->
+            </div>
+          </div>
+        </a>
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              <span>
+                Locked filter 1
+              </span>
+              <!---->
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              <span>
+                Locked filter 2
+              </span>
+              <!---->
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`filter-selector Renders \`filter-selector\` with custom props 3`] = `
+<div
+  class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+  role="combobox"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-select__slot"
+      >
+        <div
+          class="v-select__selections"
+        >
+          <div
+            class="v-select__selection v-select__selection--comma"
+          >
+            Filter 1
+          </div>
+          <input
+            aria-label=""
+            aria-readonly="false"
+            autocomplete="on"
+            readonly="readonly"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--clear"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-icon--link material-icons theme--light"
+            >
+              clear
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-menu"
+      />
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`filter-selector Renders \`filter-selector\` with custom props 4`] = `
+<div
+  class="v-menu__content theme--light "
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+>
+  <div
+    class="v-select-list v-card theme--light"
+  >
+    <div
+      class="v-list theme--light"
+      role="list"
+    >
+      <div
+        class="primary--text"
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              <span>
+                Filter 1
               </span>
               <i
                 aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light"
-                style="font-size: 16px; display: none;"
+                class="v-icon ml-2 material-icons theme--light primary--text"
+                style="font-size: 16px;"
               >
                 lock
               </i>
@@ -490,7 +310,6 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
         <a
           class="v-list__tile v-list__tile--link theme--light"
         >
-          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -498,12 +317,67 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
               class="v-list__tile__title"
             >
               <span>
-                
+                Filter 2
               </span>
               <i
                 aria-hidden="true"
                 class="v-icon ml-2 material-icons theme--light"
-                style="font-size: 16px; display: none;"
+                style="font-size: 16px;"
+              >
+                lock
+              </i>
+            </div>
+          </div>
+        </a>
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              <span>
+                Locked filter 1
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon ml-2 material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                lock
+              </i>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              <span>
+                Locked filter 2
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon ml-2 material-icons theme--light"
+                style="font-size: 16px;"
               >
                 lock
               </i>
@@ -518,88 +392,71 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
 
 exports[`filter-selector Renders \`filter-selector\` with default props 1`] = `
 <div
-  class="layout align-center row wrap"
+  class="v-input v-text-field v-select theme--light"
+  role="combobox"
 >
   <div
-    class="flex"
+    class="v-input__control"
   >
     <div
-      class="v-input v-text-field v-select theme--light"
-      role="combobox"
+      class="v-input__slot"
     >
       <div
-        class="v-input__control"
+        class="v-select__slot"
       >
         <div
-          class="v-input__slot"
+          class="v-select__selections"
         >
-          <div
-            class="v-select__slot"
-          >
-            <div
-              class="v-select__selections"
-            >
-              <input
-                aria-label=""
-                aria-readonly="false"
-                autocomplete="on"
-                readonly="readonly"
-                type="text"
-              />
-            </div>
-            <div
-              class="v-input__append-inner"
-            >
-              <div
-                class="v-input__icon v-input__icon--"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon v-icon--link material-icons theme--light"
-                />
-              </div>
-            </div>
-            <div
-              class="v-input__append-inner"
-            >
-              <div
-                class="v-input__icon v-input__icon--append"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                >
-                  arrow_drop_down
-                </i>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-menu"
+          <input
+            aria-label=""
+            aria-readonly="false"
+            autocomplete="on"
+            readonly="readonly"
+            type="text"
           />
         </div>
         <div
-          class="v-text-field__details"
+          class="v-input__append-inner"
         >
           <div
-            class="v-messages theme--light"
+            class="v-input__icon v-input__icon--"
           >
-            <div
-              class="v-messages__wrapper"
+            <i
+              aria-hidden="true"
+              class="v-icon v-icon--link material-icons theme--light"
             />
           </div>
         </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-menu"
+      />
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
       </div>
     </div>
-  </div>
-  <div
-    class="flex"
-  >
-    <c-action-btn-stub
-      icon="filter_list"
-      small="small"
-      tooltip="filterSelector.buttons.list"
-    />
   </div>
 </div>
 `;
@@ -617,29 +474,6 @@ exports[`filter-selector Renders \`filter-selector\` with default props 2`] = `
       role="list"
     >
       <div
-        class="layout pl-3"
-      >
-        <div
-          class="flex"
-        >
-          <c-enabled-field-stub
-            hide-details="hide-details"
-            label="filterSelector.fields.mixFilters"
-          />
-        </div>
-        <div
-          class="flex"
-          style="display: none;"
-        >
-          <c-operator-field-stub
-            value="$and"
-          />
-        </div>
-      </div>
-      <hr
-        class="mt-3 v-divider theme--light"
-      />
-      <div
         role="listitem"
       >
         <div
@@ -655,431 +489,6 @@ exports[`filter-selector Renders \`filter-selector\` with default props 2`] = `
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`filter-selector Renders \`filter-selector\` with value as array 1`] = `
-<div
-  class="layout align-center row wrap"
->
-  <div
-    class="flex"
-  >
-    <div
-      class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-      role="combobox"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-select__slot"
-          >
-            <div
-              class="v-select__selections"
-            >
-              <div
-                class="v-select__selection v-select__selection--comma"
-              >
-                Filter 1, 
-              </div>
-              <div
-                class="v-select__selection v-select__selection--comma"
-              >
-                Filter 2
-              </div>
-              <input
-                aria-label=""
-                aria-readonly="false"
-                autocomplete="on"
-                readonly="readonly"
-                type="text"
-              />
-            </div>
-            <div
-              class="v-input__append-inner"
-            >
-              <div
-                class="v-input__icon v-input__icon--clear"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon v-icon--link material-icons theme--light"
-                >
-                  clear
-                </i>
-              </div>
-            </div>
-            <div
-              class="v-input__append-inner"
-            >
-              <div
-                class="v-input__icon v-input__icon--append"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                >
-                  arrow_drop_down
-                </i>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-menu"
-          />
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
-    class="flex"
-  >
-    <c-action-btn-stub
-      icon="filter_list"
-      small="small"
-      tooltip="filterSelector.buttons.list"
-    />
-  </div>
-</div>
-`;
-
-exports[`filter-selector Renders \`filter-selector\` with value as array 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        class="layout pl-3"
-      >
-        <div
-          class="flex"
-        >
-          <c-enabled-field-stub
-            hide-details="hide-details"
-            label="filterSelector.fields.mixFilters"
-            value="true"
-          />
-        </div>
-        <div
-          class="flex"
-        >
-          <c-operator-field-stub
-            value="$or"
-          />
-        </div>
-      </div>
-      <hr
-        class="mt-3 v-divider theme--light"
-      />
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <div
-            class="v-list__tile__action"
-          >
-            <div
-              class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty theme--light"
-            >
-              <div
-                class="v-input__control"
-              >
-                <div
-                  class="v-input__slot"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="true"
-                      role="checkbox"
-                      type="checkbox"
-                      value=""
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple primary--text"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light primary--text"
-                    >
-                      check_box
-                    </i>
-                  </div>
-                </div>
-                <div
-                  class="v-messages theme--light"
-                >
-                  <transition-group-stub
-                    class="v-messages__wrapper"
-                    name="message-transition"
-                    tag="div"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              <span>
-                Filter 1
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light primary--text"
-                style="font-size: 16px;"
-              >
-                person
-              </i>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <div
-            class="v-list__tile__action"
-          >
-            <div
-              class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty theme--light"
-            >
-              <div
-                class="v-input__control"
-              >
-                <div
-                  class="v-input__slot"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="true"
-                      role="checkbox"
-                      type="checkbox"
-                      value=""
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple primary--text"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light primary--text"
-                    >
-                      check_box
-                    </i>
-                  </div>
-                </div>
-                <div
-                  class="v-messages theme--light"
-                >
-                  <transition-group-stub
-                    class="v-messages__wrapper"
-                    name="message-transition"
-                    tag="div"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              <span>
-                Filter 2
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light primary--text"
-                style="font-size: 16px;"
-              >
-                person
-              </i>
-            </div>
-          </div>
-        </a>
-      </div>
-      <hr
-        class="v-divider theme--light"
-      />
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__action"
-          >
-            <div
-              class="v-input v-input--selection-controls v-input--checkbox theme--light"
-            >
-              <div
-                class="v-input__control"
-              >
-                <div
-                  class="v-input__slot"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="false"
-                      role="checkbox"
-                      type="checkbox"
-                      value=""
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      check_box_outline_blank
-                    </i>
-                  </div>
-                </div>
-                <div
-                  class="v-messages theme--light"
-                >
-                  <transition-group-stub
-                    class="v-messages__wrapper"
-                    name="message-transition"
-                    tag="div"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              <span>
-                Locked filter 1
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light"
-                style="font-size: 16px;"
-              >
-                lock
-              </i>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__action"
-          >
-            <div
-              class="v-input v-input--selection-controls v-input--checkbox theme--light"
-            >
-              <div
-                class="v-input__control"
-              >
-                <div
-                  class="v-input__slot"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="false"
-                      role="checkbox"
-                      type="checkbox"
-                      value=""
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      check_box_outline_blank
-                    </i>
-                  </div>
-                </div>
-                <div
-                  class="v-messages theme--light"
-                >
-                  <transition-group-stub
-                    class="v-messages__wrapper"
-                    name="message-transition"
-                    tag="div"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              <span>
-                Locked filter 2
-              </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light"
-                style="font-size: 16px;"
-              >
-                lock
-              </i>
-            </div>
-          </div>
-        </a>
       </div>
     </div>
   </div>

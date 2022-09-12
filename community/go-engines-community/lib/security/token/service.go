@@ -6,7 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type Service interface {
@@ -35,7 +35,7 @@ type jwtService struct {
 
 type tokenClaims struct {
 	ID string `json:"_id"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func (s *jwtService) GenerateToken(id string) (string, time.Time, error) {
@@ -50,10 +50,10 @@ func (s *jwtService) GenerateTokenWithExpiration(id string, expiresAt time.Time)
 	cfg := s.apiConfigProvider.Get()
 	claims := tokenClaims{
 		ID: id,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expiresAt.Unix(),
-			Id:        utils.NewID(),
-			IssuedAt:  time.Now().Unix(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expiresAt),
+			ID:        utils.NewID(),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			Issuer:    s.issuer,
 		},
 	}
