@@ -7,7 +7,6 @@ import {
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   DEFAULT_PERIODIC_REFRESH,
-  FILTER_DEFAULT_VALUES,
   DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE,
   DEFAULT_SERVICE_WEATHER_MODAL_TEMPLATE,
   DEFAULT_SERVICE_WEATHER_ENTITY_TEMPLATE,
@@ -40,9 +39,7 @@ import {
 /**
  * @typedef {Object} ServiceWeatherWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
- * @property {WidgetFilter[]} viewFilters
  * @property {string | null} mainFilter
- * @property {WidgetFilterCondition} mainFilterCondition
  * @property {WidgetSort} sort
  * @property {string} blockTemplate
  * @property {string} modalTemplate
@@ -70,11 +67,7 @@ import {
  */
 export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
-  viewFilters: parameters.viewFilters
-    ? cloneDeep(parameters.viewFilters)
-    : [],
   mainFilter: parameters.mainFilter ?? null,
-  mainFilterCondition: parameters.mainFilterCondition ?? FILTER_DEFAULT_VALUES.condition,
   sort: parameters.sort ? { ...parameters.sort } : { order: SORT_ORDERS.asc },
   blockTemplate: parameters.blockTemplate ?? DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE,
   modalTemplate: parameters.modalTemplate ?? DEFAULT_SERVICE_WEATHER_MODAL_TEMPLATE,

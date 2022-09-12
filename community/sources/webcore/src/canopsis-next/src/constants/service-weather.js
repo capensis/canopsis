@@ -15,3 +15,10 @@ export const DEFAULT_WIDGET_MARGIN = {
   bottom: 1,
   left: 1,
 };
+
+export const SERVICE_WEATHER_PATTERN_FIELDS = {
+  grey: 'is_grey',
+  primaryIcon: 'icon',
+  secondaryIcon: 'secondary_icon',
+  state: 'state.val',
+};

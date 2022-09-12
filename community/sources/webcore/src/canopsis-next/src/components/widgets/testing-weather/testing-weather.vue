@@ -16,14 +16,11 @@ import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { entitiesTestSuitesMixin } from '@/mixins/entities/test-suite';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
-
 import TestingWeatherItem from './testing-weather-item.vue';
 
 export default {
   components: {
     TestingWeatherItem,
-    FilterSelector,
   },
   mixins: [
     widgetPeriodicRefreshMixin,

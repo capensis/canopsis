@@ -1,43 +1,24 @@
 <template lang="pug">
-  div
-    patterns-list(
-      v-if="isEntityType",
-      v-field="form.entity_patterns",
-      v-validate="'required'",
-      :type="$constants.PATTERNS_TYPES.entity",
-      name="entity_patterns"
-    )
-    c-patterns-field(
-      v-else,
-      v-field="form",
-      some-required,
-      alarm,
-      entity
-    )
+  c-patterns-field(
+    v-field="form",
+    :with-alarm="!isEntityType",
+    :alarm-attributes="alarmAttributes",
+    :entity-attributes="entityAttributes",
+    :readonly="readonly",
+    some-required,
+    with-entity
+  )
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, QUICK_RANGES } from '@/constants';
 
-import { PATTERNS_TYPES } from '@/constants';
-
-import { formValidationHeaderMixin, validationErrorsMixinCreator } from '@/mixins/form';
-
-import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
-
-const { mapActions } = createNamespacedHelpers('idleRules');
+import { formValidationHeaderMixin } from '@/mixins/form';
 
 export default {
-  provide() {
-    return {
-      $checkEntitiesCountForPatternsByType: this.checkEntitiesCountForPatternsByType,
-    };
-  },
   inject: ['$validator'],
-  components: { PatternsList },
   mixins: [
     formValidationHeaderMixin,
-    validationErrorsMixinCreator(),
   ],
   model: {
     prop: 'form',
@@ -52,43 +33,48 @@ export default {
       type: Boolean,
       default: false,
     },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
-  methods: {
-    ...mapActions({
-      fetchIdleRuleEntitiesCountWithoutStore: 'fetchEntitiesCountWithoutStore',
-    }),
-
-    setFormErrors(err) {
-      const existFieldErrors = this.getExistsFieldsErrors(err);
-
-      if (existFieldErrors.length) {
-        this.addExistsFieldsErrors(existFieldErrors);
-
-        return {
-          over_limit: false,
-          total_count: 0,
-        };
-      }
-
-      throw err;
+  computed: {
+    alarmAttributes() {
+      return [
+        {
+          value: ALARM_PATTERN_FIELDS.creationDate,
+          options: {
+            intervalRanges: [QUICK_RANGES.custom],
+          },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.ackAt,
+          options: {
+            intervalRanges: [QUICK_RANGES.custom],
+          },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.lastUpdateDate,
+          options: { disabled: true },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.resolvedAt,
+          options: { disabled: true },
+        },
+      ];
     },
 
-    async checkEntitiesCountForPatternsByType(type, patterns) {
-      const requestKey = `${type}_patterns`;
-      const responseKey = type === PATTERNS_TYPES.alarm ? 'total_count_alarms' : 'total_count_entities';
-
-      try {
-        const response = await this.fetchIdleRuleEntitiesCountWithoutStore({
-          data: { [requestKey]: patterns },
-        });
-
-        return {
-          over_limit: response.over_limit,
-          total_count: response[responseKey],
-        };
-      } catch (err) {
-        return this.setFormErrors(err);
-      }
+    entityAttributes() {
+      return [
+        {
+          value: ENTITY_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+      ];
     },
   },
 };

@@ -15,7 +15,7 @@ exports[`default-elements-per-page Renders \`default-sort-column\` with custom p
         class="v-list__tile theme--light"
       >
         <span>
-          settings.defaultNumberOfElementsPerPage
+          Default number of elements/page
         </span>
       </div>
     </div>
@@ -63,7 +63,7 @@ exports[`default-elements-per-page Renders \`default-sort-column\` with custom p
                     50
                   </div>
                   <input
-                    aria-label="settings.elementsPerPage"
+                    aria-label="Elements per page"
                     aria-readonly="false"
                     autocomplete="on"
                     readonly="readonly"
@@ -215,7 +215,7 @@ exports[`default-elements-per-page Renders \`default-sort-column\` with default 
         class="v-list__tile theme--light"
       >
         <span>
-          settings.defaultNumberOfElementsPerPage
+          Default number of elements/page
         </span>
       </div>
     </div>
@@ -263,7 +263,7 @@ exports[`default-elements-per-page Renders \`default-sort-column\` with default 
                     10
                   </div>
                   <input
-                    aria-label="settings.elementsPerPage"
+                    aria-label="Elements per page"
                     aria-readonly="false"
                     autocomplete="on"
                     readonly="readonly"

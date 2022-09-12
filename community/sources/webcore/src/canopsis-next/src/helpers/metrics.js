@@ -10,7 +10,7 @@ import {
 } from '@/constants';
 
 import { addUnitToDate, convertDateToString, convertDateToTimestampByTimezone } from '@/helpers/date/date';
-import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
+import { isOmitEqual } from '@/helpers/equal';
 
 /**
  * @typedef { 'hour' | 'day' | 'week' | 'month' } Sampling

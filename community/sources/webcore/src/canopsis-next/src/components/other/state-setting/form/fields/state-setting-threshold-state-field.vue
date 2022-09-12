@@ -2,7 +2,7 @@
   v-layout(row)
     v-flex.mt-2(xs4) {{ label }}
     v-flex(xs4)
-      v-text-field.ma-1.pa-0(v-if="isNumberType", v-field.number="value", :name="name", type="number")
+      c-number-field.ma-1.pa-0(v-if="isNumberType", v-field="value", :name="name")
       c-percents-field.ma-1.pa-0(v-else, v-field="value", :name="name")
 </template>
 
