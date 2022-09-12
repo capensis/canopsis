@@ -49,15 +49,8 @@
           color="primary",
           hide-details
         )
-    pbehavior-reasons-field(
-      v-field="form.reason",
-      v-validate="'required'"
-    )
-    pbehavior-type-field(
-      v-field="form.type",
-      v-validate="'required'",
-      return-object
-    )
+    c-pbehavior-reason-field(v-field="form.reason", required, return-object)
+    c-pbehavior-type-field(v-field="form.type", required, return-object)
     c-color-picker-field(v-field="form.color")
 </template>
 
@@ -82,23 +75,19 @@ import {
 } from '@/helpers/date/date';
 
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
-import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
+import { entitiesPbehaviorReasonMixin } from '@/mixins/entities/pbehavior/reasons';
 
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
-import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
-import PbehaviorReasonsField from '@/components/other/pbehavior/reasons/partials/pbehavior-reasons-field.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     DateTimeSplittedRangePickerField,
-    PbehaviorReasonsField,
-    PbehaviorTypeField,
   },
   mixins: [
     formMixin,
     formValidationHeaderMixin,
-    entitiesPbehaviorReasonsMixin,
+    entitiesPbehaviorReasonMixin,
   ],
   model: {
     prop: 'form',

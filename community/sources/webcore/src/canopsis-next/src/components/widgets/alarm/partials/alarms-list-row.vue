@@ -14,12 +14,13 @@
             hide-details
           )
         v-layout(v-if="hasAlarmInstruction", align-center)
-          alarm-list-row-icon(:alarm="alarm")
+          alarms-list-row-icon(:alarm="alarm")
         v-layout(v-if="expandable", :class="{ 'ml-3': !hasAlarmInstruction }", align-center)
-          c-expand-btn(
-            :class="expandButtonClass",
-            :expanded="row.expanded",
-            @expand="showExpandPanel"
+          alarms-expand-panel-btn(
+            v-model="row.expanded",
+            :alarm="alarm",
+            :widget="widget",
+            :is-tour-enabled="isTourEnabled"
           )
     td(v-for="column in columns")
       alarm-column-value(
@@ -34,32 +35,30 @@
         :item="alarm",
         :widget="widget",
         :is-resolved-alarm="isResolvedAlarm",
-        :parent-alarm="parentAlarm"
+        :parent-alarm="parentAlarm",
+        :refresh-alarms-list="refreshAlarmsList"
       )
 </template>
 
 <script>
-import { TOURS } from '@/constants';
-
 import featuresService from '@/services/features';
 
 import { isResolvedAlarm } from '@/helpers/entities';
-import { getStepClass } from '@/helpers/tour';
-
-import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 import ActionsPanel from '../actions/actions-panel.vue';
 import AlarmColumnValue from '../columns-formatting/alarm-column-value.vue';
-import AlarmListRowIcon from './alarms-list-row-icon.vue';
+import AlarmsExpandPanelBtn from '../expand-panel/alarms-expand-panel-btn.vue';
+
+import AlarmsListRowIcon from './alarms-list-row-icon.vue';
 
 export default {
   inject: ['$system'],
   components: {
     ActionsPanel,
     AlarmColumnValue,
-    AlarmListRowIcon,
+    AlarmsExpandPanelBtn,
+    AlarmsListRowIcon,
   },
-  mixins: [widgetExpandPanelAlarm],
   model: {
     prop: 'selected',
     event: 'input',
@@ -100,6 +99,10 @@ export default {
     parentAlarm: {
       type: Object,
       default: null,
+    },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
     },
   },
   data() {
@@ -143,14 +146,6 @@ export default {
       return isResolvedAlarm(this.alarm);
     },
 
-    expandButtonClass() {
-      if (this.isTourEnabled) {
-        return getStepClass(TOURS.alarmsExpandPanel, 1);
-      }
-
-      return '';
-    },
-
     isNotFiltered() {
       return this.parentAlarm
         && this.parentAlarm.filtered_children
@@ -178,14 +173,6 @@ export default {
   methods: {
     activateRow(value) {
       this.active = value;
-    },
-
-    async showExpandPanel() {
-      if (!this.row.expanded) {
-        await this.fetchAlarmItemWithGroupsAndSteps(this.alarm);
-      }
-
-      this.row.expanded = !this.row.expanded;
     },
   },
 };

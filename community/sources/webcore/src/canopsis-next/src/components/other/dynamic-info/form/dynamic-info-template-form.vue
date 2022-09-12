@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import DynamicInfoTemplateNamesField from './partials/dynamic-info-template-names-field.vue';
+import DynamicInfoTemplateNamesField from './fields/dynamic-info-template-names-field.vue';
 
 export default {
   inject: ['$validator'],

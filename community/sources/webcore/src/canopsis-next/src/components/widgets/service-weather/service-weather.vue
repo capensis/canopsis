@@ -4,17 +4,24 @@
       v-flex(v-if="hasAccessToCategory", xs3)
         c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
       v-flex(v-if="hasAccessToUserFilter", xs4)
-        filter-selector(
-          :value="mainFilter",
-          :filters="viewFilters",
-          :locked-filters="widgetViewFilters",
-          :condition="mainFilterCondition",
-          :label="$t('settings.selectAFilter')",
-          :has-access-to-user-filter="hasAccessToUserFilter",
-          @input="updateSelectedFilter",
-          @update:condition="updateSelectedCondition",
-          @update:filters="updateFilters"
-        )
+        v-layout(row, wrap, align-center)
+          filter-selector(
+            :label="$t('settings.selectAFilter')",
+            :filters="userPreference.filters",
+            :locked-filters="widget.filters",
+            :value="mainFilter",
+            :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
+            @input="updateSelectedFilter"
+          )
+          filters-list-btn(
+            :widget-id="widget._id",
+            :addable="hasAccessToAddFilter",
+            :editable="hasAccessToEditFilter",
+            :entity-types="[$constants.ENTITY_TYPES.service]",
+            with-entity,
+            with-service-weather,
+            private
+          )
     v-fade-transition(v-if="servicesPending", key="progress", mode="out-in")
       v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
     v-layout.fill-height(key="content", wrap)
@@ -46,13 +53,15 @@ import entitiesServiceMixin from '@/mixins/entities/service';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 
 import ServiceWeatherItem from './service-weather-item.vue';
 
 export default {
   components: {
-    ServiceWeatherItem,
     FilterSelector,
+    FiltersListBtn,
+    ServiceWeatherItem,
   },
   mixins: [
     permissionsWidgetsServiceWeatherFilters,

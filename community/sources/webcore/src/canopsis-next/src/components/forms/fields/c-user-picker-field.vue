@@ -7,9 +7,9 @@
     :loading="pending",
     :name="name",
     :error-messages="errors.collect(name)",
+    :return-object="returnObject",
     item-text="name",
-    item-value="_id",
-    return-object
+    item-value="_id"
   )
 </template>
 
@@ -36,6 +36,10 @@ export default {
       default: 'user',
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    returnObject: {
       type: Boolean,
       default: false,
     },

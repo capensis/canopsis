@@ -25,7 +25,7 @@ type rpcMessageProcessor struct {
 	ServiceRpc               engine.RPCClient
 	RemediationRpc           engine.RPCClient
 	Executor                 operation.Executor
-	AlarmAdapter             libalarm.Adapter
+	MetaAlarmEventProcessor  libalarm.MetaAlarmEventProcessor
 	Decoder                  encoding.Decoder
 	Encoder                  encoding.Encoder
 	Logger                   zerolog.Logger
@@ -74,7 +74,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 			return p.getErrRpcEvent(fmt.Errorf("cannot encode rpc event : %v", err), alarm), nil
 		}
 
-		err = p.PbhRpc.Call(engine.RPCMessage{
+		err = p.PbhRpc.Call(ctx, engine.RPCMessage{
 			CorrelationID: fmt.Sprintf("%s**%s", d.CorrelationId, d.ReplyTo),
 			Body:          body,
 		})
@@ -125,21 +125,6 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	}
 	alarmChange.Type = alarmChangeType
 
-	if alarm.IsMetaAlarm() {
-		var childrenAlarms []types.AlarmWithEntity
-		err := p.AlarmAdapter.GetOpenedAlarmsWithEntityByIDs(ctx, event.Alarm.Value.Children, &childrenAlarms)
-		if err != nil {
-			p.logError(err, "RPC Message Processor: error getting meta-alarm children", msg)
-		} else {
-			for _, childAlarm := range childrenAlarms {
-				_, err = p.Executor.Exec(ctx, op, &childAlarm.Alarm, &childAlarm.Entity, types.CpsTime{Time: time.Now()}, "", "", types.InitiatorSystem)
-				if err != nil {
-					p.logError(err, "RPC Message Processor: cannot update child alarm", msg)
-				}
-			}
-		}
-	}
-
 	if alarmChangeType == types.AlarmChangeTypeAck ||
 		alarmChangeType == types.AlarmChangeTypeAckremove ||
 		alarmChangeType == types.AlarmChangeTypeChangeState {
@@ -151,7 +136,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		if err != nil {
 			p.logError(err, "RPC Message Processor: failed to encode rpc call to engine-service", msg)
 		} else {
-			err = p.ServiceRpc.Call(engine.RPCMessage{
+			err = p.ServiceRpc.Call(ctx, engine.RPCMessage{
 				CorrelationID: utils.NewID(),
 				Body:          body,
 			})
@@ -179,7 +164,8 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 			p.logError(err, "RPC Message Processor: failed to encode a trigger event to engine-fifo", msg)
 		}
 
-		err = p.RMQChannel.Publish(
+		err = p.RMQChannel.PublishWithContext(
+			ctx,
 			"",
 			canopsis.FIFOQueueName,
 			false,
@@ -204,7 +190,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		if err != nil {
 			p.logError(err, "RPC Message Processor: failed to encode rpc call to engine-remediation", msg)
 		} else {
-			err = p.RemediationRpc.Call(engine.RPCMessage{
+			err = p.RemediationRpc.Call(ctx, engine.RPCMessage{
 				CorrelationID: event.Alarm.ID,
 				Body:          body,
 			})
@@ -214,10 +200,17 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		}
 	}
 
-	return p.getRpcEvent(types.RPCAxeResultEvent{
+	res := types.RPCAxeResultEvent{
 		AlarmChangeType: alarmChangeType,
 		Alarm:           alarm,
-	})
+	}
+
+	err = p.MetaAlarmEventProcessor.ProcessAxeRpc(ctx, event, res)
+	if err != nil {
+		p.logError(err, "failed to process meta alarm", msg)
+	}
+
+	return p.getRpcEvent(res)
 }
 
 func (p *rpcMessageProcessor) logError(err error, errMsg string, msg []byte) {

@@ -7,7 +7,7 @@ exports[`kpi-rating-settings Renders \`kpi-rating-settings\` with default props 
   <span
     class="pl-4 subheading grey--text text--darken-2"
   >
-    kpiRatingSettings.helpInformation
+    The list of parameters to use for rating.
   </span>
   <kpi-rating-settings-list-stub
     pagination="[object Object]"
@@ -24,7 +24,7 @@ exports[`kpi-rating-settings Renders \`kpi-rating-settings\` with full permissio
   <span
     class="pl-4 subheading grey--text text--darken-2"
   >
-    kpiRatingSettings.helpInformation
+    The list of parameters to use for rating.
   </span>
   <kpi-rating-settings-list-stub
     pagination="[object Object]"

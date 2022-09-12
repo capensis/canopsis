@@ -52,7 +52,7 @@ export default {
         name: MODALS.info,
         config: {
           title: this.$t('modals.webSocketError.title'),
-          text: this.isCatVersion
+          text: this.isProVersion
             ? this.$t('modals.webSocketError.text')
             : this.$t('modals.webSocketError.shortText'),
         },

@@ -36,26 +36,26 @@ export const CANOPSIS_STACK = {
 };
 
 export const CANOPSIS_EDITION = {
-  core: 'core',
-  cat: 'cat',
+  community: 'community',
+  pro: 'pro',
 };
 
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
-  snmpRule: { edition: CANOPSIS_EDITION.cat },
-  dynamicInfo: { edition: CANOPSIS_EDITION.cat },
-  metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  snmpRule: { edition: CANOPSIS_EDITION.pro },
+  dynamicInfo: { edition: CANOPSIS_EDITION.pro },
+  metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   scenario: { stack: CANOPSIS_STACK.go },
 };
 
 export const ADMIN_PAGES_RULES = {
-  remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
-  healthcheck: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
-  kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  healthcheck: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
 };
 
 export const NOTIFICATIONS_PAGES_RULES = {
-  instructionStats: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  instructionStats: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
 };
 
 export const USER_PERMISSIONS_PREFIXES = {
@@ -63,6 +63,7 @@ export const USER_PERMISSIONS_PREFIXES = {
     admin: 'models',
     exploitation: 'models_exploitation',
     notification: 'models_notification',
+    profile: 'models_profile',
   },
   business: {
     common: 'common',
@@ -112,6 +113,9 @@ export const USERS_PERMISSIONS = {
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
+    },
+    profile: {
+      corporatePattern: `${USER_PERMISSIONS_PREFIXES.technical.profile}_corporatePattern`,
     },
   },
   business: {
@@ -249,6 +253,10 @@ export const USERS_PERMISSIONS = {
       broadcastMessage: `${USER_PERMISSIONS_PREFIXES.api}_broadcast_message`,
       junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
       notifications: `${USER_PERMISSIONS_PREFIXES.api}_notification`,
+      metrics: `${USER_PERMISSIONS_PREFIXES.api}_metrics`,
+      ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
+      filter: `${USER_PERMISSIONS_PREFIXES.api}_kpi_filter`,
+      corporatePattern: `${USER_PERMISSIONS_PREFIXES.api}_corporate_pattern`,
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
@@ -276,9 +284,6 @@ export const USERS_PERMISSIONS = {
       pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
       pbehaviorType: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviortype`,
     },
-    metrics: `${USER_PERMISSIONS_PREFIXES.api}_metrics`,
-    ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
-    filter: `${USER_PERMISSIONS_PREFIXES.api}_filter`,
   },
 };
 
