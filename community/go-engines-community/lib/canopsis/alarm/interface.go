@@ -53,7 +53,7 @@ type Adapter interface {
 
 	// GetOpenedAlarm find one opened alarm with his entity id.
 	// Note : a control is added to prevent fetching future alarms.
-	GetOpenedAlarm(ctx context.Context, connector, connectorName, id string) (types.Alarm, error)
+	GetOpenedAlarm(ctx context.Context, entityId string) (types.Alarm, error)
 
 	GetOpenedMetaAlarm(ctx context.Context, ruleId string, valuePath string) (types.Alarm, error)
 	GetOpenedMetaAlarmWithEntity(ctx context.Context, ruleId string, valuePath string) (types.AlarmWithEntity, error)
