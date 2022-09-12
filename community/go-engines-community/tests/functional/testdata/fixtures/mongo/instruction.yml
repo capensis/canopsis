@@ -1660,7 +1660,7 @@ instruction:
         stop_on_fail: false
 
   instruction_action_remediation_triggers_7:
-    <<: *instruction_auto
+    <<: *instruction_manual
     _id: test-instruction-action-remediation-triggers-7
     name: test-instruction-action-remediation-triggers-7-name
     entity_pattern:
@@ -1672,9 +1672,20 @@ instruction:
     timeout_after_execution:
       value: 2
       unit: s
-    jobs:
-      - job: test-job-action-remediation-triggers-3
-        stop_on_fail: false
+    steps:
+      - _id: test-instruction-action-remediation-triggers-7-step-1
+        endpoint: test-instruction-action-remediation-triggers-7-step-1-endpoint
+        name: test-instruction-action-remediation-triggers-7-step-1-name
+        operations:
+          - _id: test-instruction-action-remediation-triggers-7-step-1-operation-1
+            description: test-instruction-action-remediation-triggers-7-step-1-operation-1-description
+            name: test-instruction-action-remediation-triggers-7-step-1-operation-1-name
+            jobs:
+              - test-job-action-remediation-triggers-3
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
 
   instruction_action_remediation_triggers_8:
     <<: *instruction_auto
