@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	flagVersion := flag.Bool("version", false, "version infos")
+	flagVersion := flag.Bool("version", false, "Show the version information")
 	opts := Options{}
 
 	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
@@ -28,7 +28,8 @@ func main() {
 	flag.Parse()
 
 	if *flagVersion {
-		canopsis.PrintVersionExit()
+		canopsis.PrintVersionInfo()
+		return
 	}
 
 	logger := log.NewLogger(opts.ModeDebug)

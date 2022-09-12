@@ -99,10 +99,10 @@ Feature: Get a role
     {
       "data": [
         {
-          "_id": "approver"
+          "_id": "role-to-instruction-approve-1"
         },
         {
-          "_id": "approver2"
+          "_id": "role-to-instruction-approve-2"
         }
       ],
       "meta": {

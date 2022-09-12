@@ -234,19 +234,6 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
-name = "Engine_pbehavior"
-durable = true
-autoDelete = false
-exclusive = false
-noWait = false
-# args =
-[RabbitMQ.queues.bind]
-key = "Engine_pbehavior"
-exchange = "amq.direct"
-noWait = false
-# args =
-
-[[RabbitMQ.queues]]
 name = "Engine_pbehavior_rpc_server"
 durable = true
 autoDelete = false
@@ -469,9 +456,6 @@ from = "engine-fifo"
 to = "engine-che"
 [[HealthCheck.engine_order]]
 from = "engine-che"
-to = "engine-pbehavior"
-[[HealthCheck.engine_order]]
-from = "engine-pbehavior"
 to = "engine-axe"
 [[HealthCheck.engine_order]]
 from = "engine-axe"
@@ -479,6 +463,9 @@ to = "engine-correlation"
 [[HealthCheck.engine_order]]
 from = "engine-axe"
 to = "engine-remediation"
+[[HealthCheck.engine_order]]
+from = "engine-axe"
+to = "engine-pbehavior"
 [[HealthCheck.engine_order]]
 from = "engine-correlation"
 to = "engine-service"

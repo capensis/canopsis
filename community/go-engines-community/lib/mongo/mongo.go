@@ -47,10 +47,11 @@ const (
 	AssociativeTableCollection        = "default_associativetable"
 	NotificationMongoCollection       = "notification"
 
-	ViewMongoCollection      = "views"
-	ViewTabMongoCollection   = "viewtabs"
-	WidgetMongoCollection    = "widgets"
-	ViewGroupMongoCollection = "viewgroups"
+	ViewMongoCollection          = "views"
+	ViewTabMongoCollection       = "viewtabs"
+	WidgetMongoCollection        = "widgets"
+	WidgetFiltersMongoCollection = "widget_filters"
+	ViewGroupMongoCollection     = "viewgroups"
 
 	// Following collections are used for event statistics.
 	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"
@@ -82,11 +83,16 @@ const (
 
 	UserPreferencesMongoCollection = "userpreferences"
 
-	FilterMongoCollection = "filter"
+	KpiFilterMongoCollection = "kpi_filter"
+
+	PatternMongoCollection = "pattern"
+
+	EntityInfosDictionaryCollection  = "entity_infos_dictionary"
+	DynamicInfosDictionaryCollection = "dynamic_infos_dictionary"
 )
 
 const (
-	socketTimeout = 5 * time.Second
+	clientTimeout = 5 * time.Second
 )
 
 type SingleResultHelper interface {
@@ -133,6 +139,7 @@ type DbClient interface {
 	SetRetry(count int, timeout time.Duration)
 	Ping(ctx context.Context, rp *readpref.ReadPref) error
 	WithTransaction(ctx context.Context, f func(context.Context) error) error
+	ListCollectionNames(ctx context.Context, filter interface{}, opts ...*options.ListCollectionsOptions) ([]string, error)
 }
 
 type dbClient struct {
@@ -425,8 +432,8 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
-	if clientOptions.SocketTimeout == nil {
-		clientOptions.SetSocketTimeout(socketTimeout)
+	if clientOptions.Timeout == nil {
+		clientOptions.SetTimeout(clientTimeout)
 	}
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
@@ -457,7 +464,7 @@ func NewClientWithOptions(
 	retryCount int,
 	minRetryTimeout time.Duration,
 	serverSelectionTimeout time.Duration,
-	socketTimeout time.Duration,
+	clientTimeout time.Duration,
 	logger zerolog.Logger,
 ) (DbClient, error) {
 	mongoURL, dbName, err := getURL()
@@ -470,7 +477,7 @@ func NewClientWithOptions(
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
 	clientOptions.SetServerSelectionTimeout(serverSelectionTimeout)
-	clientOptions.SetSocketTimeout(socketTimeout)
+	clientOptions.SetTimeout(clientTimeout)
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, err
@@ -509,6 +516,10 @@ func (c *dbClient) Disconnect(ctx context.Context) error {
 
 func (c *dbClient) Ping(ctx context.Context, rp *readpref.ReadPref) error {
 	return c.Client.Ping(ctx, rp)
+}
+
+func (c *dbClient) ListCollectionNames(ctx context.Context, filter interface{}, opts ...*options.ListCollectionsOptions) ([]string, error) {
+	return c.Database.ListCollectionNames(ctx, filter, opts...)
 }
 
 func (c *dbClient) SetRetry(count int, timeout time.Duration) {

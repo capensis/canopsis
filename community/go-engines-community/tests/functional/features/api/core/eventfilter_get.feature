@@ -6,36 +6,42 @@ Feature: Get an eventfilter
     When I am admin
     When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-get-1
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """
     {
       "_id": "test-eventfilter-to-get-1",
       "author": "root",
       "description": "how it should have ended.",
       "type": "enrichment",
-      "patterns": [
-        {
-          "resource": "test-eventfilter-to-get-1-pattern"
-        }
+      "old_patterns": null,
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-to-get-1-pattern"
+            }
+          }
+        ]
       ],
-      "priority": 0,
       "enabled": true,
-      "actions": [
-        {
-          "type": "set_field",
-          "name": "connector",
-          "value": "kafka_connector"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "external_data": {
         "entity": {
           "type": "entity"
         }
-      },
-      "on_success": "pass",
-      "on_failure": "pass",
-      "created": 1608284568,
-      "updated": 1608285370
+      }
     }
     """
 
@@ -43,7 +49,7 @@ Feature: Get an eventfilter
     When I am admin
     When I do GET /api/v4/eventfilter/rules?search=test-eventfilter-to-get
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """
     {
       "data": [
@@ -52,59 +58,75 @@ Feature: Get an eventfilter
           "author": "root",
           "description": "how it should have ended.",
           "type": "enrichment",
-          "patterns": [
-            {
-              "resource": "test-eventfilter-to-get-1-pattern"
-            }
+          "old_patterns": null,
+          "event_pattern": [
+            [
+              {
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-get-1-pattern"
+                }
+              }
+            ]
           ],
-          "priority": 0,
+          "config": {
+            "actions": [
+              {
+                "type": "set_field",
+                "name": "connector",
+                "value": "kafka_connector"
+              }
+            ],
+            "on_success": "pass",
+            "on_failure": "pass"
+          },
           "enabled": true,
-          "actions": [
-            {
-              "type": "set_field",
-              "name": "connector",
-              "value": "kafka_connector"
-            }
-          ],
           "external_data": {
             "entity": {
               "type": "entity"
             }
-          },
-          "on_success": "pass",
-          "on_failure": "pass",
-          "created": 1608284568,
-          "updated": 1608285370
+          }
         },
         {
           "_id": "test-eventfilter-to-get-2",
           "author": "root",
           "description": "drop filter",
           "type": "drop",
-          "patterns": [
-            {
-              "resource": "test-eventfilter-to-get-2-pattern"
-            }
+          "old_patterns": null,
+          "event_pattern": [
+            [
+              {
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-get-2-pattern"
+                }
+              }
+            ]
           ],
-          "priority": 1,
-          "enabled": true,
-          "created": 1608635535,
-          "updated": 1608635535
+          "config": {},
+          "enabled": true
         },
         {
           "_id": "test-eventfilter-to-get-3",
           "author": "root",
           "description": "break filter",
           "type": "break",
-          "patterns": [
-            {
-              "resource": "test-eventfilter-to-get-3-pattern"
-            }
+          "old_patterns": null,
+          "event_pattern": [
+            [
+              {
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-get-3-pattern"
+                }
+              }
+            ]
           ],
-          "priority": 2,
-          "enabled": true,
-          "created": 1608635535,
-          "updated": 1608635535
+          "config": {},
+          "enabled": true
         }
       ],
       "meta": {
@@ -142,5 +164,40 @@ Feature: Get an eventfilter
     """
     {
       "error": "Not found"
+    }
+    """
+
+  Scenario: given search request should return an eventfilter with old patterns
+    When I am admin
+    When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-backward-compatibility-to-get
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "_id": "test-eventfilter-to-backward-compatibility-to-get",
+      "author": "root",
+      "description": "how it should have ended.",
+      "type": "enrichment",
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "customer",
+            "description": "customer",
+            "value": "test"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "event_pattern": null,
+      "old_patterns": [
+        {
+          "resource": {
+            "regex_match": "test-eventfilter-to-backward-compatibility-to-get"
+          }
+        }
+      ]
     }
     """

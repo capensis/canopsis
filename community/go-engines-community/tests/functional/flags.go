@@ -12,16 +12,14 @@ import (
 )
 
 const (
-	dirMongoFixtures       = "testdata/fixtures/mongo"
-	dirTimescaleFixtures   = "testdata/fixtures/timescale"
-	dirTimescaleMigrations = "../../database/postgres_migrations"
+	dirMongoFixtures     = "testdata/fixtures/mongo"
+	dirTimescaleFixtures = "testdata/fixtures/timescale"
 )
 
 type Flags struct {
 	paths               arrayFlag
 	mongoFixtures       arrayFlag
 	timescaleFixtures   arrayFlag
-	timescaleMigrations string
 	periodicalWaitTime  time.Duration
 	dummyHttpPort       int64
 	eventWaitKey        string
@@ -46,7 +44,6 @@ func (f *Flags) ParseArgs() {
 	flag.Var(&f.paths, "paths", "All feature file paths.")
 	flag.Var(&f.mongoFixtures, "mongoFixtures", "Mongo fixtures dirs.")
 	flag.Var(&f.timescaleFixtures, "timescaleFixtures", "TimescaleDB fixtures dirs.")
-	flag.StringVar(&f.timescaleMigrations, "timescaleMigrations", dirTimescaleMigrations, "TimescaleDB migrations dir.")
 	flag.DurationVar(&f.periodicalWaitTime, "pwt", 2200*time.Millisecond, "Duration to wait the end of next periodical process of all engines.")
 	flag.StringVar(&f.eventWaitExchange, "ewe", "amq.direct", "Consume from exchange to detect the end of event processing.")
 	flag.StringVar(&f.eventWaitKey, "ewk", canopsis.FIFOAckQueueName, "Consume by routing key to detect the end of event processing.")

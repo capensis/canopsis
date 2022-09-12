@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"github.com/rs/zerolog"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -20,20 +20,19 @@ type EntityTypeResolver interface {
 func NewEntityTypeResolver(
 	store Store,
 	matcher EntityMatcher,
-	cachedMatcher ComputedEntityMatcher,
+	logger zerolog.Logger,
 ) EntityTypeResolver {
 	return &entityTypeResolver{
-		store:         store,
-		matcher:       matcher,
-		cachedMatcher: cachedMatcher,
+		store:   store,
+		matcher: matcher,
+		logger:  logger,
 	}
 }
 
 type entityTypeResolver struct {
-	matcher       EntityMatcher
-	cachedMatcher ComputedEntityMatcher
-
-	store Store
+	matcher EntityMatcher
+	store   Store
+	logger  zerolog.Logger
 }
 
 func (r *entityTypeResolver) Resolve(
@@ -50,43 +49,32 @@ func (r *entityTypeResolver) Resolve(
 		return ResolveResult{}, ErrRecomputeNeed
 	}
 
-	pbhIDs, err := r.cachedMatcher.Match(ctx, entity.ID)
+	computed, err := r.store.GetComputed(ctx)
 	if err != nil {
 		return ResolveResult{}, err
 	}
-	computed := ComputeResult{}
-	if len(pbhIDs) == 0 {
-		if entity.Created.Time.After(t.Add(-2 * canopsis.PeriodicalWaitTime)) {
-			computed, err = r.store.GetComputed(ctx)
-			if err != nil {
-				return ResolveResult{}, err
-			}
 
-			filters := make(map[string]string, len(computed.ComputedPbehaviors))
-			for id, pbehavior := range computed.ComputedPbehaviors {
-				filters[id] = pbehavior.Filter
-			}
-
-			pbhIDs, err = r.matcher.MatchAll(ctx, entity.ID, filters)
-			if err != nil {
-				return ResolveResult{}, err
-			}
-		}
-	}
-	if len(pbhIDs) == 0 {
-		return ResolveResult{}, nil
-	}
-
-	if computed.DefaultActiveType == "" {
-		computed, err = r.store.GetComputedByIDs(ctx, pbhIDs)
-		if err != nil {
-			return ResolveResult{}, err
+	filters := make(map[string]interface{}, len(computed.ComputedPbehaviors))
+	for id, pbehavior := range computed.ComputedPbehaviors {
+		if len(pbehavior.OldMongoQuery) > 0 {
+			filters[id] = pbehavior.OldMongoQuery
 		}
 	}
 
-	resolver := NewTypeResolver(span, computed.ComputedPbehaviors, computed.TypesByID, computed.DefaultActiveType)
+	pbhIDs, err := r.matcher.MatchAll(ctx, entity.ID, filters)
+	if err != nil {
+		return ResolveResult{}, err
+	}
 
-	return resolver.Resolve(ctx, t, pbhIDs)
+	resolver := NewTypeResolver(
+		span,
+		computed.ComputedPbehaviors,
+		computed.TypesByID,
+		computed.DefaultActiveType,
+		r.logger,
+	)
+
+	return resolver.Resolve(ctx, t, entity, pbhIDs)
 }
 
 func (r *entityTypeResolver) GetPbehaviors(ctx context.Context, pbhIDs []string, t time.Time) (map[string]ResolveResult, error) {
@@ -104,7 +92,13 @@ func (r *entityTypeResolver) GetPbehaviors(ctx context.Context, pbhIDs []string,
 		return nil, err
 	}
 
-	resolver := NewTypeResolver(span, data.ComputedPbehaviors, data.TypesByID, data.DefaultActiveType)
+	resolver := NewTypeResolver(
+		span,
+		data.ComputedPbehaviors,
+		data.TypesByID,
+		data.DefaultActiveType,
+		r.logger,
+	)
 	pbhs, err := resolver.GetPbehaviors(ctx, t, pbhIDs)
 	if err != nil {
 		return nil, err

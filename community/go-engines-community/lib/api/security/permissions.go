@@ -51,4 +51,6 @@ const (
 
 	ObjFlappingRule = "api_flapping_rule"
 	ObjResolveRule  = "api_resolve_rule"
+
+	PermCorporatePattern = "api_corporate_pattern"
 )
