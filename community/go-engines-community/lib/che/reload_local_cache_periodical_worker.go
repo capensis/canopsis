@@ -20,7 +20,7 @@ func (w *reloadLocalCachePeriodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *reloadLocalCachePeriodicalWorker) Work(ctx context.Context) {
-	err := w.EventFilterService.LoadRules(ctx)
+	err := w.EventFilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("unable to load rules")
 	}

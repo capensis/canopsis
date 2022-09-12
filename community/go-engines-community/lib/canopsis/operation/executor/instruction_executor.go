@@ -2,6 +2,7 @@ package executor
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -96,8 +97,42 @@ func (e *instructionExecutor) Exec(
 	}
 
 	switch alarmChangeType {
+	case types.AlarmStepInstructionComplete, types.AlarmStepInstructionFail:
+		instrID := params.Instruction
+
+		assigned := false
+		for _, assignedInstr := range alarm.KPIAssignedInstructions {
+			if assignedInstr == instrID {
+				assigned = true
+				break
+			}
+		}
+
+		if !assigned {
+			break
+		}
+
+		executed := false
+		for _, executedInstr := range alarm.KPIExecutedInstructions {
+			if executedInstr == instrID {
+				executed = true
+				break
+			}
+		}
+
+		if executed {
+			break
+		}
+
+		alarm.PartialUpdateAddExecutedInstruction(instrID)
+
+		if len(alarm.KPIExecutedInstructions) == 0 {
+			e.metricsSender.SendInstructionExecutionForAlarm(alarm.EntityID, time.Time)
+		}
+
+		e.metricsSender.SendInstructionExecutionForInstruction(instrID, time.Time)
 	case types.AlarmStepAutoInstructionStart:
-		go e.metricsSender.SendAutoInstructionStart(context.Background(), *alarm, time.Time)
+		e.metricsSender.SendAutoInstructionStart(*alarm, time.Time)
 	}
 
 	return alarmChangeType, nil

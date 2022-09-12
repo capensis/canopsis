@@ -162,8 +162,8 @@ export default {
           text: this.$t('common.component'),
         },
         {
-          value: EVENT_FILTER_SOURCE_TYPES.connector,
-          text: this.$t('common.connector'),
+          value: EVENT_FILTER_SOURCE_TYPES.resource,
+          text: this.$t('common.resource'),
         },
       ];
     },

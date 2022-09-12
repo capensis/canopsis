@@ -37,8 +37,8 @@ Feature: Job update
         "type": "rundeck",
         "host": "http://example.com",
         "author": {
-          "_id": "test-user-author-1-id",
-          "name": "test-user-author-1-username"
+          "_id": "root",
+          "name": "root"
         },
         "auth_username": "",
         "auth_token": "test-auth-token"
@@ -78,8 +78,8 @@ Feature: Job update
         "type": "rundeck",
         "host": "http://example.com",
         "author": {
-          "_id": "test-user-author-1-id",
-          "name": "test-user-author-1-username"
+          "_id": "root",
+          "name": "root"
         },
         "auth_username": "",
         "auth_token": "test-auth-token"

@@ -31,17 +31,20 @@ type API interface {
 }
 
 type api struct {
-	store                 Store
+	store             Store
+	metricMetaUpdater metrics.MetaUpdater
+	transformer       common.PatternFieldsTransformer
+	actionLogger      logger.ActionLogger
+	logger            zerolog.Logger
+
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage
-	metricMetaUpdater     metrics.MetaUpdater
-	actionLogger          logger.ActionLogger
-	logger                zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage,
 	metricMetaUpdater metrics.MetaUpdater,
+	transformer common.PatternFieldsTransformer,
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
@@ -49,6 +52,7 @@ func NewApi(
 		store:                 store,
 		serviceChangeListener: serviceChangeListener,
 		metricMetaUpdater:     metricMetaUpdater,
+		transformer:           transformer,
 		actionLogger:          actionLogger,
 		logger:                logger,
 	}
@@ -130,13 +134,23 @@ func (a *api) GetImpacts(c *gin.Context) {
 }
 
 // Create
-// @Param body body EditRequest true "body"
+// @Param body body CreateRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
+	}
+
+	err := a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
 	}
 
 	service, err := a.store.Create(c.Request.Context(), request)
@@ -167,7 +181,7 @@ func (a *api) Create(c *gin.Context) {
 }
 
 // Update
-// @Param body body EditRequest true "body"
+// @Param body body UpdateRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{
@@ -176,6 +190,16 @@ func (a *api) Update(c *gin.Context) {
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
+	}
+
+	err := a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
 	}
 
 	service, serviceChanges, err := a.store.Update(c.Request.Context(), request)
@@ -247,7 +271,6 @@ func (a *api) Delete(c *gin.Context) {
 
 // BulkCreate
 // @Param body body []CreateRequest true "body"
-// @Success 207 {array} []BulkCreateResponseItem
 func (a *api) BulkCreate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -294,9 +317,23 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
+		err = a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
+			a.logger.Err(err).Msg("cannot create entity service")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
+		}
+
 		service, err := a.store.Create(ctx, request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot create entity service")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
@@ -329,7 +366,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
-// @Success 207 {array} []BulkUpdateResponseItem
 func (a *api) BulkUpdate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -376,14 +412,28 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
+		err = a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
+			a.logger.Err(err).Msg("cannot update entity service")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
+		}
+
 		service, serviceChanges, err := a.store.Update(ctx, UpdateRequest(request))
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot update entity service")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if service == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
@@ -417,7 +467,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
-// @Success 207 {array} []BulkDeleteResponseItem
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -466,12 +515,13 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 		ok, alarm, err := a.store.Delete(ctx, request.ID)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot delete entity service")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if !ok {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
@@ -509,4 +559,14 @@ func (a *api) sendChangeMsg(msg entityservice.ChangeEntityMessage) {
 			Str("service_id", msg.ID).
 			Msg("fail to send change message")
 	}
+}
+
+func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
+	var err error
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

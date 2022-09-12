@@ -6,7 +6,7 @@
     expand,
     hide-actions
   )
-    template(slot="items", slot-scope="props")
+    template(#items="props")
       permission-group-row(
         :expanded="props.expanded",
         :group="props.item",
@@ -16,7 +16,7 @@
         @change="$listeners.change",
         @expand="props.expanded = !props.expanded"
       )
-    template(slot="expand", slot-scope="{ item }")
+    template(#expand="{ item }")
       permissions-table.expand-permissions-table(
         :permissions="item.permissions",
         :roles="roles",
