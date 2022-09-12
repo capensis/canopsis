@@ -1,5 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`kpi-rating Renders \`kpi-rating\` with fetching error 1`] = `
+<div
+  class="position-relative"
+>
+  <c-progress-overlay-stub />
+  <kpi-rating-filters-stub
+    query="[object Object]"
+  />
+  <kpi-rating-chart-stub
+    metric="ticket_active_alarms"
+    metrics=""
+    responsive="responsive"
+  />
+  <!---->
+</div>
+`;
+
 exports[`kpi-rating Renders \`kpi-rating\` without metrics 1`] = `
 <div
   class="position-relative"
@@ -13,5 +30,6 @@ exports[`kpi-rating Renders \`kpi-rating\` without metrics 1`] = `
     metrics=""
     responsive="responsive"
   />
+  <!---->
 </div>
 `;
