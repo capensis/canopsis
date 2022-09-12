@@ -683,7 +683,7 @@ Feature: run an auto instruction
       "output": "test-output-to-run-auto-instruction-7"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-7-1&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -745,7 +745,7 @@ Feature: run an auto instruction
       "output": "test-output-to-run-auto-instruction-7"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-7-2&with_instructions=true until response code is 200 and body contains:
     """json
     {
