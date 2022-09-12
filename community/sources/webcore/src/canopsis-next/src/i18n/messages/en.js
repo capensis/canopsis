@@ -2202,7 +2202,7 @@ export default merge({
   },
 
   healthcheck: {
-    systemIsDown: 'The system is down',
+    metricsUnavailable: 'Metrics are not collecting',
     notRunning: '{name} is unavailable',
     queueOverflow: 'Queue overflow',
     lackOfInstances: 'Lack of instances',
@@ -2213,6 +2213,7 @@ export default merge({
     queueOverflowed: 'Queue is overflowed: {queueLength} messages out of {maxQueueLength}.\nPlease check the instances.',
     engineDown: '{name} is down, the system is not operational.\nPlease check the log or restart the service.',
     engineDownOrSlow: '{name} is down or responds too slow, the system is not operational.\nPlease check the log or restart the instance.',
+    timescaleDown: '{name} is down, metrics and KPIs are not collecting.\nPlease check the log or restart the instance.',
     invalidEnginesOrder: 'Invalid engines configuration',
     invalidInstancesConfiguration: 'Invalid instances configuration: engine instances read or write to different queues.\nPlease check the instances.',
     chainConfigurationInvalid: 'Engines chain configuration is invalid.\nRefer below for the correct sequence of engines:',
@@ -2875,6 +2876,8 @@ export default merge({
   kpi: {
     alarmMetrics: 'Alarm metrics',
     sli: 'SLI',
+    metricsNotAvailable: 'TimescaleDB not running. Metrics are not available.',
+    noData: 'No data available',
   },
 
   kpiMetrics: {
