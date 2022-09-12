@@ -196,11 +196,8 @@ func (a mongoAdapter) GetAlarmsWithoutTicketByComponent(ctx context.Context, com
 	return a.getAlarmsWithEntity(ctx, bson.M{
 		"v.component": component,
 		"v.meta":      bson.M{"$exists": false},
-		"$or": []bson.M{
-			{"v.resolved": nil},
-			{"v.resolved": bson.M{"$exists": false}},
-		},
-		"v.ticket": nil,
+		"v.resolved":  nil,
+		"v.ticket":    nil,
 	})
 }
 
@@ -356,32 +353,6 @@ func (a mongoAdapter) GetOpenedAlarmsWithEntityByAlarmIDs(ctx context.Context, i
 
 	return err
 
-}
-
-func (a mongoAdapter) MassUpdate(ctx context.Context, alarms []types.Alarm, notUpdateResolved bool) error {
-	if len(alarms) == 0 {
-		return nil
-	}
-
-	models := make([]mongo.WriteModel, len(alarms))
-
-	for i, alarm := range alarms {
-		filter := bson.M{"_id": alarm.ID}
-		if notUpdateResolved {
-			filter["v.resolved"] = bson.M{"$in": []interface{}{"", nil}}
-		}
-
-		models[i] = mongo.NewUpdateOneModel().
-			SetFilter(filter).
-			SetUpdate(bson.M{"$set": alarm})
-	}
-
-	_, err := a.mainDbCollection.BulkWrite(ctx, models)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (a mongoAdapter) MassPartialUpdateOpen(ctx context.Context, updatedAlarm *types.Alarm, alarmID []string) error {
@@ -771,10 +742,10 @@ func (a *mongoAdapter) ArchiveResolvedAlarms(ctx context.Context, before types.C
 	return archived, nil
 }
 
-func (a mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdAfter types.CpsTime, idsWithPbehaviors []string) (libmongo.Cursor, error) {
+func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefore types.CpsTime, idsWithPbehaviors []string) (libmongo.Cursor, error) {
 	filter := bson.M{
 		"v.resolved": nil,
-		"t":          bson.M{"$lt": createdAfter},
+		"t":          bson.M{"$lt": createdBefore},
 	}
 
 	if len(idsWithPbehaviors) > 0 {
@@ -801,4 +772,44 @@ func (a mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdAfter
 		{"$unwind": "$entity"},
 		{"$match": bson.M{"entity.enabled": true}},
 	})
+}
+
+func (a *mongoAdapter) GetWorstAlarmState(ctx context.Context, entityIds []string) (int64, error) {
+	cursor, err := a.mainDbCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"d":          bson.M{"$in": entityIds},
+			"v.resolved": nil,
+		}},
+		{"$group": bson.M{
+			"_id":   nil,
+			"state": bson.M{"$max": "$v.state.val"},
+		}},
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	defer cursor.Close(ctx)
+	for cursor.Next(ctx) {
+		res := struct {
+			State int64 `bson:"state"`
+		}{}
+
+		err := cursor.Decode(&res)
+
+		return res.State, err
+	}
+
+	return 0, nil
+}
+
+func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, entityIds []string, t types.CpsTime) error {
+	_, err := a.mainDbCollection.UpdateMany(ctx, bson.M{
+		"d":          bson.M{"$in": entityIds},
+		"v.resolved": nil,
+	}, bson.M{
+		"$set": bson.M{"last_event_date": t},
+	})
+
+	return err
 }

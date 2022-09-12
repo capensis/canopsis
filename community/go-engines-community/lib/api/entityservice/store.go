@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -246,6 +247,14 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 }
 
 func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, error) {
+	var enabled bool
+	if request.Enabled != nil {
+		enabled = *request.Enabled
+	}
+	var sliAvailState int64
+	if request.SliAvailState != nil {
+		sliAvailState = *request.SliAvailState
+	}
 	entity := entityservice.EntityService{
 		Entity: types.Entity{
 			ID:            utils.NewID(),
@@ -253,16 +262,16 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 			Depends:       []string{},
 			Impacts:       []string{},
 			EnableHistory: []types.CpsTime{},
-			Enabled:       *request.Enabled,
+			Enabled:       enabled,
 			Infos:         transformInfos(request.EditRequest),
 			Type:          types.EntityTypeService,
 			Category:      request.Category,
 			ImpactLevel:   request.ImpactLevel,
-			SliAvailState: *request.SliAvailState,
+			SliAvailState: sliAvailState,
 			Created:       types.CpsTime{Time: time.Now()},
 		},
-		EntityPatterns: request.EntityPatterns,
-		OutputTemplate: request.OutputTemplate,
+		EntityPatternFields: request.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection)),
+		OutputTemplate:      request.OutputTemplate,
 	}
 
 	if request.ID == "" {
@@ -280,91 +289,103 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 		response, err = s.GetOneBy(ctx, entity.ID)
 		return err
 	})
-	if err != nil {
-		return nil, err
-	}
 
-	return response, nil
+	return response, err
 }
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error) {
-	serviceChanges := ServiceChanges{}
 	var service *Response
+	serviceChanges := ServiceChanges{}
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		service = nil
+		serviceChanges = ServiceChanges{}
 		oldValues := &entityservice.EntityService{}
+		pattern := request.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection))
+		update := bson.M{"$set": bson.M{
+			"name":            request.Name,
+			"output_template": request.OutputTemplate,
+			"category":        request.Category,
+			"impact_level":    request.ImpactLevel,
+			"enabled":         request.Enabled,
+			"infos":           transformInfos(request.EditRequest),
+			"sli_avail_state": request.SliAvailState,
 
+			"entity_pattern":                 pattern.EntityPattern,
+			"corporate_entity_pattern":       pattern.CorporateEntityPattern,
+			"corporate_entity_pattern_title": pattern.CorporateEntityPatternTitle,
+		}}
+		if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 {
+			update["$unset"] = bson.M{"old_entity_patterns": ""}
+		}
 		err := s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{
 				"_id":  request.ID,
 				"type": types.EntityTypeService,
 			},
-			bson.M{"$set": bson.M{
-				"name":            request.Name,
-				"output_template": request.OutputTemplate,
-				"category":        request.Category,
-				"impact_level":    request.ImpactLevel,
-				"enabled":         request.Enabled,
-				"entity_patterns": request.EntityPatterns,
-				"infos":           transformInfos(request.EditRequest),
-				"sli_avail_state": request.SliAvailState,
-			}},
+			update,
 			options.FindOneAndUpdate().
-				SetProjection(bson.M{"enabled": 1, "entity_patterns": 1}).
+				SetProjection(bson.M{"enabled": 1, "entity_pattern": 1, "old_entity_patterns": 1}).
 				SetReturnDocument(options.Before),
 		).Decode(oldValues)
 		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
 			return err
 		}
-		serviceChanges.IsToggled = oldValues.Enabled != *request.Enabled
-		serviceChanges.IsPatternChanged = !reflect.DeepEqual(oldValues.EntityPatterns, request.EntityPatterns)
+		serviceChanges.IsToggled = request.Enabled != nil && oldValues.Enabled != *request.Enabled
+		if oldValues.OldEntityPatterns.IsSet() {
+			serviceChanges.IsPatternChanged = len(request.EntityPattern) > 0
+		} else {
+			serviceChanges.IsPatternChanged = !reflect.DeepEqual(oldValues.EntityPattern, request.EntityPattern)
+		}
 		service, err = s.GetOneBy(ctx, request.ID)
 		return err
 	})
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, serviceChanges, nil
-		}
 
-		return nil, serviceChanges, err
-	}
-
-	return service, serviceChanges, nil
+	return service, serviceChanges, err
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, *types.Alarm, error) {
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{
-		"_id":  id,
-		"type": types.EntityTypeService,
-	})
-	if err != nil || deleted == 0 {
-		return false, nil, err
-	}
-
-	// Delete open alarm.
+	res := false
 	var alarm *types.Alarm
-	res := s.alarmDbCollection.FindOneAndDelete(ctx, bson.M{"d": id, "v.resolved": nil})
-	if err := res.Err(); err == nil {
-		alarm = &types.Alarm{}
-		err := res.Decode(alarm)
-		if err != nil {
-			return false, nil, err
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		alarm = nil
+		deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{
+			"_id":  id,
+			"type": types.EntityTypeService,
+		})
+		if err != nil || deleted == 0 {
+			return err
 		}
-	} else if err != mongodriver.ErrNoDocuments {
-		return false, nil, err
-	}
-	// Delete resolved alarms.
-	_, err = s.alarmDbCollection.DeleteMany(ctx, bson.M{"d": id})
-	if err != nil {
-		return false, nil, err
-	}
-	_, err = s.resolvedAlarmDbCollection.DeleteMany(ctx, bson.M{"d": id})
-	if err != nil {
-		return false, nil, err
-	}
 
-	return true, alarm, nil
+		// Delete open alarm.
+		alarm = &types.Alarm{}
+		err = s.alarmDbCollection.FindOneAndDelete(ctx, bson.M{"d": id, "v.resolved": nil}).Decode(alarm)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				alarm = nil
+			} else {
+				return err
+			}
+		}
+		// Delete resolved alarms.
+		_, err = s.alarmDbCollection.DeleteMany(ctx, bson.M{"d": id})
+		if err != nil {
+			return err
+		}
+		_, err = s.resolvedAlarmDbCollection.DeleteMany(ctx, bson.M{"d": id})
+		if err != nil {
+			return err
+		}
+
+		res = true
+		return nil
+	})
+
+	return res, alarm, err
 }
 
 func transformInfos(request EditRequest) map[string]types.Info {

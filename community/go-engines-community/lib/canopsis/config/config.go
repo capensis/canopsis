@@ -105,3 +105,9 @@ type UserInterfaceConf struct {
 	MaxMatchedItems          int `bson:"max_matched_items"`
 	CheckCountRequestTimeout int `bson:"check_count_request_timeout"`
 }
+
+type VersionConf struct {
+	Edition string `bson:"edition"`
+	Stack   string `bson:"stack"`
+	Version string `bson:"version"`
+}

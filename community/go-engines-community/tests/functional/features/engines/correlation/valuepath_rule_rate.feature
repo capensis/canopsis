@@ -53,18 +53,15 @@ Feature: correlation feature - valuegroup rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=asc
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "total": 2
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-1"
           }
         }
@@ -77,6 +74,56 @@ Feature: correlation feature - valuegroup rule with threshold rate
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-1-connector",
+                  "connector_name": "test-valuegroup-rule-rate-1-connectorname",
+                  "component":  "test-valuegroup-rule-rate-1-component",
+                  "resource": "test-valuegroup-rule-rate-1-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-1-connector",
+                  "connector_name": "test-valuegroup-rule-rate-1-connectorname",
+                  "component":  "test-valuegroup-rule-rate-1-component",
+                  "resource": "test-valuegroup-rule-rate-1-resource-2"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
+    """
 
     Scenario: given meta alarm rule with threshold rate and events shouldn't create meta alarm because rate was recomputed by the new entity event after, metaalarm should be create after reaching the new rate
       Given I am admin
@@ -85,50 +132,33 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "description" : "test-correlation-valuegroup-rate-2",
         "enabled": true,
-        "type": "enrichment",
-        "patterns": [{
-          "connector" : "test-valuegroup-rule-rate-2-connector"
-        }],
-        "external_data": {
-          "entity": {
-            "type": "entity"
-          }
-        },
-        "actions": [
-          {
-            "type": "copy",
-            "from": "ExternalData.entity",
-            "to": "Entity"
-          }
+        "event_pattern": [
+          [
+            {
+              "field": "connector",
+              "cond": {
+                "type": "eq",
+                "value": "test-valuegroup-rule-rate-2-connector"
+              }
+            }
+          ]
         ],
-        "on_success": "pass",
-        "on_failure": "pass",
-        "priority": 10000
-      }
-      """
-      Then the response code should be 201
-      When I do POST /api/v4/eventfilter/rules:
-      """
-      {
-        "description" : "test-correlation-valuegroup-rate-2",
-        "enabled": true,
-        "patterns" : [{
-            "connector" : "test-valuegroup-rule-rate-2-connector"
-        }],
         "enabled" : true,
         "external_data" : {},
-        "actions" : [
-          {
-            "type" : "set_entity_info_from_template",
-            "name" : "valuegroupRate2",
-            "value" : "{{ `{{.Event.ExtraInfos.valuegroupRate2}}` }}",
-            "description" : "valuegroupRate2"
-          }
-        ],
+        "config": {
+          "actions": [
+            {
+              "type" : "set_entity_info_from_template",
+              "name" : "valuegroupRate2",
+              "value" : "{{ `{{.Event.ExtraInfos.valuegroupRate2}}` }}",
+              "description" : "valuegroupRate2"
+            }
+          ],
+          "on_success": "pass",
+          "on_failure": "pass"
+        },
         "priority" : 10001,
-        "on_failure" : "pass",
-        "type" : "enrichment",
-        "on_success" : "pass"
+        "type" : "enrichment"
       }
       """
       Then the response code should be 201
@@ -185,7 +215,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       }
       """
       When I wait the end of 1 events processing
-      When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=asc
+      When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
       Then the response code should be 200
       Then the response body should contain:
       """
@@ -215,18 +245,15 @@ Feature: correlation feature - valuegroup rule with threshold rate
       }
       """
       When I wait the end of 2 events processing
-      When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=asc
+      When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
       Then the response code should be 200
       Then the response body should contain:
       """
       {
         "data": [
           {
-            "consequences": {
-              "total": 3
-            },
-            "metaalarm": true,
-            "rule": {
+            "is_meta_alarm": true,
+            "meta_alarm_rule": {
               "name": "test-valuegroup-correlation-rate-2"
             }
           }
@@ -238,6 +265,64 @@ Feature: correlation feature - valuegroup rule with threshold rate
           "total_count": 1
         }
       }
+      """
+      When I do POST /api/v4/alarm-details:
+      """json
+      [
+        {
+          "_id": "{{ (index .lastResponse.data 0)._id }}",
+          "children": {
+            "page": 1,
+            "sort_by": "v.resource",
+            "sort": "asc"
+          }
+        }
+      ]
+      """
+      Then the response code should be 207
+      Then the response body should contain:
+      """json
+      [
+        {
+          "status": 200,
+          "data": {
+            "children": {
+              "data": [
+                {
+                  "v": {
+                    "connector": "test-valuegroup-rule-rate-2-connector",
+                    "connector_name": "test-valuegroup-rule-rate-2-connectorname",
+                    "component":  "test-valuegroup-rule-rate-2-component",
+                    "resource": "test-valuegroup-rule-rate-2-resource-1"
+                  }
+                },
+                {
+                  "v": {
+                    "connector": "test-valuegroup-rule-rate-2-connector",
+                    "connector_name": "test-valuegroup-rule-rate-2-connectorname",
+                    "component":  "test-valuegroup-rule-rate-2-component",
+                    "resource": "test-valuegroup-rule-rate-2-resource-2"
+                  }
+                },
+                {
+                  "v": {
+                    "connector": "test-valuegroup-rule-rate-2-connector",
+                    "connector_name": "test-valuegroup-rule-rate-2-connectorname",
+                    "component":  "test-valuegroup-rule-rate-2-component",
+                    "resource": "test-valuegroup-rule-rate-2-resource-new"
+                  }
+                }                
+              ],
+              "meta": {
+                "page": 1,
+                "page_count": 1,
+                "per_page": 10,
+                "total_count": 3
+              }
+            }
+          }
+        }
+      ]
       """
 
     Scenario: given meta alarm rule with threshold rate and events should create one single meta alarms because first group didn't reached threshold
@@ -311,18 +396,15 @@ Feature: correlation feature - valuegroup rule with threshold rate
       }
       """
       When I wait the end of 2 events processing
-      When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=asc
+      When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
       Then the response code should be 200
       Then the response body should contain:
       """
       {
         "data": [
           {
-            "consequences": {
-              "total": 2
-            },
-            "metaalarm": true,
-            "rule": {
+            "is_meta_alarm": true,
+            "meta_alarm_rule": {
               "name": "test-valuegroup-correlation-rate-3"
             }
           }
@@ -334,6 +416,56 @@ Feature: correlation feature - valuegroup rule with threshold rate
           "total_count": 1
         }
       }
+      """
+      When I do POST /api/v4/alarm-details:
+      """json
+      [
+        {
+          "_id": "{{ (index .lastResponse.data 0)._id }}",
+          "children": {
+            "page": 1,
+            "sort_by": "v.resource",
+            "sort": "asc"
+          }
+        }
+      ]
+      """
+      Then the response code should be 207
+      Then the response body should contain:
+      """json
+      [
+        {
+          "status": 200,
+          "data": {
+            "children": {
+              "data": [
+                {
+                  "v": {
+                    "connector": "test-valuegroup-rule-rate-3-connector",
+                    "connector_name": "test-valuegroup-rule-rate-3-connectorname",
+                    "component":  "test-valuegroup-rule-rate-3-component",
+                    "resource": "test-valuegroup-rule-rate-3-resource-2"
+                  }
+                },
+                {
+                  "v": {
+                    "connector": "test-valuegroup-rule-rate-3-connector",
+                    "connector_name": "test-valuegroup-rule-rate-3-connectorname",
+                    "component":  "test-valuegroup-rule-rate-3-component",
+                    "resource": "test-valuegroup-rule-rate-3-resource-3"
+                  }
+                }     
+              ],
+              "meta": {
+                "page": 1,
+                "page_count": 1,
+                "per_page": 10,
+                "total_count": 2
+              }
+            }
+          }
+        }
+      ]
       """
 
     Scenario: given meta alarm rule with threshold rate and events should create 2 meta alarms because of 2 separate time intervals
@@ -423,27 +555,21 @@ Feature: correlation feature - valuegroup rule with threshold rate
       }
       """
       When I wait the end of 2 events processing
-      When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=asc
+      When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
       Then the response code should be 200
       Then the response body should contain:
       """
       {
         "data": [
           {
-            "consequences": {
-              "total": 2
-            },
-            "metaalarm": true,
-            "rule": {
+            "is_meta_alarm": true,
+            "meta_alarm_rule": {
               "name": "test-valuegroup-correlation-rate-4"
             }
           },
           {
-            "consequences": {
-              "total": 2
-            },
-            "metaalarm": true,
-            "rule": {
+            "is_meta_alarm": true,
+            "meta_alarm_rule": {
               "name": "test-valuegroup-correlation-rate-4"
             }
           }
@@ -456,6 +582,95 @@ Feature: correlation feature - valuegroup rule with threshold rate
         }
       }
       """
+      When I do POST /api/v4/alarm-details:
+      """json
+      [
+        {
+          "_id": "{{ (index .lastResponse.data 0)._id }}",
+          "children": {
+            "page": 1,
+            "sort_by": "v.resource",
+            "sort": "asc"
+          }
+        },
+        {
+          "_id": "{{ (index .lastResponse.data 1)._id }}",
+          "children": {
+            "page": 1,
+            "sort_by": "v.resource",
+            "sort": "asc"
+          }
+        }        
+      ]
+      """
+      Then the response code should be 207
+      Then the response body should contain:
+      """json
+      [
+        {
+          "status": 200,
+          "data": {
+            "children": {
+              "data": [
+                {
+                  "v": {
+                    "connector": "test-valuegroup-rule-rate-4-connector",
+                    "connector_name": "test-valuegroup-rule-rate-4-connectorname",
+                    "component":  "test-valuegroup-rule-rate-4-component",
+                    "resource": "test-valuegroup-rule-rate-4-resource-1"
+                  }
+                },
+                {
+                  "v": {
+                    "connector": "test-valuegroup-rule-rate-4-connector",
+                    "connector_name": "test-valuegroup-rule-rate-4-connectorname",
+                    "component":  "test-valuegroup-rule-rate-4-component",
+                    "resource": "test-valuegroup-rule-rate-4-resource-2"
+                  }
+                }     
+              ],
+              "meta": {
+                "page": 1,
+                "page_count": 1,
+                "per_page": 10,
+                "total_count": 2
+              }
+            }
+          }
+        },
+        {
+          "status": 200,
+          "data": {
+            "children": {
+              "data": [
+                {
+                  "v": {
+                    "connector": "test-valuegroup-rule-rate-4-connector",
+                    "connector_name": "test-valuegroup-rule-rate-4-connectorname",
+                    "component":  "test-valuegroup-rule-rate-4-component",
+                    "resource": "test-valuegroup-rule-rate-4-resource-3"
+                  }
+                },
+                {
+                  "v": {
+                    "connector": "test-valuegroup-rule-rate-4-connector",
+                    "connector_name": "test-valuegroup-rule-rate-4-connectorname",
+                    "component":  "test-valuegroup-rule-rate-4-component",
+                    "resource": "test-valuegroup-rule-rate-4-resource-4"
+                  }
+                }     
+              ],
+              "meta": {
+                "page": 1,
+                "page_count": 1,
+                "per_page": 10,
+                "total_count": 2
+              }
+            }
+          }
+        }        
+      ]
+      """ 
 
     Scenario: given meta alarm rule with threshold rate and events should create one single meta alarm without first alarm, because interval shifting
       Given I am admin
@@ -545,18 +760,15 @@ Feature: correlation feature - valuegroup rule with threshold rate
       }
       """
       When I wait the end of 2 events processing
-      When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=asc
+      When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
       Then the response code should be 200
       Then the response body should contain:
       """
       {
         "data": [
           {
-            "consequences": {
-              "total": 3
-            },
-            "metaalarm": true,
-            "rule": {
+            "is_meta_alarm": true,
+            "meta_alarm_rule": {
               "name": "test-valuegroup-correlation-rate-5"
             }
           }
@@ -569,6 +781,64 @@ Feature: correlation feature - valuegroup rule with threshold rate
         }
       }
       """
+      When I do POST /api/v4/alarm-details:
+      """json
+      [
+        {
+          "_id": "{{ (index .lastResponse.data 0)._id }}",
+          "children": {
+            "page": 1,
+            "sort_by": "v.resource",
+            "sort": "asc"
+          }
+        }
+      ]
+      """
+      Then the response code should be 207
+      Then the response body should contain:
+      """json
+      [
+        {
+          "status": 200,
+          "data": {
+            "children": {
+              "data": [
+                {
+                  "v": {
+                    "connector": "test-valuegroup-rule-rate-5-connector",
+                    "connector_name": "test-valuegroup-rule-rate-5-connectorname",
+                    "component":  "test-valuegroup-rule-rate-5-component",
+                    "resource": "test-valuegroup-rule-rate-5-resource-2"
+                  }
+                },
+                {
+                  "v": {
+                    "connector": "test-valuegroup-rule-rate-5-connector",
+                    "connector_name": "test-valuegroup-rule-rate-5-connectorname",
+                    "component":  "test-valuegroup-rule-rate-5-component",
+                    "resource": "test-valuegroup-rule-rate-5-resource-3"
+                  }
+                },
+                {
+                  "v": {
+                    "connector": "test-valuegroup-rule-rate-5-connector",
+                    "connector_name": "test-valuegroup-rule-rate-5-connectorname",
+                    "component":  "test-valuegroup-rule-rate-5-component",
+                    "resource": "test-valuegroup-rule-rate-5-resource-4"
+                  }
+                }
+              ],
+              "meta": {
+                "page": 1,
+                "page_count": 1,
+                "per_page": 10,
+                "total_count": 3
+              }
+            }
+          }
+        }
+      ]
+      """
 
   Scenario: given meta alarm rule with threshold rate and events should create meta alarm regarding total entity pattern
     Given I am admin
@@ -577,19 +847,27 @@ Feature: correlation feature - valuegroup rule with threshold rate
     {
       "name": "test-valuegroup-correlation-rate-6",
       "type": "valuegroup",
-      "config": {
-        "total_entity_patterns": [
+      "total_entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-valuegroup-rule-rate-6-resource"
-            }
-          },
-          {
-            "name": {
-              "regex_match": "test-valuegroup-rule-rate-7-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-valuegroup-rule-rate-6-resource"
             }
           }
         ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-valuegroup-rule-rate-7-resource"
+            }
+          }
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 15,
           "unit": "s"
@@ -668,7 +946,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     }
     """
     When I wait the end of 1 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=asc
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -698,18 +976,15 @@ Feature: correlation feature - valuegroup rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=asc
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "total": 5
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-6"
           }
         }
@@ -721,6 +996,80 @@ Feature: correlation feature - valuegroup rule with threshold rate
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-6-connector",
+                  "connector_name": "test-valuegroup-rule-rate-6-connectorname",
+                  "component":  "test-valuegroup-rule-rate-6-component",
+                  "resource": "test-valuegroup-rule-rate-6-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-6-connector",
+                  "connector_name": "test-valuegroup-rule-rate-6-connectorname",
+                  "component":  "test-valuegroup-rule-rate-6-component",
+                  "resource": "test-valuegroup-rule-rate-6-resource-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-6-connector",
+                  "connector_name": "test-valuegroup-rule-rate-6-connectorname",
+                  "component":  "test-valuegroup-rule-rate-6-component",
+                  "resource": "test-valuegroup-rule-rate-6-resource-3"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-6-connector",
+                  "connector_name": "test-valuegroup-rule-rate-6-connectorname",
+                  "component":  "test-valuegroup-rule-rate-6-component",
+                  "resource": "test-valuegroup-rule-rate-6-resource-4"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-6-connector",
+                  "connector_name": "test-valuegroup-rule-rate-6-connectorname",
+                  "component":  "test-valuegroup-rule-rate-6-component",
+                  "resource": "test-valuegroup-rule-rate-6-resource-5"
+                }
+              }                                
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 5
+            }
+          }
+        }
+      }
+    ]
     """
 
   Scenario: given meta alarm rule with threshold rate and events should create 4 meta alarm regarding total counted by valuepath combinations
@@ -777,6 +1126,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
+    When I wait 1s
     When I wait the end of 2 events processing
     When I send an event:
     """
@@ -809,6 +1159,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
+    When I wait 1s
     When I wait the end of 2 events processing
     When I send an event:
     """
@@ -841,6 +1192,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
+    When I wait 1s
     When I wait the end of 2 events processing
     When I send an event:
     """
@@ -873,46 +1225,35 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
+    When I wait 1s
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true&sort_key=t&sort_dir=asc
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "total": 2
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-8"
           }
         },
         {
-          "consequences": {
-            "total": 2
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-8"
           }
         },
         {
-          "consequences": {
-            "total": 2
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-8"
           }
         },
         {
-          "consequences": {
-            "total": 2
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-8"
           }
         }
@@ -925,3 +1266,484 @@ Feature: correlation feature - valuegroup rule with threshold rate
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 1)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 2)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 3)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }                  
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-8-connector",
+                  "connector_name": "test-valuegroup-rule-rate-8-connectorname",
+                  "component":  "test-valuegroup-rule-rate-8-component",
+                  "resource": "test-valuegroup-rule-rate-8-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-8-connector",
+                  "connector_name": "test-valuegroup-rule-rate-8-connectorname",
+                  "component":  "test-valuegroup-rule-rate-8-component",
+                  "resource": "test-valuegroup-rule-rate-8-resource-2"
+                }
+              }                        
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-8-connector",
+                  "connector_name": "test-valuegroup-rule-rate-8-connectorname",
+                  "component":  "test-valuegroup-rule-rate-8-component",
+                  "resource": "test-valuegroup-rule-rate-8-resource-4"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-8-connector",
+                  "connector_name": "test-valuegroup-rule-rate-8-connectorname",
+                  "component":  "test-valuegroup-rule-rate-8-component",
+                  "resource": "test-valuegroup-rule-rate-8-resource-5"
+                }
+              }                        
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-8-connector",
+                  "connector_name": "test-valuegroup-rule-rate-8-connectorname",
+                  "component":  "test-valuegroup-rule-rate-8-component",
+                  "resource": "test-valuegroup-rule-rate-8-resource-7"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-8-connector",
+                  "connector_name": "test-valuegroup-rule-rate-8-connectorname",
+                  "component":  "test-valuegroup-rule-rate-8-component",
+                  "resource": "test-valuegroup-rule-rate-8-resource-8"
+                }
+              }                        
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-8-connector",
+                  "connector_name": "test-valuegroup-rule-rate-8-connectorname",
+                  "component":  "test-valuegroup-rule-rate-8-component",
+                  "resource": "test-valuegroup-rule-rate-8-resource-10"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-8-connector",
+                  "connector_name": "test-valuegroup-rule-rate-8-connectorname",
+                  "component":  "test-valuegroup-rule-rate-8-component",
+                  "resource": "test-valuegroup-rule-rate-8-resource-11"
+                }
+              }                        
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }                  
+    ]
+    """    
+
+  Scenario: given meta alarm rule with threshold rate and old event patterns should create meta alarm
+    Given I am admin
+    When I send an event:
+    """
+    {
+      "connector": "test-valuegroup-rule-rate-backward-compatibility-1-connector",
+      "connector_name": "test-valuegroup-rule-rate-backward-compatibility-1-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-valuegroup-rule-rate-backward-compatibility-1-component",
+      "resource": "test-valuegroup-rule-rate-backward-compatibility-1-resource-1",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-valuegroup-rule-rate-backward-compatibility-1-connector",
+      "connector_name": "test-valuegroup-rule-rate-backward-compatibility-1-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-valuegroup-rule-rate-backward-compatibility-1-component",
+      "resource": "test-valuegroup-rule-rate-backward-compatibility-1-resource-2",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-valuegroup-rule-rate-backward-compatibility-1-connector",
+      "connector_name": "test-valuegroup-rule-rate-backward-compatibility-1-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-valuegroup-rule-rate-backward-compatibility-1-component",
+      "resource": "test-valuegroup-rule-rate-backward-compatibility-1-resource-3",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-backward-compatibility-1&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
+            "name": "test-valuegroup-rule-rate-backward-compatibility-1-name"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-backward-compatibility-1-connector",
+                  "connector_name": "test-valuegroup-rule-rate-backward-compatibility-1-connectorname",
+                  "component":  "test-valuegroup-rule-rate-backward-compatibility-1-component",
+                  "resource": "test-valuegroup-rule-rate-backward-compatibility-1-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-backward-compatibility-1-connector",
+                  "connector_name": "test-valuegroup-rule-rate-backward-compatibility-1-connectorname",
+                  "component":  "test-valuegroup-rule-rate-backward-compatibility-1-component",
+                  "resource": "test-valuegroup-rule-rate-backward-compatibility-1-resource-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-backward-compatibility-1-connector",
+                  "connector_name": "test-valuegroup-rule-rate-backward-compatibility-1-connectorname",
+                  "component":  "test-valuegroup-rule-rate-backward-compatibility-1-component",
+                  "resource": "test-valuegroup-rule-rate-backward-compatibility-1-resource-3"
+                }
+              }                 
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  Scenario: given meta alarm rule with threshold rate and old total event patterns should create meta alarm
+    Given I am admin
+    When I send an event:
+    """
+    {
+      "connector": "test-valuegroup-rule-rate-backward-compatibility-2-connector",
+      "connector_name": "test-valuegroup-rule-rate-backward-compatibility-2-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-valuegroup-rule-rate-backward-compatibility-2-component",
+      "resource": "test-valuegroup-rule-rate-backward-compatibility-2-resource-1",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-valuegroup-rule-rate-backward-compatibility-2-connector",
+      "connector_name": "test-valuegroup-rule-rate-backward-compatibility-2-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-valuegroup-rule-rate-backward-compatibility-2-component",
+      "resource": "test-valuegroup-rule-rate-backward-compatibility-2-resource-2",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-valuegroup-rule-rate-backward-compatibility-2-connector",
+      "connector_name": "test-valuegroup-rule-rate-backward-compatibility-2-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-valuegroup-rule-rate-backward-compatibility-2-component",
+      "resource": "test-valuegroup-rule-rate-backward-compatibility-2-resource-3",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-valuegroup-rule-rate-backward-compatibility-1-connector",
+      "connector_name": "test-valuegroup-rule-rate-backward-compatibility-1-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-valuegroup-rule-rate-backward-compatibility-1-component",
+      "resource": "test-valuegroup-rule-rate-backward-compatibility-1-resource-4",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-backward-compatibility-2&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I send an event:
+    """
+    {
+      "connector": "test-valuegroup-rule-rate-backward-compatibility-2-connector",
+      "connector_name": "test-valuegroup-rule-rate-backward-compatibility-2-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-valuegroup-rule-rate-backward-compatibility-2-component",
+      "resource": "test-valuegroup-rule-rate-backward-compatibility-2-resource-4",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """    
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-backward-compatibility-2&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
+            "name": "test-valuegroup-rule-rate-backward-compatibility-2-name"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-backward-compatibility-2-connector",
+                  "connector_name": "test-valuegroup-rule-rate-backward-compatibility-2-connectorname",
+                  "component":  "test-valuegroup-rule-rate-backward-compatibility-2-component",
+                  "resource": "test-valuegroup-rule-rate-backward-compatibility-2-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-backward-compatibility-2-connector",
+                  "connector_name": "test-valuegroup-rule-rate-backward-compatibility-2-connectorname",
+                  "component":  "test-valuegroup-rule-rate-backward-compatibility-2-component",
+                  "resource": "test-valuegroup-rule-rate-backward-compatibility-2-resource-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-backward-compatibility-2-connector",
+                  "connector_name": "test-valuegroup-rule-rate-backward-compatibility-2-connectorname",
+                  "component":  "test-valuegroup-rule-rate-backward-compatibility-2-component",
+                  "resource": "test-valuegroup-rule-rate-backward-compatibility-2-resource-3"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-valuegroup-rule-rate-backward-compatibility-2-connector",
+                  "connector_name": "test-valuegroup-rule-rate-backward-compatibility-2-connectorname",
+                  "component":  "test-valuegroup-rule-rate-backward-compatibility-2-component",
+                  "resource": "test-valuegroup-rule-rate-backward-compatibility-2-resource-4"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      }
+    ]
+    """    

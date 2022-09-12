@@ -1,10 +1,10 @@
 Feature: send activation event on create
   I need to be able to trigger rule on alarm activation
 
-  Scenario: given event for new alarm should send event
+  Scenario: given event for new alarm should set activation date
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-activation-event-1",
       "connector_name" : "test-connector-name-action-activation-event-1",
@@ -16,11 +16,12 @@ Feature: send activation event on create
       "output" : "noveo alarm"
     }
     """
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-action-activation-event-1"},{"v.activation_date":{"$exists":true}}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-action-activation-event-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -28,11 +29,7 @@ Feature: send activation event on create
             "connector": "test-connector-action-activation-event-1",
             "connector_name": "test-connector-name-action-activation-event-1",
             "component": "test-component-action-activation-event-1",
-            "resource": "test-resource-action-activation-event-1",
-            "steps": [
-              {"_t": "stateinc"},
-              {"_t": "statusinc"}
-            ]
+            "resource": "test-resource-action-activation-event-1"
           }
         }
       ],
@@ -44,19 +41,30 @@ Feature: send activation event on create
       }
     }
     """
+    When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
+    Then the difference between alarmActivationDate createTimestamp is in range -2,2
 
-  Scenario: given event for new alarm and ack action should send event
+  Scenario: given event for new alarm and ack action should update activation date
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-activation-2-name",
       "enabled": true,
-      "priority": 52,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-action-activation-event-2"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-activation-event-2"
+                }
+              }
+            ]
+          ],
           "type":"ack",
           "parameters":{},
           "drop_scenario_if_not_matched": false,
@@ -68,7 +76,7 @@ Feature: send activation event on create
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-activation-event-2",
       "connector_name" : "test-connector-name-action-activation-event-2",
@@ -80,11 +88,12 @@ Feature: send activation event on create
       "output" : "noveo alarm"
     }
     """
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-action-activation-event-2"},{"v.activation_date":{"$exists":true}}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-action-activation-event-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -92,12 +101,7 @@ Feature: send activation event on create
             "connector": "test-connector-action-activation-event-2",
             "connector_name": "test-connector-name-action-activation-event-2",
             "component": "test-component-action-activation-event-2",
-            "resource": "test-resource-action-activation-event-2",
-            "steps": [
-              {"_t": "stateinc"},
-              {"_t": "statusinc"},
-              {"_t": "ack"}
-            ]
+            "resource": "test-resource-action-activation-event-2"
           }
         }
       ],
@@ -109,19 +113,30 @@ Feature: send activation event on create
       }
     }
     """
+    When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
+    Then the difference between alarmActivationDate createTimestamp is in range -2,2
 
-  Scenario: given event for new alarm and snooze action should not send event
+  Scenario: given event for new alarm and snooze action should not update activation date
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-activation-3-name",
       "enabled": true,
-      "priority": 53,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-action-activation-event-3"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-activation-event-3"
+                }
+              }
+            ]
+          ],
           "type":"snooze",
           "parameters":{
             "duration": {
@@ -138,7 +153,7 @@ Feature: send activation event on create
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-activation-event-3",
       "connector_name" : "test-connector-name-action-activation-event-3",
@@ -151,10 +166,10 @@ Feature: send activation event on create
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-action-activation-event-3"},{"v.activation_date":{"$exists":false}}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-action-activation-event-3
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -163,11 +178,7 @@ Feature: send activation event on create
             "connector_name": "test-connector-name-action-activation-event-3",
             "component": "test-component-action-activation-event-3",
             "resource": "test-resource-action-activation-event-3",
-            "steps": [
-              {"_t": "stateinc"},
-              {"_t": "statusinc"},
-              {"_t": "snooze"}
-            ]
+            "snooze": {"_t": "snooze"}
           }
         }
       ],
@@ -179,19 +190,29 @@ Feature: send activation event on create
       }
     }
     """
+    Then the response key "data.0.v.activation_date" should not exist
 
-  Scenario: given event for new alarm and pbehavior action with start=now should not send event
+  Scenario: given event for new alarm and pbehavior action with start=now should not update activation date
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-activation-4-name",
       "enabled": true,
-      "priority": 54,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-action-activation-event-4"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-activation-event-4"
+                }
+              }
+            ]
+          ],
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-4",
@@ -209,7 +230,7 @@ Feature: send activation event on create
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-activation-event-4",
       "connector_name" : "test-connector-name-action-activation-event-4",
@@ -222,10 +243,10 @@ Feature: send activation event on create
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-action-activation-event-4"},{"v.activation_date":{"$exists":false}}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-action-activation-event-4
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -234,11 +255,9 @@ Feature: send activation event on create
             "connector_name": "test-connector-name-action-activation-event-4",
             "component": "test-component-action-activation-event-4",
             "resource": "test-resource-action-activation-event-4",
-            "steps": [
-              {"_t": "stateinc"},
-              {"_t": "statusinc"},
-              {"_t": "pbhenter"}
-            ]
+            "pbehavior_info": {
+              "name": "pbehavior-action-activation-event-4"
+            }
           }
         }
       ],
@@ -250,19 +269,29 @@ Feature: send activation event on create
       }
     }
     """
+    Then the response key "data.0.v.activation_date" should not exist
 
-  Scenario: given event for new alarm and pbehavior action with start on trigger should not send event
+  Scenario: given event for new alarm and pbehavior action with start on trigger should not update activation date
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-activation-1-name",
       "enabled": true,
-      "priority": 55,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-action-activation-event-5"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-activation-event-5"
+                }
+              }
+            ]
+          ],
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-5",
@@ -283,7 +312,7 @@ Feature: send activation event on create
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-activation-event-5",
       "connector_name" : "test-connector-name-action-activation-event-5",
@@ -296,10 +325,10 @@ Feature: send activation event on create
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-action-activation-event-5"},{"v.activation_date":{"$exists":false}}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-action-activation-event-5
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -308,11 +337,9 @@ Feature: send activation event on create
             "connector_name": "test-connector-name-action-activation-event-5",
             "component": "test-component-action-activation-event-5",
             "resource": "test-resource-action-activation-event-5",
-            "steps": [
-              {"_t": "stateinc"},
-              {"_t": "statusinc"},
-              {"_t": "pbhenter"}
-            ]
+            "pbehavior_info": {
+              "name": "pbehavior-action-activation-event-5"
+            }
           }
         }
       ],
@@ -324,19 +351,29 @@ Feature: send activation event on create
       }
     }
     """
+    Then the response key "data.0.v.activation_date" should not exist
 
-  Scenario: given event for new alarm and pbehavior action with start in the future should send event
+  Scenario: given event for new alarm and pbehavior action with start in the future should update activation date
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-activation-6-name",
       "enabled": true,
-      "priority": 56,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-action-activation-event-6"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-activation-event-6"
+                }
+              }
+            ]
+          ],
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-6",
@@ -354,7 +391,7 @@ Feature: send activation event on create
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-activation-event-6",
       "connector_name" : "test-connector-name-action-activation-event-6",
@@ -366,11 +403,12 @@ Feature: send activation event on create
       "output" : "noveo alarm"
     }
     """
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-action-activation-event-6"},{"v.activation_date":{"$exists":true}}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-action-activation-event-6
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -378,11 +416,7 @@ Feature: send activation event on create
             "connector": "test-connector-action-activation-event-6",
             "connector_name": "test-connector-name-action-activation-event-6",
             "component": "test-component-action-activation-event-6",
-            "resource": "test-resource-action-activation-event-6",
-            "steps": [
-              {"_t": "stateinc"},
-              {"_t": "statusinc"}
-            ]
+            "resource": "test-resource-action-activation-event-6"
           }
         }
       ],
@@ -394,19 +428,30 @@ Feature: send activation event on create
       }
     }
     """
+    When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
+    Then the difference between alarmActivationDate createTimestamp is in range -2,2
 
-  Scenario: given event for new alarm and pbehavior action with start and stop in the past should send event
+  Scenario: given event for new alarm and pbehavior action with start and stop in the past should update activation date
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-activation-7-name",
       "enabled": true,
-      "priority": 57,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-action-activation-event-7"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-activation-event-7"
+                }
+              }
+            ]
+          ],
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-7",
@@ -424,7 +469,7 @@ Feature: send activation event on create
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-activation-event-7",
       "connector_name" : "test-connector-name-action-activation-event-7",
@@ -436,11 +481,12 @@ Feature: send activation event on create
       "output" : "noveo alarm"
     }
     """
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-action-activation-event-7"},{"v.activation_date":{"$exists":true}}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-action-activation-event-7
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -448,11 +494,7 @@ Feature: send activation event on create
             "connector": "test-connector-action-activation-event-7",
             "connector_name": "test-connector-name-action-activation-event-7",
             "component": "test-component-action-activation-event-7",
-            "resource": "test-resource-action-activation-event-7",
-            "steps": [
-              {"_t": "stateinc"},
-              {"_t": "statusinc"}
-            ]
+            "resource": "test-resource-action-activation-event-7"
           }
         }
       ],
@@ -464,19 +506,30 @@ Feature: send activation event on create
       }
     }
     """
+    When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
+    Then the difference between alarmActivationDate createTimestamp is in range -2,2
 
-  Scenario: given event for new alarm and pbehavior action with start and stop in the past and rrule should not send event
+  Scenario: given event for new alarm and pbehavior action with start and stop in the past and rrule should not update activation date
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-activation-8-name",
       "enabled": true,
-      "priority": 58,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-action-activation-event-8"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-activation-event-8"
+                }
+              }
+            ]
+          ],
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-8",
@@ -495,7 +548,7 @@ Feature: send activation event on create
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-activation-event-8",
       "connector_name" : "test-connector-name-action-activation-event-8",
@@ -508,10 +561,10 @@ Feature: send activation event on create
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-action-activation-event-8"},{"v.activation_date":{"$exists":false}}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-action-activation-event-8
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -520,11 +573,9 @@ Feature: send activation event on create
             "connector_name": "test-connector-name-action-activation-event-8",
             "component": "test-component-action-activation-event-8",
             "resource": "test-resource-action-activation-event-8",
-            "steps": [
-              {"_t": "stateinc"},
-              {"_t": "statusinc"},
-              {"_t": "pbhenter"}
-            ]
+            "pbehavior_info": {
+              "name": "pbehavior-action-activation-event-8"
+            }
           }
         }
       ],
@@ -536,3 +587,4 @@ Feature: send activation event on create
       }
     }
     """
+    Then the response key "data.0.v.activation_date" should not exist
