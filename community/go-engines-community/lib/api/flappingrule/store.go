@@ -2,9 +2,6 @@ package flappingrule
 
 import (
 	"context"
-	"errors"
-	"time"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
@@ -41,38 +38,31 @@ func NewStore(
 	}
 }
 
-func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, error) {
-	id := request.ID
-	if id == "" {
-		id = utils.NewID()
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
+	now := types.NewCpsTime()
+	rule := transformRequestToModel(r.EditRequest)
+	if r.ID == "" {
+		r.ID = utils.NewID()
 	}
+
+	rule.ID = r.ID
+	rule.Created = now
+	rule.Updated = now
+
 	var resp *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		resp = nil
-		now := types.NewCpsTime(time.Now().Unix())
 
-		_, err := s.dbCollection.InsertOne(ctx, flappingrule.Rule{
-			ID:             id,
-			Name:           request.Name,
-			Description:    request.Description,
-			FreqLimit:      request.FreqLimit,
-			Duration:       request.Duration,
-			AlarmPatterns:  request.AlarmPatterns,
-			EntityPatterns: request.EntityPatterns,
-			Priority:       request.Priority,
-			Author:         request.Author,
-			Created:        now,
-			Updated:        now,
-		})
+		_, err := s.dbCollection.InsertOne(ctx, rule)
 		if err != nil {
 			return err
 		}
 
-		err = s.updateFollowingPriorities(ctx, id, request.Priority)
+		err = s.updateFollowingPriorities(ctx, rule.ID, rule.Priority)
 		if err != nil {
 			return err
 		}
-		resp, err = s.GetById(ctx, id)
+		resp, err = s.GetById(ctx, rule.ID)
 		return err
 	})
 	if err != nil {
@@ -138,43 +128,41 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	return &result, nil
 }
 
-func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, error) {
-	model := flappingrule.Rule{}
-	err := s.dbCollection.FindOne(ctx, bson.M{"_id": request.ID}).Decode(&model)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, nil
-		}
-		return nil, err
+func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
+	model := transformRequestToModel(r.EditRequest)
+	model.ID = r.ID
+	model.Updated = types.NewCpsTime()
+
+	update := bson.M{"$set": model}
+
+	unset := bson.M{}
+	if r.CorporateAlarmPattern != "" || len(r.AlarmPattern) > 0 {
+		unset["old_alarm_patterns"] = 1
+	}
+
+	if r.CorporateEntityPattern != "" || len(r.EntityPattern) > 0 {
+		unset["old_entity_patterns"] = 1
+	}
+
+	if len(unset) > 0 {
+		update["$unset"] = unset
 	}
 
 	var resp *Response
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		resp = nil
-		now := types.NewCpsTime(time.Now().Unix())
-		_, err = s.dbCollection.UpdateOne(
-			ctx,
-			bson.M{"_id": request.ID},
-			bson.M{"$set": flappingrule.Rule{
-				ID:             request.ID,
-				Name:           request.Name,
-				Description:    request.Description,
-				FreqLimit:      request.FreqLimit,
-				Duration:       request.Duration,
-				AlarmPatterns:  request.AlarmPatterns,
-				EntityPatterns: request.EntityPatterns,
-				Priority:       request.Priority,
-				Author:         request.Author,
-				Created:        model.Created,
-				Updated:        now,
-			}},
-		)
+		prevRule, err := s.GetById(ctx, r.ID)
+		if err != nil || prevRule == nil {
+			return err
+		}
+
+		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
 		if err != nil {
 			return err
 		}
 
-		if model.Priority != request.Priority {
-			err := s.updateFollowingPriorities(ctx, request.ID, request.Priority)
+		if prevRule.Priority != model.Priority {
+			err := s.updateFollowingPriorities(ctx, model.ID, model.Priority)
 			if err != nil {
 				return err
 			}
@@ -232,5 +220,23 @@ func (s *store) authorPipeline() []bson.M {
 			"as":           "author",
 		}},
 		{"$unwind": bson.M{"path": "$author", "preserveNullAndEmptyArrays": true}},
+	}
+}
+
+func transformRequestToModel(r EditRequest) flappingrule.Rule {
+	return flappingrule.Rule{
+		Name:        r.Name,
+		Description: r.Description,
+		FreqLimit:   r.FreqLimit,
+		Duration:    r.Duration,
+		AlarmPatternFields: r.AlarmPatternFieldsRequest.ToModelWithoutFields(
+			common.GetForbiddenFieldsInAlarmPattern(mongo.FlappingRuleMongoCollection),
+			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.FlappingRuleMongoCollection),
+		),
+		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(
+			common.GetForbiddenFieldsInEntityPattern(mongo.FlappingRuleMongoCollection),
+		),
+		Priority: r.Priority,
+		Author:   r.Author,
 	}
 }

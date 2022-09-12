@@ -26,12 +26,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
 )
 
 type Options struct {
+	Version                  bool
 	FeatureHideResources     bool
 	FeaturePrintEventOnError bool
 	ModeDebug                bool
@@ -53,32 +53,28 @@ func ParseOptions() Options {
 	flag.BoolVar(&opts.IgnoreDefaultTomlConfig, "ignoreDefaultTomlConfig", false, "load toml file values into database. - deprecated")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
+	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.Parse()
-
-	flagVersion := flag.Bool("version", false, "version infos")
-	if *flagVersion {
-		canopsis.PrintVersionExit()
-	}
 
 	return opts
 }
 
-func Default(ctx context.Context, options Options, metricsSender metrics.Sender, pgPool postgres.Pool, logger zerolog.Logger) libengine.Engine {
+func NewEngine(
+	ctx context.Context,
+	options Options,
+	dbClient mongo.DbClient,
+	cfg config.CanopsisConf,
+	metricsSender metrics.Sender,
+	logger zerolog.Logger,
+) libengine.Engine {
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
-	dbClient := m.DepMongoClient(ctx, logger)
-	cfg := m.DepConfig(ctx, dbClient)
-	config.SetDbClientRetry(dbClient, cfg)
-	if pgPool != nil {
-		config.SetPgPoolRetry(pgPool, cfg)
-	}
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
-	corrRedisClient := m.DepRedisSession(ctx, redis.CorrelationLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 
@@ -117,8 +113,28 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		amqpChannel,
 		logger,
 	)
+	pbhRpcClientForIdleRules := libengine.NewRPCClient(
+		canopsis.AxeRPCConsumerName,
+		canopsis.PBehaviorRPCQueueServerName,
+		"",
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		&rpcPBehaviorClientMessageProcessor{
+			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+			PublishCh:                amqpChannel,
+			ServiceRpc:               serviceRpcClient,
+			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
+			EntityAdapter:            entity.NewAdapter(dbClient),
+			PbehaviorAdapter:         pbehavior.NewAdapter(dbClient),
+			Decoder:                  json.NewDecoder(),
+			Encoder:                  json.NewEncoder(),
+			Logger:                   logger,
+		},
+		amqpChannel,
+		logger,
+	)
 
-	rpcPublishQueues := make([]string, 0)
+	rpcPublishQueues := []string{canopsis.PBehaviorRPCQueueServerName}
 	var remediationRpcClient libengine.RPCClient
 	if options.WithRemediation {
 		remediationRpcClient = libengine.NewRPCClient(
@@ -142,28 +158,22 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		logger,
 	)
 
+	metaAlarmEventProcessor := alarm.NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
+		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
+		metricsSender, logger)
+
 	engineAxe := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
 			return alarmStatusService.Load(ctx)
 		},
 		func(ctx context.Context) {
-			err := dbClient.Disconnect(ctx)
-			if err != nil {
-				logger.Error().Err(err).Msg("failed to close mongo connection")
-			}
-
-			err = amqpConnection.Close()
+			err := amqpConnection.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
 
 			err = lockRedisClient.Close()
-			if err != nil {
-				logger.Error().Err(err).Msg("failed to close redis connection")
-			}
-
-			err = corrRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
@@ -176,10 +186,6 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			err = runInfoRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
-			}
-
-			if pgPool != nil {
-				pgPool.Close()
 			}
 		},
 		logger,
@@ -205,9 +211,10 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 				alarmConfigProvider,
 				m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
 				alarmStatusService,
-				redis.NewLockClient(corrRedisClient),
 				metricsSender,
+				metaAlarmEventProcessor,
 				statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider),
+				pbehavior.NewEntityTypeResolver(pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()), pbehavior.NewEntityMatcher(dbClient), logger),
 				logger,
 			),
 			RemediationRpcClient:   remediationRpcClient,
@@ -231,7 +238,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			RMQChannel:               amqpChannel,
 			PbhRpc:                   pbhRpcClient,
 			RemediationRpc:           remediationRpcClient,
-			AlarmAdapter:             alarm.NewAdapter(dbClient),
+			MetaAlarmEventProcessor:  metaAlarmEventProcessor,
 			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
@@ -260,6 +267,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 				idlerule.NewRuleAdapter(dbClient),
 				alarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
+				pbhRpcClientForIdleRules,
 				json.NewEncoder(),
 				logger,
 			),

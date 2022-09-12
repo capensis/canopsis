@@ -2,7 +2,9 @@ package entityservice
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"errors"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
@@ -11,6 +13,8 @@ import (
 
 type Validator interface {
 	ValidateEditRequest(ctx context.Context, sl validator.StructLevel)
+	ValidateCreateRequest(sl validator.StructLevel)
+	ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel)
 }
 
 type basicValidator struct {
@@ -25,7 +29,47 @@ func (v *basicValidator) ValidateEditRequest(ctx context.Context, sl validator.S
 	r := sl.Current().Interface().(EditRequest)
 
 	v.validateCategory(ctx, sl, r.Category)
-	v.validatePatterns(sl, r.EntityPatterns)
+
+	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
+		!r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection)) {
+		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
+	}
+}
+
+func (v *basicValidator) ValidateCreateRequest(sl validator.StructLevel) {
+	r := sl.Current().Interface().(CreateRequest)
+	if len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" {
+		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required", "")
+	}
+}
+
+func (v *basicValidator) ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel) {
+	id := ""
+	corporateEntityPattern := ""
+	var entityPattern pattern.Entity
+	switch r := sl.Current().Interface().(type) {
+	case UpdateRequest:
+		id = r.ID
+		entityPattern = r.EntityPattern
+		corporateEntityPattern = r.CorporateEntityPattern
+	case BulkUpdateRequestItem:
+		id = r.ID
+		entityPattern = r.EntityPattern
+		corporateEntityPattern = r.CorporateEntityPattern
+	}
+
+	if id != "" {
+		err := v.dbClient.Collection(mongo.EntityMongoCollection).FindOne(ctx, bson.M{"_id": id, "old_entity_patterns": bson.M{"$ne": nil}}).Err()
+		if err == nil {
+			return
+		} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
+			panic(err)
+		}
+	}
+
+	if len(entityPattern) == 0 && corporateEntityPattern == "" {
+		sl.ReportError(entityPattern, "EntityPattern", "EntityPattern", "required", "")
+	}
 }
 
 func (v *basicValidator) validateCategory(ctx context.Context, sl validator.StructLevel, category string) {
@@ -37,25 +81,6 @@ func (v *basicValidator) validateCategory(ctx context.Context, sl validator.Stru
 				sl.ReportError(category, "Category", "Category", "not_exist", "")
 			} else {
 				panic(err)
-			}
-		}
-	}
-}
-
-func (v *basicValidator) validatePatterns(sl validator.StructLevel, patterns pattern.EntityPatternList) {
-	if !patterns.IsValid() {
-		sl.ReportError(patterns, "EntityPatterns", "EntityPatterns", "entitypattern_invalid", "")
-	} else {
-		if patterns.IsSet() {
-			query := patterns.AsMongoDriverQuery()["$or"].([]bson.M)
-			if len(query) == 0 {
-				sl.ReportError(patterns, "EntityPatterns", "EntityPatterns", "entitypattern_empty", "")
-			} else {
-				for _, q := range query {
-					if len(q) == 0 {
-						sl.ReportError(patterns, "EntityPatterns", "EntityPatterns", "entitypattern_contains_empty", "")
-					}
-				}
 			}
 		}
 	}
