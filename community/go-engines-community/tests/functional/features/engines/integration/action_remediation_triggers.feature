@@ -716,7 +716,7 @@ Feature: scenarios should be triggered by remediation triggers
       "output" : "test output"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?search=test-resource-action-remediation-triggers-6 until response code is 200 and body contains:
     """json
     {
@@ -832,10 +832,16 @@ Feature: scenarios should be triggered by remediation triggers
       "triggers": ["instructionjobcomplete"],
       "actions": [
         {
-          "entity_patterns": [
-            {
-              "_id": "test-resource-action-remediation-triggers-7/test-component-action-remediation-triggers-7"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-remediation-triggers-7/test-component-action-remediation-triggers-7"
+                }
+              }
+            ]
           ],
           "type": "ack",
           "parameters": {
@@ -873,28 +879,59 @@ Feature: scenarios should be triggered by remediation triggers
     """
     Then the response code should be 200
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-action-remediation-triggers-7&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
+    When I do GET /api/v4/alarms?search=test-resource-action-remediation-triggers-7
+    Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
     """json
     [
       {
-        "_t": "instructionstart",
-        "a": "root",
-        "m": "Instruction test-instruction-action-remediation-triggers-7-name."
-      },
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
       {
-        "_t": "instructionjobstart",
-        "a": "root",
-        "m": "Instruction test-instruction-action-remediation-triggers-7-name. Job test-job-action-remediation-triggers-3-name."
-      },
-      {
-        "_t": "instructionjobcomplete",
-        "a": "root",
-        "m": "Instruction test-instruction-action-remediation-triggers-7-name. Job test-job-action-remediation-triggers-3-name."
-      },
-      {
-        "_t": "ack",
-        "a": "system",
-        "m": "test-resource-action-remediation-triggers-7-ack"
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {},
+              {},
+              {
+                "_t": "instructionstart",
+                "a": "root",
+                "m": "Instruction test-instruction-action-remediation-triggers-7-name."
+              },
+              {
+                "_t": "instructionjobstart",
+                "a": "root",
+                "m": "Instruction test-instruction-action-remediation-triggers-7-name. Job test-job-action-remediation-triggers-3-name."
+              },
+              {
+                "_t": "instructionjobcomplete",
+                "a": "root",
+                "m": "Instruction test-instruction-action-remediation-triggers-7-name. Job test-job-action-remediation-triggers-3-name."
+              },
+              {
+                "_t": "ack",
+                "a": "system",
+                "m": "test-resource-action-remediation-triggers-7-ack"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 6
+            }
+          }
+        }
       }
     ]
     """
@@ -909,10 +946,16 @@ Feature: scenarios should be triggered by remediation triggers
       "triggers": ["instructionjobcomplete"],
       "actions": [
         {
-          "entity_patterns": [
-            {
-              "_id": "test-resource-action-remediation-triggers-8/test-component-action-remediation-triggers-8"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-remediation-triggers-8/test-component-action-remediation-triggers-8"
+                }
+              }
+            ]
           ],
           "type": "ack",
           "parameters": {
@@ -940,23 +983,48 @@ Feature: scenarios should be triggered by remediation triggers
     }
     """
     When I wait the end of 3 events processing
-    When I do GET /api/v4/alarms?search=test-resource-action-remediation-triggers-8&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
+    When I do GET /api/v4/alarms?search=test-resource-action-remediation-triggers-8
+    Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
     """json
     [
       {
-        "_t": "autoinstructionstart",
-        "a": "system",
-        "m": "Instruction test-instruction-action-remediation-triggers-8-name."
-      },
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
       {
-        "_t": "instructionjobcomplete",
-        "a": "system",
-        "m": "Instruction test-instruction-action-remediation-triggers-8-name. Job test-job-action-remediation-triggers-3-name."
-      },
-      {
-        "_t": "ack",
-        "a": "system",
-        "m": "test-resource-action-remediation-triggers-8-ack"
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {
+                "_t": "ack",
+                "a": "system",
+                "m": "test-resource-action-remediation-triggers-8-ack"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 7
+            }
+          }
+        }
       }
     ]
     """
