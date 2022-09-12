@@ -16,7 +16,7 @@ Feature: run an auto instruction
       "output": "test-output-to-run-auto-instruction-1"
     }
     """
-    When I wait the end of 3 events processing
+    When I wait the end of 6 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-1&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -125,7 +125,7 @@ Feature: run an auto instruction
       "output": "test-output-to-run-auto-instruction-2"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-2&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -206,7 +206,7 @@ Feature: run an auto instruction
       "output": "test-output-to-run-auto-instruction-3"
     }
     """
-    When I wait the end of 4 events processing
+    When I wait the end of 5 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-3&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -303,7 +303,7 @@ Feature: run an auto instruction
      }
    ]
    """
-    When I wait the end of 4 events processing
+    When I wait the end of 6 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-4-1&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -372,7 +372,7 @@ Feature: run an auto instruction
       }
     ]
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 4 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-4-2&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -529,7 +529,7 @@ Feature: run an auto instruction
      }
    ]
    """
-    When I wait the end of 5 events processing
+    When I wait the end of 6 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-6-1&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -598,7 +598,7 @@ Feature: run an auto instruction
       }
      ]
      """
-    When I wait the end of 3 events processing
+    When I wait the end of 4 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-6-2&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -683,7 +683,7 @@ Feature: run an auto instruction
       "output": "test-output-to-run-auto-instruction-7"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-7-1&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -745,7 +745,7 @@ Feature: run an auto instruction
       "output": "test-output-to-run-auto-instruction-7"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-7-2&with_instructions=true until response code is 200 and body contains:
     """json
     {
