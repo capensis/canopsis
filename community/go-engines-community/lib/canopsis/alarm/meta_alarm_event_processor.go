@@ -367,6 +367,13 @@ func (p *metaAlarmEventProcessor) processChild(ctx context.Context, event types.
 		if err != nil {
 			return err
 		}
+
+		if event.Alarm.Value.State.Value != types.AlarmStateOK {
+			err := p.updateParentState(ctx, *event.Alarm)
+			if err != nil {
+				return err
+			}
+		}
 	case types.AlarmChangeTypeStateIncrease, types.AlarmChangeTypeStateDecrease, types.AlarmChangeTypeChangeState:
 		err := p.updateParentState(ctx, *event.Alarm)
 		if err != nil {
@@ -397,17 +404,17 @@ func (p *metaAlarmEventProcessor) processChildRpc(ctx context.Context, eventRes 
 }
 
 func (p *metaAlarmEventProcessor) sendChildrenEvents(ctx context.Context, childrenIds []string, childEvent types.Event) error {
-	var alarms []types.AlarmWithEntity
-	err := p.adapter.GetOpenedAlarmsWithEntityByIDs(ctx, childrenIds, &alarms)
+	var alarms []types.Alarm
+	err := p.adapter.GetOpenedAlarmsByIDs(ctx, childrenIds, &alarms)
 	if err != nil {
 		return fmt.Errorf("cannot fetch children alarms: %w", err)
 	}
 
 	for _, alarm := range alarms {
-		childEvent.Connector = alarm.Alarm.Value.Connector
-		childEvent.ConnectorName = alarm.Alarm.Value.ConnectorName
-		childEvent.Resource = alarm.Alarm.Value.Resource
-		childEvent.Component = alarm.Alarm.Value.Component
+		childEvent.Connector = alarm.Value.Connector
+		childEvent.ConnectorName = alarm.Value.ConnectorName
+		childEvent.Resource = alarm.Value.Resource
+		childEvent.Component = alarm.Value.Component
 		childEvent.SourceType = childEvent.DetectSourceType()
 
 		err = p.sendToFifo(ctx, childEvent)
@@ -447,7 +454,7 @@ func (p *metaAlarmEventProcessor) resolveParents(ctx context.Context, childAlarm
 						return fmt.Errorf("cannot fetch parent: %w", err)
 					}
 					if len(alarms) == 0 {
-						return fmt.Errorf("parent %q not exist", parentId)
+						return nil
 					}
 					parentAlarm = alarms[0]
 
@@ -531,12 +538,15 @@ func (p *metaAlarmEventProcessor) updateParentState(ctx context.Context, childAl
 						return fmt.Errorf("cannot fetch parent: %w", err)
 					}
 					if len(alarms) == 0 {
-						return fmt.Errorf("parent %q not exist", parentId)
+						return nil
 					}
 					parentAlarm := alarms[0]
 
 					parentState := parentAlarm.Alarm.Value.State.Value
 					childState := childAlarm.Value.State.Value
+					if childAlarm.IsResolved() {
+						childState = types.AlarmStateOK
+					}
 					var newState types.CpsNumber
 
 					if childState > parentState {
