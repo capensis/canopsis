@@ -13,38 +13,33 @@
     @moved="changedEventHandler",
     @resized="changedEventHandler"
   )
-    c-progress-overlay.calendar-progress(slot="calendarAppLoader", :pending="pending")
-    ds-calendar-event-popover(
-      slot="eventPopover",
-      slot-scope="props",
-      v-bind="props"
-    )
-      pbehavior-create-event(
-        slot-scope="{ calendarEvent, close, edit }",
-        :calendar-event="calendarEvent",
-        :filter="filter",
-        @close="close",
-        @submit="edit",
-        @remove="removePbehavior"
+    template(#calendarAppLoader="props")
+      c-progress-overlay.calendar-progress(:pending="pending")
+    template(#eventPopover="props")
+      ds-calendar-event-popover(v-bind="props")
+        template(#default="{ calendarEvent, close, edit }")
+          pbehavior-create-event(
+            :calendar-event="calendarEvent",
+            :entity-pattern="entityPattern",
+            @close="close",
+            @submit="edit",
+            @remove="removePbehavior"
+          )
+    template(#eventCreatePopover="props")
+      ds-calendar-event-popover(v-bind="props")
+        template(#default="{ calendarEvent, close, add }")
+          pbehavior-create-event(
+            :calendar-event="calendarEvent",
+            :entity-pattern="entityPattern",
+            @close="close",
+            @submit="add",
+            @remove="removePbehavior"
+          )
+    template(#menuRight="")
+      pbehavior-planning-calendar-legend(
+        :exception-types="exceptionTypes",
+        :colors-to-types="colorsToPbehaviors"
       )
-    ds-calendar-event-popover(
-      slot="eventCreatePopover",
-      slot-scope="props",
-      v-bind="props"
-    )
-      pbehavior-create-event(
-        slot-scope="{ calendarEvent, close, add }",
-        :calendar-event="calendarEvent",
-        :filter="filter",
-        @close="close",
-        @submit="add",
-        @remove="removePbehavior"
-      )
-    pbehavior-planning-calendar-legend(
-      slot="menuRight",
-      :exception-types="exceptionTypes",
-      :colors-to-types="colorsToPbehaviors"
-    )
 </template>
 
 <script>
@@ -99,8 +94,8 @@ export default {
       type: Object,
       required: true,
     },
-    filter: {
-      type: Object,
+    entityPattern: {
+      type: Array,
       required: false,
     },
     readOnly: {
@@ -270,7 +265,7 @@ export default {
         /**
          * If there is `type` field in timespan it means that timespan is exception date with a `type`
          */
-        const color = pbehavior.color ?? this.getColorForPbehavior(pbehavior);
+        const color = pbehavior.color || this.getColorForPbehavior(pbehavior);
         const forecolor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
         const daySpan = getSpanForTimestamps({

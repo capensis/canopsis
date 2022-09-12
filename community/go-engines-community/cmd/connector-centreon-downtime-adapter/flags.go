@@ -13,6 +13,6 @@ type Flags struct {
 func (f *Flags) ParseArgs() {
 	flag.StringVar(&f.ConfigPath, "c", defaultConfigPath, "Configuration file path")
 	flag.BoolVar(&f.Debug, "d", false, "Enable debug mode")
-	flag.BoolVar(&f.Version, "v", false, "Show the version information")
+	flag.BoolVar(&f.Version, "version", false, "Show the version information")
 	flag.Parse()
 }

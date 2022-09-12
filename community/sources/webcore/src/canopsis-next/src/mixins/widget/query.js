@@ -11,10 +11,7 @@ import {
 import { queryMixin } from '@/mixins/query';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
-/**
- * @mixin Add query logic
- */
-export default {
+export const queryWidgetMixin = {
   mixins: [
     queryMixin,
     entitiesUserPreferenceMixin,
@@ -47,7 +44,7 @@ export default {
       return this.getQueryNonceById(this.tabId);
     },
 
-    vDataTablePagination: {
+    pagination: {
       get() {
         const { sortDir, sortKey: sortBy = null, multiSortBy = [] } = this.query;
         const descending = sortDir === SORT_ORDERS.desc;
@@ -58,7 +55,7 @@ export default {
       set(value) {
         const paginationKeys = ['sortBy', 'descending', 'multiSortBy'];
         const newPagination = pick(value, paginationKeys);
-        const oldPagination = pick(this.vDataTablePagination, paginationKeys);
+        const oldPagination = pick(this.pagination, paginationKeys);
 
         if (isEqual(newPagination, oldPagination)) {
           return;
@@ -84,7 +81,7 @@ export default {
     },
   },
   methods: {
-    getQuery() {
+    getQuery() { // TODO: use convertAlarmsListQueryToRequest here
       const query = omit(this.query, [
         'tstart',
         'tstop',
@@ -114,8 +111,8 @@ export default {
       }
 
       if (sortKey) {
-        query.sort_key = sortKey;
-        query.sort_dir = sortDir.toLowerCase();
+        query.sort_by = sortKey;
+        query.sort = sortDir.toLowerCase();
       }
 
       if (category) {

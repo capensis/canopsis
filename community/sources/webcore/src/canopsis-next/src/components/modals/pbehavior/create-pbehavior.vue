@@ -1,11 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
-        pbehavior-form(v-model="form", :no-filter="noFilter")
-      template(slot="actions")
+      template(#text="")
+        pbehavior-form(v-model="form", :no-pattern="noPattern")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { pbehaviorToForm, formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 
@@ -32,6 +32,7 @@ export default {
   name: MODALS.createPbehavior,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { PbehaviorForm, ModalWrapper },
   mixins: [
@@ -52,8 +53,8 @@ export default {
       return this.config.title || this.$t('modals.createPbehavior.create.title');
     },
 
-    noFilter() {
-      return !!this.config.noFilter;
+    noPattern() {
+      return !!this.config.noPattern;
     },
   },
   methods: {

@@ -7,7 +7,7 @@
         :instances="instances",
         :min-instances="minInstances",
         :optimal-instances="optimalInstances",
-        :is-cat-engine="isCatEngine"
+        :is-pro-engine="isProEngine"
       )
     p.pre-wrap(v-if="engine.is_queue_overflown")
       | {{ $t('healthcheck.queueOverflowed', { queueLength, maxQueueLength }) }}
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { CAT_ENGINES, HEALTHCHECK_ENGINES_NAMES, HEALTHCHECK_SERVICES_NAMES } from '@/constants';
+import { PRO_ENGINES, HEALTHCHECK_ENGINES_NAMES, HEALTHCHECK_SERVICES_NAMES } from '@/constants';
 
 import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';
 
@@ -39,8 +39,8 @@ export default {
       return this.getNodeName(this.engine.name);
     },
 
-    isCatEngine() {
-      return CAT_ENGINES.includes(this.engine.name);
+    isProEngine() {
+      return PRO_ENGINES.includes(this.engine.name);
     },
 
     queueLength() {

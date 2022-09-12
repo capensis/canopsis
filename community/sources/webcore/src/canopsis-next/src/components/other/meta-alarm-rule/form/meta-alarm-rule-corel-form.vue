@@ -34,14 +34,12 @@
       :error-messages="errors.collect('corelChild')",
       name="corelChild"
     )
-    v-text-field(
-      v-field.number="config.threshold_count",
-      v-validate="'required|numeric|min_value:0'",
+    c-number-field(
+      v-field="config.threshold_count",
       :label="$t('metaAlarmRule.thresholdCount')",
-      :error-messages="errors.collect('thresholdCount')",
       :min="0",
       name="thresholdCount",
-      type="number"
+      required
     )
 </template>
 

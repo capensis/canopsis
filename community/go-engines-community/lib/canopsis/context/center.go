@@ -423,6 +423,7 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 		EnableHistory: []types.CpsTime{now},
 		Enabled:       true,
 		Type:          types.EntityTypeComponent,
+		Connector:     connectorID,
 		Component:     event.Component,
 		Infos:         map[string]types.Info{},
 		ImpactLevel:   types.EntityDefaultImpactLevel,
@@ -439,11 +440,13 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 
 	if entity != nil {
 		if event.SourceType == types.SourceTypeResource && !entity.HasDepend(connectorID) {
+			entity.Connector = connectorID
 			entity.Depends = append(entity.Depends, connectorID)
 			entities = []types.Entity{connector, component, *entity}
 		}
 
 		if event.SourceType == types.SourceTypeComponent && !entity.HasImpact(connectorID) {
+			entity.Connector = connectorID
 			entity.Impacts = append(entity.Impacts, connectorID)
 			entities = []types.Entity{connector, *entity}
 		}
@@ -458,7 +461,8 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 				EnableHistory: []types.CpsTime{now},
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
-				Component:     event.Component,
+				Connector:     connectorID,
+				Component:     componentID,
 				Infos:         map[string]types.Info{},
 				ImpactLevel:   types.EntityDefaultImpactLevel,
 				IsNew:         true,

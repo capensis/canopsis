@@ -1,9 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createManualMetaAlarm.title') }}
-      template(slot="text")
+      template(#text="")
         v-container
           v-layout(row)
             v-flex.text-xs-center
@@ -13,7 +13,7 @@
           v-layout(row)
             v-flex(xs12)
               manual-meta-alarm-form(v-model="form")
-      template(slot="actions")
+      template(#actions="")
         v-btn(
           depressed,
           flat,
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { get, isObject } from 'lodash';
+import { isObject } from 'lodash';
 
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
@@ -35,7 +35,7 @@ import { isWarningAlarmState } from '@/helpers/entities';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -67,7 +67,7 @@ export default {
   data() {
     return {
       form: {
-        manualMetaAlarm: null,
+        metaAlarm: null,
         output: '',
       },
     };
@@ -91,7 +91,7 @@ export default {
         const data = { output: this.form.output };
 
         if (this.eventType === EVENT_ENTITY_TYPES.manualMetaAlarmUpdate) {
-          data.ma_parents = [get(this.form.metaAlarm, 'entity._id')];
+          data.ma_parents = [this.form.metaAlarm?._id];
         } else {
           data.display_name = this.form.metaAlarm;
         }

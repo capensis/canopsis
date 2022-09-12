@@ -1,68 +1,198 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with all field types correctly 1`] = `
+exports[`c-array-text-field Renders \`c-array-text-field\` with all field types correctly 1`] = `
 <div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"
     >
-      <c-mixed-field-stub
-        value="string"
-      />
+      <div
+        class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+      >
+        <div
+          class="v-input__control"
+        >
+          <div
+            class="v-input__slot"
+          >
+            <div
+              class="v-text-field__slot"
+            >
+              <label
+                aria-hidden="true"
+                class="v-label v-label--active theme--light"
+                style="left: 0px; position: absolute;"
+              >
+                Value
+              </label>
+              <input
+                aria-label="Value"
+                type="text"
+              />
+            </div>
+          </div>
+          <div
+            class="v-text-field__details"
+          >
+            <div
+              class="v-messages theme--light"
+            >
+              <div
+                class="v-messages__wrapper"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <c-action-btn-stub
       type="delete"
     />
   </div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"
     >
-      <c-mixed-field-stub
-        value="123"
-      />
+      <div
+        class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+      >
+        <div
+          class="v-input__control"
+        >
+          <div
+            class="v-input__slot"
+          >
+            <div
+              class="v-text-field__slot"
+            >
+              <label
+                aria-hidden="true"
+                class="v-label v-label--active theme--light"
+                style="left: 0px; position: absolute;"
+              >
+                Value
+              </label>
+              <input
+                aria-label="Value"
+                type="text"
+              />
+            </div>
+          </div>
+          <div
+            class="v-text-field__details"
+          >
+            <div
+              class="v-messages theme--light"
+            >
+              <div
+                class="v-messages__wrapper"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <c-action-btn-stub
       type="delete"
     />
   </div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"
     >
-      <c-mixed-field-stub />
+      <div
+        class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+      >
+        <div
+          class="v-input__control"
+        >
+          <div
+            class="v-input__slot"
+          >
+            <div
+              class="v-text-field__slot"
+            >
+              <label
+                aria-hidden="true"
+                class="v-label v-label--active theme--light"
+                style="left: 0px; position: absolute;"
+              >
+                Value
+              </label>
+              <input
+                aria-label="Value"
+                type="text"
+              />
+            </div>
+          </div>
+          <div
+            class="v-text-field__details"
+          >
+            <div
+              class="v-messages theme--light"
+            >
+              <div
+                class="v-messages__wrapper"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <c-action-btn-stub
       type="delete"
     />
   </div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"
     >
-      <c-mixed-field-stub />
-    </div>
-    <c-action-btn-stub
-      type="delete"
-    />
-  </div>
-  <div
-    class="layout"
-  >
-    <div
-      class="flex"
-    >
-      <c-mixed-field-stub
-        value=",string,123"
-      />
+      <div
+        class="v-input v-text-field theme--light"
+      >
+        <div
+          class="v-input__control"
+        >
+          <div
+            class="v-input__slot"
+          >
+            <div
+              class="v-text-field__slot"
+            >
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: absolute;"
+              >
+                Value
+              </label>
+              <input
+                aria-label="Value"
+                type="text"
+              />
+            </div>
+          </div>
+          <div
+            class="v-text-field__details"
+          >
+            <div
+              class="v-messages theme--light"
+            >
+              <div
+                class="v-messages__wrapper"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <c-action-btn-stub
       type="delete"
@@ -75,13 +205,13 @@ exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with all field type
     <div
       class="v-btn__content"
     >
-      common.add
+      Add
     </div>
   </button>
 </div>
 `;
 
-exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with default props correctly 1`] = `
+exports[`c-array-text-field Renders \`c-array-text-field\` with default props correctly 1`] = `
 <div>
   <button
     class="mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
@@ -90,37 +220,107 @@ exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with default props 
     <div
       class="v-btn__content"
     >
-      common.add
+      Add
     </div>
   </button>
 </div>
 `;
 
-exports[`c-array-mixed-field Renders disabled \`c-array-mixed-field\` correctly 1`] = `
+exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`] = `
 <div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"
     >
-      <c-mixed-field-stub
-        disabled="true"
-        value="string"
-      />
+      <div
+        class="v-input v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+      >
+        <div
+          class="v-input__control"
+        >
+          <div
+            class="v-input__slot"
+          >
+            <div
+              class="v-text-field__slot"
+            >
+              <label
+                aria-hidden="true"
+                class="v-label v-label--active v-label--is-disabled theme--light"
+                style="left: 0px; position: absolute;"
+              >
+                Value
+              </label>
+              <input
+                aria-label="Value"
+                disabled="disabled"
+                type="text"
+              />
+            </div>
+          </div>
+          <div
+            class="v-text-field__details"
+          >
+            <div
+              class="v-messages theme--light"
+            >
+              <div
+                class="v-messages__wrapper"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <!---->
   </div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"
     >
-      <c-mixed-field-stub
-        disabled="true"
-        value="123"
-      />
+      <div
+        class="v-input v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+      >
+        <div
+          class="v-input__control"
+        >
+          <div
+            class="v-input__slot"
+          >
+            <div
+              class="v-text-field__slot"
+            >
+              <label
+                aria-hidden="true"
+                class="v-label v-label--active v-label--is-disabled theme--light"
+                style="left: 0px; position: absolute;"
+              >
+                Value
+              </label>
+              <input
+                aria-label="Value"
+                disabled="disabled"
+                type="text"
+              />
+            </div>
+          </div>
+          <div
+            class="v-text-field__details"
+          >
+            <div
+              class="v-messages theme--light"
+            >
+              <div
+                class="v-messages__wrapper"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <!---->
   </div>
@@ -132,7 +332,7 @@ exports[`c-array-mixed-field Renders disabled \`c-array-mixed-field\` correctly 
     <div
       class="v-btn__content"
     >
-      common.add
+      Add
     </div>
   </button>
 </div>

@@ -3,13 +3,14 @@ package action_test
 import (
 	"context"
 	"fmt"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_action "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/action"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
-	"testing"
-	"time"
 )
 
 func TestTaskManager_Run_GiveTask_ShouldSendResult(t *testing.T) {
@@ -226,13 +227,11 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(true)).
 		Return(int64(1), nil).Times(1)
 	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(false)).
-		Return(int64(1), nil).Times(1)
-	decCall := int64(2)
+		Return(int64(2), nil).Times(1)
 	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).
-		DoAndReturn(func(_ context.Context, _ string, _ int64, _ bool) (int64, error) {
-			decCall--
-			return decCall, nil
-		}).Times(2)
+		Return(int64(1), nil).Times(1)
+	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).
+		Return(int64(0), nil).Times(1)
 	createCall := 0
 	mockExecutionStorage.EXPECT().Create(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, _ action.ScenarioExecution) (string, error) {
 		createCall++

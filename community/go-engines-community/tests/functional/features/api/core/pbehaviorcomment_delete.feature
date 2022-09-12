@@ -4,35 +4,31 @@ Feature: delete a PBehavior comment
   Scenario: Given new pbehavior Should delete comment from pbehavior
     When I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
-      "enabled":true,
-      "name":"test-pbehavior-to-comment-delete",
-      "tstart":1591172881,
-      "tstop":1591536400,
-      "color":"#FFFFFF",
+      "enabled": true,
+      "name":" test-pbehavior-to-comment-delete",
+      "tstart": 1591172881,
+      "tstop": 1591536400,
+      "color": "#FFFFFF",
       "type":"test-type-to-pbh-edit-1",
-      "reason":"test-reason-1",
-      "filter":{
-        "$and":[
-           {
-              "name": "test filter"
-           }
+      "reason": "test-reason-to-pbh-edit",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-comment-delete-pattern"
+            }
+          }
         ]
-      },
-      "exdates":[
-        {
-          "begin": 1591164001,
-          "end": 1591167601,
-          "type": "test-type-to-pbh-edit-1"
-        }
-      ],
-      "exceptions": ["test-exception-to-pbh-edit"]
+      ]
     }
     """
     Then the response code should be 201
     When I do POST /api/v4/pbehavior-comments:
-    """
+    """json
     {
       "pbehavior": "{{ .lastResponse._id }}",
       "message": "Test message"
@@ -43,18 +39,18 @@ Feature: delete a PBehavior comment
 
   Scenario: Given pbehavior Should delete comment from pbehavior
     When I am admin
-    When I do DELETE /api/v4/pbehavior-comments/test-comment-delete-1
+    When I do DELETE /api/v4/pbehavior-comments/test-pbehavior-to-delete-comment-1
     Then the response code should be 204
     When I do GET /api/v4/pbehaviors/test-pbehavior-to-delete-comment
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-pbehavior-to-delete-comment",
       "comments": [
         {
-          "_id": "test-comment-delete-2",
+          "_id": "test-pbehavior-to-delete-comment-2",
           "author": "root",
-          "message": "asdasd",
+          "message": "test-pbehavior-to-delete-comment-2-message",
           "ts": 1592215337
         }
       ]

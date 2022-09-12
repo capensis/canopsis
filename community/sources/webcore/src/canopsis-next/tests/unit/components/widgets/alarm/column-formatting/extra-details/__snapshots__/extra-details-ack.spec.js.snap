@@ -28,21 +28,21 @@ exports[`extra-details-ack Renders \`extra-details-ack\` with date in previous m
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.ack
+      Ack
     </strong>
     <div>
-      common.by : ack-author
+      By : ack-author
     </div>
     <div>
-      common.date : 07/08/2013 19:00:00
+      Date : 07/08/2013 19:00:00
     </div>
     <div>
-      common.initiator : ack-initiator
+      Initiator : ack-initiator
     </div>
     <div
       class="c-extra-details__message"
     >
-      common.comment:undefined : ack-message
+      Comment : ack-message
     </div>
   </div>
 </div>
@@ -76,21 +76,21 @@ exports[`extra-details-ack Renders \`extra-details-ack\` with full ack 2`] = `
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.ack
+      Ack
     </strong>
     <div>
-      common.by : ack-author
+      By : ack-author
     </div>
     <div>
-      common.date : 6:00:00
+      Date : 6:00:00
     </div>
     <div>
-      common.initiator : ack-initiator
+      Initiator : ack-initiator
     </div>
     <div
       class="c-extra-details__message"
     >
-      common.comment:undefined : ack-message
+      Comment : ack-message
     </div>
   </div>
 </div>
@@ -124,19 +124,19 @@ exports[`extra-details-ack Renders \`extra-details-ack\` without initiator 2`] =
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.ack
+      Ack
     </strong>
     <div>
-      common.by : ack-author
+      By : ack-author
     </div>
     <div>
-      common.date : 6:00:00
+      Date : 6:00:00
     </div>
     <!---->
     <div
       class="c-extra-details__message"
     >
-      common.comment:undefined : ack-message
+      Comment : ack-message
     </div>
   </div>
 </div>
@@ -170,16 +170,16 @@ exports[`extra-details-ack Renders \`extra-details-ack\` without message 2`] = `
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.ack
+      Ack
     </strong>
     <div>
-      common.by : ack-author
+      By : ack-author
     </div>
     <div>
-      common.date : 6:00:00
+      Date : 6:00:00
     </div>
     <div>
-      common.initiator : ack-initiator
+      Initiator : ack-initiator
     </div>
     <!---->
   </div>

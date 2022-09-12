@@ -56,7 +56,7 @@
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
 import { remediationInstructionStepToForm } from '@/helpers/forms/remediation-instruction';
-import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
+import { isOmitEqual } from '@/helpers/equal';
 import { toSeconds } from '@/helpers/date/duration';
 
 import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';

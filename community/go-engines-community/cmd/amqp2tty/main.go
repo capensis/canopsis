@@ -19,9 +19,16 @@ const (
 )
 
 func main() {
-	exchange := flag.String("exchange", canopsis.CanopsisEventsExchange, "exchange name to read events from")
-
+	var version bool
+	var exchange string
+	flag.StringVar(&exchange, "exchange", canopsis.CanopsisEventsExchange, "exchange name to read events from")
+	flag.BoolVar(&version, "version", false, "Show the version information")
 	flag.Parse()
+
+	if version {
+		canopsis.PrintVersionInfo()
+		return
+	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
@@ -65,7 +72,7 @@ func main() {
 	err = ch.QueueBind(
 		queue.Name,
 		"#",
-		*exchange,
+		exchange,
 		false,
 		nil,
 	)

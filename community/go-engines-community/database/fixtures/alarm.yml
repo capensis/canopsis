@@ -1,0 +1,18 @@
+template:
+  - &resolve_rule {
+    _id: <UUID()>,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    priority: <Index()>,
+    author: root
+  }
+
+resolve_rule:
+  default_resolve_rule:
+    <<: *resolve_rule
+    _id: "default_rule"
+    name: Default rule
+    description: Default rule
+    duration:
+      value: 1
+      unit: m

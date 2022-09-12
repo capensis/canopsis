@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`date-time-picker-menu Renders \`date-time-picker-menu\` with default props 1`] = `
+<div
+  class="v-menu v-menu--inline"
+>
+  <div
+    class="v-menu__activator"
+  >
+    <button
+      class="v-btn v-btn--floating v-btn--icon v-btn--small theme--light secondary"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
+          calendar_today
+        </i>
+      </div>
+    </button>
+  </div>
+  <transition-stub
+    name="slide-y-transition"
+  >
+    <div
+      class="v-menu__content theme--light date-time-picker"
+      style="max-height: auto; min-width: 0px; max-width: 290px; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+    />
+  </transition-stub>
+</div>
+`;
+
+exports[`date-time-picker-menu Renders \`date-time-picker-menu\` with default props 2`] = `
+<div
+  class="v-menu__content theme--light date-time-picker"
+  style="max-height: auto; min-width: 0px; max-width: 290px; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+/>
+`;
+
+exports[`date-time-picker-menu Renders \`date-time-picker-menu\` with opened menu 1`] = `
+<div
+  class="v-menu v-menu--inline"
+>
+  <div
+    class="v-menu__activator v-menu__activator--active"
+  >
+    <button
+      class="v-btn v-btn--floating v-btn--icon v-btn--small theme--light secondary"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
+          calendar_today
+        </i>
+      </div>
+    </button>
+  </div>
+  <transition-stub
+    name="slide-y-transition"
+  />
+</div>
+`;
+
+exports[`date-time-picker-menu Renders \`date-time-picker-menu\` with opened menu 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active date-time-picker"
+  style="max-height: auto; min-width: 0px; max-width: 290px; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none; z-index: 8;"
+>
+  <date-time-picker-stub
+    dateformat="DD/MM/YYYY"
+    label="label"
+    roundhours="true"
+    value="Sat Dec 07 2013 18:00:00 GMT+0100 (Central European Standard Time)"
+  />
+</div>
+`;

@@ -28,6 +28,11 @@ import {
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
+  EVENT_FILTER_TYPES,
+  PATTERN_OPERATORS,
+  PATTERN_TYPES,
+  PATTERN_FIELD_TYPES,
+  PBEHAVIOR_TYPE_TYPES,
   SCENARIO_TRIGGERS,
   WEATHER_ACTIONS_TYPES,
 } from '@/constants';
@@ -38,7 +43,7 @@ export default merge({
   common: {
     ok: 'Ok',
     undefined: 'Not defined',
-    entity: 'Entity',
+    entity: 'Entity | Entities',
     service: 'Service',
     widget: 'Widget',
     addWidget: 'Add widget',
@@ -68,6 +73,7 @@ export default merge({
     by: 'By',
     date: 'Date',
     comment: 'Comment | Comments',
+    lastComment: 'Last comment',
     start: 'Start',
     end: 'End',
     message: 'Message',
@@ -145,9 +151,12 @@ export default merge({
     clear: 'Clear',
     deleteAll: 'Delete all',
     payload: 'Payload',
-    output: 'Note',
+    note: 'Note',
+    output: 'Output',
+    displayName: 'Display name',
     created: 'Creation date',
     updated: 'Last update date',
+    lastEventDate: 'Last event date',
     pattern: 'Pattern | Patterns',
     correlation: 'Correlation',
     periods: 'Periods',
@@ -158,7 +167,9 @@ export default merge({
     eventPatterns: 'Event patterns',
     alarmPatterns: 'Alarm patterns',
     entityPatterns: 'Entity patterns',
+    pbehaviorPatterns: 'Pbehavior patterns',
     totalEntityPatterns: 'Total entity patterns',
+    serviceWeatherPatterns: 'Service weather patterns',
     addFilter: 'Add filter',
     id: 'Id',
     reset: 'Reset',
@@ -199,7 +210,7 @@ export default merge({
     summary: 'Summary',
     recurrence: 'Recurrence',
     statistics: 'Statistics',
-    action: 'Action',
+    action: 'Action | Actions',
     minimal: 'Minimal',
     optimal: 'Optimal',
     graph: 'Graph | Graphs',
@@ -214,13 +225,54 @@ export default merge({
     toTheTop: 'To the top',
     time: 'Time',
     lastModifiedOn: 'Last modified on',
+    lastModifiedBy: 'Last modified by',
     exportAsCsv: 'Export as csv',
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
+    searchBy: 'Search by',
+    dictionary: 'Dictionary',
+    condition: 'Condition | Conditions',
     template: 'Template',
     pbehaviorList: 'List periodic behaviors',
+    canceled: 'Canceled',
+    snoozed: 'Snoozed',
+    impact: 'Impact | Impacts',
+    depend: 'Depend | Depends',
+    componentInfo: 'Component info | Component infos',
+    connector: 'Connector',
+    connectorName: 'Connector name',
+    component: 'Component',
+    resource: 'Resource',
+    extraDetail: 'Extra detail | Extra details',
+    acked: 'Acked',
+    ackedAt: 'Acked at',
+    ackedBy: 'Acked by',
+    resolvedAt: 'Resolved at',
+    extraInfo: 'Extra info | Extra infos',
+    custom: 'Custom',
+    eventType: 'Event type',
+    sourceType: 'Source type',
     cycleDependency: 'Cycle dependency',
+    checkPattern: 'Check pattern',
+    itemFound: '{count} item found | {count} items found',
+    canonicalType: 'Canonical type',
+    actions: {
+      acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
+      acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
+      saveChanges: 'Save changes',
+      reportIncident: 'Report an incident',
+      [EVENT_ENTITY_TYPES.ack]: 'Acknowledge',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Declare ticket',
+      [EVENT_ENTITY_TYPES.validate]: 'Validate',
+      [EVENT_ENTITY_TYPES.invalidate]: 'Invalidate',
+      [EVENT_ENTITY_TYPES.pause]: 'Pause',
+      [EVENT_ENTITY_TYPES.play]: 'Play',
+      [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
+      [EVENT_ENTITY_TYPES.comment]: 'Comment',
+      [EVENT_ENTITY_TYPES.executeInstruction]: 'Execute instruction',
+    },
     acknowledge: 'Acknowledge',
     acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
     acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -273,6 +325,67 @@ export default merge({
       [ENTITIES_STATES.minor]: 'Minor',
       [ENTITIES_STATES.major]: 'Major',
       [ENTITIES_STATES.critical]: 'Critical',
+    },
+    statusTypes: {
+      [ENTITIES_STATUSES.closed]: 'Closed',
+      [ENTITIES_STATUSES.ongoing]: 'Ongoing',
+      [ENTITIES_STATUSES.flapping]: 'Flapping',
+      [ENTITIES_STATUSES.stealthy]: 'Stealth',
+      [ENTITIES_STATUSES.cancelled]: 'Canceled',
+      [ENTITIES_STATUSES.noEvents]: 'No events',
+    },
+    operators: {
+      [PATTERN_OPERATORS.equal]: 'Equal',
+      [PATTERN_OPERATORS.contains]: 'Contains',
+      [PATTERN_OPERATORS.notEqual]: 'Not equal',
+      [PATTERN_OPERATORS.notContains]: 'Does not contain',
+      [PATTERN_OPERATORS.beginsWith]: 'Begins with',
+      [PATTERN_OPERATORS.notBeginWith]: 'Does not begin with',
+      [PATTERN_OPERATORS.endsWith]: 'Ends with',
+      [PATTERN_OPERATORS.notEndWith]: 'Does not end with',
+      [PATTERN_OPERATORS.exist]: 'Exist',
+      [PATTERN_OPERATORS.notExist]: 'Not exist',
+
+      [PATTERN_OPERATORS.hasEvery]: 'Has every',
+      [PATTERN_OPERATORS.hasOneOf]: 'Has one of',
+      [PATTERN_OPERATORS.isOneOf]: 'Is one of',
+      [PATTERN_OPERATORS.hasNot]: 'Has not',
+      [PATTERN_OPERATORS.isNotOneOf]: 'Is not one of',
+      [PATTERN_OPERATORS.isEmpty]: 'Is empty',
+      [PATTERN_OPERATORS.isNotEmpty]: 'Is not empty',
+
+      [PATTERN_OPERATORS.higher]: 'Higher than',
+      [PATTERN_OPERATORS.lower]: 'Lower than',
+
+      [PATTERN_OPERATORS.longer]: 'Longer',
+      [PATTERN_OPERATORS.shorter]: 'Shorter',
+
+      [PATTERN_OPERATORS.ticketAssociated]: 'Ticket is associated',
+      [PATTERN_OPERATORS.ticketNotAssociated]: 'Ticket is not associated',
+
+      [PATTERN_OPERATORS.canceled]: 'Canceled',
+      [PATTERN_OPERATORS.notCanceled]: 'Not canceled',
+
+      [PATTERN_OPERATORS.snoozed]: 'Snoozed',
+      [PATTERN_OPERATORS.notSnoozed]: 'Not snoozed',
+
+      [PATTERN_OPERATORS.acked]: 'Acked',
+      [PATTERN_OPERATORS.notAcked]: 'Not acked',
+
+      [PATTERN_OPERATORS.isGrey]: 'Gray tiles',
+      [PATTERN_OPERATORS.isNotGrey]: 'Not gray tiles',
+    },
+    entityEventTypes: {
+      [EVENT_ENTITY_TYPES.ack]: 'Ack',
+      [EVENT_ENTITY_TYPES.ackRemove]: 'Ack remove',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Declare ticket',
+      [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
+      [EVENT_ENTITY_TYPES.uncancel]: 'Uncancel',
+      [EVENT_ENTITY_TYPES.changeState]: 'Change state',
+      [EVENT_ENTITY_TYPES.check]: 'Check',
+      [EVENT_ENTITY_TYPES.comment]: 'Comment',
+      [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
     },
     scenarioTriggers: {
       [SCENARIO_TRIGGERS.create]: {
@@ -382,9 +495,6 @@ export default merge({
         massDisable: 'Disable entities',
       },
     },
-    entityInfo: {
-      valueAsList: 'Change value type to list',
-    },
     fab: {
       common: 'Add a new entity',
       addService: 'Add a new service entity',
@@ -480,8 +590,8 @@ export default merge({
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
-        causes: 'Causes',
-        consequences: 'Consequences',
+        parents: 'Causes',
+        children: 'Consequences',
         rule: 'Rule | Rules',
       },
     },
@@ -532,8 +642,7 @@ export default merge({
     tabs: {
       moreInfos: 'More infos',
       timeLine: 'Timeline',
-      alarmsConsequences: 'Alarms consequences',
-      alarmsCauses: 'Alarms causes',
+      alarmsChildren: 'Alarms consequences',
       trackSource: 'Track source',
       impactChain: 'Impact chain',
       entityGantt: 'Gantt chart',
@@ -613,8 +722,6 @@ export default merge({
       + '  <dd>Pbehavior reason name are "reason_name_1"</dd>'
       + '</dl>',
     tabs: {
-      filter: 'Filter',
-      comments: 'Comments',
       entities: 'Entities',
     },
   },
@@ -1045,7 +1152,7 @@ export default merge({
         },
       },
     },
-    filter: {
+    createFilter: {
       create: {
         title: 'Create filter',
       },
@@ -1139,7 +1246,7 @@ export default merge({
         title: 'Edit role',
       },
     },
-    eventFilterRule: {
+    createEventFilter: {
       create: {
         title: 'Create event filter rule',
         success: 'Rule successfully created!',
@@ -1154,64 +1261,6 @@ export default merge({
       },
       remove: {
         success: 'Rule successfully removed!',
-      },
-      priority: 'Priority',
-      editPattern: 'Edit pattern',
-      advanced: 'Advanced',
-      addAField: 'Add a field',
-      simpleEditor: 'Simple editor',
-      field: 'Field',
-      value: 'Value',
-      advancedEditor: 'Advanced editor',
-      comparisonRules: 'Comparison rules',
-      enrichmentOptions: 'Enrichment options',
-      editActions: 'Edit actions',
-      addAction: 'Add an action',
-      editAction: 'Edit an action',
-      actions: 'Actions',
-      externalData: 'External data',
-      onSuccess: 'On success',
-      onFailure: 'On failure',
-      tooltips: {
-        addValueRuleField: 'Add value rule field',
-        editValueRuleField: 'Edit value rule field',
-        addObjectRuleField: 'Add object rule field',
-        editObjectRuleField: 'Edit object rule field',
-        removeRuleField: 'Remove rule field',
-        copyFromHelp: '<p>The accessible variables are: <strong>Event</strong></p>'
-          + '<i>For example:</i> <span>"Event.ExtraInfos.datecustom"</span>',
-      },
-      actionsTypes: {
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
-          text: 'Copy a value from a field of event to another',
-          message: 'This action is used used to copy the value of a control in an event.',
-          description: 'The parameters of the action are:\n- from: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.\n- to: the name of the event field into which the value must be copied.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
-          text: 'Copy a value from a field of an event to an info of an entity',
-          message: 'This action is used to copy the field value of an event to the field of an entity. Note, that the entity should be added to the event first.',
-          description: 'The parameters of the action are:\n- name: the name of the field of an entity.\n- description (optional): the description.\n- from: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
-          text: 'Set an info of an entity to a constant',
-          message: 'This action is used to set the dynamic information from an entity corresponding to the event. Note, that the entity should be added to the event first.',
-          description: 'The parameters of the action are:\n- name: the name of the field.\n- description (optional): the description.\n- value: the value of a field.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
-          text: 'Set a string info of an entity using a template',
-          message: 'This action is used to modify the dynamic information from an entity corresponding to the event. Note, that the entity should be added to the event.',
-          description: 'The parameters of the action are:\n- name: the name of the field.\n- description (optional): the description\n- value: the template used to determine the value of the data item.\nTemplates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
-          text: 'Set a field of an event to a constant',
-          message: 'This action can be used to modify a field of the event.',
-          description: 'The parameters of the action are:\n- name: the name of the field.\n- value: the new value of the field.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate]: {
-          text: 'Set a string field of an event using a template',
-          message: 'This action allows you to modify an event field from a template.',
-          description: 'The parameters of the action are:\n- name: the name of the field.\n- value: the template used to determine the value of the field.\n Templates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
-        },
       },
     },
     metaAlarmRule: {
@@ -1279,18 +1328,11 @@ export default merge({
       },
       errors: {
         invalid: 'Invalid',
+        emptyInfos: 'At least one info must be added.',
       },
       steps: {
-        general: {
-          fields: {
-            id: 'Id',
-            name: 'Name',
-            description: 'Description',
-          },
-        },
         infos: {
           title: 'Informations',
-          validationError: 'Every value must be filled',
         },
         patterns: {
           title: 'Patterns',
@@ -1303,10 +1345,6 @@ export default merge({
     createDynamicInfoInformation: {
       create: {
         title: 'Add an information to the dynamic information rule',
-      },
-      fields: {
-        name: 'Name',
-        value: 'Value',
       },
     },
     dynamicInfoTemplatesList: {
@@ -1346,9 +1384,6 @@ export default merge({
     },
     createCommentEvent: {
       title: 'Add comment',
-      fields: {
-        comment: 'Comment',
-      },
     },
     createPlaylist: {
       create: {
@@ -1421,7 +1456,6 @@ export default merge({
       noData: 'No meta alarm corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
         metaAlarm: 'Manual meta alarm',
-        output: 'Note',
       },
     },
     createRemediationInstruction: {
@@ -1651,29 +1685,57 @@ export default merge({
         title: 'Periodic behaviors - {name}',
       },
     },
+    createAlarmPattern: {
+      create: {
+        title: 'Create alarm filter',
+      },
+      edit: {
+        title: 'Edit alarm filter',
+      },
+    },
+    createCorporateAlarmPattern: {
+      create: {
+        title: 'Create shared alarm filter',
+      },
+      edit: {
+        title: 'Edit shared alarm filter',
+      },
+    },
+    createEntityPattern: {
+      create: {
+        title: 'Create entity filter',
+      },
+      edit: {
+        title: 'Edit entity filter',
+      },
+    },
+    createCorporateEntityPattern: {
+      create: {
+        title: 'Create shared entity filter',
+      },
+      edit: {
+        title: 'Edit shared entity filter',
+      },
+    },
+    createPbehaviorPattern: {
+      create: {
+        title: 'Create pbehavior filter',
+      },
+      edit: {
+        title: 'Edit pbehavior filter',
+      },
+    },
+    createCorporatePbehaviorPattern: {
+      create: {
+        title: 'Create shared pbehavior filter',
+      },
+      edit: {
+        title: 'Edit shared pbehavior filter',
+      },
+    },
   },
   tables: {
     noData: 'No data',
-    alarmGeneral: {
-      author: 'Author',
-      connector: 'Connector Type',
-      connectorName: 'Connector name',
-      component: 'Component',
-      resource: 'Resource',
-      output: 'Output',
-      lastUpdateDate: 'Last update date',
-      creationDate: 'Creation date',
-      duration: 'Duration',
-      state: 'Severity',
-      status: 'Status',
-      extraDetails: 'Extra details',
-    },
-    alarmStates: {
-      [ENTITIES_STATES.ok]: 'Info',
-      [ENTITIES_STATES.minor]: 'Minor',
-      [ENTITIES_STATES.major]: 'Major',
-      [ENTITIES_STATES.critical]: 'Critical',
-    },
     contextEntities: {
       columns: {
         name: 'Name',
@@ -1738,10 +1800,11 @@ export default merge({
     JSONNotValid: 'Invalid JSON',
     versionNotFound: 'Unable to get application version',
     statsRequestProblem: 'An error occurred while retrieving stats data',
-    statsWrongEditionError: "Stats widgets are not available with 'core' edition",
+    statsWrongEditionError: "Stats widgets are not available with 'community' edition",
     socketConnectionProblem: 'Problem with connection to socket server',
     endDateLessOrEqualStartDate: 'End date should be after start date',
     unknownWidgetType: 'Unknown widget type: {type}',
+    unique: 'Field must be unique',
   },
   warnings: {
     authTokenExpired: 'Authentication token was expired',
@@ -1801,9 +1864,6 @@ export default merge({
       list: 'Manage filters',
     },
   },
-  validator: {
-    unique: 'Field must be unique',
-  },
   stats: {
     types: {
       [STATS_TYPES.alarmsCreated.value]: 'Alarms created',
@@ -1823,9 +1883,76 @@ export default merge({
     },
   },
   eventFilter: {
-    externalDatas: 'External data',
+    externalData: 'External data',
     actionsRequired: 'Please add at least one action',
+    configRequired: 'No configuration defined. Please add at least one config parameter',
     idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
+    editPattern: 'Edit pattern',
+    advanced: 'Advanced',
+    addAField: 'Add a field',
+    simpleEditor: 'Simple editor',
+    field: 'Field',
+    value: 'Value',
+    advancedEditor: 'Advanced editor',
+    comparisonRules: 'Comparison rules',
+    editActions: 'Edit actions',
+    addAction: 'Add an action',
+    editAction: 'Edit an action',
+    actions: 'Actions',
+    onSuccess: 'On success',
+    onFailure: 'On failure',
+    configuration: 'Configuration',
+    resource: 'Resource ID or template',
+    component: 'Component ID or template',
+    connector: 'Connector ID or template',
+    connectorName: 'Connector name or template',
+    types: {
+      [EVENT_FILTER_TYPES.drop]: 'Drop',
+      [EVENT_FILTER_TYPES.break]: 'Break',
+      [EVENT_FILTER_TYPES.enrichment]: 'Enrichment',
+      [EVENT_FILTER_TYPES.changeEntity]: 'Change entity',
+    },
+    tooltips: {
+      addValueRuleField: 'Add value rule field',
+      editValueRuleField: 'Edit value rule field',
+      addObjectRuleField: 'Add object rule field',
+      editObjectRuleField: 'Edit object rule field',
+      removeRuleField: 'Remove rule field',
+      copyFromHelp: '<p>The accessible variables are: <strong>Event</strong></p>'
+        + '<i>For example:</i> <span>"Event.ExtraInfos.datecustom"</span>',
+    },
+    actionsTypes: {
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
+        text: 'Copy a value from a field of event to another',
+        message: 'This action is used used to copy the value of a control in an event.',
+        description: 'The parameters of the action are:\n- value: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.\n- description (optional): the description.\n- name: the name of the event field into which the value must be copied.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
+        text: 'Copy a value from a field of an event to an info of an entity',
+        message: 'This action is used to copy the field value of an event to the field of an entity. Note, that the entity should be added to the event first.',
+        description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field of an entity.\n- value: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
+        text: 'Set an info of an entity to a constant',
+        message: 'This action is used to set the dynamic information from an entity corresponding to the event. Note, that the entity should be added to the event first.',
+        description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the value of a field.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
+        text: 'Set a string info of an entity using a template',
+        message: 'This action is used to modify the dynamic information from an entity corresponding to the event. Note, that the entity should be added to the event.',
+        description: 'The parameters of the action are:\n- description (optional): the description\n- name: the name of the field.\n- value: the template used to determine the value of the data item.\nTemplates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
+        text: 'Set a field of an event to a constant',
+        message: 'This action can be used to modify a field of the event.',
+        description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the new value of the field.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate]: {
+        text: 'Set a string field of an event using a template',
+        message: 'This action allows you to modify an event field from a template.',
+        description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the template used to determine the value of the field.\n Templates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
+      },
+    },
   },
   metaAlarmRule: {
     outputTemplate: 'Output template',
@@ -1894,10 +2021,6 @@ export default merge({
     copyWidgetId: 'Copy widget ID',
     autoHeightButton: 'If this button is selected, height will be automatically calculated.',
   },
-  patternsList: {
-    noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',
-    noDataDisabled: 'No pattern set.',
-  },
   validation: {
     messages: {
       _default: 'The value is not valid',
@@ -1958,6 +2081,9 @@ export default merge({
   },
   serviceWeather: {
     seeAlarms: 'See alarms',
+    grey: 'Gray',
+    primaryIcon: 'Primary icon',
+    secondaryIcon: 'Secondary icon',
     massActions: 'Mass actions',
     cannotBeApplied: 'This action cannot be applied',
     actions: {
@@ -1971,6 +2097,11 @@ export default merge({
       [WEATHER_ACTIONS_TYPES.entityComment]: 'Comment',
       [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Execute instruction',
       [WEATHER_ACTIONS_TYPES.declareTicket]: 'Declare ticket',
+    },
+    iconTypes: {
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
     },
   },
   contextGeneralTable: {
@@ -2011,6 +2142,7 @@ export default merge({
       admin: 'Admin rights',
       exploitation: 'Exploitation rights',
       notification: 'Notification rights',
+      profile: 'Profile rights',
     },
     business: {
       [USER_PERMISSIONS_PREFIXES.business.common]: 'Rights for common',
@@ -2049,6 +2181,12 @@ export default merge({
   pbehaviorTypes: {
     usingType: 'Cannot be deleted since it is in use',
     defaultType: 'Type is default, because cannot be edited',
+    types: {
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+    },
   },
 
   pbehaviorReasons: {
@@ -2275,13 +2413,11 @@ export default merge({
 
   remediationInstructionsFilters: {
     button: 'Create instructions filter',
-    fields: {
-      with: 'With selected instructions',
-      without: 'Without selected instructions',
-      selectAll: 'Select all',
-      selectedInstructions: 'Selected instructions',
-      selectedInstructionsHelp: 'Instructions of selected type are excluded from the list',
-    },
+    with: 'With selected instructions',
+    without: 'Without selected instructions',
+    selectAll: 'Select all',
+    selectedInstructions: 'Selected instructions',
+    selectedInstructionsHelp: 'Instructions of selected type are excluded from the list',
     chip: {
       with: 'WITH',
       without: 'WITHOUT',
@@ -2394,11 +2530,11 @@ export default merge({
 
   mixedField: {
     types: {
-      string: '@:variableTypes.string',
-      number: '@:variableTypes.number',
-      boolean: '@:variableTypes.boolean',
-      null: '@:variableTypes.null',
-      array: '@:variableTypes.array',
+      [PATTERN_FIELD_TYPES.string]: '@:variableTypes.string',
+      [PATTERN_FIELD_TYPES.number]: '@:variableTypes.number',
+      [PATTERN_FIELD_TYPES.boolean]: '@:variableTypes.boolean',
+      [PATTERN_FIELD_TYPES.null]: '@:variableTypes.null',
+      [PATTERN_FIELD_TYPES.stringArray]: '@:variableTypes.array',
     },
   },
 
@@ -2411,9 +2547,10 @@ export default merge({
     emptyInfos: 'No information',
     availabilityState: 'Hi availability state',
     types: {
-      connector: 'connector type',
-      component: 'component',
-      resource: 'resource',
+      [ENTITY_TYPES.component]: 'Component',
+      [ENTITY_TYPES.connector]: 'Connector',
+      [ENTITY_TYPES.resource]: 'Resource',
+      [ENTITY_TYPES.service]: 'Service',
     },
   },
 
@@ -2561,6 +2698,13 @@ export default merge({
     timeField: 'Time field',
     types: {
       [QUICK_RANGES.custom.value]: 'Custom',
+      [QUICK_RANGES.last15Minutes.value]: 'Last 15 minutes',
+      [QUICK_RANGES.last30Minutes.value]: 'Last 30 minutes',
+      [QUICK_RANGES.last1Hour.value]: 'Last 1 hour',
+      [QUICK_RANGES.last3Hour.value]: 'Last 3 hour',
+      [QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
+      [QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
+      [QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
       [QUICK_RANGES.last2Days.value]: 'Last 2 days',
       [QUICK_RANGES.last7Days.value]: 'Last 7 days',
       [QUICK_RANGES.last30Days.value]: 'Last 30 days',
@@ -2574,11 +2718,6 @@ export default merge({
       [QUICK_RANGES.thisWeekSoFar.value]: 'This week so far',
       [QUICK_RANGES.thisMonth.value]: 'This month',
       [QUICK_RANGES.thisMonthSoFar.value]: 'This month so far',
-      [QUICK_RANGES.last1Hour.value]: 'Last 1 hour',
-      [QUICK_RANGES.last3Hour.value]: 'Last 3 hour',
-      [QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
-      [QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
-      [QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
     },
   },
 
@@ -2716,26 +2855,6 @@ export default merge({
     },
   },
 
-  alarmStatuses: {
-    [ENTITIES_STATUSES.closed]: 'Closed',
-    [ENTITIES_STATUSES.ongoing]: 'Ongoing',
-    [ENTITIES_STATUSES.flapping]: 'Flapping',
-    [ENTITIES_STATUSES.stealthy]: 'Stealth',
-    [ENTITIES_STATUSES.cancelled]: 'Canceled',
-    [ENTITIES_STATUSES.noEvents]: 'No events',
-  },
-
-  entitiesCountAlerts: {
-    filter: {
-      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
-      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
-    },
-    patterns: {
-      countOverLimit: 'The patterns you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
-      countRequestError: 'The request to entities count by the patterns was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
-    },
-  },
-
   userInterface: {
     title: 'User interface',
     appTitle: 'App title',
@@ -2813,5 +2932,36 @@ export default merge({
     formatter: 'Format (capture group with \\x)',
     uploadMib: 'Upload MIB',
     addSnmpRule: 'Add SNMP rule',
+  },
+
+  pattern: {
+    patterns: 'Patterns',
+    myPatterns: 'My patterns',
+    corporatePatterns: 'Shared patterns',
+    addRule: 'Add rule',
+    addGroup: 'Add group',
+    removeRule: 'Remove rule',
+    advancedEditor: 'Advanced editor',
+    simpleEditor: 'Simple editor',
+    noData: 'No pattern set. Click \'@:pattern.addGroup\' button to start adding fields to the pattern',
+    noDataDisabled: 'No pattern set.',
+    discard: 'Discard pattern',
+    types: {
+      [PATTERN_TYPES.alarm]: 'Alarm pattern',
+      [PATTERN_TYPES.entity]: 'Entity pattern',
+      [PATTERN_TYPES.pbehavior]: 'Pbehavior pattern',
+    },
+    errors: {
+      ruleRequired: 'Please add at least one rule',
+      groupRequired: 'Please add at least one group',
+      invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
+      countOverLimit: 'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
+      oldPattern: 'The current filter pattern is defined in old format. Please use the Advanced editor to view it. Filters in old format will be deprecated soon. Please create new patterns in our updated interface.',
+      existExcluded: 'The rules include excluded rule.',
+    },
+  },
+
+  filter: {
+    oldPattern: 'Old pattern format',
   },
 }, featureService.get('i18n.en'));

@@ -4,6 +4,7 @@
       mass-actions-panel(
         :items-ids="selectedIds",
         :widget="widget",
+        :refresh-alarms-list="refreshAlarmsList",
         @clear:items="clearSelected"
       )
     c-empty-data-table-columns(v-if="!hasColumns")
@@ -40,15 +41,15 @@
             :widget="widget",
             :columns="columns",
             :columns-filters="columnsFilters",
-            :hide-groups="hideGroups",
             :parent-alarm="parentAlarm",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)"
+            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
+            :refresh-alarms-list="refreshAlarmsList"
           )
         template(#expand="{ item, index }")
           alarms-expand-panel(
             :alarm="item",
             :widget="widget",
-            :hide-groups="hideGroups",
+            :hide-children="hideChildren",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
           )
     slot
@@ -65,14 +66,13 @@ import { ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
 import { isResolvedAlarm } from '@/helpers/entities';
 
-import Observer from '@/services/observer';
 import featuresService from '@/services/features';
 
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 import MassActionsPanel from '../actions/mass-actions-panel.vue';
-import AlarmsExpandPanel from './alarms-expand-panel.vue';
+import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
 import AlarmsListRow from './alarms-list-row.vue';
 
 /**
@@ -81,16 +81,11 @@ import AlarmsListRow from './alarms-list-row.vue';
    * @module alarm
    */
 export default {
-  inject: {
-    $periodicRefresh: {
-      default: new Observer(),
-    },
-  },
   components: {
-    AlarmsListRow,
-    AlarmsExpandPanel,
-    MassActionsPanel,
     AlarmHeaderCell,
+    MassActionsPanel,
+    AlarmsExpandPanel,
+    AlarmsListRow,
 
     ...featuresService.get('components.alarmListTable.components', {}),
   },
@@ -128,15 +123,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    hasColumns: {
-      type: Boolean,
-      default: false,
-    },
     selectable: {
       type: Boolean,
       default: false,
     },
-    hideGroups: {
+    hideChildren: {
       type: Boolean,
       default: false,
     },
@@ -156,6 +147,10 @@ export default {
       type: Object,
       default: null,
     },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
+    },
   },
   data() {
     const data = featuresService.has('components.alarmListTable.data')
@@ -172,6 +167,10 @@ export default {
   },
 
   computed: {
+    hasColumns() {
+      return this.columns.length > 0;
+    },
+
     expanded() {
       return this.$refs.dataTable.expanded;
     },
