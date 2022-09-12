@@ -217,7 +217,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
-    When I wait the end of event processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-1
     Then the response code should be 200
     When I do POST /api/v4/alarm-details:
@@ -554,7 +554,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
 
   Scenario: given job should start job for operation of different instructions multiple times
     When I am admin
@@ -728,7 +728,7 @@ Feature: run a job
     Then the response code should be 200
     When I do PUT /api/v4/cat/executions/{{ .firstExecutionID }}/next-step
     When I do PUT /api/v4/cat/executions/{{ .secondExecutionID }}/next-step
-    When I wait the end of 2 events processing
+    When I wait the end of 4 events processing
 
   Scenario: given job should not start job for not running operation of instruction
     When I am admin
@@ -1158,7 +1158,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
 
   Scenario: given jenkins job with parameters should start job for operation of instruction
     When I am admin
@@ -1299,7 +1299,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
 
   Scenario: given awx job should start job for operation of instruction
     When I am admin
@@ -1431,7 +1431,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
 
   Scenario: given job should queue exclusive job for different executions
     When I am admin
@@ -1758,7 +1758,7 @@ Feature: run a job
     When I do PUT /api/v4/cat/executions/{{ .firstExecutionID }}/next-step
     When I do PUT /api/v4/cat/executions/{{ .secondExecutionID }}/next-step
     When I do PUT /api/v4/cat/executions/{{ .thirdExecutionID }}/next-step
-    When I wait the end of 3 events processing
+    When I wait the end of 6 events processing
 
   Scenario: given job should run job in parallel for different executions
     When I am admin
@@ -1959,7 +1959,7 @@ Feature: run a job
     Then "secondJobLaunchedAt" < "firstJobCompletedAt"
     When I do PUT /api/v4/cat/executions/{{ .firstExecutionID }}/next-step
     When I do PUT /api/v4/cat/executions/{{ .secondExecutionID }}/next-step
-    When I wait the end of 2 events processing
+    When I wait the end of 4 events processing
 
   Scenario: given unauth request should not allow access
     When I do POST /api/v4/cat/job-executions
