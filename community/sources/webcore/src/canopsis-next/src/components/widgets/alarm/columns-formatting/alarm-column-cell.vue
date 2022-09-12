@@ -119,6 +119,7 @@ export default {
         'v.creation_date': convertDateToStringWithFormatForToday,
         'v.last_event_date': convertDateToStringWithFormatForToday,
         'v.activation_date': convertDateToStringWithFormatForToday,
+        'v.ack.t': convertDateToStringWithFormatForToday,
         'v.state.t': convertDateToStringWithFormatForToday,
         'v.status.t': convertDateToStringWithFormatForToday,
         'v.resolved': convertDateToStringWithFormatForToday,
