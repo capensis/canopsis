@@ -83,6 +83,11 @@ export default {
       });
     },
   },
+  mounted() {
+    if (this.entities.length) {
+      this.entities.forEach(({ data }) => this.fetchPinnedEntitiesList(data._id));
+    }
+  },
   methods: {
     ...mapActions({
       fetchServiceDependenciesWithoutStore: 'fetchDependenciesWithoutStore',

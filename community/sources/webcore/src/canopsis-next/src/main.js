@@ -55,6 +55,7 @@ import CPatternOperatorInformation from '@/components/common/block/c-pattern-ope
  */
 import CAlertOverlay from '@/components/common/overlay/c-alert-overlay.vue';
 import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue';
+import CZoomOverlay from '@/components/common/overlay/c-zoom-overlay.vue';
 
 /**
  * Chips
@@ -333,6 +334,7 @@ Vue.component('c-pagination', CPagination);
 Vue.component('c-table-pagination', CTablePagination);
 Vue.component('c-alert-overlay', CAlertOverlay);
 Vue.component('c-progress-overlay', CProgressOverlay);
+Vue.component('c-zoom-overlay', CZoomOverlay);
 Vue.component('c-enabled-field', CEnabledField);
 Vue.component('c-duration-field', CDurationField);
 Vue.component('c-disable-during-periods-field', CDisableDuringPeriodsField);
