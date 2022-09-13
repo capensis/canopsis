@@ -346,7 +346,28 @@ func Default(
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
 	})
-	api.AddWorker("auth token", func(ctx context.Context) {
+	api.AddWorker("auth token activity", func(ctx context.Context) {
+		ticker := time.NewTicker(canopsis.PeriodicalWaitTime)
+		defer ticker.Stop()
+		tokenStore := security.GetTokenStore()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				for _, tokens := range websocketHub.GetUsers() {
+					for _, token := range tokens {
+						err := tokenStore.Access(ctx, token)
+						if err != nil {
+							logger.Err(err).Msg("cannot update token access")
+						}
+					}
+				}
+			}
+		}
+	})
+	api.AddWorker("auth token expiration", func(ctx context.Context) {
 		security.GetTokenStore().DeleteExpired(ctx, canopsis.PeriodicalWaitTime)
 	})
 	api.AddWorker("websocket", func(ctx context.Context) {
