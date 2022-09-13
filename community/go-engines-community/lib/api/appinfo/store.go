@@ -2,8 +2,10 @@ package appinfo
 
 import (
 	"context"
+	"errors"
 	"sort"
 
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -23,6 +25,8 @@ type Store interface {
 	RetrieveRemediationConfig(ctx context.Context) (RemediationConf, error)
 	UpdateUserInterfaceConfig(ctx context.Context, conf *UserInterfaceConf) error
 	DeleteUserInterfaceConfig(ctx context.Context) error
+	RetrieveApiSecurityConfig(ctx context.Context) (map[string]apisecurity.AuthMethodConf, error)
+	UpdateApiSecurityConfig(ctx context.Context, conf map[string]apisecurity.AuthMethodConf) (map[string]apisecurity.AuthMethodConf, error)
 }
 
 type store struct {
@@ -183,6 +187,70 @@ func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterf
 func (s *store) DeleteUserInterfaceConfig(ctx context.Context) error {
 	_, err := s.configCollection.DeleteOne(ctx, bson.M{"_id": config.UserInterfaceKeyName})
 	return err
+}
+
+func (s *store) RetrieveApiSecurityConfig(ctx context.Context) (map[string]apisecurity.AuthMethodConf, error) {
+	conf := make(map[string]apisecurity.AuthMethodConf)
+	err := s.configCollection.
+		FindOne(ctx, bson.M{"_id": config.ApiSecurityKeyName}, options.FindOne().SetProjection(bson.M{"_id": 0})).
+		Decode(&conf)
+	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		return nil, err
+	}
+
+	for _, provider := range s.authProviders {
+		if provider == security.AuthMethodApiKey {
+			continue
+		}
+		providerConf := conf[provider]
+		if providerConf.InactivityInterval == nil {
+			providerConf.InactivityInterval = &types.DurationWithUnit{
+				Value: config.ApiSecurityInactivityInterval,
+				Unit:  "h",
+			}
+		}
+		conf[provider] = providerConf
+	}
+
+	return conf, nil
+}
+
+func (s *store) UpdateApiSecurityConfig(ctx context.Context, conf map[string]apisecurity.AuthMethodConf) (map[string]apisecurity.AuthMethodConf, error) {
+	set := bson.M{}
+	unset := bson.M{}
+	for _, provider := range s.authProviders {
+		if provider == security.AuthMethodApiKey {
+			continue
+		}
+		providerConf := conf[provider]
+		if providerConf.ExpirationInterval != nil || providerConf.InactivityInterval != nil {
+			set[provider] = providerConf
+		} else {
+			unset[provider] = ""
+		}
+	}
+	update := bson.M{}
+	if len(set) > 0 {
+		update["$set"] = set
+	}
+	if len(unset) > 0 {
+		update["$unset"] = unset
+	}
+
+	var result map[string]apisecurity.AuthMethodConf
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		result = nil
+
+		_, err := s.configCollection.UpdateOne(ctx, bson.M{"_id": config.ApiSecurityKeyName}, update, options.Update().SetUpsert(true))
+		if err != nil {
+			return err
+		}
+
+		result, err = s.RetrieveApiSecurityConfig(ctx)
+		return err
+	})
+
+	return result, err
 }
 
 func (s *store) findAuthMethodTitle(ctx context.Context, id string) (string, error) {
