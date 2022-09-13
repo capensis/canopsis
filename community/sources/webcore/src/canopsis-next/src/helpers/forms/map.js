@@ -1,7 +1,7 @@
-import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
+import { MAP_TYPES, MERMAID_THEMES, TREE_OF_DEPENDENCIES_TYPES } from '@/constants';
 
-import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
 import uuid from '@/helpers/uuid';
+import { addKeyInEntities, mapIds, removeKeyFromEntities } from '@/helpers/entities';
 
 /**
  * @typedef {Object} MapCommonFields
@@ -97,9 +97,13 @@ import uuid from '@/helpers/uuid';
  */
 
 /**
+ * @typedef { 'treeofdeps' | 'impactchain' } MapTreeOfDependenciesParametersType
+ */
+
+/**
  * @typedef {Object} MapTreeOfDependenciesParameters
  * @property {MapTreeOfDependenciesEntity[]} entities
- * @property {boolean} impact
+ * @property {MapTreeOfDependenciesParametersType} type
  */
 
 /**
@@ -206,8 +210,11 @@ export const mapMermaidParametersToForm = (parameters = {}) => ({
 export const mapTreeOfDependenciesParametersToForm = (parameters = {}) => ({
   ...parameters,
 
-  impact: parameters.impact ?? false,
-  entities: addKeyInEntities(parameters.entities ?? []),
+  impact: parameters.type === TREE_OF_DEPENDENCIES_TYPES.impactChain,
+  entities: addKeyInEntities(parameters.entities ?? []).map(({ entity, pinned_entities: pinned }) => ({
+    data: entity,
+    pinned,
+  })),
 });
 
 /**
@@ -236,13 +243,18 @@ export const mapToForm = (map = {}) => {
 /**
  * Convert form to tree of dependencies map
  *
+ * @param {boolean} impact
  * @param {MapTreeOfDependenciesParametersForm} form
  * @returns {MapTreeOfDependenciesParameters}
  */
-export const formToMapTreeOfDependenciesParameters = form => ({
+export const formToMapTreeOfDependenciesParameters = ({ impact, ...form }) => ({
   ...form,
 
-  entities: removeKeyFromEntities(form.entities),
+  type: impact ? TREE_OF_DEPENDENCIES_TYPES.impactChain : TREE_OF_DEPENDENCIES_TYPES.treeOfDependencies,
+  entities: removeKeyFromEntities(form.entities).map(({ data, pinned }) => ({
+    entity: data._id,
+    pinned_entities: mapIds(pinned),
+  })),
 });
 
 /**
