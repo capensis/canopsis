@@ -1,8 +1,8 @@
 import flushPromises from 'flush-promises';
+import Faker from 'faker';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
-import Faker from 'faker';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { MAX_LIMIT } from '@/constants';
 
