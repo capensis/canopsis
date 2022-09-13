@@ -81,11 +81,13 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
   const {
     exploitation: exploitationTechnicalPermissions,
     notification: notificationTechnicalPermissions,
+    profile: profileTechnicalPermissions,
     ...adminTechnicalPermissions
   } = USERS_PERMISSIONS.technical;
   const adminTechnicalPermissionsValues = Object.values(adminTechnicalPermissions);
   const exploitationTechnicalPermissionsValues = Object.values(exploitationTechnicalPermissions);
   const notificationTechnicalPermissionsValues = Object.values(notificationTechnicalPermissions);
+  const profileTechnicalPermissionsValues = Object.values(profileTechnicalPermissions);
   const viewsById = keyBy(views, '_id');
   const playlistsById = keyBy(playlists, '_id');
 
@@ -104,6 +106,8 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
       acc.technical.exploitation.push(permission);
     } else if (notificationTechnicalPermissionsValues.includes(permissionId)) {
       acc.technical.notification.push(permission);
+    } else if (profileTechnicalPermissionsValues.includes(permissionId)) {
+      acc.technical.profile.push(permission);
     } else if (
       allBusinessPermissionsIds.includes(permissionId)
       || NOT_COMPLETED_USER_PERMISSIONS.some(id => permissionId.startsWith(id))
@@ -139,6 +143,7 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
       admin: [],
       exploitation: [],
       notification: [],
+      profile: [],
     },
     api: {
       general: [],

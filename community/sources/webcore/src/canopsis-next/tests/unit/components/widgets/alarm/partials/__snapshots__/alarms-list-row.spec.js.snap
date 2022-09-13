@@ -19,8 +19,10 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
       <div
         class="layout align-center ml-3"
       >
-        <c-expand-btn-stub
-          class="v-tour-alarmsExpandPanel-step-1"
+        <alarms-expand-panel-btn-stub
+          alarm="[object Object]"
+          istourenabled="true"
+          widget="[object Object]"
         />
       </div>
     </div>
@@ -44,6 +46,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
   <td>
     <actions-panel-stub
       item="[object Object]"
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </td>
@@ -74,6 +77,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
   <td>
     <actions-panel-stub
       item="[object Object]"
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </td>
@@ -95,8 +99,9 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
       <div
         class="layout align-center ml-3"
       >
-        <c-expand-btn-stub
-          class=""
+        <alarms-expand-panel-btn-stub
+          alarm="[object Object]"
+          widget="[object Object]"
         />
       </div>
     </div>
@@ -104,6 +109,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
   <td>
     <actions-panel-stub
       item="[object Object]"
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </td>
@@ -118,6 +124,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = 
   <td>
     <actions-panel-stub
       item="[object Object]"
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </td>
@@ -138,7 +145,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
       <div
         class="layout align-center"
       >
-        <alarm-list-row-icon-stub
+        <alarms-list-row-icon-stub
           alarm="[object Object]"
         />
       </div>
@@ -149,6 +156,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
     <actions-panel-stub
       item="[object Object]"
       parentalarm="[object Object]"
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </td>
@@ -169,7 +177,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
       <div
         class="layout align-center"
       >
-        <alarm-list-row-icon-stub
+        <alarms-list-row-icon-stub
           alarm="[object Object]"
         />
       </div>
@@ -180,6 +188,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
     <actions-panel-stub
       item="[object Object]"
       parentalarm="[object Object]"
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </td>
@@ -209,6 +218,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
     <actions-panel-stub
       isresolvedalarm="true"
       item="[object Object]"
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </td>

@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import { merge } from 'lodash';
 
 export const types = {
   UPDATE: 'UPDATE',
@@ -28,10 +29,7 @@ export default {
     },
 
     [types.MERGE](state, { id, query }) {
-      Vue.set(state.queries, id, {
-        ...state.queries[id],
-        ...query,
-      });
+      Vue.set(state.queries, id, merge({}, state.queries[id], query));
     },
 
     [types.REMOVE](state, { id }) {

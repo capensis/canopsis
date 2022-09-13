@@ -8,11 +8,13 @@
       template(v-if="hasAccessToListFilters")
         field-filters(
           v-model="form.parameters.mainFilter",
-          :entities-type="$constants.ENTITIES_TYPES.entity",
-          :filters.sync="form.parameters.viewFilters",
-          :condition.sync="form.parameters.mainFilterCondition",
+          :filters.sync="form.filters",
+          :widget-id="widget._id",
           :addable="hasAccessToAddFilter",
           :editable="hasAccessToEditFilter",
+          :entity-types="[$constants.ENTITY_TYPES.service]",
+          with-entity,
+          with-service-weather,
           @input="updateMainFilterUpdatedAt"
         )
         v-divider
@@ -97,7 +99,11 @@
           v-divider
           field-modal-type(v-model="form.parameters.modalType")
       v-divider
-    v-btn.primary(@click="submit") {{ $t('common.save') }}
+    v-btn.primary(
+      :loading="submitting",
+      :disabled="submitting",
+      @click="submit"
+    ) {{ $t('common.save') }}
 </template>
 
 <script>

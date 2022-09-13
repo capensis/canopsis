@@ -4,11 +4,13 @@
       field-title(v-model="form.title", :title="$t('common.title')")
       v-divider
       field-filters(
-        :entities-type="$constants.ENTITIES_TYPES.alarm",
-        :filters.sync="form.parameters.viewFilters",
-        hide-select,
+        :filters.sync="form.filters",
         addable,
-        editable
+        editable,
+        with-alarm,
+        with-entity,
+        with-pbehavior,
+        hide-selector
       )
       v-divider
       field-opened-resolved-filter(v-model="form.parameters.opened")
@@ -55,7 +57,11 @@
             :title="$t('settings.isCorrelationEnabled')"
           )
       v-divider
-    v-btn.primary(@click="submit") {{ $t('common.save') }}
+    v-btn.primary(
+      :loading="submitting",
+      :disabled="submitting",
+      @click="submit"
+    ) {{ $t('common.save') }}
 </template>
 
 <script>

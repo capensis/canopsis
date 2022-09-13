@@ -10,6 +10,8 @@
 <script>
 import { MODALS } from '@/constants';
 
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
+
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
@@ -29,9 +31,7 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: [this.entityId] },
-          },
+          entityPattern: createEntityIdPatternByValue(this.entityId),
         },
       });
     },

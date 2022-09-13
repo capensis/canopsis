@@ -53,12 +53,6 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   executeInstruction: 'executeInstruction',
 };
 
-export const EVENT_FILTER_RULE_TYPES = {
-  drop: 'drop',
-  break: 'break',
-  enrichment: 'enrichment',
-};
-
 export const META_ALARMS_RULE_TYPES = {
   relation: 'relation',
   timebased: 'timebased',
@@ -96,74 +90,69 @@ export const ALARM_ENTITY_FIELDS = {
 
 export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
   {
-    labelKey: 'tables.alarmGeneral.connector',
+    labelKey: 'common.connector',
     value: ALARM_ENTITY_FIELDS.connector,
   },
   {
-    labelKey: 'tables.alarmGeneral.connectorName',
+    labelKey: 'common.connectorName',
     value: ALARM_ENTITY_FIELDS.connectorName,
   },
   {
-    labelKey: 'tables.alarmGeneral.component',
+    labelKey: 'common.component',
     value: ALARM_ENTITY_FIELDS.component,
   },
   {
-    labelKey: 'tables.alarmGeneral.resource',
+    labelKey: 'common.resource',
     value: ALARM_ENTITY_FIELDS.resource,
   },
   {
-    labelKey: 'tables.alarmGeneral.output',
+    labelKey: 'common.output',
     value: ALARM_ENTITY_FIELDS.output,
   },
   {
-    labelKey: 'tables.alarmGeneral.extraDetails',
+    labelKey: 'common.extraDetail',
     value: ALARM_ENTITY_FIELDS.extraDetails,
   },
   {
-    labelKey: 'tables.alarmGeneral.state',
+    labelKey: 'common.state',
     value: ALARM_ENTITY_FIELDS.state,
   },
   {
-    labelKey: 'tables.alarmGeneral.status',
+    labelKey: 'common.status',
     value: ALARM_ENTITY_FIELDS.status,
   },
 ];
 
 export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
   {
-    labelKey: 'tables.alarmGeneral.connector',
+    labelKey: 'common.connector',
     value: ALARM_ENTITY_FIELDS.connector,
   },
   {
-    labelKey: 'tables.alarmGeneral.connectorName',
+    labelKey: 'common.connectorName',
     value: ALARM_ENTITY_FIELDS.connectorName,
   },
   {
-    labelKey: 'tables.alarmGeneral.resource',
+    labelKey: 'common.resource',
     value: ALARM_ENTITY_FIELDS.resource,
   },
   {
-    labelKey: 'tables.alarmGeneral.output',
+    labelKey: 'common.output',
     value: ALARM_ENTITY_FIELDS.output,
   },
   {
-    labelKey: 'tables.alarmGeneral.extraDetails',
+    labelKey: 'common.extraDetail',
     value: ALARM_ENTITY_FIELDS.extraDetails,
   },
   {
-    labelKey: 'tables.alarmGeneral.state',
+    labelKey: 'common.state',
     value: ALARM_ENTITY_FIELDS.state,
   },
   {
-    labelKey: 'tables.alarmGeneral.status',
+    labelKey: 'common.status',
     value: ALARM_ENTITY_FIELDS.status,
   },
 ];
-
-export const ALARMS_GROUP_PREFIX = {
-  CAUSES: 'causes_',
-  CONSEQUENCES: 'consequences_',
-};
 
 export const MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS = {
   component: 'metaalarm',
@@ -213,4 +202,28 @@ export const ALARM_INTERVAL_FIELDS = {
   resolved: 'resolved',
   lastUpdateDate: 'last_update_date',
   lastEventDate: 'last_event_date',
+};
+
+export const ALARM_PATTERN_FIELDS = {
+  displayName: 'v.display_name',
+  state: 'v.state.val',
+  status: 'v.status.val',
+  component: 'v.component',
+  resource: 'v.resource',
+  connector: 'v.connector',
+  connectorName: 'v.connector_name',
+  creationDate: 'v.creation_date',
+  duration: 'v.duration',
+  infos: 'v.infos',
+  output: 'v.output',
+  lastEventDate: 'v.last_event_date',
+  lastUpdateDate: 'v.last_update_date',
+  ack: 'v.ack',
+  ackAt: 'v.ack.t',
+  ackBy: 'v.ack.a',
+  resolvedAt: 'v.resolved',
+  ticket: 'v.ticket',
+  canceled: 'v.canceled',
+  snooze: 'v.snooze',
+  lastComment: 'v.last_comment.m',
 };

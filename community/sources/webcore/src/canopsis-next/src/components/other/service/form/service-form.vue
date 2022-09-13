@@ -14,7 +14,7 @@
         v-flex.pr-3(xs6)
           c-entity-category-field(v-field="form.category", addable, required)
         v-flex.pr-3(xs4)
-          c-state-type-field(
+          c-entity-state-field(
             v-field="form.sli_avail_state",
             :label="$t('service.availabilityState')",
             required
@@ -36,7 +36,7 @@
     v-tabs(slider-color="primary", centered)
       v-tab(:class="{ 'error--text': errors.has('entity_patterns') }") {{ $t('common.entityPatterns') }}
       v-tab-item
-        patterns-list(v-field="form.entity_patterns", v-validate="'required'", name="entity_patterns")
+        c-patterns-field.mt-2(v-field="form.patterns", :entity-attributes="entityAttributes", with-entity)
       v-tab.validation-header(:disabled="advancedJsonWasChanged") {{ $t('entity.manageInfos') }}
       v-tab-item
         manage-infos(v-field="form.infos")
@@ -45,15 +45,13 @@
 <script>
 import { get } from 'lodash';
 
-import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
-import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
+import { ENTITY_PATTERN_FIELDS } from '@/constants';
+
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    FilterEditor,
-    PatternsList,
     ManageInfos,
   },
   model: {
@@ -73,6 +71,23 @@ export default {
 
     advancedJsonWasChanged() {
       return get(this.fields, ['advancedJson', 'changed']);
+    },
+
+    entityAttributes() {
+      return [
+        {
+          value: ENTITY_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+        {
+          value: ENTITY_PATTERN_FIELDS.connector,
+          options: { disabled: true },
+        },
+        {
+          value: ENTITY_PATTERN_FIELDS.componentInfos,
+          options: { disabled: true },
+        },
+      ];
     },
   },
 };

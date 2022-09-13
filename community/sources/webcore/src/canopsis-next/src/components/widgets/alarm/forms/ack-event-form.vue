@@ -1,28 +1,21 @@
 <template lang="pug">
-  div
-    v-layout(row)
-      v-text-field(
-        v-field="form.ticket",
-        :label="$t('modals.createAckEvent.fields.ticket')",
-        data-test="createAckEventTicket"
-      )
-    v-layout(row)
-      v-textarea(
-        v-field="form.output",
-        v-validate="isNoteRequired ? 'required' : ''",
-        :label="$t('common.output')",
-        :error-messages="errors.collect('output')",
-        name="output",
-        data-test="createAckEventNote"
-      )
+  v-layout(column)
+    v-text-field(
+      v-field="form.ticket",
+      :label="$t('modals.createAckEvent.fields.ticket')"
+    )
+    c-description-field(
+      v-field="form.output",
+      :label="$t('common.note')",
+      :required="isNoteRequired"
+    )
     v-layout(row)
       v-tooltip(top)
         v-checkbox(
           slot="activator",
           v-field="form.ack_resources",
           :label="$t('modals.createAckEvent.fields.ackResources')",
-          color="primary",
-          data-test="createAckEventResource"
+          color="primary"
         )
         span {{ $t('modals.createAckEvent.tooltips.ackResources') }}
 </template>

@@ -17,7 +17,7 @@ exports[`title Renders \`title\` with custom props 1`] = `
         <div
           class="font-italic caption ml-1"
         >
-          (common.optional)
+          (optional)
         </div>
       </div>
     </div>
@@ -56,7 +56,7 @@ exports[`title Renders \`title\` with custom props 1`] = `
                 class="v-text-field__slot"
               >
                 <input
-                  placeholder="settings.widgetTitle"
+                  placeholder="Widget title"
                   type="text"
                 />
               </div>
@@ -97,7 +97,7 @@ exports[`title Renders \`title\` with default props 1`] = `
         <div
           class="font-italic caption ml-1"
         >
-          (common.optional)
+          (optional)
         </div>
       </div>
     </div>
@@ -136,7 +136,7 @@ exports[`title Renders \`title\` with default props 1`] = `
                 class="v-text-field__slot"
               >
                 <input
-                  placeholder="settings.widgetTitle"
+                  placeholder="Widget title"
                   type="text"
                 />
               </div>

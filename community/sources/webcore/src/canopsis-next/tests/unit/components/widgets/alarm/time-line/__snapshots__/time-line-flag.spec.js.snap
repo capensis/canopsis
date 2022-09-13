@@ -1,0 +1,619 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`time-line-flag Renders \`time-line-flag\` with state: critical 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(245, 105, 84);"
+  >
+    assistant_photo
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with state: major 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(255, 153, 0);"
+  >
+    assistant_photo
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with state: minor 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(252, 220, 0);"
+  >
+    assistant_photo
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with state: ok 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(0, 166, 90);"
+  >
+    assistant_photo
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with status: cancelled 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(117, 117, 117);"
+  >
+    highlight_off
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with status: closed 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(47, 171, 99);"
+  >
+    check_circle_outline
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with status: flapping 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(43, 62, 79);"
+  >
+    swap_vert
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with status: noEvents 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(255, 82, 82);"
+  >
+    sync_problem
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with status: ongoing 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(249, 168, 37);"
+  >
+    warning
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with status: stealthy 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(117, 117, 117);"
+  >
+    swap_vert
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: ack 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(156, 39, 176);"
+  >
+    playlist_add_check
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: ackRemove 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(156, 39, 176);"
+  >
+    not_interested
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: assocTicket 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    local_play
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: autoInstructionAlreadyRunning 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: autoInstructionComplete 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: autoInstructionFail 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: autoInstructionStart 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: cancel 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    delete
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: changeState 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    thumbs_up_down
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: check 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: black;"
+  >
+    clear
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: comment 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(186, 104, 200);"
+  >
+    comment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: declareTicket 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(33, 150, 243);"
+  >
+    report_problem
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: delete 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    delete
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: done 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(0, 166, 90);"
+  >
+    assignment_turned_in
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: executeInstruction 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: fastAck 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    check
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: group 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: black;"
+  >
+    clear
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: groupRequest 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    note_add
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: instructionAbort 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: instructionComplete 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: instructionFail 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: instructionJobAbort 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: instructionJobComplete 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: instructionJobFail 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: instructionJobStart 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: instructionPause 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: instructionResume 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: instructionStart 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    assignment
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: invalidate 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    thumb_down
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: junitTestCaseUpdate 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    keyboard_arrow_up
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: junitTestSuiteUpdate 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    keyboard_arrow_up
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmGroup 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    center_focus_strong
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmUngroup 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    link_off
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmUpdate 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: black;"
+  >
+    clear
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: metaalarmattach 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(109, 76, 65);"
+  >
+    center_focus_weak
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: pause 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    pause
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: pbehaviorAdd 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    pause
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: pbehaviorList 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    list
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: pbhenter 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(24, 255, 255);"
+  >
+    pause
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: pbhleave 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(24, 255, 255);"
+  >
+    play_arrow
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: play 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    play_arrow
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: snooze 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: rgb(233, 30, 99);"
+  >
+    alarm
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: statedec 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: black;"
+  >
+    clear
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: stateinc 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: black;"
+  >
+    clear
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: statusdec 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: black;"
+  >
+    clear
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: statusinc 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: black;"
+  >
+    clear
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: uncancel 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: black;"
+  >
+    clear
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: unsooze 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: black;"
+  >
+    clear
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: validate 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    thumb_up
+  </i>
+</div>
+`;

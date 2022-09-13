@@ -206,7 +206,7 @@ func applyMongoFixtures(ctx context.Context, f flags, dbClient mongo.DbClient, l
 	}
 
 	logger.Info().Msg("start mongo fixtures")
-	loader := fixtures.NewLoader(dbClient, []string{f.mongoFixtureDirectory}, true,
+	loader := fixtures.NewLoader(dbClient, []string{f.mongoFixtureDirectory},
 		fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), logger)
 	err = loader.Load(ctx)
 	if err != nil {

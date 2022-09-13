@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('service/serviceEntity');
+const { mapActions, mapGetters } = createNamespacedHelpers('service/entity');
 
 export const entitiesServiceEntityMixin = {
   computed: {

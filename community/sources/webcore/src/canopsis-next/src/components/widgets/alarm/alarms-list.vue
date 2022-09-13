@@ -17,19 +17,24 @@
           @change="updateCorrelation"
         )
       v-flex
-        filter-selector(
-          :label="$t('settings.selectAFilter')",
-          :filters="viewFilters",
-          :locked-filters="widgetViewFilters",
-          :value="mainFilter",
-          :condition="mainFilterCondition",
-          :has-access-to-edit-filter="hasAccessToEditFilter",
-          :has-access-to-user-filter="hasAccessToUserFilter",
-          :has-access-to-list-filters="hasAccessToListFilters",
-          @input="updateSelectedFilter",
-          @update:condition="updateSelectedCondition",
-          @update:filters="updateFilters"
-        )
+        v-layout(row, wrap, align-center)
+          filter-selector(
+            :label="$t('settings.selectAFilter')",
+            :filters="userPreference.filters",
+            :locked-filters="widget.filters",
+            :value="mainFilter",
+            :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
+            @input="updateSelectedFilter"
+          )
+          filters-list-btn(
+            :widget-id="widget._id",
+            :addable="hasAccessToAddFilter",
+            :editable="hasAccessToEditFilter",
+            private,
+            with-alarm,
+            with-entity,
+            with-pbehavior
+          )
       v-flex
         alarms-list-remediation-instructions-filters(
           :filters.sync="remediationInstructionsFilters",
@@ -74,14 +79,14 @@
       :widget="widget",
       :alarms="alarms",
       :total-items="alarmsMeta.total_count",
-      :pagination.sync="vDataTablePagination",
+      :pagination.sync="pagination",
       :loading="alarmsPending",
       :is-tour-enabled="isTourEnabled",
-      :hide-groups="!query.correlation",
-      :has-columns="hasColumns",
+      :hide-children="!query.correlation",
       :columns="columns",
       :sticky-header="widget.parameters.sticky_header",
       :dense="dense",
+      :refresh-alarms-list="fetchList",
       selectable,
       expandable
     )
@@ -96,7 +101,7 @@
 </template>
 
 <script>
-import { omit, pick, isEmpty, isObject, isEqual } from 'lodash';
+import { omit, pick, isObject } from 'lodash';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
@@ -104,13 +109,13 @@ import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
 import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
-import widgetRemediationInstructionsFilterMixin from '@/mixins/widget/remediation-instructions-filter-select';
-import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
+import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
+import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
@@ -118,9 +123,10 @@ import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
-import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
+import AlarmsExpandPanelTour from './expand-panel/alarms-expand-panel-tour.vue';
 import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
 
 /**
@@ -135,6 +141,7 @@ import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-rem
 export default {
   components: {
     FilterSelector,
+    FiltersListBtn,
     AlarmsListTable,
     AlarmsExpandPanelTour,
     AlarmsListRemediationInstructionsFilters,
@@ -147,6 +154,7 @@ export default {
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,
     entitiesAlarmMixin,
+    entitiesAlarmDetailsMixin,
     permissionsWidgetsAlarmsListCategory,
     permissionsWidgetsAlarmsListCorrelation,
     permissionsWidgetsAlarmsListFilters,
@@ -298,15 +306,13 @@ export default {
       });
     },
 
-    async fetchList({ isPeriodicRefresh, isQueryNonceUpdate } = {}) {
+    async fetchList() {
       if (this.hasColumns) {
         const params = this.getQuery();
 
-        if ((isPeriodicRefresh || isQueryNonceUpdate) && !isEmpty(this.$refs.alarmsTable.expanded)) {
-          params.with_steps = true;
-        }
+        this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
 
-        if (!this.alarmsPending || !isEqual(params, this.alarmsFetchingParams)) {
+        if (!this.alarmsPending) {
           await this.fetchAlarmsList({
             widgetId: this.widget._id,
             params,
