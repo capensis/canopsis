@@ -140,7 +140,6 @@ export default {
       const options = {
         ...TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
 
-        userZoomingEnabled: false,
         style: this.styleOption,
         elements: this.entitiesElements,
       };
