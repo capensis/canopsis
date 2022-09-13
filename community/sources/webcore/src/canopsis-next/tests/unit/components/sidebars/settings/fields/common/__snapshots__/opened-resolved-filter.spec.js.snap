@@ -13,7 +13,7 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with custom p
       <div
         class="v-list__tile theme--light"
       >
-        settings.filterOnOpenResolved
+        Filter on Open/Resolved
       </div>
     </div>
     <div
@@ -63,7 +63,7 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with custom p
                     >
                       <input
                         aria-checked="false"
-                        aria-label="settings.openedTypes.true"
+                        aria-label="Opened alarms"
                         name="opened"
                         role="radio"
                         type="radio"
@@ -84,7 +84,7 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with custom p
                       class="v-label theme--light"
                       style="left: 0px; position: relative;"
                     >
-                      settings.openedTypes.true
+                      Opened alarms
                     </label>
                   </div>
                   <div
@@ -95,7 +95,7 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with custom p
                     >
                       <input
                         aria-checked="false"
-                        aria-label="settings.openedTypes.null"
+                        aria-label="Opened and recent resolved alarms"
                         name="opened"
                         role="radio"
                         type="radio"
@@ -116,7 +116,7 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with custom p
                       class="v-label theme--light"
                       style="left: 0px; position: relative;"
                     >
-                      settings.openedTypes.null
+                      Opened and recent resolved alarms
                     </label>
                   </div>
                   <div
@@ -127,7 +127,7 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with custom p
                     >
                       <input
                         aria-checked="false"
-                        aria-label="settings.openedTypes.false"
+                        aria-label="All resolved alarms"
                         name="opened"
                         role="radio"
                         type="radio"
@@ -148,7 +148,7 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with custom p
                       class="v-label theme--light"
                       style="left: 0px; position: relative;"
                     >
-                      settings.openedTypes.false
+                      All resolved alarms
                     </label>
                   </div>
                 </div>
@@ -175,7 +175,7 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with default 
       <div
         class="v-list__tile theme--light"
       >
-        settings.filterOnOpenResolved
+        Filter on Open/Resolved
       </div>
     </div>
     <div
@@ -225,7 +225,7 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with default 
                     >
                       <input
                         aria-checked="false"
-                        aria-label="settings.openedTypes.true"
+                        aria-label="Opened alarms"
                         name="opened"
                         role="radio"
                         type="radio"
@@ -246,7 +246,7 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with default 
                       class="v-label theme--light"
                       style="left: 0px; position: relative;"
                     >
-                      settings.openedTypes.true
+                      Opened alarms
                     </label>
                   </div>
                   <div
@@ -257,7 +257,7 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with default 
                     >
                       <input
                         aria-checked="false"
-                        aria-label="settings.openedTypes.null"
+                        aria-label="Opened and recent resolved alarms"
                         name="opened"
                         role="radio"
                         type="radio"
@@ -278,7 +278,7 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with default 
                       class="v-label theme--light"
                       style="left: 0px; position: relative;"
                     >
-                      settings.openedTypes.null
+                      Opened and recent resolved alarms
                     </label>
                   </div>
                   <div
@@ -289,7 +289,7 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with default 
                     >
                       <input
                         aria-checked="false"
-                        aria-label="settings.openedTypes.false"
+                        aria-label="All resolved alarms"
                         name="opened"
                         role="radio"
                         type="radio"
@@ -310,7 +310,7 @@ exports[`opened-resolved-filter Renders \`opened-resolved-filter\` with default 
                       class="v-label theme--light"
                       style="left: 0px; position: relative;"
                     >
-                      settings.openedTypes.false
+                      All resolved alarms
                     </label>
                   </div>
                 </div>

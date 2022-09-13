@@ -14,6 +14,8 @@ import {
   TIME_UNITS,
 } from '@/constants';
 
+import { isValidTimeUnit } from '@/helpers/date/date';
+
 /**
  * @typedef { "y" | "M" | "w" | "d" | "h" | "m" | "s" } DurationUnit
  */
@@ -199,3 +201,11 @@ export const convertDurationToString = (duration, format = DEFAULT_DURATION_FORM
     .duration(preparedDuration, duration?.unit ?? unit)
     .format(resultFormat, { trim: 'both final' }) || '0s';
 };
+
+/**
+ * Check duration is valid
+ *
+ * @param {Duration | *} duration
+ * @return {boolean}
+ */
+export const isValidDuration = duration => isNumber(duration?.value) && isValidTimeUnit(duration.unit);

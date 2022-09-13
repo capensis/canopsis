@@ -22,7 +22,6 @@ import {
 
 /**
  * @typedef {Object} CounterWidgetParameters
- * @property {WidgetFilter[]} viewFilters
  * @property {boolean} opened
  * @property {string} blockTemplate
  * @property {number} columnSM
@@ -42,9 +41,6 @@ import {
  * @return {CounterWidgetParameters}
  */
 export const counterWidgetParametersToForm = (parameters = {}) => ({
-  viewFilters: parameters.viewFilters
-    ? cloneDeep(parameters.viewFilters)
-    : [],
   opened: parameters.opened ?? true,
   blockTemplate: parameters.blockTemplate ?? DEFAULT_COUNTER_BLOCK_TEMPLATE,
   columnSM: parameters.columnSM ?? 6,

@@ -65,10 +65,6 @@ export default {
     ...mapGetters(['hasMinimizedModal']),
 
     closeHandler() {
-      if (!this.close) {
-        return false;
-      }
-
       if (isFunction(this.close)) {
         return this.close;
       }

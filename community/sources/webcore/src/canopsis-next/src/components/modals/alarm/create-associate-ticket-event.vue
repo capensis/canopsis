@@ -1,9 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createAssociateTicket.title') }}
-      template(slot="text")
+      template(#text="")
         v-container
           v-layout(row)
             v-flex.text-xs-center
@@ -20,7 +20,7 @@
             )
           v-alert(:value="itemsWithoutAck.length", type="info")
             span {{ alertMessage }}
-      template(slot="actions")
+      template(#actions="")
         v-btn(
           depressed,
           flat,
@@ -43,7 +43,7 @@ import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 

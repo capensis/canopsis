@@ -7,47 +7,47 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
   <button
     class="action-pbehaviorAdd"
   >
-    alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
+    Periodical behavior|pause|pbehaviorAdd
   </button>
   <button
     class="action-ack"
   >
-    alarmList.actions.titles.ack|playlist_add_check|ack
+    Ack|playlist_add_check|ack
   </button>
   <button
     class="action-fastAck"
   >
-    alarmList.actions.titles.fastAck|check|fastAck
+    Fast ack|check|fastAck
   </button>
   <button
     class="action-ackRemove"
   >
-    alarmList.actions.titles.ackRemove|not_interested|ackRemove
+    Cancel ack|not_interested|ackRemove
   </button>
   <button
     class="action-cancel"
   >
-    alarmList.actions.titles.cancel|delete|cancel
+    Cancel alarm|delete|cancel
   </button>
   <button
     class="action-associateTicket"
   >
-    alarmList.actions.titles.associateTicket|local_play|associateTicket
+    Associate ticket|local_play|associateTicket
   </button>
   <button
     class="action-snooze"
   >
-    alarmList.actions.titles.snooze|alarm|snooze
+    Snooze alarm|alarm|snooze
   </button>
   <button
     class="action-groupRequest"
   >
-    alarmList.actions.titles.groupRequest|note_add|groupRequest
+    Suggest group request for meta alarm|note_add|groupRequest
   </button>
   <button
     class="action-manualMetaAlarmGroup"
   >
-    alarmList.actions.titles.manualMetaAlarmGroup|center_focus_strong|manualMetaAlarmGroup
+    Manual meta alarm management|center_focus_strong|manualMetaAlarmGroup
   </button>
 </div>
 `;
@@ -59,37 +59,47 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] =
   <button
     class="action-pbehaviorAdd"
   >
-    alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
+    Periodical behavior|pause|pbehaviorAdd
   </button>
   <button
     class="action-ack"
   >
-    alarmList.actions.titles.ack|playlist_add_check|ack
+    Ack|playlist_add_check|ack
   </button>
   <button
     class="action-fastAck"
   >
-    alarmList.actions.titles.fastAck|check|fastAck
+    Fast ack|check|fastAck
   </button>
   <button
     class="action-ackRemove"
   >
-    alarmList.actions.titles.ackRemove|not_interested|ackRemove
+    Cancel ack|not_interested|ackRemove
   </button>
   <button
     class="action-cancel"
   >
-    alarmList.actions.titles.cancel|delete|cancel
+    Cancel alarm|delete|cancel
   </button>
   <button
     class="action-associateTicket"
   >
-    alarmList.actions.titles.associateTicket|local_play|associateTicket
+    Associate ticket|local_play|associateTicket
   </button>
   <button
     class="action-snooze"
   >
-    alarmList.actions.titles.snooze|alarm|snooze
+    Snooze alarm|alarm|snooze
+  </button>
+  <button
+    class="action-groupRequest"
+  >
+    Suggest group request for meta alarm|note_add|groupRequest
+  </button>
+  <button
+    class="action-manualMetaAlarmGroup"
+  >
+    Manual meta alarm management|center_focus_strong|manualMetaAlarmGroup
   </button>
 </div>
 `;

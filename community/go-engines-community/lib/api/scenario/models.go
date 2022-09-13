@@ -45,9 +45,10 @@ type EditRequest struct {
 	//   * `instructionfail` - Manual instruction has failed
 	//   * `autoinstructionfail` - Auto instruction has failed
 	//   * `instructionjobfail` - Manual or auto instruction's job is failed
+	//   * `instructionjobcomplete` - Manual or auto instruction's job is completed
 	//   * `instructioncomplete` - Manual instruction is completed
 	//   * `autoinstructioncomplete` - Auto instruction is completed
-	Triggers             []string                `json:"triggers" binding:"required,notblank,dive,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment done declareticket declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructioncomplete autoinstructioncomplete"`
+	Triggers             []string                `json:"triggers" binding:"required,notblank,dive,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment done declareticket declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete"`
 	DisableDuringPeriods []string                `json:"disable_during_periods" binding:"dive,oneof=maintenance pause inactive"`
 	Delay                *types.DurationWithUnit `json:"delay"`
 	Actions              []ActionRequest         `json:"actions" binding:"required,notblank,dive"`
