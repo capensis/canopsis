@@ -195,50 +195,50 @@ export default {
     /**
      * Add pinned elements to cytoscape
      *
-     * @param {Object[]} items
+     * @param {Object[]} elements
      * @param {string} sourceId
      */
-    addPinnedElements(items = [], sourceId) {
-      if (!items.length) {
+    addPinnedElements(elements = [], sourceId) {
+      if (!elements.length) {
         return;
       }
 
-      const addedItems = items.reduce((acc, item) => {
-        const elements = this.$refs.networkGraph.$cy.getElementById(item._id);
+      const addedElements = elements.reduce((acc, element) => {
+        const items = this.$refs.networkGraph.$cy.getElementById(element._id);
 
-        if (!elements.length) {
+        if (!items.length) {
           acc.push({
             group: 'nodes',
-            data: { id: item._id, entity: item },
+            data: { id: element._id, entity: element },
           });
         }
 
         acc.push({
           group: 'edges',
-          data: { source: sourceId, target: item._id },
+          data: { source: sourceId, target: element._id },
         });
 
         return acc;
       }, []);
 
-      this.$refs.networkGraph.$cy.add(addedItems);
+      this.$refs.networkGraph.$cy.add(addedElements);
     },
 
     /**
      * Remove pinned elements from cytoscape
      *
-     * @param {Object[]} items
+     * @param {Object[]} elements
      * @param {string} sourceId
      */
-    removePinnedElements(items = [], sourceId) {
-      if (!items.length) {
+    removePinnedElements(elements = [], sourceId) {
+      if (!elements.length) {
         return;
       }
 
-      const nodesForRemove = items.filter(({ _id: id }) => !this.allEntitiesById[id])
+      const nodesForRemove = elements.filter(({ _id: id }) => !this.allEntitiesById[id])
         .map(({ _id: id }) => `node[id = "${id}"]`);
 
-      const edgesForRemove = items.map(({ _id: id }) => `edge[source = "${sourceId}"][target = "${id}"]`);
+      const edgesForRemove = elements.map(({ _id: id }) => `edge[source = "${sourceId}"][target = "${id}"]`);
       const elementsForRemoveSelector = [...nodesForRemove, ...edgesForRemove].join(',');
 
       this.$refs.networkGraph.$cy.elements(elementsForRemoveSelector).remove();

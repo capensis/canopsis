@@ -40,19 +40,20 @@ export const MERMAID_THEME_PROPERTIES_BY_NAME = {
 };
 
 export const TREE_OF_DEPENDENCIES_GRAPH_OPTIONS = {
-  fitPadding: 20,
+  fitPadding: 40,
   wheelSensitivity: 0.3,
-  minZoom: 0.01,
+  minZoom: 0.05,
   maxZoom: 1.5,
+  nodeSize: 50,
 };
 
 export const TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS = {
   name: 'cise',
   animate: 'end',
   fit: true,
-  padding: 30,
-  nodeSeparation: 130,
-  nodeRepulsion: 140,
+  padding: 40,
+  nodeSeparation: 250,
+  nodeRepulsion: 250,
   idealInterClusterEdgeLengthCoefficient: 2,
 };
 

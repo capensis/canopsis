@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.zoom-overlay__wrapper(@wheel="throttledWheelListener")
+  div.zoom-overlay__wrapper(@wheel="wheelListener")
     v-fade-transition
       div.zoom-overlay(v-if="shown")
         span.zoom-overlay__text Use ctrl + mouse wheel for zoom
@@ -7,24 +7,19 @@
 </template>
 
 <script>
-import { throttle } from 'lodash';
-
 export default {
   data() {
     return {
       shown: false,
     };
   },
-  created() {
-    this.throttledWheelListener = throttle(this.wheelListener, 100);
-  },
   methods: {
-    wheelListener({ ctrlKey }) {
+    wheelListener(event) {
       if (this.timer) {
         clearTimeout(this.timer);
       }
 
-      if (ctrlKey) {
+      if (event.ctrlKey) {
         this.shown = false;
         return;
       }
