@@ -2999,6 +2999,7 @@ definitions:
             * `instructionfail` - Manual instruction has failed
             * `autoinstructionfail` - Auto instruction has failed
             * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
         items:
@@ -3076,6 +3077,7 @@ definitions:
             * `instructionfail` - Manual instruction has failed
             * `autoinstructionfail` - Auto instruction has failed
             * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
         items:
@@ -3136,6 +3138,7 @@ definitions:
             * `instructionfail` - Manual instruction has failed
             * `autoinstructionfail` - Auto instruction has failed
             * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
         items:

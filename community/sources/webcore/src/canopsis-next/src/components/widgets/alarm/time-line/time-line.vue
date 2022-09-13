@@ -1,32 +1,31 @@
 <template lang="pug">
-  div.timeline(:data-test="`alarmTimeLine-${alarm._id}`")
+  div.timeline
     ul(v-for="(steps, day) in groupedSteps", :key="day")
-      li(v-for="(step, index) in steps", :key="`step-${index}`")
-        .timeline-item(v-show="index === 0")
-          .date {{ day }}
-        .timeline-item
-          .time {{ step.t | date('time') }}
+      li(v-for="(step, index) in steps", :key="index")
+        div.timeline-item(v-show="index === 0")
+          div.date {{ day }}
+        div.timeline-item
+          div.time {{ step.t | date('time') }}
           time-line-flag.flag(:step="step")
           time-line-card(:step="step", :is-html-enabled="isHtmlEnabled")
+    c-pagination(
+      :total="meta.total_count",
+      :limit="meta.per_page",
+      :page="meta.page",
+      @input="updatePage"
+    )
 </template>
 
 <script>
 import { groupAlarmSteps } from '@/helpers/entities';
-
-import widgetExpandPanelAlarmTimeLine from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 import TimeLineFlag from './time-line-flag.vue';
 import TimeLineCard from './time-line-card.vue';
 
 export default {
   components: { TimeLineFlag, TimeLineCard },
-  mixins: [widgetExpandPanelAlarmTimeLine],
   props: {
-    alarm: {
-      type: Object,
-      required: true,
-    },
-    widget: {
+    steps: {
       type: Object,
       required: true,
     },
@@ -35,21 +34,18 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      groupedSteps: {},
-    };
+  computed: {
+    meta() {
+      return this.steps?.meta ?? {};
+    },
+
+    groupedSteps() {
+      return groupAlarmSteps(this.steps?.data ?? []);
+    },
   },
-  watch: {
-    alarm: {
-      immediate: true,
-      handler(alarm) {
-        if (alarm.v.steps) {
-          this.groupedSteps = groupAlarmSteps(alarm.v.steps);
-        } else {
-          this.fetchAlarmItemWithGroupsAndSteps(alarm);
-        }
-      },
+  methods: {
+    updatePage(page) {
+      this.$emit('update:page', page);
     },
   },
 };

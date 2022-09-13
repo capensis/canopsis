@@ -114,7 +114,7 @@ const (
 
 	// EventTypeNoEvents is used to create alarm for entity by idle rule.
 	EventTypeNoEvents = "noevents"
-	// EventTypeTrigger is used in axe rpc to send autoinstruction triggers
+	// EventTypeTrigger is used in axe rpc to send auto and manual instruction triggers
 	EventTypeTrigger = "trigger"
 )
 

@@ -1,13 +1,11 @@
 <template lang="pug">
-  v-text-field(
-    v-field.number="value",
-    v-validate="rules",
+  c-number-field(
+    v-field="value",
     :label="label || $t('common.priority')",
-    :error-messages="errors.collect(name)",
     :disabled="disabled",
     :name="name",
     :min="min",
-    type="number"
+    :required="required"
   )
 </template>
 
@@ -42,15 +40,6 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
-    },
-  },
-  computed: {
-    rules() {
-      return {
-        required: this.required,
-        numeric: true,
-        min_value: this.min,
-      };
     },
   },
 };

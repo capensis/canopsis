@@ -4,12 +4,15 @@
     :items="quickRanges",
     :label="$t('quickRanges.title')",
     :hide-details="hideDetails",
-    return-object,
+    :disabled="disabled",
+    :return-object="returnObject",
     @input="updateModel($event)"
   )
 </template>
 
 <script>
+import { isObject } from 'lodash';
+
 import { QUICK_RANGES } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
@@ -24,32 +27,44 @@ export default {
   },
   props: {
     value: {
-      type: Object,
-      required: true,
+      type: [String, Object],
+      required: false,
     },
-    customFilter: {
-      type: Function,
-      default: () => true,
+    ranges: {
+      type: Array,
+      required: false,
     },
     hideDetails: {
+      type: Boolean,
+      required: false,
+    },
+    disabled: {
+      type: Boolean,
+      required: false,
+    },
+    returnObject: {
       type: Boolean,
       required: false,
     },
   },
   computed: {
     range() {
-      const range = findQuickRangeValue(this.value.start, this.value.stop);
+      if (!isObject(this.value)) {
+        return this.value;
+      }
+
+      const range = findQuickRangeValue(this.value.start, this.value.stop, this.ranges);
 
       return this.quickRanges.find(({ value }) => value === range.value);
     },
 
     quickRanges() {
-      return Object.values(QUICK_RANGES)
-        .filter(this.customFilter)
-        .map(range => ({
-          ...range,
-          text: this.$t(`quickRanges.types.${range.value}`),
-        }));
+      const ranges = this.ranges ?? Object.values(QUICK_RANGES);
+
+      return ranges.map(range => ({
+        ...range,
+        text: this.$t(`quickRanges.types.${range.value}`),
+      }));
     },
   },
 };

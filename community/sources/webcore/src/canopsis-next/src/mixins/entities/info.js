@@ -32,8 +32,8 @@ export const entitiesInfoMixin = {
       remediationJobConfigTypes: 'remediationJobConfigTypes',
     }),
 
-    isCatVersion() {
-      return this.edition === CANOPSIS_EDITION.cat;
+    isProVersion() {
+      return this.edition === CANOPSIS_EDITION.pro;
     },
   },
   methods: {

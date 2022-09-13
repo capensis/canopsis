@@ -66,21 +66,23 @@ type metaAlarmEventProcessor struct {
 }
 
 func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error) {
-	ruleIdentifier := event.MetaAlarmRuleID
-	rule, err := p.ruleAdapter.GetRule(ctx, ruleIdentifier)
-	if err != nil {
-		return nil, fmt.Errorf("cannot fetch meta alarm rule id=%q: %w", ruleIdentifier, err)
-	} else if rule.ID == "" {
-		return nil, fmt.Errorf("meta alarm rule id=%q not found", ruleIdentifier)
-	} else {
-		ruleIdentifier = rule.Name
-	}
-
 	var updatedChildAlarms []types.Alarm
 	var metaAlarm types.Alarm
 
-	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedChildAlarms = make([]types.Alarm, 0)
+		metaAlarm = types.Alarm{}
+
+		ruleIdentifier := event.MetaAlarmRuleID
+		rule, err := p.ruleAdapter.GetRule(ctx, ruleIdentifier)
+		if err != nil {
+			return fmt.Errorf("cannot fetch meta alarm rule id=%q: %w", ruleIdentifier, err)
+		} else if rule.ID == "" {
+			return fmt.Errorf("meta alarm rule id=%q not found", ruleIdentifier)
+		} else {
+			ruleIdentifier = rule.Name
+		}
+
 		metaAlarm = newAlarm(event, p.alarmConfigProvider.Get())
 		metaAlarm.Value.Meta = event.MetaAlarmRuleID
 		metaAlarm.Value.MetaValuePath = event.MetaAlarmValuePath
@@ -367,6 +369,13 @@ func (p *metaAlarmEventProcessor) processChild(ctx context.Context, event types.
 		if err != nil {
 			return err
 		}
+
+		if event.Alarm.Value.State.Value != types.AlarmStateOK {
+			err := p.updateParentState(ctx, *event.Alarm)
+			if err != nil {
+				return err
+			}
+		}
 	case types.AlarmChangeTypeStateIncrease, types.AlarmChangeTypeStateDecrease, types.AlarmChangeTypeChangeState:
 		err := p.updateParentState(ctx, *event.Alarm)
 		if err != nil {
@@ -397,17 +406,17 @@ func (p *metaAlarmEventProcessor) processChildRpc(ctx context.Context, eventRes 
 }
 
 func (p *metaAlarmEventProcessor) sendChildrenEvents(ctx context.Context, childrenIds []string, childEvent types.Event) error {
-	var alarms []types.AlarmWithEntity
-	err := p.adapter.GetOpenedAlarmsWithEntityByIDs(ctx, childrenIds, &alarms)
+	var alarms []types.Alarm
+	err := p.adapter.GetOpenedAlarmsByIDs(ctx, childrenIds, &alarms)
 	if err != nil {
 		return fmt.Errorf("cannot fetch children alarms: %w", err)
 	}
 
 	for _, alarm := range alarms {
-		childEvent.Connector = alarm.Alarm.Value.Connector
-		childEvent.ConnectorName = alarm.Alarm.Value.ConnectorName
-		childEvent.Resource = alarm.Alarm.Value.Resource
-		childEvent.Component = alarm.Alarm.Value.Component
+		childEvent.Connector = alarm.Value.Connector
+		childEvent.ConnectorName = alarm.Value.ConnectorName
+		childEvent.Resource = alarm.Value.Resource
+		childEvent.Component = alarm.Value.Component
 		childEvent.SourceType = childEvent.DetectSourceType()
 
 		err = p.sendToFifo(ctx, childEvent)
@@ -447,7 +456,7 @@ func (p *metaAlarmEventProcessor) resolveParents(ctx context.Context, childAlarm
 						return fmt.Errorf("cannot fetch parent: %w", err)
 					}
 					if len(alarms) == 0 {
-						return fmt.Errorf("parent %q not exist", parentId)
+						return nil
 					}
 					parentAlarm = alarms[0]
 
@@ -531,12 +540,23 @@ func (p *metaAlarmEventProcessor) updateParentState(ctx context.Context, childAl
 						return fmt.Errorf("cannot fetch parent: %w", err)
 					}
 					if len(alarms) == 0 {
-						return fmt.Errorf("parent %q not exist", parentId)
+						return nil
 					}
 					parentAlarm := alarms[0]
 
+					rule, err := p.ruleAdapter.GetRule(ctx, parentAlarm.Alarm.Value.Meta)
+					if err != nil {
+						return fmt.Errorf("cannot fetch meta alarm rule: %w", err)
+					}
+					if rule.ID == "" {
+						return fmt.Errorf("meta alarm rule %s not found", parentAlarm.Alarm.Value.Meta)
+					}
+
 					parentState := parentAlarm.Alarm.Value.State.Value
 					childState := childAlarm.Value.State.Value
+					if childAlarm.IsResolved() {
+						childState = types.AlarmStateOK
+					}
 					var newState types.CpsNumber
 
 					if childState > parentState {

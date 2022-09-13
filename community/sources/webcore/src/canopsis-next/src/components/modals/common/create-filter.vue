@@ -1,52 +1,35 @@
 <template lang="pug">
-  v-form(data-test="createFilterModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
-        v-text-field(
-          data-test="filterTitle",
-          v-if="!hiddenFields.includes('title')",
-          v-model="form.title",
-          v-validate="'required|unique-title'",
-          :label="$t('modals.filter.fields.title')",
-          :error-messages="errors.collect('title')",
-          name="title",
-          required
-        )
-        filter-editor(
-          v-if="!hiddenFields.includes('filter')",
-          v-model="form.filter",
-          :entities-type="entitiesType",
-          required
-        )
-      template(slot="actions")
+      template(#text="")
+        patterns-form(v-model="form", v-bind="patternsProps")
+      template(#actions="")
         v-btn(
-          data-test="createFilterCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="isDisabled || advancedJsonWasChanged",
+          :disabled="isDisabled",
           :loading="submitting",
-          type="submit",
-          data-test="createFilterSubmitButton"
+          type="submit"
         ) {{ $t('common.submit') }}
 </template>
 
 <script>
-import { get, isString } from 'lodash';
+import { omit } from 'lodash';
 
-import { ENTITIES_TYPES, MODALS } from '@/constants';
+import { MODALS, PATTERNS_FIELDS } from '@/constants';
 
-import { filterToForm, formToFilter, filterToObject } from '@/helpers/forms/filter';
+import { filterToForm, formToFilter } from '@/helpers/forms/filter';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
+import PatternsForm from '@/components/forms/patterns-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -55,70 +38,49 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { FilterEditor, ModalWrapper },
+  components: { PatternsForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
   data() {
-    const { title = '', filter = '{}' } = this.modal.config.filter || {};
-    const preparedFilter = filterToObject(filter);
-
     return {
-      form: {
-        title,
-        filter: filterToForm(preparedFilter),
-      },
+      form: filterToForm(this.modal.config.filter, this.getPatternsFields()),
     };
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.filter.create.title');
+      return this.config.title ?? this.$t('modals.createFilter.create.title');
     },
 
-    entitiesType() {
-      return this.config.entitiesType || ENTITIES_TYPES.alarm;
+    patternsProps() {
+      return omit(this.config, ['title', 'action']);
     },
 
-    hiddenFields() {
-      return this.config.hiddenFields || [];
+    patternsFields() {
+      return this.getPatternsFields();
     },
-
-    existingTitles() {
-      return this.config.existingTitles || [];
-    },
-
-    initialTitle() {
-      return this.config.filter && this.config.filter.title;
-    },
-
-    advancedJsonWasChanged() {
-      return get(this.fields, ['advancedJson', 'changed']);
-    },
-  },
-  created() {
-    this.$validator.extend('unique-title', {
-      getMessage: () => this.$t('validator.unique'),
-      validate: value => (this.initialTitle && this.initialTitle === value)
-        || !this.existingTitles.find(title => title === value),
-    });
   },
   methods: {
+    getPatternsFields() {
+      const { withAlarm, withEntity, withPbehavior, withEvent, withServiceWeather } = this.modal.config;
+
+      return [
+        withAlarm && PATTERNS_FIELDS.alarm,
+        withEntity && PATTERNS_FIELDS.entity,
+        withPbehavior && PATTERNS_FIELDS.pbehavior,
+        withEvent && PATTERNS_FIELDS.event,
+        withServiceWeather && PATTERNS_FIELDS.serviceWeather,
+      ].filter(Boolean);
+    },
+
     async submit() {
       const isFormValid = await this.$validator.validate();
 
       if (isFormValid) {
         if (this.config.action) {
-          const preparedFilter = formToFilter(this.form.filter);
-          const newFilter = {
-            title: this.form.title,
-            filter: isString(get(this.config.filter, 'filter', '{}'))
-              ? JSON.stringify(preparedFilter)
-              : preparedFilter,
-          };
-
-          await this.config.action(newFilter);
+          await this.config.action(formToFilter(this.form, this.patternsFields, this.config.corporate));
         }
 
         this.$modals.hide();
