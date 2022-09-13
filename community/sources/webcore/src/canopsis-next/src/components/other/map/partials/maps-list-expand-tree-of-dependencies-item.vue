@@ -1,23 +1,38 @@
 <template lang="pug">
-  mermaid-preview.mermaid-expand-panel(:map="map")
+  tree-of-dependencies-preview.tree-of-dependencies-expand-panel(
+    :entities="entities",
+    :impact="impact"
+  )
 </template>
 
 <script>
-import MermaidPreview from './mermaid-preview.vue';
+import { TREE_OF_DEPENDENCIES_TYPES } from '@/constants';
+
+import TreeOfDependenciesPreview from './tree-of-dependencies-preview.vue';
 
 export default {
-  components: { MermaidPreview },
+  components: { TreeOfDependenciesPreview },
   props: {
     map: {
       type: Object,
       required: true,
     },
   },
+  computed: {
+    impact() {
+      return this.map?.parameters.type === TREE_OF_DEPENDENCIES_TYPES.impactChain;
+    },
+
+    entities() {
+      return (this.map?.parameters?.entities ?? [])
+        .map(entity => ({ data: entity.entity, pinned: entity.pinned_entities }));
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-.mermaid-expand-panel {
-  background: #F9F9F9;
+.tree-of-dependencies-expand-panel {
+  height: 700px;
 }
 </style>
