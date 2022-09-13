@@ -1979,6 +1979,8 @@ export default merge({
       + '<p><strong>{{ .Count }} conséquences;</strong> Message de la dernière alarme conséquence : <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Règle : <strong>{{ .Rule.Name }};</strong></p>'
       + '<p>Un message informatif statique</p>'
       + '<p>Corrélé par la règle <strong>{{ .Rule.Name }}</strong></p>',
+    removeConfirmationText: 'Lors de la suppression d\'une règle de méta-alarme, toutes les méta-alarmes correspondantes seront également supprimées.\n'
+      + 'Êtes-vous sûr de continuer?',
     errors: {
       noValuePaths: 'Vous devez ajouter au moins un chemin de valeur',
     },
