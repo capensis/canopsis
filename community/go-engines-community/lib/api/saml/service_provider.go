@@ -8,12 +8,17 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"github.com/beevik/etree"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
@@ -23,11 +28,6 @@ import (
 	dsig "github.com/russellhaering/goxmldsig"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"io"
-	"io/ioutil"
-	"net/http"
-	"net/url"
-	"time"
 )
 
 const MetadataReqTimeout = time.Second * 15
@@ -54,8 +54,7 @@ type serviceProvider struct {
 	sessionStore   libsession.Store
 	enforcer       security.Enforcer
 	config         *security.Config
-	tokenService   token.Service
-	tokenStore     token.Store
+	tokenService   apisecurity.TokenService
 	logger         zerolog.Logger
 }
 
@@ -65,8 +64,7 @@ func NewServiceProvider(
 	sessionStore libsession.Store,
 	enforcer security.Enforcer,
 	config *security.Config,
-	tokenService token.Service,
-	tokenStore token.Store,
+	tokenService apisecurity.TokenService,
 	logger zerolog.Logger,
 ) (ServiceProvider, error) {
 	if config.Security.Saml.IdpMetadataUrl != "" && config.Security.Saml.IdpMetadataXml != "" {
@@ -176,7 +174,6 @@ func NewServiceProvider(
 		enforcer:       enforcer,
 		config:         config,
 		tokenService:   tokenService,
-		tokenStore:     tokenStore,
 		logger:         logger,
 	}, nil
 }
@@ -306,7 +303,7 @@ func (sp *serviceProvider) SamlSessionAcsHandler() gin.HandlerFunc {
 			return
 		}
 
-		user, err := sp.userProvider.FindByExternalSource(c.Request.Context(), assertionInfo.NameID, security.SourceSaml)
+		user, err := sp.userProvider.FindByExternalSource(c, assertionInfo.NameID, security.SourceSaml)
 		if err != nil {
 			sp.logger.Err(err).Msg("SamlAcsHandler: userProvider FindByExternalSource error")
 			panic(err)
@@ -382,7 +379,7 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 			return
 		}
 
-		user, err := sp.userProvider.FindByExternalSource(c.Request.Context(), assertionInfo.NameID, security.SourceSaml)
+		user, err := sp.userProvider.FindByExternalSource(c, assertionInfo.NameID, security.SourceSaml)
 		if err != nil {
 			sp.logger.Err(err).Msg("SamlAcsHandler: userProvider FindByExternalSource error")
 			panic(err)
@@ -402,25 +399,11 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 		}
 
 		var accessToken string
-		var expiresAt time.Time
 		if assertionInfo.SessionNotOnOrAfter == nil {
-			accessToken, expiresAt, err = sp.tokenService.GenerateToken(user.ID)
+			accessToken, err = sp.tokenService.Create(c, *user, security.AuthMethodSaml)
 		} else {
-			expiresAt = *assertionInfo.SessionNotOnOrAfter
-			accessToken, err = sp.tokenService.GenerateTokenWithExpiration(user.ID, expiresAt)
+			accessToken, err = sp.tokenService.CreateWithExpiration(c, *user, security.AuthMethodSaml, *assertionInfo.SessionNotOnOrAfter)
 		}
-		if err != nil {
-			panic(err)
-		}
-
-		now := time.Now()
-		err = sp.tokenStore.Save(c.Request.Context(), token.Token{
-			ID:       accessToken,
-			User:     user.ID,
-			Provider: security.AuthMethodSaml,
-			Created:  types.CpsTime{Time: now},
-			Expired:  types.CpsTime{Time: expiresAt},
-		})
 		if err != nil {
 			panic(err)
 		}
@@ -469,7 +452,7 @@ func (sp *serviceProvider) SamlSloHandler() gin.HandlerFunc {
 			return
 		}
 
-		user, err := sp.userProvider.FindByExternalSource(c.Request.Context(), request.NameID.Value, security.SourceSaml)
+		user, err := sp.userProvider.FindByExternalSource(c, request.NameID.Value, security.SourceSaml)
 		if err != nil {
 			sp.logger.Err(err).Msg("SamlSloHandler: userProvider FindByExternalSource error")
 			panic(err)
@@ -486,7 +469,7 @@ func (sp *serviceProvider) SamlSloHandler() gin.HandlerFunc {
 			return
 		}
 
-		err = sp.sessionStore.ExpireSessions(c.Request.Context(), user.ID, security.AuthMethodSaml)
+		err = sp.sessionStore.ExpireSessions(c, user.ID, security.AuthMethodSaml)
 		if err != nil {
 			responseUrl, err := sp.buildLogoutResponseUrl(saml2.StatusCodeUnknownPrincipal, request.ID, relayState)
 			if err != nil {
@@ -498,7 +481,7 @@ func (sp *serviceProvider) SamlSloHandler() gin.HandlerFunc {
 			return
 		}
 
-		err = sp.tokenStore.DeleteBy(c.Request.Context(), user.ID, security.AuthMethodSaml)
+		err = sp.tokenService.DeleteBy(c, user.ID, security.AuthMethodSaml)
 		if err != nil {
 			responseUrl, err := sp.buildLogoutResponseUrl(saml2.StatusCodeUnknownPrincipal, request.ID, relayState)
 			if err != nil {
@@ -586,8 +569,6 @@ func (sp *serviceProvider) getSession(c *gin.Context) *sessions.Session {
 }
 
 func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *saml2.AssertionInfo) (*security.User, bool) {
-	ctx := c.Request.Context()
-
 	if !sp.config.Security.Saml.AutoUserRegistration {
 		sp.logger.Err(fmt.Errorf("user with external_id = %s is not found", assertionInfo.NameID)).Msg("AutoUserRegistration is disabled")
 		sp.errorRedirect(c, relayUrl, "This user is not allowed to log into Canopsis")
@@ -597,7 +578,7 @@ func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, asserti
 
 	role := sp.getAssocAttribute(assertionInfo.Values, "role", DefaultUserRole)
 
-	err := sp.roleCollection.FindOne(ctx, bson.M{"crecord_name": role, "crecord_type": "role"}).Err()
+	err := sp.roleCollection.FindOne(c, bson.M{"crecord_name": role, "crecord_type": "role"}).Err()
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			errMessage := fmt.Errorf("role %s doesn't exist", role)
@@ -619,7 +600,7 @@ func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, asserti
 		Lastname:   sp.getAssocAttribute(assertionInfo.Values, "lastname", ""),
 		Email:      sp.getAssocAttribute(assertionInfo.Values, "email", ""),
 	}
-	err = sp.userProvider.Save(ctx, user)
+	err = sp.userProvider.Save(c, user)
 	if err != nil {
 		sp.logger.Err(err).Msg("SamlAcsHandler: userProvider Save error")
 		panic(fmt.Errorf("cannot save user: %v", err))

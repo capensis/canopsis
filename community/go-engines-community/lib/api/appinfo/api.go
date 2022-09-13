@@ -33,15 +33,15 @@ func (a *api) GetAppInfo(c *gin.Context) {
 	response := AppInfoResponse{}
 	var err error
 
-	response.UserInterfaceConf, err = a.store.RetrieveUserInterfaceConfig(c.Request.Context())
+	response.UserInterfaceConf, err = a.store.RetrieveUserInterfaceConfig(c)
 	if err != nil {
 		panic(err)
 	}
-	response.VersionConf, err = a.store.RetrieveVersionConfig(c.Request.Context())
+	response.VersionConf, err = a.store.RetrieveVersionConfig(c)
 	if err != nil {
 		panic(err)
 	}
-	response.Login, err = a.store.RetrieveLoginConfig(c.Request.Context())
+	response.Login, err = a.store.RetrieveLoginConfig(c)
 	if err != nil {
 		panic(err)
 	}
@@ -54,12 +54,12 @@ func (a *api) GetAppInfo(c *gin.Context) {
 		}
 
 		if ok {
-			response.GlobalConf, err = a.store.RetrieveGlobalConfig(c.Request.Context())
+			response.GlobalConf, err = a.store.RetrieveGlobalConfig(c)
 			if err != nil {
 				panic(err)
 			}
 
-			remediation, err := a.store.RetrieveRemediationConfig(c.Request.Context())
+			remediation, err := a.store.RetrieveRemediationConfig(c)
 			if err != nil {
 				panic(err)
 			}
@@ -83,7 +83,7 @@ func (a *api) UpdateUserInterface(c *gin.Context) {
 		return
 	}
 
-	err := a.store.UpdateUserInterfaceConfig(c.Request.Context(), &request)
+	err := a.store.UpdateUserInterfaceConfig(c, &request)
 	if err != nil {
 		panic(err)
 	}
@@ -91,9 +91,32 @@ func (a *api) UpdateUserInterface(c *gin.Context) {
 }
 
 func (a *api) DeleteUserInterface(c *gin.Context) {
-	err := a.store.DeleteUserInterfaceConfig(c.Request.Context())
+	err := a.store.DeleteUserInterfaceConfig(c)
 	if err != nil {
 		panic(err)
 	}
 	c.JSON(http.StatusNoContent, nil)
+}
+
+func (a *api) GetApiSecurity(c *gin.Context) {
+	response, err := a.store.RetrieveApiSecurityConfig(c)
+	if err != nil {
+		panic(err)
+	}
+	c.JSON(http.StatusOK, response)
+}
+
+func (a *api) UpdateApiSecurity(c *gin.Context) {
+	var request map[string]apisecurity.AuthMethodConf
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	response, err := a.store.UpdateApiSecurityConfig(c, request)
+	if err != nil {
+		panic(err)
+	}
+	c.JSON(http.StatusOK, response)
 }

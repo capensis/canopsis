@@ -151,7 +151,6 @@ func RegisterRoutes(
 	security.RegisterCallbackRoutes(router, dbClient)
 	authApi := auth.NewApi(
 		security.GetTokenService(),
-		security.GetTokenStore(),
 		security.GetAuthProviders(),
 		security.GetSessionStore(),
 		websocketHub,
@@ -717,6 +716,20 @@ func RegisterRoutes(
 				appInfoApi.DeleteUserInterface,
 			)
 		}
+		securityRouter := protected.Group("/security")
+		{
+			securityRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.PermSecurityRead, model.PermissionCan, enforcer),
+				appInfoApi.GetApiSecurity,
+			)
+			securityRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.PermSecurityUpdate, model.PermissionCan, enforcer),
+				appInfoApi.UpdateApiSecurity,
+			)
+		}
+
 		protected.GET(
 			"/engine-runinfo",
 			middleware.Authorize(apisecurity.PermHealthcheck, permCan, enforcer),
