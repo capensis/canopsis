@@ -186,37 +186,33 @@ export default {
     },
 
     showAlarmListModal(point) {
-      try {
-        const widget = generateDefaultAlarmListWidget();
+      const widget = generateDefaultAlarmListWidget();
 
-        widget.parameters.widgetColumns = this.widget.parameters.alarms_columns;
+      widget.parameters.widgetColumns = this.widget.parameters.alarms_columns;
 
-        this.$modals.show({
-          name: MODALS.alarmsList,
-          config: {
-            widget,
-            fetchList: async (params) => {
-              const { entity } = point;
+      this.$modals.show({
+        name: MODALS.alarmsList,
+        config: {
+          widget,
+          fetchList: async (params) => {
+            const { entity } = point;
 
-              if (entity.type === ENTITY_TYPES.service) {
-                return this.fetchServiceAlarmsWithoutStore({ id: entity._id, params });
-              }
+            if (entity.type === ENTITY_TYPES.service) {
+              return this.fetchServiceAlarmsWithoutStore({ id: entity._id, params });
+            }
 
-              const alarm = await this.fetchOpenAlarmsListWithoutStore({
-                params: { ...params, _id: point.entity._id },
-              });
-              const data = alarm ? [alarm] : [];
+            const alarm = await this.fetchOpenAlarmsListWithoutStore({
+              params: { ...params, _id: point.entity._id },
+            });
+            const data = alarm ? [alarm] : [];
 
-              return {
-                meta: { total_count: data.length },
-                data,
-              };
-            },
+            return {
+              meta: { total_count: data.length },
+              data,
+            };
           },
-        });
-      } catch (err) {
-        this.$popups.error({ text: this.$t('errors.default') });
-      }
+        },
+      });
     },
   },
 };
