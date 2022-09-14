@@ -77,7 +77,7 @@ import RectShapeSelection from './shapes/rect-shape/rect-shape-selection.vue';
 import CircleShapeSelection from './shapes/circle-shape/circle-shape-selection.vue';
 import LineShapeSelection from './shapes/line-shape/line-shape-selection.vue';
 
-const DOCUMENT_EVENTS = ['mousemove', 'mouseup'];
+const DOCUMENT_EVENTS = ['mousemove', 'mouseup', 'keydown'];
 
 export default {
   provide() {
@@ -243,15 +243,13 @@ export default {
     this.$flowchart.on('mousemove', this.onContainerMouseMove);
     this.$flowchart.on('mouseup', this.onContainerMouseUp);
     this.$flowchart.on('mousedown', this.onContainerMouseDown);
-
-    document.addEventListener('keydown', this.onKeyDown);
+    this.$flowchart.on('keydown', this.onKeyDown);
   },
   beforeDestroy() {
     this.$flowchart.off('mousemove', this.onContainerMouseMove);
     this.$flowchart.off('mouseup', this.onContainerMouseUp);
     this.$flowchart.off('mousedown', this.onContainerMouseDown);
-
-    document.removeEventListener('keydown', this.onKeyDown);
+    this.$flowchart.off('keydown', this.onKeyDown);
   },
   methods: {
     isDocumentEvent(event) {
@@ -551,7 +549,7 @@ export default {
       }
     },
 
-    onKeyDown(event) {
+    onKeyDown({ event }) {
       const tag = document.activeElement.tagName.toLowerCase();
 
       if (['input', 'textarea', 'select'].includes(tag)) {
