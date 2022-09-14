@@ -77,6 +77,8 @@ import RectShapeSelection from './shapes/rect-shape/rect-shape-selection.vue';
 import CircleShapeSelection from './shapes/circle-shape/circle-shape-selection.vue';
 import LineShapeSelection from './shapes/line-shape/line-shape-selection.vue';
 
+const DOCUMENT_EVENTS = ['mousemove', 'mouseup'];
+
 export default {
   provide() {
     return {
@@ -183,11 +185,14 @@ export default {
     },
 
     svgHandlers() {
-      return Object.keys(this.handlers).reduce((acc, event) => {
-        acc[event] = this.callHandlers;
+      return Object.keys(this.handlers)
+        .reduce((acc, event) => {
+          if (!this.isDocumentEvent(event)) {
+            acc[event] = this.callHandlers;
+          }
 
-        return acc;
-      }, {});
+          return acc;
+        }, {});
     },
 
     selectionComponents() {
@@ -249,17 +254,31 @@ export default {
     document.removeEventListener('keydown', this.onKeyDown);
   },
   methods: {
+    isDocumentEvent(event) {
+      return DOCUMENT_EVENTS.includes(event);
+    },
+
     addHandler(event, func) {
       if (this.handlers[event]) {
         this.handlers[event].push(func);
       } else {
         this.$set(this.handlers, event, [func]);
+
+        if (this.isDocumentEvent(event)) {
+          document.addEventListener(event, this.callHandlers);
+        }
       }
     },
 
     removeHandler(event, func) {
       if (this.handlers[event]) {
-        this.handlers[event] = this.handlers[event].filter(handler => handler !== func);
+        const newHandlers = this.handlers[event].filter(handler => handler !== func);
+
+        this.handlers[event] = newHandlers;
+
+        if (!newHandlers.length && this.isDocumentEvent(event)) {
+          document.removeEventListener(event, this.callHandlers);
+        }
       }
     },
 

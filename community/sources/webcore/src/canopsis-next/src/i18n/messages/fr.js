@@ -3093,6 +3093,14 @@ export default merge({
       textbox: 'Textbox',
       image: 'Image',
     },
+    panzoom: {
+      helpText: 'Raccourcis utiles :\n'
+        + 'Ctrl + molette de la souris - zoom avant/arrière\n'
+        + 'Ctrl + Clic gauche de la souris + glisser - déplacer la zone\n'
+        + 'Clic du milieu de la souris + glisser - déplacer la zone\n'
+        + 'Maj + molette de la souris - défilement horizontal\n'
+        + 'Alt + molette de la souris - défilement vertical\n',
+    },
     errors: {
       pointsRequired: 'The points must be added',
     },
