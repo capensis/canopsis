@@ -55,7 +55,11 @@ export default {
     async fetchMapDetails() {
       this.pending = true;
 
-      this.mapDetails = await this.fetchMapWithoutStore({ id: this.map._id });
+      if (this.map.type === MAP_TYPES.treeOfDependencies) {
+        this.mapDetails = await this.fetchMapStateWithoutStore({ id: this.map._id });
+      } else {
+        this.mapDetails = await this.fetchMapWithoutStore({ id: this.map._id });
+      }
 
       this.pending = false;
     },
