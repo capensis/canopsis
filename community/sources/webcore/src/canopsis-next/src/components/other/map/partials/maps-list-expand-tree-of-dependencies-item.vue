@@ -1,7 +1,6 @@
 <template lang="pug">
   tree-of-dependencies-preview.tree-of-dependencies-expand-panel(
-    :entities="entities",
-    :impact="impact"
+    :map="map"
   )
 </template>
 

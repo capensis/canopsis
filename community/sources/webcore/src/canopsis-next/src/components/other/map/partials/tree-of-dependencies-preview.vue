@@ -10,61 +10,111 @@
 </template>
 
 <script>
-import { keyBy, omit } from 'lodash';
+import { omit, cloneDeep } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { COLORS, PAGINATION_LIMIT } from '@/config';
 import {
   TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
   TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
+  TREE_OF_DEPENDENCIES_TYPES,
 } from '@/constants';
+
+import { getTreeOfDependenciesEntityText } from '@/helpers/map';
 
 import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
 const { mapActions } = createNamespacedHelpers('service');
 
+const prepareEntities = (entities = []) => entities.reduce((acc, { entity, pinned_entities: pinnedEntities }) => {
+  const newEntity = {
+    entity: cloneDeep(entity),
+    children: [],
+  };
+
+  pinnedEntities.forEach((pinnedEntity) => {
+    const { _id: id } = pinnedEntity;
+
+    newEntity.children.push(id);
+
+    if (!acc[id]) {
+      acc[id] = {
+        entity: cloneDeep(pinnedEntity),
+      };
+    }
+  });
+
+  acc[entity._id] = newEntity;
+
+  return acc;
+}, {});
+
 export default {
   components: { NetworkGraph },
   props: {
-    entities: {
-      type: Array,
+    map: {
+      type: Object,
       required: true,
-    },
-    impact: {
-      type: Boolean,
-      default: false,
     },
   },
   data() {
     return {
-      childrenByEntityId: {},
+      entitiesById: prepareEntities(this.map.parameters?.entities),
     };
   },
   computed: {
-    rootEntitiesById() {
-      return keyBy(this.entities, 'data._id');
+    impact() {
+      return this.map?.parameters.type === TREE_OF_DEPENDENCIES_TYPES.impactChain;
     },
 
-    allPinnedEntitiesById() {
-      return this.entities.reduce((acc, { pinned = [] } = {}) => {
-        pinned.forEach((entity) => {
-          acc[entity._id] = entity;
-        });
-
-        return acc;
-      }, {});
-    },
-
-    allEntitiesById() {
-      return { ...this.rootEntitiesById, ...this.allPinnedEntitiesById };
+    rootEntities() {
+      return Object.values(this.entitiesById)
+        .filter(entity => entity.children?.length);
     },
 
     cytoscapeClusters() {
-      return this.entities.map(({ data = {}, pinned = [] } = {}) => [
-        data._id,
-
-        ...pinned.filter(({ _id: id }) => !this.rootEntitiesById[id]).map(({ _id: id }) => id),
+      return this.rootEntities.map(({ entity, children }) => [
+        entity._id,
+        ...children.filter(id => !this.entitiesById[id].children?.length),
       ]);
+    },
+
+    entitiesElements() {
+      return this.rootEntities.reduce((acc, { entity, children = [] }) => {
+        acc.push(
+          {
+            group: 'nodes',
+            data: {
+              id: entity._id,
+              entity,
+              root: true,
+            },
+          },
+        );
+
+        children.forEach((childId) => {
+          const child = this.entitiesById[childId];
+
+          acc.push(
+            {
+              group: 'nodes',
+              data: {
+                id: childId,
+                entity: child.entity,
+              },
+            },
+            {
+              group: 'edges',
+              data: {
+                source: entity._id,
+                target: childId,
+              },
+            },
+          );
+        });
+
+        return acc;
+      }, []);
     },
 
     styleOption() {
@@ -113,45 +163,9 @@ export default {
           query: 'node',
           valign: 'center',
           halign: 'center',
-          tpl: data => `<div class="secondary v-btn__content" style="width: ${nodeSize}px; height: ${nodeSize}px; border-radius: 50%;">${getContent(data)}<div class="position-absolute" style="top: ${nodeSize}px">${data.entity?.name}</div></div>`,
+          tpl: data => `<div class="secondary v-btn__content" style="width: ${nodeSize}px; height: ${nodeSize}px; border-radius: 50%;">${getContent(data)}<div class="position-absolute" style="top: ${nodeSize}px">${getTreeOfDependenciesEntityText(data.entity)}</div></div>`,
         },
       ];
-    },
-
-    entitiesElements() {
-      return this.entities.reduce((acc, { data, pinned = [] }) => {
-        acc.push(
-          {
-            group: 'nodes',
-            data: {
-              id: data._id,
-              entity: data,
-              root: true,
-            },
-          },
-        );
-
-        pinned.forEach((entity) => {
-          acc.push(
-            {
-              group: 'nodes',
-              data: {
-                id: entity._id,
-                entity,
-              },
-            },
-            {
-              group: 'edges',
-              data: {
-                source: data._id,
-                target: entity._id,
-              },
-            },
-          );
-        });
-
-        return acc;
-      }, []);
     },
 
     options() {
@@ -226,12 +240,12 @@ export default {
       this.$refs.networkGraph.$cy.add(addedElements);
     },
 
-    removeChildrenElements(elements, sourceId) {
-      const nodesForRemoveSelectors = elements.map(({ _id: id }) => `node[id = "${id}"]`);
+    removeChildrenElements(elementsIds, sourceId) {
+      const nodesForRemoveSelectors = elementsIds.map(id => `node[id = "${id}"]`);
       const nodesForRemove = this.$refs.networkGraph.$cy.elements(nodesForRemoveSelectors.join(','));
       const filteredNodesForRemove = nodesForRemove.filter(node => node.connectedEdges().size() === 1);
 
-      const edgesForRemoveSelectors = elements.map(({ _id: id }) => `edge[source = "${sourceId}"][target = "${id}"]`);
+      const edgesForRemoveSelectors = elementsIds.map(id => `edge[source = "${sourceId}"][target = "${id}"]`);
       const edgesForRemove = this.$refs.networkGraph.$cy.elements(edgesForRemoveSelectors.join(','));
 
       filteredNodesForRemove.remove();
@@ -251,14 +265,16 @@ export default {
       }
 
       if (opened) {
-        this.removeChildrenElements(this.childrenByEntityId[id], id);
+        const { children } = this.entitiesById[id];
+
+        this.removeChildrenElements(children, id);
 
         target.data({
           pending: false,
           opened: false,
         });
 
-        this.$delete(this.childrenByEntityId, id);
+        this.$delete(this.entitiesById[id], 'children');
 
         this.runLayout();
 
@@ -276,7 +292,19 @@ export default {
         pending: false,
       });
 
-      this.$set(this.childrenByEntityId, id, data);
+      const ids = data.map((item) => {
+        let newEntity = item;
+
+        if (this.entitiesById[item._id]) {
+          newEntity = { ...this.entitiesById[item._id], ...newEntity };
+        }
+
+        this.$set(this.entitiesById, item._id, newEntity);
+
+        return item._id;
+      });
+
+      this.$set(this.entitiesById[id], 'children', ids);
 
       this.addChildrenElements(data, id);
       this.runLayout();
