@@ -17,7 +17,6 @@ CURRENT_BUILD_OUTPUT_DIR = $(CURRENT_ROOT_DIR)/build
 
 # Path of the monorepo
 MONOREPO_ROOT := $(realpath $(dir $(COMMUNITY_MAKEFILE))/../..)
-VPATH = $(dir $(CURRENT_MAKEFILE))
 
 # List of cmds/engines to build and install (eg: engine-che connector-junit...)
 CMDS = $(notdir $(wildcard $(CURRENT_ROOT_DIR)/cmd/*))
