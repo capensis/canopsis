@@ -17,6 +17,7 @@
 
     component.flowchart-points-editor__point(
       v-for="{ point, x, y } in shapesIcons",
+      :key="point._id",
       :height="iconSize",
       :width="iconSize",
       :x="x",
