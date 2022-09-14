@@ -275,12 +275,20 @@ export default {
     },
 
     handleMouseDown({ event, cursor }) {
+      if (event.buttons !== 1) {
+        return;
+      }
+
       this.mouseDownTimestamp = event.timeStamp;
       this.mouseDownCursorX = cursor.x;
       this.mouseDownCursorY = cursor.y;
     },
 
     handleMouseUp({ event, cursor }) {
+      if (event.buttons !== 1) {
+        return;
+      }
+
       if (
         Math.abs(cursor.x - this.mouseDownCursorX) < FLOWCHART_MAX_POSITION_DIFF
         && Math.abs(cursor.y - this.mouseDownCursorY) < FLOWCHART_MAX_POSITION_DIFF
