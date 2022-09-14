@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { keyBy } from 'lodash';
+import { keyBy, omit } from 'lodash';
 
 import { COLORS } from '@/config';
 
@@ -138,7 +138,7 @@ export default {
 
     options() {
       const options = {
-        ...TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
+        ...omit(TREE_OF_DEPENDENCIES_GRAPH_OPTIONS, ['nodeSize']),
 
         style: this.styleOption,
         elements: this.entitiesElements,

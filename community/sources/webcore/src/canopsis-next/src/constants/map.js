@@ -52,9 +52,10 @@ export const TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS = {
   animate: 'end',
   fit: true,
   padding: 40,
-  nodeSeparation: 250,
-  nodeRepulsion: 250,
+  nodeSeparation: 150,
+  nodeRepulsion: 4500,
   idealInterClusterEdgeLengthCoefficient: 2,
+  allowNodesInsideCircle: false,
 };
 
 export const TREE_OF_DEPENDENCIES_TYPES = {

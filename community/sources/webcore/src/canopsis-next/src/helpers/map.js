@@ -1,3 +1,5 @@
+import { ENTITY_TYPES } from '@/constants';
+
 /**
  * Get icon data by geo map point
  *
@@ -24,3 +26,15 @@ export const getGeomapMarkerIcon = (point, size) => {
       : [halfIconSize, halfIconSize],
   };
 };
+
+/**
+ * Get text for displaying in tree of dependencies components for entity
+ *
+ * @param {Entity} entity
+ * @returns {string}
+ */
+export const getTreeOfDependenciesEntityText = entity => (
+  entity.type === ENTITY_TYPES.resource
+    ? entity._id
+    : entity.name
+);

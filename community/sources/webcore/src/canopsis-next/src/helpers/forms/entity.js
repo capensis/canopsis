@@ -6,6 +6,7 @@ import { infosToArray } from './shared/common';
 
 /**
  * @typedef {Object} Entity
+ * @property {string} [_id]
  * @property {string} name
  * @property {string} description
  * @property {string} type
