@@ -39,6 +39,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { ENTITY_TYPES, MAX_LIMIT } from '@/constants';
 
 import uid from '@/helpers/uid';
+import { getTreeOfDependenciesEntityText } from '@/helpers/map';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -95,7 +96,7 @@ export default {
     }),
 
     getItemText(item) {
-      return item.type === ENTITY_TYPES.service ? item.name : item._id;
+      return getTreeOfDependenciesEntityText(item);
     },
 
     isItemDisabled(item) {
