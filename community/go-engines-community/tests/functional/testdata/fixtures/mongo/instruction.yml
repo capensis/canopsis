@@ -1485,6 +1485,34 @@ instruction:
     entity_pattern:
     alarm_pattern:
 
+  instruction_alarm_instruction_get_11:
+    <<: *instruction_auto
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-11
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-5
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_12:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-12
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-12
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
   instruction_alarm_correlation_instruction_get_1_1:
     <<: *instruction_manual
     enabled: false

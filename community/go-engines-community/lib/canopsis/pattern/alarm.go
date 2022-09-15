@@ -189,7 +189,7 @@ func (p Alarm) ToMongoQuery(prefix string) (bson.M, error) {
 
 				condQueries[j], err = cond.Condition.ToMongoQuery(f)
 				if err != nil {
-					return nil, err
+					return nil, fmt.Errorf("invalid condition for %q field: %w", f, err)
 				}
 
 				conds := getTypeMongoQuery(f, cond.FieldType)
@@ -205,7 +205,7 @@ func (p Alarm) ToMongoQuery(prefix string) (bson.M, error) {
 			f = prefix + f
 			condQueries[j], err = cond.Condition.ToMongoQuery(f)
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("invalid condition for %q field: %w", f, err)
 			}
 		}
 

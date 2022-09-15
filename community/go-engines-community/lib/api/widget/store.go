@@ -502,6 +502,7 @@ func transformFilterRequestToModel(r FilterRequest) view.WidgetFilter {
 		AlarmPatternFields:     r.AlarmPatternFieldsRequest.ToModel(),
 		EntityPatternFields:    r.EntityPatternFieldsRequest.ToModel(),
 		PbehaviorPatternFields: r.PbehaviorPatternFieldsRequest.ToModel(),
+		InstructionPattern:     r.InstructionPattern,
 		WeatherServicePattern:  r.WeatherServicePattern,
 	}
 }

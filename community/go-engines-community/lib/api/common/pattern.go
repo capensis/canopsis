@@ -205,7 +205,7 @@ func ValidateEventPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate(nil)
+	return p.Validate()
 }
 
 func ValidateEntityPattern(fl validator.FieldLevel) bool {
@@ -231,7 +231,7 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate(nil)
+	return p.Validate()
 }
 
 func GetForbiddenFieldsInEntityPattern(collection string) []string {

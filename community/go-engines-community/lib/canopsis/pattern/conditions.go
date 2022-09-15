@@ -141,7 +141,7 @@ func NewDurationCondition(t string, d types.DurationWithUnit) (Condition, error)
 	}, nil
 }
 
-func (c Condition) MatchString(value string) (bool, RegexMatches, error) {
+func (c *Condition) MatchString(value string) (bool, RegexMatches, error) {
 	switch c.Type {
 	case ConditionEqual:
 		if c.valueStr == nil {
@@ -191,7 +191,7 @@ func (c Condition) MatchString(value string) (bool, RegexMatches, error) {
 	return false, nil, ErrUnsupportedConditionType
 }
 
-func (c Condition) MatchInt(value int64) (bool, error) {
+func (c *Condition) MatchInt(value int64) (bool, error) {
 	if c.valueInt == nil {
 		return false, ErrWrongConditionValue
 	}
@@ -210,7 +210,7 @@ func (c Condition) MatchInt(value int64) (bool, error) {
 	return false, ErrUnsupportedConditionType
 }
 
-func (c Condition) MatchBool(value bool) (bool, error) {
+func (c *Condition) MatchBool(value bool) (bool, error) {
 	if c.valueBool == nil {
 		return false, ErrWrongConditionValue
 	}
@@ -223,7 +223,7 @@ func (c Condition) MatchBool(value bool) (bool, error) {
 	return false, ErrUnsupportedConditionType
 }
 
-func (c Condition) MatchRef(value interface{}) (bool, error) {
+func (c *Condition) MatchRef(value interface{}) (bool, error) {
 	if c.valueBool == nil {
 		return false, ErrWrongConditionValue
 	}
@@ -236,7 +236,7 @@ func (c Condition) MatchRef(value interface{}) (bool, error) {
 	return false, ErrUnsupportedConditionType
 }
 
-func (c Condition) MatchStringArray(value []string) (bool, error) {
+func (c *Condition) MatchStringArray(value []string) (bool, error) {
 	if c.Type == ConditionIsEmpty {
 		if c.valueBool == nil {
 			return false, ErrWrongConditionValue
@@ -287,7 +287,7 @@ func (c Condition) MatchStringArray(value []string) (bool, error) {
 	return false, ErrUnsupportedConditionType
 }
 
-func (c Condition) MatchTime(value time.Time) (bool, error) {
+func (c *Condition) MatchTime(value time.Time) (bool, error) {
 	switch c.Type {
 	case ConditionTimeRelative:
 		if c.valueDuration == nil {
@@ -306,7 +306,7 @@ func (c Condition) MatchTime(value time.Time) (bool, error) {
 	return false, ErrUnsupportedConditionType
 }
 
-func (c Condition) MatchDuration(value int64) (bool, error) {
+func (c *Condition) MatchDuration(value int64) (bool, error) {
 	if c.valueDuration == nil {
 		return false, ErrWrongConditionValue
 	}
@@ -321,7 +321,7 @@ func (c Condition) MatchDuration(value int64) (bool, error) {
 	return false, ErrUnsupportedConditionType
 }
 
-func (c Condition) ToMongoQuery(f string) (bson.M, error) {
+func (c *Condition) ToMongoQuery(f string) (bson.M, error) {
 	switch c.Type {
 	case ConditionEqual:
 		return bson.M{f: bson.M{"$eq": c.Value}}, nil
@@ -394,7 +394,7 @@ func (c Condition) ToMongoQuery(f string) (bson.M, error) {
 }
 
 // ToSql doesn't support all conditions. Add on demand.
-func (c Condition) ToSql(f string) (string, error) {
+func (c *Condition) ToSql(f string) (string, error) {
 	switch c.Type {
 	case ConditionEqual:
 		if c.valueStr != nil {
@@ -469,7 +469,7 @@ func (c Condition) ToSql(f string) (string, error) {
 }
 
 // ToSqlJson doesn't support all conditions. Add on demand.
-func (c Condition) ToSqlJson(field, key, keyType string) (string, error) {
+func (c *Condition) ToSqlJson(field, key, keyType string) (string, error) {
 	cast := ""
 	checkType := ""
 	operand := fmt.Sprintf("%s->%s", field, sqlQuoteString(key))
@@ -650,21 +650,25 @@ func (c *Condition) parseValue() {
 			return
 		}
 
+		c.Value = s
 		c.valueStr = &s
 		return
 	}
 
 	if i, err := getIntValue(c.Value); err == nil {
+		c.Value = i
 		c.valueInt = &i
 		return
 	}
 
 	if b, err := getBoolValue(c.Value); err == nil {
+		c.Value = b
 		c.valueBool = &b
 		return
 	}
 
 	if a, err := getStringArrayValue(c.Value); err == nil {
+		c.Value = a
 		c.valueStrArray = a
 		return
 	}

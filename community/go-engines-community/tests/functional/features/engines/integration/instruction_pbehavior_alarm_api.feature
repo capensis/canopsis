@@ -229,7 +229,29 @@ Feature: Get alarms
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?include_instructions[]={{ .instructionID1 }}&with_instructions=true&sort_by=d&sort=asc
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-instruction-pbehavior-alarm-api-1",
+      "widget": "test-widget-to-alarm-get",
+      "is_private": true,
+      "instruction_pattern": [
+        [
+          {
+            "field": "instructions",
+            "cond": {
+              "type": "has_one_of",
+              "value": [
+                "{{ .instructionID1 }}"
+              ]
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&with_instructions=true&sort_by=d&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -289,7 +311,29 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?include_instructions[]={{ .instructionID2 }}&with_instructions=true&sort_by=d&sort=asc
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-instruction-pbehavior-alarm-api-1",
+      "widget": "test-widget-to-alarm-get",
+      "is_private": true,
+      "instruction_pattern": [
+        [
+          {
+            "field": "instructions",
+            "cond": {
+              "type": "has_one_of",
+              "value": [
+                "{{ .instructionID2 }}"
+              ]
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&with_instructions=true&sort_by=d&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -319,7 +363,29 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?include_instructions[]={{ .instructionID3 }}&with_instructions=true&sort_by=d&sort=asc
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-instruction-pbehavior-alarm-api-1",
+      "widget": "test-widget-to-alarm-get",
+      "is_private": true,
+      "instruction_pattern": [
+        [
+          {
+            "field": "instructions",
+            "cond": {
+              "type": "has_one_of",
+              "value": [
+                "{{ .instructionID3 }}"
+              ]
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&with_instructions=true&sort_by=d&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
