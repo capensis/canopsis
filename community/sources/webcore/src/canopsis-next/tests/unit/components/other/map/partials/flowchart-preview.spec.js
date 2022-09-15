@@ -127,7 +127,7 @@ describe('flowchart-preview', () => {
     });
   });
 
-  test.only('Shapes color changed by point with color indicator state', async () => {
+  test('Shapes color changed by point with color indicator state', async () => {
     const wrapper = factory({
       propsData: {
         map,
