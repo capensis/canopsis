@@ -39,7 +39,9 @@ export default {
   watch: {
     nodeHtmlLabelOptions(newOptions, oldOptions) {
       if (!isEqual(newOptions, oldOptions)) {
-        this.$cy.nodeHtmlLabel(newOptions);
+        this.$cy.nodeHtmlLabel(newOptions, {
+          enablePointerEvents: true,
+        });
       }
     },
   },
