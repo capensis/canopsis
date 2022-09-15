@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-zoom-overlay
+  c-zoom-overlay.tree-of-dependencies__preview
     network-graph.fill-height(
       ref="networkGraph",
       :options="options",
@@ -17,10 +17,14 @@ import { COLORS, PAGINATION_LIMIT } from '@/config';
 import {
   TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
   TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
-  TREE_OF_DEPENDENCIES_TYPES,
+  TREE_OF_DEPENDENCIES_TYPES, ENTITY_TYPES,
 } from '@/constants';
 
 import { getTreeOfDependenciesEntityText } from '@/helpers/map';
+import { getEntityColor } from '@/helpers/color';
+
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/engineering.svg';
 
 import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
@@ -55,6 +59,10 @@ export default {
     map: {
       type: Object,
       required: true,
+    },
+    colorIndicator: {
+      type: String,
+      required: false,
     },
   },
   data() {
@@ -124,9 +132,6 @@ export default {
           style: {
             width: TREE_OF_DEPENDENCIES_GRAPH_OPTIONS.nodeSize,
             height: TREE_OF_DEPENDENCIES_GRAPH_OPTIONS.nodeSize,
-            'font-size': '10px',
-            'background-color': COLORS.secondary,
-            'border-color': COLORS.secondary,
           },
         },
         {
@@ -146,16 +151,100 @@ export default {
 
     nodeHtmlLabelsOptions() {
       const { nodeSize } = TREE_OF_DEPENDENCIES_GRAPH_OPTIONS;
+
+      const getIconEl = (entity) => {
+        const el = document.createElement('i');
+        el.classList.add(
+          'v-icon',
+          'material-icons',
+          'theme--light',
+          'white--text',
+          'tree-of-dependencies__node-icon',
+        );
+
+        el.innerHTML = entity.type === ENTITY_TYPES.service
+          ? engineeringIcon
+          : 'person';
+
+        return el;
+      };
+
+      const getProgressEl = () => {
+        const progressContentCircleEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        progressContentCircleEl.classList.add('v-progress-circular__overlay');
+        progressContentCircleEl.setAttribute('fill', 'transparent');
+        progressContentCircleEl.setAttribute('cx', '45.714285714285715');
+        progressContentCircleEl.setAttribute('cy', '45.714285714285715');
+        progressContentCircleEl.setAttribute('r', '15');
+        progressContentCircleEl.setAttribute('stroke-width', '3');
+        progressContentCircleEl.setAttribute('stroke-dasharray', '125.664');
+        progressContentCircleEl.setAttribute('stroke-dashoffset', '125.66370614359172px');
+
+        const progressContentEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        progressContentEl.setAttribute('viewBox', '22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715');
+        progressContentEl.appendChild(progressContentCircleEl);
+
+        const progressEl = document.createElement('div');
+        progressEl.appendChild(progressContentEl);
+        progressEl.classList.add(
+          'v-progress-circular',
+          'v-progress-circular--indeterminate',
+          'white--text',
+          'position-relative',
+        );
+
+        return progressEl;
+      };
+
+      const getBadgeIconEl = (entity, opened) => {
+        const badgeIconEl = document.createElement('i');
+        badgeIconEl.classList.add(
+          'v-icon',
+          'material-icons',
+          'theme--light',
+          'white--text',
+          'tree-of-dependencies__load-children',
+        );
+        badgeIconEl.dataset.id = entity._id;
+        badgeIconEl.textContent = opened ? 'remove' : 'add';
+
+        return badgeIconEl;
+      };
+
+      const getBadgeEl = (entity, opened, pending) => {
+        const badgeEl = document.createElement('span');
+        badgeEl.appendChild(pending ? getProgressEl() : getBadgeIconEl(entity, opened));
+        badgeEl.classList.add(
+          'v-badge__badge',
+          'grey',
+          'darken-1',
+          'cursor-pointer',
+        );
+
+        return badgeEl;
+      };
+
       const getContent = ({ entity, opened, pending, root }) => {
-        if (pending) {
-          return '<div class="v-progress-circular v-progress-circular--indeterminate white--text position-relative" style="height: 100%; width: 100%;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715" style="transform: rotate(0deg);"><circle fill="transparent" cx="45.714285714285715" cy="45.714285714285715" r="15" stroke-width="3" stroke-dasharray="125.664" stroke-dashoffset="125.66370614359172px" class="v-progress-circular__overlay"></circle></svg><div class="v-progress-circular__info"></div></div>';
+        const nodeLabelEl = document.createElement('div');
+        nodeLabelEl.classList.add('position-absolute');
+        nodeLabelEl.style.top = `${nodeSize}px`;
+        nodeLabelEl.textContent = getTreeOfDependenciesEntityText(entity);
+
+        const nodeEl = document.createElement('div');
+        nodeEl.appendChild(getIconEl(entity));
+        nodeEl.appendChild(nodeLabelEl);
+        nodeEl.classList.add('v-btn__content', 'position-relative', 'border-radius-rounded');
+        nodeEl.style.width = `${nodeSize}px`;
+        nodeEl.style.height = `${nodeSize}px`;
+        nodeEl.style.background = !this.colorIndicator
+          ? COLORS.secondary
+          : getEntityColor(entity, this.colorIndicator);
+
+        if (entity[this.countProperty] && !root) {
+          nodeEl.appendChild(getBadgeEl(entity, opened, pending));
         }
 
-        const count = entity[this.countProperty];
-
-        return (count && !root)
-          ? `<i class="v-icon material-icons theme--light white--text">${opened ? 'remove' : 'add'}</i>`
-          : '';
+        return nodeEl.outerHTML;
       };
 
       return [
@@ -163,7 +252,7 @@ export default {
           query: 'node',
           valign: 'center',
           halign: 'center',
-          tpl: data => `<div class="secondary v-btn__content" style="width: ${nodeSize}px; height: ${nodeSize}px; border-radius: 50%;">${getContent(data)}<div class="position-absolute" style="top: ${nodeSize}px">${getTreeOfDependenciesEntityText(data.entity)}</div></div>`,
+          tpl: data => getContent(data),
         },
       ];
     },
@@ -182,6 +271,12 @@ export default {
         elements: this.entitiesElements,
       };
     },
+  },
+  mounted() {
+    this.$refs.networkGraph.$cy.on('mousedown', this.mousedownHandler);
+  },
+  beforeDestroy() {
+    this.$refs.networkGraph.$cy.off('mousedown', this.mousedownHandler);
   },
   methods: {
     ...mapActions({
@@ -253,12 +348,14 @@ export default {
     },
 
     /**
-     * Handler for the 'tap' event on node for cytoscape
+     * Method for children loading for special node
      *
-     * @param {Object} target
+     * @param {string} id
      */
-    async nodeTapHandler({ target }) {
-      const { id, opened, entity, root } = target.data();
+    async loadChildrenById(id) {
+      const target = this.$refs.networkGraph.$cy.elements(`node[id = "${id}"]`);
+
+      const { opened, entity, root } = target.data();
 
       if (!entity[this.countProperty] || root) {
         return;
@@ -310,6 +407,24 @@ export default {
       this.runLayout();
     },
 
+    /**
+     * Handler for cytoscape `mousedown` event
+     *
+     * @param {Object} event
+     */
+    mousedownHandler(event) {
+      const { originalEvent } = event;
+      if (!originalEvent.target.classList.contains('tree-of-dependencies__load-children')) {
+        return;
+      }
+
+      originalEvent.preventDefault();
+
+      this.loadChildrenById(originalEvent.target.dataset.id);
+    },
+
+    nodeTapHandler() {},
+
     fetchDependenciesList(data) {
       return this.impact
         ? this.fetchServiceImpactsWithoutStore(data)
@@ -318,3 +433,34 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.tree-of-dependencies__preview {
+  & /deep/ canvas[data-id='layer0-selectbox'] { // Hide selectbox layer from cytoscape
+    display: none;
+  }
+
+  & /deep/ .v-badge__badge {
+    top: -7px;
+    right: -7px;
+  }
+
+  & /deep/ .v-progress-circular {
+    width: 20px;
+    height: 20px;
+  }
+
+  & /deep/ .tree-of-dependencies__node-icon {
+    font-size: 30px;
+
+    svg {
+      height: 30px;
+    }
+  }
+
+  & /deep/ .tree-of-dependencies__load-children {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
+}
+</style>
