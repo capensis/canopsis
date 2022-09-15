@@ -378,6 +378,7 @@ Feature: Update a widget filter
         "corporate_entity_pattern": "CorporateEntityPattern is missing.",
         "pbehavior_pattern": "PbehaviorPattern is missing.",
         "corporate_pbehavior_pattern": "CorporatePbehaviorPattern is missing.",
+        "instruction_pattern": "InstructionPattern is missing.",
         "weather_service_pattern": "WeatherServicePattern is missing."
       }
     }

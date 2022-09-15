@@ -704,13 +704,35 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	}
 }
 
-func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstructionsFilter_ShouldBuildQueryWithLookupsBeforeLimit(t *testing.T) {
+func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetFilterWithInstructionPattern_ShouldBuildQueryWithLookupsBeforeLimit(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	instructionId := "test-instruction"
+	filterId := "test-filter"
+	filter := view.WidgetFilter{
+		InstructionPattern: view.InstructionPattern{
+			{
+				{
+					Field:     "instruction_execution",
+					Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+				},
+				{
+					Field:     "instructions",
+					Condition: pattern.NewStringArrayCondition(pattern.ConditionHasOneOf, []string{instructionId}),
+				},
+			},
+		},
+	}
+	mockFilterDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockSingleResult := mock_mongo.NewMockSingleResultHelper(ctrl)
+	mockSingleResult.EXPECT().Decode(gomock.Any()).Do(func(v *view.WidgetFilter) {
+		*v = filter
+	})
+	mockFilterDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Eq(bson.M{"_id": filterId})).Return(mockSingleResult)
+
 	mockCursor := mock_mongo.NewMockCursor(ctrl)
 	mockCursor.EXPECT().Next(gomock.Any()).Return(true)
 	mockCursor.EXPECT().Next(gomock.Any()).Return(false)
@@ -754,7 +776,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 			},
 		}
 	})
-	mockFilterDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockInstructionDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockInstructionDbCollection.EXPECT().Find(gomock.Any(), gomock.Eq(bson.M{
 		"_id":    bson.M{"$in": []string{instructionId}},
@@ -777,7 +798,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					IncludeInstructions: []string{instructionId},
+					Filter: filterId,
 				},
 			},
 		},
@@ -814,28 +835,36 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
+	expected = append(expected, getInstructionExecutionLookup()...)
 	expected = append(expected,
 		bson.M{"$match": bson.M{"entity.enabled": true}},
-		bson.M{"$match": bson.M{"$and": []bson.M{
-			{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"$or": []bson.M{{"$and": []bson.M{
-						{"v.duration": bson.M{"$gt": 600}},
-						{"$and": []bson.M{
-							{"v.infos_array.v.info_name": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
-							{"v.infos_array.v.info_name": bson.M{"$eq": 3}},
-						}},
-					}}}},
-					{"$or": []bson.M{{"$and": []bson.M{
-						{"entity.category": bson.M{"$eq": "test-category"}},
-					}}}},
-					{"v.pbehavior_info.type": bson.M{"$in": []string{"maintenance"}}},
-					{"v.pbehavior_info.type": bson.M{"$nin": []string{"pause"}}},
+		bson.M{"$match": bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"instruction_execution": bson.M{
+					"$exists": true,
+					"$ne":     nil,
+				}},
+				{"$or": []bson.M{
+					{"$and": []bson.M{
+						{"$or": []bson.M{{"$and": []bson.M{
+							{"v.duration": bson.M{"$gt": 600}},
+							{"$and": []bson.M{
+								{"v.infos_array.v.info_name": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
+								{"v.infos_array.v.info_name": bson.M{"$eq": 3}},
+							}},
+						}}}},
+						{"$or": []bson.M{{"$and": []bson.M{
+							{"entity.category": bson.M{"$eq": "test-category"}},
+						}}}},
+						{"v.pbehavior_info.type": bson.M{"$in": []string{"maintenance"}}},
+						{"v.pbehavior_info.type": bson.M{"$nin": []string{"pause"}}},
+					}},
 				}},
 			}},
 		}}},
 		bson.M{"$project": bson.M{
-			"entity": 0,
+			"entity":                0,
+			"instruction_execution": 0,
 		}},
 		bson.M{"$facet": bson.M{
 			"data":        expectedDataPipeline,
