@@ -59,6 +59,7 @@ import { PAGINATION_LIMIT } from '@/config';
 import { MODALS, ENTITY_TYPES, DEFAULT_SERVICE_DEPENDENCIES_COLUMNS, COLOR_INDICATOR_TYPES } from '@/constants';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
+import { getIconByEntityType } from '@/helpers/entities/entity';
 import { getEntityColor } from '@/helpers/color';
 import {
   dependencyToTreeviewDependency,
@@ -186,7 +187,7 @@ export default {
     }),
 
     getIconByEntity(entity) {
-      return entity.type === ENTITY_TYPES.service ? '$vuetify.icons.engineering' : 'person';
+      return getIconByEntityType(entity.type);
     },
 
     getEntityColor(entity) {

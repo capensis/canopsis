@@ -20,12 +20,14 @@ export default {
       }
 
       if (event.ctrlKey) {
+        event.preventDefault();
         this.shown = false;
+
         return;
       }
 
       this.shown = true;
-      this.timer = setTimeout(() => this.shown = false, 2000); // TODO: move to constants
+      this.timer = setTimeout(() => this.shown = false, 1500); // TODO: move to constants
     },
   },
 };
