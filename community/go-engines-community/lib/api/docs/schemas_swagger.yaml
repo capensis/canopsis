@@ -387,28 +387,12 @@ definitions:
         type: string
       correlation:
         type: boolean
-      exclude_instruction_types:
-        items:
-          type: integer
-        type: array
-      exclude_instructions:
-        items:
-          type: string
-        type: array
       fields:
         items:
           $ref: '#/definitions/export.Field'
         type: array
       filter:
         type: string
-      include_instruction_types:
-        items:
-          type: integer
-        type: array
-      include_instructions:
-        items:
-          type: string
-        type: array
       opened:
         type: boolean
       search:
@@ -4227,6 +4211,12 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      instruction_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       pbehavior_pattern:
         items:
           items:
@@ -4284,6 +4274,12 @@ definitions:
       corporate_pbehavior_pattern:
         type: string
       entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      instruction_pattern:
         items:
           items:
             $ref: '#/definitions/pattern.FieldCondition'

@@ -3,6 +3,7 @@ package widgetfilter
 import (
 	"context"
 	"errors"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
@@ -28,6 +29,7 @@ func (v *Validator) ValidatePatterns(ctx context.Context, sl validator.StructLev
 	if len(r.AlarmPattern) == 0 && r.CorporateAlarmPattern == "" &&
 		len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" &&
 		len(r.PbehaviorPattern) == 0 && r.CorporatePbehaviorPattern == "" &&
+		len(r.InstructionPattern) == 0 &&
 		len(r.WeatherServicePattern) == 0 {
 
 		if id != "" {
@@ -46,7 +48,12 @@ func (v *Validator) ValidatePatterns(ctx context.Context, sl validator.StructLev
 		sl.ReportError(r.PbehaviorPattern, "PbehaviorPattern", "PbehaviorPattern", "required", "")
 		sl.ReportError(r.CorporatePbehaviorPattern, "CorporatePbehaviorPattern", "CorporatePbehaviorPattern", "required", "")
 
+		sl.ReportError(r.InstructionPattern, "InstructionPattern", "InstructionPattern", "required", "")
 		sl.ReportError(r.WeatherServicePattern, "WeatherServicePattern", "WeatherServicePattern", "required", "")
+	}
+
+	if !r.InstructionPattern.Validate() {
+		sl.ReportError(r.InstructionPattern, "InstructionPattern", "InstructionPattern", "instruction_pattern", "")
 	}
 
 	if !r.WeatherServicePattern.Validate() {
