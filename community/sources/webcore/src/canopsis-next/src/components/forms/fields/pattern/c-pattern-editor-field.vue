@@ -203,7 +203,6 @@ export default {
     this.$validator.attach({
       name: this.name,
       getter: () => this.patterns.length,
-      context: () => this,
       vm: this,
     });
   },
