@@ -133,7 +133,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleFilter(r.FilterRequest)
+	err = q.handleFilter(ctx, r.FilterRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +152,7 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleFilter(r)
+	err = q.handleFilter(ctx, r)
 	if err != nil {
 		return nil, err
 	}
@@ -354,7 +354,7 @@ func (q *MongoQueryBuilder) addFieldsToPipeline(fieldsMap, addedFields map[strin
 	*pipeline = append(*pipeline, bson.M{"$addFields": query})
 }
 
-func (q *MongoQueryBuilder) handleFilter(r FilterRequest) error {
+func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest) error {
 	alarmMatch := make([]bson.M, 0)
 
 	q.addOpenedFilter(r, &alarmMatch)
@@ -379,6 +379,11 @@ func (q *MongoQueryBuilder) handleFilter(r FilterRequest) error {
 
 	entityMatch := make([]bson.M, 0)
 	q.addCategoryFilter(r, &entityMatch)
+	q.addInstructionExecutionFilter(r, &entityMatch)
+	err = q.addInstructionsFilter(ctx, r, &entityMatch)
+	if err != nil {
+		return err
+	}
 	if len(entityMatch) > 0 {
 		q.lookupsForAdditionalMatch["entity"] = true
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": bson.M{"$and": entityMatch}})
@@ -440,15 +445,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": entityPatternQuery})
 	}
 
-	instructionQuery, err := q.getInstructionsPatternQuery(ctx, filter.InstructionPattern)
-	if err != nil {
-		return fmt.Errorf("invalid instruction pattern in widget filter id=%q: %w", filter.ID, err)
-	}
-	if len(instructionQuery) > 0 {
-		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": instructionQuery})
-	}
-
-	if len(alarmPatternQuery) == 0 && len(pbhPatternQuery) == 0 && len(entityPatternQuery) == 0 && len(instructionQuery) == 0 &&
+	if len(alarmPatternQuery) == 0 && len(pbhPatternQuery) == 0 && len(entityPatternQuery) == 0 &&
 		len(filter.OldMongoQuery) > 0 {
 		var query map[string]interface{}
 		err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
@@ -625,87 +622,78 @@ func (q *MongoQueryBuilder) addOnlyParentsFilter(r FilterRequest, match *[]bson.
 	q.excludedFields = append(q.excludedFields, "resolved_children")
 }
 
-func (q *MongoQueryBuilder) getInstructionsPatternQuery(ctx context.Context, p view.InstructionPattern) (bson.M, error) {
-	if len(p) == 0 {
-		return nil, nil
+func (q *MongoQueryBuilder) addInstructionExecutionFilter(r FilterRequest, match *[]bson.M) {
+	if r.HasRunningExecution == nil {
+		return
 	}
 
-	groupQueries := make([]bson.M, len(p))
-	var err error
-	for i, group := range p {
-		condQueries := make([]bson.M, len(group))
-		for j, fieldCond := range group {
-			f := fieldCond.Field
-			cond := fieldCond.Condition
+	q.lookupsOnlyForAdditionalMatch["instruction_execution"] = true
+	q.lookups = append(q.lookups, lookupWithKey{key: "instruction_execution", pipeline: getInstructionExecutionLookup()})
+	if *r.HasRunningExecution {
+		*match = append(*match, bson.M{"instruction_execution": bson.M{"$ne": nil}})
+	} else {
+		*match = append(*match, bson.M{"instruction_execution": nil})
+	}
+}
 
-			switch f {
-			case "instructions":
-				value, ok := cond.Value.([]string)
-				if !ok {
-					return nil, fmt.Errorf("invalid condition for %q field: %w", f, pattern.ErrWrongConditionValue)
-				}
-				var withManualCond, withAutoCond bool
-				for _, v := range value {
-					if v == "manual" {
-						withManualCond = true
-					}
-					if v == "auto" {
-						withAutoCond = true
-					}
-				}
-				var filters []bson.M
-				if withManualCond && withAutoCond {
-					filters, err = q.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeAuto}}})
-				} else if withManualCond {
-					filters, err = q.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$eq": InstructionTypeManual}})
-				} else if withAutoCond {
-					filters, err = q.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$eq": InstructionTypeAuto}})
-				} else {
-					filters, err = q.getInstructionsFilters(ctx, bson.M{"_id": bson.M{"$in": value}})
-				}
-				if err != nil {
-					return nil, err
-				}
+func (q *MongoQueryBuilder) addInstructionsFilter(ctx context.Context, r FilterRequest, match *[]bson.M) error {
+	added := false
 
-				switch cond.Type {
-				case pattern.ConditionHasOneOf:
-					if len(filters) > 0 {
-						condQueries[j] = bson.M{"$or": filters}
-					} else {
-						condQueries[j] = bson.M{"$nor": []bson.M{{}}}
-					}
-				case pattern.ConditionHasNot:
-					if len(filters) > 0 {
-						condQueries[j] = bson.M{"$nor": filters}
-					} else {
-						condQueries[j] = bson.M{}
-					}
-				default:
-					return nil, fmt.Errorf("invalid condition for %q field: %w", f, pattern.ErrUnsupportedConditionType)
-				}
-			default:
-				condQueries[j], err = cond.ToMongoQuery(f)
-				if err != nil {
-					return nil, fmt.Errorf("invalid condition for %q field: %w", f, err)
-				}
-			}
+	if len(r.ExcludeInstructions) > 0 {
+		filters, err := q.getInstructionsFilters(ctx, bson.M{"_id": bson.M{"$in": r.ExcludeInstructions}})
+		if err != nil {
+			return err
 		}
-
-		groupQueries[i] = bson.M{"$and": condQueries}
+		if len(filters) > 0 {
+			added = true
+			*match = append(*match, bson.M{"$nor": filters})
+		}
 	}
 
-	if p.HasField("instruction_execution") {
-		q.lookupsOnlyForAdditionalMatch["instruction_execution"] = true
-		q.lookups = append(q.lookups, lookupWithKey{key: "instruction_execution", pipeline: getInstructionExecutionLookup()})
+	if len(r.ExcludeInstructionTypes) > 0 {
+		filters, err := q.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$in": r.ExcludeInstructionTypes}})
+		if err != nil {
+			return err
+		}
+		if len(filters) > 0 {
+			added = true
+			*match = append(*match, bson.M{"$nor": filters})
+		}
 	}
 
-	if p.HasField("instructions") {
+	if len(r.IncludeInstructions) > 0 {
+		filters, err := q.getInstructionsFilters(ctx, bson.M{"_id": bson.M{"$in": r.IncludeInstructions}})
+		if err != nil {
+			return err
+		}
+		if len(filters) > 0 {
+			added = true
+			*match = append(*match, bson.M{"$or": filters})
+		} else {
+			*match = append(*match, bson.M{"$nor": []bson.M{{}}})
+		}
+	}
+
+	if len(r.IncludeInstructionTypes) > 0 {
+		filters, err := q.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$in": r.IncludeInstructionTypes}})
+		if err != nil {
+			return err
+		}
+		if len(filters) > 0 {
+			added = true
+			*match = append(*match, bson.M{"$or": filters})
+		} else {
+			*match = append(*match, bson.M{"$nor": []bson.M{{}}})
+		}
+	}
+
+	if added {
 		q.computedFieldsForAlarmMatch["v.duration"] = true
 		q.computedFieldsForAlarmMatch["v.infos_array"] = true
 		q.computedFields["v.infos_array"] = bson.M{"$objectToArray": "$v.infos"}
 	}
 
-	return bson.M{"$or": groupQueries}, nil
+	return nil
 }
 
 func (q *MongoQueryBuilder) getInstructionsFilters(ctx context.Context, filter bson.M) ([]bson.M, error) {

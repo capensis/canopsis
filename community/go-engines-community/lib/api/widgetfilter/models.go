@@ -34,7 +34,6 @@ type BaseEditRequest struct {
 	common.EntityPatternFieldsRequest
 	common.PbehaviorPatternFieldsRequest
 
-	InstructionPattern    view.InstructionPattern    `json:"instruction_pattern"`
 	WeatherServicePattern view.WeatherServicePattern `json:"weather_service_pattern"`
 }
 

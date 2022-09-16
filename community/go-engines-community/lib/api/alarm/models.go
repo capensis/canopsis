@@ -43,6 +43,12 @@ type BaseFilterRequest struct {
 	Opened      *bool          `form:"opened" json:"opened"`
 	OnlyParents bool           `form:"correlation" json:"correlation"`
 	Category    string         `form:"category" json:"category"`
+
+	HasRunningExecution     *bool    `form:"has_running_execution" json:"has_running_execution"`
+	IncludeInstructionTypes []int    `form:"include_instruction_types[]" json:"include_instruction_types"`
+	ExcludeInstructionTypes []int    `form:"exclude_instruction_types[]" json:"exclude_instruction_types"`
+	IncludeInstructions     []string `form:"include_instructions[]" json:"include_instructions"`
+	ExcludeInstructions     []string `form:"exclude_instructions[]" json:"exclude_instructions"`
 }
 
 func (r FilterRequest) GetOpenedFilter() int {

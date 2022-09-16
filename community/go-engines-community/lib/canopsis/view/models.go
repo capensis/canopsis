@@ -153,6 +153,5 @@ type WidgetFilter struct {
 	// Deprecated : contains old mongo query which cannot be migrated to pattern.
 	OldMongoQuery string `bson:"old_mongo_query,omitempty"`
 
-	InstructionPattern    InstructionPattern    `bson:"instruction_pattern,omitempty"`
 	WeatherServicePattern WeatherServicePattern `bson:"weather_service_pattern,omitempty"`
 }

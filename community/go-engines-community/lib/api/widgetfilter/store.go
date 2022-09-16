@@ -303,7 +303,6 @@ func transformEditRequestToModel(request EditRequest) view.WidgetFilter {
 		EntityPatternFields:    request.EntityPatternFieldsRequest.ToModel(),
 		PbehaviorPatternFields: request.PbehaviorPatternFieldsRequest.ToModel(),
 
-		InstructionPattern:    request.InstructionPattern,
 		WeatherServicePattern: request.WeatherServicePattern,
 	}
 }
