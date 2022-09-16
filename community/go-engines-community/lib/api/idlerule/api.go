@@ -3,38 +3,37 @@ package idlerule
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/rs/zerolog"
 	"github.com/valyala/fastjson"
 )
 
-type API interface {
-	common.BulkCrudAPI
-	CountPatterns(c *gin.Context)
-}
-
 type api struct {
 	store        Store
+	transformer  common.PatternFieldsTransformer
 	actionLogger logger.ActionLogger
-	conf         config.UserInterfaceConfigProvider
+	logger       zerolog.Logger
 }
 
 func NewApi(
 	store Store,
+	transformer common.PatternFieldsTransformer,
 	actionLogger logger.ActionLogger,
-	conf config.UserInterfaceConfigProvider,
-) API {
+	logger zerolog.Logger,
+) common.BulkCrudAPI {
 	return &api{
 		store:        store,
+		transformer:  transformer,
 		actionLogger: actionLogger,
-		conf:         conf,
+		logger:       logger,
 	}
 }
 
@@ -88,8 +87,19 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	rule, err := a.store.Insert(c.Request.Context(), request)
+	ctx := c.Request.Context()
+
+	err := a.transformEditRequest(ctx, &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	rule, err := a.store.Insert(ctx, request)
 	if err != nil {
 		panic(err)
 	}
@@ -97,7 +107,7 @@ func (a *api) Create(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeIdleRule,
 		ValueID:   rule.ID,
@@ -122,8 +132,19 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	rule, err := a.store.Update(c.Request.Context(), request)
+	ctx := c.Request.Context()
+
+	err := a.transformEditRequest(ctx, &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	rule, err := a.store.Update(ctx, request)
 	if err != nil {
 		panic(err)
 	}
@@ -133,7 +154,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeIdleRule,
 		ValueID:   c.Param("id"),
@@ -172,7 +193,6 @@ func (a *api) Delete(c *gin.Context) {
 
 // BulkCreate
 // @Param body body []CreateRequest true "body"
-// @Success 207 {array} []BulkCreateResponseItem
 func (a *api) BulkCreate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -218,9 +238,23 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
+		err = a.transformEditRequest(ctx, &request.EditRequest)
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
+			a.logger.Err(err).Msg("cannot create idle rule")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
+		}
+
 		rule, err := a.store.Insert(ctx, request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot create idle rule")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
@@ -241,7 +275,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
-// @Success 207 {array} []BulkUpdateResponseItem
 func (a *api) BulkUpdate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -277,7 +310,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		var request BulkUpdateRequestItem
 		err = json.Unmarshal(userObject.MarshalTo(nil), &request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
 			continue
 		}
 
@@ -287,14 +320,28 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
+		err = a.transformEditRequest(ctx, &request.EditRequest)
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
+			a.logger.Err(err).Msg("cannot update idle rule")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
+		}
+
 		rule, err := a.store.Update(ctx, UpdateRequest(request))
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot update idle rule")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if rule == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
@@ -315,7 +362,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
-// @Success 207 {array} []BulkDeleteResponseItem
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -363,12 +409,13 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 		ok, err := a.store.Delete(ctx, request.ID)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot delete idle rule")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if !ok {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
@@ -387,25 +434,16 @@ func (a *api) BulkDelete(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-// CountPatterns
-// @Param body body CountByPatternRequest true "body"
-// @Success 200 {object} CountByPatternResult
-func (a *api) CountPatterns(c *gin.Context) {
-	var request CountByPatternRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-
-		return
-	}
-
-	data, err := a.store.CountByPatterns(c.Request.Context(), request, a.conf.Get().CheckCountRequestTimeout, a.conf.Get().MaxMatchedItems)
+func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
+	var err error
+	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, request.AlarmPatternFieldsRequest)
 	if err != nil {
-		panic(err)
+		return err
+	}
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
+	if err != nil {
+		return err
 	}
 
-	if int(data.TotalCountEntities) > a.conf.Get().MaxMatchedItems || int(data.TotalCountAlarms) > a.conf.Get().MaxMatchedItems {
-		data.OverLimit = true
-	}
-
-	c.JSON(http.StatusOK, data)
+	return nil
 }

@@ -58,11 +58,13 @@
 </template>
 
 <script>
-import { merge, get } from 'lodash';
+import { merge } from 'lodash';
 
 import { COLORS } from '@/config';
 
 import { STROKE_TYPES } from '@/constants';
+
+import { getPropertyValueByShapes } from '@/helpers/flowchart/shapes';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -139,11 +141,11 @@ export default {
     },
 
     fillValue() {
-      return this.getShapesPropertyValue(this.shapesWithStroke, 'properties.fill');
+      return getPropertyValueByShapes(this.shapesWithStroke, 'properties.fill');
     },
 
     stroke() {
-      return this.getShapesPropertyValue(this.shapesWithStroke, 'properties.stroke');
+      return getPropertyValueByShapes(this.shapesWithStroke, 'properties.stroke');
     },
 
     isStrokeEnabled() {
@@ -151,41 +153,32 @@ export default {
     },
 
     lineType() {
-      return this.getShapesPropertyValue(this.shapesWithStroke, 'lineType');
+      return getPropertyValueByShapes(this.shapesWithStroke, 'lineType');
     },
 
     strokeWidth() {
-      return this.getShapesPropertyValue(this.shapesWithStroke, 'properties.stroke-width');
+      return getPropertyValueByShapes(this.shapesWithStroke, 'properties.stroke-width');
     },
 
     strokeType() {
-      return this.getShapesPropertyValue(this.shapesWithStroke, 'properties.stroke-dasharray')
+      return getPropertyValueByShapes(this.shapesWithStroke, 'properties.stroke-dasharray')
         ? STROKE_TYPES.dashed
         : STROKE_TYPES.solid;
     },
 
     textColor() {
-      return this.getShapesPropertyValue(this.selectedShapes, 'textProperties.color');
+      return getPropertyValueByShapes(this.selectedShapes, 'textProperties.color');
     },
 
     textBackgroundColor() {
-      return this.getShapesPropertyValue(this.selectedShapes, 'textProperties.backgroundColor');
+      return getPropertyValueByShapes(this.selectedShapes, 'textProperties.backgroundColor');
     },
 
     textFontSize() {
-      return this.getShapesPropertyValue(this.selectedShapes, 'textProperties.fontSize');
+      return getPropertyValueByShapes(this.selectedShapes, 'textProperties.fontSize');
     },
   },
   methods: {
-    getShapesPropertyValue(shapes, path) {
-      const [firstShape] = shapes;
-      const value = get(firstShape, path);
-
-      return shapes?.every(shape => get(shape, path) === value)
-        ? value
-        : undefined;
-    },
-
     updateSelectedShapes(shapeData) {
       this.updateModel(this.selected.reduce((acc, id) => {
         const shape = this.shapes[id];

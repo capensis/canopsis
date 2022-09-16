@@ -1,25 +1,26 @@
 <template lang="pug">
-  v-layout(column)
+  v-layout(:column="!row")
     c-number-field(
-      v-field="value.lat",
+      v-field.number="value.lat",
+      :class="{ 'mr-3': row }",
       :label="$t('map.latitude')",
-      :name="`${name}.latitude`",
+      :name="`${name}.lat`",
       :disabled="disabled",
       :min="-90",
       :max="90",
       :step="step",
-      required,
+      :required="isFieldRequired",
       @paste="pasteHandler('lat', $event)"
     )
     c-number-field(
-      v-field="value.lng",
+      v-field.number="value.lng",
       :label="$t('map.longitude')",
-      :name="`${name}.longitude`",
+      :name="`${name}.lng`",
       :disabled="disabled",
       :min="-180",
       :max="180",
       :step="step",
-      required,
+      :required="isFieldRequired",
       @paste="pasteHandler('lng', $event)"
     )
 </template>
@@ -47,6 +48,19 @@ export default {
     step: {
       type: Number,
       default: 0.01,
+    },
+    row: {
+      type: Boolean,
+      default: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    isFieldRequired() {
+      return this.required || isNumber(this.value.lat) || isNumber(this.value.lng);
     },
   },
   methods: {

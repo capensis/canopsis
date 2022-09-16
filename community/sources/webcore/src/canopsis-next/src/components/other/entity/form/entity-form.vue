@@ -20,6 +20,7 @@
                 )
               v-flex(xs6)
                 c-entity-type-field(v-field="form.type", required, disabled)
+        c-coordinates-field(v-field="form.coordinates", row)
         v-layout(column)
           entities-select(
             v-field="form.impact",

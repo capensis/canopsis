@@ -252,7 +252,7 @@ func fillEmptyIds(
 	}
 
 	// for minute collection we should keep only last 1440 because of capped collection, for hours collection we still need to fill zeroes for all timeline
-	if interval == secondsInMinute && id < maxID - secondsInDay {
+	if interval == secondsInMinute && id < maxID-secondsInDay {
 		id = maxID - secondsInDay
 	}
 

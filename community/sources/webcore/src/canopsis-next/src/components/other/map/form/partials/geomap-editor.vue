@@ -6,6 +6,7 @@
       :disabled="shown",
       :min-zoom="minZoom",
       :options="mapOptions",
+      :center.sync="center",
       @click="openAddingPointDialogByClick",
       @dblclick="openAddingPointDialog"
     )
@@ -48,7 +49,6 @@
       geomap-cluster-group(
         ref="pointsFeatureGroup",
         :name="$t('map.layers.points')",
-        :disable-clustering-at-zoom="maxClusteringZoom",
         layer-type="overlay"
       )
         geomap-marker(
@@ -56,12 +56,20 @@
           :key="id",
           :lat-lng="coordinates",
           :options="{ data }",
-          :draggable="!shown",
+          :draggable="!data.is_entity_coordinates && !shown",
           @dragend="finishMovingMarker",
           @click=""
         )
           geomap-icon(:icon-anchor="icon.anchor")
             point-icon(:style="icon.style", :entity="data.entity", :size="icon.size")
+
+      geomap-marker(v-if="pointDialog", :lat-lng="placeholderPoint.coordinates")
+        geomap-icon(:icon-anchor="placeholderPoint.icon.anchor")
+          point-icon(
+            :style="placeholderPoint.icon.style",
+            :entity="placeholderPoint.data.entity",
+            :size="placeholderPoint.icon.size"
+          )
 
       v-menu(
         v-model="shown",
@@ -74,18 +82,22 @@
         absolute
       )
         point-form-dialog(
-          v-if="addingPoint || editingPoint",
-          :point="addingPoint || editingPoint",
+          v-if="pointDialog",
+          :point="pointDialog",
           :editing="!!editingPoint",
+          :exists-entities="existsEntities",
           coordinates,
           @cancel="closePointDialog",
           @submit="submitPointDialog",
-          @remove="showRemovePointModal"
+          @remove="showRemovePointModal",
+          @fly:coordinates="handleUpdateCoordinates"
         )
     v-messages(v-if="hasChildrenError", :value="errorMessages", color="error")
 </template>
 
 <script>
+import uid from '@/helpers/uid';
+
 import { COLORS } from '@/config';
 
 import { MODALS } from '@/constants';
@@ -163,6 +175,20 @@ export default {
     };
   },
   computed: {
+    pointDialog() {
+      return this.addingPoint || this.editingPoint;
+    },
+
+    placeholderPoint() {
+      const entityPoint = { entity: uid() };
+
+      return {
+        data: entityPoint,
+        coordinates: this.pointDialog.coordinates,
+        icon: getGeomapMarkerIconOptions(entityPoint, this.iconSize),
+      };
+    },
+
     errorMessages() {
       return [this.$t('geomap.errors.pointsRequired')];
     },
@@ -180,10 +206,14 @@ export default {
       };
     },
 
+    visiblePoints() {
+      return this.form.points.filter(point => point._id !== this.editingPoint?._id);
+    },
+
     markers() {
-      return this.form.points.map(point => ({
+      return this.visiblePoints.map(point => ({
         id: point._id,
-        coordinates: [point.coordinates.lat, point.coordinates.lng],
+        coordinates: point.coordinates,
         data: point,
         icon: getGeomapMarkerIconOptions(point, this.iconSize),
       }));
@@ -202,6 +232,10 @@ export default {
 
     pointsFieldName() {
       return `${this.name}.points`;
+    },
+
+    existsEntities() {
+      return this.form.points.map(({ entity }) => entity);
     },
   },
   watch: {
@@ -309,6 +343,7 @@ export default {
         },
       });
 
+      this.flyToCoordinates(this.addingPoint.coordinates);
       this.setMenuPositionByLatLng(this.addingPoint.coordinates);
     },
 
@@ -325,6 +360,7 @@ export default {
 
       this.closeContextMenu();
 
+      this.flyToCoordinates(this.editingPoint.coordinates);
       this.setMenuPositionByLatLng(this.editingPoint.coordinates);
     },
 
@@ -364,6 +400,15 @@ export default {
           },
         },
       });
+    },
+
+    handleUpdateCoordinates(coordinates) {
+      this.pointDialog.coordinates = coordinates;
+      this.flyToCoordinates(coordinates);
+    },
+
+    flyToCoordinates(coordinates) {
+      this.$refs.map.mapObject.panTo(coordinates, { animate: false });
     },
   },
 };

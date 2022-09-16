@@ -1,4 +1,4 @@
-import { isArray } from 'lodash';
+import { get, isArray } from 'lodash';
 
 import { LINE_TYPES, SHAPES } from '@/constants';
 
@@ -444,4 +444,20 @@ export const getShapesBounds = (shapes) => {
       y: -Infinity,
     },
   });
+};
+
+/**
+ * Get property value by shapes array. If all shapes has equal value, will be return value else undefined.
+ *
+ * @param {Shape[]} shapes
+ * @param {string} path
+ * @returns {string|number}
+ */
+export const getPropertyValueByShapes = (shapes, path) => {
+  const [firstShape] = shapes;
+  const value = get(firstShape, path);
+
+  return shapes?.every(shape => get(shape, path) === value)
+    ? value
+    : undefined;
 };

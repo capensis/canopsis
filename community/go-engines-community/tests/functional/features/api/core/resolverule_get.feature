@@ -12,13 +12,30 @@ Feature: Get a resolve rule
       "data": [
         {
           "_id": "test-resolve-rule-to-get-1",
-          "alarm_patterns": [
-            {
-              "v": {
-                "connector": "test-resolve-rule-to-get-1-pattern"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.connector",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resolve-rule-to-get-1-pattern"
+                }
               }
-            }
+            ]
           ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resolve-rule-to-get-1-resource"
+                }
+              }
+            ]
+          ],
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
           "author": {
             "_id": "root",
             "name": "root"
@@ -30,23 +47,35 @@ Feature: Get a resolve rule
             "value": 10,
             "unit": "s"
           },
-          "entity_patterns": [
-            {
-              "name": "test-resolve-rule-to-get-1-resource"
-            }
-          ],
-          "priority": 0,
+          "priority": 1,
           "updated": 1619083733
         },
         {
           "_id": "test-resolve-rule-to-get-2",
-          "alarm_patterns": [
-            {
-              "v": {
-                "connector": "test-resolve-rule-to-get-2-pattern"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.connector",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resolve-rule-to-get-2-pattern"
+                }
               }
-            }
+            ]
           ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resolve-rule-to-get-2-resource"
+                }
+              }
+            ]
+          ],
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
           "author": {
             "_id": "root",
             "name": "root"
@@ -58,12 +87,7 @@ Feature: Get a resolve rule
             "value": 10,
             "unit": "s"
           },
-          "entity_patterns": [
-            {
-              "name": "test-resolve-rule-to-get-2-resource"
-            }
-          ],
-          "priority": 1,
+          "priority": 2,
           "updated": 1619083733
         }
       ],
@@ -84,13 +108,30 @@ Feature: Get a resolve rule
     """json
     {
       "_id": "test-resolve-rule-to-get-1",
-      "alarm_patterns": [
-        {
-          "v": {
-            "connector": "test-resolve-rule-to-get-1-pattern"
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-resolve-rule-to-get-1-pattern"
+            }
           }
-        }
+        ]
       ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resolve-rule-to-get-1-resource"
+            }
+          }
+        ]
+      ],
+      "old_alarm_patterns": null,
+      "old_entity_patterns": null,
       "author": {
         "_id": "root",
         "name": "root"
@@ -102,12 +143,7 @@ Feature: Get a resolve rule
         "value": 10,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-resolve-rule-to-get-1-resource"
-        }
-      ],
-      "priority": 0,
+      "priority": 1,
       "updated": 1619083733
     }
     """

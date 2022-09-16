@@ -23,8 +23,12 @@ const (
 	RemediationWaitJobCompleteRetriesInterval = 5 * time.Second
 	RemediationPauseManualInstructionInterval = 15 * time.Second
 
+	MetricsFlushInterval  = 10 * time.Second
 	MetricsSliInterval    = time.Hour
-	MaxMetricsSliInterval = time.Hour
+	MetricsMaxSliInterval = time.Hour
+
+	UserInterfaceMaxMatchedItems          = 10000
+	UserInterfaceCheckCountRequestTimeout = 30
 )
 
 func CreateDisplayNameTpl(text string) (*template.Template, error) {

@@ -1,38 +1,56 @@
 package idlerule
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"context"
+	"errors"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"github.com/teambition/rrule-go"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"strconv"
 	"strings"
 )
 
-func ValidateEditRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(EditRequest)
+type Validator struct {
+	dbClient mongo.DbClient
+}
 
+func NewValidator(client mongo.DbClient) *Validator {
+	return &Validator{dbClient: client}
+}
+
+func (v *Validator) ValidateCreateRequest(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(CreateRequest)
+	v.validateEditRequest(ctx, sl, r.ID, r.EditRequest)
+}
+
+func (v *Validator) ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(UpdateRequest)
+	v.validateEditRequest(ctx, sl, r.ID, r.EditRequest)
+}
+
+func (v *Validator) ValidateBulkUpdateRequestItem(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(BulkUpdateRequestItem)
+	v.validateEditRequest(ctx, sl, r.ID, r.EditRequest)
+}
+
+func (v *Validator) validateEditRequest(ctx context.Context, sl validator.StructLevel, id string, r EditRequest) {
 	if r.Priority != nil && *r.Priority < 0 {
 		sl.ReportError(r.Priority, "Priority", "Priority", "min", "0")
 	}
 
-	validateType(sl, r.Type)
-	validateAlarmRule(sl, r)
-	validateEntityRule(sl, r)
-	validateDisableDuringPeriods(sl, r.DisableDuringPeriods)
+	v.validateType(sl, r.Type)
+	v.validateAlarmRule(ctx, sl, id, r)
+	v.validateEntityRule(ctx, sl, id, r)
+	v.validateDisableDuringPeriods(sl, r.DisableDuringPeriods)
 }
 
-func ValidateCountPatternRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(CountByPatternRequest)
-
-	validateAlarmPatterns(sl, r.AlarmPatterns)
-	validateEntityPatterns(sl, r.EntityPatterns)
-}
-
-func validateType(sl validator.StructLevel, t string) {
+func (v *Validator) validateType(sl validator.StructLevel, t string) {
 	if t == "" {
 		return
 	}
@@ -54,17 +72,12 @@ func validateType(sl validator.StructLevel, t string) {
 	}
 }
 
-func validateAlarmRule(sl validator.StructLevel, r EditRequest) {
+func (v *Validator) validateAlarmRule(ctx context.Context, sl validator.StructLevel, id string, r EditRequest) {
 	if r.Type != idlerule.RuleTypeAlarm {
 		return
 	}
 
-	entityPatternsIsSet := validateEntityPatterns(sl, r.EntityPatterns)
-	alarmPatternsIsSet := validateAlarmPatterns(sl, r.AlarmPatterns)
-	if !entityPatternsIsSet && !alarmPatternsIsSet {
-		sl.ReportError(r.Type, "AlarmPatterns", "AlarmPatterns", "required_or", "EntityPatterns")
-		sl.ReportError(r.Type, "EntityPatterns", "EntityPatterns", "required_or", "AlarmPatterns")
-	}
+	v.validateAlarmRulePatterns(ctx, sl, id, r)
 
 	if r.AlarmCondition == "" {
 		sl.ReportError(r.AlarmCondition, "AlarmCondition", "AlarmCondition", "required", "")
@@ -112,24 +125,16 @@ func validateAlarmRule(sl validator.StructLevel, r EditRequest) {
 			sl.ReportError(r.Operation.Type, "Operation.Type", "Type", "oneof", param)
 		}
 
-		validateOperationParametersRequest(sl, r.Operation.Type, r.Operation.Parameters)
+		v.validateOperationParametersRequest(sl, r.Operation.Type, r.Operation.Parameters)
 	}
 }
 
-func validateEntityRule(sl validator.StructLevel, r EditRequest) {
+func (v *Validator) validateEntityRule(ctx context.Context, sl validator.StructLevel, id string, r EditRequest) {
 	if r.Type != idlerule.RuleTypeEntity {
 		return
 	}
 
-	entityPatternsIsSet := validateEntityPatterns(sl, r.EntityPatterns)
-	if !entityPatternsIsSet {
-		sl.ReportError(r.Type, "EntityPatterns", "EntityPatterns", "required", "")
-	}
-
-	alarmPatternsIsSet := validateAlarmPatterns(sl, r.AlarmPatterns)
-	if alarmPatternsIsSet {
-		sl.ReportError(r.Type, "AlarmPatterns", "AlarmPatterns", "must_be_empty", "")
-	}
+	v.validateEntityRulePatterns(ctx, sl, id, r)
 
 	if r.Operation != nil {
 		sl.ReportError(r.Operation, "Operation", "Operation", "must_be_empty", "")
@@ -140,51 +145,7 @@ func validateEntityRule(sl validator.StructLevel, r EditRequest) {
 	}
 }
 
-func validateEntityPatterns(sl validator.StructLevel, patterns pattern.EntityPatternList) bool {
-	patternsIsSet := false
-	if patterns.IsSet() {
-		if !patterns.IsValid() {
-			sl.ReportError(patterns, "EntityPatterns", "EntityPatterns", "entitypattern_invalid", "")
-		} else {
-			query := patterns.AsMongoDriverQuery()["$or"].([]bson.M)
-			if len(query) > 0 {
-				patternsIsSet = true
-				for _, q := range query {
-					if len(q) == 0 {
-						sl.ReportError(patterns, "EntityPatterns", "EntityPatterns", "entitypattern_contains_empty", "")
-						break
-					}
-				}
-			}
-		}
-	}
-
-	return patternsIsSet
-}
-
-func validateAlarmPatterns(sl validator.StructLevel, patterns pattern.AlarmPatternList) bool {
-	patternsIsSet := false
-	if patterns.IsSet() {
-		if !patterns.IsValid() {
-			sl.ReportError(patterns, "AlarmPatterns", "AlarmPatterns", "alarmpattern_invalid", "")
-		} else {
-			query := patterns.AsMongoDriverQuery()["$or"].([]bson.M)
-			if len(query) > 0 {
-				patternsIsSet = true
-				for _, q := range query {
-					if len(q) == 0 {
-						sl.ReportError(patterns, "AlarmPatterns", "AlarmPatterns", "alarmpattern_contains_empty", "")
-						break
-					}
-				}
-			}
-		}
-	}
-
-	return patternsIsSet
-}
-
-func validateDisableDuringPeriods(sl validator.StructLevel, disableDuringPeriods []string) {
+func (v *Validator) validateDisableDuringPeriods(sl validator.StructLevel, disableDuringPeriods []string) {
 	if len(disableDuringPeriods) == 0 {
 		return
 	}
@@ -209,7 +170,7 @@ func validateDisableDuringPeriods(sl validator.StructLevel, disableDuringPeriods
 	}
 }
 
-func validateOperationParametersRequest(sl validator.StructLevel, t string, params idlerule.Parameters) {
+func (v *Validator) validateOperationParametersRequest(sl validator.StructLevel, t string, params idlerule.Parameters) {
 	switch t {
 	case types.ActionTypeAssocTicket:
 		if params.Ticket == "" {
@@ -291,5 +252,77 @@ func validateOperationParametersRequest(sl validator.StructLevel, t string, para
 		if params.Tstart != nil && params.Tstop != nil && params.Tstop.Before(*params.Tstart) {
 			sl.ReportError(params.Tstop, "Operation.Parameters.Tstop", "Tstop", "gtfield", "Tstart")
 		}
+	}
+}
+
+func (v *Validator) validateEntityRulePatterns(ctx context.Context, sl validator.StructLevel, id string, r EditRequest) {
+	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
+		!r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.IdleRuleMongoCollection)) {
+		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
+	}
+
+	if r.CorporateAlarmPattern != "" || len(r.AlarmPattern) > 0 {
+		sl.ReportError(r.Type, "AlarmPattern", "AlarmPattern", "must_be_empty", "")
+	}
+
+	if len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" {
+		if id != "" {
+			err := v.dbClient.Collection(mongo.IdleRuleMongoCollection).FindOne(
+				ctx,
+				bson.M{
+					"_id":                 id,
+					"old_entity_patterns": bson.M{"$ne": nil},
+				},
+			).Err()
+
+			if err == nil {
+				return
+			} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
+				panic(err)
+			}
+		}
+
+		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required", "")
+	}
+}
+
+func (v *Validator) validateAlarmRulePatterns(ctx context.Context, sl validator.StructLevel, id string, r EditRequest) {
+	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
+		!r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.IdleRuleMongoCollection)) {
+		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
+	}
+
+	if r.CorporateAlarmPattern == "" && len(r.AlarmPattern) > 0 &&
+		!r.AlarmPattern.Validate(
+			common.GetForbiddenFieldsInAlarmPattern(mongo.IdleRuleMongoCollection),
+			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.IdleRuleMongoCollection),
+		) {
+		sl.ReportError(r.EntityPattern, "AlarmPattern", "AlarmPattern", "alarm_pattern", "")
+	}
+
+	if len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" &&
+		len(r.AlarmPattern) == 0 && r.CorporateAlarmPattern == "" {
+
+		if id != "" {
+			err := v.dbClient.Collection(mongo.IdleRuleMongoCollection).FindOne(
+				ctx,
+				bson.M{
+					"_id": id,
+					"$or": bson.A{
+						bson.M{"old_entity_patterns": bson.M{"$ne": nil}},
+						bson.M{"old_alarm_patterns": bson.M{"$ne": nil}},
+					},
+				},
+			).Err()
+
+			if err == nil {
+				return
+			} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
+				panic(err)
+			}
+		}
+
+		sl.ReportError(r.AlarmPattern, "AlarmPattern", "AlarmPattern", "required_or", "EntityPattern")
+		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required_or", "AlarmPattern")
 	}
 }

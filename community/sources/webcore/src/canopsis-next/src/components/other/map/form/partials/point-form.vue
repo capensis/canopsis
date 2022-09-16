@@ -1,13 +1,18 @@
 <template lang="pug">
   v-layout(column)
     c-entity-field(
-      v-field="form.entity",
+      :value="form.entity",
       :label="$t('map.defineEntity')",
       :required="!isLinked",
       :clearable="isLinked",
-      :entity-types="entityTypes"
+      :entity-types="entityTypes",
+      :item-disabled="isEntityExist",
+      return-object,
+      @input="updateEntity"
     )
-    c-coordinates-field(v-if="coordinates", v-field="form.coordinates")
+      template(v-if="coordinates", #icon="{ item }")
+        v-icon.mr-2(v-if="item.coordinates") pin_drop
+    c-coordinates-field(v-if="coordinates", v-field="form.coordinates", :disabled="form.is_entity_coordinates")
     c-enabled-field(v-model="isLinked", :label="$t('map.addLink')")
     c-map-field(
       v-show="isLinked",
@@ -37,6 +42,10 @@ export default {
       type: Boolean,
       required: false,
     },
+    existsEntities: {
+      type: Array,
+      default: () => [],
+    },
   },
   computed: {
     entityTypes() {
@@ -50,6 +59,36 @@ export default {
       get() {
         return this.form.map !== undefined && this.form.map !== null;
       },
+    },
+  },
+  watch: {
+    'form.coordinates': {
+      handler(value) {
+        this.$emit('fly:coordinates', value);
+      },
+    },
+  },
+  methods: {
+    updateEntity(entity) {
+      if (!this.coordinates) {
+        this.updateField('entity', entity?._id ?? '');
+        return;
+      }
+
+      if (entity) {
+        this.updateModel({
+          ...this.form,
+          entity: entity._id,
+          is_entity_coordinates: !!entity.coordinates,
+          coordinates: entity.coordinates ?? this.form.coordinates,
+        });
+      } else {
+        this.updateModel({ ...this.form, entity, is_entity_coordinates: false });
+      }
+    },
+
+    isEntityExist(entity) {
+      return this.existsEntities.some(id => id === entity._id);
     },
   },
 };
