@@ -2,9 +2,10 @@ package resolverule
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"errors"
 	"net/http"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -13,6 +14,7 @@ import (
 
 type api struct {
 	store        Store
+	transformer  common.PatternFieldsTransformer
 	actionLogger logger.ActionLogger
 }
 
@@ -26,7 +28,19 @@ func (a api) Create(c *gin.Context) {
 		return
 	}
 
-	rule, err := a.store.Insert(c.Request.Context(), request)
+	ctx := c.Request.Context()
+
+	err := a.transformEditRequest(ctx, &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	rule, err := a.store.Insert(ctx, request)
 	if err != nil {
 		panic(err)
 	}
@@ -96,7 +110,19 @@ func (a api) Update(c *gin.Context) {
 		return
 	}
 
-	rule, err := a.store.Update(c.Request.Context(), request)
+	ctx := c.Request.Context()
+
+	err := a.transformEditRequest(ctx, &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	rule, err := a.store.Update(ctx, request)
 	if err != nil {
 		panic(err)
 	}
@@ -121,6 +147,11 @@ func (a api) Update(c *gin.Context) {
 func (a api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 	if err != nil {
+		if errors.Is(err, ErrDefaultRule) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
+
 		panic(err)
 	}
 
@@ -141,12 +172,28 @@ func (a api) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
+func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
+	var err error
+	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, request.AlarmPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func NewApi(
 	store Store,
+	transformer common.PatternFieldsTransformer,
 	actionLogger logger.ActionLogger,
 ) common.CrudAPI {
 	return &api{
 		store:        store,
+		transformer:  transformer,
 		actionLogger: actionLogger,
 	}
 }

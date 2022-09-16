@@ -94,6 +94,7 @@ export const USERS_PERMISSIONS = {
     remediationInstruction: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationInstruction`,
     remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
+    remediationStatistic: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationStatistic`,
     healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
     engine: `${USER_PERMISSIONS_PREFIXES.technical.admin}_engine`,
     healthcheckStatus: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheckStatus`,
@@ -378,8 +379,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [WEATHER_ACTIONS_TYPES.entityPause]: USERS_PERMISSIONS.business.serviceWeather.actions.entityPause,
     [WEATHER_ACTIONS_TYPES.entityPlay]: USERS_PERMISSIONS.business.serviceWeather.actions.entityPlay,
     [WEATHER_ACTIONS_TYPES.entityCancel]: USERS_PERMISSIONS.business.serviceWeather.actions.entityCancel,
-    [WEATHER_ACTIONS_TYPES.entityManagePbehaviors]:
-      USERS_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors,
     [WEATHER_ACTIONS_TYPES.executeInstruction]:
       USERS_PERMISSIONS.business.serviceWeather.actions.executeInstruction,
 

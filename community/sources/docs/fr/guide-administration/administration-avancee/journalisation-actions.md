@@ -41,11 +41,18 @@ Les actions sont consignées dans le journal de l'API Canopsis. Voici la méthod
     journalctl -u canopsis-service@canopsis-api.service
     ```
 
-=== "Docker Compose"
+=== "Docker Compose Community"
 
     ```sh
-    docker-compose logs api
+    CPS_EDITION=community docker-compose logs api
     ```
+
+=== "Docker Compose Pro"
+
+    ```sh
+    CPS_EDITION=pro docker-compose logs api
+    ```
+
 
 ### Anatomie du journal
 

@@ -21,6 +21,11 @@ const stubs = {
 const factory = (options = {}) => shallowMount(KpiRating, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
@@ -28,6 +33,11 @@ const factory = (options = {}) => shallowMount(KpiRating, {
 const snapshotFactory = (options = {}) => mount(KpiRating, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
@@ -99,7 +109,14 @@ describe('kpi-rating', () => {
     expect(fetchRatingMetrics).toBeCalledTimes(1);
     expect(fetchRatingMetrics).toBeCalledWith(
       expect.any(Object),
-      { params: expectedDefaultParams },
+      {
+        params: {
+          ...expectedDefaultParams,
+
+          from: 1383778800,
+          to: 1386457199,
+        },
+      },
       undefined,
     );
   });

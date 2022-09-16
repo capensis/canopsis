@@ -206,7 +206,7 @@ describe('date-interval-selector', () => {
     const stopDate = tstopField.vm.dateObjectPreparer(unix);
 
     expect(startDate.getTime()).toBe(1386435660000);
-    expect(stopDate.getTime()).toBe(1386435660000);
+    expect(stopDate.getTime()).toBe(1386435719999);
   });
 
   test('Dates prepared after trigger prepare callback with rounded hours', () => {
@@ -225,7 +225,7 @@ describe('date-interval-selector', () => {
     const stopDate = tstopField.vm.dateObjectPreparer(unix);
 
     expect(startDate.getTime()).toBe(1386435600000);
-    expect(stopDate.getTime()).toBe(1386435600000);
+    expect(stopDate.getTime()).toBe(1386439199999);
   });
 
   test('Dates prepared after trigger prepare callback with string value', () => {
@@ -242,7 +242,7 @@ describe('date-interval-selector', () => {
     const stopDate = tstopField.vm.dateObjectPreparer(QUICK_RANGES.previousWeek.stop);
 
     expect(startDate.getTime()).toBe(1385251200000);
-    expect(stopDate.getTime()).toBe(1385855940000);
+    expect(stopDate.getTime()).toBe(1385855999999);
   });
 
   test('Renders `date-interval-selector` with default props', () => {

@@ -13,6 +13,7 @@
           )
         v-flex(xs2)
           c-impact-level-field(v-field="form.impact_level", required)
+      c-coordinates-field(v-field="form.coordinates", row)
       v-textarea(
         v-field="form.output_template",
         v-validate="'required'",

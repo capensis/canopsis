@@ -62,6 +62,9 @@
       "models_notification_instructionStats": {
         "checksum": 15
       },
+      "models_remediationStatistic": {
+        "checksum": 1
+      },
       "listalarm_ack": {
         "checksum": 1,
         "desc": ""

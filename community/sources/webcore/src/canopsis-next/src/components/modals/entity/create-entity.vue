@@ -1,11 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
+      template(#text="")
         entity-form(v-model="form")
-      template(slot="actions")
+      template(#actions="")
         v-btn(
           :disabled="submitting",
           depressed,
