@@ -172,7 +172,7 @@ export const flowchartPointToForm = (point = {}) => ({
   y: point.y,
   entity: point.entity?._id ?? '',
   shape: point.shape ?? '',
-  map: point.map,
+  map: point.map?._id,
   _id: uuid(),
 });
 

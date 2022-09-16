@@ -32,8 +32,8 @@
       point-icon(:size="iconSize", :entity="point.entity")
 
     component(is="foreignObject", style="overflow: visible;")
-      flowchart-point-dialog-menu(
-        v-if="isDialogOpened",
+      point-form-dialog-menu(
+        :value="isDialogOpened",
         :position-x="clientX",
         :position-y="clientY",
         :point="addingPoint || editingPoint",
@@ -65,13 +65,13 @@ import { mapFlowchartPoints } from '@/mixins/map/map-flowchart-points';
 import PointIcon from '@/components/other/map/partials/point-icon.vue';
 import PointFormDialog from '@/components/other/map/form/partials/point-form-dialog.vue';
 
-import FlowchartPointDialogMenu from './flowchart-point-dialog-menu.vue';
+import PointFormDialogMenu from './point-form-dialog-menu.vue';
 import FlowchartPointContextmenu from './flowchart-point-contextmenu.vue';
 
 export default {
   inject: ['$flowchart'],
   components: {
-    FlowchartPointDialogMenu,
+    PointFormDialogMenu,
     FlowchartPointContextmenu,
     PointFormDialog,
     PointIcon,
