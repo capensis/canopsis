@@ -380,7 +380,6 @@ Feature: Create a widget filter
         "corporate_entity_pattern": "CorporateEntityPattern is missing.",
         "pbehavior_pattern": "PbehaviorPattern is missing.",
         "corporate_pbehavior_pattern": "CorporatePbehaviorPattern is missing.",
-        "instruction_pattern": "InstructionPattern is missing.",
         "weather_service_pattern": "WeatherServicePattern is missing."
       }
     }
@@ -397,9 +396,6 @@ Feature: Create a widget filter
       "pbehavior_pattern": [
         []
       ],
-      "instruction_pattern": [
-        []
-      ],
       "weather_service_pattern": [
         []
       ]
@@ -413,7 +409,6 @@ Feature: Create a widget filter
         "alarm_pattern": "AlarmPattern is invalid alarm pattern.",
         "entity_pattern": "EntityPattern is invalid entity pattern.",
         "pbehavior_pattern": "PbehaviorPattern is invalid pbehavior pattern.",
-        "instruction_pattern": "InstructionPattern is invalid instruction pattern.",
         "weather_service_pattern": "WeatherServicePattern is invalid weather service pattern."
       }
     }
