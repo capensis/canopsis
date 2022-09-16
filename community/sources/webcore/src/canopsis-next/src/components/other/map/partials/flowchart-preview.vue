@@ -7,6 +7,7 @@
     )
       template(#layers="{ data }")
         flowchart-points-preview(
+          v-on="$listeners",
           :points="map.parameters.points",
           :popup-template="popupTemplate",
           :popup-actions="popupActions",
