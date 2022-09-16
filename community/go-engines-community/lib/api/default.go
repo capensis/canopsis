@@ -328,6 +328,7 @@ func Default(
 			json.NewEncoder(),
 			canopsis.FIFOQueueName,
 			logger,
+			flags.Test,
 		)
 		pbhComputer.Compute(ctx, pbhComputeChan)
 	})
