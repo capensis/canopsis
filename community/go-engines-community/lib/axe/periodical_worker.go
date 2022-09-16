@@ -103,7 +103,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			Output:        "",
 		}
 		eventUpdateStatus.SourceType = eventUpdateStatus.DetectSourceType()
-		err = w.publishToEngineFIFO(eventUpdateStatus)
+		err = w.publishToEngineFIFO(ctx, eventUpdateStatus)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot publish event")
 		}
@@ -119,7 +119,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			EventType:     types.EventTypeResolveClose,
 		}
 		eventResolveClosed.SourceType = eventResolveClosed.DetectSourceType()
-		err = w.publishToEngineFIFO(eventResolveClosed)
+		err = w.publishToEngineFIFO(ctx, eventResolveClosed)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot publish event")
 		}
@@ -135,7 +135,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			EventType:     types.EventTypeResolveCancel,
 		}
 		eventResolveCancel.SourceType = eventResolveCancel.DetectSourceType()
-		err = w.publishToEngineFIFO(eventResolveCancel)
+		err = w.publishToEngineFIFO(ctx, eventResolveCancel)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot publish event")
 		}
@@ -151,7 +151,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			EventType:     types.EventTypeResolveDone,
 		}
 		eventResolveDone.SourceType = eventResolveDone.DetectSourceType()
-		err = w.publishToEngineFIFO(eventResolveDone)
+		err = w.publishToEngineFIFO(ctx, eventResolveDone)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot publish event")
 		}
@@ -167,7 +167,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			EventType:     types.EventTypeUnsnooze,
 		}
 		eventUnsnooze.SourceType = eventUnsnooze.DetectSourceType()
-		err = w.publishToEngineFIFO(eventUnsnooze)
+		err = w.publishToEngineFIFO(ctx, eventUnsnooze)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot publish event")
 		}
@@ -178,19 +178,20 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		w.Logger.Err(err).Msg("cannot process idle rules")
 	}
 	for _, event := range events {
-		err = w.publishToEngineFIFO(event)
+		err = w.publishToEngineFIFO(ctx, event)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot publish event")
 		}
 	}
 }
 
-func (w *periodicalWorker) publishToEngineFIFO(event types.Event) error {
+func (w *periodicalWorker) publishToEngineFIFO(ctx context.Context, event types.Event) error {
 	bevent, err := w.Encoder.Encode(event)
 	if err != nil {
 		return fmt.Errorf("cannot encode event : %w", err)
 	}
-	return errt.NewIOError(w.ChannelPub.Publish(
+	return errt.NewIOError(w.ChannelPub.PublishWithContext(
+		ctx,
 		"",
 		canopsis.FIFOQueueName,
 		false,

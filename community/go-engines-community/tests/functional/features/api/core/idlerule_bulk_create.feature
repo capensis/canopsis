@@ -28,15 +28,27 @@ Feature: Bulk create idlerules
           "value": 3,
           "unit": "s"
         },
-        "alarm_patterns": [
-          {
-            "_id": "test-idle-rule-to-bulk-create-1-alarm"
-          }
+        "alarm_pattern": [
+          [
+            {
+              "field": "v.component",
+              "cond": {
+                "type": "eq",
+                "value": "test-idle-rule-to-bulk-create-1-alarm"
+              }
+            }
+          ]
         ],
-        "entity_patterns": [
-          {
-            "name": "test-idle-rule-to-bulk-create-1-resource"
-          }
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-idle-rule-to-bulk-create-1-resource"
+              }
+            }
+          ]
         ],
         "operation": {
           "type": "snooze",
@@ -62,15 +74,27 @@ Feature: Bulk create idlerules
           "value": 3,
           "unit": "s"
         },
-        "alarm_patterns": [
-          {
-            "_id": "test-idle-rule-to-bulk-create-1-alarm"
-          }
+        "alarm_pattern": [
+          [
+            {
+              "field": "v.component",
+              "cond": {
+                "type": "eq",
+                "value": "test-idle-rule-to-bulk-create-1-alarm"
+              }
+            }
+          ]
         ],
-        "entity_patterns": [
-          {
-            "name": "test-idle-rule-to-bulk-create-1-resource"
-          }
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-idle-rule-to-bulk-create-1-resource"
+              }
+            }
+          ]
         ],
         "operation": {
           "type": "snooze",
@@ -96,20 +120,58 @@ Feature: Bulk create idlerules
           "value": 3,
           "unit": "s"
         },
-        "alarm_patterns": [
-          {
-            "_id": "test-idle-rule-to-bulk-create-2-alarm"
-          }
+        "alarm_pattern": [
+          [
+            {
+              "field": "v.component",
+              "cond": {
+                "type": "eq",
+                "value": "test-idle-rule-to-bulk-create-2-alarm"
+              }
+            }
+          ]
         ],
-        "entity_patterns": [
-          {
-            "name": "test-idle-rule-to-bulk-create-2-resource"
-          }
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-idle-rule-to-bulk-create-2-resource"
+              }
+            }
+          ]
         ],
         "operation": {
           "type": "snooze",
           "parameters": {
             "output": "test-idle-rule-to-bulk-create-2-operation-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          }
+        },
+        "disable_during_periods": ["pause"]
+      },
+      {
+        "_id": "test-idle-rule-to-bulk-create-3",
+        "name": "test-idle-rule-to-bulk-create-3-name",
+        "description": "test-idle-rule-to-bulk-create-3-description",
+        "type": "alarm",
+        "alarm_condition": "last_event",
+        "enabled": true,
+        "priority": 20,
+        "duration": {
+          "value": 3,
+          "unit": "s"
+        },
+        "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+        "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+        "operation": {
+          "type": "snooze",
+          "parameters": {
+            "output": "test-idle-rule-to-bulk-create-3-operation-output",
             "duration": {
               "value": 3,
               "unit": "s"
@@ -124,17 +186,15 @@ Feature: Bulk create idlerules
       },
       {
         "type": "alarm",
-        "alarm_patterns": [],
-        "entity_patterns": [],
         "operation": {
           "type": "notexists"
         }
       },
       [],
       {
-        "_id": "test-idle-rule-to-bulk-create-3",
-        "name": "test-idle-rule-to-bulk-create-3-name",
-        "description": "test-idle-rule-to-bulk-create-3-description",
+        "_id": "test-idle-rule-to-bulk-create-6",
+        "name": "test-idle-rule-to-bulk-create-6-name",
+        "description": "test-idle-rule-to-bulk-create-6-description",
         "type": "entity",
         "enabled": true,
         "priority": 22,
@@ -142,10 +202,16 @@ Feature: Bulk create idlerules
           "value": 3,
           "unit": "s"
         },
-        "entity_patterns": [
-          {
-            "name": "test-idle-rule-to-bulk-create-3-resource"
-          }
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-idle-rule-to-bulk-create-6-resource"
+              }
+            }
+          ]
         ],
         "disable_during_periods": ["pause"]
       }
@@ -170,15 +236,27 @@ Feature: Bulk create idlerules
             "value": 3,
             "unit": "s"
           },
-          "alarm_patterns": [
-            {
-              "_id": "test-idle-rule-to-bulk-create-1-alarm"
-            }
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-create-1-alarm"
+                }
+              }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "name": "test-idle-rule-to-bulk-create-1-resource"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-create-1-resource"
+                }
+              }
+            ]
           ],
           "operation": {
             "type": "snooze",
@@ -207,15 +285,27 @@ Feature: Bulk create idlerules
             "value": 3,
             "unit": "s"
           },
-          "alarm_patterns": [
-            {
-              "_id": "test-idle-rule-to-bulk-create-1-alarm"
-            }
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-create-1-alarm"
+                }
+              }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "name": "test-idle-rule-to-bulk-create-1-resource"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-create-1-resource"
+                }
+              }
+            ]
           ],
           "operation": {
             "type": "snooze",
@@ -248,20 +338,61 @@ Feature: Bulk create idlerules
             "value": 3,
             "unit": "s"
           },
-          "alarm_patterns": [
-            {
-              "_id": "test-idle-rule-to-bulk-create-2-alarm"
-            }
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-create-2-alarm"
+                }
+              }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "name": "test-idle-rule-to-bulk-create-2-resource"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-create-2-resource"
+                }
+              }
+            ]
           ],
           "operation": {
             "type": "snooze",
             "parameters": {
               "output": "test-idle-rule-to-bulk-create-2-operation-output",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            }
+          },
+          "disable_during_periods": ["pause"]
+        }
+      },
+      {
+        "id": "test-idle-rule-to-bulk-create-3",
+        "status": 200,
+        "item": {
+          "name": "test-idle-rule-to-bulk-create-3-name",
+          "description": "test-idle-rule-to-bulk-create-3-description",
+          "type": "alarm",
+          "alarm_condition": "last_event",
+          "enabled": true,
+          "priority": 20,
+          "duration": {
+            "value": 3,
+            "unit": "s"
+          },
+          "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+          "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+          "operation": {
+            "type": "snooze",
+            "parameters": {
+              "output": "test-idle-rule-to-bulk-create-3-operation-output",
               "duration": {
                 "value": 3,
                 "unit": "s"
@@ -296,16 +427,14 @@ Feature: Bulk create idlerules
         "status": 400,
         "item": {
           "type": "alarm",
-          "alarm_patterns": [],
-          "entity_patterns": [],
           "operation": {
             "type": "notexists"
           }
         },
         "errors": {
           "alarm_condition": "AlarmCondition is missing.",
-          "alarm_patterns": "AlarmPatterns or EntityPatterns is required.",
-          "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
+          "alarm_pattern": "AlarmPattern or EntityPattern is required.",
+          "entity_pattern": "EntityPattern or AlarmPattern is required.",
           "operation.type": "Type must be one of [ack ackremove cancel assocticket changestate snooze pbehavior]."
         }
       },
@@ -315,12 +444,12 @@ Feature: Bulk create idlerules
         "error": "value doesn't contain object; it contains array"
       },
       {
-        "id": "test-idle-rule-to-bulk-create-3",
+        "id": "test-idle-rule-to-bulk-create-6",
         "status": 200,
         "item": {
-          "_id": "test-idle-rule-to-bulk-create-3",
-          "name": "test-idle-rule-to-bulk-create-3-name",
-          "description": "test-idle-rule-to-bulk-create-3-description",
+          "_id": "test-idle-rule-to-bulk-create-6",
+          "name": "test-idle-rule-to-bulk-create-6-name",
+          "description": "test-idle-rule-to-bulk-create-6-description",
           "type": "entity",
           "enabled": true,
           "priority": 22,
@@ -328,10 +457,16 @@ Feature: Bulk create idlerules
             "value": 3,
             "unit": "s"
           },
-          "entity_patterns": [
-            {
-              "name": "test-idle-rule-to-bulk-create-3-resource"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-create-6-resource"
+                }
+              }
+            ]
           ],
           "disable_during_periods": ["pause"]
         }
@@ -351,20 +486,31 @@ Feature: Bulk create idlerules
           "type": "alarm",
           "alarm_condition": "last_event",
           "enabled": true,
-          "priority": 20,
           "duration": {
             "value": 3,
             "unit": "s"
           },
-          "alarm_patterns": [
-            {
-              "_id": "test-idle-rule-to-bulk-create-1-alarm"
-            }
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-create-1-alarm"
+                }
+              }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "name": "test-idle-rule-to-bulk-create-1-resource"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-create-1-resource"
+                }
+              }
+            ]
           ],
           "operation": {
             "type": "snooze",
@@ -385,20 +531,31 @@ Feature: Bulk create idlerules
           "type": "alarm",
           "alarm_condition": "last_event",
           "enabled": true,
-          "priority": 21,
           "duration": {
             "value": 3,
             "unit": "s"
           },
-          "alarm_patterns": [
-            {
-              "_id": "test-idle-rule-to-bulk-create-2-alarm"
-            }
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-create-2-alarm"
+                }
+              }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "name": "test-idle-rule-to-bulk-create-2-resource"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-create-2-resource"
+                }
+              }
+            ]
           ],
           "operation": {
             "type": "snooze",
@@ -413,21 +570,75 @@ Feature: Bulk create idlerules
           "disable_during_periods": ["pause"]
         },
         {
-          "_id": "test-idle-rule-to-bulk-create-3",
           "name": "test-idle-rule-to-bulk-create-3-name",
           "description": "test-idle-rule-to-bulk-create-3-description",
           "author": "root",
-          "type": "entity",
+          "type": "alarm",
+          "alarm_condition": "last_event",
           "enabled": true,
-          "priority": 22,
           "duration": {
             "value": 3,
             "unit": "s"
           },
-          "entity_patterns": [
-            {
-              "name": "test-idle-rule-to-bulk-create-3-resource"
+          "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+          "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-rule-edit-1-pattern"
+                }
+              }
+            ]
+          ],
+          "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+          "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-rule-edit-2-pattern"
+                }
+              }
+            ]
+          ],
+          "operation": {
+            "type": "snooze",
+            "parameters": {
+              "output": "test-idle-rule-to-bulk-create-3-operation-output",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
             }
+          },
+          "disable_during_periods": ["pause"]
+        },
+        {
+          "_id": "test-idle-rule-to-bulk-create-6",
+          "name": "test-idle-rule-to-bulk-create-6-name",
+          "description": "test-idle-rule-to-bulk-create-6-description",
+          "author": "root",
+          "type": "entity",
+          "enabled": true,
+          "duration": {
+            "value": 3,
+            "unit": "s"
+          },
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-idle-rule-to-bulk-create-6-resource"
+                }
+              }
+            ]
           ],
           "disable_during_periods": ["pause"]
         }
@@ -436,7 +647,7 @@ Feature: Bulk create idlerules
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 4
       }
     }
     """

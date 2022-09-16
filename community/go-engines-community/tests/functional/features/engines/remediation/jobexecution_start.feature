@@ -33,10 +33,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-1-description",
       "enabled": true,
@@ -212,46 +218,70 @@ Feature: run a job
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-1&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-1
     Then the response code should be 200
-    Then the response array key "data.0.v.steps" should contain:
+    When I do POST /api/v4/alarm-details:
     """json
     [
       {
-        "_t": "instructionstart",
-        "a": "root",
-        "user_id": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-1-name."
-      },
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "opened": true,
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
       {
-        "_t": "instructionjobstart",
-        "a": "root",
-        "user_id": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
-      },
-      {
-        "_t": "instructionjobcomplete",
-        "a": "root",
-        "user_id": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
-      },
-      {
-        "_t": "instructionjobstart",
-        "a": "root",
-        "user_id": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
-      },
-      {
-        "_t": "instructionjobcomplete",
-        "a": "root",
-        "user_id": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
-      },
-      {
-        "_t": "instructioncomplete",
-        "a": "root",
-        "user_id": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-1-name."
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {},
+              {},
+              {
+                "_t": "instructionstart",
+                "a": "root",
+                "user_id": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-1-name."
+              },
+              {
+                "_t": "instructionjobstart",
+                "a": "root",
+                "user_id": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
+              },
+              {
+                "_t": "instructionjobcomplete",
+                "a": "root",
+                "user_id": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
+              },
+              {
+                "_t": "instructionjobstart",
+                "a": "root",
+                "user_id": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
+              },
+              {
+                "_t": "instructionjobcomplete",
+                "a": "root",
+                "user_id": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
+              },
+              {
+                "_t": "instructioncomplete",
+                "a": "root",
+                "user_id": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-1-name."
+              }
+            ]
+          }
+        }
       }
     ]
     """
@@ -275,10 +305,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-2-description",
       "enabled": true,
@@ -343,23 +379,67 @@ Feature: run a job
     """
     Then the response code should be 200
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-2&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
+    """json
+    {
+      "steps": [
+        {
+          "operations": [
+            {
+              "jobs": [
+                {
+                  "status": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-2
+    Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
     """json
     [
       {
-        "_t": "instructionstart",
-        "a": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-2-name."
-      },
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "opened": true,
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
       {
-        "_t": "instructionjobstart",
-        "a": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-name."
-      },
-      {
-        "_t": "instructionjobfail",
-        "a": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-name."
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {},
+              {},
+              {
+                "_t": "instructionstart",
+                "a": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-2-name."
+              },
+              {
+                "_t": "instructionjobstart",
+                "a": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-name."
+              },
+              {
+                "_t": "instructionjobfail",
+                "a": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-name."
+              }
+            ]
+          }
+        }
       }
     ]
     """
@@ -385,10 +465,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-3-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-3"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-3-description",
       "enabled": true,
@@ -489,10 +575,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-4-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-4-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-4-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-4-1-description",
       "enabled": true,
@@ -524,10 +616,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-4-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-4-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-4-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-4-2-description",
       "enabled": true,
@@ -651,10 +749,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-5-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-5"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-5"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-5-description",
       "enabled": true,
@@ -747,10 +851,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-6-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-6"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-6"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-6-description",
       "enabled": true,
@@ -837,10 +947,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-7-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-7"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-7"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-7-description",
       "enabled": true,
@@ -931,10 +1047,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-8-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-8"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-8"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-8-description",
       "enabled": true,
@@ -1060,10 +1182,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-9-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-9"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-9"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-9-description",
       "enabled": true,
@@ -1192,10 +1320,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-10-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-10"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-10"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-10-description",
       "enabled": true,
@@ -1318,16 +1452,20 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-11-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-11-1"
-        },
-        {
-          "name": "test-resource-to-job-execution-start-11-2"
-        },
-        {
-          "name": "test-resource-to-job-execution-start-11-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-to-job-execution-start-11-1",
+                "test-resource-to-job-execution-start-11-2",
+                "test-resource-to-job-execution-start-11-3"
+              ]
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-11-description",
       "enabled": true,
@@ -1641,13 +1779,19 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-12-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-12-1"
-        },
-        {
-          "name": "test-resource-to-job-execution-start-12-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-to-job-execution-start-12-1",
+                "test-resource-to-job-execution-start-12-2"
+              ]
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-12-description",
       "enabled": true,
