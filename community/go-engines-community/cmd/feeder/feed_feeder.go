@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"time"
@@ -8,7 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-func (f *Feeder) modeFeeder() error {
+func (f *Feeder) modeFeeder(ctx context.Context) error {
 	if err := f.setupAmqp(); err != nil {
 		return err
 	}
@@ -58,7 +59,7 @@ func (f *Feeder) modeFeeder() error {
 
 					stateMap[eid] = state
 
-					err := f.send(int64(state), Ci, ci, ri)
+					err := f.send(ctx, int64(state), Ci, ci, ri)
 					if err != nil {
 						return err
 					}

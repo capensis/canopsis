@@ -8,13 +8,19 @@ Feature: run a instruction
     """json
     {
       "type": 0,
-      "name": "test-instruction-execution-start-1-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-start-1"
-        }
+      "name": "test-instruction-to-execution-start-1-name",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-instruction-execution-start-1"
+            }
+          }
+        ]
       ],
-      "description": "test-instruction-execution-start-1-description",
+      "description": "test-instruction-to-execution-start-1-description",
       "enabled": true,
       "timeout_after_execution": {
         "value": 10,
@@ -22,34 +28,34 @@ Feature: run a instruction
       },
       "steps": [
         {
-          "name": "test-instruction-execution-start-1-step-1",
+          "name": "test-instruction-to-execution-start-1-step-1",
           "operations": [
             {
-              "name": "test-instruction-execution-start-1-step-1-operation-1",
+              "name": "test-instruction-to-execution-start-1-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-execution-start-1-step-1-operation-1-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}",
+              "description": "test-instruction-to-execution-start-1-step-1-operation-1-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}",
               "jobs": ["test-instruction-execution-1"]
             },
             {
-              "name": "test-instruction-execution-start-1-step-1-operation-2",
+              "name": "test-instruction-to-execution-start-1-step-1-operation-2",
               "time_to_complete": {"value": 3, "unit":"s"},
-              "description": "test-instruction-execution-start-1-step-1-operation-2-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}"
+              "description": "test-instruction-to-execution-start-1-step-1-operation-2-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}"
             }
           ],
           "stop_on_fail": true,
-          "endpoint": "test-instruction-execution-start-1-step-1-endpoint"
+          "endpoint": "test-instruction-to-execution-start-1-step-1-endpoint"
         },
         {
-          "name": "test-instruction-execution-start-1-step-2",
+          "name": "test-instruction-to-execution-start-1-step-2",
           "operations": [
             {
-              "name": "test-instruction-execution-start-1-step-2-operation-1",
+              "name": "test-instruction-to-execution-start-1-step-2-operation-1",
               "time_to_complete": {"value": 6, "unit":"s"},
-              "description": "test-instruction-execution-start-1-step-2-operation-1-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}"
+              "description": "test-instruction-to-execution-start-1-step-2-operation-1-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}"
             }
           ],
           "stop_on_fail": true,
-          "endpoint": "test-instruction-execution-start-1-step-2-endpoint"
+          "endpoint": "test-instruction-to-execution-start-1-step-2-endpoint"
         }
       ]
     }
@@ -58,7 +64,7 @@ Feature: run a instruction
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-start-1",
+      "alarm": "test-alarm-to-instruction-execution-start-1",
       "instruction": "{{ .lastResponse._id }}"
     }
     """
@@ -67,20 +73,20 @@ Feature: run a instruction
     """json
     {
       "status": 0,
-      "name": "test-instruction-execution-start-1-name",
-      "description": "test-instruction-execution-start-1-description",
+      "name": "test-instruction-to-execution-start-1-name",
+      "description": "test-instruction-to-execution-start-1-description",
       "steps": [
         {
-          "name": "test-instruction-execution-start-1-step-1",
+          "name": "test-instruction-to-execution-start-1-step-1",
           "time_to_complete": {"value": 4, "unit":"s"},
           "completed_at": 0,
           "failed_at": 0,
           "operations": [
             {
               "completed_at": 0,
-              "name": "test-instruction-execution-start-1-step-1-operation-1",
+              "name": "test-instruction-to-execution-start-1-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-execution-start-1-step-1-operation-1-description connector test-instruction-execution-start-connector entity test-instruction-execution-start-resource-1/test-instruction-execution-start-component",
+              "description": "test-instruction-to-execution-start-1-step-1-operation-1-description connector test-connector-default entity test-resource-to-instruction-execution-start-1/test-component-default",
               "jobs": [
                 {
                   "_id": "",
@@ -97,16 +103,16 @@ Feature: run a instruction
             {
               "started_at": 0,
               "completed_at": 0,
-              "name": "test-instruction-execution-start-1-step-1-operation-2",
+              "name": "test-instruction-to-execution-start-1-step-1-operation-2",
               "time_to_complete": {"value": 3, "unit":"s"},
               "description": "",
               "jobs": []
             }
           ],
-          "endpoint": "test-instruction-execution-start-1-step-1-endpoint"
+          "endpoint": "test-instruction-to-execution-start-1-step-1-endpoint"
         },
         {
-          "name": "test-instruction-execution-start-1-step-2",
+          "name": "test-instruction-to-execution-start-1-step-2",
           "time_to_complete": {"value": 6, "unit":"s"},
           "completed_at": 0,
           "failed_at": 0,
@@ -114,13 +120,13 @@ Feature: run a instruction
             {
               "started_at": 0,
               "completed_at": 0,
-              "name": "test-instruction-execution-start-1-step-2-operation-1",
+              "name": "test-instruction-to-execution-start-1-step-2-operation-1",
               "time_to_complete": {"value": 6, "unit":"s"},
               "description": "",
               "jobs": []
             }
           ],
-          "endpoint": "test-instruction-execution-start-1-step-2-endpoint"
+          "endpoint": "test-instruction-to-execution-start-1-step-2-endpoint"
         }
       ]
     }
@@ -129,41 +135,199 @@ Feature: run a instruction
 
   Scenario: given instruction should not start instruction multiple times for one alarm
     When I am admin
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 0,
+      "name": "test-instruction-to-execution-start-2-name",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-instruction-execution-start-2"
+            }
+          }
+        ]
+      ],
+      "description": "test-instruction-to-execution-start-2-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "s"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-execution-start-2-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-execution-start-2-step-1-operation-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-execution-start-2-step-1-operation-1-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}",
+              "jobs": ["test-instruction-execution-1"]
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-execution-start-2-step-1-endpoint"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response instructionID={{ .lastResponse._id }}
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-start-2",
-      "instruction": "test-instruction-execution-to-start-multiple-times-1"
+      "alarm": "test-alarm-to-instruction-execution-start-2",
+      "instruction": "{{ .instructionID }}"
     }
     """
     Then the response code should be 200
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-start-2",
-      "instruction": "test-instruction-execution-to-start-multiple-times-1"
+      "alarm": "test-alarm-to-instruction-execution-start-2",
+      "instruction": "{{ .instructionID }}"
     }
     """
     Then the response code should be 400
 
   Scenario: given instruction should start instruction multiple times for multiple alarms
     When I am admin
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 0,
+      "name": "test-instruction-to-execution-start-3-name",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-to-instruction-execution-start-3-1",
+                "test-resource-to-instruction-execution-start-3-2"
+              ]
+            }
+          }
+        ]
+      ],
+      "description": "test-instruction-to-execution-start-3-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "s"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-execution-start-3-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-execution-start-3-step-1-operation-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-execution-start-3-step-1-operation-1-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}",
+              "jobs": ["test-instruction-execution-1"]
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-execution-start-3-step-1-endpoint"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response instructionID={{ .lastResponse._id }}
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-start-3-1",
-      "instruction": "test-instruction-execution-to-start-multiple-times-2"
+      "alarm": "test-alarm-to-instruction-execution-start-3-1",
+      "instruction": "{{ .instructionID }}"
     }
     """
     Then the response code should be 200
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-start-3-2",
-      "instruction": "test-instruction-execution-to-start-multiple-times-2"
+      "alarm": "test-alarm-to-instruction-execution-start-3-2",
+      "instruction": "{{ .instructionID }}"
     }
     """
     Then the response code should be 200
+
+  Scenario: given instruction with old pattern should start an execution
+    When I am admin
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "test-alarm-to-instruction-execution-start-4-1",
+      "instruction": "test-instruction-to-execution-start-4-1"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-instruction-to-execution-start-4-1-name"
+    }
+    """
+    Then the response key "steps.0.operations.0.started_at" should not be "0"
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "test-alarm-to-instruction-execution-start-4-2",
+      "instruction": "test-instruction-to-execution-start-4-2"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-instruction-to-execution-start-4-2-name"
+    }
+    """
+    Then the response key "steps.0.operations.0.started_at" should not be "0"
+
+  Scenario: given instruction with empty patterns should not start an execution
+    When I am admin
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 0,
+      "name": "test-instruction-to-execution-start-5-name",
+      "description": "test-instruction-to-execution-start-5-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "s"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-execution-start-5-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-execution-start-5-step-1-operation-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-execution-start-5-step-1-operation-1-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}",
+              "jobs": ["test-instruction-execution-1"]
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-execution-start-5-step-1-endpoint"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "test-alarm-to-instruction-execution-start-5",
+      "instruction": "{{ .lastResponse._id }}"
+    }
+    """
+    Then the response code should be 400
 
   Scenario: given invalid request should return errors
     When I am admin
@@ -194,7 +358,7 @@ Feature: run a instruction
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-start-1",
+      "alarm": "test-alarm-to-instruction-execution-start-1",
       "instruction": "test-instruction-not-exist"
     }
     """
@@ -205,7 +369,7 @@ Feature: run a instruction
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-start-1",
+      "alarm": "test-alarm-to-instruction-execution-start-1",
       "instruction": "test-instruction-not-exist"
     }
     """

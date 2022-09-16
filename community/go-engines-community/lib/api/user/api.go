@@ -12,12 +12,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/rs/zerolog"
 	"github.com/valyala/fastjson"
 )
 
 type api struct {
 	store        Store
 	actionLogger logger.ActionLogger
+	logger       zerolog.Logger
 
 	metricMetaUpdater metrics.MetaUpdater
 }
@@ -25,11 +27,13 @@ type api struct {
 func NewApi(
 	store Store,
 	actionLogger logger.ActionLogger,
+	logger zerolog.Logger,
 	metricMetaUpdater metrics.MetaUpdater,
 ) common.BulkCrudAPI {
 	return &api{
 		store:        store,
 		actionLogger: actionLogger,
+		logger:       logger,
 
 		metricMetaUpdater: metricMetaUpdater,
 	}
@@ -174,7 +178,6 @@ func (a *api) Delete(c *gin.Context) {
 
 // BulkCreate
 // @Param body body []Request true "body"
-// @Success 207 {array} []BulkCreateResponseItem
 func (a *api) BulkCreate(c *gin.Context) {
 	contextUserId := c.MustGet(auth.UserKey).(string)
 
@@ -223,7 +226,8 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 		user, err := a.store.Insert(ctx, request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot create user")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
@@ -248,7 +252,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
-// @Success 207 {array} []BulkUpdateResponseItem
 func (a *api) BulkUpdate(c *gin.Context) {
 	contextUserId := c.MustGet(auth.UserKey).(string)
 
@@ -297,12 +300,13 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 		user, err := a.store.Update(ctx, Request(request))
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot update user")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if user == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
@@ -327,7 +331,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
-// @Success 207 {array} []BulkDeleteResponseItem
 func (a *api) BulkDelete(c *gin.Context) {
 	contextUserId := c.MustGet(auth.UserKey).(string)
 
@@ -376,12 +379,13 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 		ok, err := a.store.Delete(ctx, request.ID)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot delete user")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if !ok {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 

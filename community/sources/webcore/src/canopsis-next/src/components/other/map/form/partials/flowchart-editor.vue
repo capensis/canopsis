@@ -16,6 +16,8 @@
           :shapes="data",
           :add-on-click="addOnClick"
         )
+      c-help-icon.flowchart-map-editor__help-icon(size="32", color="secondary", icon="help", top)
+        div.pre-wrap(v-html="$t('flowchart.panzoom.helpText')")
     v-messages(v-if="hasChildrenError", :value="errorMessages", color="error")
 </template>
 
@@ -115,7 +117,14 @@ export default {
 $borderColor: #e5e5e5;
 
 .flowchart-map-editor {
+  position: relative;
   border: 1px solid $borderColor;
   height: 800px;
+
+  &__help-icon {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+  }
 }
 </style>

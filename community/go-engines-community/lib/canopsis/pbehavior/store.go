@@ -14,7 +14,7 @@ import (
 var ErrNoComputed = errors.New("pbehavior intervals not computed")
 var ErrRecomputeNeed = errors.New("provided time is out of computed date, probably need recompute data")
 
-const redisStep = 100
+const redisStep = 1000
 
 type Store interface {
 	SetSpan(ctx context.Context, span timespan.Span) error
@@ -86,7 +86,8 @@ func (s *store) GetSpan(ctx context.Context) (timespan.Span, error) {
 func (s *store) SetComputed(ctx context.Context, computed ComputeResult) error {
 	data := make(map[string]interface{}, len(computed.ComputedPbehaviors)+2)
 	var err error
-	data[s.typesKey], err = s.encoder.Encode(computed.TypesByID)
+	types := Types{T: computed.TypesByID}
+	data[s.typesKey], err = s.encoder.Encode(types)
 	if err != nil {
 		return fmt.Errorf("cannot encode computed types: %w", err)
 	}
@@ -273,10 +274,12 @@ func (s *store) getTypes(ctx context.Context) (ComputeResult, error) {
 
 	switch str := res.Val()[0].(type) {
 	case string:
-		err := s.decoder.Decode([]byte(str), &computed.TypesByID)
+		types := Types{}
+		err := s.decoder.Decode([]byte(str), &types)
 		if err != nil {
 			return computed, fmt.Errorf("cannot decode types: %w", err)
 		}
+		computed.TypesByID = types.T
 	case nil:
 		/*do nothing*/
 	default:

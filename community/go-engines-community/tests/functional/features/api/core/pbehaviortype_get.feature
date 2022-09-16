@@ -22,7 +22,7 @@ Feature: Get a pbehavior type
       "description": "Some State type",
       "icon_name": "test-to-get-icon",
       "name": "Some State",
-      "priority": 8,
+      "priority": 9,
       "type": "active"
     }
     """
@@ -66,7 +66,7 @@ Feature: Get a pbehavior type
           "description": "Find State type",
           "icon_name": "test-to-find-icon",
           "name": "Find State",
-          "priority": 9,
+          "priority": 10,
           "type": "active"
         }
       ]

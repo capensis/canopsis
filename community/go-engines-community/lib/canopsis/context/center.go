@@ -75,23 +75,13 @@ func (c *center) Handle(ctx context.Context, event types.Event) (*types.Entity, 
 		}
 	}
 
-	updatedEntities := make([]string, 0)
-	metaUpdated := false
-	for _, entity := range entities {
-		if eventEntity.ID == entity.ID {
-			// Update new event entity synchronously to update metrics in following engines.
-			c.metricMetaUpdater.UpdateById(context.Background(), eventEntity.ID)
-			metaUpdated = true
-		} else {
-			updatedEntities = append(updatedEntities, entity.ID)
-		}
+	updatedEntityIds := make([]string, len(entities))
+	for i, entity := range entities {
+		updatedEntityIds[i] = entity.ID
 	}
-	if !metaUpdated {
-		updatedEntities = append(updatedEntities, eventEntity.ID)
-	}
-	updatedEntities = append(updatedEntities, resources...)
-	if len(updatedEntities) > 0 {
-		go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
+	updatedEntityIds = append(updatedEntityIds, resources...)
+	if len(updatedEntityIds) > 0 {
+		c.metricMetaUpdater.UpdateById(ctx, updatedEntityIds...)
 	}
 
 	found := false
@@ -212,7 +202,7 @@ func (c *center) UpdateEntityInfos(ctx context.Context, entity *types.Entity) (U
 		}
 	}
 
-	go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
+	c.metricMetaUpdater.UpdateById(ctx, updatedEntities...)
 
 	return updatedServices, nil
 }
@@ -433,6 +423,7 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 		EnableHistory: []types.CpsTime{now},
 		Enabled:       true,
 		Type:          types.EntityTypeComponent,
+		Connector:     connectorID,
 		Component:     event.Component,
 		Infos:         map[string]types.Info{},
 		ImpactLevel:   types.EntityDefaultImpactLevel,
@@ -449,11 +440,13 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 
 	if entity != nil {
 		if event.SourceType == types.SourceTypeResource && !entity.HasDepend(connectorID) {
+			entity.Connector = connectorID
 			entity.Depends = append(entity.Depends, connectorID)
 			entities = []types.Entity{connector, component, *entity}
 		}
 
 		if event.SourceType == types.SourceTypeComponent && !entity.HasImpact(connectorID) {
+			entity.Connector = connectorID
 			entity.Impacts = append(entity.Impacts, connectorID)
 			entities = []types.Entity{connector, *entity}
 		}
@@ -468,7 +461,8 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 				EnableHistory: []types.CpsTime{now},
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
-				Component:     event.Component,
+				Connector:     connectorID,
+				Component:     componentID,
 				Infos:         map[string]types.Info{},
 				ImpactLevel:   types.EntityDefaultImpactLevel,
 				IsNew:         true,

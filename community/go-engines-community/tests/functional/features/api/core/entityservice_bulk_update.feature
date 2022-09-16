@@ -23,7 +23,17 @@ Feature: Bulk update entityservices
         "category": "test-category-to-entityservice-edit",
         "impact_level": 2,
         "enabled": true,
-        "entity_patterns": [{"name": "test-entityservice-to-bulk-update-1-pattern-updated"}],
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-entityservice-to-bulk-update-1-pattern-updated"
+              }
+            }
+          ]
+        ],
         "sli_avail_state": 1,
         "infos": [
           {
@@ -65,7 +75,17 @@ Feature: Bulk update entityservices
         "category": "test-category-to-entityservice-edit",
         "impact_level": 2,
         "enabled": true,
-        "entity_patterns": [{"name": "test-entityservice-to-bulk-update-1-pattern-updated"}],
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-entityservice-to-bulk-update-1-pattern-updated"
+              }
+            }
+          ]
+        ],
         "sli_avail_state": 1,
         "infos": [
           {
@@ -119,7 +139,17 @@ Feature: Bulk update entityservices
         "category": "test-category-to-entityservice-edit",
         "impact_level": 2,
         "enabled": true,
-        "entity_patterns": [{"name": "test-entityservice-to-bulk-update-2-pattern-updated"}],
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-entityservice-to-bulk-update-2-pattern-updated"
+              }
+            }
+          ]
+        ],
         "sli_avail_state": 1,
         "infos": [
           {
@@ -170,7 +200,17 @@ Feature: Bulk update entityservices
           "category": "test-category-to-entityservice-edit",
           "impact_level": 2,
           "enabled": true,
-          "entity_patterns": [{"name": "test-entityservice-to-bulk-update-1-pattern-updated"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-entityservice-to-bulk-update-1-pattern-updated"
+                }
+              }
+            ]
+          ],
           "sli_avail_state": 1,
           "infos": [
             {
@@ -216,7 +256,17 @@ Feature: Bulk update entityservices
           "category": "test-category-to-entityservice-edit",
           "impact_level": 2,
           "enabled": true,
-          "entity_patterns": [{"name": "test-entityservice-to-bulk-update-1-pattern-updated"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-entityservice-to-bulk-update-1-pattern-updated"
+                }
+              }
+            ]
+          ],
           "sli_avail_state": 1,
           "infos": [
             {
@@ -302,7 +352,17 @@ Feature: Bulk update entityservices
           "category": "test-category-to-entityservice-edit",
           "impact_level": 2,
           "enabled": true,
-          "entity_patterns": [{"name": "test-entityservice-to-bulk-update-2-pattern-updated"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-entityservice-to-bulk-update-2-pattern-updated"
+                }
+              }
+            ]
+          ],
           "sli_avail_state": 1,
           "infos": [
             {
@@ -355,11 +415,17 @@ Feature: Bulk update entityservices
       },
       "depends": [],
       "enabled": true,
-      "enable_history": [],
-      "entity_patterns": [
-        {
-          "name": "test-entityservice-to-bulk-update-1-pattern-updated"
-        }
+      "enable_history": null,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-bulk-update-1-pattern-updated"
+            }
+          }
+        ]
       ],
       "impact": [],
       "impact_level": 2,
@@ -417,11 +483,17 @@ Feature: Bulk update entityservices
       },
       "depends": [],
       "enabled": true,
-      "enable_history": [],
-      "entity_patterns": [
-        {
-          "name": "test-entityservice-to-bulk-update-2-pattern-updated"
-        }
+      "enable_history": null,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-bulk-update-2-pattern-updated"
+            }
+          }
+        ]
       ],
       "impact": [],
       "impact_level": 2,

@@ -6,21 +6,22 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
-	"path/filepath"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/migration/cli"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/pgx"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"github.com/pelletier/go-toml"
-	"github.com/rs/zerolog"
+	"github.com/pelletier/go-toml/v2"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 const (
@@ -42,8 +43,12 @@ func main() {
 	f := flags{}
 	f.Parse()
 
-	logger := log.NewLogger(f.modeDebug)
+	if f.version {
+		canopsis.PrintVersionInfo()
+		return
+	}
 
+	logger := log.NewLogger(f.modeDebug)
 	data, err := ioutil.ReadFile(f.confFile)
 	if err != nil {
 		logger.Error().Err(err).Int("exit status", 1).Msg("")
@@ -57,29 +62,13 @@ func main() {
 	}
 
 	if f.overrideConfFile != "" {
-		if err := loadOverrideConfig(logger, &conf, f.overrideConfFile); err != nil {
+		if err := loadOverrideConfig(&conf, f.overrideConfFile); err != nil {
 			logger.Warn().Err(err).Msgf("skipped configuration overriding")
 		}
 	}
 
 	err = GracefullStart(ctx, logger)
 	utils.FailOnError(err, "Failed to open one of required sessions")
-
-	if f.modeMigrateMongo {
-		if f.mongoMigrationDirectory == "" {
-			logger.Error().Msg("-mongo-migration-directory is not set")
-			os.Exit(ErrGeneral)
-		}
-
-		logger.Info().Msg("Start mongo migrations")
-
-		err = executeMigrations(logger, f.mongoMigrationDirectory, f.mongoURL, f.mongoContainer)
-		if err != nil {
-			utils.FailOnError(err, "Failed to migrate")
-		}
-
-		logger.Info().Msg("Finish mongo migrations")
-	}
 
 	if f.modeMigratePostgres {
 		if f.postgresMigrationDirectory == "" {
@@ -95,10 +84,6 @@ func main() {
 		}
 
 		logger.Info().Msg("Finish postgres migrations")
-	}
-
-	if f.modeMigrateOnly {
-		return
 	}
 
 	amqpConn, err := amqp.NewConnection(logger, 0, 0)
@@ -176,6 +161,24 @@ func main() {
 		}
 	}()
 
+	collections, err := client.ListCollectionNames(ctx, bson.M{})
+	utils.FailOnError(err, "Failed to apply fixtures")
+	if len(collections) == 0 {
+		logger.Info().Msg("Start fixtures")
+		loader := fixtures.NewLoader(client, []string{f.mongoFixtureDirectory},
+			fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), logger)
+		err = loader.Load(ctx)
+		utils.FailOnError(err, "Failed to apply fixtures")
+		logger.Info().Msg("Finish fixtures")
+	}
+
+	buildInfo := canopsis.GetBuildInfo()
+	err = config.NewVersionAdapter(client).UpsertConfig(ctx, config.VersionConf{
+		Version: buildInfo.Version,
+		Edition: f.edition,
+		Stack:   "go",
+	})
+	utils.FailOnError(err, "Failed to save config into mongo")
 	err = config.NewAdapter(client).UpsertConfig(ctx, conf.Canopsis)
 	utils.FailOnError(err, "Failed to save config into mongo")
 	err = config.NewRemediationAdapter(client).UpsertConfig(ctx, conf.Remediation)
@@ -183,9 +186,18 @@ func main() {
 	err = config.NewHealthCheckAdapter(client).UpsertConfig(ctx, conf.HealthCheck)
 	utils.FailOnError(err, "Failed to save config into mongo")
 
-	logger.Info().Msg("Initialising Mongo indexes")
-	err = createMongoIndexes(ctx, client, f.mongoConfPath, logger)
-	utils.FailOnError(err, "Failed to create Mongo indexes")
+	if f.modeMigrateMongo {
+		if f.mongoMigrationDirectory == "" {
+			logger.Error().Msg("-mongo-migration-directory is not set")
+			os.Exit(ErrGeneral)
+		}
+
+		logger.Info().Msg("Start migrations")
+		cmd := cli.NewUpCmd(f.mongoMigrationDirectory, "", client, mongo.NewScriptExecutor(), logger)
+		err = cmd.Exec(ctx)
+		utils.FailOnError(err, "Failed to migrate")
+		logger.Info().Msg("Finish migrations")
+	}
 }
 
 func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
@@ -233,59 +245,13 @@ func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
 	return nil
 }
 
-func createMongoIndexes(ctx context.Context, client mongo.DbClient, mongoConfPath string, logger zerolog.Logger) error {
-	service := mongo.NewIndexService(
-		client,
-		mongoConfPath,
-		&logger,
-	)
-
-	return service.Create(ctx)
-}
-
-func executeMigrations(logger zerolog.Logger, migrationDirectory, mongoURL, mongoContainer string) error {
-	return filepath.Walk(migrationDirectory, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if info.IsDir() {
-			return nil
-		}
-
-		if matched, err := filepath.Match("*.js", filepath.Base(path)); err != nil {
-			return err
-		} else if matched {
-			logger.Info().Msg(fmt.Sprintf("Start migration %s", path))
-
-			command := fmt.Sprintf("mongo %s %s", mongoURL, path)
-			if mongoContainer != "" {
-				command = fmt.Sprintf("sudo docker exec -i %s mongo %s < %s", mongoContainer, mongoURL, path)
-			}
-
-			result := exec.Command("bash", "-c", command)
-
-			output, err := result.CombinedOutput()
-			if err != nil {
-				fmt.Println(fmt.Sprint(err) + ": " + string(output))
-				return err
-			}
-
-			fmt.Println(string(output))
-			logger.Info().Msg(fmt.Sprintf("Finish migration %s", path))
-		}
-
-		return nil
-	})
-}
-
 // Clone returns pointer to a new deep copy of current Config
 func (c *Conf) Clone() interface{} {
 	cloned := *c
 	return &cloned
 }
 
-func loadOverrideConfig(logger zerolog.Logger, conf *Conf, overrideConfFile string) error {
+func loadOverrideConfig(conf *Conf, overrideConfFile string) error {
 	data, err := ioutil.ReadFile(overrideConfFile)
 	if err != nil {
 		return fmt.Errorf("no configuration file found")
