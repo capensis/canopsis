@@ -101,7 +101,6 @@ export default {
       name: this.name,
       rules: 'min_value:1',
       getter: () => this.jobs.length,
-      context: () => this,
       vm: this,
     });
   },

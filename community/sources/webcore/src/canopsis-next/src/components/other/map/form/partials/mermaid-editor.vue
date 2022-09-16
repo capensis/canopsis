@@ -94,7 +94,6 @@ export default {
         name: this.name,
         rules: 'required:true',
         getter: () => !!this.form.code && !!this.form.points.length,
-        context: () => this,
         vm: this,
       });
     },
