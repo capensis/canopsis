@@ -275,7 +275,6 @@ Feature: Create a widget
         "filters.0.entity_pattern": "EntityPattern is missing.",
         "filters.0.pbehavior_pattern": "PbehaviorPattern is missing.",
         "filters.0.title": "Title is missing.",
-        "filters.0.instruction_pattern": "InstructionPattern is missing.",
         "filters.0.weather_service_pattern": "WeatherServicePattern is missing."
       }
     }

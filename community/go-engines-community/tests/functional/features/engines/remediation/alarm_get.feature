@@ -375,45 +375,7 @@ Feature: update an instruction statistics
     ]
     """
     When I wait the end of 10 events processing
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-6",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-6"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_one_of",
-              "value": ["manual", "auto"]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?include_instruction_types[]=0&include_instruction_types[]=1&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -448,45 +410,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-6",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-6"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_one_of",
-              "value": ["manual"]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?include_instruction_types[]=0&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -511,45 +435,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-6",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-6"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_one_of",
-              "value": ["auto"]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?include_instruction_types[]=1&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -574,45 +460,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-6",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-6"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_not",
-              "value": ["manual", "auto"]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?exclude_instruction_types[]=0&exclude_instruction_types[]=1&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -626,45 +474,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-6",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-6"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_not",
-              "value": ["manual"]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?exclude_instruction_types[]=0&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -689,45 +499,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-6",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-6"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_not",
-              "value": ["auto"]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?exclude_instruction_types[]=1&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -752,48 +524,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-6",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-6"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_one_of",
-              "value": [
-                "test-instruction-to-alarm-instruction-get-6-1",
-                "test-instruction-to-alarm-instruction-get-6-2"
-              ]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-alarm-instruction-get-6-1&include_instructions[]=test-instruction-to-alarm-instruction-get-6-2&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -828,47 +559,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-6",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-6"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_one_of",
-              "value": [
-                "test-instruction-to-alarm-instruction-get-6-1"
-              ]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-alarm-instruction-get-6-1&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -893,54 +584,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-6",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-6"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_one_of",
-              "value": ["manual", "auto"]
-            }
-          },
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_not",
-              "value": [
-                "test-instruction-to-alarm-instruction-get-6-1"
-              ]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?include_instruction_types[]=0&include_instruction_types[]=1&exclude_instructions[]=test-instruction-to-alarm-instruction-get-6-1&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -965,55 +609,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-6",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-6"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_one_of",
-              "value": ["manual", "auto"]
-            }
-          },
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_not",
-              "value": [
-                "test-instruction-to-alarm-instruction-get-6-1",
-                "test-instruction-to-alarm-instruction-get-6-2"
-              ]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?include_instruction_types[]=0&include_instruction_types[]=1&exclude_instructions[]=test-instruction-to-alarm-instruction-get-6-1&exclude_instructions[]=test-instruction-to-alarm-instruction-get-6-2&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1162,48 +758,7 @@ Feature: update an instruction statistics
     ]
     """
     When I wait the end of 2 events processing
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-9",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-9"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_one_of",
-              "value": [
-                "test-instruction-to-alarm-instruction-get-9-1",
-                "test-instruction-to-alarm-instruction-get-9-2"
-              ]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-alarm-instruction-get-9-1&include_instructions[]=test-instruction-to-alarm-instruction-get-9-2&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1228,47 +783,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-9",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-9"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_one_of",
-              "value": [
-                "test-instruction-to-alarm-instruction-get-9-1"
-              ]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-alarm-instruction-get-9-1&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1288,47 +803,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-9",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-9"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_one_of",
-              "value": [
-                "test-instruction-to-alarm-instruction-get-9-2"
-              ]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-alarm-instruction-get-9-2&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1348,47 +823,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-9",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-9"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_not",
-              "value": [
-                "test-instruction-to-alarm-instruction-get-9-2"
-              ]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?exclude_instructions[]=test-instruction-to-alarm-instruction-get-9-2&search=test-resource-to-alarm-instruction-get-9&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1408,47 +843,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-9",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-9"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_not",
-              "value": [
-                "test-instruction-to-alarm-instruction-get-9-1"
-              ]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?exclude_instructions[]=test-instruction-to-alarm-instruction-get-9-1&search=test-resource-to-alarm-instruction-get-9&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1487,47 +882,7 @@ Feature: update an instruction statistics
     ]
     """
     When I wait the end of event processing
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-10",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-10"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_one_of",
-              "value": [
-                "test-instruction-without-patterns"
-              ]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-without-patterns&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should be:
     """json
@@ -1541,47 +896,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-10",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-to-alarm-instruction-get-10"
-            }
-          },
-          {
-            "field": "type",
-            "cond": {
-              "type": "eq",
-              "value": "resource"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instructions",
-            "cond": {
-              "type": "has_not",
-              "value": [
-                "test-instruction-without-patterns"
-              ]
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?exclude_instructions[]=test-instruction-without-patterns&search=test-resource-to-alarm-instruction-get-10&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1604,70 +919,6 @@ Feature: update an instruction statistics
 
   Scenario: given auto instruction execution should return alarm
     When I am admin
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-11",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-resource-to-alarm-instruction-get-11"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instruction_execution",
-            "cond": {
-              "type": "exist",
-              "value": true
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I save response filterId1={{ .lastResponse._id }}
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-11",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-resource-to-alarm-instruction-get-11"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instruction_execution",
-            "cond": {
-              "type": "exist",
-              "value": false
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I save response filterId2={{ .lastResponse._id }}
     When I send an event:
     """json
     {
@@ -1682,7 +933,7 @@ Feature: update an instruction statistics
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={{ .filterId1 }} until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?has_running_execution=true&search=test-resource-to-alarm-instruction-get-11 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1700,7 +951,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?filter={{ .filterId2 }}
+    When I do GET /api/v4/alarms?has_running_execution=false&search=test-resource-to-alarm-instruction-get-11
     Then the response code should be 200
     Then the response body should be:
     """json
@@ -1715,7 +966,7 @@ Feature: update an instruction statistics
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={{ .filterId1 }}
+    When I do GET /api/v4/alarms?has_running_execution=true&search=test-resource-to-alarm-instruction-get-11
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1735,7 +986,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?filter={{ .filterId2 }}
+    When I do GET /api/v4/alarms?has_running_execution=false&search=test-resource-to-alarm-instruction-get-11
     Then the response code should be 200
     Then the response body should be:
     """json
@@ -1749,7 +1000,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?filter={{ .filterId1 }} until response code is 200 and body is:
+    When I do GET /api/v4/alarms?has_running_execution=true&search=test-resource-to-alarm-instruction-get-11 until response code is 200 and body is:
     """json
     {
       "data": [],
@@ -1761,7 +1012,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?filter={{ .filterId2 }}
+    When I do GET /api/v4/alarms?has_running_execution=false&search=test-resource-to-alarm-instruction-get-11
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1784,70 +1035,6 @@ Feature: update an instruction statistics
 
   Scenario: given manual instruction execution should return flags in alarm API
     When I am admin
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-12",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-resource-to-alarm-instruction-get-12"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instruction_execution",
-            "cond": {
-              "type": "exist",
-              "value": true
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I save response filterId1={{ .lastResponse._id }}
-    When I do POST /api/v4/widget-filters:
-    """json
-    {
-      "title": "test-widgetfilter-alarm-instruction-get-12",
-      "widget": "test-widget-to-alarm-get",
-      "is_private": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-resource-to-alarm-instruction-get-12"
-            }
-          }
-        ]
-      ],
-      "instruction_pattern": [
-        [
-          {
-            "field": "instruction_execution",
-            "cond": {
-              "type": "exist",
-              "value": false
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I save response filterId2={{ .lastResponse._id }}
     When I send an event:
     """json
     {
@@ -1875,7 +1062,7 @@ Feature: update an instruction statistics
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={{ .filterId1 }}
+    When I do GET /api/v4/alarms?has_running_execution=true&search=test-resource-to-alarm-instruction-get-12
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1895,7 +1082,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?filter={{ .filterId2 }}
+    When I do GET /api/v4/alarms?has_running_execution=false&search=test-resource-to-alarm-instruction-get-12
     Then the response code should be 200
     Then the response body should be:
     """json
@@ -1912,7 +1099,7 @@ Feature: update an instruction statistics
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={{ .filterId1 }}
+    When I do GET /api/v4/alarms?has_running_execution=true&search=test-resource-to-alarm-instruction-get-12
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1932,7 +1119,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?filter={{ .filterId2 }}
+    When I do GET /api/v4/alarms?has_running_execution=false&search=test-resource-to-alarm-instruction-get-12
     Then the response code should be 200
     Then the response body should be:
     """json
@@ -1946,7 +1133,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?filter={{ .filterId1 }} until response code is 200 and body is:
+    When I do GET /api/v4/alarms?has_running_execution=true&search=test-resource-to-alarm-instruction-get-12 until response code is 200 and body is:
     """json
     {
       "data": [],
@@ -1958,7 +1145,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?filter={{ .filterId2 }}
+    When I do GET /api/v4/alarms?has_running_execution=false&search=test-resource-to-alarm-instruction-get-12
     Then the response code should be 200
     Then the response body should contain:
     """json
