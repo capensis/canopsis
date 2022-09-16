@@ -1,18 +1,20 @@
 package alarm
 
 import (
+	"context"
+	"time"
+
 	amqplib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 // ActivationService checks alarm and sends activation event
 // if alarm doesn't have active snooze and pbehavior.
 type ActivationService interface {
-	Process(*types.Alarm) (bool, error)
+	Process(context.Context, types.Alarm) (bool, error)
 }
 
 type baseActivationService struct {
@@ -36,9 +38,9 @@ func NewActivationService(
 	}
 }
 
-func (s *baseActivationService) Process(alarm *types.Alarm) (bool, error) {
+func (s *baseActivationService) Process(ctx context.Context, alarm types.Alarm) (bool, error) {
 	if !alarm.IsActivated() && !alarm.IsSnoozed() && alarm.Value.PbehaviorInfo.IsActive() {
-		err := s.sendActivationEvent(alarm)
+		err := s.sendActivationEvent(ctx, alarm)
 
 		if err != nil {
 			return false, err
@@ -50,7 +52,7 @@ func (s *baseActivationService) Process(alarm *types.Alarm) (bool, error) {
 	return false, nil
 }
 
-func (s *baseActivationService) sendActivationEvent(alarm *types.Alarm) error {
+func (s *baseActivationService) sendActivationEvent(ctx context.Context, alarm types.Alarm) error {
 	event := types.Event{
 		Connector:     alarm.Value.Connector,
 		ConnectorName: alarm.Value.ConnectorName,
@@ -66,7 +68,8 @@ func (s *baseActivationService) sendActivationEvent(alarm *types.Alarm) error {
 		return err
 	}
 
-	err = s.publisher.Publish(
+	err = s.publisher.PublishWithContext(
+		ctx,
 		"",
 		s.queueName,
 		false,

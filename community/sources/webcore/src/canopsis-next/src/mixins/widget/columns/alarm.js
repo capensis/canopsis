@@ -1,3 +1,5 @@
+import { ALARM_ENTITY_FIELDS } from '@/constants';
+
 import { formToColumnValue } from '@/helpers/forms/widgets/alarm';
 
 import { widgetColumnsMixin } from './common';
@@ -20,6 +22,7 @@ export const widgetColumnsAlarmMixin = {
 
         value,
         text: label,
+        sortable: ALARM_ENTITY_FIELDS.extraDetails !== value,
         popupTemplate: this.infoPopupsMap[value],
       };
     },

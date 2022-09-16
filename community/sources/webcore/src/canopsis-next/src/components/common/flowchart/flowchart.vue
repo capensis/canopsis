@@ -24,6 +24,7 @@
           slot(name="layers", :data="data")
     div.flowchart__properties(v-if="selected.length")
       flowchart-properties(v-if="!readonly", v-field="shapes", :selected="selected")
+    slot
 </template>
 
 <script>

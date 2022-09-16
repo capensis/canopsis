@@ -1,562 +1,99 @@
 # Connecteur Zabbix vers Canopsis (connector-zabbix2canopsis)
 
-Convertit des alertes issues de triggers Zabbix en évènements Canopsis.
+Notifie les évènements des triggers Zabbix sous forme d'évènements Canopsis.
 
 ## Prérequis
 
-- Zabbix 4.2.6 ou plus récent.
-- Python 3.6.
+- Zabbix 5.0 ou plus récent
+
+!!! note
+    Une alternative existe pour les versions plus anciennes de Zabbix, qui ne
+    disposent pas de la fonctionnalité *webhook*. Voir le dépôt
+    [connector-zabbix2canopsis][conn-z2c] sur GitLab pour toutes les solutions.
+
+[conn-z2c]: https://git.canopsis.net/canopsis-connectors/connector-zabbix2canopsis
 
 ## Introduction
 
-Le connecteur Zabbix est un [script python](#mise-en-place-du-script-zabbix2filebeatpy) configuré comme `media type` et déclenché par une `action` permettant de tracer dans un fichier de log les changements de criticité des `triggers` configurés dans Zabbix. Le fichier de log est ensuite lu par Filebeat qui transfère le contenu à Logstash.
+Le connecteur Zabbix consiste en un *Media type* de type *webhook*, qui peut
+être importé dans Zabbix.
 
-## Mapping
+L'envoi de l'évènement à Canopsis est fait directement par le serveur Zabbix
+via l'API HTTP de Canopsis, sans intermédiaire, dans les conditions définies
+par l'*action* configurée.
 
-Canopsis utilise 4 criticités (0 : Info, 1 : Mineur , 2 : Majeur, 3 : Critique).
+## Mise en place
 
-Zabbix utilise 6 criticités (0 : Not classified, 1 : Information, 2 : Warning, 3 : Average, 4 : High, 5 : Disaster).
+### Importer le media type
 
-Du fait de ces différences le mapping suivant a été décidé :
+Selon votre version de Zabbix, récupérer le fichier XML ou YAML à partir du
+[dépôt connector-zabbix2canopsis][conn-z2c-webhook].
 
-| Zabbix             | Canopsis     |
-| ------------------ | ------------ |
-| 0 - Not classified | 0 - Info     |
-| 1 - Information    | 0 - Info     |
-| 2 - Warning        | 1 - Mineur   |
-| 3 - Average        | 1 - Mineur   |
-| 4 - High           | 2 - Majeur   |
-| 5  - Disaster      | 3 - Critical |
+Importer le média dans « Administration » > « Media types », bouton « Import ».
 
-## Préparation à la mise en place de "zabbix2filebeat.py"
+[conn-z2c-webhook]: https://git.canopsis.net/canopsis-connectors/connector-zabbix2canopsis/-/tree/master/webhook
 
-Cette préparation est réalisée dans l'interface web de Zabbix.
+### Paramétrer le media type
 
-### Création du media type "zabbix2filebeat"
+Dans la liste des *Media types*, vous trouvez à présent « Canopsis ».
 
-Dans l'onglet Administration, cliquez sur "Media types" puis "Create media type".
+Quelques paramètres doivent être renseignés pour correspondre à l'instance
+Canopsis cible. Modifier le nouveau média pour définir au moins ces quatre
+paramètres :
 
-Renseignez ensuite les informations ci-dessous :
+- `canopsis_url` : URL de l'API Canopsis (de la forme http://canopsis:8082/)
+- `canopsis_user` : nom d'utilisateur Canopsis utilisé pour l'API
+- `canopsis_password` : mot de passe associé à l'utilisateur Canopsis
+- `connector_name` : nom pour ce connecteur Zabbix
+  (sera utilisé dans les évènements)
 
-* Name : `zabbix2filebeat`
-* Type : `Script`
-* Script name : `zabbix2filebeat.py`
-* Script parameters : `{ALERT.MESSAGE}`
-* Enabled : `X`
+### Compléter la configuration
 
-### Ajouter le media à l'utilisateur admin
+Comme pour tous les webhooks et autres types de médias dans Zabbix,
+l'utilisation d'un média au sein d'une action nécessite une liaison à un
+utilisateur.
 
-Toujours dans l'onglet Administration, cliquez sur "Users" puis "Admin".
+À ce sujet, la [documentation Zabbix][doc-zab-webhook] recommande de créer un
+utilisateur Zabbix dédié, qui représente le webhook.
 
-Dans les propriétés de l'utilisateur cliquez sur l'onglet "Media" puis sur "Add" et renseignez le formulaire comme suit :
+Dans Zabbix on créera alors (exemple) :
 
-* Type : `zabbix2filebeat`
-* Send to : `admin@admin`
-* When active : `1-7,00:00-24:00`
-* Use if severity :
-    - Not classified : `X`
-    - Information : `X`
-    - Warning : `X`
-    - Average : `X`
-    - High : `X`
-    - Disaster : `X`
-* Enabled : `X`
+- Un *User group* « Canopsis »
 
-### Création de l'action "zabbix2filebeat"
+    À créer dans « Administration » > « User groups ».
 
-Dans l'onglet Configuration, cliquez sur "Actions" puis "Create action" et renseignez les différents onglets :
+    - Frontend access : disabled
+    - Permissions en lecture sur les host groups à propos desquels il faut
+    envoyer des évènements
 
-#### Onglet Action
+- Un *User* « canopsis »
 
-* Name : `zabbix2filebeat`
-* Enabled : `X`
+    À créer dans « Administration » > « Users ».
 
-#### Onglet Operations
+    - Membre du groupe « Canopsis »
+    - Media : ajouter le média « Canopsis »
 
-* Default operation step duration : `1h`
-* Default subject : `{TRIGGER.STATUS}: {TRIGGER.NAME}`
-* Default message :
-```
-ACTION.ID={ACTION.ID}
-ACTION.NAME={ACTION.NAME}
-DATE={DATE}
-ESC.HISTORY={ESC.HISTORY}
-EVENT.ACK.HISTORY={EVENT.ACK.HISTORY}
-EVENT.ACK.STATUS={EVENT.ACK.STATUS}
-EVENT.AGE={EVENT.AGE}
-EVENT.DATE={EVENT.DATE}
-EVENT.ID={EVENT.ID}
-EVENT.RECOVERY.DATE={EVENT.RECOVERY.DATE}
-EVENT.RECOVERY.ID={EVENT.RECOVERY.ID}
-EVENT.RECOVERY.STATUS={EVENT.RECOVERY.STATUS}
-EVENT.RECOVERY.TAGS={EVENT.RECOVERY.TAGS}
-EVENT.RECOVERY.TIME={EVENT.RECOVERY.TIME}
-EVENT.RECOVERY.VALUE={EVENT.RECOVERY.VALUE}
-EVENT.STATUS={EVENT.STATUS}
-EVENT.TAGS={EVENT.TAGS}
-EVENT.TIME={EVENT.TIME}
-EVENT.VALUE={EVENT.VALUE}
-HOST.CONN={HOST.CONN}
-HOST.DESCRIPTION={HOST.DESCRIPTION}
-HOST.DNS={HOST.DNS}
-HOST.HOST={HOST.HOST}
-HOSTNAME={HOSTNAME}
-HOST.IP={HOST.IP}
-HOST.NAME={HOST.NAME}
-HOST.PORT={HOST.PORT}
-INVENTORY.ALIAS={INVENTORY.ALIAS}
-INVENTORY.ASSET.TAG={INVENTORY.ASSET.TAG}
-INVENTORY.CHASSIS={INVENTORY.CHASSIS}
-INVENTORY.CONTACT={INVENTORY.CONTACT}
-PROFILE.CONTACT={PROFILE.CONTACT}
-INVENTORY.CONTRACT.NUMBER={INVENTORY.CONTRACT.NUMBER}
-INVENTORY.DEPLOYMENT.STATUS={INVENTORY.DEPLOYMENT.STATUS}
-INVENTORY.HARDWARE={INVENTORY.HARDWARE}
-PROFILE.HARDWARE={PROFILE.HARDWARE}
-INVENTORY.HARDWARE.FULL={INVENTORY.HARDWARE.FULL}
-INVENTORY.HOST.NETMASK={INVENTORY.HOST.NETMASK}
-INVENTORY.HOST.NETWORKS={INVENTORY.HOST.NETWORKS}
-INVENTORY.HOST.ROUTER={INVENTORY.HOST.ROUTER}
-INVENTORY.HW.ARCH={INVENTORY.HW.ARCH}
-INVENTORY.HW.DATE.DECOMM={INVENTORY.HW.DATE.DECOMM}
-INVENTORY.HW.DATE.EXPIRY={INVENTORY.HW.DATE.EXPIRY}
-INVENTORY.HW.DATE.INSTALL={INVENTORY.HW.DATE.INSTALL}
-INVENTORY.HW.DATE.PURCHASE={INVENTORY.HW.DATE.PURCHASE}
-INVENTORY.INSTALLER.NAME={INVENTORY.INSTALLER.NAME}
-INVENTORY.LOCATION={INVENTORY.LOCATION}
-PROFILE.LOCATION={PROFILE.LOCATION}
-INVENTORY.LOCATION.LAT={INVENTORY.LOCATION.LAT}
-INVENTORY.LOCATION.LON={INVENTORY.LOCATION.LON}
-INVENTORY.MACADDRESS.A={INVENTORY.MACADDRESS.A}
-PROFILE.MACADDRESS={PROFILE.MACADDRESS}
-INVENTORY.MACADDRESS.B={INVENTORY.MACADDRESS.B}
-INVENTORY.MODEL={INVENTORY.MODEL}
-INVENTORY.NAME={INVENTORY.NAME}
-INVENTORY.NOTES={INVENTORY.NOTES}
-INVENTORY.OOB.IP={INVENTORY.OOB.IP}
-INVENTORY.OOB.NETMASK={INVENTORY.OOB.NETMASK}
-INVENTORY.OOB.ROUTER={INVENTORY.OOB.ROUTER}
-INVENTORY.OS={INVENTORY.OS}
-PROFILE.OS={PROFILE.OS}
-INVENTORY.OS.FULL={INVENTORY.OS.FULL}
-INVENTORY.OS.SHORT={INVENTORY.OS.SHORT}
-INVENTORY.POC.PRIMARY.CELL={INVENTORY.POC.PRIMARY.CELL}
-INVENTORY.POC.PRIMARY.EMAIL={INVENTORY.POC.PRIMARY.EMAIL}
-INVENTORY.POC.PRIMARY.NAME={INVENTORY.POC.PRIMARY.NAME}
-INVENTORY.POC.PRIMARY.NOTES={INVENTORY.POC.PRIMARY.NOTES}
-INVENTORY.POC.PRIMARY.PHONE.A={INVENTORY.POC.PRIMARY.PHONE.A}
-INVENTORY.POC.PRIMARY.PHONE.B={INVENTORY.POC.PRIMARY.PHONE.B}
-INVENTORY.POC.PRIMARY.SCREEN={INVENTORY.POC.PRIMARY.SCREEN}
-INVENTORY.POC.SECONDARY.CELL={INVENTORY.POC.SECONDARY.CELL}
-INVENTORY.POC.SECONDARY.EMAIL={INVENTORY.POC.SECONDARY.EMAIL}
-INVENTORY.POC.SECONDARY.NAME={INVENTORY.POC.SECONDARY.NAME}
-INVENTORY.POC.SECONDARY.NOTES={INVENTORY.POC.SECONDARY.NOTES}
-INVENTORY.POC.SECONDARY.PHONE.A={INVENTORY.POC.SECONDARY.PHONE.A}
-INVENTORY.POC.SECONDARY.PHONE.B={INVENTORY.POC.SECONDARY.PHONE.B}
-INVENTORY.POC.SECONDARY.SCREEN={INVENTORY.POC.SECONDARY.SCREEN}
-INVENTORY.SERIALNO.A={INVENTORY.SERIALNO.A}
-PROFILE.SERIALNO={PROFILE.SERIALNO}
-INVENTORY.SERIALNO.B={INVENTORY.SERIALNO.B}
-INVENTORY.SITE.ADDRESS.A={INVENTORY.SITE.ADDRESS.A}
-INVENTORY.SITE.ADDRESS.B={INVENTORY.SITE.ADDRESS.B}
-INVENTORY.SITE.ADDRESS.C={INVENTORY.SITE.ADDRESS.C}
-INVENTORY.SITE.CITY={INVENTORY.SITE.CITY}
-INVENTORY.SITE.COUNTRY={INVENTORY.SITE.COUNTRY}
-INVENTORY.SITE.NOTES={INVENTORY.SITE.NOTES}
-INVENTORY.SITE.RACK={INVENTORY.SITE.RACK}
-INVENTORY.SITE.STATE={INVENTORY.SITE.STATE}
-INVENTORY.SITE.ZIP={INVENTORY.SITE.ZIP}
-INVENTORY.SOFTWARE={INVENTORY.SOFTWARE}
-INVENTORY.SOFTWARE.APP.A={INVENTORY.SOFTWARE.APP.A}
-INVENTORY.SOFTWARE.APP.B={INVENTORY.SOFTWARE.APP.B}
-INVENTORY.SOFTWARE.APP.C={INVENTORY.SOFTWARE.APP.C}
-INVENTORY.SOFTWARE.APP.D={INVENTORY.SOFTWARE.APP.D}
-INVENTORY.SOFTWARE.APP.E={INVENTORY.SOFTWARE.APP.E}
-INVENTORY.SOFTWARE.FULL={INVENTORY.SOFTWARE.FULL}
-INVENTORY.TAG={INVENTORY.TAG}
-INVENTORY.TYPE={INVENTORY.TYPE}
-INVENTORY.TYPE.FULL={INVENTORY.TYPE.FULL}
-INVENTORY.URL.A={INVENTORY.URL.A}
-INVENTORY.URL.B={INVENTORY.URL.B}
-INVENTORY.URL.C={INVENTORY.URL.C}
-INVENTORY.VENDOR={INVENTORY.VENDOR}
-ITEM.DESCRIPTION={ITEM.DESCRIPTION}
-ITEM.ID={ITEM.ID}
-ITEM.KEY={ITEM.KEY}
-TRIGGER.KEY={TRIGGER.KEY}
-ITEM.KEY.ORIG={ITEM.KEY.ORIG}
-ITEM.LASTVALUE={ITEM.LASTVALUE}
-ITEM.LOG.AGE={ITEM.LOG.AGE}
-ITEM.LOG.DATE={ITEM.LOG.DATE}
-ITEM.LOG.EVENTID={ITEM.LOG.EVENTID}
-ITEM.LOG.NSEVERITY={ITEM.LOG.NSEVERITY}
-ITEM.LOG.SEVERITY={ITEM.LOG.SEVERITY}
-ITEM.LOG.SOURCE={ITEM.LOG.SOURCE}
-ITEM.LOG.TIME={ITEM.LOG.TIME}
-ITEM.NAME={ITEM.NAME}
-ITEM.NAME.ORIG={ITEM.NAME.ORIG}
-ITEM.VALUE={ITEM.VALUE}
-PROXY.DESCRIPTION={PROXY.DESCRIPTION}
-PROXY.NAME={PROXY.NAME}
-TIME={TIME}
-TRIGGER.DESCRIPTION={TRIGGER.DESCRIPTION}
-TRIGGER.COMMENT={TRIGGER.COMMENT}
-TRIGGER.EVENTS.ACK={TRIGGER.EVENTS.ACK}
-TRIGGER.EVENTS.PROBLEM.ACK={TRIGGER.EVENTS.PROBLEM.ACK}
-TRIGGER.EVENTS.PROBLEM.UNACK={TRIGGER.EVENTS.PROBLEM.UNACK}
-TRIGGER.EVENTS.UNACK={TRIGGER.EVENTS.UNACK}
-TRIGGER.HOSTGROUP.NAME={TRIGGER.HOSTGROUP.NAME}
-TRIGGER.EXPRESSION={TRIGGER.EXPRESSION}
-TRIGGER.EXPRESSION.RECOVERY={TRIGGER.EXPRESSION.RECOVERY}
-TRIGGER.ID={TRIGGER.ID}
-TRIGGER.NAME={TRIGGER.NAME}
-TRIGGER.NAME.ORIG={TRIGGER.NAME.ORIG}
-TRIGGER.NSEVERITY={TRIGGER.NSEVERITY}
-TRIGGER.SEVERITY={TRIGGER.SEVERITY}
-TRIGGER.STATUS={TRIGGER.STATUS}
-STATUS={STATUS}
-TRIGGER.TEMPLATE.NAME={TRIGGER.TEMPLATE.NAME}
-TRIGGER.URL={TRIGGER.URL}
-TRIGGER.VALUE={TRIGGER.VALUE}
-```
-* Pause operations for suppressed problems : `X`
-* Operations :
-    -  Cliquez sur "New" et renseignez :
-        - Operation details :
-        - Steps : `1` - `0`
-            - Step duration : `0`
-            - Operation type : `Send message`
-            - Send to User groups : `Zabbix administrators`
-            - Send only to : `zabbix2filebeat`
-            - Default message : `X`
-            - Cliquez sur `Add`
+        Dans le champ « Send to », renseigner une adresse email factice comme
+        « canopsis@localhost.localdomain ».
 
-#### Onglet Recovery operations
+        Il est possible de personnaliser les plages horaires ou les sévérités
+        pour lesquelles le média est utilisé.
 
-* Default subject  : `{TRIGGER.STATUS}: {TRIGGER.NAME}`
-* Default message :
-```
-  ACTION.ID={ACTION.ID}
-ACTION.NAME={ACTION.NAME}
-DATE={DATE}
-ESC.HISTORY={ESC.HISTORY}
-EVENT.ACK.HISTORY={EVENT.ACK.HISTORY}
-EVENT.ACK.STATUS={EVENT.ACK.STATUS}
-EVENT.AGE={EVENT.AGE}
-EVENT.DATE={EVENT.DATE}
-EVENT.ID={EVENT.ID}
-EVENT.RECOVERY.DATE={EVENT.RECOVERY.DATE}
-EVENT.RECOVERY.ID={EVENT.RECOVERY.ID}
-EVENT.RECOVERY.STATUS={EVENT.RECOVERY.STATUS}
-EVENT.RECOVERY.TAGS={EVENT.RECOVERY.TAGS}
-EVENT.RECOVERY.TIME={EVENT.RECOVERY.TIME}
-EVENT.RECOVERY.VALUE={EVENT.RECOVERY.VALUE}
-EVENT.STATUS={EVENT.STATUS}
-EVENT.TAGS={EVENT.TAGS}
-EVENT.TIME={EVENT.TIME}
-EVENT.VALUE={EVENT.VALUE}
-HOST.CONN={HOST.CONN}
-HOST.DESCRIPTION={HOST.DESCRIPTION}
-HOST.DNS={HOST.DNS}
-HOST.HOST={HOST.HOST}
-HOSTNAME={HOSTNAME}
-HOST.IP={HOST.IP}
-HOST.NAME={HOST.NAME}
-HOST.PORT={HOST.PORT}
-INVENTORY.ALIAS={INVENTORY.ALIAS}
-INVENTORY.ASSET.TAG={INVENTORY.ASSET.TAG}
-INVENTORY.CHASSIS={INVENTORY.CHASSIS}
-INVENTORY.CONTACT={INVENTORY.CONTACT}
-PROFILE.CONTACT={PROFILE.CONTACT}
-INVENTORY.CONTRACT.NUMBER={INVENTORY.CONTRACT.NUMBER}
-INVENTORY.DEPLOYMENT.STATUS={INVENTORY.DEPLOYMENT.STATUS}
-INVENTORY.HARDWARE={INVENTORY.HARDWARE}
-PROFILE.HARDWARE={PROFILE.HARDWARE}
-INVENTORY.HARDWARE.FULL={INVENTORY.HARDWARE.FULL}
-INVENTORY.HOST.NETMASK={INVENTORY.HOST.NETMASK}
-INVENTORY.HOST.NETWORKS={INVENTORY.HOST.NETWORKS}
-INVENTORY.HOST.ROUTER={INVENTORY.HOST.ROUTER}
-INVENTORY.HW.ARCH={INVENTORY.HW.ARCH}
-INVENTORY.HW.DATE.DECOMM={INVENTORY.HW.DATE.DECOMM}
-INVENTORY.HW.DATE.EXPIRY={INVENTORY.HW.DATE.EXPIRY}
-INVENTORY.HW.DATE.INSTALL={INVENTORY.HW.DATE.INSTALL}
-INVENTORY.HW.DATE.PURCHASE={INVENTORY.HW.DATE.PURCHASE}
-INVENTORY.INSTALLER.NAME={INVENTORY.INSTALLER.NAME}
-INVENTORY.LOCATION={INVENTORY.LOCATION}
-PROFILE.LOCATION={PROFILE.LOCATION}
-INVENTORY.LOCATION.LAT={INVENTORY.LOCATION.LAT}
-INVENTORY.LOCATION.LON={INVENTORY.LOCATION.LON}
-INVENTORY.MACADDRESS.A={INVENTORY.MACADDRESS.A}
-PROFILE.MACADDRESS={PROFILE.MACADDRESS}
-INVENTORY.MACADDRESS.B={INVENTORY.MACADDRESS.B}
-INVENTORY.MODEL={INVENTORY.MODEL}
-INVENTORY.NAME={INVENTORY.NAME}
-INVENTORY.NOTES={INVENTORY.NOTES}
-INVENTORY.OOB.IP={INVENTORY.OOB.IP}
-INVENTORY.OOB.NETMASK={INVENTORY.OOB.NETMASK}
-INVENTORY.OOB.ROUTER={INVENTORY.OOB.ROUTER}
-INVENTORY.OS={INVENTORY.OS}
-PROFILE.OS={PROFILE.OS}
-INVENTORY.OS.FULL={INVENTORY.OS.FULL}
-INVENTORY.OS.SHORT={INVENTORY.OS.SHORT}
-INVENTORY.POC.PRIMARY.CELL={INVENTORY.POC.PRIMARY.CELL}
-INVENTORY.POC.PRIMARY.EMAIL={INVENTORY.POC.PRIMARY.EMAIL}
-INVENTORY.POC.PRIMARY.NAME={INVENTORY.POC.PRIMARY.NAME}
-INVENTORY.POC.PRIMARY.NOTES={INVENTORY.POC.PRIMARY.NOTES}
-INVENTORY.POC.PRIMARY.PHONE.A={INVENTORY.POC.PRIMARY.PHONE.A}
-INVENTORY.POC.PRIMARY.PHONE.B={INVENTORY.POC.PRIMARY.PHONE.B}
-INVENTORY.POC.PRIMARY.SCREEN={INVENTORY.POC.PRIMARY.SCREEN}
-INVENTORY.POC.SECONDARY.CELL={INVENTORY.POC.SECONDARY.CELL}
-INVENTORY.POC.SECONDARY.EMAIL={INVENTORY.POC.SECONDARY.EMAIL}
-INVENTORY.POC.SECONDARY.NAME={INVENTORY.POC.SECONDARY.NAME}
-INVENTORY.POC.SECONDARY.NOTES={INVENTORY.POC.SECONDARY.NOTES}
-INVENTORY.POC.SECONDARY.PHONE.A={INVENTORY.POC.SECONDARY.PHONE.A}
-INVENTORY.POC.SECONDARY.PHONE.B={INVENTORY.POC.SECONDARY.PHONE.B}
-INVENTORY.POC.SECONDARY.SCREEN={INVENTORY.POC.SECONDARY.SCREEN}
-INVENTORY.SERIALNO.A={INVENTORY.SERIALNO.A}
-PROFILE.SERIALNO={PROFILE.SERIALNO}
-INVENTORY.SERIALNO.B={INVENTORY.SERIALNO.B}
-INVENTORY.SITE.ADDRESS.A={INVENTORY.SITE.ADDRESS.A}
-INVENTORY.SITE.ADDRESS.B={INVENTORY.SITE.ADDRESS.B}
-INVENTORY.SITE.ADDRESS.C={INVENTORY.SITE.ADDRESS.C}
-INVENTORY.SITE.CITY={INVENTORY.SITE.CITY}
-INVENTORY.SITE.COUNTRY={INVENTORY.SITE.COUNTRY}
-INVENTORY.SITE.NOTES={INVENTORY.SITE.NOTES}
-INVENTORY.SITE.RACK={INVENTORY.SITE.RACK}
-INVENTORY.SITE.STATE={INVENTORY.SITE.STATE}
-INVENTORY.SITE.ZIP={INVENTORY.SITE.ZIP}
-INVENTORY.SOFTWARE={INVENTORY.SOFTWARE}
-INVENTORY.SOFTWARE.APP.A={INVENTORY.SOFTWARE.APP.A}
-INVENTORY.SOFTWARE.APP.B={INVENTORY.SOFTWARE.APP.B}
-INVENTORY.SOFTWARE.APP.C={INVENTORY.SOFTWARE.APP.C}
-INVENTORY.SOFTWARE.APP.D={INVENTORY.SOFTWARE.APP.D}
-INVENTORY.SOFTWARE.APP.E={INVENTORY.SOFTWARE.APP.E}
-INVENTORY.SOFTWARE.FULL={INVENTORY.SOFTWARE.FULL}
-INVENTORY.TAG={INVENTORY.TAG}
-INVENTORY.TYPE={INVENTORY.TYPE}
-INVENTORY.TYPE.FULL={INVENTORY.TYPE.FULL}
-INVENTORY.URL.A={INVENTORY.URL.A}
-INVENTORY.URL.B={INVENTORY.URL.B}
-INVENTORY.URL.C={INVENTORY.URL.C}
-INVENTORY.VENDOR={INVENTORY.VENDOR}
-ITEM.DESCRIPTION={ITEM.DESCRIPTION}
-ITEM.ID={ITEM.ID}
-ITEM.KEY={ITEM.KEY}
-TRIGGER.KEY={TRIGGER.KEY}
-ITEM.KEY.ORIG={ITEM.KEY.ORIG}
-ITEM.LASTVALUE={ITEM.LASTVALUE}
-ITEM.LOG.AGE={ITEM.LOG.AGE}
-ITEM.LOG.DATE={ITEM.LOG.DATE}
-ITEM.LOG.EVENTID={ITEM.LOG.EVENTID}
-ITEM.LOG.NSEVERITY={ITEM.LOG.NSEVERITY}
-ITEM.LOG.SEVERITY={ITEM.LOG.SEVERITY}
-ITEM.LOG.SOURCE={ITEM.LOG.SOURCE}
-ITEM.LOG.TIME={ITEM.LOG.TIME}
-ITEM.NAME={ITEM.NAME}
-ITEM.NAME.ORIG={ITEM.NAME.ORIG}
-ITEM.VALUE={ITEM.VALUE}
-PROXY.DESCRIPTION={PROXY.DESCRIPTION}
-PROXY.NAME={PROXY.NAME}
-TIME={TIME}
-TRIGGER.DESCRIPTION={TRIGGER.DESCRIPTION}
-TRIGGER.COMMENT={TRIGGER.COMMENT}
-TRIGGER.EVENTS.ACK={TRIGGER.EVENTS.ACK}
-TRIGGER.EVENTS.PROBLEM.ACK={TRIGGER.EVENTS.PROBLEM.ACK}
-TRIGGER.EVENTS.PROBLEM.UNACK={TRIGGER.EVENTS.PROBLEM.UNACK}
-TRIGGER.EVENTS.UNACK={TRIGGER.EVENTS.UNACK}
-TRIGGER.HOSTGROUP.NAME={TRIGGER.HOSTGROUP.NAME}
-TRIGGER.EXPRESSION={TRIGGER.EXPRESSION}
-TRIGGER.EXPRESSION.RECOVERY={TRIGGER.EXPRESSION.RECOVERY}
-TRIGGER.ID={TRIGGER.ID}
-TRIGGER.NAME={TRIGGER.NAME}
-TRIGGER.NAME.ORIG={TRIGGER.NAME.ORIG}
-TRIGGER.NSEVERITY={TRIGGER.NSEVERITY}
-TRIGGER.SEVERITY={TRIGGER.SEVERITY}
-TRIGGER.STATUS={TRIGGER.STATUS}
-STATUS={STATUS}
-TRIGGER.TEMPLATE.NAME={TRIGGER.TEMPLATE.NAME}
-TRIGGER.URL={TRIGGER.URL}
-TRIGGER.VALUE={TRIGGER.VALUE}
-```
-* Operations :
-    - Cliquez sur "New" puis renseignez :
-    - Operation details :
-        - Operation type : `Send message`
-        - Send to User groups : `Zabbix administrators`
-        - Send only to : `zabbix2filebeat`
-        - Default message : `X`
+    - Permissions – User type : Zabbix User
 
-### Mise en place du script "zabbix2filebeat.py"
+- Une *Action* (trigger action)
 
-#### Récupération du script
+    À créer dans « Configuration » > « Actions », « Trigger actions ».
 
-```bash
-cd /usr/lib/zabbix/alertscripts/
-wget https://git.canopsis.net/canopsis-connectors/connector-zabbix2canopsis/-/raw/master/zabbix2canopsis.py
-```
+    Dans cet exemple minimal, on propose une action qui envoie tous les
+    problèmes à Canopsis, ainsi que les résolutions des problèmes.
 
-#### Rendre exécutable le script
+    - Name : « Report to Canopsis »
+    - Conditions : (aucune)
+    - Operations :
 
-```shell
-chmod +x /usr/lib/zabbix/alertscripts/zabbix2canopsis.py
-```
+        - Operations : step 1, « Send message to users »
+        choisir l'utilisateur canopsis créé précédemment et le média Canopsis
+        - Recovery operations : « Notify all involved »
 
-#### Rotation du log via logrotate
-
-```shell
-cat > /etc/logrotate.d/zabbix-notifications << EOF
-/var/log/zabbix/notifications.log {
-    daily
-    rotate 30
-    missingok
-    notifempty
-    compress
-    delaycompress
-}
-EOF
-```
-
-#### Output du script
-
-Le script crée et alimente le fichier de log suivant : `/var/log/zabbix/notifications.log`
-
-Le contenu non minifié d'une ligne de log est de la forme suivante :
-```json
-{
-	"timestamp": "1538486892",
-	"connector": "zabbix",
-	"connector_name": "zabbix1.plateforme-dev",
-	"event_type": "check",
-	"source_type": "resource",
-	"component": "127.0.0.1",
-	"resource": "Zabbix agent on {HOST.NAME} is unreachable for 5 minutes",
-	"output": "Zabbix agent on Zabbix server is unreachable for 5 minutes",
-	"state": "0",
-	"ITEM.ID": "23287",
-	"ITEM.DESCRIPTION": "The agent always returns 1 for this item. It could be used in combination with nodata() for availability check.",
-	"ITEM.NAME": "Agent ping",
-	"ITEM.VALUE": "Up (1)",
-	"HOST.DNS": "",
-	"HOST.HOST": "Zabbix server",
-	"EVENT.ACK.STATUS": "No",
-	"EVENT.STATUS": "PROBLEM"
-}
-```
-
-### Filebeat
-
-#### Installation
-
-Pour Red Hat et CentOS :
-
-```shell
-curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-6.4.2-x86_64.rpm
-rpm -ivh filebeat-6.4.2-x86_64.rpm
-```
-
-Pour Debian consultez la [page de téléchargement](https://www.elastic.co/fr/downloads/beats/filebeat) de Filebeat et la documentation de votre distribution.
-
-#### Configuration
-
-```shell
-cat > /etc/filebeat/filebeat.yml << EOF
-filebeat.prospectors:
-- type: log
-  paths:
-    - /var/log/zabbix/notifications.log
-output.logstash:
-  hosts: ["X.X.X.X:5044"]
-EOF
-```
-
-!!! attention
-    Sur la dernière ligne, n'oubliez pas de remplacer `X.X.X.X` par l'adresse du serveur Logstash de la plateforme ciblée.
-
-#### Activation du démarrage automatique du service
-
-```shell
-systemctl enable filebeat
-```
-
-#### Rechargement la configuration
-
-```shell
-systemctl restart filebeat
-```
-
-### Logstash
-
-On utilisera Logstash pour traiter les informations en provenance de Zabbix et les transmettre à Canopsis.
-
-#### Installation
-
-L'installation et la configuration initiale de Logstash restent à votre charge et ne seront pas détaillées dans cette documentation.
-
-#### Configuration
-
-Vous trouverez ci-dessous le contenu du fichier de configuration du pipeline.
-
-```sh
-cat > /etc/logstash/conf.d/filebeat-pipeline.conf << EOF
-input {
-    beats {
-        port => "5044"
-        codec => "json"
-    }
-}
-
-filter {
-    # Conversion des champs en integer
-        mutate {
-          convert => ["[state]", "integer"]
-          convert => ["[state_type]", "integer"]
-          convert => ["[timestamp]", "integer"]
-        }
-
-
-        # construction de la clef de routage (routing key) nécessaire à Canopsis
-        mutate {
-            add_field => {"[@metadata][canopsis_rk_]" => "%{connector}.%{connector_name}.%{event_type}.%{source_type}.%{component}" }
-        }
-
-        if [source_type] == "resource" {
-            mutate {
-                add_field => {"[@metadata][canopsis_rk]" => "%{[@metadata][canopsis_rk_]}.%{resource}" }
-            }
-        } else {
-            mutate {
-                add_field => {"[@metadata][canopsis_rk]" => "%{[@metadata][canopsis_rk_]" }
-            }
-        }
-
-        # nettoyage: suppression des champs et métadonnées maintenant inutiles
-        mutate {
-            remove_field => ["[@metadata][canopsis_rk_]", "message", "@timestamp", "input"]
-        }
-
-
-        # Ajouter un timestamp à l'event (convertir une date en timestamp) :
-
-        #ruby{
-        #  code =>"event.set('timestamp', event.get('@timestamp').to_i)"
-        #}
-
-}
-output {
-  stdout { codec => rubydebug }
-
-  rabbitmq {
-      host => "rabbitmq"
-      vhost => canopsis
-      user => "cpsrabbit"
-      password => "canopsis"
-      exchange => "canopsis.events"
-      exchange_type => "topic"
-      message_properties => { "content_type" => "application/json" }
-      key => "%{[@metadata][canopsis_rk]}"
-  }
-}
-EOF
-```
-
-Les évènements seront envoyés à Canopsis par le biais du bus AMQP de RabbitMQ.
+[doc-zab-webhook]: https://www.zabbix.com/documentation/5.0/en/manual/config/notifications/media/webhook#user-media

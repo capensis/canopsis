@@ -26,6 +26,7 @@ Feature: create entities on event
         {
           "_id": "test-component-che-1",
           "category": null,
+          "connector": "test-connector-che-1/test-connector-name-che-1",
           "component": "test-component-che-1",
           "depends": [
             "test-resource-che-1/test-component-che-1"
@@ -54,11 +55,13 @@ Feature: create entities on event
           "infos": {},
           "measurements": null,
           "name": "test-connector-name-che-1",
+          "connector_type": "test-connector-che-1",
           "type": "connector"
         },
         {
           "_id": "test-resource-che-1/test-component-che-1",
           "category": null,
+          "connector": "test-connector-che-1/test-connector-name-che-1",
           "component": "test-component-che-1",
           "depends": [
             "test-connector-che-1/test-connector-name-che-1"
@@ -107,6 +110,7 @@ Feature: create entities on event
         {
           "_id": "test-component-che-2",
           "category": null,
+          "connector": "test-connector-che-2/test-connector-name-che-2",
           "component": "test-component-che-2",
           "depends": [],
           "enabled": true,
@@ -183,6 +187,7 @@ Feature: create entities on event
         {
           "_id": "test-component-che-3",
           "category": null,
+          "connector": "test-connector-che-3/test-connector-name-che-3",
           "component": "test-component-che-3",
           "depends": [
             "test-resource-che-3/test-component-che-3"
@@ -222,6 +227,7 @@ Feature: create entities on event
         {
           "_id": "test-resource-che-3/test-component-che-3",
           "category": null,
+          "connector": "test-connector-che-3/test-connector-name-che-3",
           "component": "test-component-che-3",
           "depends": [
             "test-connector-che-3/test-connector-name-che-3"

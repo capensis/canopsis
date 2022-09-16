@@ -17,12 +17,13 @@
         @click="removeItemFromArray(index)"
       )
     v-layout(v-if="!readonly", row, align-center)
-      v-btn.mx-0(
+      v-btn.ml-0(
         :disabled="disabled",
-        color="primary",
+        :color="hasRulesErrors ? 'error' : 'primary'",
         outline,
         @click="addFilterRule"
       ) {{ $t('pattern.addRule') }}
+      span.error--text(v-show="hasRulesErrors") {{ $t('pattern.errors.existExcluded') }}
 </template>
 
 <script>
@@ -69,8 +70,42 @@ export default {
         return acc;
       }, {});
     },
+
+    hasRulesErrors() {
+      return this.errors.has(this.name);
+    },
+  },
+  created() {
+    this.attachMinValueRule();
+  },
+  beforeDestroy() {
+    this.detachMinValueRule();
   },
   methods: {
+    attachMinValueRule() {
+      this.$validator.attach({
+        name: this.name,
+        rules: {
+          is_not: 0,
+        },
+        getter: () => {
+          const rules = this.rules.filter((rule) => {
+            const { disabled } = this.getOptionsByRule(rule);
+
+            return !disabled;
+          });
+
+          return rules.length;
+        },
+        context: () => this,
+        vm: this,
+      });
+    },
+
+    detachMinValueRule() {
+      this.$validator.detach(this.name);
+    },
+
     getOptionsByRule(rule) {
       return this.rulesMap[rule.attribute] ?? {};
     },

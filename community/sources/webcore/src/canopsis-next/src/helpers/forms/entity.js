@@ -1,4 +1,4 @@
-import { cloneDeep, omit } from 'lodash';
+import { cloneDeep, isNumber, omit } from 'lodash';
 
 import { BASIC_ENTITY_TYPES, ENTITIES_STATES } from '@/constants';
 
@@ -18,6 +18,7 @@ import { infosToArray } from './shared/common';
  * @property {Array} changeable_impact
  * @property {Object} infos
  * @property {number} [idle_since]
+ * @property {Object} [coordinates]
  */
 
 /**
@@ -49,6 +50,10 @@ export const entityToForm = (entity = {}) => {
     infos: infosToArray(entity.infos),
     impact_level: entity.impact_level,
     sli_avail_state: entity.sli_avail_state ?? ENTITIES_STATES.ok,
+    coordinates: entity.coordinates ?? {
+      lat: undefined,
+      lng: undefined,
+    },
   };
 };
 
@@ -59,12 +64,17 @@ export const entityToForm = (entity = {}) => {
  * @return {Entity}
  */
 export const formToEntity = (form) => {
+  const entity = omit(form, ['disabled_impact', 'disabled_depends', 'coordinates']);
+
   const disabledImpact = form.disabled_impact ?? [];
   const disabledDepends = form.disabled_depends ?? [];
 
-  return {
-    ...omit(form, ['disabled_impact', 'disabled_depends']),
-    impact: form.impact.filter(id => !disabledImpact.includes(id)),
-    depends: form.depends.filter(id => !disabledDepends.includes(id)),
-  };
+  entity.impact = form.impact.filter(id => !disabledImpact.includes(id));
+  entity.depends = form.depends.filter(id => !disabledDepends.includes(id));
+
+  if (isNumber(form.coordinates.lat) && isNumber(form.coordinates.lng)) {
+    entity.coordinates = form.coordinates;
+  }
+
+  return entity;
 };
