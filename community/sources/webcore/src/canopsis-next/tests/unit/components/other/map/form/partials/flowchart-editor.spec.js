@@ -1,8 +1,8 @@
 import Faker from 'faker';
+import { keyBy } from 'lodash';
 import flushPromises from 'flush-promises';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
-import { keyBy } from 'lodash';
 import { MERMAID_THEMES, SHAPES } from '@/constants';
 import { flowchartPointToForm } from '@/helpers/forms/map';
 

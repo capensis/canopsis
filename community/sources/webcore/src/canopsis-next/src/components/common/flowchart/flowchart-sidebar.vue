@@ -38,8 +38,8 @@
         v-divider
         v-layout(row, wrap)
           v-btn.flowchart-sidebar__button-icon.ma-0(
-            v-for="icon in icons",
-            :key="icon.src",
+            v-for="(icon, index) in icons",
+            :key="index",
             flat,
             @click="addIconAsset(icon.src)"
           )
