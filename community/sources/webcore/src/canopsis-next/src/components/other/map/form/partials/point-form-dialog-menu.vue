@@ -1,34 +1,33 @@
 <template lang="pug">
   v-menu(
-    :value="true",
+    :value="value",
     :position-x="positionX",
     :position-y="positionY",
     :close-on-content-click="false",
     ignore-click-outside,
-    absolute,
-    z-index="230"
+    absolute
   )
     point-form-dialog(
       v-on="$listeners",
+      v-if="value && point",
       :point="point",
       :editing="editing"
     )
 </template>
 
 <script>
-import PointFormDialog from '@/components/other/map/form/partials/point-form-dialog.vue';
+import PointFormDialog from './point-form-dialog.vue';
 
 export default {
-  inject: ['$validator'],
   components: { PointFormDialog },
   props: {
-    point: {
-      type: Object,
-      required: true,
-    },
-    editing: {
+    value: {
       type: Boolean,
       default: false,
+    },
+    point: {
+      type: Object,
+      required: false,
     },
     positionX: {
       type: Number,
@@ -37,6 +36,10 @@ export default {
     positionY: {
       type: Number,
       required: true,
+    },
+    editing: {
+      type: Boolean,
+      default: false,
     },
   },
 };
