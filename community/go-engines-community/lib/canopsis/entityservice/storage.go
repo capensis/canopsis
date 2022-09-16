@@ -4,7 +4,8 @@ import (
 	"context"
 	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
 	"time"
@@ -54,9 +55,11 @@ type redisStorage struct {
 }
 
 type ServiceData struct {
-	ID             string                    `json:"_id"`
-	OutputTemplate string                    `json:"output_template,omitempty"`
-	EntityPatterns pattern.EntityPatternList `json:"entity_patterns"`
+	ID             string `json:"_id"`
+	OutputTemplate string `json:"output_template,omitempty"`
+
+	EntityPattern     pattern.Entity               `json:"entity_pattern,omitempty"`
+	OldEntityPatterns oldpattern.EntityPatternList `json:"old_entity_patterns,omitempty"`
 }
 
 func (s *redisStorage) ReloadAll(ctx context.Context) ([]ServiceData, error) {
@@ -69,7 +72,7 @@ func (s *redisStorage) ReloadAll(ctx context.Context) ([]ServiceData, error) {
 		}
 		oldKeys := res.Val()
 
-		services, err := s.adapter.GetValid(ctx)
+		services, err := s.adapter.GetEnabled(ctx)
 		if err != nil {
 			return err
 		}
@@ -78,9 +81,10 @@ func (s *redisStorage) ReloadAll(ctx context.Context) ([]ServiceData, error) {
 		data = make([]ServiceData, len(services))
 		for i, v := range services {
 			data[i] = ServiceData{
-				ID:             v.ID,
-				OutputTemplate: v.OutputTemplate,
-				EntityPatterns: v.EntityPatterns,
+				ID:                v.ID,
+				OutputTemplate:    v.OutputTemplate,
+				EntityPattern:     v.EntityPattern,
+				OldEntityPatterns: v.OldEntityPatterns,
 			}
 			str, err := s.encoder.Encode(data[i])
 			if err != nil {
@@ -147,9 +151,10 @@ func (s *redisStorage) Reload(ctx context.Context, id string) (*ServiceData, boo
 		if service != nil {
 			if service.Enabled {
 				data = &ServiceData{
-					ID:             service.ID,
-					OutputTemplate: service.OutputTemplate,
-					EntityPatterns: service.EntityPatterns,
+					ID:                service.ID,
+					OutputTemplate:    service.OutputTemplate,
+					EntityPattern:     service.EntityPattern,
+					OldEntityPatterns: service.OldEntityPatterns,
 				}
 
 				str, err = s.encoder.Encode(data)

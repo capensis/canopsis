@@ -12,23 +12,35 @@ Feature: Get a dynamic infos
       "data": [
         {
           "_id": "test-dynamic-infos-to-get-1",
-          "alarm_patterns": [
-            {
-              "v": {
-                "connector": "test-dynamic-infos-to-get-1-alarm-pattern"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.connector",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-dynamic-infos-to-get-1-alarm-pattern"
+                }
               }
-            }
+            ]
           ],
+          "entity_pattern": [
+            [
+              {
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-dynamic-infos-to-get-1-entity-pattern"
+                }
+              }
+            ]
+          ],
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
           "author": "root",
-          "creation_date": 1581423405,
+          "created": 1581423405,
           "description": "test-dynamic-infos-to-get-1-description",
           "disable_during_periods": null,
           "enabled": true,
-          "entity_patterns": [
-            {
-              "_id": "test-dynamic-infos-to-get-1-entity-pattern"
-            }
-          ],
           "infos": [
             {
               "name": "test-dynamic-infos-to-get-1-info-1-name",
@@ -39,12 +51,12 @@ Feature: Get a dynamic infos
               "value": "test-dynamic-infos-to-get-1-info-2-value"
             }
           ],
-          "last_modified_date": 1593679995,
+          "updated": 1593679995,
           "name": "test-dynamic-infos-to-get-1-name"
         },
         {
           "_id": "test-dynamic-infos-to-get-2",
-          "alarm_patterns": [
+          "old_alarm_patterns": [
             {
               "v": {
                 "connector": "test-dynamic-infos-to-get-2-alarm-pattern"
@@ -52,11 +64,11 @@ Feature: Get a dynamic infos
             }
           ],
           "author": "root",
-          "creation_date": 1581423405,
+          "created": 1581423405,
           "description": "test-dynamic-infos-to-get-2-description",
           "disable_during_periods": null,
           "enabled": true,
-          "entity_patterns": [
+          "old_entity_patterns": [
             {
               "_id": "test-dynamic-infos-to-get-2-entity-pattern"
             }
@@ -71,7 +83,7 @@ Feature: Get a dynamic infos
               "value": "test-dynamic-infos-to-get-2-info-2-value"
             }
           ],
-          "last_modified_date": 1593679995,
+          "updated": 1593679995,
           "name": "test-dynamic-infos-to-get-2-name"
         }
       ],
@@ -84,7 +96,7 @@ Feature: Get a dynamic infos
     }
     """
 
-  Scenario: given search DSL request should return dynamic infos
+  Scenario: given pattern search request should return dynamic infos
     When I am admin
     When I do GET /api/v4/cat/dynamic-infos?search=pattern%20LIKE%20"test-dynamic-infos-to-get-2"
     Then the response code should be 200
@@ -111,23 +123,23 @@ Feature: Get a dynamic infos
     """json
     {
       "_id": "test-dynamic-infos-to-get-2",
-      "alarm_patterns": [
+      "old_alarm_patterns": [
         {
           "v": {
             "connector": "test-dynamic-infos-to-get-2-alarm-pattern"
           }
         }
       ],
-      "author": "root",
-      "creation_date": 1581423405,
-      "description": "test-dynamic-infos-to-get-2-description",
-      "disable_during_periods": null,
-      "enabled": true,
-      "entity_patterns": [
+      "old_entity_patterns": [
         {
           "_id": "test-dynamic-infos-to-get-2-entity-pattern"
         }
       ],
+      "author": "root",
+      "created": 1581423405,
+      "description": "test-dynamic-infos-to-get-2-description",
+      "disable_during_periods": null,
+      "enabled": true,
       "infos": [
         {
           "name": "test-dynamic-infos-to-get-2-info-1-name",
@@ -138,7 +150,7 @@ Feature: Get a dynamic infos
           "value": "test-dynamic-infos-to-get-2-info-2-value"
         }
       ],
-      "last_modified_date": 1593679995,
+      "updated": 1593679995,
       "name": "test-dynamic-infos-to-get-2-name"
     }
     """

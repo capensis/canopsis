@@ -80,7 +80,8 @@ type ConsoleWriter struct {
 }
 
 type SectionMetrics struct {
-	SliInterval string `toml:"SliInterval"`
+	FlushInterval string `toml:"FlushInterval"`
+	SliInterval   string `toml:"SliInterval"`
 }
 
 // CanopsisConf represents a generic configuration object.
@@ -103,4 +104,10 @@ type UserInterfaceConf struct {
 	// MaxMatchedItems need to warn user when number of items that match patterns is above this value
 	MaxMatchedItems          int `bson:"max_matched_items"`
 	CheckCountRequestTimeout int `bson:"check_count_request_timeout"`
+}
+
+type VersionConf struct {
+	Edition string `bson:"edition"`
+	Stack   string `bson:"stack"`
+	Version string `bson:"version"`
 }

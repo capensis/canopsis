@@ -9,7 +9,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
   />
   <span>
     <button
-      class="mx-1 v-btn v-btn--icon theme--light"
+      class="mx-1 c-action-btn__button v-btn v-btn--icon theme--light"
       type="button"
     >
       <div
@@ -47,7 +47,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
   />
   <span>
     <button
-      class="mx-1 v-btn v-btn--icon theme--light"
+      class="mx-1 c-action-btn__button v-btn v-btn--icon theme--light"
       type="button"
     >
       <div
@@ -85,7 +85,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type corre
   />
   <span>
     <button
-      class="mx-1 v-btn v-btn--icon theme--light"
+      class="mx-1 c-action-btn__button v-btn v-btn--icon theme--light"
       type="button"
     >
       <div
@@ -123,7 +123,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly.
   />
   <span>
     <button
-      class="mx-1 v-btn v-btn--icon theme--light"
+      class="mx-1 c-action-btn__button v-btn v-btn--icon theme--light"
       type="button"
     >
       <div

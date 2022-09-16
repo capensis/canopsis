@@ -13,20 +13,21 @@ type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
 	WithFlags bool `form:"with_flags" json:"with_flags"`
-	NoEvents  bool `form:"no_events" json:"no_events"`
 }
 
 type ListRequest struct {
 	BaseFilterRequest
 	Sort     string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
-	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=_id name type category impact_level category.name idle_since infos.* last_event_date enabled"`
+	SortBy   string   `form:"sort_by" json:"sort_by"`
 	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
 }
 
 type BaseFilterRequest struct {
-	Search   string `form:"search" json:"search"`
-	Filter   string `form:"filter" json:"filter"`
-	Category string `form:"category" json:"category"`
+	Search   string   `form:"search" json:"search"`
+	Filter   string   `form:"filter" json:"filter"`
+	Category string   `form:"category" json:"category"`
+	Type     []string `form:"type[]" json:"type"`
+	NoEvents bool     `form:"no_events" json:"no_events"`
 }
 
 type ExportRequest struct {
@@ -54,24 +55,29 @@ type ExportResponse struct {
 type Entity struct {
 	ID             string                   `bson:"_id" json:"_id"`
 	Name           string                   `bson:"name" json:"name"`
-	Impacts        []string                 `bson:"impact" json:"impact"`
-	Depends        []string                 `bson:"depends" json:"depends"`
 	EnableHistory  []types.CpsTime          `bson:"enable_history" json:"enable_history" swaggertype:"array,integer"`
 	Measurements   interface{}              `bson:"measurements" json:"measurements"`
 	Enabled        bool                     `bson:"enabled" json:"enabled"`
 	Infos          Infos                    `bson:"infos" json:"infos"`
 	ComponentInfos Infos                    `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
 	Type           string                   `bson:"type" json:"type"`
-	Component      string                   `bson:"component,omitempty" json:"component,omitempty"`
 	ImpactLevel    int64                    `bson:"impact_level" json:"impact_level"`
 	Category       *entitycategory.Category `bson:"category" json:"category"`
 	Deletable      *bool                    `bson:"deletable,omitempty" json:"deletable,omitempty"`
 	IdleSince      *types.CpsTime           `bson:"idle_since,omitempty" json:"idle_since,omitempty" swaggertype:"integer"`
 	PbehaviorInfo  *PbehaviorInfo           `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 	LastEventDate  *types.CpsTime           `bson:"last_event_date,omitempty" json:"last_event_date,omitempty" swaggertype:"integer"`
-	OKEvents       int                      `bson:"ok_events" json:"ok_events"`
-	KOEvents       int                      `bson:"ko_events" json:"ko_events"`
-	State          int                      `bson:"state" json:"state"`
+	OKEvents       *int                     `bson:"ok_events" json:"ok_events,omitempty"`
+	KOEvents       *int                     `bson:"ko_events" json:"ko_events,omitempty"`
+	State          *int                     `bson:"state" json:"state,omitempty"`
+
+	Impacts   []string `bson:"impact" json:"impact"`
+	Depends   []string `bson:"depends" json:"depends"`
+	Connector string   `bson:"connector,omitempty" json:"connector,omitempty"`
+	Component string   `bson:"component,omitempty" json:"component,omitempty"`
+
+	// ConnectorType contains a part before "/" of connector id.
+	ConnectorType string `bson:"-" json:"connector_type,omitempty"`
 }
 
 type Infos map[string]Info
@@ -128,13 +134,4 @@ type SimplifiedEntity struct {
 	ID      string `bson:"_id"`
 	Type    string `bson:"type"`
 	Enabled bool   `bson:"enabled"`
-}
-
-// for swagger
-type BulkToggleResponseItem struct {
-	ID     string                `json:"id,omitempty"`
-	Item   BulkToggleRequestItem `json:"item"`
-	Status int                   `json:"status"`
-	Error  string                `json:"error,omitempty"`
-	Errors map[string]string     `json:"errors,omitempty"`
 }

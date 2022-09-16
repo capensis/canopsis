@@ -9,10 +9,16 @@ Feature: abort a instruction execution
     {
       "type": 0,
       "name": "test-remediation-instruction-execution-abort-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-remediation-instruction-execution-abort-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-remediation-instruction-execution-abort-1"
+            }
+          }
+        ]
       ],
       "description": "test-remediation-instruction-execution-abort-1-description",
       "enabled": true,
@@ -113,10 +119,16 @@ Feature: abort a instruction execution
     {
       "type": 0,
       "name": "test-remediation-instruction-execution-abort-3-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-remediation-instruction-execution-abort-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-remediation-instruction-execution-abort-3"
+            }
+          }
+        ]
       ],
       "description": "test-remediation-instruction-execution-abort-3-description",
       "enabled": true,
@@ -201,18 +213,30 @@ Feature: abort a instruction execution
     }
     """
     When I wait the end of event processing
-    When I wait 1s
-    When I do GET /api/v4/cat/executions/{{ .executionID }}
-    Then the response code should be 410
-    When I do GET /api/v4/alarms?search=test-resource-remediation-instruction-execution-abort-3&with_steps=true
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 410
+    When I do GET /api/v4/alarms?search=test-resource-remediation-instruction-execution-abort-3
     Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "opened": true,
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
     Then the response body should contain:
     """json
-    {
-      "data": [
-        {
-          "v": {
-            "steps": [
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 1
@@ -244,8 +268,8 @@ Feature: abort a instruction execution
             ]
           }
         }
-      ]
-    }
+      }
+    ]
     """
 
   Scenario: given paused instruction should cancel it on resolve
@@ -255,10 +279,16 @@ Feature: abort a instruction execution
     {
       "type": 0,
       "name": "test-remediation-instruction-execution-abort-4-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-remediation-instruction-execution-abort-4"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-remediation-instruction-execution-abort-4"
+            }
+          }
+        ]
       ],
       "description": "test-remediation-instruction-execution-abort-4-description",
       "enabled": true,
@@ -354,18 +384,29 @@ Feature: abort a instruction execution
     }
     """
     When I wait the end of event processing
-    When I wait 1s
-    When I do GET /api/v4/cat/executions/{{ .executionID }}
-    Then the response code should be 410
-    When I do GET /api/v4/alarms?search=test-resource-remediation-instruction-execution-abort-4&with_steps=true
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 410
+    When I do GET /api/v4/alarms?search=test-resource-remediation-instruction-execution-abort-4
     Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
     Then the response body should contain:
     """json
-    {
-      "data": [
-        {
-          "v": {
-            "steps": [
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 1
@@ -392,8 +433,8 @@ Feature: abort a instruction execution
             ]
           }
         }
-      ]
-    }
+      }
+    ]
     """
 
   Scenario: given paused instruction should cancel it on ok change state action
@@ -403,10 +444,16 @@ Feature: abort a instruction execution
     {
       "type": 0,
       "name": "test-remediation-instruction-execution-abort-5-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-remediation-instruction-execution-abort-5"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-remediation-instruction-execution-abort-5"
+            }
+          }
+        ]
       ],
       "description": "test-remediation-instruction-execution-abort-5-description",
       "enabled": true,
@@ -483,14 +530,19 @@ Feature: abort a instruction execution
     {
       "name": "test-scenario-remediation-instruction-execution-abort-5-name",
       "enabled": true,
-      "priority": 293,
       "triggers": ["ack"],
       "actions": [
         {
-          "entity_patterns": [
-            {
-              "name": "test-resource-remediation-instruction-execution-abort-5"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-remediation-instruction-execution-abort-5"
+                }
+              }
+            ]
           ],
           "type": "changestate",
           "parameters": {
@@ -517,18 +569,30 @@ Feature: abort a instruction execution
     }
     """
     When I wait the end of event processing
-    When I wait 1s
-    When I do GET /api/v4/cat/executions/{{ .executionID }}
-    Then the response code should be 410
-    When I do GET /api/v4/alarms?search=test-resource-remediation-instruction-execution-abort-5&with_steps=true
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 410
+    When I do GET /api/v4/alarms?search=test-resource-remediation-instruction-execution-abort-5
     Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "opened": true,
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
     Then the response body should contain:
     """json
-    {
-      "data": [
-        {
-          "v": {
-            "steps": [
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 1
@@ -563,6 +627,6 @@ Feature: abort a instruction execution
             ]
           }
         }
-      ]
-    }
+      }
+    ]
     """

@@ -33,6 +33,7 @@ Feature: Import views
                       "desktop": {"x": 0, "y": 0}
                     },
                     "parameters": {
+                      "mainFilter": "test-widgetfilter-to-import-2",
                       "test-widget-to-view-import-1-parameter-1": {
                         "test-widget-to-view-import-1-parameter-1-subparameter": "test-widget-to-view-import-1-parameter-1-subvalue"
                       },
@@ -41,7 +42,41 @@ Feature: Import views
                           "test-widget-to-view-import-1-parameter-2-subparameter": "test-widget-to-view-import-1-parameter-2-subvalue"
                         }
                       ]
-                    }
+                    },
+                    "filters": [
+                      {
+                        "_id": "test-widgetfilter-to-import-1",
+                        "title": "test-widgetfilter-to-import-1-title",
+                        "is_private": false,
+                        "alarm_pattern": [
+                          [
+                            {
+                              "field": "v.component",
+                              "cond": {
+                                "type": "eq",
+                                "value": "test-widgetfilter-to-import-1-pattern"
+                              }
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "_id": "test-widgetfilter-to-import-2",
+                        "title": "test-widgetfilter-to-import-2-title",
+                        "is_private": false,
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "name",
+                              "cond": {
+                                "type": "eq",
+                                "value": "test-widgetfilter-to-import-2-pattern"
+                              }
+                            }
+                          ]
+                        ]
+                      }
+                    ]
                   }
                 ]
               },
@@ -136,6 +171,40 @@ Feature: Import views
                   }
                 ]
               },
+              "filters": [
+                {
+                  "title": "test-widgetfilter-to-import-1-title",
+                  "is_private": false,
+                  "author": "root",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-widgetfilter-to-import-1-pattern"
+                        }
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "title": "test-widgetfilter-to-import-2-title",
+                  "is_private": false,
+                  "author": "root",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-widgetfilter-to-import-2-pattern"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              ],
               "author": "root"
             }
           ],
@@ -145,6 +214,24 @@ Feature: Import views
           "title": "test-tab-to-import-1-2-title",
           "author": "root"
         }
+      ]
+    }
+    """
+    Then I save response filterId2={{ (index (index (index .lastResponse.tabs 0).widgets 0).filters 1)._id }}
+    Then the response body should contain:
+    """json
+    {
+      "tabs": [
+        {
+          "widgets": [
+            {
+              "parameters": {
+                "mainFilter": "{{ .filterId2 }}"
+              }
+            }
+          ]
+        },
+        {}
       ]
     }
     """

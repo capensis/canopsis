@@ -1,9 +1,9 @@
 <template lang="pug">
   circle(
+    v-on="$listeners",
     :cx="centerX",
     :cy="centerY",
-    :r="radius",
-    v-on="$listeners"
+    :r="radius"
   )
 </template>
 

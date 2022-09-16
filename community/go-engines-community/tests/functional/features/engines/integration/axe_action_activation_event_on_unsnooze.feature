@@ -8,11 +8,20 @@ Feature: send activation event on unsnooze
     {
       "name": "test-scenario-axe-action-activation-name",
       "enabled": true,
-      "priority": 61,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-axe-action-activation-event"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-axe-action-activation-event"
+                }
+              }
+            ]
+          ],
           "type":"snooze",
           "parameters": {
             "duration": {
@@ -42,7 +51,7 @@ Feature: send activation event on unsnooze
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-axe-action-activation-event"},{"v.activation_date":{"$exists":true}},{"$expr":{"$ne":["$v.activation_date","$v.creation_date"]}}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-action-activation-event
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -53,12 +62,7 @@ Feature: send activation event on unsnooze
             "connector" : "test-connector-axe-action-activation-event",
             "connector_name" : "test-connector-name-axe-action-activation-event",
             "component" : "test-component-axe-action-activation-event",
-            "resource" : "test-resource-axe-action-activation-event",
-            "steps": [
-              {"_t": "stateinc"},
-              {"_t": "statusinc"},
-              {"_t": "snooze"}
-            ]
+            "resource" : "test-resource-axe-action-activation-event"
           }
         }
       ],
@@ -69,4 +73,42 @@ Feature: send activation event on unsnooze
         "total_count": 1
       }
     }
+    """
+    When I save response createTimestamp={{ (index .lastResponse.data 0).v.creation_date }}
+    When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
+    Then the difference between alarmActivationDate createTimestamp is in range 0,10
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {"_t": "stateinc"},
+              {"_t": "statusinc"},
+              {"_t": "snooze"}
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
     """

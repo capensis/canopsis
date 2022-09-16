@@ -14,6 +14,7 @@ Feature: Copy a widget
         "desktop": {"x": 0, "y": 1}
       },
       "parameters": {
+        "mainFilter": "test-widgetfilter-to-widget-copy-1",
         "test-widget-to-copy-1-parameter-1": {
           "test-widget-to-copy-1-parameter-1-subparameter": "test-widget-to-copy-1-parameter-1-subvalue"
         },
@@ -44,6 +45,42 @@ Feature: Copy a widget
           }
         ]
       },
+      "filters": [
+        {
+          "title": "test-widgetfilter-to-widget-copy-1-title",
+          "is_private": false,
+          "author": "root",
+          "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
+          "corporate_alarm_pattern_title": "test-pattern-to-filter-edit-1-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-filter-edit-1-pattern"
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "title": "test-widgetfilter-to-widget-copy-2-title",
+          "is_private": false,
+          "author": "root",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-widget-copy-2-pattern"
+                }
+              }
+            ]
+          ]
+        }
+      ],
       "author": "root"
     }
     """
@@ -67,10 +104,49 @@ Feature: Copy a widget
           }
         ]
       },
+      "filters": [
+        {
+          "title": "test-widgetfilter-to-widget-copy-1-title",
+          "is_private": false,
+          "author": "root",
+          "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
+          "corporate_alarm_pattern_title": "test-pattern-to-filter-edit-1-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-filter-edit-1-pattern"
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "title": "test-widgetfilter-to-widget-copy-2-title",
+          "is_private": false,
+          "author": "root",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-widget-copy-2-pattern"
+                }
+              }
+            ]
+          ]
+        }
+      ],
       "author": "root"
     }
     """
     Then the response key "_id" should not be "test-widget-to-copy-1"
+    Then the response key "filters.0._id" should not be "test-widgetfilter-to-widget-copy-1"
+    Then the response key "filters.1._id" should not be "test-widgetfilter-to-widget-copy-2"
+    Then the response key "parameters.mainFilter" should not be "test-widgetfilter-to-widget-copy-1"
     When I do GET /api/v4/views/test-view-to-widget-copy-2
     Then the response code should be 200
     Then the response body should contain:

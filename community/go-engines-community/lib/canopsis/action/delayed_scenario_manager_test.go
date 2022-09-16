@@ -7,7 +7,8 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_action "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/action"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
@@ -56,9 +57,7 @@ func TestDelayedScenarioManager_AddDelayedScenario_GivenMatchedDelayedScenario_S
 		},
 		Actions: []action.Action{
 			{
-				AlarmPatterns: pattern.NewAlarmPatternList([]pattern.AlarmPattern{
-					newTestMatchResourceAlarmPattern("test-resource"),
-				}),
+				AlarmPatternFields: newTestMatchResourceAlarmPattern("test-resource"),
 			},
 		},
 	}
@@ -342,20 +341,13 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByWaiting
 	}
 }
 
-func newTestMatchResourceAlarmPattern(resource string) pattern.AlarmPattern {
-	return pattern.AlarmPattern{
-		ShouldNotBeNil: true,
-		AlarmFields: pattern.AlarmFields{
-			Value: pattern.AlarmValuePattern{
-				AlarmValueFields: pattern.AlarmValueFields{
-					Resource: pattern.StringPattern{
-						StringConditions: pattern.StringConditions{
-							Equal: types.OptionalString{
-								Set:   true,
-								Value: resource,
-							},
-						},
-					},
+func newTestMatchResourceAlarmPattern(resource string) savedpattern.AlarmPatternFields {
+	return savedpattern.AlarmPatternFields{
+		AlarmPattern: pattern.Alarm{
+			{
+				{
+					Field:     "v.resource",
+					Condition: pattern.NewStringCondition("eq", resource),
 				},
 			},
 		},

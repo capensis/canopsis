@@ -1,5 +1,5 @@
 <template lang="pug">
-  path(:d="path", v-on="$listeners")
+  path(v-on="$listeners", :d="path")
 </template>
 
 <script>

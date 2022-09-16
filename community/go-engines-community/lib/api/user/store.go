@@ -29,9 +29,12 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
 	return &store{
-		dbClient:              dbClient,
-		collection:            dbClient.Collection(mongo.RightsMongoCollection),
-		userPrefCollection:    dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		client:                 dbClient,
+		collection:             dbClient.Collection(mongo.RightsMongoCollection),
+		userPrefCollection:     dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		patternCollection:      dbClient.Collection(mongo.PatternMongoCollection),
+		widgetFilterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
+
 		passwordEncoder:       passwordEncoder,
 		defaultSearchByFields: []string{"_id", "crecord_name", "firstname", "lastname", "role.name"},
 		defaultSortBy:         "name",
@@ -39,9 +42,12 @@ func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
 }
 
 type store struct {
-	dbClient              mongo.DbClient
-	collection            mongo.DbCollection
-	userPrefCollection    mongo.DbCollection
+	client                 mongo.DbClient
+	collection             mongo.DbCollection
+	userPrefCollection     mongo.DbCollection
+	patternCollection      mongo.DbCollection
+	widgetFilterCollection mongo.DbCollection
+
 	passwordEncoder       password.Encoder
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -131,7 +137,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 
 func (s *store) Insert(ctx context.Context, r Request) (*User, error) {
 	var user *User
-	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 		_, err := s.collection.InsertOne(ctx, r.getInsertBson(s.passwordEncoder))
 		if err != nil {
@@ -150,7 +156,7 @@ func (s *store) Insert(ctx context.Context, r Request) (*User, error) {
 
 func (s *store) Update(ctx context.Context, r Request) (*User, error) {
 	var user *User
-	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 		res, err := s.collection.UpdateOne(ctx,
 			bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject},
@@ -188,12 +194,40 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, err
 	}
 
+	err = s.deletePatterns(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
+	err = s.deleteWidgetFilters(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 
 func (s *store) deleteUserPreferences(ctx context.Context, id string) error {
 	_, err := s.userPrefCollection.DeleteMany(ctx, bson.M{
 		"user": id,
+	})
+
+	return err
+}
+
+func (s *store) deletePatterns(ctx context.Context, id string) error {
+	_, err := s.patternCollection.DeleteMany(ctx, bson.M{
+		"author":       id,
+		"is_corporate": false,
+	})
+
+	return err
+}
+
+func (s *store) deleteWidgetFilters(ctx context.Context, id string) error {
+	_, err := s.widgetFilterCollection.DeleteMany(ctx, bson.M{
+		"author":     id,
+		"is_private": true,
 	})
 
 	return err

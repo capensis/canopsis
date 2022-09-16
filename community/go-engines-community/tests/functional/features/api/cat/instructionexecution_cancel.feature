@@ -5,14 +5,20 @@ Feature: cancel a instruction execution
   Scenario: given instruction should cancel running executions
     When I am admin
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-execution-cancel-1-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-cancel-1"
-        }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-execution-cancel-resource-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-execution-cancel-1-description",
       "enabled": true,
@@ -43,7 +49,7 @@ Feature: cancel a instruction execution
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-cancel-1",
       "instruction": "{{ .lastResponse._id }}"
@@ -56,14 +62,20 @@ Feature: cancel a instruction execution
   Scenario: given instruction should not cancel completed executions
     When I am admin
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-execution-cancel-2-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-cancel-2"
-        }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-execution-cancel-resource-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-execution-cancel-2-description",
       "enabled": true,
@@ -94,7 +106,7 @@ Feature: cancel a instruction execution
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-cancel-2",
       "instruction": "{{ .lastResponse._id }}"
@@ -113,19 +125,25 @@ Feature: cancel a instruction execution
     When I do GET /api/v4/cat/executions/test-instruction-cancel-execution-running-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "status": 0
     }
     """
     When I do PUT /api/v4/cat/instructions/test-instruction-cancel-execution-running-1:
-    """
+    """json
     {
       "name": "test-instruction-cancel-execution-running-1-name",
-      "entity_patterns": [
-        {
-          "name": "test filter"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test filter"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-cancel-execution-running-1-description",
       "enabled": true,
@@ -172,14 +190,14 @@ Feature: cancel a instruction execution
     When I do GET /api/v4/cat/executions/test-instruction-to-update-w-approval-should-cancel-execution-running-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "status": 0
     }
     """
-    When I am authenticated with username "approveruser" and password "test"
+    When I am role-to-instruction-approve-1
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update-w-approval-should-cancel-execution/approval:
-    """
+    """json
     {
       "approve": true
     }

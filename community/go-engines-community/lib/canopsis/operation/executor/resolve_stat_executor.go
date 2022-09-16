@@ -2,6 +2,7 @@ package executor
 
 import (
 	"context"
+
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -40,7 +41,7 @@ func (e *resolveStatExecutor) Exec(
 	}
 
 	if changeType != "" {
-		go e.metricsSender.SendResolve(context.Background(), *alarm, *entity, timestamp.Time)
+		e.metricsSender.SendResolve(*alarm, *entity, timestamp.Time)
 	}
 
 	return changeType, nil

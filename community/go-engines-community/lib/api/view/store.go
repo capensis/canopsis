@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -42,6 +43,7 @@ func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store) Store {
 		collection:            dbClient.Collection(mongo.ViewMongoCollection),
 		tabCollection:         dbClient.Collection(mongo.ViewTabMongoCollection),
 		widgetCollection:      dbClient.Collection(mongo.WidgetMongoCollection),
+		filterCollection:      dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		groupCollection:       dbClient.Collection(mongo.ViewGroupMongoCollection),
 		aclCollection:         dbClient.Collection(mongo.RightsMongoCollection),
 		userPrefCollection:    dbClient.Collection(mongo.UserPreferencesMongoCollection),
@@ -57,6 +59,7 @@ type store struct {
 	collection            mongo.DbCollection
 	tabCollection         mongo.DbCollection
 	widgetCollection      mongo.DbCollection
+	filterCollection      mongo.DbCollection
 	groupCollection       mongo.DbCollection
 	aclCollection         mongo.DbCollection
 	userPrefCollection    mongo.DbCollection
@@ -192,6 +195,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+
 		oldView := view.View{}
 		err := s.collection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&oldView)
 		if err != nil {
@@ -334,6 +338,47 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			"as":           "widgets",
 		}},
 		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from": mongo.WidgetFiltersMongoCollection,
+			"let":  bson.M{"id": "$widgets._id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$widget", "$$id"}}},
+					{"is_private": false},
+					{"old_mongo_query": nil}, //do not import old filters
+				}}},
+			},
+			"as": "filters",
+		}},
+		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+		{"$project": bson.M{
+			"filters.corporate_alarm_pattern":           0,
+			"filters.corporate_alarm_pattern_title":     0,
+			"filters.corporate_entity_pattern":          0,
+			"filters.corporate_entity_pattern_title":    0,
+			"filters.corporate_pbehavior_pattern":       0,
+			"filters.corporate_pbehavior_pattern_title": 0,
+			"filters.is_private":                        0,
+			"filters.author":                            0,
+			"filters.updated":                           0,
+			"filters.created":                           0,
+		}},
+		{"$sort": bson.M{"filters.title": 1}},
+		{"$group": bson.M{
+			"_id": bson.M{
+				"_id":    "$_id",
+				"tab":    "$tabs._id",
+				"widget": "$widgets._id",
+			},
+			"data":    bson.M{"$first": "$$ROOT"},
+			"tabs":    bson.M{"$first": "$tabs"},
+			"widgets": bson.M{"$first": "$widgets"},
+			"filters": bson.M{"$push": "$filters"},
+		}},
+		{"$addFields": bson.M{
+			"_id":             "$_id._id",
+			"widgets.filters": "$filters",
+		}},
 		{"$project": bson.M{
 			"widgets._id":     0,
 			"widgets.author":  0,
@@ -349,7 +394,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 				"_id": "$_id",
 				"tab": "$tabs._id",
 			},
-			"data":    bson.M{"$first": "$$ROOT"},
+			"data":    bson.M{"$first": "$data"},
 			"tabs":    bson.M{"$first": "$tabs"},
 			"widgets": bson.M{"$push": "$widgets"},
 		}},
@@ -564,6 +609,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 		newViews := make([]interface{}, 0, len(r.Items))
 		newTabs := make([]interface{}, 0, len(r.Items))
 		newWidgets := make([]interface{}, 0, len(r.Items))
+		newWidgetFilters := make([]interface{}, 0, len(r.Items))
 		newViewTitles := make(map[string]string, len(r.Items))
 		positionItems := make([]EditPositionItemRequest, 0, len(r.Items))
 		now := types.NewCpsTime()
@@ -653,6 +699,48 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 									}
 
 									widgetId := utils.NewID()
+									mainFilterId := ""
+
+									for fi, filter := range widget.Filters {
+										if filter.Title == "" {
+											return ValidationError{
+												field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.filters.%d.title", gi, vi, ti, wi, fi),
+												error: fmt.Errorf("value is missing"),
+											}
+										}
+										if len(filter.AlarmPattern) == 0 && len(filter.EntityPattern) == 0 && len(filter.PbehaviorPattern) == 0 {
+											return ValidationError{
+												field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.filters.%d.alarm_pattern", gi, vi, ti, wi, fi),
+												error: fmt.Errorf("value is missing"),
+											}
+										}
+
+										filterId := utils.NewID()
+										newWidgetFilters = append(newWidgetFilters, view.WidgetFilter{
+											ID:        filterId,
+											Title:     filter.Title,
+											Widget:    widgetId,
+											IsPrivate: false,
+											AlarmPatternFields: savedpattern.AlarmPatternFields{
+												AlarmPattern: filter.AlarmPattern,
+											},
+											EntityPatternFields: savedpattern.EntityPatternFields{
+												EntityPattern: filter.EntityPattern,
+											},
+											PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
+												PbehaviorPattern: filter.PbehaviorPattern,
+											},
+											Author:  userId,
+											Created: now,
+											Updated: now,
+										})
+
+										if widget.Parameters.MainFilter != "" && filter.ID == widget.Parameters.MainFilter {
+											mainFilterId = filterId
+										}
+									}
+
+									widget.Parameters.MainFilter = mainFilterId
 									newWidgets = append(newWidgets, view.Widget{
 										ID:             widgetId,
 										Tab:            tabId,
@@ -676,7 +764,6 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 				Views: groupViewIds,
 			})
 		}
-
 		if len(newGroups) > 0 {
 			_, err := s.groupCollection.InsertMany(ctx, newGroups)
 			if err != nil {
@@ -697,6 +784,12 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 		}
 		if len(newWidgets) > 0 {
 			_, err := s.widgetCollection.InsertMany(ctx, newWidgets)
+			if err != nil {
+				return err
+			}
+		}
+		if len(newWidgetFilters) > 0 {
+			_, err := s.filterCollection.InsertMany(ctx, newWidgetFilters)
 			if err != nil {
 				return err
 			}
@@ -979,6 +1072,32 @@ func getNestedObjectsPipeline() []bson.M {
 			"as":           "widgets",
 		}},
 		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.WidgetFiltersMongoCollection,
+			"localField":   "widgets._id",
+			"foreignField": "widget",
+			"as":           "filters",
+		}},
+		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{"filters.title": 1}},
+		{"$group": bson.M{
+			"_id": bson.M{
+				"_id":    "$_id",
+				"tab":    "$tabs._id",
+				"widget": "$widgets._id",
+			},
+			"data":    bson.M{"$first": "$$ROOT"},
+			"tabs":    bson.M{"$first": "$tabs"},
+			"widgets": bson.M{"$first": "$widgets"},
+			"filters": bson.M{"$push": "$filters"},
+		}},
+		{"$addFields": bson.M{
+			"_id": "$_id._id",
+			"widgets.filters": bson.M{"$filter": bson.M{
+				"input": "$filters",
+				"cond":  bson.M{"$eq": bson.A{"$$this.is_private", false}},
+			}},
+		}},
 		{"$sort": bson.D{
 			{Key: "widgets.grid_parameters.desktop.y", Value: 1},
 			{Key: "widgets.grid_parameters.desktop.x", Value: 1},
@@ -988,7 +1107,7 @@ func getNestedObjectsPipeline() []bson.M {
 				"_id": "$_id",
 				"tab": "$tabs._id",
 			},
-			"data":    bson.M{"$first": "$$ROOT"},
+			"data":    bson.M{"$first": "$data"},
 			"tabs":    bson.M{"$first": "$tabs"},
 			"widgets": bson.M{"$push": "$widgets"},
 		}},

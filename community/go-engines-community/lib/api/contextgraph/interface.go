@@ -2,14 +2,15 @@ package contextgraph
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"time"
 )
 
 type EventPublisher interface {
-	SendImportResultEvent(uuid string, execTime time.Duration, state types.CpsNumber) error
-	SendPerfDataEvent(uuid string, stats importcontextgraph.Stats, state types.CpsNumber) error
+	SendImportResultEvent(ctx context.Context, uuid string, execTime time.Duration, state types.CpsNumber) error
+	SendPerfDataEvent(ctx context.Context, uuid string, stats importcontextgraph.Stats, state types.CpsNumber) error
 }
 
 type StatusReporter interface {

@@ -1,0 +1,1 @@
+ALTER TABLE entities ADD COLUMN connector VARCHAR(500) NULL;
