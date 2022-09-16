@@ -99,6 +99,7 @@ export default {
 
 <style lang="scss">
 .point-icon {
+  word-break: initial;
   display: flex;
   align-items: center;
   justify-content: center;
