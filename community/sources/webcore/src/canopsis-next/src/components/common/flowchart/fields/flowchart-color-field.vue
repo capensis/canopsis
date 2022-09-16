@@ -19,10 +19,11 @@
 </template>
 
 <script>
+import { COLORS } from '@/config';
+
 import { MODALS } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
-import { COLORS } from '@/config';
 
 export default {
   mixins: [formBaseMixin],

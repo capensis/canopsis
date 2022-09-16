@@ -49,6 +49,7 @@ Feature: Export views
                         "desktop": {"x": 0, "y": 0}
                       },
                       "parameters": {
+                        "mainFilter": "test-widgetfilter-to-export-2",
                         "test-widget-to-view-export-1-parameter-1": {
                           "test-widget-to-view-export-1-parameter-1-subparameter": "test-widget-to-view-export-1-parameter-1-subvalue"
                         },
@@ -57,7 +58,61 @@ Feature: Export views
                             "test-widget-to-view-export-1-parameter-2-subparameter": "test-widget-to-view-export-1-parameter-2-subvalue"
                           }
                         ]
-                      }
+                      },
+                      "filters": [
+                        {
+                          "_id": "test-widgetfilter-to-export-1",
+                          "title": "test-widgetfilter-to-export-1-title",
+                          "alarm_pattern": [
+                            [
+                              {
+                                "field": "v.component",
+                                "cond": {
+                                  "type": "eq",
+                                  "value": "test-widgetfilter-to-export-1-pattern"
+                                }
+                              }
+                            ]
+                          ]
+                        },
+                        {
+                          "_id": "test-widgetfilter-to-export-2",
+                          "title": "test-widgetfilter-to-export-2-title",
+                          "alarm_pattern": [
+                            [
+                              {
+                                "field": "v.component",
+                                "cond": {
+                                  "type": "eq",
+                                  "value": "test-pattern-to-filter-edit-1-pattern"
+                                }
+                              }
+                            ]
+                          ],
+                          "entity_pattern": [
+                            [
+                              {
+                                "field": "name",
+                                "cond": {
+                                  "type": "eq",
+                                  "value": "test-pattern-to-filter-edit-2-pattern"
+                                }
+                              }
+                            ]
+                          ],
+                          "pbehavior_pattern": [
+                            [
+                              {
+                                "field": "pbehavior_info.type",
+                                "cond": {
+                                  "type": "eq",
+                                  "value": "test-pattern-to-filter-edit-3-pattern"
+                                }
+                              }
+                            ]
+                          ]
+                        }
+                      ]
                     }
                   ]
                 },

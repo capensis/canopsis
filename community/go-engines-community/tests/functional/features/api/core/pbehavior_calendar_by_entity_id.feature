@@ -4,7 +4,7 @@ Feature: get a pbehaviors' calendar
 
   Scenario: given get request should return pbehaviors' intervals
     When I am admin
-    When I do GET /api/v4/entities/pbehavior-calendar?_id=test-resource-to-calendar-get-by-entity/test-component-to-calendar-get-by-entity&from={{ parseTime "01-10-2022 22:00" }}&to={{ parseTime "02-10-2022 22:00" }}
+    When I do GET /api/v4/entities/pbehavior-calendar?_id=test-resource-to-pbh-calendar-get-by-entity/test-component-default&from={{ parseTime "01-10-2022 22:00" }}&to={{ parseTime "02-10-2022 22:00" }}
     Then the response code should be 200
     Then the response body should contain:
     """json

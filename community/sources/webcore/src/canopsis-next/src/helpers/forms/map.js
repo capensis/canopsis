@@ -58,6 +58,7 @@ import uuid from '@/helpers/uuid';
  * @typedef {MapGeoPoint} MapGeoPointForm
  * @property {string} map
  * @property {string} entity
+ * @property {boolean} is_entity_coordinates
  */
 
 /**
@@ -171,7 +172,7 @@ export const flowchartPointToForm = (point = {}) => ({
   y: point.y,
   entity: point.entity?._id ?? '',
   shape: point.shape ?? '',
-  map: point.map,
+  map: point.map?._id,
   _id: point._id ?? uuid(),
 });
 
@@ -187,13 +188,14 @@ export const mermaidPointsToForm = (points = []) => points.map(mermaidPointToFor
  * Convert geomap point to form object
  *
  * @param {MapGeoPoint} [point = {}]
- * @returns {MapGeoPoint}
+ * @returns {MapGeoPointForm}
  */
 export const geomapPointToForm = (point = {}) => ({
   coordinates: point.coordinates ?? {
     lat: 0,
     lng: 0,
   },
+  is_entity_coordinates: !!point.entity?.coordinates,
   entity: point.entity?._id ?? '',
   map: point.map?._id,
   _id: point._id ?? uuid(),
@@ -332,6 +334,18 @@ export const formToMapFlowchartParameters = form => ({
 });
 
 /**
+ * Convert form parameters to geomap parameters
+ *
+ * @param {MapGeoParametersForm} form
+ * @returns {MapGeoParameters}
+ */
+export const formToMapGeomapParameters = form => ({
+  ...form,
+
+  points: form.points.map(point => omit(point, ['is_entity_coordinates'])),
+});
+
+/**
  * Convert map form to map
  *
  * @param {MapForm} form
@@ -340,6 +354,7 @@ export const formToMapFlowchartParameters = form => ({
 export const formToMap = (form) => {
   const prepare = {
     [MAP_TYPES.treeOfDependencies]: formToMapTreeOfDependenciesParameters,
+    [MAP_TYPES.geo]: formToMapGeomapParameters,
     [MAP_TYPES.flowchart]: formToMapFlowchartParameters,
   }[form.type];
 

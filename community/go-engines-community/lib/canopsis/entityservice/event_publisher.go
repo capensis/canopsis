@@ -2,6 +2,9 @@ package entityservice
 
 import (
 	"context"
+	"strings"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -10,8 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"strings"
-	"time"
 )
 
 // EventPublisher is used to send event to engines' event flow to notify about entity changes.
@@ -83,7 +84,7 @@ func (p *eventPublisher) Publish(
 			}
 
 			if msg.EntityType == types.EntityTypeService {
-				go p.publishServiceEvent(msg)
+				go p.publishServiceEvent(ctx, msg)
 			} else {
 				go p.publishBasicEntityEvent(ctx, msg)
 			}
@@ -91,7 +92,7 @@ func (p *eventPublisher) Publish(
 	}
 }
 
-func (p *eventPublisher) publishServiceEvent(msg ChangeEntityMessage) {
+func (p *eventPublisher) publishServiceEvent(ctx context.Context, msg ChangeEntityMessage) {
 	var eventType string
 	if msg.IsServicePatternChanged || msg.IsToggled {
 		eventType = types.EventTypeRecomputeEntityService
@@ -110,7 +111,7 @@ func (p *eventPublisher) publishServiceEvent(msg ChangeEntityMessage) {
 		Alarm:         msg.ServiceAlarm,
 	}
 
-	err := p.publishEvent(event)
+	err := p.publishEvent(ctx, event)
 	if err != nil {
 		p.logger.Err(err).Msg("cannot send event to amqp")
 		return
@@ -179,7 +180,7 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 	event.Timestamp = types.NewCpsTime()
 	event.Author = canopsis.DefaultEventAuthor
 	event.SourceType = event.DetectSourceType()
-	err = p.publishEvent(event)
+	err = p.publishEvent(ctx, event)
 	if err != nil {
 		p.logger.Err(err).Msg("cannot send event to amqp")
 		return
@@ -188,13 +189,14 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 	p.logger.Debug().Msgf("publish %s", msg.ID)
 }
 
-func (p *eventPublisher) publishEvent(event types.Event) error {
+func (p *eventPublisher) publishEvent(ctx context.Context, event types.Event) error {
 	body, err := p.encoder.Encode(event)
 	if err != nil {
 		return err
 	}
 
-	return p.amqpPublisher.Publish(
+	return p.amqpPublisher.PublishWithContext(
+		ctx,
 		p.exchange,
 		p.routingKey,
 		false,

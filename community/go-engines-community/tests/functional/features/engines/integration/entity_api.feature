@@ -205,13 +205,17 @@ Feature: test dynamic entity api fields
       "color": "#FFFFFF",
       "type": "test-default-inactive-type",
       "reason": "test-reason-1",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-entity-api-4"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-entity-api-4"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -347,13 +351,17 @@ Feature: test dynamic entity api fields
       "color": "#FFFFFF",
       "type": "test-default-maintenance-type",
       "reason": "test-reason-1",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-entity-api-5"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-entity-api-5"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201

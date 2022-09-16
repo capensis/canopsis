@@ -22,7 +22,7 @@ Feature: Get pbehavior exception
                 "description": "Exception edit 2 State type",
                 "icon_name": "test-to-exception-edit-2-icon",
                 "name": "Exception edit 2 State",
-                "priority": 13,
+                "priority": 14,
                 "type": "active"
               }
             }
@@ -42,7 +42,7 @@ Feature: Get pbehavior exception
                 "description": "Exception edit 2 State type",
                 "icon_name": "test-to-exception-edit-2-icon",
                 "name": "Exception edit 2 State",
-                "priority": 13,
+                "priority": 14,
                 "type": "active"
               }
             }
@@ -109,7 +109,7 @@ Feature: Get pbehavior exception
             "description": "Exception edit 2 State type",
             "icon_name": "test-to-exception-edit-2-icon",
             "name": "Exception edit 2 State",
-            "priority": 13,
+            "priority": 14,
             "type": "active"
           }
         }

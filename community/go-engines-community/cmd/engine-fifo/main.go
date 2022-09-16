@@ -2,15 +2,23 @@ package main
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/debug"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"os"
 	"os/signal"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/debug"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fifo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 )
 
 func main() {
-	var opts Options
-	opts.ParseArgs()
+	opts := fifo.ParseOptions()
+
+	if opts.Version {
+		canopsis.PrintVersionInfo()
+		return
+	}
+
 	logger := log.NewLogger(opts.ModeDebug)
 	trace := debug.Start(logger)
 	// Graceful shutdown.

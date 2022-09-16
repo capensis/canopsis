@@ -5,30 +5,30 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type Store interface {
-	Insert(ctx context.Context, model *EventFilter) error
-	GetById(ctx context.Context, id string) (*EventFilter, error)
+	Insert(ctx context.Context, request CreateRequest) (*eventfilter.Rule, error)
+	GetById(ctx context.Context, id string) (*eventfilter.Rule, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
-	Update(ctx context.Context, model *EventFilter) (bool, error)
+	Update(ctx context.Context, request UpdateRequest) (*eventfilter.Rule, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
 type AggregationResult struct {
-	Data       []*EventFilter `bson:"data" json:"data"`
-	TotalCount int64          `bson:"total_count" json:"total_count"`
+	Data       []*eventfilter.Rule `bson:"data" json:"data"`
+	TotalCount int64               `bson:"total_count" json:"total_count"`
 }
 
 type store struct {
+	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -38,38 +38,70 @@ func NewStore(
 	dbClient mongo.DbClient,
 ) Store {
 	return &store{
+		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.EventFilterRulesMongoCollection),
 		defaultSearchByFields: []string{"_id", "author", "description", "type"},
 		defaultSortBy:         "created",
 	}
 }
 
-func (s *store) Insert(ctx context.Context, model *EventFilter) error {
+func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
+	return eventfilter.Rule{
+		Author:              r.Author,
+		Description:         r.Description,
+		Type:                r.Type,
+		Priority:            r.Priority,
+		Enabled:             r.Enabled,
+		Config:              r.Config,
+		ExternalData:        r.ExternalData,
+		EventPattern:        r.EventPattern,
+		EntityPatternFields: r.EntityPatternFieldsRequest.ToModel(),
+	}
+}
+
+func (s *store) Insert(ctx context.Context, request CreateRequest) (*eventfilter.Rule, error) {
+	model := s.transformRequestToDocument(request.EditRequest)
+
+	model.ID = request.ID
 	if model.ID == "" {
 		model.ID = utils.NewID()
 	}
+
 	now := types.NewCpsTime(time.Now().Unix())
 	model.Created = &now
 	model.Updated = &now
 
-	_, err := s.dbCollection.InsertOne(ctx, model)
-	if err != nil {
-		return err
-	}
+	var response *eventfilter.Rule
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err := s.dbCollection.InsertOne(ctx, model)
+		if err != nil {
+			return err
+		}
 
-	return err
+		response, err = s.GetById(ctx, model.ID)
+		return err
+	})
+
+	return response, err
 }
 
-func (s *store) GetById(ctx context.Context, id string) (*EventFilter, error) {
-	ef := &EventFilter{}
-	d := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
-	if d.Err() != nil {
-		return nil, d.Err()
-	}
-	if err := d.Decode(&ef); err != nil {
+func (s *store) GetById(ctx context.Context, id string) (*eventfilter.Rule, error) {
+	res := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
+	if err := res.Err(); err != nil {
+		if err == mongodriver.ErrNoDocuments {
+			return nil, nil
+		}
 		return nil, err
 	}
-	return ef, nil
+
+	rule := &eventfilter.Rule{}
+	err := res.Decode(rule)
+	if err != nil {
+		return nil, err
+	}
+
+	return rule, nil
 }
 
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
@@ -105,22 +137,35 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	return &result, nil
 }
 
-func (s *store) Update(ctx context.Context, model *EventFilter) (bool, error) {
-	var data EventFilter
+func (s *store) Update(ctx context.Context, request UpdateRequest) (*eventfilter.Rule, error) {
 	updated := types.NewCpsTime(time.Now().Unix())
+	model := s.transformRequestToDocument(request.EditRequest)
+	model.ID = request.ID
 	model.Created = nil
 	model.Updated = &updated
-	err := s.dbCollection.FindOneAndUpdate(
-		ctx,
-		bson.M{"_id": model.ID},
-		bson.M{"$set": model},
-	).Decode(&data)
-	model.Created = data.Created
-	if err != nil {
-		return false, err
+
+	update := bson.M{"$set": model}
+	if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 || len(request.EventPattern) > 0 {
+		update["$unset"] = bson.M{"old_patterns": 1}
 	}
 
-	return true, nil
+	var response *eventfilter.Rule
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err := s.dbCollection.UpdateOne(
+			ctx,
+			bson.M{"_id": model.ID},
+			update,
+		)
+		if err != nil {
+			return err
+		}
+
+		response, err = s.GetById(ctx, model.ID)
+		return err
+	})
+
+	return response, err
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
