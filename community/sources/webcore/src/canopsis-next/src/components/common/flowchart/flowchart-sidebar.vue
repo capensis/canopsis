@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-navigation-drawer.flowchart-sidebar(permanent, touchless, width="100%")
+  v-navigation-drawer.flowchart-sidebar(width="100%", permanent, touchless)
     v-expansion-panel(color="grey", expand)
       v-layout(column)
         slot(name="prepend")
@@ -285,7 +285,7 @@ export default {
     addRectangle() {
       const rect = rectShapeToForm({
         ...this.centerRectProperties,
-        text: 'Rectangle',
+        text: this.$t('flowchart.shapes.rectangle'),
         textProperties: {
           alignCenter: true,
           justifyCenter: true,
@@ -303,7 +303,7 @@ export default {
     addRoundedRectangle() {
       const rect = rectShapeToForm({
         ...this.centerRectProperties,
-        text: 'Rounded rectangle',
+        text: this.$t('flowchart.shapes.roundedRectangle'),
         textProperties: {
           alignCenter: true,
           justifyCenter: true,
@@ -323,7 +323,6 @@ export default {
     addLine() {
       const line = lineShapeToForm({
         points: this.centerLinePoints,
-        text: 'Line',
         properties: {
           stroke: 'black',
           'stroke-width': 2,
@@ -337,7 +336,6 @@ export default {
       const line = lineShapeToForm({
         points: this.centerLinePoints,
         lineType: LINE_TYPES.horizontalCurve,
-        text: 'Curve line',
         properties: {
           stroke: 'black',
           'stroke-width': 2,
@@ -351,7 +349,6 @@ export default {
       const arrowLine = arrowLineShapeToForm({
         points: this.centerLinePoints,
         lineType: LINE_TYPES.horizontalCurve,
-        text: 'Curve arrow line',
         properties: {
           stroke: 'black',
           'stroke-width': 2,
@@ -365,7 +362,6 @@ export default {
       const bidirectionalArrowLine = bidirectionalArrowLineShapeToForm({
         points: this.centerLinePoints,
         lineType: LINE_TYPES.horizontalCurve,
-        text: 'Bidirectional arrow curve line',
         properties: {
           stroke: 'black',
           'stroke-width': 2,
@@ -378,7 +374,6 @@ export default {
     addArrowLine() {
       const arrowLine = arrowLineShapeToForm({
         points: this.centerLinePoints,
-        text: 'Arrow line',
         properties: {
           stroke: 'black',
           'stroke-width': 2,
@@ -391,7 +386,6 @@ export default {
     addBidirectionalArrowLine() {
       const bidirectionalArrowLine = bidirectionalArrowLineShapeToForm({
         points: this.centerLinePoints,
-        text: 'Bidirectional arrow line',
         properties: {
           stroke: 'black',
           'stroke-width': 2,
@@ -404,7 +398,7 @@ export default {
     addCircle() {
       const circle = circleShapeToForm({
         ...this.centerCircleProperties,
-        text: 'Circle',
+        text: this.$t('flowchart.shapes.circle'),
         textProperties: {
           alignCenter: true,
           justifyCenter: true,
@@ -422,7 +416,7 @@ export default {
     addEllipse() {
       const ellipse = ellipseShapeToForm({
         ...this.centerRectProperties,
-        text: 'Ellipse',
+        text: this.$t('flowchart.shapes.ellipse'),
         textProperties: {
           alignCenter: true,
           justifyCenter: true,
@@ -440,7 +434,7 @@ export default {
     addRhombus() {
       const rhombus = rhombusShapeToForm({
         ...this.centerRectProperties,
-        text: 'Rhombus',
+        text: this.$t('flowchart.shapes.rhombus'),
         textProperties: {
           alignCenter: true,
           justifyCenter: true,
@@ -458,7 +452,7 @@ export default {
     addParallelogram() {
       const parallelogram = parallelogramShapeToForm({
         ...this.centerRectProperties,
-        text: 'Parallelogram',
+        text: this.$t('flowchart.shapes.parallelogram'),
         textProperties: {
           alignCenter: true,
           justifyCenter: true,
@@ -476,7 +470,7 @@ export default {
     addProcess() {
       const parallelogram = processShapeToForm({
         ...this.centerRectProperties,
-        text: 'Process',
+        text: this.$t('flowchart.shapes.process'),
         textProperties: {
           alignCenter: true,
           justifyCenter: true,
@@ -494,7 +488,7 @@ export default {
     addDocument() {
       const parallelogram = documentShapeToForm({
         ...this.centerRectProperties,
-        text: 'Document',
+        text: this.$t('flowchart.shapes.document'),
         textProperties: {
           alignCenter: true,
           justifyCenter: true,
@@ -512,7 +506,7 @@ export default {
     addSquare() {
       const square = rectShapeToForm({
         ...this.centerRectProperties,
-        text: 'Square',
+        text: this.$t('flowchart.shapes.square'),
         textProperties: {
           alignCenter: true,
           justifyCenter: true,
@@ -531,7 +525,7 @@ export default {
     addText() {
       const text = rectShapeToForm({
         ...this.centerRectProperties,
-        text: 'Text',
+        text: this.$t('flowchart.shapes.text'),
         textProperties: {
           alignCenter: true,
           justifyCenter: true,
@@ -562,7 +556,7 @@ export default {
     addStorage() {
       const storage = storageShapeToForm({
         ...this.centerRectProperties,
-        text: 'Storage',
+        text: this.$t('flowchart.shapes.storage'),
         textProperties: {
           alignCenter: true,
           justifyCenter: true,

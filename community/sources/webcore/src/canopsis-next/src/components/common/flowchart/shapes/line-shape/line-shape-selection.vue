@@ -16,8 +16,8 @@
       :cy="point.y",
       :fill="color",
       :r="cornerRadius",
-      cursor="crosshair",
       :pointer-events="moving ? 'none' : 'all'",
+      cursor="crosshair",
       @mousedown.stop="onStartMovePoint(index)"
     )
 </template>

@@ -12,8 +12,16 @@ Feature: get service entities
       "category": "test-category-service-weather-entities",
       "enabled": true,
       "impact_level": 1,
-      "entity_patterns": [
-        {"name": "test-resource-service-weather-entity-1"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-entity-1"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -47,10 +55,12 @@ Feature: get service entities
           "connector_name": "test-connector_name-service-weather-entity-1",
           "component": "test-component-service-weather-entity-1",
           "resource": "test-resource-service-weather-entity-1",
+          "source_type": "resource",
           "state": {"val": 2},
           "status": {"val": 1},
           "impact_state": 2,
           "impact_level": 1,
+          "category": null,
           "is_grey": false,
           "icon": "major",
           "ack": null,
@@ -81,10 +91,20 @@ Feature: get service entities
       "category": "test-category-service-weather-entities",
       "enabled": true,
       "impact_level": 1,
-      "entity_patterns": [
-        {"name": "test-resource-service-weather-entity-2-1"},
-        {"name": "test-resource-service-weather-entity-2-2"},
-        {"name": "test-resource-service-weather-entity-2-3"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-service-weather-entity-2-1",
+                "test-resource-service-weather-entity-2-2",
+                "test-resource-service-weather-entity-2-3"
+              ]
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -133,25 +153,25 @@ Feature: get service entities
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services/test-service-weather-entity-2
+    When I do GET /api/v4/weather-services/test-service-weather-entity-2?sort_by=state&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "_id": "test-resource-service-weather-entity-2-1/test-component-service-weather-entity-2",
-          "name": "test-resource-service-weather-entity-2-1",
+          "_id": "test-resource-service-weather-entity-2-3/test-component-service-weather-entity-2",
+          "name": "test-resource-service-weather-entity-2-3",
           "connector": "test-connector-service-weather-entity-2",
           "connector_name": "test-connector_name-service-weather-entity-2",
           "component": "test-component-service-weather-entity-2",
-          "resource": "test-resource-service-weather-entity-2-1",
-          "state": {"val": 1},
+          "resource": "test-resource-service-weather-entity-2-3",
+          "state": {"val": 3},
           "status": {"val": 1},
-          "impact_state": 1,
+          "impact_state": 3,
           "impact_level": 1,
           "is_grey": false,
-          "icon": "minor",
+          "icon": "critical",
           "ack": null,
           "snooze": null,
           "ticket": null,
@@ -180,24 +200,51 @@ Feature: get service entities
           "pbehaviors": []
         },
         {
-          "_id": "test-resource-service-weather-entity-2-3/test-component-service-weather-entity-2",
-          "name": "test-resource-service-weather-entity-2-3",
+          "_id": "test-resource-service-weather-entity-2-1/test-component-service-weather-entity-2",
+          "name": "test-resource-service-weather-entity-2-1",
           "connector": "test-connector-service-weather-entity-2",
           "connector_name": "test-connector_name-service-weather-entity-2",
           "component": "test-component-service-weather-entity-2",
-          "resource": "test-resource-service-weather-entity-2-3",
-          "state": {"val": 3},
+          "resource": "test-resource-service-weather-entity-2-1",
+          "state": {"val": 1},
           "status": {"val": 1},
-          "impact_state": 3,
+          "impact_state": 1,
           "impact_level": 1,
           "is_grey": false,
-          "icon": "critical",
+          "icon": "minor",
           "ack": null,
           "snooze": null,
           "ticket": null,
           "infos": {},
           "pbehavior_info": null,
           "pbehaviors": []
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
+      }
+    }
+    """
+    When I do GET /api/v4/weather-services/test-service-weather-entity-2?sort_by=impact_state&sort=desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-service-weather-entity-2-3/test-component-service-weather-entity-2",
+          "impact_state": 3
+        },
+        {
+          "_id": "test-resource-service-weather-entity-2-2/test-component-service-weather-entity-2",
+          "impact_state": 2
+        },
+        {
+          "_id": "test-resource-service-weather-entity-2-1/test-component-service-weather-entity-2",
+          "impact_state": 1
         }
       ],
       "meta": {
@@ -220,8 +267,16 @@ Feature: get service entities
       "category": "test-category-service-weather-entities",
       "enabled": true,
       "impact_level": 1,
-      "entity_patterns": [
-        {"name": "test-resource-service-weather-entity-3"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-entity-3"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -291,8 +346,16 @@ Feature: get service entities
       "category": "test-category-service-weather-entities",
       "enabled": true,
       "impact_level": 1,
-      "entity_patterns": [
-        {"name": "test-resource-service-weather-entity-4"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-entity-4"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }

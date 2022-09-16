@@ -17,6 +17,7 @@
 
     component.flowchart-points-editor__point(
       v-for="{ point, x, y } in shapesIcons",
+      :key="point._id",
       :height="iconSize",
       :width="iconSize",
       :x="x",
@@ -31,8 +32,8 @@
       point-icon(:size="iconSize", :entity="point.entity")
 
     component(is="foreignObject", style="overflow: visible;")
-      flowchart-point-dialog-menu(
-        v-if="isDialogOpened",
+      point-form-dialog-menu(
+        :value="isDialogOpened",
         :position-x="clientX",
         :position-y="clientY",
         :point="addingPoint || editingPoint",
@@ -64,13 +65,13 @@ import { mapFlowchartPoints } from '@/mixins/map/map-flowchart-points';
 import PointIcon from '@/components/other/map/partials/point-icon.vue';
 import PointFormDialog from '@/components/other/map/form/partials/point-form-dialog.vue';
 
-import FlowchartPointDialogMenu from './flowchart-point-dialog-menu.vue';
+import PointFormDialogMenu from './point-form-dialog-menu.vue';
 import FlowchartPointContextmenu from './flowchart-point-contextmenu.vue';
 
 export default {
   inject: ['$flowchart'],
   components: {
-    FlowchartPointDialogMenu,
+    PointFormDialogMenu,
     FlowchartPointContextmenu,
     PointFormDialog,
     PointIcon,
@@ -274,12 +275,20 @@ export default {
     },
 
     handleMouseDown({ event, cursor }) {
+      if (event.buttons !== 1) {
+        return;
+      }
+
       this.mouseDownTimestamp = event.timeStamp;
       this.mouseDownCursorX = cursor.x;
       this.mouseDownCursorY = cursor.y;
     },
 
     handleMouseUp({ event, cursor }) {
+      if (event.buttons !== 1) {
+        return;
+      }
+
       if (
         Math.abs(cursor.x - this.mouseDownCursorX) < FLOWCHART_MAX_POSITION_DIFF
         && Math.abs(cursor.y - this.mouseDownCursorY) < FLOWCHART_MAX_POSITION_DIFF

@@ -93,7 +93,7 @@ exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with custom pro
     class="layout row align-center"
   >
     <button
-      class="mx-0 v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light primary--text"
+      class="ml-0 v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light primary--text"
       disabled="disabled"
       type="button"
     >
@@ -103,6 +103,12 @@ exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with custom pro
         Add rule
       </div>
     </button>
+    <span
+      class="error--text"
+      style="display: none;"
+    >
+      The rules include excluded rule.
+    </span>
   </div>
 </div>
 `;
@@ -115,7 +121,7 @@ exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with default pr
     class="layout row align-center"
   >
     <button
-      class="mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+      class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
       type="button"
     >
       <div
@@ -124,6 +130,12 @@ exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with default pr
         Add rule
       </div>
     </button>
+    <span
+      class="error--text"
+      style="display: none;"
+    >
+      The rules include excluded rule.
+    </span>
   </div>
 </div>
 `;

@@ -2,7 +2,9 @@
 package idlerule
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -20,24 +22,27 @@ type Operation struct {
 
 // Rule represents alarm modification condition and operation.
 type Rule struct {
-	ID             string                    `bson:"_id,omitempty" json:"_id"`
-	Name           string                    `bson:"name" json:"name"`
-	Description    string                    `bson:"description" json:"description"`
-	Author         string                    `bson:"author" json:"author"`
-	Enabled        bool                      `bson:"enabled" json:"enabled"`
-	Type           string                    `bson:"type" json:"type"`
-	Priority       int64                     `bson:"priority" json:"priority"`
-	Duration       types.DurationWithUnit    `bson:"duration" json:"duration"`
-	EntityPatterns pattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
+	ID                string                       `bson:"_id,omitempty" json:"_id"`
+	Name              string                       `bson:"name" json:"name"`
+	Description       string                       `bson:"description" json:"description"`
+	Author            string                       `bson:"author" json:"author"`
+	Enabled           bool                         `bson:"enabled" json:"enabled"`
+	Type              string                       `bson:"type" json:"type"`
+	Priority          int64                        `bson:"priority" json:"priority"`
+	Duration          types.DurationWithUnit       `bson:"duration" json:"duration"`
+	OldEntityPatterns oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
 	// DisableDuringPeriods is an option that allows to disable the rule
 	// when entity is in listed periods due pbehavior schedule.
 	DisableDuringPeriods []string      `bson:"disable_during_periods" json:"disable_during_periods"`
-	Created              types.CpsTime `bson:"created" json:"created"`
-	Updated              types.CpsTime `bson:"updated" json:"updated"`
+	Created              types.CpsTime `bson:"created,omitempty" json:"created,omitempty"`
+	Updated              types.CpsTime `bson:"updated,omitempty" json:"updated,omitempty"`
 	// Only for Alarm rules
-	AlarmPatterns  pattern.AlarmPatternList `bson:"alarm_patterns,omitempty" json:"alarm_patterns,omitempty"`
-	AlarmCondition string                   `bson:"alarm_condition,omitempty" json:"alarm_condition,omitempty"`
-	Operation      *Operation               `bson:"operation,omitempty" json:"operation,omitempty"`
+	OldAlarmPatterns oldpattern.AlarmPatternList `bson:"alarm_patterns,omitempty" json:"alarm_patterns,omitempty"`
+	AlarmCondition   string                      `bson:"alarm_condition,omitempty" json:"alarm_condition,omitempty"`
+	Operation        *Operation                  `bson:"operation,omitempty" json:"operation,omitempty"`
+
+	savedpattern.EntityPatternFields `bson:",inline"`
+	savedpattern.AlarmPatternFields  `bson:",inline"`
 }
 
 type Parameters struct {
@@ -60,29 +65,36 @@ type Parameters struct {
 }
 
 // Matches returns true if alarm and entity match time condition and field patterns.
-func (r *Rule) Matches(alarm *types.Alarm, entity *types.Entity, now types.CpsTime) bool {
-	return r.matchesByAlarmLastEventDate(alarm, now) &&
+func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity, now types.CpsTime) (bool, error) {
+	alarm := alarmWithEntity.Alarm
+	entity := alarmWithEntity.Entity
+
+	matched, err := pattern.Match(alarmWithEntity.Entity, alarmWithEntity.Alarm, r.EntityPattern, r.AlarmPattern, r.OldEntityPatterns, r.OldAlarmPatterns)
+	if err != nil {
+		return false, err
+	}
+
+	return matched &&
+		r.matchesByAlarmLastEventDate(alarm, now) &&
 		r.matchesByAlarmLastUpdateDate(alarm, now) &&
-		r.matchesByEntityLastEventDate(entity, now) &&
-		(alarm == nil || r.AlarmPatterns.Matches(alarm)) &&
-		(entity == nil || r.EntityPatterns.Matches(entity))
+		r.matchesByEntityLastEventDate(entity, now), nil
 }
 
-func (r *Rule) matchesByAlarmLastEventDate(alarm *types.Alarm, now types.CpsTime) bool {
+func (r *Rule) matchesByAlarmLastEventDate(alarm types.Alarm, now types.CpsTime) bool {
 	before := r.Duration.SubFrom(now)
 
 	return r.Type != RuleTypeAlarm || r.AlarmCondition != RuleAlarmConditionLastEvent ||
 		alarm.Value.LastEventDate.Before(before)
 }
 
-func (r *Rule) matchesByAlarmLastUpdateDate(alarm *types.Alarm, now types.CpsTime) bool {
+func (r *Rule) matchesByAlarmLastUpdateDate(alarm types.Alarm, now types.CpsTime) bool {
 	before := r.Duration.SubFrom(now)
 
 	return r.Type != RuleTypeAlarm || r.AlarmCondition != RuleAlarmConditionLastUpdate ||
 		alarm.Value.LastUpdateDate.Before(before)
 }
 
-func (r *Rule) matchesByEntityLastEventDate(entity *types.Entity, now types.CpsTime) bool {
+func (r *Rule) matchesByEntityLastEventDate(entity types.Entity, now types.CpsTime) bool {
 	if r.Type != RuleTypeEntity {
 		return true
 	}
