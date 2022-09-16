@@ -1,0 +1,43 @@
+template:
+  - &pbehavior_type {
+    _id: <UUID()>,
+    priority: <Index()>
+  }
+  - &pbehavior_reason {
+    _id: <UUID()>,
+    created: <NowUnix()>
+  }
+
+pbehavior_type:
+  default_inactive:
+    <<: *pbehavior_type
+    name: Default inactive
+    description: Default inactive
+    icon_name: brightness_3
+    type: inactive
+
+  default_active:
+    <<: *pbehavior_type
+    name: Default active
+    description: Default active
+    type: active
+
+  default_maintenance:
+    <<: *pbehavior_type
+    name: Default maintenance
+    description: Default maintenance
+    icon_name: build
+    type: maintenance
+
+  default_pause:
+    <<: *pbehavior_type
+    name: Default pause
+    description: Default pause
+    icon_name: pause
+    type: pause
+
+pbehavior_reason:
+  default_reason:
+    <<: *pbehavior_reason
+    name: Default
+    description: Default
