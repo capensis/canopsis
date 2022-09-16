@@ -11,15 +11,7 @@
       :stroke="stroke",
       :stroke-width="strokeWidth"
     )
-    rect(
-      v-on="$listeners",
-      :x="insetX",
-      :y="y",
-      :width="insetWidth",
-      :height="height",
-      :stroke="stroke",
-      :stroke-width="strokeWidth"
-    )
+    path(:stroke="stroke", :stroke-width="strokeWidth", :d="linesPath", pointer-events="none")
 </template>
 
 <script>
@@ -70,6 +62,19 @@ export default {
       const width = this.width - (this.offset + this.strokeWidth) * 2;
 
       return width > 0 ? width : 0;
+    },
+
+    linesPath() {
+      return [
+        /* Move to first inner line */
+        `M ${this.insetX} ${this.y}`,
+        /* Draw a first vertical line */
+        `v ${this.height}`,
+        /* Move to second inner line */
+        `M ${this.insetX + this.insetWidth} ${this.y}`,
+        /* Draw a second vertical line */
+        `v ${this.height}`,
+      ].join(' ');
     },
   },
 };
