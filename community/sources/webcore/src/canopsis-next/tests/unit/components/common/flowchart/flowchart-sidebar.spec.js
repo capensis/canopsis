@@ -422,7 +422,7 @@ describe('flowchart-sidebar', () => {
         points,
         properties: lineProperties,
         lineType: LINE_TYPES.horizontalCurve,
-        text: 'Curve line',
+        text: '',
         textProperties: lineTextProperties,
       }),
     });
@@ -465,7 +465,7 @@ describe('flowchart-sidebar', () => {
         points,
         properties: lineProperties,
         lineType: LINE_TYPES.horizontalCurve,
-        text: 'Curve arrow line',
+        text: '',
         textProperties: lineTextProperties,
       }),
     });
@@ -508,7 +508,7 @@ describe('flowchart-sidebar', () => {
         points,
         properties: lineProperties,
         lineType: LINE_TYPES.horizontalCurve,
-        text: 'Bidirectional arrow curve line',
+        text: '',
         textProperties: lineTextProperties,
       }),
     });
@@ -551,7 +551,7 @@ describe('flowchart-sidebar', () => {
         points,
         properties: lineProperties,
         lineType: LINE_TYPES.line,
-        text: 'Line',
+        text: '',
         textProperties: lineTextProperties,
       }),
     });
@@ -594,7 +594,7 @@ describe('flowchart-sidebar', () => {
         points,
         properties: lineProperties,
         lineType: LINE_TYPES.line,
-        text: 'Arrow line',
+        text: '',
         textProperties: lineTextProperties,
       }),
     });
@@ -637,7 +637,7 @@ describe('flowchart-sidebar', () => {
         points,
         properties: lineProperties,
         lineType: LINE_TYPES.line,
-        text: 'Bidirectional arrow line',
+        text: '',
         textProperties: lineTextProperties,
       }),
     });
