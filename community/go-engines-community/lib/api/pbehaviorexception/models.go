@@ -29,8 +29,8 @@ type UpdateRequest struct {
 }
 
 type ExdateRequest struct {
-	exdate.Request
-	Type string `json:"type" binding:"required"`
+	exdate.Request `bson:"inline"`
+	Type           string `json:"type" binding:"required"`
 }
 
 type Exception struct {
