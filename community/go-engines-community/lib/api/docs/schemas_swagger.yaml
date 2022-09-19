@@ -1292,11 +1292,25 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/exdate.Request'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
         type: integer
       type:
         enum:
@@ -1339,11 +1353,25 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/exdate.Request'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
         type: integer
       type:
         enum:
@@ -1402,6 +1430,14 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/types.Exdate'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
@@ -1410,6 +1446,12 @@ definitions:
         $ref: '#/definitions/oldpattern.EventPatternList'
       priority:
         type: integer
+      rrule:
+        type: string
+      start:
+        $ref: '#/definitions/types.CpsTime'
+      stop:
+        $ref: '#/definitions/types.CpsTime'
       type:
         enum:
         - break
@@ -1468,11 +1510,25 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/exdate.Request'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
         type: integer
       type:
         enum:
@@ -1486,6 +1542,16 @@ definitions:
     required:
     - description
     - type
+    type: object
+  exdate.Request:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
+    required:
+    - begin
+    - end
     type: object
   export.Field:
     properties:
@@ -3699,6 +3765,13 @@ definitions:
     required:
     - unit
     - value
+    type: object
+  types.Exdate:
+    properties:
+      begin:
+        $ref: '#/definitions/types.CpsTime'
+      end:
+        $ref: '#/definitions/types.CpsTime'
     type: object
   types.PbehaviorInfo:
     properties:

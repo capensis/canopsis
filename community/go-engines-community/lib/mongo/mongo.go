@@ -130,6 +130,8 @@ type DbCollection interface {
 		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
 	UpdateOne(ctx context.Context, filter interface{}, update interface{},
 		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
+	Watch(ctx context.Context, pipeline interface{},
+		opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error)
 }
 
 // DbClient connected MongoDB client settings
@@ -140,6 +142,7 @@ type DbClient interface {
 	Ping(ctx context.Context, rp *readpref.ReadPref) error
 	WithTransaction(ctx context.Context, f func(context.Context) error) error
 	ListCollectionNames(ctx context.Context, filter interface{}, opts ...*options.ListCollectionsOptions) ([]string, error)
+	IsReplicaSet() bool
 }
 
 type dbClient struct {
@@ -376,6 +379,11 @@ func (c *dbCollection) UpdateMany(ctx context.Context, filter interface{}, updat
 	return res, nil
 }
 
+func (c *dbCollection) Watch(ctx context.Context, pipeline interface{},
+	opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error) {
+	return c.mongoCollection.Watch(ctx, pipeline, opts...)
+}
+
 func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update interface{},
 	opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
@@ -582,6 +590,10 @@ func (c *dbClient) checkTransactionEnabled(pCtx context.Context, logger zerolog.
 
 	logger.Info().Msg("MongoDB version supports transactions, transactions are enabled")
 	c.TransactionEnabled = true
+}
+
+func (c *dbClient) IsReplicaSet() bool {
+	return c.TransactionEnabled
 }
 
 // getURL parses URL value in EnvURL environment variable

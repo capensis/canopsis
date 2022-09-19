@@ -2,17 +2,11 @@ package pbehavior
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-)
-
-const (
-	ExceptionCollectionName = mongo.PbehaviorExceptionMongoCollection
 )
 
 type Exdate struct {
-	Begin types.CpsTime `bson:"begin" json:"begin"`
-	End   types.CpsTime `bson:"end" json:"end"`
-	Type  string        `bson:"type" json:"type"`
+	types.Exdate
+	Type string `bson:"type" json:"type"`
 }
 
 type Exception struct {

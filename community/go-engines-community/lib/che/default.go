@@ -86,9 +86,18 @@ func NewEngine(
 		logger,
 	)
 
+	eventfilterIntervalsWorker := NewEventfilterIntervalsWorker(mongoClient, timezoneConfigProvider, options.PeriodicalWaitTime, logger)
+	eventfilterIntervalsPeriodicalWorker := libengine.NewLockedPeriodicalWorker(
+		periodicalLockClient,
+		redis.CheEventFiltersIntervalsPeriodicalLockKey,
+		eventfilterIntervalsWorker,
+		logger,
+	)
+
 	engine := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
+			eventfilterIntervalsWorker.Work(ctx)
 
 			// run in goroutine because it may take some time to process heavy dbs, don't want to slow down the engine startup
 			go infosDictLockedPeriodicalWorker.Work(ctx)
@@ -179,7 +188,9 @@ func NewEngine(
 		EnrichmentCenter:   enrichmentCenter,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
+		LoadRules:          !mongoClient.IsReplicaSet(),
 	})
+	engine.AddPeriodicalWorker("eventfilter intervals", eventfilterIntervalsPeriodicalWorker)
 	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engine.AddPeriodicalWorker("alarm config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
@@ -204,6 +215,23 @@ func NewEngine(
 		logger,
 	))
 	engine.AddPeriodicalWorker("entity infos dictionary", infosDictLockedPeriodicalWorker)
+	if mongoClient.IsReplicaSet() {
+		engine.AddRoutine(func(ctx context.Context) error {
+			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventfilterService)
+
+			for {
+				select {
+				case <-ctx.Done():
+					return nil
+				default:
+					err := w.Watch(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
+					if err != nil {
+						return err
+					}
+				}
+			}
+		})
+	}
 
 	return engine
 }
