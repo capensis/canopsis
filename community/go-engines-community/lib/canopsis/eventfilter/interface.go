@@ -1,30 +1,48 @@
 package eventfilter
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/eventfilter/eventfilter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter Service,Adapter
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/eventfilter/eventfilter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter RuleApplicator,RuleAdapter,RuleApplicatorContainer,ExternalDataGetter,Service,ActionProcessor
 
 import (
 	"context"
-	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-// Service is an interface for the service that manages the event filter.
-type Service interface {
-	// LoadRules loads the event filter rules from the database, and adds them
-	// to the service.
-	LoadRules(ctx context.Context) error
+// outcome constant values
+const (
+	OutcomePass  = "pass"
+	OutcomeDrop  = "drop"
+	OutcomeBreak = "break"
+)
 
-	// LoadDataSourceFactories loads the data source factories and adds them to
-	// the service.
-	LoadDataSourceFactories(enrichmentCenter libcontext.EnrichmentCenter, dataSourceDirectory string) error
-
-	// ProcessEvent processes an event with the rules of the event filter. It
-	// returns a DropError if the event should be dropped by the eventfilter.
-	ProcessEvent(ctx context.Context, event types.Event) (types.Event, Report, error)
+type ActionProcessor interface {
+	Process(action Action, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}, cfgTimezone *config.TimezoneConfig) (types.Event, error)
 }
 
-// Adapter is a type that provides access to the MongoDB collection containing
-// the event filter's rules
-type Adapter interface {
-	List(ctx context.Context) ([]Rule, error)
+type RuleApplicator interface {
+	// Apply eventfilter rule, the first return value(string) should be one of the outcome constant values
+	Apply(context.Context, Rule, types.Event, RegexMatchWrapper, *config.TimezoneConfig) (string, types.Event, error)
+}
+
+type RuleAdapter interface {
+	GetAll(context.Context) ([]Rule, error)
+	GetByTypes(context.Context, []string) ([]Rule, error)
+}
+
+type Service interface {
+	ProcessEvent(context.Context, types.Event) (types.Event, error)
+	LoadRules(context.Context, []string) error
+}
+
+type RuleApplicatorContainer interface {
+	Get(string) (RuleApplicator, bool)
+	Set(string, RuleApplicator)
+}
+
+type ExternalDataGetter interface {
+	Get(ctx context.Context, parameters ExternalDataParameters, templateParameters TemplateGetter, cfgTimezone *config.TimezoneConfig) (interface{}, error)
+}
+
+type TemplateGetter interface {
+	GetTemplate() interface{}
 }

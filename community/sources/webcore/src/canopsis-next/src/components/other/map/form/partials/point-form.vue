@@ -71,7 +71,7 @@ export default {
   methods: {
     updateEntity(entity) {
       if (!this.coordinates) {
-        this.updateField('entity', entity?._id);
+        this.updateField('entity', entity?._id ?? '');
         return;
       }
 

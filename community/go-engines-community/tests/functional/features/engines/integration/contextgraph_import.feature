@@ -10,8 +10,16 @@ Feature: Import entities
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {"name": "test-component-import-partial-1"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-import-partial-1"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -95,12 +103,17 @@ Feature: Import entities
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {"infos": {
-          "test-component-import-partial-2-infos-1": {
-            "value": "test-component-import-partial-2-infos-1-value"
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.test-component-import-partial-2-infos-1",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-import-partial-2-infos-1-value"
+            }
           }
-        }}
+        ]
       ],
       "sli_avail_state": 0
     }

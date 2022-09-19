@@ -32,6 +32,14 @@ import { isValidTimeUnit } from '@/helpers/date/date';
  */
 
 /**
+ * Check unit is valid
+ *
+ * @param {DurationUnit} unit
+ * @returns {boolean}
+ */
+export const isValidUnit = unit => Object.values(TIME_UNITS).includes(unit);
+
+/**
  * Convert duration from one unit to another unit
  *
  * @param {number} value

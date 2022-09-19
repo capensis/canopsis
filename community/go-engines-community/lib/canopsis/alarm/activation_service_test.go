@@ -2,6 +2,10 @@ package alarm
 
 import (
 	"bytes"
+	"context"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
@@ -9,13 +13,13 @@ import (
 	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"testing"
-	"time"
 )
 
 func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
@@ -26,7 +30,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *test
 		queueName,
 		logger,
 	)
-	alarm := &types.Alarm{}
+	alarm := types.Alarm{}
 
 	eventBody := make([]byte, 1)
 	encoderMock.
@@ -36,7 +40,8 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *test
 
 	publisherMock.
 		EXPECT().
-		Publish(
+		PublishWithContext(
+			gomock.Any(),
 			gomock.Eq(""),
 			gomock.Eq(queueName),
 			gomock.Eq(false),
@@ -49,7 +54,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *test
 		).
 		Times(1)
 
-	_, err := service.Process(alarm)
+	_, err := service.Process(ctx, alarm)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -58,6 +63,8 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *test
 func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
@@ -67,7 +74,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t
 		"testQueue",
 		logger,
 	)
-	alarm := &types.Alarm{
+	alarm := types.Alarm{
 		Value: types.AlarmValue{
 			Component:     "testcomp",
 			Connector:     "testconn",
@@ -104,7 +111,8 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t
 
 	publisherMock.
 		EXPECT().
-		Publish(
+		PublishWithContext(
+			gomock.Any(),
 			gomock.Any(),
 			gomock.Any(),
 			gomock.Any(),
@@ -112,7 +120,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t
 			gomock.Any(),
 		)
 
-	_, err := service.Process(alarm)
+	_, err := service.Process(ctx, alarm)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -121,6 +129,8 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t
 func TestActivationService_Process_GivenInactiveAndSnoozedAlarm_ShouldNotPublishEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
@@ -130,7 +140,7 @@ func TestActivationService_Process_GivenInactiveAndSnoozedAlarm_ShouldNotPublish
 		"testQueue",
 		logger,
 	)
-	alarm := &types.Alarm{
+	alarm := types.Alarm{
 		Value: types.AlarmValue{
 			Snooze: &types.AlarmStep{
 				Value: types.CpsNumber(time.Now().Unix() + 1000),
@@ -144,7 +154,8 @@ func TestActivationService_Process_GivenInactiveAndSnoozedAlarm_ShouldNotPublish
 		Times(0)
 
 	publisherMock.EXPECT().
-		Publish(
+		PublishWithContext(
+			gomock.Any(),
 			gomock.Any(),
 			gomock.Any(),
 			gomock.Any(),
@@ -153,7 +164,7 @@ func TestActivationService_Process_GivenInactiveAndSnoozedAlarm_ShouldNotPublish
 		).
 		Times(0)
 
-	_, err := service.Process(alarm)
+	_, err := service.Process(ctx, alarm)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -162,6 +173,8 @@ func TestActivationService_Process_GivenInactiveAndSnoozedAlarm_ShouldNotPublish
 func TestActivationService_Process_GivenInactiveAlarmWithActivePBehavior_ShouldNotPublishEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
@@ -171,7 +184,7 @@ func TestActivationService_Process_GivenInactiveAlarmWithActivePBehavior_ShouldN
 		"testQueue",
 		logger,
 	)
-	alarm := &types.Alarm{
+	alarm := types.Alarm{
 		EntityID: "testID",
 		Value: types.AlarmValue{
 			PbehaviorInfo: types.PbehaviorInfo{CanonicalType: pbehavior.TypeInactive},
@@ -184,7 +197,8 @@ func TestActivationService_Process_GivenInactiveAlarmWithActivePBehavior_ShouldN
 		Times(0)
 
 	publisherMock.EXPECT().
-		Publish(
+		PublishWithContext(
+			gomock.Any(),
 			gomock.Any(),
 			gomock.Any(),
 			gomock.Any(),
@@ -193,7 +207,7 @@ func TestActivationService_Process_GivenInactiveAlarmWithActivePBehavior_ShouldN
 		).
 		Times(0)
 
-	_, err := service.Process(alarm)
+	_, err := service.Process(ctx, alarm)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -202,6 +216,8 @@ func TestActivationService_Process_GivenInactiveAlarmWithActivePBehavior_ShouldN
 func TestActivationService_Process_GivenActiveAlarm_ShouldNotPublishEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
 	logger := zerolog.New(bytes.NewBuffer(make([]byte, 0)))
@@ -211,7 +227,7 @@ func TestActivationService_Process_GivenActiveAlarm_ShouldNotPublishEvent(t *tes
 		"testQueue",
 		logger,
 	)
-	alarm := &types.Alarm{
+	alarm := types.Alarm{
 		Value: types.AlarmValue{
 			ActivationDate: &types.CpsTime{Time: time.Now()},
 		},
@@ -223,7 +239,8 @@ func TestActivationService_Process_GivenActiveAlarm_ShouldNotPublishEvent(t *tes
 		Times(0)
 
 	publisherMock.EXPECT().
-		Publish(
+		PublishWithContext(
+			gomock.Any(),
 			gomock.Any(),
 			gomock.Any(),
 			gomock.Any(),
@@ -232,7 +249,7 @@ func TestActivationService_Process_GivenActiveAlarm_ShouldNotPublishEvent(t *tes
 		).
 		Times(0)
 
-	_, err := service.Process(alarm)
+	_, err := service.Process(ctx, alarm)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}

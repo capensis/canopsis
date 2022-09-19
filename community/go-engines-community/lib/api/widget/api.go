@@ -3,13 +3,15 @@ package widget
 import (
 	"context"
 	"errors"
+	"fmt"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type API interface {
@@ -24,17 +26,20 @@ type API interface {
 type api struct {
 	store        Store
 	enforcer     security.Enforcer
+	transformer  common.PatternFieldsTransformer
 	actionLogger logger.ActionLogger
 }
 
 func NewApi(
 	store Store,
 	enforcer security.Enforcer,
+	transformer common.PatternFieldsTransformer,
 	actionLogger logger.ActionLogger,
 ) API {
 	return &api{
 		store:        store,
 		enforcer:     enforcer,
+		transformer:  transformer,
 		actionLogger: actionLogger,
 	}
 }
@@ -86,6 +91,16 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
+	err = a.transformEditRequest(c.Request.Context(), &request)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
 	widget, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
@@ -135,6 +150,16 @@ func (a *api) Update(c *gin.Context) {
 	if !ok {
 		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
 		return
+	}
+
+	err = a.transformEditRequest(c.Request.Context(), &request)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
 	}
 
 	widget, err := a.store.Update(c.Request.Context(), request)
@@ -325,4 +350,33 @@ func (a *api) checkAccessByTab(ctx context.Context, tabId string, userId, perm s
 	}
 
 	return a.enforcer.Enforce(userId, viewId, perm)
+}
+
+func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
+	var err error
+	for i := range request.Filters {
+		request.Filters[i].AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, request.Filters[i].AlarmPatternFieldsRequest)
+		if err != nil {
+			if err == common.ErrNotExistCorporateAlarmPattern {
+				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_alarm_pattern", i), err)
+			}
+			return err
+		}
+		request.Filters[i].EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.Filters[i].EntityPatternFieldsRequest)
+		if err != nil {
+			if err == common.ErrNotExistCorporateEntityPattern {
+				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_entity_pattern", i), err)
+			}
+			return err
+		}
+		request.Filters[i].PbehaviorPatternFieldsRequest, err = a.transformer.TransformPbehaviorPatternFieldsRequest(ctx, request.Filters[i].PbehaviorPatternFieldsRequest)
+		if err != nil {
+			if err == common.ErrNotExistCorporatePbehaviorPattern {
+				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_pbehavior_pattern", i), err)
+			}
+			return err
+		}
+	}
+
+	return nil
 }
