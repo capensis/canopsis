@@ -18,9 +18,9 @@ Feature: execute request on event
     """
     When I wait the end of event processing
     When I call RPC to engine-webhook with alarm test-resource-webhook-rpc-1/test-component-webhook-rpc-1:
-	"""
-	{
-	  "parameters": {
+    """
+    {
+      "parameters": {
         "request": {
           "method": "GET",
           "url": "{{ .apiUrl }}/api/v4/scenarios",
@@ -30,8 +30,8 @@ Feature: execute request on event
           }
         }
       }
-	}
-	"""
+    }
+    """
 
   Scenario: given event with declare ticket should execute request and update alarm
     Given I am admin
@@ -50,9 +50,9 @@ Feature: execute request on event
     """
     When I wait the end of event processing
     When I call RPC to engine-webhook with alarm test-resource-webhook-rpc-2/test-component-webhook-rpc-2:
-	"""
-	{
-	  "parameters": {
+    """
+    {
+      "parameters": {
         "request": {
           "method": "POST",
           "url": "{{ .apiUrl }}/api/v4/scenarios",
@@ -61,7 +61,7 @@ Feature: execute request on event
             "password": "test"
           },
           "headers": {"Content-Type": "application/json"},
-          "payload": "{\"name\":\"test-scenario-webhook-rpc-2\",\"enabled\":true,\"priority\":101,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-webhook-rpc-2-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+          "payload": "{\"name\":\"test-scenario-webhook-rpc-2\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"test-scenario-webhook-rpc-2-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
         },
         "declare_ticket": {
           "empty_response": false,
@@ -70,9 +70,9 @@ Feature: execute request on event
           "scenario_name": "name"
         }
       }
-	}
-	"""
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-webhook-rpc-2"}]}&with_steps=true
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-webhook-rpc-2
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -95,8 +95,38 @@ Feature: execute request on event
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -108,17 +138,17 @@ Feature: execute request on event
               {
                 "_t": "declareticket"
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given event with regexp declare ticket should execute request and update alarm
@@ -138,9 +168,9 @@ Feature: execute request on event
     """
     When I wait the end of event processing
     When I call RPC to engine-webhook with alarm test-resource-webhook-rpc-3/test-component-webhook-rpc-3:
-	"""
-	{
-	  "parameters": {
+    """
+    {
+      "parameters": {
         "request": {
           "method": "POST",
           "url": "{{ .apiUrl }}/api/v4/scenarios",
@@ -149,7 +179,7 @@ Feature: execute request on event
             "password": "test"
           },
           "headers": {"Content-Type": "application/json"},
-          "payload": "{\"name\":\"test-scenario-webhook-rpc-3\",\"enabled\":true,\"priority\":102,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-webhook-rpc-3-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+          "payload": "{\"name\":\"test-scenario-webhook-rpc-3\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"test-scenario-webhook-rpc-3-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
         },
         "declare_ticket": {
           "empty_response": false,
@@ -158,9 +188,9 @@ Feature: execute request on event
           "scenario_name": ".*name.*"
         }
       }
-	}
-	"""
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-webhook-rpc-3"}]}&with_steps=true
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-webhook-rpc-3
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -183,8 +213,38 @@ Feature: execute request on event
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -196,15 +256,15 @@ Feature: execute request on event
               {
                 "_t": "declareticket"
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """

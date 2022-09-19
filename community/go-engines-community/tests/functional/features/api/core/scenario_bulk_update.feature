@@ -11,7 +11,6 @@ Feature: Bulk update a scenario
     When I do PUT /api/v4/bulk/scenarios
     Then the response code should be 403
 
-
   Scenario: given bulk update request should return multi status and should be handled independently
     When I am admin
     When I do PUT /api/v4/bulk/scenarios:
@@ -21,14 +20,20 @@ Feature: Bulk update a scenario
         "_id": "test-scenario-to-bulk-update-1",
         "name": "test-scenario-to-bulk-update-1-name",
         "enabled": true,
-        "priority": 200010,
+        "priority": 7,
         "triggers": ["create","pbhenter"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-update-1-alarm-updated"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-1-alarm-updated"
+                  }
+                }
+              ]
             ],
             "type": "snooze",
             "parameters": {
@@ -47,14 +52,20 @@ Feature: Bulk update a scenario
         "_id": "test-scenario-to-bulk-update-1",
         "name": "test-scenario-to-bulk-update-1-name-twice",
         "enabled": true,
-        "priority": 200010,
+        "priority": 7,
         "triggers": ["create","pbhenter"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-update-1-alarm-updated"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-1-alarm-updated"
+                  }
+                }
+              ]
             ],
             "type": "snooze",
             "parameters": {
@@ -69,25 +80,34 @@ Feature: Bulk update a scenario
           }
         ]
       },
-      {
-        "priority": 12345
-      },
+      {},
       {
         "name": "test-scenario-to-check-unique-name-name",
         "enabled": true,
-        "priority": 13,
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-4-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-4-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-4-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-4-resource"
+                  }
+                }
+              ]
             ],
             "type": "snooze",
             "parameters": {
@@ -109,15 +129,27 @@ Feature: Bulk update a scenario
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-4-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-4-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-4-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-4-resource"
+                  }
+                }
+              ]
             ],
             "type": "snooze",
             "parameters": {
@@ -135,106 +167,36 @@ Feature: Bulk update a scenario
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "priority": 13,
         "triggers": ["create"],
-        "actions": [
-          {
-          }
-        ]
+        "actions": [{}]
       },
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "priority": 13,
         "triggers": ["create"],
         "actions": [
           {
-            "type": "snooze",
-            "parameters": {
-              "output": "test snooze",
-              "duration": {
-                "seconds": 3,
-                "unit": "s"
-              }
-            },
-            "drop_scenario_if_not_matched": false,
-            "emit_trigger": false
-          }
-        ]
-      },
-      {
-        "name": "test-scenario-to-bulk-create-4-name",
-        "priority": 21,
-        "enabled": true,
-        "triggers": [
-          "statedec"
-        ],
-        "disable_during_periods": [],
-        "actions": [
-          {
-            "type": "webhook",
-            "parameters": {
-              "skip_verify": false,
-              "declare_ticket": {
-                "empty_response": false,
-                "is_regexp": false
-              },
-              "request": {
-                "method": "POST",
-                "url": "http://localhost:5000",
-                "headers": {},
-                "payload": "{}"
-              }
-            },
-            "drop_scenario_if_not_matched": false,
-            "emit_trigger": false,
-            "alarm_patterns": [
-              {
-                "component": "component_recette_retry_webhooks"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-4-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": []
-          }
-        ]
-      },
-      {
-        "name": "test-scenario-to-bulk-create-4-name",
-        "enabled": true,
-        "priority": 13,
-        "triggers": ["create"],
-        "actions": [
-          {
-            "alarm_patterns": [{}],
-            "entity_patterns": [{}],
-            "type": "snooze",
-            "parameters": {
-              "output": "test snooze",
-              "duration": {
-                "seconds": 3,
-                "unit": "s"
-              }
-            },
-            "drop_scenario_if_not_matched": false,
-            "emit_trigger": false
-          }
-        ]
-      },
-      {
-        "name": "test-scenario-to-bulk-create-4-name",
-        "enabled": true,
-        "priority": 13,
-        "triggers": ["create"],
-        "actions": [
-          {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-alarm"
-              }
-            ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-4-resource"
+                  }
+                }
+              ]
             ],
             "type": "snooze",
             "drop_scenario_if_not_matched": false,
@@ -245,19 +207,30 @@ Feature: Bulk update a scenario
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "priority": 13,
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-4-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-4-resource"
+                  }
+                }
+              ]
             ],
             "type": "assocticket",
             "drop_scenario_if_not_matched": false,
@@ -268,19 +241,30 @@ Feature: Bulk update a scenario
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "priority": 13,
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-4-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-4-resource"
+                  }
+                }
+              ]
             ],
             "type": "changestate",
             "drop_scenario_if_not_matched": false,
@@ -291,19 +275,30 @@ Feature: Bulk update a scenario
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "priority": 13,
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-4-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-4-resource"
+                  }
+                }
+              ]
             ],
             "type": "pbehavior",
             "parameters": {
@@ -318,19 +313,30 @@ Feature: Bulk update a scenario
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "priority": 13,
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-4-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-4-resource"
+                  }
+                }
+              ]
             ],
             "type": "webhook",
             "drop_scenario_if_not_matched": false,
@@ -343,18 +349,158 @@ Feature: Bulk update a scenario
         "_id": "test-scenario-to-bulk-update-2",
         "name": "test-scenario-to-bulk-update-2-name",
         "enabled": true,
-        "priority": 200011,
+        "priority": 8,
         "triggers": ["create","pbhenter"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-update-2-alarm-updated"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-2-alarm-updated"
+                  }
+                }
+              ]
             ],
             "type": "snooze",
             "parameters": {
               "output": "test snooze updated",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false
+          }
+        ]
+      },
+      {
+        "_id": "test-scenario-to-bulk-update-3",
+        "name": "test-scenario-to-bulk-update-3-name",
+        "enabled": true,
+        "priority": 17,
+        "triggers": ["create"],
+        "delay": {
+          "value": 3,
+          "unit": "s"
+        },
+        "actions": [
+          {
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-3-alarm"
+                  }
+                }
+              ]
+            ],
+            "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+            "type": "snooze",
+            "parameters": {
+              "output": "test snooze",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false
+          },
+          {
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-3-name"
+                  }
+                }
+              ]
+            ],
+            "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+            "type": "snooze",
+            "parameters": {
+              "output": "test snooze",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false
+          },
+          {
+            "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+            "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+            "type": "snooze",
+            "parameters": {
+              "output": "test snooze",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false
+          }
+        ]
+      },
+      {
+        "name": "test-scenario-to-bulk-update-3-name",
+        "enabled": true,
+        "triggers": ["create"],
+        "delay": {
+          "value": 3,
+          "unit": "s"
+        },
+        "actions": [
+          {
+            "alarm_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-3-alarm"
+                  }
+                }
+              ]
+            ],
+            "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+            "type": "snooze",
+            "parameters": {
+              "output": "test snooze",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false
+          },
+          {
+            "entity_pattern": [
+              [
+                {
+                  "field": "test",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-update-3-name"
+                  }
+                }
+              ]
+            ],
+            "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+            "type": "snooze",
+            "parameters": {
+              "output": "test snooze",
               "duration": {
                 "value": 3,
                 "unit": "s"
@@ -378,14 +524,20 @@ Feature: Bulk update a scenario
           "_id": "test-scenario-to-bulk-update-1",
           "name": "test-scenario-to-bulk-update-1-name",
           "enabled": true,
-          "priority": 200010,
+          "priority": 7,
           "triggers": ["create","pbhenter"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-update-1-alarm-updated"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-1-alarm-updated"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "parameters": {
@@ -408,14 +560,20 @@ Feature: Bulk update a scenario
           "_id": "test-scenario-to-bulk-update-1",
           "name": "test-scenario-to-bulk-update-1-name-twice",
           "enabled": true,
-          "priority": 200010,
+          "priority": 7,
           "triggers": ["create","pbhenter"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-update-1-alarm-updated"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-1-alarm-updated"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "parameters": {
@@ -440,9 +598,7 @@ Feature: Bulk update a scenario
           "triggers": "Triggers is missing.",
           "_id": "ID is missing."
         },
-        "item": {
-          "priority": 12345
-        }
+        "item": {}
       },
       {
         "status": 400,
@@ -453,19 +609,30 @@ Feature: Bulk update a scenario
         "item": {
           "name": "test-scenario-to-check-unique-name-name",
           "enabled": true,
-          "priority": 13,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-4-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-4-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-4-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-4-resource"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "parameters": {
@@ -494,15 +661,27 @@ Feature: Bulk update a scenario
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-4-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-4-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-4-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-4-resource"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "parameters": {
@@ -521,122 +700,16 @@ Feature: Bulk update a scenario
       {
         "status": 400,
         "errors": {
-          "actions.0.alarm_patterns": "AlarmPatterns is missing.",
           "actions.0.drop_scenario_if_not_matched": "DropScenarioIfNotMatched is missing.",
           "actions.0.emit_trigger": "EmitTrigger is missing.",
-          "actions.0.entity_patterns": "EntityPatterns is missing.",
           "actions.0.type": "Type is missing.",
           "_id": "ID is missing."
         },
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "priority": 13,
           "triggers": ["create"],
-          "actions": [
-            {
-            }
-          ]
-        }
-      },
-      {
-        "status": 400,
-        "errors": {
-          "actions.0.alarm_patterns": "AlarmPatterns is missing.",
-          "actions.0.entity_patterns": "EntityPatterns is missing.",
-          "_id": "ID is missing."
-        },
-        "item": {
-          "name": "test-scenario-to-bulk-create-4-name",
-          "enabled": true,
-          "priority": 13,
-          "triggers": ["create"],
-          "actions": [
-            {
-              "type": "snooze",
-              "parameters": {
-                "output": "test snooze",
-                "duration": {
-                  "seconds": 3,
-                  "unit": "s"
-                }
-              },
-              "drop_scenario_if_not_matched": false,
-              "emit_trigger": false
-            }
-          ]
-        }
-      },
-      {
-        "status": 400,
-        "errors": {
-          "actions.0.alarm_patterns": "Invalid alarm pattern list.",
-          "_id": "ID is missing."
-        },
-        "item": {
-          "name": "test-scenario-to-bulk-create-4-name",
-          "priority": 21,
-          "enabled": true,
-          "triggers": [
-            "statedec"
-          ],
-          "disable_during_periods": [],
-          "actions": [
-            {
-              "type": "webhook",
-              "parameters": {
-                "skip_verify": false,
-                "declare_ticket": {
-                  "empty_response": false,
-                  "is_regexp": false
-                },
-                "request": {
-                  "method": "POST",
-                  "url": "http://localhost:5000",
-                  "headers": {},
-                  "payload": "{}"
-                }
-              },
-              "drop_scenario_if_not_matched": false,
-              "emit_trigger": false,
-              "alarm_patterns": [
-                {
-                  "component": "component_recette_retry_webhooks"
-                }
-              ],
-              "entity_patterns": []
-            }
-          ]
-        }
-      },
-      {
-        "status": 400,
-        "errors": {
-          "actions.0.alarm_patterns": "alarm pattern list contains an empty pattern.",
-          "actions.0.entity_patterns": "entity pattern list contains an empty pattern.",
-          "_id": "ID is missing."
-        },
-        "item": {
-          "name": "test-scenario-to-bulk-create-4-name",
-          "enabled": true,
-          "priority": 13,
-          "triggers": ["create"],
-          "actions": [
-            {
-              "alarm_patterns": [{}],
-              "entity_patterns": [{}],
-              "type": "snooze",
-              "parameters": {
-                "output": "test snooze",
-                "duration": {
-                  "seconds": 3,
-                  "unit": "s"
-                }
-              },
-              "drop_scenario_if_not_matched": false,
-              "emit_trigger": false
-            }
-          ]
+          "actions": [{}]
         }
       },
       {
@@ -648,19 +721,30 @@ Feature: Bulk update a scenario
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "priority": 13,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-4-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-4-resource"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "drop_scenario_if_not_matched": false,
@@ -678,19 +762,30 @@ Feature: Bulk update a scenario
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "priority": 13,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-4-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-4-resource"
+                    }
+                  }
+                ]
               ],
               "type": "assocticket",
               "drop_scenario_if_not_matched": false,
@@ -708,19 +803,30 @@ Feature: Bulk update a scenario
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "priority": 13,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-4-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-4-resource"
+                    }
+                  }
+                ]
               ],
               "type": "changestate",
               "drop_scenario_if_not_matched": false,
@@ -742,19 +848,30 @@ Feature: Bulk update a scenario
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "priority": 13,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-4-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-4-resource"
+                    }
+                  }
+                ]
               ],
               "type": "pbehavior",
               "parameters": {
@@ -776,19 +893,30 @@ Feature: Bulk update a scenario
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "priority": 13,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-4-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-4-resource"
+                    }
+                  }
+                ]
               ],
               "type": "webhook",
               "drop_scenario_if_not_matched": false,
@@ -809,14 +937,20 @@ Feature: Bulk update a scenario
           "_id": "test-scenario-to-bulk-update-2",
           "name": "test-scenario-to-bulk-update-2-name",
           "enabled": true,
-          "priority": 200011,
+          "priority": 8,
           "triggers": ["create","pbhenter"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-update-2-alarm-updated"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-2-alarm-updated"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "parameters": {
@@ -830,6 +964,151 @@ Feature: Bulk update a scenario
               "emit_trigger": false
             }
           ]
+        }
+      },
+      {
+        "id": "test-scenario-to-bulk-update-3",
+        "status": 200,
+        "item": {
+          "_id": "test-scenario-to-bulk-update-3",
+          "name": "test-scenario-to-bulk-update-3-name",
+          "enabled": true,
+          "priority": 17,
+          "triggers": ["create"],
+          "delay": {
+            "value": 3,
+            "unit": "s"
+          },
+          "actions": [
+            {
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-3-alarm"
+                    }
+                  }
+                ]
+              ],
+              "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            },
+            {
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-3-name"
+                    }
+                  }
+                ]
+              ],
+              "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            },
+            {
+              "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+              "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            }
+          ]
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-scenario-to-bulk-update-3-name",
+          "enabled": true,
+          "triggers": ["create"],
+          "delay": {
+            "value": 3,
+            "unit": "s"
+          },
+          "actions": [
+            {
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-3-alarm"
+                    }
+                  }
+                ]
+              ],
+              "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            },
+            {
+              "entity_pattern": [
+                [
+                  {
+                    "field": "test",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-3-name"
+                    }
+                  }
+                ]
+              ],
+              "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            }
+          ]
+        },
+        "errors": {
+          "actions.0.alarm_pattern": "AlarmPattern is invalid alarm pattern.",
+          "actions.1.entity_pattern": "EntityPattern is invalid entity pattern."
         }
       }
     ]
@@ -845,18 +1124,25 @@ Feature: Bulk update a scenario
           "name": "test-scenario-to-bulk-update-1-name-twice",
           "author": "root",
           "enabled": true,
-          "priority": 200010,
+          "priority": 7,
           "delay": null,
           "disable_during_periods": null,
           "triggers": ["create","pbhenter"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-update-1-alarm-updated"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-1-alarm-updated"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": null,
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
               "type": "snooze",
               "parameters": {
                 "output": "test snooze updated",
@@ -868,26 +1154,32 @@ Feature: Bulk update a scenario
               "drop_scenario_if_not_matched": false,
               "emit_trigger": false
             }
-          ],
-          "created": 1605263992
+          ]
         },
         {
           "_id": "test-scenario-to-bulk-update-2",
           "name": "test-scenario-to-bulk-update-2-name",
           "author": "root",
           "enabled": true,
-          "priority": 200011,
+          "priority": 8,
           "delay": null,
           "disable_during_periods": null,
           "triggers": ["create","pbhenter"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-update-2-alarm-updated"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-2-alarm-updated"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": null,
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
               "type": "snooze",
               "parameters": {
                 "output": "test snooze updated",
@@ -899,15 +1191,143 @@ Feature: Bulk update a scenario
               "drop_scenario_if_not_matched": false,
               "emit_trigger": false
             }
-          ],
-          "created": 1605263992
+          ]
+        },
+        {
+          "_id": "test-scenario-to-bulk-update-3",
+          "name": "test-scenario-to-bulk-update-3-name",
+          "author": "root",
+          "enabled": true,
+          "triggers": ["create"],
+          "delay": {
+            "value": 3,
+            "unit": "s"
+          },
+          "actions": [
+            {
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-3-alarm"
+                    }
+                  }
+                ]
+              ],
+              "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+              "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-pattern-to-rule-edit-2-pattern"
+                    }
+                  }
+                ]
+              ],
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            },
+            {
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
+              "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+              "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-pattern-to-rule-edit-1-pattern"
+                    }
+                  }
+                ]
+              ],
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-update-3-name"
+                    }
+                  }
+                ]
+              ],
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            },
+            {
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
+              "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+              "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-pattern-to-rule-edit-1-pattern"
+                    }
+                  }
+                ]
+              ],
+              "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+              "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-pattern-to-rule-edit-2-pattern"
+                    }
+                  }
+                ]
+              ],
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            }
+          ]
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """

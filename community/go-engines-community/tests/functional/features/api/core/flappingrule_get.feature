@@ -6,67 +6,81 @@ Feature: Get a flapping rule
     When I am admin
     When I do GET /api/v4/flapping-rules?search=test-flapping-rule-to-get
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
         {
           "_id": "test-flapping-rule-to-get-1",
-          "alarm_patterns": [
-            {
-              "v": {
-                "connector": "test-flapping-rule-to-get-1-pattern"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.connector",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-flapping-rule-to-get-1-pattern"
+                }
               }
-            }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-flapping-rule-to-get-1-resource"
+                }
+              }
+            ]
           ],
           "author": {
             "_id": "root",
             "name": "root"
           },
-          "created": 1619083733,
           "name": "test-flapping-rule-to-get-1-name",
           "description": "test-flapping-rule-to-get-1-description",
           "duration": {
-            "value": 10,
+            "value": 3,
             "unit": "s"
           },
-          "entity_patterns": [
-            {
-              "name": "test-flapping-rule-to-get-1-resource"
-            }
-          ],
-          "freq_limit": 3,
-          "priority": 0,
-          "updated": 1619083733
+          "freq_limit": 3
         },
         {
           "_id": "test-flapping-rule-to-get-2",
-          "alarm_patterns": [
-            {
-              "v": {
-                "connector": "test-flapping-rule-to-get-2-pattern"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.connector",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-flapping-rule-to-get-2-pattern"
+                }
               }
-            }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-flapping-rule-to-get-2-resource"
+                }
+              }
+            ]
           ],
           "author": {
             "_id": "root",
             "name": "root"
           },
-          "created": 1619083733,
           "name": "test-flapping-rule-to-get-2-name",
           "description": "test-flapping-rule-to-get-2-description",
           "duration": {
-            "value": 10,
+            "value": 3,
             "unit": "s"
           },
-          "entity_patterns": [
-            {
-              "name": "test-flapping-rule-to-get-2-resource"
-            }
-          ],
-          "freq_limit": 3,
-          "priority": 1,
-          "updated": 1619083733
+          "freq_limit": 3
         }
       ],
       "meta": {
@@ -82,36 +96,43 @@ Feature: Get a flapping rule
     When I am admin
     When I do GET /api/v4/flapping-rules/test-flapping-rule-to-get-1
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "_id": "test-flapping-rule-to-get-1",
-      "alarm_patterns": [
-        {
-          "v": {
-            "connector": "test-flapping-rule-to-get-1-pattern"
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-get-1-pattern"
+            }
           }
-        }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-get-1-resource"
+            }
+          }
+        ]
       ],
       "author": {
         "_id": "root",
         "name": "root"
       },
-      "created": 1619083733,
       "name": "test-flapping-rule-to-get-1-name",
       "description": "test-flapping-rule-to-get-1-description",
       "duration": {
-        "value": 10,
+        "value": 3,
         "unit": "s"
       },
-      "entity_patterns": [
-        {
-          "name": "test-flapping-rule-to-get-1-resource"
-        }
-      ],
-      "freq_limit": 3,
-      "priority": 0,
-      "updated": 1619083733
+      "freq_limit": 3
     }
     """
 

@@ -7,12 +7,12 @@ import (
 
 func TestGetJunitState(t *testing.T) {
 	var dataSets = []struct {
-		testName string
-		thresholds JUnitThresholds
-		skipped int64
-		errors int64
-		failures int64
-		total int64
+		testName      string
+		thresholds    JUnitThresholds
+		skipped       int64
+		errors        int64
+		failures      int64
+		total         int64
 		expectedState int
 	}{
 		{

@@ -2,6 +2,7 @@ package widget
 
 import (
 	"encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 )
@@ -14,6 +15,13 @@ type EditRequest struct {
 	GridParameters map[string]interface{} `json:"grid_parameters"`
 	Parameters     view.Parameters        `json:"parameters"`
 	Author         string                 `json:"author" swaggerignore:"true"`
+
+	Filters []FilterRequest `json:"filters" binding:"dive"`
+}
+
+type FilterRequest struct {
+	widgetfilter.BaseEditRequest
+	ID string `json:"_id"`
 }
 
 type EditGridPositionItemRequest struct {
@@ -43,4 +51,6 @@ type Response struct {
 	Author         string                 `bson:"author" json:"author,omitempty"`
 	Created        *types.CpsTime         `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated        *types.CpsTime         `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+
+	Filters []widgetfilter.Response `bson:"filters" json:"filters"`
 }

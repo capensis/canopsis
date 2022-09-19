@@ -74,7 +74,7 @@ export default {
       this.tabsPending = true;
 
       const { data: groups } = await this.fetchGroupsListWithoutStore({
-        params: { limit: MAX_LIMIT, with_views: true },
+        params: { limit: MAX_LIMIT, with_views: true, with_tabs: true },
       });
 
       this.playlistGroups = groups;

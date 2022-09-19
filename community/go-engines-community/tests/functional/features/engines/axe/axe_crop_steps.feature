@@ -423,7 +423,7 @@ Feature: crop alarm steps
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-crop-steps"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-crop-steps
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -435,7 +435,39 @@ Feature: crop alarm steps
             "connector": "test-connector-axe-crop-steps",
             "connector_name": "test-connector-name-axe-crop-steps",
             "resource": "test-resource-axe-crop-steps",
-            "steps": [
+            "total_state_changes": 30
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1,
+          "limit": 30
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 1,
@@ -559,15 +591,14 @@ Feature: crop alarm steps
                 "m": "test-output-axe-crop-steps-30"
               }
             ],
-            "total_state_changes": 30
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 30,
+              "total_count": 23
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """

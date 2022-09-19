@@ -11,7 +11,7 @@
       v-on="$listeners",
       v-if="value && point",
       :point="point",
-      :editing="!!editing",
+      :editing="editing",
       :exists-entities="existsEntities"
     )
 </template>
