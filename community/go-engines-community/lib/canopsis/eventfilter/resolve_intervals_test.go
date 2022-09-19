@@ -232,6 +232,20 @@ func TestUpdateIntervals(t *testing.T) {
 			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
 			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
 		},
+		"weird test": {
+			ef: Rule{
+				Start:         &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 0, 0, 0, time.UTC)},
+				Stop:          &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 20, 0, 0, time.UTC)},
+				ResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 0, 0, 0, time.UTC)},
+				ResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 20, 0, 0, time.UTC)},
+			},
+			rrule:                     "FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16",
+			now:                       time.Date(2022, 1, 4, 10, 30, 0, 0, time.UTC),
+			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 4, 10, 20, 0, 0, time.UTC)},
+			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 4, 10, 40, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 4, 10, 40, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 4, 11, 0, 0, 0, time.UTC)},
+		},
 	}
 
 	for testName, dataSet := range dataSets {
