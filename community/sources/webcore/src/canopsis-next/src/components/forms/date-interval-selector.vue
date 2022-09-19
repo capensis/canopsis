@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { TIME_UNITS, ALARM_INTERVAL_FIELDS, DATETIME_INTERVAL_TYPES } from '@/constants';
+import { TIME_UNITS, ALARM_INTERVAL_FIELDS, DATETIME_INTERVAL_TYPES, DATETIME_FORMATS } from '@/constants';
 
 import { convertDateIntervalToDateObject, getValueFromQuickRange } from '@/helpers/date/date-intervals';
 
@@ -97,12 +97,22 @@ export default {
     },
   },
   methods: {
-    stopDateObjectPreparer(date) {
-      return convertDateIntervalToDateObject(date, DATETIME_INTERVAL_TYPES.stop, this.unit);
+    startDateObjectPreparer(date) {
+      return convertDateIntervalToDateObject(
+        date,
+        DATETIME_INTERVAL_TYPES.start,
+        DATETIME_FORMATS.dateTimePicker,
+        this.unit,
+      );
     },
 
-    startDateObjectPreparer(date) {
-      return convertDateIntervalToDateObject(date, DATETIME_INTERVAL_TYPES.start, this.unit);
+    stopDateObjectPreparer(date) {
+      return convertDateIntervalToDateObject(
+        date,
+        DATETIME_INTERVAL_TYPES.stop,
+        DATETIME_FORMATS.dateTimePicker,
+        this.unit,
+      );
     },
   },
 };

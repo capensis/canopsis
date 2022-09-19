@@ -10,8 +10,9 @@
 <script>
 import { isNumber } from 'lodash';
 
-import { ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+import { ENTITIES_STATES } from '@/constants';
 
+import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior';
 import { getEntityColor } from '@/helpers/color';
 
 import { COLORS } from '@/config';
@@ -54,17 +55,15 @@ export default {
       }
 
       return {
-        color: getEntityColor(this.entity, this.colorIndicator),
+        backgroundColor: getEntityColor(this.entity, this.colorIndicator),
+        color: 'white',
+        size: this.size - 8,
         name: 'warning',
       };
     },
 
     isNotActivePbehavior() {
-      return [
-        PBEHAVIOR_TYPE_TYPES.pause,
-        PBEHAVIOR_TYPE_TYPES.inactive,
-        PBEHAVIOR_TYPE_TYPES.maintenance,
-      ].includes(this.entity.pbehavior_info?.canonical_type);
+      return isNotActivePbehaviorType(this.entity.pbehavior_info?.canonical_type);
     },
 
     icon() {
@@ -79,7 +78,7 @@ export default {
         return {
           name: this.entity.pbehavior_info.icon_name,
           color: 'white',
-          size: 16,
+          size: this.size - 8,
           backgroundColor: COLORS.secondary,
         };
       }
@@ -99,6 +98,7 @@ export default {
 
 <style lang="scss">
 .point-icon {
+  word-break: initial;
   display: flex;
   align-items: center;
   justify-content: center;
