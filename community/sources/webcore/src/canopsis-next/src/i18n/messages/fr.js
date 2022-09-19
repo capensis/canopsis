@@ -2415,9 +2415,14 @@ export default merge({
 
   remediationInstructionsFilters: {
     button: 'Créer un filtre sur les consignes de remédiation',
-    with: 'Avec les consignes sélectionnées',
-    without: 'Sans les consignes sélectionnées',
+    filterByInstructions: 'Pour les alarmes par instructions',
+    with: 'Afficher les alarmes avec les instructions sélectionnées',
+    without: 'Afficher les alarmes sans instructions sélectionnées',
     selectAll: 'Tout sélectionner',
+    alarmsListDisplay: 'Affichage de la liste des alarmes',
+    allAlarms: 'Afficher toutes les alarmes',
+    showInProgress: 'Afficher les alarmes avec les instructions en cours',
+    hideInProgress: 'Masquer les alarmes avec les instructions en cours',
     selectedInstructions: 'Consignes sélectionnées',
     selectedInstructionsHelp: 'Les consignes du type sélectionné sont exclues de la liste',
     chip: {

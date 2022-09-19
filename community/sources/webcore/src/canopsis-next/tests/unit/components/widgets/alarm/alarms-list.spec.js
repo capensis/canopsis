@@ -18,9 +18,9 @@ import {
   TIME_UNITS,
   USERS_PERMISSIONS,
 } from '@/constants';
+import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
-import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
 
 jest.mock('file-saver', () => ({
   saveAs: jest.fn(),
@@ -526,6 +526,7 @@ describe('alarms-list', () => {
 
     const manualInstructionFilter = {
       manual: true,
+      has_running: null,
       instructions: [{
         _id: 'manual-instruction-id',
       }],
@@ -533,6 +534,7 @@ describe('alarms-list', () => {
     };
     const autoInstructionFilter = {
       auto: true,
+      has_running: true,
       instructions: [{
         _id: 'auto-instruction-id',
       }],
@@ -541,6 +543,7 @@ describe('alarms-list', () => {
     const allAndWithInstructionFilter = {
       all: true,
       with: true,
+      has_running: false,
       instructions: [{
         _id: 'all-and-with-instruction-id',
       }, {
@@ -591,6 +594,7 @@ describe('alarms-list', () => {
           exclude_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
           exclude_instructions: excludeInstructionsIds,
           include_instructions: includeInstructionsIds,
+          has_running_execution: false,
           page: 1,
         },
       },

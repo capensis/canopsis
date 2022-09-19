@@ -2415,9 +2415,14 @@ export default merge({
 
   remediationInstructionsFilters: {
     button: 'Create instructions filter',
-    with: 'With selected instructions',
-    without: 'Without selected instructions',
+    filterByInstructions: 'For alarms by instructions',
+    with: 'Show alarms with selected instructions',
+    without: 'Show alarms without selected instructions',
     selectAll: 'Select all',
+    alarmsListDisplay: 'Alarms list display',
+    allAlarms: 'Show all alarms',
+    showInProgress: 'Show alarms with instructions in progress',
+    hideInProgress: 'Hide alarms with instructions in progress',
     selectedInstructions: 'Selected instructions',
     selectedInstructionsHelp: 'Instructions of selected type are excluded from the list',
     chip: {
