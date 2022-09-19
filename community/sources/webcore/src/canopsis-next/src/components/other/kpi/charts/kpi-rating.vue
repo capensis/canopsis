@@ -21,13 +21,21 @@ import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
 import {
   QUICK_RANGES,
   ALARM_METRIC_PARAMETERS,
-  DATETIME_FORMATS, USER_METRIC_PARAMETERS,
+  DATETIME_FORMATS,
+  USER_METRIC_PARAMETERS,
+  SAMPLINGS,
 } from '@/constants';
 
-import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
-import { convertDateToStartOfDayTimestamp, convertDateToString } from '@/helpers/date/date';
 import { saveFile } from '@/helpers/file/files';
-import { isMetricsQueryChanged } from '@/helpers/metrics';
+import {
+  convertStartDateIntervalToTimestampByTimezone,
+  convertStopDateIntervalToTimestampByTimezone,
+} from '@/helpers/date/date-intervals';
+import {
+  convertDateToStartOfDayTimestampByTimezone,
+  convertDateToString,
+} from '@/helpers/date/date';
+import { convertMetricsToTimezone, isMetricsQueryChanged } from '@/helpers/metrics';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
@@ -38,6 +46,7 @@ import KpiRatingFilters from './partials/kpi-rating-filters.vue';
 const KpiRatingChart = () => import(/* webpackChunkName: "Charts" */ './partials/kpi-rating-chart.vue');
 
 export default {
+  inject: ['$system'],
   components: { KpiRatingFilters, KpiRatingChart },
   mixins: [
     entitiesMetricsMixin,
@@ -65,16 +74,28 @@ export default {
       },
     };
   },
+  computed: {
+    interval() {
+      return {
+        from: convertStartDateIntervalToTimestampByTimezone(
+          this.query.interval.from,
+          DATETIME_FORMATS.datePicker,
+          SAMPLINGS.day,
+          this.$system.timezone,
+        ),
+        to: convertStopDateIntervalToTimestampByTimezone(
+          this.query.interval.to,
+          DATETIME_FORMATS.datePicker,
+          SAMPLINGS.day,
+          this.$system.timezone,
+        ),
+      };
+    },
+  },
   methods: {
     getFileName() {
-      const fromTime = convertDateToString(
-        convertStartDateIntervalToTimestamp(this.query.interval.from),
-        DATETIME_FORMATS.short,
-      );
-      const toTime = convertDateToString(
-        convertStopDateIntervalToTimestamp(this.query.interval.to),
-        DATETIME_FORMATS.short,
-      );
+      const fromTime = convertDateToString(this.interval.from, DATETIME_FORMATS.short);
+      const toTime = convertDateToString(this.interval.to, DATETIME_FORMATS.short);
 
       return [
         KPI_RATING_METRICS_FILENAME_PREFIX,
@@ -99,8 +120,8 @@ export default {
 
     getQuery() {
       return {
-        from: convertStartDateIntervalToTimestamp(this.query.interval.from),
-        to: convertStopDateIntervalToTimestamp(this.query.interval.to),
+        ...this.interval,
+
         criteria: this.query.criteria.id,
         filter: this.query.metric !== USER_METRIC_PARAMETERS.totalUserActivity ? this.query.filter : undefined,
         metric: this.query.metric,
@@ -117,8 +138,8 @@ export default {
         meta: { min_date: minDate },
       } = await this.fetchRatingMetricsWithoutStore({ params });
 
-      this.ratingMetrics = ratingMetrics;
-      this.minDate = convertDateToStartOfDayTimestamp(minDate);
+      this.ratingMetrics = convertMetricsToTimezone(ratingMetrics, this.$system.timezone);
+      this.minDate = convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone);
 
       if (params.from < this.minDate) {
         this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });

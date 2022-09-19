@@ -5,10 +5,11 @@ package engine
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
-	"time"
 )
 
 // Engine interface is used to implement canopsis engine.
@@ -19,6 +20,7 @@ type Engine interface {
 	AddPeriodicalWorker(name string, worker PeriodicalWorker)
 	// AddRoutine adds a long-running goroutine to engine.
 	AddRoutine(Routine)
+	AddDeferFunc(deferFunc func(ctx context.Context))
 	// Run starts goroutines for all consumers and periodical workers.
 	// Engine stops if one of consumer or periodical worker return error.
 	Run(context.Context) error
@@ -52,7 +54,7 @@ type RPCClient interface {
 	// Consumer receives RPC responses from AMQP queue.
 	Consumer
 	// Call receives RPC request and publishes it to AMQP queue.
-	Call(m RPCMessage) error
+	Call(ctx context.Context, m RPCMessage) error
 }
 
 // RPCMessageProcessor interface is used to implement AMQP RPC response processor of consumer.

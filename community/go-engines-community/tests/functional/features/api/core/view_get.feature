@@ -119,6 +119,46 @@ Feature: Get a view
                   }
                 ]
               },
+              "filters": [
+                {
+                  "_id": "test-widgetfilter-to-view-get-1",
+                  "title": "test-widgetfilter-to-view-get-1-title",
+                  "is_private": false,
+                  "author": "nopermsuser",
+                  "created": 1611229670,
+                  "updated": 1611229670,
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-widgetfilter-to-view-get-1-pattern"
+                        }
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "_id": "test-widgetfilter-to-view-get-2",
+                  "title": "test-widgetfilter-to-view-get-2-title",
+                  "is_private": false,
+                  "author": "root",
+                  "created": 1611229670,
+                  "updated": 1611229670,
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-widgetfilter-to-view-get-2-pattern"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              ],
               "title": "test-widget-to-view-get-1-title",
               "type": "test-widget-to-view-get-1-type"
             },
@@ -140,6 +180,7 @@ Feature: Get a view
                   }
                 ]
               },
+              "filters": [],
               "title": "test-widget-to-view-get-2-title",
               "type": "test-widget-to-view-get-2-type"
             }

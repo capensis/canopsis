@@ -86,6 +86,8 @@ func (a *Alarm) PartialUpdateSnooze(timestamp CpsTime, duration DurationWithUnit
 	a.AddUpdate("$set", bson.M{"v.snooze": a.Value.Snooze})
 	a.AddUpdate("$push", bson.M{"v.steps": a.Value.Snooze})
 
+	a.startInactiveInterval(timestamp)
+
 	return nil
 }
 
@@ -99,6 +101,8 @@ func (a *Alarm) PartialUpdateUnsnooze(timestamp CpsTime) error {
 	a.Value.Snooze = nil
 	a.AddUpdate("$set", bson.M{"v.snooze": a.Value.Snooze})
 	a.AddUpdate("$inc", bson.M{"v.snooze_duration": d})
+
+	a.stopInactiveInterval(timestamp)
 
 	return nil
 }
@@ -119,6 +123,10 @@ func (a *Alarm) PartialUpdatePbhEnter(timestamp CpsTime, pbehaviorInfo Pbehavior
 
 	a.AddUpdate("$set", bson.M{"v.pbehavior_info": a.Value.PbehaviorInfo})
 	a.AddUpdate("$push", bson.M{"v.steps": newStep})
+
+	if !a.Value.PbehaviorInfo.IsActive() {
+		a.startInactiveInterval(timestamp)
+	}
 
 	return nil
 }
@@ -155,6 +163,8 @@ func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, userID,
 			a.Value.PbehaviorInactiveDuration += d
 			a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
 		}
+
+		a.stopInactiveInterval(timestamp)
 	}
 
 	return nil
@@ -197,7 +207,11 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 	a.AddUpdate("$set", bson.M{"v.pbehavior_info": a.Value.PbehaviorInfo})
 	a.AddUpdate("$push", bson.M{"v.steps": bson.M{"$each": bson.A{leaveStep, enterStep}}})
 
-	if leaveStep.PbehaviorCanonicalType != "active" {
+	if leaveStep.PbehaviorCanonicalType == "active" {
+		if enterStep.PbehaviorCanonicalType != "active" {
+			a.startInactiveInterval(timestamp)
+		}
+	} else {
 		enterTimestamp := CpsTime{}
 		for i := len(a.Value.Steps) - 3; i >= 0; i-- {
 			if a.Value.Steps[i].Type == AlarmStepPbhEnter {
@@ -211,6 +225,8 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 			a.Value.PbehaviorInactiveDuration += d
 			a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
 		}
+
+		a.stopInactiveInterval(timestamp)
 	}
 
 	return nil
@@ -260,7 +276,44 @@ func (a *Alarm) PartialUpdateActivate(timestamp CpsTime) error {
 
 func (a *Alarm) PartialUpdateResolve(timestamp CpsTime) error {
 	a.Value.Resolved = &timestamp
-	a.AddUpdate("$set", bson.M{"v.resolved": a.Value.Resolved})
+	a.Value.Duration = int64(timestamp.Sub(a.Value.CreationDate.Time).Seconds())
+	a.Value.CurrentStateDuration = int64(timestamp.Sub(a.Value.State.Timestamp.Time).Seconds())
+
+	if a.Value.Snooze != nil {
+		snoozeDuration := int64(timestamp.Sub(a.Value.Snooze.Timestamp.Time).Seconds())
+		a.Value.SnoozeDuration += snoozeDuration
+		a.AddUpdate("$inc", bson.M{"v.snooze_duration": snoozeDuration})
+	}
+	if !a.Value.PbehaviorInfo.IsActive() {
+		enterTimestamp := CpsTime{}
+		for i := len(a.Value.Steps) - 2; i >= 0; i-- {
+			if a.Value.Steps[i].Type == AlarmStepPbhEnter {
+				enterTimestamp = a.Value.Steps[i].Timestamp
+				break
+			}
+		}
+
+		if !enterTimestamp.IsZero() {
+			pbhDuration := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
+			a.Value.PbehaviorInactiveDuration += pbhDuration
+			a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": pbhDuration})
+		}
+	}
+
+	if (a.Value.Snooze != nil || !a.Value.PbehaviorInfo.IsActive()) && a.Value.InactiveStart != nil {
+		inactiveDuration := int64(timestamp.Sub(a.Value.InactiveStart.Time).Seconds())
+		a.Value.InactiveDuration += inactiveDuration
+		a.AddUpdate("$inc", bson.M{"v.inactive_duration": inactiveDuration})
+	}
+
+	a.Value.ActiveDuration = a.Value.Duration - a.Value.InactiveDuration
+	a.AddUpdate("$set", bson.M{
+		"v.resolved": a.Value.Resolved,
+
+		"v.duration":               a.Value.Duration,
+		"v.current_state_duration": a.Value.CurrentStateDuration,
+		"v.active_duration":        a.Value.ActiveDuration,
+	})
 
 	return nil
 }
@@ -310,6 +363,10 @@ func (a *Alarm) PartialUpdateAddInstructionStep(stepType string, timestamp CpsTi
 	a.AddUpdate("$push", bson.M{"v.steps": newStep})
 
 	return nil
+}
+
+func (a *Alarm) PartialUpdateAddExecutedInstruction(instructionID string) {
+	a.AddUpdate("$addToSet", bson.M{"kpi_executed_instructions": instructionID})
 }
 
 func (a *Alarm) PartialUpdateCropSteps() {
@@ -370,6 +427,35 @@ func (a *Alarm) CleanUpdate() {
 	a.parentsUpdate = nil
 	a.childrenRemove = nil
 	a.parentsRemove = nil
+}
+
+func (a *Alarm) startInactiveInterval(timestamp CpsTime) {
+	if a.Value.InactiveStart != nil {
+		inactiveDuration := int64(timestamp.Sub(a.Value.InactiveStart.Time).Seconds())
+		a.Value.InactiveDuration += inactiveDuration
+		a.AddUpdate("$inc", bson.M{"v.inactive_duration": inactiveDuration})
+	}
+
+	a.Value.InactiveStart = &timestamp
+	a.AddUpdate("$set", bson.M{"v.inactive_start": a.Value.InactiveStart})
+}
+
+func (a *Alarm) stopInactiveInterval(timestamp CpsTime) {
+	if a.Value.InactiveStart == nil {
+		return
+	}
+
+	inactiveDuration := int64(timestamp.Sub(a.Value.InactiveStart.Time).Seconds())
+	a.Value.InactiveDuration += inactiveDuration
+	a.AddUpdate("$inc", bson.M{"v.inactive_duration": inactiveDuration})
+
+	if a.Value.PbehaviorInfo.IsActive() && a.Value.Snooze == nil {
+		a.Value.InactiveStart = nil
+		a.AddUpdate("$unset", bson.M{"v.inactive_start": ""})
+	} else {
+		a.Value.InactiveStart = &timestamp
+		a.AddUpdate("$set", bson.M{"v.inactive_start": a.Value.InactiveStart})
+	}
 }
 
 func ResolveSnoozeAfterPbhLeave(timestamp CpsTime, alarm *Alarm) {

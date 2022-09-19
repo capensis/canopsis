@@ -11,7 +11,7 @@ const localVue = createVueInstance();
 
 const stubs = {
   'mermaid-code-editor': true,
-  'mermaid-add-location-btn': true,
+  'add-location-btn': true,
   'mermaid-theme-field': true,
   'mermaid-code-preview': true,
   'mermaid-points': true,
@@ -38,7 +38,7 @@ const snapshotFactory = (options = {}) => mount(MermaidEditor, {
 });
 
 const selectMermaidCodeEditor = wrapper => wrapper.find('mermaid-code-editor-stub');
-const selectMermaidAddLocationBtn = wrapper => wrapper.find('mermaid-add-location-btn-stub');
+const selectAddLocationBtn = wrapper => wrapper.find('add-location-btn-stub');
 const selectMermaidThemeField = wrapper => wrapper.find('mermaid-theme-field-stub');
 const selectMermaidPoints = wrapper => wrapper.find('mermaid-points-stub');
 
@@ -113,9 +113,9 @@ describe('mermaid-editor', () => {
       },
     });
 
-    const mermaidAddLocationBtn = selectMermaidAddLocationBtn(wrapper);
+    const addLocationBtn = selectAddLocationBtn(wrapper);
 
-    await mermaidAddLocationBtn.vm.$emit('input', true);
+    await addLocationBtn.vm.$emit('input', true);
 
     const mermaidPoints = selectMermaidPoints(wrapper);
 

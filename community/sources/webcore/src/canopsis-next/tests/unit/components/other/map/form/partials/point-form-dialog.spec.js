@@ -196,18 +196,28 @@ describe('point-form-dialog', () => {
 
   test('Cancel emitted after click outside and confirm close', async () => {
     const pointId = Faker.datatype.number();
+    const point = {
+      _id: pointId,
+      entity: undefined,
+    };
 
     const wrapper = snapshotFactory({
       propsData: {
-        point: {
-          _id: pointId,
-        },
+        point,
         editing: true,
       },
       mocks: {
         $modals,
       },
     });
+
+    const newPoint = {
+      ...point,
+      entity: Faker.datatype.string(),
+    };
+
+    const pointForm = selectPointForm(wrapper);
+    await pointForm.vm.$emit('input', newPoint);
 
     wrapper.clickOutside();
 
@@ -247,6 +257,14 @@ describe('point-form-dialog', () => {
       },
     });
 
+    const newPoint = {
+      ...point,
+      entity: Faker.datatype.string(),
+    };
+
+    const pointForm = selectPointForm(wrapper);
+    await pointForm.vm.$emit('input', newPoint);
+
     wrapper.clickOutside();
 
     expect($modals.show).toBeCalled();
@@ -255,7 +273,7 @@ describe('point-form-dialog', () => {
 
     await modalArguments.config.action(true);
 
-    expect(wrapper).toEmit('submit', point);
+    expect(wrapper).toEmit('submit', newPoint);
   });
 
   test('Renders `point-form-dialog` with required props', () => {
