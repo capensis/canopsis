@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper(fill-height, close)
+  modal-wrapper(close)
     template(#title="")
       span {{ title }}
     template(#text="")

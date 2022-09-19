@@ -46,17 +46,9 @@ type PaginatedData interface {
 }
 
 func NewPaginatedResponse(q pagination.Query, d PaginatedData) (PaginatedListResponse, error) {
-	if !q.Paginate {
-		q.Limit = d.GetTotal()
-	}
-
-	pageCount := int64(math.Ceil(float64(d.GetTotal()) / float64(q.Limit)))
-	if pageCount == 0 {
-		pageCount = 1
-	}
-
-	if q.Page > pageCount {
-		return PaginatedListResponse{}, errors.New("page is out of range")
+	meta, err := NewPaginatedMeta(q, d.GetTotal())
+	if err != nil {
+		return PaginatedListResponse{}, err
 	}
 
 	data := d.GetData()
@@ -66,12 +58,29 @@ func NewPaginatedResponse(q pagination.Query, d PaginatedData) (PaginatedListRes
 
 	return PaginatedListResponse{
 		Data: data,
-		Meta: PaginatedMeta{
-			Page:       q.Page,
-			PerPage:    q.Limit,
-			PageCount:  pageCount,
-			TotalCount: d.GetTotal(),
-		},
+		Meta: meta,
+	}, nil
+}
+
+func NewPaginatedMeta(q pagination.Query, total int64) (PaginatedMeta, error) {
+	if !q.Paginate {
+		q.Limit = total
+	}
+
+	pageCount := int64(math.Ceil(float64(total) / float64(q.Limit)))
+	if pageCount == 0 {
+		pageCount = 1
+	}
+
+	if q.Page > pageCount {
+		return PaginatedMeta{}, errors.New("page is out of range")
+	}
+
+	return PaginatedMeta{
+		Page:       q.Page,
+		PerPage:    q.Limit,
+		PageCount:  pageCount,
+		TotalCount: total,
 	}, nil
 }
 
@@ -103,26 +112,40 @@ type ValidationErrorResponse struct {
 func NewValidationErrorResponse(err error, request interface{}) interface{} {
 	var errs validator.ValidationErrors
 	if errors.As(err, &errs) {
-		var res ValidationErrorResponse
-		res.Errors = make(map[string]string)
-		for _, fe := range errs {
-			field := transformNamespace(fe.Namespace(), request)
-			res.Errors[field] = libvalidator.TranslateError(fe)
-		}
-
-		return res
+		return TransformValidationErrors(errs, request)
 	}
 
 	return ErrorResponse{Error: "request has invalid structure"}
 }
 
+func TransformValidationErrors(errs validator.ValidationErrors, request interface{}) ValidationErrorResponse {
+	var res ValidationErrorResponse
+	res.Errors = make(map[string]string)
+	for _, fe := range errs {
+		field := transformNamespace(fe.Namespace(), request)
+		res.Errors[field] = libvalidator.TranslateError(fe)
+	}
+
+	return res
+}
+
 func NewValidationErrorFastJsonValue(ar *fastjson.Arena, err error, request interface{}) *fastjson.Value {
-	var errs validator.ValidationErrors
-	if errors.As(err, &errs) {
+	var validatorErrs validator.ValidationErrors
+	if errors.As(err, &validatorErrs) {
 		value := ar.NewObject()
-		for _, fe := range errs {
+		for _, fe := range validatorErrs {
 			field := transformNamespace(fe.Namespace(), request)
 			value.Set(field, ar.NewString(libvalidator.TranslateError(fe)))
+		}
+
+		return value
+	}
+
+	var commonValidatorErrs ValidationError
+	if errors.As(err, &commonValidatorErrs) {
+		value := ar.NewObject()
+		for k, v := range commonValidatorErrs.ValidationErrorResponse().Errors {
+			value.Set(k, ar.NewString(v))
 		}
 
 		return value

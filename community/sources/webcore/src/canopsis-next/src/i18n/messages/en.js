@@ -124,6 +124,7 @@ export default merge({
     tags: 'tags',
     actionsLabel: 'Actions',
     noResults: 'No results',
+    result: 'Result',
     exploitation: 'Exploitation',
     administration: 'Administration',
     forbidden: 'Forbidden',
@@ -186,6 +187,7 @@ export default merge({
     category: 'Category',
     infos: 'Infos',
     impactLevel: 'Impact level',
+    impactState: 'Impact state',
     loadMore: 'Load more',
     download: 'Download',
     initiator: 'Initiator',
@@ -237,6 +239,7 @@ export default merge({
     template: 'Template',
     pbehaviorList: 'List periodic behaviors',
     canceled: 'Canceled',
+    snooze: 'Snooze',
     snoozed: 'Snoozed',
     impact: 'Impact | Impacts',
     depend: 'Depend | Depends',
@@ -246,6 +249,7 @@ export default merge({
     component: 'Component',
     resource: 'Resource',
     extraDetail: 'Extra detail | Extra details',
+    ack: 'Ack',
     acked: 'Acked',
     ackedAt: 'Acked at',
     ackedBy: 'Acked by',
@@ -280,6 +284,7 @@ export default merge({
     acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
     saveChanges: 'Save changes',
     reportIncident: 'Report an incident',
+    instructions: 'Instructions',
     times: {
       second: 'second | seconds',
       minute: 'minute | minutes',
@@ -677,8 +682,11 @@ export default merge({
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% of alarms with auto remediation',
       [ALARM_METRIC_PARAMETERS.ratioTickets]: '% of alarms with tickets created',
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms]: '% of manually remediated alarms',
       [ALARM_METRIC_PARAMETERS.averageAck]: 'Average time to ack alarms',
       [ALARM_METRIC_PARAMETERS.averageResolve]: 'Average time to resolve alarms',
+      [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Number of manually remediated alarms',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Number of alarms with manual instructions',
     },
   },
   weather: {
@@ -1379,7 +1387,6 @@ export default merge({
       title: 'Import/Export views',
       groups: 'Groups',
       views: 'Views',
-      result: 'Result',
     },
     createBroadcastMessage: {
       create: {
@@ -1411,7 +1418,6 @@ export default merge({
         unit: 'Unit',
       },
       groups: 'Groups',
-      result: 'Result',
       manageTabs: 'Manage tabs',
     },
     pbehaviorPlanning: {
@@ -2242,8 +2248,8 @@ export default merge({
     usingType: 'Cannot be deleted since it is in use',
     defaultType: 'Type is default, because cannot be edited',
     types: {
-      [PBEHAVIOR_TYPE_TYPES.active]: 'Default active',
-      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Default inactive',
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
     },
@@ -2379,9 +2385,9 @@ export default merge({
 
   remediation: {
     tabs: {
-      instructions: 'Instructions',
       configurations: 'Configurations',
       jobs: 'Jobs',
+      statistics: 'Remediation statistics',
     },
   },
 
@@ -2492,10 +2498,14 @@ export default merge({
     modifiedOn: 'Modified on',
     averageCompletionTime: 'Average time\nof completion',
     executionCount: 'Number of\nexecutions',
+    totalExecutions: 'Total executions',
+    successfulExecutions: 'Successful executions',
     alarmStates: 'Alarms affected by state',
     okAlarmStates: 'Number of resulting\nOK states',
     notAvailable: 'N/a',
     instructionChanged: 'The instruction has been changed',
+    alarmResolvedDate: 'Alarm resolved date',
+    showFailedExecutions: 'Show failed instruction executions',
     actions: {
       needRate: 'Rate it!',
       rate: 'Rate',
@@ -2511,6 +2521,21 @@ export default merge({
           disabledOnTypes: 'Disabled on types',
         },
       },
+    },
+  },
+
+  remediationStatistic: {
+    remediation: 'Remediation',
+    fields: {
+      all: 'All',
+    },
+    labels: {
+      remediated: 'Remediated',
+      notRemediated: 'Not remediated',
+    },
+    tooltips: {
+      remediated: '{value} alarms remediated',
+      assigned: '{value} alarms with instructions',
     },
   },
 
@@ -2942,8 +2967,11 @@ export default merge({
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% alarms with instructions',
       [ALARM_METRIC_PARAMETERS.ratioTickets]: '{value}% of alarms with tickets created',
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms]: '{value}% of manually remediated alarms',
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} to ack alarms',
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} to resolve alarms',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarms with manual instructions',
+      [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: '{value} manually remediated alarms',
     },
   },
 
@@ -2996,6 +3024,7 @@ export default merge({
       invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
       countOverLimit: 'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
       oldPattern: 'The current filter pattern is defined in old format. Please use the Advanced editor to view it. Filters in old format will be deprecated soon. Please create new patterns in our updated interface.',
+      existExcluded: 'The rules include excluded rule.',
     },
   },
 
@@ -3052,6 +3081,54 @@ export default merge({
       helpText: 'Useful shortcuts:\n'
         + 'Ctrl + mouse wheel - zoom in/out\n'
         + 'Left mouse click + drag - pan the area',
+    },
+    errors: {
+      pointsRequired: 'The points must be added',
+    },
+  },
+
+  flowchart: {
+    shape: 'Shape | Shapes',
+    icons: 'Icons',
+    properties: 'Properties',
+    color: 'Color',
+    fill: 'Fill',
+    stroke: 'Stroke',
+    strokeWidth: 'Stroke width',
+    strokeType: 'Stroke type',
+    fontColor: 'Font color',
+    fontSize: 'Font size',
+    fontBackgroundColor: 'Font background color',
+    lineType: 'Line type',
+    backgroundColor: 'Background color',
+    shapes: {
+      rectangle: 'Rectangle',
+      roundedRectangle: 'Rounded rectangle',
+      square: 'Square',
+      rhombus: 'Rhombus',
+      circle: 'Circle',
+      ellipse: 'Ellipse',
+      parallelogram: 'Parallelogram',
+      process: 'Process',
+      document: 'Document',
+      storage: 'Storage',
+      curve: 'Curve',
+      curveArrow: 'Curve arrow',
+      bidirectionalCurve: 'Bidirectional curve',
+      line: 'Line',
+      arrowLine: 'Arrow line',
+      bidirectionalArrowLine: 'Bidirectional arrow line',
+      text: 'Text',
+      textbox: 'Textbox',
+      image: 'Image',
+    },
+    panzoom: {
+      helpText: 'Useful shortcuts:\n'
+        + 'Ctrl + mouse wheel - zoom in/out\n'
+        + 'Ctrl + Left mouse click + drag - pan the area\n'
+        + 'Middle mouse click + drag - pan the area\n'
+        + 'Shift + mouse wheel - horizontal scroll\n'
+        + 'Alt + mouse wheel - vertical scroll\n',
     },
     errors: {
       pointsRequired: 'The points must be added',
