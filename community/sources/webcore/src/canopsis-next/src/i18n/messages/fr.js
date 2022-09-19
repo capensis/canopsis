@@ -187,6 +187,7 @@ export default merge({
     category: 'Catégorie',
     infos: 'Infos',
     impactLevel: 'Niveau d\'impact',
+    impactState: 'État d\'impact',
     loadMore: 'Charger plus',
     initiator: 'Initiateur',
     download: 'Télécharger',
@@ -238,6 +239,7 @@ export default merge({
     template: 'Template',
     pbehaviorList: 'Lister les comportements périodiques',
     canceled: 'Annulé',
+    snooze: 'Snooze',
     snoozed: 'En attente',
     impact: 'Impact | Impacts',
     depend: 'Depend | Depends',
@@ -247,6 +249,7 @@ export default merge({
     component: 'Composant',
     resource: 'Ressource',
     extraDetails: 'Détails supplémentaires',
+    ack: 'Ack',
     acked: 'Acked',
     ackedAt: 'Acked at',
     ackedBy: 'Acked by',
@@ -3078,6 +3081,54 @@ export default merge({
       helpText: 'Raccourcis utiles :\n'
         + 'Ctrl + molette de la souris - zoom avant/arrière\n'
         + 'Clic gauche de la souris + glisser - déplacer la zone',
+    },
+    errors: {
+      pointsRequired: 'The points must be added',
+    },
+  },
+
+  flowchart: {
+    shape: 'Forme | Formes',
+    icons: 'Icônes',
+    properties: 'Propriétés',
+    color: 'Couleur',
+    fill: 'Remplir',
+    stroke: 'Stroke',
+    strokeWidth: 'Stroke width',
+    strokeType: 'Stroke type',
+    fontColor: 'Couleur de la police',
+    fontSize: 'Taille de police',
+    fontBackgroundColor: 'Couleur de fond de la police',
+    lineType: 'Type de ligne',
+    backgroundColor: 'Couleur de l\'arrière plan',
+    shapes: {
+      rectangle: 'Rectangle',
+      roundedRectangle: 'Rounded rectangle',
+      square: 'Square',
+      rhombus: 'Rhombus',
+      circle: 'Circle',
+      ellipse: 'Ellipse',
+      parallelogram: 'Parallelogram',
+      process: 'Process',
+      document: 'Document',
+      storage: 'Storage',
+      curve: 'Curve',
+      curveArrow: 'Curve arrow',
+      bidirectionalCurve: 'Bidirectional curve',
+      line: 'Line',
+      arrowLine: 'Arrow line',
+      bidirectionalArrowLine: 'Bidirectional arrow line',
+      text: 'Text',
+      textbox: 'Textbox',
+      image: 'Image',
+    },
+    panzoom: {
+      helpText: 'Raccourcis utiles :\n'
+        + 'Ctrl + molette de la souris - zoom avant/arrière\n'
+        + 'Ctrl + Clic gauche de la souris + glisser - déplacer la zone\n'
+        + 'Clic du milieu de la souris + glisser - déplacer la zone\n'
+        + 'Maj + molette de la souris - défilement horizontal\n'
+        + 'Alt + molette de la souris - défilement vertical\n',
     },
     errors: {
       pointsRequired: 'The points must be added',

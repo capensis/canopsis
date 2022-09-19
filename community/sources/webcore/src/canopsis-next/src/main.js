@@ -488,6 +488,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.createMermaidMap]: { maxWidth: 1600 },
     [MODALS.createTreeOfDependenciesMap]: { maxWidth: 1334 },
     [MODALS.createGeoMap]: { maxWidth: 1280 },
+    [MODALS.createFlowchartMap]: { maxWidth: 1600 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

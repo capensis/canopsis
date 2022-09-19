@@ -1,7 +1,11 @@
-import { omit } from 'lodash';
+import { keyBy, omit } from 'lodash';
+
+import { COLORS } from '@/config';
+
 import { MAP_TYPES, MERMAID_THEMES } from '@/constants';
 
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
+import { shapeToForm } from '@/helpers/flowchart/shapes';
 import uuid from '@/helpers/uuid';
 
 /**
@@ -74,11 +78,31 @@ import uuid from '@/helpers/uuid';
  */
 
 /**
+ * @typedef {Object} MapFlowchartPoint
+ * @property {string} _id
+ * @property {string} [shape]
+ * @property {MapCommonFields} map
+ * @property {Entity} entity
+ * @property {number} [x]
+ * @property {number} [y]
+ */
+
+/**
  * @typedef {Object} MapFlowchartParameters
+ * @property {Shape[]} shapes
+ * @property {string} background_color
+ * @property {MapFlowchartPoint[]} points
+ */
+
+/**
+ * @typedef {MapFlowchartPoint} MapFlowchartPointForm
+ * @property {string} map
+ * @property {string} entity
  */
 
 /**
  * @typedef {MapFlowchartParameters} MapFlowchartParametersForm
+ * @property {MapFlowchartPointForm[]} points
  */
 
 /**
@@ -140,6 +164,21 @@ export const mermaidPointToForm = (point = {}) => ({
 /**
  * Convert mermaid point to form object
  *
+ * @param {MapFlowchartPoint} [point = {}]
+ * @returns {MapFlowchartPointForm}
+ */
+export const flowchartPointToForm = (point = {}) => ({
+  x: point.x,
+  y: point.y,
+  entity: point.entity?._id ?? '',
+  shape: point.shape ?? '',
+  map: point.map?._id,
+  _id: uuid(),
+});
+
+/**
+ * Convert mermaid point to form object
+ *
  * @param {MapMermaidPoint[]} [points = []]
  * @returns {MapMermaidPointForm[]}
  */
@@ -171,6 +210,22 @@ export const geomapPointToForm = (point = {}) => ({
 export const geomapPointsToForm = (points = []) => points.map(geomapPointToForm);
 
 /**
+ * Convert flowchart points to form array
+ *
+ * @param {MapFlowchartPoint[]} [points = {}]
+ * @returns {MapFlowchartPointForm[]}
+ */
+export const flowchartPointsToForm = (points = []) => points.map(flowchartPointToForm);
+
+/**
+ * Convert flowchart shapes to form
+ *
+ * @param {Shape[]} [shapes = []]
+ * @returns {Object.<string, Shape>}
+ */
+export const flowchartShapesToForm = (shapes = []) => keyBy(shapes.map(shapeToForm), '_id');
+
+/**
  * Convert map geo parameters object to form
  *
  * @param {MapGeoParameters} [parameters = {}]
@@ -186,7 +241,11 @@ export const mapGeoParametersToForm = (parameters = {}) => ({
  * @param {MapFlowchartParameters} [parameters = {}]
  * @returns {MapFlowchartParametersForm}
  */
-export const mapFlowchartParametersToForm = parameters => ({ ...parameters });
+export const mapFlowchartParametersToForm = (parameters = {}) => ({
+  shapes: parameters.shapes ? flowchartShapesToForm(parameters.shapes) : {},
+  background_color: parameters.background_color ?? COLORS.flowchart.background[0],
+  points: flowchartPointsToForm(parameters.points),
+});
 
 /**
  * Convert map mermaid parameters object to form
@@ -249,6 +308,32 @@ export const formToMapTreeOfDependenciesParameters = form => ({
 });
 
 /**
+ * Convert form parameters to flowchart map parameters
+ *
+ * @param {MapFlowchartPointForm[]} points
+ * @returns {MapFlowchartPoint[]}
+ */
+export const formPointsToMapFlowchartPoints = points => points.map(
+  point => omit(
+    point,
+    point.shape ? ['x', 'y'] : ['shape'],
+  ),
+);
+
+/**
+ * Convert form parameters to flowchart map parameters
+ *
+ * @param {MapFlowchartParametersForm} form
+ * @returns {MapFlowchartParameters}
+ */
+export const formToMapFlowchartParameters = form => ({
+  ...form,
+
+  points: formPointsToMapFlowchartPoints(form.points),
+  shapes: Object.values(form.shapes),
+});
+
+/**
  * Convert form parameters to geomap parameters
  *
  * @param {MapGeoParametersForm} form
@@ -270,6 +355,7 @@ export const formToMap = (form) => {
   const prepare = {
     [MAP_TYPES.treeOfDependencies]: formToMapTreeOfDependenciesParameters,
     [MAP_TYPES.geo]: formToMapGeomapParameters,
+    [MAP_TYPES.flowchart]: formToMapFlowchartParameters,
   }[form.type];
 
   return {
