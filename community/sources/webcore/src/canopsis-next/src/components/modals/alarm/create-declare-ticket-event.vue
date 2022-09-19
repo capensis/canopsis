@@ -1,18 +1,17 @@
 <template lang="pug">
-  v-form(data-test="createDeclareTicketEventModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createDeclareTicket.title') }}
-      template(slot="text")
+      template(#text="")
         v-container
           v-layout(row)
             v-flex.text-xs-center
               alarm-general-table(:items="items")
           v-layout(row)
             v-divider.my-3
-      template(slot="actions")
+      template(#actions="")
         v-btn(
-          data-test="declareTicketEventCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
@@ -20,7 +19,6 @@
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
-          data-test="declareTicketEventSubmitButton",
           type="submit"
         ) {{ $t('common.reportIncident') }}
 </template>
@@ -30,7 +28,7 @@ import { MODALS, EVENT_ENTITY_TYPES, DECLARE_TICKET_OUTPUT } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';

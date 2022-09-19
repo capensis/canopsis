@@ -7,14 +7,22 @@ import {
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
-  FILTER_DEFAULT_VALUES,
   GRID_SIZES,
   SORT_ORDERS,
+  TIME_UNITS,
 } from '@/constants';
 import { DEFAULT_CATEGORIES_LIMIT, PAGINATION_LIMIT } from '@/config';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
-import { durationWithEnabledToForm } from '@/helpers/date/duration';
+import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
+
+/**
+ * @typedef {Object} AlarmsListDataTableColumn
+ * @property {string} value
+ * @property {string} text
+ * @property {boolean} [isHtml]
+ * @property {boolean} [colorIndicator]
+ */
 
 /**
  * @typedef {Object} WidgetFastAckOutput
@@ -71,10 +79,8 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
 /**
  * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
- * @property {WidgetFilter[]} viewFilters
  * @property {string | null} mainFilter
  * @property {number} mainFilterUpdatedAt
- * @property {WidgetFilterCondition} mainFilterCondition
  * @property {WidgetLiveReporting} liveReporting
  * @property {WidgetSort} sort
  * @property {boolean | null} opened
@@ -148,6 +154,23 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
 });
 
 /**
+ * Convert widget periodic refresh to form duration
+ *
+ * @param {DurationWithEnabled} periodicRefresh
+ * @returns {DurationWithEnabled}
+ */
+export const periodicRefreshToDurationForm = (periodicRefresh = DEFAULT_PERIODIC_REFRESH) => {
+  /*
+  * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4390
+  */
+  const unit = isValidUnit(periodicRefresh.unit)
+    ? periodicRefresh.unit
+    : TIME_UNITS.second;
+
+  return durationWithEnabledToForm({ ...periodicRefresh, unit });
+};
+
+/**
  * Convert alarm list widget parameters to form
  *
  * @param {AlarmListWidgetDefaultParameters} [parameters = {}]
@@ -197,12 +220,8 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   ...parameters,
   ...alarmListWidgetDefaultParametersToForm(parameters),
 
-  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
-  viewFilters: parameters.viewFilters
-    ? cloneDeep(parameters.viewFilters)
-    : [],
+  periodic_refresh: periodicRefreshToDurationForm(parameters.periodic_refresh),
   mainFilter: parameters.mainFilter ?? null,
-  mainFilterCondition: parameters.mainFilterCondition ?? FILTER_DEFAULT_VALUES.condition,
   mainFilterUpdatedAt: parameters.mainFilterUpdatedAt || 0,
   liveReporting: parameters.liveReporting
     ? cloneDeep(parameters.liveReporting)
@@ -281,3 +300,15 @@ export const formToAlarmListWidgetParameters = form => ({
   infoPopups: formInfoPopupsToInfoPopups(form.infoPopups),
   sort: formSortToWidgetSort(form.sort),
 });
+
+/**
+ * Convert alarms list columns to data table columns
+ *
+ * @param {WidgetColumn[]} [columns = []]
+ * @returns {AlarmsListDataTableColumn[]}
+ */
+export const alarmsListColumnsToTableColumns = (columns = []) => columns.map(({ label, ...column }) => ({
+  ...column,
+
+  text: label,
+}));

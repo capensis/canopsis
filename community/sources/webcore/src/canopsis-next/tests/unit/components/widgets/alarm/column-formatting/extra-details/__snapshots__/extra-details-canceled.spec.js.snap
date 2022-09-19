@@ -30,18 +30,18 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` with date in 
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.canceled
+      Canceled
     </strong>
     <div>
-      common.by : cancelled-author
+      By : cancelled-author
     </div>
     <div>
-      common.date : 07/08/2013 19:00:00
+      Date : 07/08/2013 19:00:00
     </div>
     <div
       class="c-extra-details__message"
     >
-      common.comment:undefined : cancelled-message
+      Comment : cancelled-message
     </div>
   </div>
 </div>
@@ -77,18 +77,18 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` with full can
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.canceled
+      Canceled
     </strong>
     <div>
-      common.by : cancelled-author
+      By : cancelled-author
     </div>
     <div>
-      common.date : 6:00:00
+      Date : 6:00:00
     </div>
     <div
       class="c-extra-details__message"
     >
-      common.comment:undefined : cancelled-message
+      Comment : cancelled-message
     </div>
   </div>
 </div>
@@ -124,13 +124,13 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` without messa
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.canceled
+      Canceled
     </strong>
     <div>
-      common.by : cancelled-author
+      By : cancelled-author
     </div>
     <div>
-      common.date : 6:00:00
+      Date : 6:00:00
     </div>
     <!---->
   </div>

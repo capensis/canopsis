@@ -11,6 +11,7 @@
       @export:csv="exportRatingMetricsAsCsv",
       @export:png="exportRatingMetricsAsPng"
     )
+    kpi-error-overlay(v-if="unavailable || fetchError")
 </template>
 
 <script>
@@ -42,12 +43,13 @@ import { localQueryMixin } from '@/mixins/query-local/query';
 import { exportCsvMixinCreator } from '@/mixins/widget/export';
 
 import KpiRatingFilters from './partials/kpi-rating-filters.vue';
+import KpiErrorOverlay from './partials/kpi-error-overlay.vue';
 
 const KpiRatingChart = () => import(/* webpackChunkName: "Charts" */ './partials/kpi-rating-chart.vue');
 
 export default {
   inject: ['$system'],
-  components: { KpiRatingFilters, KpiRatingChart },
+  components: { KpiErrorOverlay, KpiRatingFilters, KpiRatingChart },
   mixins: [
     entitiesMetricsMixin,
     localQueryMixin,
@@ -57,11 +59,18 @@ export default {
       fetchExportFile: 'fetchMetricCsvFile',
     }),
   ],
+  props: {
+    unavailable: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       ratingMetrics: [],
       pending: false,
       downloading: false,
+      fetchError: false,
       minDate: null,
       query: {
         criteria: undefined,
@@ -90,6 +99,13 @@ export default {
           this.$system.timezone,
         ),
       };
+    },
+  },
+  watch: {
+    unavailable(unavailable) {
+      if (!unavailable) {
+        this.fetchList();
+      }
     },
   },
   methods: {
@@ -122,7 +138,7 @@ export default {
       return {
         ...this.interval,
 
-        criteria: this.query.criteria.id,
+        criteria: this.query.criteria?.id,
         filter: this.query.metric !== USER_METRIC_PARAMETERS.totalUserActivity ? this.query.filter : undefined,
         metric: this.query.metric,
         limit: this.query.rowsPerPage,
@@ -130,22 +146,27 @@ export default {
     },
 
     async fetchList() {
-      this.pending = true;
-      const params = this.getQuery();
+      try {
+        this.pending = true;
 
-      const {
-        data: ratingMetrics,
-        meta: { min_date: minDate },
-      } = await this.fetchRatingMetricsWithoutStore({ params });
+        const params = this.getQuery();
 
-      this.ratingMetrics = convertMetricsToTimezone(ratingMetrics, this.$system.timezone);
-      this.minDate = convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone);
+        const {
+          data: ratingMetrics,
+          meta: { min_date: minDate },
+        } = await this.fetchRatingMetricsWithoutStore({ params });
 
-      if (params.from < this.minDate) {
-        this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
+        this.ratingMetrics = convertMetricsToTimezone(ratingMetrics, this.$system.timezone);
+        this.minDate = convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone);
+
+        if (params.from < this.minDate) {
+          this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
+        }
+      } catch (err) {
+        this.fetchError = true;
+      } finally {
+        this.pending = false;
       }
-
-      this.pending = false;
     },
 
     async exportRatingMetricsAsCsv() {

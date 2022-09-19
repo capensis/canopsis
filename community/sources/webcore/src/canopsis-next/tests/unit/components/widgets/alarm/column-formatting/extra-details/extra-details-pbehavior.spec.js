@@ -34,18 +34,11 @@ describe('extra-details-pbehavior', () => {
     reason: {
       name: 'pbehavior-reason-name',
     },
-    comments: [
-      {
-        _id: 'pbehavior-comment-1-id',
-        author: 'pbehavior-comment-1-author',
-        message: 'pbehavior-comment-1-message',
-      },
-      {
-        _id: 'pbehavior-comment-2-id',
-        author: 'pbehavior-comment-2-author',
-        message: 'pbehavior-comment-2-message',
-      },
-    ],
+    last_comment: {
+      _id: 'pbehavior-comment-1-id',
+      author: 'pbehavior-comment-1-author',
+      message: 'pbehavior-comment-1-message',
+    },
   };
   const pbehaviorInfo = {
     type_name: 'type-name',

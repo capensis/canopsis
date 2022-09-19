@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.textEditor.title');
+      return this.config.title ?? this.$t('modals.textEditor.title');
     },
   },
   methods: {

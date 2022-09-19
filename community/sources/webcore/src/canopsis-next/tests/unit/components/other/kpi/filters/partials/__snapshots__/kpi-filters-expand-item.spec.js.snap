@@ -31,7 +31,7 @@ exports[`kpi-filters-expand-item Renders \`kpi-filters-expand-item\` with filter
             <a
               class="v-tabs__item v-tabs__item--active"
             >
-              common.pattern:2
+              Patterns
             </a>
           </div>
         </div>
@@ -43,7 +43,7 @@ exports[`kpi-filters-expand-item Renders \`kpi-filters-expand-item\` with filter
     <!---->
   </div>
   <div
-    class="layout pa-3 secondary lighten-2"
+    class="layout pa-3"
   >
     <div
       class="flex xs12"
@@ -64,12 +64,14 @@ exports[`kpi-filters-expand-item Renders \`kpi-filters-expand-item\` with filter
                 class="v-window-item"
               >
                 <div
-                  class="flex offset-xs2 xs8"
+                  class="flex xs12 lg10 offset-lg1"
                 >
                   <c-patterns-field-stub
-                    disabled="disabled"
-                    entity="entity"
+                    entity-attributes="[object Object]"
+                    readonly="true"
+                    required="required"
                     value="[object Object]"
+                    with-entity="with-entity"
                   />
                 </div>
               </div>

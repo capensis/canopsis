@@ -66,21 +66,23 @@ type metaAlarmEventProcessor struct {
 }
 
 func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error) {
-	ruleIdentifier := event.MetaAlarmRuleID
-	rule, err := p.ruleAdapter.GetRule(ctx, ruleIdentifier)
-	if err != nil {
-		return nil, fmt.Errorf("cannot fetch meta alarm rule id=%q: %w", ruleIdentifier, err)
-	} else if rule.ID == "" {
-		return nil, fmt.Errorf("meta alarm rule id=%q not found", ruleIdentifier)
-	} else {
-		ruleIdentifier = rule.Name
-	}
-
 	var updatedChildAlarms []types.Alarm
 	var metaAlarm types.Alarm
 
-	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedChildAlarms = make([]types.Alarm, 0)
+		metaAlarm = types.Alarm{}
+
+		ruleIdentifier := event.MetaAlarmRuleID
+		rule, err := p.ruleAdapter.GetRule(ctx, ruleIdentifier)
+		if err != nil {
+			return fmt.Errorf("cannot fetch meta alarm rule id=%q: %w", ruleIdentifier, err)
+		} else if rule.ID == "" {
+			return fmt.Errorf("meta alarm rule id=%q not found", ruleIdentifier)
+		} else {
+			ruleIdentifier = rule.Name
+		}
+
 		metaAlarm = newAlarm(event, p.alarmConfigProvider.Get())
 		metaAlarm.Value.Meta = event.MetaAlarmRuleID
 		metaAlarm.Value.MetaValuePath = event.MetaAlarmValuePath
@@ -141,11 +143,9 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 		return nil, err
 	}
 
-	go func() {
-		for _, child := range updatedChildAlarms {
-			p.metricsSender.SendCorrelation(context.Background(), event.Timestamp.Time, child)
-		}
-	}()
+	for _, child := range updatedChildAlarms {
+		p.metricsSender.SendCorrelation(event.Timestamp.Time, child)
+	}
 
 	return &metaAlarm, nil
 }
@@ -369,6 +369,13 @@ func (p *metaAlarmEventProcessor) processChild(ctx context.Context, event types.
 		if err != nil {
 			return err
 		}
+
+		if event.Alarm.Value.State.Value != types.AlarmStateOK {
+			err := p.updateParentState(ctx, *event.Alarm)
+			if err != nil {
+				return err
+			}
+		}
 	case types.AlarmChangeTypeStateIncrease, types.AlarmChangeTypeStateDecrease, types.AlarmChangeTypeChangeState:
 		err := p.updateParentState(ctx, *event.Alarm)
 		if err != nil {
@@ -399,17 +406,17 @@ func (p *metaAlarmEventProcessor) processChildRpc(ctx context.Context, eventRes 
 }
 
 func (p *metaAlarmEventProcessor) sendChildrenEvents(ctx context.Context, childrenIds []string, childEvent types.Event) error {
-	var alarms []types.AlarmWithEntity
-	err := p.adapter.GetOpenedAlarmsWithEntityByIDs(ctx, childrenIds, &alarms)
+	var alarms []types.Alarm
+	err := p.adapter.GetOpenedAlarmsByIDs(ctx, childrenIds, &alarms)
 	if err != nil {
 		return fmt.Errorf("cannot fetch children alarms: %w", err)
 	}
 
 	for _, alarm := range alarms {
-		childEvent.Connector = alarm.Alarm.Value.Connector
-		childEvent.ConnectorName = alarm.Alarm.Value.ConnectorName
-		childEvent.Resource = alarm.Alarm.Value.Resource
-		childEvent.Component = alarm.Alarm.Value.Component
+		childEvent.Connector = alarm.Value.Connector
+		childEvent.ConnectorName = alarm.Value.ConnectorName
+		childEvent.Resource = alarm.Value.Resource
+		childEvent.Component = alarm.Value.Component
 		childEvent.SourceType = childEvent.DetectSourceType()
 
 		err = p.sendToFifo(ctx, childEvent)
@@ -423,88 +430,83 @@ func (p *metaAlarmEventProcessor) sendChildrenEvents(ctx context.Context, childr
 
 func (p *metaAlarmEventProcessor) resolveParents(ctx context.Context, childAlarm types.Alarm, timestamp types.CpsTime) error {
 	ch := make(chan string)
-	go func() {
+	g, ctx := errgroup.WithContext(ctx)
+	g.Go(func() error {
 		defer close(ch)
 		for _, p := range childAlarm.Value.Parents {
 			select {
 			case <-ctx.Done():
-				return
+				return nil
 			case ch <- p:
 			}
 		}
-	}()
 
-	g, ctx := errgroup.WithContext(ctx)
+		return nil
+	})
+
 	w := int(math.Min(float64(workers), float64(len(childAlarm.Value.Parents))))
 	for i := 0; i < w; i++ {
 		g.Go(func() error {
-			for {
-				select {
-				case <-ctx.Done():
-					return nil
-				case parentId, ok := <-ch:
-					if !ok {
-						return nil
-					}
-
-					var parentAlarm types.AlarmWithEntity
-					err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-						alarms := make([]types.AlarmWithEntity, 0)
-						err := p.adapter.GetOpenedAlarmsWithEntityByIDs(ctx, []string{parentId}, &alarms)
-						if err != nil {
-							return fmt.Errorf("cannot fetch parent: %w", err)
-						}
-						if len(alarms) == 0 {
-							return fmt.Errorf("parent %q not exist", parentId)
-						}
-						parentAlarm = alarms[0]
-
-						rule, err := p.ruleAdapter.GetRule(ctx, parentAlarm.Alarm.Value.Meta)
-						if err != nil {
-							return fmt.Errorf("cannot fetch meta alarm rule: %w", err)
-						}
-						if rule.ID == "" {
-							return fmt.Errorf("meta alarm rule %s not found", parentAlarm.Alarm.Value.Meta)
-						}
-						if !rule.AutoResolve {
-							return nil
-						}
-
-						resolvedCount, err := p.adapter.CountResolvedAlarm(ctx, parentAlarm.Alarm.Value.Children)
-						if err != nil {
-							return fmt.Errorf("cannot fetch alarms: %w", err)
-						}
-
-						if resolvedCount < len(parentAlarm.Alarm.Value.Children) {
-							return nil
-						}
-
-						err = parentAlarm.Alarm.PartialUpdateResolve(types.NewCpsTime())
-						if err != nil {
-							return fmt.Errorf("cannot update alarm: %w", err)
-						}
-
-						err = p.adapter.PartialUpdateOpen(ctx, &parentAlarm.Alarm)
-						if err != nil {
-							return fmt.Errorf("cannot update alarm: %w", err)
-						}
-
-						return nil
-					})
+			for parentId := range ch {
+				var parentAlarm types.AlarmWithEntity
+				err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+					alarms := make([]types.AlarmWithEntity, 0)
+					err := p.adapter.GetOpenedAlarmsWithEntityByIDs(ctx, []string{parentId}, &alarms)
 					if err != nil {
-						return err
+						return fmt.Errorf("cannot fetch parent: %w", err)
+					}
+					if len(alarms) == 0 {
+						return nil
+					}
+					parentAlarm = alarms[0]
+
+					rule, err := p.ruleAdapter.GetRule(ctx, parentAlarm.Alarm.Value.Meta)
+					if err != nil {
+						return fmt.Errorf("cannot fetch meta alarm rule: %w", err)
+					}
+					if rule.ID == "" {
+						return fmt.Errorf("meta alarm rule %s not found", parentAlarm.Alarm.Value.Meta)
+					}
+					if !rule.AutoResolve {
+						return nil
 					}
 
-					if parentAlarm.Alarm.IsResolved() {
-						err = p.adapter.CopyAlarmToResolvedCollection(ctx, parentAlarm.Alarm)
-						if err != nil {
-							return fmt.Errorf("cannot update alarm: %w", err)
-						}
-
-						p.metricsSender.SendResolve(ctx, parentAlarm.Alarm, parentAlarm.Entity, timestamp.Time)
+					resolvedCount, err := p.adapter.CountResolvedAlarm(ctx, parentAlarm.Alarm.Value.Children)
+					if err != nil {
+						return fmt.Errorf("cannot fetch alarms: %w", err)
 					}
+
+					if resolvedCount < len(parentAlarm.Alarm.Value.Children) {
+						return nil
+					}
+
+					err = parentAlarm.Alarm.PartialUpdateResolve(types.NewCpsTime())
+					if err != nil {
+						return fmt.Errorf("cannot update alarm: %w", err)
+					}
+
+					err = p.adapter.PartialUpdateOpen(ctx, &parentAlarm.Alarm)
+					if err != nil {
+						return fmt.Errorf("cannot update alarm: %w", err)
+					}
+
+					return nil
+				})
+				if err != nil {
+					return err
+				}
+
+				if parentAlarm.Alarm.IsResolved() {
+					err = p.adapter.CopyAlarmToResolvedCollection(ctx, parentAlarm.Alarm)
+					if err != nil {
+						return fmt.Errorf("cannot update alarm: %w", err)
+					}
+
+					p.metricsSender.SendResolve(parentAlarm.Alarm, parentAlarm.Entity, timestamp.Time)
 				}
 			}
+
+			return nil
 		})
 	}
 
@@ -513,76 +515,82 @@ func (p *metaAlarmEventProcessor) resolveParents(ctx context.Context, childAlarm
 
 func (p *metaAlarmEventProcessor) updateParentState(ctx context.Context, childAlarm types.Alarm) error {
 	ch := make(chan string)
-	go func() {
+	g, ctx := errgroup.WithContext(ctx)
+	g.Go(func() error {
 		defer close(ch)
 		for _, p := range childAlarm.Value.Parents {
 			select {
 			case <-ctx.Done():
-				return
+				return nil
 			case ch <- p:
 			}
 		}
-	}()
 
-	g, ctx := errgroup.WithContext(ctx)
+		return nil
+	})
+
 	w := int(math.Min(float64(workers), float64(len(childAlarm.Value.Parents))))
 	for i := 0; i < w; i++ {
 		g.Go(func() error {
-			for {
-				select {
-				case <-ctx.Done():
-					return nil
-				case parentId, ok := <-ch:
-					if !ok {
-						return nil
-					}
-
-					err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-						alarms := make([]types.AlarmWithEntity, 0)
-						err := p.adapter.GetOpenedAlarmsWithEntityByIDs(ctx, []string{parentId}, &alarms)
-						if err != nil {
-							return fmt.Errorf("cannot fetch parent: %w", err)
-						}
-						if len(alarms) == 0 {
-							return fmt.Errorf("parent %q not exist", parentId)
-						}
-						parentAlarm := alarms[0]
-
-						parentState := parentAlarm.Alarm.Value.State.Value
-						childState := childAlarm.Value.State.Value
-						var newState types.CpsNumber
-
-						if childState > parentState {
-							newState = childState
-						} else if childState < parentState {
-							r, err := p.adapter.GetWorstAlarmState(ctx, parentAlarm.Alarm.Value.Children)
-							if err != nil {
-								return fmt.Errorf("cannot fetch children state: %w", err)
-							}
-
-							newState = types.CpsNumber(r)
-						} else {
-							return nil
-						}
-
-						err = UpdateAlarmState(&parentAlarm.Alarm, parentAlarm.Entity, childAlarm.Value.LastUpdateDate,
-							newState, parentAlarm.Alarm.Value.Output, p.alarmStatusService)
-						if err != nil {
-							return fmt.Errorf("cannot update parent: %w", err)
-						}
-
-						err = p.adapter.PartialUpdateOpen(ctx, &parentAlarm.Alarm)
-						if err != nil {
-							return fmt.Errorf("cannot update alarm: %w", err)
-						}
-
-						return nil
-					})
+			for parentId := range ch {
+				err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+					alarms := make([]types.AlarmWithEntity, 0)
+					err := p.adapter.GetOpenedAlarmsWithEntityByIDs(ctx, []string{parentId}, &alarms)
 					if err != nil {
-						return err
+						return fmt.Errorf("cannot fetch parent: %w", err)
 					}
+					if len(alarms) == 0 {
+						return nil
+					}
+					parentAlarm := alarms[0]
+
+					rule, err := p.ruleAdapter.GetRule(ctx, parentAlarm.Alarm.Value.Meta)
+					if err != nil {
+						return fmt.Errorf("cannot fetch meta alarm rule: %w", err)
+					}
+					if rule.ID == "" {
+						return fmt.Errorf("meta alarm rule %s not found", parentAlarm.Alarm.Value.Meta)
+					}
+
+					parentState := parentAlarm.Alarm.Value.State.Value
+					childState := childAlarm.Value.State.Value
+					if childAlarm.IsResolved() {
+						childState = types.AlarmStateOK
+					}
+					var newState types.CpsNumber
+
+					if childState > parentState {
+						newState = childState
+					} else if childState < parentState {
+						r, err := p.adapter.GetWorstAlarmState(ctx, parentAlarm.Alarm.Value.Children)
+						if err != nil {
+							return fmt.Errorf("cannot fetch children state: %w", err)
+						}
+
+						newState = types.CpsNumber(r)
+					} else {
+						return nil
+					}
+
+					err = UpdateAlarmState(&parentAlarm.Alarm, parentAlarm.Entity, childAlarm.Value.LastUpdateDate,
+						newState, parentAlarm.Alarm.Value.Output, p.alarmStatusService)
+					if err != nil {
+						return fmt.Errorf("cannot update parent: %w", err)
+					}
+
+					err = p.adapter.PartialUpdateOpen(ctx, &parentAlarm.Alarm)
+					if err != nil {
+						return fmt.Errorf("cannot update alarm: %w", err)
+					}
+
+					return nil
+				})
+				if err != nil {
+					return err
 				}
 			}
+
+			return nil
 		})
 	}
 

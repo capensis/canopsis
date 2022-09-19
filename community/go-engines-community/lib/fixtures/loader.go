@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -17,39 +18,39 @@ const (
 
 type Loader interface {
 	Load(ctx context.Context) error
+	Clean(ctx context.Context) error
 }
 
 func NewLoader(
 	client mongo.DbClient,
 	dirs []string,
-	deleteAllBefore bool,
 	parser Parser,
 	logger zerolog.Logger,
 ) Loader {
 	return &loader{
-		client:          client,
-		dirs:            dirs,
-		deleteAllBefore: deleteAllBefore,
-		parser:          parser,
-		logger:          logger,
+		client: client,
+		dirs:   dirs,
+		parser: parser,
+		logger: logger,
 	}
 }
 
 type loader struct {
-	client          mongo.DbClient
-	dirs            []string
-	deleteAllBefore bool
-	parser          Parser
-	logger          zerolog.Logger
+	client mongo.DbClient
+	dirs   []string
+	parser Parser
+	logger zerolog.Logger
+
+	collections []string
 }
 
 func (l *loader) Load(ctx context.Context) error {
 	deleted := make(map[string]bool)
 
 	for _, dir := range l.dirs {
-		files, err := filepath.Glob(filepath.Join(dir, filePattern))
+		files, err := getFiles(dir)
 		if err != nil {
-			return fmt.Errorf("cannot read dir %q: %w", dir, err)
+			return err
 		}
 
 		for _, filename := range files {
@@ -64,19 +65,21 @@ func (l *loader) Load(ctx context.Context) error {
 			}
 
 			for collectionName, docs := range docsByCollection {
-				deleted, err = l.deleteAll(ctx, docsByCollection, deleted)
-				if err != nil {
-					return err
+				if !deleted[collectionName] {
+					_, err := l.client.Collection(collectionName).DeleteMany(ctx, bson.M{})
+					if err != nil {
+						return fmt.Errorf("cannot delete collection %q: %w", collectionName, err)
+					}
+					deleted[collectionName] = true
+					l.collections = append(l.collections, collectionName)
 				}
 
-				if len(docs) == 0 {
-					continue
-				}
-
-				collection := l.client.Collection(collectionName)
-				_, err = collection.InsertMany(ctx, docs)
-				if err != nil {
-					return fmt.Errorf("cannot save documents from file %q: %w", filename, err)
+				if len(docs) > 0 {
+					collection := l.client.Collection(collectionName)
+					_, err = collection.InsertMany(ctx, docs)
+					if err != nil {
+						return fmt.Errorf("cannot save documents from file %q: %w", filename, err)
+					}
 				}
 			}
 		}
@@ -85,23 +88,26 @@ func (l *loader) Load(ctx context.Context) error {
 	return nil
 }
 
-func (l *loader) deleteAll(ctx context.Context, docs map[string][]interface{}, deleted map[string]bool) (map[string]bool, error) {
-	if !l.deleteAllBefore {
-		return deleted, nil
-	}
-
-	for collectionName := range docs {
-		if deleted[collectionName] {
-			continue
-		}
-
+func (l *loader) Clean(ctx context.Context) error {
+	for _, collectionName := range l.collections {
 		_, err := l.client.Collection(collectionName).DeleteMany(ctx, bson.M{})
 		if err != nil {
-			return nil, fmt.Errorf("cannot delete collection %q: %w", collectionName, err)
+			return fmt.Errorf("cannot delete collection %q: %w", collectionName, err)
 		}
-
-		deleted[collectionName] = true
 	}
 
-	return deleted, nil
+	return nil
+}
+
+func getFiles(dir string) ([]string, error) {
+	stat, err := os.Stat(dir)
+	if err != nil {
+		return nil, fmt.Errorf("cannot read dir %q: %w", dir, err)
+	}
+
+	if stat.IsDir() {
+		return filepath.Glob(filepath.Join(dir, filePattern))
+	}
+
+	return []string{dir}, nil
 }

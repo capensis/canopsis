@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-pattern-group-field Renders \`c-pattern-group-field\` with custom props 1`] = `
+<div
+  class="layout"
+>
+  <div
+    class="flex pa-2 mr-2"
+  >
+    <c-pattern-operator-information-stub>
+      And
+    </c-pattern-operator-information-stub>
+  </div>
+  <div
+    class="flex xs11"
+  >
+    <div
+      class="layout column"
+    >
+      <c-pattern-rules-field-stub
+        attributes="[object Object]"
+        disabled="true"
+        rules=""
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-pattern-group-field Renders \`c-pattern-group-field\` with default props 1`] = `
+<div
+  class="layout"
+>
+  <div
+    class="flex pa-2 mr-2"
+  >
+    <c-pattern-operator-information-stub>
+      And
+    </c-pattern-operator-information-stub>
+  </div>
+  <div
+    class="flex xs11"
+  >
+    <div
+      class="layout column"
+    >
+      <c-pattern-rules-field-stub
+        attributes=""
+        rules=""
+      />
+    </div>
+  </div>
+</div>
+`;

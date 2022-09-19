@@ -2,8 +2,9 @@ import Faker from 'faker';
 import { Validator } from 'vee-validate';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { createInputStub } from '@unit/stubs/input';
 
-import CArrayMixedField from '@/components/forms/fields/c-array-mixed-field.vue';
+import CArrayTextField from '@/components/forms/fields/c-array-text-field.vue';
 
 const localVue = createVueInstance();
 
@@ -25,30 +26,22 @@ const stubs = {
       </button>
     `,
   },
-  'c-mixed-field': {
-    props: ['value'],
-    template: `
-      <input
-        :value="value"
-        class="c-mixed-field"
-        @input="$listeners.input($event.target.value)"
-      />
-    `,
-  },
+  'v-text-field': createInputStub('v-text-field'),
 };
 
 const snapshotStubs = {
-  'c-mixed-field': true,
   'c-action-btn': true,
 };
 
-const factory = (options = {}) => shallowMount(CArrayMixedField, {
+const factory = (options = {}) => shallowMount(CArrayTextField, {
   localVue,
   stubs,
   ...options,
 });
 
-describe('c-array-mixed-field', () => {
+const selectTextField = wrapper => wrapper.find('input.v-text-field');
+
+describe('c-array-text-field', () => {
   it('Empty string added after click on add button', () => {
     const wrapper = factory({
       propsData: {
@@ -77,7 +70,7 @@ describe('c-array-mixed-field', () => {
       },
     });
     const secondFieldElement = wrapper.findAll('v-layout-stub').at(0);
-    const mixedFieldElement = secondFieldElement.find('input.c-mixed-field');
+    const mixedFieldElement = selectTextField(secondFieldElement);
 
     mixedFieldElement.setValue(newFieldValue);
 
@@ -108,8 +101,8 @@ describe('c-array-mixed-field', () => {
     expect(newFieldsData).toEqual([mockData.string]);
   });
 
-  it('Renders `c-array-mixed-field` with default props correctly', () => {
-    const wrapper = mount(CArrayMixedField, {
+  it('Renders `c-array-text-field` with default props correctly', () => {
+    const wrapper = mount(CArrayTextField, {
       localVue,
       stubs: snapshotStubs,
     });
@@ -117,8 +110,8 @@ describe('c-array-mixed-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `c-array-mixed-field` with all field types correctly', () => {
-    const wrapper = mount(CArrayMixedField, {
+  it('Renders `c-array-text-field` with all field types correctly', () => {
+    const wrapper = mount(CArrayTextField, {
       localVue,
       provide: {
         $validator: new Validator(),
@@ -130,7 +123,6 @@ describe('c-array-mixed-field', () => {
           123,
           false,
           null,
-          [null, 'string', 123],
         ],
       },
     });
@@ -138,8 +130,8 @@ describe('c-array-mixed-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders disabled `c-array-mixed-field` correctly', () => {
-    const wrapper = mount(CArrayMixedField, {
+  it('Renders disabled `c-array-text-field` correctly', () => {
+    const wrapper = mount(CArrayTextField, {
       localVue,
       provide: {
         $validator: new Validator(),

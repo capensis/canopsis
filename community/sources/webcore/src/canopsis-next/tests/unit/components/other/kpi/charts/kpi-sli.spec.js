@@ -15,6 +15,7 @@ const stubs = {
   'c-progress-overlay': true,
   'kpi-sli-filters': true,
   'kpi-sli-chart': true,
+  'kpi-error-overlay': true,
 };
 
 const factory = (options = {}) => shallowMount(KpiSli, {
@@ -155,6 +156,21 @@ describe('kpi-sli', () => {
             data: [],
             meta: { min_date: 1385830800 },
           })),
+        },
+      }]),
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `kpi-sli` with fetching error', async () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([{
+        name: 'metrics',
+        actions: {
+          fetchSliMetricsWithoutStore: jest.fn().mockRejectedValue(),
         },
       }]),
     });
