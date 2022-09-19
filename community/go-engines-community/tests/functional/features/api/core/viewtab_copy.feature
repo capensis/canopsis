@@ -34,6 +34,18 @@ Feature: Copy a view tab
               }
             ]
           },
+          "filters": [
+            {
+              "title": "test-widgetfilter-to-tab-copy-1-title",
+              "is_private": false,
+              "author": "root"
+            },
+            {
+              "title": "test-widgetfilter-to-tab-copy-2-title",
+              "is_private": false,
+              "author": "root"
+            }
+          ],
           "author": "root"
         }
       ]
@@ -63,6 +75,40 @@ Feature: Copy a view tab
               }
             ]
           },
+          "filters": [
+            {
+              "title": "test-widgetfilter-to-tab-copy-1-title",
+              "author": "root",
+              "is_private": false,
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-widgetfilter-to-tab-copy-1-pattern"
+                    }
+                  }
+                ]
+              ]
+            },
+            {
+              "title": "test-widgetfilter-to-tab-copy-2-title",
+              "author": "root",
+              "is_private": false,
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-widgetfilter-to-tab-copy-2-pattern"
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
           "author": "root"
         }
       ]
@@ -70,6 +116,9 @@ Feature: Copy a view tab
     """
     Then the response key "_id" should not be "test-tab-to-copy-1"
     Then the response key "widgets.0._id" should not be "test-widget-to-tab-copy-1"
+    Then the response key "widgets.0.filters.0._id" should not be "test-widgetfilter-to-tab-copy-1"
+    Then the response key "widgets.0.filters.1._id" should not be "test-widgetfilter-to-tab-copy-2"
+    Then the response key "widgets.0.parameters.mainFilter" should not be "test-widgetfilter-to-tab-copy-1"
     When I do GET /api/v4/views/test-view-to-tab-copy-2
     Then the response code should be 200
     Then the response body should contain:

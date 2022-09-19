@@ -51,7 +51,8 @@ Feature: Delete user preferences on widget delete.
       "widget": "{{ .widgetID }}",
       "content": {
         "test": 1
-      }
+      },
+      "filters": []
     }
 	"""
     When I do DELETE /api/v4/views/{{ .viewID }}
@@ -129,7 +130,8 @@ Feature: Delete user preferences on widget delete.
       "widget": "{{ .widget1ID }}",
       "content": {
         "test": 1
-      }
+      },
+      "filters": []
     }
 	"""
     When I do GET /api/v4/user-preferences/{{ .widget2ID }}
@@ -140,7 +142,8 @@ Feature: Delete user preferences on widget delete.
       "widget": "{{ .widget2ID }}",
       "content": {
         "test": 2
-      }
+      },
+      "filters": []
     }
 	"""
     When I do DELETE /api/v4/widgets/{{ .widget2ID }}
@@ -153,7 +156,8 @@ Feature: Delete user preferences on widget delete.
       "widget": "{{ .widget1ID }}",
       "content": {
         "test": 1
-      }
+      },
+      "filters": []
     }
 	"""
     When I do GET /api/v4/user-preferences/{{ .widget2ID }}
@@ -197,7 +201,8 @@ Feature: Delete user preferences on widget delete.
       "widget": "{{ .widgetID }}",
       "content": {
         "test": 1
-      }
+      },
+      "filters": []
     }
     """
     Then the response code should be 200
@@ -209,7 +214,8 @@ Feature: Delete user preferences on widget delete.
       "widget": "{{ .widgetID }}",
       "content": {
         "test": 1
-      }
+      },
+      "filters": []
     }
 	"""
     When I do DELETE /api/v4/view-tabs/{{ .tabID }}

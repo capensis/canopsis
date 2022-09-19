@@ -63,6 +63,11 @@ paths:
             type: array
             items:
               type: string
+        - name: filter
+          in: query
+          description: Widget filter id.
+          schema:
+            type: string
         - name: category
           in: query
           schema:
@@ -71,7 +76,7 @@ paths:
           in: query
           schema:
             type: boolean
-        - name: exclude_instruction_types
+        - name: exclude_instruction_types[]
           in: query
           style: form
           explode: true
@@ -79,7 +84,7 @@ paths:
             type: array
             items:
               type: integer
-        - name: exclude_instructions
+        - name: exclude_instructions[]
           in: query
           style: form
           explode: true
@@ -87,11 +92,7 @@ paths:
             type: array
             items:
               type: string
-        - name: filter
-          in: query
-          schema:
-            type: string
-        - name: include_instruction_types
+        - name: include_instruction_types[]
           in: query
           style: form
           explode: true
@@ -99,7 +100,7 @@ paths:
             type: array
             items:
               type: integer
-        - name: include_instructions
+        - name: include_instructions[]
           in: query
           style: form
           explode: true
@@ -107,15 +108,10 @@ paths:
             type: array
             items:
               type: string
-        - name: manual
-          in: query
-          schema:
-            type: boolean
         - name: opened
           in: query
           schema:
             type: boolean
-        - $ref: '#/components/parameters/search'
         - name: time_field
           in: query
           schema:
@@ -235,14 +231,70 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarm-details:
+    post:
+      tags:
+        - alarms
+      summary: Get alarms' details
+      description: Get paginated list of alarms' steps and children.
+      operationId: alarms-details-get
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarm.DetailsRequest'
+            examples:
+              get:
+                summary: Get details
+                description: Get details of alarms
+                value: [
+                  {
+                    "_id": "293d7b83-e622-40d9-95ef-86b06eda3746",
+                    "with_instructions": true,
+                    "opened": true,
+                    "steps": {
+                      "page": 1,
+                      "limit": 10
+                    },
+                    "children": {
+                      "page": 1,
+                      "limit": 10,
+                      "sort_by": "v.resource",
+                      "sort": "asc",
+                      "multi_sort": []
+                    }
+                  },
+                  {
+                    "_id": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                    "opened": true,
+                    "steps": {
+                      "page": 2
+                    }
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarm.DetailsResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /alarms:
     get:
       tags:
         - alarms
       summary: Find all alarms
-      description: Get paginated list of alarms. Use parameters "multi_sort[]=field_1,asc&multi_sort[]=field_2,desc&multi_sort[]=field_3,asc"
-        to sort list by multiple fields. "sort_key", "sort_dir" are left for compatibility
-        with older ways of sorting
+      description: Get paginated list of alarms.
       operationId: alarms-find-all
       parameters:
         - name: active_columns[]
@@ -253,6 +305,11 @@ paths:
             type: array
             items:
               type: string
+        - name: filter
+          in: query
+          description: Widget filter id.
+          schema:
+            type: string
         - name: category
           in: query
           schema:
@@ -261,7 +318,7 @@ paths:
           in: query
           schema:
             type: boolean
-        - name: exclude_instruction_types
+        - name: exclude_instruction_types[]
           in: query
           style: form
           explode: true
@@ -269,7 +326,7 @@ paths:
             type: array
             items:
               type: integer
-        - name: exclude_instructions
+        - name: exclude_instructions[]
           in: query
           style: form
           explode: true
@@ -277,11 +334,7 @@ paths:
             type: array
             items:
               type: string
-        - name: filter
-          in: query
-          schema:
-            type: string
-        - name: include_instruction_types
+        - name: include_instruction_types[]
           in: query
           style: form
           explode: true
@@ -289,20 +342,7 @@ paths:
             type: array
             items:
               type: integer
-        - name: include_instructions
-          in: query
-          style: form
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
-        - $ref: '#/components/parameters/limit'
-        - name: manual
-          in: query
-          schema:
-            type: boolean
-        - name: multi_sort[]
+        - name: include_instructions[]
           in: query
           style: form
           explode: true
@@ -314,20 +354,6 @@ paths:
           in: query
           schema:
             type: boolean
-        - $ref: '#/components/parameters/page'
-        - name: paginate
-          in: query
-          schema:
-            type: boolean
-        - $ref: '#/components/parameters/search'
-        - name: sort_dir
-          in: query
-          schema:
-            type: string
-        - name: sort_key
-          in: query
-          schema:
-            type: string
         - name: time_field
           in: query
           schema:
@@ -340,18 +366,32 @@ paths:
           in: query
           schema:
             type: integer
-        - name: with_consequences
+        - name: with_links
           in: query
+          description: Links are retrieved from external service so use carefully with big limit.
           schema:
             type: boolean
         - name: with_instructions
           in: query
           schema:
             type: boolean
-        - name: with_steps
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
           in: query
           schema:
-            type: boolean
+            type: string
+        - name: multi_sort[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+          example: t,asc
       responses:
         200:
           description: OK
@@ -372,6 +412,33 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /alarms/{id}:
+    get:
+      tags:
+        - alarms
+      summary: Get alarm by id
+      description: Get alarm by id
+      operationId: alarms-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: alarm id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /app-info:
     get:
       tags:
@@ -644,7 +711,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
         400:
           description: Bad Request
           content:
@@ -689,7 +761,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entity.BulkToggleRequestItem'
         400:
           description: Bad Request
           content:
@@ -733,15 +810,23 @@ paths:
                     "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
                     "impact_level": 2,
                     "enabled": true,
-                    "entity_patterns": [
-                      {
-                        "type": "resource",
-                        "infos": {
-                          "group": {
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "type",
+                          "cond": {
+                            "type": "eq",
+                            "value": "resource"
+                          }
+                        },
+                        {
+                          "field": "infos.group",
+                          "cond": {
+                            "type": "eq",
                             "value": "g1"
                           }
                         }
-                      }
+                      ]
                     ],
                     "sli_avail_state": 1,
                     "infos": [
@@ -764,7 +849,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/entityservice.BulkUpdateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entityservice.BulkUpdateRequestItem'
         400:
           description: Bad Request
           content:
@@ -806,15 +896,23 @@ paths:
                     "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
                     "impact_level": 2,
                     "enabled": true,
-                    "entity_patterns": [
-                      {
-                        "type": "resource",
-                        "infos": {
-                          "group": {
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "type",
+                          "cond": {
+                            "type": "eq",
+                            "value": "resource"
+                          }
+                        },
+                        {
+                          "field": "infos.group",
+                          "cond": {
+                            "type": "eq",
                             "value": "g1"
                           }
                         }
-                      }
+                      ]
                     ],
                     "sli_avail_state": 1,
                     "infos": [
@@ -837,7 +935,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/entityservice.BulkCreateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entityservice.CreateRequest'
         400:
           description: Bad Request
           content:
@@ -876,9 +979,12 @@ paths:
               schema:
                 type: array
                 items:
-                  type: array
-                  items:
-                    $ref: 'schemas_swagger.yaml#/definitions/entityservice.BulkDeleteResponseItem'
+                  allOf:
+                    - $ref: '#/components/schemas/BulkResponseItem'
+                    - type: object
+                      properties:
+                        item:
+                          $ref: 'schemas_swagger.yaml#/definitions/entityservice.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
@@ -911,7 +1017,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkUpdateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkUpdateRequestItem'
         400:
           description: Bad Request
           content:
@@ -931,7 +1042,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EventFilter'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
         required: true
       responses:
         207:
@@ -943,7 +1054,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkCreateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
         400:
           description: Bad Request
           content:
@@ -975,7 +1091,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkDeleteResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
@@ -1008,7 +1129,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkUpdateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkUpdateRequestItem'
         400:
           description: Bad Request
           content:
@@ -1040,7 +1166,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkCreateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/idlerule.CreateRequest'
         400:
           description: Bad Request
           content:
@@ -1072,7 +1203,59 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkDeleteResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /bulk/patterns:
+    delete:
+      tags:
+        - saved-patterns
+      summary: Bulk delete patterns
+      description: Bulk delete patterns
+      operationId: saved-patterns-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete patterns
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pattern.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
@@ -1108,13 +1291,17 @@ paths:
                     "rrule": "FREQ=DAILY",
                     "type": "default_active",
                     "reason": "default_reason",
-                    "filter": {
-                      "$and": [
+                    "entity_pattern": [
+                      [
                         {
-                          "name": "cps_resource"
+                          "field": "name",
+                          "cond": {
+                            "type": "eq",
+                            "value": "cps_resource"
+                          }
                         }
                       ]
-                    },
+                    ],
                     "exdates": [
                       {
                         "begin": 1651460400,
@@ -1136,7 +1323,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkUpdateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkUpdateRequestItem'
         400:
           description: Bad Request
           content:
@@ -1170,13 +1362,17 @@ paths:
                     "rrule": "FREQ=DAILY",
                     "type": "default_active",
                     "reason": "default_reason",
-                    "filter": {
-                      "$and": [
+                    "entity_pattern": [
+                      [
                         {
-                          "name": "cps_resource"
+                          "field": "name",
+                          "cond": {
+                            "type": "eq",
+                            "value": "cps_resource"
+                          }
                         }
                       ]
-                    },
+                    ],
                     "exdates": [
                       {
                         "begin": 1651460400,
@@ -1198,7 +1394,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkCreateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehavior.CreateRequest'
         400:
           description: Bad Request
           content:
@@ -1239,7 +1440,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkDeleteResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
@@ -1279,24 +1485,34 @@ paths:
                         "parameters": {
                           "output": "The alarm is acknowledged by scenario"
                         },
-                        "alarm_patterns": [
-                          {
-                            "v": {
-                              "state": {
-                                "val": 3
+                        "alarm_pattern": [
+                          [
+                            {
+                              "field": "v.state.val",
+                              "cond": {
+                                "type": "eq",
+                                "value": 3
                               }
                             }
-                          }
+                          ]
                         ],
-                        "entity_patterns": [
-                          {
-                            "type": "resource",
-                            "infos": {
-                              "group": {
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
+                              "cond": {
+                                "type": "eq",
                                 "value": "g1"
                               }
                             }
-                          }
+                          ]
                         ],
                         "drop_scenario_if_not_matched": false,
                         "emit_trigger": false
@@ -1315,7 +1531,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkUpdateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkUpdateRequestItem'
         400:
           description: Bad Request
           content:
@@ -1353,24 +1574,34 @@ paths:
                         "parameters": {
                           "output": "The alarm is acknowledged by scenario"
                         },
-                        "alarm_patterns": [
-                          {
-                            "v": {
-                              "state": {
-                                "val": 3
+                        "alarm_pattern": [
+                          [
+                            {
+                              "field": "v.state.val",
+                              "cond": {
+                                "type": "eq",
+                                "value": 3
                               }
                             }
-                          }
+                          ]
                         ],
-                        "entity_patterns": [
-                          {
-                            "type": "resource",
-                            "infos": {
-                              "group": {
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
+                              "cond": {
+                                "type": "eq",
                                 "value": "g1"
                               }
                             }
-                          }
+                          ]
                         ],
                         "drop_scenario_if_not_matched": false,
                         "emit_trigger": false
@@ -1389,7 +1620,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkCreateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/scenario.CreateRequest'
         400:
           description: Bad Request
           content:
@@ -1430,7 +1666,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkDeleteResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
@@ -1463,7 +1704,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/user.BulkUpdateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/user.BulkUpdateRequestItem'
         400:
           description: Bad Request
           content:
@@ -1495,7 +1741,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/user.BulkCreateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/user.Request'
         400:
           description: Bad Request
           content:
@@ -1527,13 +1778,65 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/user.BulkDeleteResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/user.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /component-alarms:
+    get:
+      tags:
+        - alarms
+      summary: Find opened alarms of component's resource
+      description: Get paginated list of alarms.
+      operationId: alarms-find-component-alarms
+      parameters:
+        - name: _id
+          in: query
+          description: component id
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /contextgraph/import:
     put:
       tags:
@@ -1673,15 +1976,23 @@ paths:
                           Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
                           Pause: {{index .PbehaviorCounters \"default_pause\"}}
                           Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
-                        "entity_patterns": [
-                          {
-                            "type": "resource",
-                            "infos": {
-                              "group": {
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
+                              "cond": {
+                                "type": "eq",
                                 "value": "g1"
                               }
                             }
-                          }
+                          ]
                         ],
                         "type": "service",
                         "impact_level": 2,
@@ -1709,15 +2020,23 @@ paths:
                           Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
                           Pause: {{index .PbehaviorCounters \"default_pause\"}}
                           Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
-                        "entity_patterns": [
-                          {
-                            "type": "resource",
-                            "infos": {
-                              "group": {
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
+                              "cond": {
+                                "type": "eq",
                                 "value": "g2"
                               }
                             }
-                          }
+                          ]
                         ],
                         "type": "service",
                         "impact_level": 2,
@@ -1745,15 +2064,23 @@ paths:
                           Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
                           Pause: {{index .PbehaviorCounters \"default_pause\"}}
                           Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
-                        "entity_patterns": [
-                          {
-                            "type": "resource",
-                            "infos": {
-                              "group": {
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
+                              "cond": {
+                                "type": "eq",
                                 "value": "g3"
                               }
                             }
-                          }
+                          ]
                         ],
                         "type": "service",
                         "impact_level": 2,
@@ -2145,11 +2472,19 @@ paths:
           in: query
           schema:
             type: string
-        - $ref: '#/components/parameters/limit'
         - name: no_events
           in: query
           schema:
             type: boolean
+        - name: type[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - name: paginate
           in: query
@@ -2550,6 +2885,73 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entity-infos-dictionary/keys:
+    get:
+      tags:
+        - entity-infos-dictionary
+      summary: Find entity infos keys
+      description: Get paginated list of entity info keys
+      operationId: entity-infos-dictionary-list-keys
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/entityinfodictionary.Result'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /entity-infos-dictionary/values:
+    get:
+      tags:
+        - entity-infos-dictionary
+      summary: Find entity infos values
+      description: Get paginated list of entity info values
+      operationId: entity-infos-dictionary-list-values
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - name: key
+          in: query
+          description: infos key name
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/entityinfodictionary.Result'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /entitybasics:
     get:
       tags:
@@ -2789,6 +3191,48 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entityservice-alarms/{id}:
+    get:
+      tags:
+        - alarms
+      summary: Find opened alarms of service's dependencies
+      description: Get paginated list of alarms.
+      operationId: alarms-find-service-alarms
+      parameters:
+        - name: id
+          in: path
+          description: entity service id
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /entityservices:
     post:
       tags:
@@ -2801,7 +3245,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/entityservice.EditRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/entityservice.CreateRequest'
             examples:
               create:
                 summary: Create
@@ -2822,15 +3266,23 @@ paths:
                   "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
                   "impact_level": 2,
                   "enabled": true,
-                  "entity_patterns": [
-                    {
-                      "type": "resource",
-                      "infos": {
-                        "group": {
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "resource"
+                        }
+                      },
+                      {
+                        "field": "infos.group",
+                        "cond": {
+                          "type": "eq",
                           "value": "g1"
                         }
                       }
-                    }
+                    ]
                   ],
                   "sli_avail_state": 1,
                   "infos": [
@@ -2900,7 +3352,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/entityservice.EditRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/entityservice.UpdateRequest'
             examples:
               update:
                 summary: Update
@@ -2921,15 +3373,23 @@ paths:
                   "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
                   "impact_level": 2,
                   "enabled": true,
-                  "entity_patterns": [
-                    {
-                      "type": "resource",
-                      "infos": {
-                        "group": {
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "resource"
+                        }
+                      },
+                      {
+                        "field": "infos.group",
+                        "cond": {
+                          "type": "eq",
                           "value": "g1"
                         }
                       }
-                    }
+                    ]
                   ],
                   "sli_avail_state": 1,
                   "infos": [
@@ -3173,7 +3633,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EventFilter'
+                          $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
         400:
           description: Bad Request
           content:
@@ -3191,7 +3651,233 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EventFilter'
+              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
+            examples:
+              CreateDropRule:
+                summary: Create a drop rule
+                description: Create a drop rule.
+                value: {
+                  "type": "drop",
+                  "event_pattern":[[
+                    {
+                      "field": "event_type",
+                      "cond": {
+                        "type": "eq",
+                        "value": "check"
+                      }
+                    },
+                    {
+                      "field": "component",
+                      "cond": {
+                        "type": "eq",
+                        "value": "example-component"
+                      }
+                    }
+                  ]],
+                  "description": "drop rule example",
+                  "priority": 1,
+                  "enabled": true
+                }
+              CreateBreakRule:
+                summary: Create a break rule
+                description: Create a break rule.
+                value: {
+                  "type": "break",
+                  "event_pattern":[[
+                    {
+                      "field": "event_type",
+                      "cond": {
+                        "type": "eq",
+                        "value": "check"
+                      }
+                    },
+                    {
+                      "field": "component",
+                      "cond": {
+                        "type": "eq",
+                        "value": "example-component"
+                      }
+                    }
+                  ]],
+                  "description": "break rule example",
+                  "priority": 1,
+                  "enabled": true
+                }
+              CreateEnrichmentRule:
+                summary: Create an enrichment rule
+                description: Create an enrichment rule.
+                value: {
+                  "description": "enrichment rule example",
+                  "type": "enrichment",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "pattern"
+                        }
+                      }
+                    ]
+                  ],
+                  "priority": 0,
+                  "enabled": true,
+                  "config": {
+                    "actions": [
+                      {
+                        "type": "set_field",
+                        "name": "connector",
+                        "value": "kafka_connector"
+                      }
+                    ],
+                    "on_success": "pass",
+                    "on_failure": "pass"
+                  }
+                }
+              CreateEnrichmentRuleWithTemplate:
+                summary: Create an enrichment rule with template
+                description: Create an enrichment rule with template.
+                value: {
+                  "description": "enrichment rule example with template",
+                  "type": "enrichment",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "pattern"
+                        }
+                      }
+                    ]
+                  ],
+                  "priority": 0,
+                  "enabled": true,
+                  "config": {
+                    "actions": [
+                      {
+                        "type": "set_entity_info_from_template",
+                        "name": "customer",
+                        "description": "Client",
+                        "value": "{{ .Event.ExtraInfos.customer }}"
+                      }
+                    ],
+                    "on_success": "pass",
+                    "on_failure": "pass"
+                  }
+                }
+              CreateEnrichmentRuleWithExternalMongoData:
+                summary: Create an enrichment rule with external mongo data
+                description: Create an enrichment rule with external mongo data.
+                value: {
+                  "type": "enrichment",
+                  "external_data": {
+                    "component": {
+                      "type": "mongo",
+                      "select": {
+                        "component_customer": "{{ .Event.Component }}"
+                      },
+                      "collection": "assets"
+                    }
+                  },
+                  "event_pattern": [
+                    [
+                      {
+                        "field": "component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "example component"
+                        }
+                      }
+                    ]
+                  ],
+                  "description": "enruchment rule with external mongo data",
+                  "priority": 1,
+                  "enabled": true,
+                  "config": {
+                    "actions": [
+                      {
+                        "type": "set_entity_info_from_template",
+                        "name": "status",
+                        "value": "{{ .ExternalData.component.component_status }}",
+                        "description": "status from assets"
+                      }
+                    ],
+                    "on_success": "pass",
+                    "on_failure": "pass"
+                  }
+                }
+              CreateEnrichmentRuleWithExternalApiData:
+                summary: Create an enrichment rule with external api data
+                description: Create an enrichment rule with external api data.
+                value: {
+                  "type": "enrichment",
+                  "external_data": {
+                    "title": {
+                      "type": "api",
+                      "request": {
+                        "url": "http://localhost:3000/api/external_data",
+                        "method": "GET"
+                      }
+                    }
+                  },
+                  "event_pattern": [
+                    [
+                      {
+                        "field": "component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "component-example"
+                        }
+                      }
+                    ]
+                  ],
+                  "description": "enrichment rule with external api data",
+                  "priority": 1,
+                  "enabled": true,
+                  "config": {
+                    "actions": [
+                      {
+                        "type": "set_entity_info_from_template",
+                        "name": "title",
+                        "value": "{{ .ExternalData.title.title }}",
+                        "description": "title from external api"
+                      }
+                    ],
+                    "on_success": "pass",
+                    "on_failure": "pass"
+                  }
+                }
+              CreateChangeEntityRule:
+                summary: Create a change_entity rule
+                description: Create a change_entity rule.
+                value: {
+                  "description": "change_entity rule example",
+                  "type": "change_entity",
+                  "event_pattern": [
+                    [
+                      {
+                        "field": "connector",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test_connector"
+                        }
+                      },
+                      {
+                        "field": "extra.customer_tags",
+                        "field_type": "string",
+                        "cond": {
+                          "type": "regexp",
+                          "value": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+                        }
+                      }
+                    ]
+                  ],
+                  "config": {
+                    "component": "{{ .RegexMatch.ExtraInfos.customer_tags.SI_CMDB }}"
+                  },
+                  "enabled": true
+                }
         required: true
       responses:
         201:
@@ -3199,7 +3885,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EventFilter'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
         400:
           description: Bad Request
           content:
@@ -3226,7 +3912,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EventFilter'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
         404:
           description: Not Found
           content:
@@ -3251,7 +3937,44 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EventFilter'
+              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
+            examples:
+              Update:
+                summary: Update
+                description: Update an eventfilter.
+                value: {
+                  "description": "test update",
+                  "type": "enrichment",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "updated pattern"
+                        }
+                      }
+                    ]
+                  ],
+                  "priority": 0,
+                  "enabled": true,
+                  "config": {
+                    "actions": [
+                      {
+                        "type": "set_field",
+                        "name": "connector",
+                        "value": "kafka_connector"
+                      }
+                    ],
+                    "on_success": "pass",
+                    "on_failure": "pass"
+                  },
+                  "external_data": {
+                    "test": {
+                      "type": "mongo"
+                    }
+                  }
+                }
         required: true
       responses:
         200:
@@ -3259,7 +3982,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EventFilter'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
         400:
           description: Bad Request
           content:
@@ -3474,6 +4197,42 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/flappingrule.CreateRequest'
+            examples:
+              create:
+                summary: Create flapping rule
+                description: Create flapping rule
+                value: {
+                  "name": "test-flapping-rule-name",
+                  "description": "test-flapping-rule-description",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-flapping-rule-pattern"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-flapping-rule-resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "duration": {
+                    "value": 10,
+                    "unit": "s"
+                  },
+                  "freq_limit": 3,
+                  "priority": 5
+                }
         required: true
       responses:
         201:
@@ -3534,6 +4293,42 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/flappingrule.UpdateRequest'
+            examples:
+              update:
+                summary: Update flapping rule
+                description: Update flapping rule
+                value: {
+                  "name": "test-flapping-rule-name",
+                  "description": "test-flapping-rule-description",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-flapping-rule-pattern"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-flapping-rule-resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "duration": {
+                    "value": 10,
+                    "unit": "s"
+                  },
+                  "freq_limit": 3,
+                  "priority": 5
+                }
         required: true
       responses:
         200:
@@ -3625,6 +4420,81 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/idlerule.EditRequest'
+            examples:
+              alarm:
+                summary: Alarm rule
+                description: Create an alarm rule.
+                value: {
+                  "name": "test-idle-rule-name",
+                  "description": "test-idle-rule-description",
+                  "type": "alarm",
+                  "alarm_condition": "last_event",
+                  "enabled": true,
+                  "priority": 20,
+                  "duration": {
+                    "value": 3,
+                    "unit": "s"
+                  },
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-idle-rule-alarm"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-idle-rule-resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "operation": {
+                    "type": "snooze",
+                    "parameters": {
+                      "output": "test-idle-rule-operation-output",
+                      "duration": {
+                        "value": 3,
+                        "unit": "s"
+                      }
+                    }
+                  },
+                  "disable_during_periods": ["pause"]
+                }
+              entity:
+                summary: Entity rule
+                description: Create an entity rule.
+                value: {
+                  "name": "test-idle-rule-name",
+                  "description": "test-idle-rule-description",
+                  "type": "entity",
+                  "enabled": true,
+                  "priority": 21,
+                  "duration": {
+                    "value": 3,
+                    "unit": "s"
+                  },
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-idle-rule-resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "disable_during_periods": ["pause"]
+                }
         required: true
       responses:
         201:
@@ -3691,6 +4561,81 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/idlerule.EditRequest'
+            examples:
+              alarm:
+                summary: Alarm rule
+                description: Update an alarm rule.
+                value: {
+                  "name": "test-idle-rule-name",
+                  "description": "test-idle-rule-description",
+                  "type": "alarm",
+                  "alarm_condition": "last_event",
+                  "enabled": true,
+                  "priority": 20,
+                  "duration": {
+                    "value": 3,
+                    "unit": "s"
+                  },
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-idle-rule-alarm"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-idle-rule-resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "operation": {
+                    "type": "snooze",
+                    "parameters": {
+                      "output": "test-idle-rule-operation-output",
+                      "duration": {
+                        "value": 3,
+                        "unit": "s"
+                      }
+                    }
+                  },
+                  "disable_during_periods": ["pause"]
+                }
+              entity:
+                summary: Entity rule
+                description: Update an entity rule.
+                value: {
+                  "name": "test-idle-rule-name",
+                  "description": "test-idle-rule-description",
+                  "type": "entity",
+                  "enabled": true,
+                  "priority": 21,
+                  "duration": {
+                    "value": 3,
+                    "unit": "s"
+                  },
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-idle-rule-resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "disable_during_periods": ["pause"]
+                }
         required: true
       responses:
         200:
@@ -3729,39 +4674,6 @@ paths:
           description: OK
         404:
           description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-  /idle-rules/count:
-    post:
-      tags:
-        - idlerules
-      summary: Count entities and alarm matching patterns
-      description: Count entities and alarm matching patterns
-      operationId: idlerules-countpatterns
-      requestBody:
-        description: body
-        content:
-          application/json:
-            schema:
-              $ref: 'schemas_swagger.yaml#/definitions/idlerule.CountByPatternRequest'
-        required: true
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/idlerule.CountByPatternResult'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-        408:
-          description: Request Timeout
           content:
             application/json:
               schema:
@@ -3847,6 +4759,24 @@ paths:
           description: OK
       security:
         - BearerAuth: [ ]
+  /manual-meta-alarms:
+    get:
+      tags:
+        - alarms
+      summary: Find manual meta alarms
+      description: Get manual meta alarms.
+      operationId: alarms-find-meta-alarms
+      parameters:
+        - $ref: '#/components/parameters/search'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/alarm.ManualResponse'
   /message-rate-stats:
     get:
       tags:
@@ -3913,13 +4843,6 @@ paths:
       summary: Update notification settings
       description: Update notification settings
       operationId: notification-update
-      parameters:
-        - name: id
-          in: path
-          description: type id
-          required: true
-          schema:
-            type: string
       requestBody:
         description: body
         content:
@@ -3940,6 +4863,386 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /patterns-count:
+    post:
+      tags:
+        - saved-patterns
+      summary: Count matches
+      description: Count matches of pattern
+      operationId: saved-patterns-count
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.CountRequest'
+            examples:
+              count:
+                summary: Count
+                description: Count matches of patterns.
+                value: {
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_maintenance"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /patterns:
+    get:
+      tags:
+        - saved-patterns
+      summary: Find all saved patterns
+      description: Get paginated list of saved patterns
+      operationId: saved-patterns-find-all
+      parameters:
+        - name: corporate
+          in: query
+          schema:
+            type: boolean
+        - name: type
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          description: sort query
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/pattern.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    post:
+      tags:
+        - saved-patterns
+      summary: Create saved pattern
+      description: Create saved pattern
+      operationId: saved-patterns-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.EditRequest'
+            examples:
+              alarm:
+                summary: Alarm pattern
+                description: Create an alarm pattern.
+                value: {
+                  "title": "Alarm pattern",
+                  "type": "alarm",
+                  "is_corporate": false,
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      },
+                      {
+                        "field": "v.duration",
+                        "cond": {
+                          "type": "gt",
+                          "value": {
+                            "value": 3,
+                            "unit": "m"
+                          }
+                        }
+                      },
+                      {
+                        "field": "v.ack",
+                        "cond": {
+                          "type": "eq",
+                          "value": false
+                        }
+                      }
+                    ]
+                  ]
+                }
+              entity:
+                summary: Entity pattern
+                description: Create a entity pattern.
+                value: {
+                  "title": "Entity pattern",
+                  "type": "entity",
+                  "is_corporate": false,
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "_id",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource/cps_component"
+                        }
+                      },
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      },
+                      {
+                        "field": "category",
+                        "cond": {
+                          "type": "eq",
+                          "value": "293d7b83-e622-40d9-95ef-86b06eda3746"
+                        }
+                      },
+                      {
+                        "field": "type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "resource"
+                        }
+                      },
+                      {
+                        "field": "infos.custom_name",
+                        "field_type": "string",
+                        "cond": {
+                          "type": "eq",
+                          "value": "custom"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              pbehavior:
+                summary: Pbehavior pattern
+                description: Create a pbehavior pattern.
+                value: {
+                  "title": "Pbehavior pattern",
+                  "type": "pbehavior",
+                  "is_corporate": false,
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info.id",
+                        "cond": {
+                          "type": "eq",
+                          "value": "f7501e0a-a04d-46f1-bf10-4a85c4b37433"
+                        }
+                      },
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_maintenance"
+                        }
+                      },
+                      {
+                        "field": "pbehavior_info.reason",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_reason"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /patterns/{id}:
+    get:
+      tags:
+        - saved-patterns
+      summary: Get saved pattern by id
+      description: Get saved pattern by id
+      operationId: saved-patterns-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: pattern id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - saved-patterns
+      summary: Update saved pattern by id
+      description: Update saved pattern by id
+      operationId: saved-patterns-update-by-id
+      parameters:
+        - name: id
+          in: path
+          description: pattern id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a pattern.
+                value: {
+                  "title": "Alarm pattern",
+                  "type": "alarm",
+                  "is_corporate": false,
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      },
+                      {
+                        "field": "v.duration",
+                        "cond": {
+                          "type": "gt",
+                          "value": {
+                            "value": 3,
+                            "unit": "m"
+                          }
+                        }
+                      },
+                      {
+                        "field": "v.ack",
+                        "cond": {
+                          "type": "eq",
+                          "value": false
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - saved-patterns
+      summary: Delete saved pattern by id
+      description: Delete saved pattern by id
+      operationId: saved-patterns-delete-by-id
+      parameters:
+        - name: id
+          in: path
+          description: pattern id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
         404:
           description: Not Found
           content:
@@ -3981,7 +5284,7 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-  /pbehavior-comments/:id:
+  /pbehavior-comments/{id}:
     delete:
       tags:
         - pbehavior-comments
@@ -4726,13 +6029,17 @@ paths:
                   "rrule": "",
                   "type": "default_Maintenance",
                   "reason": "default_reason",
-                  "filter": {
-                    "$and": [
+                  "entity_pattern": [
+                    [
                       {
-                        "name": "cps_resource"
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
                       }
                     ]
-                  }
+                  ]
                 }
               pause:
                 summary: Pause period
@@ -4745,13 +6052,17 @@ paths:
                   "rrule": "",
                   "type": "default_pause",
                   "reason": "default_reason",
-                  "filter": {
-                    "$and": [
+                  "entity_pattern": [
+                    [
                       {
-                        "name": "cps_resource"
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
                       }
                     ]
-                  }
+                  ]
                 }
               inactive:
                 summary: Inactive period
@@ -4764,13 +6075,17 @@ paths:
                   "rrule": "FREQ=WEEKLY",
                   "type": "default_inactive",
                   "reason": "default_reason",
-                  "filter": {
-                    "$and": [
+                  "entity_pattern": [
+                    [
                       {
-                        "name": "cps_resource"
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
                       }
                     ]
-                  }
+                  ]
                 }
               active:
                 summary: Active period
@@ -4783,13 +6098,17 @@ paths:
                   "rrule": "FREQ=DAILY",
                   "type": "default_active",
                   "reason": "default_reason",
-                  "filter": {
-                    "$and": [
+                  "entity_pattern": [
+                    [
                       {
-                        "name": "cps_resource"
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
                       }
                     ]
-                  },
+                  ],
                   "exdates": [
                     {
                       "begin": 1651460400,
@@ -4871,13 +6190,17 @@ paths:
                   "rrule": "FREQ=DAILY",
                   "type": "default_active",
                   "reason": "default_reason",
-                  "filter": {
-                    "$and": [
+                  "entity_pattern": [
+                    [
                       {
-                        "name": "cps_resource"
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
                       }
                     ]
-                  },
+                  ],
                   "exdates": [
                     {
                       "begin": 1651460400,
@@ -5021,39 +6344,6 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
         404:
           description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-  /pbehaviors/count:
-    post:
-      tags:
-        - pbehaviors
-      summary: Count entities matching filter
-      description: Count entities matching filter
-      operationId: pbehaviors-countfilter
-      requestBody:
-        description: body
-        content:
-          application/json:
-            schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehavior.FilterRequest'
-        required: true
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.CountFilterResult'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-        408:
-          description: Request Timeout
           content:
             application/json:
               schema:
@@ -5289,6 +6579,41 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/resolverule.CreateRequest'
+            examples:
+              create:
+                summary: Create a resolve rule
+                description: Create a resolve rule
+                value: {
+                  "name": "test-resolve-rule-name",
+                  "description": "test-resolve-rule-desc",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-resource-name"
+                        }
+                      }
+                    ]
+                  ],
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-component"
+                        }
+                      }
+                    ]
+                  ],
+                  "duration": {
+                    "value": 2,
+                    "unit": "s"
+                  },
+                  "priority": 10
+                }
         required: true
       responses:
         201:
@@ -5349,6 +6674,41 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/resolverule.UpdateRequest'
+            examples:
+              update:
+                summary: Update a resolve rule
+                description: Update a resolve rule
+                value: {
+                  "name": "test-resolve-rule-name-updated",
+                  "description": "test-resolve-rule-desc-updated",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-resource-name-updated"
+                        }
+                      }
+                    ]
+                  ],
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-component-updated"
+                        }
+                      }
+                    ]
+                  ],
+                  "duration": {
+                    "value": 2,
+                    "unit": "s"
+                  },
+                  "priority": 10
+                }
         required: true
       responses:
         200:
@@ -5385,6 +6745,61 @@ paths:
       responses:
         204:
           description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /resolved-alarms:
+    get:
+      tags:
+        - alarms
+      summary: Find resolved alarms of entity
+      description: Get paginated list of alarms.
+      operationId: alarms-find-resolved-alarms
+      parameters:
+        - name: _id
+          in: query
+          description: entity id
+          required: true
+          schema:
+            type: string
+        - name: tstart
+          in: query
+          schema:
+            type: integer
+        - name: tstop
+          in: query
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -5613,24 +7028,34 @@ paths:
                       "parameters": {
                         "output": "The alarm is acknowledged by scenario"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -5652,24 +7077,34 @@ paths:
                       "parameters": {
                         "output": "The alarm is unacknowledged by scenario"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -5692,24 +7127,34 @@ paths:
                         "output": "The ticket is added to the alarm by scenario",
                         "ticket": "ENV-116"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -5731,24 +7176,34 @@ paths:
                       "parameters": {
                         "output": "The alarm is canceled by scenario"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 1
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 1
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -5771,24 +7226,34 @@ paths:
                         "output": "The state of the alarm is changed by scenario",
                         "state": 3
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "status": {
-                              "val": 1
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 1
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -5817,24 +7282,34 @@ paths:
                           "unit": "m"
                         }
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -5860,24 +7335,34 @@ paths:
                           "unit": "m"
                         }
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -5919,24 +7404,34 @@ paths:
                           "unit": "s"
                         }
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6025,24 +7520,34 @@ paths:
                       "parameters": {
                         "output": "The alarm is acknowledged by scenario"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6064,24 +7569,34 @@ paths:
                       "parameters": {
                         "output": "The alarm is unacknowledged by scenario"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6104,24 +7619,34 @@ paths:
                         "output": "The ticket is added to the alarm by scenario",
                         "ticket": "ENV-116"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6143,24 +7668,34 @@ paths:
                       "parameters": {
                         "output": "The alarm is canceled by scenario"
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 1
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 1
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6183,24 +7718,34 @@ paths:
                         "output": "The state of the alarm is changed by scenario",
                         "state": 3
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "status": {
-                              "val": 1
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 1
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6229,24 +7774,34 @@ paths:
                           "unit": "m"
                         }
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6272,24 +7827,34 @@ paths:
                           "unit": "m"
                         }
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -6331,24 +7896,34 @@ paths:
                           "unit": "s"
                         }
                       },
-                      "alarm_patterns": [
-                        {
-                          "v": {
-                            "state": {
-                              "val": 3
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
-                        }
+                        ]
                       ],
-                      "entity_patterns": [
-                        {
-                          "type": "resource",
-                          "infos": {
-                            "group": {
+                      "entity_pattern": [
+                        [
+                          {
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
+                            "cond": {
+                              "type": "eq",
                               "value": "g1"
                             }
                           }
-                        }
+                        ]
                       ],
                       "drop_scenario_if_not_matched": false,
                       "emit_trigger": false
@@ -7037,6 +8612,7 @@ paths:
                                 "title": "New widget",
                                 "type": "AlarmsList",
                                 "parameters": {
+                                  "mainFilter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
                                   "widgetColumns": [
                                     {
                                       "value": "v.connector",
@@ -7075,7 +8651,9 @@ paths:
                                     "order": "DESC"
                                   },
                                   "itemsPerPage": 15,
-                                  "opened": true
+                                  "alarmsStateFilter": {
+                                    "opened": true
+                                  }
                                 },
                                 "grid_parameters": {
                                   "mobile": {
@@ -7099,7 +8677,40 @@ paths:
                                     "h": 1,
                                     "autoHeight": true
                                   }
-                                }
+                                },
+                                "filters": [
+                                  {
+                                    "_id": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                                    "title": "New filter. ID is used to set main filter parameter.",
+                                    "is_private": false,
+                                    "alarm_pattern": [
+                                      [
+                                        {
+                                          "field": "v.component",
+                                          "cond": {
+                                            "type": "eq",
+                                            "value": "cps_component"
+                                          }
+                                        }
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "title": "New filter 2",
+                                    "is_private": false,
+                                    "entity_pattern": [
+                                      [
+                                        {
+                                          "field": "name",
+                                          "cond": {
+                                            "type": "eq",
+                                            "value": "cps_resource"
+                                          }
+                                        }
+                                      ]
+                                    ]
+                                  }
+                                ]
                               }
                             ]
                           },
@@ -7710,7 +9321,7 @@ paths:
             examples:
               copy:
                 summary: Copy
-                description: Copy a widget
+                description: Copy a widget. Widget's filters are also copied.
                 value: {
                   "tab": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
                   "title": "Opened",
@@ -7739,6 +9350,7 @@ paths:
                     }
                   },
                   "parameters": {
+                    "mainFilter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
                     "widgetColumns": [
                       {
                         "value": "v.connector",
@@ -7777,7 +9389,9 @@ paths:
                       "order": "DESC"
                     },
                     "itemsPerPage": 15,
-                    "opened": true
+                    "alarmsStateFilter": {
+                      "opened": true
+                    }
                   }
                 }
         required: true
@@ -7794,6 +9408,254 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /widget-filters:
+    get:
+      tags:
+        - widgetfilters
+      summary: Find widget filters
+      description: Get paginated list of widget filters
+      operationId: widgetfilters-find-all
+      parameters:
+        - name: private
+          in: query
+          schema:
+            type: boolean
+        - name: widget
+          in: query
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    post:
+      tags:
+        - widgetfilters
+      summary: Create widget filter
+      description: Create widget filter
+      operationId: widgetfilters-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.EditRequest'
+            examples:
+              embedpatterns:
+                summary: Embed patterns
+                description: Create a filter with embed patterns.
+                value: {
+                  "title": "Filter",
+                  "widget": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "is_private": true,
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_maintenance"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              corporatepatterns:
+                summary: Corporate patterns
+                description: Create a filter with corporate patterns.
+                value: {
+                  "title": "Filter",
+                  "widget": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "is_private": true,
+                  "corporate_alarm_pattern": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                  "corporate_entity_pattern": "84511962-6b00-4b3e-8a00-29216b2e1be6",
+                  "corporate_pbehavior_pattern": "0be1d3df-816b-4359-a2ba-7bcccb33ed4f"
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /widget-filters/{id}:
+    get:
+      tags:
+        - widgetfilters
+      summary: Get widget filter by id
+      description: Get widget filter by id
+      operationId: widgetfilters-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: filter id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - widgetfilters
+      summary: Update widget filter by id
+      description: Update widget filter by id
+      operationId: widgetfilters-update-by-id
+      parameters:
+        - name: id
+          in: path
+          description: filter id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a filter.
+                value: {
+                  "title": "Filter",
+                  "widget": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "is_private": true,
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_maintenance"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - widgetfilters
+      summary: Delete widget filter by id
+      description: Delete widget filter by id
+      operationId: widgetfilters-delete-by-id
+      parameters:
+        - name: id
+          in: path
+          description: filter id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
         404:
           description: Not Found
           content:
@@ -7900,6 +9762,7 @@ paths:
                     }
                   },
                   "parameters": {
+                    "mainFilter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
                     "widgetColumns": [
                       {
                         "value": "v.connector",
@@ -7938,7 +9801,9 @@ paths:
                       "order": "DESC"
                     },
                     "itemsPerPage": 15,
-                    "opened": true
+                    "alarmsStateFilter": {
+                      "opened": true
+                    }
                   }
                 }
         required: true
@@ -8033,6 +9898,7 @@ paths:
                     }
                   },
                   "parameters": {
+                    "mainFilter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
                     "widgetColumns": [
                       {
                         "value": "v.connector",
@@ -8071,7 +9937,9 @@ paths:
                       "order": "DESC"
                     },
                     "itemsPerPage": 15,
-                    "opened": true
+                    "alarmsStateFilter": {
+                      "opened": true
+                    }
                   }
                 }
         required: true
@@ -8224,6 +10092,21 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/event.Event'
+    BulkResponseItem:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: integer
+        item:
+          type: object
+        error:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: string
 
   securitySchemes:
     BasicAuth:

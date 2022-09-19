@@ -57,10 +57,16 @@ Il s'agit en réalité de la réponse renvoyée par le reverse proxy `nginx`.
     systemctl restart canopsis-service@canopsis-api.service
     ```
 
-=== "Docker Compose"
+=== "Docker Compose Community"
 
     ```sh
-    docker-compose restart api
+    CPS_EDITION=community docker-compose restart api
+    ```
+
+=== "Docker Compose Pro"
+
+    ```sh
+    CPS_EDITION=pro docker-compose restart api
     ```
 
 Si cela ne permet pas de rétablir le service, une analyse de logs est nécessaire.
@@ -80,10 +86,16 @@ Canopsis ne peut alors pas fonctionner correctement.
     systemctl restart redis.service
     ```
 
-=== "Docker Compose"
+=== "Docker Compose Community"
 
     ```sh
-    docker-compose restart redis
+    CPS_EDITION=community docker-compose restart redis
+    ```
+
+=== "Docker Compose Pro"
+
+    ```sh
+    CPS_EDITION=pro docker-compose restart redis
     ```
 
 Si cela ne permet pas de rétablir le service, une analyse de logs est nécessaire.
@@ -103,10 +115,16 @@ Canopsis ne peut alors pas fonctionner correctement.
     systemctl restart mongod.service
     ```
 
-=== "Docker Compose"
+=== "Docker Compose Community"
 
     ```sh
-    docker-compose restart mongodb
+    CPS_EDITION=community docker-compose restart mongodb
+    ```
+
+=== "Docker Compose Pro"
+
+    ```sh
+    CPS_EDITION=pro docker-compose restart mongodb
     ```
 
 Si cela ne permet pas de rétablir le service, une analyse de logs est nécessaire.
@@ -126,10 +144,16 @@ Canopsis ne peut alors pas fonctionner correctement.
     systemctl restart rabbitmq.service
     ```
 
-=== "Docker Compose"
+=== "Docker Compose Community"
 
     ```sh
-    docker-compose restart rabbitmq
+    CPS_EDITION=community docker-compose restart rabbitmq
+    ```
+
+=== "Docker Compose Pro"
+
+    ```sh
+    CPS_EDITION=pro docker-compose restart rabbitmq
     ```
 
 Si cela ne permet pas de rétablir le service, une analyse de logs est nécessaire.

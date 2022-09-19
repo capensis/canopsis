@@ -46,3 +46,29 @@ export const convertPayloadToJson = (payload, indents = 4) => {
 
   return JSON.stringify(JSON.parse(preparedPayload), null, indents);
 };
+
+/**
+ * Match variable by selection
+ *
+ * @param {string} text
+ * @param {Selection} selection
+ * @returns {Object}
+ */
+export const matchPayloadVariableBySelection = (text, selection) => {
+  const { anchorOffset, focusOffset } = selection;
+  const [selectionStart, selectionEnd] = [anchorOffset, focusOffset].sort();
+
+  const match = text?.matchAll(/({{\s?([\w.]{2,})\s?}})/g);
+
+  return match && Array.from(match).find((group) => {
+    const value = group[0];
+
+    const startIndex = group.index;
+    const endIndex = group.index + value.length;
+
+    return selectionStart >= startIndex
+      && selectionEnd > startIndex
+      && selectionStart < endIndex
+      && selectionEnd <= endIndex;
+  });
+};

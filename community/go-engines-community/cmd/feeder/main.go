@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"math"
+	"os"
+	"os/signal"
 	"strconv"
 	"time"
 
@@ -52,8 +55,9 @@ func (f *Feeder) getCompatEvent(state, Ci, ci, ri int64) types.Event {
 	}
 }
 
-func (f *Feeder) sendBytes(content []byte, rk string) error {
-	return f.references.channelPub.Publish(
+func (f *Feeder) sendBytes(ctx context.Context, content []byte, rk string) error {
+	return f.references.channelPub.PublishWithContext(
+		ctx,
 		f.flags.ExchangeName,
 		rk,
 		false,
@@ -65,7 +69,7 @@ func (f *Feeder) sendBytes(content []byte, rk string) error {
 	)
 }
 
-func (f *Feeder) send(state, Ci, ci, ri int64) error {
+func (f *Feeder) send(ctx context.Context, state, Ci, ci, ri int64) error {
 	var evt types.Event
 	if f.flags.DirtyEvent {
 		evt = f.getDirtyEvent(state, Ci, ci, ri)
@@ -73,12 +77,12 @@ func (f *Feeder) send(state, Ci, ci, ri int64) error {
 		evt = f.getCompatEvent(state, Ci, ci, ri)
 	}
 	bevt, _ := json.Marshal(evt)
-	return f.sendBytes(bevt, evt.GetCompatRK())
+	return f.sendBytes(ctx, bevt, evt.GetCompatRK())
 }
 
 func (f *Feeder) adjust(target float64, sent, tsent int64) int64 {
 	eps := float64(sent * time.Second.Nanoseconds() / tsent)
-	variance := math.Abs(target-eps) * 100.0 / float64(target)
+	variance := math.Abs(target-eps) * 100.0 / target
 	adj := int64(0)
 
 	if variance > 1 {
@@ -114,19 +118,19 @@ func (f *Feeder) setupAmqp() error {
 	return nil
 }
 
-func (f *Feeder) Run() error {
+func (f *Feeder) Run(ctx context.Context) error {
 	var err error
 	switch f.flags.Mode {
 	case "file":
 		if f.flags.PubHTTP {
 			f.modeSendEventHTTP()
 		} else if f.flags.PubAMQP {
-			err = f.modeSendEvent()
+			err = f.modeSendEvent(ctx)
 		}
 	case "feeder":
-		err = f.modeFeeder()
+		err = f.modeFeeder(ctx)
 	default:
-		err = fmt.Errorf("Unknown mode \"%s\": please check help (-h)", f.flags.Mode)
+		err = fmt.Errorf("unknown mode \"%s\": please check help (-h)", f.flags.Mode)
 	}
 
 	return err
@@ -141,13 +145,16 @@ func NewFeeder(logger zerolog.Logger) (*Feeder, error) {
 	}
 
 	if f.flags.Version {
-		cps.PrintVersionExit()
+		cps.PrintVersionInfo()
+		os.Exit(0)
 	}
 
 	return &f, nil
 }
 
 func main() {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 	logger := log.NewLogger(false)
 
 	feeder, err := NewFeeder(logger)
@@ -155,7 +162,7 @@ func main() {
 		logger.Fatal().Err(err).Msg("feeder init error")
 	}
 
-	if err = feeder.Run(); err != nil {
+	if err = feeder.Run(ctx); err != nil {
 		logger.Fatal().Err(err).Msg("feeder run error")
 	}
 }

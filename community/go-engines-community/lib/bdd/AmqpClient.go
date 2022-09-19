@@ -5,6 +5,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math/rand"
+	"net/url"
+	"text/template"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -14,10 +19,6 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
-	"math/rand"
-	"net/url"
-	"text/template"
-	"time"
 )
 
 // stepTimeout is used to limit waiting time for wait steps.
@@ -112,7 +113,8 @@ func (c *AmqpClient) Reset(ctx context.Context, _ *godog.Scenario) (context.Cont
 	}
 }
 
-/**
+/*
+IWaitTheEndOfEventProcessing
 Step example:
 	When I wait the end of event processing
 */
@@ -120,7 +122,8 @@ func (c *AmqpClient) IWaitTheEndOfEventProcessing() error {
 	return c.IWaitTheEndOfEventsProcessing(1)
 }
 
-/**
+/*
+IWaitTheEndOfEventsProcessing
 Step example:
 	When I wait the end of 2 events processing
 */
@@ -153,7 +156,8 @@ func (c *AmqpClient) IWaitTheEndOfEventsProcessing(count int) error {
 	}
 }
 
-/**
+/*
+ICallRPCAxeRequest
 Step example:
 	When I call RPC request to engine-axe with alarm resource/component:
 	"""
@@ -181,7 +185,7 @@ func (c *AmqpClient) ICallRPCAxeRequest(ctx context.Context, eid string, doc str
 		return err
 	}
 
-	res, err := c.executeRPC(canopsis.AxeRPCQueueServerName, body)
+	res, err := c.executeRPC(ctx, canopsis.AxeRPCQueueServerName, body)
 	if err != nil {
 		return err
 	}
@@ -199,7 +203,8 @@ func (c *AmqpClient) ICallRPCAxeRequest(ctx context.Context, eid string, doc str
 	return nil
 }
 
-/**
+/*
+ICallRPCWebhookRequest
 Step example:
 	When I call RPC request to engine-webhook with alarm resource/component:
 	"""
@@ -235,7 +240,7 @@ func (c *AmqpClient) ICallRPCWebhookRequest(ctx context.Context, eid string, doc
 		return err
 	}
 
-	res, err := c.executeRPC(canopsis.WebhookRPCQueueServerName, body)
+	res, err := c.executeRPC(ctx, canopsis.WebhookRPCQueueServerName, body)
 	if err != nil {
 		return err
 	}
@@ -288,7 +293,7 @@ func (c *AmqpClient) findAlarm(ctx context.Context, eid string) (*types.AlarmWit
 	return nil, fmt.Errorf("couldn't find an alarm for eid = %s", eid)
 }
 
-func (c *AmqpClient) executeRPC(queue string, body []byte) ([]byte, error) {
+func (c *AmqpClient) executeRPC(ctx context.Context, queue string, body []byte) ([]byte, error) {
 	publishCh, err := c.amqpConnection.Channel()
 	if err != nil {
 		return nil, err
@@ -330,7 +335,8 @@ func (c *AmqpClient) executeRPC(queue string, body []byte) ([]byte, error) {
 	}
 
 	corrID := fmt.Sprintf("test-%d", rand.Int())
-	err = publishCh.Publish(
+	err = publishCh.PublishWithContext(
+		ctx,
 		"",    // exchange
 		queue, // routing key
 		false, // mandatory
