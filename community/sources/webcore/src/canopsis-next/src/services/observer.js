@@ -11,8 +11,8 @@ class Observer {
     this.handlers = this.handlers.filter(h => h !== handler);
   }
 
-  async notify() {
-    await Promise.all(this.handlers.map(subscriber => subscriber()));
+  async notify(data) {
+    await Promise.all(this.handlers.map(subscriber => subscriber(data)));
   }
 }
 

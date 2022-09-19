@@ -27,6 +27,7 @@
   )
     template(#item="{ item, tile }")
       v-list-tile.c-entity-field--tile(v-bind="tile.props", v-on="tile.on")
+        slot(name="icon", :item="item")
         v-list-tile-content {{ getItemText(item) }}
         span.ml-4.grey--text {{ item.type }}
     template(#append-item="")

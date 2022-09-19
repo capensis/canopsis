@@ -4,13 +4,13 @@ Feature: get a pbehavior by entity id
 
   Scenario: given get request should return pbehaviors
     When I am admin
-    When I do GET /api/v4/entities/pbehaviors?_id=test-pbehavior-get-by-entity-id-resource/test-pbehavior-get-by-entity-id-component
+    When I do GET /api/v4/entities/pbehaviors?_id=test-resource-to-pbehavior-get-by-entity-id-1/test-component-default
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     [
       {
-        "_id": "test-pbehavior-to-get-by-entity-id",
+        "_id": "test-pbehavior-to-get-by-entity-id-1",
         "author": "root",
         "comments": [],
         "color": "#FFFFFF",
@@ -19,18 +19,22 @@ Feature: get a pbehavior by entity id
         "enabled": true,
         "exceptions": [],
         "exdates": [],
-        "filter": {
-          "$and": [
+        "entity_pattern": [
+          [
             {
-              "name": "test-pbehavior-get-by-entity-id-resource"
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-resource-to-pbehavior-get-by-entity-id-1"
+              }
             }
           ]
-        },
-        "name": "Pbehavior by entity id",
+        ],
+        "name": "test-pbehavior-to-get-by-entity-id-1-name",
         "reason": {
-          "_id": "test-reason-1",
-          "name": "test-reason-1-name",
-          "description": "test-reason-1-description"
+          "_id": "test-reason-to-pbh-edit",
+          "name": "test-reason-to-pbh-edit-name",
+          "description": "test-reason-to-pbh-edit-description"
         },
         "rrule": "",
         "tstart": 1591172881,
@@ -40,7 +44,46 @@ Feature: get a pbehavior by entity id
           "description": "Pbh edit 1 State type",
           "icon_name": "test-to-pbh-edit-1-icon",
           "name": "Pbh edit 1 State",
-          "priority": 10,
+          "type": "active"
+        }
+      }
+    ]
+    """
+
+  Scenario: given get request should return pbehaviors with old mongo query
+    When I am admin
+    When I do GET /api/v4/entities/pbehaviors?_id=test-resource-to-pbehavior-get-by-entity-id-2/test-component-default
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    [
+      {
+        "_id": "test-pbehavior-to-get-by-entity-id-2",
+        "author": "root",
+        "comments": [],
+        "color": "#FFFFFF",
+        "created": 1592215337,
+        "updated": 1592215337,
+        "enabled": true,
+        "exceptions": [],
+        "exdates": [],
+        "old_mongo_query": {
+          "$and": [{"name": "test-resource-to-pbehavior-get-by-entity-id-2"}]
+        },
+        "name": "test-pbehavior-to-get-by-entity-id-2-name",
+        "reason": {
+          "_id": "test-reason-to-pbh-edit",
+          "name": "test-reason-to-pbh-edit-name",
+          "description": "test-reason-to-pbh-edit-description"
+        },
+        "rrule": "",
+        "tstart": 1591172881,
+        "tstop": 1591536400,
+        "type": {
+          "_id": "test-type-to-pbh-edit-1",
+          "description": "Pbh edit 1 State type",
+          "icon_name": "test-to-pbh-edit-1-icon",
+          "name": "Pbh edit 1 State",
           "type": "active"
         }
       }

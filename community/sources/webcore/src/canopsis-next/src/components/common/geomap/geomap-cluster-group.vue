@@ -8,6 +8,20 @@ import { MarkerClusterGroup } from 'leaflet.markercluster';
 import { LayerGroupMixin, optionsMerger, findRealParent, propsBinder } from 'vue2-leaflet';
 import { DivIcon, Point, DomEvent } from 'leaflet';
 
+const CustomDivIcon = DivIcon.extend({
+  createIcon(oldIcon) {
+    const div = DivIcon.prototype.createIcon.apply(this, oldIcon);
+
+    if (this.options.style) {
+      Object.entries(this.options.style).forEach(([name, value]) => {
+        div.style[name] = value;
+      });
+    }
+
+    return div;
+  },
+});
+
 export default {
   mixins: [LayerGroupMixin],
   props: {
@@ -21,6 +35,10 @@ export default {
       type: String,
       required: false,
     },
+    clusterStyle: {
+      type: Object,
+      required: false,
+    },
   },
   data() {
     return {
@@ -29,6 +47,9 @@ export default {
   },
   watch: {
     clusterClassName() {
+      this.mapObject.refreshClusters();
+    },
+    clusterStyle() {
       this.mapObject.refreshClusters();
     },
   },
@@ -66,9 +87,10 @@ export default {
     createIcon(cluster) {
       const count = cluster.getChildCount();
 
-      return new DivIcon({
+      return new CustomDivIcon({
         html: `<div><span>${count}</span></div>`,
         className: `marker-cluster ${this.clusterClassName}`,
+        style: this.clusterStyle,
         iconSize: new Point(40, 40),
       });
     },

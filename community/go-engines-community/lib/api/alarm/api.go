@@ -1,6 +1,8 @@
 package alarm
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -10,10 +12,20 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
+	"github.com/rs/zerolog"
+	"github.com/valyala/fastjson"
 )
 
 type API interface {
 	List(c *gin.Context)
+	Get(c *gin.Context)
+	GetDetails(c *gin.Context)
+	ListManual(c *gin.Context)
+	ListByService(c *gin.Context)
+	ListByComponent(c *gin.Context)
+	ResolvedList(c *gin.Context)
 	Count(c *gin.Context)
 	StartExport(c *gin.Context)
 	GetExport(c *gin.Context)
@@ -26,12 +38,15 @@ type api struct {
 	defaultExportFields    export.Fields
 	exportSeparators       map[string]rune
 	timezoneConfigProvider config.TimezoneConfigProvider
+
+	logger zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	executor export.TaskExecutor,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	logger zerolog.Logger,
 ) API {
 	fields := []string{"_id", "v.connector", "v.connector_name", "v.component",
 		"v.resource", "v.output", "v.state.val", "v.status.val"}
@@ -50,6 +65,7 @@ func NewApi(
 		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
 			"tab": '	', "space": ' '},
 		timezoneConfigProvider: timezoneConfigProvider,
+		logger:                 logger,
 	}
 }
 
@@ -64,14 +80,241 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	apiKey := ""
-	if key, ok := c.Get(auth.ApiKey); ok {
-		apiKey = key.(string)
-	}
+	apiKey := c.MustGet(auth.ApiKey).(string)
 
 	aggregationResult, err := a.store.Find(c.Request.Context(), apiKey, r)
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
 		panic(err)
+	}
+
+	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// Get
+// @Success 200 {object} Alarm
+func (a *api) Get(c *gin.Context) {
+	apiKey := c.MustGet(auth.ApiKey).(string)
+	alarm, err := a.store.GetByID(c.Request.Context(), c.Param("id"), apiKey)
+	if err != nil {
+		panic(err)
+	}
+
+	if alarm == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.JSON(http.StatusOK, alarm)
+}
+
+// GetDetails
+// @Param request body []DetailsRequest true "request"
+// @Success 200 {array} DetailsResponse
+func (a *api) GetDetails(c *gin.Context) {
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	apiKey := c.MustGet(auth.ApiKey).(string)
+	defaultQuery := pagination.GetDefaultQuery()
+	response := make([]DetailsResponse, len(rawObjects))
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response[idx].Status = http.StatusBadRequest
+			response[idx].Error = err.Error()
+			continue
+		}
+
+		var request DetailsRequest
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response[idx].Status = http.StatusBadRequest
+			response[idx].Error = err.Error()
+			continue
+		}
+
+		if request.Steps != nil {
+			request.Steps.Paginate = true
+			if request.Steps.Page == 0 {
+				request.Steps.Page = defaultQuery.Page
+			}
+			if request.Steps.Limit == 0 {
+				request.Steps.Limit = defaultQuery.Limit
+			}
+		}
+
+		if request.Children != nil {
+			request.Children.Paginate = true
+			if request.Children.Page == 0 {
+				request.Children.Page = defaultQuery.Page
+			}
+			if request.Children.Limit == 0 {
+				request.Children.Limit = defaultQuery.Limit
+			}
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response[idx].ID = request.ID
+			response[idx].Status = http.StatusBadRequest
+			var errs validator.ValidationErrors
+			if errors.As(err, &errs) {
+				response[idx].Errors = common.TransformValidationErrors(errs, request).Errors
+			} else {
+				response[idx].Error = "Request has invalid structure"
+			}
+			continue
+		}
+
+		details, err := a.store.GetDetails(c.Request.Context(), apiKey, request)
+		if err != nil {
+			response[idx].ID = request.ID
+			response[idx].Status = http.StatusInternalServerError
+			response[idx].Error = common.InternalServerErrorResponse.Error
+			a.logger.Err(err).Msg("cannot fetch alarm details")
+			continue
+		}
+
+		if details == nil {
+			response[idx].ID = request.ID
+			response[idx].Status = http.StatusNotFound
+			response[idx].Error = common.NotFoundResponse.Error
+			continue
+		}
+
+		response[idx].ID = request.ID
+		response[idx].Status = http.StatusOK
+		response[idx].Data = *details
+	}
+
+	c.JSON(http.StatusMultiStatus, response)
+}
+
+// ListManual
+// @Success 200 {array} ManualResponse
+func (a *api) ListManual(c *gin.Context) {
+	var r ManualRequest
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	alarms, err := a.store.FindManual(c.Request.Context(), r.Search)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, alarms)
+}
+
+// ListByService
+// @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
+func (a *api) ListByService(c *gin.Context) {
+	r := ListByServiceRequest{
+		Query: pagination.GetDefaultQuery(),
+	}
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	apiKey := c.MustGet(auth.ApiKey).(string)
+	aggregationResult, err := a.store.FindByService(c.Request.Context(), c.Param("id"), apiKey, r)
+	if err != nil {
+		panic(err)
+	}
+
+	if aggregationResult == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// ListByComponent
+// @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
+func (a *api) ListByComponent(c *gin.Context) {
+	r := ListByComponentRequest{
+		Query: pagination.GetDefaultQuery(),
+	}
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	apiKey := c.MustGet(auth.ApiKey).(string)
+	aggregationResult, err := a.store.FindByComponent(c.Request.Context(), r, apiKey)
+	if err != nil {
+		panic(err)
+	}
+
+	if aggregationResult == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// ResolvedList
+// @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
+func (a *api) ResolvedList(c *gin.Context) {
+	r := ResolvedListRequest{
+		Query: pagination.GetDefaultQuery(),
+	}
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	apiKey := c.MustGet(auth.ApiKey).(string)
+	aggregationResult, err := a.store.FindResolved(c.Request.Context(), r, apiKey)
+	if err != nil {
+		panic(err)
+	}
+
+	if aggregationResult == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
 	}
 
 	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
@@ -117,10 +360,7 @@ func (a *api) StartExport(c *gin.Context) {
 		exportFields = a.defaultExportFields
 	}
 
-	apiKey := ""
-	if key, ok := c.Get(auth.ApiKey); ok {
-		apiKey = key.(string)
-	}
+	apiKey := c.MustGet(auth.ApiKey).(string)
 
 	taskID, err := a.exportExecutor.StartExecute(c.Request.Context(), export.Task{
 		Filename:     "alarms",

@@ -43,7 +43,7 @@
       absolute
     )
       point-form-dialog(
-        v-if="formPoint",
+        v-if="isFormOpened",
         :point="formPoint",
         :editing="!!editingPoint",
         @cancel="clearMenuData",
@@ -238,6 +238,8 @@ export default {
     },
 
     showRemovePointModal() {
+      this.shownMenu = false;
+
       this.$modals.show({
         name: MODALS.confirmation,
         config: {

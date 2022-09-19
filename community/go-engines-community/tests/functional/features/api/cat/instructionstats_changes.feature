@@ -28,6 +28,7 @@ Feature: get instruction statistics
           "ok_alarm_states": 0,
           "avg_complete_time": 400,
           "execution_count": 1,
+          "successful": 1,
           "modified_on": 1596712203
         },
         {
@@ -48,6 +49,7 @@ Feature: get instruction statistics
           "ok_alarm_states": 1,
           "avg_complete_time": 275,
           "execution_count": 2,
+          "successful": 2,
           "modified_on": 1596712103
         },
         {
@@ -68,6 +70,7 @@ Feature: get instruction statistics
           "ok_alarm_states": 0,
           "avg_complete_time": 0,
           "execution_count": 0,
+          "successful": 0,
           "modified_on": 1596712003
         }
       ],
@@ -106,6 +109,7 @@ Feature: get instruction statistics
           "ok_alarm_states": 0,
           "avg_complete_time": 400,
           "execution_count": 1,
+          "successful": 1,
           "modified_on": 1596712203
         },
         {
@@ -126,6 +130,7 @@ Feature: get instruction statistics
           "ok_alarm_states": 1,
           "avg_complete_time": 275,
           "execution_count": 2,
+          "successful": 2,
           "modified_on": 1596712103
         },
         {
@@ -146,6 +151,7 @@ Feature: get instruction statistics
           "ok_alarm_states": 0,
           "avg_complete_time": 0,
           "execution_count": 0,
+          "successful": 0,
           "modified_on": 1596712003
         }
       ],
@@ -184,6 +190,7 @@ Feature: get instruction statistics
           "ok_alarm_states": 0,
           "avg_complete_time": 0,
           "execution_count": 0,
+          "successful": 0,
           "modified_on": 1596712203
         }
       ],
@@ -222,6 +229,7 @@ Feature: get instruction statistics
           "ok_alarm_states": 0,
           "avg_complete_time": 400,
           "execution_count": 1,
+          "successful": 1,
           "modified_on": 1596712203
         },
         {
@@ -242,6 +250,7 @@ Feature: get instruction statistics
           "ok_alarm_states": 1,
           "avg_complete_time": 275,
           "execution_count": 2,
+          "successful": 2,
           "modified_on": 1596712103
         },
         {
@@ -262,6 +271,7 @@ Feature: get instruction statistics
           "ok_alarm_states": 0,
           "avg_complete_time": 0,
           "execution_count": 0,
+          "successful": 0,
           "modified_on": 1596712003
         }
       ],

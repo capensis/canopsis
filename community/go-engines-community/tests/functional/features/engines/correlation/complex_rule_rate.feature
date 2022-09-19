@@ -7,14 +7,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-1",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-1-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-1-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 10,
           "unit": "s"
@@ -74,50 +78,15 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-1"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-1"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-1"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 3
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-1"
           }
         }
@@ -130,6 +99,64 @@ Feature: correlation feature - complex rule with threshold rate
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-1-connector",
+                  "connector_name": "test-complex-rule-rate-1-connectorname",
+                  "component":  "test-complex-rule-rate-1-component",
+                  "resource": "test-complex-rule-rate-1-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-1-connector",
+                  "connector_name": "test-complex-rule-rate-1-connectorname",
+                  "component":  "test-complex-rule-rate-1-component",
+                  "resource": "test-complex-rule-rate-1-resource-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-1-connector",
+                  "connector_name": "test-complex-rule-rate-1-connectorname",
+                  "component":  "test-complex-rule-rate-1-component",
+                  "resource": "test-complex-rule-rate-1-resource-3"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
 
   Scenario: given meta alarm rule with threshold rate and events shouldn't create meta alarm because rate was recomputed by the new entity event after, metaalarm should be create after reaching the new rate
     Given I am admin
@@ -138,14 +165,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-2",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-2-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-2-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 10,
           "unit": "s"
@@ -205,7 +236,7 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 1 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -235,60 +266,15 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-2"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 4
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-2"
           }
         }
@@ -301,6 +287,72 @@ Feature: correlation feature - complex rule with threshold rate
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-2-connector",
+                  "connector_name": "test-complex-rule-rate-2-connectorname",
+                  "component":  "test-complex-rule-rate-2-component",
+                  "resource": "test-complex-rule-rate-2-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-2-connector",
+                  "connector_name": "test-complex-rule-rate-2-connectorname",
+                  "component":  "test-complex-rule-rate-2-component",
+                  "resource": "test-complex-rule-rate-2-resource-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-2-connector",
+                  "connector_name": "test-complex-rule-rate-2-connectorname",
+                  "component":  "test-complex-rule-rate-2-component",
+                  "resource": "test-complex-rule-rate-2-resource-3"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-2-connector",
+                  "connector_name": "test-complex-rule-rate-2-connectorname",
+                  "component":  "test-complex-rule-rate-2-component",
+                  "resource": "test-complex-rule-rate-2-resource-new"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      }
+    ]
+    """
 
   Scenario: given meta alarm rule with threshold rate and events should create one single meta alarms because first group didn't reached threshold
     Given I am admin
@@ -309,14 +361,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-3",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-3-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-3-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 3,
           "unit": "s"
@@ -409,50 +465,15 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-3"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-3"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-3"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 3
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-3"
           }
         }
@@ -465,6 +486,64 @@ Feature: correlation feature - complex rule with threshold rate
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-3-connector",
+                  "connector_name": "test-complex-rule-rate-3-connectorname",
+                  "component":  "test-complex-rule-rate-3-component",
+                  "resource": "test-complex-rule-rate-3-resource-3"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-3-connector",
+                  "connector_name": "test-complex-rule-rate-3-connectorname",
+                  "component":  "test-complex-rule-rate-3-component",
+                  "resource": "test-complex-rule-rate-3-resource-4"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-3-connector",
+                  "connector_name": "test-complex-rule-rate-3-connectorname",
+                  "component":  "test-complex-rule-rate-3-component",
+                  "resource": "test-complex-rule-rate-3-resource-5"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
 
   Scenario: given meta alarm rule with threshold rate and events should create 2 meta alarms because of 2 separate time intervals
     Given I am admin
@@ -473,14 +552,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-4",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-4-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-4-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 3,
           "unit": "s"
@@ -573,71 +656,21 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-4"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-4"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 2
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-4"
           }
         },
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-4"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-4"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 2
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-4"
           }
         }
@@ -650,6 +683,95 @@ Feature: correlation feature - complex rule with threshold rate
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 1)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }      
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-4-connector",
+                  "connector_name": "test-complex-rule-rate-4-connectorname",
+                  "component":  "test-complex-rule-rate-4-component",
+                  "resource": "test-complex-rule-rate-4-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-4-connector",
+                  "connector_name": "test-complex-rule-rate-4-connectorname",
+                  "component":  "test-complex-rule-rate-4-component",
+                  "resource": "test-complex-rule-rate-4-resource-2"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-4-connector",
+                  "connector_name": "test-complex-rule-rate-4-connectorname",
+                  "component":  "test-complex-rule-rate-4-component",
+                  "resource": "test-complex-rule-rate-4-resource-3"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-4-connector",
+                  "connector_name": "test-complex-rule-rate-4-connectorname",
+                  "component":  "test-complex-rule-rate-4-component",
+                  "resource": "test-complex-rule-rate-4-resource-4"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
+    """
 
   Scenario: given meta alarm rule with threshold rate and events should create one single meta alarm without first alarm, because interval shifting
     Given I am admin
@@ -658,14 +780,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-5",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-5-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-5-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 5,
           "unit": "s"
@@ -743,50 +869,15 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-5"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-5"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-5"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 3
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-5"
           }
         }
@@ -799,6 +890,64 @@ Feature: correlation feature - complex rule with threshold rate
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-5-connector",
+                  "connector_name": "test-complex-rule-rate-5-connectorname",
+                  "component":  "test-complex-rule-rate-5-component",
+                  "resource": "test-complex-rule-rate-5-resource-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-5-connector",
+                  "connector_name": "test-complex-rule-rate-5-connectorname",
+                  "component":  "test-complex-rule-rate-5-component",
+                  "resource": "test-complex-rule-rate-5-resource-3"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-5-connector",
+                  "connector_name": "test-complex-rule-rate-5-connectorname",
+                  "component":  "test-complex-rule-rate-5-component",
+                  "resource": "test-complex-rule-rate-5-resource-4"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
 
   Scenario: given meta alarm rule with threshold rate and events should create meta alarm regarding total entity pattern
     Given I am admin
@@ -807,26 +956,38 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-6",
       "type": "complex",
+      "total_entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-6-resource"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-7-resource"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-7-resource"
+            }
+          }
+        ]
+      ],
       "config": {
-        "total_entity_patterns": [
-          {
-            "name": {
-              "regex_match": "test-complex-rule-rate-6-resource"
-            }
-          },
-          {
-            "name": {
-              "regex_match": "test-complex-rule-rate-7-resource"
-            }
-          }
-        ],
-        "entity_patterns": [
-          {
-            "name": {
-              "regex_match": "test-complex-rule-rate-7-resource"
-            }
-          }
-        ],
         "time_interval": {
           "value": 10,
           "unit": "s"
@@ -886,7 +1047,7 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 1 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -916,60 +1077,15 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-6"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-6"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-6"
-                    }
-                  ],
-                  "total": 1
-                }
-              },
-              {
-                "causes": {
-                  "rules": [
-                    {
-                      "name": "test-complex-correlation-threshold-rate-6"
-                    }
-                  ],
-                  "total": 1
-                }
-              }
-            ],
-            "total": 4
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-6"
           }
         }
@@ -981,4 +1097,384 @@ Feature: correlation feature - complex rule with threshold rate
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-7-connector",
+                  "connector_name": "test-complex-rule-rate-7-connectorname",
+                  "component":  "test-complex-rule-rate-7-component",
+                  "resource": "test-complex-rule-rate-7-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-7-connector",
+                  "connector_name": "test-complex-rule-rate-7-connectorname",
+                  "component":  "test-complex-rule-rate-7-component",
+                  "resource": "test-complex-rule-rate-7-resource-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-7-connector",
+                  "connector_name": "test-complex-rule-rate-7-connectorname",
+                  "component":  "test-complex-rule-rate-7-component",
+                  "resource": "test-complex-rule-rate-7-resource-3"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-7-connector",
+                  "connector_name": "test-complex-rule-rate-7-connectorname",
+                  "component":  "test-complex-rule-rate-7-component",
+                  "resource": "test-complex-rule-rate-7-resource-4"
+                }
+              }              
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  Scenario: given meta alarm rule with threshold rate and old event patterns should create meta alarm
+    Given I am admin
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-1-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-1-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-1-resource-1",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-1-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-1-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-1-resource-2",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-1-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-1-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-1-resource-3",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-backward-compatibility-1&active_columns[]=v.meta&correlation=true    
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
+            "name": "test-complex-rule-rate-backward-compatibility-1-name"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
+                  "connector_name": "test-complex-rule-rate-backward-compatibility-1-connectorname",
+                  "component":  "test-complex-rule-rate-backward-compatibility-1-component",
+                  "resource": "test-complex-rule-rate-backward-compatibility-1-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
+                  "connector_name": "test-complex-rule-rate-backward-compatibility-1-connectorname",
+                  "component":  "test-complex-rule-rate-backward-compatibility-1-component",
+                  "resource": "test-complex-rule-rate-backward-compatibility-1-resource-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
+                  "connector_name": "test-complex-rule-rate-backward-compatibility-1-connectorname",
+                  "component":  "test-complex-rule-rate-backward-compatibility-1-component",
+                  "resource": "test-complex-rule-rate-backward-compatibility-1-resource-3"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  Scenario: given meta alarm rule with threshold rate and old total event patterns should create meta alarm
+    Given I am admin
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-2-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-2-resource-1",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-2-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-2-resource-2",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-2-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-2-resource-3",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-1-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-1-resource-3",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-backward-compatibility-2&active_columns[]=v.meta&correlation=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-2-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-2-resource-4",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-backward-compatibility-2&active_columns[]=v.meta&correlation=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
+            "name": "test-complex-rule-rate-backward-compatibility-2-name"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
+                  "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
+                  "component":  "test-complex-rule-rate-backward-compatibility-2-component",
+                  "resource": "test-complex-rule-rate-backward-compatibility-2-resource-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
+                  "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
+                  "component":  "test-complex-rule-rate-backward-compatibility-2-component",
+                  "resource": "test-complex-rule-rate-backward-compatibility-2-resource-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
+                  "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
+                  "component":  "test-complex-rule-rate-backward-compatibility-2-component",
+                  "resource": "test-complex-rule-rate-backward-compatibility-2-resource-3"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
+                  "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
+                  "component":  "test-complex-rule-rate-backward-compatibility-2-component",
+                  "resource": "test-complex-rule-rate-backward-compatibility-2-resource-4"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      }
+    ]
     """

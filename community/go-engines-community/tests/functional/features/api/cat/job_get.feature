@@ -14,8 +14,8 @@ Feature: get a job
           "_id": "test-job-to-get",
           "name": "test-job-name-to-get",
           "author": {
-            "_id": "test-user-author-1-id",
-            "name": "test-user-author-1-username"
+            "_id": "root",
+            "name": "root"
           },
           "config": {
             "_id": "test-job-config-to-edit-job",
@@ -23,8 +23,8 @@ Feature: get a job
             "type": "rundeck",
             "host": "http://example.com",
             "author": {
-              "_id": "test-user-author-1-id",
-              "name": "test-user-author-1-username"
+              "_id": "root",
+              "name": "root"
             },
             "auth_username": "",
             "auth_token": "test-auth-token"
@@ -86,8 +86,8 @@ Feature: get a job
       "_id": "test-job-to-get",
       "name": "test-job-name-to-get",
       "author": {
-        "_id": "test-user-author-1-id",
-        "name": "test-user-author-1-username"
+        "_id": "root",
+        "name": "root"
       },
       "config": {
         "_id": "test-job-config-to-edit-job",
@@ -95,8 +95,8 @@ Feature: get a job
         "type": "rundeck",
         "host": "http://example.com",
         "author": {
-          "_id": "test-user-author-1-id",
-          "name": "test-user-author-1-username"
+          "_id": "root",
+          "name": "root"
         },
         "auth_username": "",
         "auth_token": "test-auth-token"
