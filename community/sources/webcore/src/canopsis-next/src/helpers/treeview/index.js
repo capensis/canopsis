@@ -59,3 +59,25 @@ export const convertTreeArrayToArray = (tree, itemChildren = 'children') => {
 
   return result;
 };
+
+/**
+ * Convert treeview nodes to object
+ *
+ * @param {Object} node
+ * @returns {Object | undefined}
+ */
+export const convertTreeviewToObject = (node) => {
+  if (node.isArray) {
+    return node.children?.map(convertTreeviewToObject);
+  }
+
+  if (node.children) {
+    return node.children?.reduce((acc, item) => {
+      acc[item.name] = convertTreeviewToObject(item);
+
+      return acc;
+    }, {});
+  }
+
+  return node.value;
+};
