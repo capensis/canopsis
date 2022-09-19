@@ -66,7 +66,6 @@ export default {
         this.$modals.hide();
       }
     },
-
   },
 };
 </script>

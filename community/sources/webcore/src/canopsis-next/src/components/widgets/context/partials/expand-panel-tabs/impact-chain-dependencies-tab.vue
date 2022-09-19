@@ -3,7 +3,7 @@
     v-card-text
       service-dependencies.pa-3(
         :root="item",
-        :columns="widget.parameters.serviceDependenciesColumns",
+        :columns="columns",
         impact,
         openable-root
       )
@@ -21,9 +21,9 @@ export default {
       type: Object,
       required: true,
     },
-    widget: {
-      type: Object,
-      required: true,
+    columns: {
+      type: Array,
+      default: () => [],
     },
   },
 };

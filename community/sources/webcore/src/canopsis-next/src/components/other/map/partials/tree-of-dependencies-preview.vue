@@ -10,18 +10,19 @@
 </template>
 
 <script>
-import { omit, cloneDeep } from 'lodash';
+import { omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { COLORS, PAGINATION_LIMIT } from '@/config';
 import {
+  MODALS,
   TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
   TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
   TREE_OF_DEPENDENCIES_TYPES, ENTITY_TYPES,
 } from '@/constants';
 
-import { getTreeOfDependenciesEntityText } from '@/helpers/map';
 import { getEntityColor } from '@/helpers/color';
+import { getTreeOfDependenciesEntityText, normalizeTreeOfDependenciesMapEntities } from '@/helpers/map';
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/engineering.svg';
@@ -29,29 +30,6 @@ import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/enginee
 import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
 const { mapActions } = createNamespacedHelpers('service');
-
-const prepareEntities = (entities = []) => entities.reduce((acc, { entity, pinned_entities: pinnedEntities }) => {
-  const newEntity = {
-    entity: cloneDeep(entity),
-    children: [],
-  };
-
-  pinnedEntities.forEach((pinnedEntity) => {
-    const { _id: id } = pinnedEntity;
-
-    newEntity.children.push(id);
-
-    if (!acc[id]) {
-      acc[id] = {
-        entity: cloneDeep(pinnedEntity),
-      };
-    }
-  });
-
-  acc[entity._id] = newEntity;
-
-  return acc;
-}, {});
 
 export default {
   components: { NetworkGraph },
@@ -67,7 +45,7 @@ export default {
   },
   data() {
     return {
-      entitiesById: prepareEntities(this.map.parameters?.entities),
+      entitiesById: normalizeTreeOfDependenciesMapEntities(this.map.parameters?.entities),
     };
   },
   computed: {
@@ -77,18 +55,18 @@ export default {
 
     rootEntities() {
       return Object.values(this.entitiesById)
-        .filter(entity => entity.children?.length);
+        .filter(entity => entity.dependencies?.length);
     },
 
     cytoscapeClusters() {
-      return this.rootEntities.map(({ entity, children }) => [
+      return this.rootEntities.map(({ entity, dependencies }) => [
         entity._id,
-        ...children.filter(id => !this.entitiesById[id].children?.length),
+        ...dependencies.filter(id => !this.entitiesById[id].dependencies?.length),
       ]);
     },
 
     entitiesElements() {
-      return this.rootEntities.reduce((acc, { entity, children = [] }) => {
+      return this.rootEntities.reduce((acc, { entity, dependencies = [] }) => {
         acc.push(
           {
             group: 'nodes',
@@ -100,7 +78,7 @@ export default {
           },
         );
 
-        children.forEach((childId) => {
+        dependencies.forEach((childId) => {
           const child = this.entitiesById[childId];
 
           acc.push(
@@ -121,6 +99,30 @@ export default {
           );
         });
 
+        const { [this.countProperty]: count } = entity;
+
+        if (count > dependencies.length) {
+          const showAllId = `show-all-${entity._id}`;
+
+          acc.push(
+            {
+              group: 'nodes',
+              classes: ['show-all'],
+              data: {
+                id: showAllId,
+                entity,
+              },
+            },
+            {
+              group: 'edges',
+              data: {
+                source: entity._id,
+                target: showAllId,
+              },
+            },
+          );
+        }
+
         return acc;
       }, []);
     },
@@ -132,6 +134,15 @@ export default {
           style: {
             width: TREE_OF_DEPENDENCIES_GRAPH_OPTIONS.nodeSize,
             height: TREE_OF_DEPENDENCIES_GRAPH_OPTIONS.nodeSize,
+          },
+        },
+        {
+          selector: '.show-all',
+          style: {
+            'background-opacity': 0,
+            'border-width': 0,
+            width: 128,
+            height: 34,
           },
         },
         {
@@ -203,7 +214,7 @@ export default {
           'material-icons',
           'theme--light',
           'white--text',
-          'tree-of-dependencies__load-children',
+          'tree-of-dependencies__load-dependencies',
         );
         badgeIconEl.dataset.id = entity._id;
         badgeIconEl.textContent = opened ? 'remove' : 'add';
@@ -247,12 +258,36 @@ export default {
         return nodeEl.outerHTML;
       };
 
+      const getShowAllContent = ({ entity }) => {
+        const btnContentEl = document.createElement('div');
+        btnContentEl.classList.add('v-btn__content');
+        btnContentEl.dataset.id = entity._id;
+        btnContentEl.textContent = `Show all (${entity[this.countProperty]})`; // TODO: Add translation
+
+        const btnEl = document.createElement('button');
+        btnEl.classList.add(
+          'v-btn',
+          'v-btn--round',
+          'theme--light',
+          'tree-of-dependencies__show-all-btn',
+        );
+        btnEl.appendChild(btnContentEl);
+
+        return btnEl.outerHTML;
+      };
+
       return [
         {
           query: 'node',
           valign: 'center',
           halign: 'center',
-          tpl: data => getContent(data),
+          tpl: getContent,
+        },
+        {
+          query: '.show-all',
+          valign: 'center',
+          halign: 'center',
+          tpl: getShowAllContent,
         },
       ];
     },
@@ -272,6 +307,13 @@ export default {
       };
     },
   },
+  watch: {
+    map(map) {
+      this.entitiesById = normalizeTreeOfDependenciesMapEntities(map.parameters?.entities);
+
+      this.resetLayout();
+    },
+  },
   mounted() {
     this.$refs.networkGraph.$cy.on('mousedown', this.mousedownHandler);
   },
@@ -283,6 +325,21 @@ export default {
       fetchServiceDependenciesWithoutStore: 'fetchDependenciesWithoutStore',
       fetchServiceImpactsWithoutStore: 'fetchImpactsWithoutStore',
     }),
+
+    fetchDependenciesList(data) {
+      return this.impact
+        ? this.fetchServiceImpactsWithoutStore(data)
+        : this.fetchServiceDependenciesWithoutStore(data);
+    },
+
+    /**
+     * Remove old elements and add new elements to network graph
+     */
+    resetLayout() {
+      this.$refs.networkGraph.$cy.elements().remove();
+      this.$refs.networkGraph.$cy.add(this.entitiesElements);
+      this.runLayout();
+    },
 
     /**
      * Run 'cise' layout for rerender clusters
@@ -303,7 +360,7 @@ export default {
       }
     },
 
-    addChildrenElements(elements, sourceId) {
+    addDependenciesElements(elements, sourceId) {
       if (!elements.length) {
         return;
       }
@@ -335,7 +392,7 @@ export default {
       this.$refs.networkGraph.$cy.add(addedElements);
     },
 
-    removeChildrenElements(elementsIds, sourceId) {
+    removeDependenciesElements(elementsIds, sourceId) {
       const nodesForRemoveSelectors = elementsIds.map(id => `node[id = "${id}"]`);
       const nodesForRemove = this.$refs.networkGraph.$cy.elements(nodesForRemoveSelectors.join(','));
       const filteredNodesForRemove = nodesForRemove.filter(node => node.connectedEdges().size() === 1);
@@ -348,12 +405,12 @@ export default {
     },
 
     /**
-     * Method for children loading for special node
+     * Method for dependencies loading for special node
      *
      * @param {string} id
      */
-    async loadChildrenById(id) {
-      const target = this.$refs.networkGraph.$cy.elements(`node[id = "${id}"]`);
+    async loadDependenciesById(id) {
+      const target = this.$refs.networkGraph.$cy.getElementById(id);
 
       const { opened, entity, root } = target.data();
 
@@ -362,16 +419,16 @@ export default {
       }
 
       if (opened) {
-        const { children } = this.entitiesById[id];
+        const { dependencies } = this.entitiesById[id];
 
-        this.removeChildrenElements(children, id);
+        this.removeDependenciesElements(dependencies, id);
 
         target.data({
           pending: false,
           opened: false,
         });
 
-        this.$delete(this.entitiesById[id], 'children');
+        this.$delete(this.entitiesById[id], 'dependencies');
 
         this.runLayout();
 
@@ -401,9 +458,9 @@ export default {
         return item._id;
       });
 
-      this.$set(this.entitiesById[id], 'children', ids);
+      this.$set(this.entitiesById[id], 'dependencies', ids);
 
-      this.addChildrenElements(data, id);
+      this.addDependenciesElements(data, id);
       this.runLayout();
     },
 
@@ -414,21 +471,29 @@ export default {
      */
     mousedownHandler(event) {
       const { originalEvent } = event;
-      if (!originalEvent.target.classList.contains('tree-of-dependencies__load-children')) {
-        return;
+      const { target } = originalEvent;
+
+      if (target.classList.contains('tree-of-dependencies__load-dependencies')) {
+        originalEvent.preventDefault();
+
+        this.loadDependenciesById(originalEvent.target.dataset.id);
       }
-
-      originalEvent.preventDefault();
-
-      this.loadChildrenById(originalEvent.target.dataset.id);
     },
 
-    nodeTapHandler() {},
+    showAllDependenciesById(entityId) {
+      this.$modals.show({
+        name: MODALS.entityDependenciesList,
+        config: {
+          entityId,
+          impact: this.impact,
+        },
+      });
+    },
 
-    fetchDependenciesList(data) {
-      return this.impact
-        ? this.fetchServiceImpactsWithoutStore(data)
-        : this.fetchServiceDependenciesWithoutStore(data);
+    nodeTapHandler({ target }) {
+      const { entity } = target.data();
+
+      this.showAllDependenciesById(entity._id);
     },
   },
 };
@@ -457,7 +522,7 @@ export default {
     }
   }
 
-  & /deep/ .tree-of-dependencies__load-children {
+  & /deep/ .tree-of-dependencies__load-dependencies {
     width: 100%;
     height: 100%;
     border-radius: 50%;
