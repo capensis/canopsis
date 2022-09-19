@@ -3,6 +3,8 @@ package api
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -139,7 +141,7 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 		pbhExceptionUniqueNameValidator.Validate(ctx, sl)
 	}, pbehaviorexception.CreateRequest{})
 	v.RegisterStructValidationCtx(pbhExceptionUniqueNameValidator.Validate, pbehaviorexception.UpdateRequest{})
-	v.RegisterStructValidation(pbehaviorexception.ValidateExdateRequest, pbehaviorexception.ExdateRequest{})
+	v.RegisterStructValidation(exdate.ValidateExdateRequest, exdate.Request{})
 
 	v.RegisterStructValidation(pbehaviortimespan.ValidateTimespansRequest, pbehaviortimespan.TimespansRequest{})
 
