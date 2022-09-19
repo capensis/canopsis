@@ -8,7 +8,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-1-1-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-succeeded",
       "payload": "{\"resource1\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity1\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -20,7 +20,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-1-2-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-succeeded",
       "payload": "{\"resource2\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity2\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -286,20 +286,73 @@ Feature: run a job
     ]
     """
 
-  Scenario: given http error during job execution should return failed job status
+  Scenario: given error during job execution should return failed job status
     When I am admin
     When I do POST /api/v4/cat/jobs:
     """json
     {
-      "name": "test-job-to-job-execution-start-2-name",
-      "config": "test-job-config-to-run-manual-job",
+      "name": "test-job-to-job-execution-start-2-1-name",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-http-error",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
     }
     """
     Then the response code should be 201
-    When I save response jobID={{ .lastResponse._id }}
+    When I save response jobId1={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/jobs:
+    """json
+    {
+      "name": "test-job-to-job-execution-start-2-2-name",
+      "config": "test-job-config-to-run-manual-job-2",
+      "job_id": "test-job",
+      "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "multiple_executions": false
+    }
+    """
+    Then the response code should be 201
+    When I save response jobId2={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/jobs:
+    """json
+    {
+      "name": "test-job-to-job-execution-start-2-3-name",
+      "config": "test-job-config-to-run-manual-job-1",
+      "job_id": "test-job-running",
+      "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "multiple_executions": false,
+      "retry_amount": 2,
+      "retry_interval": {
+        "value": 2,
+        "unit": "s"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I save response jobId3={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/jobs:
+    """json
+    {
+      "name": "test-job-to-job-execution-start-2-4-name",
+      "config": "test-job-config-to-run-manual-job-1",
+      "job_id": "test-job-running",
+      "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "multiple_executions": false
+    }
+    """
+    Then the response code should be 201
+    When I save response jobId4={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/jobs:
+    """json
+    {
+      "name": "test-job-to-job-execution-start-2-5-name",
+      "config": "test-job-config-to-run-manual-job-1",
+      "job_id": "test-job-failed",
+      "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "multiple_executions": false
+    }
+    """
+    Then the response code should be 201
+    When I save response jobId5={{ .lastResponse._id }}
     When I do POST /api/v4/cat/instructions:
     """json
     {
@@ -330,7 +383,13 @@ Feature: run a job
               "name": "test-instruction-to-job-execution-start-2-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-job-execution-start-2-step-1-operation-1-description",
-              "jobs": ["{{ .jobID }}"]
+              "jobs": [
+                "{{ .jobId1 }}",
+                "{{ .jobId2 }}",
+                "{{ .jobId3 }}",
+                "{{ .jobId4 }}",
+                "{{ .jobId5 }}"
+              ]
             }
           ],
           "stop_on_fail": true,
@@ -374,11 +433,47 @@ Feature: run a job
     {
       "execution": "{{ .executionID }}",
       "operation": "{{ .operationID }}",
-      "job": "{{ .jobID }}"
+      "job": "{{ .jobId1 }}"
     }
     """
     Then the response code should be 200
-    When I wait the end of event processing
+    When I do POST /api/v4/cat/job-executions:
+    """json
+    {
+      "execution": "{{ .executionID }}",
+      "operation": "{{ .operationID }}",
+      "job": "{{ .jobId2 }}"
+    }
+    """
+    Then the response code should be 200
+    When I do POST /api/v4/cat/job-executions:
+    """json
+    {
+      "execution": "{{ .executionID }}",
+      "operation": "{{ .operationID }}",
+      "job": "{{ .jobId3 }}"
+    }
+    """
+    Then the response code should be 200
+    When I do POST /api/v4/cat/job-executions:
+    """json
+    {
+      "execution": "{{ .executionID }}",
+      "operation": "{{ .operationID }}",
+      "job": "{{ .jobId4 }}"
+    }
+    """
+    Then the response code should be 200
+    When I do POST /api/v4/cat/job-executions:
+    """json
+    {
+      "execution": "{{ .executionID }}",
+      "operation": "{{ .operationID }}",
+      "job": "{{ .jobId5 }}"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 5 events processing
     When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
     """json
     {
@@ -388,6 +483,28 @@ Feature: run a job
             {
               "jobs": [
                 {
+                  "fail_reason": "http-error",
+                  "output": "",
+                  "status": 2
+                },
+                {
+                  "fail_reason": "url POST http://not-exist/api/35/job/test-job/run cannot be connected",
+                  "output": "",
+                  "status": 2
+                },
+                {
+                  "fail_reason": "job is executing too long, cannot retrieve status after 2 retries by 2s",
+                  "output": "",
+                  "status": 2
+                },
+                {
+                  "fail_reason": "job is executing too long, cannot retrieve status after 1 retries by 1s",
+                  "output": "",
+                  "status": 2
+                },
+                {
+                  "fail_reason": "see localhost:3000/rundeck/execution/show/test-job-execution-failed",
+                  "output": "test-job-execution-failed-output",
                   "status": 2
                 }
               ]
@@ -406,40 +523,70 @@ Feature: run a job
         "_id": "{{ (index .lastResponse.data 0)._id }}",
         "opened": true,
         "steps": {
-          "page": 1
+          "page": 1,
+          "limit": 20
         }
       }
     ]
     """
     Then the response code should be 207
-    Then the response body should contain:
+    Then the response array key "0.data.steps.data" should contain:
     """json
     [
       {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {},
-              {},
-              {
-                "_t": "instructionstart",
-                "a": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-2-name."
-              },
-              {
-                "_t": "instructionjobstart",
-                "a": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-name."
-              },
-              {
-                "_t": "instructionjobfail",
-                "a": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-name."
-              }
-            ]
-          }
-        }
+        "_t": "instructionstart",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-1-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-1-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-2-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-2-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-3-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-3-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-4-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-4-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-5-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-5-name."
       }
     ]
     """
@@ -452,7 +599,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-3-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-long-succeeded",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -562,7 +709,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-4-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-succeeded",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -736,7 +883,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-5-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-succeeded",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -838,7 +985,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-6-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-succeeded",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -934,7 +1081,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-7-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-succeeded",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.ResourceBadValue }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -1439,7 +1586,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-11-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-long-succeeded",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -1766,7 +1913,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-12-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-long-succeeded",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": true
