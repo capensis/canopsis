@@ -2,68 +2,76 @@ Feature: create a PBehavior
   I need to be able to create a PBehavior
   Only admin should be able to create a PBehavior
 
-  Scenario: POST a valid PBehavior but unauthorized
+  Scenario: given create request and no auth user should not allow access
     When I do POST /api/v4/pbehaviors
     Then the response code should be 401
 
-  Scenario: POST a valid PBehavior but without permissions
+  Scenario: given create request and auth user without view permission should not allow access
     When I am noperms
     When I do POST /api/v4/pbehaviors
     Then the response code should be 403
 
-  Scenario: POST a valid PBehavior
+  Scenario: given create request should return ok
     When I am admin
     When I do POST /api/v4/pbehaviors:
     """json
     {
-      "enabled":true,
-      "name":"test-pbehavior-to-create-1",
-      "tstart":1591172881,
-      "tstop":1591536400,
+      "enabled": true,
+      "name": "test-pbehavior-to-create-1",
+      "tstart": 1591172881,
+      "tstop": 1591536400,
       "color": "#FFFFFF",
-      "type":"test-type-to-pbh-edit-1",
-      "reason":"test-reason-1",
-      "filter":{
-        "$and":[
-           {
-              "name": "test filter"
-           }
+      "type": "test-type-to-pbh-edit-1",
+      "reason": "test-reason-to-pbh-edit",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-create-1-pattern"
+            }
+          }
         ]
-      },
-      "exdates":[
+      ],
+      "exdates": [
         {
-          "begin": 1591164001,
-          "end": 1591167601,
-          "type": "test-type-to-pbh-edit-1"
+          "begin":  1591164001,
+          "end":  1591167601,
+          "type":  "test-type-to-pbh-edit-1"
         }
       ],
-      "exceptions": ["test-exception-to-pbh-edit"]
+      "exceptions":  ["test-exception-to-pbh-edit"]
     }
     """
     Then the response code should be 201
     Then the response body should contain:
     """json
     {
-      "enabled":true,
-      "author":"root",
-      "name":"test-pbehavior-to-create-1",
-      "tstart":1591172881,
-      "tstop":1591536400,
+      "enabled": true,
+      "author": "root",
+      "name": "test-pbehavior-to-create-1",
+      "tstart": 1591172881,
+      "tstop": 1591536400,
       "color": "#FFFFFF",
-      "type": {
+      "type":  {
         "_id": "test-type-to-pbh-edit-1"
       },
       "reason": {
-        "_id": "test-reason-1"
+        "_id": "test-reason-to-pbh-edit"
       },
-      "filter":{
-        "$and":[
-           {
-              "name": "test filter"
-           }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-create-1-pattern"
+            }
+          }
         ]
-      },
-      "exdates":[
+      ],
+      "exdates": [
         {
           "begin": 1591164001,
           "end": 1591167601,
@@ -79,37 +87,6 @@ Feature: create a PBehavior
       ]
     }
     """
-
-  Scenario: POST a valid PBehavior
-    When I am admin
-    When I do POST /api/v4/pbehaviors:
-    """json
-    {
-      "enabled":true,
-      "name":"test-pbehavior-to-create-2",
-      "tstart":1591172881,
-      "tstop":1591536400,
-      "color": "#FFFFFF",
-      "type":"test-type-to-pbh-edit-1",
-      "reason":"test-reason-1",
-      "filter":{
-        "$and":[
-           {
-              "name": "test filter"
-           }
-        ]
-      },
-      "exdates":[
-        {
-          "begin": 1591164001,
-          "end": 1591167601,
-          "type": "test-type-to-pbh-edit-1"
-        }
-      ],
-      "exceptions": ["test-exception-to-pbh-edit"]
-    }
-    """
-    Then the response code should be 201
     When I do GET /api/v4/pbehaviors/{{ .lastResponse._id}}
     Then the response code should be 200
     Then the response body should contain:
@@ -133,7 +110,7 @@ Feature: create a PBehavior
                 "description": "Pbh edit 1 State type",
                 "icon_name": "test-to-pbh-edit-1-icon",
                 "name": "Pbh edit 1 State",
-                "priority": 10,
+                "priority": 11,
                 "type": "active"
               }
             }
@@ -150,23 +127,27 @@ Feature: create a PBehavior
             "description": "Pbh edit 1 State type",
             "icon_name": "test-to-pbh-edit-1-icon",
             "name": "Pbh edit 1 State",
-            "priority": 10,
+            "priority": 11,
             "type": "active"
           }
         }
       ],
-      "filter": {
-        "$and": [
+      "entity_pattern": [
+        [
           {
-            "name": "test filter"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-create-1-pattern"
+            }
           }
         ]
-      },
-      "name": "test-pbehavior-to-create-2",
+      ],
+      "name": "test-pbehavior-to-create-1",
       "reason": {
-        "_id": "test-reason-1",
-        "description": "test-reason-1-description",
-        "name": "test-reason-1-name"
+        "_id": "test-reason-to-pbh-edit",
+        "description": "test-reason-to-pbh-edit-description",
+        "name": "test-reason-to-pbh-edit-name"
       },
       "rrule": "",
       "tstart": 1591172881,
@@ -176,33 +157,106 @@ Feature: create a PBehavior
         "description": "Pbh edit 1 State type",
         "icon_name": "test-to-pbh-edit-1-icon",
         "name": "Pbh edit 1 State",
-        "priority": 10,
+        "priority": 11,
         "type": "active"
       }
     }
     """
 
-  Scenario: POST a valid PBehavior with custom ID
+  Scenario: given create request with corporate pattern should return ok
     When I am admin
     When I do POST /api/v4/pbehaviors:
     """json
     {
-      "_id": "custom-id",
-      "enabled":true,
-      "name": "test-pbehavior-to-create-3",
-      "tstart":1591172881,
-      "tstop":1591536400,
+      "enabled": true,
+      "name": "test-pbehavior-to-create-2",
+      "tstart": 1591172881,
+      "tstop": 1591536400,
       "color": "#FFFFFF",
-      "type":"test-type-to-pbh-edit-1",
-      "reason":"test-reason-1",
-      "filter":{
-        "$and":[
-           {
-              "name": "test filter"
-           }
-        ]
+      "type": "test-type-to-pbh-edit-1",
+      "reason": "test-reason-to-pbh-edit",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "exdates": [
+        {
+          "begin":  1591164001,
+          "end":  1591167601,
+          "type":  "test-type-to-pbh-edit-1"
+        }
+      ],
+      "exceptions":  ["test-exception-to-pbh-edit"]
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "enabled": true,
+      "author": "root",
+      "name": "test-pbehavior-to-create-2",
+      "tstart": 1591172881,
+      "tstop": 1591536400,
+      "color": "#FFFFFF",
+      "type":  {
+        "_id": "test-type-to-pbh-edit-1"
       },
-      "exdates":[
+      "reason": {
+        "_id": "test-reason-to-pbh-edit"
+      },
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-2-pattern"
+            }
+          }
+        ]
+      ],
+      "exdates": [
+        {
+          "begin": 1591164001,
+          "end": 1591167601,
+          "type": {
+            "_id": "test-type-to-pbh-edit-1"
+          }
+        }
+      ],
+      "exceptions": [
+        {
+          "_id": "test-exception-to-pbh-edit"
+        }
+      ]
+    }
+    """
+
+  Scenario: given create request with custom id should return ok
+    When I am admin
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "_id": "test-pbehavior-to-create-3",
+      "enabled":true,
+      "name": "test-pbehavior-to-create-3-name",
+      "tstart": 1591172881,
+      "tstop": 1591536400,
+      "color": "#FFFFFF",
+      "type": "test-type-to-pbh-edit-1",
+      "reason": "test-reason-to-pbh-edit",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-create-3-pattern"
+            }
+          }
+        ]
+      ],
+      "exdates": [
         {
           "begin": 1591164001,
           "end": 1591167601,
@@ -213,10 +267,10 @@ Feature: create a PBehavior
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/pbehaviors/custom-id
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-create-3
     Then the response code should be 200
 
-  Scenario: POST a valid PBehavior with the custom ID that already exists should cause dup error
+  Scenario: given create request with the custom ID that already exists should cause dup error
     When I am admin
     When I do POST /api/v4/pbehaviors:
     """json
@@ -224,19 +278,23 @@ Feature: create a PBehavior
       "_id": "test-pbehavior-to-check-unique",
       "enabled":true,
       "name": "test-pbehavior-to-create-4",
-      "tstart":1591172881,
-      "tstop":1591536400,
+      "tstart": 1591172881,
+      "tstop": 1591536400,
       "color": "#FFFFFF",
-      "type":"test-type-to-pbh-edit-1",
-      "reason":"test-reason-1",
-      "filter":{
-        "$and":[
-           {
-              "name": "test filter"
-           }
+      "type": "test-type-to-pbh-edit-1",
+      "reason": "test-reason-to-pbh-edit",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-create-4-pattern"
+            }
+          }
         ]
-      },
-      "exdates":[
+      ],
+      "exdates": [
         {
           "begin": 1591164001,
           "end": 1591167601,
@@ -256,26 +314,30 @@ Feature: create a PBehavior
     }
     """
 
-  Scenario: POST a valid PBehavior with the name that already exists should cause dup error
+  Scenario: given create request with the name that already exists should cause dup error
     When I am admin
     When I do POST /api/v4/pbehaviors:
     """json
     {
       "enabled":true,
       "name": "test-pbehavior-to-check-unique-name",
-      "tstart":1591172881,
-      "tstop":1591536400,
+      "tstart": 1591172881,
+      "tstop": 1591536400,
       "color": "#FFFFFF",
-      "type":"test-type-to-pbh-edit-1",
-      "reason":"test-reason-1",
-      "filter":{
-        "$and":[
-           {
-              "name": "test filter"
-           }
+      "type": "test-type-to-pbh-edit-1",
+      "reason": "test-reason-to-pbh-edit",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-create-4-pattern"
+            }
+          }
         ]
-      },
-      "exdates":[
+      ],
+      "exdates": [
         {
           "begin": 1591164001,
           "end": 1591167601,
@@ -295,25 +357,29 @@ Feature: create a PBehavior
     }
     """
 
-  Scenario: POST a valid pause PBehavior without Stop
+  Scenario: given create request with pause type and without stop should return ok
     When I am admin
     When I do POST /api/v4/pbehaviors:
     """json
     {
       "enabled":true,
       "name": "test-pbehavior-to-create-5",
-      "tstart":1591172881,
+      "tstart": 1591172881,
       "color": "#FFFFFF",
-      "type":"test-type-to-pbh-edit-3",
-      "reason":"test-reason-1",
-      "filter":{
-        "$and":[
-           {
-              "name":"ccccc"
-           }
+      "type": "test-type-to-pbh-edit-3",
+      "reason": "test-reason-to-pbh-edit",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-create-5-pattern"
+            }
+          }
         ]
-      },
-      "exdates":[
+      ],
+      "exdates": [
         {
           "begin": 1591164001,
           "end": 1591167601,
@@ -328,25 +394,29 @@ Feature: create a PBehavior
     """json
     {
       "enabled":true,
-      "author":"root",
+      "author": "root",
       "name": "test-pbehavior-to-create-5",
-      "tstart":1591172881,
-      "tstop":null,
+      "tstart": 1591172881,
+      "tstop": null,
       "color": "#FFFFFF",
       "type": {
         "_id": "test-type-to-pbh-edit-3"
       },
       "reason": {
-        "_id": "test-reason-1"
+        "_id": "test-reason-to-pbh-edit"
       },
-      "filter":{
-        "$and":[
-           {
-              "name":"ccccc"
-           }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-create-5-pattern"
+            }
+          }
         ]
-      },
-      "exdates":[
+      ],
+      "exdates": [
         {
           "begin": 1591164001,
           "end": 1591167601,
@@ -363,13 +433,35 @@ Feature: create a PBehavior
     }
     """
 
-  Scenario: POST an invalid PBehavior, where tstart > tstop
+  Scenario: given invalid create request should return errors
+    When I am admin
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {}
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "color": "Color is missing.",
+        "enabled": "Enabled is missing.",
+        "name": "Name is missing.",
+        "entity_pattern": "EntityPattern is missing.",
+        "reason": "Reason is missing.",
+        "tstart": "Start is missing.",
+        "type": "Type is missing."
+      }
+    }
+    """
+
+  Scenario: given invalid create request with start > stop should return error
     When I am admin
     When I do POST /api/v4/pbehaviors:
     """json
     {
-      "tstart":1592172881,
-      "tstop":1591536400
+      "tstart": 1592172881,
+      "tstop": 1591536400
     }
     """
     Then the response code should be 400
@@ -382,7 +474,7 @@ Feature: create a PBehavior
     }
     """
 
-  Scenario: POST an invalid PBehavior with not existed reason
+  Scenario: given invalid create request with not existed reason should return error
     When I am admin
     When I do POST /api/v4/pbehaviors:
     """json
@@ -400,12 +492,12 @@ Feature: create a PBehavior
     }
     """
 
-  Scenario: POST an invalid PBehavior, where tstart > tstop
+  Scenario: given invalid create request with invalid exclude date should return error
     When I am admin
     When I do POST /api/v4/pbehaviors:
     """json
     {
-      "exdates":[
+      "exdates": [
         {
           "begin": 1592164001,
           "end": 1591167601,
@@ -423,13 +515,52 @@ Feature: create a PBehavior
       }
     }
     """
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "exdates": [
+        {
+          "begin": 1592164001,
+          "end": 1592166001,
+          "type": "test-type-not-exist"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "exdates": "Exdates doesn't exist."
+      }
+    }
+    """
 
-  Scenario: POST an invalid PBehavior with not existed type
+  Scenario: given invalid create request with invalid exception should return error
     When I am admin
     When I do POST /api/v4/pbehaviors:
     """json
     {
-      "type":"notexist"
+      "exceptions": ["test-exception-to-pbh-edit", "test-exception-not-exist"]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "exceptions": "Exceptions doesn't exist."
+      }
+    }
+    """
+
+  Scenario: given invalid create request with not existed type should return error
+    When I am admin
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "type": "notexist"
     }
     """
     Then the response code should be 400
@@ -442,31 +573,110 @@ Feature: create a PBehavior
     }
     """
 
-  Scenario: POST an invalid PBehavior, where filter is invalid
+  Scenario: given invalid create request with invalid entity pattern should return error
     When I am admin
     When I do POST /api/v4/pbehaviors:
     """json
     {
-      "filter": "{}"
+      "entity_pattern": [[]]
     }
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
-      {
-        "errors": {
-          "filter": "Filter is invalid entity filter."
-        }
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
       }
+    }
+    """
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-create-8-pattern"
+            }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-1",
+      "enabled":true,
+      "name": "test-pbehavior-to-create-7",
+      "tstart": 1591172881,
+      "tstop": 1591536400,
+      "color": "#FFFFFF",
+      "type": "test-type-to-pbh-edit-1",
+      "reason": "test-reason-to-pbh-edit"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "corporate_entity_pattern": "CorporateEntityPattern doesn't exist."
+      }
+    }
+    """
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "corporate_entity_pattern": "test-pattern-not-found",
+      "enabled":true,
+      "name": "test-pbehavior-to-create-7",
+      "tstart": 1591172881,
+      "tstop": 1591536400,
+      "color": "#FFFFFF",
+      "type": "test-type-to-pbh-edit-1",
+      "reason": "test-reason-to-pbh-edit"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "corporate_entity_pattern": "CorporateEntityPattern doesn't exist."
+      }
+    }
     """
 
-  Scenario: POST an invalid PBehavior, where Stop is missing
+  Scenario: given invalid create request with missing stop should return error
     When I am admin
     When I do POST /api/v4/pbehaviors:
     """json
     {
-      "tstart":1591172881,
-      "type":"test-type-to-pbh-edit-1"
+      "tstart": 1591172881,
+      "type": "test-type-to-pbh-edit-1"
     }
     """
     Then the response code should be 400
@@ -479,7 +689,7 @@ Feature: create a PBehavior
     }
     """
 
-  Scenario: POST an invalid PBehavior, where ID is invalid
+  Scenario: given invalid create request with invalid id should return error
     When I am admin
     When I do POST /api/v4/pbehaviors:
     """json
@@ -542,26 +752,30 @@ Feature: create a PBehavior
     }
     """
 
-  Scenario: POST a valid PBehavior with strange ids
+  Scenario: given create request with strange id should return ok
     When I am admin
     When I do POST /api/v4/pbehaviors:
     """json
     {
       "_id": "strange \\id&key=value!*@!'\"-_:;<>",
       "enabled":true,
-      "name":"test-pbehavior-to-create-6",
-      "tstart":1591172881,
-      "tstop":1591536400,
+      "name": "test-pbehavior-to-create-6",
+      "tstart": 1591172881,
+      "tstop": 1591536400,
       "color": "#FFFFFF",
-      "type":"test-type-to-pbh-edit-1",
-      "reason":"test-reason-1",
-      "filter":{
-        "$and":[
-           {
-              "name": "test filter"
-           }
+      "type": "test-type-to-pbh-edit-1",
+      "reason": "test-reason-to-pbh-edit",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-create-6-pattern"
+            }
+          }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201

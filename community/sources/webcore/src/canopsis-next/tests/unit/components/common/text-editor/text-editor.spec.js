@@ -9,9 +9,14 @@ import TextEditor from '@/components/common/text-editor/text-editor.vue';
 
 const localVue = createVueInstance();
 
+const stubs = {
+  'variables-menu': true,
+};
+
 const snapshotFactory = (options = {}) => mount(TextEditor, {
   localVue,
   attachTo: document.body,
+  stubs,
 
   ...options,
 });
@@ -30,6 +35,8 @@ const selectEditorImageTextInput = wrapper => selectEditorTabsWrapper(wrapper)
   .find('input[name="text"]');
 const selectEditorImageInsetButton = wrapper => selectEditorTabsWrapper(wrapper)
   .findAll('button');
+const selectVariablesMenu = wrapper => wrapper.find('variables-menu-stub');
+const selectVariablesButton = wrapper => wrapper.find('.text-editor__variables-button');
 
 describe('text-editor', () => {
   const XMLHttpRequest = mockXMLHttpRequest();
@@ -80,6 +87,113 @@ describe('text-editor', () => {
     editor.trigger('mousedown');
 
     expect(wrapper).toEmit('input', newValue);
+  });
+
+  test('Value changed after trigger variables', async () => {
+    const focusSpy = jest.spyOn(window, 'focus').mockImplementation();
+    const wrapper = snapshotFactory({
+      propsData: {
+        variables: [{ value: 'variable' }],
+      },
+    });
+
+    await flushPromises();
+
+    const variable = Faker.lorem.word();
+
+    const variablesMenu = selectVariablesMenu(wrapper);
+
+    variablesMenu.vm.$emit('input', variable);
+
+    expect(wrapper).toEmit('input', `{{ ${variable} }}`);
+    expect(focusSpy).toBeCalled();
+  });
+
+  test('Menu showed after trigger variables button', async () => {
+    const initialValue = 'Variable: {{ variable }}';
+    const wrapper = snapshotFactory({
+      propsData: {
+        value: initialValue,
+        variables: [{ value: 'variable' }],
+      },
+    });
+
+    await flushPromises();
+
+    const variablesButton = selectVariablesButton(wrapper);
+    jest.spyOn(variablesButton.element, 'getBoundingClientRect').mockImplementation(() => ({
+      top: 100,
+      left: 100,
+      height: 88,
+    }));
+    variablesButton.trigger('click');
+
+    expect(wrapper.vm.variablesShown).toBeTruthy();
+    expect(wrapper.vm.variablesMenuPosition).toEqual({
+      y: 188,
+      x: 100,
+    });
+  });
+
+  test('Value changed after trigger variables with caret in variable', async () => {
+    const focusSpy = jest.spyOn(window, 'focus').mockImplementation();
+    const initialValue = 'Variable: {{ variable }}';
+    const wrapper = snapshotFactory({
+      propsData: {
+        value: initialValue,
+        variables: [{ value: 'variable' }],
+      },
+    });
+
+    await flushPromises();
+
+    const variable = Faker.lorem.word();
+
+    const editor = selectEditor(wrapper);
+    const range = document.createRange();
+    const selection = window.getSelection();
+
+    range.setStart(editor.element.firstChild, 15);
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    const variablesMenu = selectVariablesMenu(wrapper);
+
+    variablesMenu.vm.$emit('input', variable);
+
+    expect(wrapper).toEmit('input', `Variable: {{ ${variable} }}`);
+    expect(focusSpy).toBeCalled();
+  });
+
+  test('Value changed after trigger variables with selected variable', async () => {
+    const focusSpy = jest.spyOn(window, 'focus').mockImplementation();
+    const initialValue = 'Variable: {{ variable }}';
+    const wrapper = snapshotFactory({
+      propsData: {
+        value: initialValue,
+        variables: [{ value: 'variable' }],
+      },
+    });
+
+    await flushPromises();
+
+    const variable = Faker.lorem.word();
+
+    const editor = selectEditor(wrapper);
+    const range = document.createRange();
+    const selection = window.getSelection();
+
+    range.setStart(editor.element.firstChild, initialValue.indexOf('{{'));
+    range.setEnd(editor.element.firstChild, initialValue.indexOf('}}') + 2);
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    const variablesMenu = selectVariablesMenu(wrapper);
+
+    variablesMenu.vm.$emit('input', variable);
+
+    expect(wrapper).toEmit('input', `Variable: {{ ${variable} }}`);
+    expect(focusSpy).toBeCalled();
   });
 
   test('Image uploaded after trigger image control', async () => {
@@ -279,6 +393,32 @@ describe('text-editor', () => {
 
     await flushPromises();
     jest.runAllTimers();
+
+    expect(wrapper.element).toMatchSnapshot();
+    jest.useRealTimers();
+  });
+
+  test('Renders `text-editor` with variables', async () => {
+    jest.useFakeTimers();
+    const wrapper = snapshotFactory({
+      propsData: {
+        value: '{{ test.test }}',
+        variables: [{ value: 'test.test' }],
+      },
+    });
+
+    await flushPromises();
+    jest.runAllTimers();
+
+    const variablesButton = selectVariablesButton(wrapper);
+    jest.spyOn(variablesButton.element, 'getBoundingClientRect').mockImplementation(() => ({
+      top: 101,
+      left: 112,
+      height: 88,
+    }));
+    variablesButton.trigger('click');
+
+    await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
     jest.useRealTimers();

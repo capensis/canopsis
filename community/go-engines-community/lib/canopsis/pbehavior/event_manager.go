@@ -41,14 +41,14 @@ func (r eventManager) GetEvent(resolveResult ResolveResult, alarm types.Alarm, n
 func (r eventManager) GetEventType(resolveResult ResolveResult, curPbehaviorInfo types.PbehaviorInfo) (string, string) {
 	resolvedType := resolveResult.ResolvedType
 
-	if resolvedType != nil && resolvedType.ID == curPbehaviorInfo.TypeID && resolveResult.ResolvedPbhID == curPbehaviorInfo.ID ||
-		resolvedType == nil && curPbehaviorInfo.IsDefaultActive() {
+	if resolvedType.ID != "" && resolvedType.ID == curPbehaviorInfo.TypeID && resolveResult.ResolvedPbhID == curPbehaviorInfo.ID ||
+		resolvedType.ID == "" && curPbehaviorInfo.IsDefaultActive() {
 		return "", ""
 	}
 
 	var eventType string
 	var output string
-	if resolvedType == nil {
+	if resolvedType.ID == "" {
 		eventType = types.EventTypePbhLeave
 		output = fmt.Sprintf(
 			"Pbehavior %s. Type: %s. Reason: %s.",
@@ -79,7 +79,7 @@ func NewEventManager() EventManager {
 }
 
 func NewPBehaviorInfo(time types.CpsTime, result ResolveResult) types.PbehaviorInfo {
-	if result.ResolvedType == nil {
+	if result.ResolvedType.ID == "" {
 		return types.PbehaviorInfo{}
 	}
 

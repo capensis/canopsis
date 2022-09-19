@@ -158,18 +158,16 @@ describe('alarms-expand-panel-tour', () => {
 
     jest.runAllTimers();
     await flushPromises();
-    const nextStepButton = selectNextButton(wrapper);
-    nextStepButton.trigger('click');
+    selectNextButton(wrapper).trigger('click');
 
     jest.runAllTimers();
     await flushPromises();
-    nextStepButton.trigger('click');
+    selectNextButton(wrapper).trigger('click');
 
     jest.runAllTimers();
     await flushPromises();
 
-    const stopButton = selectStopButton(wrapper);
-    stopButton.trigger('click');
+    selectStopButton(wrapper).trigger('click');
     jest.runAllTimers();
     await flushPromises();
 
@@ -210,18 +208,16 @@ describe('alarms-expand-panel-tour', () => {
 
     jest.runAllTimers();
     await flushPromises();
-    const nextStepButton = selectNextButton(wrapper);
-    nextStepButton.trigger('click');
+    selectNextButton(wrapper).trigger('click');
 
     jest.runAllTimers();
     await flushPromises();
-    nextStepButton.trigger('click');
+    selectNextButton(wrapper).trigger('click');
 
     jest.runAllTimers();
     await flushPromises();
 
-    const stopButton = selectStopButton(wrapper);
-    stopButton.trigger('click');
+    selectStopButton(wrapper).trigger('click');
     jest.runAllTimers();
     await flushPromises();
 
@@ -271,12 +267,11 @@ describe('alarms-expand-panel-tour', () => {
 
     jest.runAllTimers();
     await flushPromises();
-    const nextStepButton = selectNextButton(wrapper);
-    nextStepButton.trigger('click');
+    selectNextButton(wrapper).trigger('click');
 
     jest.runAllTimers();
     await flushPromises();
-    nextStepButton.trigger('click');
+    selectNextButton(wrapper).trigger('click');
 
     jest.runAllTimers();
     await flushPromises();
@@ -289,12 +284,11 @@ describe('alarms-expand-panel-tour', () => {
 
     jest.runAllTimers();
     await flushPromises();
-    const nextStepButton = selectNextButton(wrapper);
-    nextStepButton.trigger('click');
+    selectNextButton(wrapper).trigger('click');
 
     jest.runAllTimers();
     await flushPromises();
-    nextStepButton.trigger('click');
+    selectNextButton(wrapper).trigger('click');
 
     jest.runAllTimers();
     await flushPromises();

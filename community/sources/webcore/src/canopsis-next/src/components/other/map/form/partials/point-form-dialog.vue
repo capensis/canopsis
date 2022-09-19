@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { isEqual } from 'lodash';
 import { MODALS } from '@/constants';
 
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -100,22 +101,26 @@ export default {
     },
 
     showConfirmationModal() {
-      this.$modals.show({
-        id: this.point._id,
-        name: MODALS.clickOutsideConfirmation,
-        dialogProps: {
-          persistent: true,
-        },
-        config: {
-          action: (confirmed) => {
-            if (confirmed) {
-              return this.submit();
-            }
-
-            return this.close();
+      if (!isEqual(this.point, this.form)) {
+        this.$modals.show({
+          id: this.point._id,
+          name: MODALS.clickOutsideConfirmation,
+          dialogProps: {
+            persistent: true,
           },
-        },
-      });
+          config: {
+            action: (confirmed) => {
+              if (confirmed) {
+                return this.submit();
+              }
+
+              return this.close();
+            },
+          },
+        });
+      } else {
+        this.close();
+      }
     },
   },
 };

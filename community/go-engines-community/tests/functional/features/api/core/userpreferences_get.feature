@@ -16,7 +16,47 @@ Feature: Get user preferences
         "test-map": {
           "nested": 1
         }
-      }
+      },
+      "filters": [
+        {
+          "_id": "test-widgetfilter-to-user-preferences-get-1",
+          "title": "test-widgetfilter-to-user-preferences-get-1-title",
+          "is_private": true,
+          "author": "test-user-to-user-preferences-edit",
+          "created": 1611229670,
+          "updated": 1611229670,
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-user-preferences-get-1-pattern"
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "_id": "test-widgetfilter-to-user-preferences-get-2",
+          "title": "test-widgetfilter-to-user-preferences-get-2-title",
+          "is_private": true,
+          "author": "test-user-to-user-preferences-edit",
+          "created": 1611229670,
+          "updated": 1611229670,
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-user-preferences-get-2-pattern"
+                }
+              }
+            ]
+          ]
+        }
+      ]
     }
 	"""
     When I do GET /api/v4/user-preferences/test-widget-to-user-preferences-get-2
@@ -32,7 +72,8 @@ Feature: Get user preferences
         "test-map": {
           "nested": 1
         }
-      }
+      },
+      "filters": []
     }
 	"""
 
