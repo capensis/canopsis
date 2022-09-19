@@ -4,8 +4,7 @@
       ref="networkGraph",
       :options="options",
       :node-html-label-options="nodeHtmlLabelsOptions",
-      ctrl-wheel-zoom,
-      @node:tap="nodeTapHandler"
+      ctrl-wheel-zoom
     )
 </template>
 
@@ -99,28 +98,8 @@ export default {
           );
         });
 
-        const { [this.countProperty]: count } = entity;
-
-        if (count > dependencies.length) {
-          const showAllId = `show-all-${entity._id}`;
-
-          acc.push(
-            {
-              group: 'nodes',
-              classes: ['show-all'],
-              data: {
-                id: showAllId,
-                entity,
-              },
-            },
-            {
-              group: 'edges',
-              data: {
-                source: entity._id,
-                target: showAllId,
-              },
-            },
-          );
+        if (entity[this.countProperty] > dependencies.length) {
+          acc.push(...this.getShowAllElements(entity));
         }
 
         return acc;
@@ -214,9 +193,8 @@ export default {
           'material-icons',
           'theme--light',
           'white--text',
-          'tree-of-dependencies__load-dependencies',
+          'tree-of-dependencies__fetch-dependencies',
         );
-        badgeIconEl.dataset.id = entity._id;
         badgeIconEl.textContent = opened ? 'remove' : 'add';
 
         return badgeIconEl;
@@ -231,6 +209,7 @@ export default {
           'darken-1',
           'cursor-pointer',
         );
+        badgeEl.dataset.id = entity._id;
 
         return badgeEl;
       };
@@ -251,7 +230,7 @@ export default {
           ? COLORS.secondary
           : getEntityColor(entity, this.colorIndicator);
 
-        if (entity[this.countProperty] && !root) {
+        if (this.hasDependencies(entity) && !root) {
           nodeEl.appendChild(getBadgeEl(entity, opened, pending));
         }
 
@@ -261,7 +240,6 @@ export default {
       const getShowAllContent = ({ entity }) => {
         const btnContentEl = document.createElement('div');
         btnContentEl.classList.add('v-btn__content');
-        btnContentEl.dataset.id = entity._id;
         btnContentEl.textContent = `Show all (${entity[this.countProperty]})`; // TODO: Add translation
 
         const btnEl = document.createElement('button');
@@ -315,10 +293,10 @@ export default {
     },
   },
   mounted() {
-    this.$refs.networkGraph.$cy.on('mousedown', this.mousedownHandler);
+    this.$refs.networkGraph.$cy.on('tap', this.tapHandler);
   },
   beforeDestroy() {
-    this.$refs.networkGraph.$cy.off('mousedown', this.mousedownHandler);
+    this.$refs.networkGraph.$cy.off('tap', this.tapHandler);
   },
   methods: {
     ...mapActions({
@@ -330,6 +308,10 @@ export default {
       return this.impact
         ? this.fetchServiceImpactsWithoutStore(data)
         : this.fetchServiceDependenciesWithoutStore(data);
+    },
+
+    hasDependencies(entity) {
+      return !!entity[this.countProperty];
     },
 
     /**
@@ -360,7 +342,30 @@ export default {
       }
     },
 
-    addDependenciesElements(elements, sourceId) {
+    getShowAllElements(entity) {
+      const showAllId = `show-all-${entity._id}`;
+
+      return [
+        {
+          group: 'nodes',
+          classes: ['show-all'],
+          data: {
+            id: showAllId,
+            entity,
+          },
+        },
+        {
+          group: 'edges',
+          data: {
+            id: `show-all-edge-${entity._id}`,
+            source: entity._id,
+            target: showAllId,
+          },
+        },
+      ];
+    },
+
+    addDependenciesElements(elements, source) {
       if (!elements.length) {
         return;
       }
@@ -381,7 +386,7 @@ export default {
         acc.push({
           group: 'edges',
           data: {
-            source: sourceId,
+            source: source._id,
             target: element._id,
           },
         });
@@ -389,15 +394,23 @@ export default {
         return acc;
       }, []);
 
+      if (source[this.countProperty] > elements.length) {
+        addedElements.push(...this.getShowAllElements(source));
+      }
+
       this.$refs.networkGraph.$cy.add(addedElements);
     },
 
     removeDependenciesElements(elementsIds, sourceId) {
       const nodesForRemoveSelectors = elementsIds.map(id => `node[id = "${id}"]`);
+      nodesForRemoveSelectors.push(`node[id = "show-all-${sourceId}"]`);
+
       const nodesForRemove = this.$refs.networkGraph.$cy.elements(nodesForRemoveSelectors.join(','));
       const filteredNodesForRemove = nodesForRemove.filter(node => node.connectedEdges().size() === 1);
 
       const edgesForRemoveSelectors = elementsIds.map(id => `edge[source = "${sourceId}"][target = "${id}"]`);
+      edgesForRemoveSelectors.push(`node[id = "show-all-edge-${sourceId}"]`);
+
       const edgesForRemove = this.$refs.networkGraph.$cy.elements(edgesForRemoveSelectors.join(','));
 
       filteredNodesForRemove.remove();
@@ -405,16 +418,15 @@ export default {
     },
 
     /**
-     * Method for dependencies loading for special node
+     * Method for dependencies fetching for special node
      *
      * @param {string} id
      */
-    async loadDependenciesById(id) {
+    async fetchDependenciesById(id) {
       const target = this.$refs.networkGraph.$cy.getElementById(id);
+      const { opened, entity, root, pending } = target.data();
 
-      const { opened, entity, root } = target.data();
-
-      if (!entity[this.countProperty] || root) {
+      if (!this.hasDependencies(entity) || root || pending) {
         return;
       }
 
@@ -460,24 +472,8 @@ export default {
 
       this.$set(this.entitiesById[id], 'dependencies', ids);
 
-      this.addDependenciesElements(data, id);
+      this.addDependenciesElements(data, entity);
       this.runLayout();
-    },
-
-    /**
-     * Handler for cytoscape `mousedown` event
-     *
-     * @param {Object} event
-     */
-    mousedownHandler(event) {
-      const { originalEvent } = event;
-      const { target } = originalEvent;
-
-      if (target.classList.contains('tree-of-dependencies__load-dependencies')) {
-        originalEvent.preventDefault();
-
-        this.loadDependenciesById(originalEvent.target.dataset.id);
-      }
     },
 
     showAllDependenciesById(entityId) {
@@ -490,8 +486,22 @@ export default {
       });
     },
 
-    nodeTapHandler({ target }) {
+    tapHandler({ target, originalEvent }) {
+      if (originalEvent.target.classList.contains('v-badge__badge')) {
+        const { id } = originalEvent.target.dataset;
+
+        if (id) {
+          this.fetchDependenciesById(id);
+
+          return;
+        }
+      }
+
       const { entity } = target.data();
+
+      if (!entity || !this.hasDependencies(entity)) {
+        return;
+      }
 
       this.showAllDependenciesById(entity._id);
     },
@@ -507,6 +517,10 @@ export default {
   & /deep/ .v-badge__badge {
     top: -7px;
     right: -7px;
+
+    * {
+      pointer-events: none;
+    }
   }
 
   & /deep/ .v-progress-circular {
@@ -522,7 +536,7 @@ export default {
     }
   }
 
-  & /deep/ .tree-of-dependencies__load-dependencies {
+  & /deep/ .tree-of-dependencies__fetch-dependencies {
     width: 100%;
     height: 100%;
     border-radius: 50%;
