@@ -1,21 +1,27 @@
 import Faker from 'faker';
+import flushPromises from 'flush-promises';
 
 import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
-import flushPromises from 'flush-promises';
 import { LINE_TYPES } from '@/constants';
 import uid from '@/helpers/uid';
-
-import FlowchartSidebar from '@/components/common/flowchart/flowchart-sidebar.vue';
 import {
-  arrowLineShapeToForm, bidirectionalArrowLineShapeToForm,
-  circleShapeToForm, documentShapeToForm,
-  ellipseShapeToForm, imageShapeToForm, lineShapeToForm,
-  parallelogramShapeToForm, processShapeToForm,
+  arrowLineShapeToForm,
+  bidirectionalArrowLineShapeToForm,
+  circleShapeToForm,
+  documentShapeToForm,
+  ellipseShapeToForm,
+  imageShapeToForm,
+  lineShapeToForm,
+  parallelogramShapeToForm,
+  processShapeToForm,
   rectShapeToForm,
-  rhombusShapeToForm, storageShapeToForm,
+  rhombusShapeToForm,
+  storageShapeToForm,
 } from '@/helpers/flowchart/shapes';
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
 import { getImageProperties } from '@/helpers/file/image';
+
+import FlowchartSidebar from '@/components/common/flowchart/flowchart-sidebar.vue';
 
 const localVue = createVueInstance();
 
