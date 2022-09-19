@@ -8,16 +8,20 @@ Feature: Get alarms
     {
       "type": 0,
       "name": "test-instruction-instruction-pbehavior-alarm-api-1-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-instruction-pbehavior-alarm-api-1-1"
-        },
-        {
-          "name": "test-resource-instruction-pbehavior-alarm-api-1-2"
-        },
-        {
-          "name": "test-resource-instruction-pbehavior-alarm-api-1-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-instruction-pbehavior-alarm-api-1-1",
+                "test-resource-instruction-pbehavior-alarm-api-1-2",
+                "test-resource-instruction-pbehavior-alarm-api-1-3"
+              ]
+            }
+          }
+        ]
       ],
       "description": "test-instruction-instruction-pbehavior-alarm-api-1-1-description",
       "enabled": true,
@@ -49,16 +53,20 @@ Feature: Get alarms
     {
       "type": 0,
       "name": "test-instruction-instruction-pbehavior-alarm-api-1-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-instruction-pbehavior-alarm-api-1-1"
-        },
-        {
-          "name": "test-resource-instruction-pbehavior-alarm-api-1-2"
-        },
-        {
-          "name": "test-resource-instruction-pbehavior-alarm-api-1-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-instruction-pbehavior-alarm-api-1-1",
+                "test-resource-instruction-pbehavior-alarm-api-1-2",
+                "test-resource-instruction-pbehavior-alarm-api-1-3"
+              ]
+            }
+          }
+        ]
       ],
       "active_on_pbh": ["test-maintenance-type-to-engine"],
       "description": "test-instruction-instruction-pbehavior-alarm-api-1-2-description",
@@ -91,16 +99,20 @@ Feature: Get alarms
     {
       "type": 0,
       "name": "test-instruction-instruction-pbehavior-alarm-api-1-3-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-instruction-pbehavior-alarm-api-1-1"
-        },
-        {
-          "name": "test-resource-instruction-pbehavior-alarm-api-1-2"
-        },
-        {
-          "name": "test-resource-instruction-pbehavior-alarm-api-1-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-instruction-pbehavior-alarm-api-1-1",
+                "test-resource-instruction-pbehavior-alarm-api-1-2",
+                "test-resource-instruction-pbehavior-alarm-api-1-3"
+              ]
+            }
+          }
+        ]
       ],
       "disabled_on_pbh": ["test-maintenance-type-to-engine"],
       "description": "test-instruction-instruction-pbehavior-alarm-api-1-3-description",
@@ -178,13 +190,17 @@ Feature: Get alarms
       "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-instruction-pbehavior-alarm-api-1-2"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-instruction-pbehavior-alarm-api-1-2"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -198,18 +214,22 @@ Feature: Get alarms
       "color": "#FFFFFF",
       "type": "test-pause-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-instruction-pbehavior-alarm-api-1-3"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-instruction-pbehavior-alarm-api-1-3"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?include_instructions[]={{ .instructionID1 }}&with_instructions=true&sort_key=d&sort_dir=asc
+    When I do GET /api/v4/alarms?include_instructions[]={{ .instructionID1 }}&with_instructions=true&sort_by=d&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -269,7 +289,7 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?include_instructions[]={{ .instructionID2 }}&with_instructions=true&sort_key=d&sort_dir=asc
+    When I do GET /api/v4/alarms?include_instructions[]={{ .instructionID2 }}&with_instructions=true&sort_by=d&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -299,7 +319,7 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?include_instructions[]={{ .instructionID3 }}&with_instructions=true&sort_key=d&sort_dir=asc
+    When I do GET /api/v4/alarms?include_instructions[]={{ .instructionID3 }}&with_instructions=true&sort_by=d&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -352,10 +372,16 @@ Feature: Get alarms
     {
       "type": 1,
       "name": "test-instruction-instruction-pbehavior-alarm-api-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-instruction-pbehavior-alarm-api-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-instruction-pbehavior-alarm-api-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-instruction-pbehavior-alarm-api-2-description",
       "enabled": true,
@@ -383,13 +409,17 @@ Feature: Get alarms
       "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-instruction-pbehavior-alarm-api-2"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-instruction-pbehavior-alarm-api-2"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -407,15 +437,29 @@ Feature: Get alarms
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-instruction-pbehavior-alarm-api-2&with_steps=true
+    When I wait 100ms
+    When I do GET /api/v4/alarms?search=test-resource-instruction-pbehavior-alarm-api-2
     Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
     Then the response body should contain:
     """json
-    {
-      "data": [
-        {
-          "v": {
-            "steps": [
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc"
               },
@@ -425,9 +469,15 @@ Feature: Get alarms
               {
                 "_t": "pbhenter"
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ]
-    }
+      }
+    ]
     """

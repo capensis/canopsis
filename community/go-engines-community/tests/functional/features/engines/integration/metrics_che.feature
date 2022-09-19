@@ -3,35 +3,41 @@ Feature: Entities should be synchronized in metrics db
 
   Scenario: given updated entity should get metrics by updated entity
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-che-1-1-name",
-      "entity_patterns": [
-        {
-          "infos": {
-            "client": {
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.client",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
               "value": "test-client-metrics-che-1"
             }
           }
-        }
+        ]
       ]
     }
     """
     Then the response code should be 201
     When I save response filter1ID={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-che-1-2-name",
-      "entity_patterns": [
-        {
-          "infos": {
-            "client": {
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.client",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
               "value": "test-client-metrics-che-1-updated"
             }
           }
-        }
+        ]
       ]
     }
     """
@@ -41,49 +47,37 @@ Feature: Entities should be synchronized in metrics db
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "resource": "test-resource-metrics-che-1"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-che-1"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
+      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
       },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-metrics-che-1-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "resource": "test-resource-metrics-che-1"
-      }],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "client",
-          "description": "Client",
-          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
-        }
-      ],
       "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass",
       "description": "test-eventfilter-metrics-che-1-description",
       "enabled": true
     }
@@ -169,35 +163,41 @@ Feature: Entities should be synchronized in metrics db
 
   Scenario: given updated component should get metrics by updated resource
     Given I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-che-2-1-name",
-      "entity_patterns": [
-        {
-          "component_infos": {
-            "client": {
+      "entity_pattern": [
+        [
+          {
+            "field": "component_infos.client",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
               "value": "test-client-metrics-che-2"
             }
           }
-        }
+        ]
       ]
     }
     """
     Then the response code should be 201
     When I save response filter1ID={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-metrics-che-2-2-name",
-      "entity_patterns": [
-        {
-          "component_infos": {
-            "client": {
+      "entity_pattern": [
+        [
+          {
+            "field": "component_infos.client",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
               "value": "test-client-metrics-che-2-updated"
             }
           }
-        }
+        ]
       ]
     }
     """
@@ -207,51 +207,44 @@ Feature: Entities should be synchronized in metrics db
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
-        "component": "test-component-metrics-che-2"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-metrics-che-2"
+            }
+          },
+          {
+            "field": "source_type",
+            "cond": {
+              "type": "eq",
+              "value": "component"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
+      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
       },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-metrics-che-2-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
-        "component": "test-component-metrics-che-2"
-      }],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "client",
-          "description": "Client",
-          "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
-        }
-      ],
       "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass",
       "description": "test-eventfilter-metrics-che-2-description",
       "enabled": true
     }

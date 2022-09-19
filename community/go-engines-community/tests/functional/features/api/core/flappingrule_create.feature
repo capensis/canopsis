@@ -9,17 +9,27 @@ Feature: Create an flapping rule
     {
       "name": "test-flapping-rule-to-create-1-name",
       "description": "test-flapping-rule-to-create-1-description",
-      "alarm_patterns": [
-        {
-          "v": {
-            "component": "test-flapping-rule-to-create-1-pattern"
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-1-pattern"
+            }
           }
-        }
+        ]
       ],
-      "entity_patterns": [
-        {
-          "name": "test-flapping-rule-to-create-1-resource"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-1-resource"
+            }
+          }
+        ]
       ],
       "duration": {
         "value": 10,
@@ -39,17 +49,29 @@ Feature: Create an flapping rule
       },
       "name": "test-flapping-rule-to-create-1-name",
       "description": "test-flapping-rule-to-create-1-description",
-      "alarm_patterns": [
-        {
-          "v": {
-            "component": "test-flapping-rule-to-create-1-pattern"
+      "old_alarm_patterns": null,
+      "old_entity_patterns": null,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-1-pattern"
+            }
           }
-        }
+        ]
       ],
-      "entity_patterns": [
-        {
-          "name": "test-flapping-rule-to-create-1-resource"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-1-resource"
+            }
+          }
+        ]
       ],
       "duration": {
         "value": 10,
@@ -70,17 +92,29 @@ Feature: Create an flapping rule
       },
       "name": "test-flapping-rule-to-create-1-name",
       "description": "test-flapping-rule-to-create-1-description",
-      "alarm_patterns": [
-        {
-          "v": {
-            "component": "test-flapping-rule-to-create-1-pattern"
+      "old_alarm_patterns": null,
+      "old_entity_patterns": null,      
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-1-pattern"
+            }
           }
-        }
+        ]
       ],
-      "entity_patterns": [
-        {
-          "name": "test-flapping-rule-to-create-1-resource"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-1-resource"
+            }
+          }
+        ]
       ],
       "duration": {
         "value": 10,
@@ -98,17 +132,27 @@ Feature: Create an flapping rule
     {
       "name": "test-flapping-rule-to-create-2-priority-1-name",
       "description": "test-flapping-rule-to-create-2-priority-1-description",
-      "alarm_patterns": [
-        {
-          "v": {
-            "component": "test-flapping-rule-to-create-2-priority-1-pattern"
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-2-priority-1-pattern"
+            }
           }
-        }
+        ]
       ],
-      "entity_patterns": [
-        {
-          "name": "test-flapping-rule-to-create-2-priority-1-resource"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-2-priority-1-resource"
+            }
+          }
+        ]
       ],
       "duration": {
         "value": 10,
@@ -124,17 +168,27 @@ Feature: Create an flapping rule
     {
       "name": "test-flapping-rule-to-create-2-priority-2-name",
       "description": "test-flapping-rule-to-create-2-priority-2-description",
-      "alarm_patterns": [
-        {
-          "v": {
-            "component": "test-flapping-rule-to-create-2-priority-2-pattern"
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-2-priority-2-pattern"
+            }
           }
-        }
+        ]
       ],
-      "entity_patterns": [
-        {
-          "name": "test-flapping-rule-to-create-2-priority-2-resource"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-2-priority-2-resource"
+            }
+          }
+        ]
       ],
       "duration": {
         "value": 10,
@@ -161,6 +215,569 @@ Feature: Create an flapping rule
     }
     """
 
+  Scenario: given create request with corporate entity pattern should return success
+    When I am admin
+    When I do POST /api/v4/flapping-rules:
+    """json
+    {
+      "name": "test-flapping-rule-to-create-3-name",
+      "description": "test-flapping-rule-to-create-3-description",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "name": "test-flapping-rule-to-create-3-name",
+      "description": "test-flapping-rule-to-create-3-description",
+      "old_alarm_patterns": null,
+      "old_entity_patterns": null,      
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",      
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-2-pattern"
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+    
+  Scenario: given create request with corporate alarm pattern should return success
+    When I am admin
+    When I do POST /api/v4/flapping-rules:
+    """json
+    {
+      "name": "test-flapping-rule-to-create-4-name",
+      "description": "test-flapping-rule-to-create-4-description",
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "name": "test-flapping-rule-to-create-4-name",
+      "description": "test-flapping-rule-to-create-4-description",
+      "old_alarm_patterns": null,
+      "old_entity_patterns": null,      
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-1-pattern"
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+
+  Scenario: given create request with both corporate patterns should return success
+    When I am admin
+    When I do POST /api/v4/flapping-rules:
+    """json
+    {
+      "name": "test-flapping-rule-to-create-5-name",
+      "description": "test-flapping-rule-to-create-5-description",
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "name": "test-flapping-rule-to-create-5-name",
+      "description": "test-flapping-rule-to-create-5-description",
+      "old_alarm_patterns": null,
+      "old_entity_patterns": null,      
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-1-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-2-pattern"
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+
+  Scenario: given create request with absent alarm corporate pattern should return error    
+    When I am admin
+    When I do POST /api/v4/flapping-rules:
+    """json
+    {
+      "name": "test-flapping-rule-to-create-7-name",
+      "description": "test-flapping-rule-to-create-7-description",
+      "corporate_alarm_pattern": "test-pattern-to-rule-not-exist",
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "corporate_alarm_pattern": "CorporateAlarmPattern doesn't exist."
+      }
+    }
+    """    
+    
+  Scenario: given create request with absent entity corporate pattern should return error    
+    When I am admin
+    When I do POST /api/v4/flapping-rules:
+    """json
+    {
+      "name": "test-flapping-rule-to-create-8-name",
+      "description": "test-flapping-rule-to-create-8-description",
+      "corporate_entity_pattern": "test-pattern-to-rule-not-exist",
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "corporate_entity_pattern": "CorporateEntityPattern doesn't exist."
+      }
+    }
+    """
+    
+  Scenario: given create request with unacceptable alarm pattern and entity pattern fields for flapping rules should return error
+    When I am admin
+    When I do POST /api/v4/flapping-rules:
+    """json
+    {
+      "name": "test-flapping-rule-to-create-9-name",
+      "description": "test-flapping-rule-to-create-9-description",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/flapping-rules:
+    """json
+    {
+      "name": "test-flapping-rule-to-create-9-name",
+      "description": "test-flapping-rule-to-create-9-description",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.last_update_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/flapping-rules:
+    """json
+    {
+      "name": "test-flapping-rule-to-create-9-name",
+      "description": "test-flapping-rule-to-create-9-description",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.resolved",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/flapping-rules:
+    """json
+    {
+      "name": "test-flapping-rule-to-create-9-name",
+      "description": "test-flapping-rule-to-create-9-description",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/flapping-rules:
+    """json
+    {
+      "name": "test-flapping-rule-to-create-9-name",
+      "description": "test-flapping-rule-to-create-9-description",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/flapping-rules:
+    """json
+    {
+      "name": "test-flapping-rule-to-create-9-name",
+      "description": "test-flapping-rule-to-create-9-description",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-flapping-rule-to-create-9-pattern"
+            }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ],
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
+      }
+    }
+    """
+    
+  Scenario: given create request with unacceptable corporate alarm pattern and corporate entity pattern fields for flapping rules should exclude invalid patterns
+    When I am admin
+    When I do POST /api/v4/flapping-rules:
+    """json
+    {
+      "name": "test-flapping-rule-to-create-10-name",
+      "description": "test-flapping-rule-to-create-10-description",
+      "corporate_entity_pattern": "test-pattern-to-flapping-rule-pattern-to-exclude-1",
+      "corporate_alarm_pattern": "test-pattern-to-flapping-rule-pattern-to-exclude-2",
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "name": "test-flapping-rule-to-create-10-name",
+      "description": "test-flapping-rule-to-create-10-description",
+      "old_alarm_patterns": null,
+      "old_entity_patterns": null,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-flapping-rule-pattern-to-exclude-1-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_entity_pattern": "test-pattern-to-flapping-rule-pattern-to-exclude-1",
+      "corporate_entity_pattern_title": "test-pattern-to-flapping-rule-pattern-to-exclude-1-title",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.state.val",
+            "cond": {
+              "type": "eq",
+              "value": 3
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          }
+        ]
+      ],
+      "corporate_alarm_pattern": "test-pattern-to-flapping-rule-pattern-to-exclude-2",
+      "corporate_alarm_pattern_title": "test-pattern-to-flapping-rule-pattern-to-exclude-2-title",
+      "duration": {
+        "value": 10,
+        "unit": "s"
+      },
+      "freq_limit": 3,
+      "priority": 5
+    }
+    """      
+                        
   Scenario: given create request with missing fields should return bad request
     When I am admin
     When I do POST /api/v4/flapping-rules:
@@ -173,8 +790,8 @@ Feature: Create an flapping rule
     """json
     {
       "errors": {
-        "alarm_patterns": "AlarmPatterns or EntityPatterns is required.",
-        "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
+        "alarm_pattern": "AlarmPattern or EntityPattern is required.",
+        "entity_pattern": "EntityPattern or AlarmPattern is required.",
         "name": "Name is missing.",
         "freq_limit": "FreqLimit is missing.",
         "duration.value": "Value is missing.",
@@ -189,17 +806,27 @@ Feature: Create an flapping rule
     When I do POST /api/v4/flapping-rules:
     """json
     {
-      "alarm_patterns": [
-        {
-          "v": {
-            "component_name": "ram"
+      "alarm_pattern": [
+        [
+          {
+            "field": "abcd",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
           }
-        }
+        ]
       ],
-      "entity_patterns": [
-        {
-          "component_name": "ram"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "abcd",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
       ]
     }
     """
@@ -208,8 +835,8 @@ Feature: Create an flapping rule
     """json
     {
       "errors": {
-        "alarm_patterns":"Invalid alarm pattern list.",
-        "entity_patterns":"Invalid entity pattern list."
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern.",
+        "entity_pattern": "EntityPattern is invalid entity pattern."
       }
     }
     """

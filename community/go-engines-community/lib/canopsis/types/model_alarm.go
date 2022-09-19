@@ -108,6 +108,10 @@ type Alarm struct {
 	childrenRemove []string
 	parentsUpdate  []string
 	parentsRemove  []string
+
+	// is used only for manual instructions KPI metrics
+	KPIAssignedInstructions []string `bson:"kpi_assigned_instructions,omitempty" json:"-"`
+	KPIExecutedInstructions []string `bson:"kpi_executed_instructions,omitempty" json:"-"`
 }
 
 // AlarmWithEntity is an encapsulated type, mostly to facilitate the alarm manipulation for the post-processors
@@ -233,63 +237,6 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
 	}
 	sort.Sort(ByTimestamp{steps})
 	return steps, ticket
-}
-
-// Apply actions (ACK, Snooze, AssocTicket, DeclareTicket) from steps to alarm
-func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket, allowDoubleAck bool) error {
-	ts := NewCpsTime(time.Now().Unix())
-
-	for j := 0; j < len(steps); j++ {
-		step := steps[j]
-		step.Author = "correlation"
-		step.Timestamp = ts
-		switch step.Type {
-		case AlarmStepAck:
-			err := a.PartialUpdateAck(ts, step.Author, step.Message, step.UserID, step.Role, step.Initiator, allowDoubleAck)
-			if err != nil {
-				return err
-			}
-		case AlarmStepSnooze:
-			d := DurationWithUnit{
-				Value: int64(step.Value) - step.Timestamp.Unix(),
-				Unit:  "s",
-			}
-			err := a.PartialUpdateSnooze(ts, d, step.Author, step.Message, step.UserID, step.Role, step.Initiator)
-			if err != nil {
-				return err
-			}
-		case AlarmStepAssocTicket:
-			if a.Value.Ticket != nil {
-				continue
-			}
-
-			if ticket == nil {
-				continue
-			}
-
-			err := a.PartialUpdateAssocTicket(ts, ticket.Data, step.Author, ticket.Value, step.UserID, step.Role, step.Initiator)
-			if err != nil {
-				return err
-			}
-		case AlarmStepDeclareTicket:
-			if a.Value.Ticket != nil {
-				continue
-			}
-
-			if ticket == nil {
-				continue
-			}
-
-			err := a.PartialUpdateDeclareTicket(ts, step.Author, step.Message, ticket.Value, ticket.Data, step.UserID, step.Role, step.Initiator)
-			if err != nil {
-				return err
-			}
-		default:
-			return fmt.Errorf("unsupported action type: %s", step.Type)
-		}
-	}
-
-	return nil
 }
 
 // CurrentState returns the Current State of the Alarm
@@ -429,7 +376,7 @@ func (a Alarm) IsMetaAlarm() bool {
 }
 
 func (a Alarm) IsMetaChildren() bool {
-	return a.Value.Parents != nil
+	return len(a.Value.Parents) > 0
 }
 
 func (a Alarm) HasChildByEID(childEID string) bool {

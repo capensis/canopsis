@@ -3,7 +3,6 @@ package scheduler
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -14,7 +13,6 @@ import (
 	redismod "github.com/go-redis/redis/v8"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/valyala/fastjson"
 )
 
 var (
@@ -34,9 +32,8 @@ type scheduler struct {
 	channelPub     libamqp.Channel
 	publishToQueue string
 
-	decoder                   encoding.Decoder
-	encoder                   encoding.Encoder
-	enableMetaAlarmProcessing bool
+	decoder encoding.Decoder
+	encoder encoding.Encoder
 
 	queueLock QueueLock
 
@@ -56,7 +53,6 @@ func NewSchedulerService(
 	lockTtl int,
 	decoder encoding.Decoder,
 	encoder encoding.Encoder,
-	enableMetaAlarmProcessing bool,
 ) Scheduler {
 
 	s := scheduler{
@@ -67,8 +63,6 @@ func NewSchedulerService(
 
 		decoder: decoder,
 		encoder: encoder,
-
-		enableMetaAlarmProcessing: enableMetaAlarmProcessing,
 
 		queueLock: NewQueueLock(
 			redisLockStorage,
@@ -119,154 +113,35 @@ func (s *scheduler) ProcessEvent(ctx context.Context, event types.Event) error {
 		return err
 	}
 
-	if s.IsMetaAlarm(event) && s.enableMetaAlarmProcessing {
-		return s.ProcessMetaAlarm(ctx, lockID, bevent)
-	}
-
 	locked, err := s.queueLock.LockOrPush(ctx, lockID, bevent)
 
 	if !locked || err != nil {
 		return err
 	}
 
-	return s.publishToNext(bevent)
-}
-
-func (s *scheduler) IsMetaAlarm(event types.Event) bool {
-	return event.EventType != types.EventTypeMetaAlarm &&
-		event.EventType != types.EventTypeMetaAlarmUpdated &&
-		strings.HasPrefix(event.Resource, "meta-alarm-entity-")
-}
-
-func (s *scheduler) ProcessMetaAlarm(ctx context.Context, lockID string, bevent []byte) error {
-	s.logger.Debug().Msg("Processing meta-alarm event")
-
-	var event types.Event
-	err := s.decoder.Decode(bevent, &event)
-	if err != nil {
-		return err
-	}
-
-	var lockIDList []string
-	if event.MetaAlarmChildren != nil {
-		lockIDList = append(lockIDList, *event.MetaAlarmChildren...)
-	}
-
-	locked, err := s.queueLock.LockMultipleOrPush(ctx, lockIDList, lockID, bevent)
-
-	if err != nil {
-		s.logger.Err(err).Msg("error on setting meta-alarm lock")
-	}
-
-	if !locked {
-		s.logger.Debug().Msg("meta-alarm is locked, pushing to queue")
-
-		return nil
-	}
-
-	s.logger.Debug().Msg("sending meta-alarm event")
-
-	return s.publishToNext(bevent)
+	return s.publishToNext(ctx, bevent)
 }
 
 func (s *scheduler) AckEvent(ctx context.Context, event types.Event) error {
 	lockID := event.GetLockID()
 	s.logger.Debug().Str("lockID", lockID).Msg("AckEvent")
 
-	if s.IsMetaAlarm(event) && s.enableMetaAlarmProcessing {
-		return s.processMetaAlarmUnlock(ctx, event)
-	}
-
-	asyncUnlock := !s.enableMetaAlarmProcessing || event.MetaAlarmParents == nil ||
-		len(*event.MetaAlarmParents) == 0
-	nextEvent, err := s.queueLock.PopOrUnlock(ctx, lockID, asyncUnlock)
+	nextEvent, err := s.queueLock.PopOrUnlock(ctx, lockID, true)
 
 	if err != nil {
 		return err
 	}
 
 	if nextEvent == nil {
-		go func() {
-			if s.enableMetaAlarmProcessing {
-				s.processMetaAlarmChildUnlock(ctx, event)
-			}
-		}()
-
 		return nil
 	}
 
-	return s.publishToNext(nextEvent)
+	return s.publishToNext(ctx, nextEvent)
 }
 
-func (s *scheduler) processMetaAlarmUnlock(ctx context.Context, event types.Event) error {
-	lockID := event.GetEID()
-
-	if metaAlarmChildren := event.MetaAlarmChildren; metaAlarmChildren != nil && len(*metaAlarmChildren) > 0 {
-		nextEvents, err := s.queueLock.ExtendAndPopRelatedOrMultiple(ctx, *metaAlarmChildren, lockID)
-		if err != nil {
-			s.logger.Err(err).
-				Str("lockID", lockID).
-				Msg("unable to process meta alarm")
-		}
-
-		for _, nextEvent := range nextEvents {
-			err = s.publishToNext(nextEvent)
-			if err != nil {
-				return err
-			}
-		}
-
-		if len(nextEvents) > 0 {
-			return nil
-		}
-	}
-
-	for _, relatedParentId := range event.MetaAlarmRelatedParents {
-		nextMetaAlarmEvent, err := s.queueLock.ExtendAndPopMultiple(ctx, relatedParentId, getChildren)
-		if err != nil {
-			s.logger.Err(err).
-				Str(relatedParentId, "lockID").
-				Msg("unable to unlock alarm")
-
-			continue
-		}
-
-		if nextMetaAlarmEvent != nil {
-			return s.publishToNext(nextMetaAlarmEvent)
-		}
-	}
-
-	return nil
-}
-
-func (s *scheduler) processMetaAlarmChildUnlock(ctx context.Context, event types.Event) {
-	if metaAlarmParents := event.MetaAlarmParents; metaAlarmParents != nil && len(*metaAlarmParents) > 0 {
-		for _, metaAlarmLock := range *metaAlarmParents {
-			nextEvent, err := s.queueLock.ExtendAndPopMultiple(ctx, metaAlarmLock, getChildren)
-			if err != nil {
-				s.logger.Err(err).
-					Str(metaAlarmLock, "meta-alarm-lockID").
-					Msg("unable to get meta-alarms")
-			}
-
-			if nextEvent == nil {
-				continue
-			}
-
-			err = s.publishToNext(nextEvent)
-			if err != nil {
-				s.logger.Err(err).
-					Str(metaAlarmLock, "meta-alarm-lockID").
-					Msg("unable to process meta-alarm")
-			}
-
-			break
-		}
-	}
-}
-
-func (s *scheduler) publishToNext(eventByte []byte) error {
-	return s.channelPub.Publish(
+func (s *scheduler) publishToNext(ctx context.Context, eventByte []byte) error {
+	return s.channelPub.PublishWithContext(
+		ctx,
 		"",
 		s.publishToQueue,
 		false,
@@ -318,33 +193,11 @@ func (s *scheduler) processExpiredLock(ctx context.Context, lockID string) {
 		return
 	}
 
-	err = s.publishToNext(nextEvent)
+	err = s.publishToNext(ctx, nextEvent)
 	if err != nil {
 		s.logger.
 			Err(err).
 			Str("lockID", lockID).
 			Msg("error on publishsing event to queue")
 	}
-}
-
-func getChildren(b []byte) ([]string, error) {
-	jsonEvent, err := fastjson.ParseBytes(b)
-	if err != nil {
-		return nil, err
-	}
-
-	jsonChildren := jsonEvent.GetArray("ma_children")
-	children := make([]string, len(jsonChildren))
-	for idx, child := range jsonChildren {
-		if child == nil {
-			continue
-		}
-
-		children[idx], err = strconv.Unquote(child.String())
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return children, nil
 }

@@ -25,13 +25,17 @@ Feature: Bulk update a pbehaviors
         "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-1",
-        "filter":{
-          "$and":[
+        "entity_pattern": [
+          [
             {
-              "name": "test filter"
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-pbehavior-to-bulk-update-1-pattern-updated"
+              }
             }
           ]
-        },
+        ],
         "exdates": [
           {
             "begin": 1591164001,
@@ -50,13 +54,17 @@ Feature: Bulk update a pbehaviors
         "color": "#FFFFFA",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-1",
-        "filter":{
-          "$and":[
+        "entity_pattern": [
+          [
             {
-              "name": "test filter"
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-pbehavior-to-bulk-update-1-pattern-updated-twice"
+              }
             }
           ]
-        },
+        ],
         "exdates": [
           {
             "begin": 1591164001,
@@ -75,17 +83,39 @@ Feature: Bulk update a pbehaviors
         "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-1",
-        "filter":{
-          "$and":[
+        "entity_pattern": [
+          [
             {
-              "name": "test filter"
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-pbehavior-not-found-pattern"
+              }
             }
           ]
-        }
+        ]
       },
       {},
       {
-        "name": "test-pbehavior-to-check-unique-name"
+        "_id": "test-pbehavior-to-bulk-update-1",
+        "enabled": true,
+        "name": "test-pbehavior-to-check-unique-name",
+        "tstart": 1591172881,
+        "tstop": 1591536400,
+        "color": "#FFFFFF",
+        "type": "test-type-to-pbh-edit-1",
+        "reason": "test-reason-1",
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-pbehavior-to-bulk-update-1-pattern-updated"
+              }
+            }
+          ]
+        ]
       },
       [],
       {
@@ -97,13 +127,17 @@ Feature: Bulk update a pbehaviors
         "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-1",
-        "filter":{
-          "$and":[
+        "entity_pattern": [
+          [
             {
-              "name": "test filter"
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-pbehavior-to-bulk-update-2-pattern-updated"
+              }
             }
           ]
-        },
+        ],
         "exdates": [
           {
             "begin": 1591164001,
@@ -131,13 +165,17 @@ Feature: Bulk update a pbehaviors
           "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-1",
-          "filter":{
-            "$and":[
+          "entity_pattern": [
+            [
               {
-                "name": "test filter"
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-to-bulk-update-1-pattern-updated"
+                }
               }
             ]
-          },
+          ],
           "exdates": [
             {
               "begin": 1591164001,
@@ -160,13 +198,17 @@ Feature: Bulk update a pbehaviors
           "color": "#FFFFFA",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-1",
-          "filter":{
-            "$and":[
+          "entity_pattern": [
+            [
               {
-                "name": "test filter"
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-to-bulk-update-1-pattern-updated-twice"
+                }
               }
             ]
-          },
+          ],
           "exdates": [
             {
               "begin": 1591164001,
@@ -188,13 +230,17 @@ Feature: Bulk update a pbehaviors
           "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-1",
-          "filter":{
-            "$and":[
+          "entity_pattern": [
+            [
               {
-                "name": "test filter"
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-not-found-pattern"
+                }
               }
             ]
-          }
+          ]
         },
         "error": "Not found"
       },
@@ -204,7 +250,7 @@ Feature: Bulk update a pbehaviors
         "errors": {
           "enabled": "Enabled is missing.",
           "name": "Name is missing.",
-          "filter": "Filter is missing.",
+          "entity_pattern": "EntityPattern is missing.",
           "tstart": "Start is missing.",
           "color": "Color is missing.",
           "reason": "Reason is missing.",
@@ -214,7 +260,25 @@ Feature: Bulk update a pbehaviors
       {
         "status": 400,
         "item": {
-          "name": "test-pbehavior-to-check-unique-name"
+          "_id": "test-pbehavior-to-bulk-update-1",
+          "enabled": true,
+          "name": "test-pbehavior-to-check-unique-name",
+          "tstart": 1591172881,
+          "tstop": 1591536400,
+          "color": "#FFFFFF",
+          "type": "test-type-to-pbh-edit-1",
+          "reason": "test-reason-1",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-to-bulk-update-1-pattern-updated"
+                }
+              }
+            ]
+          ]
         },
         "errors": {
           "name": "Name already exists."
@@ -237,13 +301,17 @@ Feature: Bulk update a pbehaviors
           "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-1",
-          "filter":{
-            "$and":[
+          "entity_pattern": [
+            [
               {
-                "name": "test filter"
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-to-bulk-update-2-pattern-updated"
+                }
               }
             ]
-          },
+          ],
           "exdates": [
             {
               "begin": 1591164001,
@@ -275,13 +343,17 @@ Feature: Bulk update a pbehaviors
           "reason": {
             "_id": "test-reason-1"
           },
-          "filter":{
-            "$and":[
+          "entity_pattern": [
+            [
               {
-                "name": "test filter"
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-to-bulk-update-1-pattern-updated-twice"
+                }
               }
             ]
-          },
+          ],
           "exdates": [
             {
               "begin": 1591164001,
@@ -312,13 +384,17 @@ Feature: Bulk update a pbehaviors
           "reason": {
             "_id": "test-reason-1"
           },
-          "filter":{
-            "$and":[
+          "entity_pattern": [
+            [
               {
-                "name": "test filter"
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-to-bulk-update-2-pattern-updated"
+                }
               }
             ]
-          },
+          ],
           "exdates": [
             {
               "begin": 1591164001,

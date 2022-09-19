@@ -2,6 +2,7 @@ package executor
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -48,13 +49,11 @@ func (e *declareTicketWebhookExecutor) Exec(
 		return "", err
 	}
 
-	go func() {
-		metricsUserID := ""
-		if initiator == types.InitiatorUser {
-			metricsUserID = userID
-		}
-		e.metricsSender.SendTicket(context.Background(), *alarm, metricsUserID, time.Time)
-	}()
+	metricsUserID := ""
+	if initiator == types.InitiatorUser {
+		metricsUserID = userID
+	}
+	e.metricsSender.SendTicket(*alarm, metricsUserID, time.Time)
 
 	return types.AlarmChangeTypeDeclareTicketWebhook, nil
 }

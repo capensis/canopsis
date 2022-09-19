@@ -26,7 +26,7 @@ type store struct {
 }
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*pbehaviorapi.Response, error) {
-	return pbehaviorapi.NewStore(s.dbClient, nil, nil, nil, nil).GetOneBy(ctx, bson.M{"_id": id})
+	return pbehaviorapi.NewStore(s.dbClient, nil, nil, nil, nil).GetOneBy(ctx, id)
 }
 
 func (s *store) FindMaxPriority(ctx context.Context) (int64, error) {
