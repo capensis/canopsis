@@ -35,6 +35,7 @@
             :color-indicator="colorIndicator",
             :pbehavior-enabled="pbehaviorEnabled"
           )
+
     point-popup-dialog(
       v-if="activePoint",
       :point="activePoint",

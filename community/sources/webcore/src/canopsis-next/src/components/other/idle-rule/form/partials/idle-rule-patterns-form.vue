@@ -48,6 +48,12 @@ export default {
           },
         },
         {
+          value: ALARM_PATTERN_FIELDS.ackAt,
+          options: {
+            intervalRanges: [QUICK_RANGES.custom],
+          },
+        },
+        {
           value: ALARM_PATTERN_FIELDS.lastUpdateDate,
           options: { disabled: true },
         },

@@ -6,7 +6,7 @@
         v-card.ma-2
           v-tabs(v-model="activeTab", slider-color="primary", fixed-tabs)
             template(v-if="hasReadAnyRemediationInstructionAccess")
-              v-tab(:href="`#${$constants.REMEDIATION_TABS.instructions}`") {{ $t('remediation.tabs.instructions') }}
+              v-tab(:href="`#${$constants.REMEDIATION_TABS.instructions}`") {{ $t('common.instructions') }}
               v-tab-item(:value="$constants.REMEDIATION_TABS.instructions", lazy)
                 v-card-text
                   remediation-instructions
@@ -22,7 +22,15 @@
               v-tab-item(:value="$constants.REMEDIATION_TABS.jobs", lazy)
                 v-card-text
                   remediation-jobs
-    c-fab-btn(@create="create", @refresh="refresh", :has-access="hasCreateAccess")
+            template(v-if="hasReadRemediationStatisticAccess")
+              v-tab(:href="`#${$constants.REMEDIATION_TABS.statistics}`") {{ $t('remediation.tabs.statistics') }}
+              v-tab-item(:value="$constants.REMEDIATION_TABS.statistics", lazy)
+                v-card-text
+                  remediation-statistics
+    c-fab-btn(
+      v-on="fabListeners",
+      :has-access="hasCreateAccess"
+    )
       span {{ tooltipText }}
 </template>
 
@@ -30,12 +38,14 @@
 import { MODALS, REMEDIATION_TABS } from '@/constants';
 
 import RemediationInstructions from '@/components/other/remediation/instructions/remediation-instructions.vue';
-import RemediationJobs from '@/components/other/remediation/jobs/remediation-jobs.vue';
 import RemediationConfigurations from '@/components/other/remediation/configurations/remediation-configurations.vue';
+import RemediationJobs from '@/components/other/remediation/jobs/remediation-jobs.vue';
+import RemediationStatistics from '@/components/other/remediation/statistics/remediation-statistics.vue';
 
 import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
 import { entitiesRemediationConfigurationMixin } from '@/mixins/entities/remediation/configuration';
 import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';
+import { entitiesRemediationStatisticMixin } from '@/mixins/entities/remediation/statistic';
 import {
   permissionsTechnicalRemediationInstructionMixin,
 } from '@/mixins/permissions/technical/remediation-instruction';
@@ -43,20 +53,24 @@ import {
   permissionsTechnicalRemediationConfigurationMixin,
 } from '@/mixins/permissions/technical/remediation-configuration';
 import { permissionsTechnicalRemediationJobMixin } from '@/mixins/permissions/technical/remediation-job';
+import { permissionsTechnicalRemediationStatisticMixin } from '@/mixins/permissions/technical/remediation-statistic';
 
 export default {
   components: {
     RemediationInstructions,
     RemediationConfigurations,
     RemediationJobs,
+    RemediationStatistics,
   },
   mixins: [
     entitiesRemediationInstructionMixin,
     entitiesRemediationConfigurationMixin,
     entitiesRemediationJobMixin,
+    entitiesRemediationStatisticMixin,
     permissionsTechnicalRemediationInstructionMixin,
     permissionsTechnicalRemediationConfigurationMixin,
     permissionsTechnicalRemediationJobMixin,
+    permissionsTechnicalRemediationStatisticMixin,
   ],
   data() {
     return {
@@ -64,6 +78,18 @@ export default {
     };
   },
   computed: {
+    fabListeners() {
+      const listeners = {
+        refresh: this.refresh,
+      };
+
+      if (this.activeTab !== REMEDIATION_TABS.statistics) {
+        listeners.create = this.create;
+      }
+
+      return listeners;
+    },
+
     tooltipText() {
       return {
         [REMEDIATION_TABS.instructions]: this.$t('modals.createRemediationInstruction.create.title'),
@@ -92,6 +118,9 @@ export default {
         case REMEDIATION_TABS.jobs:
           this.fetchJobsList();
           break;
+        case REMEDIATION_TABS.statistics:
+          this.fetchStatisticsList();
+          break;
       }
     },
 
@@ -119,6 +148,10 @@ export default {
 
     fetchJobsList() {
       this.fetchRemediationJobsListWithPreviousParams();
+    },
+
+    fetchStatisticsList() {
+      this.fetchRemediationMetricsListWithPreviousParams();
     },
 
     showCreateInstructionModal() {

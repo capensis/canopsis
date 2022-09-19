@@ -9,6 +9,7 @@
           v-validate="config.rules",
           :label="config.label",
           :error-messages="errors.collect('text')",
+          :variables="variables",
           name="text"
         )
       template(#actions="")
@@ -58,6 +59,10 @@ export default {
   computed: {
     title() {
       return this.config.title ?? this.$t('modals.textEditor.title');
+    },
+
+    variables() {
+      return this.config.variables;
     },
   },
   methods: {

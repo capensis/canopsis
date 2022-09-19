@@ -19,7 +19,7 @@ func (f *Flags) ParseArgs() error {
 	flagConnStart := flag.Int64("connstart", int64(0), "start with this connector")
 	flagResStart := flag.Int64("resstart", int64(0), "start with this resource")
 	flagDirtyEvent := flag.Bool("dirty", true, "dirty event to be cleaned by che. if not, compat event for old engines")
-	flagVersion := flag.Bool("version", false, "version infos")
+	flagVersion := flag.Bool("version", false, "Show the version information")
 	flagFile := flag.String("file", "event.json", "send event from json file (-amqp|http) or directory (-http)")
 	flagMode := flag.String("mode", "feeder", "mode: file (-amqp or -http) or feeder")
 	flagExchange := flag.String("exchange", cps.CheExchangeName, "exchange name to publish events to")
