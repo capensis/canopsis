@@ -36,10 +36,18 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
+import Observer from '@/services/observer';
+
 const { mapActions } = createNamespacedHelpers('entity');
 
 export default {
-  inject: ['$periodicRefresh'],
+  inject: {
+    $periodicRefresh: {
+      default() {
+        return new Observer();
+      },
+    },
+  },
   props: {
     entity: {
       type: Object,

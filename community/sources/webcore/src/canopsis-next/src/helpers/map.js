@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import { ENTITY_TYPES } from '@/constants';
 
 /**
@@ -35,4 +36,40 @@ export const getTreeOfDependenciesEntityText = entity => (
   entity.type === ENTITY_TYPES.resource
     ? entity._id
     : entity.name
+);
+
+/**
+ * @typedef {Object} TreeOfDependenciesMapEntity
+ * @property {Entity} entity
+ * @property {string[]} [dependencies]
+ */
+
+/**
+ *
+ * @param {Entity[]} [entities = []]
+ * @returns {Object<string, TreeOfDependenciesMapEntity>}
+ */
+export const normalizeTreeOfDependenciesMapEntities = (entities = []) => (
+  entities.reduce((acc, { entity, pinned_entities: pinnedEntities }) => {
+    const newEntity = {
+      entity: cloneDeep(entity),
+      dependencies: [],
+    };
+
+    pinnedEntities.forEach((pinnedEntity) => {
+      const { _id: id } = pinnedEntity;
+
+      newEntity.dependencies.push(id);
+
+      if (!acc[id]) {
+        acc[id] = {
+          entity: cloneDeep(pinnedEntity),
+        };
+      }
+    });
+
+    acc[entity._id] = newEntity;
+
+    return acc;
+  }, {})
 );
