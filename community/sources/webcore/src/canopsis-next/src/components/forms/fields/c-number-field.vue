@@ -7,6 +7,7 @@
     :label="label",
     :error-messages="errors.collect(name)",
     :disabled="disabled",
+    :hide-details="hideDetails",
     :name="name",
     :min="min",
     :max="max",
@@ -56,6 +57,10 @@ export default {
     step: {
       type: Number,
       default: undefined,
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

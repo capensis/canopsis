@@ -5,6 +5,16 @@
     ) {{ label }}
     div.text-editor(:class="{ 'error--text': hasError }", @blur="$emit('blur', $event)")
       div(ref="textEditor")
+      variables-menu(
+        v-if="variables",
+        :variables="variables",
+        :visible="variablesShown",
+        :value="variablesMenuValue",
+        :position-x="variablesMenuPosition.x",
+        :position-y="variablesMenuPosition.y",
+        @input="pasteVariable",
+        @close="closeVariablesMenu"
+      )
       div.text-editor__details
         div.v-messages.theme--light.error--text
           div.v-messages__wrapper
@@ -19,7 +29,11 @@ import 'jodit/build/jodit.min.css';
 
 import { BASE_URL, FILE_BASE_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 
+import { matchPayloadVariableBySelection } from '@/helpers/payload-json';
+
 import localStorageService from '@/services/local-storage';
+
+import VariablesMenu from './variables-menu.vue';
 
 const {
   modules: {
@@ -51,6 +65,7 @@ Ajax.prototype.send = function send(...args) {
 };
 
 export default {
+  components: { VariablesMenu },
   props: {
     value: {
       type: String,
@@ -83,10 +98,39 @@ export default {
       type: Number,
       required: false,
     },
+    variables: {
+      type: Array,
+      required: false,
+    },
+  },
+  data() {
+    return {
+      variablesShown: false,
+      variablesMenuValue: '',
+      variablesMenuPosition: {
+        x: 0,
+        y: 0,
+      },
+    };
   },
   computed: {
     hasError() {
       return this.errorMessages.length;
+    },
+
+    variablesButton() {
+      return {
+        name: 'variables',
+        mode: 3,
+        getContent: () => {
+          const controlButton = document.createElement('span');
+
+          controlButton.classList.add('text-editor__variables-button');
+          controlButton.addEventListener('click', this.showVariablesMenu);
+
+          return controlButton;
+        },
+      };
     },
 
     editorConfig() {
@@ -113,8 +157,14 @@ export default {
         config.buttonsXS = this.buttons;
       }
 
+      config.extraButtons = [];
+
+      if (this.variables) {
+        config.extraButtons.push(this.variablesButton);
+      }
+
       if (this.extraButtons.length) {
-        config.extraButtons = this.extraButtons;
+        config.extraButtons.push(...this.extraButtons);
       }
 
       return config;
@@ -172,6 +222,68 @@ export default {
     delete this.$editor;
   },
   methods: {
+    selectVariableValueByCursor() {
+      const selection = this.$editor.selection.sel;
+      const { anchorNode, anchorOffset, focusOffset } = selection;
+
+      if (!anchorNode) {
+        return;
+      }
+
+      const variableGroup = matchPayloadVariableBySelection(anchorNode.nodeValue, selection);
+
+      if (!variableGroup) {
+        this.variablesMenuValue = undefined;
+        return;
+      }
+
+      const [variable,, value] = variableGroup;
+
+      this.variablesMenuValue = value;
+
+      const [currentStart, currentEnd] = [anchorOffset, focusOffset].sort();
+      const start = variableGroup.index;
+      const end = variableGroup.index + variable.length;
+
+      if (currentStart !== start || currentEnd !== end) {
+        const range = document.createRange();
+
+        range.setStart(anchorNode, start);
+        range.setEnd(anchorNode, end);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    },
+
+    showVariablesMenu(event) {
+      this.selectVariableValueByCursor();
+
+      const { left, top, height } = event.target.getBoundingClientRect();
+
+      this.variablesMenuPosition = {
+        x: left,
+        y: top + height,
+      };
+      this.variablesShown = true;
+
+      document.addEventListener('selectionchange', this.selectVariableValueByCursor);
+    },
+
+    closeVariablesMenu() {
+      this.variablesShown = false;
+
+      document.removeEventListener('selectionchange', this.selectVariableValueByCursor);
+    },
+
+    pasteVariable(variable) {
+      this.selectVariableValueByCursor();
+
+      this.$editor.selection.insertHTML(`{{ ${variable} }}`);
+
+      this.closeVariablesMenu();
+    },
+
     /**
      * Editor change event handler
      *
@@ -427,9 +539,26 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .jodit_fullsize_box {
   z-index: 100000 !important;
+}
+
+.text-editor {
+  &__variables-button {
+    display: flex;
+    width: 100%;
+    height: 100%;
+
+    &:after {
+      content: '(x)';
+      display: block;
+      width: 100%;
+      height: 100%;
+      color: black;
+      font-size: 15px;
+    }
+  }
 }
 </style>
 
