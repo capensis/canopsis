@@ -28,6 +28,10 @@ export default {
       type: String,
       default: '',
     },
+    variables: {
+      type: Array,
+      required: false,
+    },
   },
   computed: {
     isValueEmpty() {
@@ -40,6 +44,7 @@ export default {
         name: MODALS.textEditor,
         config: {
           text: this.value,
+          variables: this.variables,
           action: value => this.updateModel(value),
         },
       });
