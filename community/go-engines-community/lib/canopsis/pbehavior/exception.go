@@ -5,8 +5,8 @@ import (
 )
 
 type Exdate struct {
-	types.Exdate
-	Type string `bson:"type" json:"type"`
+	types.Exdate `bson:"inline"`
+	Type         string `bson:"type" json:"type"`
 }
 
 type Exception struct {
