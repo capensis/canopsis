@@ -37,11 +37,11 @@ import { DATETIME_FORMATS, MODALS } from '@/constants';
 
 import { saveJsonFile } from '@/helpers/file/files';
 import { convertTreeviewToObject } from '@/helpers/treeview';
+import { convertDateToString, getNowTimestamp } from '@/helpers/date/date';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 
 import ModalWrapper from '../modal-wrapper.vue';
-import { convertDateToString, getNowTimestamp } from '@/helpers/date/date';
 
 export default {
   name: MODALS.variablesHelp,
