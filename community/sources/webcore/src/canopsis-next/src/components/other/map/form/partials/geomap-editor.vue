@@ -6,6 +6,7 @@
       :disabled="shown",
       :min-zoom="minZoom",
       :options="mapOptions",
+      :center.sync="center",
       @click="openAddingPointDialogByClick",
       @dblclick="openAddingPointDialog"
     )
@@ -33,6 +34,10 @@
               v-icon add_location
           span {{ $t('map.toggleAddingPointMode') }}
 
+      geomap-control(position="bottomright")
+        c-help-icon(size="32", color="secondary", icon="help", top)
+          div.pre-wrap(v-html="$t('geomap.panzoom.helpText')")
+
       geomap-tile-layer(
         :name="$t('map.layers.openStreetMap')",
         :url="$config.OPEN_STREET_LAYER_URL",
@@ -47,20 +52,24 @@
         layer-type="overlay"
       )
         geomap-marker(
-          v-for="marker in markers",
-          :key="marker.id",
-          :lat-lng="marker.coordinates",
-          :options="{ data: marker.data }",
-          :draggable="!shown",
+          v-for="{ coordinates, id, data, icon } in markers",
+          :key="id",
+          :lat-lng="coordinates",
+          :options="{ data }",
+          :draggable="!data.is_entity_coordinates && !shown",
           @dragend="finishMovingMarker",
           @click=""
         )
-          geomap-icon(:icon-anchor="marker.icon.anchor")
-            v-icon(
-              :style="marker.icon.style",
-              :size="marker.icon.size",
-              color="grey darken-2"
-            ) {{ marker.icon.name }}
+          geomap-icon(:icon-anchor="icon.anchor")
+            point-icon(:style="icon.style", :entity="data.entity", :size="icon.size")
+
+      geomap-marker(v-if="pointDialog", :lat-lng="placeholderPoint.coordinates")
+        geomap-icon(:icon-anchor="placeholderPoint.icon.anchor")
+          point-icon(
+            :style="placeholderPoint.icon.style",
+            :entity="placeholderPoint.data.entity",
+            :size="placeholderPoint.icon.size"
+          )
 
       v-menu(
         v-model="shown",
@@ -73,24 +82,28 @@
         absolute
       )
         point-form-dialog(
-          v-if="addingPoint || editingPoint",
-          :point="addingPoint || editingPoint",
+          v-if="pointDialog",
+          :point="pointDialog",
           :editing="!!editingPoint",
+          :exists-entities="existsEntities",
           coordinates,
           @cancel="closePointDialog",
           @submit="submitPointDialog",
-          @remove="showRemovePointModal"
+          @remove="showRemovePointModal",
+          @fly:coordinates="handleUpdateCoordinates"
         )
     v-messages(v-if="hasChildrenError", :value="errorMessages", color="error")
 </template>
 
 <script>
+import uid from '@/helpers/uid';
+
 import { COLORS } from '@/config';
 
 import { MODALS } from '@/constants';
 
 import { geomapPointToForm } from '@/helpers/forms/map';
-import { getGeomapMarkerIcon } from '@/helpers/map';
+import { getGeomapMarkerIconOptions } from '@/helpers/map';
 
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
@@ -103,6 +116,7 @@ import GeomapContextmenu from '@/components/common/geomap/geomap-contextmenu.vue
 import GeomapClusterGroup from '@/components/common/geomap/geomap-cluster-group.vue';
 import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
 import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
+import PointIcon from '@/components/other/map/partials/point-icon.vue';
 
 import PointFormDialog from './point-form-dialog.vue';
 
@@ -119,6 +133,7 @@ export default {
     GeomapMarker,
     PointFormDialog,
     GeomapIcon,
+    PointIcon,
   },
   mixins: [formMixin, validationChildrenMixin],
   model: {
@@ -134,9 +149,13 @@ export default {
       type: Number,
       default: 2,
     },
+    maxClusteringZoom: {
+      type: Number,
+      default: 12,
+    },
     iconSize: {
       type: Number,
-      default: 34,
+      default: 24,
     },
     name: {
       type: String,
@@ -156,6 +175,20 @@ export default {
     };
   },
   computed: {
+    pointDialog() {
+      return this.addingPoint || this.editingPoint;
+    },
+
+    placeholderPoint() {
+      const entityPoint = { entity: uid() };
+
+      return {
+        data: entityPoint,
+        coordinates: this.pointDialog.coordinates,
+        icon: getGeomapMarkerIconOptions(entityPoint, this.iconSize),
+      };
+    },
+
     errorMessages() {
       return [this.$t('geomap.errors.pointsRequired')];
     },
@@ -173,12 +206,16 @@ export default {
       };
     },
 
+    visiblePoints() {
+      return this.form.points.filter(point => point._id !== this.editingPoint?._id);
+    },
+
     markers() {
-      return this.form.points.map(point => ({
+      return this.visiblePoints.map(point => ({
         id: point._id,
-        coordinates: [point.coordinates.lat, point.coordinates.lng],
+        coordinates: point.coordinates,
         data: point,
-        icon: getGeomapMarkerIcon(point, this.iconSize),
+        icon: getGeomapMarkerIconOptions(point, this.iconSize),
       }));
     },
 
@@ -195,6 +232,10 @@ export default {
 
     pointsFieldName() {
       return `${this.name}.points`;
+    },
+
+    existsEntities() {
+      return this.form.points.map(({ entity }) => entity);
     },
   },
   watch: {
@@ -302,6 +343,7 @@ export default {
         },
       });
 
+      this.flyToCoordinates(this.addingPoint.coordinates);
       this.setMenuPositionByLatLng(this.addingPoint.coordinates);
     },
 
@@ -318,6 +360,7 @@ export default {
 
       this.closeContextMenu();
 
+      this.flyToCoordinates(this.editingPoint.coordinates);
       this.setMenuPositionByLatLng(this.editingPoint.coordinates);
     },
 
@@ -357,6 +400,15 @@ export default {
           },
         },
       });
+    },
+
+    handleUpdateCoordinates(coordinates) {
+      this.pointDialog.coordinates = coordinates;
+      this.flyToCoordinates(coordinates);
+    },
+
+    flyToCoordinates(coordinates) {
+      this.$refs.map.mapObject.panTo(coordinates, { animate: false });
     },
   },
 };

@@ -2,7 +2,7 @@
 
 exports[`idle-rule-patterns-form Renders \`idle-rule-patterns-form\` with custom props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object],[object Object],[object Object]"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object]"
   entity-attributes="[object Object]"
   some-required="some-required"
   value="[object Object]"
@@ -12,7 +12,7 @@ exports[`idle-rule-patterns-form Renders \`idle-rule-patterns-form\` with custom
 
 exports[`idle-rule-patterns-form Renders \`idle-rule-patterns-form\` with default props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object],[object Object],[object Object]"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object]"
   entity-attributes="[object Object]"
   some-required="some-required"
   value="[object Object]"

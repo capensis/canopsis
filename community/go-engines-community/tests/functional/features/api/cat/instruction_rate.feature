@@ -5,7 +5,7 @@ Feature: rate an instruction
   Scenario: given rate request and admin user should rate instruction which was executed by someone else
     When I am admin
     When I do PUT /api/v4/notification:
-    """
+    """json
     {
       "instruction": {
         "rate": true,
@@ -20,7 +20,7 @@ Feature: rate an instruction
     Then I do GET /api/v4/cat/instruction-stats?search=test-instruction-to-rate-1&from=1000000000&to=2000000000&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -33,7 +33,7 @@ Feature: rate an instruction
     }
     """
     When I do PUT /api/v4/cat/instructions/test-instruction-to-rate-1/rate:
-    """
+    """json
     {
       "rating": 4.5,
       "comment": "test"
@@ -41,7 +41,7 @@ Feature: rate an instruction
     """
     Then the response code should be 204
     When I do PUT /api/v4/cat/instructions/test-instruction-to-rate-1/rate:
-    """
+    """json
     {
       "rating": 4.5,
       "comment": "test"
@@ -49,7 +49,7 @@ Feature: rate an instruction
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
        "error": "user has already rated today"
     }
@@ -57,7 +57,7 @@ Feature: rate an instruction
     Then I do GET /api/v4/cat/instruction-stats?search=test-instruction-to-rate-1&from=1000000000&to=2000000000&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -73,7 +73,7 @@ Feature: rate an instruction
   Scenario: given rate request and user without instruction create permission should rate instruction which was executed by them
     When I am test-role-to-rate-instruction
     When I do PUT /api/v4/notification:
-    """
+    """json
     {
       "instruction": {
         "rate": true,
@@ -88,7 +88,7 @@ Feature: rate an instruction
     Then I do GET /api/v4/cat/instruction-stats?search=test-instruction-to-rate-2&from=1000000000&to=2000000000&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -101,7 +101,7 @@ Feature: rate an instruction
     }
     """
     When I do PUT /api/v4/cat/instructions/test-instruction-to-rate-2/rate:
-    """
+    """json
     {
       "rating": 4.5,
       "comment": "test"
@@ -109,7 +109,7 @@ Feature: rate an instruction
     """
     Then the response code should be 204
     When I do PUT /api/v4/cat/instructions/test-instruction-to-rate-2/rate:
-    """
+    """json
     {
       "rating": 4.5,
       "comment": "test"
@@ -117,7 +117,7 @@ Feature: rate an instruction
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
        "error": "user has already rated today"
     }
@@ -125,7 +125,7 @@ Feature: rate an instruction
     Then I do GET /api/v4/cat/instruction-stats?search=test-instruction-to-rate-2&from=1000000000&to=2000000000&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -141,7 +141,7 @@ Feature: rate an instruction
   Scenario: given rate request should be calculated rate properly
     When I am admin
     When I do PUT /api/v4/cat/instructions/test-instruction-to-rate-3/rate:
-    """
+    """json
     {
       "rating": 1.5,
       "comment": "test"
@@ -150,7 +150,7 @@ Feature: rate an instruction
     Then the response code should be 204
     When I am test-role-to-rate-instruction
     When I do PUT /api/v4/cat/instructions/test-instruction-to-rate-3/rate:
-    """
+    """json
     {
       "rating": 3,
       "comment": "test"
@@ -160,7 +160,7 @@ Feature: rate an instruction
     Then I do GET /api/v4/cat/instruction-stats?search=test-instruction-to-rate-3&from=1000000000&to=2000000000
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -180,7 +180,7 @@ Feature: rate an instruction
   Scenario: given rate request and admin user should not rate instruction without completed execution
     When I am admin
     When I do PUT /api/v4/cat/instructions/test-instruction-to-rate-4/rate:
-    """
+    """json
     {
       "rating": 4.5,
       "comment": "test"
@@ -188,7 +188,7 @@ Feature: rate an instruction
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "error": "instruction wasn't completed"
     }
@@ -199,7 +199,7 @@ Feature: rate an instruction
     Then I do GET /api/v4/cat/instruction-stats?search=test-instruction-to-rate-5&from=1000000000&to=2000000000
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -211,7 +211,7 @@ Feature: rate an instruction
     }
     """
     When I do PUT /api/v4/cat/instructions/test-instruction-to-rate-5/rate:
-    """
+    """json
     {
       "rating": 4.5,
       "comment": "test"
@@ -219,7 +219,7 @@ Feature: rate an instruction
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "error": "instruction wasn't completed by the user"
     }

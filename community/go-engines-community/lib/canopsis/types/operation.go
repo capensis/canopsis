@@ -23,4 +23,6 @@ type OperationParameters struct {
 	PbehaviorInfo *PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 	// Instruction
 	Execution string `bson:"execution,omitempty" json:"execution,omitempty"`
+	// Instruction is used only for manual instructions kpi metrics
+	Instruction string `bson:"instruction,omitempty" json:"instruction,omitempty"`
 }

@@ -26,7 +26,17 @@ Feature: get service entities
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-pbehavior-weather-service-entity-1"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-1"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """
@@ -42,13 +52,17 @@ Feature: get service entities
       "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-weather-service-entity-1"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-1"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -67,7 +81,8 @@ Feature: get service entities
           "icon": "maintenance",
           "pbehavior_info": {
             "canonical_type": "maintenance",
-            "name": "test-pbehavior-weather-service-entity-1"
+            "name": "test-pbehavior-weather-service-entity-1",
+            "icon_name": "build"
           },
           "pbehaviors": [
             {
@@ -83,7 +98,7 @@ Feature: get service entities
               },
               "type": {
                 "_id": "test-maintenance-type-to-engine",
-                "icon_name": "test-maintenance-to-engine-icon",
+                "icon_name": "build",
                 "name": "Engine maintenance",
                 "type": "maintenance"
               }
@@ -125,7 +140,17 @@ Feature: get service entities
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-pbehavior-weather-service-entity-2"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-2"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """
@@ -141,13 +166,17 @@ Feature: get service entities
       "color": "#FFFFFF",
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-weather-service-entity-2"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-2"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -166,7 +195,8 @@ Feature: get service entities
           "icon": "major",
           "pbehavior_info": {
             "canonical_type": "active",
-            "name": "test-pbehavior-weather-service-entity-2"
+            "name": "test-pbehavior-weather-service-entity-2",
+            "icon_name": "brightness_3"
           },
           "pbehaviors": [
             {
@@ -182,7 +212,7 @@ Feature: get service entities
               },
               "type": {
                 "_id": "test-active-type-to-engine",
-                "icon_name": "test-active-to-engine-icon",
+                "icon_name": "brightness_3",
                 "name": "Engine active",
                 "type": "active"
               }
@@ -238,9 +268,19 @@ Feature: get service entities
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-         {"name": "test-resource-pbehavior-weather-service-entity-3-1"},
-         {"name": "test-resource-pbehavior-weather-service-entity-3-2"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-pbehavior-weather-service-entity-3-1",
+                "test-resource-pbehavior-weather-service-entity-3-2"
+              ]
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -257,13 +297,17 @@ Feature: get service entities
       "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-weather-service-entity-3-1"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-3-1"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -282,7 +326,8 @@ Feature: get service entities
           "icon": "maintenance",
           "pbehavior_info": {
             "canonical_type": "maintenance",
-            "name": "test-pbehavior-weather-service-entity-3-1"
+            "name": "test-pbehavior-weather-service-entity-3-1",
+            "icon_name": "build"
           },
           "pbehaviors": [
             {
@@ -298,7 +343,7 @@ Feature: get service entities
               },
               "type": {
                 "_id": "test-maintenance-type-to-engine",
-                "icon_name": "test-maintenance-to-engine-icon",
+                "icon_name": "build",
                 "name": "Engine maintenance",
                 "type": "maintenance"
               }
@@ -349,8 +394,16 @@ Feature: get service entities
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-         {"name": "test-resource-pbehavior-weather-service-entity-4"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-4"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -367,13 +420,17 @@ Feature: get service entities
       "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-pbehavior-weather-service-entity-4"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-weather-service-entity-4"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -428,8 +485,16 @@ Feature: get service entities
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-         {"name": "test-resource-pbehavior-weather-service-entity-5"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-5"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -446,13 +511,17 @@ Feature: get service entities
       "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-pbehavior-weather-service-entity-5"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-weather-service-entity-5"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -507,8 +576,16 @@ Feature: get service entities
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-         {"name": "test-resource-pbehavior-weather-service-entity-6"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-6"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -525,13 +602,17 @@ Feature: get service entities
       "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-weather-service-entity-6"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-6"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -550,7 +631,8 @@ Feature: get service entities
           "icon": "maintenance",
           "pbehavior_info": {
             "canonical_type": "maintenance",
-            "name": "test-pbehavior-weather-service-entity-6"
+            "name": "test-pbehavior-weather-service-entity-6",
+            "icon_name": "build"
           },
           "pbehaviors": [
             {
@@ -566,7 +648,7 @@ Feature: get service entities
               },
               "type": {
                 "_id": "test-maintenance-type-to-engine",
-                "icon_name": "test-maintenance-to-engine-icon",
+                "icon_name": "build",
                 "name": "Engine maintenance",
                 "type": "maintenance"
               }

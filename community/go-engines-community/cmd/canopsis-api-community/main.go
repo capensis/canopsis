@@ -8,6 +8,7 @@ import (
 	"os/signal"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
@@ -22,6 +23,12 @@ import (
 func main() {
 	var flags api.Flags
 	flags.ParseArgs()
+
+	if flags.Version {
+		canopsis.PrintVersionInfo()
+		return
+	}
+
 	logger := log.NewLogger(flags.Debug)
 	// Graceful shutdown.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)

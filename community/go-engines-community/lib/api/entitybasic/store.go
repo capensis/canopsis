@@ -173,7 +173,10 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, err
 	}
 
-	alarmRes := s.alarmDbCollection.FindOne(ctx, bson.M{"d": entity.ID})
+	alarmRes := s.alarmDbCollection.FindOne(ctx, bson.M{
+		"d":          entity.ID,
+		"v.resolved": nil,
+	})
 	if err := alarmRes.Err(); err == nil {
 		return false, ErrLinkedEntityToAlarm
 	} else if err != mongodriver.ErrNoDocuments {
@@ -199,6 +202,16 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 	_, err = s.dbCollection.UpdateMany(ctx, bson.M{"depends": id},
 		bson.M{"$pull": bson.M{"depends": id}})
+	if err != nil {
+		return false, err
+	}
+	_, err = s.dbCollection.UpdateMany(ctx, bson.M{"connector": id},
+		bson.M{"$unset": bson.M{"connector": ""}})
+	if err != nil {
+		return false, err
+	}
+	_, err = s.dbCollection.UpdateMany(ctx, bson.M{"component": id},
+		bson.M{"$unset": bson.M{"component": ""}})
 	if err != nil {
 		return false, err
 	}

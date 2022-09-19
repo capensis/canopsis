@@ -20,19 +20,30 @@ Feature: Bulk create scenarios
         "_id": "bulk-create-scenario-1",
         "name": "test-scenario-to-bulk-create-1-name",
         "enabled": true,
-        "priority": 200000,
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-action-1-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-action-1-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-action-1-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-action-1-resource"
+                  }
+                }
+              ]
             ],
             "type": "snooze",
             "parameters": {
@@ -46,15 +57,27 @@ Feature: Bulk create scenarios
             "emit_trigger": false
           },
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-action-2-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-action-2-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-action-2-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-action-2-resource"
+                  }
+                }
+              ]
             ],
             "type": "webhook",
             "parameters": {
@@ -84,15 +107,27 @@ Feature: Bulk create scenarios
             "emit_trigger": false
           },
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-action-3-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-action-3-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-action-3-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-action-3-resource"
+                  }
+                }
+              ]
             ],
             "type": "pbehavior",
             "parameters": {
@@ -115,19 +150,30 @@ Feature: Bulk create scenarios
         "_id": "bulk-create-scenario-1",
         "name": "test-scenario-to-bulk-create-1-name",
         "enabled": true,
-        "priority": 200000,
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-action-1-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-action-1-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-action-1-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-action-1-resource"
+                  }
+                }
+              ]
             ],
             "type": "snooze",
             "parameters": {
@@ -141,15 +187,27 @@ Feature: Bulk create scenarios
             "emit_trigger": false
           },
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-action-2-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-action-2-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-action-2-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-action-2-resource"
+                  }
+                }
+              ]
             ],
             "type": "webhook",
             "parameters": {
@@ -179,15 +237,27 @@ Feature: Bulk create scenarios
             "emit_trigger": false
           },
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-action-3-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-action-3-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-action-3-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-action-3-resource"
+                  }
+                }
+              ]
             ],
             "type": "pbehavior",
             "parameters": {
@@ -210,19 +280,30 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-check-unique-name-name",
         "enabled": true,
-        "priority": 13,
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-4-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-4-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-4-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-4-resource"
+                  }
+                }
+              ]
             ],
             "type": "snooze",
             "parameters": {
@@ -244,15 +325,27 @@ Feature: Bulk create scenarios
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-4-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-4-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-4-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-4-resource"
+                  }
+                }
+              ]
             ],
             "type": "snooze",
             "parameters": {
@@ -270,7 +363,6 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "priority": 13,
         "triggers": ["create"],
         "actions": [
           {
@@ -280,96 +372,30 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "priority": 13,
         "triggers": ["create"],
         "actions": [
           {
-            "type": "snooze",
-            "parameters": {
-              "output": "test snooze",
-              "duration": {
-                "seconds": 3,
-                "unit": "s"
-              }
-            },
-            "drop_scenario_if_not_matched": false,
-            "emit_trigger": false
-          }
-        ]
-      },
-      {
-        "name": "test-scenario-to-bulk-create-4-name",
-        "priority": 21,
-        "enabled": true,
-        "triggers": [
-          "statedec"
-        ],
-        "disable_during_periods": [],
-        "actions": [
-          {
-            "type": "webhook",
-            "parameters": {
-              "skip_verify": false,
-              "declare_ticket": {
-                "empty_response": false,
-                "is_regexp": false
-              },
-              "request": {
-                "method": "POST",
-                "url": "http://localhost:5000",
-                "headers": {},
-                "payload": "{}"
-              }
-            },
-            "drop_scenario_if_not_matched": false,
-            "emit_trigger": false,
-            "alarm_patterns": [
-              {
-                "component": "component_recette_retry_webhooks"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": []
-          }
-        ]
-      },
-      {
-        "name": "test-scenario-to-bulk-create-4-name",
-        "enabled": true,
-        "priority": 13,
-        "triggers": ["create"],
-        "actions": [
-          {
-            "alarm_patterns": [{}],
-            "entity_patterns": [{}],
-            "type": "snooze",
-            "parameters": {
-              "output": "test snooze",
-              "duration": {
-                "seconds": 3,
-                "unit": "s"
-              }
-            },
-            "drop_scenario_if_not_matched": false,
-            "emit_trigger": false
-          }
-        ]
-      },
-      {
-        "name": "test-scenario-to-bulk-create-4-name",
-        "enabled": true,
-        "priority": 13,
-        "triggers": ["create"],
-        "actions": [
-          {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-alarm"
-              }
-            ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-resource"
+                  }
+                }
+              ]
             ],
             "type": "snooze",
             "drop_scenario_if_not_matched": false,
@@ -380,19 +406,30 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "priority": 13,
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-resource"
+                  }
+                }
+              ]
             ],
             "type": "assocticket",
             "drop_scenario_if_not_matched": false,
@@ -403,19 +440,30 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "priority": 13,
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-resource"
+                  }
+                }
+              ]
             ],
             "type": "changestate",
             "drop_scenario_if_not_matched": false,
@@ -426,19 +474,30 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "priority": 13,
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-resource"
+                  }
+                }
+              ]
             ],
             "type": "pbehavior",
             "parameters": {
@@ -453,19 +512,30 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "priority": 13,
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-1-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-1-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-resource"
+                  }
+                }
+              ]
             ],
             "type": "webhook",
             "drop_scenario_if_not_matched": false,
@@ -477,19 +547,30 @@ Feature: Bulk create scenarios
         "_id": "test-scenario-to-check-id",
         "name": "my_scenario-name",
         "enabled": true,
-        "priority": 987653,
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-create-1-action-1-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-create-1-action-1-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-1-resource"
+                  }
+                }
+              ]
             ],
             "type": "snooze",
             "parameters": {
@@ -509,19 +590,30 @@ Feature: Bulk create scenarios
         "_id": "bulk-create-scenario-2",
         "name": "test-scenario-to-bulk-create-2-name",
         "enabled": true,
-        "priority": 200001,
         "triggers": ["create"],
         "actions": [
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-2-action-1-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-2-action-1-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-2-action-1-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-2-action-1-resource"
+                  }
+                }
+              ]
             ],
             "type": "snooze",
             "parameters": {
@@ -535,15 +627,27 @@ Feature: Bulk create scenarios
             "emit_trigger": false
           },
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-2-action-2-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-2-action-2-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-2-action-2-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-2-action-2-resource"
+                  }
+                }
+              ]
             ],
             "type": "webhook",
             "parameters": {
@@ -573,15 +677,27 @@ Feature: Bulk create scenarios
             "emit_trigger": false
           },
           {
-            "alarm_patterns": [
-              {
-                "_id": "test-scenario-to-bulk-create-2-action-3-alarm"
-              }
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-2-action-3-alarm"
+                  }
+                }
+              ]
             ],
-            "entity_patterns": [
-              {
-                "name": "test-scenario-to-bulk-create-2-action-3-resource"
-              }
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-2-action-3-resource"
+                  }
+                }
+              ]
             ],
             "type": "pbehavior",
             "parameters": {
@@ -590,6 +706,139 @@ Feature: Bulk create scenarios
               "reason": "test-reason-to-edit-scenario",
               "type": "test-type-to-edit-scenario",
               "start_on_trigger": true,
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false
+          }
+        ]
+      },
+      {
+        "_id": "bulk-create-scenario-3",
+        "name": "test-scenario-to-bulk-create-3-name",
+        "enabled": true,
+        "triggers": ["create"],
+        "delay": {
+          "value": 3,
+          "unit": "s"
+        },
+        "actions": [
+          {
+            "alarm_pattern": [
+              [
+                {
+                  "field": "v.component",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-3-alarm"
+                  }
+                }
+              ]
+            ],
+            "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+            "type": "snooze",
+            "parameters": {
+              "output": "test snooze",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false
+          },
+          {
+            "entity_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-bulk-create-3-name"
+                  }
+                }
+              ]
+            ],
+            "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+            "type": "snooze",
+            "parameters": {
+              "output": "test snooze",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false
+          },
+          {
+            "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+            "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+            "type": "snooze",
+            "parameters": {
+              "output": "test snooze",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false
+          }
+        ]
+      },
+      {
+        "name": "test-scenario-to-create-4-name",
+        "enabled": true,
+        "triggers": ["create"],
+        "delay": {
+          "value": 3,
+          "unit": "s"
+        },
+        "actions": [
+          {
+            "alarm_pattern": [
+              [
+                {
+                  "field": "name",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-create-4-alarm"
+                  }
+                }
+              ]
+            ],
+            "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+            "type": "snooze",
+            "parameters": {
+              "output": "test snooze",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false
+          },
+          {
+            "entity_pattern": [
+              [
+                {
+                  "field": "test",
+                  "cond": {
+                    "type": "eq",
+                    "value": "test-scenario-to-create-4-name"
+                  }
+                }
+              ]
+            ],
+            "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+            "type": "snooze",
+            "parameters": {
+              "output": "test snooze",
               "duration": {
                 "value": 3,
                 "unit": "s"
@@ -613,19 +862,30 @@ Feature: Bulk create scenarios
           "_id": "bulk-create-scenario-1",
           "name": "test-scenario-to-bulk-create-1-name",
           "enabled": true,
-          "priority": 200000,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-action-1-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-1-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-action-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-1-resource"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "parameters": {
@@ -639,15 +899,27 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-action-2-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-2-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-action-2-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-2-resource"
+                    }
+                  }
+                ]
               ],
               "type": "webhook",
               "parameters": {
@@ -677,15 +949,27 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-action-3-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-3-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-action-3-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-3-resource"
+                    }
+                  }
+                ]
               ],
               "type": "pbehavior",
               "parameters": {
@@ -711,19 +995,30 @@ Feature: Bulk create scenarios
           "_id": "bulk-create-scenario-1",
           "name": "test-scenario-to-bulk-create-1-name",
           "enabled": true,
-          "priority": 200000,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-action-1-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-1-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-action-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-1-resource"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "parameters": {
@@ -737,15 +1032,27 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-action-2-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-2-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-action-2-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-2-resource"
+                    }
+                  }
+                ]
               ],
               "type": "webhook",
               "parameters": {
@@ -775,15 +1082,27 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-action-3-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-3-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-action-3-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-3-resource"
+                    }
+                  }
+                ]
               ],
               "type": "pbehavior",
               "parameters": {
@@ -824,19 +1143,30 @@ Feature: Bulk create scenarios
         "item": {
           "name": "test-scenario-to-check-unique-name-name",
           "enabled": true,
-          "priority": 13,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-4-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-4-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-4-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-4-resource"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "parameters": {
@@ -864,15 +1194,27 @@ Feature: Bulk create scenarios
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-4-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-4-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-4-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-4-resource"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "parameters": {
@@ -891,116 +1233,16 @@ Feature: Bulk create scenarios
       {
         "status": 400,
         "errors": {
-          "actions.0.alarm_patterns": "AlarmPatterns is missing.",
           "actions.0.drop_scenario_if_not_matched": "DropScenarioIfNotMatched is missing.",
           "actions.0.emit_trigger": "EmitTrigger is missing.",
-          "actions.0.entity_patterns": "EntityPatterns is missing.",
           "actions.0.type": "Type is missing."
         },
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "priority": 13,
           "triggers": ["create"],
           "actions": [
             {
-            }
-          ]
-        }
-      },
-      {
-        "status": 400,
-        "errors": {
-          "actions.0.alarm_patterns": "AlarmPatterns is missing.",
-          "actions.0.entity_patterns": "EntityPatterns is missing."
-        },
-        "item": {
-          "name": "test-scenario-to-bulk-create-4-name",
-          "enabled": true,
-          "priority": 13,
-          "triggers": ["create"],
-          "actions": [
-            {
-              "type": "snooze",
-              "parameters": {
-                "output": "test snooze",
-                "duration": {
-                  "seconds": 3,
-                  "unit": "s"
-                }
-              },
-              "drop_scenario_if_not_matched": false,
-              "emit_trigger": false
-            }
-          ]
-        }
-      },
-      {
-        "status": 400,
-        "errors": {
-          "actions.0.alarm_patterns": "Invalid alarm pattern list."
-        },
-        "item": {
-          "name": "test-scenario-to-bulk-create-4-name",
-          "priority": 21,
-          "enabled": true,
-          "triggers": [
-            "statedec"
-          ],
-          "disable_during_periods": [],
-          "actions": [
-            {
-              "type": "webhook",
-              "parameters": {
-                "skip_verify": false,
-                "declare_ticket": {
-                  "empty_response": false,
-                  "is_regexp": false
-                },
-                "request": {
-                  "method": "POST",
-                  "url": "http://localhost:5000",
-                  "headers": {},
-                  "payload": "{}"
-                }
-              },
-              "drop_scenario_if_not_matched": false,
-              "emit_trigger": false,
-              "alarm_patterns": [
-                {
-                  "component": "component_recette_retry_webhooks"
-                }
-              ],
-              "entity_patterns": []
-            }
-          ]
-        }
-      },
-      {
-        "status": 400,
-        "errors": {
-          "actions.0.alarm_patterns": "alarm pattern list contains an empty pattern.",
-          "actions.0.entity_patterns": "entity pattern list contains an empty pattern."
-        },
-        "item": {
-          "name": "test-scenario-to-bulk-create-4-name",
-          "enabled": true,
-          "priority": 13,
-          "triggers": ["create"],
-          "actions": [
-            {
-              "alarm_patterns": [{}],
-              "entity_patterns": [{}],
-              "type": "snooze",
-              "parameters": {
-                "output": "test snooze",
-                "duration": {
-                  "seconds": 3,
-                  "unit": "s"
-                }
-              },
-              "drop_scenario_if_not_matched": false,
-              "emit_trigger": false
             }
           ]
         }
@@ -1013,19 +1255,30 @@ Feature: Bulk create scenarios
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "priority": 13,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-resource"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "drop_scenario_if_not_matched": false,
@@ -1042,19 +1295,30 @@ Feature: Bulk create scenarios
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "priority": 13,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-resource"
+                    }
+                  }
+                ]
               ],
               "type": "assocticket",
               "drop_scenario_if_not_matched": false,
@@ -1071,19 +1335,30 @@ Feature: Bulk create scenarios
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "priority": 13,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-resource"
+                    }
+                  }
+                ]
               ],
               "type": "changestate",
               "drop_scenario_if_not_matched": false,
@@ -1104,19 +1379,30 @@ Feature: Bulk create scenarios
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "priority": 13,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-resource"
+                    }
+                  }
+                ]
               ],
               "type": "pbehavior",
               "parameters": {
@@ -1137,19 +1423,30 @@ Feature: Bulk create scenarios
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "priority": 13,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-resource"
+                    }
+                  }
+                ]
               ],
               "type": "webhook",
               "drop_scenario_if_not_matched": false,
@@ -1167,19 +1464,30 @@ Feature: Bulk create scenarios
           "_id": "test-scenario-to-check-id",
           "name": "my_scenario-name",
           "enabled": true,
-          "priority": 987653,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-create-1-action-1-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-create-1-action-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-resource"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "parameters": {
@@ -1207,19 +1515,30 @@ Feature: Bulk create scenarios
           "_id": "bulk-create-scenario-2",
           "name": "test-scenario-to-bulk-create-2-name",
           "enabled": true,
-          "priority": 200001,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-2-action-1-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-2-action-1-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-2-action-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-2-action-1-resource"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "parameters": {
@@ -1233,15 +1552,27 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-2-action-2-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-2-action-2-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-2-action-2-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-2-action-2-resource"
+                    }
+                  }
+                ]
               ],
               "type": "webhook",
               "parameters": {
@@ -1271,15 +1602,27 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-2-action-3-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-2-action-3-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-2-action-3-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-2-action-3-resource"
+                    }
+                  }
+                ]
               ],
               "type": "pbehavior",
               "parameters": {
@@ -1298,6 +1641,150 @@ Feature: Bulk create scenarios
             }
           ]
         }
+      },
+      {
+        "id": "bulk-create-scenario-3",
+        "status": 200,
+        "item": {
+          "_id": "bulk-create-scenario-3",
+          "name": "test-scenario-to-bulk-create-3-name",
+          "enabled": true,
+          "triggers": ["create"],
+          "delay": {
+            "value": 3,
+            "unit": "s"
+          },
+          "actions": [
+            {
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-3-alarm"
+                    }
+                  }
+                ]
+              ],
+              "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            },
+            {
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-3-name"
+                    }
+                  }
+                ]
+              ],
+              "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            },
+            {
+              "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+              "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            }
+          ]
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-scenario-to-create-4-name",
+          "enabled": true,
+          "triggers": ["create"],
+          "delay": {
+            "value": 3,
+            "unit": "s"
+          },
+          "actions": [
+            {
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-create-4-alarm"
+                    }
+                  }
+                ]
+              ],
+              "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            },
+            {
+              "entity_pattern": [
+                [
+                  {
+                    "field": "test",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-create-4-name"
+                    }
+                  }
+                ]
+              ],
+              "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            }
+          ]
+        },
+        "errors": {
+          "actions.0.alarm_pattern": "AlarmPattern is invalid alarm pattern.",
+          "actions.1.entity_pattern": "EntityPattern is invalid entity pattern."
+        }
       }
     ]
     """
@@ -1312,19 +1799,32 @@ Feature: Bulk create scenarios
           "name": "test-scenario-to-bulk-create-1-name",
           "author": "root",
           "enabled": true,
-          "priority": 200000,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-action-1-alarm"
-                }
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-1-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-action-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-1-resource"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "parameters": {
@@ -1338,15 +1838,29 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-action-2-alarm"
-                }
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-2-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-action-2-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-2-resource"
+                    }
+                  }
+                ]
               ],
               "type": "webhook",
               "parameters": {
@@ -1376,15 +1890,29 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-1-action-3-alarm"
-                }
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-3-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-1-action-3-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-1-action-3-resource"
+                    }
+                  }
+                ]
               ],
               "type": "pbehavior",
               "parameters": {
@@ -1405,7 +1933,7 @@ Feature: Bulk create scenarios
                   "description": "test-type-to-edit-scenario-description",
                   "icon_name": "test-type-to-edit-scenario-icon",
                   "name": "test-type-to-edit-scenario-name",
-                  "priority": 26,
+                  "priority": 24,
                   "type": "maintenance"
                 }
               },
@@ -1419,19 +1947,32 @@ Feature: Bulk create scenarios
           "name": "test-scenario-to-bulk-create-2-name",
           "author": "root",
           "enabled": true,
-          "priority": 200001,
           "triggers": ["create"],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-2-action-1-alarm"
-                }
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-2-action-1-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-2-action-1-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-2-action-1-resource"
+                    }
+                  }
+                ]
               ],
               "type": "snooze",
               "parameters": {
@@ -1445,15 +1986,29 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-2-action-2-alarm"
-                }
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-2-action-2-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-2-action-2-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-2-action-2-resource"
+                    }
+                  }
+                ]
               ],
               "type": "webhook",
               "parameters": {
@@ -1483,15 +2038,29 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-to-bulk-create-2-action-3-alarm"
-                }
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-2-action-3-alarm"
+                    }
+                  }
+                ]
               ],
-              "entity_patterns": [
-                {
-                  "name": "test-scenario-to-bulk-create-2-action-3-resource"
-                }
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-2-action-3-resource"
+                    }
+                  }
+                ]
               ],
               "type": "pbehavior",
               "parameters": {
@@ -1512,8 +2081,137 @@ Feature: Bulk create scenarios
                   "description": "test-type-to-edit-scenario-description",
                   "icon_name": "test-type-to-edit-scenario-icon",
                   "name": "test-type-to-edit-scenario-name",
-                  "priority": 26,
+                  "priority": 24,
                   "type": "maintenance"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            }
+          ]
+        },
+        {
+          "_id": "bulk-create-scenario-3",
+          "name": "test-scenario-to-bulk-create-3-name",
+          "author": "root",
+          "enabled": true,
+          "triggers": ["create"],
+          "delay": {
+            "value": 3,
+            "unit": "s"
+          },
+          "actions": [
+            {
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-3-alarm"
+                    }
+                  }
+                ]
+              ],
+              "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+              "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-pattern-to-rule-edit-2-pattern"
+                    }
+                  }
+                ]
+              ],
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            },
+            {
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
+              "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+              "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-pattern-to-rule-edit-1-pattern"
+                    }
+                  }
+                ]
+              ],
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-to-bulk-create-3-name"
+                    }
+                  }
+                ]
+              ],
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            },
+            {
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
+              "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+              "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-pattern-to-rule-edit-1-pattern"
+                    }
+                  }
+                ]
+              ],
+              "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+              "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+              "entity_pattern": [
+                [
+                  {
+                    "field": "name",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-pattern-to-rule-edit-2-pattern"
+                    }
+                  }
+                ]
+              ],
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
                 }
               },
               "drop_scenario_if_not_matched": false,
@@ -1526,7 +2224,7 @@ Feature: Bulk create scenarios
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """
