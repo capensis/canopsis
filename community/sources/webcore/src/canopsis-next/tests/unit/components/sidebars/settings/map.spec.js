@@ -104,6 +104,7 @@ describe('map', () => {
     widgetModule,
     authModule,
     userPreferenceModule,
+    serviceModule,
   } = createSettingsMocks();
 
   const widget = {
@@ -123,6 +124,7 @@ describe('map', () => {
   const store = createMockedStoreModules([
     userPreferenceModule,
     activeViewModule,
+    serviceModule,
     widgetModule,
     authModule,
   ]);
@@ -348,6 +350,7 @@ describe('map', () => {
       store: createMockedStoreModules([
         userPreferenceModule,
         activeViewModule,
+        serviceModule,
         widgetModule,
         authModule,
       ]),
