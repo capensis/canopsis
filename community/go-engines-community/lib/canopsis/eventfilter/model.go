@@ -64,6 +64,18 @@ type Rule struct {
 
 	EventPattern                     pattern.Event `json:"event_pattern" bson:"event_pattern"`
 	savedpattern.EntityPatternFields `bson:",inline"`
+
+	RRule             string         `json:"rrule" bson:"rrule"`
+	Start             *types.CpsTime `json:"start,omitempty" bson:"start,omitempty"`
+	Stop              *types.CpsTime `json:"stop,omitempty" bson:"stop,omitempty"`
+	ResolvedStart     *types.CpsTime `json:"-" bson:"resolved_start,omitempty"`
+	ResolvedStop      *types.CpsTime `json:"-" bson:"resolved_stop,omitempty"`
+	NextResolvedStart *types.CpsTime `json:"-" bson:"next_resolved_start,omitempty"`
+	NextResolvedStop  *types.CpsTime `json:"-" bson:"next_resolved_stop,omitempty"`
+
+	Exdates         []types.Exdate `json:"exdates" bson:"exdates"`
+	Exceptions      []string       `json:"exceptions" bson:"exceptions"`
+	ResolvedExdates []types.Exdate `json:"-" bson:"resolved_exdates"`
 }
 
 type RuleConfig struct {
