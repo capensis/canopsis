@@ -384,6 +384,26 @@ func (mr *MockDbCollectionMockRecorder) UpdateOne(arg0, arg1, arg2 interface{}, 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateOne", reflect.TypeOf((*MockDbCollection)(nil).UpdateOne), varargs...)
 }
 
+// Watch mocks base method.
+func (m *MockDbCollection) Watch(arg0 context.Context, arg1 interface{}, arg2 ...*options.ChangeStreamOptions) (*mongo0.ChangeStream, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Watch", varargs...)
+	ret0, _ := ret[0].(*mongo0.ChangeStream)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Watch indicates an expected call of Watch.
+func (mr *MockDbCollectionMockRecorder) Watch(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Watch", reflect.TypeOf((*MockDbCollection)(nil).Watch), varargs...)
+}
+
 // MockDbClient is a mock of DbClient interface.
 type MockDbClient struct {
 	ctrl     *gomock.Controller
@@ -433,6 +453,20 @@ func (m *MockDbClient) Disconnect(arg0 context.Context) error {
 func (mr *MockDbClientMockRecorder) Disconnect(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Disconnect", reflect.TypeOf((*MockDbClient)(nil).Disconnect), arg0)
+}
+
+// IsReplicaSet mocks base method.
+func (m *MockDbClient) IsReplicaSet() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsReplicaSet")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsReplicaSet indicates an expected call of IsReplicaSet.
+func (mr *MockDbClientMockRecorder) IsReplicaSet() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsReplicaSet", reflect.TypeOf((*MockDbClient)(nil).IsReplicaSet))
 }
 
 // ListCollectionNames mocks base method.
