@@ -6,7 +6,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -30,7 +29,6 @@ type AggregationResult struct {
 type store struct {
 	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
-	timezoneProvider      config.TimezoneConfigProvider
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
