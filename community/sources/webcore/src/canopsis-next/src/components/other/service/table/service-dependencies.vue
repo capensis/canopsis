@@ -26,7 +26,7 @@
         dark,
         @click="showTreeOfDependenciesModal(item)"
       )
-        v-icon {{ getIconByEntity(item) }}
+        v-icon {{ getIconByEntity(item.entity) }}
       v-tooltip(v-if="item.cycle", top)
         template(#activator="{ on }")
           v-icon(v-on="on", color="error", size="14") autorenew
