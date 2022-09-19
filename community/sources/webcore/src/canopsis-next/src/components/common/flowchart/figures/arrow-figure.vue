@@ -7,7 +7,7 @@ export default {
   props: {
     fill: {
       type: String,
-      required: true,
+      required: false,
     },
     width: {
       type: Number,
