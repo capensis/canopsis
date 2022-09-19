@@ -33,7 +33,9 @@ const snapshotFactory = (options = {}) => mount(RemediationInstructionsFilterFor
   ...options,
 });
 
-const selectWithField = wrapper => wrapper.find('.v-radio-group');
+const selectRadioGroups = wrapper => wrapper.findAll('.v-radio-group');
+const selectRunningField = wrapper => selectRadioGroups(wrapper).at(0);
+const selectWithField = wrapper => selectRadioGroups(wrapper).at(1);
 const selectAllField = wrapper => wrapper.find('.v-switch');
 const selectCheckboxFields = wrapper => wrapper.findAll('.v-checkbox');
 const selectAutoField = wrapper => selectCheckboxFields(wrapper).at(0);
@@ -75,6 +77,22 @@ describe('remediation-instructions-filter-form', () => {
     );
   });
 
+  test('Has running enabled after trigger has running field', () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        form: {
+          has_running: undefined,
+        },
+      },
+    });
+
+    const runningField = selectRunningField(wrapper);
+    runningField.vm.$emit('input', false);
+
+    expect(wrapper).toEmit('input', { has_running: false });
+  });
+
   test('With enabled after trigger with field', () => {
     const wrapper = factory({
       store,
@@ -89,12 +107,7 @@ describe('remediation-instructions-filter-form', () => {
 
     withField.vm.$emit('input', false);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({ with: false });
+    expect(wrapper).toEmit('input', { with: false });
   });
 
   test('All disabled after trigger all field', () => {
@@ -111,12 +124,7 @@ describe('remediation-instructions-filter-form', () => {
 
     allField.vm.$emit('change', false);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({ all: false });
+    expect(wrapper).toEmit('input', { all: false });
   });
 
   test('All enabled after trigger all field', () => {
@@ -133,12 +141,7 @@ describe('remediation-instructions-filter-form', () => {
 
     allField.vm.$emit('change', true);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       all: true,
       manual: true,
       auto: true,
@@ -165,13 +168,7 @@ describe('remediation-instructions-filter-form', () => {
     const autoField = selectAutoField(wrapper);
 
     autoField.vm.$emit('change', false);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       auto: false,
       instructions: filter.instructions,
     });
@@ -196,13 +193,7 @@ describe('remediation-instructions-filter-form', () => {
     const manualField = selectManualField(wrapper);
 
     manualField.vm.$emit('change', true);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       manual: true,
       instructions: [],
     });
@@ -227,13 +218,7 @@ describe('remediation-instructions-filter-form', () => {
     ];
 
     instructionsField.vm.$emit('change', instructions);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       manual: true,
       instructions,
     });

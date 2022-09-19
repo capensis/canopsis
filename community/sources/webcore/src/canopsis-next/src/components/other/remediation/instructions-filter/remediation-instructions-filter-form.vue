@@ -1,25 +1,50 @@
 <template lang="pug">
   div
-    v-layout(row)
-      v-radio-group(v-field="form.with", name="with", hide-details)
-        v-radio(
-          :label="$t('remediationInstructionsFilters.with')",
-          :value="true",
-          color="primary"
-        )
-        v-radio(
-          :label="$t('remediationInstructionsFilters.without')",
-          :value="false",
-          color="primary"
-        )
-    v-layout(row)
-      v-switch(
-        :input-value="form.all",
-        :label="$t('remediationInstructionsFilters.selectAll')",
-        :disabled="hasAnyAnotherOppositeFilter",
-        color="primary",
-        @change="changeSelectedAll"
+    v-radio-group(
+      v-field="form.has_running",
+      :label="$t('remediationInstructionsFilters.alarmsListDisplay')",
+      name="with",
+      hide-details
+    )
+      v-radio(
+        :label="$t('remediationInstructionsFilters.allAlarms')",
+        :value="null",
+        color="primary"
       )
+      v-radio(
+        :label="$t('remediationInstructionsFilters.showInProgress')",
+        :value="true",
+        color="primary"
+      )
+      v-radio(
+        :label="$t('remediationInstructionsFilters.hideInProgress')",
+        :value="false",
+        color="primary"
+      )
+
+    v-radio-group(
+      v-field="form.with",
+      :label="$t('remediationInstructionsFilters.filterByInstructions')",
+      name="with",
+      hide-details
+    )
+      v-radio(
+        :label="$t('remediationInstructionsFilters.with')",
+        :value="true",
+        color="primary"
+      )
+      v-radio(
+        :label="$t('remediationInstructionsFilters.without')",
+        :value="false",
+        color="primary"
+      )
+    v-switch(
+      :input-value="form.all",
+      :label="$t('remediationInstructionsFilters.selectAll')",
+      :disabled="hasAnyAnotherOppositeFilter",
+      color="primary",
+      @change="changeSelectedAll"
+    )
     v-layout(row)
       v-flex(md3, xs6)
         v-checkbox(
@@ -36,25 +61,24 @@
         color="primary",
         @change="changeType('manual', $event)"
       )
-    v-layout(row)
-      v-select(
-        v-validate="selectValidationRules",
-        :value="form.instructions",
-        :items="preparedRemediationInstructions",
-        :loading="remediationInstructionsPending",
-        :disabled="isAll",
-        :label="$t('remediationInstructionsFilters.selectedInstructions')",
-        :error-messages="errors.collect('instructions')",
-        item-text="name",
-        item-value="_id",
-        name="instructions",
-        multiple,
-        clearable,
-        return-object,
-        @change="changeInstructions"
-      )
+    v-select(
+      v-validate="selectValidationRules",
+      :value="form.instructions",
+      :items="preparedRemediationInstructions",
+      :loading="remediationInstructionsPending",
+      :disabled="isAll",
+      :label="$t('remediationInstructionsFilters.selectedInstructions')",
+      :error-messages="errors.collect('instructions')",
+      item-text="name",
+      item-value="_id",
+      name="instructions",
+      multiple,
+      clearable,
+      return-object,
+      @change="changeInstructions"
+    )
+      template(#append-outer="")
         c-help-icon(
-          slot="append-outer",
           :text="$t('remediationInstructionsFilters.selectedInstructionsHelp')",
           color="grey darken-1",
           icon="help",

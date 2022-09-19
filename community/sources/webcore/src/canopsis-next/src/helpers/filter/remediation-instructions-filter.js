@@ -1,4 +1,4 @@
-import { uniq } from 'lodash';
+import { isBoolean, uniq } from 'lodash';
 
 import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
@@ -72,6 +72,14 @@ export function prepareRemediationInstructionsFiltersToQuery(filters = []) {
       }
     });
   });
+
+  query.has_running_execution = filters.reduce((acc, { has_running: hasRunning }) => {
+    if (isBoolean(hasRunning) && acc !== false) {
+      return hasRunning;
+    }
+
+    return acc;
+  }, undefined);
 
   return query;
 }
