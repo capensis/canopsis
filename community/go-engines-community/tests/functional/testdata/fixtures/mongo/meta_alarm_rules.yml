@@ -140,6 +140,68 @@ meta_alarm_rules:
             type: eq
             value: test-resource-to-alarm-correlation-get-3-1
 
+  metaalarm_rule_alarm_action_correlation_1:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-action-correlation-1
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-action-correlation-1
+    name: test-metaalarmrule-action-correlation-1-name
+  metaalarm_rule_alarm_action_correlation_2:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-action-correlation-2
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-action-correlation-2
+    name: test-metaalarmrule-action-correlation-2-name
+  metaalarm_rule_alarm_action_correlation_3:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-action-correlation-3
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-action-correlation-3
+    name: test-metaalarmrule-action-correlation-3-name
+  metaalarm_rule_alarm_action_correlation_4:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-action-correlation-4
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-action-correlation-4
+    name: test-metaalarmrule-action-correlation-4-name
+
+  metaalarm_rule_axe_idlerule_correlation_1:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-idlerule-correlation-1
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-idlerule-correlation-1
+    name: test-metaalarmrule-axe-idlerule-correlation-1-name
+  metaalarm_rule_axe_idlerule_correlation_2:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-idlerule-correlation-2
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-idlerule-correlation-2
+    name: test-metaalarmrule-axe-idlerule-correlation-2-name
+
   meta_alarm_rules_1:
     <<: *metaaalarm_rule_complex
     _id: test-alarm-get-metaalarm-rule-1
@@ -496,36 +558,6 @@ meta_alarm_rules:
             value: test-component-axe-correlation-14
     name: test-metaalarmrule-axe-correlation-14-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
-  meta_alarm_rules_39:
-    <<: *metaaalarm_rule_attribute
-    _id: test-metaalarmrule-action-correlation-1
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-component-action-correlation-1
-    name: test-metaalarmrule-action-correlation-1-name
-  meta_alarm_rules_40:
-    <<: *metaaalarm_rule_attribute
-    _id: test-metaalarmrule-action-correlation-2
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-component-action-correlation-2
-    name: test-metaalarmrule-action-correlation-2-name
-  meta_alarm_rules_41:
-    <<: *metaaalarm_rule_attribute
-    _id: test-metaalarmrule-action-correlation-3
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-component-action-correlation-3
-    name: test-metaalarmrule-action-correlation-3-name
 
   metaalarm_rule_backward_compatibility_1:
     _id: test-metaalarm-rule-backward-compatibility-1

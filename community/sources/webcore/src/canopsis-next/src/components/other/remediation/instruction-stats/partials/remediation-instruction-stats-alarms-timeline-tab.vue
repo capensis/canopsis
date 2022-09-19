@@ -5,12 +5,24 @@
     :loading="pending",
     :pagination.sync="pagination",
     :total-items="totalItems",
+    search,
     advanced-pagination
   )
+    template(#toolbar="")
+      v-layout(align-center)
+        c-enabled-field(
+          v-model="showFailed",
+          :label="$t('remediationInstructionStats.showFailedExecutions')",
+          hide-details
+        )
     template(#executed_on="{ item }")
       span.c-nowrap {{ item.executed_on | date }}
-    template(#alarm._id="{ item }")
-      span {{ item.alarm | get('v.display_name') }}
+    template(#result="{ item }")
+      c-enabled(:value="item.status === $constants.REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed")
+    template(#duration="{ item }")
+      span {{ item.duration | duration }}
+    template(#resolved="{ item }")
+      span {{ item.alarm | get('v.resolved') | date }}
     template(#timeline="{ item }")
       span.grey--text.text--darken-2(v-if="!item.alarm") {{ $t('remediationInstructionStats.instructionChanged') }}
       alarm-horizontal-time-line.my-2(v-else, :alarm="item.alarm")
@@ -39,6 +51,7 @@ export default {
     return {
       remediationInstructionExecutions: [],
       totalItems: 0,
+      showFailed: true,
       pending: false,
     };
   },
@@ -56,6 +69,21 @@ export default {
           sortable: false,
         },
         {
+          text: this.$t('common.result'),
+          value: 'result',
+          sortable: false,
+        },
+        {
+          text: this.$t('common.duration'),
+          value: 'duration',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediationInstructionStats.alarmResolvedDate'),
+          value: 'resolved',
+          sortable: false,
+        },
+        {
           value: 'timeline',
           sortable: false,
         },
@@ -64,6 +92,7 @@ export default {
   },
   watch: {
     interval: 'fetchList',
+    showFailed: 'fetchList',
   },
   mounted() {
     this.fetchList();
@@ -76,6 +105,7 @@ export default {
 
       params.from = this.interval.from;
       params.to = this.interval.to;
+      params.show_failed = this.showFailed;
 
       const {
         data: remediationInstructionExecutions,

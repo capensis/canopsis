@@ -2,7 +2,7 @@
 
 exports[`kpi-rating-metric-field Renders \`kpi-rating-metric-field\` without props 1`] = `
 <div
-  class="v-input kpi-rating-metric-field v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input c-select-field v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
   role="combobox"
 >
   <div
@@ -19,20 +19,21 @@ exports[`kpi-rating-metric-field Renders \`kpi-rating-metric-field\` without pro
           class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
-          kpiMetrics.parameter
+          Parameter to compare
         </label>
         <div
           class="v-select__selections"
         >
-          <span
-            class="ellipsis"
+          <div
+            class="v-select__selection v-select__selection--comma"
           >
-            users.metrics.ack_alarms
-          </span>
+            Total number of acks
+          </div>
           <input
-            aria-label="kpiMetrics.parameter"
+            aria-label="Parameter to compare"
             aria-readonly="false"
             autocomplete="on"
+            name="metric"
             readonly="readonly"
             type="text"
           />
@@ -84,7 +85,7 @@ exports[`kpi-rating-metric-field Renders \`kpi-rating-metric-field\` without pro
             <div
               class="v-list__tile__title"
             >
-              users.metrics.ticket_active_alarms
+              Number of active alarms with acks
             </div>
           </div>
         </a>
@@ -102,7 +103,7 @@ exports[`kpi-rating-metric-field Renders \`kpi-rating-metric-field\` without pro
             <div
               class="v-list__tile__title"
             >
-              users.metrics.ack_alarms
+              Total number of acks
             </div>
           </div>
         </a>
@@ -119,7 +120,7 @@ exports[`kpi-rating-metric-field Renders \`kpi-rating-metric-field\` without pro
             <div
               class="v-list__tile__title"
             >
-              users.metrics.cancel_ack_alarms
+              Number of canceled acks
             </div>
           </div>
         </a>
@@ -136,7 +137,7 @@ exports[`kpi-rating-metric-field Renders \`kpi-rating-metric-field\` without pro
             <div
               class="v-list__tile__title"
             >
-              users.metrics.without_ticket_active_alarms
+              Number of active alarms without tickets
             </div>
           </div>
         </a>
@@ -153,7 +154,7 @@ exports[`kpi-rating-metric-field Renders \`kpi-rating-metric-field\` without pro
             <div
               class="v-list__tile__title"
             >
-              users.metrics.average_ack
+              Average time to ack alarms
             </div>
           </div>
         </a>
@@ -170,7 +171,7 @@ exports[`kpi-rating-metric-field Renders \`kpi-rating-metric-field\` without pro
             <div
               class="v-list__tile__title"
             >
-              users.metrics.total_user_activity
+              Total activity time
             </div>
           </div>
         </a>

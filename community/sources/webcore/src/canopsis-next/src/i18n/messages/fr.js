@@ -28,6 +28,11 @@ import {
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
+  EVENT_FILTER_TYPES,
+  PATTERN_OPERATORS,
+  PATTERN_TYPES,
+  PATTERN_FIELD_TYPES,
+  PBEHAVIOR_TYPE_TYPES,
   SCENARIO_TRIGGERS,
   WEATHER_ACTIONS_TYPES,
 } from '@/constants';
@@ -38,7 +43,7 @@ export default merge({
   common: {
     ok: 'Ok',
     undefined: 'Non défini',
-    entity: 'Entité',
+    entity: 'Entité | Entités',
     service: 'Service',
     widget: 'Widget',
     addWidget: 'Ajouter un widget',
@@ -68,6 +73,7 @@ export default merge({
     by: 'Par',
     date: 'Date',
     comment: 'Commentaire | Commentaires',
+    lastComment: 'Dernier commentaire',
     end: 'Fin',
     start: 'Début',
     message: 'Message',
@@ -116,6 +122,7 @@ export default merge({
     tags: 'Étiquettes',
     actionsLabel: 'Actions',
     noResults: 'Pas de résultats',
+    result: 'Résultat',
     exploitation: 'Exploitation',
     administration: 'Administration',
     forbidden: 'Accès refusé',
@@ -144,9 +151,12 @@ export default merge({
     clear: 'Nettoyer',
     deleteAll: 'Tout supprimer',
     payload: 'Payload',
-    output: 'Note',
+    note: 'Note',
+    output: 'Output',
+    displayName: 'Afficher un nom',
     created: 'Date de création',
     updated: 'Date de dernière modification',
+    lastEventDate: 'Date du dernier événement',
     pattern: 'Modèle | Modèles',
     correlation: 'Corrélation',
     periods: 'Périodes',
@@ -157,7 +167,9 @@ export default merge({
     eventPatterns: 'Modèles des événements',
     alarmPatterns: 'Modèles des alarmes',
     entityPatterns: 'Modèles des entités',
+    pbehaviorPatterns: 'Modèles de comportement',
     totalEntityPatterns: 'Total des modèles d\'entité',
+    serviceWeatherPatterns: 'Modèles météorologiques de service',
     addFilter: 'Ajouter un filtre',
     id: 'Identifiant',
     reset: 'Réinitialiser',
@@ -198,7 +210,7 @@ export default merge({
     summary: 'Résumé',
     recurrence: 'Récurrence',
     statistics: 'Statistiques',
-    action: 'Action',
+    action: 'Action | Actions',
     minimal: 'Minimal',
     optimal: 'Optimal',
     graph: 'Graphique | Graphiques',
@@ -213,13 +225,54 @@ export default merge({
     toTheTop: 'Jusqu\'au sommet',
     time: 'Temps',
     lastModifiedOn: 'Dernière modification le',
+    lastModifiedBy: 'Dernière modification par',
     exportAsCsv: 'Export as csv',
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
+    searchBy: 'Recherché par',
+    dictionary: 'Dictionnaire',
+    condition: 'Condition | Conditions',
     template: 'Template',
     pbehaviorList: 'Lister les comportements périodiques',
+    canceled: 'Annulé',
+    snoozed: 'En attente',
+    impact: 'Impact | Impacts',
+    depend: 'Depend | Depends',
+    componentInfo: 'Component info | Component infos',
+    connector: 'Type de connecteur',
+    connectorName: 'Nom du connecteur',
+    component: 'Composant',
+    resource: 'Ressource',
+    extraDetails: 'Détails supplémentaires',
+    acked: 'Acked',
+    ackedAt: 'Acked at',
+    ackedBy: 'Acked by',
+    resolvedAt: 'Resolved at',
+    extraInfo: 'Extra info | Extra infos',
+    custom: 'Personnalisé',
+    eventType: 'Type d\'événement',
+    sourceType: 'Type de Source',
     cycleDependency: 'Dépendance au cycle',
+    checkPattern: 'Motif à carreaux',
+    itemFound: '{count} article trouvé | {count} articles trouvés',
+    canonicalType: 'Type canonique',
+    actions: {
+      acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
+      acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
+      saveChanges: 'Sauvegarder',
+      reportIncident: 'Signaler un incident',
+      [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
+      [EVENT_ENTITY_TYPES.validate]: 'Valider',
+      [EVENT_ENTITY_TYPES.invalidate]: 'Invalider',
+      [EVENT_ENTITY_TYPES.pause]: 'Pause',
+      [EVENT_ENTITY_TYPES.play]: 'Supprimer la pause',
+      [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
+      [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
+      [EVENT_ENTITY_TYPES.executeInstruction]: 'Exécuter la consigne',
+    },
     acknowledge: 'Acquitter',
     acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
     acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -272,6 +325,67 @@ export default merge({
       [ENTITIES_STATES.minor]: 'Mineur',
       [ENTITIES_STATES.major]: 'Majeur',
       [ENTITIES_STATES.critical]: 'Critique',
+    },
+    statusTypes: {
+      [ENTITIES_STATUSES.closed]: 'Fermée',
+      [ENTITIES_STATUSES.ongoing]: 'En cours',
+      [ENTITIES_STATUSES.flapping]: 'Bagot',
+      [ENTITIES_STATUSES.stealthy]: 'Furtive',
+      [ENTITIES_STATUSES.cancelled]: 'Annulée',
+      [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
+    },
+    operators: {
+      [PATTERN_OPERATORS.equal]: 'Égal',
+      [PATTERN_OPERATORS.contains]: 'Contient',
+      [PATTERN_OPERATORS.notEqual]: 'Inégal',
+      [PATTERN_OPERATORS.notContains]: 'Ne contient pas',
+      [PATTERN_OPERATORS.beginsWith]: 'Commence par',
+      [PATTERN_OPERATORS.notBeginWith]: 'Ne commence pas par',
+      [PATTERN_OPERATORS.endsWith]: 'Se termine par',
+      [PATTERN_OPERATORS.notEndWith]: 'Ne se termine pas par',
+      [PATTERN_OPERATORS.exist]: 'Exister',
+      [PATTERN_OPERATORS.notExist]: 'N\'existe pas',
+
+      [PATTERN_OPERATORS.hasEvery]: 'A chaque',
+      [PATTERN_OPERATORS.hasOneOf]: 'A l\'un des',
+      [PATTERN_OPERATORS.isOneOf]: 'Fait partie de',
+      [PATTERN_OPERATORS.hasNot]: 'N\'a pas',
+      [PATTERN_OPERATORS.isNotOneOf]: 'N\'est pas l\'un des',
+      [PATTERN_OPERATORS.isEmpty]: 'Est vide',
+      [PATTERN_OPERATORS.isNotEmpty]: 'N\'est pas vide',
+
+      [PATTERN_OPERATORS.higher]: 'Plus haut que',
+      [PATTERN_OPERATORS.lower]: 'Plus bas que',
+
+      [PATTERN_OPERATORS.longer]: 'Plus long',
+      [PATTERN_OPERATORS.shorter]: 'Plus court',
+
+      [PATTERN_OPERATORS.ticketAssociated]: 'Le billet est associé',
+      [PATTERN_OPERATORS.ticketNotAssociated]: 'Le billet n\'est pas associé',
+
+      [PATTERN_OPERATORS.canceled]: 'Annulé',
+      [PATTERN_OPERATORS.notCanceled]: 'Non annulé',
+
+      [PATTERN_OPERATORS.snoozed]: 'En attente',
+      [PATTERN_OPERATORS.notSnoozed]: 'Non mis en attente',
+
+      [PATTERN_OPERATORS.acked]: 'Acquis',
+      [PATTERN_OPERATORS.notAcked]: 'Non confirmé',
+
+      [PATTERN_OPERATORS.isGrey]: 'Carrelage gris',
+      [PATTERN_OPERATORS.isNotGrey]: 'Pas de carreaux gris',
+    },
+    entityEventTypes: {
+      [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
+      [EVENT_ENTITY_TYPES.ackRemove]: 'Suppression d\'acquittement',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
+      [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
+      [EVENT_ENTITY_TYPES.uncancel]: 'Uncancel',
+      [EVENT_ENTITY_TYPES.changeState]: 'Changer d\'état',
+      [EVENT_ENTITY_TYPES.check]: 'Vérifier',
+      [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
+      [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
     },
     scenarioTriggers: {
       [SCENARIO_TRIGGERS.create]: {
@@ -381,9 +495,6 @@ export default merge({
         massDisable: 'Désactiver les entités',
       },
     },
-    entityInfo: {
-      valueAsList: 'Changer le type de valeur en liste',
-    },
     fab: {
       common: 'Ajouter une nouvelle entité',
       addService: 'Ajouter une nouvelle entité de service',
@@ -479,8 +590,8 @@ export default merge({
       },
       iconsFields: {
         ticketNumber: 'Numéro de ticket',
-        causes: 'Causes',
-        consequences: 'Conséquences',
+        parents: 'Causes',
+        children: 'Conséquences',
         rule: 'Règle | Règles',
       },
     },
@@ -531,8 +642,7 @@ export default merge({
     tabs: {
       moreInfos: 'Plus d\'infos',
       timeLine: 'Chronologie',
-      alarmsConsequences: 'Alarmes liées',
-      alarmsCauses: 'Causes des alarmes',
+      alarmsChildren: 'Alarmes liées',
       trackSource: 'Source de la piste',
       impactChain: 'Chaîne d\'impact',
       entityGantt: 'Diagramme de Gantt',
@@ -612,8 +722,6 @@ export default merge({
       + '  <dd>Le nom de la raison du comportement périodique est "reason_name_1"</dd>'
       + '</dl>',
     tabs: {
-      filter: 'Filtre',
-      comments: 'Commentaires',
       entities: 'Entités',
     },
   },
@@ -1044,7 +1152,7 @@ export default merge({
         },
       },
     },
-    filter: {
+    createFilter: {
       create: {
         title: 'Créer un filtre',
       },
@@ -1138,7 +1246,7 @@ export default merge({
         title: 'Éditer un rôle',
       },
     },
-    eventFilterRule: {
+    createEventFilter: {
       create: {
         title: 'Créer une règle',
         success: 'Règle créée avec succès !',
@@ -1153,64 +1261,6 @@ export default merge({
       },
       remove: {
         success: 'La règle a bien été supprimée !',
-      },
-      priority: 'Priorité',
-      editPattern: 'Éditer le modèle',
-      advanced: 'Avancée',
-      addAField: 'Ajouter un champ',
-      simpleEditor: 'Éditeur simple',
-      field: 'Champ',
-      value: 'Valeur',
-      advancedEditor: 'Éditeur avancé',
-      comparisonRules: 'Règles de comparaison',
-      enrichmentOptions: 'Options d\'enrichissement',
-      editActions: 'Éditer les actions',
-      addAction: 'Ajouter une action',
-      editAction: 'Éditer une action',
-      actions: 'Actions',
-      externalData: 'Données externes',
-      onSuccess: 'En cas de succès',
-      onFailure: 'En cas d\'échec',
-      tooltips: {
-        addValueRuleField: 'Ajouter une règle',
-        editValueRuleField: 'Éditer la règle',
-        addObjectRuleField: 'Ajouter un groupe de règles',
-        editObjectRuleField: 'Éditer le groupe de règles',
-        removeRuleField: 'Supprimer le groupe/la règle',
-        copyFromHelp: '<p>Les variables accessibles sont: <strong>Event</strong></p>'
-          + '<i>Quelques exemples:</i> <span>"Event.ExtraInfos.datecustom"</span>',
-      },
-      actionsTypes: {
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
-          text: 'Copier une valeur d\'un champ d\'événement à un autre',
-          message: 'Cette action est utilisée pour copier la valeur d\'un contrôle dans un événement.',
-          description: 'Les paramètres de l\'action sont :\n- depuis : le nom du champ dont la valeur doit être copiée. Il peut s\'agir d\'un champ d\'événement, d\'un sous-groupe d\'une expression régulière ou d\'une donnée externe.\n- vers : le nom du champ événement dans lequel la valeur doit être copiée.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
-          text: 'Copier une valeur d\'un champ d\'un événement vers une information d\'une entité',
-          message: 'Cette action est utilisée pour copier la valeur du champ d\'un événement dans le champ d\'une entité. Notez que l\'entité doit être ajoutée à l\'événement en premier.',
-          description: 'Les paramètres de l\'action sont :\n- nom : le nom du champ d\'une entité.\n- description (optionnel) : la description.\n- depuis : le nom du champ dont la valeur doit être copiée. Il peut s\'agir d\'un champ d\'événement, d\'un sous-groupe d\'une expression régulière ou d\'une donnée externe.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
-          text: 'Définir une information d\'une entité sur une constante',
-          message: 'Cette action permet de définir les informations dynamiques d\'une entité correspondant à l\'événement. Notez que l\'entité doit être ajoutée à l\'événement en premier.',
-          description: 'Les paramètres de l\'action sont :\n- nom : le nom du champ.\n- description (optionnel) : la description.\n- valeur : la valeur d\'un champ.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
-          text: 'Définir une chaîne d\'informations sur une entité à l\'aide d\'un modèle',
-          message: 'Cette action permet de modifier les informations dynamiques d\'une entité correspondant à l\'événement. Notez que l\'entité doit être ajoutée à l\'événement.',
-          description: 'Les paramètres de l\'action sont :\n- nom : le nom du champ.\n- description (optionnel) : la description\n- valeur : le modèle utilisé pour déterminer la valeur de la donnée.\nDes modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
-          text: 'Définir un champ d\'un événement sur une constante',
-          message: 'Cette action peut être utilisée pour modifier un champ de l\'événement.',
-          description: 'Les paramètres de l\'action sont :\n- nom : le nom du champ.\n- valeur : la nouvelle valeur du champ.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate]: {
-          text: 'Définir un champ de chaîne d\'un événement à l\'aide d\'un modèle',
-          message: 'Cette action vous permet de modifier un champ d\'événement à partir d\'un modèle.',
-          description: 'Les paramètres de l\'action sont :\n- nom : le nom du champ.\n- valeur : le modèle utilisé pour déterminer la valeur du champ.\n  Des modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
-        },
       },
     },
     metaAlarmRule: {
@@ -1278,18 +1328,11 @@ export default merge({
       },
       errors: {
         invalid: 'Invalide',
+        emptyInfos: 'Au moins une information doit être ajoutée.',
       },
       steps: {
-        general: {
-          fields: {
-            id: 'Identifiant',
-            name: 'Nom',
-            description: 'Description',
-          },
-        },
         infos: {
           title: 'Informations',
-          validationError: 'Toutes les valeurs doivent être saisies',
         },
         patterns: {
           title: 'Modèles',
@@ -1302,10 +1345,6 @@ export default merge({
     createDynamicInfoInformation: {
       create: {
         title: 'Ajouter une information à la règle d\'information dynamique',
-      },
-      fields: {
-        name: 'Nom',
-        value: 'Valeur',
       },
     },
     dynamicInfoTemplatesList: {
@@ -1333,7 +1372,6 @@ export default merge({
       title: 'Vues d\'importation / exportation',
       groups: 'Groupes',
       views: 'Vues',
-      result: 'Résultat',
     },
     createBroadcastMessage: {
       create: {
@@ -1346,9 +1384,6 @@ export default merge({
     },
     createCommentEvent: {
       title: 'Ajouter un commentaire',
-      fields: {
-        comment: 'Commentaire',
-      },
     },
     createPlaylist: {
       create: {
@@ -1368,7 +1403,6 @@ export default merge({
         unit: 'Unité',
       },
       groups: 'Groupe',
-      result: 'Résultat',
       manageTabs: 'Gérer les onglets',
     },
     pbehaviorPlanning: {
@@ -1422,7 +1456,6 @@ export default merge({
       noData: 'Aucune méta-alarme correspondante. Appuyez sur <kbd>Entrée</kbd> pour en créer un nouveau',
       fields: {
         metaAlarm: 'Méta-alarme manuelle',
-        output: 'Note',
       },
     },
     createRemediationInstruction: {
@@ -1470,20 +1503,6 @@ export default merge({
           success: '{jobName} a été modifiée avec succès',
         },
       },
-      fields: {
-        configuration: 'Configuration',
-        jobId: 'Identifiant de la tâche',
-        query: 'Requête',
-        multipleExecutions: 'Autoriser l\'exécution parallèle',
-      },
-      errors: {
-        invalidJSON: 'JSON non valide',
-      },
-      addPayload: 'Ajouter un payload',
-      deletePayload: 'Supprimer le payload',
-      payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
-        + '<i>Quelques exemples:</i>'
-        + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
     },
     clickOutsideConfirmation: {
       title: 'Êtes-vous sûr(e) ?',
@@ -1652,29 +1671,57 @@ export default merge({
         title: 'Comportements périodiques - {name}',
       },
     },
+    createAlarmPattern: {
+      create: {
+        title: 'Créer un filtre d\'alarme',
+      },
+      edit: {
+        title: 'Modifier le modèle d\'alarme',
+      },
+    },
+    createCorporateAlarmPattern: {
+      create: {
+        title: 'Créer un filtre d\'alarme partagé',
+      },
+      edit: {
+        title: 'Modifier le filtre d\'alarme partagé',
+      },
+    },
+    createEntityPattern: {
+      create: {
+        title: 'Créer un filtre d\'entité',
+      },
+      edit: {
+        title: 'Modifier le modèle d\'entité',
+      },
+    },
+    createCorporateEntityPattern: {
+      create: {
+        title: 'Créer un filtre d\'entité partagée',
+      },
+      edit: {
+        title: 'Modifier le filtre d\'entité partagée',
+      },
+    },
+    createPbehaviorPattern: {
+      create: {
+        title: 'Créer un filtre de comportement',
+      },
+      edit: {
+        title: 'Modifier le modèle de comportement',
+      },
+    },
+    createCorporatePbehaviorPattern: {
+      create: {
+        title: 'Créer un filtre de comportement partagé',
+      },
+      edit: {
+        title: 'Modifier le filtre de comportement partagé',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
-    alarmGeneral: {
-      author: 'Auteur',
-      connector: 'Type de connecteur',
-      connectorName: 'Nom du connecteur',
-      component: 'Composant',
-      resource: 'Ressource',
-      output: 'Message',
-      lastUpdateDate: 'Date de dernière modification',
-      creationDate: 'Date de création',
-      duration: 'Durée',
-      state: 'Criticité',
-      status: 'Statut',
-      extraDetails: 'Détails supplémentaires',
-    },
-    alarmStates: {
-      [ENTITIES_STATES.ok]: 'Info',
-      [ENTITIES_STATES.minor]: 'Mineur',
-      [ENTITIES_STATES.major]: 'Majeur',
-      [ENTITIES_STATES.critical]: 'Critique',
-    },
     contextEntities: {
       columns: {
         name: 'Nom',
@@ -1739,10 +1786,11 @@ export default merge({
     JSONNotValid: 'JSON non valide',
     versionNotFound: 'Erreur dans la récupération du numéro de version...',
     statsRequestProblem: 'Erreur dans la récupération des statistiques',
-    statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
+    statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'community' de Canopsis",
     socketConnectionProblem: 'Problème de connexion aux websockets',
     endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
     unknownWidgetType: 'Type de widget inconnu: {type}',
+    unique: 'Le champ doit être unique',
   },
   warnings: {
     authTokenExpired: 'Le jeton d\'authentification a expiré',
@@ -1802,9 +1850,6 @@ export default merge({
       list: 'Gérer les filtres',
     },
   },
-  validator: {
-    unique: 'Le champ doit être unique',
-  },
   stats: {
     types: {
       [STATS_TYPES.alarmsCreated.value]: 'Alarmes créées',
@@ -1824,9 +1869,76 @@ export default merge({
     },
   },
   eventFilter: {
-    externalDatas: 'Données externes',
+    externalData: 'Données externes',
     actionsRequired: 'Veuillez ajouter au moins une action',
+    configRequired: 'No configuration defined. Please add at least one config parameter',
     idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
+    editPattern: 'Éditer le modèle',
+    advanced: 'Avancée',
+    addAField: 'Ajouter un champ',
+    simpleEditor: 'Éditeur simple',
+    field: 'Champ',
+    value: 'Valeur',
+    advancedEditor: 'Éditeur avancé',
+    comparisonRules: 'Règles de comparaison',
+    editActions: 'Éditer les actions',
+    addAction: 'Ajouter une action',
+    editAction: 'Éditer une action',
+    actions: 'Actions',
+    onSuccess: 'En cas de succès',
+    onFailure: 'En cas d\'échec',
+    configuration: 'Configuration',
+    resource: 'ID de ressource ou modèle',
+    component: 'ID de composant ou modèle',
+    connector: 'ID ou modèle de connecteur',
+    connectorName: 'Nom ou modèle de connecteur',
+    types: {
+      [EVENT_FILTER_TYPES.drop]: 'Drop',
+      [EVENT_FILTER_TYPES.break]: 'Break',
+      [EVENT_FILTER_TYPES.enrichment]: 'Enrichment',
+      [EVENT_FILTER_TYPES.changeEntity]: 'Change entity',
+    },
+    tooltips: {
+      addValueRuleField: 'Ajouter une règle',
+      editValueRuleField: 'Éditer la règle',
+      addObjectRuleField: 'Ajouter un groupe de règles',
+      editObjectRuleField: 'Éditer le groupe de règles',
+      removeRuleField: 'Supprimer le groupe/la règle',
+      copyFromHelp: '<p>Les variables accessibles sont: <strong>Event</strong></p>'
+        + '<i>Quelques exemples:</i> <span>"Event.ExtraInfos.datecustom"</span>',
+    },
+    actionsTypes: {
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
+        text: 'Copier une valeur d\'un champ d\'événement à un autre',
+        message: 'Cette action est utilisée pour copier la valeur d\'un contrôle dans un événement.',
+        description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description.\n- valeur : le nom du champ dont la valeur doit être copiée. Il peut s\'agir d\'un champ d\'événement, d\'un sous-groupe d\'une expression régulière ou d\'une donnée externe.\n- nom : le nom du champ événement dans lequel la valeur doit être copiée.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
+        text: 'Copier une valeur d\'un champ d\'un événement vers une information d\'une entité',
+        message: 'Cette action est utilisée pour copier la valeur du champ d\'un événement dans le champ d\'une entité. Notez que l\'entité doit être ajoutée à l\'événement en premier.',
+        description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description.\n- nom : le nom du champ d\'une entité.\n- valeur : le nom du champ dont la valeur doit être copiée. Il peut s\'agir d\'un champ d\'événement, d\'un sous-groupe d\'une expression régulière ou d\'une donnée externe.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
+        text: 'Définir une information d\'une entité sur une constante',
+        message: 'Cette action permet de définir les informations dynamiques d\'une entité correspondant à l\'événement. Notez que l\'entité doit être ajoutée à l\'événement en premier.',
+        description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description.\n- nom : le nom du champ.\n- valeur : la valeur d\'un champ.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
+        text: 'Définir une chaîne d\'informations sur une entité à l\'aide d\'un modèle',
+        message: 'Cette action permet de modifier les informations dynamiques d\'une entité correspondant à l\'événement. Notez que l\'entité doit être ajoutée à l\'événement.',
+        description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description\n- nom : le nom du champ.\n- valeur : le modèle utilisé pour déterminer la valeur de la donnée.\nDes modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
+        text: 'Définir un champ d\'un événement sur une constante',
+        message: 'Cette action peut être utilisée pour modifier un champ de l\'événement.',
+        description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description\n- nom : le nom du champ.\n- valeur : la nouvelle valeur du champ.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate]: {
+        text: 'Définir un champ de chaîne d\'un événement à l\'aide d\'un modèle',
+        message: 'Cette action vous permet de modifier un champ d\'événement à partir d\'un modèle.',
+        description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description\n- nom : le nom du champ.\n- valeur : le modèle utilisé pour déterminer la valeur du champ.\n  Des modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
+      },
+    },
   },
   metaAlarmRule: {
     outputTemplate: 'Modèle de message',
@@ -1853,6 +1965,8 @@ export default merge({
       + '<p><strong>{{ .Count }} conséquences;</strong> Message de la dernière alarme conséquence : <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Règle : <strong>{{ .Rule.Name }};</strong></p>'
       + '<p>Un message informatif statique</p>'
       + '<p>Corrélé par la règle <strong>{{ .Rule.Name }}</strong></p>',
+    removeConfirmationText: 'Lors de la suppression d\'une règle de méta-alarme, toutes les méta-alarmes correspondantes seront également supprimées.\n'
+      + 'Êtes-vous sûr de continuer?',
     errors: {
       noValuePaths: 'Vous devez ajouter au moins un chemin de valeur',
     },
@@ -1894,10 +2008,6 @@ export default merge({
     fullScreenShortcut: 'Alt + Entrée / Command + Entrée',
     copyWidgetId: 'Copier l\'identifiant du widget',
     autoHeightButton: 'Si ce bouton est sélectionné, la hauteur sera calculée automatiquement.',
-  },
-  patternsList: {
-    noData: 'Aucun modèle. Cliquez sur \'Ajouter\' pour ajouter des champs au modèle',
-    noDataDisabled: 'Aucun modèle.',
   },
   validation: {
     messages: {
@@ -1959,6 +2069,9 @@ export default merge({
   },
   serviceWeather: {
     seeAlarms: 'Voir les alarmes',
+    grey: 'Gris',
+    primaryIcon: 'Icône principale',
+    secondaryIcon: 'Icône secondaire',
     massActions: 'Actions de masse',
     cannotBeApplied: 'Cette action ne peut pas être appliquée',
     actions: {
@@ -1972,6 +2085,11 @@ export default merge({
       [WEATHER_ACTIONS_TYPES.entityComment]: 'Commenter l\'alarme',
       [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Exécuter l\'instruction',
       [WEATHER_ACTIONS_TYPES.declareTicket]: 'Déclarer un incident',
+    },
+    iconTypes: {
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
     },
   },
   contextGeneralTable: {
@@ -2012,6 +2130,7 @@ export default merge({
       admin: 'Droits d\'administration',
       exploitation: 'Droits d\'exploitation',
       notification: 'Droits de notification',
+      profile: 'Droits de profil',
     },
     business: {
       [USER_PERMISSIONS_PREFIXES.business.common]: 'Droits communs',
@@ -2050,6 +2169,12 @@ export default merge({
   pbehaviorTypes: {
     usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
     defaultType: 'Le type par défaut ne peut pas être modifié.',
+    types: {
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
+    },
   },
 
   pbehaviorReasons: {
@@ -2065,7 +2190,7 @@ export default merge({
   },
 
   healthcheck: {
-    systemIsDown: 'Le système est en panne',
+    metricsUnavailable: 'Les métriques ne sont pas collectées',
     notRunning: '{name} n\'est pas disponible',
     queueOverflow: 'Débordement de file d\'attente',
     lackOfInstances: 'Manque d\'instances',
@@ -2076,6 +2201,7 @@ export default merge({
     queueOverflowed: 'La file d\'attente est débordée : {queueLength} messages sur {maxQueueLength}.\nVeuillez vérifier les instances.',
     engineDown: '{name} est en panne, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer le service.',
     engineDownOrSlow: '{name} est en panne ou répond trop lentement, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer l\'instance.',
+    timescaleDown: '{name} est en panne, les métriques et les KPI ne sont pas collectés.\nVeuillez vérifier le journal ou redémarrer l\'instance.',
     invalidEnginesOrder: 'Configuration des moteurs non valide',
     invalidInstancesConfiguration: 'Configuration des instances non valide : les instances du moteur lisent ou écrivent dans différentes files d\'attente.\nVeuillez vérifier les instances.',
     chainConfigurationInvalid: 'La configuration de la chaîne des moteurs n\'est pas valide.\nReportez-vous ci-dessous pour la séquence correcte des moteurs :',
@@ -2275,13 +2401,11 @@ export default merge({
 
   remediationInstructionsFilters: {
     button: 'Créer un filtre sur les consignes de remédiation',
-    fields: {
-      with: 'Avec les consignes sélectionnées',
-      without: 'Sans les consignes sélectionnées',
-      selectAll: 'Tout sélectionner',
-      selectedInstructions: 'Consignes sélectionnées',
-      selectedInstructionsHelp: 'Les consignes du type sélectionné sont exclues de la liste',
-    },
+    with: 'Avec les consignes sélectionnées',
+    without: 'Sans les consignes sélectionnées',
+    selectAll: 'Tout sélectionner',
+    selectedInstructions: 'Consignes sélectionnées',
+    selectedInstructionsHelp: 'Les consignes du type sélectionné sont exclues de la liste',
     chip: {
       with: 'AVEC',
       without: 'SANS',
@@ -2297,10 +2421,14 @@ export default merge({
     modifiedOn: 'Dernière modification le',
     averageCompletionTime: 'Temps moyen\nd\'achèvement',
     executionCount: 'Nombre\nd\'exécutions',
+    totalExecutions: 'Total des exécutions',
+    successfulExecutions: 'Exécutions réussies',
     alarmStates: 'Alarmes affectées par l\'état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
     notAvailable: 'Indisponible',
     instructionChanged: 'La consigne a été modifiée',
+    alarmResolvedDate: 'Date de résolution de l\'alarme',
+    showFailedExecutions: 'Afficher les exécutions d\'instructions ayant échoué',
     actions: {
       needRate: 'Notez-le!',
       rate: 'Évaluer',
@@ -2316,6 +2444,23 @@ export default merge({
           disabledOnTypes: 'Désactivé sur les types',
         },
       },
+    },
+  },
+
+  remediationJob: {
+    configuration: 'Configuration',
+    jobId: 'Identifiant de la tâche',
+    query: 'Requête',
+    multipleExecutions: 'Autoriser l\'exécution parallèle',
+    retryAmount: 'Montant de la nouvelle tentative',
+    retryInterval: 'Intervalle de relance',
+    addPayload: 'Ajouter un payload',
+    deletePayload: 'Supprimer le payload',
+    payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
+      + '<i>Quelques exemples:</i>'
+      + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+    errors: {
+      invalidJSON: 'JSON non valide',
     },
   },
 
@@ -2390,11 +2535,11 @@ export default merge({
 
   mixedField: {
     types: {
-      string: '@:variableTypes.string',
-      number: '@:variableTypes.number',
-      boolean: '@:variableTypes.boolean',
-      null: '@:variableTypes.null',
-      array: '@:variableTypes.array',
+      [PATTERN_FIELD_TYPES.string]: '@:variableTypes.string',
+      [PATTERN_FIELD_TYPES.number]: '@:variableTypes.number',
+      [PATTERN_FIELD_TYPES.boolean]: '@:variableTypes.boolean',
+      [PATTERN_FIELD_TYPES.null]: '@:variableTypes.null',
+      [PATTERN_FIELD_TYPES.stringArray]: '@:variableTypes.array',
     },
   },
 
@@ -2407,9 +2552,10 @@ export default merge({
     emptyInfos: 'Aucune information',
     availabilityState: 'État de haute disponibilité',
     types: {
-      connector: 'type de connecteur',
-      component: 'composant',
-      resource: 'ressource',
+      [ENTITY_TYPES.component]: 'Composant',
+      [ENTITY_TYPES.connector]: 'Connecteur',
+      [ENTITY_TYPES.resource]: 'Ressource',
+      [ENTITY_TYPES.service]: 'Service',
     },
   },
 
@@ -2557,6 +2703,13 @@ export default merge({
     timeField: 'Champ de temps',
     types: {
       [QUICK_RANGES.custom.value]: 'Personnalisé',
+      [QUICK_RANGES.last15Minutes.value]: '15 dernières minutes',
+      [QUICK_RANGES.last30Minutes.value]: '30 dernières minutes',
+      [QUICK_RANGES.last1Hour.value]: 'Dernière heure',
+      [QUICK_RANGES.last3Hour.value]: '3 dernières heures',
+      [QUICK_RANGES.last6Hour.value]: '6 dernières heures',
+      [QUICK_RANGES.last12Hour.value]: '12 dernières heures',
+      [QUICK_RANGES.last24Hour.value]: '24 dernières heures',
       [QUICK_RANGES.last2Days.value]: '2 derniers jours',
       [QUICK_RANGES.last7Days.value]: '7 derniers jours',
       [QUICK_RANGES.last30Days.value]: '30 derniers jours',
@@ -2570,11 +2723,6 @@ export default merge({
       [QUICK_RANGES.thisWeekSoFar.value]: 'Cette semaine jusqu\'à maintenant',
       [QUICK_RANGES.thisMonth.value]: 'Ce mois',
       [QUICK_RANGES.thisMonthSoFar.value]: 'Ce mois jusqu\'à maintenant',
-      [QUICK_RANGES.last1Hour.value]: 'Dernière heure',
-      [QUICK_RANGES.last3Hour.value]: '3 dernières heures',
-      [QUICK_RANGES.last6Hour.value]: '6 dernières heures',
-      [QUICK_RANGES.last12Hour.value]: '12 dernières heures',
-      [QUICK_RANGES.last24Hour.value]: '24 dernières heures',
     },
   },
 
@@ -2712,26 +2860,6 @@ export default merge({
     },
   },
 
-  alarmStatuses: {
-    [ENTITIES_STATUSES.closed]: 'Fermée',
-    [ENTITIES_STATUSES.ongoing]: 'En cours',
-    [ENTITIES_STATUSES.flapping]: 'Bagot',
-    [ENTITIES_STATUSES.stealthy]: 'Furtive',
-    [ENTITIES_STATUSES.cancelled]: 'Annulée',
-    [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
-  },
-
-  entitiesCountAlerts: {
-    filter: {
-      countOverLimit: 'Le filtre que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr ?',
-      countRequestError: 'Le calcul du nombre d\'entités ciblées par le filtre s\'est terminée avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr ?',
-    },
-    patterns: {
-      countOverLimit: 'Le modèle que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr ?',
-      countRequestError: 'Le calcul du nombre d\'entités ciblées par le modèle s\'est terminé avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr ?',
-    },
-  },
-
   userInterface: {
     title: 'Interface utilisateur',
     appTitle: 'Titre de l\'application',
@@ -2753,6 +2881,8 @@ export default merge({
   kpi: {
     alarmMetrics: 'Métriques d\'alarme',
     sli: 'SLI',
+    metricsNotAvailable: 'TimescaleDB ne fonctionne pas. Les métriques ne sont pas disponibles.',
+    noData: 'Pas de données disponibles',
   },
 
   kpiMetrics: {
@@ -2807,5 +2937,36 @@ export default merge({
     formatter: 'Format (groupe de capture avec \\x)',
     uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
+  },
+
+  pattern: {
+    patterns: 'Modèles',
+    myPatterns: 'Mes modèles',
+    corporatePatterns: 'Modèles partagés',
+    addRule: 'Ajouter une règle',
+    addGroup: 'Ajouter un groupe',
+    removeRule: 'Supprimer la règle',
+    advancedEditor: 'Éditeur avancé',
+    simpleEditor: 'Éditeur simple',
+    noData: 'Aucun modèle. Cliquez sur \'@:pattern.addGroup\' pour ajouter des champs au modèle',
+    noDataDisabled: 'Aucun modèle.',
+    discard: 'Jeter le motif',
+    types: {
+      [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
+      [PATTERN_TYPES.entity]: 'Modèle d\'entité',
+      [PATTERN_TYPES.pbehavior]: 'Modèle de comportement',
+    },
+    errors: {
+      ruleRequired: 'Veuillez ajouter au moins une règle',
+      groupRequired: 'Veuillez ajouter au moins un groupe',
+      invalidPatterns: 'Les modèles ne sont pas valides ou il y a un champ de modèle désactivé',
+      countOverLimit: 'Le modèle que vous avez défini cible {count} éléments. Cela peut affecter les performances, en êtes-vous sûr ?',
+      oldPattern: 'Le modèle de filtre actuel est défini dans l\'ancien format. Veuillez utiliser l\'éditeur avancé pour l\'afficher. Les filtres dans l\'ancien format seront bientôt obsolètes. Veuillez créer de nouveaux modèles dans notre interface mise à jour.',
+      existExcluded: 'Les règles incluent la règle exclue.',
+    },
+  },
+
+  filter: {
+    oldPattern: 'Ancien format de motif',
   },
 }, featureService.get('i18n.fr'));

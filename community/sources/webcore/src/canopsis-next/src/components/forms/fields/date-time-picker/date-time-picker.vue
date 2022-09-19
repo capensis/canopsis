@@ -7,22 +7,22 @@
         v-flex.v-date-time-picker__subtitle-wrapper
           span.v-date-time-picker__subtitle(
             :class="{ 'grey--text darken-1': !localValue }"
-          ) {{ localValue | date(dateFormat, '−−/−−/−−−−') }}
+          ) {{ valueString }}
         v-flex.v-date-time-picker__subtitle-wrapper
           time-picker-field.v-date-time-picker__subtitle(
-            :value="localValue | date('timePicker', null)",
+            :value="timeString",
             :round-hours="roundHours",
             @input="updateTime"
           )
       div
         v-date-picker(
           :locale="$i18n.locale",
-          :value="localValue | date('datePicker', null)",
+          :value="dateString",
           color="primary",
           no-title,
           @input="updateDate"
         )
-    slot(name="footer", @submit="submit")
+    slot(name="footer")
       v-divider
       v-layout.mt-1(justify-space-around)
         v-btn(depressed, flat, @click="$listeners.close") {{ $t('common.cancel') }}
@@ -30,9 +30,10 @@
 </template>
 
 <script>
-import { isDate } from 'lodash';
+import { DATETIME_FORMATS } from '@/constants';
 
-import { updateTime, updateDate } from '@/helpers/date/date-time-picker';
+import { getDateObjectByDate, getDateObjectByTime } from '@/helpers/date/date-time-picker';
+import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -52,7 +53,7 @@ export default {
     },
     dateFormat: {
       type: String,
-      default: 'short',
+      default: DATETIME_FORMATS.short,
     },
     roundHours: {
       type: Boolean,
@@ -60,19 +61,30 @@ export default {
     },
   },
   data() {
-    const milliseconds = isDate(this.value) ? this.value.getTime() : this.value;
-
     return {
-      localValue: milliseconds ? new Date(milliseconds) : null,
+      localValue: this.value ? convertDateToDateObject(this.value) : null,
     };
+  },
+  computed: {
+    valueString() {
+      return convertDateToString(this.localValue, this.dateFormat, '−−/−−/−−−−');
+    },
+
+    timeString() {
+      return convertDateToString(this.localValue, DATETIME_FORMATS.timePicker, null);
+    },
+
+    dateString() {
+      return convertDateToString(this.localValue, DATETIME_FORMATS.datePicker, null);
+    },
   },
   methods: {
     updateTime(time) {
-      this.localValue = updateTime(this.localValue, time);
+      this.localValue = getDateObjectByTime(this.localValue, time);
     },
 
     updateDate(date) {
-      this.localValue = updateDate(this.localValue, date);
+      this.localValue = getDateObjectByDate(this.localValue, date);
     },
 
     submit() {

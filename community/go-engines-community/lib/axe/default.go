@@ -26,7 +26,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
 )
@@ -60,16 +59,17 @@ func ParseOptions() Options {
 	return opts
 }
 
-func Default(ctx context.Context, options Options, metricsSender metrics.Sender, pgPool postgres.Pool, logger zerolog.Logger) libengine.Engine {
+func NewEngine(
+	ctx context.Context,
+	options Options,
+	dbClient mongo.DbClient,
+	cfg config.CanopsisConf,
+	metricsSender metrics.Sender,
+	logger zerolog.Logger,
+) libengine.Engine {
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
-	dbClient := m.DepMongoClient(ctx, logger)
-	cfg := m.DepConfig(ctx, dbClient)
-	config.SetDbClientRetry(dbClient, cfg)
-	if pgPool != nil {
-		config.SetPgPoolRetry(pgPool, cfg)
-	}
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
@@ -168,12 +168,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			return alarmStatusService.Load(ctx)
 		},
 		func(ctx context.Context) {
-			err := dbClient.Disconnect(ctx)
-			if err != nil {
-				logger.Error().Err(err).Msg("failed to close mongo connection")
-			}
-
-			err = amqpConnection.Close()
+			err := amqpConnection.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
@@ -191,10 +186,6 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			err = runInfoRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
-			}
-
-			if pgPool != nil {
-				pgPool.Close()
 			}
 		},
 		logger,

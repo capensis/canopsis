@@ -22,7 +22,7 @@ exports[`c-search-field Renders \`c-search-field\` correctly 1`] = `
             class="v-text-field__slot"
           >
             <input
-              aria-label="common.search"
+              aria-label="Search"
               data-test="searchingTextField"
               type="text"
             />

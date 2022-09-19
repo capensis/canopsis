@@ -13,7 +13,7 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
       <div
         class="v-list__tile theme--light"
       >
-        settings.exportCsv.title
+        Export CSV
       </div>
     </div>
     <div
@@ -59,7 +59,7 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
                     class="v-label v-label--active theme--light"
                     style="left: 0px; position: absolute;"
                   >
-                    settings.exportCsv.fields.separator
+                    Separator
                   </label>
                   <div
                     class="v-select__selections"
@@ -70,7 +70,7 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
                       comma
                     </div>
                     <input
-                      aria-label="settings.exportCsv.fields.separator"
+                      aria-label="Separator"
                       aria-readonly="false"
                       autocomplete="on"
                       readonly="readonly"
@@ -131,7 +131,7 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
                     class="v-label v-label--active theme--light"
                     style="left: 0px; position: absolute;"
                   >
-                    settings.exportCsv.fields.datetimeFormat
+                    Datetime format
                   </label>
                   <div
                     class="v-select__selections"
@@ -142,7 +142,7 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
                       2021-01-02T15:04:05+0200
                     </div>
                     <input
-                      aria-label="settings.exportCsv.fields.datetimeFormat"
+                      aria-label="Datetime format"
                       aria-readonly="false"
                       autocomplete="on"
                       readonly="readonly"
@@ -186,7 +186,7 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
       <h4
         class="subheading ml-4"
       >
-        settings.exportColumnNames
+        Export column names
       </h4>
       <c-columns-field-stub
         class="subheading"
@@ -399,7 +399,7 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
       <div
         class="v-list__tile theme--light"
       >
-        settings.exportCsv.title
+        Export CSV
       </div>
     </div>
     <div
@@ -445,13 +445,13 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
                     class="v-label theme--light"
                     style="left: 0px; position: absolute;"
                   >
-                    settings.exportCsv.fields.separator
+                    Separator
                   </label>
                   <div
                     class="v-select__selections"
                   >
                     <input
-                      aria-label="settings.exportCsv.fields.separator"
+                      aria-label="Separator"
                       aria-readonly="false"
                       autocomplete="on"
                       readonly="readonly"
@@ -496,7 +496,7 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
       <h4
         class="subheading ml-4"
       >
-        settings.exportColumnNames
+        Export column names
       </h4>
       <c-columns-field-stub
         class="subheading"

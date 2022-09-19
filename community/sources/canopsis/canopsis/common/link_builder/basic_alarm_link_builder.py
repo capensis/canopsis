@@ -73,7 +73,8 @@ class BasicAlarmLinkBuilder(HypertextLinkBuilder):
                 value = get_sub_key(entity, '.'.join(needles))
 
             if value is None:
-                raise ValueError("Value {} is missing or None".format('.'.join(needles)))
+                raise ValueError(
+                    "Value {} is missing or None".format('.'.join(needles)))
 
             phrase = phrase[:m.start()] + '{' + needle + '}' + phrase[m.end():]
             hay[needle] = value
@@ -94,15 +95,15 @@ class BasicAlarmLinkBuilder(HypertextLinkBuilder):
 
                 category = 'Liens'
                 label = 'URL'
-                
+
                 if 'category' in opt:
                     category = opt['category']
 
                 if 'label' in opt:
                     label = opt['label']
 
-                links[category] = [{'label' : label,
-                                'link' : link}]
+                links[category] = [{'label': label,
+                                    'link': link}]
 
                 return links
 
@@ -110,8 +111,8 @@ class BasicAlarmLinkBuilder(HypertextLinkBuilder):
                 return {}
 
             except Exception as err:
-                self.logger.exception('Unhandled error {} : {}'.format(type(err), err))
+                self.logger.exception(
+                    'Unhandled error {} : {}'.format(type(err), err))
                 return {}
 
         return {}
-

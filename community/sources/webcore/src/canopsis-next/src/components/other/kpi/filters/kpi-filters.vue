@@ -39,12 +39,10 @@ export default {
 
     showEditFilterModal(filter) {
       this.$modals.show({
-        name: MODALS.patterns,
+        name: MODALS.createKpiFilter,
         config: {
-          title: this.$t('modals.filter.edit.title'),
-          name: true,
-          entity: true,
-          patterns: filter,
+          filter,
+          title: this.$t('modals.createFilter.edit.title'),
           action: async (data) => {
             await this.updateFilter({ id: filter._id, data });
 
@@ -56,12 +54,10 @@ export default {
 
     showDuplicateFilterModal(filter) {
       this.$modals.show({
-        name: MODALS.patterns,
+        name: MODALS.createKpiFilter,
         config: {
-          title: this.$t('modals.filter.duplicate.title'),
-          name: true,
-          entity: true,
-          patterns: omit(filter, ['_id']),
+          filter: omit(filter, ['_id']),
+          title: this.$t('modals.createFilter.duplicate.title'),
           action: async (data) => {
             await this.createFilter({ data });
 

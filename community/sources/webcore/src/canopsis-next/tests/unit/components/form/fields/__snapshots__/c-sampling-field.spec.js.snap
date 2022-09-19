@@ -27,7 +27,7 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with custom props 1`] = `
           <span
             class="text-capitalize"
           >
-            common.times.hour:2
+            hours
           </span>
           <input
             aria-label="Custom label"
@@ -84,7 +84,7 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with custom props 2`] = `
           <span
             class="text-capitalize"
           >
-            common.times.hour:2
+            hours
           </span>
         </a>
       </div>
@@ -97,7 +97,7 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with custom props 2`] = `
           <span
             class="text-capitalize"
           >
-            common.times.day:2
+            days
           </span>
         </a>
       </div>
@@ -110,7 +110,7 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with custom props 2`] = `
           <span
             class="text-capitalize"
           >
-            common.times.week:2
+            weeks
           </span>
         </a>
       </div>
@@ -123,7 +123,7 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with custom props 2`] = `
           <span
             class="text-capitalize"
           >
-            common.times.month:2
+            months
           </span>
         </a>
       </div>
@@ -151,7 +151,7 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with default props 1`] = 
           class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
-          common.sampling
+          Sampling
         </label>
         <div
           class="v-select__selections"
@@ -159,10 +159,10 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with default props 1`] = 
           <span
             class="text-capitalize"
           >
-            common.times.day:2
+            days
           </span>
           <input
-            aria-label="common.sampling"
+            aria-label="Sampling"
             aria-readonly="false"
             autocomplete="on"
             name="sampling"
@@ -214,7 +214,7 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with default props 2`] = 
           <span
             class="text-capitalize"
           >
-            common.times.hour:2
+            hours
           </span>
         </a>
       </div>
@@ -228,7 +228,7 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with default props 2`] = 
           <span
             class="text-capitalize"
           >
-            common.times.day:2
+            days
           </span>
         </a>
       </div>
@@ -241,7 +241,7 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with default props 2`] = 
           <span
             class="text-capitalize"
           >
-            common.times.week:2
+            weeks
           </span>
         </a>
       </div>
@@ -254,7 +254,7 @@ exports[`c-sampling-field Renders \`c-sampling-field\` with default props 2`] = 
           <span
             class="text-capitalize"
           >
-            common.times.month:2
+            months
           </span>
         </a>
       </div>

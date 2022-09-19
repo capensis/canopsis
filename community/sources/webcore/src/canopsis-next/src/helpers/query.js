@@ -1,4 +1,4 @@
-import { isUndefined, isEmpty } from 'lodash';
+import { isUndefined, isEmpty, omit } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import {
@@ -7,13 +7,15 @@ import {
   ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP,
   SORT_ORDERS,
   ALARMS_OPENED_VALUES,
+  DATETIME_FORMATS,
 } from '@/constants';
 
-import { prepareMainFilterToQueryFilter, getMainFilterAndCondition } from './filter';
+import { getMainFilter } from './filter';
 import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
 } from './filter/remediation-instructions-filter';
+import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from './date/date-intervals';
 
 /**
  * WIDGET CONVERTERS
@@ -72,6 +74,7 @@ export function convertAlarmWidgetToQuery(widget) {
     page: 1,
     limit: itemsPerPage || PAGINATION_LIMIT,
     with_instructions: true,
+    with_links: true,
     multiSortBy: [],
   };
 
@@ -117,9 +120,7 @@ export function convertContextWidgetToQuery(widget) {
   }
 
   if (!isEmpty(selectedTypes)) {
-    query.typesFilter = {
-      $or: selectedTypes.map(type => ({ type })),
-    };
+    query.type = selectedTypes;
   }
 
   return { ...query, ...convertSortToQuery(widget) };
@@ -147,32 +148,31 @@ export function convertWeatherWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsCalendarWidgetToQuery(widget) {
-  const {
+  const { filters = [], parameters: { considerPbehaviors = false } } = widget;
+
+  return {
+    ...convertAlarmStateFilterToQuery(widget),
+
+    considerPbehaviors,
     filters,
-    considerPbehaviors,
-  } = widget.parameters;
-
-  const query = {
-    considerPbehaviors,
-    filters: filters || [],
+    time_field: 't',
   };
-
-  return { ...query, ...convertAlarmStateFilterToQuery(widget) };
 }
 
 /**
+ * This function converts widget with type 'counter' widget to query Object
  *
  * @param widget
  * @returns {{filters: *}}
  */
 export function convertCounterWidgetToQuery(widget) {
-  const { viewFilters = [], isCorrelationEnabled = false } = widget.parameters;
+  const { filters = [], parameters: { isCorrelationEnabled = false } } = widget;
 
   return {
     ...convertAlarmStateFilterToQuery(widget),
 
     correlation: isCorrelationEnabled,
-    filters: viewFilters.map(({ filter }) => filter),
+    filters: filters.map(({ _id: id }) => id),
   };
 }
 
@@ -289,25 +289,16 @@ export function convertWidgetToQuery(widget) {
 export function prepareQuery(widget, userPreference) {
   const widgetQuery = convertWidgetToQuery(widget);
   const userPreferenceQuery = convertUserPreferenceToQuery(userPreference, widget.type);
+
   let query = {
     ...widgetQuery,
     ...userPreferenceQuery,
   };
 
-  const WIDGET_FILTER_KEYS_MAP = {
-    [WIDGET_TYPES.alarmList]: 'filter',
-    [WIDGET_TYPES.context]: 'mainFilter',
-    [WIDGET_TYPES.serviceWeather]: 'filter',
-  };
+  const filter = getMainFilter(widget, userPreference);
 
-  const filterKey = WIDGET_FILTER_KEYS_MAP[widget.type];
-
-  if (filterKey) {
-    const { mainFilter: activeMainFilter, condition } = getMainFilterAndCondition(widget, userPreference);
-
-    if (activeMainFilter) {
-      query[filterKey] = prepareMainFilterToQueryFilter(activeMainFilter, condition);
-    }
+  if (filter) {
+    query.filter = filter;
   }
 
   const remediationInstructionsFilters = getRemediationInstructionsFilters(widget, userPreference);
@@ -321,3 +312,81 @@ export function prepareQuery(widget, userPreference) {
 
   return query;
 }
+
+/**
+ * Prepare query for alarm details fetching
+ *
+ * @param {Alarm} alarm
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export const prepareAlarmDetailsQuery = (alarm, widget) => ({
+  _id: alarm._id,
+  with_instructions: true,
+  opened: widget.parameters.opened,
+  steps: {
+    page: 1,
+    limit: PAGINATION_LIMIT,
+  },
+  children: {
+    page: 1,
+    limit: PAGINATION_LIMIT,
+    sort_by: '',
+    sort: '',
+    multi_sort: [],
+  },
+});
+
+/**
+ * Convert alarms list query to request parameters
+ *
+ * @param {Object} query
+ * @returns {Object}
+ */
+export const convertAlarmsListQueryToRequest = (query) => {
+  const result = omit(query, [
+    'tstart',
+    'tstop',
+    'sortKey',
+    'sortDir',
+    'category',
+    'multiSortBy',
+    'limit',
+  ]);
+
+  const {
+    tstart,
+    tstop,
+    sortKey,
+    sortDir,
+    category,
+    multiSortBy = [],
+    limit = PAGINATION_LIMIT,
+  } = query;
+
+  if (tstart) {
+    result.tstart = convertStartDateIntervalToTimestamp(tstart, DATETIME_FORMATS.dateTimePicker);
+  }
+
+  if (tstop) {
+    result.tstop = convertStopDateIntervalToTimestamp(tstop, DATETIME_FORMATS.dateTimePicker);
+  }
+
+  if (sortKey) {
+    result.sort_by = sortKey;
+    result.sort = sortDir.toLowerCase();
+  }
+
+  if (category) {
+    result.category = category;
+  }
+
+  if (multiSortBy.length) {
+    result.multi_sort = multiSortBy
+      .map(({ sortBy, descending }) => `${sortBy},${(descending ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`);
+  }
+
+  result.limit = limit;
+
+  return result;
+};

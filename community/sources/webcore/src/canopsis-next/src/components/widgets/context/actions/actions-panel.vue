@@ -8,6 +8,7 @@ import { compact, pickBy } from 'lodash';
 import { MODALS, CONTEXT_ACTIONS_TYPES, ENTITY_TYPES } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
@@ -180,9 +181,7 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: [this.item._id] },
-          },
+          entityPattern: createEntityIdPatternByValue(this.item._id),
         },
       });
     },

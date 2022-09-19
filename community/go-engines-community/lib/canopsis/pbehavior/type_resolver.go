@@ -71,13 +71,27 @@ func (r *typeResolver) Resolve(
 	entity types.Entity,
 	cachedMatchedPbehaviorIds []string,
 ) (ResolveResult, error) {
-	// Return error if time is out of timespan.
 	if !r.Span.In(t) {
 		return ResolveResult{}, ErrRecomputeNeed
 	}
 
-	workerCh := r.createWorkerChByEntity(ctx, entity, cachedMatchedPbehaviorIds)
-	pbhRes, err := r.getPbehaviorIntervals(ctx, t, workerCh)
+	cachedPbehaviorIds := make(map[string]bool, len(cachedMatchedPbehaviorIds))
+	for _, id := range cachedMatchedPbehaviorIds {
+		cachedPbehaviorIds[id] = true
+	}
+	pbhRes, err := r.getPbehaviorIntervals(ctx, t, func(id string, computed ComputedPbehavior) bool {
+		if len(computed.Pattern) > 0 {
+			matched, _, err := computed.Pattern.Match(entity)
+			if err != nil {
+				r.logger.Err(err).Str("pbehavior", id).Msg("pbehavior has invalid pattern")
+				return false
+			}
+
+			return matched
+		}
+
+		return cachedPbehaviorIds[id]
+	})
 	if err != nil {
 		return ResolveResult{}, err
 	}
@@ -113,57 +127,76 @@ func (r *typeResolver) GetPbehaviors(
 	t time.Time,
 	pbehaviorIDs []string,
 ) ([]ResolveResult, error) {
-	// Return error if time is out of timespan.
 	if !r.Span.In(t) {
 		return nil, ErrRecomputeNeed
 	}
 
-	workerCh := r.createWorkerCh(ctx, pbehaviorIDs)
+	return r.getPbehaviorIntervals(ctx, t, func(id string, _ ComputedPbehavior) bool {
+		for i := range pbehaviorIDs {
+			if pbehaviorIDs[i] == id {
+				return true
+			}
+		}
 
-	return r.getPbehaviorIntervals(ctx, t, workerCh)
+		return false
+	})
 }
 
 func (r *typeResolver) getPbehaviorIntervals(
 	ctx context.Context,
 	t time.Time,
-	workerCh <-chan workerData,
+	f func(id string, c ComputedPbehavior) bool,
 ) ([]ResolveResult, error) {
 	resCh := make(chan ResolveResult)
-
+	workerCh := make(chan workerData)
 	g, ctx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
+		defer close(workerCh)
+
+		for id, computed := range r.ComputedPbehaviors {
+			if !f(id, computed) {
+				continue
+			}
+
+			select {
+			case <-ctx.Done():
+				return nil
+			case workerCh <- workerData{
+				id:       id,
+				computed: computed,
+			}:
+			}
+		}
+
+		return nil
+	})
 
 	for i := 0; i < r.workerPoolSize; i++ {
 		g.Go(func() error {
-			for {
-				select {
-				case <-ctx.Done():
-					return nil
-				case d, ok := <-workerCh:
+			for d := range workerCh {
+				for _, computedType := range d.computed.Types {
+					if !computedType.Span.In(t) {
+						continue
+					}
+
+					resolvedType, ok := r.TypesByID[computedType.ID]
 					if !ok {
-						return nil
+						return fmt.Errorf("unknown type %v, probably need recompute data", computedType.ID)
 					}
 
-					for _, computedType := range d.computed.Types {
-						if !computedType.Span.In(t) {
-							continue
-						}
-
-						resolvedType, ok := r.TypesByID[computedType.ID]
-						if !ok {
-							return fmt.Errorf("unknown type %v, probably need recompute data", computedType.ID)
-						}
-
-						resCh <- ResolveResult{
-							ResolvedType:      resolvedType,
-							ResolvedPbhID:     d.id,
-							ResolvedPbhName:   d.computed.Name,
-							ResolvedPbhReason: d.computed.Reason,
-							ResolvedCreated:   d.computed.Created,
-						}
-						break
+					resCh <- ResolveResult{
+						ResolvedType:      resolvedType,
+						ResolvedPbhID:     d.id,
+						ResolvedPbhName:   d.computed.Name,
+						ResolvedPbhReason: d.computed.Reason,
+						ResolvedCreated:   d.computed.Created,
 					}
+					break
 				}
 			}
+
+			return nil
 		})
 	}
 
@@ -191,85 +224,4 @@ func (r *typeResolver) getPbehaviorIntervals(
 	})
 
 	return res, nil
-}
-
-// createWorkerCh creates worker ch and fills it.
-func (r *typeResolver) createWorkerCh(ctx context.Context, pbehaviorIDs []string) <-chan workerData {
-	workerCh := make(chan workerData)
-
-	go func() {
-		defer close(workerCh)
-
-		for id, computed := range r.ComputedPbehaviors {
-			select {
-			case <-ctx.Done():
-				return
-			default:
-				found := false
-				for i := range pbehaviorIDs {
-					if pbehaviorIDs[i] == id {
-						found = true
-						break
-					}
-				}
-
-				if !found {
-					continue
-				}
-
-				workerCh <- workerData{
-					id:       id,
-					computed: computed,
-				}
-			}
-		}
-	}()
-
-	return workerCh
-}
-
-func (r *typeResolver) createWorkerChByEntity(ctx context.Context, entity types.Entity, cachedMatchedPbehaviorIds []string) <-chan workerData {
-	workerCh := make(chan workerData)
-
-	cachedPbehaviorIds := make(map[string]bool, len(cachedMatchedPbehaviorIds))
-	for _, id := range cachedMatchedPbehaviorIds {
-		cachedPbehaviorIds[id] = true
-	}
-
-	go func() {
-		defer close(workerCh)
-
-		for id, computed := range r.ComputedPbehaviors {
-			select {
-			case <-ctx.Done():
-				return
-			default:
-				if len(computed.Pattern) > 0 {
-					ok, _, err := computed.Pattern.Match(entity)
-					if err != nil {
-						r.logger.Err(err).Str("pbehavior", id).Msg("pbehavior has invalid pattern")
-						continue
-					}
-
-					if ok {
-						workerCh <- workerData{
-							id:       id,
-							computed: computed,
-						}
-					}
-
-					continue
-				}
-
-				if cachedPbehaviorIds[id] {
-					workerCh <- workerData{
-						id:       id,
-						computed: computed,
-					}
-				}
-			}
-		}
-	}()
-
-	return workerCh
 }

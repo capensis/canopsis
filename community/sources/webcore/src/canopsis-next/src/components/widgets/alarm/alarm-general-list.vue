@@ -6,11 +6,11 @@
       :items="items",
       hide-actions
     )
-      template(slot="items", slot-scope="props")
-        td.text-xs-left {{ props.item.v.state.a }}
-        td.text-xs-left {{ props.item.v.connector }}
-        td.text-xs-left {{ props.item.v.component }}
-        td.text-xs-left {{ props.item.v.resource }}
+      template(#items="{ item }")
+        td.text-xs-left {{ item.v.state.a }}
+        td.text-xs-left {{ item.v.connector }}
+        td.text-xs-left {{ item.v.component }}
+        td.text-xs-left {{ item.v.resource }}
 </template>
 
 <script>
@@ -32,19 +32,19 @@ export default {
     return {
       headers: [
         {
-          text: this.$t('tables.alarmGeneral.author'),
+          text: this.$t('common.author'),
           sortable: false,
         },
         {
-          text: this.$t('tables.alarmGeneral.connector'),
+          text: this.$t('common.connector'),
           sortable: false,
         },
         {
-          text: this.$t('tables.alarmGeneral.component'),
+          text: this.$t('common.component'),
           sortable: false,
         },
         {
-          text: this.$t('tables.alarmGeneral.resource'),
+          text: this.$t('common.resource'),
           sortable: false,
         },
       ],

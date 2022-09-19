@@ -1,5 +1,11 @@
-import { isFunction } from 'lodash';
+import { cloneDeep, isFunction, omit } from 'lodash';
 import Vuex from 'vuex';
+import AxiosMockAdapter from 'axios-mock-adapter';
+import Faker from 'faker';
+
+import request from '@/services/request';
+import { DEFAULT_ENTITY_MODULE_TYPES } from '@/store/plugins/entities/create-entity-module';
+
 /**
  * @typedef {Object} Module
  * @property {string} name
@@ -17,8 +23,22 @@ const convertMockedGettersToStore = (getters = {}) => Object
 
     return acc;
   }, {});
+
 /**
  * Create mocked store module.
+ *
+ * @param {Module} module
+ * @returns {{}}
+ */
+export const createMockedStoreModule = module => ({
+  ...omit(module, ['name']),
+
+  namespaced: true,
+  getters: convertMockedGettersToStore(module.getters),
+});
+
+/**
+ * Create mocked whole store by special modules
  *
  * @example
  *  createMockedStoreModules({
@@ -36,13 +56,8 @@ const convertMockedGettersToStore = (getters = {}) => Object
  * @returns {Store}
  */
 export const createMockedStoreModules = modules => new Vuex.Store({
-  modules: modules.reduce((acc, { name, actions = {}, getters, state }) => {
-    acc[name] = {
-      namespaced: true,
-      state,
-      actions,
-      getters: convertMockedGettersToStore(getters),
-    };
+  modules: modules.reduce((acc, module) => {
+    acc[module.name] = createMockedStoreModule(module);
 
     return acc;
   }, {}),
@@ -56,3 +71,288 @@ export const createMockedStoreModules = modules => new Vuex.Store({
  * @returns {Store}
  */
 export const createMockedStoreGetters = ({ name, ...getters }) => createMockedStoreModules([{ name, getters }]);
+
+/**
+ *
+ * @param {string} route
+ * @param {Object} module
+ * @param {Object} schema
+ * @param {string} entityType
+ * @param {Object[]} entities
+ * @param {string[]} entityIds
+ * @param {Object} types
+ * @return {{ axiosMockAdapter: MockAdapter }}
+ */
+export const testsEntityModule = ({
+  route,
+  module,
+  schema,
+  entityType,
+  entities,
+  entityIds,
+  types = DEFAULT_ENTITY_MODULE_TYPES,
+}) => {
+  const { actions, state: initialState, mutations, getters } = module;
+
+  const axiosMockAdapter = new AxiosMockAdapter(request);
+  const normalizedData = {
+    result: entityIds,
+  };
+  const responseData = {
+    data: entities,
+    meta: {
+      total_count: Faker.datatype.number(),
+    },
+  };
+
+  beforeEach(() => {
+    axiosMockAdapter.reset();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('Mutate state after commit FETCH_LIST', () => {
+    const state = cloneDeep(initialState);
+
+    const fetchList = mutations[types.FETCH_LIST];
+
+    fetchList(state);
+
+    expect(state).toEqual({ ...state, pending: true });
+  });
+
+  it('Mutate state after commit FETCH_LIST with params', () => {
+    const state = cloneDeep(initialState);
+    const params = {
+      param: Faker.datatype.string(),
+    };
+
+    const fetchList = mutations[types.FETCH_LIST];
+
+    fetchList(state, { params });
+
+    if (actions.fetchListWithPreviousParams) {
+      expect(state).toEqual({ ...state, fetchingParams: params, pending: true });
+    } else {
+      expect(state).toEqual({ ...state, pending: true });
+    }
+  });
+
+  it('Mutate state after commit FETCH_LIST_COMPLETED', () => {
+    const state = cloneDeep(initialState);
+
+    const fetchListCompleted = mutations[types.FETCH_LIST_COMPLETED];
+
+    const allIds = Faker.datatype.array();
+
+    fetchListCompleted(state, { allIds });
+
+    expect(state).toEqual({ ...state, allIds });
+  });
+
+  it('Mutate state after commit FETCH_LIST_FAILED', () => {
+    const state = cloneDeep(initialState);
+
+    const fetchListFailed = mutations[types.FETCH_LIST_FAILED];
+
+    fetchListFailed(state);
+
+    expect(state).toEqual({ ...state, pending: false });
+  });
+
+  it('Get item by id. Getter: getItemById', () => {
+    const item = {
+      param: Faker.datatype.string(),
+    };
+    const getItem = jest.fn(() => item);
+    const rootGetters = {
+      'entities/getItem': getItem,
+    };
+    const state = {};
+
+    const id = Faker.datatype.string();
+
+    const data = getters.getItemById(state, getters, {}, rootGetters)(id);
+
+    expect(data).toEqual(item);
+    expect(getItem).toHaveBeenCalledWith(entityType, id);
+  });
+
+  it('Get items. Getter: items', () => {
+    const getList = jest.fn(() => entities);
+    const rootGetters = {
+      'entities/getList': getList,
+    };
+    const state = {
+      ...initialState,
+      allIds: entityIds,
+    };
+
+    const data = getters.items(state, getters, {}, rootGetters);
+
+    expect(data).toEqual(entities);
+    expect(getList).toHaveBeenCalledWith(entityType, entityIds);
+  });
+
+  it('Get pending. Getter: pending', () => {
+    const pending = Faker.datatype.boolean();
+    const state = { pending };
+
+    const data = getters.pending(state);
+
+    expect(data).toEqual(pending);
+  });
+
+  if (getters.meta) {
+    it('Get meta. Getter: meta', () => {
+      const meta = {
+        total_count: Faker.datatype.number(),
+      };
+      const state = { meta };
+
+      const data = getters.meta(state);
+
+      expect(data).toEqual(meta);
+    });
+  }
+
+  it('Fetch list. Action: fetchList', async () => {
+    const dispatch = jest.fn().mockReturnValue({
+      normalizedData,
+      data: responseData,
+    });
+    const commit = jest.fn();
+
+    await actions.fetchList({ dispatch, commit });
+
+    expect(dispatch).toBeCalledWith(
+      'entities/fetch',
+      {
+        route,
+        dataPreparer: expect.any(Function),
+        params: undefined,
+        schema: [schema],
+      },
+      { root: true },
+    );
+
+    expect(commit).toBeCalledWith(
+      types.FETCH_LIST_COMPLETED,
+      {
+        ...responseData,
+        allIds: entityIds,
+      },
+    );
+  });
+
+  if (actions.fetchListWithPreviousParams) {
+    it('Fetch list with previous params. Action: fetchListWithPreviousParams', async () => {
+      const fetchingParams = {
+        param: Faker.datatype.string(),
+      };
+      const state = { fetchingParams };
+      const dispatch = jest.fn();
+
+      await actions.fetchListWithPreviousParams({ dispatch, state });
+
+      expect(dispatch).toBeCalledWith('fetchList', { params: fetchingParams });
+    });
+  }
+
+  it('Fetch list with params. Action: fetchList', async () => {
+    const params = {};
+    const dispatch = jest.fn().mockReturnValue({
+      normalizedData,
+      data: responseData,
+    });
+    const commit = jest.fn();
+
+    await actions.fetchList({ dispatch, commit }, { params });
+
+    expect(dispatch).toBeCalledWith(
+      'entities/fetch',
+      {
+        route,
+        params,
+        dataPreparer: expect.any(Function),
+        schema: [schema],
+      },
+      { root: true },
+    );
+
+    expect(commit).toBeCalledWith(
+      types.FETCH_LIST_COMPLETED,
+      {
+        ...responseData,
+        allIds: entityIds,
+      },
+    );
+  });
+
+  it('Fetch list with error. Action: fetchList', async () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+    const error = new Error(Faker.datatype.string());
+    const dispatch = jest.fn().mockRejectedValue(error);
+    const commit = jest.fn();
+
+    try {
+      await actions.fetchList({ dispatch, commit });
+    } catch (err) {
+      expect(err).toBe(error);
+
+      expect(commit).toBeCalledWith(types.FETCH_LIST_FAILED);
+
+      expect(console.error).toBeCalledWith(error);
+
+      console.error = originalError;
+    }
+  });
+
+  it('Create item. Action: create', async () => {
+    const [entity] = entities;
+
+    axiosMockAdapter
+      .onPost(route, entity)
+      .reply(200);
+
+    await actions.create({}, { data: entity });
+
+    const [entityPostRequest] = axiosMockAdapter.history.post;
+
+    expect(JSON.parse(entityPostRequest.data)).toEqual(entity);
+  });
+
+  it('Update item. Action: update', async () => {
+    const [entity] = entities;
+    const id = Faker.datatype.number();
+
+    axiosMockAdapter
+      .onPut(`${route}/${id}`, entity)
+      .reply(200);
+
+    await actions.update({}, { id, data: entity });
+
+    const [entityPutRequest] = axiosMockAdapter.history.put;
+
+    expect(JSON.parse(entityPutRequest.data)).toEqual(entity);
+  });
+
+  it('Remove item. Action: remove', async () => {
+    const id = Faker.datatype.number();
+
+    axiosMockAdapter
+      .onDelete(`${route}/${id}`)
+      .reply(200);
+
+    await actions.remove({}, { id });
+
+    expect(axiosMockAdapter.history.delete).toHaveLength(1);
+  });
+
+  return {
+    axiosMockAdapter,
+  };
+};

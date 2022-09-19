@@ -26,6 +26,7 @@ export const widgetSettingsMixin = {
   data() {
     return {
       form: widgetToForm(this.sidebar.config?.widget),
+      submitting: false,
     };
   },
   computed: {
@@ -55,29 +56,37 @@ export const widgetSettingsMixin = {
      * @returns {Promise<void>}
      */
     async submit() {
-      const isFormValid = await this.$validator.validateAll();
+      try {
+        this.submitting = true;
 
-      if (isFormValid) {
-        const { _id: widgetId, tab: tabId } = this.widget;
-        const data = formToWidget(this.form);
+        const isFormValid = await this.$validator.validateAll();
 
-        data.tab = tabId;
+        if (isFormValid) {
+          const { _id: widgetId, tab: tabId } = this.widget;
+          const data = formToWidget(this.form);
 
-        if (this.duplicate) {
-          await this.copyWidget({ id: widgetId, data });
-        } else if (widgetId) {
-          await this.updateWidget({ id: widgetId, data });
-        } else {
-          await this.createWidget({ data });
+          data.tab = tabId;
+
+          if (this.duplicate) {
+            await this.copyWidget({ id: widgetId, data });
+          } else if (widgetId) {
+            await this.updateWidget({ id: widgetId, data });
+          } else {
+            await this.createWidget({ data });
+          }
+
+          if (widgetId) {
+            await this.fetchUserPreference({ id: widgetId });
+          }
+
+          await this.fetchActiveView();
+
+          this.$sidebar.hide();
         }
-
-        if (widgetId) {
-          await this.fetchUserPreference({ id: widgetId });
-        }
-
-        await this.fetchActiveView();
-
-        this.$sidebar.hide();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.submitting = false;
       }
     },
   },
