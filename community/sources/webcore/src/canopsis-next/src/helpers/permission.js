@@ -89,10 +89,11 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
   const notificationTechnicalPermissionsValues = Object.values(notificationTechnicalPermissions);
   const profileTechnicalPermissionsValues = Object.values(profileTechnicalPermissions);
   const viewsById = keyBy(views, '_id');
+
   const playlistsById = keyBy(playlists, '_id');
 
   const groupedPermissions = permissions.reduce((acc, permission) => {
-    const permissionId = String(permission._id, '\'');
+    const permissionId = String(permission._id);
     const view = viewsById[permissionId];
     const playlist = playlistsById[permissionId];
 

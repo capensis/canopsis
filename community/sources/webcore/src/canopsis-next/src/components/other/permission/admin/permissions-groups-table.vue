@@ -54,6 +54,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    sortBy: {
+      type: [Function, Array, String],
+      default: () => ['name'],
+    },
   },
   computed: {
     headers() {
@@ -69,7 +73,7 @@ export default {
     },
 
     sortedGroups() {
-      return sortBy(this.groupsWithName, ['name']);
+      return sortBy(this.groupsWithName, this.sortBy);
     },
   },
 };
