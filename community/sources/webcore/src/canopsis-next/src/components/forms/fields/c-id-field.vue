@@ -1,6 +1,6 @@
 <template lang="pug">
   v-text-field(
-    v-validate="",
+    v-validate="rules",
     v-field="value",
     :label="label || $t('common.id')",
     :error-messages="errors.collect(name)",
@@ -45,6 +45,17 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
     },
   },
 };
