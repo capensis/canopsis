@@ -8,21 +8,19 @@ Feature: execute action on trigger
     {
       "name": "test-scenario-action-webhook-1-name",
       "enabled": true,
-      "priority": 30,
       "triggers": ["create"],
       "actions": [
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "component": "test-component-action-webhook-1"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-1"
+                }
               }
-            }
-          ],
-          "entity_patterns": [
-            {
-              "_id": "test-resource-action-webhook-1/test-component-action-webhook-1"
-            }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -34,7 +32,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-1 {{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"priority\":41,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-1-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"test-scenario-action-webhook-1 {{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-1\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -65,7 +63,7 @@ Feature: execute action on trigger
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-webhook-1"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-action-webhook-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -80,19 +78,6 @@ Feature: execute action on trigger
                 "scenario_name": "test-scenario-action-webhook-1 test-resource-action-webhook-1/test-component-action-webhook-1"
               }
             },
-            "steps": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "declareticket",
-                "a": "system",
-                "user_id": ""
-              }
-            ],
             "connector": "test-connector-action-webhook-1",
             "connector_name": "test-connector-name-action-webhook-1",
             "component": "test-component-action-webhook-1",
@@ -108,6 +93,49 @@ Feature: execute action on trigger
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "declareticket",
+                "a": "system",
+                "user_id": ""
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
 
   Scenario: given scenario and check event should emit declare ticket trigger
     Given I am admin
@@ -116,21 +144,19 @@ Feature: execute action on trigger
     {
       "name": "test-scenario-action-webhook-2-1-name",
       "enabled": true,
-      "priority": 31,
       "triggers": ["create"],
       "actions": [
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "component": "test-component-action-webhook-2"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-2"
+                }
               }
-            }
-          ],
-          "entity_patterns": [
-            {
-              "_id": "test-resource-action-webhook-2/test-component-action-webhook-2"
-            }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -144,7 +170,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-2 {{ `{{ .Alarm.Value.Resource }}` }}\",\"enabled\":true,\"priority\":42,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-2-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"test-scenario-action-webhook-2 {{ `{{ .Alarm.Value.Resource }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-2\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -165,21 +191,19 @@ Feature: execute action on trigger
     {
       "name": "test-scenario-action-webhook-2-2-name",
       "enabled": true,
-      "priority": 32,
       "triggers": ["declareticketwebhook"],
       "actions": [
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "component": "test-component-action-webhook-2"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-2"
+                }
               }
-            }
-          ],
-          "entity_patterns": [
-            {
-              "_id": "test-resource-action-webhook-2/test-component-action-webhook-2"
-            }
+            ]
           ],
           "type": "ack",
           "drop_scenario_if_not_matched": false,
@@ -204,7 +228,7 @@ Feature: execute action on trigger
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-webhook-2"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-action-webhook-2
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -222,22 +246,6 @@ Feature: execute action on trigger
             "ack": {
               "_t": "ack"
             },
-            "steps": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "declareticket",
-                "a": "root",
-                "user_id": "root"
-              },
-              {
-                "_t": "ack"
-              }
-            ],
             "connector": "test-connector-action-webhook-2",
             "connector_name": "test-connector-name-action-webhook-2",
             "component": "test-component-action-webhook-2",
@@ -253,6 +261,52 @@ Feature: execute action on trigger
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "declareticket",
+                "a": "root",
+                "user_id": "root"
+              },
+              {
+                "_t": "ack"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      }
+    ]
+    """
 
   Scenario: given scenario and ack resources event should update resource alarms
     Given I am admin
@@ -261,21 +315,19 @@ Feature: execute action on trigger
     {
       "name": "test-scenario-action-webhook-3-name",
       "enabled": true,
-      "priority": 33,
       "triggers": ["ack"],
       "actions": [
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "component": "test-component-action-webhook-3"
+          "entity_pattern": [
+            [
+              {
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-3"
+                }
               }
-            }
-          ],
-          "entity_patterns": [
-            {
-              "_id": "test-component-action-webhook-3"
-            }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -287,7 +339,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-3\",\"enabled\":true,\"priority\":43,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-3-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"test-scenario-action-webhook-3\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-3\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -343,8 +395,8 @@ Feature: execute action on trigger
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-component-action-webhook-3"}]}&with_steps=true
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/alarms?search=test-component-action-webhook-3&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -358,40 +410,11 @@ Feature: execute action on trigger
             "ack": {
               "_t": "ack"
             },
-            "steps": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "ack"
-              },
-              {
-                "_t": "declareticket"
-              }
-            ],
             "connector": "test-connector-action-webhook-3",
             "connector_name": "test-connector-name-action-webhook-3",
             "component": "test-component-action-webhook-3"
           }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-action-webhook-3/test-component-action-webhook-3"}]}&with_steps=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
+        },
         {
           "v": {
             "ticket": {
@@ -400,20 +423,6 @@ Feature: execute action on trigger
             "ack": {
               "_t": "ack"
             },
-            "steps": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "ack"
-              },
-              {
-                "_t": "declareticket"
-              }
-            ],
             "connector": "test-connector-action-webhook-3",
             "connector_name": "test-connector-name-action-webhook-3",
             "component": "test-component-action-webhook-3",
@@ -425,9 +434,86 @@ Feature: execute action on trigger
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 1)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "ack"
+              },
+              {
+                "_t": "declareticket"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "ack"
+              },
+              {
+                "_t": "declareticket"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      }
+    ]
     """
 
   Scenario: given webhook scenario to test response and header templates
@@ -437,21 +523,19 @@ Feature: execute action on trigger
     {
       "name": "test-scenario-action-webhook-4-name",
       "enabled": true,
-      "priority": 34,
       "triggers": ["create"],
       "actions": [
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "component": "test-component-action-webhook-4"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-4"
+                }
               }
-            }
-          ],
-          "entity_patterns": [
-            {
-              "_id": "test-resource-action-webhook-4/test-component-action-webhook-4"
-            }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -469,17 +553,16 @@ Feature: execute action on trigger
           "emit_trigger": false
         },
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "component": "test-component-action-webhook-4"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-4"
+                }
               }
-            }
-          ],
-          "entity_patterns": [
-            {
-              "_id": "test-resource-action-webhook-4/test-component-action-webhook-4"
-            }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -491,7 +574,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "{{ `{{index .Header \"Content-Type\"}}` }}"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-4-webhook {{ `{{index .Response \"icon_name\"}}` }}\",\"enabled\":true,\"priority\":44,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"{{ `{{index .Response \"_id\"}}` }}\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"test-scenario-action-webhook-4-webhook {{ `{{index .Response \"icon_name\"}}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"{{ `{{index .Response \"_id\"}}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -526,8 +609,16 @@ Feature: execute action on trigger
           "name": "test-scenario-action-webhook-4-webhook test-active-icon",
           "actions": [
             {
-              "alarm_patterns": [
-                {"_id": "test-default-active-type"}
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.resource",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-default-active-type"
+                    }
+                  }
+                ]
               ]
             }
           ]
@@ -549,21 +640,19 @@ Feature: execute action on trigger
     {
       "name": "test-scenario-action-webhook-5-name",
       "enabled": true,
-      "priority": 35,
       "triggers": ["declareticket"],
       "actions": [
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "component": "test-component-action-webhook-5"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-5"
+                }
               }
-            }
-          ],
-          "entity_patterns": [
-            {
-              "_id": "test-resource-action-webhook-5/test-component-action-webhook-5"
-            }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -576,7 +665,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"{{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"priority\":45,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-5-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"{{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-5-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -620,7 +709,7 @@ Feature: execute action on trigger
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-webhook-5"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-action-webhook-5
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -635,19 +724,6 @@ Feature: execute action on trigger
                 "scenario_name": "test-resource-action-webhook-5/test-component-action-webhook-5"
               }
             },
-            "steps": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "declareticket",
-                "a": "system",
-                "user_id": ""
-              }
-            ],
             "connector": "test-connector-action-webhook-5",
             "connector_name": "test-connector-name-action-webhook-5",
             "component": "test-component-action-webhook-5",
@@ -663,6 +739,49 @@ Feature: execute action on trigger
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "declareticket",
+                "a": "system",
+                "user_id": ""
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
 
   Scenario: given scenarios with 2 actions and webhook should be able to use additional data in template
     Given I am admin
@@ -671,18 +790,21 @@ Feature: execute action on trigger
     {
       "name": "test-scenario-action-webhook-6-1-name",
       "enabled": true,
-      "priority": 70,
       "triggers": [
         "create"
       ],
       "actions": [
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "resource": "test-resource-action-webhook-6"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-6"
+                }
               }
-            }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -697,7 +819,7 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-1-action-1 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"priority\":113,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-6-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-1-action-1 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -710,12 +832,16 @@ Feature: execute action on trigger
           "emit_trigger": false
         },
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                 "resource": "test-resource-action-webhook-6"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-6"
+                }
               }
-            }
+            ]
           ],
           "drop_scenario_if_not_matched": false,
           "emit_trigger": true,
@@ -731,7 +857,7 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-1-action-2 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"priority\":114,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-6-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-1-action-2 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -750,18 +876,21 @@ Feature: execute action on trigger
     {
       "name": "test-scenario-action-webhook-6-2-name",
       "enabled": true,
-      "priority": 71,
       "triggers": [
         "declareticketwebhook"
       ],
       "actions": [
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "resource": "test-resource-action-webhook-6"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-6"
+                }
               }
-            }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -776,7 +905,7 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-2-action-1 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"priority\":115,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-6-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-2-action-1 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -802,12 +931,16 @@ Feature: execute action on trigger
       ],
       "actions": [
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "resource": "test-resource-action-webhook-6"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-6"
+                }
               }
-            }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -822,7 +955,7 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"name\": \"{{ `{{ $testVar := .AdditionalData.Output }}test-scenario-action-webhook-6-3-action-1 [{{$testVar}}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-6-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\": \"{{ `{{ $testVar := .AdditionalData.Output }}test-scenario-action-webhook-6-3-action-1 [{{$testVar}}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -848,7 +981,7 @@ Feature: execute action on trigger
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-webhook-6"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-action-webhook-6
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -862,7 +995,41 @@ Feature: execute action on trigger
                 "scenario_name_3": "test-scenario-action-webhook-6-2-action-1 [declareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []"
               }
             },
-            "steps": [
+            "connector": "test-connector-action-webhook-6",
+            "connector_name": "test-connector-name-action-webhook-6",
+            "component": "test-component-action-webhook-6",
+            "resource": "test-resource-action-webhook-6"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc"
               },
@@ -885,20 +1052,16 @@ Feature: execute action on trigger
                 "user_id": ""
               }
             ],
-            "connector": "test-connector-action-webhook-6",
-            "connector_name": "test-connector-name-action-webhook-6",
-            "component": "test-component-action-webhook-6",
-            "resource": "test-resource-action-webhook-6"
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 5
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
     When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-6-1-action-1
     Then the response code should be 200
@@ -914,14 +1077,19 @@ Feature: execute action on trigger
           ],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-action-webhook-6-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.resource",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-action-webhook-6-alarm"
+                    }
+                  }
+                ]
               ]
             }
-          ],
-          "priority": 113
+          ]
         }
       ],
       "meta": {
@@ -946,14 +1114,19 @@ Feature: execute action on trigger
           ],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-action-webhook-6-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.resource",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-action-webhook-6-alarm"
+                    }
+                  }
+                ]
               ]
             }
-          ],
-          "priority": 114
+          ]
         }
       ],
       "meta": {
@@ -978,14 +1151,19 @@ Feature: execute action on trigger
           ],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-action-webhook-6-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.resource",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-action-webhook-6-alarm"
+                    }
+                  }
+                ]
               ]
             }
-          ],
-          "priority": 115
+          ]
         }
       ],
       "meta": {
@@ -1010,10 +1188,16 @@ Feature: execute action on trigger
           ],
           "actions": [
             {
-              "alarm_patterns": [
-                {
-                  "_id": "test-scenario-action-webhook-6-alarm"
-                }
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.resource",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-scenario-action-webhook-6-alarm"
+                    }
+                  }
+                ]
               ]
             }
           ]
@@ -1035,21 +1219,30 @@ Feature: execute action on trigger
     {
       "name": "test-scenario-action-webhook-7-name",
       "enabled": true,
-      "priority": 46,
       "triggers": ["create"],
       "actions": [
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "component": "test-component-action-webhook-7"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-7"
+                }
               }
-            }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "_id": "test-resource-action-webhook-7/test-component-action-webhook-7"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-webhook-7/test-component-action-webhook-7"
+                }
+              }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -1067,34 +1260,54 @@ Feature: execute action on trigger
           "emit_trigger": false
         },
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "component": "test-component-action-webhook-7"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-7"
+                }
               }
-            }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "_id": "test-resource-action-webhook-7/test-component-action-webhook-7"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-webhook-7/test-component-action-webhook-7"
+                }
+              }
+            ]
           ],
           "type": "ack",
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false
         },
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "component": "test-component-action-webhook-7"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-7"
+                }
               }
-            }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "_id": "test-resource-action-webhook-7/test-component-action-webhook-7"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-webhook-7/test-component-action-webhook-7"
+                }
+              }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -1112,17 +1325,27 @@ Feature: execute action on trigger
           "emit_trigger": false
         },
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "component": "test-component-action-webhook-7"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-7"
+                }
               }
-            }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "_id": "test-resource-action-webhook-7/test-component-action-webhook-7"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-webhook-7/test-component-action-webhook-7"
+                }
+              }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -1134,7 +1357,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "{{ `{{index .Header \"Content-Type\"}}` }}"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-7-webhook {{ `{{index .ResponseMap \"0._id\"}}` }}\",\"enabled\":true,\"priority\":47,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"{{ `{{index .ResponseMap \"1._id\"}}` }}\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"test-scenario-action-webhook-7-webhook {{ `{{index .ResponseMap \"0._id\"}}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"_id\",\"cond\":{\"type\":\"eq\",\"value\":\"{{ `{{index .ResponseMap \"1._id\"}}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -1169,8 +1392,16 @@ Feature: execute action on trigger
           "name": "test-scenario-action-webhook-7-webhook test-default-active-type",
           "actions": [
             {
-              "alarm_patterns": [
-                {"_id": "test-default-maintenance-type"}
+              "entity_pattern": [
+                [
+                  {
+                    "field": "_id",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-default-maintenance-type"
+                    }
+                  }
+                ]
               ]
             }
           ]
@@ -1192,21 +1423,30 @@ Feature: execute action on trigger
     {
       "name": "test-scenario-action-webhook-8-name",
       "enabled": true,
-      "priority": 48,
       "triggers": ["create"],
       "actions": [
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "component": "test-component-action-webhook-8"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-8"
+                }
               }
-            }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "_id": "test-resource-action-webhook-8/test-component-action-webhook-8"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-webhook-8/test-component-action-webhook-8"
+                }
+              }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -1230,17 +1470,27 @@ Feature: execute action on trigger
           "emit_trigger": false
         },
         {
-          "alarm_patterns": [
-            {
-              "v": {
-                "component": "test-component-action-webhook-8"
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-8"
+                }
               }
-            }
+            ]
           ],
-          "entity_patterns": [
-            {
-              "_id": "test-resource-action-webhook-8/test-component-action-webhook-8"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-webhook-8/test-component-action-webhook-8"
+                }
+              }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -1252,7 +1502,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-8-webhook {{ `{{index .ResponseMap \"0.array.0.elem1\"}}` }}\",\"enabled\":true,\"priority\":49,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"{{ `{{index .ResponseMap \"0.array.1.elem2\"}}` }}\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"test-scenario-action-webhook-8-webhook {{ `{{index .ResponseMap \"0.array.0.elem1\"}}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"_id\",\"cond\":{\"type\":\"eq\",\"value\":\"{{ `{{index .ResponseMap \"0.array.1.elem2\"}}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -1287,8 +1537,16 @@ Feature: execute action on trigger
           "name": "test-scenario-action-webhook-8-webhook test1",
           "actions": [
             {
-              "alarm_patterns": [
-                {"_id": "test4"}
+              "entity_pattern": [
+                [
+                  {
+                    "field": "_id",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test4"
+                    }
+                  }
+                ]
               ]
             }
           ]
@@ -1302,7 +1560,7 @@ Feature: execute action on trigger
       }
     }
     """
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-webhook-8"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-action-webhook-8
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1318,18 +1576,6 @@ Feature: execute action on trigger
                 "test_val": "test1"
               }
             },
-            "steps": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "declareticket",
-                "a": "system"
-              }
-            ],
             "connector": "test-connector-action-webhook-8",
             "connector_name": "test-connector-name-action-webhook-8",
             "component": "test-component-action-webhook-8",
@@ -1344,4 +1590,46 @@ Feature: execute action on trigger
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "declareticket",
+                "a": "system"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
     """

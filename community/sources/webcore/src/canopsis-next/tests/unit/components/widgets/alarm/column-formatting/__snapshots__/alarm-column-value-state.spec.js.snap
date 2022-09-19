@@ -2,7 +2,7 @@
 
 exports[`alarm-column-value-state Renders \`alarm-column-value-state\` with alarm state 1`] = `
 <div
-  class="layout align-center"
+  class="layout align-center alarm-column-value-state--badge"
 >
   <c-alarm-chip-stub
     badge-value="Events count"

@@ -45,10 +45,11 @@ const (
 	ValueAssociativeTable       = "associativetable"
 	ValueTypeIdleRule           = "idlerule"
 
-	ValueTypeView      = "view"
-	ValueTypeViewTab   = "viewtab"
-	ValueTypeWidget    = "widget"
-	ValueTypeViewGroup = "viewgroup"
+	ValueTypeView         = "view"
+	ValueTypeViewTab      = "viewtab"
+	ValueTypeWidget       = "widget"
+	ValueTypeWidgetFilter = "widgetfilter"
+	ValueTypeViewGroup    = "viewgroup"
 
 	ValueTypeResolveRule  = "resolverule"
 	ValueTypeFlappingRule = "flappingrule"
@@ -56,6 +57,8 @@ const (
 	ValueTypeUserPreferences = "userpreferences"
 
 	ValueTypeFilter = "filter"
+
+	ValueTypePattern = "pattern"
 )
 
 type ActionLogger interface {

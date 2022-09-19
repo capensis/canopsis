@@ -48,6 +48,8 @@ type parseEntityResult struct {
 
 	componentInfos map[string]map[string]interface{}
 
+	entityTypes map[string]string
+
 	updatedIds        []string
 	removedIds        []string
 	serviceEvents     []types.Event
@@ -127,14 +129,14 @@ func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stat
 
 	if serviceCount == 0 {
 		for _, event := range res.serviceEvents {
-			err := w.publisher.SendEvent(event)
+			err := w.publisher.SendEvent(ctx, event)
 			if err != nil {
 				return stats, err
 			}
 		}
 	} else if len(res.serviceEvents)+len(res.basicEntityEvents) <= int(serviceCount) {
 		for _, event := range res.serviceEvents {
-			err := w.publisher.SendEvent(event)
+			err := w.publisher.SendEvent(ctx, event)
 			if err != nil {
 				return stats, err
 			}
@@ -145,7 +147,7 @@ func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stat
 				return stats, err
 			}
 			if fixedEvent.EventType != "" {
-				err = w.publisher.SendEvent(fixedEvent)
+				err = w.publisher.SendEvent(ctx, fixedEvent)
 				if err != nil {
 					return stats, err
 				}
@@ -231,7 +233,7 @@ func (w *worker) parseFile(ctx context.Context, filename, source string, withEve
 				return res, fmt.Errorf("links should be an array")
 			}
 
-			linkWriteModels, err := w.parseLinks(ctx, decoder, entityParseRes.componentInfos)
+			linkWriteModels, err := w.parseLinks(ctx, decoder, entityParseRes.componentInfos, entityParseRes.entityTypes)
 			if err != nil {
 				return res, err
 			}
@@ -261,6 +263,7 @@ func (w *worker) parseEntities(
 	removedIds := make([]string, 0)
 	serviceEvents := make([]types.Event, 0)
 	basicEntityEvents := make([]types.Event, 0)
+	entityTypes := make(map[string]string)
 	now := types.NewCpsTime()
 	componentInfos := make(map[string]map[string]interface{})
 
@@ -282,6 +285,10 @@ func (w *worker) parseEntities(
 
 		eventType := ""
 		var oldEntity ConfigurationItem
+
+		if ci.Type != nil {
+			entityTypes[ci.ID] = *ci.Type
+		}
 
 		switch ci.Action {
 		case ActionCreate:
@@ -455,6 +462,7 @@ func (w *worker) parseEntities(
 	res.componentInfos = componentInfos
 	res.serviceEvents = serviceEvents
 	res.basicEntityEvents = basicEntityEvents
+	res.entityTypes = entityTypes
 	return res, nil
 }
 
@@ -462,8 +470,12 @@ func (w *worker) parseLinks(
 	ctx context.Context,
 	decoder *json.Decoder,
 	componentInfos map[string]map[string]interface{},
+	entityTypes map[string]string,
 ) ([]mongo.WriteModel, error) {
 	writeModels := make([]mongo.WriteModel, 0)
+	if entityTypes == nil {
+		entityTypes = make(map[string]string)
+	}
 
 	for decoder.More() {
 		var link Link
@@ -472,38 +484,49 @@ func (w *worker) parseLinks(
 			return nil, fmt.Errorf("failed to decode links item: %v", err)
 		}
 
+		ciTo := ConfigurationItem{}
+		err = w.entityCollection.FindOne(ctx, bson.M{"_id": link.To}).Decode(&ciTo)
+		if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, err
+		}
+
+		if _, ok := entityTypes[link.To]; !ok && ciTo.Type != nil {
+			entityTypes[link.To] = *ciTo.Type
+		}
+		for _, from := range link.From {
+			fromType := entityTypes[from]
+			if fromType == "" {
+				ciFrom := ConfigurationItem{}
+				err = w.entityCollection.FindOne(ctx, bson.M{"_id": from}).Decode(&ciFrom)
+				if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+					return nil, err
+				}
+				if ciFrom.Type != nil {
+					entityTypes[fromType] = *ciFrom.Type
+				}
+			}
+		}
+
 		switch link.Action {
 		case ActionCreate:
-			writeModels = append(writeModels, w.createLink(link)...)
+			linkWriterModels, err := w.createLink(link, entityTypes)
+			if err != nil {
+				return nil, err
+			}
+			writeModels = append(writeModels, linkWriterModels...)
 
 			if infos, ok := componentInfos[link.To]; ok {
 				writeModels = append(writeModels, w.updateComponentInfosOnLinkCreate(link, infos))
-			} else {
-				ci := ConfigurationItem{}
-				err := w.entityCollection.
-					FindOne(ctx, bson.M{"_id": link.To, "type": types.EntityTypeComponent}).
-					Decode(&ci)
-				if err == nil {
-					writeModels = append(writeModels, w.updateComponentInfosOnLinkCreate(link, ci.Infos))
-				} else if !errors.Is(err, mongo.ErrNoDocuments) {
-					return nil, err
-				}
+			} else if ciTo.Type != nil && *ciTo.Type == types.EntityTypeComponent {
+				writeModels = append(writeModels, w.updateComponentInfosOnLinkCreate(link, ciTo.Infos))
 			}
 		case ActionDelete:
-			writeModels = append(writeModels, w.deleteLink(link)...)
+			writeModels = append(writeModels, w.deleteLink(link, entityTypes)...)
 
 			if _, ok := componentInfos[link.To]; ok {
 				writeModels = append(writeModels, w.updateComponentInfosOnLinkDelete(link))
-			} else {
-				ci := ConfigurationItem{}
-				err := w.entityCollection.
-					FindOne(ctx, bson.M{"_id": link.To, "type": types.EntityTypeComponent}).
-					Decode(&ci)
-				if err == nil {
-					writeModels = append(writeModels, w.updateComponentInfosOnLinkDelete(link))
-				} else if !errors.Is(err, mongo.ErrNoDocuments) {
-					return nil, err
-				}
+			} else if ciTo.Type != nil && *ciTo.Type == types.EntityTypeComponent {
+				writeModels = append(writeModels, w.updateComponentInfosOnLinkDelete(link))
 			}
 		case ActionUpdate:
 			//wasn't implemented in python code
@@ -537,7 +560,7 @@ func (w *worker) sendUpdateServiceEvents(ctx context.Context) error {
 			return err
 		}
 
-		err = w.publisher.SendEvent(types.Event{
+		err = w.publisher.SendEvent(ctx, types.Event{
 			EventType:     types.EventTypeRecomputeEntityService,
 			Connector:     types.ConnectorEngineService,
 			ConnectorName: types.ConnectorEngineService,
@@ -622,8 +645,8 @@ func (w *worker) validate(ci ConfigurationItem) error {
 		return fmt.Errorf("type is not valid %q", *ci.Type)
 	}
 
-	if *ci.Type != types.EntityTypeService && ci.EntityPatterns != nil {
-		return fmt.Errorf("contains entity patterns, but ci is not a service")
+	if *ci.Type != types.EntityTypeService && len(ci.EntityPattern) > 0 {
+		return fmt.Errorf("contains entity pattern, but ci is not a service")
 	}
 
 	return nil
@@ -642,25 +665,67 @@ func (w *worker) fillDefaultFields(ci *ConfigurationItem) {
 	}
 }
 
-func (w *worker) createLink(link Link) []mongo.WriteModel {
+func (w *worker) createLink(link Link, entityTypes map[string]string) ([]mongo.WriteModel, error) {
+	updateTo := bson.M{"$addToSet": bson.M{"depends": bson.M{"$each": link.From}}}
+	updateFrom := bson.M{"$addToSet": bson.M{"impact": link.To}}
+
+	if entityTypes[link.To] == types.EntityTypeConnector {
+		updateFrom["$set"] = bson.M{"connector": link.To}
+	} else if entityTypes[link.To] == types.EntityTypeComponent {
+		updateFrom["$set"] = bson.M{"component": link.To}
+	} else {
+		connCount := 0
+		connector := ""
+		for _, fromId := range link.From {
+			if entityTypes[fromId] == types.EntityTypeConnector {
+				connector = fromId
+				connCount++
+			}
+		}
+
+		if connCount > 0 {
+			if connCount > 1 {
+				return nil, fmt.Errorf("an entity cannot be connected to more then 1 connector")
+			}
+
+			updateTo["$set"] = bson.M{"connector": connector}
+		}
+	}
+
 	return []mongo.WriteModel{
 		mongo.NewUpdateManyModel().
 			SetFilter(bson.M{"_id": link.To}).
-			SetUpdate(bson.M{"$addToSet": bson.M{"depends": bson.M{"$each": link.From}}}),
+			SetUpdate(updateTo),
 		mongo.NewUpdateManyModel().
 			SetFilter(bson.M{"_id": bson.M{"$in": link.From}}).
-			SetUpdate(bson.M{"$addToSet": bson.M{"impact": link.To}}),
-	}
+			SetUpdate(updateFrom),
+	}, nil
 }
 
-func (w *worker) deleteLink(link Link) []mongo.WriteModel {
+func (w *worker) deleteLink(link Link, entityTypes map[string]string) []mongo.WriteModel {
+	updateTo := bson.M{"$pull": bson.M{"depends": bson.M{"$in": link.From}}}
+	updateFrom := bson.M{"$pull": bson.M{"impact": link.To}}
+
+	if entityTypes[link.To] == types.EntityTypeConnector {
+		updateFrom["$unset"] = bson.M{"connector": ""}
+	} else if entityTypes[link.To] == types.EntityTypeComponent {
+		updateFrom["$unset"] = bson.M{"component": ""}
+	} else {
+		for _, from := range link.From {
+			if entityTypes[from] == types.EntityTypeConnector {
+				updateTo["$unset"] = bson.M{"connector": ""}
+				break
+			}
+		}
+	}
+
 	return []mongo.WriteModel{
 		mongo.NewUpdateManyModel().
 			SetFilter(bson.M{"_id": link.To}).
-			SetUpdate(bson.M{"$pull": bson.M{"depends": bson.M{"$in": link.From}}}),
+			SetUpdate(updateTo),
 		mongo.NewUpdateManyModel().
 			SetFilter(bson.M{"_id": bson.M{"$in": link.From}}).
-			SetUpdate(bson.M{"$pull": bson.M{"impact": link.To}}),
+			SetUpdate(updateFrom),
 	}
 }
 
@@ -668,6 +733,10 @@ func (w *worker) createEntity(ci ConfigurationItem) mongo.WriteModel {
 	ci.Depends = []string{}
 	ci.Impact = []string{}
 	ci.EnableHistory = make([]int64, 0)
+
+	if ci.Type != nil && *ci.Type == types.EntityTypeComponent {
+		ci.Component = ci.ID
+	}
 
 	if ci.Infos == nil {
 		ci.Infos = make(map[string]interface{})
@@ -689,6 +758,10 @@ func (w *worker) updateEntity(ci *ConfigurationItem, oldEntity ConfigurationItem
 	ci.Depends = oldEntity.Depends
 	ci.Impact = oldEntity.Impact
 	ci.EnableHistory = oldEntity.EnableHistory
+
+	if ci.Type != nil && *ci.Type == types.EntityTypeComponent {
+		ci.Component = ci.ID
+	}
 
 	if ci.Infos == nil {
 		ci.Infos = make(map[string]interface{})
@@ -728,15 +801,26 @@ func (w *worker) deleteEntity(ci ConfigurationItem) []mongo.WriteModel {
 		mongo.NewUpdateManyModel().
 			SetFilter(bson.M{"depends": ci.ID}).
 			SetUpdate(bson.M{"$pull": bson.M{"depends": ci.ID}}),
+		mongo.NewUpdateManyModel().
+			SetFilter(bson.M{"connector": ci.ID}).
+			SetUpdate(bson.M{"$unset": bson.M{"connector": ""}}),
+		mongo.NewUpdateManyModel().
+			SetFilter(bson.M{"component": ci.ID}).
+			SetUpdate(bson.M{"$unset": bson.M{"component": ""}}),
 		mongo.NewDeleteOneModel().
 			SetFilter(bson.M{"_id": ci.ID}),
 	}
 }
 
 func (w *worker) updateComponentInfosOnComponentUpdate(ci ConfigurationItem) mongo.WriteModel {
+	update := bson.M{"component": ci.ID}
+	if len(ci.Infos) > 0 {
+		update["component_infos"] = ci.Infos
+	}
+
 	return mongo.NewUpdateManyModel().
 		SetFilter(bson.M{"type": types.EntityTypeResource, "impact": ci.ID}).
-		SetUpdate(bson.M{"$set": bson.M{"component_infos": ci.Infos, "component": ci.ID}})
+		SetUpdate(bson.M{"$set": update})
 }
 
 func (w *worker) updateComponentInfosOnComponentDelete(ci ConfigurationItem) mongo.WriteModel {
@@ -746,9 +830,14 @@ func (w *worker) updateComponentInfosOnComponentDelete(ci ConfigurationItem) mon
 }
 
 func (w *worker) updateComponentInfosOnLinkCreate(link Link, infos map[string]interface{}) mongo.WriteModel {
+	update := bson.M{"component": link.To}
+	if len(infos) > 0 {
+		update["component_infos"] = infos
+	}
+
 	return mongo.NewUpdateManyModel().
 		SetFilter(bson.M{"_id": bson.M{"$in": link.From}, "type": types.EntityTypeResource}).
-		SetUpdate(bson.M{"$set": bson.M{"component_infos": infos, "component": link.To}})
+		SetUpdate(bson.M{"$set": update})
 }
 
 func (w *worker) updateComponentInfosOnLinkDelete(link Link) mongo.WriteModel {
