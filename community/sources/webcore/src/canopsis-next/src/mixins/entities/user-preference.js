@@ -11,11 +11,11 @@ export const entitiesUserPreferenceMixin = {
   },
   computed: {
     ...mapGetters({
-      getUserPreferenceByWidget: 'getItemByWidget',
+      getUserPreferenceByWidgetId: 'getItemByWidgetId',
     }),
 
     userPreference() {
-      return this.getUserPreferenceByWidget(this.widget);
+      return this.getUserPreferenceByWidgetId(this.widget._id);
     },
   },
   methods: {

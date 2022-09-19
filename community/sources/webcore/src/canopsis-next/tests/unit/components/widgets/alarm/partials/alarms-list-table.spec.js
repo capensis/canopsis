@@ -122,6 +122,11 @@ describe('alarms-list-table', () => {
 
   const defaultWidget = generateDefaultAlarmListWidget();
 
+  const columns = [{
+    label: 'Label-1',
+    value: 'label',
+  }];
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -132,9 +137,8 @@ describe('alarms-list-table', () => {
       store,
       propsData: {
         alarms,
+        columns,
         widget: defaultWidget,
-        columns: [],
-        hasColumns: true,
       },
     });
 
@@ -151,9 +155,8 @@ describe('alarms-list-table', () => {
       store,
       propsData: {
         alarms,
+        columns,
         widget: defaultWidget,
-        columns: [],
-        hasColumns: true,
       },
     });
 
@@ -170,10 +173,9 @@ describe('alarms-list-table', () => {
     const wrapper = factory({
       store,
       propsData: {
+        columns,
         widget: defaultWidget,
         alarms: [],
-        columns: [],
-        hasColumns: true,
       },
     });
 
@@ -203,10 +205,9 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        columns,
         widget: defaultWidget,
         alarms: [],
-        columns: [],
-        hasColumns: true,
         stickyHeader: true,
       },
     });
@@ -253,10 +254,9 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        columns,
         widget: defaultWidget,
         alarms: [],
-        columns: [],
-        hasColumns: true,
       },
     });
 
@@ -293,10 +293,9 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        columns,
         widget: defaultWidget,
         alarms: [],
-        columns: [],
-        hasColumns: true,
       },
     });
 
@@ -343,11 +342,7 @@ describe('alarms-list-table', () => {
       propsData: {
         widget: defaultWidget,
         alarms,
-        columns: [{
-          label: 'Label-1',
-          value: 'label',
-        }],
-        hasColumns: true,
+        columns,
         stickyHeader: true,
       },
     });
@@ -379,11 +374,7 @@ describe('alarms-list-table', () => {
       propsData: {
         widget: defaultWidget,
         alarms,
-        columns: [{
-          label: 'Label-1',
-          value: 'label',
-        }],
-        hasColumns: true,
+        columns,
         stickyHeader: true,
       },
     });
@@ -417,11 +408,7 @@ describe('alarms-list-table', () => {
       propsData: {
         widget: defaultWidget,
         alarms,
-        columns: [{
-          label: 'Label-1',
-          value: 'label',
-        }],
-        hasColumns: true,
+        columns,
         stickyHeader: true,
       },
     });
@@ -463,21 +450,19 @@ describe('alarms-list-table', () => {
       store,
       propsData: {
         alarms,
-        widget: defaultWidget,
-        columns: [{
-          label: 'Label-1',
-          value: 'label',
-        }],
+        columns,
         totalItems,
+        widget: defaultWidget,
         pagination: {},
         isTourEnabled: true,
         loading: true,
-        hasColumns: true,
         selectable: true,
-        hideGroups: true,
+        hideChildren: true,
+        dense: true,
         expandable: true,
         stickyHeader: true,
         parentAlarm: fakeAlarm(),
+        refreshAlarmsList: jest.fn(),
       },
     });
 
@@ -492,10 +477,9 @@ describe('alarms-list-table', () => {
       propsData: {
         alarms,
         widget: defaultWidget,
-        columns: [],
+        columns,
         totalItems,
         pagination: {},
-        hasColumns: true,
         selectable: false,
         expandable: true,
       },
@@ -519,8 +503,7 @@ describe('alarms-list-table', () => {
           },
         },
         alarms: [],
-        columns: [],
-        hasColumns: true,
+        columns,
       },
     });
 

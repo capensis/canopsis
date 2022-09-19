@@ -74,8 +74,14 @@ $mobileBreakpoint: 450px;
   }
 }
 
-.cursor-pointer {
-  cursor: pointer !important;
+.cursor {
+  &-pointer {
+    cursor: pointer !important;
+  }
+
+  &-move {
+    cursor: move !important;
+  }
 }
 
 .weather-item {

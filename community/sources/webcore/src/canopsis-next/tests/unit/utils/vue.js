@@ -13,6 +13,7 @@ import GridPlugin from '@/plugins/grid';
 import ToursPlugin from '@/plugins/tours';
 import * as constants from '@/constants';
 import * as config from '@/config';
+import i18n from '@/i18n';
 import { convertDateToString } from '@/helpers/date/date';
 import SetSeveralPlugin from '@/plugins/set-several';
 
@@ -27,30 +28,10 @@ import SetSeveralPlugin from '@/plugins/set-several';
 
 document.body.setAttribute('data-app', true);
 
-const prepareTranslateValues = values => (values ? `:${JSON.stringify(values)}` : '');
-
 const mocks = {
-  $t: (path, values) => `${path}${prepareTranslateValues(values)}`,
-  $tc: (path, count, values) => `${path}:${count}${prepareTranslateValues(values)}`,
-  $te: () => true,
-
   $constants: Object.freeze(constants),
   $config: Object.freeze(config),
 };
-
-const i18n = {
-  _vm: new Vue(),
-  t: mocks.$t,
-  tc: mocks.$tc,
-  te: mocks.$te,
-  mergeLocaleMessage: jest.fn(),
-};
-
-jest.mock('@/i18n', () => ({
-  t: mocks.$t,
-  tc: mocks.$tc,
-  te: mocks.$te,
-}));
 
 Vue.use(VueAsyncComputed);
 Vue.use(Vuex);
@@ -83,6 +64,15 @@ export const createVueInstance = () => createLocalVue();
  */
 const enhanceWrapper = (wrapper) => {
   wrapper.getValidator = () => wrapper.vm.$validator;
+  wrapper.getValidatorErrorsObject = () => {
+    const { errors = { items: [] } } = wrapper.getValidator();
+
+    return errors.items.reduce((acc, { field, msg }) => {
+      acc[field] = msg;
+
+      return acc;
+    }, {});
+  };
   wrapper.findAllMenus = () => wrapper.findAll('.v-menu__content');
   wrapper.findMenu = () => wrapper.find('.v-menu__content');
   wrapper.findAllTooltips = () => wrapper.findAll('.v-tooltip__content');
@@ -103,7 +93,7 @@ export const mount = (component, options = {}) => {
 
   const wrapper = testUtilsMount(
     component,
-    merge({ mocks, stubs }, options),
+    merge({ mocks, stubs }, options, { i18n }),
   );
 
   enhanceWrapper(wrapper);
@@ -121,7 +111,7 @@ export const mount = (component, options = {}) => {
 export const shallowMount = (component, options = {}) => {
   const wrapper = testUtilsShallowMount(
     component,
-    merge(options, { mocks, stubs }),
+    merge(options, { mocks, i18n, stubs }),
   );
 
   enhanceWrapper(wrapper);

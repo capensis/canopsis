@@ -9,7 +9,7 @@ export const ACTION_TYPES = {
   webhook: 'webhook',
 };
 
-export const CAT_ACTION_TYPES = [ACTION_TYPES.webhook];
+export const PRO_ACTION_TYPES = [ACTION_TYPES.webhook];
 
 export const SCENARIO_TRIGGERS = {
   create: 'create',
@@ -34,16 +34,18 @@ export const SCENARIO_TRIGGERS = {
   pbhleave: 'pbhleave',
   instructionfail: 'instructionfail',
   autoinstructionfail: 'autoinstructionfail',
+  instructionjobcomplete: 'instructionjobcomplete',
   instructionjobfail: 'instructionjobfail',
   instructioncomplete: 'instructioncomplete',
   autoinstructioncomplete: 'autoinstructioncomplete',
 };
 
-export const CAT_SCENARIO_TRIGGERS = [
+export const PRO_SCENARIO_TRIGGERS = [
   SCENARIO_TRIGGERS.declareticket,
   SCENARIO_TRIGGERS.declareticketwebhook,
   SCENARIO_TRIGGERS.instructionfail,
   SCENARIO_TRIGGERS.autoinstructionfail,
+  SCENARIO_TRIGGERS.instructionjobcomplete,
   SCENARIO_TRIGGERS.instructionjobfail,
   SCENARIO_TRIGGERS.instructioncomplete,
   SCENARIO_TRIGGERS.autoinstructioncomplete,

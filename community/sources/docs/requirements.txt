@@ -11,3 +11,6 @@ mkdocs-git-revision-date-localized-plugin==0.12.1
 
 # https://facelessuser.github.io/pymdown-extensions/about/changelog/
 pymdown-extensions==9.2
+
+# https://github.com/readthedocs/readthedocs.org/issues/9064
+jinja2<3.1.0

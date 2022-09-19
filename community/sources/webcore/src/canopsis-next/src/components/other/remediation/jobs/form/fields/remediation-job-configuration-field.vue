@@ -4,7 +4,7 @@
       v-field="value",
       v-validate="'required'",
       :items="configurations",
-      :label="$t('modals.createRemediationJob.fields.configuration')",
+      :label="$t('remediationJob.configuration')",
       :error-messages="errors.collect('configuration')",
       :loading="pending",
       name="configuration",

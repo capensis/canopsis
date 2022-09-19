@@ -6,15 +6,13 @@
         hide-details
       )
     v-flex(xs7)
-      v-text-field(
-        v-field.number="value.limit",
-        v-validate="'required|numeric|min_value:1'",
-        :error-messages="errors.collect(name)",
+      c-number-field(
+        v-field="value.limit",
         :label="label",
         :disabled="!value.enabled",
         :min="1",
         :name="name",
-        type="number",
+        required,
         hide-details
       )
 </template>

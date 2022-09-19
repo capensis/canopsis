@@ -4,8 +4,18 @@
       div(:class="validationHeaderClass") {{ $t('settings.advancedSettings') }}
     v-list.grey.lighten-4.px-2.py-0(expand)
       field-filters(
+        v-model="form.parameters.mainFilter",
+        :filters.sync="form.filters",
+        :widget-id="widget._id",
+        addable,
+        editable,
+        with-alarm,
+        with-entity,
+        with-pbehavior,
+        @input="updateMainFilterUpdatedAt"
+      )
+      field-filters(
         :filters="value.filters",
-        hide-select,
         addable,
         editable,
         @update:filters="updateField('filters', $event)"
@@ -56,6 +66,10 @@ export default {
   props: {
     value: {
       type: Object,
+      required: true,
+    },
+    widgetId: {
+      type: String,
       required: true,
     },
   },

@@ -16,9 +16,12 @@ import {
 
 import {
   ALARMS_OPENED_VALUES,
+
   EXPORT_CSV_DATETIME_FORMATS,
+
   EXPORT_CSV_SEPARATORS,
   SORT_ORDERS,
+  TIME_UNITS,
   USERS_PERMISSIONS,
   SIDE_BARS,
   COLOR_INDICATOR_TYPES,
@@ -50,6 +53,7 @@ const stubs = {
   'field-switcher': createInputStub('field-switcher'),
   'field-fast-ack-output': createInputStub('field-fast-ack-output'),
   'field-enabled-limit': createInputStub('field-enabled-limit'),
+  'field-density': createInputStub('field-density'),
   'export-csv-form': createInputStub('export-csv-form'),
   'v-btn': createButtonStub('v-btn'),
 };
@@ -70,6 +74,7 @@ const snapshotStubs = {
   'field-switcher': true,
   'field-fast-ack-output': true,
   'field-enabled-limit': true,
+  'field-density': true,
   'export-csv-form': true,
 };
 
@@ -140,6 +145,7 @@ describe('alarm', () => {
   const widget = {
     ...generateDefaultAlarmListWidget(),
 
+    _id: '3f8dba7c-f39e-42ae-912c-e78cb39669c5',
     tab: Faker.datatype.string(),
   };
 
@@ -499,7 +505,51 @@ describe('alarm', () => {
     });
   });
 
-  it('Filters changed after trigger filters field', async () => {
+  it('Filters changed after trigger update:filters on filters field', async () => {
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        activeViewModule,
+        widgetModule,
+        {
+          ...authModule,
+          getters: {
+            currentUserPermissionsById: {
+              [USERS_PERMISSIONS.business.alarmsList.actions.listFilters]: {
+                actions: [],
+              },
+            },
+          },
+        },
+      ]),
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldFilters = selectFieldFilters(wrapper);
+
+    const filters = [{
+      title: Faker.datatype.string(),
+      filter: Faker.helpers.createTransaction(),
+    }];
+
+    fieldFilters.vm.$emit('update:filters', filters);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewProperty(widget, 'filters', filters),
+      },
+    });
+  });
+
+  it('Filter changed after trigger input on filters field', async () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         activeViewModule,
@@ -954,6 +1004,51 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'sticky_header', stickyHeader),
+      },
+    });
+  });
+
+  /**
+   * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4390
+   */
+  it('Invalid periodic refresh converted to valid object', async () => {
+    const periodicRefresh = {
+      value: 1,
+      unit: {},
+      enabled: false,
+    };
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar: {
+          ...sidebar,
+
+          config: {
+            widget: {
+              ...widget,
+              parameters: {
+                ...widget.parameters,
+                periodic_refresh: periodicRefresh,
+              },
+            },
+          },
+        },
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'periodic_refresh', {
+          ...periodicRefresh,
+          unit: TIME_UNITS.second,
+        }),
       },
     });
   });

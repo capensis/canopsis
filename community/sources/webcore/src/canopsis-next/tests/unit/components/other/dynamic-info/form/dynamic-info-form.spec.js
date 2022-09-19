@@ -1,0 +1,150 @@
+import Faker from 'faker';
+
+import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+
+import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
+
+const localVue = createVueInstance();
+
+const stubs = {
+  'dynamic-info-general-form': true,
+  'dynamic-info-infos-form': true,
+  'dynamic-info-patterns-form': true,
+};
+
+const factory = (options = {}) => shallowMount(DynamicInfoForm, {
+  localVue,
+  stubs,
+
+  ...options,
+});
+
+const snapshotFactory = (options = {}) => mount(DynamicInfoForm, {
+  localVue,
+  stubs,
+
+  ...options,
+});
+
+const selectDynamicInfoGeneralForm = wrapper => wrapper.find('dynamic-info-general-form-stub');
+const selectDynamicInfoInfosForm = wrapper => wrapper.find('dynamic-info-infos-form-stub');
+const selectDynamicInfoPatternsForm = wrapper => wrapper.find('dynamic-info-patterns-form-stub');
+
+describe('dynamic-info-form', () => {
+  test('Dynamic info general fields changed after trigger general form', () => {
+    const wrapper = factory({
+      propsData: {
+        form: {
+          infos: [],
+        },
+      },
+    });
+
+    const dynamicInfoGeneralForm = selectDynamicInfoGeneralForm(wrapper);
+
+    const newForm = {
+      _id: Faker.datatype.string(),
+      name: Faker.datatype.string(),
+      enabled: Faker.datatype.boolean(),
+      disable_during_periods: [],
+      description: Faker.datatype.string(),
+    };
+
+    dynamicInfoGeneralForm.vm.$emit('input', newForm);
+
+    expect(wrapper).toEmit('input', newForm);
+  });
+
+  test('Dynamic info infos changed after trigger infos form', () => {
+    const wrapper = factory({
+      propsData: {
+        form: {
+          infos: [],
+        },
+      },
+    });
+
+    const dynamicInfoInfosForm = selectDynamicInfoInfosForm(wrapper);
+
+    const newInfos = [
+      {
+        name: Faker.datatype.string(),
+        value: Faker.datatype.string(),
+        actions: [],
+      },
+    ];
+
+    dynamicInfoInfosForm.vm.$emit('input', newInfos);
+
+    expect(wrapper).toEmit('input', { infos: newInfos });
+  });
+
+  test('Dynamic info patterns changed after trigger patterns form', () => {
+    const wrapper = factory({
+      propsData: {
+        form: {
+          infos: [],
+          patterns: {},
+        },
+      },
+    });
+
+    const patternsForm = selectDynamicInfoPatternsForm(wrapper);
+
+    const newPatterns = {
+      alarm_pattern: {},
+      entity_pattern: {},
+    };
+
+    patternsForm.vm.$emit('input', newPatterns);
+
+    expect(wrapper).toEmit('input', {
+      infos: [],
+      patterns: newPatterns,
+    });
+  });
+
+  test('Renders `dynamic-info-form` with default props', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        form: {
+          infos: [{}],
+        },
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  test('Renders `dynamic-info-form` with custom props', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        form: {
+          enabled: true,
+          infos: [{}],
+          patterns: {},
+        },
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  test('Renders `dynamic-info-form` with errors', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        form: {
+          infos: [{}],
+        },
+      },
+    });
+
+    await wrapper.setData({
+      hasGeneralFormAnyError: true,
+      hasInfosFormAnyError: true,
+      hasPatternsFormAnyError: true,
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+});

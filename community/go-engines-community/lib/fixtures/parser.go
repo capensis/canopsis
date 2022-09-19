@@ -12,10 +12,14 @@ import (
 )
 
 const (
-	referenceRegexp = `^@(?P<ref>[\w\-\d]+)$`
-	methodRegexp    = `^<(?P<method>\w+)\((?P<args>[^)]*)\)(\.(?P<field>\w+))?>$`
-	keyCurrent      = "Current"
-	keyIndex        = "Index"
+	keyRangeRegexp   = `^(?P<key>[\w-]+)\{(?P<from>\d+)\.\.(?P<to>\d+)\}$`
+	referenceRegexp  = `^@(?P<ref>[\w\-\d\*]+)$`
+	methodRegexp     = `^` + methodTplRegexp + `$`
+	methodTplRegexp  = `<(?P<method>\w+)\((?P<args>[^)]*)\)(\.(?P<field>\w+))?>`
+	tplRegexp        = `^<\{(?P<content>.+)\}>$`
+	methodCurrent    = "Current"
+	methodIndex      = "Index"
+	methodRangeIndex = "RangeIndex"
 )
 
 type Parser interface {
@@ -26,8 +30,11 @@ func NewParser(faker *Faker) Parser {
 	return &parser{
 		faker:        faker,
 		reflectFaker: reflect.ValueOf(faker),
+		keyRangeRe:   regexp.MustCompile(keyRangeRegexp),
 		referenceRe:  regexp.MustCompile(referenceRegexp),
 		methodRe:     regexp.MustCompile(methodRegexp),
+		methodTplRe:  regexp.MustCompile(methodTplRegexp),
+		tplRe:        regexp.MustCompile(tplRegexp),
 	}
 }
 
@@ -35,7 +42,7 @@ type parser struct {
 	faker        *Faker
 	reflectFaker reflect.Value
 
-	referenceRe, methodRe *regexp.Regexp
+	keyRangeRe, referenceRe, methodRe, methodTplRe, tplRe *regexp.Regexp
 }
 
 func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
@@ -78,7 +85,42 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 				return nil, fmt.Errorf("cannot decode content: %q must be object", key)
 			}
 
-			doc, err := p.processItem(index, val, references)
+			matches := p.keyRangeRe.FindStringSubmatch(key)
+			if len(matches) > 0 {
+				refKey := matches[p.keyRangeRe.SubexpIndex("key")]
+				fromStr := matches[p.keyRangeRe.SubexpIndex("from")]
+				toStr := matches[p.keyRangeRe.SubexpIndex("to")]
+				from, err := strconv.Atoi(fromStr)
+				if err != nil {
+					return nil, fmt.Errorf("from %q must be int in range %s: %w", fromStr, key, err)
+				}
+				to, err := strconv.Atoi(toStr)
+				if err != nil {
+					return nil, fmt.Errorf("to %q must be int in range %s: %w", toStr, key, err)
+				}
+				if from >= to {
+					return nil, fmt.Errorf("from %q must be less than to %q in range %s", fromStr, toStr, key)
+				}
+
+				ids := make([]interface{}, 0, to-from+1)
+				for i := from; i <= to; i++ {
+					doc, err := p.processItem(index, &i, val, references)
+					index++
+					if err != nil {
+						return nil, fmt.Errorf("cannot process %s: %w", key, err)
+					}
+
+					references[fmt.Sprintf("%s%d", refKey, i)] = doc["_id"]
+					ids = append(ids, doc["_id"])
+					docs = append(docs, doc)
+				}
+
+				references[fmt.Sprintf("%s*", refKey)] = ids
+
+				continue
+			}
+
+			doc, err := p.processItem(index, nil, val, references)
 			index++
 			if err != nil {
 				return nil, fmt.Errorf("cannot process %s: %w", key, err)
@@ -95,7 +137,7 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 	return docsByCollection, nil
 }
 
-func (p *parser) processItem(index int, data yaml.MapSlice, references map[string]interface{}) (map[string]interface{}, error) {
+func (p *parser) processItem(index int, rangeIndex *int, data yaml.MapSlice, references map[string]interface{}) (map[string]interface{}, error) {
 	doc := make(map[string]interface{}, len(data))
 	var err error
 
@@ -119,7 +161,7 @@ func (p *parser) processItem(index int, data yaml.MapSlice, references map[strin
 			}
 		}
 
-		doc[key], err = p.processValue(v.Value, index, doc, references)
+		doc[key], err = p.processValue(v.Value, index, rangeIndex, doc, references)
 		if err != nil {
 			return nil, fmt.Errorf("cannot process %q: %w", key, err)
 		}
@@ -128,15 +170,15 @@ func (p *parser) processItem(index int, data yaml.MapSlice, references map[strin
 	return doc, nil
 }
 
-func (p *parser) processValue(fieldVal interface{}, index int, doc map[string]interface{}, references map[string]interface{}) (interface{}, error) {
+func (p *parser) processValue(fieldVal interface{}, index int, rangeIndex *int, doc map[string]interface{}, references map[string]interface{}) (interface{}, error) {
 	switch val := fieldVal.(type) {
 	case yaml.MapSlice:
-		return p.processItem(index, val, references)
+		return p.processItem(index, rangeIndex, val, references)
 	case []interface{}:
 		var err error
 		newVal := make([]interface{}, len(val))
 		for i := range val {
-			newVal[i], err = p.processValue(val[i], index, doc, references)
+			newVal[i], err = p.processValue(val[i], index, rangeIndex, doc, references)
 			if err != nil {
 				return nil, err
 			}
@@ -154,38 +196,63 @@ func (p *parser) processValue(fieldVal interface{}, index int, doc map[string]in
 			return newVal, nil
 		}
 
-		matches = p.methodRe.FindStringSubmatch(val)
+		return p.processMethod(val, fieldVal, index, rangeIndex, doc)
+	default:
+		return fieldVal, nil
+	}
+}
+
+func (p *parser) processMethod(val string, fieldVal interface{}, index int, rangeIndex *int, doc map[string]interface{}) (interface{}, error) {
+	matches := p.methodRe.FindStringSubmatch(val)
+	if len(matches) == 0 {
+		matches := p.tplRe.FindStringSubmatch(val)
 		if len(matches) == 0 {
 			return fieldVal, nil
 		}
 
-		method := matches[p.methodRe.SubexpIndex("method")]
-		args := matches[p.methodRe.SubexpIndex("args")]
-		field := matches[p.methodRe.SubexpIndex("field")]
-
-		switch method {
-		case keyCurrent:
-			if field == "" {
-				return nil, fmt.Errorf("%q field not defined", keyCurrent)
+		content := matches[p.tplRe.SubexpIndex("content")]
+		var err error
+		res := p.methodTplRe.ReplaceAllStringFunc(content, func(tplV string) string {
+			tplRes, tplErr := p.processMethod(tplV, tplV, index, rangeIndex, doc)
+			if tplErr != nil {
+				err = tplErr
 			}
+			return fmt.Sprintf("%v", tplRes)
+		})
 
-			if fieldV, ok := doc[field]; ok {
-				return fieldV, nil
-			}
+		return res, err
+	}
 
-			return nil, fmt.Errorf("missing %q field", keyCurrent)
-		case keyIndex:
-			return index + 1, nil
-		default:
-			newVal, err := callReflectMethod(p.reflectFaker, method, args)
-			if err != nil {
-				return nil, fmt.Errorf("cannot call faker method: %w", err)
-			}
+	method := matches[p.methodRe.SubexpIndex("method")]
+	args := matches[p.methodRe.SubexpIndex("args")]
+	field := matches[p.methodRe.SubexpIndex("field")]
 
-			return newVal, nil
+	switch method {
+	case methodCurrent:
+		if field == "" {
+			return nil, fmt.Errorf("%q field not defined", methodCurrent)
 		}
+
+		if fieldV, ok := doc[field]; ok {
+			return fieldV, nil
+		}
+
+		return nil, fmt.Errorf("missing %q field", methodCurrent)
+	case methodIndex:
+		return index + 1, nil
+	case methodRangeIndex:
+		if rangeIndex == nil {
+			return nil, fmt.Errorf("cannot use range index")
+		}
+		return *rangeIndex, nil
 	default:
-		return fieldVal, nil
+		newVal, err := callReflectMethod(p.reflectFaker, method, args)
+		if err != nil {
+
+			return nil, fmt.Errorf("cannot call faker method: %w", err)
+		}
+
+		return newVal, nil
 	}
 }
 

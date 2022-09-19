@@ -17,7 +17,7 @@ exports[`state-criticity-field Renders \`state-criticity-field\` with custom pro
       <div
         class="v-btn__content"
       >
-        modals.createChangeStateEvent.states.ok
+        Info
       </div>
     </button>
     <button
@@ -30,7 +30,7 @@ exports[`state-criticity-field Renders \`state-criticity-field\` with custom pro
       <div
         class="v-btn__content"
       >
-        modals.createChangeStateEvent.states.minor
+        Minor
       </div>
     </button>
     <button
@@ -43,7 +43,7 @@ exports[`state-criticity-field Renders \`state-criticity-field\` with custom pro
       <div
         class="v-btn__content"
       >
-        modals.createChangeStateEvent.states.critical
+        Critical
       </div>
     </button>
   </div>
@@ -67,7 +67,7 @@ exports[`state-criticity-field Renders \`state-criticity-field\` with default pr
       <div
         class="v-btn__content"
       >
-        modals.createChangeStateEvent.states.ok
+        Info
       </div>
     </button>
     <button
@@ -80,7 +80,7 @@ exports[`state-criticity-field Renders \`state-criticity-field\` with default pr
       <div
         class="v-btn__content"
       >
-        modals.createChangeStateEvent.states.minor
+        Minor
       </div>
     </button>
     <button
@@ -93,7 +93,7 @@ exports[`state-criticity-field Renders \`state-criticity-field\` with default pr
       <div
         class="v-btn__content"
       >
-        modals.createChangeStateEvent.states.major
+        Major
       </div>
     </button>
     <button
@@ -106,7 +106,7 @@ exports[`state-criticity-field Renders \`state-criticity-field\` with default pr
       <div
         class="v-btn__content"
       >
-        modals.createChangeStateEvent.states.critical
+        Critical
       </div>
     </button>
   </div>

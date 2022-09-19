@@ -1,12 +1,11 @@
 <template lang="pug">
-  v-select.kpi-rating-metric-field(
+  c-select-field(
     v-field="value",
     :items="availableMetrics",
     :label="$t('kpiMetrics.parameter')",
+    name="metric",
     hide-details
   )
-    template(#selection="{ item }")
-      span.ellipsis {{ item.text }}
 </template>
 
 <script>
@@ -42,14 +41,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-$selectIconWidth: 24px;
-
-.kpi-rating-metric-field {
-  .v-select__selections {
-    width: calc(100% - #{$selectIconWidth});
-    flex-wrap: nowrap;
-  }
-}
-</style>
