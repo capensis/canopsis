@@ -1,11 +1,24 @@
 import flushPromises from 'flush-promises';
+import { omit, pick } from 'lodash';
+import Faker from 'faker';
 
 import { mount, createVueInstance } from '@unit/utils/vue';
-import { omit } from 'lodash';
 import { FLOWCHART_KEY_CODES, SHAPES } from '@/constants';
 import { shapeToForm } from '@/helpers/flowchart/shapes';
+import { readTextFromClipboard, writeTextToClipboard } from '@/helpers/clipboard';
+import uid from '@/helpers/uid';
 
 import FlowchartSidebar from '@/components/common/flowchart/flowchart-editor.vue';
+
+jest.mock('@/helpers/uid', () => {
+  const originalModule = jest.requireActual('@/helpers/uid');
+
+  return jest.fn(originalModule.default);
+});
+jest.mock('@/helpers/clipboard', () => ({
+  readTextFromClipboard: jest.fn(),
+  writeTextToClipboard: jest.fn(),
+}));
 
 const localVue = createVueInstance();
 
@@ -391,6 +404,58 @@ describe('flowchart-editor', () => {
       process: {
         ...shapes.process,
         x: shapes.process.x - 5,
+      },
+    });
+  });
+
+  test('Shapes copied and pasted after keyboard event triggered', async () => {
+    const copiedRectId = Faker.datatype.string();
+    const copiedCircleId = Faker.datatype.string();
+    uid
+      .mockReturnValueOnce(copiedRectId)
+      .mockReturnValueOnce(copiedCircleId);
+
+    const wrapper = snapshotFactory({
+      propsData: {
+        shapes,
+        viewBox,
+        selected: [SHAPES.rect, SHAPES.circle],
+      },
+    });
+
+    await flushPromises();
+
+    triggerDocumentKeyboardEvent('keydown', {
+      keyCode: FLOWCHART_KEY_CODES.keyC,
+      ctrlKey: true,
+    });
+
+    await flushPromises();
+
+    const copiedData = JSON.stringify(pick(shapes, [SHAPES.rect, SHAPES.circle]));
+
+    expect(writeTextToClipboard).toBeCalledWith(copiedData);
+
+    readTextFromClipboard.mockReturnValueOnce(copiedData);
+
+    await flushPromises();
+
+    triggerDocumentKeyboardEvent('keydown', {
+      keyCode: FLOWCHART_KEY_CODES.keyV,
+      ctrlKey: true,
+    });
+
+    await flushPromises();
+
+    expect(wrapper).toEmit('input', {
+      ...shapes,
+      [copiedRectId]: {
+        ...shapes.rect,
+        _id: copiedRectId,
+      },
+      [copiedCircleId]: {
+        ...shapes.circle,
+        _id: copiedCircleId,
       },
     });
   });
