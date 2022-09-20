@@ -331,7 +331,7 @@ export default {
       }
 
       if (!this.isSelected(shape._id) && !event.ctrlKey) {
-        this.clearSelected();
+        this.setSelected([]);
         this.setSelectedShape(shape);
       }
 
@@ -358,7 +358,7 @@ export default {
       }
 
       if (!event.ctrlKey) {
-        this.clearSelected();
+        this.setSelected([]);
         this.setSelectedShape(shape);
 
         return;
