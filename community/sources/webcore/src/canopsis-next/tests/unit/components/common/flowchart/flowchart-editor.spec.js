@@ -1,7 +1,8 @@
 import flushPromises from 'flush-promises';
 
 import { mount, createVueInstance } from '@unit/utils/vue';
-import { SHAPES } from '@/constants';
+import { omit } from 'lodash';
+import { FLOWCHART_KEY_CODES, SHAPES } from '@/constants';
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 
 import FlowchartSidebar from '@/components/common/flowchart/flowchart-editor.vue';
@@ -17,8 +18,16 @@ const snapshotFactory = (options = {}) => mount(FlowchartSidebar, {
 const selectSvg = wrapper => wrapper.find('svg');
 const selectShapeByType = (wrapper, type) => wrapper.find(`[data-type="${type}"]`);
 
-const triggerDocumentEvent = (type, data) => {
-  document.dispatchEvent(new MouseEvent(type, data));
+const triggerDocumentEvent = (event) => {
+  document.dispatchEvent(event);
+};
+
+const triggerDocumentMouseEvent = (type, data) => {
+  triggerDocumentEvent(new MouseEvent(type, data));
+};
+
+const triggerDocumentKeyboardEvent = (type, data) => {
+  triggerDocumentEvent(new KeyboardEvent(type, data));
 };
 
 describe('flowchart-editor', () => {
@@ -173,21 +182,21 @@ describe('flowchart-editor', () => {
 
     const svg = selectSvg(wrapper);
 
-    triggerDocumentEvent('mousemove', {
+    triggerDocumentMouseEvent('mousemove', {
       clientX: rect.x - 10,
       clientY: rect.y - 10,
     });
 
     await svg.trigger('mousedown');
 
-    triggerDocumentEvent('mousemove', {
+    triggerDocumentMouseEvent('mousemove', {
       clientX: rect.x + rect.width + 10,
       clientY: rect.y + rect.height + 10,
     });
 
     await flushPromises();
 
-    triggerDocumentEvent('mouseup');
+    triggerDocumentMouseEvent('mouseup');
 
     await flushPromises();
 
@@ -209,25 +218,181 @@ describe('flowchart-editor', () => {
 
     const svg = selectSvg(wrapper);
 
-    triggerDocumentEvent('mousemove', {
+    triggerDocumentMouseEvent('mousemove', {
       clientX: rhombus.x - 10,
       clientY: rhombus.y - 10,
     });
 
     await svg.trigger('mousedown');
 
-    triggerDocumentEvent('mousemove', {
+    triggerDocumentMouseEvent('mousemove', {
       clientX: rhombus.x + rhombus.width + 10,
       clientY: rhombus.y + rhombus.height + 10,
     });
 
     await flushPromises();
 
-    triggerDocumentEvent('mouseup', { shiftKey: true });
+    triggerDocumentMouseEvent('mouseup', { shiftKey: true });
 
     await flushPromises();
 
     expect(wrapper).toEmit('update:selected', [SHAPES.storage]);
+  });
+
+  test('Shapes removed after keyboard event triggered', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        shapes,
+        viewBox,
+        selected: [SHAPES.rhombus, SHAPES.ellipse],
+      },
+    });
+
+    await flushPromises();
+
+    triggerDocumentKeyboardEvent('keydown', {
+      keyCode: FLOWCHART_KEY_CODES.delete,
+    });
+
+    await flushPromises();
+
+    expect(wrapper).toEmit('input', omit(shapes, [SHAPES.ellipse, SHAPES.rhombus]));
+  });
+
+  test('Shapes moved up after keyboard event triggered', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        shapes,
+        viewBox,
+        selected: [SHAPES.line, SHAPES.document],
+      },
+    });
+
+    await flushPromises();
+
+    triggerDocumentKeyboardEvent('keydown', {
+      keyCode: FLOWCHART_KEY_CODES.arrowUp,
+    });
+
+    await flushPromises();
+
+    expect(wrapper).toEmit('input', {
+      ...shapes,
+      line: {
+        ...shapes.line,
+        points: shapes.line.points.map(point => ({
+          ...point,
+          y: point.y - 5,
+        })),
+      },
+      document: {
+        ...shapes.document,
+        y: shapes.document.y - 5,
+      },
+    });
+  });
+
+  test('Shapes moved right after keyboard event triggered', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        shapes,
+        viewBox,
+        selected: [SHAPES.process, SHAPES.arrowLine],
+      },
+    });
+
+    await flushPromises();
+
+    triggerDocumentKeyboardEvent('keydown', {
+      keyCode: FLOWCHART_KEY_CODES.arrowRight,
+    });
+
+    await flushPromises();
+
+    const arrowLine = shapes[SHAPES.arrowLine];
+
+    expect(wrapper).toEmit('input', {
+      ...shapes,
+      [SHAPES.arrowLine]: {
+        ...arrowLine,
+        points: arrowLine.points.map(point => ({
+          ...point,
+          x: point.x + 5,
+        })),
+      },
+      process: {
+        ...shapes.process,
+        x: shapes.process.x + 5,
+      },
+    });
+  });
+
+  test('Shapes moved up after keyboard event triggered', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        shapes,
+        viewBox,
+        selected: [SHAPES.line, SHAPES.ellipse],
+      },
+    });
+
+    await flushPromises();
+
+    triggerDocumentKeyboardEvent('keydown', {
+      keyCode: FLOWCHART_KEY_CODES.arrowDown,
+    });
+
+    await flushPromises();
+
+    expect(wrapper).toEmit('input', {
+      ...shapes,
+      line: {
+        ...shapes.line,
+        points: shapes.line.points.map(point => ({
+          ...point,
+          y: point.y + 5,
+        })),
+      },
+      ellipse: {
+        ...shapes.ellipse,
+        y: shapes.ellipse.y + 5,
+      },
+    });
+  });
+
+  test('Shapes moved left after keyboard event triggered', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        shapes,
+        viewBox,
+        selected: [SHAPES.process, SHAPES.arrowLine],
+      },
+    });
+
+    await flushPromises();
+
+    triggerDocumentKeyboardEvent('keydown', {
+      keyCode: FLOWCHART_KEY_CODES.arrowLeft,
+    });
+
+    await flushPromises();
+
+    const arrowLine = shapes[SHAPES.arrowLine];
+
+    expect(wrapper).toEmit('input', {
+      ...shapes,
+      [SHAPES.arrowLine]: {
+        ...arrowLine,
+        points: arrowLine.points.map(point => ({
+          ...point,
+          x: point.x - 5,
+        })),
+      },
+      process: {
+        ...shapes.process,
+        x: shapes.process.x - 5,
+      },
+    });
   });
 
   test('Renders `flowchart-editor` with all shapes', async () => {
