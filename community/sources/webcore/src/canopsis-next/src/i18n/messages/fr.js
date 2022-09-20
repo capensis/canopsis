@@ -459,6 +459,9 @@ export default merge({
       [SCENARIO_TRIGGERS.instructionjobfail]: {
         text: 'Job de remédiation en erreur',
       },
+      [SCENARIO_TRIGGERS.instructionjobcomplete]: {
+        text: 'Job de remédiation terminé',
+      },
       [SCENARIO_TRIGGERS.instructioncomplete]: {
         text: 'Consigne manuelle terminée',
       },

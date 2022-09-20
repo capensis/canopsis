@@ -459,6 +459,9 @@ export default merge({
       [SCENARIO_TRIGGERS.instructionjobfail]: {
         text: 'Manual or auto instruction\'s job is failed',
       },
+      [SCENARIO_TRIGGERS.instructionjobcomplete]: {
+        text: 'Manual or auto instruction\'s job is completed',
+      },
       [SCENARIO_TRIGGERS.instructioncomplete]: {
         text: 'Manual instruction is completed',
       },
