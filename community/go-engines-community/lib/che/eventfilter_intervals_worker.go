@@ -95,7 +95,7 @@ func (w *eventfilterIntervalsWorker) Work(ctx context.Context) {
 						"next_resolved_stop":  bson.M{"$first": "$next_resolved_stop"},
 						"in_exdate":           bson.M{"$first": "$in_exdate"},
 						"exceptions_exdates": bson.M{
-							"$push": "$exceptions.exdates.exdate",
+							"$push": "$exceptions.exdates",
 						},
 					},
 				},
@@ -134,8 +134,8 @@ func (w *eventfilterIntervalsWorker) Work(ctx context.Context) {
 							"$push": bson.M{
 								"$cond": bson.A{
 									bson.M{"$and": bson.A{
-										bson.M{"gt": bson.A{time.Now().Unix(), "$resolved_exdates.end"}},
-										bson.M{"lt": bson.A{"$resolved_exdates.start", time.Now().Add(w.periodicalInterval * 2).Unix()}},
+										bson.M{"$gte": bson.A{"$resolved_exdates.end", time.Now().Unix()}},
+										bson.M{"$lte": bson.A{"$resolved_exdates.begin", time.Now().Unix()}},
 									}},
 									"$resolved_exdates",
 									"$$REMOVE",
