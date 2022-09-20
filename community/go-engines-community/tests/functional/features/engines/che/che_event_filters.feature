@@ -2538,6 +2538,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I wait the next periodical process
+    When I wait the next periodical process
     When I send an event:
     """json
     {
@@ -2766,6 +2767,7 @@ Feature: modify event on event filter
     }
     """
     Then the response code should be 201
+    When I wait the next periodical process
     When I wait the next periodical process
     When I send an event:
     """json

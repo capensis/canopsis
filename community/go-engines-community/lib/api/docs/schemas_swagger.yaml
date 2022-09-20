@@ -1386,6 +1386,23 @@ definitions:
     - description
     - type
     type: object
+  eventfilter.Exception:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      deletable:
+        type: boolean
+      description:
+        type: string
+      exdates:
+        items:
+          $ref: '#/definitions/types.Exdate'
+        type: array
+      name:
+        type: string
+    type: object
   eventfilter.ExternalDataParameters:
     properties:
       collection:
@@ -1401,7 +1418,7 @@ definitions:
       type:
         type: string
     type: object
-  eventfilter.Rule:
+  eventfilter.Response:
     properties:
       _id:
         type: string
@@ -1432,7 +1449,7 @@ definitions:
         type: array
       exceptions:
         items:
-          type: string
+          $ref: '#/definitions/eventfilter.Exception'
         type: array
       exdates:
         items:
