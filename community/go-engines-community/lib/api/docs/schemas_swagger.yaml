@@ -3337,6 +3337,8 @@ definitions:
         type: string
       connector_name:
         type: string
+      depends_count:
+        type: integer
       icon:
         type: string
       idle_since:
