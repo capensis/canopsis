@@ -5,9 +5,6 @@ SELECT remove_continuous_aggregate_policy('cps_event_summary_daily');
 SELECT remove_retention_policy('cps_event');
 SELECT remove_retention_policy('cps_event_summary_hourly');
 SELECT remove_retention_policy('cps_event_summary_daily');
-SELECT remove_continuous_aggregate_policy('che_infos_summary_daily');
-SELECT remove_retention_policy('che_infos');
-SELECT remove_retention_policy('che_infos_summary_daily');
 
 SELECT remove_retention_policy('fifo_queue');
 SELECT remove_continuous_aggregate_policy('fifo_event_summary_hourly');
@@ -21,6 +18,9 @@ SELECT remove_continuous_aggregate_policy('che_event_summary_daily');
 SELECT remove_retention_policy('che_event');
 SELECT remove_retention_policy('che_event_summary_hourly');
 SELECT remove_retention_policy('che_event_summary_daily');
+SELECT remove_continuous_aggregate_policy('che_infos_summary_daily');
+SELECT remove_retention_policy('che_infos');
+SELECT remove_retention_policy('che_infos_summary_daily');
 
 SELECT remove_continuous_aggregate_policy('axe_event_summary_hourly');
 SELECT remove_continuous_aggregate_policy('axe_event_summary_daily');
