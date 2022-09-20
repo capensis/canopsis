@@ -29,7 +29,14 @@ const snapshotFactory = (options = {}) => mount(FlowchartSidebar, {
 });
 
 const selectSvg = wrapper => wrapper.find('svg');
-const selectShapeByType = (wrapper, type) => wrapper.find(`[data-type="${type}"]`);
+const selectShapeByType = (wrapper, type) => {
+  switch (type) {
+    case SHAPES.line:
+      return wrapper.find(`[data-type="${type}"] ~ path`);
+    default:
+      return wrapper.find(`[data-type="${type}"]`);
+  }
+};
 
 const triggerDocumentEvent = (event) => {
   document.dispatchEvent(event);
@@ -622,6 +629,65 @@ describe('flowchart-editor', () => {
         ...rectShape,
         x: clientX,
         y: clientY,
+      },
+    });
+  });
+
+  test('Line unconnected after move connected shape', async () => {
+    const clientX = 50;
+    const clientY = 50;
+
+    const lineShape = { ...shapes.line };
+    const [connectedPoint] = lineShape.points;
+    const rectShape = {
+      ...shapes.rect,
+      connections: [{
+        shapeId: lineShape._id,
+        pointId: connectedPoint._id,
+        side: CONNECTOR_SIDES.top,
+      }],
+    };
+    lineShape.connectedTo.push(rectShape._id);
+
+    wrapper = snapshotFactory({
+      propsData: {
+        shapes: {
+          line: lineShape,
+          rect: rectShape,
+        },
+        viewBox,
+      },
+    });
+
+    await flushPromises();
+
+    triggerDocumentMouseEvent('mousemove', {
+      clientX: 0,
+      clientY: 0,
+    });
+
+    await selectShapeByType(wrapper, SHAPES.line).trigger('mousedown');
+
+    triggerDocumentMouseEvent('mousemove', {
+      clientX,
+      clientY,
+    });
+
+    await triggerDocumentMouseEvent('mouseup');
+
+    expect(wrapper).toEmit('input', {
+      line: {
+        ...lineShape,
+        connectedTo: [],
+        points: lineShape.points.map(point => ({
+          ...point,
+          x: point.x + clientX,
+          y: point.y + clientY,
+        })),
+      },
+      rect: {
+        ...rectShape,
+        connections: [],
       },
     });
   });
