@@ -3,7 +3,7 @@ import { omit, pick } from 'lodash';
 import Faker from 'faker';
 
 import { mount, createVueInstance } from '@unit/utils/vue';
-import { FLOWCHART_KEY_CODES, SHAPES } from '@/constants';
+import { CONNECTOR_SIDES, FLOWCHART_KEY_CODES, SHAPES } from '@/constants';
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 import { readTextFromClipboard, writeTextToClipboard } from '@/helpers/clipboard';
 import uid from '@/helpers/uid';
@@ -44,6 +44,7 @@ const triggerDocumentKeyboardEvent = (type, data) => {
 };
 
 describe('flowchart-editor', () => {
+  let wrapper;
   const viewBox = {
     x: 10,
     y: 10,
@@ -88,8 +89,12 @@ describe('flowchart-editor', () => {
     getTotalLength.mockClear();
   });
 
+  afterEach(() => {
+    wrapper.destroy();
+  });
+
   test('Shape selected after mouse events triggered', async () => {
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes,
         viewBox,
@@ -107,7 +112,7 @@ describe('flowchart-editor', () => {
   });
 
   test('Second shape selected after mouse events triggered with ctrl', async () => {
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes,
         viewBox,
@@ -129,7 +134,7 @@ describe('flowchart-editor', () => {
   });
 
   test('Shape unselected after mouse events triggered on already selected shape with ctrl', async () => {
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes,
         viewBox,
@@ -146,7 +151,7 @@ describe('flowchart-editor', () => {
   });
 
   test('Shapes unselected after mouse events triggered on already selected shape without ctrl', async () => {
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes,
         viewBox,
@@ -163,7 +168,7 @@ describe('flowchart-editor', () => {
   });
 
   test('Selected shapes cleared and new selected after mouse events triggered without ctrl', async () => {
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes,
         viewBox,
@@ -184,7 +189,7 @@ describe('flowchart-editor', () => {
   test('Shapes selected after mouse events triggered on container', async () => {
     const { rect, circle, line } = shapes;
 
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes: { rect, circle, line },
         viewBox,
@@ -219,7 +224,7 @@ describe('flowchart-editor', () => {
   test('Shapes selected after mouse events triggered on container with shift', async () => {
     const { rhombus, ellipse, storage } = shapes;
 
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes: { rhombus, ellipse, storage },
         viewBox,
@@ -253,7 +258,7 @@ describe('flowchart-editor', () => {
   });
 
   test('Shapes removed after keyboard event triggered', async () => {
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes,
         viewBox,
@@ -273,7 +278,7 @@ describe('flowchart-editor', () => {
   });
 
   test('Shapes moved up after keyboard event triggered', async () => {
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes,
         viewBox,
@@ -306,7 +311,7 @@ describe('flowchart-editor', () => {
   });
 
   test('Shapes moved right after keyboard event triggered', async () => {
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes,
         viewBox,
@@ -341,7 +346,7 @@ describe('flowchart-editor', () => {
   });
 
   test('Shapes moved up after keyboard event triggered', async () => {
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes,
         viewBox,
@@ -374,7 +379,7 @@ describe('flowchart-editor', () => {
   });
 
   test('Shapes moved left after keyboard event triggered', async () => {
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes,
         viewBox,
@@ -415,7 +420,7 @@ describe('flowchart-editor', () => {
       .mockReturnValueOnce(copiedRectId)
       .mockReturnValueOnce(copiedCircleId);
 
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes,
         viewBox,
@@ -460,6 +465,167 @@ describe('flowchart-editor', () => {
     });
   });
 
+  test('Shape moved after mouse event triggered', async () => {
+    const startX = Faker.datatype.number({ min: 0, precision: 5 });
+    const startY = Faker.datatype.number({ min: 0, precision: 5 });
+    const diffX = Faker.datatype.number({ min: 0, precision: 5 });
+    const diffY = Faker.datatype.number({ min: 0, precision: 5 });
+
+    wrapper = snapshotFactory({
+      propsData: {
+        shapes,
+        viewBox,
+      },
+    });
+
+    await flushPromises();
+
+    triggerDocumentMouseEvent('mousemove', {
+      clientX: startX,
+      clientY: startY,
+    });
+
+    await selectShapeByType(wrapper, SHAPES.circle).trigger('mousedown');
+
+    triggerDocumentMouseEvent('mousemove', {
+      clientX: startX + diffX,
+      clientY: startY + diffY,
+    });
+
+    await triggerDocumentMouseEvent('mouseup');
+
+    const offsetX = diffX + startX;
+    const offsetY = diffY + startY;
+
+    expect(wrapper).toEmit('input', {
+      ...shapes,
+      circle: {
+        ...shapes.circle,
+        x: shapes.circle.x + offsetX,
+        y: shapes.circle.y + offsetY,
+      },
+    });
+  });
+
+  test('Shapes moved after mouse event triggered', async () => {
+    const startX = Faker.datatype.number({ min: 0, precision: 5 });
+    const startY = Faker.datatype.number({ min: 0, precision: 5 });
+    const diffX = Faker.datatype.number({ min: 0, precision: 5 });
+    const diffY = Faker.datatype.number({ min: 0, precision: 5 });
+
+    wrapper = snapshotFactory({
+      propsData: {
+        shapes,
+        viewBox,
+        selected: [SHAPES.rect, SHAPES.line, SHAPES.circle],
+      },
+    });
+
+    await flushPromises();
+
+    triggerDocumentMouseEvent('mousemove', {
+      clientX: startX,
+      clientY: startY,
+    });
+
+    await selectShapeByType(wrapper, SHAPES.circle).trigger('mousedown');
+
+    triggerDocumentMouseEvent('mousemove', {
+      clientX: startX + diffX,
+      clientY: startY + diffY,
+    });
+
+    await triggerDocumentMouseEvent('mouseup');
+
+    const offsetX = diffX + startX;
+    const offsetY = diffY + startY;
+
+    expect(wrapper).toEmit('input', {
+      ...shapes,
+      circle: {
+        ...shapes.circle,
+        x: shapes.circle.x + offsetX,
+        y: shapes.circle.y + offsetY,
+      },
+      rect: {
+        ...shapes.rect,
+        x: shapes.rect.x + offsetX,
+        y: shapes.rect.y + offsetY,
+      },
+      line: {
+        ...shapes.line,
+        points: shapes.line.points.map(point => ({
+          ...point,
+          x: point.x + offsetX,
+          y: point.y + offsetY,
+        })),
+      },
+    });
+  });
+
+  test('Connected line moved after move connected shape', async () => {
+    const clientX = 50;
+    const clientY = 50;
+
+    const lineShape = { ...shapes.line };
+    const [connectedPoint] = lineShape.points;
+    const rectShape = {
+      ...shapes.rect,
+      connections: [{
+        shapeId: lineShape._id,
+        pointId: connectedPoint._id,
+        side: CONNECTOR_SIDES.top,
+      }],
+    };
+    lineShape.connectedTo.push(rectShape._id);
+
+    wrapper = snapshotFactory({
+      propsData: {
+        shapes: {
+          line: lineShape,
+          rect: rectShape,
+        },
+        viewBox,
+        selected: [SHAPES.rect],
+      },
+    });
+
+    await flushPromises();
+
+    triggerDocumentMouseEvent('mousemove', {
+      clientX: 0,
+      clientY: 0,
+    });
+
+    await selectShapeByType(wrapper, SHAPES.rect).trigger('mousedown');
+
+    triggerDocumentMouseEvent('mousemove', {
+      clientX,
+      clientY,
+    });
+
+    await triggerDocumentMouseEvent('mouseup');
+
+    expect(wrapper).toEmit('input', {
+      line: {
+        ...lineShape,
+        points: [
+          {
+            ...lineShape.points[0],
+            x: clientX + rectShape.height / 2,
+            y: clientY,
+          },
+          lineShape.points[1],
+        ],
+      },
+      rect: {
+        ...rectShape,
+        x: clientX,
+        y: clientY,
+      },
+    });
+  });
+
   test('Renders `flowchart-editor` with all shapes', async () => {
     getPointAtLength
       .mockReturnValueOnce({ x: 1, y: 2 })
@@ -469,7 +635,7 @@ describe('flowchart-editor', () => {
       .mockReturnValueOnce({ x: 9, y: 10 })
       .mockReturnValueOnce({ x: 11, y: 12 });
 
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes,
         viewBox,
@@ -490,7 +656,7 @@ describe('flowchart-editor', () => {
       .mockReturnValueOnce({ x: 9, y: 10 })
       .mockReturnValueOnce({ x: 11, y: 12 });
 
-    const wrapper = snapshotFactory({
+    wrapper = snapshotFactory({
       propsData: {
         shapes,
         gridSize: 10,

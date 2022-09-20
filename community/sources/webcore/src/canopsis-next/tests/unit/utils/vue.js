@@ -94,9 +94,8 @@ export const mount = (component, options = {}) => {
 
   enhanceWrapper(wrapper);
 
-  beforeEach(() => {
+  afterEach(() => {
     jest.clearAllMocks();
-    wrapper.destroy();
   });
 
   return wrapper;
