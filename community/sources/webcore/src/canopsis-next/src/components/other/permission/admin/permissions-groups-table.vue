@@ -22,6 +22,7 @@
         :roles="roles",
         :changed-roles="changedRoles",
         :disabled="disabled",
+        :sort-by="sortBy",
         @change="$listeners.change"
       )
 </template>
@@ -69,7 +70,7 @@ export default {
     },
 
     groupsWithName() {
-      return this.groups.map(({ key, permissions }) => ({ permissions, name: this.$t(key) }));
+      return this.groups.map(({ key, name, permissions }) => ({ permissions, name: name ?? this.$tc(key) }));
     },
 
     sortedGroups() {
