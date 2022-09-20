@@ -135,7 +135,7 @@ func (w *eventfilterIntervalsWorker) Work(ctx context.Context) {
 								"$cond": bson.A{
 									bson.M{"$and": bson.A{
 										bson.M{"$gte": bson.A{"$resolved_exdates.end", time.Now().Unix()}},
-										bson.M{"$lte": bson.A{"$resolved_exdates.begin", time.Now().Unix()}},
+										bson.M{"$lte": bson.A{"$resolved_exdates.begin", time.Now().Add(w.periodicalInterval * 2)}},
 									}},
 									"$resolved_exdates",
 									"$$REMOVE",
