@@ -32,6 +32,8 @@ type Adapter interface {
 	UpdateBulk(ctx context.Context, writeModels []mongodriver.WriteModel) error
 
 	GetServiceDependencies(ctx context.Context, serviceID string) (mongo.Cursor, error)
+
+	GetDependenciesCount(ctx context.Context, serviceID string) (int64, error)
 }
 
 // Manager is used to implement context graph modifier for entity service.
