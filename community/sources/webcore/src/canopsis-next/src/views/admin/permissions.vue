@@ -81,6 +81,14 @@ export default {
       return this.groups.reduce((acc, { views }) => acc.concat(views), []);
     },
 
+    groupsPriorityByTitle() {
+      return this.groups.reduce((acc, group, index) => {
+        acc[group.title] = index;
+
+        return acc;
+      }, {});
+    },
+
     viewsPriorityById() {
       return this.allViews.reduce((acc, view, index) => {
         acc[view._id] = index;
@@ -101,12 +109,10 @@ export default {
     this.fetchList();
   },
   methods: {
-    getPlaylistSort(permission) {
-      return this.playlistPriorityById[permission._id] + this.allViews.length;
-    },
-
     getViewSort(permission) {
-      return this.viewsPriorityById[permission._id] ?? this.getPlaylistSort(permission);
+      return this.groupsPriorityByTitle[permission.name]
+        ?? this.viewsPriorityById[permission._id]
+        ?? this.playlistPriorityById[permission._id];
     },
 
     // eslint-disable-next-line consistent-return

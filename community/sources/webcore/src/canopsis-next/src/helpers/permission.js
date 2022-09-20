@@ -1,4 +1,4 @@
-import { get, isUndefined, omit, sortBy, keyBy } from 'lodash';
+import { get, isUndefined, omit, sortBy, keyBy, groupBy } from 'lodash';
 import flatten from 'flat';
 
 import {
@@ -182,7 +182,22 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
       permissions: sortBy(groupPermissions, ['description']),
     }));
 
-  groupedPermissions.view.push(...groupedPermissions.playlist);
+  const viewsPermissionsByGroupTitle = groupBy(groupedPermissions.view, (permission) => {
+    const view = viewsById[permission._id];
+
+    return view.group.title;
+  });
+
+  groupedPermissions.view = Object.entries(viewsPermissionsByGroupTitle)
+    .map(([name, groupPermissions]) => ({
+      name,
+      permissions: sortBy(groupPermissions, ['description']),
+    }));
+
+  groupedPermissions.view.push({
+    key: 'common.playlist',
+    permissions: groupedPermissions.playlist,
+  });
 
   return omit(groupedPermissions, ['playlist']);
 };
