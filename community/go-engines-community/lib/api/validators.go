@@ -26,7 +26,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/resolverule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
@@ -168,8 +167,6 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 		scenarioExistReasonValidator.Validate(ctx, sl)
 		scenarioExistTypeValidator.Validate(ctx, sl)
 	}, action.Parameters{})
-
-	v.RegisterStructValidation(serviceweather.ValidateRequest, serviceweather.ListRequest{})
 
 	entitybasicValidator := entitybasic.NewValidator(client)
 	v.RegisterStructValidation(entity.ValidateListRequest, entity.ListRequest{})

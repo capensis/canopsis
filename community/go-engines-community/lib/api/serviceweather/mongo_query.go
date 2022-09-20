@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	pbehaviorlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -13,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 type MongoQueryBuilder struct {
@@ -167,64 +168,64 @@ func (q *MongoQueryBuilder) handleFilter(r ListRequest) {
 }
 
 func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListRequest) error {
-	if r.Filter == "" {
+	if len(r.Filters) == 0 {
 		return nil
 	}
 
-	filter := view.WidgetFilter{}
-	err := q.filterCollection.FindOne(ctx, bson.M{"_id": r.Filter}).Decode(&filter)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return common.NewValidationError("filter", errors.New("Filter doesn't exist."))
-		}
-		return fmt.Errorf("cannot fetch widget filter: %w", err)
-	}
-
-	if len(filter.EntityPattern) == 0 && len(filter.WeatherServicePattern) == 0 && len(filter.OldMongoQuery) == 0 ||
-		len(filter.AlarmPattern) > 0 ||
-		len(filter.PbehaviorPattern) > 0 {
-		return common.NewValidationError("filter", errors.New("Filter cannot be applied."))
-	}
-
-	entityPatternQuery, err := filter.EntityPattern.ToMongoQuery("")
-	if err != nil {
-		return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
-	}
-
-	if len(entityPatternQuery) > 0 {
-		q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
-	}
-
-	weatherPatternQuery, err := filter.WeatherServicePattern.ToMongoQuery("")
-	if err != nil {
-		return fmt.Errorf("invalid weather service pattern in widget filter id=%q: %w", filter.ID, err)
-	}
-	if len(weatherPatternQuery) > 0 {
-		q.lookupsForAdditionalMatch["alarm"] = true
-
-		if filter.WeatherServicePattern.HasField("is_grey") ||
-			filter.WeatherServicePattern.HasField("icon") ||
-			filter.WeatherServicePattern.HasField("secondary_icon") {
-			q.lookupsForAdditionalMatch["alarm_counters"] = true
-		}
-		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": weatherPatternQuery})
-	}
-
-	if len(entityPatternQuery) == 0 && len(weatherPatternQuery) == 0 &&
-		len(filter.OldMongoQuery) > 0 {
-		var query map[string]interface{}
-		err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
+	for _, v := range r.Filters {
+		filter := view.WidgetFilter{}
+		err := q.filterCollection.FindOne(ctx, bson.M{"_id": v}).Decode(&filter)
 		if err != nil {
-			return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return common.NewValidationError("filter", errors.New("Filter doesn't exist."))
+			}
+			return fmt.Errorf("cannot fetch widget filter: %w", err)
 		}
 
-		for _, lookup := range q.lookups {
-			q.lookupsForAdditionalMatch[lookup.key] = true
+		if len(filter.EntityPattern) == 0 && len(filter.WeatherServicePattern) == 0 && len(filter.OldMongoQuery) == 0 ||
+			len(filter.AlarmPattern) > 0 ||
+			len(filter.PbehaviorPattern) > 0 {
+			return common.NewValidationError("filter", errors.New("Filter cannot be applied."))
 		}
 
-		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": query})
+		entityPatternQuery, err := filter.EntityPattern.ToMongoQuery("")
+		if err != nil {
+			return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
+		}
 
-		return nil
+		if len(entityPatternQuery) > 0 {
+			q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
+		}
+
+		weatherPatternQuery, err := filter.WeatherServicePattern.ToMongoQuery("")
+		if err != nil {
+			return fmt.Errorf("invalid weather service pattern in widget filter id=%q: %w", filter.ID, err)
+		}
+		if len(weatherPatternQuery) > 0 {
+			q.lookupsForAdditionalMatch["alarm"] = true
+
+			if filter.WeatherServicePattern.HasField("is_grey") ||
+				filter.WeatherServicePattern.HasField("icon") ||
+				filter.WeatherServicePattern.HasField("secondary_icon") {
+				q.lookupsForAdditionalMatch["alarm_counters"] = true
+			}
+			q.additionalMatch = append(q.additionalMatch, bson.M{"$match": weatherPatternQuery})
+		}
+
+		if len(entityPatternQuery) == 0 && len(weatherPatternQuery) == 0 &&
+			len(filter.OldMongoQuery) > 0 {
+			var query map[string]interface{}
+			err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
+			if err != nil {
+				return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
+			}
+
+			for _, lookup := range q.lookups {
+				q.lookupsForAdditionalMatch[lookup.key] = true
+			}
+
+			q.additionalMatch = append(q.additionalMatch, bson.M{"$match": query})
+		}
 	}
 
 	return nil
