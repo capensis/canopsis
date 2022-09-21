@@ -43,6 +43,7 @@ type Service struct {
 	Output         string                   `json:"output" bson:"output"`
 	LastUpdateDate *types.CpsTime           `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
 	AlarmCounters  []AlarmCounter           `json:"alarm_counters" bson:"alarm_counters"`
+	DependsCount   int64                    `json:"depends_count" bson:"depends_count"`
 	PbehaviorInfo  *entity.PbehaviorInfo    `json:"pbehavior_info" bson:"pbehavior_info"`
 	Pbehaviors     []alarm.Pbehavior        `json:"pbehaviors" bson:"pbehaviors"`
 	ImpactLevel    int                      `json:"impact_level" bson:"impact_level"`

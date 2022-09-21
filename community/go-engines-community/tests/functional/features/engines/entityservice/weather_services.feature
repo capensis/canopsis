@@ -89,6 +89,7 @@ Feature: update service weather on event
           "is_grey": false,
           "is_action_required": true,
           "alarm_counters": [],
+          "depends_count": 1,
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -219,6 +220,7 @@ Feature: update service weather on event
           "is_grey": false,
           "is_action_required": true,
           "alarm_counters": [],
+          "depends_count": 3,
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -319,6 +321,7 @@ Feature: update service weather on event
           "is_grey": false,
           "is_action_required": false,
           "alarm_counters": [],
+          "depends_count": 1,
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -461,6 +464,7 @@ Feature: update service weather on event
           "is_grey": false,
           "is_action_required": false,
           "alarm_counters": [],
+          "depends_count": 2,
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -561,6 +565,7 @@ Feature: update service weather on event
           },
           "is_action_required": true,
           "alarm_counters": [],
+          "depends_count": 1,
           "pbehavior_info": null,
           "pbehaviors": []
         }

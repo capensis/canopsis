@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	pbehaviorlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -13,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 type MongoQueryBuilder struct {
@@ -445,7 +446,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 			}},
 		}},
 		{"$addFields": bson.M{
-			"depends_total": bson.M{"$size": "$depends"},
+			"depends_count": bson.M{"$size": "$depends"},
 			"has_open_alarm": bson.M{"$cond": bson.M{
 				"if":   bson.M{"$gt": bson.A{"$alarms_cumulative_data.watched_not_acked_count", 0}},
 				"then": true,
@@ -511,7 +512,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 						{
 							"case": bson.M{"$and": []bson.M{
 								{"$gt": bson.A{"$watched_inactive_count", 0}},
-								{"$eq": bson.A{"$watched_inactive_count", "$depends_total"}},
+								{"$eq": bson.A{"$watched_inactive_count", "$depends_count"}},
 							}},
 							"then": "$watched_pbehavior_type",
 						},
@@ -533,7 +534,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 					{
 						"case": bson.M{"$and": []bson.M{
 							{"$gt": bson.A{"$watched_inactive_count", 0}},
-							{"$eq": bson.A{"$watched_inactive_count", "$depends_total"}},
+							{"$eq": bson.A{"$watched_inactive_count", "$depends_count"}},
 						}},
 						"then": true,
 					},
@@ -546,7 +547,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 						// If only some watched alarms are not active return most priority pbehavior type of watched alarms.
 						"case": bson.M{"$and": []bson.M{
 							{"$gt": bson.A{"$watched_inactive_count", 0}},
-							{"$lt": bson.A{"$watched_inactive_count", "$depends_total"}},
+							{"$lt": bson.A{"$watched_inactive_count", "$depends_count"}},
 						}},
 						"then": "$watched_pbehavior_type",
 					},

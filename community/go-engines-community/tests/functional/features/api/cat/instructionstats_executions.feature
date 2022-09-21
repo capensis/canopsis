@@ -791,3 +791,27 @@ Feature: get instruction statistics
       "error": "Not found"
     }
     """
+
+  Scenario: given get search request should return instruction stats
+    When I am admin
+    When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-executions-get-with-resolved-alarms-1/executions?search=resolved-alarms-resolved
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "executed_on": 1518280210,
+          "alarm": {
+            "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-resolved"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
