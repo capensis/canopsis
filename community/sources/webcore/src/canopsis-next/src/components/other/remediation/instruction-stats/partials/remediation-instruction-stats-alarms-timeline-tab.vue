@@ -5,13 +5,16 @@
     :loading="pending",
     :pagination.sync="pagination",
     :total-items="totalItems",
+    search,
     advanced-pagination
   )
     template(#toolbar="")
-      c-enabled-field(
-        v-model="showFailed",
-        :label="$t('remediationInstructionStats.showFailedExecutions')"
-      )
+      v-layout(align-center)
+        c-enabled-field(
+          v-model="showFailed",
+          :label="$t('remediationInstructionStats.showFailedExecutions')",
+          hide-details
+        )
     template(#executed_on="{ item }")
       span.c-nowrap {{ item.executed_on | date }}
     template(#result="{ item }")
