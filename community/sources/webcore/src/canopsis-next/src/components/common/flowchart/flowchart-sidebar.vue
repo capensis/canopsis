@@ -36,14 +36,16 @@
         template(#header="")
           span.v-label.theme--light {{ $t('flowchart.icons') }}
         v-divider
-        v-layout(row, wrap)
+        v-layout(v-for="group in iconGroups", :key="group.name", row, wrap)
           v-btn.flowchart-sidebar__button-icon.ma-0(
-            v-for="icon in icons",
-            :key="icon.src",
+            v-for="icon in group.icons",
+            :key="icon",
             flat,
-            @click="addIconAsset(icon.src)"
+            @click="addIconAsset(icon)"
           )
-            img(:src="icon.src")
+            img(:src="icon")
+          v-flex(xs12)
+            v-divider
 </template>
 
 <script>
@@ -94,7 +96,7 @@ import DocumentShapeIcon from './icons/document-shape.vue';
 import TextShapeIcon from './icons/text-shape.vue';
 import TextboxShapeIcon from './icons/textbox-shape.vue';
 
-import assets from './assets';
+import assetGroups from './assets';
 
 export default {
   components: { FlowchartColorField, FileSelector, ImageShapeIcon },
@@ -225,9 +227,10 @@ export default {
       return this.pointDistance / 2;
     },
 
-    icons() {
-      return assets.map(assetPath => ({
-        src: assetPath,
+    iconGroups() {
+      return Object.entries(assetGroups).map(([name, icons]) => ({
+        name,
+        icons,
       }));
     },
 

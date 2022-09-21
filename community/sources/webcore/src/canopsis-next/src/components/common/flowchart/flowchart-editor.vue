@@ -477,7 +477,9 @@ export default {
         this.editing = false;
         this.editingShape = undefined;
         this.editingLinePoint = undefined;
+      }
 
+      if (!isEqual(this.shapes, this.data)) {
         this.updateShapes(this.data);
       }
     },
