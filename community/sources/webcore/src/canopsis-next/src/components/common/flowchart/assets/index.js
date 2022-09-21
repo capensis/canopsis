@@ -1,8 +1,15 @@
 const requireModule = require.context('.', true, /.*\.svg$/);
-const assets = [];
+const assetGroups = {};
 
 requireModule.keys().forEach((fileName) => {
-  assets.push(requireModule(fileName));
+  const [, groupName] = fileName.match(/\.\/(.+)\/.+.svg$/);
+  const file = requireModule(fileName);
+
+  if (assetGroups[groupName]) {
+    assetGroups[groupName].push(file);
+  } else {
+    assetGroups[groupName] = [file];
+  }
 });
 
-export default assets;
+export default assetGroups;
