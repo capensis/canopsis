@@ -1,11 +1,14 @@
 <template lang="pug">
-  c-zoom-overlay.tree-of-dependencies__preview
-    network-graph.fill-height(
-      ref="networkGraph",
-      :options="options",
-      :node-html-label-options="nodeHtmlLabelsOptions",
-      ctrl-wheel-zoom
-    )
+  div.tree-of-dependencies__preview
+    c-zoom-overlay
+      network-graph.fill-height(
+        ref="networkGraph",
+        :options="options",
+        :node-html-label-options="nodeHtmlLabelsOptions",
+        ctrl-wheel-zoom
+      )
+    c-help-icon.map-preview__help-icon(size="32", color="secondary", icon="help", top)
+      div.pre-wrap(v-html="$t('flowchart.panzoom.helpText')")
 </template>
 
 <script>
@@ -49,12 +52,12 @@ export default {
   },
   computed: {
     impact() {
-      return this.map?.parameters.type === TREE_OF_DEPENDENCIES_TYPES.impactChain;
+      return this.map.parameters?.type === TREE_OF_DEPENDENCIES_TYPES.impactChain;
     },
 
     rootEntities() {
       return Object.values(this.entitiesById)
-        .filter(entity => entity.dependencies?.length);
+        .filter(entity => entity.dependencies);
     },
 
     cytoscapeClusters() {
@@ -116,7 +119,7 @@ export default {
           },
         },
         {
-          selector: '.show-all',
+          selector: 'node[showAll]',
           style: {
             'background-opacity': 0,
             'border-width': 0,
@@ -262,7 +265,7 @@ export default {
           tpl: getContent,
         },
         {
-          query: '.show-all',
+          query: 'node[showAll]',
           valign: 'center',
           halign: 'center',
           tpl: getShowAllContent,
@@ -271,25 +274,31 @@ export default {
     },
 
     options() {
-      return {
+      const options = {
         ...omit(TREE_OF_DEPENDENCIES_GRAPH_OPTIONS, ['nodeSize']),
-
-        layout: {
-          ...TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
-
-          clusters: this.cytoscapeClusters,
-        },
 
         style: this.styleOption,
         elements: this.entitiesElements,
       };
+
+      if (this.entitiesElements.length) {
+        options.layout = {
+          ...TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
+
+          clusters: this.cytoscapeClusters,
+        };
+      }
+
+      return options;
     },
   },
   watch: {
     map(map) {
       this.entitiesById = normalizeTreeOfDependenciesMapEntities(map.parameters?.entities);
 
-      this.resetLayout();
+      setTimeout(() => { // TODO: change it
+        this.resetLayout();
+      }, 1000);
     },
   },
   mounted() {
@@ -342,16 +351,22 @@ export default {
       }
     },
 
+    /**
+     * Get show all cytoscape elements for special entity
+     *
+     * @param {Entity} entity
+     * @returns {[Object, Object]}
+     */
     getShowAllElements(entity) {
       const showAllId = `show-all-${entity._id}`;
 
       return [
         {
           group: 'nodes',
-          classes: ['show-all'],
           data: {
             id: showAllId,
             entity,
+            showAll: true,
           },
         },
         {
@@ -365,6 +380,12 @@ export default {
       ];
     },
 
+    /**
+     * Add dependencies to cytoscape for special source
+     *
+     * @param {Entity[]} elements
+     * @param {Entity} source
+     */
     addDependenciesElements(elements, source) {
       if (!elements.length) {
         return;
@@ -401,6 +422,12 @@ export default {
       this.$refs.networkGraph.$cy.add(addedElements);
     },
 
+    /**
+     * Remove dependencies from cytoscape for special source
+     *
+     * @param {string[]} elementsIds
+     * @param {string} sourceId
+     */
     removeDependenciesElements(elementsIds, sourceId) {
       const nodesForRemoveSelectors = elementsIds.map(id => `node[id = "${id}"]`);
       nodesForRemoveSelectors.push(`node[id = "show-all-${sourceId}"]`);
@@ -422,7 +449,7 @@ export default {
      *
      * @param {string} id
      */
-    async fetchDependenciesById(id) {
+    async fetchDependencies(id) {
       const target = this.$refs.networkGraph.$cy.getElementById(id);
       const { opened, entity, root, pending } = target.data();
 
@@ -476,7 +503,12 @@ export default {
       this.runLayout();
     },
 
-    showAllDependenciesById(entityId) {
+    /**
+     * Show modal window with all entity dependencies
+     *
+     * @param {string} entityId
+     */
+    showAllDependenciesModal(entityId) {
       this.$modals.show({
         name: MODALS.entityDependenciesList,
         config: {
@@ -486,30 +518,40 @@ export default {
       });
     },
 
+    /**
+     * Handler for tap event on whole cytoscape canvas
+     *
+     * @param {Object} target
+     * @param {MouseEvent} originalEvent
+     */
     tapHandler({ target, originalEvent }) {
       if (originalEvent.target.classList.contains('v-badge__badge')) {
         const { id } = originalEvent.target.dataset;
 
         if (id) {
-          this.fetchDependenciesById(id);
+          this.fetchDependencies(id);
 
           return;
         }
       }
 
-      const { entity } = target.data();
+      const { entity, showAll } = target.data();
 
-      if (!entity || !this.hasDependencies(entity)) {
+      if (!showAll || !entity || !this.hasDependencies(entity)) {
         return;
       }
 
-      this.showAllDependenciesById(entity._id);
+      this.showAllDependenciesModal(entity._id);
     },
   },
 };
 </script>
 <style lang="scss" scoped>
 .tree-of-dependencies__preview {
+  position: relative;
+  height: 800px;
+  width: 100%;
+
   & /deep/ canvas[data-id='layer0-selectbox'] { // Hide selectbox layer from cytoscape
     display: none;
   }
