@@ -469,8 +469,6 @@ export default {
         this.moving = false;
         this.movingStart = { x: 0, y: 0 };
         this.movingOffset = { x: 0, y: 0 };
-
-        this.updateShapes(this.data);
       }
 
       if (this.editing) {
