@@ -1,4 +1,7 @@
+import { isNumber } from 'lodash';
+
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
+import { durationToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} RemediationJob
@@ -9,6 +12,8 @@ import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
  * @property {string} payload
  * @property {boolean} multiple_executions
  * @property {Object} query
+ * @property {number} [retry_amount]
+ * @property {Duration} [retry_interval]
  */
 
 /**
@@ -45,6 +50,10 @@ export const remediationJobToForm = (remediationJob = {}) => ({
   payload: remediationJob.payload ?? '',
   multiple_executions: remediationJob.multiple_executions ?? false,
   query: remediationJob.query ? objectToTextPairs(remediationJob.query) : [],
+  retry_amount: remediationJob.retry_amount,
+  retry_interval: remediationJob.retry_interval
+    ? durationToForm(remediationJob.retry_interval)
+    : { value: undefined, unit: undefined },
 });
 
 /**
@@ -56,6 +65,12 @@ export const remediationJobToForm = (remediationJob = {}) => ({
 export const formToRemediationJob = form => ({
   ...form,
 
+  retry_amount: isNumber(form.retry_amount)
+    ? form.retry_amount
+    : undefined,
+  retry_interval: isNumber(form.retry_interval?.value)
+    ? form.retry_interval
+    : undefined,
   config: form.config._id,
   query: textPairsToObject(form.query),
 });

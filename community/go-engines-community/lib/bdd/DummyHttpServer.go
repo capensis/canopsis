@@ -173,6 +173,16 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Method: http.MethodGet,
 			Body:   "test-job-execution-long-failed-output",
 		},
+		"/api/35/job/test-job-running/run": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+			Body:   fmt.Sprintf("{\"id\":\"test-job-execution-running\",\"href\":\"/api/35/execution/test-job-execution-running\",\"permalink\":\"%s/rundeck/execution/show/test-job-execution-running\"}", addr),
+		},
+		"/api/35/execution/test-job-execution-running": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"id\":\"test-job-execution-running\",\"status\":\"running\"}",
+		},
 		// AWX
 		"/api/v2/job_templates/test-job-succeeded/launch/": {
 			Code:   http.StatusOK,

@@ -459,6 +459,9 @@ export default merge({
       [SCENARIO_TRIGGERS.instructionjobfail]: {
         text: 'Job de remédiation en erreur',
       },
+      [SCENARIO_TRIGGERS.instructionjobcomplete]: {
+        text: 'Job de remédiation terminé',
+      },
       [SCENARIO_TRIGGERS.instructioncomplete]: {
         text: 'Consigne manuelle terminée',
       },
@@ -1503,20 +1506,6 @@ export default merge({
           success: '{jobName} a été modifiée avec succès',
         },
       },
-      fields: {
-        configuration: 'Configuration',
-        jobId: 'Identifiant de la tâche',
-        query: 'Requête',
-        multipleExecutions: 'Autoriser l\'exécution parallèle',
-      },
-      errors: {
-        invalidJSON: 'JSON non valide',
-      },
-      addPayload: 'Ajouter un payload',
-      deletePayload: 'Supprimer le payload',
-      payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
-        + '<i>Quelques exemples:</i>'
-        + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
     },
     clickOutsideConfirmation: {
       title: 'Êtes-vous sûr(e) ?',
@@ -2458,6 +2447,23 @@ export default merge({
           disabledOnTypes: 'Désactivé sur les types',
         },
       },
+    },
+  },
+
+  remediationJob: {
+    configuration: 'Configuration',
+    jobId: 'Identifiant de la tâche',
+    query: 'Requête',
+    multipleExecutions: 'Autoriser l\'exécution parallèle',
+    retryAmount: 'Montant de la nouvelle tentative',
+    retryInterval: 'Intervalle de relance',
+    addPayload: 'Ajouter un payload',
+    deletePayload: 'Supprimer le payload',
+    payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
+      + '<i>Quelques exemples:</i>'
+      + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+    errors: {
+      invalidJSON: 'JSON non valide',
     },
   },
 
