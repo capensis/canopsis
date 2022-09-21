@@ -7,7 +7,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
@@ -169,7 +168,6 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	}, action.Parameters{})
 
 	entitybasicValidator := entitybasic.NewValidator(client)
-	v.RegisterStructValidation(entity.ValidateListRequest, entity.ListRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		entitybasicValidator.ValidateEditRequest(ctx, sl)
 	}, entitybasic.EditRequest{})
