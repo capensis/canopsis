@@ -249,3 +249,10 @@ $mobileBreakpoint: 450px;
 .border-radius-rounded {
   border-radius: 50% !important;
 }
+
+.map-preview__help-icon {
+  cursor: pointer;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}

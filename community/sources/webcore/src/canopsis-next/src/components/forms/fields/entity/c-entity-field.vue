@@ -229,7 +229,7 @@ export default {
         this.pageCount = meta.page_count;
 
         this.entitiesById = {
-          ...this.entitiesById,
+          // ...this.entitiesById,
           ...keyBy(entities, this.itemValue),
         };
       } catch (err) {

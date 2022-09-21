@@ -3,7 +3,7 @@
     v-card-text
       service-dependencies.pa-3(
         :root="item",
-        :columns="coilumns",
+        :columns="columns",
         openable-root
       )
 </template>
