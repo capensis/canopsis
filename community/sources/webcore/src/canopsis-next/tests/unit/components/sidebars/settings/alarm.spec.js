@@ -140,6 +140,7 @@ describe('alarm', () => {
     activeViewModule,
     widgetModule,
     authModule,
+    userPreferenceModule,
   } = createSettingsMocks();
 
   const widget = {
@@ -160,6 +161,7 @@ describe('alarm', () => {
   const store = createMockedStoreModules([
     activeViewModule,
     widgetModule,
+    userPreferenceModule,
     authModule,
   ]);
 
@@ -510,6 +512,7 @@ describe('alarm', () => {
       store: createMockedStoreModules([
         activeViewModule,
         widgetModule,
+        userPreferenceModule,
         {
           ...authModule,
           getters: {
@@ -554,6 +557,7 @@ describe('alarm', () => {
       store: createMockedStoreModules([
         activeViewModule,
         widgetModule,
+        userPreferenceModule,
         {
           ...authModule,
           getters: {
@@ -590,8 +594,6 @@ describe('alarm', () => {
         id: widget._id,
         data: getWidgetRequestWithNewProperty(widget, 'parameters', {
           ...widget.parameters,
-
-          mainFilterUpdatedAt: nowTimestamp,
           mainFilter: filter,
         }),
       },
@@ -603,6 +605,7 @@ describe('alarm', () => {
       store: createMockedStoreModules([
         activeViewModule,
         widgetModule,
+        userPreferenceModule,
         {
           ...authModule,
           getters: {
@@ -1071,6 +1074,7 @@ describe('alarm', () => {
       store: createMockedStoreModules([
         activeViewModule,
         widgetModule,
+        userPreferenceModule,
         {
           ...authModule,
           getters: {
@@ -1132,7 +1136,6 @@ describe('alarm', () => {
                 periodic_refresh: { value: 30, unit: 's', enabled: true },
                 viewFilters: [],
                 mainFilter: null,
-                mainFilterUpdatedAt: 0,
                 liveReporting: {},
                 sort: { order: SORT_ORDERS.desc, column: 'connector' },
                 opened: true,
