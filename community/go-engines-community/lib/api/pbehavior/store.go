@@ -505,9 +505,6 @@ func (s *store) transformRequestToDocument(r EditRequest) pbehavior.PBehavior {
 		exdates[i].End = r.Exdates[i].End
 	}
 
-	exceptions := make([]string, len(r.Exceptions))
-	copy(exceptions, r.Exceptions)
-
 	return pbehavior.PBehavior{
 		Author:     r.Author,
 		Enabled:    *r.Enabled,
@@ -518,7 +515,7 @@ func (s *store) transformRequestToDocument(r EditRequest) pbehavior.PBehavior {
 		Stop:       r.Stop,
 		Type:       r.Type,
 		Exdates:    exdates,
-		Exceptions: exceptions,
+		Exceptions: r.Exceptions,
 		Color:      r.Color,
 
 		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)),

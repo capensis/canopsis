@@ -33,23 +33,23 @@ type EditRequest struct {
 }
 
 type Response struct {
-	ID                               string                                        `bson:"_id" json:"_id" binding:"id"`
+	ID                               string                                        `bson:"_id" json:"_id"`
 	Author                           string                                        `bson:"author" json:"author" swaggerignore:"true"`
-	Description                      string                                        `bson:"description" json:"description" binding:"required,max=255"`
-	Type                             string                                        `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
+	Description                      string                                        `bson:"description" json:"description"`
+	Type                             string                                        `bson:"type" json:"type"`
 	Priority                         int                                           `bson:"priority" json:"priority"`
 	Enabled                          bool                                          `bson:"enabled" json:"enabled"`
 	Config                           eventfilter.RuleConfig                        `bson:"config" json:"config"`
 	ExternalData                     map[string]eventfilter.ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
 	Created                          *types.CpsTime                                `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated                          *types.CpsTime                                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
-	RRule                            string                                        `json:"rrule" bson:"rrule"`
-	Start                            *types.CpsTime                                `json:"start,omitempty" bson:"start,omitempty"`
-	Stop                             *types.CpsTime                                `json:"stop,omitempty" bson:"stop,omitempty"`
-	Exdates                          []types.Exdate                                `json:"exdates" bson:"exdates"`
-	Exceptions                       []Exception                                   `json:"exceptions" bson:"exceptions"`
+	RRule                            string                                        `bson:"rrule" json:"rrule"`
+	Start                            *types.CpsTime                                `bson:"start,omitempty" json:"start,omitempty"`
+	Stop                             *types.CpsTime                                `bson:"stop,omitempty" json:"stop,omitempty"`
+	Exdates                          []types.Exdate                                `bson:"exdates" json:"exdates"`
+	Exceptions                       []Exception                                   `bson:"exceptions" json:"exceptions"`
 	OldPatterns                      oldpattern.EventPatternList                   `bson:"old_patterns,omitempty" json:"old_patterns,omitempty"`
-	EventPattern                     pattern.Event                                 `json:"event_pattern" bson:"event_pattern"`
+	EventPattern                     pattern.Event                                 `bson:"event_pattern" json:"event_pattern"`
 	savedpattern.EntityPatternFields `bson:",inline"`
 }
 
@@ -59,7 +59,6 @@ type Exception struct {
 	Description string         `bson:"description" json:"description"`
 	Exdates     []types.Exdate `bson:"exdates" json:"exdates"`
 	Created     types.CpsTime  `bson:"created" json:"created" swaggertype:"integer"`
-	Deletable   *bool          `bson:"deletable,omitempty" json:"deletable,omitempty"`
 }
 
 type CreateRequest struct {
