@@ -34,6 +34,8 @@ const selectShapeByType = (wrapper, type) => {
   switch (type) {
     case SHAPES.line:
       return wrapper.find(`[data-type="${type}"] ~ path`);
+    case SHAPES.image:
+      return wrapper.find(`[data-type="${type}"] ~ image`);
     default:
       return wrapper.find(`[data-type="${type}"]`);
   }
@@ -808,6 +810,138 @@ describe('flowchart-editor', () => {
       rect: {
         ...rectShape,
         connections: [],
+      },
+    });
+  });
+
+  test(`Shape: ${SHAPES.circle} resized after trigger selection`, async () => {
+    const clientX = 120;
+    const clientY = 20;
+
+    wrapper = snapshotFactory({
+      propsData: {
+        shapes,
+        viewBox,
+      },
+    });
+
+    await flushPromises();
+
+    const shape = selectShapeByType(wrapper, SHAPES.circle);
+
+    await shape.trigger('mousedown');
+    await shape.trigger('mouseup');
+
+    const selectionPointCircle = wrapper.find('circle[cursor="ne-resize"]');
+    await selectionPointCircle.trigger('mousedown');
+
+    triggerDocumentMouseEvent('mousemove', {
+      clientX,
+      clientY,
+    });
+
+    await selectSvg(wrapper).trigger('mouseup', {
+      clientX,
+      clientY,
+    });
+
+    expect(wrapper).toEmit('input', {
+      ...shapes,
+      circle: {
+        ...shapes.circle,
+        diameter: 65,
+        y: 85,
+      },
+    });
+  });
+
+  test(`Shape: ${SHAPES.image} resized after trigger selection`, async () => {
+    const clientX = 120;
+    const clientY = 20;
+
+    wrapper = snapshotFactory({
+      propsData: {
+        shapes,
+        viewBox,
+      },
+    });
+
+    await flushPromises();
+
+    const shape = selectShapeByType(wrapper, SHAPES.image);
+
+    await shape.trigger('mousedown');
+    await shape.trigger('mouseup');
+
+    const selectionPointCircle = wrapper.find('circle[cursor="ne-resize"]');
+    await selectionPointCircle.trigger('mousedown');
+
+    triggerDocumentMouseEvent('mousemove', {
+      clientX,
+      clientY,
+    });
+
+    await selectSvg(wrapper).trigger('mouseup', {
+      clientX,
+      clientY,
+    });
+
+    expect(wrapper).toEmit('input', {
+      ...shapes,
+      image: {
+        ...shapes.image,
+        height: 105,
+        width: 115,
+        y: 25,
+      },
+    });
+  });
+
+  test.each(
+    Object.values(
+      omit(
+        SHAPES,
+        ['circle', 'line', 'arrowLine', 'bidirectionalArrowLine', 'image'],
+      ),
+    ),
+  )('Shape: %s resized after trigger selection', async (type) => {
+    const clientX = 120;
+    const clientY = 20;
+
+    wrapper = snapshotFactory({
+      propsData: {
+        shapes,
+        viewBox,
+      },
+    });
+
+    await flushPromises();
+
+    const shape = selectShapeByType(wrapper, type);
+
+    await shape.trigger('mousedown');
+    await shape.trigger('mouseup');
+
+    const selectionPointCircle = wrapper.find('circle[cursor="ne-resize"]');
+    await selectionPointCircle.trigger('mousedown');
+
+    triggerDocumentMouseEvent('mousemove', {
+      clientX,
+      clientY,
+    });
+
+    await selectSvg(wrapper).trigger('mouseup', {
+      clientX,
+      clientY,
+    });
+
+    expect(wrapper).toEmit('input', {
+      ...shapes,
+      [type]: {
+        ...shapes[type],
+        width: 115,
+        height: 105,
+        y: 25,
       },
     });
   });
