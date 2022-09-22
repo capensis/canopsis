@@ -276,7 +276,7 @@ func TestUpdateIntervals(t *testing.T) {
 				t.Fatalf("error is not expected = %s", err.Error())
 			}
 
-			if opt.Count != 0 || dataSet.ef.ResolvedStart.IsZero() {
+			if opt.Count != 0 || dataSet.ef.ResolvedStart == nil || dataSet.ef.ResolvedStart.IsZero() {
 				r.DTStart(dataSet.ef.Start.Time)
 			} else {
 				r.DTStart(dataSet.ef.ResolvedStart.Time)
@@ -354,24 +354,16 @@ func BenchmarkCalculateRRuleAllCalculated(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleDailyInTheBeginningOfTheInterval(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=DAILY")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC),
+		"FREQ=DAILY",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -384,24 +376,16 @@ func BenchmarkCalculateRRuleDailyInTheBeginningOfTheInterval(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleDailyOneDayGap(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=DAILY")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC),
+		"FREQ=DAILY",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -414,24 +398,16 @@ func BenchmarkCalculateRRuleDailyOneDayGap(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleDailyOneWeekGap(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2022, 1, 7, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=DAILY")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC),
+		"FREQ=DAILY",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -444,24 +420,16 @@ func BenchmarkCalculateRRuleDailyOneWeekGap(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleDailyOneMonthGap(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2022, 2, 1, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=DAILY")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC),
+		"FREQ=DAILY",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -474,24 +442,16 @@ func BenchmarkCalculateRRuleDailyOneMonthGap(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleDailyOneYearGap(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=DAILY")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC),
+		"FREQ=DAILY",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -504,24 +464,16 @@ func BenchmarkCalculateRRuleDailyOneYearGap(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleHourlyOneDayGap(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 1, 1, 0, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=HOURLY")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 1, 1, 0, 0, 0, time.UTC),
+		"FREQ=HOURLY",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -534,24 +486,16 @@ func BenchmarkCalculateRRuleHourlyOneDayGap(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleHourlyOneWeekGap(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 1, 1, 0, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2022, 1, 7, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=HOURLY")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 1, 1, 0, 0, 0, time.UTC),
+		"FREQ=HOURLY",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -564,24 +508,16 @@ func BenchmarkCalculateRRuleHourlyOneWeekGap(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleHourlyOneMonthGap(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 1, 1, 0, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2022, 2, 1, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=HOURLY")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 1, 1, 0, 0, 0, time.UTC),
+		"FREQ=HOURLY",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -594,24 +530,16 @@ func BenchmarkCalculateRRuleHourlyOneMonthGap(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleHourlyOneYearGap(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 1, 1, 0, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=HOURLY")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 1, 1, 0, 0, 0, time.UTC),
+		"FREQ=HOURLY",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -624,24 +552,16 @@ func BenchmarkCalculateRRuleHourlyOneYearGap(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleMinutelyOneDayGap(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 1, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=MINUTELY")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 1, 0, 1, 0, 0, time.UTC),
+		"FREQ=MINUTELY",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -654,24 +574,16 @@ func BenchmarkCalculateRRuleMinutelyOneDayGap(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleMinutelyOneWeekGap(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 1, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2022, 1, 7, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=MINUTELY")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 1, 0, 1, 0, 0, time.UTC),
+		"FREQ=MINUTELY",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -684,24 +596,16 @@ func BenchmarkCalculateRRuleMinutelyOneWeekGap(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleComplexOneDayGap(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 20, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 9, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 1, 9, 20, 0, 0, time.UTC),
+		"FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -714,24 +618,16 @@ func BenchmarkCalculateRRuleComplexOneDayGap(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleComplexOneWeekGap(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 20, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2022, 1, 7, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 9, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 1, 9, 20, 0, 0, time.UTC),
+		"FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -744,24 +640,16 @@ func BenchmarkCalculateRRuleComplexOneWeekGap(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleComplexOneMonthGap(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 20, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2022, 2, 1, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 9, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 1, 9, 20, 0, 0, time.UTC),
+		"FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -774,24 +662,16 @@ func BenchmarkCalculateRRuleComplexOneMonthGap(b *testing.B) {
 }
 
 func BenchmarkCalculateRRuleComplexOneYearGap(b *testing.B) {
-	ef := &Rule{
-		Start: &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 0, 0, 0, time.UTC)},
-		Stop:  &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 20, 0, 0, time.UTC)},
-	}
-
 	now := time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	opt, err := rrule.StrToROption("FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16")
+	ef, r, err := getBenchmarkData(
+		time.Date(2022, 1, 1, 9, 0, 0, 0, time.UTC),
+		time.Date(2022, 1, 1, 9, 20, 0, 0, time.UTC),
+		"FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16",
+	)
 	if err != nil {
 		b.Fatalf("error is not expected = %s", err.Error())
 	}
-
-	r, err := rrule.NewRRule(*opt)
-	if err != nil {
-		b.Fatalf("error is not expected = %s", err.Error())
-	}
-
-	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
 		ef.ResolvedStart = nil
@@ -801,4 +681,25 @@ func BenchmarkCalculateRRuleComplexOneYearGap(b *testing.B) {
 
 		ResolveIntervals(ef, r, now, time.UTC)
 	}
+}
+
+func getBenchmarkData(start, stop time.Time, rruleString string) (*Rule, *rrule.RRule, error) {
+	ef := Rule{
+		Start: &types.CpsTime{Time: start},
+		Stop:  &types.CpsTime{Time: stop},
+	}
+
+	opt, err := rrule.StrToROption(rruleString)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	r, err := rrule.NewRRule(*opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	r.DTStart(ef.Start.Time)
+
+	return &ef, r, nil
 }

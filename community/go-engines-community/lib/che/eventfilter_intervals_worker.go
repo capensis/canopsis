@@ -164,7 +164,7 @@ func (w *eventfilterIntervalsWorker) Work(ctx context.Context) {
 				continue
 			}
 
-			if opt.Count != 0 || ef.ResolvedStart.IsZero() {
+			if opt.Count != 0 || ef.ResolvedStart == nil || ef.ResolvedStart.IsZero() {
 				r.DTStart(ef.Start.Time.In(location))
 			} else {
 				r.DTStart(ef.ResolvedStart.Time.In(location))
