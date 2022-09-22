@@ -87,7 +87,7 @@ export default {
       this.$emit('update', { points: this.editingPoints });
 
       this.$flowchart.off('mousemove', this.movePoint);
-      this.$flowchart.off('mouseup', this.onMouseUp);
+      this.$flowchart.off('mouseup', this.finishMovePoints);
 
       this.moving = false;
     },
