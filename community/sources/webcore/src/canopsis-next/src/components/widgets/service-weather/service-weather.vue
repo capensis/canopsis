@@ -9,6 +9,7 @@
             :label="$t('settings.selectAFilter')",
             :filters="userPreference.filters",
             :locked-filters="widget.filters",
+            :locked-value="lockedFilter",
             :value="mainFilter",
             :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
             @input="updateSelectedFilter"
@@ -43,8 +44,6 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
-
 import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
 import { permissionsWidgetsServiceWeatherCategory } from '@/mixins/permissions/widgets/service-weather/category';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
@@ -102,21 +101,6 @@ export default {
 
         category: categoryId,
       };
-    },
-
-    getQuery() {
-      const query = omit(this.query, [
-        'page',
-        'sortKey',
-        'sortDir',
-      ]);
-
-      if (this.query.sortKey) {
-        query.sort_by = this.query.sortKey;
-        query.sort = this.query.sortDir.toLowerCase();
-      }
-
-      return query;
     },
 
     fetchList() {
