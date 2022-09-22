@@ -24,6 +24,7 @@ const localVue = createVueInstance();
 
 const snapshotFactory = (options = {}) => mount(FlowchartSidebar, {
   localVue,
+  attachTo: document.body,
 
   ...options,
 });
@@ -574,7 +575,10 @@ describe('flowchart-editor', () => {
     const clientX = 50;
     const clientY = 50;
 
-    const lineShape = { ...shapes.line };
+    const lineShape = {
+      ...shapes.line,
+      connectedTo: [shapes.rect._id],
+    };
     const [connectedPoint] = lineShape.points;
     const rectShape = {
       ...shapes.rect,
@@ -584,7 +588,6 @@ describe('flowchart-editor', () => {
         side: CONNECTOR_SIDES.top,
       }],
     };
-    lineShape.connectedTo.push(rectShape._id);
 
     wrapper = snapshotFactory({
       propsData: {
@@ -618,7 +621,7 @@ describe('flowchart-editor', () => {
         ...lineShape,
         points: [
           {
-            ...lineShape.points[0],
+            ...connectedPoint,
             x: clientX + rectShape.height / 2,
             y: clientY,
           },
@@ -633,11 +636,70 @@ describe('flowchart-editor', () => {
     });
   });
 
-  test('Line unconnected after move connected shape', async () => {
+  test('Line connected after mouseover with point', async () => {
     const clientX = 50;
     const clientY = 50;
 
-    const lineShape = { ...shapes.line };
+    wrapper = snapshotFactory({
+      propsData: {
+        shapes: pick(shapes, [SHAPES.rect, SHAPES.line]),
+        viewBox,
+      },
+    });
+
+    await flushPromises();
+
+    const line = selectShapeByType(wrapper, SHAPES.line);
+
+    await line.trigger('mousedown');
+    await line.trigger('mouseup');
+
+    const linePointCircle = wrapper.find('circle[cursor="crosshair"]');
+    await linePointCircle.trigger('mousedown');
+
+    const rectTopConnector = wrapper.findAll('g')
+      .at(2)
+      .find('path');
+
+    await rectTopConnector.trigger('mouseenter');
+    await rectTopConnector.trigger('mouseup', {
+      clientX,
+      clientY,
+    });
+
+    await flushPromises();
+
+    expect(wrapper).toEmit('input', {
+      line: {
+        ...shapes.line,
+        points: [
+          {
+            ...shapes.line.points[0],
+            x: shapes.rect.width / 2,
+            y: 0,
+          },
+          shapes.line.points[1],
+        ],
+        connectedTo: [SHAPES.rect],
+      },
+      rect: {
+        ...shapes.rect,
+        connections: [
+          {
+            pointId: shapes.line.points[0]._id,
+            side: CONNECTOR_SIDES.top,
+            shapeId: shapes.line._id,
+          },
+        ],
+      },
+    });
+  });
+
+  test('Line unconnected after mouseleave', async () => {
+    const lineShape = {
+      ...shapes.line,
+      connectedTo: [shapes.rect._id],
+    };
     const [connectedPoint] = lineShape.points;
     const rectShape = {
       ...shapes.rect,
@@ -647,7 +709,60 @@ describe('flowchart-editor', () => {
         side: CONNECTOR_SIDES.top,
       }],
     };
-    lineShape.connectedTo.push(rectShape._id);
+
+    wrapper = snapshotFactory({
+      propsData: {
+        shapes: {
+          rect: rectShape,
+          line: lineShape,
+        },
+        viewBox,
+      },
+    });
+
+    await flushPromises();
+
+    const line = selectShapeByType(wrapper, SHAPES.line);
+
+    await line.trigger('mousedown');
+    await line.trigger('mouseup');
+
+    const linePointCircle = wrapper.find('circle[cursor="crosshair"]');
+    await linePointCircle.trigger('mousedown');
+
+    const rectTopConnector = wrapper.findAll('g')
+      .at(2)
+      .find('path');
+
+    await rectTopConnector.trigger('mouseleave');
+
+    await selectSvg(wrapper).trigger('mouseup');
+
+    await flushPromises();
+
+    expect(wrapper).toEmit('input', {
+      line: shapes.line,
+      rect: shapes.rect,
+    });
+  });
+
+  test('Line unconnected after move connected shape', async () => {
+    const clientX = 50;
+    const clientY = 50;
+
+    const lineShape = {
+      ...shapes.line,
+      connectedTo: [shapes.rect._id],
+    };
+    const [connectedPoint] = lineShape.points;
+    const rectShape = {
+      ...shapes.rect,
+      connections: [{
+        shapeId: lineShape._id,
+        pointId: connectedPoint._id,
+        side: CONNECTOR_SIDES.top,
+      }],
+    };
 
     wrapper = snapshotFactory({
       propsData: {
@@ -673,7 +788,12 @@ describe('flowchart-editor', () => {
       clientY,
     });
 
-    await triggerDocumentMouseEvent('mouseup');
+    await flushPromises();
+
+    await selectShapeByType(wrapper, SHAPES.line).trigger('mouseup', {
+      clientX,
+      clientY,
+    });
 
     expect(wrapper).toEmit('input', {
       line: {
