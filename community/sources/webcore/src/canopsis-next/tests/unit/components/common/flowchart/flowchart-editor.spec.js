@@ -7,8 +7,20 @@ import { CONNECTOR_SIDES, FLOWCHART_KEY_CODES, SHAPES } from '@/constants';
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 import { readTextFromClipboard, writeTextToClipboard } from '@/helpers/clipboard';
 import uid from '@/helpers/uid';
+import RectShape from '@/components/common/flowchart/shapes/rect-shape/rect-shape.vue';
+import RhombusShape from '@/components/common/flowchart/shapes/rhombus-shape/rhombus-shape.vue';
+import CircleShape from '@/components/common/flowchart/shapes/circle-shape/circle-shape.vue';
+import EllipseShape from '@/components/common/flowchart/shapes/ellipse-shape/ellipse-shape.vue';
+import ParallelogramShape from '@/components/common/flowchart/shapes/parallelogram-shape/parallelogram-shape.vue';
+import ProcessShape from '@/components/common/flowchart/shapes/process-shape/process-shape.vue';
+import DocumentShape from '@/components/common/flowchart/shapes/document-shape/document-shape.vue';
+import StorageShape from '@/components/common/flowchart/shapes/storage-shape/storage-shape.vue';
+import LineShape from '@/components/common/flowchart/shapes/line-shape/line-shape.vue';
+import ArrowLineShape from '@/components/common/flowchart/shapes/arrow-line-shape/arrow-line-shape.vue';
+import BidirectionalArrowLineShape from '@/components/common/flowchart/shapes/bidirectional-arrow-line-shape/bidirectional-arrow-line-shape.vue';
+import ImageShape from '@/components/common/flowchart/shapes/image-shape/image-shape.vue';
 
-import FlowchartSidebar from '@/components/common/flowchart/flowchart-editor.vue';
+import FlowchartEditor from '@/components/common/flowchart/flowchart-editor.vue';
 
 jest.mock('@/helpers/uid', () => {
   const originalModule = jest.requireActual('@/helpers/uid');
@@ -22,7 +34,7 @@ jest.mock('@/helpers/clipboard', () => ({
 
 const localVue = createVueInstance();
 
-const snapshotFactory = (options = {}) => mount(FlowchartSidebar, {
+const snapshotFactory = (options = {}) => mount(FlowchartEditor, {
   localVue,
   attachTo: document.body,
 
@@ -39,6 +51,27 @@ const selectShapeByType = (wrapper, type) => {
     default:
       return wrapper.find(`[data-type="${type}"]`);
   }
+};
+const selectTextShapeEditorFieldByType = (wrapper, type) => {
+  const Component = {
+    [SHAPES.line]: LineShape,
+    [SHAPES.rect]: RectShape,
+    [SHAPES.line]: LineShape,
+    [SHAPES.arrowLine]: ArrowLineShape,
+    [SHAPES.bidirectionalArrowLine]: BidirectionalArrowLineShape,
+    [SHAPES.circle]: CircleShape,
+    [SHAPES.ellipse]: EllipseShape,
+    [SHAPES.rhombus]: RhombusShape,
+    [SHAPES.parallelogram]: ParallelogramShape,
+    [SHAPES.process]: ProcessShape,
+    [SHAPES.document]: DocumentShape,
+    [SHAPES.storage]: StorageShape,
+    [SHAPES.image]: ImageShape,
+  }[type];
+
+  return wrapper
+    .findComponent(Component)
+    .find('.text-shape-editor__field');
 };
 
 const triggerDocumentEvent = (event) => {
@@ -74,7 +107,7 @@ describe('flowchart-editor', () => {
   }, {});
 
   const getTotalLength = jest.fn();
-  const getPointAtLength = jest.fn();
+  const getPointAtLength = jest.fn().mockReturnValue({ x: 10, y: 12 });
   const createSVGPoint = jest.fn()
     .mockImplementation(() => ({
       x: 0,
@@ -942,6 +975,42 @@ describe('flowchart-editor', () => {
         width: 115,
         height: 105,
         y: 25,
+      },
+    });
+  });
+
+  test.each(Object.values(SHAPES))('Shape: %s text changed after trigger', async (type) => {
+    wrapper = snapshotFactory({
+      propsData: {
+        shapes,
+        viewBox,
+      },
+    });
+
+    await flushPromises();
+
+    const shape = selectShapeByType(wrapper, type);
+    await shape.trigger('dblclick');
+
+    await flushPromises();
+
+    const editorField = selectTextShapeEditorFieldByType(wrapper, type);
+
+    const text = Faker.lorem.words();
+
+    editorField.element.innerHTML = text;
+    editorField.trigger('blur');
+
+    await triggerDocumentMouseEvent('mousedown');
+    await triggerDocumentMouseEvent('mouseup');
+
+    await flushPromises();
+
+    expect(wrapper).toEmit('input', {
+      ...shapes,
+      [type]: {
+        ...shapes[type],
+        text,
       },
     });
   });
