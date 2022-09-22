@@ -10,7 +10,6 @@ import {
   DATETIME_FORMATS,
 } from '@/constants';
 
-import { getMainFilter } from './filter';
 import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
@@ -295,10 +294,12 @@ export function prepareQuery(widget, userPreference) {
     ...userPreferenceQuery,
   };
 
-  const filter = getMainFilter(widget, userPreference);
+  if (widget.parameters.mainFilter) {
+    query.lockedFilter = widget.parameters.mainFilter;
+  }
 
-  if (filter) {
-    query.filter = filter;
+  if (userPreference.content.mainFilter) {
+    query.filter = userPreference.content.mainFilter;
   }
 
   const remediationInstructionsFilters = getRemediationInstructionsFilters(widget, userPreference);
@@ -338,12 +339,12 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => ({
 });
 
 /**
- * Convert alarms list query to request parameters
+ * Convert widget query to request parameters
  *
  * @param {Object} query
  * @returns {Object}
  */
-export const convertAlarmsListQueryToRequest = (query) => {
+export const convertWidgetQueryToRequest = (query) => {
   const result = omit(query, [
     'tstart',
     'tstop',
@@ -352,6 +353,8 @@ export const convertAlarmsListQueryToRequest = (query) => {
     'category',
     'multiSortBy',
     'limit',
+    'filter',
+    'lockedFilter',
   ]);
 
   const {
@@ -360,9 +363,13 @@ export const convertAlarmsListQueryToRequest = (query) => {
     sortKey,
     sortDir,
     category,
+    filter,
+    lockedFilter,
     multiSortBy = [],
     limit = PAGINATION_LIMIT,
   } = query;
+
+  result.filters = [lockedFilter, filter].filter(Boolean);
 
   if (tstart) {
     result.tstart = convertStartDateIntervalToTimestamp(tstart, DATETIME_FORMATS.dateTimePicker);

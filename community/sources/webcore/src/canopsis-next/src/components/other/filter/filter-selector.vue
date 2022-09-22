@@ -9,14 +9,15 @@
     clearable
   )
     template(#item="{ parent, item, tile }")
-      v-list-tile-content
-        v-list-tile-title
-          span {{ item.title }}
-          v-icon.ml-2(
-            v-if="!hideIcon",
-            :color="tile.props.value ? parent.color : ''",
-            small
-          ) {{ item.is_private ? 'person' : 'lock' }}
+      v-list-tile(v-bind="tile.props", v-on="tile.on", :disabled="item.active")
+        v-list-tile-content
+          v-list-tile-title
+            span {{ item.title }}
+            v-icon.ml-2(
+              v-if="!hideIcon",
+              :color="tile.props.value ? parent.color : ''",
+              small
+            ) {{ item.is_private ? 'person' : 'lock' }}
 </template>
 
 <script>
@@ -25,6 +26,10 @@ export default {
     value: {
       type: String,
       default: () => null,
+    },
+    lockedValue: {
+      type: String,
+      required: false,
     },
     filters: {
       type: Array,
@@ -48,6 +53,10 @@ export default {
     },
   },
   computed: {
+    lockedFilter() {
+      return this.lockedFilters.find(this.isLockedFilter);
+    },
+
     preparedFilters() {
       const preparedFilters = [...this.filters];
 
@@ -59,9 +68,19 @@ export default {
         preparedFilters.push({ divider: true });
       }
 
-      preparedFilters.push(...this.lockedFilters);
+      preparedFilters.push(
+        ...this.lockedFilters.map(filter => ({
+          ...filter,
+          active: this.isLockedFilter(filter),
+        })),
+      );
 
       return preparedFilters;
+    },
+  },
+  methods: {
+    isLockedFilter(filter) {
+      return filter._id === this.lockedValue;
     },
   },
 };

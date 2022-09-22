@@ -51,8 +51,7 @@
               :editable="hasAccessToEditFilter",
               with-alarm,
               with-entity,
-              with-pbehavior,
-              @input="updateMainFilterUpdatedAt"
+              with-pbehavior
             )
             v-divider
           template(v-if="hasAccessToListRemediationInstructionsFilters")
