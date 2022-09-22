@@ -358,7 +358,14 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 		}
 	}
 	if r.Exdates != nil {
-		set["exdates"] = r.Exdates
+		exdates := make([]pbehavior.Exdate, len(r.Exdates))
+		for i := range r.Exdates {
+			exdates[i].Type = r.Exdates[i].Type
+			exdates[i].Begin = r.Exdates[i].Begin
+			exdates[i].End = r.Exdates[i].End
+		}
+
+		set["exdates"] = exdates
 	}
 	if r.Exceptions != nil {
 		set["exceptions"] = r.Exceptions
