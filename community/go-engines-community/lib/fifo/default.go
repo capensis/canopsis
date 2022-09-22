@@ -213,9 +213,9 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		timezoneConfigProvider,
 		logger,
 	))
-	if mongoClient.IsReplicaSet() {
+	if mongoClient.IsDistributed() {
 		engine.AddRoutine(func(ctx context.Context) error {
-			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventfilterService)
+			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventfilterService, logger)
 
 			for {
 				select {
@@ -224,7 +224,7 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 				default:
 					err := w.Watch(ctx, []string{eventfilter.RuleTypeChangeEntity})
 					if err != nil {
-						return err
+						logger.Error().Err(err).Msg("failed to watch eventfilter collection")
 					}
 				}
 			}

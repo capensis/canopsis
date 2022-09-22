@@ -188,7 +188,7 @@ func NewEngine(
 		EnrichmentCenter:   enrichmentCenter,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
-		LoadRules:          !mongoClient.IsReplicaSet(),
+		LoadRules:          !mongoClient.IsDistributed(),
 	})
 	engine.AddPeriodicalWorker("eventfilter intervals", eventfilterIntervalsPeriodicalWorker)
 	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
@@ -215,9 +215,9 @@ func NewEngine(
 		logger,
 	))
 	engine.AddPeriodicalWorker("entity infos dictionary", infosDictLockedPeriodicalWorker)
-	if mongoClient.IsReplicaSet() {
+	if mongoClient.IsDistributed() {
 		engine.AddRoutine(func(ctx context.Context) error {
-			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventfilterService)
+			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventfilterService, logger)
 
 			for {
 				select {
@@ -226,7 +226,7 @@ func NewEngine(
 				default:
 					err := w.Watch(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
 					if err != nil {
-						return err
+						logger.Error().Err(err).Msg("failed to watch eventfilter collection")
 					}
 				}
 			}

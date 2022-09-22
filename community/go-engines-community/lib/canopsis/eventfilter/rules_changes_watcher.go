@@ -2,26 +2,34 @@ package eventfilter
 
 import (
 	"context"
-	"fmt"
+	"time"
+
+	"github.com/rs/zerolog"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type RuleChangesWatcherInterface interface {
+const loadTimerDuration = 200 * time.Millisecond
+
+type RuleChangesWatcher interface {
 	Watch(ctx context.Context, types []string) error
 }
 
-func NewRulesChangesWatcher(client mongo.DbClient, service Service) RuleChangesWatcherInterface {
+func NewRulesChangesWatcher(client mongo.DbClient, service Service, logger zerolog.Logger) RuleChangesWatcher {
 	return &rulesChangesWatcher{
-		collection: client.Collection(mongo.EventFilterRulesMongoCollection),
-		service:    service,
+		collection:        client.Collection(mongo.EventFilterRulesMongoCollection),
+		service:           service,
+		logger:            logger,
+		loadTimerDuration: loadTimerDuration,
 	}
 }
 
 type rulesChangesWatcher struct {
-	collection mongo.DbCollection
-	service    Service
+	collection        mongo.DbCollection
+	service           Service
+	logger            zerolog.Logger
+	loadTimerDuration time.Duration
 }
 
 func (w *rulesChangesWatcher) Watch(ctx context.Context, types []string) error {
@@ -30,13 +38,30 @@ func (w *rulesChangesWatcher) Watch(ctx context.Context, types []string) error {
 		return err
 	}
 
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	loadTimer := time.NewTimer(w.loadTimerDuration)
+	loadTimer.Stop()
+
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-loadTimer.C:
+				err := w.service.LoadRules(ctx, types)
+				if err != nil {
+					w.logger.Error().Err(err).Msg("unable to load rules")
+				}
+			}
+		}
+	}()
+
 	defer stream.Close(ctx)
 
 	for stream.Next(ctx) {
-		err := w.service.LoadRules(ctx, types)
-		if err != nil {
-			return fmt.Errorf("unable to load rules: %w", err)
-		}
+		loadTimer.Reset(w.loadTimerDuration)
 	}
 
 	return nil

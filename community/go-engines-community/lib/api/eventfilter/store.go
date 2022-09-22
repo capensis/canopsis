@@ -51,9 +51,6 @@ func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
 		exdates[i].End = r.Exdates[i].End
 	}
 
-	exceptions := make([]string, len(r.Exceptions))
-	copy(exceptions, r.Exceptions)
-
 	return eventfilter.Rule{
 		Author:              r.Author,
 		Description:         r.Description,
@@ -70,7 +67,7 @@ func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
 		ResolvedStart:       r.Start,
 		ResolvedStop:        r.Stop,
 		Exdates:             exdates,
-		Exceptions:          exceptions,
+		Exceptions:          r.Exceptions,
 	}
 }
 
@@ -142,15 +139,6 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	pipeline = append(pipeline, bson.M{
-		"$lookup": bson.M{
-			"from":         mongo.PbehaviorExceptionMongoCollection,
-			"localField":   "exceptions",
-			"foreignField": "_id",
-			"as":           "exceptions",
-		},
-	})
-
 	sortBy := s.defaultSortBy
 	if query.SortBy != "" {
 		sortBy = query.SortBy
@@ -160,6 +148,16 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 		query.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, query.Sort),
+		[]bson.M{
+			{
+				"$lookup": bson.M{
+					"from":         mongo.PbehaviorExceptionMongoCollection,
+					"localField":   "exceptions",
+					"foreignField": "_id",
+					"as":           "exceptions",
+				},
+			},
+		},
 	))
 
 	if err != nil {
