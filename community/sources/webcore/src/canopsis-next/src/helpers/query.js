@@ -37,6 +37,22 @@ export function convertSortToQuery({ parameters }) {
 }
 
 /**
+ * Convert widget filter to query
+ *
+ * @param parameters
+ * @returns {{ lockedFilter?: string }}
+ */
+export function convertWidgetFilterToQuery({ parameters }) {
+  if (parameters.mainFilter) {
+    return {
+      lockedFilter: parameters.mainFilter,
+    };
+  }
+
+  return {};
+}
+
+/**
  *  This function converts widget.parameters.opened to query Object
  *
  * @param {Object} parameters
@@ -65,6 +81,7 @@ export function convertAlarmWidgetToQuery(widget) {
     widgetColumns,
     itemsPerPage,
     sort,
+    mainFilter,
     opened = ALARMS_OPENED_VALUES.opened,
   } = widget.parameters;
 
@@ -75,6 +92,7 @@ export function convertAlarmWidgetToQuery(widget) {
     with_instructions: true,
     with_links: true,
     multiSortBy: [],
+    lockedFilter: mainFilter,
   };
 
   if (!isEmpty(liveReporting)) {
@@ -107,11 +125,13 @@ export function convertContextWidgetToQuery(widget) {
     itemsPerPage,
     selectedTypes,
     widgetColumns,
+    mainFilter,
   } = widget.parameters;
 
   const query = {
     page: 1,
     limit: itemsPerPage || PAGINATION_LIMIT,
+    lockedFilter: mainFilter,
   };
 
   if (widgetColumns) {
@@ -132,11 +152,12 @@ export function convertContextWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertWeatherWidgetToQuery(widget) {
-  const { limit } = widget.parameters;
+  const { limit, mainFilter } = widget.parameters;
 
   return {
     ...convertSortToQuery(widget),
     limit: limit || DEFAULT_WEATHER_LIMIT,
+    lockedFilter: mainFilter,
   };
 }
 
@@ -189,11 +210,13 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
   const {
     itemsPerPage,
     category,
+    mainFilter,
     isCorrelationEnabled = false,
   } = content;
 
   const query = {
     correlation: isCorrelationEnabled,
+    filter: mainFilter,
     category,
   };
 
@@ -211,9 +234,9 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
  * @returns {{ category: string }}
  */
 export function convertWeatherUserPreferenceToQuery({ content }) {
-  const { category } = content;
+  const { category, mainFilter } = content;
 
-  return { category };
+  return { category, filter: mainFilter };
 }
 
 /**
@@ -223,10 +246,11 @@ export function convertWeatherUserPreferenceToQuery({ content }) {
  * @returns {{ category: string }}
  */
 export function convertContextUserPreferenceToQuery({ content }) {
-  const { category, noEvents } = content;
+  const { category, noEvents, mainFilter } = content;
 
   return {
     category,
+    filter: mainFilter,
     no_events: noEvents,
   };
 }
@@ -293,14 +317,6 @@ export function prepareQuery(widget, userPreference) {
     ...widgetQuery,
     ...userPreferenceQuery,
   };
-
-  if (widget.parameters.mainFilter) {
-    query.lockedFilter = widget.parameters.mainFilter;
-  }
-
-  if (userPreference.content.mainFilter) {
-    query.filter = userPreference.content.mainFilter;
-  }
 
   const remediationInstructionsFilters = getRemediationInstructionsFilters(widget, userPreference);
 
@@ -369,7 +385,9 @@ export const convertWidgetQueryToRequest = (query) => {
     limit = PAGINATION_LIMIT,
   } = query;
 
-  result.filters = [lockedFilter, filter].filter(Boolean);
+  if (lockedFilter || filter) {
+    result.filters = [lockedFilter, filter].filter(Boolean);
+  }
 
   if (tstart) {
     result.tstart = convertStartDateIntervalToTimestamp(tstart, DATETIME_FORMATS.dateTimePicker);
