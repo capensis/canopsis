@@ -69,18 +69,18 @@ type Rule struct {
 	Start *types.CpsTime `json:"start,omitempty" bson:"start,omitempty"`
 	Stop  *types.CpsTime `json:"stop,omitempty" bson:"stop,omitempty"`
 
-	//ResolvedStart shows the beginning of the current or the next time interval, where eventfilter rule is enabled
+	//ResolvedStart and ResolvedStop shows the current or the next time interval, where eventfilter rule is enabled
 	ResolvedStart *types.CpsTime `json:"-" bson:"resolved_start,omitempty"`
-	//ResolvedStart shows the ending time of the current or the next time interval, where eventfilter rule is enabled
-	ResolvedStop *types.CpsTime `json:"-" bson:"resolved_stop,omitempty"`
+	ResolvedStop  *types.CpsTime `json:"-" bson:"resolved_stop,omitempty"`
 
-	//NextResolvedStart shows the beginning of the next interval after previous resolved, where eventfilter rule is enabled
+	//NextResolvedStart and NextResolvedStop shows the next time interval after the one which is defined by ResolvedStart and ResolvedStop
 	NextResolvedStart *types.CpsTime `json:"-" bson:"next_resolved_start,omitempty"`
-	//NextResolvedStart shows the ending of the next interval after previous resolved, where eventfilter rule is enabled
-	NextResolvedStop *types.CpsTime `json:"-" bson:"next_resolved_stop,omitempty"`
+	NextResolvedStop  *types.CpsTime `json:"-" bson:"next_resolved_stop,omitempty"`
 
-	Exdates         []types.Exdate `json:"exdates" bson:"exdates"`
-	Exceptions      []string       `json:"exceptions" bson:"exceptions"`
+	Exdates    []types.Exdate `json:"exdates" bson:"exdates"`
+	Exceptions []string       `json:"exceptions" bson:"exceptions"`
+
+	// ResolvedExdates shows exdates if their interval intersects with [now(); now() + 2 che periodical processes] interval
 	ResolvedExdates []types.Exdate `json:"-" bson:"resolved_exdates"`
 }
 
