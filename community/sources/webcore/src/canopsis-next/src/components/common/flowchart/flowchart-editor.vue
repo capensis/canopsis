@@ -479,7 +479,7 @@ export default {
         this.editingLinePoint = undefined;
       }
 
-      if (!isEqual(this.data, this.shapes)) {
+      if (!isEqual(this.shapes, this.data)) {
         this.updateShapes(this.data);
       }
     },
