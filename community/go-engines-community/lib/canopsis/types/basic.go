@@ -151,10 +151,6 @@ func (t CpsTime) EqualDay(u CpsTime) bool {
 	return t.Time.In(time.UTC).Format(dateFormat) == u.Time.In(time.UTC).Format(dateFormat)
 }
 
-func (t *CpsTime) IsZero() bool {
-	return t == nil || t.Time.IsZero()
-}
-
 // DurationWithUnit represent duration with user-preferred units
 type DurationWithUnit struct {
 	Value int64  `bson:"value" json:"value" binding:"required,min=1"`
