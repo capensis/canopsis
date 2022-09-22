@@ -1015,6 +1015,116 @@ describe('flowchart-editor', () => {
     });
   });
 
+  test('View box changed after trigger mousemove event', async () => {
+    wrapper = snapshotFactory({
+      propsData: {
+        shapes: {},
+        viewBox,
+      },
+    });
+
+    await flushPromises();
+
+    await selectSvg(wrapper).trigger('mousedown', {
+      button: 1,
+    });
+
+    const movementX = Faker.datatype.number();
+    const movementY = Faker.datatype.number();
+
+    await selectSvg(wrapper).trigger('mousemove', {
+      movementX,
+      movementY,
+    });
+
+    expect(wrapper).toEmit('update:viewBox', {
+      ...viewBox,
+      x: viewBox.x - movementX,
+      y: viewBox.y - movementY,
+    });
+  });
+
+  test('View box scaled after trigger mousewheel event', async () => {
+    wrapper = snapshotFactory({
+      propsData: {
+        shapes: {},
+        viewBox,
+      },
+    });
+
+    await flushPromises();
+
+    const svg = selectSvg(wrapper);
+    const event = new WheelEvent('wheel', {
+      clientX: 600,
+      clientY: 400,
+      deltaY: 10,
+      ctrlKey: true,
+    });
+
+    await svg.element.dispatchEvent(event);
+
+    expect(wrapper).toEmit('update:viewBox', {
+      ...viewBox,
+      height: 1111,
+      width: 1091,
+      x: -49,
+      y: -29,
+    });
+  });
+
+  test('View box moved horizontal after trigger mousewheel event with shift', async () => {
+    wrapper = snapshotFactory({
+      propsData: {
+        shapes: {},
+        viewBox,
+      },
+    });
+
+    await flushPromises();
+
+    const deltaY = -10;
+
+    const svg = selectSvg(wrapper);
+    const event = new WheelEvent('wheel', {
+      deltaY,
+      shiftKey: true,
+    });
+
+    await svg.element.dispatchEvent(event);
+
+    expect(wrapper).toEmit('update:viewBox', {
+      ...viewBox,
+      x: viewBox.x + deltaY,
+    });
+  });
+
+  test('View box moved vertical after trigger mousewheel event with alt', async () => {
+    wrapper = snapshotFactory({
+      propsData: {
+        shapes: {},
+        viewBox,
+      },
+    });
+
+    await flushPromises();
+
+    const deltaY = 15;
+
+    const svg = selectSvg(wrapper);
+    const event = new WheelEvent('wheel', {
+      deltaY,
+      altKey: true,
+    });
+
+    await svg.element.dispatchEvent(event);
+
+    expect(wrapper).toEmit('update:viewBox', {
+      ...viewBox,
+      y: viewBox.y + deltaY,
+    });
+  });
+
   test('Renders `flowchart-editor` with all shapes', async () => {
     getPointAtLength
       .mockReturnValueOnce({ x: 1, y: 2 })
