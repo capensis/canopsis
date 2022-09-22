@@ -27,6 +27,9 @@ type Flags struct {
 	eventLogs           string
 	checkUncaughtEvents bool
 	onlyFixtures        bool
+	randomize           int64
+	concurrency         int
+	tags                string
 }
 
 type arrayFlag []string
@@ -51,6 +54,9 @@ func (f *Flags) ParseArgs() {
 	flag.Int64Var(&f.dummyHttpPort, "dummyHttpPort", 3000, "Port for dummy http server.")
 	flag.BoolVar(&f.checkUncaughtEvents, "checkUncaughtEvents", false, "Enable catching event after each scenario.")
 	flag.BoolVar(&f.onlyFixtures, "onlyFixtures", false, "Only apply fixtures.")
+	flag.Int64Var(&f.randomize, "godog.randomize", 0, "Enable random order.")
+	flag.IntVar(&f.concurrency, "godog.concurrency", 0, "Concurrency rate.")
+	flag.StringVar(&f.tags, "godog.tags", "", "Filter scenarios.")
 	flag.Parse()
 
 	if !f.onlyFixtures && len(f.paths) == 0 {
