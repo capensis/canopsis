@@ -4,9 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/rs/zerolog"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
