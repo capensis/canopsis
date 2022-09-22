@@ -142,7 +142,7 @@ type DbClient interface {
 	Ping(ctx context.Context, rp *readpref.ReadPref) error
 	WithTransaction(ctx context.Context, f func(context.Context) error) error
 	ListCollectionNames(ctx context.Context, filter interface{}, opts ...*options.ListCollectionsOptions) ([]string, error)
-	IsReplicaSet() bool
+	IsDistributed() bool
 }
 
 type dbClient struct {
@@ -151,7 +151,7 @@ type dbClient struct {
 	RetryCount      int
 	MinRetryTimeout time.Duration
 
-	TransactionEnabled bool
+	isDistributed bool
 }
 
 type dbCollection struct {
@@ -536,7 +536,7 @@ func (c *dbClient) SetRetry(count int, timeout time.Duration) {
 }
 
 func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) error) error {
-	if !c.TransactionEnabled {
+	if !c.isDistributed {
 		return f(ctx)
 	}
 
@@ -589,11 +589,13 @@ func (c *dbClient) checkTransactionEnabled(pCtx context.Context, logger zerolog.
 	}
 
 	logger.Info().Msg("MongoDB version supports transactions, transactions are enabled")
-	c.TransactionEnabled = true
+	c.isDistributed = true
 }
 
-func (c *dbClient) IsReplicaSet() bool {
-	return c.TransactionEnabled
+// IsDistributed returns true if MongoDB is Replica Set or Sharded Cluster.
+// Use to check feature availability : Transactions, Change Streams, etc.
+func (c *dbClient) IsDistributed() bool {
+	return c.isDistributed
 }
 
 // getURL parses URL value in EnvURL environment variable

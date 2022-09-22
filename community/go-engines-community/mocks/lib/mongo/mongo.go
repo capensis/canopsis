@@ -456,9 +456,9 @@ func (mr *MockDbClientMockRecorder) Disconnect(arg0 interface{}) *gomock.Call {
 }
 
 // IsReplicaSet mocks base method.
-func (m *MockDbClient) IsReplicaSet() bool {
+func (m *MockDbClient) IsDistributed() bool {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsReplicaSet")
+	ret := m.ctrl.Call(m, "IsDistributed")
 	ret0, _ := ret[0].(bool)
 	return ret0
 }
@@ -466,7 +466,7 @@ func (m *MockDbClient) IsReplicaSet() bool {
 // IsReplicaSet indicates an expected call of IsReplicaSet.
 func (mr *MockDbClientMockRecorder) IsReplicaSet() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsReplicaSet", reflect.TypeOf((*MockDbClient)(nil).IsReplicaSet))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsDistributed", reflect.TypeOf((*MockDbClient)(nil).IsDistributed))
 }
 
 // ListCollectionNames mocks base method.

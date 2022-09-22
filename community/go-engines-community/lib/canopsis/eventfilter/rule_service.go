@@ -37,7 +37,7 @@ func (s *ruleService) LoadRules(ctx context.Context, types []string) error {
 		ids[i] = s.rules[i].ID
 	}
 
-	s.logger.Debug().Strs("rules", ids).Msg("Loading event filter rules")
+	s.logger.Info().Strs("rules", ids).Msg("Loading event filter rules")
 
 	return nil
 }

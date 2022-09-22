@@ -4,22 +4,15 @@ import (
 	"context"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-
-	"github.com/teambition/rrule-go"
-
-	"go.mongodb.org/mongo-driver/bson"
-
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-
 	"github.com/rs/zerolog"
+	"github.com/teambition/rrule-go"
+	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 func NewEventfilterIntervalsWorker(
@@ -93,7 +86,6 @@ func (w *eventfilterIntervalsWorker) Work(ctx context.Context) {
 						"resolved_stop":       bson.M{"$first": "$resolved_stop"},
 						"next_resolved_start": bson.M{"$first": "$next_resolved_start"},
 						"next_resolved_stop":  bson.M{"$first": "$next_resolved_stop"},
-						"in_exdate":           bson.M{"$first": "$in_exdate"},
 						"exceptions_exdates": bson.M{
 							"$push": "$exceptions.exdates",
 						},
@@ -114,31 +106,24 @@ func (w *eventfilterIntervalsWorker) Work(ctx context.Context) {
 					},
 				},
 				{
-					"$unwind": bson.M{
-						"path":                       "$resolved_exdates",
-						"preserveNullAndEmptyArrays": true,
-					},
-				},
-				{
-					"$group": bson.M{
-						"_id":                 "$_id",
-						"rrule":               bson.M{"$first": "$rrule"},
-						"start":               bson.M{"$first": "$start"},
-						"stop":                bson.M{"$first": "$stop"},
-						"resolved_start":      bson.M{"$first": "$resolved_start"},
-						"resolved_stop":       bson.M{"$first": "$resolved_stop"},
-						"next_resolved_start": bson.M{"$first": "$next_resolved_start"},
-						"next_resolved_stop":  bson.M{"$first": "$next_resolved_stop"},
-						"in_exdate":           bson.M{"$first": "$in_exdate"},
+					"$project": bson.M{
+						"_id":                 1,
+						"rrule":               1,
+						"start":               1,
+						"stop":                1,
+						"resolved_start":      1,
+						"resolved_stop":       1,
+						"next_resolved_start": 1,
+						"next_resolved_stop":  1,
 						"resolved_exdates": bson.M{
-							"$push": bson.M{
-								"$cond": bson.A{
-									bson.M{"$and": bson.A{
-										bson.M{"$gte": bson.A{"$resolved_exdates.end", time.Now().Unix()}},
-										bson.M{"$lte": bson.A{"$resolved_exdates.begin", time.Now().Add(w.periodicalInterval * 2)}},
-									}},
-									"$resolved_exdates",
-									"$$REMOVE",
+							"$filter": bson.M{
+								"input": "$resolved_exdates",
+								"as":    "resolved_exdate",
+								"cond": bson.M{
+									"$and": bson.A{
+										bson.M{"$gte": bson.A{"$$resolved_exdate.end", 1663849255}},
+										bson.M{"$lte": bson.A{"$$resolved_exdate.begin", 1663849259}},
+									},
 								},
 							},
 						},
@@ -149,6 +134,7 @@ func (w *eventfilterIntervalsWorker) Work(ctx context.Context) {
 
 	if err != nil {
 		w.logger.Error().Err(err).Msg("unable to load eventfilter rules with rrule")
+		return
 	}
 
 	defer cursor.Close(ctx)
@@ -161,26 +147,6 @@ func (w *eventfilterIntervalsWorker) Work(ctx context.Context) {
 		err = cursor.Decode(&ef)
 		if err != nil {
 			w.logger.Error().Err(err).Str("rule_id", ef.ID).Msg("failed to decode the eventfilter with rrule")
-			continue
-		}
-
-		if ef.Start.IsZero() {
-			w.logger.Error().Str("rule_id", ef.ID).Msg("failed to calculate the rrule interval, start date can't be zero")
-			continue
-		}
-
-		if ef.Stop.IsZero() {
-			w.logger.Error().Str("rule_id", ef.ID).Msg("failed to calculate the rrule interval, stop date can't be zero")
-			continue
-		}
-
-		if ef.ResolvedStart.IsZero() {
-			w.logger.Error().Str("rule_id", ef.ID).Msg("failed to calculate the rrule interval, resolved start date can't be zero")
-			continue
-		}
-
-		if ef.ResolvedStop.IsZero() {
-			w.logger.Error().Str("rule_id", ef.ID).Msg("failed to calculate the rrule interval, resolved stop date can't be zero")
 			continue
 		}
 
@@ -198,7 +164,7 @@ func (w *eventfilterIntervalsWorker) Work(ctx context.Context) {
 				continue
 			}
 
-			if opt.Count != 0 {
+			if opt.Count != 0 || ef.ResolvedStart.IsZero() {
 				r.DTStart(ef.Start.Time.In(location))
 			} else {
 				r.DTStart(ef.ResolvedStart.Time.In(location))

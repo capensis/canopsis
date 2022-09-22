@@ -1392,8 +1392,6 @@ definitions:
         type: string
       created:
         type: integer
-      deletable:
-        type: boolean
       description:
         type: string
       exdates:
@@ -1431,7 +1429,6 @@ definitions:
       created:
         type: integer
       description:
-        maxLength: 255
         type: string
       enabled:
         type: boolean
@@ -1470,17 +1467,9 @@ definitions:
       stop:
         $ref: '#/definitions/types.CpsTime'
       type:
-        enum:
-        - break
-        - drop
-        - enrichment
-        - change_entity
         type: string
       updated:
         type: integer
-    required:
-    - description
-    - type
     type: object
   eventfilter.RuleConfig:
     properties:
@@ -3786,9 +3775,9 @@ definitions:
   types.Exdate:
     properties:
       begin:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
       end:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
     type: object
   types.PbehaviorInfo:
     properties:

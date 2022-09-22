@@ -102,7 +102,7 @@ func (v *Validator) validateEventFilter(ctx context.Context, sl validator.Struct
 	}
 
 	if r.Stop == nil && r.Start != nil {
-		sl.ReportError(r.Start, "Stop", "Stop", "required_with", "Start")
+		sl.ReportError(r.Stop, "Stop", "Stop", "required_with", "Start")
 	}
 
 	if r.Stop != nil && r.Start != nil && r.Start.Unix() >= r.Stop.Unix() {
@@ -111,7 +111,7 @@ func (v *Validator) validateEventFilter(ctx context.Context, sl validator.Struct
 
 	if r.RRule != "" && r.Stop == nil && r.Start == nil {
 		sl.ReportError(r.Start, "Start", "Start", "required_with", "RRule")
-		sl.ReportError(r.Start, "Stop", "Stop", "required_with", "RRule")
+		sl.ReportError(r.Stop, "Stop", "Stop", "required_with", "RRule")
 	}
 
 	if r.RRule != "" && !v.checkRrule(r.RRule) {
