@@ -1492,6 +1492,420 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                 />
               </div>
             </button>
+            <div
+              class="flex xs12"
+            >
+              <hr
+                class="v-divider theme--light"
+              />
+            </div>
+          </div>
+          <div
+            class="layout row wrap"
+          >
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <div
+              class="flex xs12"
+            >
+              <hr
+                class="v-divider theme--light"
+              />
+            </div>
           </div>
         </div>
       </transition-stub>
@@ -2994,6 +3408,420 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                 />
               </div>
             </button>
+            <div
+              class="flex xs12"
+            >
+              <hr
+                class="v-divider theme--light"
+              />
+            </div>
+          </div>
+          <div
+            class="layout row wrap"
+          >
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <button
+              class="flowchart-sidebar__button-icon ma-0 v-btn v-btn--flat theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <img
+                  src="[object Object]"
+                />
+              </div>
+            </button>
+            <div
+              class="flex xs12"
+            >
+              <hr
+                class="v-divider theme--light"
+              />
+            </div>
           </div>
         </div>
       </transition-stub>
