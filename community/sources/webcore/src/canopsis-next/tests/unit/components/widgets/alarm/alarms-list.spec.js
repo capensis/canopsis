@@ -299,6 +299,8 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...omit(defaultQuery, ['search', 'tstart', 'tstop', 'filters']),
+          filter: undefined,
+          lockedFilter: null,
           multiSortBy: [],
           page: 1,
           with_instructions: true,
@@ -329,6 +331,8 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...omit(defaultQuery, ['search', 'tstart', 'tstop', 'filters']),
+          filter: undefined,
+          lockedFilter: null,
           multiSortBy: [],
           page: 1,
           with_instructions: true,
