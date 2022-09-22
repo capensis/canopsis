@@ -289,9 +289,11 @@ export default {
     },
 
     callHandlers(event, data) {
+      const cursor = this.normalizeCursor({ x: event.clientX, y: event.clientY });
+
       this.handlers[event.type]?.forEach(func => func({
         event,
-        cursor: this.normalizeCursor({ x: event.clientX, y: event.clientY }),
+        cursor,
         ...data,
       }));
     },
@@ -469,15 +471,15 @@ export default {
         this.moving = false;
         this.movingStart = { x: 0, y: 0 };
         this.movingOffset = { x: 0, y: 0 };
-
-        this.updateShapes(this.data);
       }
 
       if (this.editing) {
         this.editing = false;
         this.editingShape = undefined;
         this.editingLinePoint = undefined;
+      }
 
+      if (!isEqual(this.data, this.shapes)) {
         this.updateShapes(this.data);
       }
     },
