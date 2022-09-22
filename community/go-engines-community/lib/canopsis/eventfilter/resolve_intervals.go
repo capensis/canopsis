@@ -12,11 +12,11 @@ func ResolveIntervals(ef *Rule, rrule *rrule.RRule, now time.Time, location *tim
 		return
 	}
 
-	if ef.ResolvedStart.IsZero() {
+	if ef.ResolvedStart == nil || ef.ResolvedStart.IsZero() {
 		ef.ResolvedStart = &types.CpsTime{Time: ef.Start.Time}
 	}
 
-	if ef.ResolvedStop.IsZero() {
+	if ef.ResolvedStop == nil || ef.ResolvedStop.IsZero() {
 		ef.ResolvedStop = &types.CpsTime{Time: ef.Stop.Time}
 	}
 
