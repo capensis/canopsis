@@ -86,7 +86,7 @@ const (
 )
 
 const (
-	socketTimeout = 5 * time.Second
+	socketTimeout = 15 * time.Second
 )
 
 type SingleResultHelper interface {
