@@ -2,35 +2,40 @@ Feature: create a job
   I need to be able to create a job
   Only admin should be able to create a job
 
-  Scenario: POST a valid job but unauthorized
+  Scenario: given create request and no auth user should not allow access
     When I do POST /api/v4/cat/jobs
     Then the response code should be 401
 
-  Scenario: POST a valid job but without permissions
+  Scenario: given create request and auth user without permissions should not allow access
     When I am noperms
     When I do POST /api/v4/cat/jobs
     Then the response code should be 403
 
-  Scenario: POST a valid job
+  Scenario: given create request should return ok
     When I am admin
     When I do POST /api/v4/cat/jobs:
     """json
     {
-      "name": "test-job-name",
+      "name": "test-job-to-create-1",
       "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "query": {
         "resource": "{{ `{{ .Alarm.Value.Resource }}` }}"
       },
-      "multiple_executions": true
+      "multiple_executions": true,
+      "retry_amount": 3,
+      "retry_interval": {
+        "value": 10,
+        "unit": "s"
+      }
     }
     """
     Then the response code should be 201
     Then the response body should contain:
     """json
     {
-      "name": "test-job-name",
+      "name": "test-job-to-create-1",
       "author": {
         "_id": "root",
         "name": "root"
@@ -47,29 +52,20 @@ Feature: create a job
       "query": {
         "resource": "{{ `{{ .Alarm.Value.Resource }}` }}"
       },
-      "multiple_executions": true
+      "multiple_executions": true,
+      "retry_amount": 3,
+      "retry_interval": {
+        "value": 10,
+        "unit": "s"
+      }
     }
     """
-
-  Scenario: POST a valid job
-    When I am admin
-    When I do POST /api/v4/cat/jobs:
-    """json
-    {
-      "name": "test-job-name-2",
-      "config": "test-job-config-to-edit-job",
-      "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-      "multiple_executions": false
-    }
-    """
-    Then the response code should be 201
     When I do GET /api/v4/cat/jobs/{{ .lastResponse._id}}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "name": "test-job-name-2",
+      "name": "test-job-to-create-1",
       "author": {
         "_id": "root",
         "name": "root"
@@ -82,18 +78,26 @@ Feature: create a job
         "type": "rundeck"
       },
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-      "multiple_executions": false
+      "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "query": {
+        "resource": "{{ `{{ .Alarm.Value.Resource }}` }}"
+      },
+      "multiple_executions": true,
+      "retry_amount": 3,
+      "retry_interval": {
+        "value": 10,
+        "unit": "s"
+      }
     }
     """
 
-  Scenario: POST a valid job with custom id
+  Scenario: given create request with custom id should return ok
     When I am admin
     When I do POST /api/v4/cat/jobs:
     """json
     {
-      "_id": "custom-id",
-      "name": "test-job-name-2-custom-id-1",
+      "_id": "test-job-to-create-2",
+      "name": "test-job-to-create-2-name",
       "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
@@ -101,16 +105,16 @@ Feature: create a job
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/cat/jobs/custom-id
+    When I do GET /api/v4/cat/jobs/test-job-to-create-2
     Then the response code should be 200
 
-  Scenario: POST a valid job with custom id that already exist should cause dup error
+  Scenario: given create request with custom id that already exists should cause dup error
     When I am admin
     When I do POST /api/v4/cat/jobs:
     """json
     {
-      "_id": "test-job-to-update",
-      "name": "test-job-name-2-custom-id-2",
+      "_id": "test-job-to-check-unique",
+      "name": "test-job-to-create-3-name",
       "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
@@ -127,12 +131,12 @@ Feature: create a job
     }
     """
 
-  Scenario: POST an invalid job where name already exists
+  Scenario: given create request the name that already exists should cause dup error
     When I am admin
     When I do POST /api/v4/cat/jobs:
     """json
     {
-      "name": "test-job-name-to-get",
+      "name": "test-job-to-check-unique-name",
       "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
@@ -149,7 +153,7 @@ Feature: create a job
     }
     """
 
-  Scenario: POST an invalid job where config doesn't exist
+  Scenario: given invalid create request should return errors
     When I am admin
     When I do POST /api/v4/cat/jobs:
     """json

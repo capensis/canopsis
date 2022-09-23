@@ -8,13 +8,25 @@ Feature: update an instruction statistics
     {
       "type": 0,
       "name": "test-instruction-to-stats-update-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-stats-update-1-1"
-        },
-        {
-          "name": "test-resource-to-stats-update-1-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-1-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-1-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-stats-update-1-description",
       "enabled": true,
@@ -278,13 +290,25 @@ Feature: update an instruction statistics
     {
       "type": 1,
       "name": "test-instruction-to-stats-update-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-stats-update-2-1"
-        },
-        {
-          "name": "test-resource-to-stats-update-2-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-2-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-2-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-stats-update-2-description",
       "enabled": true,
@@ -349,7 +373,7 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-2"
     }
     """
-    When I wait the end of 3 events processing
+    When I wait the end of 5 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-stats-update-2-2
     Then the response code should be 200
     When I save response alarm2ID={{ (index .lastResponse.data 0)._id }}
@@ -532,13 +556,25 @@ Feature: update an instruction statistics
     {
       "type": 0,
       "name": "test-instruction-to-stats-update-3-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-stats-update-3-1"
-        },
-        {
-          "name": "test-resource-to-stats-update-3-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-3-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-3-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-stats-update-3-description",
       "enabled": true,
@@ -784,13 +820,25 @@ Feature: update an instruction statistics
     {
       "type": 1,
       "name": "test-instruction-to-stats-update-4-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-stats-update-4-1"
-        },
-        {
-          "name": "test-resource-to-stats-update-4-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-4-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-stats-update-4-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-stats-update-4-description",
       "enabled": true,
@@ -855,7 +903,7 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-4"
     }
     """
-    When I wait the end of 4 events processing
+    When I wait the end of 5 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-stats-update-4-2
     Then the response code should be 200
     When I save response alarm2ID={{ (index .lastResponse.data 0)._id }}

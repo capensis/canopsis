@@ -18,7 +18,7 @@ import viewModule from './view';
 import roleModule from './role';
 import userModule from './user';
 import permissionModule from './permission';
-import eventFilterRuleModule from './event-filter-rule';
+import eventFilterModule from './event-filter';
 import infoModule from './info';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
@@ -44,6 +44,7 @@ import messageRateStatsModule from './message-rate-stats';
 import metricsModule from './metrics';
 import filterModule from './filter';
 import ratingSettingsModule from './rating-settings';
+import patternModule from './pattern';
 
 export default {
   alarm: alarmModule,
@@ -59,7 +60,7 @@ export default {
   role: roleModule,
   user: userModule,
   permission: permissionModule,
-  eventFilterRule: eventFilterRuleModule,
+  eventFilter: eventFilterModule,
   info: infoModule,
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,
@@ -92,4 +93,5 @@ export default {
   metrics: metricsModule,
   filter: filterModule,
   ratingSettings: ratingSettingsModule,
+  pattern: patternModule,
 };

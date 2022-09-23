@@ -23,7 +23,7 @@ exports[`c-operator-field Renders \`c-operator-field\` with custom props correct
           >
             <input
               aria-checked="false"
-              aria-label="common.and"
+              aria-label="And"
               name="customName"
               role="radio"
               type="radio"
@@ -44,7 +44,7 @@ exports[`c-operator-field Renders \`c-operator-field\` with custom props correct
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
-            common.and
+            And
           </label>
         </div>
         <div
@@ -55,7 +55,7 @@ exports[`c-operator-field Renders \`c-operator-field\` with custom props correct
           >
             <input
               aria-checked="false"
-              aria-label="common.or"
+              aria-label="Or"
               name="customName"
               role="radio"
               type="radio"
@@ -76,7 +76,7 @@ exports[`c-operator-field Renders \`c-operator-field\` with custom props correct
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
-            common.or
+            Or
           </label>
         </div>
       </div>
@@ -108,7 +108,7 @@ exports[`c-operator-field Renders \`c-operator-field\` with default props correc
           >
             <input
               aria-checked="false"
-              aria-label="common.and"
+              aria-label="And"
               name="operator"
               role="radio"
               type="radio"
@@ -129,7 +129,7 @@ exports[`c-operator-field Renders \`c-operator-field\` with default props correc
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
-            common.and
+            And
           </label>
         </div>
         <div
@@ -140,7 +140,7 @@ exports[`c-operator-field Renders \`c-operator-field\` with default props correc
           >
             <input
               aria-checked="false"
-              aria-label="common.or"
+              aria-label="Or"
               name="operator"
               role="radio"
               type="radio"
@@ -161,7 +161,7 @@ exports[`c-operator-field Renders \`c-operator-field\` with default props correc
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
-            common.or
+            Or
           </label>
         </div>
       </div>

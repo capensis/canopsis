@@ -13,7 +13,7 @@ const localVue = createVueInstance();
 
 const stubs = {
   'c-quick-date-interval-field': true,
-  'c-filters-field': true,
+  'c-filter-field': true,
   'kpi-rating-criteria-field': true,
   'kpi-rating-metric-field': true,
   'c-records-per-page-field': true,
@@ -91,7 +91,7 @@ describe('kpi-rating-filters', () => {
       },
     });
 
-    const filtersField = wrapper.find('c-filters-field-stub');
+    const filtersField = wrapper.find('c-filter-field-stub');
 
     filtersField.vm.$emit('input', expectedFilter);
 

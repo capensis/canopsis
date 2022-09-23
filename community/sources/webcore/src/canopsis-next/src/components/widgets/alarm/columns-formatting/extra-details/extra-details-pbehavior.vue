@@ -15,11 +15,8 @@
           div {{ tstart }}
             template(v-if="pbehavior.tstop") &nbsp;- {{ tstop }}
           div(v-if="pbehavior.rrule") {{ pbehavior.rrule }}
-          div(
-            v-for="comment in pbehavior.comments",
-            :key="comment._id"
-          ) {{ $tc('common.comment', pbehavior.comments.length) }}:
-            div.ml-2 - {{ comment.author }}: {{ comment.message }}
+          div(v-if="pbehavior.last_comment") {{ $t('common.lastComment') }}:
+            div.ml-2 - {{ pbehavior.last_comment.author }}: {{ pbehavior.last_comment.message }}
           v-divider
 </template>
 

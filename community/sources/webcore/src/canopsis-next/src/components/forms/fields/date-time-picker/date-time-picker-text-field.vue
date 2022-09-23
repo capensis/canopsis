@@ -3,17 +3,15 @@
     v-layout
       v-flex
         v-text-field(
-          data-test="dateTimePickerTextField",
-          :value="value",
+          v-field="value",
           :label="label",
           :name="name",
           :error-messages="errorMessages",
           @focus="focus",
-          @blur="blur",
-          @input="updateModel($event)"
+          @blur="blur"
         )
       v-flex
-        date-time-picker-button(
+        date-time-picker-menu(
           :value="objectValue",
           :label="label",
           :round-hours="roundHours",
@@ -27,11 +25,10 @@ import { isEmpty } from 'lodash';
 import { DATETIME_FORMATS } from '@/constants';
 
 import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date';
-import uid from '@/helpers/uid';
 
 import { formBaseMixin } from '@/mixins/form';
 
-import DateTimePickerButton from './date-time-picker-button.vue';
+import DateTimePickerMenu from './date-time-picker-menu.vue';
 
 export default {
   $_veeValidate: {
@@ -44,7 +41,7 @@ export default {
     },
   },
   inject: ['$validator'],
-  components: { DateTimePickerButton },
+  components: { DateTimePickerMenu },
   mixins: [formBaseMixin],
   model: {
     prop: 'value',
@@ -86,6 +83,10 @@ export default {
 
       return [];
     },
+
+    ruleName() {
+      return `picker_format_${this.name}`;
+    },
   },
   watch: {
     value: {
@@ -97,47 +98,37 @@ export default {
       },
     },
 
-    isFocusedTextField(value) {
-      if (!value) {
+    isFocusedTextField(focused) {
+      if (!focused) {
         this.setObjectValue(this.value);
       }
     },
   },
   created() {
-    if (this.$validator) {
-      const pickerFormatRuleName = `picker_format_${uid()}`;
-
-      this.$validator.extend(pickerFormatRuleName, {
-        getMessage: () => this.$t('errors.endDateLessOrEqualStartDate'),
-        validate: (value) => {
-          try {
-            if (!isEmpty(value)) {
-              return Boolean(this.dateObjectPreparer(value));
-            }
-
-            return true;
-          } catch (err) {
-            return false;
-          }
-        },
-      });
-
+    if (this.$validator && this.name) {
       this.$validator.attach({
         name: this.name,
-        rules: pickerFormatRuleName,
+        rules: {
+          picker_format: {
+            preparer: this.dateObjectPreparer,
+          },
+        },
         getter: () => this.value,
         context: () => this,
+        vm: this,
       });
     }
   },
   beforeDestroy() {
-    if (this.$validator) {
+    if (this.$validator && this.name) {
       this.$validator.detach(this.name);
     }
   },
   methods: {
     updateObjectField(value) {
-      this.updateModel(convertDateToString(value, DATETIME_FORMATS.dateTimePicker));
+      this.updateModel(
+        convertDateToString(value, DATETIME_FORMATS.dateTimePicker),
+      );
     },
 
     focus() {

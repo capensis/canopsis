@@ -2,7 +2,7 @@
   c-no-events-icon.mr-1(v-if="isNoEventsStatus", :value="idleSince", color="red", top)
   v-tooltip(v-else, top)
     v-icon(slot="activator", :color="statusColor") {{ status.icon }}
-    span {{ $t(`alarmStatuses.${statusValue}`) }}
+    span {{ $t(`common.statusTypes.${statusValue}`) }}
 </template>
 
 <script>

@@ -30,16 +30,16 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with date in prev
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.declareTicket
+      Declare ticket
     </strong>
     <div>
-      common.by : ticket-author
+      By : ticket-author
     </div>
     <div>
-      common.date : 07/08/2013 19:00:00
+      Date : 07/08/2013 19:00:00
     </div>
     <div>
-      alarmList.actions.iconsFields.ticketNumber : ticket-message
+      Ticket number : ticket-message
     </div>
   </div>
 </div>
@@ -75,16 +75,16 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full ticket 
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.declareTicket
+      Declare ticket
     </strong>
     <div>
-      common.by : ticket-author
+      By : ticket-author
     </div>
     <div>
-      common.date : 6:00:00
+      Date : 6:00:00
     </div>
     <div>
-      alarmList.actions.iconsFields.ticketNumber : ticket-message
+      Ticket number : ticket-message
     </div>
   </div>
 </div>
@@ -120,13 +120,13 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` without value 2`]
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.declareTicket
+      Declare ticket
     </strong>
     <div>
-      common.by : ticket-author
+      By : ticket-author
     </div>
     <div>
-      common.date : 6:00:00
+      Date : 6:00:00
     </div>
     <!---->
   </div>

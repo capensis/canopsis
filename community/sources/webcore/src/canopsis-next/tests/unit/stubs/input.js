@@ -42,7 +42,12 @@ export const createSelectInputStub = className => ({
     },
   },
   template: `
-    <select class="${className}" :value="value" @change="$listeners.input($event.target.value)">
+    <select
+      v-on="$listeners"
+      class="${className}"
+      :value="value"
+      @change="$listeners.input($event.target.value)"
+    >
       <option v-for="item in availableItems" :value="getValue(item)" :key="getValue(item)">
         <slot name="prepend-item" />
         {{ item.value }}
@@ -66,4 +71,16 @@ export const createTextareaInputStub = className => ({
       }
     },
   },
+});
+
+export const createCheckboxInputStub = className => ({
+  props: ['inputValue'],
+  template: `
+    <input
+      :checked="inputValue"
+      type="checkbox"
+      class="${className}"
+      @change="$listeners.change($event.target.checked)"
+    />
+  `,
 });

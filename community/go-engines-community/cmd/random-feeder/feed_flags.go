@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+
 	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 )
 
@@ -12,6 +13,7 @@ func (f *Flags) ParseArgs() error {
 	flagFeederTime := flag.Int("time", int(60), "feeder duration")
 	flagAlarms := flag.Int("alarms", 20, "percent of alarms")
 	flagExchange := flag.String("exchange", cps.CheExchangeName, "exchange name to publish events to")
+	version := flag.Bool("version", false, "Show the version information")
 
 	flag.Parse()
 
@@ -21,15 +23,17 @@ func (f *Flags) ParseArgs() error {
 	f.Alarms = *flagAlarms
 	f.FeederTime = *flagFeederTime
 	f.ExchangeName = *flagExchange
+	f.Version = *version
 
 	return nil
 }
 
 type Flags struct {
-	EventsPerSec 		int
-	NewResourcesPerSec  int
-	Alarms       		int
-	DumpFile 			string
-	FeederTime 			int
-	ExchangeName 		string
+	Version            bool
+	EventsPerSec       int
+	NewResourcesPerSec int
+	Alarms             int
+	DumpFile           string
+	FeederTime         int
+	ExchangeName       string
 }

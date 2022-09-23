@@ -112,7 +112,7 @@ export default {
         },
       ];
 
-      const enginesLink = this.isCatVersion
+      const enginesLink = this.isProVersion
         ? {
           route: { name: ROUTES_NAMES.adminHealthcheck },
           icon: '$vuetify.icons.alt_route',
