@@ -391,18 +391,20 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       </div>
     </foreignobject>
   </g>
-  <g>
+  <g
+    class="image-shape"
+  >
     <rect
       data-type="image"
-      height="130"
-      width="130"
+      height="40"
+      width="40"
       x="0"
       y="0"
     />
     <image
       cursor="move"
-      height="130"
-      width="130"
+      height="40"
+      width="40"
       x="0"
       y="0"
     />
@@ -413,7 +415,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
     >
       <div
         class="text-shape-editor text-shape-editor--align-center text-shape-editor--justify-center"
-        style="top: 130px; left: 65px; width: 1px; height: 1em;"
+        style="top: 45px; left: 20px; width: 1px; height: 1em;"
       >
         <div
           class="text-shape-editor__wrapper"
@@ -862,18 +864,20 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       </div>
     </foreignobject>
   </g>
-  <g>
+  <g
+    class="image-shape"
+  >
     <rect
       data-type="image"
-      height="130"
-      width="130"
+      height="40"
+      width="40"
       x="0"
       y="0"
     />
     <image
       cursor=""
-      height="130"
-      width="130"
+      height="40"
+      width="40"
       x="0"
       y="0"
     />
@@ -884,7 +888,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
     >
       <div
         class="text-shape-editor text-shape-editor--align-center text-shape-editor--justify-center"
-        style="top: 130px; left: 65px; width: 1px; height: 1em;"
+        style="top: 45px; left: 20px; width: 1px; height: 1em;"
       >
         <div
           class="text-shape-editor__wrapper"

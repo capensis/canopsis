@@ -141,7 +141,7 @@ export default {
     },
 
     fillValue() {
-      return getPropertyValueByShapes(this.shapesWithStroke, 'properties.fill');
+      return getPropertyValueByShapes(this.shapesWithFill, 'properties.fill');
     },
 
     stroke() {
@@ -153,7 +153,7 @@ export default {
     },
 
     lineType() {
-      return getPropertyValueByShapes(this.shapesWithStroke, 'lineType');
+      return getPropertyValueByShapes(this.selectedShapes, 'lineType');
     },
 
     strokeWidth() {
