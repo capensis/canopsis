@@ -1,33 +1,31 @@
 package pbehavior
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/pbehavior/pbehavior.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior Service,EntityMatcher,ModelProvider,EventManager,ComputedEntityMatcher,Store,EntityTypeResolver
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/pbehavior/pbehavior.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior Service,EntityMatcher,ModelProvider,EventManager,ComputedEntityMatcher,Store,EntityTypeResolver,ComputedEntityTypeResolver,TypeComputer
 
 import (
 	"context"
 	"errors"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/bsm/redislock"
+	"github.com/rs/zerolog"
 	"time"
 )
 
 // Service computes pbehavior timespans and figures out state
 // of provided entity by computed data.
 type Service interface {
-	Compute(ctx context.Context, span timespan.Span) (int, error)
-	Recompute(ctx context.Context) error
-	RecomputeByID(ctx context.Context, pbehaviorID string) error
-	RecomputeByIds(ctx context.Context, pbehaviorIds []string) error
-
-	Resolve(ctx context.Context, entityID string, t time.Time) (ResolveResult, error)
+	Compute(ctx context.Context, span timespan.Span) (ComputedEntityTypeResolver, int, error)
+	Recompute(ctx context.Context) (ComputedEntityTypeResolver, error)
+	RecomputeByIds(ctx context.Context, pbehaviorIds []string) (ComputedEntityTypeResolver, error)
 }
 
 // service uses TypeComputer to compute data and TypeResolver to resolve type by this data.
 type service struct {
-	resolver       TypeResolver
+	dbClient       mongo.DbClient
 	computer       TypeComputer
-	matcher        ComputedEntityMatcher
 	store          Store
 	workerPoolSize int
 
@@ -36,57 +34,61 @@ type service struct {
 	lockDuration time.Duration
 	lockBackoff  time.Duration
 	lockRetries  int
+
+	logger zerolog.Logger
 }
 
 // NewService creates new service.
 func NewService(
-	modelProvider ModelProvider,
-	matcher ComputedEntityMatcher,
+	dbClient mongo.DbClient,
+	computer TypeComputer,
 	store Store,
 	lockClient redis.LockClient,
+	logger zerolog.Logger,
 ) Service {
 	return &service{
+		dbClient:       dbClient,
 		store:          store,
-		computer:       NewTypeComputer(modelProvider),
-		matcher:        matcher,
+		computer:       computer,
 		workerPoolSize: DefaultPoolSize,
 		lockClient:     lockClient,
 		lockKey:        redis.RecomputeLockKey,
 		lockDuration:   redis.RecomputeLockDuration,
 		lockBackoff:    time.Second,
 		lockRetries:    10,
+		logger:         logger,
 	}
 }
 
-func (s *service) Compute(ctx context.Context, span timespan.Span) (int, error) {
+func (s *service) Compute(ctx context.Context, span timespan.Span) (ComputedEntityTypeResolver, int, error) {
 	currentSpan, err := s.store.GetSpan(ctx)
 	if err == nil {
 		if currentSpan.To().Sub(span.From()) >= span.To().Sub(span.From())/2 {
-			err := s.load(ctx, currentSpan)
+			r, err := s.load(ctx, currentSpan)
 			if err != nil {
-				return 0, err
+				return nil, 0, err
 			}
 
-			return -1, nil
+			return r, -1, nil
 		}
 	} else if !errors.Is(err, ErrNoComputed) {
-		return 0, err
+		return nil, 0, err
 	}
 
 	return s.compute(ctx, &span)
 }
 
-func (s *service) Recompute(ctx context.Context) error {
-	_, err := s.compute(ctx, nil)
-	return err
+func (s *service) Recompute(ctx context.Context) (ComputedEntityTypeResolver, error) {
+	r, _, err := s.compute(ctx, nil)
+	return r, err
 }
 
-func (s *service) RecomputeByID(ctx context.Context, pbehaviorID string) (resErr error) {
+func (s *service) RecomputeByIds(ctx context.Context, pbehaviorIds []string) (_ ComputedEntityTypeResolver, resErr error) {
 	lock, err := s.lockClient.Obtain(ctx, s.lockKey, s.lockDuration, &redislock.Options{
 		RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(s.lockBackoff), s.lockRetries),
 	})
 	if err != nil {
-		return fmt.Errorf("cannot obtain lock: %w", err)
+		return nil, fmt.Errorf("cannot obtain lock: %w", err)
 	}
 
 	defer func() {
@@ -98,52 +100,12 @@ func (s *service) RecomputeByID(ctx context.Context, pbehaviorID string) (resErr
 
 	span, err := s.store.GetSpan(ctx)
 	if err != nil {
-		return err
-	}
-	res, err := s.computer.ComputeByIds(ctx, span, []string{pbehaviorID})
-	if err != nil {
-		return err
-	}
-
-	computedPbehavior := res.ComputedPbehaviors[pbehaviorID]
-	if computedPbehavior.Name == "" {
-		err = s.store.DelComputedPbehavior(ctx, pbehaviorID)
-		if err != nil {
-			return err
-		}
-	} else {
-		err = s.store.SetComputedPbehavior(ctx, pbehaviorID, computedPbehavior)
-		if err != nil {
-			return err
-		}
-	}
-
-	return s.load(ctx, span)
-}
-
-func (s *service) RecomputeByIds(ctx context.Context, pbehaviorIds []string) (resErr error) {
-	lock, err := s.lockClient.Obtain(ctx, s.lockKey, s.lockDuration, &redislock.Options{
-		RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(s.lockBackoff), s.lockRetries),
-	})
-	if err != nil {
-		return fmt.Errorf("cannot obtain lock: %w", err)
-	}
-
-	defer func() {
-		err = lock.Release(ctx)
-		if err != nil && !errors.Is(err, redislock.ErrLockNotHeld) && resErr == nil {
-			resErr = fmt.Errorf("cannot release lock: %w", err)
-		}
-	}()
-
-	span, err := s.store.GetSpan(ctx)
-	if err != nil {
-		return err
+		return nil, err
 	}
 
 	res, err := s.computer.ComputeByIds(ctx, span, pbehaviorIds)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for _, pbehaviorID := range pbehaviorIds {
@@ -152,12 +114,12 @@ func (s *service) RecomputeByIds(ctx context.Context, pbehaviorIds []string) (re
 		if computedPbehavior.Name == "" {
 			err = s.store.DelComputedPbehavior(ctx, pbehaviorID)
 			if err != nil {
-				return err
+				return nil, err
 			}
 		} else {
 			err = s.store.SetComputedPbehavior(ctx, pbehaviorID, computedPbehavior)
 			if err != nil {
-				return err
+				return nil, err
 			}
 		}
 	}
@@ -165,25 +127,12 @@ func (s *service) RecomputeByIds(ctx context.Context, pbehaviorIds []string) (re
 	return s.load(ctx, span)
 }
 
-func (s *service) Resolve(ctx context.Context, entityID string, t time.Time) (ResolveResult, error) {
-	if s.resolver == nil {
-		return ResolveResult{}, ErrNoComputed
-	}
-
-	pbhIDs, err := s.matcher.Match(ctx, entityID)
-	if err != nil || len(pbhIDs) == 0 {
-		return ResolveResult{}, err
-	}
-
-	return s.resolver.Resolve(ctx, t, pbhIDs)
-}
-
-func (s *service) compute(ctx context.Context, span *timespan.Span) (count int, resErr error) {
+func (s *service) compute(ctx context.Context, span *timespan.Span) (_ ComputedEntityTypeResolver, _ int, resErr error) {
 	lock, err := s.lockClient.Obtain(ctx, s.lockKey, s.lockDuration, &redislock.Options{
 		RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(s.lockBackoff), s.lockRetries),
 	})
 	if err != nil {
-		return 0, fmt.Errorf("cannot obtain lock: %w", err)
+		return nil, 0, fmt.Errorf("cannot obtain lock: %w", err)
 	}
 
 	defer func() {
@@ -196,62 +145,80 @@ func (s *service) compute(ctx context.Context, span *timespan.Span) (count int, 
 	if span == nil {
 		currentSpan, err := s.store.GetSpan(ctx)
 		if err != nil {
-			return 0, err
+			return nil, 0, err
 		}
 		span = &currentSpan
 	}
 
 	res, err := s.computer.Compute(ctx, *span)
 	if err != nil {
-		return 0, err
+		return nil, 0, err
 	}
 
 	err = s.store.SetSpan(ctx, *span)
 	if err != nil {
-		return 0, err
+		return nil, 0, err
 	}
 
 	err = s.store.SetComputed(ctx, res)
 	if err != nil {
-		return 0, err
+		return nil, 0, err
 	}
 
-	s.resolver = NewTypeResolver(
+	resolver := NewTypeResolver(
 		*span,
 		res.ComputedPbehaviors,
 		res.TypesByID,
 		res.DefaultActiveType,
+		s.logger,
 	)
-
-	err = s.matcher.LoadAll(ctx, getFilters(res.ComputedPbehaviors))
+	matcher := NewComputedEntityMatcher(s.dbClient)
+	queries := s.getQueries(res.ComputedPbehaviors)
+	err = matcher.LoadAll(ctx, queries)
 	if err != nil {
-		return 0, err
+		return nil, 0, err
 	}
 
-	return len(res.ComputedPbehaviors), nil
+	return NewComputedEntityTypeResolver(matcher, resolver), len(res.ComputedPbehaviors), nil
 }
 
-func (s *service) load(ctx context.Context, span timespan.Span) error {
+func (s *service) load(ctx context.Context, span timespan.Span) (ComputedEntityTypeResolver, error) {
 	data, err := s.store.GetComputed(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	s.resolver = NewTypeResolver(
+	resolver := NewTypeResolver(
 		span,
 		data.ComputedPbehaviors,
 		data.TypesByID,
 		data.DefaultActiveType,
+		s.logger,
 	)
-
-	return s.matcher.LoadAll(ctx, getFilters(data.ComputedPbehaviors))
-}
-
-func getFilters(computed map[string]ComputedPbehavior) map[string]string {
-	filters := make(map[string]string, len(computed))
-	for id, pbehavior := range computed {
-		filters[id] = pbehavior.Filter
+	matcher := NewComputedEntityMatcher(s.dbClient)
+	queries := s.getQueries(data.ComputedPbehaviors)
+	err = matcher.LoadAll(ctx, queries)
+	if err != nil {
+		return nil, err
 	}
 
-	return filters
+	return NewComputedEntityTypeResolver(matcher, resolver), nil
+}
+
+func (s *service) getQueries(computed map[string]ComputedPbehavior) map[string]interface{} {
+	queries := make(map[string]interface{}, len(computed))
+	for id, pbehavior := range computed {
+		if len(pbehavior.OldMongoQuery) > 0 {
+			queries[id] = pbehavior.OldMongoQuery
+		} else {
+			query, err := pbehavior.Pattern.ToMongoQuery("")
+			if err != nil {
+				s.logger.Err(err).Str("pbehavior", id).Msg("pbehavior has invalid pattern")
+				continue
+			}
+			queries[id] = query
+		}
+	}
+
+	return queries
 }

@@ -29,6 +29,7 @@ func NewStore(dbClient mongo.DbClient, widgetStore widget.Store) Store {
 		client:             dbClient,
 		collection:         dbClient.Collection(mongo.ViewTabMongoCollection),
 		widgetCollection:   dbClient.Collection(mongo.WidgetMongoCollection),
+		filterCollection:   dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		playlistCollection: dbClient.Collection(mongo.PlaylistMongoCollection),
 		userPrefCollection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
 
@@ -40,6 +41,7 @@ type store struct {
 	client             mongo.DbClient
 	collection         mongo.DbCollection
 	widgetCollection   mongo.DbCollection
+	filterCollection   mongo.DbCollection
 	playlistCollection mongo.DbCollection
 	userPrefCollection mongo.DbCollection
 
@@ -84,13 +86,37 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			"as":           "widgets",
 		}},
 		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.WidgetFiltersMongoCollection,
+			"localField":   "widgets._id",
+			"foreignField": "widget",
+			"as":           "filters",
+		}},
+		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{"filters.title": 1}},
+		{"$group": bson.M{
+			"_id": bson.M{
+				"_id":    "_id",
+				"widget": "$widgets._id",
+			},
+			"data":    bson.M{"$first": "$$ROOT"},
+			"widgets": bson.M{"$first": "$widgets"},
+			"filters": bson.M{"$push": "$filters"},
+		}},
+		{"$addFields": bson.M{
+			"_id": "$_id._id",
+			"widgets.filters": bson.M{"$filter": bson.M{
+				"input": "$filters",
+				"cond":  bson.M{"$eq": bson.A{"$$this.is_private", false}},
+			}},
+		}},
 		{"$sort": bson.D{
 			{Key: "widgets.grid_parameters.desktop.y", Value: 1},
 			{Key: "widgets.grid_parameters.desktop.x", Value: 1},
 		}},
 		{"$group": bson.M{
 			"_id":     "$_id",
-			"data":    bson.M{"$first": "$$ROOT"},
+			"data":    bson.M{"$first": "$data"},
 			"widgets": bson.M{"$push": "$widgets"},
 		}},
 		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
@@ -346,6 +372,11 @@ func (s *store) deleteWidgets(ctx context.Context, id string) error {
 	}
 
 	_, err = s.userPrefCollection.DeleteMany(ctx, bson.M{"widget": bson.M{"$in": widgetIds}})
+	if err != nil {
+		return err
+	}
+
+	_, err = s.filterCollection.DeleteMany(ctx, bson.M{"widget": bson.M{"$in": widgetIds}})
 	if err != nil {
 		return err
 	}

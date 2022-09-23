@@ -1,10 +1,5 @@
 import Vue from 'vue';
-import {
-  omit,
-  isObject,
-  isString,
-  cloneDeep,
-} from 'lodash';
+import { omit, isObject, cloneDeep } from 'lodash';
 import {
   CalendarEvent,
   DaySpan,
@@ -14,6 +9,10 @@ import {
 
 import { COLORS } from '@/config';
 
+import { PATTERNS_FIELDS } from '@/constants';
+
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
+
 import uid from '@/helpers/uid';
 import {
   convertDateToTimestampByTimezone,
@@ -21,6 +20,7 @@ import {
   getLocaleTimezone,
 } from '@/helpers/date/date';
 import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/entities';
+import { getRandomHexColor } from '@/helpers/color';
 
 /**
  * @typedef {Object} PbehaviorReason
@@ -69,17 +69,17 @@ import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/help
  */
 
 /**
- * @typedef {Object} Pbehavior
+ * @typedef {FilterPatterns} Pbehavior
  * @property {string} _id
  * @property {string} author
  * @property {boolean} enabled
- * @property {Object | string} filter
  * @property {string} name
  * @property {string} rrule
  * @property {boolean} start_on_trigger
  * @property {Duration} duration
  * @property {number} tstart
  * @property {number} tstop
+ * @property {string} color
  * @property {PbehaviorType} type
  * @property {PbehaviorReason} reason
  * @property {PbehaviorComment[]} comments
@@ -93,6 +93,7 @@ import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/help
  * @property {PbehaviorExceptionForm[]} exceptions
  * @property {PbehaviorExdateForm[]} exdates
  * @property {Duration} duration
+ * @property {FilterPatternsForm} patterns
  */
 
 /**
@@ -159,13 +160,13 @@ export const exceptionsToRequest = (exceptions = []) => exceptions.map(exception
  * Convert pbehavior entity to form data.
  *
  * @param {Pbehavior} [pbehavior = {}]
- * @param {string|Object} [filter = null]
+ * @param {string|Object} [entityPattern]
  * @param {string} [timezone = getLocaleTimezone()]
  * @return {PbehaviorForm}
  */
 export const pbehaviorToForm = (
   pbehavior = {},
-  filter = null,
+  entityPattern,
   timezone = getLocaleTimezone(),
 ) => {
   let rrule = pbehavior.rrule ?? null;
@@ -174,10 +175,16 @@ export const pbehaviorToForm = (
     ({ rrule } = pbehavior.rrule);
   }
 
-  const resultFilter = filter ?? pbehavior.filter ?? {};
+  const patterns = filterPatternsToForm(
+    entityPattern
+      ? { entity_pattern: entityPattern }
+      : pbehavior,
+    [PATTERNS_FIELDS.entity],
+  );
 
   return {
     rrule,
+    patterns,
     _id: pbehavior._id ?? uid('pbehavior'),
     color: pbehavior.color ?? COLORS.secondary,
     enabled: pbehavior.enabled ?? true,
@@ -186,7 +193,6 @@ export const pbehaviorToForm = (
     reason: cloneDeep(pbehavior.reason),
     tstart: pbehavior.tstart ? convertDateToDateObjectByTimezone(pbehavior.tstart, timezone) : null,
     tstop: pbehavior.tstop ? convertDateToDateObjectByTimezone(pbehavior.tstop, timezone) : null,
-    filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
     exceptions: pbehavior.exceptions ? addKeyInEntities(cloneDeep(pbehavior.exceptions)) : [],
     comments: pbehavior.comments ? addKeyInEntities(cloneDeep(pbehavior.comments)) : [],
     exdates: pbehavior.exdates ? pbehavior.exdates.map(exdate => exdateToForm(exdate, timezone)) : [],
@@ -210,7 +216,7 @@ export const pbehaviorToDuplicateForm = pbehavior => ({
  * @return {Pbehavior}
  */
 export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
-  ...form,
+  ...omit(form, ['patterns']),
 
   enabled: form.enabled ?? true,
   reason: form.reason,
@@ -220,19 +226,20 @@ export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
   exceptions: removeKeyFromEntities(form.exceptions),
   tstart: form.tstart ? convertDateToTimestampByTimezone(form.tstart, timezone) : null,
   tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
+  ...formFilterToPatterns(form.patterns),
 });
 
 /**
  * Convert calendar event to pbehavior form data
  *
  * @param {CalendarEvent} calendarEvent
- * @param {string|Object} filter
+ * @param {Array} entityPattern
  * @param {string} [timezone = getLocaleTimezone()]
  * @return {PbehaviorForm}
  */
 export const calendarEventToPbehaviorForm = (
   calendarEvent,
-  filter,
+  entityPattern,
   timezone = getLocaleTimezone(),
 ) => {
   const {
@@ -243,7 +250,7 @@ export const calendarEventToPbehaviorForm = (
   } = calendarEvent;
 
   const form = {
-    ...pbehaviorToForm(pbehavior, filter, timezone),
+    ...pbehaviorToForm(pbehavior, entityPattern, timezone),
     ...cachedForm,
   };
 
@@ -315,6 +322,10 @@ export const pbehaviorToRequest = (pbehavior) => {
 
   if (pbehavior.exceptions) {
     result.exceptions = exceptionsToRequest(pbehavior.exceptions);
+  }
+
+  if (!pbehavior.color) {
+    result.color = getRandomHexColor();
   }
 
   return result;

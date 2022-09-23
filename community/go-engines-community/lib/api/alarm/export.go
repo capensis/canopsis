@@ -39,8 +39,6 @@ func getDataFetcher(
 					BaseFilterRequest: r.BaseFilterRequest,
 					SearchBy:          exportFields,
 				},
-				WithSteps:    r.WithSteps,
-				WithChildren: r.WithChildren,
 			},
 		})
 		if err != nil {

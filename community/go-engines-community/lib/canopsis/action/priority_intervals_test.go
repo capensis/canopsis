@@ -135,7 +135,7 @@ func TestPriorityIntervalsRestore(t *testing.T) {
 		},
 		{
 			testName:          "restore, when left interval doesn't exist",
-			setPriorities:     []int{1,2,3,4,10},
+			setPriorities:     []int{1, 2, 3, 4, 10},
 			restorePriorities: []int{4},
 			expectedIntervals: map[int]int{4: 9, 11: 0},
 			expectedKeys:      []int{4, 11},

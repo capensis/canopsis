@@ -31,6 +31,7 @@ import (
 )
 
 type Options struct {
+	Version                  bool
 	FeatureHideResources     bool
 	FeaturePrintEventOnError bool
 	ModeDebug                bool
@@ -52,12 +53,8 @@ func ParseOptions() Options {
 	flag.BoolVar(&opts.IgnoreDefaultTomlConfig, "ignoreDefaultTomlConfig", false, "load toml file values into database. - deprecated")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
+	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.Parse()
-
-	flagVersion := flag.Bool("version", false, "version infos")
-	if *flagVersion {
-		canopsis.PrintVersionExit()
-	}
 
 	return opts
 }
@@ -78,7 +75,6 @@ func NewEngine(
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
-	corrRedisClient := m.DepRedisSession(ctx, redis.CorrelationLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 
@@ -117,8 +113,28 @@ func NewEngine(
 		amqpChannel,
 		logger,
 	)
+	pbhRpcClientForIdleRules := libengine.NewRPCClient(
+		canopsis.AxeRPCConsumerName,
+		canopsis.PBehaviorRPCQueueServerName,
+		"",
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		&rpcPBehaviorClientMessageProcessor{
+			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+			PublishCh:                amqpChannel,
+			ServiceRpc:               serviceRpcClient,
+			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
+			EntityAdapter:            entity.NewAdapter(dbClient),
+			PbehaviorAdapter:         pbehavior.NewAdapter(dbClient),
+			Decoder:                  json.NewDecoder(),
+			Encoder:                  json.NewEncoder(),
+			Logger:                   logger,
+		},
+		amqpChannel,
+		logger,
+	)
 
-	rpcPublishQueues := make([]string, 0)
+	rpcPublishQueues := []string{canopsis.PBehaviorRPCQueueServerName}
 	var remediationRpcClient libengine.RPCClient
 	if options.WithRemediation {
 		remediationRpcClient = libengine.NewRPCClient(
@@ -142,6 +158,10 @@ func NewEngine(
 		logger,
 	)
 
+	metaAlarmEventProcessor := alarm.NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
+		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
+		metricsSender, logger)
+
 	engineAxe := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
@@ -154,11 +174,6 @@ func NewEngine(
 			}
 
 			err = lockRedisClient.Close()
-			if err != nil {
-				logger.Error().Err(err).Msg("failed to close redis connection")
-			}
-
-			err = corrRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
@@ -196,9 +211,10 @@ func NewEngine(
 				alarmConfigProvider,
 				m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
 				alarmStatusService,
-				redis.NewLockClient(corrRedisClient),
 				metricsSender,
+				metaAlarmEventProcessor,
 				statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider),
+				pbehavior.NewEntityTypeResolver(pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()), pbehavior.NewEntityMatcher(dbClient), logger),
 				logger,
 			),
 			RemediationRpcClient:   remediationRpcClient,
@@ -222,7 +238,7 @@ func NewEngine(
 			RMQChannel:               amqpChannel,
 			PbhRpc:                   pbhRpcClient,
 			RemediationRpc:           remediationRpcClient,
-			AlarmAdapter:             alarm.NewAdapter(dbClient),
+			MetaAlarmEventProcessor:  metaAlarmEventProcessor,
 			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
@@ -251,6 +267,7 @@ func NewEngine(
 				idlerule.NewRuleAdapter(dbClient),
 				alarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
+				pbhRpcClientForIdleRules,
 				json.NewEncoder(),
 				logger,
 			),

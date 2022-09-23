@@ -1,15 +1,18 @@
 <template lang="pug">
-  div.mt-4
-    c-patterns-field(
-      v-field="patterns",
-      :name="name",
-      some-required,
-      alarm,
-      entity
-    )
+  c-patterns-field(
+    v-field="patterns",
+    :name="name",
+    :alarm-attributes="alarmAttributes",
+    :entity-attributes="entityAttributes",
+    some-required,
+    with-alarm,
+    with-entity
+  )
 </template>
 
 <script>
+import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, QUICK_RANGES } from '@/constants';
+
 import { formValidationHeaderMixin } from '@/mixins/form';
 
 export default {
@@ -27,6 +30,47 @@ export default {
     name: {
       type: String,
       default: 'patterns',
+    },
+  },
+  computed: {
+    intervalOptions() {
+      return {
+        intervalRanges: [QUICK_RANGES.custom],
+      };
+    },
+
+    alarmAttributes() {
+      return [
+        {
+          value: ALARM_PATTERN_FIELDS.creationDate,
+          options: this.intervalOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.ackAt,
+          options: this.intervalOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.lastUpdateDate,
+          options: { disabled: true },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.resolvedAt,
+          options: { disabled: true },
+        },
+      ];
+    },
+
+    entityAttributes() {
+      return [
+        {
+          value: ENTITY_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+      ];
     },
   },
 };

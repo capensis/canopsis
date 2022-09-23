@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-redis/redis/v8"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
@@ -30,7 +29,6 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 		{
 			ID:             serviceID,
 			OutputTemplate: "test-service-output",
-			EntityPatterns: pattern.EntityPatternList{},
 		},
 	}
 	alarm := types.Alarm{
@@ -57,11 +55,12 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 	defer ctrl.Finish()
 	mockAmqpPublisher := mock_amqp.NewMockPublisher(ctrl)
 	mockAmqpPublisher.EXPECT().
-		Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockEncoder.EXPECT().Encode(gomock.Any()).Return(eventBody, nil)
 	mockAdapter := mock_entityservice.NewMockAdapter(ctrl)
+	mockAdapter.EXPECT().GetDependenciesCount(gomock.Any(), gomock.Any()).Return(int64(0), nil)
 	mockAdapter.EXPECT().UpdateCounters(gomock.Any(), gomock.Eq(serviceID), gomock.Eq(newServiceCounters)).Return(nil)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 	mockCountersCache := mock_entityservice.NewMockCountersCache(ctrl)
@@ -135,7 +134,6 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 		{
 			ID:             serviceID,
 			OutputTemplate: "test-service-output",
-			EntityPatterns: pattern.EntityPatternList{},
 		},
 	}
 	alarm := types.Alarm{
@@ -164,11 +162,12 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 	defer ctrl.Finish()
 	mockAmqpPublisher := mock_amqp.NewMockPublisher(ctrl)
 	mockAmqpPublisher.EXPECT().
-		Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockEncoder.EXPECT().Encode(gomock.Any()).Return(eventBody, nil)
 	mockAdapter := mock_entityservice.NewMockAdapter(ctrl)
+	mockAdapter.EXPECT().GetDependenciesCount(gomock.Any(), gomock.Any()).Return(int64(0), nil)
 	mockAdapter.EXPECT().
 		UpdateCounters(gomock.Any(), gomock.Eq(serviceID), gomock.Eq(newServiceCounters)).
 		Return(nil)
@@ -246,7 +245,6 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 		{
 			ID:             serviceID,
 			OutputTemplate: "test-service-output",
-			EntityPatterns: pattern.EntityPatternList{},
 		},
 	}
 	alarm := types.Alarm{
@@ -261,7 +259,7 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 	defer ctrl.Finish()
 	mockAmqpPublisher := mock_amqp.NewMockPublisher(ctrl)
 	mockAmqpPublisher.EXPECT().
-		Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Times(0)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	resendEventBody := []byte("test-body")
@@ -328,7 +326,6 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 	serviceID := "test-service"
 	serviceData := entityservice.ServiceData{
-		EntityPatterns: pattern.EntityPatternList{},
 		OutputTemplate: "test-output",
 	}
 	entity := types.Entity{
@@ -362,12 +359,13 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 	defer ctrl.Finish()
 	mockAmqpPublisher := mock_amqp.NewMockPublisher(ctrl)
 	mockAmqpPublisher.EXPECT().
-		Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil).
 		Times(2)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockEncoder.EXPECT().Encode(gomock.Any()).Return(eventBody, nil)
 	mockAdapter := mock_entityservice.NewMockAdapter(ctrl)
+	mockAdapter.EXPECT().GetDependenciesCount(gomock.Any(), gomock.Any()).Return(int64(0), nil)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 	mockEntityCursor := mock_mongo.NewMockCursor(ctrl)
 	gomock.InOrder(

@@ -283,6 +283,18 @@ func (a *ApiClient) TheResponseKeyShouldNotExist(path string) error {
 	return nil
 }
 
+/**
+Step example:
+	Then the response key "data.0.created_at" should exist
+*/
+func (a *ApiClient) TheResponseKeyShouldExist(path string) error {
+	if _, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); !ok {
+		return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+	}
+
+	return nil
+}
+
 /*
 Step example:
 	Then the difference between metaalarmLastEventDate createTimestamp is in range -2,2
@@ -344,6 +356,38 @@ func (a *ApiClient) TheResponseKeyShouldBeGreaterOrEqualThan(path string, value 
 	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
 }
 
+/**
+Step example:
+	Then the response key "data.0.duration" should be greater than 3
+*/
+func (a *ApiClient) TheResponseKeyShouldBeGreaterThan(path string, value float64) error {
+	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
+		var fieldVal float64
+		switch v := nestedVal.(type) {
+		case int:
+			fieldVal = float64(v)
+		case int32:
+			fieldVal = float64(v)
+		case int64:
+			fieldVal = float64(v)
+		case float32:
+			fieldVal = float64(v)
+		case float64:
+			fieldVal = v
+		default:
+			return fmt.Errorf("%v is not number", nestedVal)
+		}
+
+		if fieldVal > value {
+			return nil
+		}
+
+		return fmt.Errorf("%v is lesser or equal then %v", fieldVal, value)
+	}
+
+	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+}
+
 // TheResponseArrayKeyShouldContain
 // Step example:
 //   Then the response array key "data.0.v.steps" should contain:
@@ -355,16 +399,21 @@ func (a *ApiClient) TheResponseKeyShouldBeGreaterOrEqualThan(path string, value 
 //   ]
 //   """
 func (a *ApiClient) TheResponseArrayKeyShouldContain(path string, doc string) error {
+	b, err := a.executeTemplate(doc)
+	if err != nil {
+		return err
+	}
+
 	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
 		receivedStr, _ := json.MarshalIndent(nestedVal, "", "  ")
 
 		switch received := nestedVal.(type) {
 		case []interface{}:
 			expected := make([]map[string]interface{}, 0)
-			err := json.Unmarshal([]byte(doc), &expected)
+			err := json.Unmarshal(b.Bytes(), &expected)
 			if err != nil {
 				expected := make([]interface{}, 0)
-				err := json.Unmarshal([]byte(doc), &expected)
+				err := json.Unmarshal(b.Bytes(), &expected)
 				if err != nil {
 					return err
 				}
@@ -417,43 +466,85 @@ func (a *ApiClient) TheResponseArrayKeyShouldContain(path string, doc string) er
 	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
 }
 
-// TheResponseArrayKeyShouldContainOnlyOne
+// TheResponseArrayKeyShouldContainOnly
 // Step example:
-//   Then the response array key "data.0.v.steps" should contain only one:
+//   Then the response array key "data.0.v.steps" should contain only:
+//   [
+//     {
+//       "_t": "stateinc"
+//     }
+//   ]
 //   """
-//   {
-//     "_t": "stateinc"
-//   }
-//   """
-func (a *ApiClient) TheResponseArrayKeyShouldContainOnlyOne(path string, doc string) error {
+func (a *ApiClient) TheResponseArrayKeyShouldContainOnly(path string, doc string) error {
+	b, err := a.executeTemplate(doc)
+	if err != nil {
+		return err
+	}
+
 	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
 		receivedStr, _ := json.MarshalIndent(nestedVal, "", "  ")
 
 		switch received := nestedVal.(type) {
 		case []interface{}:
-			expected := make(map[string]interface{})
-			err := json.Unmarshal([]byte(doc), &expected)
+			expected := make([]map[string]interface{}, 0)
+			err := json.Unmarshal(b.Bytes(), &expected)
 			if err != nil {
-				return err
+				expected := make([]interface{}, 0)
+				err := json.Unmarshal(b.Bytes(), &expected)
+				if err != nil {
+					return err
+				}
+
+				if len(expected) < len(received) {
+					return fmt.Errorf("too little expected items, receieved items:\n%s", receivedStr)
+				} else if len(expected) > len(received) {
+					return fmt.Errorf("too many expected items, receieved items:\n%s", receivedStr)
+				}
+
+				for _, ev := range expected {
+					found := false
+					for _, v := range received {
+						if err := checkResponse(v, ev); err == nil {
+							found = true
+							break
+						}
+					}
+
+					if !found {
+						return fmt.Errorf("%s\nis not in:\n%s", ev, receivedStr)
+					}
+				}
+
+				return nil
 			}
 
 			if len(expected) == 0 {
 				return fmt.Errorf("%s is empty", doc)
 			}
 
-			found := 0
-			for _, v := range received {
-				if err := checkResponse(getPartialResponse(v, expected), expected); err == nil {
-					found++
+			if len(expected) < len(received) {
+				return fmt.Errorf("too little expected items, receieved items:\n%s", receivedStr)
+			} else if len(expected) > len(received) {
+				return fmt.Errorf("too many expected items, receieved items:\n%s", receivedStr)
+			}
+
+			for _, ev := range expected {
+				if len(ev) == 0 {
+					return fmt.Errorf("%s contains empty element", doc)
 				}
-			}
 
-			if found == 0 {
-				return fmt.Errorf("%s\nis not in:\n%s", doc, receivedStr)
-			}
+				found := false
+				for _, v := range received {
+					if err := checkResponse(getPartialResponse(v, ev), ev); err == nil {
+						found = true
+						break
+					}
+				}
 
-			if found > 1 {
-				return fmt.Errorf("%s\nis %d times in:\n%s", doc, found, receivedStr)
+				if !found {
+					expectedStr, _ := json.MarshalIndent(ev, "", "  ")
+					return fmt.Errorf("%s\nis not in:\n%s", expectedStr, receivedStr)
+				}
 			}
 
 			return nil
@@ -530,7 +621,7 @@ func (a *ApiClient) IAm(ctx context.Context, role string) error {
 	}
 
 	uri := fmt.Sprintf("%s/api/v4/login", a.url)
-	body, _ := json.Marshal(map[string]string{
+	body, err := json.Marshal(map[string]string{
 		"username": line.Name,
 		"password": userPass,
 	})
@@ -1049,19 +1140,19 @@ func (a *ApiClient) ValueShouldBeGteLteThan(left, op, right string) error {
 	switch op {
 	case "<":
 		if !(leftV < rightV) {
-			return fmt.Errorf("%q is not lesser than %q", left, right)
+			return fmt.Errorf("%q is not lesser than %q (%v < %v)", left, right, leftV, rightV)
 		}
 	case "<=":
 		if !(leftV <= rightV) {
-			return fmt.Errorf("%q is not lesser or equal than %q", left, right)
+			return fmt.Errorf("%q is not lesser or equal than %q (%v <= %v)", left, right, leftV, rightV)
 		}
 	case ">":
 		if !(leftV > rightV) {
-			return fmt.Errorf("%q is not greater than %q", left, right)
+			return fmt.Errorf("%q is not greater than %q (%v > %v)", left, right, leftV, rightV)
 		}
 	case ">=":
 		if !(leftV >= rightV) {
-			return fmt.Errorf("%q is not greater or equal than %q", left, right)
+			return fmt.Errorf("%q is not greater or equal than %q (%v >= %v)", left, right, leftV, rightV)
 		}
 	default:
 		return fmt.Errorf("unknown operator %q", op)

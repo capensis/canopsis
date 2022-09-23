@@ -1,10 +1,12 @@
 import moment from 'moment-timezone';
 
-import { DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES, SAMPLINGS } from '@/constants';
+import { DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES, TIME_UNITS, SAMPLINGS } from '@/constants';
 
 import {
   convertDateToMomentByTimezone,
+  convertDateToStartOfUnitString,
   getLocaleTimezone,
+  subtractUnitFromDate,
 } from '@/helpers/date/date';
 
 /**
@@ -243,3 +245,65 @@ export const findQuickRangeValue = (
   defaultValue = QUICK_RANGES.custom,
 ) => Object.values(ranges)
   .find(range => start === range.start && stop === range.stop) ?? defaultValue;
+
+/**
+ * Get value from quick range period
+ *
+ * @param {string} value
+ * @param {string | number} start
+ * @param {string | number} stop
+ * @return {Object}
+ */
+export const getValueFromQuickRange = ({ value, start, stop }) => {
+  if (value === QUICK_RANGES.custom.value) {
+    return {
+      periodUnit: TIME_UNITS.hour,
+      periodValue: 1,
+
+      tstart: convertDateToStartOfUnitString(
+        subtractUnitFromDate(Date.now(), 1, TIME_UNITS.hour),
+        TIME_UNITS.hour,
+        DATETIME_FORMATS.dateTimePicker,
+      ),
+
+      tstop: convertDateToStartOfUnitString(
+        Date.now(),
+        TIME_UNITS.hour,
+        DATETIME_FORMATS.dateTimePicker,
+      ),
+    };
+  }
+
+  return {
+    tstart: start,
+    tstop: stop,
+  };
+};
+
+/**
+ * Get diff between start and stop of quick range type
+ *
+ * @param {string} type
+ * @return {number}
+ */
+export const getDiffBetweenStartAndStopQuickInterval = (type) => {
+  const { start, stop } = QUICK_RANGES[type];
+
+  if (!start || !stop) {
+    return 0;
+  }
+
+  return convertStopDateIntervalToTimestamp(stop) - convertStartDateIntervalToTimestamp(start);
+};
+
+/**
+ * Get quick range by diff
+ *
+ * @param {number} diff
+ * @param {Array} ranges
+ * @return {Object}
+ */
+export const getQuickRangeByDiffBetweenStartAndStop = (
+  diff,
+  ranges = Object.values(QUICK_RANGES),
+) => ranges.find(range => getDiffBetweenStartAndStopQuickInterval(range.value) === diff) || QUICK_RANGES.custom;

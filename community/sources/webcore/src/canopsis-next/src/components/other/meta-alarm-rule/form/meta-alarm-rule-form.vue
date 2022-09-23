@@ -1,18 +1,10 @@
 <template lang="pug">
   div
-    v-layout(align-center)
-      v-text-field(
-        v-validate,
-        v-field="form._id",
-        :label="$t('common.id')",
-        :disabled="isDisabledIdField",
-        :readonly="isDisabledIdField",
-        :error-messages="errors.collect('_id')",
-        name="_id"
-      )
-        v-tooltip(v-show="!isDisabledIdField", slot="append", left)
-          v-icon(slot="activator") help
-          span {{ $t('metaAlarmRule.idHelp') }}
+    c-id-field(
+      v-field="form._id",
+      :disabled="isDisabledIdField",
+      :help-text="$t('metaAlarmRule.idHelp')"
+    )
     v-text-field(
       v-validate="'required'",
       v-field="form.name",
@@ -20,41 +12,43 @@
       :label="$t('common.name')",
       name="name"
     )
-    v-textarea(
+    c-description-field(
       v-field="form.output_template",
-      :label="$t('metaAlarmRule.outputTemplate')"
+      :label="$t('metaAlarmRule.outputTemplate')",
+      :help-text="$t('metaAlarmRule.outputTemplateHelp')"
     )
-      v-tooltip(slot="append", left)
-        v-icon(slot="activator") help
-        div(v-html="$t('metaAlarmRule.outputTemplateHelp')")
-    v-switch(
-      v-field="form.auto_resolve",
-      :label="$t('metaAlarmRule.autoResolve')",
-      color="primary"
-    )
+    c-enabled-field(v-field="form.auto_resolve", :label="$t('metaAlarmRule.autoResolve')")
     v-select(v-field="form.type", :items="ruleTypes", :label="$t('common.type')")
     meta-alarm-rule-corel-form(v-if="isCorelFormShown", v-field="form.config")
     meta-alarm-rule-threshold-form(v-if="isThresholdFormShown", v-field="form.config")
     meta-alarm-rule-time-based-form(v-if="isTimeBasedFormShown", v-field="form.config")
-    meta-alarm-rule-value-paths-form(v-if="isValuePathsFormShown", v-field="form.config")
-    c-patterns-field(
+    meta-alarm-rule-value-paths-form.mb-2(v-if="isValuePathsFormShown", v-field="form.config")
+    meta-alarm-rule-patterns-form(
       v-if="isPatternsFormShown",
-      v-field="form.config",
-      :total-entity="withTotalEntityPatterns",
-      name="config",
-      alarm,
-      entity,
-      event
+      v-field="form.patterns",
+      :with-total-entity="withTotalEntityPattern",
+      :some-required="patternsRequired"
     )
 </template>
 
 <script>
 import { META_ALARMS_RULE_TYPES } from '@/constants';
 
+import {
+  isAttributeMetaAlarmRuleType,
+  isComplexMetaAlarmRuleType,
+  isCorelMetaAlarmRuleType,
+  isManualGroupMetaAlarmRuleType,
+  isMetaAlarmRuleTypeHasTotalEntityPatterns,
+  isTimebasedMetaAlarmRuleType,
+  isValueGroupMetaAlarmRuleType,
+} from '@/helpers/forms/meta-alarm-rule';
+
 import MetaAlarmRuleThresholdForm from './meta-alarm-rule-threshold-form.vue';
 import MetaAlarmRuleTimeBasedForm from './meta-alarm-rule-time-based-form.vue';
 import MetaAlarmRuleValuePathsForm from './meta-alarm-rule-value-paths-form.vue';
 import MetaAlarmRuleCorelForm from './meta-alarm-rule-corel-form.vue';
+import MetaAlarmRulePatternsForm from './meta-alarm-rule-patterns-form.vue';
 
 export default {
   inject: ['$validator'],
@@ -63,6 +57,7 @@ export default {
     MetaAlarmRuleThresholdForm,
     MetaAlarmRuleValuePathsForm,
     MetaAlarmRuleCorelForm,
+    MetaAlarmRulePatternsForm,
   },
   model: {
     prop: 'form',
@@ -84,7 +79,7 @@ export default {
      */
     ruleTypes() {
       return Object.values(META_ALARMS_RULE_TYPES)
-        .filter(type => type !== META_ALARMS_RULE_TYPES.manualgroup);
+        .filter(type => !isManualGroupMetaAlarmRuleType(type));
     },
 
     /**
@@ -112,31 +107,39 @@ export default {
         || this.isCorelFormShown;
     },
 
-    withTotalEntityPatterns() {
-      return this.isComplexType || this.isValueGroupType;
+    isCorelFormShown() {
+      return this.isCorelType;
+    },
+
+    withTotalEntityPattern() {
+      return isMetaAlarmRuleTypeHasTotalEntityPatterns(this.form.type);
     },
 
     /**
      * Rule types
      */
     isPatternsType() {
-      return this.form.type === META_ALARMS_RULE_TYPES.attribute;
+      return isAttributeMetaAlarmRuleType(this.form.type);
     },
 
     isTimeBasedType() {
-      return this.form.type === META_ALARMS_RULE_TYPES.timebased;
+      return isTimebasedMetaAlarmRuleType(this.form.type);
     },
 
     isComplexType() {
-      return this.form.type === META_ALARMS_RULE_TYPES.complex;
+      return isComplexMetaAlarmRuleType(this.form.type);
     },
 
     isValueGroupType() {
-      return this.form.type === META_ALARMS_RULE_TYPES.valuegroup;
+      return isValueGroupMetaAlarmRuleType(this.form.type);
     },
 
-    isCorelFormShown() {
-      return this.form.type === META_ALARMS_RULE_TYPES.corel;
+    isCorelType() {
+      return isCorelMetaAlarmRuleType(this.form.type);
+    },
+
+    patternsRequired() {
+      return !this.isValueGroupType;
     },
   },
 };

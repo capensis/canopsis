@@ -4,6 +4,7 @@
       v-btn(
         v-on="on",
         :input-value="isPeriodicRefreshEnabled",
+        :loading="pending",
         color="secondary",
         fab,
         dark,

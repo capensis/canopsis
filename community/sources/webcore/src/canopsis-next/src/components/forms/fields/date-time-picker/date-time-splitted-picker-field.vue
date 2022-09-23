@@ -11,7 +11,7 @@
           @input="updateTime"
         )
       v-flex(:class="datePickerFlexClass")
-        date-picker-field(
+        c-date-picker-field(
           :value="value | date('vuetifyDatePicker', null)",
           :label="!reverse || fullDay ? label : ''",
           :error="errors.has(name)",
@@ -42,11 +42,10 @@
 import { TIME_UNITS } from '@/constants';
 
 import { convertDateToStartOfUnitDateObject } from '@/helpers/date/date';
-import { updateTime, updateDate } from '@/helpers/date/date-time-picker';
+import { getDateObjectByTime, getDateObjectByDate } from '@/helpers/date/date-time-picker';
 
 import { formBaseMixin } from '@/mixins/form';
 
-import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
 import TimePickerField from '@/components/forms/fields/time-picker/time-picker-field.vue';
 
 export default {
@@ -64,7 +63,7 @@ export default {
     },
   },
   inject: ['$validator'],
-  components: { DatePickerField, TimePickerField },
+  components: { TimePickerField },
   mixins: [formBaseMixin],
   props: {
     value: {
@@ -111,11 +110,11 @@ export default {
   },
   methods: {
     updateTime(time) {
-      this.updateModel(updateTime(this.value, time));
+      this.updateModel(getDateObjectByTime(this.value, time));
     },
 
     updateDate(date) {
-      this.updateModel(updateDate(this.value, date));
+      this.updateModel(getDateObjectByDate(this.value, date));
     },
   },
 };
