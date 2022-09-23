@@ -244,6 +244,14 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_profile_corporatePattern",
+        "loader_id": "models_profile_corporatePattern",
+        "crecord_name": "models_profile_corporatePattern",
+        "crecord_type": "action",
+        "desc": "Profile: Shared filters",
+        "type": "CRUD"
+   },
+   {
         "_id": "models_remediationStatistic",
         "loader_id": "models_remediationStatistic",
         "crecord_name": "models_remediationStatistic",
@@ -634,7 +642,7 @@
         "crecord_type": "action",
         "crecord_name": "crudcontext_massDisable",
         "desc": "Rights on context: Mass disable"
-    },    
+    },
     {
         "_id": "875df4c2-027b-4549-8add-e20ed7ff7d4f",
         "loader_id": "875df4c2-027b-4549-8add-e20ed7ff7d4f",

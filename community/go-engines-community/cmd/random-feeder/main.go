@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"os"
 	"strconv"
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -232,6 +234,11 @@ func NewFeeder(logger zerolog.Logger) (*Feeder, error) {
 
 	if err := f.flags.ParseArgs(); err != nil {
 		return nil, err
+	}
+
+	if f.flags.Version {
+		canopsis.PrintVersionInfo()
+		os.Exit(0)
 	}
 
 	return &f, nil

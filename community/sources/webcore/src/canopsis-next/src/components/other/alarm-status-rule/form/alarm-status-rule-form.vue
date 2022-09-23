@@ -9,34 +9,23 @@
     )
     c-duration-field(v-field="form.duration", required)
     c-priority-field(v-field="form.priority", required)
-    v-text-field(
+    c-number-field(
       v-if="flapping",
-      v-field.number="form.freq_limit",
-      v-validate="'required|numeric|min_value:1'",
+      v-field="form.freq_limit",
       :label="$t('alarmStatusRules.frequencyLimit')",
-      :error-messages="errors.collect('freq_limit')",
       :min="1",
-      name="freq_limit",
-      type="number"
+      name="freq_limit"
     )
-    v-textarea(
-      v-field="form.description",
-      v-validate="'required'",
-      :label="$t('common.description')",
-      :error-messages="errors.collect('description')",
-      name="description"
-    )
-    c-patterns-field(
-      v-field="form.patterns",
-      :some-required="flapping",
-      alarm,
-      entity
-    )
+    c-description-field(v-field="form.description", required)
+    alarm-status-rule-patterns-form(v-field="form.patterns", :flapping="flapping")
 </template>
 
 <script>
+import AlarmStatusRulePatternsForm from './partials/alarm-status-rule-patterns-form.vue';
+
 export default {
   inject: ['$validator'],
+  components: { AlarmStatusRulePatternsForm },
   model: {
     prop: 'form',
     event: 'input',

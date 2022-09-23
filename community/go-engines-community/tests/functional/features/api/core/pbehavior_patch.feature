@@ -2,442 +2,1480 @@ Feature: update a PBehavior
   I need to be able to patch a PBehavior field individually
   Only admin should be able to patch a PBehavior
 
-  Scenario: PATCH a valid PBehavior but unauthorized
+  Scenario: given update request and no auth user should not allow access
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-update
     Then the response code should be 401
 
-  Scenario: PATCH a valid PBehavior but without permissions
+  Scenario: given update request and auth user without view permission should not allow access
     When I am noperms
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-update
     Then the response code should be 403
 
-  Scenario: PATCH a non-existing PBehavior
+  Scenario: given no exist pbehavior id should return error
     When I am admin
-    When I do PATCH /api/v4/pbehaviors/non-existing-pbehavior:
-    """
-      {
-        "name": "non-existing-pbehavior-name-new"
-      }
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-not-exist:
+    """json
+    {
+      "name": "test-pbehavior-not-exist"
+    }
     """
     Then the response code should be 404
 
-  Scenario: PATCH a valid PBehavior with new name value
+  Scenario: given update request with name should update only if name is not empty and is unique
     When I am admin
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
+    """json
+    {
+        "name": null
+    }
     """
-      {
-          "name": "test-pbehavior-to-patch-1-name-new"
-      }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
     Then the response code should be 200
     Then the response body should contain:
+    """json
+    {
+      "name": "test-pbehavior-to-patch-1-name"
+    }
     """
-      {
-        "name": "test-pbehavior-to-patch-1-name-new",
-        "author": "root"
-      }
-    """
-
-  Scenario: PATCH a valid PBehavior with new enabled value
-    When I am admin
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
-    """
-      {
-          "enabled": false
-      }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-      {
-        "enabled": false
-      }
-    """
-
-  Scenario: PATCH a valid PBehavior with new color value
-    When I am admin
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
-    """
-      {
-        "color": "#FFFFFF"
-      }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-      {
-        "color": "#FFFFFF"
-      }
-    """
-  
-  Scenario: PATCH a valid PBehavior with new filter value
-    When I am admin
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
-    """
-      {
-          "filter": "{\"$or\":[{\"name\":\"test-new-filter\"}]}"
-      }
+    """json
+    {
+      "name": "test-pbehavior-to-check-unique-name"
+    }
     """
     Then the response code should be 400
-    Then the response body should contain:
-    """
+    Then the response body should be:
+    """json
     {
       "errors": {
-        "filter": "Filter is invalid entity filter."
+        "name": "Name already exists."
       }
     }
     """
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
+    """json
+    {
+      "name": ""
+    }
     """
-      {
-        "filter":{
-          "$and":[
-            {
-              "name": "another test filter"
-            }
-          ]
-        }
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing."
       }
+    }
     """
-    Then the response code should be 200
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
+    """json
+    {
+      "name": "test-pbehavior-to-patch-1-name-updated"
+    }
+    """
     Then the response code should be 200
     Then the response body should contain:
-    """
-      {
-        "filter":{
-          "$and":[
-            {
-              "name": "another test filter"
-            }
-          ]
+    """json
+    {
+      "name": "test-pbehavior-to-patch-1-name-updated",
+      "author": "root",
+      "_id": "test-pbehavior-to-patch-1",
+      "comments": [
+        {
+          "_id": "test-pbehavior-to-patch-1-comment-1",
+          "author": "root",
+          "ts": 1592215337,
+          "message": "test-pbehavior-to-patch-1-comment-1-message"
+        },
+        {
+          "_id": "test-pbehavior-to-patch-1-comment-2",
+          "author": "root",
+          "ts": 1592215337,
+          "message": "test-pbehavior-to-patch-1-comment-2-message"
         }
-      }
-    """
-  
-  Scenario: PATCH a valid PBehavior with new reason value
-    When I am admin
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
-    """
-      {
-          "reason": "test-reason-to-patch-pbehavior-new"
-      }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-      {
-        "reason": {
-          "_id": "test-reason-to-patch-pbehavior-new",
-          "name": "test-reason-to-patch-pbehavior-new-name",
-          "description": "test-reason-to-patch-pbehavior-new-description"
-        }
-      }
-    """
-
-  Scenario: PATCH a valid PBehavior with new rrule value
-    When I am admin
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
-    """
-      {
-        "rrule": "FREQ=YEARLY"
-      }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-      {
-        "rrule": "FREQ=YEARLY"
-      }
-    """
-
-  Scenario: PATCH a valid PBehavior with new exdates value
-    When I am admin
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
-    """
-      {
+      ],
+      "created": 1592215337,
+      "enabled": true,
+      "exceptions": [
+        {
+          "_id": "test-exception-to-pbh-edit",
+          "created": 1592215037,
+          "name": "Exception to pbehavior edit",
+          "description": "test",
           "exdates": [
             {
-              "begin": 1111111117,
-              "end": 1111111118,
-              "type": "test-pause-type-to-patch-pbehavior"
+              "begin": 15911648001,
+              "end": 1591167901,
+              "type": {
+                "_id": "test-type-to-pbh-edit-1"
+              }
             }
           ]
-      }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-      {
-        "exdates": [
+        }
+      ],
+      "exdates": [
+        {
+          "begin": 1591164001,
+          "end": 1591167601,
+          "type": {
+            "_id": "test-type-to-pbh-edit-1"
+          }
+        }
+      ],
+      "entity_pattern": [
+        [
           {
-            "begin": 1111111117,
-            "end": 1111111118,
-            "type": {
-              "_id": "test-pause-type-to-patch-pbehavior",
-              "name": "test-pause-type-to-patch-pbehavior-name",
-              "description": "test-pause-type-to-patch-pbehavior-description",
-              "type": "pause",
-              "priority": 29,
-              "icon_name": "test-pause-type-to-patch-pbehavior-icon"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-patch-1-pattern"
             }
           }
         ]
-      }
+      ],
+      "reason": {
+        "_id": "test-reason-to-pbh-edit"
+      },
+      "rrule": "FREQ=DAILY",
+      "tstart": 1591172881,
+      "tstop": 1591536400,
+      "type": {
+        "_id": "test-type-to-pbh-edit-1"
+      },
+      "last_alarm_date": null
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-pbehavior-to-patch-1-name-updated",
+      "author": "root",
+      "_id": "test-pbehavior-to-patch-1",
+      "comments": [
+        {
+          "_id": "test-pbehavior-to-patch-1-comment-1",
+          "author": "root",
+          "ts": 1592215337,
+          "message": "test-pbehavior-to-patch-1-comment-1-message"
+        },
+        {
+          "_id": "test-pbehavior-to-patch-1-comment-2",
+          "author": "root",
+          "ts": 1592215337,
+          "message": "test-pbehavior-to-patch-1-comment-2-message"
+        }
+      ],
+      "created": 1592215337,
+      "enabled": true,
+      "exceptions": [
+        {
+          "_id": "test-exception-to-pbh-edit",
+          "created": 1592215037,
+          "name": "Exception to pbehavior edit",
+          "description": "test",
+          "exdates": [
+            {
+              "begin": 15911648001,
+              "end": 1591167901,
+              "type": {
+                "_id": "test-type-to-pbh-edit-1"
+              }
+            }
+          ]
+        }
+      ],
+      "exdates": [
+        {
+          "begin": 1591164001,
+          "end": 1591167601,
+          "type": {
+            "_id": "test-type-to-pbh-edit-1"
+          }
+        }
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-patch-1-pattern"
+            }
+          }
+        ]
+      ],
+      "reason": {
+        "_id": "test-reason-to-pbh-edit"
+      },
+      "rrule": "FREQ=DAILY",
+      "tstart": 1591172881,
+      "tstop": 1591536400,
+      "type": {
+        "_id": "test-type-to-pbh-edit-1"
+      },
+      "last_alarm_date": null
+    }
     """
 
-  Scenario: PATCH a valid PBehavior with pause type and null stop to the new stop value less than start
+  Scenario: given update request with corporate entity pattern should update only if pattern is not empty and is valid
     When I am admin
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-2:
-    """
-      {
-          "tstop": 1592215336
-      }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """
-      {
-        "error": "invalid fields start, stop, type"
-      }
-    """
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-2:
-    """
-      {
-          "tstop": -300
-      }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """
-      {
-        "error": "invalid fields start, stop, type"
-      }
-    """
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-2:
-    """
-      {
-          "tstop": 1592215339
-      }
+    """json
+    {
+      "corporate_entity_pattern": null
+    }
     """
     Then the response code should be 200
     Then the response body should contain:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-patch-2-pattern"
+            }
+          }
+        ]
+      ]
+    }
     """
-      {
-        "tstop": 1592215339
+    Then the response key "corporate_entity_pattern" should not exist
+    Then the response key "corporate_entity_pattern_title" should not exist
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-2:
+    """json
+    {
+      "corporate_entity_pattern": ""
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "corporate_entity_pattern": "CorporateEntityPattern is missing."
       }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-2:
+    """json
+    {
+      "corporate_entity_pattern": "test-pattern-not-exist"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "corporate_entity_pattern": "CorporateEntityPattern doesn't exist."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-2:
+    """json
+    {
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-2-pattern"
+            }
+          }
+        ]
+      ]
+    }
     """
     When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-2
     Then the response code should be 200
     Then the response body should contain:
-    """
-      {
-        "tstop": 1592215339
-      }
-    """
-
-  Scenario: PATCH a valid PBehavior with new exceptions value
-    When I am admin
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
-    """
-      {
-          "exceptions": ["test-exception-to-patch-pbehavior-new"]
-      }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-      {
-        "exceptions": [
+    """json
+    {
+      "author": "root",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+      "entity_pattern": [
+        [
           {
-            "_id": "test-exception-to-patch-pbehavior-new",
-            "created": 1592215337,
-            "description": "test-exception-to-patch-pbehavior-new-description",
-            "exdates": [
-              {
-                "begin": 1592215337,
-                "end": 1592215337,
-                "type": {
-                  "_id": "test-pause-type-to-patch-pbehavior",
-                  "description": "test-pause-type-to-patch-pbehavior-description",
-                  "icon_name": "test-pause-type-to-patch-pbehavior-icon",
-                  "name": "test-pause-type-to-patch-pbehavior-name",
-                  "priority": 29,
-                  "type": "pause"
-                }
-              }
-            ],
-            "name": "test-exception-to-patch-pbehavior-new-name"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-2-pattern"
+            }
           }
         ]
-      }
+      ]
+    }
     """
 
-  Scenario: PATCH a valid PBehavior with invalid tstart/tstop and type pause
+  Scenario: given update request with entity pattern should update only if pattern is not empty and is valid
     When I am admin
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-3:
+    """json
+    {
+      "entity_pattern": null
+    }
     """
-      {
-        "tstart": 1111111112,
-        "tstop": 1111111111,
-        "type": "test-pause-type-to-patch-pbehavior"
-      }
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-2-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-3:
+    """json
+    {
+      "entity_pattern": []
+    }
     """
     Then the response code should be 400
-    Then the response body should contain:
-    """
-      {
-        "errors": {
-            "tstop": "Stop should be greater than Start."
-        }
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is missing."
       }
+    }
     """
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
-    """
-      {
-        "tstart": 1111111112,
-        "tstop": 1111111113,
-        "type": "test-pause-type-to-patch-pbehavior"
-      }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-      {
-        "tstart": 1111111112,
-        "tstop": 1111111113,
-        "type": {
-          "_id": "test-pause-type-to-patch-pbehavior",
-          "name": "test-pause-type-to-patch-pbehavior-name",
-          "description": "test-pause-type-to-patch-pbehavior-description",
-          "type": "pause",
-          "priority": 29,
-          "icon_name": "test-pause-type-to-patch-pbehavior-icon"
-        }
-      }
-    """
-  
-  Scenario: PATCH a valid PBehavior having type pause with null tstop
-    When I am admin
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
-    """
-      {
-        "tstop": null
-      }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-      {
-        "tstop": null
-      }
-    """
-
-  Scenario: PATCH a valid PBehavior having a valid tstart/tstop with type active
-    When I am admin
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-      {
-        "tstart": 1111111112,
-        "tstop": null,
-        "type": {
-          "type": "pause"
-        }
-      }
-    """
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
-    """
-      {
-        "type": "test-active-type-to-patch-pbehavior"
-      }
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-3:
+    """json
+    {
+      "entity_pattern": [[]]
+    }
     """
     Then the response code should be 400
-    Then the response body should contain:
-    """
-      {
-        "errors": {
-          "tstop": "Stop is missing."
-        }
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
       }
+    }
     """
-
-  Scenario: PATCH a valid PBehavior with valid tstart/tstop and type active
-    When I am admin
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
-    """
-      {
-        "tstart": 1111111111,
-        "tstop": 1111111112,
-        "type": "test-active-type-to-patch-pbehavior"
-      }
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-3:
+    """json
+    {
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-update-3-pattern"
+            }
+          }
+        ]
+      ]
+    }
     """
     Then the response code should be 200
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-1
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-update-3-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response key "corporate_entity_pattern" should not exist
+    Then the response key "corporate_entity_pattern_title" should not exist
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-3
     Then the response code should be 200
     Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-update-3-pattern"
+            }
+          }
+        ]
+      ]
+    }
     """
-      {
-        "tstart": 1111111111,
-        "tstop": 1111111112,
-        "type": {
-          "_id": "test-active-type-to-patch-pbehavior",
-          "name": "test-active-type-to-patch-pbehavior-name",
-          "description": "test-active-type-to-patch-pbehavior-description",
-          "type": "active",
-          "priority": 28,
-          "icon_name": "test-active-type-to-patch-pbehavior-icon"
+    Then the response key "corporate_entity_pattern" should not exist
+    Then the response key "corporate_entity_pattern_title" should not exist
+
+  Scenario: given update request with stop should update only if stop is not empty and is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-4:
+    """json
+    {
+      "tstop": null
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "tstop": "Stop is missing."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-4:
+    """json
+    {
+      "tstop": 1591172880
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "tstop": "Stop should be greater than Start."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-4:
+    """json
+    {
+      "tstop": 1591173981
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstop": 1591173981
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-4
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstop": 1591173981
+    }
+    """
+
+  Scenario: given update request with stop for pbehavior with pause type should update only if stop is empty or is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-5:
+    """json
+    {
+      "tstop": 1591172880
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "tstop": "Stop should be greater than Start."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-5:
+    """json
+    {
+      "tstop": 1591173982
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstop": 1591173982
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-5
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstop": 1591173982
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-5:
+    """json
+    {
+      "tstop": null
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstop": null
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-5
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstop": null
+    }
+    """
+
+  Scenario: given update request with stop and type should update only if stop is not empty and is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-6:
+    """json
+    {
+      "type": "test-type-to-pbh-edit-1",
+      "tstop": null
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "tstop": "Stop is missing."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-6:
+    """json
+    {
+      "type": "test-type-to-pbh-edit-1",
+      "tstop": 1591172880
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "tstop": "Stop should be greater than Start."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-6:
+    """json
+    {
+      "type": "test-type-to-pbh-edit-1",
+      "tstop": 1591173981
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstop": 1591173981
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-6
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstop": 1591173981
+    }
+    """
+
+  Scenario: given update request with stop for pbehavior with pause type should update only if stop is empty or is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-7:
+    """json
+    {
+      "type": "test-type-to-pbh-edit-3",
+      "tstop": 1591172880
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "tstop": "Stop should be greater than Start."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-7:
+    """json
+    {
+      "type": "test-type-to-pbh-edit-3",
+      "tstop": null
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstop": null
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-7
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstop": null
+    }
+    """
+
+  Scenario: given update request with start should update only if start is not empty and is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-8:
+    """json
+    {
+      "tstart": null
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "tstart": 1591172881
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-8:
+    """json
+    {
+      "tstart": 1591172982
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "tstart": "Start should be less than Stop."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-8:
+    """json
+    {
+      "tstart": 1591172681
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstart": 1591172681
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-8
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstart": 1591172681
+    }
+    """
+
+  Scenario: given update request with start for pbehavior with pause type should update only if start is not empty and is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-9:
+    """json
+    {
+      "tstart": 1591172681
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstart": 1591172681
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-9
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstart": 1591172681
+    }
+    """
+
+  Scenario: given update request with start, stop and type should update only if all fields are valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-10:
+    """json
+    {
+      "tstart": null,
+      "tstop": 1591172881,
+      "type": "test-type-to-pbh-edit-1"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "tstop": "Stop should be greater than Start."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-10:
+    """json
+    {
+      "tstart": 1591172681,
+      "tstop": null,
+      "type": "test-type-to-pbh-edit-1"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "tstop": "Stop is missing."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-10:
+    """json
+    {
+      "tstart": 1591172881,
+      "tstop": 1591172681,
+      "type": "test-type-to-pbh-edit-1"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "tstop": "Stop should be greater than Start."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-10:
+    """json
+    {
+      "tstart": 1591172681,
+      "tstop": 1591172881,
+      "type": "test-type-to-pbh-edit-1"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstart": 1591172681,
+      "tstop": 1591172881,
+      "type": {
+        "_id": "test-type-to-pbh-edit-1"
+      }
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-10
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstart": 1591172681,
+      "tstop": 1591172881,
+      "type": {
+        "_id": "test-type-to-pbh-edit-1"
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-10:
+    """json
+    {
+      "tstart": 1591172881,
+      "tstop": 1591172681,
+      "type": "test-type-to-pbh-edit-3"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "tstop": "Stop should be greater than Start."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-10:
+    """json
+    {
+      "tstart": 1591172681,
+      "tstop": null,
+      "type": "test-type-to-pbh-edit-3"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstart": 1591172681,
+      "tstop": null,
+      "type": {
+        "_id": "test-type-to-pbh-edit-3"
+      }
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-10
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "tstart": 1591172681,
+      "tstop": null,
+      "type": {
+        "_id": "test-type-to-pbh-edit-3"
+      }
+    }
+    """
+
+  Scenario: given update request with type should update only if type is not empty and is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-11:
+    """json
+    {
+      "type": null
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "type": {
+        "_id": "test-type-to-pbh-edit-1"
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-11:
+    """json
+    {
+      "type": "test-type-not-exist"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "type": "Type doesn't exist."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-11:
+    """json
+    {
+      "type": "test-type-to-pbh-edit-2"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "type": {
+        "_id": "test-type-to-pbh-edit-2"
+      }
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-11
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "type": {
+        "_id": "test-type-to-pbh-edit-2"
+      }
+    }
+    """
+
+  Scenario: given update request with type for pbehavior without stop should update only if type is not empty and is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-12:
+    """json
+    {
+      "type": "test-type-to-pbh-edit-1"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "tstop": "Stop is missing."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-12:
+    """json
+    {
+      "type": "test-type-to-pbh-edit-2"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "type": {
+        "_id": "test-type-to-pbh-edit-2"
+      }
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-12
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "type": {
+        "_id": "test-type-to-pbh-edit-2"
+      }
+    }
+    """
+
+  Scenario: given update request with reason should update only if reason is not empty and is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "reason": null
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "reason": {
+        "_id": "test-reason-to-pbh-edit"
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "reason": "test-reason-not-exist"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "reason": "Reason doesn't exist."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "reason": "test-reason-to-pbh-edit"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "reason": {
+        "_id": "test-reason-to-pbh-edit"
+      }
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-13
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "reason": {
+        "_id": "test-reason-to-pbh-edit"
+      }
+    }
+    """
+
+  Scenario: given update request with enabled should update only if enabled is not empty and is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "enabled": null
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "enabled": true
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "enabled": false
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "enabled": false
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-13
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "enabled": false
+    }
+    """
+
+  Scenario: given update request with rrule should update only if rrule is not empty and is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "rrule": null
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "rrule": "FREQ=DAILY"
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "rrule": "invalid"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "rrule": "RRule is invalid recurrence rule."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "rrule": "FREQ=WEEKLY"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "rrule": "FREQ=WEEKLY"
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-13
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "rrule": "FREQ=WEEKLY"
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "rrule": ""
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "rrule": ""
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-13
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "rrule": ""
+    }
+    """
+
+  Scenario: given update request with exdates should update only if exdates is empty or is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "exdates": null
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "exdates": [
+        {
+          "begin": 1591164001,
+          "end": 1591167601,
+          "type": {
+            "_id": "test-type-to-pbh-edit-1"
+          }
         }
-      }
+      ]
+    }
     """
-
-  Scenario: PATCH a valid PBehavior having type active with null tstop
-    When I am admin
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
-    """
-      {
-        "tstop": null
-      }
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "exdates": [{}]
+    }
     """
     Then the response code should be 400
-    Then the response body should contain:
-    """
-      {
-        "error": "invalid fields start, stop, type"
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "exdates.0.begin": "Begin is missing.",
+        "exdates.0.end": "End is missing.",
+        "exdates.0.type": "Type is missing."
       }
+    }
     """
-
-  Scenario: PATCH a valid PBehavior having type active with invalid tstop
-    When I am admin
-    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-1:
-    """
-      {
-        "tstop": 1000000000
-      }
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "exdates": [
+        {
+          "begin": 1591164001,
+          "end": 1591167601,
+          "type": "test-type-not-exist"
+        }
+      ]
+    }
     """
     Then the response code should be 400
-    Then the response body should contain:
-    """
-      {
-        "error": "invalid fields start, stop, type"
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "exdates": "Exdates doesn't exist."
       }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "exdates": [
+        {
+          "begin": 1592164001,
+          "end": 1591167601,
+          "type": "test-type-to-pbh-edit-1"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "exdates.0.end": "End should be greater than Begin."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "exdates": [
+        {
+          "begin": 1591164002,
+          "end": 1591167602,
+          "type": "test-type-to-pbh-edit-2"
+        }
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "exdates": [
+        {
+          "begin": 1591164002,
+          "end": 1591167602,
+          "type": {
+            "_id": "test-type-to-pbh-edit-2"
+          }
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-13
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "exdates": [
+        {
+          "begin": 1591164002,
+          "end": 1591167602,
+          "type": {
+            "_id": "test-type-to-pbh-edit-2"
+          }
+        }
+      ]
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "exdates": []
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "exdates": []
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-13
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "exdates": []
+    }
+    """
+
+  Scenario: given update request with exceptions should update only if exceptions is empty or is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "exceptions": null
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "exceptions": [
+        {
+          "_id": "test-exception-to-pbh-edit"
+        }
+      ]
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "exceptions": [""]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "exceptions": "Exceptions doesn't exist."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "exceptions": ["test-exception-not-exist"]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "exceptions": "Exceptions doesn't exist."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "exceptions": []
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "exceptions": []
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-13
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "exceptions": []
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-13:
+    """json
+    {
+      "exceptions": ["test-exception-to-pbh-edit"]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "exceptions": [
+        {
+          "_id": "test-exception-to-pbh-edit"
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-13
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "exceptions": [
+        {
+          "_id": "test-exception-to-pbh-edit"
+        }
+      ]
+    }
+    """
+
+  Scenario: given update request with color should update only if color is not empty and is valid
+    When I am admin
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-14:
+    """json
+    {
+      "color": null
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "color": "#FFFFFF"
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-14:
+    """json
+    {
+      "color": "test"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "color": "Color is not valid."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-14:
+    """json
+    {
+      "color": ""
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "color": "Color is missing."
+      }
+    }
+    """
+    When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-14:
+    """json
+    {
+      "color": "#AAAAAA"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "color": "#AAAAAA"
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-14
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "color": "#AAAAAA"
+    }
     """

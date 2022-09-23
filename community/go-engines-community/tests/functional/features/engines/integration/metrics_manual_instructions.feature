@@ -9,10 +9,16 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-1-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-1-name-1",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-1-description",
       "enabled": true,
@@ -44,10 +50,16 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-1-2",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-1-name-2",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-1-description",
       "enabled": true,
@@ -79,10 +91,16 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-1-3",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-1-name-3",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-1-description",
       "enabled": true,
@@ -108,14 +126,20 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-to-manual-instruction-metrics-1-name",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-1"
+            }
+          }
+        ]
       ]
     }
     """
@@ -192,14 +216,20 @@ Feature: Metrics should be added on alarm changes
 
   Scenario: given manual instruction and new event should increase assigned metric on instruction creation only one time for alarm metric and every time for instruction metric
     When I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-to-manual-instruction-metrics-2-name",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-2"
+            }
+          }
+        ]
       ]
     }
     """
@@ -260,13 +290,25 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-2-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-2-name-1",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-manual-instruction-metrics-2-1"
-        },
-        {
-          "name": "test-resource-to-manual-instruction-metrics-2-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-2-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-2-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-2-description",
       "enabled": true,
@@ -327,13 +369,25 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-2-2",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-2-name-2",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-manual-instruction-metrics-2-2"
-        },
-        {
-          "name": "test-resource-to-manual-instruction-metrics-2-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-2-2"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-2-3"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-2-description",
       "enabled": true,
@@ -410,10 +464,16 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-3-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-3-name-1",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-3"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-3-description",
       "enabled": true,
@@ -439,14 +499,20 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-to-manual-instruction-metrics-3-name",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-3"
+            }
+          }
+        ]
       ]
     }
     """
@@ -520,10 +586,16 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-resolve-rule-to-manual-instruction-metrics-3",
       "name": "test-resolve-rule-to-manual-instruction-metrics-3-name",
       "description": "test-resolve-rule-to-manual-instruction-metrics-3-desc",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-3"
-        }
+      "entity_pattern":[
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-3"
+            }
+          }
+        ]
       ],
       "duration": {
         "value": 2,
@@ -585,10 +657,16 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-4-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-4-name-1",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-4"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-4"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-4-description",
       "enabled": true,
@@ -620,10 +698,16 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-4-2",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-4-name-2",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-4"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-4"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-4-description",
       "enabled": true,
@@ -649,14 +733,20 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-to-manual-instruction-metrics-4-name",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-4"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-4"
+            }
+          }
+        ]
       ]
     }
     """
@@ -860,10 +950,16 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-5-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-5-name-1",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-5"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-5"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-5-description",
       "enabled": true,
@@ -889,14 +985,20 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-to-manual-instruction-metrics-5-name",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-5"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-5"
+            }
+          }
+        ]
       ]
     }
     """
@@ -1061,10 +1163,16 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-resolve-rule-to-manual-instruction-metrics-5",
       "name": "test-resolve-rule-to-manual-instruction-metrics-5-name",
       "description": "test-resolve-rule-to-manual-instruction-metrics-5-desc",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-5"
-        }
+      "entity_pattern":[
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-5"
+            }
+          }
+        ]
       ],
       "duration": {
         "value": 2,
@@ -1175,10 +1283,16 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-6-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-6-name-1",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-manual-instruction-metrics-6-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-6-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-6-description",
       "enabled": true,
@@ -1210,10 +1324,16 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-6-2",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-6-name-2",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-manual-instruction-metrics-6-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-6-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-6-description",
       "enabled": true,
@@ -1239,14 +1359,20 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-to-manual-instruction-metrics-6-name",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-6"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-6"
+            }
+          }
+        ]
       ]
     }
     """
@@ -1286,13 +1412,25 @@ Feature: Metrics should be added on alarm changes
     {
       "type": 0,
       "name": "test-instruction-to-manual-metrics-6-name-1",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-manual-instruction-metrics-6-2"
-        },
-        {
-          "name": "test-resource-to-manual-instruction-metrics-6-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-6-2"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-6-3"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-6-description",
       "enabled": true,
@@ -1350,14 +1488,20 @@ Feature: Metrics should be added on alarm changes
 
   Scenario: given manual instruction with create approval and new event should increase assigned metric on instruction creation only one time for alarm metric and every time for instruction metric
     When I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-to-manual-instruction-metrics-7-name",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-7"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-7"
+            }
+          }
+        ]
       ]
     }
     """
@@ -1418,13 +1562,25 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-7-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-7-name-1",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-manual-instruction-metrics-7-1"
-        },
-        {
-          "name": "test-resource-to-manual-instruction-metrics-7-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-7-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-7-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-7-description",
       "enabled": true,
@@ -1448,7 +1604,7 @@ Feature: Metrics should be added on alarm changes
         }
       ],
       "approval": {
-        "user": "approveruser",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
@@ -1483,7 +1639,7 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I am approver
+    When I am role-to-instruction-approve-1
     When I do PUT /api/v4/cat/instructions/test-instruction-to-manual-metrics-7-1/approval:
     """json
     {
@@ -1524,14 +1680,20 @@ Feature: Metrics should be added on alarm changes
 
   Scenario: given manual instruction with update approval and new event should increase assigned metric on instruction creation only one time for alarm metric and every time for instruction metric
     When I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-to-manual-instruction-metrics-8-name",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-8"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-8"
+            }
+          }
+        ]
       ]
     }
     """
@@ -1592,13 +1754,25 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-8-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-8-name-1",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-manual-instruction-metrics-8-1"
-        },
-        {
-          "name": "test-resource-to-manual-instruction-metrics-8-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-8-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-8-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-8-description",
       "enabled": true,
@@ -1658,16 +1832,34 @@ Feature: Metrics should be added on alarm changes
     {
       "type": 0,
       "name": "test-instruction-to-manual-metrics-8-name-1",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-manual-instruction-metrics-8-1"
-        },
-        {
-          "name": "test-resource-to-manual-instruction-metrics-8-2"
-        },
-        {
-          "name": "test-resource-to-manual-instruction-metrics-8-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-8-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-8-2"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-8-3"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-8-description",
       "enabled": true,
@@ -1691,13 +1883,13 @@ Feature: Metrics should be added on alarm changes
         }
       ],
       "approval": {
-        "user": "approveruser",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 200
-    When I am approver
+    When I am role-to-instruction-approve-1
     When I do PUT /api/v4/cat/instructions/test-instruction-to-manual-metrics-8-1/approval:
     """json
     {
@@ -1744,10 +1936,16 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-9-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-9-name-1",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-9"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-9"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-manual-metrics-9-description",
       "enabled": true,
@@ -1784,21 +1982,35 @@ Feature: Metrics should be added on alarm changes
       "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter": {
-        "component": "test-component-to-manual-instruction-metrics-9"
-      }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-9"
+            }
+          }
+        ]
+      ]
     }
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-to-manual-instruction-metrics-9-name",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-9"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-9"
+            }
+          }
+        ]
       ]
     }
     """
@@ -1850,14 +2062,20 @@ Feature: Metrics should be added on alarm changes
 
   Scenario: given manual disabled in pbh instruction and new event should not count assigned metric if entity in pbh
     When I am admin
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-to-manual-instruction-metrics-10-name",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-10"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-10"
+            }
+          }
+        ]
       ]
     }
     """
@@ -1873,9 +2091,17 @@ Feature: Metrics should be added on alarm changes
       "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter": {
-        "component": "test-component-to-manual-instruction-metrics-10"
-      }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-10"
+            }
+          }
+        ]
+      ]
     }
     """
     Then the response code should be 201
@@ -1899,10 +2125,16 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-10-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-10-name-1",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-manual-instruction-metrics-10-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-manual-instruction-metrics-10-1"
+            }
+          }
+        ]
       ],
       "disabled_on_pbh": ["test-maintenance-type-to-engine"],
       "description": "test-instruction-to-manual-metrics-10-description",
@@ -1963,54 +2195,34 @@ Feature: Metrics should be added on alarm changes
   Scenario: given manual instruction and new events should not count executed instruction metric if an alarm wasn't assigned before
     When I am admin
     When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "description": "test manual instruction metrics 11",
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-to-manual-instruction-metrics-11"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "enabled": true,
-      "priority": 1,
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass"
-    }
     """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
     {
       "description": "test manual instruction metrics 11",
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-to-manual-instruction-metrics-11"
-      }],
-      "priority": 2,
-      "enabled": true,
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "test-infos-to-manual-metrics-11",
-          "description": "test-infos-to-manual-metrics-11-description",
-          "value": "{{ `{{ .Event.Output }}` }}"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-11"
+            }
+          }
+        ]
       ],
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "test-infos-to-manual-metrics-11",
+            "value": "{{ `{{ .Event.Output }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
     }
     """
     Then the response code should be 201
@@ -2021,9 +2233,18 @@ Feature: Metrics should be added on alarm changes
       "_id": "test-instruction-to-manual-metrics-11-1",
       "type": 0,
       "name": "test-instruction-to-manual-metrics-11-name-1",
-      "entity_patterns": [{"infos": {
-        "test-infos-to-manual-metrics-11": {"value": "test value"}
-      }}],
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.test-infos-to-manual-metrics-11",
+            "field_type": "string",
+            "cond": {
+              "type": "eq",
+              "value": "test value"
+            }
+          }
+        ]
+      ],
       "description": "test-instruction-to-manual-metrics-11-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -2048,14 +2269,20 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I do POST /api/v4/cat/filters:
+    When I do POST /api/v4/cat/kpi-filters:
     """json
     {
       "name": "test-filter-to-manual-instruction-metrics-11-name",
-      "entity_patterns": [
-        {
-          "component": "test-component-to-manual-instruction-metrics-11"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-to-manual-instruction-metrics-11"
+            }
+          }
+        ]
       ]
     }
     """

@@ -20,8 +20,6 @@ CURRENT_ROOT_DIR = $(realpath $(dir $(CURRENT_MAKEFILE)))
 # Where to put the built binaries
 CURRENT_BUILD_OUTPUT_DIR = $(CURRENT_ROOT_DIR)/build
 
-VPATH = $(dir $(CURRENT_MAKEFILE))
-
 # List of cmds/engines to build and install (eg: engine-che connector-junit...)
 CMDS = $(notdir $(wildcard $(CURRENT_ROOT_DIR)/cmd/*))
 # List of cmd binary paths (eg: build/cmd/engine-che build/cmd/connector-junit...)
@@ -40,13 +38,12 @@ DOCKER_CMD_TARGETS = $(addprefix docker-cmd-,$(CMDS))
 
 SOURCE_DATE_EPOCH:=$(shell date -u +%s)
 LINKPKG=git.canopsis.net/canopsis/canopsis-$(CANOPSIS_EDITION)/$(CANOPSIS_EDITION)/go-engines-$(CANOPSIS_EDITION)/lib/canopsis
-VERSION:=$(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-authordate --format='%(refname:short)' --count=1 2>/dev/null || echo "0.0.0")
-GITCOMMIT:=$(shell git -C "$(MONOREPO_ROOT)" log -n 1 --format=oneline --abbrev=12 --pretty="%h" 2>/dev/null || echo "unknown Git commit")
+VERSION:=$(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-taggerdate --format='%(refname:short)' --count=1 2>/dev/null || echo "0.0.0")
 # Metadata for the binaries
 CUSTOM_LDFLAGS=
 # TODO: simplify this after Go 1.18 with https://utcc.utoronto.ca/~cks/space/blog/programming/GoVersionOfYourSource
 LDFLAGS:=-ldflags "\
-	-X '$(LINKPKG).BuildGitCommit=$(GITCOMMIT)' \
+	-X '$(LINKPKG).Version=$(VERSION)' \
 	-X '$(LINKPKG).BuildDate=$(SOURCE_DATE_EPOCH)' $(CUSTOM_LDFLAGS)"
 
 # -trimpath makes the log lines shorter and independent from the current machine.
@@ -64,7 +61,7 @@ export DOCKER_BUILDKIT:=1
 export BUILDKIT_PROGRESS:=plain
 
 # If set to 1, previous build caches will be ignored
-DOCKER_NO_CACHE = 
+DOCKER_NO_CACHE =
 DOCKER_TAG = $(VERSION)
 DOCKERFILE_PATH = $(COMMUNITY_ROOT_DIR)/Dockerfile
 DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
@@ -187,8 +184,27 @@ install: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDIT
 	$(foreach plugin,$(PLUGINS),install -d -m 755 -- "$(DESTDIR)/opt/canopsis/lib/go/plugins/$(dir $(plugin))" && install -c -m 644 -- "$(CURRENT_BUILD_OUTPUT_DIR)/plugins/$(plugin)" "$(DESTDIR)/opt/canopsis/lib/go/plugins/$(dir $(plugin))")
 	# Install configuration files
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/etc"
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/systemd/go-engines-vars.conf" "$(DESTDIR)/opt/canopsis/etc/"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/config/connector-centreon-downtime-adapter"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/config/api/security"
+	install $(COMMUNITY_ROOT_DIR)/config/api/security/* -t "$(DESTDIR)/opt/canopsis/share/config/api/security"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/config/mongo"
+	install $(COMMUNITY_ROOT_DIR)/config/mongo/* -t "$(DESTDIR)/opt/canopsis/share/config/mongo"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/migrations/mongodb"
+	$(foreach path,$(wildcard $(COMMUNITY_ROOT_DIR)/database/migrations/*),\
+		install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/migrations/mongodb/$(lastword $(subst /, ,$(path)))/";)
+	$(foreach path,$(wildcard $(COMMUNITY_ROOT_DIR)/database/migrations/*),\
+		install -c -m 644 -p -- $(wildcard $(COMMUNITY_ROOT_DIR)/database/migrations/$(lastword $(subst /, ,$(path)))/*) "$(DESTDIR)/opt/canopsis/share/migrations/mongodb/$(lastword $(subst /, ,$(path)))/";)
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/migrations/postgres"
+	install -c -m 644 -p -- $(wildcard $(COMMUNITY_ROOT_DIR)/database/postgres_migrations/*) "$(DESTDIR)/opt/canopsis/share/migrations/postgres/"
 	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml" "$(DESTDIR)/opt/canopsis/etc/"
 	( cd -- "$(DESTDIR)/opt/canopsis/etc" && ln -sf "canopsis-$(CANOPSIS_EDITION).toml" canopsis.toml )
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/cmd/connector-centreon-downtime-adapter/config.yml.example" "$(DESTDIR)/opt/canopsis/share/config/connector-centreon-downtime-adapter/config.yml"
+
+systemd_install:
+	install -d -m 755 -- "$(DESTDIR)/usr/lib/systemd/system"
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/systemd/canopsis-engine-go@.service" "$(DESTDIR)/usr/lib/systemd/system/canopsis-engine-go@.service"
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/systemd/canopsis-service@canopsis-api.service" "$(DESTDIR)/usr/lib/systemd/system/canopsis-service@canopsis-api.service"
 
 #
 # TESTS
@@ -198,7 +214,6 @@ install: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDIT
 test: $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/ready $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/canopsis-reconfigure
 	@echo "==> Running tests"
 	"$(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/ready" -retries 0 -timeout 2m
-	"$(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/canopsis-reconfigure" -conf "$(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml" -mongoConf "$(COMMUNITY_ROOT_DIR)/config/mongo"
 	# The options -p 1 -parallel 1 ensure that the tests are not run
 	# concurrently, which is necessary for tests that use MongoDB, or
 	# environment variables.

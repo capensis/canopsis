@@ -16,7 +16,7 @@
         dark,
         @click="showTreeOfDependenciesModal(item)"
       )
-        v-icon {{ item.entity | btnIcon }}
+        v-icon {{ getIconByEntity(item.entity) }}
       v-tooltip(v-else, right)
         v-btn(
           slot="activator",
@@ -77,11 +77,6 @@ import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wra
 const { mapActions } = createNamespacedHelpers('service');
 
 export default {
-  filters: {
-    btnIcon(entity) {
-      return entity.type === ENTITY_TYPES.service ? '$vuetify.icons.engineering' : 'person';
-    },
-  },
   components: { ColorIndicatorWrapper },
   props: {
     root: {
@@ -194,6 +189,10 @@ export default {
       fetchServiceDependenciesWithoutStore: 'fetchDependenciesWithoutStore',
       fetchServiceImpactsWithoutStore: 'fetchImpactsWithoutStore',
     }),
+
+    getIconByEntity(entity) {
+      return entity.type === ENTITY_TYPES.service ? '$vuetify.icons.engineering' : 'person';
+    },
 
     getEntityColor(entity) {
       return getEntityColor(entity, COLOR_INDICATOR_TYPES.impactState);

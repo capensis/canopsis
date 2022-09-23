@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarms-expand-panel-more-infos Renders \`alarms-expand-panel-more-infos\` with template 1`] = `
+<div
+  class="more-infos"
+>
+  <v-runtime-template-stub
+    template=<div>
+  <div>
+    <p>Template</p>
+    <p>more-infos-alarm</p>
+    <p>more-infos-entity</p>
+  </div>
+</div>
+    templateprops="[object Object]"
+  />
+</div>
+`;
+
+exports[`alarms-expand-panel-more-infos Renders \`alarms-expand-panel-more-infos\` without template 1`] = `
+<div
+  class="more-infos"
+>
+  <div
+    class="layout justify-center"
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon material-icons theme--light info--text"
+    >
+      infos
+    </i>
+    <p
+      class="ma-0"
+    >
+      To define a template for this window, go to the alarms list settings
+    </p>
+  </div>
+</div>
+`;

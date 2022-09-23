@@ -1,17 +1,16 @@
 <template lang="pug">
-  v-form(data-test="createChangeStateEventModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createChangeStateEvent.title') }}
-      template(slot="text")
+      template(#text="")
         v-container
           c-change-state-field(
             v-model="form",
             :label="$t('modals.createChangeStateEvent.fields.output')"
           )
-      template(slot="actions")
+      template(#actions="")
         v-btn(
-          data-test="createChangeStateEventCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
@@ -19,7 +18,6 @@
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
-          data-test="createChangeStateEventSubmitButton",
           type="submit"
         ) {{ $t('common.saveChanges') }}
 </template>
@@ -29,7 +27,7 @@ import { MODALS, ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { entitiesInfoMixin } from '@/mixins/entities/info';

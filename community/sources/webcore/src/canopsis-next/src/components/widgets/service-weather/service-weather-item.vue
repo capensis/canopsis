@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import VRuntimeTemplate from 'v-runtime-template';
 
 import {
@@ -55,6 +56,8 @@ import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import AlarmCounters from './alarm-counters.vue';
 import ImpactStateIndicator from './impact-state-indicator.vue';
+
+const { mapActions } = createNamespacedHelpers('service');
 
 export default {
   components: {
@@ -172,6 +175,10 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      fetchServiceAlarmsWithoutStore: 'fetchAlarmsWithoutStore',
+    }),
+
     showAdditionalInfoModal(e) {
       if (e.target.tagName !== 'A' || !e.target.href) {
         if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
@@ -197,33 +204,14 @@ export default {
       try {
         const widget = generateDefaultAlarmListWidget();
 
-        const filter = { $and: [{ 'entity.impact': this.service._id }] };
-
-        const serviceFilter = {
-          title: this.service.name,
-          filter,
-        };
-
-        const widgetParameters = {
-          ...this.widget.parameters.alarmsList,
-
-          mainFilter: serviceFilter,
-          viewFilters: [serviceFilter],
-          serviceDependenciesColumns: this.widget.parameters.serviceDependenciesColumns,
-        };
+        widget.parameters.serviceDependenciesColumns = this.widget.parameters.serviceDependenciesColumns;
 
         this.$modals.show({
           name: MODALS.alarmsList,
           config: {
-            widget: {
-              ...widget,
-
-              parameters: {
-                ...widget.parameters,
-                ...widgetParameters,
-              },
-            },
+            widget,
             title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.service.name }),
+            fetchList: params => this.fetchServiceAlarmsWithoutStore({ id: this.service._id, params }),
           },
         });
       } catch (err) {

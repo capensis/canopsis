@@ -8,7 +8,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-1-1-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-succeeded",
       "payload": "{\"resource1\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity1\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -20,7 +20,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-1-2-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-succeeded",
       "payload": "{\"resource2\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity2\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -33,10 +33,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-1-description",
       "enabled": true,
@@ -211,74 +217,157 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
-    When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-1&with_steps=true
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-1
     Then the response code should be 200
-    Then the response array key "data.0.v.steps" should contain:
+    When I do POST /api/v4/alarm-details:
     """json
     [
       {
-        "_t": "instructionstart",
-        "a": "root",
-        "user_id": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-1-name."
-      },
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "opened": true,
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
       {
-        "_t": "instructionjobstart",
-        "a": "root",
-        "user_id": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
-      },
-      {
-        "_t": "instructionjobcomplete",
-        "a": "root",
-        "user_id": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
-      },
-      {
-        "_t": "instructionjobstart",
-        "a": "root",
-        "user_id": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
-      },
-      {
-        "_t": "instructionjobcomplete",
-        "a": "root",
-        "user_id": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
-      },
-      {
-        "_t": "instructioncomplete",
-        "a": "root",
-        "user_id": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-1-name."
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {},
+              {},
+              {
+                "_t": "instructionstart",
+                "a": "root",
+                "user_id": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-1-name."
+              },
+              {
+                "_t": "instructionjobstart",
+                "a": "root",
+                "user_id": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
+              },
+              {
+                "_t": "instructionjobcomplete",
+                "a": "root",
+                "user_id": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
+              },
+              {
+                "_t": "instructionjobstart",
+                "a": "root",
+                "user_id": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
+              },
+              {
+                "_t": "instructionjobcomplete",
+                "a": "root",
+                "user_id": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
+              },
+              {
+                "_t": "instructioncomplete",
+                "a": "root",
+                "user_id": "root",
+                "m": "Instruction test-instruction-to-job-execution-start-1-name."
+              }
+            ]
+          }
+        }
       }
     ]
     """
 
-  Scenario: given http error during job execution should return failed job status
+  Scenario: given error during job execution should return failed job status
     When I am admin
     When I do POST /api/v4/cat/jobs:
     """json
     {
-      "name": "test-job-to-job-execution-start-2-name",
-      "config": "test-job-config-to-run-manual-job",
+      "name": "test-job-to-job-execution-start-2-1-name",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-http-error",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
     }
     """
     Then the response code should be 201
-    When I save response jobID={{ .lastResponse._id }}
+    When I save response jobId1={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/jobs:
+    """json
+    {
+      "name": "test-job-to-job-execution-start-2-2-name",
+      "config": "test-job-config-to-run-manual-job-2",
+      "job_id": "test-job",
+      "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "multiple_executions": false
+    }
+    """
+    Then the response code should be 201
+    When I save response jobId2={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/jobs:
+    """json
+    {
+      "name": "test-job-to-job-execution-start-2-3-name",
+      "config": "test-job-config-to-run-manual-job-1",
+      "job_id": "test-job-running",
+      "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "multiple_executions": false,
+      "retry_amount": 2,
+      "retry_interval": {
+        "value": 2,
+        "unit": "s"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I save response jobId3={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/jobs:
+    """json
+    {
+      "name": "test-job-to-job-execution-start-2-4-name",
+      "config": "test-job-config-to-run-manual-job-1",
+      "job_id": "test-job-running",
+      "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "multiple_executions": false
+    }
+    """
+    Then the response code should be 201
+    When I save response jobId4={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/jobs:
+    """json
+    {
+      "name": "test-job-to-job-execution-start-2-5-name",
+      "config": "test-job-config-to-run-manual-job-1",
+      "job_id": "test-job-failed",
+      "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "multiple_executions": false
+    }
+    """
+    Then the response code should be 201
+    When I save response jobId5={{ .lastResponse._id }}
     When I do POST /api/v4/cat/instructions:
     """json
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-2-description",
       "enabled": true,
@@ -294,7 +383,13 @@ Feature: run a job
               "name": "test-instruction-to-job-execution-start-2-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-job-execution-start-2-step-1-operation-1-description",
-              "jobs": ["{{ .jobID }}"]
+              "jobs": [
+                "{{ .jobId1 }}",
+                "{{ .jobId2 }}",
+                "{{ .jobId3 }}",
+                "{{ .jobId4 }}",
+                "{{ .jobId5 }}"
+              ]
             }
           ],
           "stop_on_fail": true,
@@ -338,12 +433,104 @@ Feature: run a job
     {
       "execution": "{{ .executionID }}",
       "operation": "{{ .operationID }}",
-      "job": "{{ .jobID }}"
+      "job": "{{ .jobId1 }}"
     }
     """
     Then the response code should be 200
-    When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-2&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
+    When I do POST /api/v4/cat/job-executions:
+    """json
+    {
+      "execution": "{{ .executionID }}",
+      "operation": "{{ .operationID }}",
+      "job": "{{ .jobId2 }}"
+    }
+    """
+    Then the response code should be 200
+    When I do POST /api/v4/cat/job-executions:
+    """json
+    {
+      "execution": "{{ .executionID }}",
+      "operation": "{{ .operationID }}",
+      "job": "{{ .jobId3 }}"
+    }
+    """
+    Then the response code should be 200
+    When I do POST /api/v4/cat/job-executions:
+    """json
+    {
+      "execution": "{{ .executionID }}",
+      "operation": "{{ .operationID }}",
+      "job": "{{ .jobId4 }}"
+    }
+    """
+    Then the response code should be 200
+    When I do POST /api/v4/cat/job-executions:
+    """json
+    {
+      "execution": "{{ .executionID }}",
+      "operation": "{{ .operationID }}",
+      "job": "{{ .jobId5 }}"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 5 events processing
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
+    """json
+    {
+      "steps": [
+        {
+          "operations": [
+            {
+              "jobs": [
+                {
+                  "fail_reason": "http-error",
+                  "output": "",
+                  "status": 2
+                },
+                {
+                  "fail_reason": "url POST http://not-exist/api/35/job/test-job/run cannot be connected",
+                  "output": "",
+                  "status": 2
+                },
+                {
+                  "fail_reason": "job is executing too long, cannot retrieve status after 2 retries by 2s",
+                  "output": "",
+                  "status": 2
+                },
+                {
+                  "fail_reason": "job is executing too long, cannot retrieve status after 1 retries by 1s",
+                  "output": "",
+                  "status": 2
+                },
+                {
+                  "fail_reason": "see localhost:3000/rundeck/execution/show/test-job-execution-failed",
+                  "output": "test-job-execution-failed-output",
+                  "status": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-2
+    Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "opened": true,
+        "steps": {
+          "page": 1,
+          "limit": 20
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain:
     """json
     [
       {
@@ -354,12 +541,52 @@ Feature: run a job
       {
         "_t": "instructionjobstart",
         "a": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-name."
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-1-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-name."
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-1-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-2-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-2-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-3-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-3-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-4-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-4-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-5-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-5-name."
       }
     ]
     """
@@ -372,7 +599,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-3-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-long-succeeded",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -385,10 +612,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-3-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-3"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-3-description",
       "enabled": true,
@@ -468,7 +701,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
 
   Scenario: given job should start job for operation of different instructions multiple times
     When I am admin
@@ -476,7 +709,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-4-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-succeeded",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -489,10 +722,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-4-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-4-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-4-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-4-1-description",
       "enabled": true,
@@ -524,10 +763,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-4-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-4-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-4-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-4-2-description",
       "enabled": true,
@@ -630,7 +875,7 @@ Feature: run a job
     Then the response code should be 200
     When I do PUT /api/v4/cat/executions/{{ .firstExecutionID }}/next-step
     When I do PUT /api/v4/cat/executions/{{ .secondExecutionID }}/next-step
-    When I wait the end of 2 events processing
+    When I wait the end of 4 events processing
 
   Scenario: given job should not start job for not running operation of instruction
     When I am admin
@@ -638,7 +883,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-5-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-succeeded",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -651,10 +896,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-5-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-5"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-5"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-5-description",
       "enabled": true,
@@ -734,7 +985,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-6-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-succeeded",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -747,10 +998,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-6-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-6"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-6"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-6-description",
       "enabled": true,
@@ -824,7 +1081,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-7-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-succeeded",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.ResourceBadValue }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -837,10 +1094,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-7-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-7"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-7"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-7-description",
       "enabled": true,
@@ -931,10 +1194,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-8-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-8"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-8"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-8-description",
       "enabled": true,
@@ -1036,7 +1305,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
 
   Scenario: given jenkins job with parameters should start job for operation of instruction
     When I am admin
@@ -1060,10 +1329,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-9-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-9"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-9"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-9-description",
       "enabled": true,
@@ -1171,7 +1446,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
 
   Scenario: given awx job should start job for operation of instruction
     When I am admin
@@ -1192,10 +1467,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-10-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-10"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-10"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-10-description",
       "enabled": true,
@@ -1297,7 +1578,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
 
   Scenario: given job should queue exclusive job for different executions
     When I am admin
@@ -1305,7 +1586,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-11-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-long-succeeded",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": false
@@ -1318,16 +1599,20 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-11-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-11-1"
-        },
-        {
-          "name": "test-resource-to-job-execution-start-11-2"
-        },
-        {
-          "name": "test-resource-to-job-execution-start-11-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-to-job-execution-start-11-1",
+                "test-resource-to-job-execution-start-11-2",
+                "test-resource-to-job-execution-start-11-3"
+              ]
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-11-description",
       "enabled": true,
@@ -1620,7 +1905,7 @@ Feature: run a job
     When I do PUT /api/v4/cat/executions/{{ .firstExecutionID }}/next-step
     When I do PUT /api/v4/cat/executions/{{ .secondExecutionID }}/next-step
     When I do PUT /api/v4/cat/executions/{{ .thirdExecutionID }}/next-step
-    When I wait the end of 3 events processing
+    When I wait the end of 6 events processing
 
   Scenario: given job should run job in parallel for different executions
     When I am admin
@@ -1628,7 +1913,7 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-12-name",
-      "config": "test-job-config-to-run-manual-job",
+      "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-long-succeeded",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
       "multiple_executions": true
@@ -1641,13 +1926,19 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-12-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-12-1"
-        },
-        {
-          "name": "test-resource-to-job-execution-start-12-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-to-job-execution-start-12-1",
+                "test-resource-to-job-execution-start-12-2"
+              ]
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-12-description",
       "enabled": true,
@@ -1815,7 +2106,7 @@ Feature: run a job
     Then "secondJobLaunchedAt" < "firstJobCompletedAt"
     When I do PUT /api/v4/cat/executions/{{ .firstExecutionID }}/next-step
     When I do PUT /api/v4/cat/executions/{{ .secondExecutionID }}/next-step
-    When I wait the end of 2 events processing
+    When I wait the end of 4 events processing
 
   Scenario: given unauth request should not allow access
     When I do POST /api/v4/cat/job-executions

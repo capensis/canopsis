@@ -1,0 +1,320 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`info-popup-setting Renders \`info-popup-setting\` with empty modal 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Info popup
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <div
+        class="layout justify-end"
+      >
+        <button
+          class="v-btn v-btn--floating v-btn--icon v-btn--small theme--light secondary"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              add
+            </i>
+          </div>
+        </button>
+      </div>
+      <div
+        class="layout column"
+      />
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Info popup
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <div
+        class="layout justify-end"
+      >
+        <button
+          class="v-btn v-btn--floating v-btn--icon v-btn--small theme--light secondary"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              add
+            </i>
+          </div>
+        </button>
+      </div>
+      <div
+        class="layout column"
+      >
+        <div
+          class="my-1 v-card v-card--flat v-sheet theme--light secondary white--text"
+        >
+          <div
+            class="v-card__title"
+          >
+            <div
+              class="layout justify-space-between"
+            >
+              <div>
+                Column: alarm.v.connector
+              </div>
+              <div>
+                <button
+                  class="v-btn v-btn--icon v-btn--small theme--light"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light error--text"
+                    >
+                      delete
+                    </i>
+                  </div>
+                </button>
+                <button
+                  class="v-btn v-btn--icon v-btn--small theme--light"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light primary--text"
+                    >
+                      edit
+                    </i>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-card__text"
+          >
+            <p>
+              Template:
+            </p>
+            <div
+              class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--dark"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-text-field__slot"
+                  >
+                    <textarea
+                      disabled="disabled"
+                      rows="5"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="v-text-field__details"
+                >
+                  <div
+                    class="v-messages theme--dark"
+                  >
+                    <transition-group-stub
+                      class="v-messages__wrapper"
+                      name="message-transition"
+                      tag="div"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="my-1 v-card v-card--flat v-sheet theme--light secondary white--text"
+        >
+          <div
+            class="v-card__title"
+          >
+            <div
+              class="layout justify-space-between"
+            >
+              <div>
+                Column: extra_details
+              </div>
+              <div>
+                <button
+                  class="v-btn v-btn--icon v-btn--small theme--light"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light error--text"
+                    >
+                      delete
+                    </i>
+                  </div>
+                </button>
+                <button
+                  class="v-btn v-btn--icon v-btn--small theme--light"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light primary--text"
+                    >
+                      edit
+                    </i>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-card__text"
+          >
+            <p>
+              Template:
+            </p>
+            <div
+              class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--dark"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-text-field__slot"
+                  >
+                    <textarea
+                      disabled="disabled"
+                      rows="5"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="v-text-field__details"
+                >
+                  <div
+                    class="v-messages theme--dark"
+                  >
+                    <transition-group-stub
+                      class="v-messages__wrapper"
+                      name="message-transition"
+                      tag="div"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;

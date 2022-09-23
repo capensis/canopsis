@@ -30,22 +30,6 @@ func (a *mongoAdapter) GetEnabled(ctx context.Context) ([]EntityService, error) 
 	return a.find(ctx, bson.M{"type": types.EntityTypeService, "enabled": true})
 }
 
-func (a *mongoAdapter) GetValid(ctx context.Context) ([]EntityService, error) {
-	res, err := a.GetEnabled(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	filtered := make([]EntityService, 0)
-	for _, s := range res {
-		if s.EntityPatterns.IsSet() && s.EntityPatterns.IsValid() {
-			filtered = append(filtered, s)
-		}
-	}
-
-	return filtered, nil
-}
-
 func (a *mongoAdapter) GetByID(ctx context.Context, id string) (*EntityService, error) {
 	return a.findOne(ctx, bson.M{"type": types.EntityTypeService, "_id": id})
 }
@@ -134,17 +118,38 @@ func (a *mongoAdapter) GetServiceDependencies(
 	ctx context.Context,
 	serviceID string,
 ) (mongo.Cursor, error) {
-	cursor, err := a.collection.Aggregate(ctx, []bson.M{
+	return a.collection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"enabled": true,
 			"impact":  serviceID,
 		}},
 	})
+}
+
+func (a *mongoAdapter) GetDependenciesCount(
+	ctx context.Context,
+	serviceID string,
+) (int64, error) {
+	cursor, err := a.collection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"_id": serviceID,
+		}},
+		{"$project": bson.M{
+			"depends_count": bson.M{"$size": "$depends"},
+		}},
+	})
 	if err != nil {
-		return nil, err
+		return 0, err
+	}
+	if cursor.Next(ctx) {
+		res := struct {
+			DependsCount int64 `bson:"depends_count"`
+		}{}
+		err = cursor.Decode(&res)
+		return res.DependsCount, err
 	}
 
-	return cursor, nil
+	return 0, nil
 }
 
 func (a *mongoAdapter) find(ctx context.Context, filter interface{}) ([]EntityService, error) {

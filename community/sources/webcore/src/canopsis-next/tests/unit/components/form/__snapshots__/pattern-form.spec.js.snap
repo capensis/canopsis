@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pattern-form Renders \`pattern-form\` with alarm type 1`] = `
+<div
+  class="layout column"
+>
+  <input
+    class="v-text-field"
+    error-messages=""
+    label="Title"
+    name="title"
+  />
+  <c-alarm-patterns-field-stub
+    check-count-name="alarm_pattern"
+    name="alarm_pattern"
+    value="[object Object]"
+  />
+</div>
+`;
+
+exports[`pattern-form Renders \`pattern-form\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <input
+    class="v-text-field"
+    error-messages=""
+    label="Title"
+    name="title"
+  />
+  <!---->
+</div>
+`;
+
+exports[`pattern-form Renders \`pattern-form\` with entity type 1`] = `
+<div
+  class="layout column"
+>
+  <input
+    class="v-text-field"
+    error-messages=""
+    label="Title"
+    name="title"
+  />
+  <c-entity-patterns-field-stub
+    check-count-name="entity_pattern"
+    name="entity_pattern"
+    value="[object Object]"
+  />
+</div>
+`;
+
+exports[`pattern-form Renders \`pattern-form\` with entity type 2`] = `
+<div
+  class="layout column"
+>
+  <input
+    class="v-text-field"
+    error-messages=""
+    label="Title"
+    name="title"
+  />
+  <c-pbehavior-patterns-field-stub
+    check-count-name="pbehavior_pattern"
+    name="pbehavior_pattern"
+    value="[object Object]"
+  />
+</div>
+`;
+
+exports[`pattern-form Renders \`pattern-form\` with errors 1`] = `
+<div
+  class="layout column"
+>
+  <input
+    class="v-text-field"
+    error-messages="The field is required"
+    label="Title"
+    name="title"
+  />
+  <!---->
+</div>
+`;

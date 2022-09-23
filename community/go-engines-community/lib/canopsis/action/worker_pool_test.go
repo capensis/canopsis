@@ -7,21 +7,18 @@ import (
 	"testing"
 	"time"
 
+	"github.com/rs/zerolog"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
 	"github.com/golang/mock/gomock"
-	"go.mongodb.org/mongo-driver/bson"
 )
-
-type entityPatternListWrapper struct {
-	PatternList pattern.EntityPatternList `bson:"list"`
-}
 
 func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 	ctrl := gomock.NewController(t)
@@ -44,34 +41,22 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 		}
 	}(timerCtx)
 
-	bsonPattern, err := bson.Marshal(bson.M{
-		"list": []bson.M{
-			{
-				"enabled": true,
-				"type":    bson.M{"regex_match": "abc-.*-def"},
-				"infos": bson.M{
-					"output": bson.M{
-						"value": "debian9",
-					},
-				},
-			},
+	cond, err := pattern.NewRegexpCondition("regexp", "abc-.*-def")
+	if err != nil {
+		t.Fatal("error shouldn't be raised")
+	}
+
+	p := pattern.Entity{{
+		{
+			Field:     "type",
+			Condition: cond,
 		},
-	})
-	if err != nil {
-		t.Fatal("error shouldn't be raised")
-	}
-
-	var w entityPatternListWrapper
-	err = bson.Unmarshal(bsonPattern, &w)
-	if err != nil {
-		t.Fatal("error shouldn't be raised")
-	}
-
-	p := w.PatternList
-
-	if p.IsSet() != true || p.IsValid() != true {
-		t.Fatal("bad entity patterns")
-	}
+		{
+			Field:     "infos.output",
+			FieldType: "string",
+			Condition: pattern.NewStringCondition("eq", "debian9"),
+		},
+	}}
 
 	axeRpcMock := mock_engine.NewMockRPCClient(ctrl)
 	webhookRpcMock := mock_engine.NewMockRPCClient(ctrl)
@@ -80,7 +65,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 	taskChannel := make(chan action.Task)
 	defer close(taskChannel)
 
-	pool := action.NewWorkerPool(5, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), log.NewLogger(true), nil)
+	pool := action.NewWorkerPool(5, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), zerolog.Nop(), nil)
 	resultChannel, err := pool.RunWorkers(ctx, taskChannel)
 	if err != nil {
 		t.Fatal("error shouldn't be raised")
@@ -96,8 +81,10 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 		{
 			task: action.Task{
 				Action: action.Action{
-					EntityPatterns: p,
-					Type:           "action_1",
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: p,
+					},
+					Type: "action_1",
 					Parameters: action.Parameters{
 						Output: "output 1",
 						Author: "author 1",
@@ -124,8 +111,10 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 		{
 			task: action.Task{
 				Action: action.Action{
-					EntityPatterns: p,
-					Type:           "action_2",
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: p,
+					},
+					Type: "action_2",
 					Parameters: action.Parameters{
 						Output: "output 2",
 						Author: "author 2",
@@ -142,8 +131,10 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 		{
 			task: action.Task{
 				Action: action.Action{
-					EntityPatterns: p,
-					Type:           "action_3",
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: p,
+					},
+					Type: "action_3",
 					Parameters: action.Parameters{
 						Output: "output 3",
 						Author: "author 3",
@@ -171,8 +162,10 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 			testName: "should render templates",
 			task: action.Task{
 				Action: action.Action{
-					EntityPatterns: p,
-					Type:           "action_1",
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: p,
+					},
+					Type: "action_1",
 					Parameters: action.Parameters{
 						Output: "rendered output: {{.Entity.ID}}",
 						Author: "rendered author: {{.Alarm.ID}}",
@@ -207,9 +200,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 			if !dataset.expectedNotMatched {
 				axeRpcMock.
 					EXPECT().
-					Call(gomock.Any()).
+					Call(gomock.Any(), gomock.Any()).
 					Times(1).
-					Do(func(val1 interface{}) {
+					Do(func(_ context.Context, val1 interface{}) {
 						decoder := json.NewDecoder()
 						message := val1.(engine.RPCMessage)
 						correlationID := message.CorrelationID
@@ -280,7 +273,7 @@ func TestPool_RunWorkers_GivenCancelContext_ShouldCancelTasks(t *testing.T) {
 	taskChannel := make(chan action.Task)
 
 	poolSize := 5
-	pool := action.NewWorkerPool(poolSize, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), log.NewLogger(true), nil)
+	pool := action.NewWorkerPool(poolSize, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), zerolog.Nop(), nil)
 	resultChannel, err := pool.RunWorkers(ctx, taskChannel)
 	if err != nil {
 		t.Fatal("error shouldn't be raised")

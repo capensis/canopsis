@@ -21,7 +21,7 @@ import { formToWidget, widgetToForm } from './forms/widgets/common';
  */
 export function defaultColumnsToColumns(columns = []) {
   return columns.map(({ labelKey, value }) => ({
-    label: i18n.t(labelKey),
+    label: i18n.tc(labelKey),
     value,
   }));
 }
@@ -126,3 +126,30 @@ export const generateDefaultAlarmListWidget = () => ({
 
   _id: uuid(),
 });
+
+/**
+ * Generate alarm details id by widgetId
+ *
+ * @param {string} alarmId
+ * @param {string} widgetId
+ * @returns {string}
+ */
+export const generateAlarmDetailsId = (alarmId, widgetId) => `${alarmId}_${widgetId}`;
+
+/**
+ * Get dataPreparer for alarmDetails entity
+ *
+ * @param {string} widgetId
+ * @returns {Function}
+ */
+export const getAlarmDetailsDataPreparer = widgetId => data => (
+  data.map(item => ({
+    ...item,
+
+    /**
+     * We are generating new id based on alarmId and widgetId to avoiding collision with two widgets
+     * on the same view with opened expand panel on the same alarm
+     */
+    _id: generateAlarmDetailsId(item._id, widgetId),
+  }))
+);

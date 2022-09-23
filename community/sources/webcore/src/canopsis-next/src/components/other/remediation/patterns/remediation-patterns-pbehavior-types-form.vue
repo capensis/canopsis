@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-layout(row)
-      pbehavior-type-field(
+      c-pbehavior-type-field(
         v-field="form.active_on_pbh",
         :label="$t('remediationPatterns.tabs.pbehaviorTypes.fields.activeOnTypes')",
         :is-item-disabled="isActiveItemDisabled",
@@ -9,7 +9,7 @@
         multiple
       )
     v-layout(row)
-      pbehavior-type-field(
+      c-pbehavior-type-field(
         v-field="form.disabled_on_pbh",
         :label="$t('remediationPatterns.tabs.pbehaviorTypes.fields.disabledOnTypes')",
         :is-item-disabled="isDisabledItemDisabled",
@@ -19,10 +19,7 @@
 </template>
 
 <script>
-import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
-
 export default {
-  components: { PbehaviorTypeField },
   model: {
     prop: 'form',
     event: 'input',

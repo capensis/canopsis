@@ -9,9 +9,9 @@
           color="primary",
           hide-details
         )
-        pbehavior-type-field(
+        c-pbehavior-type-field(
           v-field="value.types",
-          v-validate="value.enabled ? 'required' : ''",
+          :required="!value.enabled",
           :disabled="!value.enabled",
           :is-item-disabled="isItemDisabled",
           with-icon,
@@ -25,11 +25,8 @@ import { COUNTERS_LIMIT } from '@/constants';
 
 import { formValidationHeaderMixin } from '@/mixins/form';
 
-import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
-
 export default {
   inject: ['$validator'],
-  components: { PbehaviorTypeField },
   mixins: [formValidationHeaderMixin],
   props: {
     value: {

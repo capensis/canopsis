@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`entity-gantt Renders \`entity-gantt\` with required props 1`] = `
+<div
+  class="layout justify-center"
+>
+  <c-progress-overlay-stub
+    pending="true"
+  />
+  <junit-gantt-chart-stub
+    items=""
+    query="[object Object]"
+    totalitems="0"
+    width="840"
+  />
+</div>
+`;
+
+exports[`entity-gantt Renders \`entity-gantt\` with required props 2`] = `
+<div
+  class="layout justify-center"
+>
+  <c-progress-overlay-stub />
+  <junit-gantt-chart-stub
+    items="[object Object],[object Object]"
+    query="[object Object]"
+    totalitems="2"
+    width="840"
+  />
+</div>
+`;
