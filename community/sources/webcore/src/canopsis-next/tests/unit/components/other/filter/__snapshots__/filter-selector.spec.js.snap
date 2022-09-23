@@ -25,11 +25,10 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 1`] = `
         <div
           class="v-select__selections"
         >
-          <div
-            class="v-select__selection v-select__selection--comma"
-          >
+          <!---->
+          <span>
             Filter 1
-          </div>
+          </span>
           <input
             aria-label="Custom label"
             aria-readonly="false"
@@ -204,11 +203,10 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 3`] = `
         <div
           class="v-select__selections"
         >
-          <div
-            class="v-select__selection v-select__selection--comma"
-          >
+          <!---->
+          <span>
             Filter 1
-          </div>
+          </span>
           <input
             aria-label=""
             aria-readonly="false"
@@ -407,6 +405,10 @@ exports[`filter-selector Renders \`filter-selector\` with default props 1`] = `
         <div
           class="v-select__selections"
         >
+          <!---->
+          <span>
+            
+          </span>
           <input
             aria-label=""
             aria-readonly="false"
