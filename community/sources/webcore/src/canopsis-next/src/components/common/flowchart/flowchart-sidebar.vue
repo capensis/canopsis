@@ -43,7 +43,7 @@
             flat,
             @click="addIconAsset(icon)"
           )
-            img(:src="icon")
+            span.grey--text.text--darken-3.flowchart-sidebar__button-svg(v-html="icon")
           v-flex(xs12)
             v-divider
 </template>
@@ -614,18 +614,13 @@ export default {
       this.$refs.fileSelector.clear();
     },
 
-    async addIconAsset(src) {
-      const { width, height } = await getImageProperties(src);
-
+    async addIconAsset(svg) {
       const image = imageShapeToForm({
         ...this.centerRectProperties,
-        width,
-        height,
-        src,
+        svg,
         aspectRatio: true,
         properties: {
-          fill: 'transparent',
-          stroke: 'transparent',
+          fill: 'black',
         },
       });
 
@@ -646,6 +641,11 @@ export default {
     width: 50px !important;
     height: 50px !important;
     padding: 0 !important;
+
+    svg {
+      width: 30px;
+      height: 30px;
+    }
   }
 
   &__additional-item {
