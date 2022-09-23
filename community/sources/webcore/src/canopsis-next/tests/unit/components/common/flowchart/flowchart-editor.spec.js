@@ -923,7 +923,7 @@ describe('flowchart-editor', () => {
       ...shapes,
       image: {
         ...shapes.image,
-        height: 105,
+        height: 15,
         width: 115,
         y: 25,
       },

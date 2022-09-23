@@ -1,4 +1,8 @@
-const requireModule = require.context('.', true, /.*\.svg$/);
+const requireModule = require.context(
+  '!svg-inline-loader?modules!.',
+  true,
+  /.*\.svg$/,
+);
 const assetGroups = {};
 
 requireModule.keys().forEach((fileName) => {

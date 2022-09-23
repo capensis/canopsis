@@ -29,17 +29,6 @@ module.exports = {
       })
       .end();
 
-    config.module.rule('svg').test(/.*\.svg$/i).use('file-loader')
-      .tap(options => ({ ...options,
-        name(resourcePath) {
-          if (resourcePath.includes('flowchart/assets')) {
-            return 'img/[name].[ext]';
-          }
-
-          return 'img/[name].[hash:8].[ext]';
-        },
-      }));
-
     return config;
   },
   devServer: {

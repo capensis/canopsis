@@ -800,12 +800,6 @@ describe('flowchart-sidebar', () => {
     const id = Faker.datatype.string();
     uid.mockReturnValueOnce(id);
 
-    const imageProperties = {
-      width: 100,
-      height: 200,
-    };
-    getImageProperties.mockReturnValueOnce(imageProperties);
-
     const wrapper = factory({
       propsData: {
         shapes: {},
@@ -821,13 +815,14 @@ describe('flowchart-sidebar', () => {
     expect(wrapper).toEmit('input', {
       [id]: imageShapeToForm({
         _id: id,
-        ...imageProperties,
         x: 435,
         y: 435,
-        src: {},
+        height: 150,
+        width: 150,
+        src: undefined,
+        svg: '<svg><text>special-asset</text></svg>',
         properties: {
-          fill: 'transparent',
-          stroke: 'transparent',
+          fill: 'black',
         },
         aspectRatio: true,
       }),

@@ -120,6 +120,7 @@
     "selenium-server": "^3.141.59",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
+    "svg-inline-loader": "^0.8.2",
     "vue-cli-plugin-test-attrs": "^0.1.5",
     "vue-cli-plugin-webpack-bundle-analyzer": "^4.0.0",
     "vue-jest": "^4.0.1",
