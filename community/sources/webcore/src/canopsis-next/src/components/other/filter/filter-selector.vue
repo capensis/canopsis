@@ -4,10 +4,18 @@
     :items="preparedFilters",
     :label="label",
     :disabled="disabled",
+    :always-dirty="!!lockedFilter",
     item-text="title",
     item-value="_id",
     clearable
   )
+    template(#selections="{ items }")
+      v-tooltip(v-if="lockedFilter", top)
+        template(#activator="{ on }")
+          v-chip(v-on="on", small) {{ lockedFilter.title }}
+        span {{ $t('settings.lockedFilter') }}
+      span {{ items.map(item => item.title).join(', ') }}
+
     template(#item="{ parent, item, tile }")
       v-list-tile(v-bind="tile.props", v-on="tile.on", :disabled="item.active")
         v-list-tile-content
