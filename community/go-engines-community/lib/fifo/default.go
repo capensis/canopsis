@@ -107,9 +107,11 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 			runInfoPeriodicalWorker.Work(ctx)
 			scheduler.Start(ctx)
 
-			err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeChangeEntity})
-			if err != nil {
-				return err
+			if !mongoClient.IsDistributed() {
+				err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeChangeEntity})
+				if err != nil {
+					return err
+				}
 			}
 
 			go statsListener.Listen(ctx, statsCh)
@@ -216,6 +218,8 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 	if mongoClient.IsDistributed() {
 		engine.AddRoutine(func(ctx context.Context) error {
 			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventfilterService, logger)
+
+			logger.Debug().Msg("Loading event filter rules")
 
 			for {
 				select {

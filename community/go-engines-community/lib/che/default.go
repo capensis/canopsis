@@ -102,13 +102,15 @@ func NewEngine(
 			// run in goroutine because it may take some time to process heavy dbs, don't want to slow down the engine startup
 			go infosDictLockedPeriodicalWorker.Work(ctx)
 
-			logger.Debug().Msg("Loading event filter rules")
-			err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
-			if err != nil {
-				return fmt.Errorf("unable to load rules: %w", err)
+			if !mongoClient.IsDistributed() {
+				logger.Debug().Msg("Loading event filter rules")
+				err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
+				if err != nil {
+					return fmt.Errorf("unable to load rules: %w", err)
+				}
 			}
 
-			err = enrichmentCenter.LoadServices(ctx)
+			err := enrichmentCenter.LoadServices(ctx)
 			if err != nil {
 				return fmt.Errorf("unable to load services: %w", err)
 			}
@@ -218,6 +220,8 @@ func NewEngine(
 	if mongoClient.IsDistributed() {
 		engine.AddRoutine(func(ctx context.Context) error {
 			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventfilterService, logger)
+
+			logger.Debug().Msg("Loading event filter rules")
 
 			for {
 				select {
