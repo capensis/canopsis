@@ -183,6 +183,32 @@ func BenchmarkMessageProcessor_Process_GivenNewEntityAndMatchedEnrichmentEntityE
 	})
 }
 
+func BenchmarkMessageProcessor_Process_GivenNewEntityAndMatchedDropEventfilterWith10ResolvedExdates(b *testing.B) {
+	benchmarkMessageProcessor(b, "./testdata/fixtures/eventfilters_with_rrule_10_resolved_exdates.yml", func(i int) types.Event {
+		return types.Event{
+			EventType:     types.EventTypeCheck,
+			Connector:     fmt.Sprintf("test-connector-%d", i),
+			ConnectorName: fmt.Sprintf("test-connector-name-%d", i),
+			Component:     fmt.Sprintf("test-component-%d", i),
+			Resource:      fmt.Sprintf("test-resource-%d", i),
+			SourceType:    types.SourceTypeResource,
+		}
+	})
+}
+
+func BenchmarkMessageProcessor_Process_GivenNewEntityAndMatchedDropEventfilterWith100ResolvedExdates(b *testing.B) {
+	benchmarkMessageProcessor(b, "./testdata/fixtures/eventfilters_with_rrule_100_resolved_exdates.yml", func(i int) types.Event {
+		return types.Event{
+			EventType:     types.EventTypeCheck,
+			Connector:     fmt.Sprintf("test-connector-%d", i),
+			ConnectorName: fmt.Sprintf("test-connector-name-%d", i),
+			Component:     fmt.Sprintf("test-component-%d", i),
+			Resource:      fmt.Sprintf("test-resource-%d", i),
+			SourceType:    types.SourceTypeResource,
+		}
+	})
+}
+
 func benchmarkMessageProcessor(
 	b *testing.B,
 	fixturesPath string,

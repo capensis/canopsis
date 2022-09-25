@@ -134,6 +134,8 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 		p.faker.ResetUniqueName()
 	}
 
+	p.faker.ResetPBehaviorExceptions()
+
 	return docsByCollection, nil
 }
 
