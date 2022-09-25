@@ -13,6 +13,7 @@ import (
 	"github.com/teambition/rrule-go"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func NewEventfilterIntervalsWorker(
@@ -130,6 +131,7 @@ func (w *eventfilterIntervalsWorker) Work(ctx context.Context) {
 					},
 				},
 			},
+			options.Aggregate().SetAllowDiskUse(true),
 		)
 
 	if err != nil {
