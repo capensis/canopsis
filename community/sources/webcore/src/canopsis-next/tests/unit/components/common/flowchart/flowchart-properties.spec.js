@@ -34,6 +34,9 @@ const selectStrokeColorField = wrapper => wrapper.find('flowchart-color-field-st
 const selectStrokeWidthField = wrapper => wrapper.find('flowchart-number-field-stub[label="Stroke width"]');
 const selectStrokeTypeField = wrapper => wrapper.find('flowchart-stroke-type-field-stub[label="Stroke type"]');
 const selectLineTypeField = wrapper => wrapper.find('flowchart-line-type-field-stub');
+const selectFontColorField = wrapper => wrapper.find('flowchart-color-field-stub[label="Font color"]');
+const selectFontBackgroundColorField = wrapper => wrapper.find('flowchart-color-field-stub[label="Font background color"]');
+const selectFontSizeField = wrapper => wrapper.find('flowchart-number-field-stub[label="Font size"]');
 
 describe('flowchart-properties', () => {
   test('Fill changed after trigger color field', () => {
@@ -58,7 +61,7 @@ describe('flowchart-properties', () => {
 
     const fillColorField = selectFillColorField(wrapper);
 
-    const newFill = 'orange';
+    const newFill = Faker.internet.color();
 
     fillColorField.vm.$emit('input', newFill);
 
@@ -100,7 +103,7 @@ describe('flowchart-properties', () => {
 
     const strokeColorField = selectStrokeColorField(wrapper);
 
-    const newStroke = 'orange';
+    const newStroke = Faker.internet.color();
 
     strokeColorField.vm.$emit('input', newStroke);
 
@@ -236,6 +239,132 @@ describe('flowchart-properties', () => {
       second: {
         ...secondShape,
         lineType: LINE_TYPES.rightElbow,
+      },
+    });
+  });
+
+  test('Text color changed after trigger color field', () => {
+    const firstShape = rectShapeToForm({
+      _id: 'first',
+    });
+    const secondShape = rectShapeToForm({
+      _id: 'second',
+    });
+    const shapes = {
+      first: firstShape,
+      second: secondShape,
+    };
+    const wrapper = factory({
+      propsData: {
+        shapes,
+        selected: Object.keys(shapes),
+      },
+    });
+
+    const fontColorField = selectFontColorField(wrapper);
+
+    const newFontColor = Faker.internet.color();
+
+    fontColorField.vm.$emit('input', newFontColor);
+
+    expect(wrapper).toEmit('input', {
+      first: {
+        ...firstShape,
+        textProperties: {
+          ...firstShape.textProperties,
+          color: newFontColor,
+        },
+      },
+      second: {
+        ...secondShape,
+        textProperties: {
+          ...secondShape.textProperties,
+          color: newFontColor,
+        },
+      },
+    });
+  });
+
+  test('Text background color changed after trigger color field', () => {
+    const firstShape = rectShapeToForm({
+      _id: 'first',
+    });
+    const secondShape = rectShapeToForm({
+      _id: 'second',
+    });
+    const shapes = {
+      first: firstShape,
+      second: secondShape,
+    };
+    const wrapper = factory({
+      propsData: {
+        shapes,
+        selected: Object.keys(shapes),
+      },
+    });
+
+    const fontBackgroundColorField = selectFontBackgroundColorField(wrapper);
+
+    const newFontBackgroundColor = Faker.internet.color();
+
+    fontBackgroundColorField.vm.$emit('input', newFontBackgroundColor);
+
+    expect(wrapper).toEmit('input', {
+      first: {
+        ...firstShape,
+        textProperties: {
+          ...firstShape.textProperties,
+          backgroundColor: newFontBackgroundColor,
+        },
+      },
+      second: {
+        ...secondShape,
+        textProperties: {
+          ...secondShape.textProperties,
+          backgroundColor: newFontBackgroundColor,
+        },
+      },
+    });
+  });
+
+  test('text size changed after trigger number field', () => {
+    const firstShape = rectShapeToForm({
+      _id: 'first',
+    });
+    const secondShape = rectShapeToForm({
+      _id: 'second',
+    });
+    const shapes = {
+      first: firstShape,
+      second: secondShape,
+    };
+    const wrapper = factory({
+      propsData: {
+        shapes,
+        selected: Object.keys(shapes),
+      },
+    });
+
+    const fontSizeField = selectFontSizeField(wrapper);
+
+    const newFontSize = Faker.datatype.number();
+
+    fontSizeField.vm.$emit('input', newFontSize);
+
+    expect(wrapper).toEmit('input', {
+      first: {
+        ...firstShape,
+        textProperties: {
+          ...firstShape.textProperties,
+          fontSize: newFontSize,
+        },
+      },
+      second: {
+        ...secondShape,
+        textProperties: {
+          ...secondShape.textProperties,
+          fontSize: newFontSize,
+        },
       },
     });
   });
