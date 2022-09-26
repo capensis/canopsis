@@ -16,16 +16,14 @@ type Faker struct {
 	*gofakeit.Faker
 	passwordEncoder password.Encoder
 
-	usedNames           map[string]struct{}
-	pbehaviorExceptions map[string]struct{}
+	usedNames map[string]struct{}
 }
 
 func NewFaker(passwordEncoder password.Encoder) *Faker {
 	return &Faker{
-		Faker:               gofakeit.New(0),
-		passwordEncoder:     passwordEncoder,
-		usedNames:           make(map[string]struct{}),
-		pbehaviorExceptions: make(map[string]struct{}),
+		Faker:           gofakeit.New(0),
+		passwordEncoder: passwordEncoder,
+		usedNames:       make(map[string]struct{}),
 	}
 }
 
@@ -39,7 +37,7 @@ func (*Faker) NowUnixAdd(dStr string) (interface{}, error) {
 		return nil, err
 	}
 
-	return types.CpsTime{Time: time.Now().Add(d)}, nil
+	return time.Now().Add(d).Unix(), nil
 }
 
 func (*Faker) GenerateExdates(count int) interface{} {
@@ -62,18 +60,8 @@ func (*Faker) GenerateExdates(count int) interface{} {
 
 func (f *Faker) GeneratePBehaviorExceptionID() string {
 	id := utils.NewID()
-	f.pbehaviorExceptions[id] = struct{}{}
 
 	return id
-}
-
-func (f *Faker) LinkPBehaviorExceptions() []string {
-	exceptions := make([]string, 0, len(f.pbehaviorExceptions))
-	for k := range f.pbehaviorExceptions {
-		exceptions = append(exceptions, k)
-	}
-
-	return exceptions
 }
 
 func (f *Faker) DateUnix() interface{} {
@@ -100,8 +88,4 @@ func (f *Faker) UniqueName() (string, error) {
 
 func (f *Faker) ResetUniqueName() {
 	f.usedNames = make(map[string]struct{})
-}
-
-func (f *Faker) ResetPBehaviorExceptions() {
-	f.pbehaviorExceptions = make(map[string]struct{})
 }
