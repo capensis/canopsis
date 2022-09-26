@@ -2104,7 +2104,7 @@ Feature: modify event on event filter
             "field": "component",
             "cond": {
               "type": "eq",
-              "value": "test-eventfilter-assets-customer-2"
+              "value": "test-eventfilter-assets-customer-3"
             }
           }
         ]
@@ -2135,7 +2135,7 @@ Feature: modify event on event filter
       "connector_name": "test-connector-name-che-event-filters-16",
       "source_type": "resource",
       "event_type": "check",
-      "component": "test-eventfilter-assets-customer-2",
+      "component": "test-eventfilter-assets-customer-3",
       "resource": "test-resource-che-event-filters-16",
       "state": 2,
       "output": "test-output-che-event-filters-16"
@@ -2150,15 +2150,15 @@ Feature: modify event on event filter
     {
       "data": [
         {
-          "_id": "test-resource-che-event-filters-16/test-eventfilter-assets-customer-2",
+          "_id": "test-resource-che-event-filters-16/test-eventfilter-assets-customer-3",
           "category": null,
-          "component": "test-eventfilter-assets-customer-2",
+          "component": "test-eventfilter-assets-customer-3",
           "depends": [
             "test-connector-che-event-filters-16/test-connector-name-che-event-filters-16"
           ],
           "enabled": true,
           "impact": [
-            "test-eventfilter-assets-customer-2"
+            "test-eventfilter-assets-customer-3"
           ],
           "enable_history": [
             {{ .createTimestamp }}
@@ -2206,7 +2206,7 @@ Feature: modify event on event filter
             "field": "component",
             "cond": {
               "type": "eq",
-              "value": "test-eventfilter-assets-customer-2"
+              "value": "test-eventfilter-assets-customer-4"
             }
           }
         ]
@@ -2237,7 +2237,7 @@ Feature: modify event on event filter
       "connector_name": "test-connector-name-che-event-filters-17",
       "source_type": "resource",
       "event_type": "check",
-      "component": "test-eventfilter-assets-customer-2",
+      "component": "test-eventfilter-assets-customer-4",
       "resource": "test-resource-che-event-filters-17",
       "state": 2,
       "output": "test-output-che-event-filters-17"
@@ -2252,15 +2252,15 @@ Feature: modify event on event filter
     {
       "data": [
         {
-          "_id": "test-resource-che-event-filters-17/test-eventfilter-assets-customer-2",
+          "_id": "test-resource-che-event-filters-17/test-eventfilter-assets-customer-4",
           "category": null,
-          "component": "test-eventfilter-assets-customer-2",
+          "component": "test-eventfilter-assets-customer-4",
           "depends": [
             "test-connector-che-event-filters-17/test-connector-name-che-event-filters-17"
           ],
           "enabled": true,
           "impact": [
-            "test-eventfilter-assets-customer-2"
+            "test-eventfilter-assets-customer-4"
           ],
           "enable_history": [
             {{ .createTimestamp }}
