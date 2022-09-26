@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -15,11 +14,10 @@ type RuleChangesWatcher interface {
 	Watch(ctx context.Context, types []string) error
 }
 
-func NewRulesChangesWatcher(client mongo.DbClient, service Service, logger zerolog.Logger) RuleChangesWatcher {
+func NewRulesChangesWatcher(client mongo.DbClient, service Service) RuleChangesWatcher {
 	return &rulesChangesWatcher{
 		collection:        client.Collection(mongo.EventFilterRulesMongoCollection),
 		service:           service,
-		logger:            logger,
 		loadSleepDuration: loadTimerDuration,
 	}
 }
@@ -27,7 +25,6 @@ func NewRulesChangesWatcher(client mongo.DbClient, service Service, logger zerol
 type rulesChangesWatcher struct {
 	collection        mongo.DbCollection
 	service           Service
-	logger            zerolog.Logger
 	loadSleepDuration time.Duration
 }
 

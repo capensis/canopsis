@@ -219,7 +219,7 @@ func NewEngine(
 	engine.AddPeriodicalWorker("entity infos dictionary", infosDictLockedPeriodicalWorker)
 	if mongoClient.IsDistributed() {
 		engine.AddRoutine(func(ctx context.Context) error {
-			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventfilterService, logger)
+			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventfilterService)
 
 			logger.Debug().Msg("Loading event filter rules")
 
