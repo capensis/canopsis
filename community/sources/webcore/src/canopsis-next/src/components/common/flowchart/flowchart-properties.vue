@@ -37,7 +37,7 @@
             :value="lineType",
             @input="updateLineType"
           )
-          v-divider
+          v-divider(v-if="showLineType || showStroke || showFill")
           flowchart-color-field.my-1(
             :label="$t('flowchart.fontColor')",
             :value="textColor",
