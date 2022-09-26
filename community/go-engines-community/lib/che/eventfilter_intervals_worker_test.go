@@ -13,35 +13,35 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func BenchmarkRulesChangesWatcher10Exdates(b *testing.B) {
+func BenchmarkEventfilterIntervalsWorker_Work_Given10Exdates(b *testing.B) {
 	benchmarkRulesChangesWatcher(b, "./testdata/fixtures/eventfilters_with_rrule_10_exdates.yml")
 }
 
-func BenchmarkRulesChangesWatcher100Exdates(b *testing.B) {
+func BenchmarkEventfilterIntervalsWorker_Work_Given100Exdates(b *testing.B) {
 	benchmarkRulesChangesWatcher(b, "./testdata/fixtures/eventfilters_with_rrule_100_exdates.yml")
 }
 
-func BenchmarkRulesChangesWatcher1000Exdates(b *testing.B) {
+func BenchmarkEventfilterIntervalsWorker_Work_Given1000Exdates(b *testing.B) {
 	benchmarkRulesChangesWatcher(b, "./testdata/fixtures/eventfilters_with_rrule_1000_exdates.yml")
 }
 
-func BenchmarkRulesChangesWatcher10Exdates10Exceptions1Exdate(b *testing.B) {
+func BenchmarkEventfilterIntervalsWorker_Work_Given10Exdates_10ExceptionsWith_1Exdate(b *testing.B) {
 	benchmarkRulesChangesWatcher(b, "./testdata/fixtures/eventfilters_with_rrule_10_exdates_10_exceptions_1_exdate.yml")
 }
 
-func BenchmarkRulesChangesWatcher10Exdates10Exceptions10Exdate(b *testing.B) {
+func BenchmarkEventfilterIntervalsWorker_Work_Given10Exdates_10ExceptionsWith_10Exdates(b *testing.B) {
 	benchmarkRulesChangesWatcher(b, "./testdata/fixtures/eventfilters_with_rrule_10_exdates_10_exceptions_10_exdate.yml")
 }
 
-func BenchmarkRulesChangesWatcher10Exdates10Exceptions100Exdate(b *testing.B) {
+func BenchmarkEventfilterIntervalsWorker_Work_Given10Exdates_10ExceptionsWith_100Exdates(b *testing.B) {
 	benchmarkRulesChangesWatcher(b, "./testdata/fixtures/eventfilters_with_rrule_10_exdates_10_exceptions_100_exdate.yml")
 }
 
-func BenchmarkRulesChangesWatcher10Exdates100Exceptions100Exdate(b *testing.B) {
+func BenchmarkEventfilterIntervalsWorker_Work_Given10Exdates_100ExceptionsWith_100Exdates(b *testing.B) {
 	benchmarkRulesChangesWatcher(b, "./testdata/fixtures/eventfilters_with_rrule_10_exdates_100_exceptions_100_exdate.yml")
 }
 
-func BenchmarkRulesChangesWatcher100Exdates100Exceptions100Exdate(b *testing.B) {
+func BenchmarkEventfilterIntervalsWorker_Work_Given100Exdates_100ExceptionsWith_100Exdates(b *testing.B) {
 	benchmarkRulesChangesWatcher(b, "./testdata/fixtures/eventfilters_with_rrule_100_exdates_100_exceptions_100_exdate.yml")
 }
 
