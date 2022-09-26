@@ -194,12 +194,8 @@ export const convertStopDateIntervalToTimestamp = (
  * Convert date interval value to timestamp by timezone
  *
  * @param {LocalDate} date
- * @param {string} [unit = SAMPLINGS.day]
  * @param {string} [format = DATETIME_FORMATS.datePicker]
-<<<<<<< HEAD
  * @param {string} [unit = SAMPLINGS.day]
-=======
->>>>>>> 5f26726b7b989895609fcf65243d0051402ef839
  * @param {string} [timezone = getLocaleTimezone()]
  * @return {number}
  */
