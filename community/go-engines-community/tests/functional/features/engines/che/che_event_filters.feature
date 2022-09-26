@@ -2082,3 +2082,207 @@ Feature: modify event on event filter
       }
     }
     """
+
+  Scenario: given check event and enrichment event filter should enrich from external api data where response is document with an array
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "type": "enrichment",
+      "external_data": {
+        "title": {
+          "type": "api",
+          "request": {
+            "url": "http://localhost:3000/api/external_data_document_with_array",
+            "method": "GET"
+          }
+        }
+      },
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-assets-customer-2"
+            }
+          }
+        ]
+      ],
+      "description": "test-event-filter-che-event-filters-16-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "title",
+            "value": "{{ `{{ index .ExternalData.title \"array.1.title\" }}` }}",
+            "description": "title from external api"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """
+    {
+      "connector": "test-connector-che-event-filters-16",
+      "connector_name": "test-connector-name-che-event-filters-16",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-eventfilter-assets-customer-2",
+      "resource": "test-resource-che-event-filters-16",
+      "state": 2,
+      "output": "test-output-che-event-filters-16"
+    }
+    """
+    When I save response createTimestamp={{ now }}
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-16
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-16/test-eventfilter-assets-customer-2",
+          "category": null,
+          "component": "test-eventfilter-assets-customer-2",
+          "depends": [
+            "test-connector-che-event-filters-16/test-connector-name-che-event-filters-16"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-eventfilter-assets-customer-2"
+          ],
+          "enable_history": [
+            {{ .createTimestamp }}
+          ],
+          "impact_level": 1,
+          "infos": {
+            "title": {
+              "name": "title",
+              "description": "title from external api",
+              "value": "test title 2"
+            }
+          },
+          "measurements": null,
+          "name": "test-resource-che-event-filters-16",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given check event and enrichment event filter should enrich from external api data and mongo
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "type": "enrichment",
+      "external_data": {
+        "title": {
+          "type": "api",
+          "request": {
+            "url": "http://localhost:3000/api/external_data_response_is_array",
+            "method": "GET"
+          }
+        }
+      },
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-assets-customer-2"
+            }
+          }
+        ]
+      ],
+      "description": "test-event-filter-che-event-filters-17-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "title",
+            "value": "{{ `{{ index .ExternalData.title \"1.title\" }}` }}",
+            "description": "title from external api"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """
+    {
+      "connector": "test-connector-che-event-filters-17",
+      "connector_name": "test-connector-name-che-event-filters-17",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-eventfilter-assets-customer-2",
+      "resource": "test-resource-che-event-filters-17",
+      "state": 2,
+      "output": "test-output-che-event-filters-17"
+    }
+    """
+    When I save response createTimestamp={{ now }}
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-17
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-17/test-eventfilter-assets-customer-2",
+          "category": null,
+          "component": "test-eventfilter-assets-customer-2",
+          "depends": [
+            "test-connector-che-event-filters-17/test-connector-name-che-event-filters-17"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-eventfilter-assets-customer-2"
+          ],
+          "enable_history": [
+            {{ .createTimestamp }}
+          ],
+          "impact_level": 1,
+          "infos": {
+            "title": {
+              "name": "title",
+              "description": "title from external api",
+              "value": "test title 2"
+            }
+          },
+          "measurements": null,
+          "name": "test-resource-che-event-filters-17",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
