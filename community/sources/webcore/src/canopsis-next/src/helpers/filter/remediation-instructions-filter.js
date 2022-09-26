@@ -25,6 +25,14 @@ const PARAMETERS_FILTERS_TYPES = {
 export function prepareRemediationInstructionsFiltersToQuery(filters = []) {
   const query = {};
 
+  query.has_running_execution = filters.reduce((acc, { has_running: hasRunning }) => {
+    if (isBoolean(hasRunning) && acc !== false) {
+      return hasRunning;
+    }
+
+    return acc;
+  }, undefined);
+
   if (!filters.length) {
     return query;
   }
@@ -72,14 +80,6 @@ export function prepareRemediationInstructionsFiltersToQuery(filters = []) {
       }
     });
   });
-
-  query.has_running_execution = filters.reduce((acc, { has_running: hasRunning }) => {
-    if (isBoolean(hasRunning) && acc !== false) {
-      return hasRunning;
-    }
-
-    return acc;
-  }, undefined);
 
   return query;
 }
