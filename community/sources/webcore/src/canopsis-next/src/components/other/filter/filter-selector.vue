@@ -5,16 +5,17 @@
     :label="label",
     :disabled="disabled",
     :always-dirty="!!lockedFilter",
-    item-text="title",
-    item-value="_id",
-    clearable
+    :item-text="itemText",
+    :item-value="itemValue"
   )
     template(#selections="{ items }")
       v-tooltip(v-if="lockedFilter", top)
         template(#activator="{ on }")
-          v-chip(v-on="on", small) {{ lockedFilter.title }}
+          v-chip(v-on="on", small)
+            span {{ getItemText(lockedFilter) }}
+            v-icon.ml-2(small) lock
         span {{ $t('settings.lockedFilter') }}
-      span {{ items.map(item => item.title).join(', ') }}
+      v-chip(v-if="items.length", small, close, @input="cancelFilter") {{ getItemText(items[0]) }}
 
     template(#item="{ parent, item, tile }")
       v-list-tile(v-bind="tile.props", v-on="tile.on", :disabled="item.active")
@@ -29,7 +30,10 @@
 </template>
 
 <script>
+import { formBaseMixin } from '@/mixins/form';
+
 export default {
+  mixins: [formBaseMixin],
   props: {
     value: {
       type: String,
@@ -50,6 +54,14 @@ export default {
     label: {
       type: String,
       default: '',
+    },
+    itemText: {
+      type: String,
+      default: 'title',
+    },
+    itemValue: {
+      type: String,
+      default: '_id',
     },
     hideIcon: {
       type: Boolean,
@@ -87,8 +99,20 @@ export default {
     },
   },
   methods: {
+    getItemText(item) {
+      return item[this.itemText];
+    },
+
+    getItemValue(item) {
+      return item[this.itemValue];
+    },
+
     isLockedFilter(filter) {
-      return filter._id === this.lockedValue;
+      return this.getItemValue(filter) === this.lockedValue;
+    },
+
+    cancelFilter() {
+      this.updateModel('');
     },
   },
 };

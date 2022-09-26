@@ -43,6 +43,8 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
         >
           <filter-selector-stub
             filters="[object Object]"
+            itemtext="title"
+            itemvalue="_id"
             label="Default filter"
             lockedfilters=""
             value="filter-id"
@@ -100,6 +102,8 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
         >
           <filter-selector-stub
             filters=""
+            itemtext="title"
+            itemvalue="_id"
             label="Default filter"
             lockedfilters=""
           />
