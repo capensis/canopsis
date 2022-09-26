@@ -8,11 +8,21 @@ Feature: update service weather on event
     {
       "_id": "test-service-weather-1",
       "name": "test-service-weather-1",
-      "output_template": "Test-service-weather-1",
+      "output_template": "test-service-weather-1-output",
       "category": "test-category-service-weather",
       "enabled": true,
       "impact_level": 1,
-      "entity_patterns": [{"name": "test-resource-service-weather-1"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-1"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """
@@ -32,29 +42,54 @@ Feature: update service weather on event
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services?filter={"name":"test-service-weather-1"}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-service-weather-1",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-service-weather-1"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
+          "_id": "test-service-weather-1",
           "name": "test-service-weather-1",
           "connector": "service",
           "connector_name": "service",
+          "component": "test-service-weather-1",
           "resource": "",
           "state": {"val": 2},
           "status": {"val": 1},
           "ack": null,
           "snooze": null,
+          "output": "test-service-weather-1-output",
           "infos": {},
           "icon": "major",
           "secondary_icon": "",
           "category": {
             "_id": "test-category-service-weather"
           },
+          "is_grey": false,
           "is_action_required": true,
           "alarm_counters": [],
+          "depends_count": 1,
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -73,16 +108,25 @@ Feature: update service weather on event
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-service-weather-2",
       "name": "test-service-weather-2",
       "enabled": true,
       "output_template": "Test-service-weather-2",
       "category": "test-category-service-weather",
       "impact_level": 1,
-      "entity_patterns": [
-        {"name": "test-resource-service-weather-2-1"},
-        {"name": "test-resource-service-weather-2-2"},
-        {"name": "test-resource-service-weather-2-3"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-service-weather-2-1",
+                "test-resource-service-weather-2-2",
+                "test-resource-service-weather-2-3"
+              ]
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -132,7 +176,27 @@ Feature: update service weather on event
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services?filter={"name":"test-service-weather-2"}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-service-weather-1",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-service-weather-2"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -153,8 +217,10 @@ Feature: update service weather on event
             "_id": "test-category-service-weather"
           },
           "secondary_icon": "",
+          "is_grey": false,
           "is_action_required": true,
           "alarm_counters": [],
+          "depends_count": 3,
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -179,8 +245,16 @@ Feature: update service weather on event
       "output_template": "Test-service-weather-3",
       "category": "test-category-service-weather",
       "impact_level": 1,
-      "entity_patterns": [
-        {"name": "test-resource-service-weather-3"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-3"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -201,7 +275,27 @@ Feature: update service weather on event
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/weather-services?filter={"name":"test-service-weather-3"}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-service-weather-1",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-service-weather-3"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -224,8 +318,10 @@ Feature: update service weather on event
           },
           "icon": "ok",
           "secondary_icon": "",
+          "is_grey": false,
           "is_action_required": false,
           "alarm_counters": [],
+          "depends_count": 1,
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -251,9 +347,19 @@ Feature: update service weather on event
       "output_template": "Test-service-weather-4",
       "category": "test-category-service-weather",
       "impact_level": 1,
-      "entity_patterns": [
-        {"name": "test-resource-service-weather-4-1"},
-        {"name": "test-resource-service-weather-4-2"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-service-weather-4-1",
+                "test-resource-service-weather-4-2"
+              ]
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -314,7 +420,27 @@ Feature: update service weather on event
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services?filter={"name":"test-service-weather-4"}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-service-weather-1",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-service-weather-4"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -335,8 +461,10 @@ Feature: update service weather on event
           },
           "icon": "critical",
           "secondary_icon": "",
+          "is_grey": false,
           "is_action_required": false,
           "alarm_counters": [],
+          "depends_count": 2,
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -361,7 +489,17 @@ Feature: update service weather on event
       "output_template": "Test-service-weather-5",
       "category": "test-category-service-weather",
       "impact_level": 5,
-      "entity_patterns": [{"name": "test-resource-service-weather-5"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-5"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """
@@ -381,7 +519,27 @@ Feature: update service weather on event
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services?filter={"name":"test-service-weather-5"}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-service-weather-1",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-service-weather-5"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -401,13 +559,198 @@ Feature: update service weather on event
           "impact_level": 5,
           "impact_state": 10,
           "secondary_icon": "",
+          "is_grey": false,
           "category": {
             "_id": "test-category-service-weather"
           },
           "is_action_required": true,
           "alarm_counters": [],
+          "depends_count": 1,
           "pbehavior_info": null,
           "pbehaviors": []
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given service should get service by filter state=critical
+    Given I am admin
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "name": "test-service-weather-6-1",
+      "enabled": true,
+      "output_template": "Test-service-weather-6-1",
+      "category": "test-category-service-weather",
+      "impact_level": 1,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-6-1"
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "name": "test-service-weather-6-2",
+      "enabled": true,
+      "output_template": "Test-service-weather-6-2",
+      "category": "test-category-service-weather",
+      "impact_level": 1,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-6-2"
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 4 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-weather-6",
+      "connector_name": "test-connector-name-service-weather-6",
+      "source_type": "resource",
+      "event_type": "check",
+      "category": "test-category-service-weather",
+      "component":  "test-component-service-weather-6",
+      "resource": "test-resource-service-weather-6-1",
+      "state": 1,
+      "output": "noveo alarm"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-weather-6",
+      "connector_name": "test-connector-name-service-weather-6",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-service-weather-6",
+      "resource": "test-resource-service-weather-6-2",
+      "state": 2,
+      "output": "noveo alarm"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-service-weather-1",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-service-weather-6-1",
+                "test-service-weather-6-2"
+              ]
+            }
+          }
+        ]
+      ],
+      "weather_service_pattern": [
+        [
+          {
+            "field": "state.val",
+            "cond": {
+              "type": "eq",
+              "value": 1
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-service-weather-6-1"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-service-weather-1",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-service-weather-6-1",
+                "test-service-weather-6-2"
+              ]
+            }
+          }
+        ]
+      ],
+      "weather_service_pattern": [
+        [
+          {
+            "field": "state.val",
+            "cond": {
+              "type": "neq",
+              "value": 1
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-service-weather-6-2"
         }
       ],
       "meta": {

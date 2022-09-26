@@ -1,70 +1,45 @@
 package eventfilter
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-type EventFilterPayload struct {
-	Author      string `bson:"author" json:"author" swaggerignore:"true"`
-	Description string `bson:"description" json:"description" binding:"required,max=255"`
-	Type        string `bson:"type" json:"type" binding:"required,oneof=break drop enrichment"`
+type EditRequest struct {
+	Author       string                                        `bson:"author" json:"author" swaggerignore:"true"`
+	Description  string                                        `bson:"description" json:"description" binding:"required,max=255"`
+	Type         string                                        `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
+	Priority     int                                           `bson:"priority" json:"priority"`
+	Enabled      bool                                          `bson:"enabled" json:"enabled"`
+	Config       eventfilter.RuleConfig                        `bson:"config" json:"config" binding:"dive"`
+	ExternalData map[string]eventfilter.ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
+	Created      *types.CpsTime                                `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated      *types.CpsTime                                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
-	Patterns *pattern.EventPatternList `bson:"patterns" json:"patterns"`
-
-	Priority int   `bson:"priority" json:"priority"`
-	Enabled  *bool `bson:"enabled" json:"enabled" binding:"required"`
-
-	Actions      []eventfilter.Action   `bson:"actions,omitempty" json:"actions,omitempty" binding:"required_if=Type enrichment"`
-	ExternalData map[string]interface{} `bson:"external_data,omitempty" json:"external_data,omitempty"`
-	OnSuccess    string                 `bson:"on_success,omitempty" json:"on_success,omitempty" binding:"required_if=Type enrichment"`
-	OnFailure    string                 `bson:"on_failure,omitempty" json:"on_failure,omitempty" binding:"required_if=Type enrichment"`
-
-	Created *types.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated *types.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	common.EntityPatternFieldsRequest
+	EventPattern pattern.Event `json:"event_pattern" bson:"event_pattern" binding:"event_pattern"`
 }
 
-type EventFilter struct {
-	ID                 string `bson:"_id" json:"_id" binding:"id"`
-	EventFilterPayload `bson:",inline"`
+type CreateRequest struct {
+	EditRequest `bson:",inline"`
+	ID          string `bson:"_id" json:"_id" binding:"id"`
+}
+
+type UpdateRequest struct {
+	EditRequest `bson:",inline"`
+	ID          string `bson:"-" json:"-"`
 }
 
 type BulkUpdateRequestItem struct {
-	ID string `json:"_id" binding:"required"`
-	EventFilterPayload
+	EditRequest `bson:",inline"`
+	ID          string `bson:"_id" json:"_id" binding:"required"`
 }
 
 type BulkDeleteRequestItem struct {
-	ID string `json:"_id" binding:"required"`
-}
-
-// for swagger
-type BulkCreateResponseItem struct {
-	ID     string            `json:"id,omitempty"`
-	Item   EventFilter       `json:"item"`
-	Status int               `json:"status"`
-	Error  string            `json:"error,omitempty"`
-	Errors map[string]string `json:"errors,omitempty"`
-}
-
-// for swagger
-type BulkUpdateResponseItem struct {
-	ID     string                `json:"id,omitempty"`
-	Item   BulkUpdateRequestItem `json:"item"`
-	Status int                   `json:"status"`
-	Error  string                `json:"error,omitempty"`
-	Errors map[string]string     `json:"errors,omitempty"`
-}
-
-// for swagger
-type BulkDeleteResponseItem struct {
-	ID     string                `json:"id,omitempty"`
-	Item   BulkDeleteRequestItem `json:"item"`
-	Status int                   `json:"status"`
-	Error  string                `json:"error,omitempty"`
-	Errors map[string]string     `json:"errors,omitempty"`
+	ID string `bson:"_id" json:"_id" binding:"required"`
 }
 
 type FilteredQuery struct {

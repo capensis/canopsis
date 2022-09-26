@@ -28,11 +28,12 @@ const (
 
 	RemediationPeriodicalLockKey      = "remediation-periodical-lock-key"
 	RemediationStatsPeriodicalLockKey = "remediation-stats-periodical-lock-key"
-	RemediationAutoInstructionLockKey = "remediation-auto-instruction-lock-key"
 
 	PbehaviorSpanKey              = "pbehavior-span"
 	PbehaviorTypesKey             = "pbehavior-types"
 	PbehaviorDefaultActiveTypeKey = "pbehavior-default-active-type"
 	PbehaviorComputedKey          = "pbehavior-computed-"
-	PbehaviorEntityMatchKey       = "pbehavior-entity-match-"
+
+	CheEntityInfosDictionaryPeriodicalLockKey = "che-entity-infos-dictionary-periodical-lock-key"
+	DynamicInfosDictionaryPeriodicalLockKey   = "dynamic-infos-dictionary-periodical-lock-key"
 )

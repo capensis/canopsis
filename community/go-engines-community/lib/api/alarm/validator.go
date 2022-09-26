@@ -31,3 +31,11 @@ func ValidateListRequest(sl validator.StructLevel) {
 		}
 	}
 }
+
+func ValidateDetailsRequest(sl validator.StructLevel) {
+	r := sl.Current().Interface().(DetailsRequest)
+	if r.Steps == nil && r.Children == nil {
+		sl.ReportError(r.Steps, "Steps", "Steps", "required", "")
+		sl.ReportError(r.Children, "Children", "Children", "required", "")
+	}
+}

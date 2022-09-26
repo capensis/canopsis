@@ -15,11 +15,7 @@ Feature: delete a PBehavior
     When I am admin
     When I do DELETE /api/v4/pbehaviors/test-pbehavior-to-delete-1
     Then the response code should be 204
-
-  Scenario: DELETE a PBehavior with success
-    When I am admin
-    When I do DELETE /api/v4/pbehaviors/test-pbehavior-to-delete-2
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-delete-2
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-delete-1
     Then the response code should be 404
 
   Scenario: DELETE previous PBehavior, should be not found response
