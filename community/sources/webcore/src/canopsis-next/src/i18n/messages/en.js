@@ -459,6 +459,9 @@ export default merge({
       [SCENARIO_TRIGGERS.instructionjobfail]: {
         text: 'Manual or auto instruction\'s job is failed',
       },
+      [SCENARIO_TRIGGERS.instructionjobcomplete]: {
+        text: 'Manual or auto instruction\'s job is completed',
+      },
       [SCENARIO_TRIGGERS.instructioncomplete]: {
         text: 'Manual instruction is completed',
       },
@@ -1503,20 +1506,6 @@ export default merge({
           success: '{jobName} has been successfully modified',
         },
       },
-      fields: {
-        configuration: 'Configuration',
-        jobId: 'Job ID',
-        query: 'Query',
-        multipleExecutions: 'Allow parallel execution',
-      },
-      errors: {
-        invalidJSON: 'Invalid JSON',
-      },
-      addPayload: 'Add payload',
-      deletePayload: 'Delete payload',
-      payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
-        + '<i>For example:</i>'
-        + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
     },
     clickOutsideConfirmation: {
       title: 'Are you sure?',
@@ -1979,6 +1968,8 @@ export default merge({
       + '<p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p>'
       + '<p>A static informative message</p>'
       + '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
+    removeConfirmationText: 'When deleting a meta alarm rule, all corresponding meta alarms will be deleted as well.\n'
+      + 'Are you sure to proceed with it?\n',
     errors: {
       noValuePaths: 'You have to add at least 1 value path',
     },
@@ -2456,6 +2447,23 @@ export default merge({
           disabledOnTypes: 'Disabled on types',
         },
       },
+    },
+  },
+
+  remediationJob: {
+    configuration: 'Configuration',
+    jobId: 'Job ID',
+    query: 'Query',
+    multipleExecutions: 'Allow parallel execution',
+    retryAmount: 'Retry amount',
+    retryInterval: 'Retry interval',
+    addPayload: 'Add payload',
+    deletePayload: 'Delete payload',
+    payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
+      + '<i>For example:</i>'
+      + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+    errors: {
+      invalidJSON: 'Invalid JSON',
     },
   },
 
