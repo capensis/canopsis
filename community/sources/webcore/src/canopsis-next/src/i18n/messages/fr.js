@@ -258,6 +258,7 @@ export default merge({
     itemFound: '{count} article trouvé | {count} articles trouvés',
     canonicalType: 'Type canonique',
     instructions: 'Des instructions',
+    playlist: 'Liste de lecture | Listes de lecture',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
