@@ -26,8 +26,25 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 1`] = `
           class="v-select__selections"
         >
           <!---->
-          <span>
-            Filter 1
+          <span
+            class="v-chip v-chip--small v-chip--removable theme--light"
+            tabindex="0"
+          >
+            <span
+              class="v-chip__content"
+            >
+              Filter 1
+              <div
+                class="v-chip__close"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  cancel
+                </i>
+              </div>
+            </span>
           </span>
           <input
             aria-label="Custom label"
@@ -36,20 +53,6 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 1`] = `
             readonly="readonly"
             type="text"
           />
-        </div>
-        <div
-          class="v-input__append-inner"
-        >
-          <div
-            class="v-input__icon v-input__icon--clear"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--link material-icons theme--light"
-            >
-              clear
-            </i>
-          </div>
         </div>
         <div
           class="v-input__append-inner"
@@ -204,8 +207,25 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 3`] = `
           class="v-select__selections"
         >
           <!---->
-          <span>
-            Filter 1
+          <span
+            class="v-chip v-chip--small v-chip--removable theme--light"
+            tabindex="0"
+          >
+            <span
+              class="v-chip__content"
+            >
+              Filter 1
+              <div
+                class="v-chip__close"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  cancel
+                </i>
+              </div>
+            </span>
           </span>
           <input
             aria-label=""
@@ -214,20 +234,6 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 3`] = `
             readonly="readonly"
             type="text"
           />
-        </div>
-        <div
-          class="v-input__append-inner"
-        >
-          <div
-            class="v-input__icon v-input__icon--clear"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--link material-icons theme--light"
-            >
-              clear
-            </i>
-          </div>
         </div>
         <div
           class="v-input__append-inner"
@@ -406,9 +412,7 @@ exports[`filter-selector Renders \`filter-selector\` with default props 1`] = `
           class="v-select__selections"
         >
           <!---->
-          <span>
-            
-          </span>
+          <!---->
           <input
             aria-label=""
             aria-readonly="false"
@@ -416,18 +420,6 @@ exports[`filter-selector Renders \`filter-selector\` with default props 1`] = `
             readonly="readonly"
             type="text"
           />
-        </div>
-        <div
-          class="v-input__append-inner"
-        >
-          <div
-            class="v-input__icon v-input__icon--"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--link material-icons theme--light"
-            />
-          </div>
         </div>
         <div
           class="v-input__append-inner"
