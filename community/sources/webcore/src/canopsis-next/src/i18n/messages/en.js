@@ -257,6 +257,7 @@ export default merge({
     checkPattern: 'Check pattern',
     itemFound: '{count} item found | {count} items found',
     canonicalType: 'Canonical type',
+    instructions: 'Instructions',
     playlist: 'Playlist | Playlists',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -279,7 +280,6 @@ export default merge({
     acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
     saveChanges: 'Save changes',
     reportIncident: 'Report an incident',
-    instructions: 'Instructions',
     times: {
       second: 'second | seconds',
       minute: 'minute | minutes',
@@ -459,6 +459,9 @@ export default merge({
       },
       [SCENARIO_TRIGGERS.instructionjobfail]: {
         text: 'Manual or auto instruction\'s job is failed',
+      },
+      [SCENARIO_TRIGGERS.instructionjobcomplete]: {
+        text: 'Manual or auto instruction\'s job is completed',
       },
       [SCENARIO_TRIGGERS.instructioncomplete]: {
         text: 'Manual instruction is completed',
