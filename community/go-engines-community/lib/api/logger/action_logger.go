@@ -59,6 +59,8 @@ const (
 	ValueTypeFilter = "filter"
 
 	ValueTypePattern = "pattern"
+
+	ValueTypeShareToken = "sharetoken"
 )
 
 type ActionLogger interface {
