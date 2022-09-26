@@ -257,6 +257,7 @@ export default merge({
     checkPattern: 'Motif à carreaux',
     itemFound: '{count} article trouvé | {count} articles trouvés',
     canonicalType: 'Type canonique',
+    instructions: 'Des instructions',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -278,7 +279,6 @@ export default merge({
     acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
     saveChanges: 'Sauvegarder',
     reportIncident: 'Signaler un incident',
-    instructions: 'Des instructions',
     times: {
       second: 'seconde | secondes',
       minute: 'minute | minutes',

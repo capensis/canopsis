@@ -257,6 +257,7 @@ export default merge({
     checkPattern: 'Check pattern',
     itemFound: '{count} item found | {count} items found',
     canonicalType: 'Canonical type',
+    instructions: 'Instructions',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -278,7 +279,6 @@ export default merge({
     acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
     saveChanges: 'Save changes',
     reportIncident: 'Report an incident',
-    instructions: 'Instructions',
     times: {
       second: 'second | seconds',
       minute: 'minute | minutes',
