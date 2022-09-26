@@ -1634,7 +1634,7 @@ Feature: execute action on trigger
     ]
     """
 
-  Scenario: given webhook scenario to test document with an array in the response
+  Scenario: given webhook scenario where the webhook response is an array
     Given I am admin
     When I do POST /api/v4/scenarios:
     """json

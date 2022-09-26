@@ -2083,7 +2083,7 @@ Feature: modify event on event filter
     }
     """
 
-  Scenario: given check event and enrichment event filter should enrich from external api data where response is document with an array
+  Scenario: given check event and enrichment event filter should enrich from external api data where response is a document with an array
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
     """
@@ -2185,7 +2185,7 @@ Feature: modify event on event filter
     }
     """
 
-  Scenario: given check event and enrichment event filter should enrich from external api data and mongo
+  Scenario: given check event and enrichment event filter should enrich from external api data where response is an array
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
     """
