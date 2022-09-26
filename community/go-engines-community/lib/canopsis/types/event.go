@@ -61,7 +61,6 @@ const (
 	EventTypePbhEnter           = "pbhenter"
 	EventTypePbhLeaveAndEnter   = "pbhleaveandenter"
 	EventTypePbhLeave           = "pbhleave"
-	EventTypePbhCreate          = "pbhcreate"
 	EventTypeResolveDone        = "resolve_done"
 	EventTypeResolveCancel      = "resolve_cancel"
 	EventTypeResolveClose       = "resolve_close"
@@ -115,7 +114,7 @@ const (
 
 	// EventTypeNoEvents is used to create alarm for entity by idle rule.
 	EventTypeNoEvents = "noevents"
-	// EventTypeTrigger is used in axe rpc to send autoinstruction triggers
+	// EventTypeTrigger is used in axe rpc to send auto and manual instruction triggers
 	EventTypeTrigger = "trigger"
 )
 
@@ -164,6 +163,7 @@ type Event struct {
 	AckResources bool                   `json:"ack_resources"`
 	Duration     CpsNumber              `json:"duration"`
 	Ticket       string                 `bson:"ticket" json:"ticket"`
+	TicketData   map[string]string      `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 	StatName     string                 `bson:"stat_name" json:"stat_name"`
 	Debug        bool                   `bson:"debug" json:"debug"`
 	Role         string                 `bson:"role,omitempty" json:"role,omitempty"`
@@ -173,9 +173,10 @@ type Event struct {
 	MetaAlarmRuleID    string `bson:"metaalarm_rule_id" json:"metaalarm_rule_id"`
 	MetaAlarmValuePath string `bson:"metaalarm_value_path" json:"metaalarm_value_path"`
 
-	MetaAlarmRelatedParents []string  `bson:"ma_related_parents" json:"ma_related_parents"`
-	MetaAlarmParents        *[]string `bson:"ma_parents" json:"ma_parents"`
-	MetaAlarmChildren       *[]string `bson:"ma_children" json:"ma_children"`
+	MetaAlarmParents  *[]string `bson:"ma_parents" json:"ma_parents"`
+	MetaAlarmChildren *[]string `bson:"ma_children" json:"ma_children"`
+	// DisplayName is used for manual meta alarms.
+	DisplayName string `bson:"display_name" json:"display_name"`
 
 	PbehaviorInfo PbehaviorInfo `bson:"pbehavior_info" json:"pbehavior_info"`
 
@@ -194,14 +195,17 @@ type Event struct {
 	// RemovedFromServices contains ids of entity services from which entity has been removed as dependency.
 	RemovedFromServices []string `bson:"removed_from_services,omitempty" json:"removed_from_services,omitempty"`
 
-	// PbhParameters is used only with EventTypePbhCreate
-	PbhParameters string `bson:"pbh_parameters,omitempty" json:"pbh_parameters,omitempty"`
-
 	// IdleRuleApply is used if event is emitted by idle rule.
 	IdleRuleApply string `bson:"idle_rule_apply,omitempty" json:"idle_rule_apply,omitempty"`
 
 	// Execution is used only for instruction events: EventTypeInstructionStarted, EventTypeInstructionCompleted, etc..
 	Execution string `bson:"execution,omitempty" json:"execution,omitempty"`
+
+	// Instruction is used only for manual instructions kpi metrics
+	Instruction string `bson:"instruction,omitempty" json:"instruction,omitempty"`
+
+	// TODO: should be refactored
+	IsEntityUpdated bool `bson:"-" json:"-"`
 }
 
 // ContextInformation regroup context values necessary for creating a new entity
@@ -486,18 +490,6 @@ func (e *Event) GenerateContextInformations() []ContextInformation {
 	return []ContextInformation{connector, component, resource}
 }
 
-// NewEntity create an entity from ContextInformation struct
-func (ci *ContextInformation) NewEntity() Entity {
-	return NewEntity(
-		ci.ID,
-		ci.Name,
-		ci.Type,
-		map[string]Info{},
-		ci.Impacts,
-		ci.Depends,
-	)
-}
-
 var cpsNumberType = reflect.TypeOf(CpsNumber(0))
 var cpsNumberPtrType = reflect.PtrTo(cpsNumberType)
 var cpsTimeType = reflect.TypeOf(CpsTime{})
@@ -618,7 +610,6 @@ func isValidEventType(t string) bool {
 		EventTypePbhEnter,
 		EventTypePbhLeaveAndEnter,
 		EventTypePbhLeave,
-		EventTypePbhCreate,
 		EventTypeUpdateStatus,
 		EventTypeMetaAlarm,
 		EventTypeMetaAlarmUpdated,

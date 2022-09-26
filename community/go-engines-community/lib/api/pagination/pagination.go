@@ -21,7 +21,6 @@ type Query struct {
 type FilteredQuery struct {
 	Query
 	Search    string `form:"search"`
-	Filter    string `form:"filter"`
 	Sort      string `form:"sort"`
 	WithFlags bool   `form:"with_flags"`
 }

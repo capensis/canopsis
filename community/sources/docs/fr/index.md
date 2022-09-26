@@ -19,22 +19,22 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 ### Dernières versions
 
 <!-- du plus récent au plus ancien -->
+*  [Canopsis 4.6.1](notes-de-version/4.6.1.md), publié le 16 septembre 2022.
+*  [Canopsis 4.6.0](notes-de-version/4.6.0.md), publié le 29 juillet 2022. Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-4.6.0.md)
+*  [Canopsis 4.5.10](notes-de-version/4.5.10.md), publié le 16 septembre 2022.
+*  [Canopsis 4.5.9](notes-de-version/4.5.9.md), publié le 31 août 2022.
 *  [Canopsis 4.5.8](notes-de-version/4.5.8.md), publié le 2 juin 2022.
 *  [Canopsis 4.5.7](notes-de-version/4.5.7.md), publié le 12 mai 2022.
 *  [Canopsis 4.5.6](notes-de-version/4.5.6.md), publié le 21 avril 2022.
 *  [Canopsis 4.5.5](notes-de-version/4.5.5.md), publié le 13 avril 2022.
-*  [Canopsis 4.5.4](notes-de-version/4.5.4.md), publié le 25 mars 2022.
-*  [Canopsis 4.5.3](notes-de-version/4.5.3.md), publié le 18 mars 2022.
-*  [Canopsis 4.5.2](notes-de-version/4.5.2.md), publié le 11 mars 2022.
-*  [Canopsis 4.5.1](notes-de-version/4.5.1.md), publié le 4 mars 2022.
-*  [Canopsis 4.5.0](notes-de-version/4.5.0.md), publié le 18 février 2022. Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-4.5.0.md).
 
 ### Anciennes versions
 
 <!-- du plus récent au plus ancien -->
 | | | | | | |
 |-:|-|-|-|-|-|
-| *janvier–mars 2021* | [4.4.1](notes-de-version/4.4.1.md) | [4.3.8](notes-de-version/4.3.8.md) | [4.3.7](notes-de-version/4.3.7.md) | |
+| *mars 2022* | [4.5.4](notes-de-version/4.5.4.md) | [4.5.3](notes-de-version/4.5.3.md) |[4.5.2](notes-de-version/4.5.2.md) |[4.5.1](notes-de-version/4.5.1.md) | [4.5.0](notes-de-version/4.5.0.md) |
+| *janvier–mars 2022* | [4.4.1](notes-de-version/4.4.1.md) | [4.3.8](notes-de-version/4.3.8.md) | [4.3.7](notes-de-version/4.3.7.md) | |
 | *novembre–décembre 2021* | [4.4.0](notes-de-version/4.4.0.md) | [4.3.6](notes-de-version/4.3.6.md) | [4.3.5](notes-de-version/4.3.5.md) | [4.3.4](notes-de-version/4.3.4.md) |
 | *juin–octobre 2021* | [4.3.3](notes-de-version/4.3.3.md) | [4.3.2](notes-de-version/4.3.2.md) | [4.3.1](notes-de-version/4.3.1.md) | [4.3.0](notes-de-version/4.3.0.md) |
 | *mars–mai 2021* | [4.2.0](notes-de-version/4.2.0.md) | [4.1.1](notes-de-version/4.1.1.md) | [4.1.0](notes-de-version/4.1.0.md) | |

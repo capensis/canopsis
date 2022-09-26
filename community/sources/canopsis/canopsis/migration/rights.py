@@ -171,4 +171,5 @@ class RightsModule(MigrationModule):
 
             self.manager.update_rights(role['_id'], 'role', rights, record)
             self.manager.update_group(role['_id'], 'role', groups, record)
-            self.manager.update_fields(role['_id'], 'role', {"defaultview": role.get("defaultview", None)})
+            self.manager.update_fields(role['_id'], 'role', {
+                                       "defaultview": role.get("defaultview", None)})

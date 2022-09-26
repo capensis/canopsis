@@ -115,13 +115,14 @@ export const convertDateIntervalToMomentByTimezone = (
 export const convertDateIntervalToTimestamp = (date, type, format, unit) => (
   convertDateIntervalToMoment(date, type, format, unit).unix()
 );
+
 /**
  * Convert date interval to timestamp unix system.
  *
  * @param {number} date
  * @param {string} type
- * @param {string} unit
  * @param {string} format
+ * @param {string} unit
  * @param {string} [timezone = getLocaleTimezone()]
  * @return {number}
  */
@@ -193,8 +194,12 @@ export const convertStopDateIntervalToTimestamp = (
  * Convert date interval value to timestamp by timezone
  *
  * @param {LocalDate} date
- * @param {string} [format = DATETIME_FORMATS.datePicker]
  * @param {string} [unit = SAMPLINGS.day]
+ * @param {string} [format = DATETIME_FORMATS.datePicker]
+<<<<<<< HEAD
+ * @param {string} [unit = SAMPLINGS.day]
+=======
+>>>>>>> 5f26726b7b989895609fcf65243d0051402ef839
  * @param {string} [timezone = getLocaleTimezone()]
  * @return {number}
  */

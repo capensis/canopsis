@@ -3,13 +3,14 @@ package engine_test
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
 	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"testing"
 )
 
 func TestDefaultConsumer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
@@ -80,7 +81,8 @@ func TestDefaultConsumer_Consume_GivenProcessedMessage_ShouldPublishResultMessag
 		gomock.Any(), gomock.Any(), gomock.Any()).Return(msgs, nil)
 
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Any()).Return(resultBody, nil)
-	mockChannel.EXPECT().Publish(
+	mockChannel.EXPECT().PublishWithContext(
+		gomock.Any(),
 		gomock.Eq(nextExchange),
 		gomock.Eq(nextQueue),
 		gomock.Any(),
@@ -129,7 +131,8 @@ func TestDefaultConsumer_Consume_GivenProcessedMessageAndNoNextQueue_ShouldPubli
 		gomock.Any(), gomock.Any(), gomock.Any()).Return(msgs, nil)
 
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Any()).Return(nil, nil)
-	mockChannel.EXPECT().Publish(
+	mockChannel.EXPECT().PublishWithContext(
+		gomock.Any(),
 		gomock.Eq(fifoExchange),
 		gomock.Eq(fifoQueue),
 		gomock.Any(),
@@ -180,7 +183,8 @@ func TestDefaultConsumer_Consume_GivenProcessedMessageAndNoNextMessage_ShouldPub
 		gomock.Any(), gomock.Any(), gomock.Any()).Return(msgs, nil)
 
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Any()).Return(nil, nil)
-	mockChannel.EXPECT().Publish(
+	mockChannel.EXPECT().PublishWithContext(
+		gomock.Any(),
 		gomock.Eq(fifoExchange),
 		gomock.Eq(fifoQueue),
 		gomock.Any(),
@@ -223,7 +227,7 @@ func TestDefaultConsumer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testi
 	mockChannel.EXPECT().Close().AnyTimes()
 	mockChannel.EXPECT().Consume(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(),
 		gomock.Any(), gomock.Any(), gomock.Any()).Return(msgs, nil)
-	mockChannel.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(),
+	mockChannel.EXPECT().PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(),
 		gomock.Any()).Times(0)
 	mockChannel.EXPECT().Ack(gomock.Any(), gomock.Any()).Times(0)
 	mockChannel.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any())
