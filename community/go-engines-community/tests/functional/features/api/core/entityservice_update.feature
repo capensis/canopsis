@@ -3,46 +3,56 @@ Feature: Update entity service
 
   Scenario: given update request should update entity
     When I am admin
-    When I do PUT /api/v4/entityservices/test-entityservice-to-update:
+    When I do PUT /api/v4/entityservices/test-entityservice-to-update-1:
     """json
     {
-      "name": "test-entityservice-to-update-name",
-      "output_template": "test-entityservice-to-update-output-updated",
+      "name": "test-entityservice-to-update-1-name",
+      "output_template": "test-entityservice-to-update-1-output-updated",
       "category": "test-category-to-entityservice-edit",
       "impact_level": 2,
       "enabled": true,
-      "entity_patterns": [{"name": "test-entityservice-to-update-pattern-updated"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-update-1-pattern-updated"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 1,
       "infos": [
         {
-          "description": "test-entityservice-to-update-info-1-description",
-          "name": "test-entityservice-to-update-info-1-name",
-          "value": "test-entityservice-to-update-info-1-value"
+          "description": "test-entityservice-to-update-1-info-1-description",
+          "name": "test-entityservice-to-update-1-info-1-name",
+          "value": "test-entityservice-to-update-1-info-1-value"
         },
         {
-          "description": "test-entityservice-to-update-info-2-description",
-          "name": "test-entityservice-to-update-info-2-name",
+          "description": "test-entityservice-to-update-1-info-2-description",
+          "name": "test-entityservice-to-update-1-info-2-name",
           "value": false
         },
         {
-          "description": "test-entityservice-to-update-info-3-description",
-          "name": "test-entityservice-to-update-info-3-name",
+          "description": "test-entityservice-to-update-1-info-3-description",
+          "name": "test-entityservice-to-update-1-info-3-name",
           "value": 1022
         },
         {
-          "description": "test-entityservice-to-update-info-4-description",
-          "name": "test-entityservice-to-update-info-4-name",
+          "description": "test-entityservice-to-update-1-info-4-description",
+          "name": "test-entityservice-to-update-1-info-4-name",
           "value": 10.45
         },
         {
-          "description": "test-entityservice-to-update-info-5-description",
-          "name": "test-entityservice-to-update-info-5-name",
+          "description": "test-entityservice-to-update-1-info-5-description",
+          "name": "test-entityservice-to-update-1-info-5-name",
           "value": null
         },
         {
-          "description": "test-entityservice-to-update-info-6-description",
-          "name": "test-entityservice-to-update-info-6-name",
-          "value": ["test-entityservice-to-update-info-6-value", false, 1022, 10.45, null]
+          "description": "test-entityservice-to-update-1-info-6-description",
+          "name": "test-entityservice-to-update-1-info-6-name",
+          "value": ["test-entityservice-to-update-1-info-6-value", false, 1022, 10.45, null]
         }
       ]
     }
@@ -51,7 +61,7 @@ Feature: Update entity service
     Then the response body should be:
     """json
     {
-      "_id": "test-entityservice-to-update",
+      "_id": "test-entityservice-to-update-1",
       "category": {
         "_id": "test-category-to-entityservice-edit",
         "name": "test-category-to-entityservice-edit-name",
@@ -61,54 +71,159 @@ Feature: Update entity service
       },
       "depends": [],
       "enabled": true,
-      "enable_history": [],
-      "entity_patterns": [
-        {
-          "name": "test-entityservice-to-update-pattern-updated"
-        }
+      "enable_history": null,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-update-1-pattern-updated"
+            }
+          }
+        ]
       ],
+      "old_entity_patterns": null,
       "impact": [],
       "impact_level": 2,
       "infos": {
-        "test-entityservice-to-update-info-1-name": {
-          "description": "test-entityservice-to-update-info-1-description",
-          "name": "test-entityservice-to-update-info-1-name",
-          "value": "test-entityservice-to-update-info-1-value"
+        "test-entityservice-to-update-1-info-1-name": {
+          "description": "test-entityservice-to-update-1-info-1-description",
+          "name": "test-entityservice-to-update-1-info-1-name",
+          "value": "test-entityservice-to-update-1-info-1-value"
         },
-        "test-entityservice-to-update-info-2-name": {
-          "description": "test-entityservice-to-update-info-2-description",
-          "name": "test-entityservice-to-update-info-2-name",
+        "test-entityservice-to-update-1-info-2-name": {
+          "description": "test-entityservice-to-update-1-info-2-description",
+          "name": "test-entityservice-to-update-1-info-2-name",
           "value": false
         },
-        "test-entityservice-to-update-info-3-name": {
-          "description": "test-entityservice-to-update-info-3-description",
-          "name": "test-entityservice-to-update-info-3-name",
+        "test-entityservice-to-update-1-info-3-name": {
+          "description": "test-entityservice-to-update-1-info-3-description",
+          "name": "test-entityservice-to-update-1-info-3-name",
           "value": 1022
         },
-        "test-entityservice-to-update-info-4-name": {
-          "description": "test-entityservice-to-update-info-4-description",
-          "name": "test-entityservice-to-update-info-4-name",
+        "test-entityservice-to-update-1-info-4-name": {
+          "description": "test-entityservice-to-update-1-info-4-description",
+          "name": "test-entityservice-to-update-1-info-4-name",
           "value": 10.45
         },
-        "test-entityservice-to-update-info-5-name": {
-          "description": "test-entityservice-to-update-info-5-description",
-          "name": "test-entityservice-to-update-info-5-name",
+        "test-entityservice-to-update-1-info-5-name": {
+          "description": "test-entityservice-to-update-1-info-5-description",
+          "name": "test-entityservice-to-update-1-info-5-name",
           "value": null
         },
-        "test-entityservice-to-update-info-6-name": {
-          "description": "test-entityservice-to-update-info-6-description",
-          "name": "test-entityservice-to-update-info-6-name",
-          "value": ["test-entityservice-to-update-info-6-value", false, 1022, 10.45, null]
+        "test-entityservice-to-update-1-info-6-name": {
+          "description": "test-entityservice-to-update-1-info-6-description",
+          "name": "test-entityservice-to-update-1-info-6-name",
+          "value": ["test-entityservice-to-update-1-info-6-value", false, 1022, 10.45, null]
         }
       },
       "measurements": null,
-      "name": "test-entityservice-to-update-name",
-      "output_template": "test-entityservice-to-update-output-updated",
+      "name": "test-entityservice-to-update-1-name",
+      "output_template": "test-entityservice-to-update-1-output-updated",
       "sli_avail_state": 1,
-      "type": "service",
-      "ok_events": 0,
-      "ko_events": 0,
-      "state": 0
+      "type": "service"
+    }
+    """
+
+  Scenario: given update request with old pattern should update entity
+    When I am admin
+    When I do PUT /api/v4/entityservices/test-entityservice-to-update-2:
+    """json
+    {
+      "name": "test-entityservice-to-update-2-name",
+      "output_template": "test-entityservice-to-update-2-output-updated",
+      "category": "test-category-to-entityservice-edit",
+      "impact_level": 2,
+      "enabled": true,
+      "sli_avail_state": 1,
+      "infos": []
+    }
+    """
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "_id": "test-entityservice-to-update-2",
+      "category": {
+        "_id": "test-category-to-entityservice-edit",
+        "name": "test-category-to-entityservice-edit-name",
+        "author": "test-category-to-entityservice-edit-author",
+        "created": 1592215337,
+        "updated": 1592215337
+      },
+      "depends": [],
+      "enabled": true,
+      "enable_history": null,
+      "old_entity_patterns": [{"name": "test-entityservice-to-update-2-pattern"}],
+      "impact": [],
+      "impact_level": 2,
+      "infos": {},
+      "measurements": null,
+      "name": "test-entityservice-to-update-2-name",
+      "output_template": "test-entityservice-to-update-2-output-updated",
+      "sli_avail_state": 1,
+      "type": "service"
+    }
+    """
+    When I do PUT /api/v4/entityservices/test-entityservice-to-update-2:
+    """json
+    {
+      "name": "test-entityservice-to-update-2-name",
+      "output_template": "test-entityservice-to-update-2-output-updated",
+      "category": "test-category-to-entityservice-edit",
+      "impact_level": 2,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-update-2-pattern-updated"
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 1,
+      "infos": []
+    }
+    """
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "_id": "test-entityservice-to-update-2",
+      "category": {
+        "_id": "test-category-to-entityservice-edit",
+        "name": "test-category-to-entityservice-edit-name",
+        "author": "test-category-to-entityservice-edit-author",
+        "created": 1592215337,
+        "updated": 1592215337
+      },
+      "depends": [],
+      "enabled": true,
+      "enable_history": null,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-update-2-pattern-updated"
+            }
+          }
+        ]
+      ],
+      "old_entity_patterns": null,
+      "impact": [],
+      "impact_level": 2,
+      "infos": {},
+      "measurements": null,
+      "name": "test-entityservice-to-update-2-name",
+      "output_template": "test-entityservice-to-update-2-output-updated",
+      "sli_avail_state": 1,
+      "type": "service"
     }
     """
 
@@ -125,6 +240,7 @@ Feature: Update entity service
       "errors": {
         "enabled": "Enabled is missing.",
         "impact_level": "ImpactLevel is missing.",
+        "entity_pattern": "EntityPattern is missing.",
         "name": "Name is missing.",
         "output_template": "OutputTemplate is missing.",
         "sli_avail_state": "SliAvailState is missing."
@@ -194,7 +310,17 @@ Feature: Update entity service
       "impact_level": 2,
       "enabled": true,
       "sli_avail_state": 1,
-      "entity_patterns": [{"name": "test-entityservice-to-update-not-found-pattern"}]
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-update-not-found-pattern"
+            }
+          }
+        ]
+      ]
     }
     """
     Then the response code should be 404

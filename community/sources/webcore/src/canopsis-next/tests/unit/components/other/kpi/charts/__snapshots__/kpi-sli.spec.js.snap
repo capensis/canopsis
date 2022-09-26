@@ -1,5 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`kpi-sli Renders \`kpi-sli\` with fetching error 1`] = `
+<div
+  class="position-relative"
+>
+  <c-progress-overlay-stub />
+  <kpi-sli-filters-stub
+    query="[object Object]"
+  />
+  <kpi-sli-chart-stub
+    data-type="percent"
+    metrics=""
+    responsive="responsive"
+    sampling="day"
+  />
+  <kpi-error-overlay-stub />
+</div>
+`;
+
 exports[`kpi-sli Renders \`kpi-sli\` without metrics 1`] = `
 <div
   class="position-relative"
@@ -16,5 +34,6 @@ exports[`kpi-sli Renders \`kpi-sli\` without metrics 1`] = `
     responsive="responsive"
     sampling="day"
   />
+  <!---->
 </div>
 `;

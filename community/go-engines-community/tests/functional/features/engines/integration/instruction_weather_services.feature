@@ -8,13 +8,19 @@ Feature: get service entities with assigned instructions
     {
       "type": 0,
       "name": "test-instruction-get-assigned-instruction-in-weather-api-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-alarm-weather-widget-instructions-resource-1"
-        },
-        {
-          "name": "test-alarm-weather-widget-instructions-resource-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-alarm-weather-widget-instructions-resource-1",
+                "test-alarm-weather-widget-instructions-resource-2"
+              ]
+            }
+          }
+        ]
       ],
       "description": "test-instruction-get-assigned-instruction-in-weather-api-1-description",
       "enabled": true,
@@ -46,13 +52,19 @@ Feature: get service entities with assigned instructions
     {
       "type": 0,
       "name": "test-instruction-get-assigned-instruction-in-weather-api-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-alarm-weather-widget-instructions-resource-2"
-        },
-        {
-          "name": "test-alarm-weather-widget-instructions-resource-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-alarm-weather-widget-instructions-resource-2",
+                "test-alarm-weather-widget-instructions-resource-3"
+              ]
+            }
+          }
+        ]
       ],
       "description": "test-instruction-get-assigned-instruction-in-weather-api-2-description",
       "enabled": true,
@@ -142,15 +154,25 @@ Feature: get service entities with assigned instructions
       "_id": "test-entity-instruction-weather-services-1",
       "name": "test-entity-instruction-weather-services-1",
       "output_template": "test-entity-instruction-weather-services-1",
-      "category": "test-category-pbehavior-weather-service-entity",
+      "category": "",
       "impact_level": 1,
       "enabled": true,
       "sli_avail_state": 1,
-      "entity_patterns": [
-        {"name": "test-alarm-weather-widget-instructions-resource-1"},
-        {"name": "test-alarm-weather-widget-instructions-resource-2"},
-        {"name": "test-alarm-weather-widget-instructions-resource-3"},
-        {"name": "test-alarm-weather-widget-instructions-resource-4"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-alarm-weather-widget-instructions-resource-1",
+                "test-alarm-weather-widget-instructions-resource-2",
+                "test-alarm-weather-widget-instructions-resource-3",
+                "test-alarm-weather-widget-instructions-resource-4"
+              ]
+            }
+          }
+        ]
       ]
     }
     """
@@ -210,10 +232,16 @@ Feature: get service entities with assigned instructions
     {
       "type": 1,
       "name": "test-instruction-get-assigned-instruction-in-weather-api-3-name",
-      "entity_patterns": [
-        {
-          "name": "test-alarm-weather-widget-instructions-resource-5"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-alarm-weather-widget-instructions-resource-5"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-get-assigned-instruction-in-weather-api-1-1-description",
       "enabled": true,
@@ -235,10 +263,16 @@ Feature: get service entities with assigned instructions
     {
       "type": 1,
       "name": "test-instruction-get-assigned-instruction-in-weather-api-4-name",
-      "entity_patterns": [
-        {
-          "name": "test-alarm-weather-widget-instructions-resource-5"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-alarm-weather-widget-instructions-resource-5"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-get-assigned-instruction-in-weather-api-1-1-description",
       "enabled": true,
@@ -290,12 +324,20 @@ Feature: get service entities with assigned instructions
       "_id": "test-entity-instruction-weather-services-2",
       "name": "test-entity-instruction-weather-services-2",
       "output_template": "test-entity-instruction-weather-services-2",
-      "category": "test-category-pbehavior-weather-service-entity",
+      "category": "",
       "impact_level": 1,
       "enabled": true,
       "sli_avail_state": 1,
-      "entity_patterns": [
-        {"name": "test-alarm-weather-widget-instructions-resource-5"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-alarm-weather-widget-instructions-resource-5"
+            }
+          }
+        ]
       ]
     }
     """
@@ -344,7 +386,7 @@ Feature: get service entities with assigned instructions
       }
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 4 events processing
     When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-2?with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -372,10 +414,16 @@ Feature: get service entities with assigned instructions
     {
       "type": 0,
       "name": "test-instruction-get-assigned-instruction-in-weather-api-5-name",
-      "entity_patterns": [
-        {
-          "name": "test-alarm-weather-widget-instructions-resource-6"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-alarm-weather-widget-instructions-resource-6"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-get-assigned-instruction-in-weather-api-5-description",
       "enabled": true,
@@ -426,12 +474,20 @@ Feature: get service entities with assigned instructions
       "_id": "test-entity-instruction-weather-services-3",
       "name": "test-entity-instruction-weather-services-3",
       "output_template": "test-entity-instruction-weather-services-3",
-      "category": "test-category-pbehavior-weather-service-entity",
+      "category": "",
       "impact_level": 1,
       "enabled": true,
       "sli_avail_state": 1,
-      "entity_patterns": [
-        {"name": "test-alarm-weather-widget-instructions-resource-6"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-alarm-weather-widget-instructions-resource-6"
+            }
+          }
+        ]
       ]
     }
     """
@@ -495,10 +551,16 @@ Feature: get service entities with assigned instructions
     {
       "type": 1,
       "name": "test-instruction-get-assigned-instruction-in-weather-api-6-name",
-      "entity_patterns": [
-        {
-          "name": "test-alarm-weather-widget-instructions-resource-7"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-alarm-weather-widget-instructions-resource-7"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-get-assigned-instruction-in-weather-api-1-1-description",
       "enabled": true,
@@ -520,10 +582,16 @@ Feature: get service entities with assigned instructions
     {
       "type": 1,
       "name": "test-instruction-get-assigned-instruction-in-weather-api-7-name",
-      "entity_patterns": [
-        {
-          "name": "test-alarm-weather-widget-instructions-resource-7"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-alarm-weather-widget-instructions-resource-7"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-get-assigned-instruction-in-weather-api-1-1-description",
       "enabled": true,
@@ -575,12 +643,20 @@ Feature: get service entities with assigned instructions
       "_id": "test-entity-instruction-weather-services-4",
       "name": "test-entity-instruction-weather-services-4",
       "output_template": "test-entity-instruction-weather-services-4",
-      "category": "test-category-pbehavior-weather-service-entity",
+      "category": "",
       "impact_level": 1,
       "enabled": true,
       "sli_avail_state": 1,
-      "entity_patterns": [
-        {"name": "test-alarm-weather-widget-instructions-resource-7"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-alarm-weather-widget-instructions-resource-7"
+            }
+          }
+        ]
       ]
     }
     """
@@ -607,7 +683,7 @@ Feature: get service entities with assigned instructions
       }
     }
     """
-    When I wait the end of 3 events processing
+    When I wait the end of 4 events processing
     When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-4?with_instructions=true until response code is 200 and body contains:
     """json
     {

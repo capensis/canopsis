@@ -80,13 +80,14 @@ func NewService(
 	return &service
 }
 
-func (s *service) sendEvent(event types.Event) error {
+func (s *service) sendEvent(ctx context.Context, event types.Event) error {
 	body, err := s.encoder.Encode(event)
 	if err != nil {
 		return fmt.Errorf("unable to serialize service event: %v", err)
 	}
 
-	err = s.pubChannel.Publish(
+	err = s.pubChannel.PublishWithContext(
+		ctx,
 		s.pubExchangeName,
 		s.pubQueueName,
 		false,
@@ -110,12 +111,18 @@ func (s *service) updateServiceState(
 	serviceID, serviceOutput string,
 	counters AlarmCounters,
 ) error {
+	count, err := s.adapter.GetDependenciesCount(ctx, serviceID)
+	if err != nil {
+		return err
+	}
+
+	counters.Depends = count
 	output, err := GetServiceOutput(serviceOutput, counters)
 	if err != nil {
 		return err
 	}
 
-	err = s.sendEvent(types.Event{
+	err = s.sendEvent(ctx, types.Event{
 		EventType:     types.EventTypeCheck,
 		SourceType:    types.SourceTypeService,
 		Component:     serviceID,
@@ -213,7 +220,7 @@ func (s *service) RecomputeIdleSince(parentCtx context.Context) error {
 
 	defer trace.StartRegion(ctx, "service.RecomputeIdleSince").End()
 
-	services, err := s.adapter.GetValid(ctx)
+	services, err := s.adapter.GetEnabled(ctx)
 	if err != nil {
 		return err
 	}
@@ -353,7 +360,7 @@ func (s *service) calculateState(ctx context.Context, event types.Event) error {
 	g, ctx := errgroup.WithContext(ctx)
 	workers := int(math.Min(float64(len(services)), float64(maxWorkersCount)))
 	workerCh := make(chan workerMsg)
-	go func() {
+	g.Go(func() error {
 		defer close(workerCh)
 
 		for _, serviceID := range unchangedServices {
@@ -365,7 +372,7 @@ func (s *service) calculateState(ctx context.Context, event types.Event) error {
 
 			select {
 			case <-ctx.Done():
-				return
+				return nil
 			case workerCh <- workerMsg{
 				Service:   data,
 				Unchanged: true,
@@ -382,7 +389,7 @@ func (s *service) calculateState(ctx context.Context, event types.Event) error {
 
 			select {
 			case <-ctx.Done():
-				return
+				return nil
 			case workerCh <- workerMsg{
 				Service: data,
 				Added:   true,
@@ -399,14 +406,16 @@ func (s *service) calculateState(ctx context.Context, event types.Event) error {
 
 			select {
 			case <-ctx.Done():
-				return
+				return nil
 			case workerCh <- workerMsg{
 				Service: data,
 				Removed: true,
 			}:
 			}
 		}
-	}()
+
+		return nil
+	})
 
 	for i := 0; i < workers; i++ {
 		g.Go(func() error {
@@ -606,20 +615,22 @@ func (s *service) ComputeAllServices(parentCtx context.Context) error {
 		return nil
 	}
 
+	g, ctx := errgroup.WithContext(ctx)
 	workers := int(math.Min(float64(len(services)), float64(maxWorkersCount)))
 	workerCh := make(chan ServiceData)
-	go func() {
+	g.Go(func() error {
 		defer close(workerCh)
 		for _, data := range services {
 			select {
 			case <-ctx.Done():
-				return
+				return nil
 			case workerCh <- data:
 			}
 		}
-	}()
 
-	g, ctx := errgroup.WithContext(ctx)
+		return nil
+	})
+
 	for i := 0; i < workers; i++ {
 		g.Go(func() error {
 			for {
@@ -787,7 +798,8 @@ func (s *service) processSkippedQueue(ctx context.Context, serviceID string) err
 	}
 
 	for entityID, body := range events {
-		err := s.pubChannel.Publish(
+		err := s.pubChannel.PublishWithContext(
+			ctx,
 			s.pubExchangeName,
 			s.pubQueueName,
 			false,
