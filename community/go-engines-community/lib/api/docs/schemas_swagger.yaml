@@ -659,6 +659,13 @@ definitions:
       total_count:
         type: integer
     type: object
+  common.Role:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
   common.User:
     properties:
       _id:
@@ -3402,6 +3409,33 @@ definitions:
       cat_name:
         type: string
       links: {}
+    type: object
+  sharetoken.EditRequest:
+    properties:
+      description:
+        maxLength: 500
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+    type: object
+  sharetoken.Response:
+    properties:
+      _id:
+        type: string
+      accessed:
+        type: integer
+      created:
+        type: integer
+      description:
+        type: string
+      expired:
+        type: integer
+      role:
+        $ref: '#/definitions/common.Role'
+      user:
+        $ref: '#/definitions/common.User'
+      value:
+        type: string
     type: object
   statesettings.JUnitThresholds:
     properties:

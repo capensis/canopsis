@@ -13,6 +13,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+type TokenStore interface {
+	Save(ctx context.Context, token token.Token) error
+	Exists(ctx context.Context, id string) (bool, error)
+	Count(ctx context.Context) (int64, error)
+	Delete(ctx context.Context, id string) (bool, error)
+	DeleteBy(ctx context.Context, user, provider string) error
+}
+
 type TokenService interface {
 	Create(ctx context.Context, user security.User, provider string) (string, error)
 	CreateWithExpiration(ctx context.Context, user security.User, provider string, expiredAt time.Time) (string, error)
@@ -29,13 +37,13 @@ type AuthMethodConf struct {
 
 func NewTokenService(
 	client mongo.DbClient,
-	service token.Service,
-	store token.Store,
+	generator token.Generator,
+	store TokenStore,
 ) TokenService {
 	return &tokenService{
 		dbConfigCollection: client.Collection(mongo.ConfigurationMongoCollection),
 		dbRoleCollection:   client.Collection(mongo.RightsMongoCollection),
-		tokenService:       service,
+		tokenGenerator:     generator,
 		tokenStore:         store,
 	}
 }
@@ -44,8 +52,8 @@ type tokenService struct {
 	dbConfigCollection mongo.DbCollection
 	dbRoleCollection   mongo.DbCollection
 
-	tokenService token.Service
-	tokenStore   token.Store
+	tokenGenerator token.Generator
+	tokenStore     TokenStore
 }
 
 func (s *tokenService) Create(ctx context.Context, user security.User, provider string) (string, error) {
@@ -59,7 +67,7 @@ func (s *tokenService) Create(ctx context.Context, user security.User, provider 
 	if expirationInterval.Value > 0 {
 		expired = expirationInterval.AddTo(now)
 	}
-	accessToken, err := s.tokenService.GenerateToken(user.ID, expired.Time)
+	accessToken, err := s.tokenGenerator.Generate(user.ID, expired.Time)
 	if err != nil {
 		return "", err
 	}
@@ -69,8 +77,9 @@ func (s *tokenService) Create(ctx context.Context, user security.User, provider 
 		User:     user.ID,
 		Provider: provider,
 		Created:  now,
-
-		MaxInactiveInterval: inactivityInterval,
+	}
+	if inactivityInterval.Value > 0 {
+		t.MaxInactiveInterval = &inactivityInterval
 	}
 	if !expired.IsZero() {
 		t.Expired = &expired
@@ -97,7 +106,7 @@ func (s *tokenService) CreateWithExpiration(ctx context.Context, user security.U
 			minExpired = expiredByInterval
 		}
 	}
-	accessToken, err := s.tokenService.GenerateToken(user.ID, minExpired.Time)
+	accessToken, err := s.tokenGenerator.Generate(user.ID, minExpired.Time)
 	if err != nil {
 		return "", err
 	}
@@ -107,8 +116,9 @@ func (s *tokenService) CreateWithExpiration(ctx context.Context, user security.U
 		User:     user.ID,
 		Provider: provider,
 		Created:  now,
-
-		MaxInactiveInterval: inactivityInterval,
+	}
+	if inactivityInterval.Value > 0 {
+		t.MaxInactiveInterval = &inactivityInterval
 	}
 	if !minExpired.IsZero() {
 		t.Expired = &minExpired

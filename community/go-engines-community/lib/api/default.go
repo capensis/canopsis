@@ -37,6 +37,8 @@ import (
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/mongostore"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/sharetoken"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"github.com/gin-gonic/gin"
 	gorillawebsocket "github.com/gorilla/websocket"
 	"github.com/rs/zerolog"
@@ -202,7 +204,10 @@ func Default(
 		exportExecutor = export.NewTaskExecutor(dbClient, logger)
 	}
 
-	websocketHub := newWebsocketHub(enforcer, security.GetTokenProvider(), logger)
+	websocketHub := newWebsocketHub(enforcer, []libsecurity.TokenProvider{
+		security.GetTokenProvider(),
+		security.GetShareTokenProvider(),
+	}, logger)
 
 	broadcastMessageChan := make(chan bool)
 
@@ -349,7 +354,8 @@ func Default(
 	api.AddWorker("auth token activity", func(ctx context.Context) {
 		ticker := time.NewTicker(canopsis.PeriodicalWaitTime)
 		defer ticker.Stop()
-		tokenStore := security.GetTokenStore()
+		tokenStore := token.NewMongoStore(dbClient, logger)
+		shareTokenStore := sharetoken.NewMongoStore(dbClient, logger)
 
 		for {
 			select {
@@ -357,10 +363,14 @@ func Default(
 				return
 			case <-ticker.C:
 				for _, tokens := range websocketHub.GetUsers() {
-					for _, token := range tokens {
-						err := tokenStore.Access(ctx, token)
+					for _, t := range tokens {
+						err := tokenStore.Access(ctx, t)
 						if err != nil {
 							logger.Err(err).Msg("cannot update token access")
+						}
+						err = shareTokenStore.Access(ctx, t)
+						if err != nil {
+							logger.Err(err).Msg("cannot update share token access")
 						}
 					}
 				}
@@ -368,7 +378,26 @@ func Default(
 		}
 	})
 	api.AddWorker("auth token expiration", func(ctx context.Context) {
-		security.GetTokenStore().DeleteExpired(ctx, canopsis.PeriodicalWaitTime)
+		ticker := time.NewTicker(canopsis.PeriodicalWaitTime)
+		defer ticker.Stop()
+		tokenStore := token.NewMongoStore(dbClient, logger)
+		shareTokenStore := sharetoken.NewMongoStore(dbClient, logger)
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				err := tokenStore.DeleteExpired(ctx)
+				if err != nil {
+					logger.Err(err).Msg("cannot delete expired tokens")
+				}
+				err = shareTokenStore.DeleteExpired(ctx)
+				if err != nil {
+					logger.Err(err).Msg("cannot delete expired share tokens")
+				}
+			}
+		}
 	})
 	api.AddWorker("websocket", func(ctx context.Context) {
 		websocketHub.Start(ctx)
@@ -381,7 +410,7 @@ func Default(
 	return api, docsFile, nil
 }
 
-func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.TokenProvider, logger zerolog.Logger) websocket.Hub {
+func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProviders []libsecurity.TokenProvider, logger zerolog.Logger) websocket.Hub {
 	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 2048,
@@ -389,7 +418,7 @@ func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.To
 			return true
 		},
 	})
-	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProvider)
+	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProviders)
 	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer,
 		canopsis.PeriodicalWaitTime, logger)
 	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {

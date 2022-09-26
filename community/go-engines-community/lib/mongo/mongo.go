@@ -76,7 +76,8 @@ const (
 	// Data storage entity collections
 	ArchivedEntitiesMongoCollection = "archived_entities"
 
-	TokenMongoCollection = "token"
+	TokenMongoCollection      = "token"
+	ShareTokenMongoCollection = "share_token"
 
 	ResolveRuleMongoCollection  = "resolve_rule"
 	FlappingRuleMongoCollection = "flapping_rule"

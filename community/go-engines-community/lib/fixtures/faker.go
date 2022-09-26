@@ -5,8 +5,11 @@ import (
 	"strings"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/brianvoe/gofakeit/v6"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type Faker struct {
@@ -52,4 +55,14 @@ func (f *Faker) UniqueName() (string, error) {
 
 func (f *Faker) ResetUniqueName() {
 	f.usedNames = make(map[string]struct{})
+}
+
+func (f *Faker) JWT() (string, error) {
+	registeredClaims := jwt.RegisteredClaims{
+		ID:       utils.NewID(),
+		IssuedAt: jwt.NewNumericDate(time.Now()),
+		Issuer:   canopsis.AppName,
+	}
+
+	return jwt.NewWithClaims(jwt.SigningMethodHS256, registeredClaims).SignedString([]byte(""))
 }

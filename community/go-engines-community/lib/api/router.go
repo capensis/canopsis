@@ -46,6 +46,7 @@ import (
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionauth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sharetoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/userpreferences"
@@ -67,6 +68,7 @@ import (
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -163,7 +165,7 @@ func RegisterRoutes(
 		sessionStore,
 		security.GetAuthProviders(),
 		websocketHub,
-		security.GetTokenStore(),
+		token.NewMongoStore(dbClient, logger),
 		logger,
 	)
 	router.POST("/auth", sessionauthApi.LoginHandler())
@@ -256,6 +258,23 @@ func RegisterRoutes(
 			permissionRouter.GET("",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
 				permissionApi.List,
+			)
+		}
+
+		sharetokenApi := sharetoken.NewApi(sharetoken.NewStore(dbClient, security.GetTokenGenerator()), actionLogger)
+		sharetokenRouter := protected.Group("/share-tokens")
+		{
+			sharetokenRouter.POST("",
+				middleware.Authorize(apisecurity.PermShareToken, model.PermissionCreate, enforcer),
+				sharetokenApi.Create,
+			)
+			sharetokenRouter.GET("",
+				middleware.Authorize(apisecurity.PermShareToken, model.PermissionRead, enforcer),
+				sharetokenApi.List,
+			)
+			sharetokenRouter.DELETE("/:id",
+				middleware.Authorize(apisecurity.PermShareToken, model.PermissionDelete, enforcer),
+				sharetokenApi.Delete,
 			)
 		}
 

@@ -21,6 +21,8 @@ const (
 
 	PermAcl = "api_acl"
 
+	PermShareToken = "api_share_token"
+
 	PermStateSettings = "api_state_settings"
 
 	PermDataStorageRead   = "api_datastorage_read"

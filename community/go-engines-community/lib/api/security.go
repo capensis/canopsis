@@ -17,6 +17,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/provider"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/sharetoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tokenprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
@@ -42,8 +43,9 @@ type Security interface {
 	GetConfig() libsecurity.Config
 	GetPasswordEncoder() password.Encoder
 	GetTokenService() apisecurity.TokenService
-	GetTokenStore() token.Store
+	GetTokenGenerator() token.Generator
 	GetTokenProvider() libsecurity.TokenProvider
+	GetShareTokenProvider() libsecurity.TokenProvider
 	GetCookieOptions() CookieOptions
 }
 
@@ -96,7 +98,10 @@ func (s *security) GetHttpAuthProviders() []libsecurity.HttpProvider {
 		case libsecurity.AuthMethodBasic:
 			baseProvider := s.newBaseAuthProvider()
 			res = append(res, httpprovider.NewBasicProvider(baseProvider))
-			res = append(res, httpprovider.NewBearerProvider(s.GetTokenProvider()))
+			res = append(res, httpprovider.NewBearerProvider([]libsecurity.TokenProvider{
+				s.GetTokenProvider(),
+				s.GetShareTokenProvider(),
+			}))
 		case libsecurity.AuthMethodApiKey:
 			res = append(res, httpprovider.NewApikeyProvider(s.newUserProvider()))
 		case libsecurity.AuthMethodLdap:
@@ -166,8 +171,7 @@ func (s *security) GetAuthMiddleware() []gin.HandlerFunc {
 func (s *security) GetFileAuthMiddleware() []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		middleware.Auth([]libsecurity.HttpProvider{
-			httpprovider.NewCookieProvider(s.getJwtTokenService(), s.GetTokenStore(),
-				s.newUserProvider(), s.cookieOptions.FileAccessName, s.logger),
+			httpprovider.NewCookieProvider(s.GetTokenProvider(), s.cookieOptions.FileAccessName, s.logger),
 		}),
 	}
 }
@@ -185,24 +189,24 @@ func (s *security) GetPasswordEncoder() password.Encoder {
 }
 
 func (s *security) GetTokenService() apisecurity.TokenService {
-	return apisecurity.NewTokenService(s.dbClient, s.getJwtTokenService(), s.GetTokenStore())
-}
-
-func (s *security) GetTokenStore() token.Store {
-	return token.NewMongoStore(s.dbClient, s.logger)
+	return apisecurity.NewTokenService(s.dbClient, s.GetTokenGenerator(), token.NewMongoStore(s.dbClient, s.logger))
 }
 
 func (s *security) GetTokenProvider() libsecurity.TokenProvider {
-	return tokenprovider.NewTokenProvider(s.getJwtTokenService(), s.GetTokenStore(), s.newUserProvider(), s.logger)
+	return tokenprovider.NewTokenProvider(s.GetTokenGenerator(), token.NewMongoStore(s.dbClient, s.logger), s.newUserProvider(), s.logger)
+}
+
+func (s *security) GetShareTokenProvider() libsecurity.TokenProvider {
+	return tokenprovider.NewTokenProvider(s.GetTokenGenerator(), sharetoken.NewMongoStore(s.dbClient, s.logger), s.newUserProvider(), s.logger)
 }
 
 func (s *security) GetCookieOptions() CookieOptions {
 	return s.cookieOptions
 }
 
-func (s *security) getJwtTokenService() token.Service {
+func (s *security) GetTokenGenerator() token.Generator {
 	secretKey := os.Getenv(JwtSecretEnv)
-	return token.NewJwtService([]byte(secretKey), canopsis.AppName, s.apiConfigProvider)
+	return token.NewJwtGenerator([]byte(secretKey), canopsis.AppName, s.apiConfigProvider)
 }
 
 func (s *security) newUserProvider() libsecurity.UserProvider {

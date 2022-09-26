@@ -4,16 +4,15 @@ package sessionauth
 
 import (
 	"context"
+	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"
-	"net/http"
 )
 
 type API interface {
@@ -21,11 +20,15 @@ type API interface {
 	LoginHandler() gin.HandlerFunc
 }
 
+type TokenStore interface {
+	Count(ctx context.Context) (int64, error)
+}
+
 func NewApi(
 	sessionStore libsession.Store,
 	providers []security.Provider,
 	websocketHub websocket.Hub,
-	tokenStore token.Store,
+	tokenStore TokenStore,
 	logger zerolog.Logger,
 ) API {
 	return &api{
@@ -41,7 +44,7 @@ type api struct {
 	sessionStore libsession.Store
 	providers    []security.Provider
 	websocketHub websocket.Hub
-	tokenStore   token.Store
+	tokenStore   TokenStore
 	logger       zerolog.Logger
 }
 
