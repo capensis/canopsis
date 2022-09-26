@@ -8,7 +8,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/brianvoe/gofakeit/v6"
 )
 
@@ -56,12 +55,6 @@ func (*Faker) GenerateExdates(count int) interface{} {
 	}
 
 	return exdates
-}
-
-func (f *Faker) GeneratePBehaviorExceptionID() string {
-	id := utils.NewID()
-
-	return id
 }
 
 func (f *Faker) DateUnix() interface{} {
