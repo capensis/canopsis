@@ -39,46 +39,50 @@ func (w *rulesChangesWatcher) Watch(ctx context.Context, types []string) error {
 	if err != nil {
 		return err
 	}
+
 	defer stream.Close(ctx)
 
 	// buf = 1, in order not to lose stream event when loader was slept
 	loadChan := make(chan struct{}, 1)
-	defer close(loadChan)
 
 	// load in case of something was changed in the collection when it wasn't watched
 	err = w.service.LoadRules(ctx, types)
 	if err != nil {
-		w.logger.Error().Err(err).Msg("unable to load rules")
-		return nil
+		return err
 	}
 
 	go func() {
-		for {
+		defer close(loadChan)
+
+		for stream.Next(ctx) {
 			select {
 			case <-ctx.Done():
 				return
-			case _, ok := <-loadChan:
-				if !ok {
-					return
-				}
-				time.Sleep(w.loadSleepDuration)
-
-				err := w.service.LoadRules(ctx, types)
-				if err != nil {
-					w.logger.Error().Err(err).Msg("unable to load rules")
-				}
+			case loadChan <- struct{}{}:
+			default:
 			}
 		}
 	}()
 
-	for stream.Next(ctx) {
+	for {
 		select {
 		case <-ctx.Done():
 			return nil
-		case loadChan <- struct{}{}:
-		default:
+		case _, ok := <-loadChan:
+			if !ok {
+				return nil
+			}
+
+			select {
+			case <-ctx.Done():
+				return nil
+			case <-time.After(w.loadSleepDuration):
+			}
+
+			err := w.service.LoadRules(ctx, types)
+			if err != nil {
+				return err
+			}
 		}
 	}
-
-	return nil
 }

@@ -44,8 +44,8 @@ type Response struct {
 	Created                          *types.CpsTime                                `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated                          *types.CpsTime                                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 	RRule                            string                                        `bson:"rrule" json:"rrule"`
-	Start                            *types.CpsTime                                `bson:"start,omitempty" json:"start,omitempty"`
-	Stop                             *types.CpsTime                                `bson:"stop,omitempty" json:"stop,omitempty"`
+	Start                            *types.CpsTime                                `bson:"start,omitempty" json:"start,omitempty" swaggertype:"integer"`
+	Stop                             *types.CpsTime                                `bson:"stop,omitempty" json:"stop,omitempty" swaggertype:"integer"`
 	Exdates                          []types.Exdate                                `bson:"exdates" json:"exdates"`
 	Exceptions                       []Exception                                   `bson:"exceptions" json:"exceptions"`
 	OldPatterns                      oldpattern.EventPatternList                   `bson:"old_patterns,omitempty" json:"old_patterns,omitempty"`

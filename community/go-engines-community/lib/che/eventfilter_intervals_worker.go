@@ -53,7 +53,7 @@ func (w *eventfilterIntervalsWorker) Work(ctx context.Context) {
 					"$match": bson.M{
 						"start":   bson.M{"$nin": bson.A{0, nil}},
 						"stop":    bson.M{"$nin": bson.A{0, nil}},
-						"enabled": bson.M{"$nin": bson.A{false, nil}},
+						"enabled": true,
 					},
 				},
 				{

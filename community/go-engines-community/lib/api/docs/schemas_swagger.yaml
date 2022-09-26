@@ -1463,9 +1463,9 @@ definitions:
       rrule:
         type: string
       start:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
       stop:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
       type:
         type: string
       updated:
