@@ -37,6 +37,8 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
         <filter-selector-stub
           disabled="true"
           filters=""
+          itemtext="title"
+          itemvalue="_id"
           label="Select a filter"
           lockedfilters=""
         />
