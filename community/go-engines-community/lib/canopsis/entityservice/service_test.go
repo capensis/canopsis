@@ -60,6 +60,7 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockEncoder.EXPECT().Encode(gomock.Any()).Return(eventBody, nil)
 	mockAdapter := mock_entityservice.NewMockAdapter(ctrl)
+	mockAdapter.EXPECT().GetDependenciesCount(gomock.Any(), gomock.Any()).Return(int64(0), nil)
 	mockAdapter.EXPECT().UpdateCounters(gomock.Any(), gomock.Eq(serviceID), gomock.Eq(newServiceCounters)).Return(nil)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 	mockCountersCache := mock_entityservice.NewMockCountersCache(ctrl)
@@ -166,6 +167,7 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockEncoder.EXPECT().Encode(gomock.Any()).Return(eventBody, nil)
 	mockAdapter := mock_entityservice.NewMockAdapter(ctrl)
+	mockAdapter.EXPECT().GetDependenciesCount(gomock.Any(), gomock.Any()).Return(int64(0), nil)
 	mockAdapter.EXPECT().
 		UpdateCounters(gomock.Any(), gomock.Eq(serviceID), gomock.Eq(newServiceCounters)).
 		Return(nil)
@@ -363,6 +365,7 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockEncoder.EXPECT().Encode(gomock.Any()).Return(eventBody, nil)
 	mockAdapter := mock_entityservice.NewMockAdapter(ctrl)
+	mockAdapter.EXPECT().GetDependenciesCount(gomock.Any(), gomock.Any()).Return(int64(0), nil)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 	mockEntityCursor := mock_mongo.NewMockCursor(ctrl)
 	gomock.InOrder(
