@@ -1,6 +1,6 @@
 <template lang="pug">
-  c-action-btn(:tooltip="tooltip")
-    v-btn(
+  c-action-btn(v-bind="$attrs", :tooltip="tooltip")
+    v-btn.mx-1(
       slot="button",
       v-clipboard:copy="value",
       v-clipboard:success="onSuccessCopied",

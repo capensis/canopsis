@@ -82,6 +82,7 @@ export default {
         PATTERN_OPERATORS.notEqual,
         PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.isNotOneOf,
+        PATTERN_OPERATORS.contains,
       ];
     },
 
