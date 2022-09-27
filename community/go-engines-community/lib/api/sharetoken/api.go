@@ -9,7 +9,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 )
 
 type API interface {
@@ -21,7 +20,6 @@ type API interface {
 type api struct {
 	store        Store
 	actionLogger logger.ActionLogger
-	logger       zerolog.Logger
 }
 
 func NewApi(

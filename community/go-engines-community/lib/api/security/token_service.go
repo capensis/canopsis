@@ -15,7 +15,6 @@ import (
 
 type TokenStore interface {
 	Save(ctx context.Context, token token.Token) error
-	Exists(ctx context.Context, id string) (bool, error)
 	Count(ctx context.Context) (int64, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	DeleteBy(ctx context.Context, user, provider string) error
@@ -26,7 +25,6 @@ type TokenService interface {
 	CreateWithExpiration(ctx context.Context, user security.User, provider string, expiredAt time.Time) (string, error)
 	Delete(ctx context.Context, token string) (bool, error)
 	DeleteBy(ctx context.Context, user, provider string) error
-	Exists(ctx context.Context, token string) (bool, error)
 	Count(ctx context.Context) (int64, error)
 }
 
@@ -137,10 +135,6 @@ func (s *tokenService) Delete(ctx context.Context, token string) (bool, error) {
 
 func (s *tokenService) DeleteBy(ctx context.Context, user, provider string) error {
 	return s.tokenStore.DeleteBy(ctx, user, provider)
-}
-
-func (s *tokenService) Exists(ctx context.Context, token string) (bool, error) {
-	return s.tokenStore.Exists(ctx, token)
 }
 
 func (s *tokenService) Count(ctx context.Context) (int64, error) {
