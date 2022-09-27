@@ -399,8 +399,10 @@ definitions:
         items:
           $ref: '#/definitions/export.Field'
         type: array
-      filter:
-        type: string
+      filters:
+        items:
+          type: string
+        type: array
       has_running_execution:
         type: boolean
       include_instruction_types:
@@ -842,8 +844,10 @@ definitions:
         items:
           $ref: '#/definitions/export.Field'
         type: array
-      filter:
-        type: string
+      filters:
+        items:
+          type: string
+        type: array
       no_events:
         type: boolean
       search:
