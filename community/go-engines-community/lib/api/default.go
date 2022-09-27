@@ -204,10 +204,7 @@ func Default(
 		exportExecutor = export.NewTaskExecutor(dbClient, logger)
 	}
 
-	websocketHub := newWebsocketHub(enforcer, []libsecurity.TokenProvider{
-		security.GetTokenProvider(),
-		security.GetShareTokenProvider(),
-	}, logger)
+	websocketHub := newWebsocketHub(enforcer, security.GetTokenProviders(), logger)
 
 	broadcastMessageChan := make(chan bool)
 
