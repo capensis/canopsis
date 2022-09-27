@@ -2846,6 +2846,10 @@ export default merge({
       title: 'KPI',
       message: '', // TODO: add correct message
     },
+    [USERS_PERMISSIONS.technical.shareToken]: {
+      title: 'Share token',
+      message: '', // TODO: add correct message
+    },
 
     /**
      * Admin general
