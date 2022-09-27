@@ -12,7 +12,7 @@ import { TIME_UNITS } from '@/constants';
  */
 
 /**
- * Convert event filter to form
+ * Convert share token to form
  *
  * @param {ShareToken} [shareToken = {}]
  * @returns {ShareTokenForm}

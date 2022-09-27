@@ -17,9 +17,9 @@ import { APP_HOST, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 import { MODALS } from '@/constants';
 
 import { removeTrailingSlashes } from '@/helpers/url';
+import { writeTextToClipboard } from '@/helpers/clipboard';
 
 import { entitiesShareTokenMixin } from '@/mixins/entities/share-token';
-import { writeTextToClipboard } from '@/helpers/clipboard';
 
 export default {
   mixins: [entitiesShareTokenMixin],
