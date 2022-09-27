@@ -150,6 +150,10 @@ definitions:
         $ref: '#/definitions/alarm.Pbehavior'
       t:
         type: integer
+      tags:
+        items:
+          type: string
+        type: array
       v:
         $ref: '#/definitions/alarm.AlarmValue'
     type: object
@@ -277,10 +281,6 @@ definitions:
       steps:
         items:
           $ref: '#/definitions/alarm.AlarmStep'
-        type: array
-      tags:
-        items:
-          type: string
         type: array
       ticket:
         $ref: '#/definitions/alarm.AlarmTicket'
@@ -3469,8 +3469,13 @@ definitions:
         type: string
       t:
         $ref: '#/definitions/types.CpsTime'
+      tags:
+        items:
+          type: string
+        type: array
       v:
         $ref: '#/definitions/types.AlarmValue'
+        description: todo move all field from Value to Alarm
     type: object
   types.AlarmStep:
     properties:
@@ -3633,10 +3638,6 @@ definitions:
       steps:
         items:
           $ref: '#/definitions/types.AlarmStep'
-        type: array
-      tags:
-        items:
-          type: string
         type: array
       ticket:
         $ref: '#/definitions/types.AlarmTicket'
