@@ -154,6 +154,7 @@ exports[`flowchart-properties Renders \`flowchart-properties\` with lines 1`] = 
             <!---->
             <!---->
             <flowchart-line-type-field-stub
+              averagepoints="[object Object],[object Object]"
               class="my-2"
               label="Line type"
               value="line"

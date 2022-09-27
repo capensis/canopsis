@@ -28,10 +28,34 @@ export default {
       type: String,
       required: false,
     },
+    averagePoints: {
+      type: Array,
+      required: false,
+    },
   },
   computed: {
     points() {
-      return [{ x: 1, y: 1 }, { x: 49, y: 39 }];
+      const maxY = 39;
+      const maxX = 49;
+
+      const startPoint = { x: 1, y: 1 };
+      const endPoint = { x: maxX, y: maxY };
+
+      if (this.averagePoints) {
+        const [start, end] = this.averagePoints;
+
+        if (start.y > end.y) {
+          startPoint.y = maxY;
+          endPoint.y = 1;
+        }
+
+        if (start.x > end.x) {
+          startPoint.x = maxX;
+          endPoint.x = 1;
+        }
+      }
+
+      return [startPoint, endPoint];
     },
 
     types() {
