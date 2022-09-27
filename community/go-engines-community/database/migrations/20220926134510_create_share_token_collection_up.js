@@ -17,3 +17,21 @@ if (!db.default_rights.findOne({_id: "api_share_token"})) {
         }
     });
 }
+
+if (!db.default_rights.findOne({_id: "models_shareToken"})) {
+    db.default_rights.insertOne({
+        _id: "models_shareToken",
+        crecord_name: "models_shareToken",
+        crecord_type: "action",
+        desc: "Share token",
+        type: "CRUD"
+    });
+    db.default_rights.updateOne({_id: "admin"}, {
+        $set: {
+            "rights.models_shareToken": {
+                checksum: 15,
+                crecord_type: "right"
+            }
+        }
+    });
+}

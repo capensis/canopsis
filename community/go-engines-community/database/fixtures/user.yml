@@ -455,6 +455,11 @@ default_rights:
     _id: models_profile_corporatePattern
     crecord_name: <Current()._id>
     desc: "Profile: Corporate patterns"
+  permission_models_shareToken:
+    <<: *permission_crud
+    _id: models_shareToken
+    crecord_name: <Current()._id>
+    desc: "Share token"
   permission_listalarm_ack:
     <<: *permission
     _id: listalarm_ack
@@ -1105,6 +1110,8 @@ default_rights:
       "@permission_models_notification_instructionStats":
         checksum: 15
       "@permission_models_profile_corporatePattern":
+        checksum: 15
+      "@permission_models_shareToken":
         checksum: 15
       "@permission_listalarm_ack":
         checksum: 1
