@@ -39,7 +39,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
                   curveOffset="0.6"
                   fill="transparent"
                   points="[object Object],[object Object]"
-                  stroke="black"
+                  stroke="currentColor"
                   stroke-width="2"
                   type="line"
                 />
@@ -104,7 +104,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="line"
             />
@@ -126,7 +126,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="verticalCurve"
             />
@@ -148,7 +148,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="horizontalCurve"
             />
@@ -170,7 +170,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="leftCurvedAngle"
             />
@@ -192,7 +192,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="rightCurvedAngle"
             />
@@ -214,7 +214,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="rightElbow"
             />
@@ -236,7 +236,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="leftElbow"
             />
@@ -258,7 +258,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="verticalStepped"
             />
@@ -280,7 +280,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="horizontalStepped"
             />
@@ -331,7 +331,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
                   curveOffset="0.6"
                   fill="transparent"
                   points="[object Object],[object Object]"
-                  stroke="black"
+                  stroke="currentColor"
                   stroke-width="2"
                   type="line"
                 />
@@ -396,7 +396,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="line"
             />
@@ -418,7 +418,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="verticalCurve"
             />
@@ -440,7 +440,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="horizontalCurve"
             />
@@ -462,7 +462,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="leftCurvedAngle"
             />
@@ -484,7 +484,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="rightCurvedAngle"
             />
@@ -506,7 +506,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="rightElbow"
             />
@@ -528,7 +528,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="leftElbow"
             />
@@ -550,7 +550,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="verticalStepped"
             />
@@ -572,7 +572,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="horizontalStepped"
             />
@@ -673,7 +673,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="line"
             />
@@ -695,7 +695,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="verticalCurve"
             />
@@ -717,7 +717,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="horizontalCurve"
             />
@@ -739,7 +739,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="leftCurvedAngle"
             />
@@ -761,7 +761,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="rightCurvedAngle"
             />
@@ -783,7 +783,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="rightElbow"
             />
@@ -805,7 +805,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="leftElbow"
             />
@@ -827,7 +827,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="verticalStepped"
             />
@@ -849,7 +849,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               curveOffset="0.6"
               fill="transparent"
               points="[object Object],[object Object]"
-              stroke="black"
+              stroke="currentColor"
               stroke-width="2"
               type="horizontalStepped"
             />
