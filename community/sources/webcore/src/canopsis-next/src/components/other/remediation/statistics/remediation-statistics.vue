@@ -26,7 +26,6 @@ import {
   convertStartDateIntervalToTimestampByTimezone,
   convertStopDateIntervalToTimestampByTimezone,
 } from '@/helpers/date/date-intervals';
-
 import { isMetricsQueryChanged, convertMetricsToTimezone } from '@/helpers/metrics';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
