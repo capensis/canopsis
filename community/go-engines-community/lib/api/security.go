@@ -171,7 +171,10 @@ func (s *security) GetAuthMiddleware() []gin.HandlerFunc {
 func (s *security) GetFileAuthMiddleware() []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		middleware.Auth([]libsecurity.HttpProvider{
-			httpprovider.NewCookieProvider(s.GetTokenProvider(), s.cookieOptions.FileAccessName, s.logger),
+			httpprovider.NewCookieProvider([]libsecurity.TokenProvider{
+				s.GetTokenProvider(),
+				s.GetShareTokenProvider(),
+			}, s.cookieOptions.FileAccessName, s.logger),
 		}),
 	}
 }
