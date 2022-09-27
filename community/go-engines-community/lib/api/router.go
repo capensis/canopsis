@@ -153,6 +153,7 @@ func RegisterRoutes(
 	security.RegisterCallbackRoutes(router, dbClient)
 	authApi := auth.NewApi(
 		security.GetTokenService(),
+		security.GetTokenProviders(),
 		security.GetAuthProviders(),
 		security.GetSessionStore(),
 		websocketHub,

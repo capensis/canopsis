@@ -44,8 +44,7 @@ type Security interface {
 	GetPasswordEncoder() password.Encoder
 	GetTokenService() apisecurity.TokenService
 	GetTokenGenerator() token.Generator
-	GetTokenProvider() libsecurity.TokenProvider
-	GetShareTokenProvider() libsecurity.TokenProvider
+	GetTokenProviders() []libsecurity.TokenProvider
 	GetCookieOptions() CookieOptions
 }
 
@@ -98,10 +97,7 @@ func (s *security) GetHttpAuthProviders() []libsecurity.HttpProvider {
 		case libsecurity.AuthMethodBasic:
 			baseProvider := s.newBaseAuthProvider()
 			res = append(res, httpprovider.NewBasicProvider(baseProvider))
-			res = append(res, httpprovider.NewBearerProvider([]libsecurity.TokenProvider{
-				s.GetTokenProvider(),
-				s.GetShareTokenProvider(),
-			}))
+			res = append(res, httpprovider.NewBearerProvider(s.GetTokenProviders()))
 		case libsecurity.AuthMethodApiKey:
 			res = append(res, httpprovider.NewApikeyProvider(s.newUserProvider()))
 		case libsecurity.AuthMethodLdap:
@@ -171,10 +167,7 @@ func (s *security) GetAuthMiddleware() []gin.HandlerFunc {
 func (s *security) GetFileAuthMiddleware() []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		middleware.Auth([]libsecurity.HttpProvider{
-			httpprovider.NewCookieProvider([]libsecurity.TokenProvider{
-				s.GetTokenProvider(),
-				s.GetShareTokenProvider(),
-			}, s.cookieOptions.FileAccessName, s.logger),
+			httpprovider.NewCookieProvider(s.GetTokenProviders(), s.cookieOptions.FileAccessName, s.logger),
 		}),
 	}
 }
@@ -195,12 +188,11 @@ func (s *security) GetTokenService() apisecurity.TokenService {
 	return apisecurity.NewTokenService(s.dbClient, s.GetTokenGenerator(), token.NewMongoStore(s.dbClient, s.logger))
 }
 
-func (s *security) GetTokenProvider() libsecurity.TokenProvider {
-	return tokenprovider.NewTokenProvider(s.GetTokenGenerator(), token.NewMongoStore(s.dbClient, s.logger), s.newUserProvider(), s.logger)
-}
-
-func (s *security) GetShareTokenProvider() libsecurity.TokenProvider {
-	return tokenprovider.NewTokenProvider(s.GetTokenGenerator(), sharetoken.NewMongoStore(s.dbClient, s.logger), s.newUserProvider(), s.logger)
+func (s *security) GetTokenProviders() []libsecurity.TokenProvider {
+	return []libsecurity.TokenProvider{
+		tokenprovider.NewTokenProvider(s.GetTokenGenerator(), token.NewMongoStore(s.dbClient, s.logger), s.newUserProvider(), s.logger),
+		tokenprovider.NewTokenProvider(s.GetTokenGenerator(), sharetoken.NewMongoStore(s.dbClient, s.logger), s.newUserProvider(), s.logger),
+	}
 }
 
 func (s *security) GetCookieOptions() CookieOptions {

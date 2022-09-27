@@ -28,6 +28,7 @@ type API interface {
 
 func NewApi(
 	tokenService apisecurity.TokenService,
+	tokenProviders []security.TokenProvider,
 	providers []security.Provider,
 	sessionStore session.Store,
 	websocketHub websocket.Hub,
@@ -37,11 +38,12 @@ func NewApi(
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		tokenService: tokenService,
-		providers:    providers,
-		websocketHub: websocketHub,
-		sessionStore: sessionStore,
-		logger:       logger,
+		tokenService:   tokenService,
+		tokenProviders: tokenProviders,
+		providers:      providers,
+		websocketHub:   websocketHub,
+		sessionStore:   sessionStore,
+		logger:         logger,
 
 		cookieName:     cookieName,
 		cookieMaxAge:   cookieMaxAge,
@@ -51,10 +53,11 @@ func NewApi(
 }
 
 type api struct {
-	tokenService apisecurity.TokenService
-	providers    []security.Provider
-	websocketHub websocket.Hub
-	logger       zerolog.Logger
+	tokenService   apisecurity.TokenService
+	tokenProviders []security.TokenProvider
+	providers      []security.Provider
+	websocketHub   websocket.Hub
+	logger         zerolog.Logger
 
 	cookieName     string
 	cookieMaxAge   int
@@ -148,12 +151,19 @@ func (a *api) GetFileAccess(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.tokenService.Exists(c, tokenString)
-	if err != nil {
-		panic(err)
+	var user *security.User
+	var err error
+	for _, provider := range a.tokenProviders {
+		user, err = provider.Auth(c, tokenString)
+		if err != nil {
+			panic(err)
+		}
+		if user != nil {
+			break
+		}
 	}
 
-	if !ok {
+	if user == nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 		return
 	}
