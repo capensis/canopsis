@@ -45,6 +45,7 @@ import metricsModule from './metrics';
 import filterModule from './filter';
 import ratingSettingsModule from './rating-settings';
 import patternModule from './pattern';
+import shareTokenModule from './share-token';
 
 export default {
   alarm: alarmModule,
@@ -94,4 +95,5 @@ export default {
   filter: filterModule,
   ratingSettings: ratingSettingsModule,
   pattern: patternModule,
+  shareToken: shareTokenModule,
 };

@@ -4,7 +4,6 @@
       view-scroll-top-btn
       view-periodic-refresh-btn
       v-speed-dial(
-        v-if="updatable",
         v-model="opened",
         direction="top",
         transition="slide-y-reverse-transition"
@@ -18,6 +17,7 @@
         )
           v-icon menu
           v-icon close
+        view-share-link-btn(v-if="hasCreateAnyShareTokenAccess")
         view-fullscreen-btn(
           :value="fullscreen",
           :toggle-full-screen="toggleFullScreen",
@@ -49,7 +49,6 @@
           )
             v-icon add
           span {{ $t('common.addTab') }}
-      view-fullscreen-btn(v-else, :active-tab="activeTab", top-tooltip)
 </template>
 
 <script>
@@ -58,7 +57,9 @@ import { MODALS } from '@/constants';
 import { activeViewMixin } from '@/mixins/active-view';
 import { viewRouterMixin } from '@/mixins/view/router';
 import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
+import { permissionsTechnicalShareTokenMixin } from '@/mixins/permissions/technical/share-token';
 
+import ViewShareLinkBtn from './view-share-link-btn.vue';
 import ViewEditingBtn from './view-editing-btn.vue';
 import ViewScrollTopBtn from './view-scroll-top-btn.vue';
 import ViewFullscreenBtn from './view-fullscreen-btn.vue';
@@ -66,6 +67,7 @@ import ViewPeriodicRefreshBtn from './view-periodic-refresh-btn.vue';
 
 export default {
   components: {
+    ViewShareLinkBtn,
     ViewEditingBtn,
     ViewScrollTopBtn,
     ViewFullscreenBtn,
@@ -75,6 +77,7 @@ export default {
     activeViewMixin,
     viewRouterMixin,
     entitiesViewTabMixin,
+    permissionsTechnicalShareTokenMixin,
   ],
   props: {
     activeTab: {
