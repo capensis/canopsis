@@ -17,7 +17,7 @@
           @change="updateCorrelation"
         )
       v-flex
-        v-layout(row, wrap, align-center)
+        v-layout(row, align-center)
           filter-selector(
             :label="$t('settings.selectAFilter')",
             :filters="userPreference.filters",
