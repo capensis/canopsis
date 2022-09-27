@@ -35,6 +35,7 @@
             v-if="showLineType",
             :label="$t('flowchart.lineType')",
             :value="lineType",
+            :average-points="lineAveragePoints",
             @input="updateLineType"
           )
           v-divider(v-if="showLineType || showStroke || showFill")
@@ -72,6 +73,7 @@ import FlowchartColorField from './fields/flowchart-color-field.vue';
 import FlowchartNumberField from './fields/flowchart-number-field.vue';
 import FlowchartStrokeTypeField from './fields/flowchart-stroke-type-field.vue';
 import FlowchartLineTypeField from './fields/flowchart-line-type-field.vue';
+import { calculateCenterBetweenPoint } from '@/helpers/flowchart/points';
 
 export default {
   components: {
@@ -153,7 +155,7 @@ export default {
     },
 
     lineType() {
-      return getPropertyValueByShapes(this.selectedShapes, 'lineType');
+      return getPropertyValueByShapes(this.shapesWithLineType, 'lineType');
     },
 
     strokeWidth() {
@@ -176,6 +178,19 @@ export default {
 
     textFontSize() {
       return getPropertyValueByShapes(this.selectedShapes, 'textProperties.fontSize');
+    },
+
+    lineAveragePoints() {
+      return this.shapesWithLineType.reduce((acc, { points }) => {
+        if (acc.length) {
+          return acc.map((point, index) => calculateCenterBetweenPoint(
+            acc[index],
+            point,
+          ));
+        }
+
+        return [...points];
+      }, []);
     },
   },
   methods: {
