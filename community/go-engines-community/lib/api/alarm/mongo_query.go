@@ -358,6 +358,7 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest) e
 	q.addStartFromFilter(r, &alarmMatch)
 	q.addStartToFilter(r, &alarmMatch)
 	q.addOnlyParentsFilter(r, &alarmMatch)
+	q.addTagFilter(r, &alarmMatch)
 	searchMarch, withLookups, err := q.addSearchFilter(r)
 	if err != nil {
 		return err
@@ -598,6 +599,14 @@ func (q *MongoQueryBuilder) addCategoryFilter(r FilterRequest, match *[]bson.M) 
 	}
 
 	*match = append(*match, bson.M{"entity.category": bson.M{"$eq": r.Category}})
+}
+
+func (q *MongoQueryBuilder) addTagFilter(r FilterRequest, match *[]bson.M) {
+	if r.Tag == "" {
+		return
+	}
+
+	*match = append(*match, bson.M{"tags": r.Tag})
 }
 
 func (q *MongoQueryBuilder) addOnlyParentsFilter(r FilterRequest, match *[]bson.M) {
