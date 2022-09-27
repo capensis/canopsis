@@ -48,6 +48,7 @@ export default merge({
     widget: 'Widget',
     addWidget: 'Ajouter un widget',
     addTab: 'Ajouter un onglet',
+    shareLink: 'Créer un lien de partage',
     addPbehavior: 'Ajouter un comportement périodique',
     refresh: 'Rafraîchir',
     toggleEditView: 'Activer/Désactiver le mode édition',
@@ -156,6 +157,7 @@ export default merge({
     displayName: 'Afficher un nom',
     created: 'Date de création',
     updated: 'Date de dernière modification',
+    expired: 'Date d\'expiration',
     lastEventDate: 'Date du dernier événement',
     pattern: 'Modèle | Modèles',
     correlation: 'Corrélation',
@@ -1721,6 +1723,11 @@ export default merge({
       },
       edit: {
         title: 'Modifier le filtre de comportement partagé',
+      },
+    },
+    createShareToken: {
+      create: {
+        title: 'Créer un jeton de partage',
       },
     },
   },

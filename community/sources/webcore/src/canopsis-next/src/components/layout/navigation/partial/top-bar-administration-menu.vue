@@ -70,6 +70,11 @@ export default {
           icon: 'people',
           permission: USERS_PERMISSIONS.technical.user,
         },
+        {
+          route: { name: ROUTES_NAMES.adminShareTokens },
+          icon: 'people',
+          permission: USERS_PERMISSIONS.technical.shareToken,
+        },
       ];
     },
 

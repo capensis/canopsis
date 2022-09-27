@@ -48,6 +48,7 @@ export default merge({
     widget: 'Widget',
     addWidget: 'Add widget',
     addTab: 'Add tab',
+    shareLink: 'Create share link',
     addPbehavior: 'Add pbehavior',
     refresh: 'Refresh',
     toggleEditView: 'Toggle view edition mode',
@@ -156,6 +157,7 @@ export default merge({
     displayName: 'Display name',
     created: 'Creation date',
     updated: 'Last update date',
+    expired: 'Expired date',
     lastEventDate: 'Last event date',
     pattern: 'Pattern | Patterns',
     correlation: 'Correlation',
@@ -1721,6 +1723,11 @@ export default merge({
       },
       edit: {
         title: 'Edit shared pbehavior filter',
+      },
+    },
+    createShareToken: {
+      create: {
+        title: 'Create share token',
       },
     },
   },

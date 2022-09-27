@@ -100,6 +100,7 @@ export const USERS_PERMISSIONS = {
     kpi: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpi`,
     kpiFilters: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiFilters`,
     kpiRatingSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiRatingSettings`,
+    shareToken: `${USER_PERMISSIONS_PREFIXES.technical.admin}_shareToken`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -269,6 +270,7 @@ export const USERS_PERMISSIONS = {
       resolveRule: `${USER_PERMISSIONS_PREFIXES.api}_resolve_rule`,
       snmpRule: `${USER_PERMISSIONS_PREFIXES.api}_snmprule`,
       snmpMib: `${USER_PERMISSIONS_PREFIXES.api}_snmpmib`,
+      shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
     },
     remediation: {
       instruction: `${USER_PERMISSIONS_PREFIXES.api}_instruction`,
