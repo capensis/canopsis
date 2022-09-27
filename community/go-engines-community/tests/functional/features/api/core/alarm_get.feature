@@ -71,7 +71,6 @@ Feature: Get alarms
               "initiator": "external",
               "val": 0
             },
-            "tags": [],
             "total_state_changes": 1
           }
         },
@@ -141,7 +140,6 @@ Feature: Get alarms
               "initiator": "external",
               "val": 1
             },
-            "tags": [],
             "total_state_changes": 1
           }
         },
@@ -250,7 +248,6 @@ Feature: Get alarms
               "initiator": "external",
               "val": 1
             },
-            "tags": [],
             "total_state_changes": 1
           }
         }
@@ -812,7 +809,6 @@ Feature: Get alarms
           "initiator": "external",
           "val": 1
         },
-        "tags": [],
         "total_state_changes": 1
       }
     }
@@ -885,7 +881,6 @@ Feature: Get alarms
           "initiator": "external",
           "val": 0
         },
-        "tags": [],
         "total_state_changes": 1
       }
     }
