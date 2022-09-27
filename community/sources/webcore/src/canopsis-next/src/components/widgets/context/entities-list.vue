@@ -23,7 +23,7 @@
         v-flex(v-if="hasAccessToCategory")
           c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
         v-flex
-          v-layout(row, wrap, align-center)
+          v-layout(row, align-center)
             filter-selector(
               :label="$t('settings.selectAFilter')",
               :filters="userPreference.filters",
