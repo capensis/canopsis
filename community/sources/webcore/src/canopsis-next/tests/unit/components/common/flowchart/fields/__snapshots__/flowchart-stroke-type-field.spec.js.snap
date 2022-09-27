@@ -85,7 +85,7 @@ exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` wit
             width="50"
           >
             <line
-              stroke="black"
+              stroke="currentColor"
               stroke-width="4"
               x1="0"
               x2="100%"
@@ -106,7 +106,7 @@ exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` wit
             width="50"
           >
             <line
-              stroke="black"
+              stroke="currentColor"
               stroke-dasharray="4 4"
               stroke-width="4"
               x1="0"
@@ -207,7 +207,7 @@ exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` wit
             width="50"
           >
             <line
-              stroke="black"
+              stroke="currentColor"
               stroke-width="4"
               x1="0"
               x2="100%"
@@ -228,7 +228,7 @@ exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` wit
             width="50"
           >
             <line
-              stroke="black"
+              stroke="currentColor"
               stroke-dasharray="4 4"
               stroke-width="4"
               x1="0"
