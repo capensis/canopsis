@@ -321,3 +321,7 @@ export const CreateKpiFilter = () => ({
   component: import(/* webpackChunkName: "KPI" */ './kpi/create-kpi-filter.vue'),
   loading: LoaderOverlay,
 });
+export const CreateShareToken = () => ({
+  component: import(/* webpackChunkName: "ShareToken" */ './share-token/create-share-token.vue'),
+  loading: LoaderOverlay,
+});

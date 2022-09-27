@@ -30,6 +30,7 @@ const AdminPlanning = () => import(/* webpackChunkName: "Planning" */ '@/views/a
 const AdminRemediation = () => import(/* webpackChunkName: "Remediation" */ '@/views/admin/remediation.vue');
 const AdminEngines = () => import(/* webpackChunkName: "Engines" */ '@/views/admin/engines.vue');
 const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/views/admin/healthcheck.vue');
+const AdminShareTokens = () => import(/* webpackChunkName: "ShareTokens" */ '@/views/admin/share-tokens.vue');
 const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
 const ExploitationEventFilters = () => import(/* webpackChunkName: "EventFilters" */ '@/views/exploitation/event-filters.vue');
@@ -208,6 +209,18 @@ const routes = [
       requiresPermission: {
         action: CRUD_ACTIONS.can,
         id: USERS_PERMISSIONS.technical.kpi,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminShareTokens,
+    name: ROUTES_NAMES.adminShareTokens,
+    component: AdminShareTokens,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        action: CRUD_ACTIONS.can,
+        id: USERS_PERMISSIONS.technical.shareToken,
       },
     },
   },

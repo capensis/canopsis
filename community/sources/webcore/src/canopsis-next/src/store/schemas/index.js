@@ -151,6 +151,8 @@ export const ratingSettingsSchema = new schema.Entity(ENTITIES_TYPES.ratingSetti
 
 export const patternSchema = new schema.Entity(ENTITIES_TYPES.pattern, {}, { idAttribute: '_id' });
 
+export const shareTokenSchema = new schema.Entity(ENTITIES_TYPES.shareToken, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.alarmDetails]: alarmDetailsSchema,
@@ -189,4 +191,5 @@ export default {
   [ENTITIES_TYPES.filter]: filterSchema,
   [ENTITIES_TYPES.ratingSettings]: ratingSettingsSchema,
   [ENTITIES_TYPES.pattern]: patternSchema,
+  [ENTITIES_TYPES.shareToken]: shareTokenSchema,
 };
