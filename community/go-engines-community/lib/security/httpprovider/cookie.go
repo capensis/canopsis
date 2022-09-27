@@ -12,19 +12,19 @@ import (
 // cookieProvider implements a Cookie Token Authentication provider.
 // It must be used only for file access.
 type cookieProvider struct {
-	tokenProvider security.TokenProvider
+	tokenProviders []security.TokenProvider
 
 	cookieName string
 	logger     zerolog.Logger
 }
 
 func NewCookieProvider(
-	tokenProvider security.TokenProvider,
+	tokenProviders []security.TokenProvider,
 	cookieName string,
 	logger zerolog.Logger,
 ) security.HttpProvider {
 	return &cookieProvider{
-		tokenProvider: tokenProvider,
+		tokenProviders: tokenProviders,
 
 		cookieName: cookieName,
 		logger:     logger,
@@ -45,6 +45,12 @@ func (p *cookieProvider) Auth(r *http.Request) (*security.User, error, bool) {
 		return nil, err, false
 	}
 
-	user, err := p.tokenProvider.Auth(r.Context(), tokenString)
-	return user, err, true
+	for _, provider := range p.tokenProviders {
+		user, err := provider.Auth(r.Context(), tokenString)
+		if err != nil || user != nil {
+			return user, err, true
+		}
+	}
+
+	return nil, nil, true
 }
