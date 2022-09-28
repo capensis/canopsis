@@ -4,6 +4,7 @@ import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
   ENTITY_EVENT_BY_ACTION_TYPE,
+  ENTITY_TYPES,
   WEATHER_ACK_EVENT_OUTPUT,
   WEATHER_ACTIONS_TYPES,
 } from '@/constants';
@@ -223,3 +224,15 @@ export const convertActionsToEvents = actions => actions.reduce((
 
   return acc;
 }, []);
+
+/**
+ * Get icon by entity type
+ *
+ * @param {EntityType} type
+ * @returns {string}
+ */
+export const getIconByEntityType = type => (
+  type === ENTITY_TYPES.service
+    ? '$vuetify.icons.engineering'
+    : 'person'
+);

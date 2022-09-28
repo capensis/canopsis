@@ -22,7 +22,7 @@ exports[`flowchart-preview Renders \`flowchart-preview\` with custom props 1`] =
      
   </div>
   <c-help-icon-stub
-    class="flowchart-preview__help-icon"
+    class="map-preview__help-icon"
     color="secondary"
     icon="help"
     size="32"
@@ -61,7 +61,7 @@ exports[`flowchart-preview Renders \`flowchart-preview\` with required props 1`]
      
   </div>
   <c-help-icon-stub
-    class="flowchart-preview__help-icon"
+    class="map-preview__help-icon"
     color="secondary"
     icon="help"
     size="32"
