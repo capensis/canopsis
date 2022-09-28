@@ -5,7 +5,12 @@ import { BASIC_ENTITY_TYPES, ENTITIES_STATES } from '@/constants';
 import { infosToArray } from './shared/common';
 
 /**
+ * @typedef { 'service' | 'connector' | 'resource' | 'component' } EntityType
+ */
+
+/**
  * @typedef {Object} Entity
+ * @property {string} [_id]
  * @property {string} name
  * @property {string} description
  * @property {string} type

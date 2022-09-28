@@ -108,7 +108,7 @@ import {
 
 import uid from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
-import { serviceToServiceDependency } from '@/helpers/treeview/service-dependencies';
+import { alarmToServiceDependency } from '@/helpers/treeview/service-dependencies';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
@@ -194,7 +194,7 @@ export default {
     },
 
     dependency() {
-      return serviceToServiceDependency(this.alarm.entity, this.alarm);
+      return alarmToServiceDependency(this.alarm);
     },
 
     hasMoreInfos() {
