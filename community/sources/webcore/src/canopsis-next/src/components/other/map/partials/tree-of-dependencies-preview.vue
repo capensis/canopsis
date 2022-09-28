@@ -294,7 +294,7 @@ export default {
     },
   },
   watch: {
-    async map(map) {
+    map(map) {
       this.entitiesById = normalizeTreeOfDependenciesMapEntities(map.parameters?.entities);
 
       /**
