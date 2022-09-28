@@ -1,8 +1,13 @@
 import { cloneDeep } from 'lodash';
+
 import { calculateShapeIconPosition } from '@/helpers/flowchart/shapes';
 
-export const mapFlowchartPoints = {
+export const mapFlowchartPointsMixin = {
   props: {
+    points: {
+      type: Array,
+      default: () => [],
+    },
     shapes: {
       type: Object,
       required: true,

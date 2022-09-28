@@ -27,18 +27,18 @@
 </template>
 
 <script>
-import { mapInformationPopup } from '@/mixins/map/map-information-popup';
+import { mapInformationPopupMixin } from '@/mixins/map/map-information-popup-mixin';
 
 import MermaidPointMarker from './mermaid-point-marker.vue';
 import PointPopupDialog from './point-popup-dialog.vue';
 
 export default {
   components: { MermaidPointMarker, PointPopupDialog },
-  mixins: [mapInformationPopup],
+  mixins: [mapInformationPopupMixin],
   props: {
     points: {
       type: Array,
-      required: true,
+      default: () => [],
     },
   },
 };
