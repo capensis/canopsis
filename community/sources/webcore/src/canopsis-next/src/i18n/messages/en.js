@@ -3041,6 +3041,7 @@ export default merge({
     latitude: 'Latitude',
     longitude: 'Longitude',
     toggleAddingPointMode: 'Toggle adding point mode',
+    usingMap: 'Map is linked',
     showAll: 'Show all ({count})',
     types: {
       [MAP_TYPES.geo]: 'Geo',
