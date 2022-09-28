@@ -80,8 +80,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	filterId := "test-filter"
 	filter := view.WidgetFilter{
+		ID: "test-filter",
 		EntityPatternFields: savedpattern.EntityPatternFields{
 			EntityPattern: pattern.Entity{
 				{
@@ -103,12 +103,12 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			BaseFilterRequest: BaseFilterRequest{
-				Filter: filterId,
+				Filters: []string{filter.ID},
 			},
 		},
 	}
@@ -166,8 +166,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	filterId := "test-filter"
 	filter := view.WidgetFilter{
+		ID: "test-filter",
 		AlarmPatternFields: savedpattern.AlarmPatternFields{
 			AlarmPattern: pattern.Alarm{
 				{
@@ -199,12 +199,12 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			BaseFilterRequest: BaseFilterRequest{
-				Filter: filterId,
+				Filters: []string{filter.ID},
 			},
 		},
 	}
@@ -269,7 +269,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	filterId := "test-filter"
 	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, types.DurationWithUnit{
 		Value: 10,
 		Unit:  "m",
@@ -278,6 +277,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		panic(err)
 	}
 	filter := view.WidgetFilter{
+		ID: "test-filter",
 		AlarmPatternFields: savedpattern.AlarmPatternFields{
 			AlarmPattern: pattern.Alarm{
 				{
@@ -293,12 +293,12 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			BaseFilterRequest: BaseFilterRequest{
-				Filter: filterId,
+				Filters: []string{filter.ID},
 			},
 		},
 	}
@@ -357,8 +357,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	filterId := "test-filter"
 	filter := view.WidgetFilter{
+		ID: "test-filter",
 		AlarmPatternFields: savedpattern.AlarmPatternFields{
 			AlarmPattern: pattern.Alarm{
 				{
@@ -375,12 +375,12 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			BaseFilterRequest: BaseFilterRequest{
-				Filter: filterId,
+				Filters: []string{filter.ID},
 			},
 		},
 	}
@@ -442,19 +442,19 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	filterId := "test-filter"
 	filter := view.WidgetFilter{
+		ID: "test-filter",
 		OldMongoQuery: `{"$and": [
 			{"type": "resource"},
 			{"category": "test-category"}
 		]}`,
 	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			BaseFilterRequest: BaseFilterRequest{
-				Filter: filterId,
+				Filters: []string{filter.ID},
 			},
 		},
 	}
@@ -510,8 +510,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	filterId := "test-filter"
 	filter := view.WidgetFilter{
+		ID: "test-filter",
 		AlarmPatternFields: savedpattern.AlarmPatternFields{
 			AlarmPattern: pattern.Alarm{
 				{
@@ -523,12 +523,12 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 			},
 		},
 	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			BaseFilterRequest: BaseFilterRequest{
-				Filter: filterId,
+				Filters: []string{filter.ID},
 			},
 			SortRequest: SortRequest{
 				SortBy: "state",
@@ -714,6 +714,149 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 }
 
+func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipleWidgetFilters_ShouldBuildQueryWithAllMatches(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	filter1 := view.WidgetFilter{
+		ID: "test-filter-1",
+		AlarmPatternFields: savedpattern.AlarmPatternFields{
+			AlarmPattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.resource",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
+					},
+				},
+			},
+		},
+		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
+			PbehaviorPattern: pattern.PbehaviorInfo{
+				{
+					{
+						Field:     "canonical_type",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
+					},
+				},
+			},
+		},
+		EntityPatternFields: savedpattern.EntityPatternFields{
+			EntityPattern: pattern.Entity{
+				{
+					{
+						Field:     "category",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-category"),
+					},
+				},
+			},
+		},
+	}
+	filter2 := view.WidgetFilter{
+		ID: "test-filter-2",
+		AlarmPatternFields: savedpattern.AlarmPatternFields{
+			AlarmPattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.component",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-component"),
+					},
+				},
+			},
+		},
+		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
+			PbehaviorPattern: pattern.PbehaviorInfo{
+				{
+					{
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-pbehavior"),
+					},
+				},
+			},
+		},
+		EntityPatternFields: savedpattern.EntityPatternFields{
+			EntityPattern: pattern.Entity{
+				{
+					{
+						Field:     "type",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "resource"),
+					},
+				},
+			},
+		},
+	}
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter1, filter2})
+	request := ListRequestWithPagination{
+		Query: pagination.GetDefaultQuery(),
+		ListRequest: ListRequest{
+			BaseFilterRequest: BaseFilterRequest{
+				Filters: []string{filter1.ID, filter2.ID},
+			},
+		},
+	}
+	now := types.NewCpsTime()
+	expectedDataPipeline := []bson.M{
+		{"$sort": bson.D{{Key: "_id", Value: 1}}},
+		{"$skip": 0},
+		{"$limit": 10},
+	}
+	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(),
+	})
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$project": bson.M{
+			"alarm":               0,
+			"event_stats":         0,
+			"pbehavior_info_type": 0,
+		},
+	})
+	expected := []bson.M{
+		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
+			{"category": bson.M{"$eq": "test-category"}},
+		}}}}},
+		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
+			{"pbehavior_info.canonical_type": bson.M{"$eq": "pause"}},
+		}}}}},
+		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
+			{"type": bson.M{"$eq": "resource"}},
+		}}}}},
+		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
+			{"pbehavior_info.name": bson.M{"$eq": "test-pbehavior"}},
+		}}}}},
+	}
+	expected = append(expected, getAlarmLookup()...)
+	expected = append(expected,
+		bson.M{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
+			{"alarm.v.resource": bson.M{"$eq": "test-resource"}},
+		}}}}},
+		bson.M{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
+			{"alarm.v.component": bson.M{"$eq": "test-component"}},
+		}}}}},
+		bson.M{"$project": bson.M{"alarm": 0}},
+		bson.M{"$facet": bson.M{
+			"data":        expectedDataPipeline,
+			"total_count": []bson.M{{"$count": "count"}},
+		}},
+		bson.M{"$addFields": bson.M{
+			"total_count": bson.M{"$sum": "$total_count.count"},
+		}},
+	)
+
+	b := NewMongoQueryBuilder(mockDbClient)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+	if diff := pretty.Compare(result, expected); diff != "" {
+		t.Errorf("unexpected result: %s", diff)
+	}
+}
+
 func createMockDbClient(ctrl *gomock.Controller) mongo.DbClient {
 	mockFilterDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
@@ -729,13 +872,17 @@ func createMockDbClient(ctrl *gomock.Controller) mongo.DbClient {
 	return mockDbClient
 }
 
-func createMockDbClientWithFilterFetching(ctrl *gomock.Controller, filterId string, filter view.WidgetFilter) mongo.DbClient {
-	mockSingleResult := mock_mongo.NewMockSingleResultHelper(ctrl)
-	mockSingleResult.EXPECT().Decode(gomock.Any()).Do(func(v *view.WidgetFilter) {
-		*v = filter
-	})
+func createMockDbClientWithFilterFetching(ctrl *gomock.Controller, filters []view.WidgetFilter) mongo.DbClient {
 	mockFilterDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockFilterDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Eq(bson.M{"_id": filterId})).Return(mockSingleResult)
+	for _, v := range filters {
+		filter := v
+		mockSingleResult := mock_mongo.NewMockSingleResultHelper(ctrl)
+		mockSingleResult.EXPECT().Decode(gomock.Any()).Do(func(v *view.WidgetFilter) {
+			*v = filter
+		})
+		mockFilterDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Eq(bson.M{"_id": filter.ID})).Return(mockSingleResult)
+	}
+
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.EXPECT().Collection(gomock.Any()).DoAndReturn(func(name string) mongo.DbCollection {
 		switch name {

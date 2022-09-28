@@ -7,7 +7,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-1-name",
-      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "output_template": "Depends: {{ `{{ .Depends }}` }}; All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -89,6 +89,7 @@ Feature: update service on event
             "component": "{{ .serviceID }}",
             "connector": "service",
             "connector_name": "service",
+            "output": "Depends: 3; All: 3; Alarms: 3; Acknowledged: 0; NotAcknowledged: 3; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateInfo: 0; Pbehaviors: map[];",
             "state": {
               "val": 3
             },
@@ -129,19 +130,19 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateInfo: 0; Pbehaviors: map[];",
+                "m": "Depends: 1; All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateInfo: 0; Pbehaviors: map[];",
                 "val": 1
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateInfo: 0; Pbehaviors: map[];",
+                "m": "Depends: 1; All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateInfo: 0; Pbehaviors: map[];",
                 "val": 1
               },
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 2; Alarms: 2; Acknowledged: 0; NotAcknowledged: 2; StateCritical: 1; StateMajor: 0; StateMinor: 1; StateInfo: 0; Pbehaviors: map[];",
+                "m": "Depends: 2; All: 2; Alarms: 2; Acknowledged: 0; NotAcknowledged: 2; StateCritical: 1; StateMajor: 0; StateMinor: 1; StateInfo: 0; Pbehaviors: map[];",
                 "val": 3
               }
             ],
@@ -1146,7 +1147,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-8-name",
-      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "output_template": "Depends: {{ `{{ .Depends}}` }}; All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -1184,6 +1185,7 @@ Feature: update service on event
             "component": "{{ .serviceID }}",
             "connector": "service",
             "connector_name": "service",
+            "output": "Depends: 6; All: 5; Alarms: 5; Acknowledged: 1; NotAcknowledged: 4; StateCritical: 2; StateMajor: 1; StateMinor: 1; StateInfo: 1; Pbehaviors: map[];",
             "state": {
               "val": 3
             },
@@ -1224,13 +1226,13 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 5; Alarms: 5; Acknowledged: 1; NotAcknowledged: 4; StateCritical: 2; StateMajor: 1; StateMinor: 1; StateInfo: 1; Pbehaviors: map[];",
+                "m": "Depends: 6; All: 5; Alarms: 5; Acknowledged: 1; NotAcknowledged: 4; StateCritical: 2; StateMajor: 1; StateMinor: 1; StateInfo: 1; Pbehaviors: map[];",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 5; Alarms: 5; Acknowledged: 1; NotAcknowledged: 4; StateCritical: 2; StateMajor: 1; StateMinor: 1; StateInfo: 1; Pbehaviors: map[];",
+                "m": "Depends: 6; All: 5; Alarms: 5; Acknowledged: 1; NotAcknowledged: 4; StateCritical: 2; StateMajor: 1; StateMinor: 1; StateInfo: 1; Pbehaviors: map[];",
                 "val": 1
               }
             ],

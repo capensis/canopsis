@@ -250,68 +250,68 @@ func (q *MongoQueryBuilder) handleFilter(r ListRequest) error {
 }
 
 func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListRequest, now types.CpsTime) error {
-	if r.Filter == "" {
+	if len(r.Filters) == 0 {
 		return nil
 	}
 
-	filter := view.WidgetFilter{}
-	err := q.filterCollection.FindOne(ctx, bson.M{"_id": r.Filter}).Decode(&filter)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return common.NewValidationError("filter", errors.New("Filter doesn't exist."))
-		}
-		return fmt.Errorf("cannot fetch widget filter: %w", err)
-	}
-
-	entityPatternQuery, err := filter.EntityPattern.ToMongoQuery("")
-	if err != nil {
-		return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
-	}
-
-	if len(entityPatternQuery) > 0 {
-		q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
-	}
-
-	pbhPatternQuery, err := filter.PbehaviorPattern.ToMongoQuery("pbehavior_info")
-	if err != nil {
-		return fmt.Errorf("invalid pbehavior pattern in widget filter id=%q: %w", filter.ID, err)
-	}
-
-	if len(pbhPatternQuery) > 0 {
-		q.entityMatch = append(q.entityMatch, bson.M{"$match": pbhPatternQuery})
-	}
-
-	alarmPatternQuery, err := filter.AlarmPattern.ToMongoQuery("alarm")
-	if err != nil {
-		return fmt.Errorf("invalid alarm pattern in widget filter id=%q: %w", filter.ID, err)
-	}
-
-	if len(alarmPatternQuery) > 0 {
-		q.lookupsForAdditionalMatch["alarm"] = true
-		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": alarmPatternQuery})
-
-		if filter.AlarmPattern.HasInfosField() {
-			q.computedFieldsForAdditionalMatch["alarm.v.infos_array"] = true
-			q.computedFields["alarm.v.infos_array"] = bson.M{"$objectToArray": "$alarm.v.infos"}
-		}
-
-		if filter.AlarmPattern.HasField("v.duration") {
-			q.computedFieldsForAdditionalMatch["alarm.v.duration"] = true
-			q.computedFields["alarm.v.duration"] = getDurationField(now)
-		}
-	}
-
-	if len(entityPatternQuery) == 0 && len(pbhPatternQuery) == 0 && len(alarmPatternQuery) == 0 &&
-		len(filter.OldMongoQuery) > 0 {
-		var query map[string]interface{}
-		err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
+	for _, v := range r.Filters {
+		filter := view.WidgetFilter{}
+		err := q.filterCollection.FindOne(ctx, bson.M{"_id": v}).Decode(&filter)
 		if err != nil {
-			return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return common.NewValidationError("filter", errors.New("Filter doesn't exist."))
+			}
+			return fmt.Errorf("cannot fetch widget filter: %w", err)
 		}
 
-		q.entityMatch = append(q.entityMatch, bson.M{"$match": query})
+		entityPatternQuery, err := filter.EntityPattern.ToMongoQuery("")
+		if err != nil {
+			return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
+		}
 
-		return nil
+		if len(entityPatternQuery) > 0 {
+			q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
+		}
+
+		pbhPatternQuery, err := filter.PbehaviorPattern.ToMongoQuery("pbehavior_info")
+		if err != nil {
+			return fmt.Errorf("invalid pbehavior pattern in widget filter id=%q: %w", filter.ID, err)
+		}
+
+		if len(pbhPatternQuery) > 0 {
+			q.entityMatch = append(q.entityMatch, bson.M{"$match": pbhPatternQuery})
+		}
+
+		alarmPatternQuery, err := filter.AlarmPattern.ToMongoQuery("alarm")
+		if err != nil {
+			return fmt.Errorf("invalid alarm pattern in widget filter id=%q: %w", filter.ID, err)
+		}
+
+		if len(alarmPatternQuery) > 0 {
+			q.lookupsForAdditionalMatch["alarm"] = true
+			q.additionalMatch = append(q.additionalMatch, bson.M{"$match": alarmPatternQuery})
+
+			if filter.AlarmPattern.HasInfosField() {
+				q.computedFieldsForAdditionalMatch["alarm.v.infos_array"] = true
+				q.computedFields["alarm.v.infos_array"] = bson.M{"$objectToArray": "$alarm.v.infos"}
+			}
+
+			if filter.AlarmPattern.HasField("v.duration") {
+				q.computedFieldsForAdditionalMatch["alarm.v.duration"] = true
+				q.computedFields["alarm.v.duration"] = getDurationField(now)
+			}
+		}
+
+		if len(entityPatternQuery) == 0 && len(pbhPatternQuery) == 0 && len(alarmPatternQuery) == 0 &&
+			len(filter.OldMongoQuery) > 0 {
+			var query map[string]interface{}
+			err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
+			if err != nil {
+				return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
+			}
+
+			q.entityMatch = append(q.entityMatch, bson.M{"$match": query})
+		}
 	}
 
 	return nil

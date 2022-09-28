@@ -422,7 +422,7 @@ Feature: Get alarms
 
   Scenario: given filter get request should return alarms
     When I am admin
-    When I do GET /api/v4/alarms?filter=test-widgetfilter-to-alarm-get-1
+    When I do GET /api/v4/alarms?filters[]=test-widgetfilter-to-alarm-get-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -440,7 +440,7 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?filter=test-widgetfilter-to-alarm-get-2
+    When I do GET /api/v4/alarms?filters[]=test-widgetfilter-to-alarm-get-2
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -626,7 +626,7 @@ Feature: Get alarms
 
   Scenario: given invalid get request should return error
     When I am admin
-    When I do GET /api/v4/alarms?filter=not-exist
+    When I do GET /api/v4/alarms?filters[]=not-exist
     Then the response code should be 400
     Then the response body should be:
     """json
