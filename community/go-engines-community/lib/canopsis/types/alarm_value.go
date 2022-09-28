@@ -342,7 +342,6 @@ type AlarmValue struct {
 	Resource          string        `bson:"resource,omitempty" json:"resource,omitempty"`
 	Resolved          *CpsTime      `bson:"resolved,omitempty" json:"resolved,omitempty"`
 	PbehaviorInfo     PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	Tags              []string      `bson:"tags" json:"tags"`
 	Meta              string        `bson:"meta,omitempty" json:"meta,omitempty"`
 	MetaValuePath     string        `bson:"meta_value_path,omitempty" json:"meta_value_path,omitempty"`
 
