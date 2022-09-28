@@ -1,7 +1,6 @@
 <template lang="pug">
   v-text-field(
     v-bind="$attrs",
-    v-on="$listeners",
     v-field.number="value",
     v-validate="rules",
     :label="label",
@@ -12,7 +11,8 @@
     :min="min",
     :max="max",
     :step="step",
-    type="number"
+    type="number",
+    @paste="$emit('paste', $event)"
   )
     template(#append="")
       slot(name="append")

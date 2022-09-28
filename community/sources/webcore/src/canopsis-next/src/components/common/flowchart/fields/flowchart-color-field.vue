@@ -38,7 +38,7 @@ export default {
     },
     palette: {
       type: Array,
-      default: COLORS.flowchart.shapes,
+      default: () => COLORS.flowchart.shapes,
     },
     label: {
       type: String,
