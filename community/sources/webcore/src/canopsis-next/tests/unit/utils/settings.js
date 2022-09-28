@@ -6,6 +6,12 @@ export const createSettingsMocks = () => {
   const updateWidget = jest.fn();
   const copyWidget = jest.fn();
   const fetchActiveView = jest.fn();
+  const fetchUserPreference = jest.fn();
+  const currentUserPermissionsById = jest.fn().mockReturnValue({});
+  const fetchEntityInfosKeysWithoutStore = jest.fn().mockReturnValue({
+    data: [],
+    meta: { total_count: 0 },
+  });
   const fetchItem = jest.fn();
 
   return {
@@ -13,6 +19,8 @@ export const createSettingsMocks = () => {
     updateWidget,
     copyWidget,
     fetchActiveView,
+    fetchUserPreference,
+    currentUserPermissionsById,
     fetchItem,
     activeViewModule: {
       name: 'activeView',
@@ -33,14 +41,21 @@ export const createSettingsMocks = () => {
     authModule: {
       name: 'auth',
       getters: {
-        currentUserPermissionsById: {},
+        currentUserPermissionsById,
       },
     },
 
     userPreferenceModule: {
       name: 'userPreference',
       actions: {
-        fetchItem,
+        fetchItem: fetchUserPreference,
+      },
+    },
+
+    serviceModule: {
+      name: 'service',
+      actions: {
+        fetchInfosKeysWithoutStore: fetchEntityInfosKeysWithoutStore,
       },
     },
   };
