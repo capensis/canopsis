@@ -133,6 +133,7 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
       [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: [],
       [USER_PERMISSIONS_PREFIXES.business.counter]: [],
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: [],
+      [USER_PERMISSIONS_PREFIXES.business.map]: [],
     },
     view: [],
     playlist: [],
