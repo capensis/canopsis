@@ -76,6 +76,7 @@ import PointPopupDialog from './point-popup-dialog.vue';
 
 export default {
   components: {
+    PointPopupDialog,
     Geomap,
     GeomapTileLayer,
     GeomapControlZoom,
@@ -86,7 +87,6 @@ export default {
     GeomapTooltip,
     GeomapControl,
     PointIcon,
-    PointPopupDialog,
   },
   mixins: [mapInformationPopup],
   props: {
@@ -136,7 +136,7 @@ export default {
     layers() {
       const layers = {};
 
-      if (!this.colorIndicator) {
+      if (!this.colorIndicator && !this.pbehaviorEnabled) {
         return {
           points: {
             name: this.$t('map.layers.points'),
@@ -181,8 +181,10 @@ export default {
     },
   },
   watch: {
-    points() {
-      this.$nextTick(this.fitMap);
+    'map.parameters.points': {
+      handler() {
+        this.$nextTick(this.fitMap);
+      },
     },
   },
   mounted() {

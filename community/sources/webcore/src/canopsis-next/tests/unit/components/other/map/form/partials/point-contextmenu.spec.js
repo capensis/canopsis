@@ -81,6 +81,8 @@ describe('mermaid-contextmenu', () => {
   test('Renders `mermaid-contextmenu` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
+        positionX: 1,
+        positionY: 2,
         editing: true,
       },
     });
