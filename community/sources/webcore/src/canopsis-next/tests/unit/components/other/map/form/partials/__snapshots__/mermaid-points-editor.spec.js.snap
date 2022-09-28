@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`mermaid-points Renders \`mermaid-points\` with custom props 1`] = `
+exports[`mermaid-points-editor Renders \`mermaid-points-editor\` with custom props 1`] = `
 <div
   class="mermaid-points mermaid-points--addable"
 >
@@ -29,7 +29,7 @@ exports[`mermaid-points Renders \`mermaid-points\` with custom props 1`] = `
 </div>
 `;
 
-exports[`mermaid-points Renders \`mermaid-points\` with required props 1`] = `
+exports[`mermaid-points-editor Renders \`mermaid-points-editor\` with required props 1`] = `
 <div
   class="mermaid-points"
 >
