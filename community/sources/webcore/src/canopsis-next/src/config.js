@@ -50,6 +50,8 @@ export const LOCALE_PRIORITIES = {
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
 
+export const ZOOM_OVERLAY_DELAY = 1500;
+
 export const VUETIFY_ANIMATION_DELAY = 300;
 
 export const POPUP_TICK_DELAY = 100;
@@ -96,6 +98,7 @@ export const API_ROUTES = {
   openAlarms: '/api/v4/open-alarms',
   manualMetaAlarm: '/api/v4/manual-meta-alarms',
   entity: '/api/v4/entities',
+  entityContextGraph: '/api/v4/entities/context-graph',
   bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
   bulkEntitiesDisable: '/api/v4/bulk/entities/disable',
   entityBasics: '/api/v4/entitybasics',

@@ -3042,6 +3042,7 @@ export default merge({
     longitude: 'Longitude',
     toggleAddingPointMode: 'Toggle adding point mode',
     usingMap: 'Map is linked',
+    showAll: 'Show all ({count})',
     types: {
       [MAP_TYPES.geo]: 'Geo',
       [MAP_TYPES.flowchart]: 'Flowchart',
@@ -3133,6 +3134,13 @@ export default merge({
     },
     errors: {
       pointsRequired: 'The points must be added',
+    },
+  },
+  treeOfDependencies: {
+    panzoom: {
+      helpText: 'Useful shortcuts:\n'
+        + 'Ctrl + mouse wheel - zoom in/out\n'
+        + 'Ctrl + Left mouse click + drag - pan the area\n',
     },
   },
 }, featureService.get('i18n.en'));
