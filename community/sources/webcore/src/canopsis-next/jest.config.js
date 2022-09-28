@@ -12,7 +12,7 @@ module.exports = {
     '^.+\\.jsx?$': '<rootDir>/tests/unit/jest.transform',
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!vue-tour/.*)',
+    '<rootDir>/node_modules/(?!(vue-tour|monaco-editor)/.*)',
   ],
   moduleNameMapper: {
     '^.+\\.styl(us)?$': '<rootDir>/tests/unit/mocks/styleMock.js',
