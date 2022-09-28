@@ -108,6 +108,7 @@ export default merge({
     create: 'Create',
     delete: 'Delete',
     show: 'Show',
+    hide: 'Hide',
     edit: 'Edit',
     duplicate: 'Duplicate',
     play: 'Play',
@@ -2425,6 +2426,7 @@ export default merge({
     hideInProgress: 'Hide alarms with instructions in progress',
     selectedInstructions: 'Selected instructions',
     selectedInstructionsHelp: 'Instructions of selected type are excluded from the list',
+    inProgress: 'In progress',
     chip: {
       with: 'WITH',
       without: 'WITHOUT',
