@@ -129,3 +129,88 @@ Feature: create and update alarm by main event stream
       "cloud"
     ]
     """
+
+  Scenario: given check event should create alarm tags
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-axe-tags-4",
+      "connector_name": "test-connector-name-axe-tags-4",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-axe-tags-4",
+      "resource": "test-resource-axe-tags-4",
+      "state": 2,
+      "output": "test-output-axe-tags-4",
+      "tags": {
+        "test-tag-axe-tags-4-1": " prod ",
+        " test-tag-axe-tags-4-2 ": " "
+      }
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarm-tags?search=test-tag-axe-tags-4 until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "value": "test-tag-axe-tags-4-1: prod"
+        },
+        {
+          "value": "test-tag-axe-tags-4-2"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I save response sameLabelColor={{ (index .lastResponse.data 0).color }}
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-axe-tags-4",
+      "connector_name": "test-connector-name-axe-tags-4",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-axe-tags-4",
+      "resource": "test-resource-axe-tags-4",
+      "state": 2,
+      "output": "test-output-axe-tags-4",
+      "tags": {
+        "test-tag-axe-tags-4-1": " test ",
+        " test-tag-axe-tags-4-3 ": " "
+      }
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarm-tags?search=test-tag-axe-tags-4 until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "value": "test-tag-axe-tags-4-1: prod"
+        },
+        {
+          "value": "test-tag-axe-tags-4-1: test",
+          "color": "{{ .sameLabelColor }}"
+        },
+        {
+          "value": "test-tag-axe-tags-4-2"
+        },
+        {
+          "value": "test-tag-axe-tags-4-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 4
+      }
+    }
+    """

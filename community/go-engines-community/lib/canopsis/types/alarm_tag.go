@@ -1,9 +1,16 @@
 package types
 
 import (
-	"fmt"
 	"strings"
 )
+
+type AlarmTag struct {
+	ID      string  `bson:"_id" json:"_id"`
+	Value   string  `bson:"value" json:"value"`
+	Label   string  `bson:"label" json:"label"`
+	Color   string  `bson:"color" json:"color"`
+	Created CpsTime `bson:"created" json:"created"`
+}
 
 func TransformEventTags(eventTags map[string]string) []string {
 	alarmTags := make([]string, 0, len(eventTags))
@@ -25,5 +32,5 @@ func TransformEventTag(k, v string) string {
 		return k
 	}
 
-	return fmt.Sprintf("%s: %s", k, v)
+	return k + ": " + v
 }

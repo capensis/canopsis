@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/appinfo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/associativetable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -1481,6 +1482,16 @@ func RegisterRoutes(
 			middleware.Authorize(authObjEntity, permRead, enforcer),
 			entityInfoDictionaryApi.ListValues,
 		)
+
+		alarmTagRouter := protected.Group("/alarm-tags")
+		{
+			alarmTagAPI := alarmtag.NewApi(alarmtag.NewStore(dbClient))
+			alarmTagRouter.GET(
+				"",
+				middleware.Authorize(authPermAlarmRead, permCan, enforcer),
+				alarmTagAPI.List,
+			)
+		}
 	}
 }
 

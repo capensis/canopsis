@@ -11,7 +11,7 @@ Feature: Get application information
     {
       "allow_change_severity_to_info": false,
       "app_title": "Canopsis Test",
-      "edition": "cat",
+      "edition": "pro",
       "footer": "Test footer",
       "language": "en",
       "login_page_description": "Test login",
@@ -33,7 +33,7 @@ Feature: Get application information
       },
       "stack": "go",
       "timezone": "Europe/Paris",
-      "version": "3.42.0"
+      "version": "development"
     }
     """
 
@@ -45,12 +45,12 @@ Feature: Get application information
     {
       "allow_change_severity_to_info": false,
       "app_title": "Canopsis Test",
-      "edition": "cat",
+      "edition": "pro",
       "footer": "Test footer",
       "language": "en",
       "login_page_description": "Test login",
       "stack": "go",
-      "version": "3.42.0"
+      "version": "development"
     }
     """
 
@@ -63,11 +63,11 @@ Feature: Get application information
     {
       "allow_change_severity_to_info": false,
       "app_title": "Canopsis Test",
-      "edition": "cat",
+      "edition": "pro",
       "footer": "Test footer",
       "language": "en",
       "login_page_description": "Test login",
       "stack": "go",
-      "version": "3.42.0"
+      "version": "development"
     }
     """

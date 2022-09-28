@@ -292,6 +292,39 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /alarm-tags:
+    get:
+      tags:
+        - alarms
+      summary: Get alarms' tags
+      description: Get paginated list of alarms' tags.
+      operationId: alarms-tags-get
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /alarms:
     get:
       tags:
@@ -10030,7 +10063,13 @@ components:
         enum:
           - asc
           - desc
-  
+    sort_by:
+      name: sort_by
+      in: query
+      description: sort query
+      schema:
+        type: string
+
   schemas:
     event.Event:
       type: object
