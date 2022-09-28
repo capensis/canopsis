@@ -9,19 +9,21 @@
         v-field="form.entities",
         :impact="form.impact",
         @remove="removeEntity",
-        @update:data="updateEntityData",
+        @update:entity="updateEntity",
         @update:pinned="updatePinnedEntities"
       )
     v-flex.cluster-graph-editor__content
-      network-graph.fill-height(
-        ref="networkGraph",
-        :options="options",
-        :node-html-label-options="nodeHtmlLabelsOptions"
-      )
+      c-zoom-overlay
+        network-graph.fill-height(
+          ref="networkGraph",
+          :options="options",
+          :node-html-label-options="nodeHtmlLabelsOptions",
+          ctrl-wheel-zoom
+        )
 </template>
 
 <script>
-import { keyBy } from 'lodash';
+import { keyBy, omit } from 'lodash';
 
 import { COLORS } from '@/config';
 
@@ -58,11 +60,11 @@ export default {
   },
   computed: {
     notEmptyEntities() {
-      return this.form.entities.filter(({ data }) => data);
+      return this.form.entities.filter(({ entity }) => entity);
     },
 
     rootEntitiesById() {
-      return keyBy(this.notEmptyEntities, 'data._id');
+      return keyBy(this.notEmptyEntities, 'entity._id');
     },
 
     allPinnedEntitiesById() {
@@ -80,8 +82,8 @@ export default {
     },
 
     cytoscapeClusters() {
-      return this.notEmptyEntities.map(({ data = {}, pinned = [] } = {}) => [
-        data._id,
+      return this.notEmptyEntities.map(({ entity = {}, pinned = [] } = {}) => [
+        entity._id,
 
         ...pinned.filter(({ _id: id }) => !this.rootEntitiesById[id]).map(({ _id: id }) => id),
       ]);
@@ -92,9 +94,19 @@ export default {
         {
           selector: 'node',
           style: {
-            'font-size': '10px',
+            width: TREE_OF_DEPENDENCIES_GRAPH_OPTIONS.nodeSize,
+            height: TREE_OF_DEPENDENCIES_GRAPH_OPTIONS.nodeSize,
             'background-color': COLORS.secondary,
             'border-color': COLORS.secondary,
+          },
+        },
+        {
+          selector: 'node[showAll]',
+          style: {
+            'background-opacity': 0,
+            'border-width': 0,
+            width: 128,
+            height: 34,
           },
         },
         {
@@ -108,12 +120,49 @@ export default {
       ];
     },
 
+    entitiesElements() {
+      return this.notEmptyEntities.reduce((acc, { entity, pinned = [] }) => {
+        acc.push(
+          {
+            group: 'nodes',
+            data: { id: entity._id, entity },
+          },
+        );
+
+        pinned.forEach((pinnedEntity) => {
+          acc.push(
+            {
+              group: 'nodes',
+              data: { id: pinnedEntity._id, entity: pinnedEntity },
+            },
+            {
+              group: 'edges',
+              data: { source: entity._id, target: pinnedEntity._id },
+            },
+          );
+        });
+
+        return acc;
+      }, []);
+    },
+
     options() {
-      return {
-        ...TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
+      const options = {
+        ...omit(TREE_OF_DEPENDENCIES_GRAPH_OPTIONS, ['nodeSize']),
 
         style: this.styleOption,
+        elements: this.entitiesElements,
       };
+
+      if (this.entitiesElements.length) {
+        options.layout = {
+          ...TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
+
+          clusters: this.cytoscapeClusters,
+        };
+      }
+
+      return options;
     },
 
     nodeHtmlLabelsOptions() {
@@ -156,50 +205,50 @@ export default {
     /**
      * Add pinned elements to cytoscape
      *
-     * @param {Object[]} items
+     * @param {Object[]} elements
      * @param {string} sourceId
      */
-    addPinnedElements(items = [], sourceId) {
-      if (!items.length) {
+    addPinnedElements(elements = [], sourceId) {
+      if (!elements.length) {
         return;
       }
 
-      const addedItems = items.reduce((acc, item) => {
-        const elements = this.$refs.networkGraph.$cy.getElementById(item._id);
+      const addedElements = elements.reduce((acc, element) => {
+        const items = this.$refs.networkGraph.$cy.getElementById(element._id);
 
-        if (!elements.length) {
+        if (!items.length) {
           acc.push({
             group: 'nodes',
-            data: { id: item._id, entity: item },
+            data: { id: element._id, entity: element },
           });
         }
 
         acc.push({
           group: 'edges',
-          data: { source: sourceId, target: item._id },
+          data: { source: sourceId, target: element._id },
         });
 
         return acc;
       }, []);
 
-      this.$refs.networkGraph.$cy.add(addedItems);
+      this.$refs.networkGraph.$cy.add(addedElements);
     },
 
     /**
      * Remove pinned elements from cytoscape
      *
-     * @param {Object[]} items
+     * @param {Object[]} elements
      * @param {string} sourceId
      */
-    removePinnedElements(items = [], sourceId) {
-      if (!items.length) {
+    removePinnedElements(elements = [], sourceId) {
+      if (!elements.length) {
         return;
       }
 
-      const nodesForRemove = items.filter(({ _id: id }) => !this.allEntitiesById[id])
+      const nodesForRemove = elements.filter(({ _id: id }) => !this.allEntitiesById[id])
         .map(({ _id: id }) => `node[id = "${id}"]`);
 
-      const edgesForRemove = items.map(({ _id: id }) => `edge[source = "${sourceId}"][target = "${id}"]`);
+      const edgesForRemove = elements.map(({ _id: id }) => `edge[source = "${sourceId}"][target = "${id}"]`);
       const elementsForRemoveSelector = [...nodesForRemove, ...edgesForRemove].join(',');
 
       this.$refs.networkGraph.$cy.elements(elementsForRemoveSelector).remove();
@@ -208,13 +257,13 @@ export default {
     /**
      * Add cluster root to cytoscape
      *
-     * @param {Object} data
+     * @param {Object} entity
      */
-    addRootElement(data) {
-      const elements = this.$refs.networkGraph.$cy.getElementById(data._id);
+    addRootElement(entity) {
+      const elements = this.$refs.networkGraph.$cy.getElementById(entity._id);
 
       if (elements.length) {
-        elements.data({ id: data._id, entity: data });
+        elements.data({ id: entity._id, entity });
 
         return;
       }
@@ -223,8 +272,8 @@ export default {
         {
           group: 'nodes',
           data: {
-            id: data._id,
-            entity: data,
+            id: entity._id,
+            entity,
             root: true,
           },
         },
@@ -234,12 +283,12 @@ export default {
     /**
      * Update cluster root data in cytoscape
      *
-     * @param {Object} data
+     * @param {Object} entity
      */
-    updateRootElement(data) {
-      this.$refs.networkGraph.$cy.getElementById(data._id).data({
-        id: data._id,
-        entity: data,
+    updateRootElement(entity) {
+      this.$refs.networkGraph.$cy.getElementById(entity._id).data({
+        id: entity._id,
+        entity,
         root: true,
       });
     },
@@ -247,26 +296,26 @@ export default {
     /**
      * Remove cluster root from cytoscape
      *
-     * @param {Object} data
+     * @param {Object} entity
      * @param {Object[]} pinned
      */
-    removeRootElement(data, pinned) {
-      this.removePinnedElements(pinned, data._id);
+    removeRootElement(entity, pinned) {
+      this.removePinnedElements(pinned, entity._id);
 
-      if (!this.allEntitiesById[data._id]) {
-        this.$refs.networkGraph.$cy.getElementById(data._id).remove();
+      if (!this.allEntitiesById[entity._id]) {
+        this.$refs.networkGraph.$cy.getElementById(entity._id).remove();
       }
     },
 
     /**
      * Remove special entity
      *
-     * @param {Object} data
+     * @param {Object} entity
      * @param {Object[]} pinned
      * @returns {Promise<void>}
      */
-    async removeEntity({ data, pinned }) {
-      if (!data) {
+    async removeEntity({ entity, pinned }) {
+      if (!entity) {
         return;
       }
 
@@ -275,69 +324,69 @@ export default {
        */
       await this.$nextTick();
 
-      this.removeRootElement(data, pinned);
+      this.removeRootElement(entity, pinned);
       this.runLayout();
     },
 
     /**
      * Update entity data for special entity
      *
-     * @param {Object} [newEntity]
-     * @param {Object} [oldEntity]
+     * @param {Object} [newEntityItem]
+     * @param {Object} [oldEntityItem]
      * @returns {Promise<void>}
      */
-    async updateEntityData(newEntity, oldEntity) {
+    async updateEntity(newEntityItem, oldEntityItem) {
       /**
        * @desc We've added nextTick to avoid problem with v-field usage
        */
       await this.$nextTick();
 
-      const { data: oldData, pinned: oldPinned } = oldEntity;
-      const { data: newData } = newEntity;
+      const { entity: oldEntity, pinned: oldPinned } = oldEntityItem;
+      const { entity: newEntity } = newEntityItem;
 
-      if (!newData) {
-        if (oldData) {
-          this.removeRootElement(oldData, oldPinned);
+      if (!newEntity) {
+        if (oldEntity) {
+          this.removeRootElement(oldEntity, oldPinned);
         }
 
         return;
       }
 
-      if (oldData) {
-        if (oldData._id !== newData._id) {
-          this.removeRootElement(oldData, oldPinned);
+      if (oldEntity) {
+        if (oldEntity._id !== newEntity._id) {
+          this.removeRootElement(oldEntity, oldPinned);
         } else {
-          this.updateRootElement(newData);
+          this.updateRootElement(newEntity);
         }
       }
 
-      this.addRootElement(newData);
+      this.addRootElement(newEntity);
       this.runLayout();
     },
 
     /**
      * Update pinned entities for special entity
      *
-     * @param {Object} [newEntity]
-     * @param {Object} [oldEntity]
+     * @param {Object} [newEntityItem]
+     * @param {Object} [oldEntityItem]
      * @returns {Promise<void>}
      */
-    async updatePinnedEntities(newEntity, oldEntity) {
+    async updatePinnedEntities(newEntityItem, oldEntityItem) {
       /**
        * @desc We've added nextTick to avoid problem with v-field usage
        */
       await this.$nextTick();
 
-      const { data, pinned: oldPinned } = oldEntity;
-      const { pinned: newPinned } = newEntity;
+      const { entity, pinned: oldPinned } = oldEntityItem;
+      const { pinned: newPinned } = newEntityItem;
 
       const newById = keyBy(newPinned, '_id');
       const oldById = keyBy(oldPinned, '_id');
       const added = newPinned.filter(({ _id: id }) => !oldById[id]);
       const removed = oldPinned.filter(({ _id: id }) => !newById[id]);
 
-      this.addPinnedElements(added, data._id);
-      this.removePinnedElements(removed, data._id);
+      this.addPinnedElements(added, entity._id);
+      this.removePinnedElements(removed, entity._id);
       this.runLayout();
     },
 

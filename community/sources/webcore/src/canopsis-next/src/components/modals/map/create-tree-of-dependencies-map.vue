@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { MODALS, MAP_TYPES } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { mapToForm, formToMap } from '@/helpers/forms/map';
 
@@ -46,10 +46,8 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
-    const { map = { type: MAP_TYPES.treeOfDependencies } } = this.modal.config;
-
     return {
-      form: mapToForm(map),
+      form: mapToForm(this.modal.config.map),
     };
   },
   computed: {

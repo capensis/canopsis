@@ -1,14 +1,10 @@
-import { get, omit, isUndefined } from 'lodash';
-
 import uid from '../uid';
 
 /**
- * @typedef {Object} ServiceDependency
- * @property {Service | Entity} entity
- * @property {Object} [alarm = null]
+ * @typedef {Service | Entity} ServiceDependency
  * @property {number} impact_state
- * @property {boolean} has_dependencies
- * @property {boolean} has_impacts
+ * @property {number} [depends_count]
+ * @property {number} [impacts_count]
  */
 
 /**
@@ -39,45 +35,33 @@ import uid from '../uid';
  */
 
 /**
- * Convert service to service dependency
+ * Convert alarm to service dependency
  *
- * @param {Service} entity
- * @param {Object} [alarm = null]
+ * @param {Object} alarm
  * @returns {ServiceDependency}
  */
-export const serviceToServiceDependency = (entity, alarm = null) => {
-  let impactState = get(entity, 'impact_state');
+export const alarmToServiceDependency = alarm => ({
+  ...alarm.entity,
 
-  if (isUndefined(impactState)) {
-    impactState = get(alarm, 'impact_state', 0);
-  }
-
-  return {
-    entity,
-    alarm,
-
-    impact_state: impactState,
-    has_dependencies: true,
-  };
-};
+  impact_state: alarm?.impact_state,
+});
 
 /**
  * Convert dependency to treeview dependency
  *
  * @param {ServiceDependency} [dependency = {}]
+ * @param {boolean} [impact = false]
  * @returns {ServiceTreeviewDependency}
  */
-export const dependencyToTreeviewDependency = (dependency = {}) => {
+export const dependencyToTreeviewDependency = (dependency = {}, impact = false) => {
   const preparedDependency = {
-    ...dependency,
-
-    entity: { ...dependency.entity, impact_state: dependency.impact_state },
-    key: dependency.entity._id,
+    entity: dependency,
     cycle: false,
-    _id: dependency.entity._id,
+    key: dependency._id,
+    _id: dependency._id,
   };
 
-  if (dependency.has_dependencies || dependency.has_impacts) {
+  if ((!impact && dependency.depends_count) || (impact && dependency.impacts_count)) {
     preparedDependency.children = [];
   }
 
@@ -85,24 +69,14 @@ export const dependencyToTreeviewDependency = (dependency = {}) => {
 };
 
 /**
- * Convert treeview dependency to dependency
- *
- * @param {ServiceTreeviewDependency} [treeviewDependency = {}]
- * @returns {ServiceDependency}
- */
-export const treeviewDependencyToDependency = (treeviewDependency = {}) => omit(
-  treeviewDependency,
-  ['children', 'parentId', 'parentKey'],
-);
-
-/**
  * Normalize treeview dependencies array
  *
  * @param {ServiceTreeviewDependency[]} [dependencies = []]
+ * @param {boolean} [impact = false]
  * @returns {{result: string[], dependencies: Object}}
  */
-export const normalizeDependencies = (dependencies = []) => dependencies.reduce((acc, dependency) => {
-  const preparedDependency = dependencyToTreeviewDependency(dependency);
+export const normalizeDependencies = (dependencies = [], impact = false) => dependencies.reduce((acc, dependency) => {
+  const preparedDependency = dependencyToTreeviewDependency(dependency, impact);
 
   acc.dependencies[preparedDependency._id] = preparedDependency;
   acc.result.push(preparedDependency._id);

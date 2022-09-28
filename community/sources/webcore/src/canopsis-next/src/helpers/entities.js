@@ -128,6 +128,17 @@ export const generateDefaultAlarmListWidget = () => ({
 });
 
 /**
+ * Generate context widget with default parameters.
+ *
+ * @return {Widget}
+ */
+export const generateDefaultContextWidget = () => ({
+  ...formToWidget(widgetToForm({ type: WIDGET_TYPES.context })),
+
+  _id: uuid(),
+});
+
+/**
  * Generate alarm details id by widgetId
  *
  * @param {string} alarmId
