@@ -6,8 +6,8 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { mockModals } from '@unit/utils/mock-hooks';
-import PointFormDialog from '@/components/other/map/form/partials/point-form-dialog.vue';
 import { MODALS } from '@/constants';
+import PointFormDialog from '@/components/other/map/form/partials/point-form-dialog.vue';
 
 const localVue = createVueInstance();
 
