@@ -50,51 +50,35 @@ describe('service-dependencies', () => {
 
   const data = [
     {
-      _id: 'data-alarm-1',
-      entity: {
-        _id: 'data-alarm-1-entity',
-        name: 'Data alarm 1 entity',
-        type: ENTITY_TYPES.service,
-        impact_level: 5,
-      },
-      alarm: null,
+      _id: 'data-alarm-1-entity',
+      name: 'Data alarm 1 entity',
+      type: ENTITY_TYPES.service,
+      impact_level: 5,
       impact_state: 0,
       has_impacts: false,
       cycle: false,
     },
     {
-      _id: 'data-alarm-2',
-      entity: {
-        _id: 'data-alarm-2-entity',
-        name: 'Data alarm 2 entity',
-        type: ENTITY_TYPES.service,
-        impact_level: 1,
-      },
-      alarm: null,
+      _id: 'data-alarm-2-entity',
+      name: 'Data alarm 2 entity',
+      type: ENTITY_TYPES.service,
+      impact_level: 1,
       impact_state: 0,
       has_impacts: false,
     },
     {
-      _id: 'data-alarm-3',
-      entity: {
-        _id: 'data-alarm-3-entity',
-        name: 'Data alarm 3 entity',
-        type: ENTITY_TYPES.connector,
-        impact_level: 5,
-      },
-      alarm: null,
+      _id: 'data-alarm-3-entity',
+      name: 'Data alarm 3 entity',
+      type: ENTITY_TYPES.connector,
+      impact_level: 5,
       impact_state: 0,
       has_impacts: false,
     },
     {
-      _id: 'data-alarm-4',
-      entity: {
-        _id: 'data-alarm-4-entity',
-        name: 'Data alarm 4 entity',
-        type: ENTITY_TYPES.service,
-        impact_level: 1,
-      },
-      alarm: null,
+      _id: 'data-alarm-4-entity',
+      name: 'Data alarm 4 entity',
+      type: ENTITY_TYPES.service,
+      impact_level: 1,
       impact_state: 0,
       has_impacts: false,
     },
@@ -105,18 +89,17 @@ describe('service-dependencies', () => {
     page_count: 1,
     total_count: 4,
   };
-  const alarm = {
-    entity: {
-      _id: 'root-alarm-entity',
-      name: 'Root alarm entity',
-      impact: [
-        'data-alarm-entity-1',
-        'data-alarm-entity-2',
-        'data-alarm-entity-3',
-        'data-alarm-entity-4',
-      ],
-    },
+  const entity = {
+    _id: 'root-alarm-entity',
+    name: 'Root alarm entity',
+    impact: [
+      'data-alarm-entity-1',
+      'data-alarm-entity-2',
+      'data-alarm-entity-3',
+      'data-alarm-entity-4',
+    ],
   };
+
   const serviceModule = {
     name: 'service',
     actions: {
@@ -143,7 +126,7 @@ describe('service-dependencies', () => {
     factory({
       store,
       propsData: {
-        root: alarm,
+        root: entity,
       },
     });
 
@@ -152,9 +135,10 @@ describe('service-dependencies', () => {
     expect(fetchDependenciesWithoutStore).toBeCalledWith(
       expect.any(Object),
       {
-        id: alarm.entity._id,
+        id: entity._id,
         params: {
           limit: 10,
+          with_flags: true,
         },
       },
       undefined,
@@ -165,7 +149,7 @@ describe('service-dependencies', () => {
     const wrapper = factory({
       store,
       propsData: {
-        root: alarm,
+        root: entity,
       },
     });
 
@@ -173,14 +157,17 @@ describe('service-dependencies', () => {
 
     const treeviewTable = selectTreeviewTable(wrapper);
 
-    treeviewTable.vm.loadChildren(data[1]);
+    const [, entityWithDeps] = data;
+
+    treeviewTable.vm.loadChildren(entityWithDeps);
 
     expect(fetchDependenciesWithoutStore).toBeCalledWith(
       expect.any(Object),
       {
-        id: alarm.entity._id,
+        id: entityWithDeps._id,
         params: {
           limit: 10,
+          with_flags: true,
         },
       },
       undefined,
@@ -200,7 +187,7 @@ describe('service-dependencies', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        root: alarm,
+        root: entity,
       },
     });
 
@@ -218,10 +205,11 @@ describe('service-dependencies', () => {
     expect(fetchDependenciesWithoutStore).toBeCalledWith(
       expect.any(Object),
       {
-        id: alarm.entity._id,
+        id: entity._id,
         params: {
           limit: 10,
           page: 2,
+          with_flags: true,
         },
       },
       undefined,
@@ -236,7 +224,7 @@ describe('service-dependencies', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        root: alarm,
+        root: entity,
       },
       mocks: {
         $modals,
@@ -250,7 +238,7 @@ describe('service-dependencies', () => {
 
     dependenciesModalButton.trigger('click');
 
-    const [, alarmWithDeps] = data;
+    const [, entityWithDeps] = data;
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.serviceDependencies,
@@ -258,14 +246,8 @@ describe('service-dependencies', () => {
         columns: undefined,
         impact: false,
         root: {
-          ...alarmWithDeps,
-          _id: alarmWithDeps.entity._id,
-          cycle: false,
-          entity: {
-            ...alarmWithDeps.entity,
-            impact_state: 0,
-          },
-          key: expect.any(String),
+          ...entityWithDeps,
+          impact_state: 0,
         },
       },
     });
@@ -279,7 +261,7 @@ describe('service-dependencies', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        root: alarm,
+        root: entity,
       },
       mocks: {
         $modals,
@@ -300,7 +282,7 @@ describe('service-dependencies', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        root: alarm,
+        root: entity,
       },
     });
 
@@ -331,7 +313,7 @@ describe('service-dependencies', () => {
             value: 'entity.type',
           },
         ],
-        root: alarm,
+        root: entity,
       },
     });
 
@@ -358,7 +340,7 @@ describe('service-dependencies', () => {
             value: 'entity.type',
           },
         ],
-        root: alarm,
+        root: entity,
       },
     });
 
@@ -381,7 +363,7 @@ describe('service-dependencies', () => {
       store,
       propsData: {
         columns,
-        root: alarm,
+        root: entity,
       },
     });
 
