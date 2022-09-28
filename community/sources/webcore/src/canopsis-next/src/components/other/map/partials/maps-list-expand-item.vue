@@ -16,12 +16,14 @@ import { entitiesMapMixin } from '@/mixins/entities/map';
 import MapsListExpandMermaidItem from './maps-list-expand-mermaid-item.vue';
 import MapsListExpandGeomapItem from './maps-list-expand-geomap-item.vue';
 import MapsListExpandFlowchartItem from './maps-list-expand-flowchart-item.vue';
+import MapsListExpandTreeOfDependenciesItem from './maps-list-expand-tree-of-dependencies-item.vue';
 
 export default {
   components: {
     MapsListExpandMermaidItem,
     MapsListExpandGeomapItem,
     MapsListExpandFlowchartItem,
+    MapsListExpandTreeOfDependenciesItem,
   },
   mixins: [entitiesMapMixin],
   props: {
@@ -42,6 +44,7 @@ export default {
         [MAP_TYPES.geo]: 'maps-list-expand-geomap-item',
         [MAP_TYPES.mermaid]: 'maps-list-expand-mermaid-item',
         [MAP_TYPES.flowchart]: 'maps-list-expand-flowchart-item',
+        [MAP_TYPES.treeOfDependencies]: 'maps-list-expand-tree-of-dependencies-item',
       }[this.map.type];
     },
   },
@@ -55,7 +58,11 @@ export default {
     async fetchMapDetails() {
       this.pending = true;
 
-      this.mapDetails = await this.fetchMapWithoutStore({ id: this.map._id });
+      if (this.map.type === MAP_TYPES.treeOfDependencies) {
+        this.mapDetails = await this.fetchMapStateWithoutStore({ id: this.map._id });
+      } else {
+        this.mapDetails = await this.fetchMapWithoutStore({ id: this.map._id });
+      }
 
       this.pending = false;
     },

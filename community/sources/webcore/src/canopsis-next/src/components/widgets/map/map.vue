@@ -68,6 +68,7 @@ import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
 import GeomapPreview from '@/components/other/map/partials/geomap-preview.vue';
 import FlowchartPreview from '@/components/other/map/partials/flowchart-preview.vue';
+import TreeOfDependenciesPreview from '@/components/other/map/partials/tree-of-dependencies-preview.vue';
 
 import MapBreadcrumbs from './partials/map-breadcrumbs.vue';
 
@@ -84,6 +85,7 @@ export default {
     MermaidPreview,
     GeomapPreview,
     FlowchartPreview,
+    TreeOfDependenciesPreview,
   },
   mixins: [
     permissionsWidgetsMapCategory,
@@ -112,7 +114,7 @@ export default {
         [MAP_TYPES.geo]: 'geomap-preview',
         [MAP_TYPES.flowchart]: 'flowchart-preview',
         [MAP_TYPES.mermaid]: 'mermaid-preview',
-        [MAP_TYPES.treeOfDependencies]: 'span',
+        [MAP_TYPES.treeOfDependencies]: 'tree-of-dependencies-preview',
       }[this.mapState.type];
     },
   },

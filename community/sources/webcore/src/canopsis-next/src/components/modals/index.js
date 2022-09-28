@@ -341,3 +341,7 @@ export const CreateTreeOfDependenciesMap = () => ({
   component: import(/* webpackChunkName: "Maps" */ './map/create-tree-of-dependencies-map.vue'),
   loading: LoaderOverlay,
 });
+export const EntityDependenciesList = () => ({
+  component: import(/* webpackChunkName: "Map" */ './entity/entity-dependencies-list.vue'),
+  loading: LoaderOverlay,
+});

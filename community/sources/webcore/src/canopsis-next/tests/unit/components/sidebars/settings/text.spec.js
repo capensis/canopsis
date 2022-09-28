@@ -81,9 +81,11 @@ describe('text', () => {
     updateWidget,
     copyWidget,
     fetchActiveView,
+    fetchItem,
     activeViewModule,
     widgetModule,
     authModule,
+    userPreferenceModule,
   } = createSettingsMocks();
 
   const widget = {
@@ -104,6 +106,7 @@ describe('text', () => {
     activeViewModule,
     widgetModule,
     authModule,
+    userPreferenceModule,
   ]);
 
   afterEach(() => {
@@ -111,6 +114,7 @@ describe('text', () => {
     updateWidget.mockReset();
     copyWidget.mockReset();
     fetchActiveView.mockReset();
+    fetchItem.mockReset();
   });
 
   it('Create widget with default parameters', async () => {

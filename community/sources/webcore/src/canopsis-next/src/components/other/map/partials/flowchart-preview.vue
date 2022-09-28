@@ -15,7 +15,7 @@
           :pbehavior-enabled="pbehaviorEnabled",
           :shapes="data"
         )
-    c-help-icon.flowchart-preview__help-icon(size="32", color="secondary", icon="help", top)
+    c-help-icon.map-preview__help-icon(size="32", color="secondary", icon="help", top)
       div.pre-wrap(v-html="$t('flowchart.panzoom.helpText')")
 </template>
 
@@ -109,12 +109,5 @@ export default {
   position: relative;
   height: 800px;
   width: 100%;
-
-  &__help-icon {
-    cursor: pointer;
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-  }
 }
 </style>
