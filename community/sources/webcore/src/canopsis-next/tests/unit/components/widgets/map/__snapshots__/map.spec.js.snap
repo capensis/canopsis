@@ -55,11 +55,11 @@ exports[`map Renders flowchart \`map\` with state 1`] = `
   <!---->
   <!---->
   <flowchart-preview-stub
-    colorindicator="color_indicator"
+    color-indicator="color_indicator"
     map="[object Object]"
-    pbehaviorenabled="true"
-    popupactions="true"
-    popuptemplate="entity_info_template"
+    pbehavior-enabled="true"
+    popup-actions="popup-actions"
+    popup-template="entity_info_template"
   />
 </div>
 `;
@@ -103,13 +103,11 @@ exports[`map Renders geo \`map\` with state 1`] = `
   <!---->
   <!---->
   <geomap-preview-stub
-    colorindicator="color_indicator"
-    iconsize="24"
+    color-indicator="color_indicator"
     map="[object Object]"
-    minzoom="2"
-    pbehaviorenabled="true"
-    popupactions="true"
-    popuptemplate="entity_info_template"
+    pbehavior-enabled="true"
+    popup-actions="popup-actions"
+    popup-template="entity_info_template"
   />
 </div>
 `;
@@ -153,16 +151,16 @@ exports[`map Renders mermaid \`map\` with state 1`] = `
   <!---->
   <!---->
   <mermaid-preview-stub
-    colorindicator="color_indicator"
+    color-indicator="color_indicator"
     map="[object Object]"
-    pbehaviorenabled="true"
-    popupactions="true"
-    popuptemplate="entity_info_template"
+    pbehavior-enabled="true"
+    popup-actions="popup-actions"
+    popup-template="entity_info_template"
   />
 </div>
 `;
 
-exports[`map Renders treeOfDependencies \`map\` with state 1`] = `
+exports[`map Renders treeofdeps \`map\` with state 1`] = `
 <div
   class="pa-2"
 >
@@ -200,7 +198,7 @@ exports[`map Renders treeOfDependencies \`map\` with state 1`] = `
   </div>
   <!---->
   <!---->
-  <span
+  <tree-of-dependencies-preview-stub
     color-indicator="color_indicator"
     map="[object Object]"
     pbehavior-enabled="true"
