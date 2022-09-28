@@ -8,12 +8,11 @@
         ctrl-wheel-zoom
       )
     c-help-icon.map-preview__help-icon(size="32", color="secondary", icon="help", top)
-      div.pre-wrap(v-html="$t('flowchart.panzoom.helpText')")
+      div.pre-wrap(v-html="$t('treeOfDependencies.panzoom.helpText')")
 </template>
 
 <script>
 import { omit } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
 
 import { COLORS, PAGINATION_LIMIT } from '@/config';
 import {
@@ -29,12 +28,13 @@ import { getTreeOfDependenciesEntityText, normalizeTreeOfDependenciesMapEntities
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/engineering.svg';
 
-import NetworkGraph from '@/components/common/chart/network-graph.vue';
+import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
-const { mapActions } = createNamespacedHelpers('service');
+import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
 export default {
   components: { NetworkGraph },
+  mixins: [entitiesEntityDependenciesMixin],
   props: {
     map: {
       type: Object,
@@ -76,6 +76,7 @@ export default {
               id: entity._id,
               entity,
               root: true,
+              dependenciesCount: dependencies.length,
             },
           },
         );
@@ -101,7 +102,7 @@ export default {
           );
         });
 
-        if (entity[this.countProperty] > dependencies.length) {
+        if (dependencies.length && entity[this.countProperty] > dependencies.length) {
           acc.push(...this.getShowAllElements(entity));
         }
 
@@ -217,7 +218,7 @@ export default {
         return badgeEl;
       };
 
-      const getContent = ({ entity, opened, pending, root }) => {
+      const getContent = ({ entity, opened, pending, dependenciesCount }) => {
         const nodeLabelEl = document.createElement('div');
         nodeLabelEl.classList.add('position-absolute');
         nodeLabelEl.style.top = `${nodeSize}px`;
@@ -233,7 +234,7 @@ export default {
           ? COLORS.secondary
           : getEntityColor(entity, this.colorIndicator);
 
-        if (this.hasDependencies(entity) && !root) {
+        if (this.hasDependencies(entity) && !dependenciesCount) {
           nodeEl.appendChild(getBadgeEl(entity, opened, pending));
         }
 
@@ -243,7 +244,7 @@ export default {
       const getShowAllContent = ({ entity }) => {
         const btnContentEl = document.createElement('div');
         btnContentEl.classList.add('v-btn__content');
-        btnContentEl.textContent = `Show all (${entity[this.countProperty]})`; // TODO: Add translation
+        btnContentEl.textContent = this.$t('map.showAll', { count: entity[this.countProperty] });
 
         const btnEl = document.createElement('button');
         btnEl.classList.add(
@@ -293,12 +294,13 @@ export default {
     },
   },
   watch: {
-    map(map) {
+    async map(map) {
       this.entitiesById = normalizeTreeOfDependenciesMapEntities(map.parameters?.entities);
 
-      setTimeout(() => { // TODO: change it
-        this.resetLayout();
-      }, 1000);
+      /**
+       * TODO: investigate this behavior in the future
+       */
+      setTimeout(() => this.resetLayout(), 1000);
     },
   },
   mounted() {
@@ -308,17 +310,6 @@ export default {
     this.$refs.networkGraph.$cy.off('tap', this.tapHandler);
   },
   methods: {
-    ...mapActions({
-      fetchServiceDependenciesWithoutStore: 'fetchDependenciesWithoutStore',
-      fetchServiceImpactsWithoutStore: 'fetchImpactsWithoutStore',
-    }),
-
-    fetchDependenciesList(data) {
-      return this.impact
-        ? this.fetchServiceImpactsWithoutStore(data)
-        : this.fetchServiceDependenciesWithoutStore(data);
-    },
-
     hasDependencies(entity) {
       return !!entity[this.countProperty];
     },
@@ -335,7 +326,7 @@ export default {
     /**
      * Run 'cise' layout for rerender clusters
      */
-    runLayout() {
+    async runLayout() {
       if (this.$refs.networkGraph.$cy.nodes().empty()) {
         return;
       }
@@ -432,8 +423,16 @@ export default {
       const nodesForRemoveSelectors = elementsIds.map(id => `node[id = "${id}"]`);
       nodesForRemoveSelectors.push(`node[id = "show-all-${sourceId}"]`);
 
-      const nodesForRemove = this.$refs.networkGraph.$cy.elements(nodesForRemoveSelectors.join(','));
-      const filteredNodesForRemove = nodesForRemove.filter(node => node.connectedEdges().size() === 1);
+      const nodesForRemoveJoinedSelector = nodesForRemoveSelectors.join(',');
+      const openedNodesForRemove = this.$refs.networkGraph.$cy.elements(nodesForRemoveJoinedSelector)
+        .filter(node => node.data().opened);
+
+      if (openedNodesForRemove.length) {
+        openedNodesForRemove.forEach(node => this.hideDependencies(node));
+      }
+
+      const filteredNodesForRemove = this.$refs.networkGraph.$cy.elements(nodesForRemoveJoinedSelector)
+        .filter(node => node.connectedEdges().size() === 1);
 
       const edgesForRemoveSelectors = elementsIds.map(id => `edge[source = "${sourceId}"][target = "${id}"]`);
       edgesForRemoveSelectors.push(`node[id = "show-all-edge-${sourceId}"]`);
@@ -445,32 +444,15 @@ export default {
     },
 
     /**
-     * Method for dependencies fetching for special node
+     * Show dependencies for node
      *
-     * @param {string} id
+     * @param {Object} target
+     * @returns {Promise<void>}
      */
-    async fetchDependencies(id) {
-      const target = this.$refs.networkGraph.$cy.getElementById(id);
-      const { opened, entity, root, pending } = target.data();
-
-      if (!this.hasDependencies(entity) || root || pending) {
-        return;
-      }
+    async showDependencies(target) {
+      const { id, entity, opened } = target.data();
 
       if (opened) {
-        const { dependencies } = this.entitiesById[id];
-
-        this.removeDependenciesElements(dependencies, id);
-
-        target.data({
-          pending: false,
-          opened: false,
-        });
-
-        this.$delete(this.entitiesById[id], 'dependencies');
-
-        this.runLayout();
-
         return;
       }
 
@@ -478,7 +460,10 @@ export default {
         pending: true,
       });
 
-      const { data } = await this.fetchDependenciesList({ id, params: { limit: PAGINATION_LIMIT } });
+      const { data } = await this.fetchDependenciesList({
+        id,
+        params: { limit: PAGINATION_LIMIT, with_flags: true },
+      });
 
       target.data({
         opened: true,
@@ -486,13 +471,20 @@ export default {
       });
 
       const ids = data.map((item) => {
-        let newEntity = item;
+        let newEntityItem = { entity: item };
 
         if (this.entitiesById[item._id]) {
-          newEntity = { ...this.entitiesById[item._id], ...newEntity };
+          newEntityItem = {
+            ...this.entitiesById[item._id],
+
+            entity: {
+              ...newEntityItem,
+              ...this.entitiesById[item._id].entity,
+            },
+          };
         }
 
-        this.$set(this.entitiesById, item._id, newEntity);
+        this.$set(this.entitiesById, item._id, newEntityItem);
 
         return item._id;
       });
@@ -500,6 +492,52 @@ export default {
       this.$set(this.entitiesById[id], 'dependencies', ids);
 
       this.addDependenciesElements(data, entity);
+    },
+
+    /**
+     * Hide dependencies for node
+     *
+     * @param {Object} target
+     * @returns {void}
+     */
+    hideDependencies(target) {
+      const { id, opened } = target.data();
+
+      if (!opened) {
+        return;
+      }
+
+      const { dependencies } = this.entitiesById[id];
+
+      this.removeDependenciesElements(dependencies, id);
+
+      target.data({
+        pending: false,
+        opened: false,
+      });
+
+      this.$delete(this.entitiesById[id], 'dependencies');
+    },
+
+    /**
+     * Method for dependencies fetching for special node
+     *
+     * @param {string} id
+     */
+    async fetchDependencies(id) {
+      const target = this.$refs.networkGraph.$cy.getElementById(id);
+      const { opened, entity, pending } = target.data();
+
+      if (!this.hasDependencies(entity) || pending) {
+        return;
+      }
+
+      if (opened) {
+        await this.hideDependencies(target);
+      } else {
+        await this.showDependencies(target);
+      }
+
       this.runLayout();
     },
 

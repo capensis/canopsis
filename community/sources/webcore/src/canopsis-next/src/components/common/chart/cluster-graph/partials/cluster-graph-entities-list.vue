@@ -1,24 +1,25 @@
 <template lang="pug">
   div
     h6.my-2.title.text-xs-center {{ $tc('common.entity', 2) }}
-    v-card.ma-2(v-for="(entity, index) in entities", :key="entity.key")
+    v-card.ma-2(v-for="(entityItem, index) in entities", :key="entityItem.key")
       v-card-text
         c-entity-field(
-          :value="entity.data",
-          :name="`entity-${entity.key}`",
+          :value="entityItem.entity",
+          :name="`entity-${entityItem.key}`",
           :entity-types="entityTypes",
           :item-disabled="isItemDisabled",
           :item-text="getItemText",
+          required,
           return-object,
           clearable,
-          @input="updateData($event, index)"
+          @input="updateEntity($event, index)"
         )
         v-expand-transition
           v-combobox(
-            v-if="entity.data",
-            :value="entity.pinned",
-            :items="pinnedListById[entity.data._id]",
-            :loading="pinnedPendingById[entity.data._id]",
+            v-if="entityItem.entity",
+            :value="entityItem.pinned",
+            :items="pinnedListById[entityItem.entity._id]",
+            :loading="pinnedPendingById[entityItem.entity._id]",
             :label="$t('modals.createTreeOfDependenciesMap.pinnedEntities')",
             :item-text="getItemText",
             item-value="_id",
@@ -29,12 +30,15 @@
           )
       v-card-actions
         v-layout(justify-end)
-          c-action-btn(type="delete", @click="remove(index)")
+          c-action-btn(
+            :disabled="entities.length === 1",
+            type="delete",
+            @click="remove(index)"
+          )
     v-btn(color="primary", @click="add") {{ $t('modals.createTreeOfDependenciesMap.addEntity') }}
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 
 import { ENTITY_TYPES, MAX_LIMIT } from '@/constants';
 
@@ -42,11 +46,10 @@ import uid from '@/helpers/uid';
 import { getTreeOfDependenciesEntityText } from '@/helpers/map';
 
 import { formArrayMixin } from '@/mixins/form';
-
-const { mapActions } = createNamespacedHelpers('service');
+import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
 export default {
-  mixins: [formArrayMixin],
+  mixins: [formArrayMixin, entitiesEntityDependenciesMixin],
   model: {
     prop: 'entities',
     event: 'input',
@@ -71,40 +74,40 @@ export default {
       pinnedPendingById: {},
     };
   },
+  computed: {
+    notEmptyEntities() {
+      return this.entities.filter(({ entity }) => entity);
+    },
+  },
   watch: {
     impact() {
-      this.entities.forEach(({ data }) => {
-        if (!data) {
+      this.entities.forEach(({ entity }) => {
+        if (!entity) {
           return;
         }
 
-        this.$set(this.pinnedListById, data._id, []);
+        this.$set(this.pinnedListById, entity._id, []);
 
-        this.fetchPinnedEntitiesList(data._id);
+        this.fetchPinnedEntitiesList(entity._id);
       });
     },
   },
   mounted() {
-    if (this.entities.length) {
-      this.entities.forEach(({ data }) => this.fetchPinnedEntitiesList(data._id));
+    if (this.notEmptyEntities.length) {
+      this.notEmptyEntities.forEach(({ entity }) => this.fetchPinnedEntitiesList(entity._id));
     }
   },
   methods: {
-    ...mapActions({
-      fetchServiceDependenciesWithoutStore: 'fetchDependenciesWithoutStore',
-      fetchServiceImpactsWithoutStore: 'fetchImpactsWithoutStore',
-    }),
-
     getItemText(item) {
       return getTreeOfDependenciesEntityText(item);
     },
 
     isItemDisabled(item) {
-      return this.entities.some(({ data }) => data?._id === item._id);
+      return this.entities.some(({ entity }) => entity?._id === item._id);
     },
 
     add() {
-      const newEntity = { key: uid(), data: undefined, pinned: [] };
+      const newEntity = { key: uid(), entity: undefined, pinned: [] };
 
       this.addItemIntoArray(newEntity);
 
@@ -119,17 +122,17 @@ export default {
       this.$emit('remove', entity);
     },
 
-    updateData(newData, index) {
-      const oldEntity = this.entities[index] ?? {};
-      const newEntity = { ...oldEntity, data: newData, pinned: [] };
+    updateEntity(newEntity, index) {
+      const oldEntityItem = this.entities[index] ?? {};
+      const newEntityItem = { ...oldEntityItem, entity: newEntity, pinned: [] };
 
-      if (newData) {
-        this.fetchPinnedEntitiesList(newData._id);
+      if (newEntity) {
+        this.fetchPinnedEntitiesList(newEntity._id);
       }
 
-      this.updateItemInArray(index, newEntity);
+      this.updateItemInArray(index, newEntityItem);
 
-      this.$emit('update:data', newEntity, oldEntity);
+      this.$emit('update:entity', newEntityItem, oldEntityItem);
     },
 
     updatePinned(newPinned, index) {
@@ -148,12 +151,6 @@ export default {
 
       this.$set(this.pinnedListById, id, data);
       this.$set(this.pinnedPendingById, id, false);
-    },
-
-    fetchDependenciesList(data) {
-      return this.impact
-        ? this.fetchServiceImpactsWithoutStore(data)
-        : this.fetchServiceDependenciesWithoutStore(data);
     },
   },
 };
