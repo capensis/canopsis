@@ -406,18 +406,16 @@ func (a *Alarm) PartialUpdateTags(eventTags map[string]string) {
 
 	tags := TransformEventTags(eventTags)
 	var k = 0
-	for i, tag := range tags {
+	for _, tag := range tags {
 		if _, ok := exists[tag]; !ok {
-			tags[i] = tags[k]
 			tags[k] = tag
 			k++
 		}
 	}
-	tags = tags[:k]
-	if len(tags) == 0 {
+	if k == 0 {
 		return
 	}
-
+	tags = tags[:k]
 	a.Tags = append(a.Tags, tags...)
 	a.AddUpdate("$addToSet", bson.M{
 		"tags": bson.M{"$each": tags},
