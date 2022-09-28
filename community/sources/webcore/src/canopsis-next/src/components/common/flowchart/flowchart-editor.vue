@@ -469,15 +469,15 @@ export default {
         this.moving = false;
         this.movingStart = { x: 0, y: 0 };
         this.movingOffset = { x: 0, y: 0 };
-
-        this.updateShapes(this.data);
       }
 
       if (this.editing) {
         this.editing = false;
         this.editingShape = undefined;
         this.editingLinePoint = undefined;
+      }
 
+      if (!isEqual(this.shapes, this.data)) {
         this.updateShapes(this.data);
       }
     },
