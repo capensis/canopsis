@@ -5,6 +5,7 @@ package request
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -25,19 +26,38 @@ func CreateRequest(ctx context.Context, params Parameters) (*http.Request, error
 	return request, nil
 }
 
-func Flatten(m map[string]interface{}) map[string]interface{} {
-	o := make(map[string]interface{})
-	for k, v := range m {
-		switch child := v.(type) {
-		case map[string]interface{}:
-			nm := Flatten(child)
-			for nk, nv := range nm {
-				o[k+"."+nk] = nv
+// Flatten creates a new map[string]interface{} with a flat hierarchy
+func Flatten(in interface{}, prevKey string) map[string]interface{} {
+	out := make(map[string]interface{})
+
+	switch inVal := in.(type) {
+	case map[string]interface{}:
+		for k, v := range inVal {
+			newPrevKey := prevKey + "." + k
+			if prevKey == "" {
+				newPrevKey = k
 			}
-		default:
-			o[k] = v
+
+			nm := Flatten(v, newPrevKey)
+			for nk, nv := range nm {
+				out[nk] = nv
+			}
 		}
+	case []interface{}:
+		for idx, v := range inVal {
+			newPrevKey := fmt.Sprintf("%s.%d", prevKey, idx)
+			if prevKey == "" {
+				newPrevKey = newPrevKey[1:]
+			}
+
+			nm := Flatten(v, newPrevKey)
+			for nk, nv := range nm {
+				out[nk] = nv
+			}
+		}
+	default:
+		out[prevKey] = inVal
 	}
 
-	return o
+	return out
 }
