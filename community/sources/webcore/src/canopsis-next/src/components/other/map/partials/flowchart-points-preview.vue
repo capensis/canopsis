@@ -50,21 +50,15 @@
 </template>
 
 <script>
-import { mapInformationPopup } from '@/mixins/map/map-information-popup';
-import { mapFlowchartPoints } from '@/mixins/map/map-flowchart-points';
+import { mapInformationPopupMixin } from '@/mixins/map/map-information-popup-mixin';
+import { mapFlowchartPointsMixin } from '@/mixins/map/map-flowchart-points-mixin';
 
 import PointIcon from './point-icon.vue';
 import PointPopupDialog from './point-popup-dialog.vue';
 
 export default {
   components: { PointPopupDialog, PointIcon },
-  mixins: [mapInformationPopup, mapFlowchartPoints],
-  props: {
-    points: {
-      type: Array,
-      required: true,
-    },
-  },
+  mixins: [mapInformationPopupMixin, mapFlowchartPointsMixin],
 };
 </script>
 

@@ -65,6 +65,7 @@ const stubs = {
     },
   },
   'geomap-marker': true,
+  'c-zoom-overlay': true,
   'geomap-icon': true,
   'point-icon': true,
   'point-form-dialog': true,

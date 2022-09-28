@@ -66,7 +66,7 @@ export default {
   props: {
     points: {
       type: Array,
-      required: true,
+      default: () => [],
     },
     addOnClick: {
       type: Boolean,

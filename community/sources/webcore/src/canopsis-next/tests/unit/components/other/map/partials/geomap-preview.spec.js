@@ -29,6 +29,7 @@ const stubs = {
   'point-popup-dialog': true,
   'point-icon': true,
   'c-help-icon': true,
+  'c-zoom-overlay': true,
 };
 
 const factory = (options = {}) => shallowMount(GeomapPreview, {

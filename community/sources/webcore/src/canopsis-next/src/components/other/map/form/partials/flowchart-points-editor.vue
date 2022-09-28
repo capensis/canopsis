@@ -60,7 +60,7 @@ import { flowchartPointToForm } from '@/helpers/forms/map';
 import { waitVuetifyAnimation } from '@/helpers/vuetify';
 
 import { formMixin } from '@/mixins/form';
-import { mapFlowchartPoints } from '@/mixins/map/map-flowchart-points';
+import { mapFlowchartPointsMixin } from '@/mixins/map/map-flowchart-points-mixin';
 
 import PointIcon from '@/components/other/map/partials/point-icon.vue';
 import PointFormDialog from '@/components/other/map/form/partials/point-form-dialog.vue';
@@ -76,16 +76,12 @@ export default {
     PointFormDialog,
     PointIcon,
   },
-  mixins: [formMixin, mapFlowchartPoints],
+  mixins: [formMixin, mapFlowchartPointsMixin],
   model: {
     prop: 'points',
     event: 'input',
   },
   props: {
-    points: {
-      type: Array,
-      required: true,
-    },
     iconSize: {
       type: Number,
       default: 24,
@@ -285,10 +281,6 @@ export default {
     },
 
     handleMouseUp({ event, cursor }) {
-      if (event.buttons !== 1) {
-        return;
-      }
-
       if (
         Math.abs(cursor.x - this.mouseDownCursorX) < FLOWCHART_MAX_POSITION_DIFF
         && Math.abs(cursor.y - this.mouseDownCursorY) < FLOWCHART_MAX_POSITION_DIFF

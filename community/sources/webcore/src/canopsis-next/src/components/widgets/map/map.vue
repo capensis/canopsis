@@ -120,7 +120,11 @@ export default {
     },
   },
   watch: {
-    activeMapId: 'fetchList',
+    activeMapId(id, oldId) {
+      if (id !== oldId) {
+        this.fetchList();
+      }
+    },
   },
   created() {
     this.registerEditingOffHandler(this.clearPreviousMaps);

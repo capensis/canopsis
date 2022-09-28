@@ -12,8 +12,10 @@ exports[`flowchart Renders \`flowchart\` with custom props 1`] = `
     shapes="[object Object]"
     viewbox="[object Object]"
   />
-  <div
+  <c-zoom-overlay-stub
     class="flowchart__editor"
+    skip-alt="skip-alt"
+    skip-shift="skip-shift"
   >
     <flowchart-editor-stub
       backgroundcolor="#000"
@@ -27,7 +29,7 @@ exports[`flowchart Renders \`flowchart\` with custom props 1`] = `
       shapes="[object Object]"
       viewbox="[object Object]"
     />
-  </div>
+  </c-zoom-overlay-stub>
   <!---->
 </div>
 `;
@@ -43,8 +45,10 @@ exports[`flowchart Renders \`flowchart\` with form 1`] = `
     shapes="[object Object]"
     viewbox="[object Object]"
   />
-  <div
+  <c-zoom-overlay-stub
     class="flowchart__editor"
+    skip-alt="skip-alt"
+    skip-shift="skip-shift"
   >
     <flowchart-editor-stub
       fitpaddingpercent="0.1"
@@ -56,7 +60,7 @@ exports[`flowchart Renders \`flowchart\` with form 1`] = `
       shapes="[object Object]"
       viewbox="[object Object]"
     />
-  </div>
+  </c-zoom-overlay-stub>
   <!---->
 </div>
 `;
@@ -66,8 +70,10 @@ exports[`flowchart Renders \`flowchart\` with readonly 1`] = `
   class="flowchart fill-height"
 >
   <!---->
-  <div
+  <c-zoom-overlay-stub
     class="flowchart__editor flowchart__editor--readonly"
+    skip-alt="skip-alt"
+    skip-shift="skip-shift"
   >
     <flowchart-editor-stub
       fitpaddingpercent="0.1"
@@ -80,7 +86,7 @@ exports[`flowchart Renders \`flowchart\` with readonly 1`] = `
       shapes="[object Object]"
       viewbox="[object Object]"
     />
-  </div>
+  </c-zoom-overlay-stub>
   <!---->
 </div>
 `;
