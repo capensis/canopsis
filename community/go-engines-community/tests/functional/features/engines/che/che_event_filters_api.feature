@@ -68,26 +68,13 @@ Feature: modify event on event filter
       "data": [
         {
           "_id": "test-resource-che-event-filters-api-1/test-component-che-event-filters-api-1",
-          "category": null,
-          "component": "test-component-che-event-filters-api-1",
-          "depends": [
-            "test-connector-che-event-filters-api-1/test-connector-name-che-event-filters-api-1"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-event-filters-api-1"
-          ],
-          "impact_level": 1,
           "infos": {
             "title": {
               "name": "title",
               "description": "title from external api",
               "value": "test title"
             }
-          },
-          "measurements": null,
-          "name": "test-resource-che-event-filters-api-1",
-          "type": "resource"
+          }
         }
       ],
       "meta": {
@@ -179,16 +166,6 @@ Feature: modify event on event filter
       "data": [
         {
           "_id": "test-resource-che-event-filters-api-2/test-eventfilter-mongo-data-2-customer",
-          "category": null,
-          "component": "test-eventfilter-mongo-data-2-customer",
-          "depends": [
-            "test-connector-che-event-filters-api-2/test-connector-name-che-event-filters-api-2"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-eventfilter-mongo-data-2-customer"
-          ],
-          "impact_level": 1,
           "infos": {
             "status": {
               "name": "status",
@@ -200,10 +177,177 @@ Feature: modify event on event filter
               "description": "title from external api",
               "value": "test title"
             }
-          },
-          "measurements": null,
-          "name": "test-resource-che-event-filters-api-2",
-          "type": "resource"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given check event and enrichment event filter should enrich from external api data where response is a document with an array
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "external_data": {
+        "title": {
+          "type": "api",
+          "request": {
+            "url": "http://localhost:3000/api/external_data_document_with_array",
+            "method": "GET"
+          }
+        }
+      },
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-assets-customer-3"
+            }
+          }
+        ]
+      ],
+      "description": "test-event-filter-che-event-filters-api-3-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "title",
+            "value": "{{ `{{ index .ExternalData.title \"array.1.title\" }}` }}",
+            "description": "title from external api"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-che-event-filters-api-3",
+      "connector_name": "test-connector-name-che-event-filters-api-3",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-eventfilter-assets-customer-3",
+      "resource": "test-resource-che-event-filters-api-3",
+      "state": 2,
+      "output": "test-output-che-event-filters-api-3"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-api-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-api-3/test-eventfilter-assets-customer-3",
+          "infos": {
+            "title": {
+              "name": "title",
+              "description": "title from external api",
+              "value": "test title 2"
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given check event and enrichment event filter should enrich from external api data where response is an array
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "external_data": {
+        "title": {
+          "type": "api",
+          "request": {
+            "url": "http://localhost:3000/api/external_data_response_is_array",
+            "method": "GET"
+          }
+        }
+      },
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-assets-customer-4"
+            }
+          }
+        ]
+      ],
+      "description": "test-event-filter-che-event-filters-17-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "title",
+            "value": "{{ `{{ index .ExternalData.title \"1.title\" }}` }}",
+            "description": "title from external api"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-che-event-filters-api-4",
+      "connector_name": "test-connector-name-che-event-filters-api-4",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-eventfilter-assets-customer-4",
+      "resource": "test-resource-che-event-filters-api-4",
+      "state": 2,
+      "output": "test-output-che-event-filters-api-4"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-api-4
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-api-4/test-eventfilter-assets-customer-4",
+          "infos": {
+            "title": {
+              "name": "title",
+              "description": "title from external api",
+              "value": "test title 2"
+            }
+          }
         }
       ],
       "meta": {
