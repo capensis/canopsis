@@ -108,6 +108,7 @@ export default merge({
     create: 'Créer',
     delete: 'Supprimer',
     show: 'Afficher',
+    hide: 'Cacher',
     edit: 'Éditer',
     duplicate: 'Dupliquer',
     play: 'Lecture',
@@ -2425,6 +2426,7 @@ export default merge({
     hideInProgress: 'Masquer les alarmes avec les instructions en cours',
     selectedInstructions: 'Consignes sélectionnées',
     selectedInstructionsHelp: 'Les consignes du type sélectionné sont exclues de la liste',
+    inProgress: 'En cours',
     chip: {
       with: 'AVEC',
       without: 'SANS',

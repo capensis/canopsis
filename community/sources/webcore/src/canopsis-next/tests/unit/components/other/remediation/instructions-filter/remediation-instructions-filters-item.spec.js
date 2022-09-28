@@ -174,4 +174,50 @@ describe('remediation-instructions-filters-item', () => {
 
     expect(wrapper.element).toMatchSnapshot();
   });
+
+  it('Renders `remediation-instructions-filters-item` with filter in progress', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        filters,
+        filter: {
+          with: true,
+          all: false,
+          auto: false,
+          manual: true,
+          locked: true,
+          disabled: true,
+          instructions: [],
+          has_running: true,
+          _id: 'id3',
+        },
+        editable: true,
+        closable: true,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `remediation-instructions-filters-item` with filter instruction in progress', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        filters,
+        filter: {
+          with: true,
+          all: false,
+          auto: false,
+          manual: true,
+          locked: true,
+          disabled: true,
+          instructions: [],
+          has_running: true,
+          _id: 'id3',
+        },
+        editable: true,
+        closable: true,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
 });
