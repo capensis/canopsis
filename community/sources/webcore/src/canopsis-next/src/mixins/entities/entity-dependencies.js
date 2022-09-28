@@ -3,12 +3,6 @@ import { createNamespacedHelpers } from 'vuex';
 const { mapActions } = createNamespacedHelpers('service');
 
 export const entitiesEntityDependenciesMixin = {
-  props: {
-    impact: {
-      type: Boolean,
-      default: false,
-    },
-  },
   methods: {
     ...mapActions({
       fetchServiceDependenciesWithoutStore: 'fetchDependenciesWithoutStore',

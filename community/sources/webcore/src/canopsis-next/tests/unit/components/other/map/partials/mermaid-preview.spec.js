@@ -8,6 +8,7 @@ const localVue = createVueInstance();
 
 const stubs = {
   panzoom: true,
+  'c-zoom-overlay': true,
   'mermaid-code-preview': true,
   'mermaid-points-preview': true,
 };
