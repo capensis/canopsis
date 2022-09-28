@@ -263,6 +263,8 @@ export default merge({
     itemFound: '{count} article trouvé | {count} articles trouvés',
     canonicalType: 'Type canonique',
     map: 'Carte | Plans',
+    instructions: 'Des instructions',
+    playlist: 'Liste de lecture | Listes de lecture',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -284,7 +286,6 @@ export default merge({
     acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
     saveChanges: 'Sauvegarder',
     reportIncident: 'Signaler un incident',
-    instructions: 'Des instructions',
     times: {
       second: 'seconde | secondes',
       minute: 'minute | minutes',
@@ -464,6 +465,9 @@ export default merge({
       },
       [SCENARIO_TRIGGERS.instructionjobfail]: {
         text: 'Job de remédiation en erreur',
+      },
+      [SCENARIO_TRIGGERS.instructionjobcomplete]: {
+        text: 'Job de remédiation terminé',
       },
       [SCENARIO_TRIGGERS.instructioncomplete]: {
         text: 'Consigne manuelle terminée',
@@ -1518,20 +1522,6 @@ export default merge({
           success: '{jobName} a été modifiée avec succès',
         },
       },
-      fields: {
-        configuration: 'Configuration',
-        jobId: 'Identifiant de la tâche',
-        query: 'Requête',
-        multipleExecutions: 'Autoriser l\'exécution parallèle',
-      },
-      errors: {
-        invalidJSON: 'JSON non valide',
-      },
-      addPayload: 'Ajouter un payload',
-      deletePayload: 'Supprimer le payload',
-      payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
-        + '<i>Quelques exemples:</i>'
-        + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
     },
     clickOutsideConfirmation: {
       title: 'Êtes-vous sûr(e) ?',
@@ -2044,6 +2034,8 @@ export default merge({
       + '<p><strong>{{ .Count }} conséquences;</strong> Message de la dernière alarme conséquence : <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Règle : <strong>{{ .Rule.Name }};</strong></p>'
       + '<p>Un message informatif statique</p>'
       + '<p>Corrélé par la règle <strong>{{ .Rule.Name }}</strong></p>',
+    removeConfirmationText: 'Lors de la suppression d\'une règle de méta-alarme, toutes les méta-alarmes correspondantes seront également supprimées.\n'
+      + 'Êtes-vous sûr de continuer?',
     errors: {
       noValuePaths: 'Vous devez ajouter au moins un chemin de valeur',
     },
@@ -2268,7 +2260,7 @@ export default merge({
   },
 
   healthcheck: {
-    systemIsDown: 'Le système est en panne',
+    metricsUnavailable: 'Les métriques ne sont pas collectées',
     notRunning: '{name} n\'est pas disponible',
     queueOverflow: 'Débordement de file d\'attente',
     lackOfInstances: 'Manque d\'instances',
@@ -2279,6 +2271,7 @@ export default merge({
     queueOverflowed: 'La file d\'attente est débordée : {queueLength} messages sur {maxQueueLength}.\nVeuillez vérifier les instances.',
     engineDown: '{name} est en panne, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer le service.',
     engineDownOrSlow: '{name} est en panne ou répond trop lentement, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer l\'instance.',
+    timescaleDown: '{name} est en panne, les métriques et les KPI ne sont pas collectés.\nVeuillez vérifier le journal ou redémarrer l\'instance.',
     invalidEnginesOrder: 'Configuration des moteurs non valide',
     invalidInstancesConfiguration: 'Configuration des instances non valide : les instances du moteur lisent ou écrivent dans différentes files d\'attente.\nVeuillez vérifier les instances.',
     chainConfigurationInvalid: 'La configuration de la chaîne des moteurs n\'est pas valide.\nReportez-vous ci-dessous pour la séquence correcte des moteurs :',
@@ -2521,6 +2514,23 @@ export default merge({
           disabledOnTypes: 'Désactivé sur les types',
         },
       },
+    },
+  },
+
+  remediationJob: {
+    configuration: 'Configuration',
+    jobId: 'Identifiant de la tâche',
+    query: 'Requête',
+    multipleExecutions: 'Autoriser l\'exécution parallèle',
+    retryAmount: 'Montant de la nouvelle tentative',
+    retryInterval: 'Intervalle de relance',
+    addPayload: 'Ajouter un payload',
+    deletePayload: 'Supprimer le payload',
+    payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
+      + '<i>Quelques exemples:</i>'
+      + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+    errors: {
+      invalidJSON: 'JSON non valide',
     },
   },
 
@@ -2945,6 +2955,8 @@ export default merge({
   kpi: {
     alarmMetrics: 'Métriques d\'alarme',
     sli: 'SLI',
+    metricsNotAvailable: 'TimescaleDB ne fonctionne pas. Les métriques ne sont pas disponibles.',
+    noData: 'Pas de données disponibles',
   },
 
   kpiMetrics: {

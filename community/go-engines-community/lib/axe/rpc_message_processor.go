@@ -149,6 +149,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	if event.Entity != nil &&
 		alarmChangeType == types.AlarmChangeTypeAutoInstructionFail ||
 		alarmChangeType == types.AlarmChangeTypeInstructionJobFail ||
+		alarmChangeType == types.AlarmChangeTypeInstructionJobComplete ||
 		alarmChangeType == types.AlarmChangeTypeAutoInstructionComplete {
 		body, err := p.Encoder.Encode(types.Event{
 			EventType:     types.EventTypeTrigger,
