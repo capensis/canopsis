@@ -18,8 +18,9 @@
     :item-disabled="itemDisabled",
     :menu-props="{ contentClass: 'c-entity-field__list' }",
     :clearable="clearable",
-    dense,
+    no-filter,
     combobox,
+    dense,
     @focus="onFocus",
     @blur="onBlur",
     @update:searchInput="debouncedUpdateSearch"
@@ -218,19 +219,24 @@ export default {
     },
 
     async fetchEntities() {
-      this.entitiesPending = true;
+      try {
+        this.entitiesPending = true;
 
-      const { data: entities, meta } = await this.fetchContextEntitiesListWithoutStore({
-        params: this.getQuery(),
-      });
+        const { data: entities, meta } = await this.fetchContextEntitiesListWithoutStore({
+          params: this.getQuery(),
+        });
 
-      this.pageCount = meta.page_count;
+        this.pageCount = meta.page_count;
 
-      this.entitiesById = {
-        ...this.entitiesById,
-        ...keyBy(entities, this.itemValue),
-      };
-      this.entitiesPending = false;
+        this.entitiesById = {
+          // ...this.entitiesById,
+          ...keyBy(entities, this.itemValue),
+        };
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.entitiesPending = false;
+      }
     },
   },
 };

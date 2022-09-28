@@ -13,8 +13,6 @@
 </template>
 
 <script>
-import { get } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -33,7 +31,7 @@ export default {
         ? 'impacts'
         : 'dependencies';
 
-      return this.$t(`modals.serviceDependencies.${type}.title`, { name: get(this.config.root, 'entity.name') });
+      return this.$t(`modals.serviceDependencies.${type}.title`, { name: this.config.root?.name });
     },
   },
 };

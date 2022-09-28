@@ -1,97 +1,57 @@
 <template lang="pug">
-  div
-    c-empty-data-table-columns(v-if="!hasColumns")
-    c-advanced-data-table(
-      v-else,
-      :items="contextEntities",
-      :headers="headers",
-      :loading="contextEntitiesPending || columnsFiltersPending",
-      :total-items="contextEntitiesMeta.total_count",
-      :pagination.sync="pagination",
-      :toolbar-props="toolbarProps",
-      select-all,
-      expand,
-      no-pagination
-    )
-      template(#toolbar="")
-        v-flex
-          c-advanced-search-field(
-            :query.sync="query",
-            :columns="columns",
-            :tooltip="$t('search.contextAdvancedSearch')"
-          )
-        v-flex(v-if="hasAccessToCategory")
-          c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
-        v-flex
-          v-layout(row, wrap, align-center)
-            filter-selector(
-              :label="$t('settings.selectAFilter')",
-              :filters="userPreference.filters",
-              :locked-filters="widget.filters",
-              :value="mainFilter",
-              :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
-              @input="updateSelectedFilter"
-            )
-            filters-list-btn(
-              :widget-id="widget._id",
-              :addable="hasAccessToAddFilter",
-              :editable="hasAccessToEditFilter",
-              private,
-              with-alarm,
-              with-entity,
-              with-pbehavior
-            )
-        v-flex
-          v-checkbox(
-            :input-value="query.no_events",
-            :label="$t('context.noEventsFilter')",
-            color="primary",
-            @change="updateNoEvents"
-          )
-        v-flex(v-if="hasAccessToCreateEntity")
-          context-fab
-        v-flex(v-if="hasAccessToExportAsCsv")
-          c-action-btn(
-            :loading="!!contextExportPending",
-            :tooltip="$t('settings.exportAsCsv')",
-            icon="cloud_download",
-            color="black",
-            @click="exportContextList"
-          )
-        v-flex(v-if="hasColumns", xs12)
-          v-layout(row, wrap, align-center)
-            c-pagination(
-              :page="query.page",
-              :limit="query.limit",
-              :total="contextEntitiesMeta.total_count",
-              type="top",
-              @input="updateQueryPage"
-            )
-      template(v-for="column in columns", :slot="column.value", slot-scope="props")
-        entity-column-cell(
-          :entity="props.item",
-          :column="column",
-          :columns-filters="columnsFilters"
+  entities-list-table-with-pagination(
+    :widget="widget",
+    :entities="contextEntities",
+    :pending="contextEntitiesPending",
+    :meta="contextEntitiesMeta",
+    :query.sync="query",
+    selectable
+  )
+    template(#toolbar="")
+      v-flex
+        c-advanced-search-field(
+          :query.sync="query",
+          :columns="columns",
+          :tooltip="$t('search.contextAdvancedSearch')"
         )
-      template(#actions="{ item }")
-        actions-panel(:item="item", :editing="editing")
-      template(#expand="{ item }")
-        entities-list-expand-panel(
-          :item="item",
-          :widget="widget",
-          :tab-id="tabId",
-          :columns-filters="columnsFilters"
+      v-flex(v-if="hasAccessToCategory")
+        c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
+      v-flex
+        v-layout(row, wrap, align-center)
+          filter-selector(
+            :label="$t('settings.selectAFilter')",
+            :filters="userPreference.filters",
+            :locked-filters="widget.filters",
+            :value="mainFilter",
+            :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
+            @input="updateSelectedFilter"
+          )
+          filters-list-btn(
+            :widget-id="widget._id",
+            :addable="hasAccessToAddFilter",
+            :editable="hasAccessToEditFilter",
+            private,
+            with-alarm,
+            with-entity,
+            with-pbehavior
+          )
+      v-flex
+        v-checkbox(
+          :input-value="query.no_events",
+          :label="$t('context.noEventsFilter')",
+          color="primary",
+          @change="updateNoEvents"
         )
-      template(#mass-actions="{ selected, clearSelected }")
-        mass-actions-panel.ml-3(:items="selected", @clear:items="clearSelected")
-
-    c-table-pagination(
-      :total-items="contextEntitiesMeta.total_count",
-      :rows-per-page="query.limit",
-      :page="query.page",
-      @update:page="updateQueryPage",
-      @update:rows-per-page="updateRecordsPerPage"
-    )
+      v-flex(v-if="hasAccessToCreateEntity")
+        context-fab
+      v-flex(v-if="hasAccessToExportAsCsv")
+        c-action-btn(
+          :loading="!!contextExportPending",
+          :tooltip="$t('settings.exportAsCsv')",
+          icon="cloud_download",
+          color="black",
+          @click="exportContextList"
+        )
 </template>
 
 <script>
@@ -105,28 +65,21 @@ import { widgetColumnsContextMixin } from '@/mixins/widget/columns';
 import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
-import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
 import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 
-import EntityColumnCell from './columns-formatting/entity-column-cell.vue';
-import EntitiesListExpandPanel from './partials/entities-list-expand-panel.vue';
 import ContextFab from './actions/context-fab.vue';
-import ActionsPanel from './actions/actions-panel.vue';
-import MassActionsPanel from './actions/mass-actions-panel.vue';
+import EntitiesListTableWithPagination from './partials/entities-list-table-with-pagination.vue';
 
 export default {
   components: {
     FilterSelector,
     FiltersListBtn,
-    EntitiesListExpandPanel,
     ContextFab,
-    EntityColumnCell,
-    ActionsPanel,
-    MassActionsPanel,
+    EntitiesListTableWithPagination,
   },
   mixins: [
     authMixin,
@@ -134,7 +87,6 @@ export default {
     widgetColumnsContextMixin,
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
-    entitiesAlarmColumnsFiltersMixin,
     permissionsWidgetsContextFilters,
     permissionsWidgetsContextCategory,
     exportCsvMixinCreator({
@@ -148,25 +100,8 @@ export default {
       type: Object,
       required: true,
     },
-    editing: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  data() {
-    return {
-      columnsFilters: [],
-      columnsFiltersPending: false,
-    };
   },
   computed: {
-    toolbarProps() {
-      return {
-        'justify-space-between': true,
-        'align-center': true,
-      };
-    },
-
     headers() {
       if (this.hasColumns) {
         return [
@@ -185,11 +120,6 @@ export default {
     hasAccessToExportAsCsv() {
       return this.checkAccess(USERS_PERMISSIONS.business.context.actions.exportAsCsv);
     },
-  },
-  async mounted() {
-    this.columnsFiltersPending = true;
-    this.columnsFilters = await this.fetchAlarmColumnsFiltersList();
-    this.columnsFiltersPending = false;
   },
   methods: {
     updateNoEvents(noEvents) {

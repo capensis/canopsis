@@ -12,6 +12,7 @@ export const createSettingsMocks = () => {
     data: [],
     meta: { total_count: 0 },
   });
+  const fetchItem = jest.fn();
 
   return {
     createWidget,
@@ -20,6 +21,7 @@ export const createSettingsMocks = () => {
     fetchActiveView,
     fetchUserPreference,
     currentUserPermissionsById,
+    fetchItem,
     activeViewModule: {
       name: 'activeView',
       actions: {
