@@ -1,0 +1,211 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`map Renders \`map\` with default props 1`] = `
+<div
+  class="pa-2"
+>
+  <div
+    class="layout mx-1 wrap"
+  >
+    <!---->
+    <!---->
+  </div>
+  <!---->
+  <!---->
+  <!---->
+</div>
+`;
+
+exports[`map Renders flowchart \`map\` with state 1`] = `
+<div
+  class="pa-2"
+>
+  <div
+    class="layout mx-1 wrap"
+  >
+    <div
+      class="flex xs3"
+    >
+      <c-entity-category-field-stub
+        class="mr-3"
+      />
+    </div>
+    <div
+      class="flex xs4"
+    >
+      <div
+        class="layout row wrap align-center"
+      >
+        <filter-selector-stub
+          filters=""
+          label="Select a filter"
+          lockedfilters=""
+        />
+        <filters-list-btn-stub
+          addable="true"
+          editable="true"
+          private="true"
+          widgetid="map-widget-id"
+          withentity="true"
+          withserviceweather="true"
+        />
+      </div>
+    </div>
+  </div>
+  <!---->
+  <!---->
+  <flowchart-preview-stub
+    colorindicator="color_indicator"
+    map="[object Object]"
+    pbehaviorenabled="true"
+    popupactions="true"
+    popuptemplate="entity_info_template"
+  />
+</div>
+`;
+
+exports[`map Renders geo \`map\` with state 1`] = `
+<div
+  class="pa-2"
+>
+  <div
+    class="layout mx-1 wrap"
+  >
+    <div
+      class="flex xs3"
+    >
+      <c-entity-category-field-stub
+        class="mr-3"
+      />
+    </div>
+    <div
+      class="flex xs4"
+    >
+      <div
+        class="layout row wrap align-center"
+      >
+        <filter-selector-stub
+          filters=""
+          label="Select a filter"
+          lockedfilters=""
+        />
+        <filters-list-btn-stub
+          addable="true"
+          editable="true"
+          private="true"
+          widgetid="map-widget-id"
+          withentity="true"
+          withserviceweather="true"
+        />
+      </div>
+    </div>
+  </div>
+  <!---->
+  <!---->
+  <geomap-preview-stub
+    colorindicator="color_indicator"
+    iconsize="24"
+    map="[object Object]"
+    minzoom="2"
+    pbehaviorenabled="true"
+    popupactions="true"
+    popuptemplate="entity_info_template"
+  />
+</div>
+`;
+
+exports[`map Renders mermaid \`map\` with state 1`] = `
+<div
+  class="pa-2"
+>
+  <div
+    class="layout mx-1 wrap"
+  >
+    <div
+      class="flex xs3"
+    >
+      <c-entity-category-field-stub
+        class="mr-3"
+      />
+    </div>
+    <div
+      class="flex xs4"
+    >
+      <div
+        class="layout row wrap align-center"
+      >
+        <filter-selector-stub
+          filters=""
+          label="Select a filter"
+          lockedfilters=""
+        />
+        <filters-list-btn-stub
+          addable="true"
+          editable="true"
+          private="true"
+          widgetid="map-widget-id"
+          withentity="true"
+          withserviceweather="true"
+        />
+      </div>
+    </div>
+  </div>
+  <!---->
+  <!---->
+  <mermaid-preview-stub
+    colorindicator="color_indicator"
+    map="[object Object]"
+    pbehaviorenabled="true"
+    popupactions="true"
+    popuptemplate="entity_info_template"
+  />
+</div>
+`;
+
+exports[`map Renders treeOfDependencies \`map\` with state 1`] = `
+<div
+  class="pa-2"
+>
+  <div
+    class="layout mx-1 wrap"
+  >
+    <div
+      class="flex xs3"
+    >
+      <c-entity-category-field-stub
+        class="mr-3"
+      />
+    </div>
+    <div
+      class="flex xs4"
+    >
+      <div
+        class="layout row wrap align-center"
+      >
+        <filter-selector-stub
+          filters=""
+          label="Select a filter"
+          lockedfilters=""
+        />
+        <filters-list-btn-stub
+          addable="true"
+          editable="true"
+          private="true"
+          widgetid="map-widget-id"
+          withentity="true"
+          withserviceweather="true"
+        />
+      </div>
+    </div>
+  </div>
+  <!---->
+  <!---->
+  <span
+    color-indicator="color_indicator"
+    map="[object Object]"
+    pbehavior-enabled="true"
+    popup-actions="popup-actions"
+    popup-template="entity_info_template"
+  />
+</div>
+`;
