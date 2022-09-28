@@ -55,14 +55,30 @@ template:
   }
 
 job:
-  job_to_get:
+  job_to_get_1:
     <<: *job
-    _id: test-job-to-get
+    _id: test-job-to-get-1
     config: test-job-config-to-edit-job
     created: 1596712203
     external_id: test-job-id
-    name: test-job-name-to-get
+    name: test-job-name-to-get-1
     payload: '{"key1": "val1","key2": "val2"}'
+
+  job_to_get_2:
+    <<: *job
+    _id: test-job-to-get-2
+    config: test-job-config-to-edit-job
+    created: 1596712203
+    external_id: test-job-id
+    name: test-job-name-to-get-2
+    query:
+      key1: val1
+      key2: val2
+    multiple_executions: true
+    retry_amount: 3
+    retry_interval:
+      value: 10
+      unit: s
 
   job_to_update:
     <<: *job
@@ -71,6 +87,11 @@ job:
   job_to_delete:
     <<: *job
     _id: test-job-to-delete
+
+  job_to_check_unique:
+    <<: *job
+    _id: test-job-to-check-unique
+    name: test-job-to-check-unique-name
 
   job_to_check_linked_to_manual_instruction:
     <<: *job
@@ -203,7 +224,7 @@ job:
     <<: *job_dummy_failed
     _id: test-job-action-remediation-triggers-2
     name: test-job-action-remediation-triggers-2-name
-    config: test-job-config-to-run-manual-job
+    config: test-job-config-to-run-manual-job-1
     payload: '{"test-job-action-remediation-triggers-2-key": "test-job-action-remediation-triggers-2-val"}'
 
   job_action_remediation_triggers_3:

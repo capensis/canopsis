@@ -685,6 +685,82 @@ default_entities:
       old_info:
         value: "1"
 
+  connector_complex_rule_rate_6:
+    <<: *connector
+    _id: test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
+    name: test-complex-rule-rate-6-connectorname
+    depends:
+      - test-complex-rule-rate-6-component
+    impact:
+      - test-complex-rule-rate-6-resource-1-1/test-complex-rule-rate-6-component
+      - test-complex-rule-rate-6-resource-1-2/test-complex-rule-rate-6-component
+      - test-complex-rule-rate-6-resource-1-3/test-complex-rule-rate-6-component
+      - test-complex-rule-rate-6-resource-1-4/test-complex-rule-rate-6-component
+      - test-complex-rule-rate-6-resource-1-5/test-complex-rule-rate-6-component
+
+  component_complex_rule_rate_6:
+    <<: *component
+    _id: test-complex-rule-rate-6-component
+    name: test-complex-rule-rate-6-component
+    depends:
+      - test-complex-rule-rate-6-resource-1-1/test-complex-rule-rate-6-component
+      - test-complex-rule-rate-6-resource-1-2/test-complex-rule-rate-6-component
+      - test-complex-rule-rate-6-resource-1-3/test-complex-rule-rate-6-component
+      - test-complex-rule-rate-6-resource-1-4/test-complex-rule-rate-6-component
+      - test-complex-rule-rate-6-resource-1-5/test-complex-rule-rate-6-component
+    impact:
+      - test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
+
+  resource_complex_rule_rate_6_1_1:
+    <<: *resource
+    _id: test-complex-rule-rate-6-resource-1-1/test-complex-rule-rate-6-component
+    name: test-complex-rule-rate-6-resource-1-1
+    component: test-complex-rule-rate-6-component
+    depends:
+      - test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
+    impact:
+      - test-complex-rule-rate-6-component
+
+  resource_complex_rule_rate_6_1_2:
+    <<: *resource
+    _id: test-complex-rule-rate-6-resource-1-2/test-complex-rule-rate-6-component
+    name: test-complex-rule-rate-6-resource-1-2
+    component: test-complex-rule-rate-6-component
+    depends:
+      - test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
+    impact:
+      - test-complex-rule-rate-6-component
+
+  resource_complex_rule_rate_6_1_3:
+    <<: *resource
+    _id: test-complex-rule-rate-6-resource-1-3/test-complex-rule-rate-6-component
+    name: test-complex-rule-rate-6-resource-1-3
+    component: test-complex-rule-rate-6-component
+    depends:
+      - test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
+    impact:
+      - test-complex-rule-rate-6-component
+
+  resource_complex_rule_rate_6_1_4:
+    <<: *resource
+    _id: test-complex-rule-rate-6-resource-1-4/test-complex-rule-rate-6-component
+    name: test-complex-rule-rate-6-resource-1-4
+    component: test-complex-rule-rate-6-component
+    depends:
+      - test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
+    impact:
+      - test-complex-rule-rate-6-component
+
+  resource_complex_rule_rate_6_1_5:
+    <<: *resource
+    _id: test-complex-rule-rate-6-resource-1-5/test-complex-rule-rate-6-component
+    name: test-complex-rule-rate-6-resource-1-5
+    component: test-complex-rule-rate-6-component
+    depends:
+      - test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
+    impact:
+      - test-complex-rule-rate-6-component
+
   default_entities_34:
     _id: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
     component: test-instruction-execution-next-component
@@ -2101,117 +2177,6 @@ default_entities:
     infos: { }
     measurements: null
     name: test-complex-rule-rate-5-resource-5
-    type: resource
-  default_entities_185:
-    _id: test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
-    depends:
-      - test-complex-rule-rate-6-component
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact:
-      - test-complex-rule-rate-6-resource-1/test-complex-rule-rate-6-component
-      - test-complex-rule-rate-6-resource-2/test-complex-rule-rate-6-component
-      - test-complex-rule-rate-6-resource-3/test-complex-rule-rate-6-component
-      - test-complex-rule-rate-6-resource-4/test-complex-rule-rate-6-component
-      - test-complex-rule-rate-6-resource-5/test-complex-rule-rate-6-component
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-6-connectorname
-    type: connector
-  default_entities_186:
-    _id: test-complex-rule-rate-6-component
-    depends:
-      - test-complex-rule-rate-6-resource-1/test-complex-rule-rate-6-component
-      - test-complex-rule-rate-6-resource-2/test-complex-rule-rate-6-component
-      - test-complex-rule-rate-6-resource-3/test-complex-rule-rate-6-component
-      - test-complex-rule-rate-6-resource-4/test-complex-rule-rate-6-component
-      - test-complex-rule-rate-6-resource-5/test-complex-rule-rate-6-component
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact:
-      - test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-6-component
-    type: component
-  default_entities_187:
-    _id: test-complex-rule-rate-6-resource-1/test-complex-rule-rate-6-component
-    component: test-complex-rule-rate-6-component
-    depends:
-      - test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact:
-      - test-complex-rule-rate-6-component
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-6-resource-1
-    type: resource
-  default_entities_188:
-    _id: test-complex-rule-rate-6-resource-2/test-complex-rule-rate-6-component
-    component: test-complex-rule-rate-6-component
-    depends:
-      - test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact:
-      - test-complex-rule-rate-6-component
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-6-resource-2
-    type: resource
-  default_entities_189:
-    _id: test-complex-rule-rate-6-resource-3/test-complex-rule-rate-6-component
-    component: test-complex-rule-rate-6-component
-    depends:
-      - test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact:
-      - test-complex-rule-rate-6-component
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-6-resource-3
-    type: resource
-  default_entities_190:
-    _id: test-complex-rule-rate-6-resource-4/test-complex-rule-rate-6-component
-    component: test-complex-rule-rate-6-component
-    depends:
-      - test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact:
-      - test-complex-rule-rate-6-component
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-6-resource-4
-    type: resource
-  default_entities_191:
-    _id: test-complex-rule-rate-6-resource-5/test-complex-rule-rate-6-component
-    component: test-complex-rule-rate-6-component
-    depends:
-      - test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact:
-      - test-complex-rule-rate-6-component
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-6-resource-5
     type: resource
   default_entities_192:
     _id: test-complex-rule-rate-7-connector/test-complex-rule-rate-7-connectorname

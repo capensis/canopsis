@@ -4,34 +4,42 @@
       c-enabled-field(v-field="form.enabled")
       c-enabled-field(
         v-field="form.multiple_executions",
-        :label="$t('modals.createRemediationJob.fields.multipleExecutions')"
+        :label="$t('remediationJob.multipleExecutions')"
       )
     c-name-field(v-field="form.name")
     remediation-job-configuration-field(v-field="form.config")
-    v-text-field(
+    c-id-field(
       v-field="form.job_id",
-      v-validate="'required'",
-      :label="$t('modals.createRemediationJob.fields.jobId')",
-      :error-messages="errors.collect('job_id')",
-      name="job_id"
+      :label="$t('remediationJob.jobId')",
+      name="job_id",
+      required
     )
+    v-layout(row)
+      v-flex.pr-3(xs6)
+        c-number-field(v-field="form.retry_amount", :label="$t('remediationJob.retryAmount')")
+      v-flex(xs6)
+        c-duration-field(
+          v-field="form.retry_interval",
+          :label="$t('remediationJob.retryInterval')",
+          clearable
+        )
     v-layout(row)
       v-btn.ml-0(
         v-if="!form.payload",
         color="primary",
         outline,
         @click="addPayload"
-      ) {{ $t('modals.createRemediationJob.addPayload') }}
+      ) {{ $t('remediationJob.addPayload') }}
       template(v-else)
         c-json-field(
           v-field="form.payload",
           :label="$t('common.payload')",
-          :help-text="$t('modals.createRemediationJob.payloadHelp')",
+          :help-text="$t('remediationJob.payloadHelp')",
           name="payload",
           variables
         )
         c-action-btn(
-          :tooltip="$t('modals.createRemediationJob.deletePayload')",
+          :tooltip="$t('remediationJob.deletePayload')",
           icon="delete",
           color="error",
           bottom,
@@ -39,7 +47,7 @@
         )
     c-text-pairs-field(
       v-field="form.query",
-      :title="$t('modals.createRemediationJob.fields.query')",
+      :title="$t('remediationJob.query')",
       :text-label="$t('common.field')",
       :value-label="$t('common.value')",
       name="query"

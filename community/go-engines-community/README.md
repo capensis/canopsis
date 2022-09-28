@@ -4,7 +4,7 @@ This directory contains the open-source “new generation” engines for Canopsi
 
 ## Requirements
 
-* A native build requires Requires [Go](https://golang.org/dl/) (see the `DOCKER_GOLANG_VERSION` variable in the [.env](.env) for the exact version) and GNU Make.
+* A native build requires Requires [Go](https://golang.org/dl/) (see the `GOLANG_VERSION` variable in the [.env](../.env) for the exact version) and GNU Make.
 * A Docker build requires Docker and GNU Make.
 
 ## Building
