@@ -19,37 +19,26 @@
       @dblclick.stop="openEditPointFormByDoubleClick(point)",
       @mousedown.stop.prevent.left="startMoving(point, index)"
     )
-
-    v-menu(
+    point-contextmenu(
       :value="shownMenu",
-      :position-x="pageX",
-      :position-y="pageY",
-      :close-on-content-click="false",
-      absolute,
-      @input="clearMenuData"
+      :editing="!!editingPoint",
+      :position-x="clientX",
+      :position-y="clientY",
+      @add:point="openAddPointForm",
+      @edit:point="openEditPointForm",
+      @remove:point="showRemovePointModal",
+      @close="clearMenuData"
     )
-      mermaid-contextmenu(
-        :editing="!!editingPoint",
-        @add:point="openAddPointForm",
-        @edit:point="openEditPointForm",
-        @remove:point="showRemovePointModal"
-      )
-    v-menu(
+    point-form-dialog-menu(
       :value="isFormOpened",
-      :position-x="pageX",
-      :position-y="pageY",
-      :close-on-content-click="false",
-      ignore-click-outside,
-      absolute
+      :point="formPoint",
+      :position-x="clientX",
+      :position-y="clientY",
+      :editing="!!editingPoint",
+      @cancel="clearMenuData",
+      @submit="submitPointForm",
+      @remove="showRemovePointModal"
     )
-      point-form-dialog(
-        v-if="isFormOpened",
-        :point="formPoint",
-        :editing="!!editingPoint",
-        @cancel="clearMenuData",
-        @submit="submitPointForm",
-        @remove="showRemovePointModal"
-      )
 </template>
 
 <script>
@@ -64,11 +53,11 @@ import { formBaseMixin } from '@/mixins/form';
 
 import MermaidPointMarker from '@/components/other/map/partials/mermaid-point-marker.vue';
 
-import MermaidContextmenu from './mermaid-contextmenu.vue';
-import PointFormDialog from './point-form-dialog.vue';
+import PointContextmenu from './point-contextmenu.vue';
+import PointFormDialogMenu from './point-form-dialog-menu.vue';
 
 export default {
-  components: { MermaidContextmenu, PointFormDialog, MermaidPointMarker },
+  components: { PointContextmenu, PointFormDialogMenu, MermaidPointMarker },
   mixins: [formBaseMixin],
   model: {
     prop: 'points',
@@ -104,8 +93,8 @@ export default {
 
       offsetX: 0,
       offsetY: 0,
-      pageX: 0,
-      pageY: 0,
+      clientX: 0,
+      clientY: 0,
     };
   },
   computed: {
@@ -134,8 +123,8 @@ export default {
     },
 
     setOffsetsByEvent(event) {
-      this.pageX = event.pageX;
-      this.pageY = event.pageY - window.scrollY;
+      this.clientX = event.clientX;
+      this.clientY = event.clientY;
       this.offsetX = event.offsetX;
       this.offsetY = event.offsetY;
     },
@@ -143,8 +132,8 @@ export default {
     setOffsetsByPoint(point) {
       const { x, y } = this.$refs.container.getBoundingClientRect();
 
-      this.pageX = x + point.x;
-      this.pageY = y + point.y;
+      this.clientX = x + point.x;
+      this.clientY = y + point.y;
       this.offsetX = point.x;
       this.offsetY = point.y;
     },
@@ -182,10 +171,6 @@ export default {
     },
 
     openAddPointForm() {
-      if (this.isFormOpened) {
-        return;
-      }
-
       this.addingPoint = mermaidPointToForm(
         this.normalizePosition({
           x: this.offsetX,

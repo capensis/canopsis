@@ -5,9 +5,9 @@
 <script>
 import { merge } from 'lodash';
 
-import { renderMermaid } from '@/helpers/mermaid';
-
 import { MERMAID_THEME_PROPERTIES_BY_NAME } from '@/constants';
+
+import { renderMermaid } from '@/helpers/mermaid';
 
 export default {
   props: {
@@ -50,8 +50,6 @@ export default {
         },
         sequence: {
           useMaxWidth: false,
-        },
-        flowchart: {
         },
         requirement: {
           useMaxWidth: false,

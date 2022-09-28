@@ -16,7 +16,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with default props 1`] = `
 </div>
 `;
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode  1`] = `
+exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode 1`] = `
 <div
   style="min-height: 40px;"
 >
@@ -55,7 +55,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode  1`] = `
 </div>
 `;
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode  1`] = `
+exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode 1`] = `
 <div
   style="min-height: 40px;"
 >
@@ -366,7 +366,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and core editi
 </div>
 `;
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with widget title  1`] = `
+exports[`widget-wrapper Renders \`widget-wrapper\` with widget title 1`] = `
 <div
   style="min-height: 40px;"
 >
