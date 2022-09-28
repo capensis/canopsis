@@ -20,7 +20,6 @@ import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.
  * @module context
  *
  * @prop {Object} item - Item of context entities lists
- * @prop {boolean} [editing=false] - Is editing mode enable on a view
  */
 export default {
   components: { SharedActionsPanel },
@@ -31,10 +30,6 @@ export default {
     item: {
       type: Object,
       required: true,
-    },
-    editing: {
-      type: Boolean,
-      default: false,
     },
   },
   data() {
@@ -97,10 +92,6 @@ export default {
 
       actions.push(filteredActionsMap.pbehavior, filteredActionsMap.variablesHelp);
 
-      if (this.editing) {
-        actions.push(filteredActionsMap.variablesHelp);
-      }
-
       actions = compact(actions);
 
       return {
@@ -129,12 +120,20 @@ export default {
           },
         });
       } else {
-        const basicEntity = await this.fetchBasicContextEntityWithoutStore({ id: this.item._id });
+        const [basicEntity, { impact, depends }] = await Promise.all([
+          this.fetchBasicContextEntityWithoutStore({ id: this.item._id }),
+          this.fetchContextEntityContextGraphWithoutStore({ id: this.item._id }),
+        ]);
 
         this.$modals.show({
           name: MODALS.createEntity,
           config: {
-            entity: basicEntity,
+            entity: {
+              ...basicEntity,
+
+              impact,
+              depends,
+            },
             title: this.$t('modals.createEntity.edit.title'),
             action: async (data) => {
               await this.updateContextEntityWithPopup({ id: basicEntity._id, data });
