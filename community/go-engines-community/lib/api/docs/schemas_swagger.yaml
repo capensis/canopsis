@@ -477,6 +477,17 @@ definitions:
       meta:
         $ref: '#/definitions/common.PaginatedMeta'
     type: object
+  alarmtag.Response:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      created:
+        type: integer
+      value:
+        type: string
+    type: object
   appinfo.AppInfoResponse:
     properties:
       allow_change_severity_to_info:
