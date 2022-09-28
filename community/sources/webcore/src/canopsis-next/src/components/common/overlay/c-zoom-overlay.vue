@@ -7,6 +7,8 @@
 </template>
 
 <script>
+import { ZOOM_OVERLAY_DELAY } from '@/config';
+
 export default {
   data() {
     return {
@@ -27,7 +29,7 @@ export default {
       }
 
       this.shown = true;
-      this.timer = setTimeout(() => this.shown = false, 1500); // TODO: move to constants
+      this.timer = setTimeout(() => this.shown = false, ZOOM_OVERLAY_DELAY);
     },
   },
 };

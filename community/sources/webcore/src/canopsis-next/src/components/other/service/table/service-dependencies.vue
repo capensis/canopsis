@@ -52,7 +52,6 @@
 
 <script>
 import { get, uniq } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
 
 import { PAGINATION_LIMIT } from '@/config';
 
@@ -68,12 +67,13 @@ import {
   dependenciesDenormalize,
 } from '@/helpers/treeview/service-dependencies';
 
-import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
+import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
-const { mapActions } = createNamespacedHelpers('service');
+import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
 export default {
   components: { ColorIndicatorWrapper },
+  mixins: [entitiesEntityDependenciesMixin],
   props: {
     root: {
       type: Object,
@@ -181,11 +181,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      fetchServiceDependenciesWithoutStore: 'fetchDependenciesWithoutStore',
-      fetchServiceImpactsWithoutStore: 'fetchImpactsWithoutStore',
-    }),
-
     getIconByEntity(entity) {
       return getIconByEntityType(entity.type);
     },
@@ -272,12 +267,6 @@ export default {
       this.$set(this.pendingByIds, id, false);
 
       return result;
-    },
-
-    fetchDependenciesList(data) {
-      return this.impact
-        ? this.fetchServiceImpactsWithoutStore(data)
-        : this.fetchServiceDependenciesWithoutStore(data);
     },
   },
 };
