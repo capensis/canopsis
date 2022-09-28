@@ -3041,6 +3041,7 @@ export default merge({
     latitude: 'Latitude',
     longitude: 'Longitude',
     toggleAddingPointMode: 'Basculer le mode d\'ajout de point',
+    showAll: 'Afficher tout ({count})',
     types: {
       [MAP_TYPES.geo]: 'Géo',
       [MAP_TYPES.flowchart]: 'Flowchart',
@@ -3132,6 +3133,13 @@ export default merge({
     },
     errors: {
       pointsRequired: 'The points must be added',
+    },
+  },
+  treeOfDependencies: {
+    panzoom: {
+      helpText: 'Raccourcis utiles :\n'
+        + 'Ctrl + molette de la souris - zoom avant/arrière\n'
+        + 'Ctrl + Clic gauche de la souris + glisser - déplacer la zone\n',
     },
   },
 }, featureService.get('i18n.fr'));
