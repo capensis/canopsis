@@ -24,7 +24,6 @@ template:
     initial_output: <LoremIpsumSentence(3)>,
     parents: [ ],
     children: [ ],
-    tags: [ ],
     total_state_changes: 1,
     inactive_duration: 0,
     snooze_duration: 0,
@@ -67,11 +66,13 @@ template:
   - &alarm {
     _id: <UUID()>,
     t: <NowUnix()>,
+    tags: [],
     v: *alarm_value
   }
   - &resolved_alarm {
     _id: <UUID()>,
     t: <NowUnix()>,
+    tags: [],
     v: {
        <<: *alarm_value,
        resolved: <NowUnix()>,
@@ -915,7 +916,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_19:
     _id: test-instruction-execution-next-2
@@ -971,7 +971,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_20:
     _id: test-instruction-execution-next-step-1
@@ -1027,7 +1026,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_21:
     _id: test-instruction-execution-next-step-2
@@ -1083,7 +1081,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_22:
     _id: test-instruction-execution-next-step-3
@@ -1139,7 +1136,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_23:
     _id: test-instruction-execution-next-step-4
@@ -1195,7 +1191,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_24:
     _id: test-instruction-execution-next-step-5
@@ -1251,7 +1246,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_25:
     _id: test-instruction-execution-next-step-6
@@ -1307,7 +1301,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_26:
     _id: test-instruction-execution-previous-1
@@ -1363,7 +1356,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_27:
     _id: test-instruction-execution-previous-2
@@ -1419,7 +1411,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_28:
     _id: test-instruction-execution-previous-3
@@ -1475,7 +1466,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_29:
     _id: test-instruction-execution-previous-4
@@ -1531,7 +1521,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_30:
     _id: test-instruction-execution-cancel-1
@@ -1587,7 +1576,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_31:
     _id: test-instruction-execution-cancel-2
@@ -1643,7 +1631,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_32:
     _id: test-instruction-execution-pause-1
@@ -1692,7 +1679,6 @@ periodical_alarm:
           m: test-instruction-execution-pause alarm
           t: 1596942720
           val: 1
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_33:
     _id: test-instruction-execution-pause-2
@@ -1741,7 +1727,6 @@ periodical_alarm:
           m: test-instruction-execution-pause alarm
           t: 1596942720
           val: 1
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_34:
     _id: test-instruction-execution-pause-3
@@ -1790,7 +1775,6 @@ periodical_alarm:
           m: test-instruction-execution-pause alarm
           t: 1596942720
           val: 1
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_35:
     _id: test-instruction-execution-pause-4
@@ -1839,7 +1823,6 @@ periodical_alarm:
           m: test-instruction-execution-pause alarm
           t: 1596942720
           val: 1
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_36:
     _id: test-instruction-execution-resume-1
@@ -1888,7 +1871,6 @@ periodical_alarm:
           m: test-instruction-execution-resume alarm
           t: 1596942720
           val: 1
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_41:
     _id: test-instruction-execution-get-1
@@ -1944,7 +1926,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_42:
     _id: test-instruction-execution-get-2
@@ -2000,7 +1981,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_43:
     _id: test-instruction-execution-get-3
@@ -2056,7 +2036,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_44:
     _id: test-instruction-execution-get-4
@@ -2112,7 +2091,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_46:
     _id: test-alarm-to-check-deletable-entity
@@ -2138,7 +2116,6 @@ periodical_alarm:
       output: test-alarm-to-check-deletable-entity-output
       parents: [ ]
       resource: test-entity-to-check-deletable-resource
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_47:
     _id: test-alarm-to-delete-entity-linked-to-alarm
@@ -2164,7 +2141,6 @@ periodical_alarm:
       output: test-alarm-to-delete-entity-linked-to-alarm-output
       parents: [ ]
       resource: test-entitybasic-to-delete-linked-to-alarm-resource
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_50:
     _id: test-alarm-to-export-1
@@ -2228,7 +2204,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_51:
     _id: test-alarm-to-export-2
@@ -2277,7 +2252,6 @@ periodical_alarm:
           m: test-alarm-to-export-output
           t: 1597030219
           val: 1
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_57:
     _id: test-alarm-to-not-run-auto-instruction-manually
@@ -2326,7 +2300,6 @@ periodical_alarm:
           m: ""
           t: 1596942720
           val: 1
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_65:
     _id: test-alarm-to-stats-executions-get-9
@@ -2554,7 +2527,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_85:
     _id: test-alarm-time-fields-search-get-2
@@ -2611,7 +2583,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_86:
     _id: test-alarm-time-fields-search-get-3
@@ -2668,7 +2639,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_87:
     _id: test-alarm-time-fields-search-get-4
@@ -2726,7 +2696,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_88:
     _id: test-alarm-time-fields-search-get-5
@@ -2784,7 +2753,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_89:
     _id: test-alarm-time-fields-search-get-6
@@ -2842,7 +2810,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
 
   test-alarm-to-dynamic-infos-dictionary-1:

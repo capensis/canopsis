@@ -165,6 +165,7 @@ type Alarm struct {
 	Time   types.CpsTime                     `bson:"t" json:"t" swaggertype:"integer"`
 	Entity entity.Entity                     `bson:"entity" json:"entity"`
 	Value  AlarmValue                        `bson:"v" json:"v"`
+	Tags   []string                          `bson:"tags" json:"tags"`
 	Infos  map[string]map[string]interface{} `bson:"infos" json:"infos"`
 
 	Pbehavior *Pbehavior `bson:"pbehavior,omitempty" json:"pbehavior,omitempty"`
@@ -222,7 +223,6 @@ type AlarmValue struct {
 	Resource          string                `bson:"resource,omitempty" json:"resource,omitempty"`
 	Resolved          *types.CpsTime        `bson:"resolved,omitempty" json:"resolved,omitempty" swaggertype:"integer"`
 	PbehaviorInfo     *entity.PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	Tags              []string              `bson:"tags" json:"tags"`
 	Meta              string                `bson:"meta,omitempty" json:"meta,omitempty"`
 	Parents           []string              `bson:"parents" json:"parents"`
 	Children          []string              `bson:"children" json:"children"`
