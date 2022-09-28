@@ -20,16 +20,14 @@
 
 <script>
 import { omit } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
 
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { widgetColumnsContextMixin } from '@/mixins/widget/columns';
+import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
 
 import EntitiesListTableWithPagination from '../../widgets/context/partials/entities-list-table-with-pagination.vue';
-
-const { mapActions } = createNamespacedHelpers('service');
 
 export default {
   components: {
@@ -39,6 +37,7 @@ export default {
     authMixin,
     localQueryMixin,
     widgetColumnsContextMixin,
+    entitiesEntityDependenciesMixin,
     permissionsWidgetsContextCategory,
   ],
   props: {
@@ -78,11 +77,6 @@ export default {
     this.fetchList();
   },
   methods: {
-    ...mapActions({
-      fetchServiceDependenciesWithoutStore: 'fetchDependenciesWithoutStore',
-      fetchServiceImpactsWithoutStore: 'fetchImpactsWithoutStore',
-    }),
-
     updateCategory(category) {
       const categoryId = category && category._id;
 
@@ -107,12 +101,6 @@ export default {
       }
 
       return query;
-    },
-
-    fetchDependenciesList(data) { // TODO: move to mixin
-      return this.impact
-        ? this.fetchServiceImpactsWithoutStore(data)
-        : this.fetchServiceDependenciesWithoutStore(data);
     },
 
     async fetchList() {

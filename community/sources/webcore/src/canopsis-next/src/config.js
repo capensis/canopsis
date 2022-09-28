@@ -50,6 +50,8 @@ export const LOCALE_PRIORITIES = {
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
 
+export const ZOOM_OVERLAY_DELAY = 1500;
+
 export const VUETIFY_ANIMATION_DELAY = 300;
 
 export const POPUP_TICK_DELAY = 100;
