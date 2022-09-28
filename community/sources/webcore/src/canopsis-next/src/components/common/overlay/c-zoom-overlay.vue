@@ -2,8 +2,7 @@
   div.zoom-overlay__wrapper(@wheel="wheelListener")
     v-fade-transition
       div.zoom-overlay(v-if="shown")
-        span.zoom-overlay__text
-          div {{ $t('common.ctrlZoom') }}
+        span.zoom-overlay__text {{ $t('common.ctrlZoom') }}
     slot
 </template>
 
