@@ -303,6 +303,17 @@ cohérence dans les données (à la source, dans la base de données MongoDB) :
     caractères, dépasse la taille de la colonne `value` dans le modèle de
     données défini sur PostgreSQL (3000).
 
+- Valeur d'info avec un type de données non exploitable
+
+    ```
+    Skipping info with value type "{}": info id "{}" in entity "{}"
+    ```
+
+    L'info indiquée, contenue dans l'entité, n'a pas une valeur simple
+    (la valeur est un dictionnaire ou une liste).
+
+    L'info est inutilisable et sera ignorée par `kpi`.
+
 - Id ou nom d'entité trop long
 
     ```
