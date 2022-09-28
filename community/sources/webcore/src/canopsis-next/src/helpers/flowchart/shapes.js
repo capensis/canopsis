@@ -84,7 +84,8 @@ import { generatePoint } from './points';
 
 /**
  * @typedef {RectShape} ImageShape
- * @property {number} src
+ * @property {string} src
+ * @property {string} svg
  */
 
 /**
@@ -287,8 +288,11 @@ export const storageShapeToForm = shape => ({
 export const imageShapeToForm = shape => ({
   ...rectShapeToForm(shape),
 
+  width: shape.width ?? 40,
+  height: shape.height ?? 40,
   type: SHAPES.image,
   src: shape.src,
+  svg: shape.svg,
 });
 
 /**

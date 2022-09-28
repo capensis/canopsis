@@ -2,6 +2,7 @@
   g
     rect(
       v-on="$listeners",
+      v-bind="$attrs",
       :x="x",
       :y="y",
       :rx="offset",
@@ -16,6 +17,7 @@
 
 <script>
 export default {
+  inheritAttrs: false,
   props: {
     width: {
       type: Number,

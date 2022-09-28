@@ -49,7 +49,6 @@ export default {
       name: 'exdates',
       rules: 'required:true',
       getter: () => !!this.exdates.length,
-      context: () => this,
       vm: this,
     });
   },

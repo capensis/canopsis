@@ -61,7 +61,6 @@ export default {
       name: 'tabs',
       rules: 'required:true',
       getter: () => this.form.tabs_list.length > 0,
-      context: () => this,
       vm: this,
     });
   },

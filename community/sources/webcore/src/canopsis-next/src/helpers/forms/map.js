@@ -169,7 +169,7 @@ export const mermaidPointToForm = (point = {}) => ({
   y: point.y,
   entity: point.entity?._id ?? '',
   map: point.map?._id,
-  _id: uuid(),
+  _id: point._id ?? uuid(),
 });
 
 /**
@@ -184,7 +184,7 @@ export const flowchartPointToForm = (point = {}) => ({
   entity: point.entity?._id ?? '',
   shape: point.shape ?? '',
   map: point.map?._id,
-  _id: uuid(),
+  _id: point._id ?? uuid(),
 });
 
 /**
@@ -209,7 +209,7 @@ export const geomapPointToForm = (point = {}) => ({
   is_entity_coordinates: !!point.entity?.coordinates,
   entity: point.entity?._id ?? '',
   map: point.map?._id,
-  _id: uuid(),
+  _id: point._id ?? uuid(),
 });
 
 /**

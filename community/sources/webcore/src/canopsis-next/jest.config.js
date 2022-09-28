@@ -22,6 +22,7 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^vue$': 'vue/dist/vue.common.dev.js',
     mermaid: '<rootDir>/node_modules/mermaid/dist/mermaid.js',
+    './assets': '<rootDir>/tests/unit/mocks/flowchartAssets.js',
   },
   snapshotSerializers: [
     'jest-serializer-vue',
