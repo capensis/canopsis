@@ -16,11 +16,9 @@
         v-field="shapes",
         :view-box.sync="viewBox",
         :selected.sync="selected",
-        :points="points",
         :background-color="backgroundColor",
         :readonly="readonly",
-        :cursor-style="cursorStyle",
-        @update:points="$emit('update:points', $event)"
+        :cursor-style="cursorStyle"
       )
         template(#layers="{ data }")
           slot(name="layers", :data="data")
@@ -48,10 +46,6 @@ export default {
     shapes: {
       type: Object,
       required: true,
-    },
-    points: {
-      type: Array,
-      required: false,
     },
     cursorStyle: {
       type: String,

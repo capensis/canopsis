@@ -65,10 +65,6 @@ import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
-import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
-import GeomapPreview from '@/components/other/map/partials/geomap-preview.vue';
-import FlowchartPreview from '@/components/other/map/partials/flowchart-preview.vue';
-import TreeOfDependenciesPreview from '@/components/other/map/partials/tree-of-dependencies-preview.vue';
 
 import MapBreadcrumbs from './partials/map-breadcrumbs.vue';
 
@@ -76,6 +72,11 @@ const { mapActions: mapMapActions } = createNamespacedHelpers('map');
 const { mapActions: mapActiveViewActions } = createNamespacedHelpers('activeView');
 const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
+
+const MermaidPreview = () => import(/* webpackChunkName: "Maps" */ '@/components/other/map/partials/mermaid-preview.vue');
+const GeomapPreview = () => import(/* webpackChunkName: "Maps" */ '@/components/other/map/partials/geomap-preview.vue');
+const FlowchartPreview = () => import(/* webpackChunkName: "Maps" */ '@/components/other/map/partials/flowchart-preview.vue');
+const TreeOfDependenciesPreview = () => import(/* webpackChunkName: "Maps" */ '@/components/other/map/partials/tree-of-dependencies-preview.vue');
 
 export default {
   components: {

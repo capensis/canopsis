@@ -53,7 +53,7 @@ export const selectedShapesMixin = {
     },
 
     clearSelected() {
-      this.selectedIds = [];
+      this.setSelected([]);
       this.updateSelected();
     },
 

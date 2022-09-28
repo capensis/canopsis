@@ -2,10 +2,11 @@
   v-layout(column)
     flowchart.flowchart-map-editor.mb-2(
       :shapes="form.shapes",
-      :background-color.sync="form.background_color",
+      :background-color="form.background_color",
       :style="editorStyles",
       :cursor-style="addOnClick ? 'crosshair' : undefined",
-      @input="updateShapes"
+      @input="updateShapes",
+      @update:background-color="updateBackgroundColor"
     )
       template(#sidebar-prepend="{ data }")
         add-location-btn(v-model="addOnClick")
@@ -23,8 +24,6 @@
 
 <script>
 import { COLORS } from '@/config';
-
-import { mapIds } from '@/helpers/entities';
 
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
@@ -90,7 +89,6 @@ export default {
         name: this.name,
         rules: 'required:true',
         getter: () => !!this.form.points.length,
-        context: () => this,
         vm: this,
       });
     },
@@ -100,14 +98,17 @@ export default {
     },
 
     updateShapes(shapes) {
-      const shapesIds = mapIds(shapes);
-      const points = this.form.points.filter(point => (point.shape ? shapesIds.includes(point.shape) : true));
+      const points = this.form.points.filter(point => (point.shape ? shapes[point.shape] : true));
 
       this.updateModel({
         ...this.form,
         shapes,
         points,
       });
+    },
+
+    updateBackgroundColor(color) {
+      this.updateField('background_color', color);
     },
   },
 };

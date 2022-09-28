@@ -106,16 +106,16 @@ const enhanceWrapper = (wrapper) => {
  * @return {CustomWrapper}
  */
 export const mount = (component, options = {}) => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   const wrapper = testUtilsMount(
     component,
     merge({ mocks, stubs }, options, { i18n }),
   );
 
   enhanceWrapper(wrapper);
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   return wrapper;
 };

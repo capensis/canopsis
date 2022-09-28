@@ -289,9 +289,11 @@ export default {
     },
 
     callHandlers(event, data) {
+      const cursor = this.normalizeCursor({ x: event.clientX, y: event.clientY });
+
       this.handlers[event.type]?.forEach(func => func({
         event,
-        cursor: this.normalizeCursor({ x: event.clientX, y: event.clientY }),
+        cursor,
         ...data,
       }));
     },
@@ -331,7 +333,7 @@ export default {
       }
 
       if (!this.isSelected(shape._id) && !event.ctrlKey) {
-        this.clearSelected();
+        this.setSelected([]);
         this.setSelectedShape(shape);
       }
 
@@ -358,7 +360,7 @@ export default {
       }
 
       if (!event.ctrlKey) {
-        this.clearSelected();
+        this.setSelected([]);
         this.setSelectedShape(shape);
 
         return;

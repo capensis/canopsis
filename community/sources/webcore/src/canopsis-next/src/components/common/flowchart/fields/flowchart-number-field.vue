@@ -30,6 +30,7 @@ export default {
   computed: {
     numbers() {
       return [
+        /* from | to | step */
         ...range(1, 12, 1),
         ...range(12, 24, 2),
         ...range(24, 52, 4),
