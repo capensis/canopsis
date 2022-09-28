@@ -147,10 +147,7 @@ func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf,
 }
 
 func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterfaceConf) error {
-	defaultInterval := types.DurationWithUnit{
-		Value: defaultPopupInterval,
-		Unit:  "s",
-	}
+	defaultInterval := types.NewDurationWithUnit(defaultPopupInterval, types.DurationUnitSecond)
 
 	if model.PopupTimeout == nil {
 		model.PopupTimeout = &PopupTimeout{
@@ -204,10 +201,8 @@ func (s *store) RetrieveApiSecurityConfig(ctx context.Context) (map[string]apise
 		}
 		providerConf := conf[provider]
 		if providerConf.InactivityInterval == nil {
-			providerConf.InactivityInterval = &types.DurationWithUnit{
-				Value: config.ApiSecurityInactivityInterval,
-				Unit:  "h",
-			}
+			inactivityInterval := types.NewDurationWithUnit(config.ApiSecurityInactivityInterval, types.DurationUnitHour)
+			providerConf.InactivityInterval = &inactivityInterval
 		}
 		conf[provider] = providerConf
 	}
