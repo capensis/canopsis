@@ -263,7 +263,7 @@ Feature: Get entities
 
   Scenario: given get filter request should return entities which are matched to the filter
     When I am admin
-    When I do GET /api/v4/entities?filter=test-widgetfilter-to-entity-get-1
+    When I do GET /api/v4/entities?filters[]=test-widgetfilter-to-entity-get-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -284,7 +284,7 @@ Feature: Get entities
 
   Scenario: given get filter request with old mongo query should return entities which are matched to the filter
     When I am admin
-    When I do GET /api/v4/entities?filter=test-widgetfilter-to-entity-get-2
+    When I do GET /api/v4/entities?filters[]=test-widgetfilter-to-entity-get-2
     Then the response code should be 200
     Then the response body should contain:
     """json
