@@ -143,6 +143,7 @@ import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-f
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
 import CIconField from '@/components/forms/fields/c-icon-field.vue';
 import CIdField from '@/components/forms/fields/c-id-field.vue';
+import CNameField from '@/components/forms/fields/c-name-field.vue';
 import CDescriptionField from '@/components/forms/fields/c-description-field.vue';
 import CEventFilterTypeField from '@/components/forms/fields/c-event-filter-type-field.vue';
 import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
@@ -159,7 +160,6 @@ import CServiceWeatherIconField from '@/components/forms/fields/service-weather/
 import CContextmenu from '@/components/common/contextmenu/c-contextmenu.vue';
 import CMapField from '@/components/forms/fields/map/c-map-field.vue';
 import CCoordinatesField from '@/components/forms/fields/map/c-coordinates-field.vue';
-import CNameField from '@/components/forms/fields/c-name-field.vue';
 
 /**
  * Patterns

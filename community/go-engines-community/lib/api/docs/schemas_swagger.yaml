@@ -399,8 +399,10 @@ definitions:
         items:
           $ref: '#/definitions/export.Field'
         type: array
-      filter:
-        type: string
+      filters:
+        items:
+          type: string
+        type: array
       include_instruction_types:
         items:
           type: integer
@@ -840,8 +842,10 @@ definitions:
         items:
           $ref: '#/definitions/export.Field'
         type: array
-      filter:
-        type: string
+      filters:
+        items:
+          type: string
+        type: array
       no_events:
         type: boolean
       search:
@@ -2999,6 +3003,7 @@ definitions:
             * `instructionfail` - Manual instruction has failed
             * `autoinstructionfail` - Auto instruction has failed
             * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
         items:
@@ -3076,6 +3081,7 @@ definitions:
             * `instructionfail` - Manual instruction has failed
             * `autoinstructionfail` - Auto instruction has failed
             * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
         items:
@@ -3136,6 +3142,7 @@ definitions:
             * `instructionfail` - Manual instruction has failed
             * `autoinstructionfail` - Auto instruction has failed
             * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
         items:
@@ -3334,6 +3341,8 @@ definitions:
         type: string
       connector_name:
         type: string
+      depends_count:
+        type: integer
       icon:
         type: string
       idle_since:

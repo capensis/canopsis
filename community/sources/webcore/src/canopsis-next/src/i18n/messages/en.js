@@ -263,6 +263,8 @@ export default merge({
     itemFound: '{count} item found | {count} items found',
     canonicalType: 'Canonical type',
     map: 'Map | Maps',
+    instructions: 'Instructions',
+    playlist: 'Playlist | Playlists',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -284,7 +286,6 @@ export default merge({
     acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
     saveChanges: 'Save changes',
     reportIncident: 'Report an incident',
-    instructions: 'Instructions',
     times: {
       second: 'second | seconds',
       minute: 'minute | minutes',
@@ -464,6 +465,9 @@ export default merge({
       },
       [SCENARIO_TRIGGERS.instructionjobfail]: {
         text: 'Manual or auto instruction\'s job is failed',
+      },
+      [SCENARIO_TRIGGERS.instructionjobcomplete]: {
+        text: 'Manual or auto instruction\'s job is completed',
       },
       [SCENARIO_TRIGGERS.instructioncomplete]: {
         text: 'Manual instruction is completed',
@@ -1518,20 +1522,6 @@ export default merge({
           success: '{jobName} has been successfully modified',
         },
       },
-      fields: {
-        configuration: 'Configuration',
-        jobId: 'Job ID',
-        query: 'Query',
-        multipleExecutions: 'Allow parallel execution',
-      },
-      errors: {
-        invalidJSON: 'Invalid JSON',
-      },
-      addPayload: 'Add payload',
-      deletePayload: 'Delete payload',
-      payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
-        + '<i>For example:</i>'
-        + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
     },
     clickOutsideConfirmation: {
       title: 'Are you sure?',
@@ -2044,6 +2034,8 @@ export default merge({
       + '<p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p>'
       + '<p>A static informative message</p>'
       + '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
+    removeConfirmationText: 'When deleting a meta alarm rule, all corresponding meta alarms will be deleted as well.\n'
+      + 'Are you sure to proceed with it?\n',
     errors: {
       noValuePaths: 'You have to add at least 1 value path',
     },
@@ -2268,7 +2260,7 @@ export default merge({
   },
 
   healthcheck: {
-    systemIsDown: 'The system is down',
+    metricsUnavailable: 'Metrics are not collecting',
     notRunning: '{name} is unavailable',
     queueOverflow: 'Queue overflow',
     lackOfInstances: 'Lack of instances',
@@ -2279,6 +2271,7 @@ export default merge({
     queueOverflowed: 'Queue is overflowed: {queueLength} messages out of {maxQueueLength}.\nPlease check the instances.',
     engineDown: '{name} is down, the system is not operational.\nPlease check the log or restart the service.',
     engineDownOrSlow: '{name} is down or responds too slow, the system is not operational.\nPlease check the log or restart the instance.',
+    timescaleDown: '{name} is down, metrics and KPIs are not collecting.\nPlease check the log or restart the instance.',
     invalidEnginesOrder: 'Invalid engines configuration',
     invalidInstancesConfiguration: 'Invalid instances configuration: engine instances read or write to different queues.\nPlease check the instances.',
     chainConfigurationInvalid: 'Engines chain configuration is invalid.\nRefer below for the correct sequence of engines:',
@@ -2521,6 +2514,23 @@ export default merge({
           disabledOnTypes: 'Disabled on types',
         },
       },
+    },
+  },
+
+  remediationJob: {
+    configuration: 'Configuration',
+    jobId: 'Job ID',
+    query: 'Query',
+    multipleExecutions: 'Allow parallel execution',
+    retryAmount: 'Retry amount',
+    retryInterval: 'Retry interval',
+    addPayload: 'Add payload',
+    deletePayload: 'Delete payload',
+    payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
+      + '<i>For example:</i>'
+      + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+    errors: {
+      invalidJSON: 'Invalid JSON',
     },
   },
 
@@ -2945,6 +2955,8 @@ export default merge({
   kpi: {
     alarmMetrics: 'Alarm metrics',
     sli: 'SLI',
+    metricsNotAvailable: 'TimescaleDB not running. Metrics are not available.',
+    noData: 'No data available',
   },
 
   kpiMetrics: {
