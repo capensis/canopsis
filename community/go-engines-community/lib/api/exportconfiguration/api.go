@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
+
+	"github.com/rs/zerolog"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -21,12 +24,14 @@ type API interface {
 
 type api struct {
 	client          mongo.DbClient
+	logger          zerolog.Logger
 	collectionNames map[string]string
 }
 
-func NewApi(client mongo.DbClient) API {
+func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 	return &api{
 		client: client,
+		logger: logger,
 		collectionNames: map[string]string{
 			"configuration":       mongo.ConfigurationMongoCollection,
 			"auth_configuration":  mongo.ObjectMongoCollection,
@@ -83,6 +88,20 @@ func (a *api) Export(c *gin.Context) {
 		panic(err)
 	}
 
+	filename := file.Name()
+
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			a.logger.Err(err).Str("filename", filename).Msg("failed to close the file")
+		} else {
+			err = os.Remove(file.Name())
+			if err != nil {
+				a.logger.Err(err).Str("filename", filename).Msg("failed to remove the file")
+			}
+		}
+	}()
+
 	contents := make(map[string]ExportDocuments)
 
 	for _, collection := range r.Exports {
@@ -102,7 +121,7 @@ func (a *api) Export(c *gin.Context) {
 		panic(err)
 	}
 
-	c.FileAttachment(file.Name(), exportFileName)
+	c.FileAttachment(filename, exportFileName)
 }
 
 func (a *api) addContents(c *gin.Context, contents map[string]ExportDocuments, collectionName string) error {
