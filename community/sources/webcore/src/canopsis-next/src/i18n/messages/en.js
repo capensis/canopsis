@@ -1896,6 +1896,7 @@ export default merge({
     component: 'Component ID or template',
     connector: 'Connector ID or template',
     connectorName: 'Connector name or template',
+    duringPeriod: 'Applied during this period only',
     types: {
       [EVENT_FILTER_TYPES.drop]: 'Drop',
       [EVENT_FILTER_TYPES.break]: 'Break',

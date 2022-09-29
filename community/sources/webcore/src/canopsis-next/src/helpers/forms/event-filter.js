@@ -15,7 +15,6 @@ import {
   formExceptionsToExceptions,
   formExdatesToExdates,
 } from '@/helpers/forms/planning-pbehavior';
-import { convertDateToDateObject, convertDateToTimestamp } from '@/helpers/date/date';
 
 /**
  * @typedef { 'enrichment' | 'drop' | 'break' | 'change_entity' } EventFilterType
@@ -69,6 +68,8 @@ import { convertDateToDateObject, convertDateToTimestamp } from '@/helpers/date/
  * @property {EventFilterType} type
  * @property {string} description
  * @property {number} priority
+ * @property {number} [start]
+ * @property {number} [stop]
  * @property {boolean} enabled
  * @property {EventFilterConfig} config
  * @property {string} rrule
@@ -116,8 +117,8 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
   priority: eventFilter.priority ?? 0,
   enabled: eventFilter.enabled ?? true,
   rrule: eventFilter.rrule ?? null,
-  start: convertDateToDateObject(eventFilter.start),
-  stop: convertDateToDateObject(eventFilter.end),
+  start: eventFilter.start,
+  stop: eventFilter.stop,
   exceptions: exceptionsToForm(eventFilter.exceptions),
   exdates: exdatesToForm(eventFilter.exdates, timezone),
   config: eventFilterConfigToForm(eventFilter.config),
@@ -149,7 +150,7 @@ export const eventFilterActionToForm = (eventFilterAction = {}) => ({
  * @returns {EventFilter}
  */
 export const formToEventFilter = (eventFilterForm, timezone) => {
-  const { config, patterns, exdates, exceptions, rrule, start, stop, ...eventFilter } = eventFilterForm;
+  const { config, patterns, exdates, exceptions, rrule, ...eventFilter } = eventFilterForm;
 
   switch (eventFilterForm.type) {
     case EVENT_FILTER_TYPES.changeEntity:
@@ -159,8 +160,6 @@ export const formToEventFilter = (eventFilterForm, timezone) => {
       eventFilter.config = pick(config, ['actions', 'on_success', 'on_failure']);
       break;
     case EVENT_FILTER_TYPES.drop:
-      eventFilter.start = convertDateToTimestamp(start);
-      eventFilter.stop = convertDateToTimestamp(stop);
       eventFilter.rrule = rrule;
       eventFilter.exdates = exdatesToRequest(formExdatesToExdates(exdates, timezone));
       eventFilter.exceptions = exceptionsToRequest(formExceptionsToExceptions(exceptions));
