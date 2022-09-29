@@ -7,11 +7,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/rs/zerolog"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"gopkg.in/yaml.v3"
 )
