@@ -207,6 +207,11 @@ eventfilter:
   eventfilter_33:
     <<: *eventfilter
     _id: test-eventfilter-to-update-20
+  eventfilter_34:
+    <<: *eventfilter
+    _id: test-eventfilter-to-update-21
+    start: 1591164001
+    stop: 1591166001
 
   eventfilter_backward_compatibility_1:
     <<: *eventfilter

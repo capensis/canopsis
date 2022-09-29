@@ -1592,3 +1592,47 @@ Feature: Update an eventfilter
       }
     }
     """
+
+  Scenario: given update request with start and stop should return success
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-21:
+    """
+    {
+      "description": "test update 21",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-21-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-update-21
+    Then the response code should be 200
+    Then the response key "start" should not exist
+    Then the response key "stop" should not exist
