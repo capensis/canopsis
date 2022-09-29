@@ -19,6 +19,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
   <c-enabled-field-stub
     value="true"
   />
+  <!---->
   <c-patterns-field-stub
     some-required="some-required"
     value="[object Object]"
@@ -48,6 +49,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
   <c-enabled-field-stub
     value="true"
   />
+  <!---->
   <c-patterns-field-stub
     some-required="some-required"
     value="[object Object]"
@@ -88,6 +90,13 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
   <c-enabled-field-stub
     value="true"
   />
+  <event-filter-drop-intervals-field-stub
+    form="[object Object]"
+  />
+  <pbehavior-recurrence-rule-field-stub
+    class="mb-1"
+    form="[object Object]"
+  />
   <c-patterns-field-stub
     some-required="some-required"
     value="[object Object]"
@@ -117,6 +126,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
   <c-enabled-field-stub
     value="true"
   />
+  <!---->
   <c-patterns-field-stub
     some-required="some-required"
     value="[object Object]"
@@ -157,6 +167,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with change entity type
   <c-enabled-field-stub
     value="true"
   />
+  <!---->
   <c-patterns-field-stub
     some-required="some-required"
     value="[object Object]"
@@ -197,6 +208,13 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
   <c-enabled-field-stub
     value="true"
   />
+  <event-filter-drop-intervals-field-stub
+    form="[object Object]"
+  />
+  <pbehavior-recurrence-rule-field-stub
+    class="mb-1"
+    form="[object Object]"
+  />
   <c-patterns-field-stub
     some-required="some-required"
     value="[object Object]"
@@ -218,6 +236,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] 
   />
   <c-priority-field-stub />
   <c-enabled-field-stub />
+  <!---->
   <c-patterns-field-stub
     some-required="some-required"
     with-entity="with-entity"
