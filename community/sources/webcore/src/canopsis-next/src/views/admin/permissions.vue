@@ -14,6 +14,7 @@
               :roles="preparedRoles",
               :changed-roles="changedRoles",
               :disabled="!hasUpdateAnyPermissionAccess",
+              :sort-by="getSortBy(groupKey)",
               @change="changeCheckboxValue"
             )
     v-layout.submit-button.mt-3(v-show="hasChanges")
@@ -75,11 +76,52 @@ export default {
     preparedRoles() {
       return sortBy(this.roles, [({ _id: name }) => name.toLowerCase()]).map(roleToForm);
     },
+
+    allViews() {
+      return this.groups.reduce((acc, { views }) => acc.concat(views), []);
+    },
+
+    groupsPriorityByTitle() {
+      return this.groups.reduce((acc, group, index) => {
+        acc[group.title] = index;
+
+        return acc;
+      }, {});
+    },
+
+    viewsPriorityById() {
+      return this.allViews.reduce((acc, view, index) => {
+        acc[view._id] = index;
+
+        return acc;
+      }, {});
+    },
+
+    playlistPriorityById() {
+      return this.playlists.reduce((acc, playlist, index) => {
+        acc[playlist._id] = index;
+
+        return acc;
+      }, {});
+    },
   },
   mounted() {
     this.fetchList();
   },
   methods: {
+    getViewSort(permission) {
+      return this.groupsPriorityByTitle[permission.name]
+        ?? this.viewsPriorityById[permission._id]
+        ?? this.playlistPriorityById[permission._id];
+    },
+
+    // eslint-disable-next-line consistent-return
+    getSortBy(key) {
+      if (key === 'view') {
+        return this.getViewSort;
+      }
+    },
+
     /**
      * Clear changed roles
      *
@@ -234,9 +276,8 @@ export default {
         this.fetchRolesList({ params: { limit: MAX_LIMIT } }),
       ]);
 
-      const allViews = this.groups.reduce((acc, { views }) => acc.concat(views), []);
+      this.groupedPermissions = getGroupedPermissions(permissions, this.allViews, this.playlists);
 
-      this.groupedPermissions = getGroupedPermissions(permissions, allViews, this.playlists);
       this.pending = false;
     },
   },

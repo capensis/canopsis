@@ -399,8 +399,10 @@ definitions:
         items:
           $ref: '#/definitions/export.Field'
         type: array
-      filter:
-        type: string
+      filters:
+        items:
+          type: string
+        type: array
       include_instruction_types:
         items:
           type: integer
@@ -840,8 +842,10 @@ definitions:
         items:
           $ref: '#/definitions/export.Field'
         type: array
-      filter:
-        type: string
+      filters:
+        items:
+          type: string
+        type: array
       no_events:
         type: boolean
       search:
@@ -3337,6 +3341,8 @@ definitions:
         type: string
       connector_name:
         type: string
+      depends_count:
+        type: integer
       icon:
         type: string
       idle_since:
