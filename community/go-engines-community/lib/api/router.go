@@ -326,7 +326,7 @@ func RegisterRoutes(
 			)
 		}
 
-		exportConfigurationAPI := configuration.NewApi(dbClient, logger)
+		exportConfigurationAPI := configuration.NewApi(dbClient)
 		exportConfigurationRouter := protected.Group("/export-configuration")
 		{
 			exportConfigurationRouter.POST(
