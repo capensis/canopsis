@@ -77,6 +77,8 @@ func (p Alarm) Match(alarm types.Alarm) (bool, error) {
 				matched, err = cond.MatchTime(t)
 			} else if d, ok := getAlarmDurationField(alarm, f); ok {
 				matched, err = cond.MatchDuration(d)
+			} else if a, ok := getAlarmStringArrayField(alarm, f); ok {
+				matched, err = cond.MatchStringArray(a)
 			} else {
 				err = ErrUnsupportedField
 			}
@@ -154,6 +156,8 @@ func (p Alarm) Validate(forbiddenFields, onlyTimeAbsoluteFields []string) bool {
 				_, err = cond.MatchTime(t)
 			} else if d, ok := getAlarmDurationField(emptyAlarm, f); ok {
 				_, err = cond.MatchDuration(d)
+			} else if a, ok := getAlarmStringArrayField(emptyAlarm, f); ok {
+				_, err = cond.MatchStringArray(a)
 			} else {
 				err = ErrUnsupportedField
 			}
@@ -434,6 +438,15 @@ func getAlarmDurationField(alarm types.Alarm, field string) (int64, bool) {
 		return int64(time.Since(alarm.Time.Time).Seconds()), true
 	default:
 		return 0, false
+	}
+}
+
+func getAlarmStringArrayField(alarm types.Alarm, field string) ([]string, bool) {
+	switch field {
+	case "tags":
+		return alarm.Tags, true
+	default:
+		return nil, false
 	}
 }
 
