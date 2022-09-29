@@ -9,6 +9,9 @@
     c-description-field(v-field="form.description", required)
     c-priority-field(v-field="form.priority")
     c-enabled-field(v-field="form.enabled")
+    template(v-if="isDropType")
+      event-filter-drop-intervals-field(v-field="form")
+      pbehavior-recurrence-rule-field.mb-1(v-field="form")
     c-patterns-field(v-field="form.patterns", with-entity, with-event, some-required)
 
     template(v-if="isChangeEntityType || isEnrichmentType")
@@ -21,14 +24,26 @@
 </template>
 
 <script>
-import { EVENT_FILTER_TYPES } from '@/constants';
+import { DATETIME_FORMATS, EVENT_FILTER_TYPES } from '@/constants';
 
+import { convertDateToString } from '@/helpers/date/date';
+
+import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import EventFilterEnrichmentForm from '@/components/other/event-filter/form/event-filter-enrichment-form.vue';
 import EventFilterChangeEntityForm from '@/components/other/event-filter/form/event-filter-change-entity-form.vue';
+import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/calendar/partials/pbehavior-recurrence-rule-field.vue';
+
+import EventFilterDropIntervalsField from './fields/event-filter-drop-intervals-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { EventFilterEnrichmentForm, EventFilterChangeEntityForm },
+  components: {
+    EventFilterDropIntervalsField,
+    DateTimePickerField,
+    PbehaviorRecurrenceRuleField,
+    EventFilterEnrichmentForm,
+    EventFilterChangeEntityForm,
+  },
   model: {
     prop: 'form',
     event: 'input',
@@ -44,8 +59,27 @@ export default {
     },
   },
   computed: {
+    startRules() {
+      return {
+        required: true,
+        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
+      };
+    },
+
+    stopRules() {
+      return {
+        required: true,
+        after: [convertDateToString(this.form.start, DATETIME_FORMATS.dateTimePicker)],
+        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
+      };
+    },
+
     isEnrichmentType() {
       return this.form.type === EVENT_FILTER_TYPES.enrichment;
+    },
+
+    isDropType() {
+      return this.form.type === EVENT_FILTER_TYPES.drop;
     },
 
     isChangeEntityType() {

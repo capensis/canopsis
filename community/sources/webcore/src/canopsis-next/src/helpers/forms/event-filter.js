@@ -9,6 +9,13 @@ import {
 } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
+import {
+  exceptionsToForm,
+  exdatesToForm,
+  formExceptionsToExceptions,
+  formExdatesToExdates,
+} from '@/helpers/forms/planning-pbehavior';
+import { convertDateToDateObject, convertDateToTimestamp } from '@/helpers/date/date';
 
 /**
  * @typedef { 'enrichment' | 'drop' | 'break' | 'change_entity' } EventFilterType
@@ -64,10 +71,15 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filt
  * @property {number} priority
  * @property {boolean} enabled
  * @property {EventFilterConfig} config
+ * @property {string} rrule
+ * @property {PbehaviorException[]} exceptions
+ * @property {PbehaviorExdate[]} exdates
  */
 
 /**
  * @typedef {PatternsForm & EventFilter} EventFilterForm
+ * @property {PbehaviorExceptionForm[]} exceptions
+ * @property {PbehaviorExdateForm[]} exdates
  */
 
 /**
@@ -94,14 +106,20 @@ export const eventFilterConfigToForm = (eventFilterConfig = {}) => ({
  * Convert event filter to form
  *
  * @param {EventFilter | {}} [eventFilter = {}]
+ * @param {string} [timezone]
  * @returns {EventFilterForm}
  */
-export const eventFilterToForm = (eventFilter = {}) => ({
+export const eventFilterToForm = (eventFilter = {}, timezone) => ({
   _id: eventFilter._id ?? '',
   type: eventFilter.type ?? EVENT_FILTER_TYPES.drop,
   description: eventFilter.description ?? '',
   priority: eventFilter.priority ?? 0,
   enabled: eventFilter.enabled ?? true,
+  rrule: eventFilter.rrule ?? null,
+  start: convertDateToDateObject(eventFilter.start),
+  stop: convertDateToDateObject(eventFilter.end),
+  exceptions: exceptionsToForm(eventFilter.exceptions),
+  exdates: exdatesToForm(eventFilter.exdates, timezone),
   config: eventFilterConfigToForm(eventFilter.config),
   patterns: filterPatternsToForm(
     eventFilter,
@@ -127,10 +145,11 @@ export const eventFilterActionToForm = (eventFilterAction = {}) => ({
  * Convert form to event filter fields
  *
  * @param {EventFilterForm} eventFilterForm
+ * @param {string} timezone
  * @returns {EventFilter}
  */
-export const formToEventFilter = (eventFilterForm) => {
-  const { config, patterns, ...eventFilter } = eventFilterForm;
+export const formToEventFilter = (eventFilterForm, timezone) => {
+  const { config, patterns, exdates, exceptions, rrule, start, stop, ...eventFilter } = eventFilterForm;
 
   switch (eventFilterForm.type) {
     case EVENT_FILTER_TYPES.changeEntity:
@@ -138,6 +157,13 @@ export const formToEventFilter = (eventFilterForm) => {
       break;
     case EVENT_FILTER_TYPES.enrichment:
       eventFilter.config = pick(config, ['actions', 'on_success', 'on_failure']);
+      break;
+    case EVENT_FILTER_TYPES.drop:
+      eventFilter.start = convertDateToTimestamp(start);
+      eventFilter.stop = convertDateToTimestamp(stop);
+      eventFilter.rrule = rrule;
+      eventFilter.exdates = formExdatesToExdates(exdates, timezone);
+      eventFilter.exceptions = formExceptionsToExceptions(exceptions);
       break;
   }
 
