@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/url"
 
-	configuration "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exportconfiguration"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exportconfiguration"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -326,15 +326,12 @@ func RegisterRoutes(
 			)
 		}
 
-		exportConfigurationAPI := configuration.NewApi(dbClient)
-		exportConfigurationRouter := protected.Group("/export-configuration")
-		{
-			exportConfigurationRouter.POST(
-				"",
-				middleware.Authorize(apisecurity.PermExportConfigurations, permCan, enforcer),
-				exportConfigurationAPI.Export,
-			)
-		}
+		exportConfigurationAPI := exportconfiguration.NewApi(dbClient)
+		protected.POST(
+			"/export-configuration",
+			middleware.Authorize(apisecurity.PermExportConfigurations, permCan, enforcer),
+			exportConfigurationAPI.Export,
+		)
 
 		entityAPI := entity.NewApi(
 			entity.NewStore(dbClient, timezoneConfigProvider),
