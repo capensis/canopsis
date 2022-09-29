@@ -429,6 +429,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
+		"depends": 0,
+		"impact":  0,
+	}})
 	expected := []bson.M{
 		{"$match": bson.M{
 			"type":    types.EntityTypeService,
