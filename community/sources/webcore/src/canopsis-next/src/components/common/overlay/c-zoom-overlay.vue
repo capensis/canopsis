@@ -2,7 +2,7 @@
   div.zoom-overlay__wrapper(@wheel="wheelListener")
     v-fade-transition
       div.zoom-overlay(v-if="shown")
-        span.zoom-overlay__text Use ctrl + mouse wheel for zoom
+        span.zoom-overlay__text {{ $t('common.ctrlZoom') }}
     slot
 </template>
 
@@ -10,6 +10,16 @@
 import { ZOOM_OVERLAY_DELAY } from '@/config';
 
 export default {
+  props: {
+    skipAlt: {
+      type: Boolean,
+      default: false,
+    },
+    skipShift: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       shown: false,
@@ -21,7 +31,7 @@ export default {
         clearTimeout(this.timer);
       }
 
-      if (event.ctrlKey) {
+      if (event.ctrlKey || (this.skipShift && event.shiftKey) || (this.skipAlt && event.altKey)) {
         event.preventDefault();
         this.shown = false;
 

@@ -265,6 +265,7 @@ export default merge({
     map: 'Map | Maps',
     instructions: 'Instructions',
     playlist: 'Playlist | Playlists',
+    ctrlZoom: 'Use ctrl + mouse wheel for zoom',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',

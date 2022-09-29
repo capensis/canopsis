@@ -6,6 +6,7 @@ import { circleShapeToForm, rectShapeToForm } from '@/helpers/flowchart/shapes';
 const localVue = createVueInstance();
 
 const stubs = {
+  'c-zoom-overlay': true,
   'flowchart-sidebar': true,
   'flowchart-editor': true,
   'flowchart-properties': true,

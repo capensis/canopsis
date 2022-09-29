@@ -1,53 +1,54 @@
 <template lang="pug">
-  geomap.geomap-preview(ref="map", :min-zoom="minZoom", :disabled="!!activePoint")
-    geomap-control-zoom(position="topleft", :disabled="!!activePoint")
-    geomap-control-layers(position="topright", :disabled="!!activePoint")
+  c-zoom-overlay
+    geomap.geomap-preview(ref="map", :min-zoom="minZoom", :disabled="!!activePoint")
+      geomap-control-zoom(position="topleft", :disabled="!!activePoint")
+      geomap-control-layers(position="topright", :disabled="!!activePoint")
 
-    geomap-tile-layer(
-      :name="$t('map.layers.openStreetMap')",
-      :url="$config.OPEN_STREET_LAYER_URL",
-      layer-type="base",
-      no-wrap
-    )
-
-    geomap-control(position="bottomright")
-      c-help-icon(size="32", color="secondary", icon="help", top)
-        div.pre-wrap(v-html="$t('geomap.panzoom.helpText')")
-
-    geomap-cluster-group(
-      v-for="{ markers, name, style } in layers",
-      :key="name",
-      :name="name",
-      :cluster-style="style",
-      layer-type="overlay"
-    )
-      geomap-marker(
-        v-for="{ coordinates, id, data, icon } in markers",
-        :key="id",
-        :lat-lng="coordinates",
-        @click="openMarkerPopup(data, $event)"
+      geomap-tile-layer(
+        :name="$t('map.layers.openStreetMap')",
+        :url="$config.OPEN_STREET_LAYER_URL",
+        layer-type="base",
+        no-wrap
       )
-        geomap-icon(:icon-anchor="icon.anchor")
-          point-icon(
-            :style="icon.style",
-            :entity="data.entity",
-            :size="icon.size",
-            :color-indicator="colorIndicator",
-            :pbehavior-enabled="pbehaviorEnabled"
-          )
 
-    point-popup-dialog(
-      v-if="activePoint",
-      :point="activePoint",
-      :position-x="positionX",
-      :position-y="positionY",
-      :popup-template="popupTemplate",
-      :color-indicator="colorIndicator",
-      :popup-actions="popupActions",
-      @show:alarms="showAlarms",
-      @show:map="showLinkedMap",
-      @close="closePopup"
-    )
+      geomap-control(position="bottomright")
+        c-help-icon(size="32", color="secondary", icon="help", top)
+          div.pre-wrap(v-html="$t('geomap.panzoom.helpText')")
+
+      geomap-cluster-group(
+        v-for="{ markers, name, style } in layers",
+        :key="name",
+        :name="name",
+        :cluster-style="style",
+        layer-type="overlay"
+      )
+        geomap-marker(
+          v-for="{ coordinates, id, data, icon } in markers",
+          :key="id",
+          :lat-lng="coordinates",
+          @click="openMarkerPopup(data, $event)"
+        )
+          geomap-icon(:icon-anchor="icon.anchor")
+            point-icon(
+              :style="icon.style",
+              :entity="data.entity",
+              :size="icon.size",
+              :color-indicator="colorIndicator",
+              :pbehavior-enabled="pbehaviorEnabled"
+            )
+
+      point-popup-dialog(
+        v-if="activePoint",
+        :point="activePoint",
+        :position-x="positionX",
+        :position-y="positionY",
+        :popup-template="popupTemplate",
+        :color-indicator="colorIndicator",
+        :popup-actions="popupActions",
+        @show:alarms="showAlarms",
+        @show:map="showLinkedMap",
+        @close="closePopup"
+      )
 </template>
 
 <script>
@@ -59,7 +60,7 @@ import { COLOR_INDICATOR_TYPES } from '@/constants';
 import { getGeomapMarkerIconOptions } from '@/helpers/map';
 import { getEntityColor } from '@/helpers/color';
 
-import { mapInformationPopup } from '@/mixins/map/map-information-popup';
+import { mapInformationPopupMixin } from '@/mixins/map/map-information-popup-mixin';
 
 import Geomap from '@/components/common/geomap/geomap.vue';
 import GeomapTileLayer from '@/components/common/geomap/geomap-tile-layer.vue';
@@ -88,7 +89,7 @@ export default {
     GeomapControl,
     PointIcon,
   },
-  mixins: [mapInformationPopup],
+  mixins: [mapInformationPopupMixin],
   props: {
     map: {
       type: Object,

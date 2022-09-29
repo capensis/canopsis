@@ -3,7 +3,7 @@ import Faker from 'faker';
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { mockModals } from '@unit/utils/mock-hooks';
-import MermaidPoints from '@/components/other/map/form/partials/mermaid-points.vue';
+import MermaidPoints from '@/components/other/map/form/partials/mermaid-points-editor.vue';
 import { mermaidPointToForm } from '@/helpers/forms/map';
 import { MODALS } from '@/constants';
 
@@ -93,7 +93,7 @@ const getEvent = () => ({
   offsetY: Faker.datatype.number(),
 });
 
-describe('mermaid-points', () => {
+describe('mermaid-points-editor', () => {
   const $modals = mockModals();
 
   test('Contextmenu opened after right click', async () => {
@@ -362,7 +362,7 @@ describe('mermaid-points', () => {
     addEventListener.mockClear();
   });
 
-  test('Renders `mermaid-points` with required props', () => {
+  test('Renders `mermaid-points-editor` with required props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         points: [],
@@ -372,7 +372,7 @@ describe('mermaid-points', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `mermaid-points` with custom props', () => {
+  test('Renders `mermaid-points-editor` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         points: [
