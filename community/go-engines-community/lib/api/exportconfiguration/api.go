@@ -33,7 +33,6 @@ func NewApi(
 	return &api{
 		client: client,
 		collectionNames: map[string]string{
-			"canopsis":            mongo.DB,
 			"configuration":       mongo.ConfigurationMongoCollection,
 			"auth_configuration":  mongo.ObjectMongoCollection,
 			"rights":              mongo.RightsMongoCollection,
