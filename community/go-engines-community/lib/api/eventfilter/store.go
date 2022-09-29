@@ -183,8 +183,23 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	model.Updated = &updated
 
 	update := bson.M{"$set": model}
+	unset := bson.M{}
+
 	if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 || len(request.EventPattern) > 0 {
-		update["$unset"] = bson.M{"old_patterns": 1}
+		unset["old_patterns"] = 1
+	}
+
+	if model.Start == nil || model.Start.IsZero() || model.Stop == nil || model.Stop.IsZero() {
+		unset["start"] = ""
+		unset["stop"] = ""
+		unset["resolved_start"] = ""
+		unset["resolved_stop"] = ""
+		unset["next_resolved_start"] = ""
+		unset["next_resolved_stop"] = ""
+	}
+
+	if len(unset) != 0 {
+		update["$unset"] = unset
 	}
 
 	var response *Response
