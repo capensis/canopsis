@@ -4,6 +4,8 @@ import (
 	"context"
 	"net/url"
 
+	configuration "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exportconfiguration"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
@@ -321,6 +323,16 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(authPermAlarmRead, permCan, enforcer),
 				alarmAPI.GetExport,
+			)
+		}
+
+		exportConfigurationAPI := configuration.NewApi(dbClient, logger)
+		exportConfigurationRouter := protected.Group("/export-configuration")
+		{
+			exportConfigurationRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.PermExportConfigurations, permCan, enforcer),
+				exportConfigurationAPI.Export,
 			)
 		}
 
