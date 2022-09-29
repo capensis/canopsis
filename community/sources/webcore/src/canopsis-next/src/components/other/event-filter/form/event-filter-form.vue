@@ -9,9 +9,9 @@
     c-description-field(v-field="form.description", required)
     c-priority-field(v-field="form.priority")
     c-enabled-field(v-field="form.enabled")
-    template(v-if="isDropType")
+    c-information-block(:title="$t('eventFilter.duringPeriod')")
       event-filter-drop-intervals-field(v-field="form")
-      pbehavior-recurrence-rule-field.mb-1(v-field="form")
+    pbehavior-recurrence-rule-field.mb-1(v-if="isDropType", v-field="form")
     c-patterns-field(v-field="form.patterns", with-entity, with-event, some-required)
 
     template(v-if="isChangeEntityType || isEnrichmentType")
