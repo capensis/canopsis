@@ -120,7 +120,7 @@ Feature: Get alarms
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/alarms?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -171,7 +171,7 @@ Feature: Get alarms
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort=asc&sort_by=v.resource
+    When I do GET /api/v4/alarms?filters[]={{ .lastResponse._id }}&sort=asc&sort_by=v.resource
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -230,7 +230,7 @@ Feature: Get alarms
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}&sort=asc&sort_by=v.resource
+    When I do GET /api/v4/alarms?filters[]={{ .lastResponse._id }}&sort=asc&sort_by=v.resource
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -289,7 +289,7 @@ Feature: Get alarms
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/alarms?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
