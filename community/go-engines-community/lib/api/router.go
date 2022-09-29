@@ -326,7 +326,7 @@ func RegisterRoutes(
 			)
 		}
 
-		exportConfigurationAPI := exportconfiguration.NewApi(dbClient)
+		exportConfigurationAPI := exportconfiguration.NewApi(dbClient, logger)
 		protected.POST(
 			"/export-configuration",
 			middleware.Authorize(apisecurity.PermExportConfigurations, permCan, enforcer),
