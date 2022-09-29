@@ -90,6 +90,8 @@ const (
 	EntityInfosDictionaryCollection  = "entity_infos_dictionary"
 	DynamicInfosDictionaryCollection = "dynamic_infos_dictionary"
 
+	MapMongoCollection = "map"
+
 	AlarmTagCollection = "alarm_tag"
 )
 
