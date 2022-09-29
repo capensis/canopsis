@@ -87,6 +87,7 @@ import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration'
  * @property {number[]} expandGridRangeSize
  * @property {WidgetCsvSeparator} exportCsvSeparator
  * @property {string} exportCsvDatetimeFormat
+ * @property {boolean} clearFilterDisabled
  */
 
 /**
@@ -222,6 +223,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
 
   periodic_refresh: periodicRefreshToDurationForm(parameters.periodic_refresh),
   mainFilter: parameters.mainFilter ?? null,
+  clearFilterDisabled: parameters.clearFilterDisabled ?? false,
   mainFilterUpdatedAt: parameters.mainFilterUpdatedAt || 0,
   liveReporting: parameters.liveReporting
     ? cloneDeep(parameters.liveReporting)
