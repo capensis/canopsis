@@ -1,7 +1,7 @@
 ---
 # Values overriding something in a role should be put here.
 
-# Sync this with DOCKER_NGINX_VERSION in the monorepo
+# Sync this with NGINX_VERSION in the monorepo
 nginx_version: "-1.20.2-1.el7.ngx"
 nginx_branch: stable
 

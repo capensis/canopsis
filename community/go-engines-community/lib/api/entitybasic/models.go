@@ -3,7 +3,9 @@ package entitybasic
 import (
 	"encoding/json"
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type Entity struct {
@@ -28,6 +30,8 @@ type EditRequest struct {
 	Impacts       []string      `json:"impact"`
 	Depends       []string      `json:"depends"`
 	SliAvailState *int64        `json:"sli_avail_state" binding:"required,min=0,max=3"`
+
+	Coordinates *types.Coordinates `json:"coordinates"`
 }
 
 type InfoRequest struct {
