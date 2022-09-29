@@ -828,6 +828,7 @@ Feature: Get alarms
       },
       "impact_state": 0,
       "infos": {},
+      "tags": [],
       "t": 1597030121,
       "v": {
         "children": [],
@@ -1478,7 +1479,6 @@ Feature: Get alarms
           "initiator": "external",
           "val": 1
         },
-        "tags": [],
         "total_state_changes": 1
       }
     }
