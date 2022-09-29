@@ -13,6 +13,7 @@ import (
 
 const (
 	WidgetTypeJunit = "Junit"
+	WidgetTypeMap   = "Map"
 
 	WidgetInternalParamJunitTestSuites = "test_suites"
 
@@ -76,6 +77,9 @@ type Parameters struct {
 	VideoDirectories      []string `bson:"video_directories,omitempty" json:"video_directories,omitempty"`
 	ScreenshotFilemask    string   `bson:"screenshot_filemask,omitempty" json:"screenshot_filemask,omitempty"`
 	VideoFilemask         string   `bson:"video_filemask,omitempty" json:"video_filemask,omitempty"`
+
+	// Map
+	Map string `bson:"map,omitempty" json:"map,omitempty"`
 
 	RemainParameters map[string]interface{} `bson:",inline" json:"-"`
 }

@@ -54,7 +54,11 @@ Feature: Update entity service
           "name": "test-entityservice-to-update-1-info-6-name",
           "value": ["test-entityservice-to-update-1-info-6-value", false, 1022, 10.45, null]
         }
-      ]
+      ],
+      "coordinates": {
+        "lat": 62.34960927573042,
+        "lng": 74.02834455685206
+      }
     }
     """
     Then the response code should be 200
@@ -69,9 +73,7 @@ Feature: Update entity service
         "created": 1592215337,
         "updated": 1592215337
       },
-      "depends": [],
       "enabled": true,
-      "enable_history": null,
       "entity_pattern": [
         [
           {
@@ -84,7 +86,6 @@ Feature: Update entity service
         ]
       ],
       "old_entity_patterns": null,
-      "impact": [],
       "impact_level": 2,
       "infos": {
         "test-entityservice-to-update-1-info-1-name": {
@@ -118,11 +119,14 @@ Feature: Update entity service
           "value": ["test-entityservice-to-update-1-info-6-value", false, 1022, 10.45, null]
         }
       },
-      "measurements": null,
       "name": "test-entityservice-to-update-1-name",
       "output_template": "test-entityservice-to-update-1-output-updated",
       "sli_avail_state": 1,
-      "type": "service"
+      "type": "service",
+      "coordinates": {
+        "lat": 62.34960927573042,
+        "lng": 74.02834455685206
+      }
     }
     """
 
@@ -152,14 +156,10 @@ Feature: Update entity service
         "created": 1592215337,
         "updated": 1592215337
       },
-      "depends": [],
       "enabled": true,
-      "enable_history": null,
       "old_entity_patterns": [{"name": "test-entityservice-to-update-2-pattern"}],
-      "impact": [],
       "impact_level": 2,
       "infos": {},
-      "measurements": null,
       "name": "test-entityservice-to-update-2-name",
       "output_template": "test-entityservice-to-update-2-output-updated",
       "sli_avail_state": 1,
@@ -201,9 +201,7 @@ Feature: Update entity service
         "created": 1592215337,
         "updated": 1592215337
       },
-      "depends": [],
       "enabled": true,
-      "enable_history": null,
       "entity_pattern": [
         [
           {
@@ -216,10 +214,8 @@ Feature: Update entity service
         ]
       ],
       "old_entity_patterns": null,
-      "impact": [],
       "impact_level": 2,
       "infos": {},
-      "measurements": null,
       "name": "test-entityservice-to-update-2-name",
       "output_template": "test-entityservice-to-update-2-output-updated",
       "sli_avail_state": 1,

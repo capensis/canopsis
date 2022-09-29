@@ -157,25 +157,6 @@ definitions:
       v:
         $ref: '#/definitions/alarm.AlarmValue'
     type: object
-  alarm.AlarmStep:
-    properties:
-      _t:
-        type: string
-      a:
-        type: string
-      initiator:
-        type: string
-      m:
-        type: string
-      statecounter:
-        $ref: '#/definitions/types.CropCounter'
-      t:
-        type: integer
-      user_id:
-        type: string
-      val:
-        type: integer
-    type: object
   alarm.AlarmTicket:
     properties:
       _t:
@@ -198,13 +179,13 @@ definitions:
   alarm.AlarmValue:
     properties:
       ack:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       activation_date:
         type: integer
       active_duration:
         type: integer
       canceled:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       children:
         items:
           type: string
@@ -222,7 +203,7 @@ definitions:
       display_name:
         type: string
       done:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       duration:
         type: integer
       events_count:
@@ -241,7 +222,7 @@ definitions:
       initial_output:
         type: string
       last_comment:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       last_event_date:
         type: integer
       last_update_date:
@@ -269,18 +250,18 @@ definitions:
       resource:
         type: string
       snooze:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       snooze_duration:
         type: integer
       state:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       state_changes_since_status_update:
         type: integer
       status:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       steps:
         items:
-          $ref: '#/definitions/alarm.AlarmStep'
+          $ref: '#/definitions/common.AlarmStep'
         type: array
       ticket:
         $ref: '#/definitions/alarm.AlarmTicket'
@@ -472,7 +453,7 @@ definitions:
     properties:
       data:
         items:
-          $ref: '#/definitions/alarm.AlarmStep'
+          $ref: '#/definitions/common.AlarmStep'
         type: array
       meta:
         $ref: '#/definitions/common.PaginatedMeta'
@@ -639,6 +620,25 @@ definitions:
     - message
     - start
     type: object
+  common.AlarmStep:
+    properties:
+      _t:
+        type: string
+      a:
+        type: string
+      initiator:
+        type: string
+      m:
+        type: string
+      statecounter:
+        $ref: '#/definitions/types.CropCounter'
+      t:
+        type: integer
+      user_id:
+        type: string
+      val:
+        type: integer
+    type: object
   common.ErrorResponse:
     properties:
       error:
@@ -781,10 +781,25 @@ definitions:
     required:
     - _id
     type: object
+  entity.ContextGraphResponse:
+    properties:
+      depends:
+        items:
+          type: string
+        type: array
+      impact:
+        items:
+          type: string
+        type: array
+    type: object
   entity.Entity:
     properties:
       _id:
         type: string
+      ack:
+        $ref: '#/definitions/common.AlarmStep'
+      alarm_last_update_date:
+        type: integer
       category:
         $ref: '#/definitions/entitycategory.Category'
       component:
@@ -796,25 +811,24 @@ definitions:
       connector_type:
         description: ConnectorType contains a part before "/" of connector id.
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       deletable:
+        description: Flags
         type: boolean
-      depends:
-        items:
-          type: string
-        type: array
-      enable_history:
-        items:
-          type: integer
-        type: array
+      depends_count:
+        description: DependsCount contains only service's dependencies
+        type: integer
       enabled:
         type: boolean
       idle_since:
         type: integer
-      impact:
-        items:
-          type: string
-        type: array
       impact_level:
+        type: integer
+      impact_state:
+        type: integer
+      impacts_count:
+        description: ImpactsCount contains only services
         type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
@@ -822,14 +836,23 @@ definitions:
         type: integer
       last_event_date:
         type: integer
-      measurements: {}
+      links:
+        additionalProperties: true
+        description: Links
+        type: object
       name:
         type: string
       ok_events:
+        description: Stats
         type: integer
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
+      snooze:
+        $ref: '#/definitions/common.AlarmStep'
       state:
+        description: Alarm fields
+        type: integer
+      status:
         type: integer
       type:
         type: string
@@ -908,6 +931,8 @@ definitions:
     properties:
       category:
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       depends:
         items:
           type: string
@@ -942,6 +967,10 @@ definitions:
     properties:
       _id:
         type: string
+      ack:
+        $ref: '#/definitions/common.AlarmStep'
+      alarm_last_update_date:
+        type: integer
       category:
         $ref: '#/definitions/entitycategory.Category'
       changeable_depends:
@@ -961,27 +990,26 @@ definitions:
       connector_type:
         description: ConnectorType contains a part before "/" of connector id.
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       deletable:
+        description: Flags
         type: boolean
-      depends:
-        items:
-          type: string
-        type: array
+      depends_count:
+        description: DependsCount contains only service's dependencies
+        type: integer
       description:
         type: string
-      enable_history:
-        items:
-          type: integer
-        type: array
       enabled:
         type: boolean
       idle_since:
         type: integer
-      impact:
-        items:
-          type: string
-        type: array
       impact_level:
+        type: integer
+      impact_state:
+        type: integer
+      impacts_count:
+        description: ImpactsCount contains only services
         type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
@@ -989,16 +1017,25 @@ definitions:
         type: integer
       last_event_date:
         type: integer
-      measurements: {}
+      links:
+        additionalProperties: true
+        description: Links
+        type: object
       name:
         type: string
       ok_events:
+        description: Stats
         type: integer
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       sli_avail_state:
         type: integer
+      snooze:
+        $ref: '#/definitions/common.AlarmStep'
       state:
+        description: Alarm fields
+        type: integer
+      status:
         type: integer
       type:
         type: string
@@ -1041,19 +1078,6 @@ definitions:
       value:
         type: string
     type: object
-  entityservice.AlarmWithEntity:
-    properties:
-      alarm:
-        $ref: '#/definitions/types.Alarm'
-      entity:
-        $ref: '#/definitions/entity.Entity'
-      has_dependencies:
-        type: boolean
-      has_impacts:
-        type: boolean
-      impact_state:
-        type: integer
-    type: object
   entityservice.BulkDeleteRequestItem:
     properties:
       _id:
@@ -1067,6 +1091,8 @@ definitions:
         type: string
       category:
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       corporate_entity_pattern:
         type: string
       enabled:
@@ -1109,6 +1135,8 @@ definitions:
         type: string
       category:
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       corporate_entity_pattern:
         type: string
       enabled:
@@ -1148,6 +1176,10 @@ definitions:
     properties:
       _id:
         type: string
+      ack:
+        $ref: '#/definitions/common.AlarmStep'
+      alarm_last_update_date:
+        type: integer
       category:
         $ref: '#/definitions/entitycategory.Category'
       component:
@@ -1159,20 +1191,18 @@ definitions:
       connector_type:
         description: ConnectorType contains a part before "/" of connector id.
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       corporate_entity_pattern:
         type: string
       corporate_entity_pattern_title:
         type: string
       deletable:
+        description: Flags
         type: boolean
-      depends:
-        items:
-          type: string
-        type: array
-      enable_history:
-        items:
-          type: integer
-        type: array
+      depends_count:
+        description: DependsCount contains only service's dependencies
+        type: integer
       enabled:
         type: boolean
       entity_pattern:
@@ -1183,11 +1213,12 @@ definitions:
         type: array
       idle_since:
         type: integer
-      impact:
-        items:
-          type: string
-        type: array
       impact_level:
+        type: integer
+      impact_state:
+        type: integer
+      impacts_count:
+        description: ImpactsCount contains only services
         type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
@@ -1195,10 +1226,14 @@ definitions:
         type: integer
       last_event_date:
         type: integer
-      measurements: {}
+      links:
+        additionalProperties: true
+        description: Links
+        type: object
       name:
         type: string
       ok_events:
+        description: Stats
         type: integer
       old_entity_patterns:
         $ref: '#/definitions/oldpattern.EntityPatternList'
@@ -1208,7 +1243,12 @@ definitions:
         $ref: '#/definitions/entity.PbehaviorInfo'
       sli_avail_state:
         type: integer
+      snooze:
+        $ref: '#/definitions/common.AlarmStep'
       state:
+        description: Alarm fields
+        type: integer
+      status:
         type: integer
       type:
         type: string
@@ -1217,6 +1257,8 @@ definitions:
     properties:
       category:
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       corporate_entity_pattern:
         type: string
       enabled:
@@ -3245,7 +3287,7 @@ definitions:
       _id:
         type: string
       ack:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       alarm_creation_date:
         type: integer
       alarm_display_name:
@@ -3264,6 +3306,8 @@ definitions:
         type: string
       connector_name:
         type: string
+      depends_count:
+        type: integer
       icon:
         type: string
       idle_since:
@@ -3305,15 +3349,15 @@ definitions:
       resource:
         type: string
       snooze:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       source_type:
         type: string
       state:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       stats:
         $ref: '#/definitions/statistics.EventStatistics'
       status:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       ticket:
         $ref: '#/definitions/alarm.AlarmTicket'
     type: object
@@ -3328,7 +3372,7 @@ definitions:
       _id:
         type: string
       ack:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       alarm_counters:
         items:
           $ref: '#/definitions/serviceweather.AlarmCounter'
@@ -3380,11 +3424,11 @@ definitions:
       secondary_icon:
         type: string
       snooze:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       state:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       status:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
     type: object
   serviceweather.WeatherLink:
     properties:
@@ -3461,188 +3505,15 @@ definitions:
       ok:
         type: integer
     type: object
-  types.Alarm:
+  types.Coordinates:
     properties:
-      _id:
-        type: string
-      d:
-        type: string
-      t:
-        $ref: '#/definitions/types.CpsTime'
-      tags:
-        items:
-          type: string
-        type: array
-      v:
-        $ref: '#/definitions/types.AlarmValue'
-        description: todo move all field from Value to Alarm
-    type: object
-  types.AlarmStep:
-    properties:
-      _t:
-        type: string
-      a:
-        type: string
-      exec:
-        description: Execution contains id if instruction execution for instruction
-          steps only.
-        type: string
-      initiator:
-        type: string
-      m:
-        type: string
-      pbehavior_canonical_type:
-        type: string
-      role:
-        type: string
-      statecounter:
-        $ref: '#/definitions/types.CropCounter'
-      t:
-        $ref: '#/definitions/types.CpsTime'
-      user_id:
-        type: string
-      val:
-        type: integer
-    type: object
-  types.AlarmTicket:
-    properties:
-      _t:
-        type: string
-      a:
-        type: string
-      data:
-        additionalProperties:
-          type: string
-        type: object
-      m:
-        type: string
-      role:
-        type: string
-      t:
-        $ref: '#/definitions/types.CpsTime'
-      user_id:
-        type: string
-      val:
-        type: string
-    type: object
-  types.AlarmValue:
-    properties:
-      ack:
-        $ref: '#/definitions/types.AlarmStep'
-      activation_date:
-        $ref: '#/definitions/types.CpsTime'
-      active_duration:
-        description: |-
-          ActiveDuration represents a duration when an alarm wasn't in snooze or in maintenance, pause, inactive pbehavior interval.
-          Keep omitempty.
-        type: integer
-      canceled:
-        $ref: '#/definitions/types.AlarmStep'
-      children:
-        items:
-          type: string
-        type: array
-      component:
-        type: string
-      connector:
-        type: string
-      connector_name:
-        type: string
-      creation_date:
-        $ref: '#/definitions/types.CpsTime'
-      current_state_duration:
-        description: |-
-          CurrentStateDuration represents a duration when an alarm was in current state.
-          Keep omitempty.
-        type: integer
-      display_name:
-        type: string
-      done:
-        $ref: '#/definitions/types.AlarmStep'
-      duration:
-        description: |-
-          Duration represents a duration from creation date to resolve date.
-          Keep omitempty.
-        type: integer
-      events_count:
-        description: EventsCount accumulates count of check events.
-        type: integer
-      hard_limit:
-        type: integer
-      inactive_duration:
-        description: InactiveDuration represents a duration when an alarm was in snooze
-          or in maintenance, pause, inactive pbehavior interval.
-        type: integer
-      inactive_start:
-        $ref: '#/definitions/types.CpsTime'
-        description: |-
-          InactiveStart represents start of snooze or maintenance, pause, inactive pbehavior interval.
-          It's used only to compute InactiveDuration.
-      infos:
-        additionalProperties:
-          additionalProperties: true
-          type: object
-        type: object
-      initial_long_output:
-        type: string
-      initial_output:
-        type: string
-      last_comment:
-        $ref: '#/definitions/types.AlarmStep'
-      last_event_date:
-        $ref: '#/definitions/types.CpsTime'
-      last_update_date:
-        $ref: '#/definitions/types.CpsTime'
-      long_output:
-        type: string
-      long_output_history:
-        items:
-          type: string
-        type: array
-      meta:
-        type: string
-      meta_value_path:
-        type: string
-      output:
-        type: string
-      parents:
-        items:
-          type: string
-        type: array
-      pbehavior_info:
-        $ref: '#/definitions/types.PbehaviorInfo'
-      pbh_inactive_duration:
-        description: PbehaviorInactiveDuration represents a duration when an alarm
-          was in maintenance, pause, inactive pbehavior interval.
-        type: integer
-      resolved:
-        $ref: '#/definitions/types.CpsTime'
-      resource:
-        type: string
-      ruleVersion:
-        additionalProperties:
-          type: string
-        description: store version of dynamic-infos rule
-        type: object
-      snooze:
-        $ref: '#/definitions/types.AlarmStep'
-      snooze_duration:
-        description: SnoozeDuration represents a duration when an alarm was in snooze.
-        type: integer
-      state:
-        $ref: '#/definitions/types.AlarmStep'
-      state_changes_since_status_update:
-        type: integer
-      status:
-        $ref: '#/definitions/types.AlarmStep'
-      steps:
-        items:
-          $ref: '#/definitions/types.AlarmStep'
-        type: array
-      ticket:
-        $ref: '#/definitions/types.AlarmTicket'
-      total_state_changes:
-        type: integer
+      lat:
+        type: number
+      lng:
+        type: number
+    required:
+    - lat
+    - lng
     type: object
   types.CpsTime:
     properties:
@@ -3706,32 +3577,6 @@ definitions:
     required:
     - unit
     - value
-    type: object
-  types.PbehaviorInfo:
-    properties:
-      canonical_type:
-        description: CanonicalType is Type of pbehavior.Type.
-        type: string
-      id:
-        description: ID is ID of pbehavior.PBehavior.
-        type: string
-      name:
-        description: Name is Name of pbehavior.PBehavior.
-        type: string
-      reason:
-        description: Reason is Name of pbehavior.Reason.
-        type: string
-      timestamp:
-        description: |-
-          Timestamp is time when entity enters pbehavior.
-          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
-        type: integer
-      type:
-        description: TypeID is ID of pbehavior.Type.
-        type: string
-      type_name:
-        description: TypeName is Name of pbehavior.Type.
-        type: string
     type: object
   types.WebhookBasicAuth:
     properties:
@@ -4068,6 +3913,9 @@ definitions:
         description: Junit
         type: boolean
       mainFilter:
+        type: string
+      map:
+        description: Map
         type: string
       report_fileregexp:
         type: string

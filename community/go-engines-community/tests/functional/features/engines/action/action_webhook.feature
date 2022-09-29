@@ -1416,7 +1416,7 @@ Feature: execute action on trigger
     }
     """
 
-  Scenario: given webhook scenario to test arrays in the response
+  Scenario: given webhook scenario to test document with a document with arrays in response
     Given I am admin
     When I do POST /api/v4/scenarios:
     """json
@@ -1452,7 +1452,7 @@ Feature: execute action on trigger
           "parameters": {
             "request": {
               "method": "GET",
-              "url": "http://localhost:3000/webhook/arrays",
+              "url": "http://localhost:3000/webhook/document_with_array",
               "auth": {
                 "username": "root",
                 "password": "test"
@@ -1580,6 +1580,224 @@ Feature: execute action on trigger
             "connector_name": "test-connector-name-action-webhook-8",
             "component": "test-component-action-webhook-8",
             "resource": "test-resource-action-webhook-8"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "declareticket",
+                "a": "system"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  Scenario: given webhook scenario where the webhook response is an array
+    Given I am admin
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-action-webhook-9-name",
+      "enabled": true,
+      "triggers": ["create"],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-9"
+                }
+              }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-webhook-9/test-component-action-webhook-9"
+                }
+              }
+            ]
+          ],
+          "type": "webhook",
+          "parameters": {
+            "request": {
+              "method": "GET",
+              "url": "http://localhost:3000/webhook/response_is_array",
+              "auth": {
+                "username": "root",
+                "password": "test"
+              },
+              "headers": {"Content-Type": "application/json"}
+            },
+            "declare_ticket": {
+              "empty_response": false,
+              "is_regexp": false,
+              "ticket_id": "1.elem1",
+              "test_val": "0.elem1"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        },
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-9"
+                }
+              }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-webhook-9/test-component-action-webhook-9"
+                }
+              }
+            ]
+          ],
+          "type": "webhook",
+          "parameters": {
+            "request": {
+              "method": "POST",
+              "url": "{{ .apiURL }}/api/v4/scenarios",
+              "auth": {
+                "username": "root",
+                "password": "test"
+              },
+              "headers": {"Content-Type": "application/json"},
+              "payload": "{\"name\":\"test-scenario-action-webhook-9-webhook {{ `{{index .ResponseMap \"0.0.elem1\"}}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"_id\",\"cond\":{\"type\":\"eq\",\"value\":\"{{ `{{index .ResponseMap \"0.1.elem2\"}}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-action-webhook-9",
+      "connector_name" : "test-connector-name-action-webhook-9",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" :  "test-component-action-webhook-9",
+      "resource" : "test-resource-action-webhook-9",
+      "state" : 2,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-9-webhook
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-scenario-action-webhook-9-webhook test1",
+          "actions": [
+            {
+              "entity_pattern": [
+                [
+                  {
+                    "field": "_id",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test4"
+                    }
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-action-webhook-9
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "ticket": {
+              "_t": "declareticket",
+              "a": "system",
+              "val": "test3",
+              "data": {
+                "test_val": "test1"
+              }
+            },
+            "connector": "test-connector-action-webhook-9",
+            "connector_name": "test-connector-name-action-webhook-9",
+            "component": "test-component-action-webhook-9",
+            "resource": "test-resource-action-webhook-9"
           }
         }
       ],

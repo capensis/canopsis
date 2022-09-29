@@ -7,6 +7,7 @@ import (
 	"time"
 
 	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -16,8 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const linkFetchTimeout = 30 * time.Second
-
 type Store interface {
 	Find(context.Context, ListRequest) (*AggregationResult, error)
 	FindEntities(ctx context.Context, id, apiKey string, query EntitiesListRequest) (*EntityAggregationResult, error)
@@ -25,7 +24,7 @@ type Store interface {
 
 func NewStore(
 	dbClient mongo.DbClient,
-	legacyURL string,
+	linksFetcher common.LinksFetcher,
 	alarmStore alarmapi.Store,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	logger zerolog.Logger,
@@ -33,8 +32,8 @@ func NewStore(
 	return &store{
 		dbCollection: dbClient.Collection(mongo.EntityMongoCollection),
 
-		alarmStore: alarmStore,
-		links:      alarmapi.NewLinksFetcher(legacyURL, linkFetchTimeout),
+		alarmStore:   alarmStore,
+		linksFetcher: linksFetcher,
 
 		timezoneConfigProvider: timezoneConfigProvider,
 
@@ -47,8 +46,8 @@ func NewStore(
 type store struct {
 	dbCollection mongo.DbCollection
 
-	links      alarmapi.LinksFetcher
-	alarmStore alarmapi.Store
+	linksFetcher common.LinksFetcher
+	alarmStore   alarmapi.Store
 
 	timezoneConfigProvider config.TimezoneConfigProvider
 
@@ -168,11 +167,11 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, r EntitiesL
 }
 
 func (s *store) fillLinks(ctx context.Context, apiKey string, result *EntityAggregationResult) error {
-	linksEntities := make([]alarmapi.AlarmEntity, 0, len(result.Data))
+	reqEntities := make([]common.FetchLinksRequestItem, 0, len(result.Data))
 	entities := make(map[string][]int, len(result.Data))
 	for i, entity := range result.Data {
 		if _, ok := entities[entity.ID]; !ok {
-			linksEntities = append(linksEntities, alarmapi.AlarmEntity{
+			reqEntities = append(reqEntities, common.FetchLinksRequestItem{
 				EntityID: entity.ID,
 			})
 			entities[entity.ID] = make([]int, 0, 1)
@@ -180,7 +179,7 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *EntityAggr
 		// map entity ID with record number in result.Data list
 		entities[entity.ID] = append(entities[entity.ID], i)
 	}
-	res, err := s.links.Fetch(ctx, apiKey, linksEntities)
+	res, err := s.linksFetcher.Fetch(ctx, apiKey, common.FetchLinksRequest{Entities: reqEntities})
 	if err != nil || res == nil {
 		return err
 	}
