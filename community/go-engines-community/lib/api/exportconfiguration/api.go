@@ -9,7 +9,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"gopkg.in/yaml.v3"
 )
@@ -23,13 +22,9 @@ type API interface {
 type api struct {
 	client          mongo.DbClient
 	collectionNames map[string]string
-	logger          zerolog.Logger
 }
 
-func NewApi(
-	client mongo.DbClient,
-	logger zerolog.Logger,
-) API {
+func NewApi(client mongo.DbClient) API {
 	return &api{
 		client: client,
 		collectionNames: map[string]string{
@@ -64,7 +59,6 @@ func NewApi(
 			"kpi_filter":          mongo.KpiFilterMongoCollection,
 			"pattern":             mongo.PatternMongoCollection,
 		},
-		logger: logger,
 	}
 }
 
