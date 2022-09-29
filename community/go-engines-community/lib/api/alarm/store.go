@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"sort"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
@@ -30,8 +29,6 @@ const (
 	InstructionStatusApproved            = 0
 )
 
-const linkFetchTimeout = 30 * time.Second
-
 const manualMetaAlarmsLimit = 100
 
 type Store interface {
@@ -40,6 +37,7 @@ type Store interface {
 	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string) (map[string]ExecutionStatus, error)
 	Count(ctx context.Context, r FilterRequest) (*Count, error)
 	GetByID(ctx context.Context, id, apiKey string) (*Alarm, error)
+	GetOpenByEntityID(ctx context.Context, id, apiKey string) (*Alarm, bool, error)
 	FindManual(ctx context.Context, search string) ([]ManualResponse, error)
 	FindByService(ctx context.Context, id, apiKey string, r ListByServiceRequest) (*AggregationResult, error)
 	FindByComponent(ctx context.Context, r ListByComponentRequest, apiKey string) (*AggregationResult, error)
@@ -57,12 +55,12 @@ type store struct {
 
 	queryBuilder *MongoQueryBuilder
 
-	links LinksFetcher
+	linksFetcher common.LinksFetcher
 
 	logger zerolog.Logger
 }
 
-func NewStore(dbClient mongo.DbClient, legacyURL string, logger zerolog.Logger) Store {
+func NewStore(dbClient mongo.DbClient, linksFetcher common.LinksFetcher, logger zerolog.Logger) Store {
 	return &store{
 		dbClient:                         dbClient,
 		mainDbCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
@@ -73,7 +71,7 @@ func NewStore(dbClient mongo.DbClient, legacyURL string, logger zerolog.Logger) 
 
 		queryBuilder: NewMongoQueryBuilder(dbClient),
 
-		links: NewLinksFetcher(legacyURL, linkFetchTimeout),
+		linksFetcher: linksFetcher,
 
 		logger: logger,
 	}
@@ -133,7 +131,7 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 }
 
 func (s *store) GetByID(ctx context.Context, id, apiKey string) (*Alarm, error) {
-	pipeline, err := s.queryBuilder.CreateGetAggregationPipeline(id, types.NewCpsTime())
+	pipeline, err := s.queryBuilder.CreateGetAggregationPipeline(bson.M{"_id": id}, types.NewCpsTime())
 	if err != nil {
 		return nil, err
 	}
@@ -186,6 +184,61 @@ func (s *store) GetByID(ctx context.Context, id, apiKey string) (*Alarm, error) 
 	}
 
 	return &result.Data[0], nil
+}
+
+func (s *store) GetOpenByEntityID(ctx context.Context, entityID, apiKey string) (*Alarm, bool, error) {
+	err := s.dbEntityCollection.FindOne(ctx, bson.M{
+		"_id":     entityID,
+		"enabled": true,
+	}).Err()
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, false, nil
+		}
+		return nil, false, err
+	}
+
+	pipeline, err := s.queryBuilder.CreateGetAggregationPipeline(bson.M{
+		"d":          entityID,
+		"v.resolved": nil,
+	}, types.NewCpsTime())
+	if err != nil {
+		return nil, false, err
+	}
+
+	cursor, err := s.mainDbCollection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, false, err
+	}
+	defer cursor.Close(ctx)
+
+	result := AggregationResult{}
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&result)
+		if err != nil {
+			return nil, false, err
+		}
+	}
+
+	if len(result.Data) == 0 {
+		return nil, true, nil
+	}
+
+	_, err = s.fillAssignedInstructions(ctx, &result, types.NewCpsTime())
+	if err != nil {
+		return nil, false, err
+	}
+	err = s.fillInstructionFlags(ctx, &result)
+	if err != nil {
+		return nil, false, err
+	}
+
+	err = s.fillLinks(ctx, apiKey, &result)
+	if err != nil {
+		s.logger.Err(err).Msg("cannot fill links")
+	}
+
+	return &result.Data[0], true, nil
 }
 
 func (s *store) FindManual(ctx context.Context, search string) ([]ManualResponse, error) {
@@ -247,10 +300,18 @@ func (s *store) FindByService(ctx context.Context, id, apiKey string, r ListBySe
 		return nil, err
 	}
 
-	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(bson.M{
-		"d":          bson.M{"$in": service.Depends},
+	ids := service.Depends
+	if r.WithService {
+		ids = append(ids, id)
+	}
+
+	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(ctx, bson.M{
+		"d":          bson.M{"$in": ids},
 		"v.resolved": nil,
-	}, r.Query, r.SortRequest, now)
+	}, r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
+		Category: r.Category,
+		Search:   r.Search,
+	}}, now)
 	if err != nil {
 		return nil, err
 	}
@@ -301,10 +362,10 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, a
 		return nil, err
 	}
 
-	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(bson.M{
+	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(ctx, bson.M{
 		"d":          bson.M{"$in": component.Depends},
 		"v.resolved": nil,
-	}, r.Query, r.SortRequest, now)
+	}, r.Query, r.SortRequest, FilterRequest{}, now)
 	if err != nil {
 		return nil, err
 	}
@@ -355,13 +416,12 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, apiKey 
 	}
 
 	match := bson.M{"d": r.ID}
-	if r.StartFrom != nil {
-		match[defaultTimeFieldResolved] = bson.M{"$gte": r.StartFrom}
-	}
-	if r.StartTo != nil {
-		match[defaultTimeFieldResolved] = bson.M{"$lte": r.StartTo}
-	}
-	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(match, r.Query, r.SortRequest, now)
+	opened := false
+	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(ctx, match, r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
+		StartFrom: r.StartFrom,
+		StartTo:   r.StartTo,
+		Opened:    &opened,
+	}}, now)
 	if err != nil {
 		return nil, err
 	}
@@ -957,18 +1017,18 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 		return nil
 	}
 
-	linksEntities := make([]AlarmEntity, len(result.Data))
+	reqEntities := make([]common.FetchLinksRequestItem, len(result.Data))
 	alarmIndexes := make(map[string]int, len(result.Data))
 
 	for i, item := range result.Data {
-		linksEntities[i] = AlarmEntity{
+		reqEntities[i] = common.FetchLinksRequestItem{
 			AlarmID:  item.ID,
 			EntityID: item.Entity.ID,
 		}
 		alarmIndexes[item.ID] = i
 	}
 
-	res, err := s.links.Fetch(ctx, apiKey, linksEntities)
+	res, err := s.linksFetcher.Fetch(ctx, apiKey, common.FetchLinksRequest{Entities: reqEntities})
 	if err != nil || res == nil {
 		return err
 	}

@@ -79,7 +79,7 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.computedFieldsForAdditionalMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields()
-	q.excludedFields = []string{"alarm", "event_stats", "pbehavior_info_type"}
+	q.excludedFields = []string{"impact", "depends", "alarm", "event_stats", "pbehavior_info_type"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime) ([]bson.M, error) {
@@ -93,13 +93,16 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleSort(r.ListRequest)
-	if err != nil {
-		return nil, err
-	}
+	q.handleSort(r.SortRequest)
 
 	if r.WithFlags {
-		q.lookups = append(q.lookups, lookupWithKey{key: "deletable", pipeline: getDeletablePipeline()})
+		q.addFlags()
+		q.computedFields["depends_count"] = bson.M{"$cond": bson.M{
+			"if":   bson.M{"$eq": bson.A{"$type", types.EntityTypeService}},
+			"then": bson.M{"$size": "$depends"},
+			"else": 0,
+		}}
+		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: getImpactsCountPipeline()})
 	}
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
@@ -110,6 +113,47 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 		q.sort,
 		afterLimit,
 	), nil
+}
+
+func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
+	match bson.M,
+	paginationQuery pagination.Query,
+	sortRequest SortRequest,
+	category, search string,
+	withFlags bool,
+	now types.CpsTime,
+) []bson.M {
+	q.clear(now)
+
+	and := []bson.M{match}
+	if category != "" {
+		and = append(and, bson.M{"category": bson.M{"$eq": category}})
+	}
+	if search != "" {
+		and = append(and, common.GetSearchQuery(search, q.defaultSearchByFields))
+	}
+
+	q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{"$and": and}})
+	q.handleSort(sortRequest)
+
+	if withFlags {
+		q.addFlags()
+		q.computedFields["depends_count"] = bson.M{"$cond": bson.M{
+			"if":   bson.M{"$eq": bson.A{"$type", types.EntityTypeService}},
+			"then": bson.M{"$size": "$depends"},
+			"else": 0,
+		}}
+		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: getImpactsCountPipeline()})
+	}
+
+	beforeLimit, afterLimit := q.createAggregationPipeline()
+
+	return pagination.CreateAggregationPipeline(
+		paginationQuery,
+		beforeLimit,
+		q.sort,
+		afterLimit,
+	)
 }
 
 func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
@@ -310,7 +354,7 @@ func (q *MongoQueryBuilder) addNoEventsFilter(r ListRequest, match *[]bson.M) {
 	*match = append(*match, bson.M{"idle_since": bson.M{"$gt": 0}})
 }
 
-func (q *MongoQueryBuilder) handleSort(r ListRequest) error {
+func (q *MongoQueryBuilder) handleSort(r SortRequest) {
 	sortBy := r.SortBy
 	if sortBy == "" {
 		sortBy = q.defaultSortBy
@@ -322,15 +366,21 @@ func (q *MongoQueryBuilder) handleSort(r ListRequest) error {
 
 	q.adjustLookupsForSort([]string{sortBy})
 	q.sort = common.GetSortQuery(sortBy, sort)
-
-	return nil
 }
 
 func (q *MongoQueryBuilder) adjustLookupsForSort(sortFields []string) {
+	lookupByComputedField := map[string]string{
+		"state":        "alarm",
+		"impact_state": "alarm",
+	}
+
 	for field := range q.computedFields {
 		for _, sortField := range sortFields {
 			if sortField == field {
 				q.computedFieldsForSort[field] = true
+				if lookup := lookupByComputedField[sortField]; lookup != "" {
+					q.lookupsForSort[lookup] = true
+				}
 				break
 			}
 		}
@@ -339,7 +389,7 @@ func (q *MongoQueryBuilder) adjustLookupsForSort(sortFields []string) {
 	for lookup := range q.lookupsForAdditionalMatch {
 		found := false
 		for _, sortField := range sortFields {
-			if strings.HasPrefix(sortField, lookup) {
+			if strings.HasPrefix(sortField, lookup) || lookup == lookupByComputedField[sortField] {
 				found = true
 				break
 			}
@@ -358,6 +408,10 @@ func (q *MongoQueryBuilder) adjustLookupsForSort(sortFields []string) {
 			}
 		}
 	}
+}
+
+func (q *MongoQueryBuilder) addFlags() {
+	q.lookups = append(q.lookups, lookupWithKey{key: "deletable", pipeline: getDeletablePipeline()})
 }
 
 func getAlarmLookup() []bson.M {
@@ -461,23 +515,50 @@ func getDeletablePipeline() []bson.M {
 	}
 }
 
+func getImpactsCountPipeline() []bson.M {
+	return []bson.M{
+		{"$graphLookup": bson.M{
+			"from":                    mongo.EntityMongoCollection,
+			"startWith":               "$impact",
+			"connectFromField":        "impact",
+			"connectToField":          "_id",
+			"as":                      "service_impacts",
+			"restrictSearchWithMatch": bson.M{"type": types.EntityTypeService},
+			"maxDepth":                0,
+		}},
+		{"$addFields": bson.M{
+			"impacts_count": bson.M{"$size": "$service_impacts"},
+		}},
+		{"$project": bson.M{"service_impacts": 0}},
+	}
+}
+
 func getComputedFields() bson.M {
 	return bson.M{
-		"ok_events": bson.M{"$cond": bson.M{
-			"if":   "$event_stats.ok",
-			"then": "$event_stats.ok",
-			"else": 0,
+		"ok_events": bson.M{"$ifNull": bson.A{
+			"$event_stats.ok",
+			0,
 		}},
-		"ko_events": bson.M{"$cond": bson.M{
-			"if":   "$event_stats.ko",
-			"then": "$event_stats.ko",
-			"else": 0,
+		"ko_events": bson.M{"$ifNull": bson.A{
+			"$event_stats.ko",
+			0,
 		}},
-		"state": bson.M{"$cond": bson.M{
+		"state": bson.M{"$ifNull": bson.A{
+			"$alarm.v.state.val",
+			0,
+		}},
+		"impact_state": bson.M{"$cond": bson.M{
 			"if":   "$alarm.v.state.val",
-			"then": "$alarm.v.state.val",
+			"then": bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$impact_level"}},
 			"else": 0,
 		}},
+		"status": bson.M{"$ifNull": bson.A{
+			"$alarm.v.status.val",
+			0,
+		}},
+		"ack":                    "$alarm.v.ack",
+		"snooze":                 "$alarm.v.snooze",
+		"alarm_last_update_date": "$alarm.v.last_update_date",
 	}
 }
 

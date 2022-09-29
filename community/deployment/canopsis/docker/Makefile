@@ -1,8 +1,13 @@
-ifneq (3.81,$(firstword $(sort $(MAKE_VERSION) 3.81)))
-$(error This makefile requires GNU Make >= 3.81)
+CURRENT_MAKEFILE := $(abspath $(firstword $(MAKEFILE_LIST)))
+
+# Path of the monorepo
+MONOREPO_ROOT := $(realpath $(dir $(CURRENT_MAKEFILE))/../../../../)
+include $(MONOREPO_ROOT)/community/.env
+
+ifneq ($(REQUIRED_MAKE_VERSION),$(firstword $(sort $(MAKE_VERSION) $(REQUIRED_MAKE_VERSION))))
+$(error This makefile requires GNU Make >= $(REQUIRED_MAKE_VERSION))
 endif
 
-CURRENT_MAKEFILE := $(abspath $(firstword $(MAKEFILE_LIST)))
 # Directory containing the main Makefile (the Makefile that was executed)
 CURRENT_ROOT_DIR = $(realpath $(dir $(CURRENT_MAKEFILE)))
 # Where to put the built binaries

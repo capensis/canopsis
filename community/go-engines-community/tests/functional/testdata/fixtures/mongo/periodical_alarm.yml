@@ -422,6 +422,7 @@ periodical_alarm:
       connector_name: test-connector-name-to-entity-get
       component: test-component-to-entity-get
       resource: test-resource-to-entity-get-1
+      last_update_date: 1597030219
       state:
         _t: stateinc
         a: test-connector-to-entity-get.test-connector-name-to-entity-get
@@ -861,6 +862,37 @@ periodical_alarm:
     v:
       <<: *alarm_value
       resource: test-resource-to-stats-executions-get-with-resolved-alarms-1
+
+  alarm_to_map_state_get_1:
+    <<: *alarm
+    _id: test-alarm-to-map-state-get-1
+    d: test-resource-to-map-state-get-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-map-state-get-1
+      last_update_date: 1605263992
+      state:
+        _t: stateinc
+        a: test-connector-default/test-connector-default-name
+        m: test-alarm-to-map-state-get-1-state-message
+        t: 1605263992
+        initiator: external
+        val: 3
+      status:
+        _t: stateinc
+        a: test-connector-default/test-connector-default-name
+        m: test-alarm-to-map-state-get-1-status-message
+        t: 1605263992
+        initiator: external
+        val: 1
+      ack:
+        _t: ack
+        a: root
+        user_id: root
+        m: test-alarm-to-map-state-get-1-ack-message
+        t: 1605263992
+        initiator: user
+        val: 0
 
   periodical_alarm_18:
     _id: test-instruction-execution-next-1
