@@ -94,11 +94,12 @@ func (a *api) Export(c *gin.Context) {
 		err := file.Close()
 		if err != nil {
 			a.logger.Err(err).Str("filename", filename).Msg("failed to close the file")
-		} else {
-			err = os.Remove(file.Name())
-			if err != nil {
-				a.logger.Err(err).Str("filename", filename).Msg("failed to remove the file")
-			}
+			return
+		}
+
+		err = os.Remove(file.Name())
+		if err != nil {
+			a.logger.Err(err).Str("filename", filename).Msg("failed to remove the file")
 		}
 	}()
 
