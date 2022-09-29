@@ -2,17 +2,19 @@
   v-flex
     date-time-picker-field(
       v-validate="startRules",
-      v-field="form.start",
+      :value="form.start",
       :label="$t('common.start')",
       :error-message="errors.collect('start')",
-      name="start"
+      name="start",
+      @input="updateField('start', $event)"
     )
     date-time-picker-field.ml-2(
       v-validate="stopRules",
-      v-field="form.stop",
+      :value="form.stop",
       :label="$t('common.stop')",
       :error-message="errors.collect('stop')",
-      name="stop"
+      name="stop",
+      @input="updateField('stop', $event)"
     )
 </template>
 
@@ -21,11 +23,14 @@ import { DATETIME_FORMATS } from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
 
+import { formMixin } from '@/mixins/form';
+
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 
 export default {
   inject: ['$validator'],
   components: { DateTimePickerField },
+  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',

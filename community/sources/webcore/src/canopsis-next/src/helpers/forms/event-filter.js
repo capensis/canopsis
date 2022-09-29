@@ -10,8 +10,8 @@ import {
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 import {
-  exceptionsToForm,
-  exdatesToForm,
+  exceptionsToForm, exceptionsToRequest,
+  exdatesToForm, exdatesToRequest,
   formExceptionsToExceptions,
   formExdatesToExdates,
 } from '@/helpers/forms/planning-pbehavior';
@@ -162,8 +162,8 @@ export const formToEventFilter = (eventFilterForm, timezone) => {
       eventFilter.start = convertDateToTimestamp(start);
       eventFilter.stop = convertDateToTimestamp(stop);
       eventFilter.rrule = rrule;
-      eventFilter.exdates = formExdatesToExdates(exdates, timezone);
-      eventFilter.exceptions = formExceptionsToExceptions(exceptions);
+      eventFilter.exdates = exdatesToRequest(formExdatesToExdates(exdates, timezone));
+      eventFilter.exceptions = exceptionsToRequest(formExceptionsToExceptions(exceptions));
       break;
   }
 

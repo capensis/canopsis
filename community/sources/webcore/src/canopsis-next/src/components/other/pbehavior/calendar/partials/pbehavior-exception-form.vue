@@ -14,6 +14,7 @@
         v-for="(exdate, index) in exdates",
         v-field="exdates[index]",
         :key="exdate.key",
+        :with-type="withExdateType",
         @delete="removeItemFromArray(index)"
       )
     v-layout(row)
@@ -49,6 +50,10 @@ export default {
     exceptions: {
       type: Array,
       default: () => [],
+    },
+    withExdateType: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

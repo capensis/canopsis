@@ -138,11 +138,13 @@ export const exdateToForm = (exdate, timezone = getLocaleTimezone()) => ({
 /**
  * Convert exdates array to exdates form array
  *
- * @param {PbehaviorExdate[]} [exdates = []]
+ * @param {PbehaviorExdate[]} exdates
  * @param {string} timezone
  * @returns {PbehaviorExdateForm[]}
  */
-export const exdatesToForm = (exdates = [], timezone) => exdates.map(exdate => exdateToForm(exdate, timezone));
+export const exdatesToForm = (exdates, timezone) => (
+  exdates ? exdates.map(exdate => exdateToForm(exdate, timezone)) : []
+);
 
 /**
  * Convert exdate form to exdate
