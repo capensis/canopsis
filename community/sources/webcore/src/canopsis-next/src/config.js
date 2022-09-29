@@ -5,6 +5,7 @@ export const {
   VUE_APP_API_HOST,
   VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY,
   VUE_APP_PAGINATION_LIMIT,
+  VUE_APP_OPEN_STREET_LAYER_URL,
 } = process.env;
 
 export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
@@ -17,10 +18,7 @@ export const SOCKET_ROUTE = '/api/v4/ws';
 
 export const SOCKET_URL = removeTrailingSlashes(`${SOCKET_HOST}${SOCKET_ROUTE}`);
 
-/**
- * TODO: Should be fixed after backend integration
- */
-export const OPEN_STREET_LAYER_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+export const OPEN_STREET_LAYER_URL = VUE_APP_OPEN_STREET_LAYER_URL;
 
 export const ROUTER_MODE = 'history';
 
