@@ -813,6 +813,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			"alarm":               0,
 			"event_stats":         0,
 			"pbehavior_info_type": 0,
+			"depends":             0,
+			"impact":              0,
 		},
 	})
 	expected := []bson.M{
