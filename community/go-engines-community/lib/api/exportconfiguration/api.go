@@ -83,7 +83,7 @@ func (a *api) Export(c *gin.Context) {
 		panic(err)
 	}
 
-	contents := make(map[string]ExportDocument)
+	contents := make(map[string]ExportDocuments)
 
 	for _, collection := range r.Exports {
 		err = a.addContents(c, contents, collection)
@@ -105,7 +105,7 @@ func (a *api) Export(c *gin.Context) {
 	c.FileAttachment(file.Name(), exportFileName)
 }
 
-func (a *api) addContents(c *gin.Context, contents map[string]ExportDocument, collectionName string) error {
+func (a *api) addContents(c *gin.Context, contents map[string]ExportDocuments, collectionName string) error {
 	cursor, err := a.client.Collection(collectionName).Find(c, bson.M{})
 	if err != nil {
 		return err
@@ -113,7 +113,7 @@ func (a *api) addContents(c *gin.Context, contents map[string]ExportDocument, co
 
 	defer cursor.Close(c)
 
-	content := make(ExportDocument)
+	content := make(ExportDocuments)
 	i := 0
 
 	for cursor.Next(c) {
