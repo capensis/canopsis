@@ -1,35 +1,35 @@
 <template lang="pug">
-  v-flex
-    date-time-picker-field(
+  v-layout(row)
+    date-time-picker-text-field(
       v-validate="startRules",
-      :value="form.start",
+      :value="startString",
       :label="$t('common.start')",
       :error-message="errors.collect('start')",
       name="start",
-      @input="updateField('start', $event)"
+      @input="updateStartDate"
     )
-    date-time-picker-field.ml-2(
+    date-time-picker-text-field.ml-2(
       v-validate="stopRules",
-      :value="form.stop",
+      :value="stopString",
       :label="$t('common.stop')",
       :error-message="errors.collect('stop')",
       name="stop",
-      @input="updateField('stop', $event)"
+      @input="updateStopDate"
     )
 </template>
 
 <script>
 import { DATETIME_FORMATS } from '@/constants';
 
-import { convertDateToString } from '@/helpers/date/date';
+import { convertDateToDateObject, convertDateToString, convertDateToTimestamp } from '@/helpers/date/date';
 
 import { formMixin } from '@/mixins/form';
 
-import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
+import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DateTimePickerField },
+  components: { DateTimePickerTextField },
   mixins: [formMixin],
   model: {
     prop: 'form',
@@ -42,19 +42,44 @@ export default {
     },
   },
   computed: {
+    startString() {
+      return this.form.start && convertDateToString(this.form.start, DATETIME_FORMATS.dateTimePicker);
+    },
+
+    stopString() {
+      return this.form.stop && convertDateToString(this.form.stop, DATETIME_FORMATS.dateTimePicker);
+    },
+
     startRules() {
       return {
-        required: true,
         date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
       };
     },
 
     stopRules() {
       return {
-        required: true,
         after: [convertDateToString(this.form.start, DATETIME_FORMATS.dateTimePicker)],
         date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
       };
+    },
+  },
+  watch: {
+    'form.rrule': function watchRRule() {
+      this.errors.remove('start');
+      this.errors.remove('stop');
+    },
+  },
+  methods: {
+    prepareDate(date) {
+      return date ? convertDateToTimestamp(convertDateToDateObject(date, DATETIME_FORMATS.dateTimePicker)) : null;
+    },
+
+    updateStartDate(value) {
+      this.updateField('start', this.prepareDate(value));
+    },
+
+    updateStopDate(value) {
+      this.updateField('stop', this.prepareDate(value));
     },
   },
 };
