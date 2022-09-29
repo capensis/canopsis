@@ -1,6 +1,9 @@
 package entity
 
 import (
+	"strings"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -17,9 +20,13 @@ type ListRequestWithPagination struct {
 
 type ListRequest struct {
 	BaseFilterRequest
-	Sort     string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
-	SortBy   string   `form:"sort_by" json:"sort_by"`
+	SortRequest
 	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
+}
+
+type SortRequest struct {
+	Sort   string `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
+	SortBy string `form:"sort_by" json:"sort_by"`
 }
 
 type BaseFilterRequest struct {
@@ -55,29 +62,52 @@ type ExportResponse struct {
 type Entity struct {
 	ID             string                   `bson:"_id" json:"_id"`
 	Name           string                   `bson:"name" json:"name"`
-	EnableHistory  []types.CpsTime          `bson:"enable_history" json:"enable_history" swaggertype:"array,integer"`
-	Measurements   interface{}              `bson:"measurements" json:"measurements"`
 	Enabled        bool                     `bson:"enabled" json:"enabled"`
 	Infos          Infos                    `bson:"infos" json:"infos"`
 	ComponentInfos Infos                    `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
 	Type           string                   `bson:"type" json:"type"`
 	ImpactLevel    int64                    `bson:"impact_level" json:"impact_level"`
 	Category       *entitycategory.Category `bson:"category" json:"category"`
-	Deletable      *bool                    `bson:"deletable,omitempty" json:"deletable,omitempty"`
 	IdleSince      *types.CpsTime           `bson:"idle_since,omitempty" json:"idle_since,omitempty" swaggertype:"integer"`
 	PbehaviorInfo  *PbehaviorInfo           `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 	LastEventDate  *types.CpsTime           `bson:"last_event_date,omitempty" json:"last_event_date,omitempty" swaggertype:"integer"`
-	OKEvents       *int                     `bson:"ok_events" json:"ok_events,omitempty"`
-	KOEvents       *int                     `bson:"ko_events" json:"ko_events,omitempty"`
-	State          *int                     `bson:"state" json:"state,omitempty"`
 
-	Impacts   []string `bson:"impact" json:"impact"`
-	Depends   []string `bson:"depends" json:"depends"`
-	Connector string   `bson:"connector,omitempty" json:"connector,omitempty"`
-	Component string   `bson:"component,omitempty" json:"component,omitempty"`
+	Connector string `bson:"connector,omitempty" json:"connector,omitempty"`
+	Component string `bson:"component,omitempty" json:"component,omitempty"`
 
 	// ConnectorType contains a part before "/" of connector id.
 	ConnectorType string `bson:"-" json:"connector_type,omitempty"`
+
+	// Flags
+	Deletable *bool `bson:"deletable,omitempty" json:"deletable,omitempty"`
+
+	// Stats
+	OKEvents *int `bson:"ok_events" json:"ok_events,omitempty"`
+	KOEvents *int `bson:"ko_events" json:"ko_events,omitempty"`
+
+	// Alarm fields
+	State               *int              `bson:"state" json:"state,omitempty"`
+	ImpactState         *int              `bson:"impact_state" json:"impact_state,omitempty"`
+	Status              *int              `bson:"status" json:"status,omitempty"`
+	Ack                 *common.AlarmStep `bson:"ack" json:"ack,omitempty"`
+	Snooze              *common.AlarmStep `bson:"snooze" json:"snooze,omitempty"`
+	AlarmLastUpdateDate *types.CpsTime    `bson:"alarm_last_update_date" json:"alarm_last_update_date,omitempty" swaggertype:"integer"`
+
+	// Links
+	Links map[string]interface{} `bson:"-" json:"links,omitempty"`
+
+	// DependsCount contains only service's dependencies
+	DependsCount *int `bson:"depends_count" json:"depends_count,omitempty"`
+	// ImpactsCount contains only services
+	ImpactsCount *int `bson:"impacts_count" json:"impacts_count,omitempty"`
+
+	Coordinates *types.Coordinates `bson:"coordinates,omitempty" json:"coordinates,omitempty"`
+}
+
+func (e *Entity) fillConnectorType() {
+	if e.Type == types.EntityTypeConnector {
+		e.ConnectorType = strings.TrimSuffix(e.ID, "/"+e.Name)
+	}
 }
 
 type Infos map[string]Info
@@ -134,4 +164,13 @@ type SimplifiedEntity struct {
 	ID      string `bson:"_id"`
 	Type    string `bson:"type"`
 	Enabled bool   `bson:"enabled"`
+}
+
+type ContextGraphRequest struct {
+	ID string `form:"_id" binding:"required"`
+}
+
+type ContextGraphResponse struct {
+	Impacts []string `bson:"impact" json:"impact"`
+	Depends []string `bson:"depends" json:"depends"`
 }

@@ -262,6 +262,11 @@ default_rights:
     _id: api_corporate_pattern
     crecord_name: <Current()._id>
     desc: Corporate patterns
+  permission_api_map:
+    <<: *permission_crud
+    _id: api_map
+    crecord_name: <Current()._id>
+    desc: Map
 
   role_noperms:
     <<: *role
@@ -1115,6 +1120,9 @@ default_rights:
         crecord_type: right
       "@permission_api_corporate_pattern":
         checksum: 1
+        crecord_type: right
+      "@permission_api_map":
+        checksum: 15
         crecord_type: right
       "@permission_playlist_to_delete":
         checksum: 1

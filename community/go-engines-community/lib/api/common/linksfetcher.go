@@ -1,4 +1,4 @@
-package alarm
+package common
 
 import (
 	"bytes"
@@ -12,27 +12,29 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 )
 
+const linkFetchTimeout = 30 * time.Second
+
 // LinksFetcher interface to fetch external API
 type LinksFetcher interface {
-	Fetch(context.Context, string, []AlarmEntity) (*LinksResponse, error)
+	Fetch(context.Context, string, FetchLinksRequest) (*FetchLinksResponse, error)
 }
 
-type LinksRequest struct {
-	Entities []AlarmEntity `json:"entities"`
+type FetchLinksRequest struct {
+	Entities []FetchLinksRequestItem `json:"entities"`
 }
 
-type AlarmEntity struct {
+type FetchLinksRequestItem struct {
 	AlarmID  string `json:"alarm"`
 	EntityID string `json:"entity"`
 }
 
-type EntityLinks struct {
-	AlarmEntity
-	Links map[string]interface{} `json:"links"`
+type FetchLinksResponse struct {
+	Data []FetchLinksResponseItem
 }
 
-type LinksResponse struct {
-	Data []EntityLinks
+type FetchLinksResponseItem struct {
+	FetchLinksRequestItem
+	Links map[string]interface{} `json:"links"`
 }
 
 type linksFetcher struct {
@@ -40,15 +42,19 @@ type linksFetcher struct {
 	LegacyURL string
 }
 
-func NewLinksFetcher(legacyURL string, timeout time.Duration) LinksFetcher {
+func NewLinksFetcher(legacyURL string) LinksFetcher {
 	return &linksFetcher{
 		LegacyURL: legacyURL,
-		Timeout:   timeout,
+		Timeout:   linkFetchTimeout,
 	}
 }
 
-func (lf *linksFetcher) Fetch(ctx context.Context, apiKey string, ae []AlarmEntity) (*LinksResponse, error) {
-	if lf.LegacyURL == "" || len(ae) == 0 {
+func (lf *linksFetcher) Fetch(
+	ctx context.Context,
+	apiKey string,
+	r FetchLinksRequest,
+) (*FetchLinksResponse, error) {
+	if lf.LegacyURL == "" || len(r.Entities) == 0 {
 		return nil, nil
 	}
 
@@ -56,10 +62,7 @@ func (lf *linksFetcher) Fetch(ctx context.Context, apiKey string, ae []AlarmEnti
 		Timeout: lf.Timeout,
 	}
 
-	linksRequestData := &LinksRequest{
-		Entities: ae,
-	}
-	reqBytes, err := json.Marshal(linksRequestData)
+	reqBytes, err := json.Marshal(r)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +91,7 @@ func (lf *linksFetcher) Fetch(ctx context.Context, apiKey string, ae []AlarmEnti
 		return nil, fmt.Errorf("payload %s;response %s; %s", string(reqBytes), resp.Status, string(buf))
 	}
 
-	var body LinksResponse
+	var body FetchLinksResponse
 	err = json.Unmarshal(buf, &body)
 	if err != nil {
 		return nil, err
