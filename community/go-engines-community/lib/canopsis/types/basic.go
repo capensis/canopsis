@@ -298,6 +298,10 @@ func (d DurationWithUnit) String() string {
 	return fmt.Sprintf("%d%s", d.Value, d.Unit)
 }
 
+func (d DurationWithUnit) IsZero() bool {
+	return d == DurationWithUnit{}
+}
+
 func ParseDurationWithUnit(str string) (DurationWithUnit, error) {
 	d := DurationWithUnit{}
 	if str == "" {

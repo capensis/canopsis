@@ -6,14 +6,16 @@
       :roles="roles",
       :changed-roles="changedRoles",
       :disabled="disabled",
+      :sort-by="sortBy",
       @change="$listeners.change"
     )
     permissions-table(
       v-else,
       :permissions="permissions",
       :roles="roles",
-      :changedRoles="changedRoles",
+      :changed-roles="changedRoles",
       :disabled="disabled",
+      :sort-by="sortBy",
       @change="$listeners.change"
     )
 </template>
@@ -43,6 +45,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    sortBy: {
+      type: [Function, Array, String],
+      required: false,
     },
   },
   computed: {
