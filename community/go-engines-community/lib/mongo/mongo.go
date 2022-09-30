@@ -92,7 +92,7 @@ const (
 )
 
 const (
-	clientTimeout = 5 * time.Second
+	clientTimeout = 15 * time.Second
 )
 
 type SingleResultHelper interface {

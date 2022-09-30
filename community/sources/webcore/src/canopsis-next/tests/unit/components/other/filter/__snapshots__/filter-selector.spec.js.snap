@@ -607,23 +607,13 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 3`] = `
           class="v-select__selections"
         >
           <span
-            class="v-chip v-chip--small v-chip--removable theme--light"
+            class="v-chip v-chip--small theme--light"
             tabindex="0"
           >
             <span
               class="v-chip__content"
             >
               Filter 1
-              <div
-                class="v-chip__close"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                >
-                  cancel
-                </i>
-              </div>
             </span>
           </span>
           <input
@@ -681,11 +671,13 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 4`] = `
       role="list"
     >
       <div
-        class="primary--text"
+        class="v-list--disabled"
+        disabled="disabled"
         role="listitem"
       >
         <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+          class="v-list__tile v-list__tile--link v-list__tile--disabled v-list__tile--active theme--light primary--text"
+          disabled="disabled"
         >
           <!---->
           <div

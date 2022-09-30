@@ -116,14 +116,15 @@ const selectFieldLiveReporting = wrapper => wrapper.find('input.field-live-repor
 const selectFieldInfoPopups = wrapper => wrapper.find('input.field-info-popup');
 const selectFieldTextEditor = wrapper => wrapper.find('input.field-text-editor');
 const selectFieldGridRangeSize = wrapper => wrapper.find('input.field-grid-range-size');
-const selectFieldHtmlEnabledSwitcher = wrapper => wrapper.findAll('input.field-switcher').at(0);
-const selectFieldAckNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(1);
-const selectFieldMultiAckEnabled = wrapper => wrapper.findAll('input.field-switcher').at(2);
+const selectFieldClearFilterDisabled = wrapper => wrapper.findAll('input.field-switcher').at(0);
+const selectFieldHtmlEnabledSwitcher = wrapper => wrapper.findAll('input.field-switcher').at(1);
+const selectFieldAckNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(2);
+const selectFieldMultiAckEnabled = wrapper => wrapper.findAll('input.field-switcher').at(3);
 const selectFieldFastAckOutput = wrapper => wrapper.find('input.field-fast-ack-output');
-const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(3);
+const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(4);
 const selectFieldLinksCategoriesAsList = wrapper => wrapper.find('input.field-enabled-limit');
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
-const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(5);
+const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(6);
 
 describe('alarm', () => {
   const nowTimestamp = 1386435600000;
@@ -137,6 +138,7 @@ describe('alarm', () => {
     updateWidget,
     copyWidget,
     fetchActiveView,
+    fetchUserPreference,
     activeViewModule,
     widgetModule,
     authModule,
@@ -163,6 +165,7 @@ describe('alarm', () => {
     widgetModule,
     userPreferenceModule,
     authModule,
+    userPreferenceModule,
   ]);
 
   afterEach(() => {
@@ -170,6 +173,7 @@ describe('alarm', () => {
     updateWidget.mockReset();
     copyWidget.mockReset();
     fetchActiveView.mockReset();
+    fetchUserPreference.mockReset();
   });
 
   it('Create widget with default parameters', async () => {
@@ -772,6 +776,34 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'expandGridRangeSize', expandGridRangeSize),
+      },
+    });
+  });
+
+  it('Clear filter disabled changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldHtmlEnabledSwitcher = selectFieldClearFilterDisabled(wrapper);
+
+    const clearFilterDisabled = Faker.datatype.boolean();
+
+    fieldHtmlEnabledSwitcher.vm.$emit('input', clearFilterDisabled);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'clearFilterDisabled', clearFilterDisabled),
       },
     });
   });

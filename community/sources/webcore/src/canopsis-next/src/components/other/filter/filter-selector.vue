@@ -7,6 +7,7 @@
     :always-dirty="!!lockedItems.length",
     :item-text="itemText",
     :item-value="itemValue",
+    :item-disabled="isFilterItemDisabled",
     :multiple="isMultiple"
   )
     template(v-if="!hideMultiply", #prepend-item="")
@@ -31,18 +32,18 @@
       v-chip(
         v-for="(item, index) in items",
         :key="getItemValue(item)",
+        :close="isChipRemovable",
         small,
-        close,
         @input="removeFilter(index)"
       ) {{ getItemText(item) }}
 
     template(#item="{ parent, item, tile }")
-      v-list-tile(v-bind="tile.props", v-on="tile.on", :disabled="item.active")
+      v-list-tile(v-bind="tile.props", v-on="tile.on")
         v-list-tile-action(v-if="isMultiple")
           v-checkbox(
             :input-value="item.active || tile.props.value",
             :color="parent.color",
-            :disabled="item.active"
+            :disabled="tile.props.disabled"
           )
         v-list-tile-content
           v-list-tile-title
@@ -98,6 +99,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    clearable: {
+      type: Boolean,
+      default: true,
+    },
     hideMultiply: {
       type: Boolean,
       default: false,
@@ -115,6 +120,18 @@ export default {
       get() {
         return isArray(this.value);
       },
+    },
+
+    isOneValueSelected() {
+      return this.value.length === 1;
+    },
+
+    isChipRemovable() {
+      if (this.clearable) {
+        return true;
+      }
+
+      return this.isMultiple ? !this.isOneValueSelected : false;
     },
 
     lockedItems() {
@@ -149,6 +166,24 @@ export default {
 
     getItemValue(item) {
       return item[this.itemValue];
+    },
+
+    isFilterItemDisabled(filter) {
+      if (this.isLockedFilter(filter)) {
+        return true;
+      }
+
+      if (this.clearable) {
+        return false;
+      }
+
+      const value = this.getItemValue(filter);
+
+      if (this.isMultiple) {
+        return this.isOneValueSelected && this.value.includes(value);
+      }
+
+      return this.value === value;
     },
 
     isLockedFilter(filter) {

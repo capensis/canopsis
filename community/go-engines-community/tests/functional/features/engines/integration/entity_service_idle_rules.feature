@@ -76,7 +76,7 @@ Feature: entity_service idle_rules integration
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -213,7 +213,7 @@ Feature: entity_service idle_rules integration
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -334,7 +334,7 @@ Feature: entity_service idle_rules integration
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -488,7 +488,7 @@ Feature: entity_service idle_rules integration
     """
     Then the response code should be 201
     When I save response filterID={{ .lastResponse._id }}
-    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    When I do GET /api/v4/weather-services?filters[]={{ .filterID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -523,7 +523,7 @@ Feature: entity_service idle_rules integration
     When I wait the end of 2 events processing
     When I wait the next periodical process
     When I wait the next periodical process
-    When I do GET /api/v4/weather-services?filter={{ .filterID }}
+    When I do GET /api/v4/weather-services?filters[]={{ .filterID }}
     Then the response code should be 200
     Then the response body should contain:
     """json

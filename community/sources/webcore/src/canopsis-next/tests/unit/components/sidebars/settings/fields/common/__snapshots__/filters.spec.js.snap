@@ -42,6 +42,7 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
           class="layout column"
         >
           <filter-selector-stub
+            clearable="true"
             filters="[object Object]"
             hidemultiply="true"
             itemtext="title"
@@ -102,6 +103,7 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
           class="layout column"
         >
           <filter-selector-stub
+            clearable="true"
             filters=""
             hidemultiply="true"
             itemtext="title"
