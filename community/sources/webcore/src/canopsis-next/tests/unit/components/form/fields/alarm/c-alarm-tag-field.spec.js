@@ -93,7 +93,7 @@ describe('c-alarm-tag-field', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        value: [items[0]._id],
+        value: [items[0].value],
         label: 'Custom label',
         name: 'customName',
         disabled: true,

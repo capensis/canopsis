@@ -382,6 +382,9 @@ export default merge({
 
       [PATTERN_OPERATORS.isGrey]: 'Gray tiles',
       [PATTERN_OPERATORS.isNotGrey]: 'Not gray tiles',
+
+      [PATTERN_OPERATORS.with]: 'With',
+      [PATTERN_OPERATORS.without]: 'Without',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Ack',
