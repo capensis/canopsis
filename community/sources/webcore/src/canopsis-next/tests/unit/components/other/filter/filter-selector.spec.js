@@ -8,6 +8,11 @@ const localVue = createVueInstance();
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
+  'c-enabled-field': true,
+};
+
+const snapshotStubs = {
+  'c-enabled-field': true,
 };
 
 const factory = (options = {}) => shallowMount(FilterSelector, {
@@ -19,6 +24,7 @@ const factory = (options = {}) => shallowMount(FilterSelector, {
 
 const snapshotFactory = (options = {}) => mount(FilterSelector, {
   localVue,
+  stubs: snapshotStubs,
 
   parentComponent: {
     provide: {
@@ -111,9 +117,25 @@ describe('filter-selector', () => {
       propsData: {
         filters,
         lockedFilters,
+        hideMultiply: true,
         value: filters[0]._id,
         hideIcon: false,
         clearable: false,
+      },
+    });
+
+    const menuContent = wrapper.find('.v-menu__content');
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
+  });
+
+  it('Renders `filter-selector` with array value', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        filters,
+        lockedFilters,
+        value: [filters[0]._id],
       },
     });
 
