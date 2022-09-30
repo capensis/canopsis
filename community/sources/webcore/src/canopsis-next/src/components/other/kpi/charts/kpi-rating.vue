@@ -158,6 +158,7 @@ export default {
 
         this.ratingMetrics = convertMetricsToTimezone(ratingMetrics, this.$system.timezone);
         this.minDate = convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone);
+        this.fetchError = false;
 
         if (params.from < this.minDate) {
           this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
