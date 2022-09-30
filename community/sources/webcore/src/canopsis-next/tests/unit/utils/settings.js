@@ -7,6 +7,8 @@ export const createSettingsMocks = () => {
   const copyWidget = jest.fn();
   const fetchActiveView = jest.fn();
   const fetchUserPreference = jest.fn();
+  const getUserPreferenceByWidgetId = jest.fn()
+    .mockReturnValue({ content: {} });
 
   return {
     createWidget,
@@ -41,6 +43,9 @@ export const createSettingsMocks = () => {
       name: 'userPreference',
       actions: {
         fetchItem: fetchUserPreference,
+      },
+      getters: {
+        getItemByWidgetId: () => getUserPreferenceByWidgetId,
       },
     },
   };

@@ -1,12 +1,8 @@
-import { omit, pick, isEqual } from 'lodash';
+import { pick, isEqual } from 'lodash';
 
-import { PAGINATION_LIMIT } from '@/config';
-import { DATETIME_FORMATS, SORT_ORDERS } from '@/constants';
+import { SORT_ORDERS } from '@/constants';
 
-import {
-  convertStartDateIntervalToTimestamp,
-  convertStopDateIntervalToTimestamp,
-} from '@/helpers/date/date-intervals';
+import { convertWidgetQueryToRequest } from '@/helpers/query';
 
 import { queryMixin } from '@/mixins/query';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
@@ -81,51 +77,8 @@ export const queryWidgetMixin = {
     },
   },
   methods: {
-    getQuery() { // TODO: use convertAlarmsListQueryToRequest here
-      const query = omit(this.query, [
-        'tstart',
-        'tstop',
-        'sortKey',
-        'sortDir',
-        'category',
-        'multiSortBy',
-        'limit',
-      ]);
-
-      const {
-        tstart,
-        tstop,
-        sortKey,
-        sortDir,
-        category,
-        multiSortBy = [],
-        limit = PAGINATION_LIMIT,
-      } = this.query;
-
-      if (tstart) {
-        query.tstart = convertStartDateIntervalToTimestamp(tstart, DATETIME_FORMATS.dateTimePicker);
-      }
-
-      if (tstop) {
-        query.tstop = convertStopDateIntervalToTimestamp(tstop, DATETIME_FORMATS.dateTimePicker);
-      }
-
-      if (sortKey) {
-        query.sort_by = sortKey;
-        query.sort = sortDir.toLowerCase();
-      }
-
-      if (category) {
-        query.category = category;
-      }
-
-      if (multiSortBy.length) {
-        query.multi_sort = multiSortBy.map(({ sortBy, descending }) => `${sortBy},${(descending ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`);
-      }
-
-      query.limit = limit;
-
-      return query;
+    getQuery() {
+      return convertWidgetQueryToRequest(this.query);
     },
 
     updateRecordsPerPage(limit) {

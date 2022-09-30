@@ -777,6 +777,7 @@ export default merge({
     periodsNumber: 'Number of steps',
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
+    lockedFilter: 'Filter locked in widget settings',
     exportAsCsv: 'Export widget as csv file',
     criticityLevels: 'Criticity levels',
     isPriorityEnabled: 'Show priority',
