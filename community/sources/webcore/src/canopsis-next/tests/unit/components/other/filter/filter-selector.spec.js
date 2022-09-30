@@ -113,6 +113,7 @@ describe('filter-selector', () => {
         lockedFilters,
         value: filters[0]._id,
         hideIcon: false,
+        clearable: false,
       },
     });
 

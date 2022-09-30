@@ -62,6 +62,11 @@
               :editable="hasAccessToEditRemediationInstructionsFilter"
             )
             v-divider
+          field-switcher(
+            v-model="form.parameters.clearFilterDisabled",
+            :title="$t('settings.clearFilterDisabled')"
+          )
+          v-divider
           field-live-reporting(v-model="form.parameters.liveReporting")
           v-divider
           field-info-popup(

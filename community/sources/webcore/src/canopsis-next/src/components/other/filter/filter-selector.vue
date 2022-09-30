@@ -4,9 +4,9 @@
     :items="preparedFilters",
     :label="label",
     :disabled="disabled",
+    :clearable="clearable",
     item-text="title",
-    item-value="_id",
-    clearable
+    item-value="_id"
   )
     template(#item="{ parent, item, tile }")
       v-list-tile-content
@@ -45,6 +45,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    clearable: {
+      type: Boolean,
+      default: true,
     },
   },
   computed: {

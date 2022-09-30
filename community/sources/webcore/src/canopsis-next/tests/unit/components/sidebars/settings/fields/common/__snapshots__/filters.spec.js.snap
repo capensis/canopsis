@@ -42,6 +42,7 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
           class="layout column"
         >
           <filter-selector-stub
+            clearable="true"
             filters="[object Object]"
             label="Default filter"
             lockedfilters=""
@@ -99,6 +100,7 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
           class="layout column"
         >
           <filter-selector-stub
+            clearable="true"
             filters=""
             label="Default filter"
             lockedfilters=""
