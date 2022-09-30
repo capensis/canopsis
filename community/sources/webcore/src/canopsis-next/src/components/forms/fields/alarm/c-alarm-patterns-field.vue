@@ -234,6 +234,18 @@ export default {
       };
     },
 
+    tagsOptions() {
+      return {
+        operators: [
+          PATTERN_OPERATORS.with,
+          PATTERN_OPERATORS.without,
+        ],
+        valueField: {
+          is: 'c-alarm-tag-field',
+        },
+      };
+    },
+
     snoozeOptions() {
       return {
         operators: [
@@ -355,6 +367,11 @@ export default {
         {
           text: this.$t('common.lastComment'),
           value: ALARM_PATTERN_FIELDS.lastComment,
+        },
+        {
+          text: this.$tc('common.tag', 2),
+          value: ALARM_PATTERN_FIELDS.tags,
+          options: this.tagsOptions,
         },
       ];
     },

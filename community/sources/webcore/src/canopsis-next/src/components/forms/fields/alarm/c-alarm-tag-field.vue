@@ -7,7 +7,7 @@
     :disabled="disabled",
     :name="name",
     item-text="value",
-    item-value="_id",
+    item-value="value",
     hide-details,
     multiple,
     chips,
@@ -20,8 +20,6 @@
 </template>
 
 <script>
-import { MAX_LIMIT } from '@/constants';
-
 import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 import { formArrayMixin } from '@/mixins/form';
 
@@ -47,7 +45,7 @@ export default {
   },
   mounted() {
     if (!this.alarmTagsPending) {
-      this.fetchAlarmTagsList({ params: { limit: MAX_LIMIT } });
+      this.fetchAlarmTagsList({ params: { paginate: false } });
     }
   },
 };
