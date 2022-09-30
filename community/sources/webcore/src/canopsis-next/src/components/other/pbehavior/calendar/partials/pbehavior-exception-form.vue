@@ -15,9 +15,10 @@
         v-field="exdates[index]",
         :key="exdate.key",
         :with-type="withExdateType",
+        :disabled="disabled",
         @delete="removeItemFromArray(index)"
       )
-    v-layout(row)
+    v-layout(v-if="!disabled", row)
       v-flex
         v-btn.ml-0(outline, @click="addException") {{ $t('pbehaviorExceptions.create') }}
       v-flex
@@ -52,6 +53,10 @@ export default {
       default: () => [],
     },
     withExdateType: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },
