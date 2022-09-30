@@ -33,8 +33,7 @@
               :editable="hasAccessToEditFilter",
               with-alarm,
               with-entity,
-              with-pbehavior,
-              @input="updateMainFilterUpdatedAt"
+              with-pbehavior
             )
             v-divider
           field-context-entities-types-filter(v-model="form.parameters.selectedTypes")

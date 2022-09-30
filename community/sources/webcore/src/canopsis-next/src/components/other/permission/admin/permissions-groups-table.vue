@@ -22,6 +22,7 @@
         :roles="roles",
         :changed-roles="changedRoles",
         :disabled="disabled",
+        :sort-by="sortBy",
         @change="$listeners.change"
       )
 </template>
@@ -54,6 +55,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    sortBy: {
+      type: [Function, Array, String],
+      default: () => ['name'],
+    },
   },
   computed: {
     headers() {
@@ -65,11 +70,11 @@ export default {
     },
 
     groupsWithName() {
-      return this.groups.map(({ key, permissions }) => ({ permissions, name: this.$t(key) }));
+      return this.groups.map(({ key, name, permissions }) => ({ permissions, name: name ?? this.$tc(key) }));
     },
 
     sortedGroups() {
-      return sortBy(this.groupsWithName, ['name']);
+      return sortBy(this.groupsWithName, this.sortBy);
     },
   },
 };

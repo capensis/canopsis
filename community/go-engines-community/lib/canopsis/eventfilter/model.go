@@ -44,8 +44,9 @@ type ExternalDataParameters struct {
 	// are used in mongo external data
 	Collection string            `json:"collection,omitempty" bson:"collection,omitempty"`
 	Select     map[string]string `json:"select,omitempty" bson:"select,omitempty"`
+	Regexp     map[string]string `json:"regexp,omitempty" bson:"regexp,omitempty"`
 
-	//are used in api external data
+	// are used in api external data
 	RequestParameters *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
 }
 

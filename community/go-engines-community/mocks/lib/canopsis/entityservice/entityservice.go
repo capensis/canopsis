@@ -82,6 +82,21 @@ func (mr *MockAdapterMockRecorder) GetByID(arg0, arg1 interface{}) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockAdapter)(nil).GetByID), arg0, arg1)
 }
 
+// GetDependenciesCount mocks base method.
+func (m *MockAdapter) GetDependenciesCount(arg0 context.Context, arg1 string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDependenciesCount", arg0, arg1)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetDependenciesCount indicates an expected call of GetDependenciesCount.
+func (mr *MockAdapterMockRecorder) GetDependenciesCount(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDependenciesCount", reflect.TypeOf((*MockAdapter)(nil).GetDependenciesCount), arg0, arg1)
+}
+
 // GetEnabled mocks base method.
 func (m *MockAdapter) GetEnabled(arg0 context.Context) ([]entityservice.EntityService, error) {
 	m.ctrl.T.Helper()
