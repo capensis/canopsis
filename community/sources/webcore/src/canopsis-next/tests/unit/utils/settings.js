@@ -15,6 +15,7 @@ export const createSettingsMocks = () => {
     updateWidget,
     copyWidget,
     fetchActiveView,
+    fetchUserPreference,
     activeViewModule: {
       name: 'activeView',
       actions: {

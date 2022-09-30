@@ -108,7 +108,7 @@ exports[`alarms-expand-panel-tour Renders \`alarms-expand-panel-tour\` with thir
 >
   <div
     class="v-step"
-    id="v-step-b2b95c86"
+    id="v-step-b2b95c88"
   >
     <!---->
      
@@ -116,14 +116,18 @@ exports[`alarms-expand-panel-tour Renders \`alarms-expand-panel-tour\` with thir
       class="v-step__content"
     >
       <div>
-        Timeline tab
+        MoreInfos tab (Displayed only in case of existing confguration)
       </div>
     </div>
      
     <div
       class="v-step__buttons"
     >
-      <!---->
+      <button
+        class="v-step__button v-step__button-skip"
+      >
+        Skip tour
+      </button>
        
       <button
         class="v-step__button v-step__button-previous"
@@ -131,13 +135,13 @@ exports[`alarms-expand-panel-tour Renders \`alarms-expand-panel-tour\` with thir
         Previous
       </button>
        
-      <!---->
-       
       <button
-        class="v-step__button v-step__button-stop"
+        class="v-step__button v-step__button-next"
       >
-        Finish
+        Next
       </button>
+       
+      <!---->
     </div>
      
     <div

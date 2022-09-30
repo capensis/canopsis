@@ -120,6 +120,7 @@ describe('filter-selector', () => {
         hideMultiply: true,
         value: filters[0]._id,
         hideIcon: false,
+        clearable: false,
       },
     });
 
