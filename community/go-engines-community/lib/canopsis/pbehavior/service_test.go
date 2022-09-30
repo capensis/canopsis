@@ -2,6 +2,9 @@ package pbehavior_test
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -14,8 +17,6 @@ import (
 	mock_redis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/redis"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
-	"testing"
-	"time"
 )
 
 func TestService(t *testing.T) {
@@ -547,9 +548,11 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Type:  activeType.ID,
 					Exdates: []pbehavior.Exdate{
 						{
-							Begin: types.CpsTime{Time: genTime("02-06-2020 00:00")},
-							End:   types.CpsTime{Time: genTime("04-06-2020 00:00")},
-							Type:  mostPriorityMaintenanceType.ID,
+							Exdate: types.Exdate{
+								Begin: types.CpsTime{Time: genTime("02-06-2020 00:00")},
+								End:   types.CpsTime{Time: genTime("04-06-2020 00:00")},
+							},
+							Type: mostPriorityMaintenanceType.ID,
 						},
 					},
 
@@ -621,9 +624,11 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					ID: "exception1",
 					Exdates: []pbehavior.Exdate{
 						{
-							Begin: types.CpsTime{Time: genTime("02-06-2020 00:00")},
-							End:   types.CpsTime{Time: genTime("04-06-2020 00:00")},
-							Type:  mostPriorityMaintenanceType.ID,
+							Exdate: types.Exdate{
+								Begin: types.CpsTime{Time: genTime("02-06-2020 00:00")},
+								End:   types.CpsTime{Time: genTime("04-06-2020 00:00")},
+							},
+							Type: mostPriorityMaintenanceType.ID,
 						},
 					},
 				},
@@ -661,9 +666,11 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					Type:  mostPriorityActiveType.ID,
 					Exdates: []pbehavior.Exdate{
 						{
-							Begin: types.CpsTime{Time: genTime("02-06-2020 00:00")},
-							End:   types.CpsTime{Time: genTime("04-06-2020 00:00")},
-							Type:  defaultInactiveType.ID,
+							Exdate: types.Exdate{
+								Begin: types.CpsTime{Time: genTime("02-06-2020 00:00")},
+								End:   types.CpsTime{Time: genTime("04-06-2020 00:00")},
+							},
+							Type: defaultInactiveType.ID,
 						},
 					},
 
@@ -735,9 +742,11 @@ func dataSetsForService() map[string]serviceSuiteDataSet {
 					ID: "exception1",
 					Exdates: []pbehavior.Exdate{
 						{
-							Begin: types.CpsTime{Time: genTime("02-06-2020 00:00")},
-							End:   types.CpsTime{Time: genTime("04-06-2020 00:00")},
-							Type:  defaultInactiveType.ID,
+							Exdate: types.Exdate{
+								Begin: types.CpsTime{Time: genTime("02-06-2020 00:00")},
+								End:   types.CpsTime{Time: genTime("04-06-2020 00:00")},
+							},
+							Type: defaultInactiveType.ID,
 						},
 					},
 				},

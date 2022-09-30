@@ -119,6 +119,13 @@ pbehavior_type:
     icon_name: test-to-exception-edit-2-icon
     name: Exception edit 2 State
 
+  type_to_exception_edit_3:
+    <<: *type_active
+    _id: test-type-to-exception-edit-3
+    description: Exception edit 3 State type
+    icon_name: test-to-exception-edit-3-icon
+    name: Exception edit 3 State
+
   type_type-to-delete-linked-to-pbh-1:
     <<: *type_active
     _id: test-type-to-delete-linked-to-pbh-1

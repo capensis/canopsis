@@ -137,7 +137,7 @@ func (p *modelProvider) GetEnabledPbehaviorsByIds(ctx context.Context, ids []str
 }
 
 func (p *modelProvider) GetExceptions(ctx context.Context) (map[string]Exception, error) {
-	cursor, err := p.dbClient.Collection(ExceptionCollectionName).Find(ctx, bson.M{})
+	cursor, err := p.dbClient.Collection(mongo.PbehaviorExceptionMongoCollection).Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
 	}
