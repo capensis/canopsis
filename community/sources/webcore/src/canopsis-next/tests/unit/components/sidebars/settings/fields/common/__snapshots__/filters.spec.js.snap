@@ -44,6 +44,9 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
           <filter-selector-stub
             clearable="true"
             filters="[object Object]"
+            hidemultiply="true"
+            itemtext="title"
+            itemvalue="_id"
             label="Default filter"
             lockedfilters=""
             value="filter-id"
@@ -102,6 +105,9 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
           <filter-selector-stub
             clearable="true"
             filters=""
+            hidemultiply="true"
+            itemtext="title"
+            itemvalue="_id"
             label="Default filter"
             lockedfilters=""
           />

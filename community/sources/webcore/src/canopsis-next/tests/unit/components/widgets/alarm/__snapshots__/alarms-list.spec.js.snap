@@ -32,11 +32,13 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
       class="flex"
     >
       <div
-        class="layout row wrap align-center"
+        class="layout row align-center"
       >
         <filter-selector-stub
           disabled="true"
           filters=""
+          itemtext="title"
+          itemvalue="_id"
           label="Select a filter"
           lockedfilters=""
         />
@@ -153,12 +155,14 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
       class="flex"
     >
       <div
-        class="layout row wrap align-center"
+        class="layout row align-center"
       >
         <filter-selector-stub
           clearable="true"
           disabled="true"
           filters=""
+          itemtext="title"
+          itemvalue="_id"
           label="Select a filter"
           lockedfilters=""
         />
