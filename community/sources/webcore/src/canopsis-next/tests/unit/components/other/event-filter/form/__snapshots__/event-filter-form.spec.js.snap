@@ -26,7 +26,10 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
       form="[object Object]"
     />
   </c-information-block-stub>
-  <!---->
+  <pbehavior-recurrence-rule-field-stub
+    class="mb-1"
+    form="[object Object]"
+  />
   <c-patterns-field-stub
     some-required="some-required"
     value="[object Object]"
@@ -63,7 +66,10 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
       form="[object Object]"
     />
   </c-information-block-stub>
-  <!---->
+  <pbehavior-recurrence-rule-field-stub
+    class="mb-1"
+    form="[object Object]"
+  />
   <c-patterns-field-stub
     some-required="some-required"
     value="[object Object]"
@@ -151,7 +157,10 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
       form="[object Object]"
     />
   </c-information-block-stub>
-  <!---->
+  <pbehavior-recurrence-rule-field-stub
+    class="mb-1"
+    form="[object Object]"
+  />
   <c-patterns-field-stub
     some-required="some-required"
     value="[object Object]"
@@ -199,7 +208,10 @@ exports[`event-filter-form Renders \`event-filter-form\` with change entity type
       form="[object Object]"
     />
   </c-information-block-stub>
-  <!---->
+  <pbehavior-recurrence-rule-field-stub
+    class="mb-1"
+    form="[object Object]"
+  />
   <c-patterns-field-stub
     some-required="some-required"
     value="[object Object]"
@@ -279,7 +291,10 @@ exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] 
       form="[object Object]"
     />
   </c-information-block-stub>
-  <!---->
+  <pbehavior-recurrence-rule-field-stub
+    class="mb-1"
+    form="[object Object]"
+  />
   <c-patterns-field-stub
     some-required="some-required"
     with-entity="with-entity"

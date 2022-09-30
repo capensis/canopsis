@@ -150,7 +150,7 @@ export const eventFilterActionToForm = (eventFilterAction = {}) => ({
  * @returns {EventFilter}
  */
 export const formToEventFilter = (eventFilterForm, timezone) => {
-  const { config, patterns, exdates, exceptions, rrule, ...eventFilter } = eventFilterForm;
+  const { config, patterns, exdates, exceptions, ...eventFilter } = eventFilterForm;
 
   switch (eventFilterForm.type) {
     case EVENT_FILTER_TYPES.changeEntity:
@@ -159,15 +159,12 @@ export const formToEventFilter = (eventFilterForm, timezone) => {
     case EVENT_FILTER_TYPES.enrichment:
       eventFilter.config = pick(config, ['actions', 'on_success', 'on_failure']);
       break;
-    case EVENT_FILTER_TYPES.drop:
-      eventFilter.rrule = rrule;
-      eventFilter.exdates = exdatesToRequest(formExdatesToExdates(exdates, timezone));
-      eventFilter.exceptions = exceptionsToRequest(formExceptionsToExceptions(exceptions));
-      break;
   }
 
   return {
     ...eventFilter,
+    exdates: exdatesToRequest(formExdatesToExdates(exdates, timezone)),
+    exceptions: exceptionsToRequest(formExceptionsToExceptions(exceptions)),
     ...formFilterToPatterns(patterns, [PATTERNS_FIELDS.event, PATTERNS_FIELDS.entity]),
   };
 };
