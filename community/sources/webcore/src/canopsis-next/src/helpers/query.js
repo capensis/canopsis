@@ -1,4 +1,4 @@
-import { isUndefined, isEmpty, omit } from 'lodash';
+import { isUndefined, isEmpty, omit, isArray } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import {
@@ -355,6 +355,26 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => ({
 });
 
 /**
+ * Convert filter to query filters
+ *
+ * @param {string | string[]} filter
+ * @returns {string[]}
+ */
+const convertFilterToQuery = filter => (isArray(filter) ? filter : [filter]).filter(Boolean);
+
+/**
+ * Convert locked filter and main filter to query filters
+ *
+ * @param {string | string[]} filter
+ * @param {string | string[]} lockedFilter
+ * @returns {string[]}
+ */
+const convertFiltersToQuery = (filter, lockedFilter) => [
+  ...convertFilterToQuery(filter),
+  ...convertFilterToQuery(lockedFilter),
+];
+
+/**
  * Convert widget query to request parameters
  *
  * @param {Object} query
@@ -386,7 +406,7 @@ export const convertWidgetQueryToRequest = (query) => {
   } = query;
 
   if (lockedFilter || filter) {
-    result.filters = [lockedFilter, filter].filter(Boolean);
+    result.filters = convertFiltersToQuery(filter, lockedFilter);
   }
 
   if (tstart) {

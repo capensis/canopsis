@@ -1,24 +1,49 @@
 <template lang="pug">
-  v-select(
+  v-select.filter-selector(
     v-field="value",
     :items="preparedFilters",
     :label="label",
     :disabled="disabled",
-    :always-dirty="!!lockedFilter",
+    :always-dirty="!!lockedItems.length",
     :item-text="itemText",
-    :item-value="itemValue"
+    :item-value="itemValue",
+    :multiple="isMultiple"
   )
+    template(v-if="!hideMultiply", #prepend-item="")
+      c-enabled-field.mx-3(
+        v-model="isMultiple",
+        :label="$t('filterSelector.fields.mixFilters')",
+        hide-details
+      )
+      v-divider.mt-3
+
     template(#selections="{ items }")
-      v-tooltip(v-if="lockedFilter", top)
+      v-tooltip(
+        v-for="lockedItem in lockedItems",
+        :key="getItemValue(lockedItem)",
+        top
+      )
         template(#activator="{ on }")
           v-chip(v-on="on", small)
-            span {{ getItemText(lockedFilter) }}
+            span {{ getItemText(lockedItem) }}
             v-icon.ml-2(small) lock
         span {{ $t('settings.lockedFilter') }}
-      v-chip(v-if="items.length", small, close, @input="cancelFilter") {{ getItemText(items[0]) }}
+      v-chip(
+        v-for="(item, index) in items",
+        :key="getItemValue(item)",
+        small,
+        close,
+        @input="removeFilter(index)"
+      ) {{ getItemText(item) }}
 
     template(#item="{ parent, item, tile }")
       v-list-tile(v-bind="tile.props", v-on="tile.on", :disabled="item.active")
+        v-list-tile-action(v-if="isMultiple")
+          v-checkbox(
+            :input-value="item.active || tile.props.value",
+            :color="parent.color",
+            :disabled="item.active"
+          )
         v-list-tile-content
           v-list-tile-title
             span {{ item.title }}
@@ -30,18 +55,20 @@
 </template>
 
 <script>
-import { formBaseMixin } from '@/mixins/form';
+import { isArray } from 'lodash';
+
+import { formArrayMixin } from '@/mixins/form';
 
 export default {
-  mixins: [formBaseMixin],
+  mixins: [formArrayMixin],
   props: {
     value: {
-      type: String,
+      type: [String, Array],
       default: () => null,
     },
     lockedValue: {
-      type: String,
-      required: false,
+      type: [String, Array],
+      default: () => null,
     },
     filters: {
       type: Array,
@@ -71,10 +98,27 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideMultiply: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
-    lockedFilter() {
-      return this.lockedFilters.find(this.isLockedFilter);
+    isMultiple: {
+      set(value) {
+        if (value) {
+          this.updateModel(this.value ? [this.value] : []);
+        } else {
+          this.updateModel(this.value.length ? this.value[0] : undefined);
+        }
+      },
+      get() {
+        return isArray(this.value);
+      },
+    },
+
+    lockedItems() {
+      return this.lockedFilters.filter(this.isLockedFilter);
     },
 
     preparedFilters() {
@@ -108,12 +152,26 @@ export default {
     },
 
     isLockedFilter(filter) {
-      return this.getItemValue(filter) === this.lockedValue;
+      const value = this.getItemValue(filter);
+
+      return this.isMultiple
+        ? this.lockedValue?.includes(value)
+        : this.lockedValue === value;
     },
 
-    cancelFilter() {
-      this.updateModel('');
+    removeFilter(index) {
+      if (this.isMultiple) {
+        this.removeItemFromArray(index);
+      } else {
+        this.updateModel('');
+      }
     },
   },
 };
 </script>
+
+<style lang="scss">
+.filter-selector {
+  max-width: 500px;
+}
+</style>
