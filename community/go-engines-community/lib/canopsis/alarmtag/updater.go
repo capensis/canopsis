@@ -68,12 +68,12 @@ func (u *updater) update(ctx context.Context, tags map[string]string) error {
 	now := types.NewCpsTime()
 
 	return u.client.WithTransaction(ctx, func(ctx context.Context) error {
-		newTags, err := u.getNewTags(ctx, tags)
-		if err != nil || len(newTags) == 0 {
+		err := u.keepNewTags(ctx, tags)
+		if err != nil || len(tags) == 0 {
 			return err
 		}
 
-		labelColors, err := u.getLabelColors(ctx, newTags)
+		labelColors, err := u.getLabelColors(ctx, tags)
 		if err != nil {
 			return err
 		}
@@ -83,10 +83,10 @@ func (u *updater) update(ctx context.Context, tags map[string]string) error {
 			return err
 		}
 
-		models := make([]interface{}, len(newTags))
+		models := make([]interface{}, len(tags))
 		i := 0
 		k := 0
-		for t, label := range newTags {
+		for t, label := range tags {
 			color := labelColors[label]
 			if color == "" && len(colors) > 0 {
 				colorIndex := (count + k) % len(colors)
@@ -109,7 +109,7 @@ func (u *updater) update(ctx context.Context, tags map[string]string) error {
 	})
 }
 
-func (u *updater) getNewTags(ctx context.Context, tags map[string]string) (map[string]string, error) {
+func (u *updater) keepNewTags(ctx context.Context, tags map[string]string) error {
 	values := make([]string, len(tags))
 	i := 0
 	for t := range tags {
@@ -118,29 +118,22 @@ func (u *updater) getNewTags(ctx context.Context, tags map[string]string) (map[s
 	}
 	cursor, err := u.collection.Find(ctx, bson.M{"value": bson.M{"$in": values}})
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer cursor.Close(ctx)
-	exists := make(map[string]struct{}, len(tags))
 	for cursor.Next(ctx) {
 		tag := struct {
 			Value string `bson:"value"`
 		}{}
 		err = cursor.Decode(&tag)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		exists[tag.Value] = struct{}{}
+		delete(tags, tag.Value)
 	}
 
-	for t := range tags {
-		if _, ok := exists[t]; ok {
-			delete(tags, t)
-		}
-	}
-
-	return tags, nil
+	return nil
 }
 
 func (u *updater) getLabelColors(ctx context.Context, newTags map[string]string) (map[string]string, error) {
