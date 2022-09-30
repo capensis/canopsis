@@ -398,6 +398,8 @@ definitions:
         type: string
       separator:
         type: string
+      tag:
+        type: string
       time_field:
         type: string
       time_format:
