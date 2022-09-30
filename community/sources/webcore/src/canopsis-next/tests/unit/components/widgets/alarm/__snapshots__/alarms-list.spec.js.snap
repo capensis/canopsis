@@ -35,6 +35,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
         class="layout row wrap align-center"
       >
         <filter-selector-stub
+          clearable="true"
           disabled="true"
           filters=""
           label="Select a filter"
