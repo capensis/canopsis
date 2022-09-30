@@ -86,6 +86,7 @@ export const ALARM_ENTITY_FIELDS = {
   impactState: 'impact_state',
   state: 'v.state.val',
   status: 'v.status.val',
+  tags: 'tags',
 };
 
 export const DEFAULT_ALARMS_WIDGET_COLUMNS = [

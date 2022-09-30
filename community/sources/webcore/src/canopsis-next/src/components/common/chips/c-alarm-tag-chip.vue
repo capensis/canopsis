@@ -1,5 +1,10 @@
 <template lang="pug">
-  v-chip.c-alarm-tag-chip(:class="{ 'c-alarm-tag-chip--closable': close }", :color="color", small)
+  v-chip.c-alarm-tag-chip(
+    :class="{ 'c-alarm-tag-chip--closable': close }",
+    :color="color",
+    small,
+    @click="$emit('click')"
+  )
     span.white--text
       slot
     v-icon.cursor-pointer.ml-2(
@@ -33,6 +38,10 @@ export default {
     .v-chip__content {
       padding-right: 4px;
     }
+  }
+
+  .v-datatable thead th.column.sortable & .v-icon {
+    opacity: .6;
   }
 }
 </style>
