@@ -1742,4 +1742,24 @@ describe('alarms-list', () => {
 
     expect(wrapper.element).toMatchSnapshot();
   });
+
+  it('Renders `alarms-list` with clear filter disabled props', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        widget: {
+          ...widget,
+          parameters: {
+            ...widget.parameters,
+
+            clearFilterDisabled: true,
+          },
+        },
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
 });
