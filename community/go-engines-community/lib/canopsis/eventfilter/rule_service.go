@@ -2,12 +2,14 @@ package eventfilter
 
 import (
 	"context"
+	"sync"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
-	"sync"
 )
 
 type ruleService struct {
@@ -46,10 +48,39 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 
 	outcome := OutcomePass
 	tz := s.timezoneConfigProvider.Get()
+	now := time.Now()
 
 	for _, rule := range s.rules {
 		if outcome != OutcomePass {
 			break
+		}
+
+		if rule.ResolvedStart != nil && rule.ResolvedStop != nil {
+			inExDate := false
+			for _, exdate := range rule.ResolvedExdates {
+				if now.After(exdate.Begin.Time) && now.Before(exdate.End.Time) {
+					inExDate = true
+					break
+				}
+			}
+
+			if inExDate {
+				continue
+			}
+
+			if now.Before(rule.ResolvedStart.Time) {
+				continue
+			}
+
+			if now.After(rule.ResolvedStop.Time) {
+				if rule.NextResolvedStart == nil || rule.NextResolvedStop == nil {
+					continue
+				}
+
+				if now.Before(rule.NextResolvedStart.Time) || now.After(rule.NextResolvedStop.Time) {
+					continue
+				}
+			}
 		}
 
 		var err error
