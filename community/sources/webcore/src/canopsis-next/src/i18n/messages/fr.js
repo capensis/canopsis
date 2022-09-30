@@ -265,6 +265,7 @@ export default merge({
     map: 'Carte | Plans',
     instructions: 'Des instructions',
     playlist: 'Liste de lecture | Listes de lecture',
+    tag: 'Étiquette | Mots clés',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
