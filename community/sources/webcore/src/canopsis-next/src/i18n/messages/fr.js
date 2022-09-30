@@ -780,6 +780,7 @@ export default merge({
     exportAsCsv: 'Exporter le widget sous forme de fichier csv',
     criticityLevels: 'Niveaux de criticité',
     isPriorityEnabled: 'Afficher la priorité',
+    clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
     exportCsv: {
       title: 'Exporter CSV',
       fields: {
