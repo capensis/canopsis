@@ -204,11 +204,15 @@ export const patternRuleToForm = (rule = {}) => {
       form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.hasOneOf:
-      form.operator = PATTERN_OPERATORS.hasOneOf;
+      form.operator = rule.field === ALARM_PATTERN_FIELDS.tags
+        ? PATTERN_OPERATORS.with
+        : PATTERN_OPERATORS.hasOneOf;
       form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.hasNot:
-      form.operator = PATTERN_OPERATORS.hasNot;
+      form.operator = rule.field === ALARM_PATTERN_FIELDS.tags
+        ? PATTERN_OPERATORS.without
+        : PATTERN_OPERATORS.hasNot;
       form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.isNotOneOf:
@@ -520,6 +524,12 @@ export const formRuleToPatternRule = (rule) => {
     case PATTERN_OPERATORS.notAcked:
       pattern.cond.type = PATTERN_CONDITIONS.exist;
       pattern.cond.value = false;
+      break;
+    case PATTERN_OPERATORS.with:
+      pattern.cond.type = PATTERN_CONDITIONS.hasOneOf;
+      break;
+    case PATTERN_OPERATORS.without:
+      pattern.cond.type = PATTERN_CONDITIONS.hasNot;
       break;
   }
 
