@@ -75,6 +75,10 @@ paths:
           in: query
           schema:
             type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
         - name: correlation
           in: query
           schema:
@@ -317,6 +321,10 @@ paths:
             items:
               type: string
         - name: category
+          in: query
+          schema:
+            type: string
+        - name: tag
           in: query
           schema:
             type: string
