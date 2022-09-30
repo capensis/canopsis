@@ -199,6 +199,8 @@ periodical_alarm:
     _id: test-alarm-to-get-2
     d: test-resource-to-alarm-get-2/test-component-to-alarm-get
     t: 1597030220
+    tags:
+      - test-tag-to-alarm-get-1
     v:
       <<: *alarm_value
       connector: test-connector-default
