@@ -382,6 +382,9 @@ export default merge({
 
       [PATTERN_OPERATORS.isGrey]: 'Carrelage gris',
       [PATTERN_OPERATORS.isNotGrey]: 'Pas de carreaux gris',
+
+      [PATTERN_OPERATORS.with]: 'Avec',
+      [PATTERN_OPERATORS.without]: 'Sans pour autant',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
