@@ -259,6 +259,7 @@ export default merge({
     canonicalType: 'Canonical type',
     instructions: 'Instructions',
     playlist: 'Playlist | Playlists',
+    calendar: 'Calendar',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
