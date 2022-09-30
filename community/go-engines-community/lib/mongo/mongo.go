@@ -91,6 +91,8 @@ const (
 	DynamicInfosDictionaryCollection = "dynamic_infos_dictionary"
 
 	MapMongoCollection = "map"
+
+	AlarmTagCollection = "alarm_tag"
 )
 
 const (
