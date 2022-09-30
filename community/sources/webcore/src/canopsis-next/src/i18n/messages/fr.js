@@ -1898,6 +1898,8 @@ export default merge({
     component: 'ID de composant ou modèle',
     connector: 'ID ou modèle de connecteur',
     connectorName: 'Nom ou modèle de connecteur',
+    duringPeriod: 'Appliqué pendant cette période uniquement',
+    calendar: 'Calendrier',
     types: {
       [EVENT_FILTER_TYPES.drop]: 'Drop',
       [EVENT_FILTER_TYPES.break]: 'Break',
