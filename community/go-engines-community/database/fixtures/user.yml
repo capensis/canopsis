@@ -780,6 +780,36 @@ default_rights:
     _id: testingweather_alarmsList
     crecord_name: <Current()._id>
     desc: "Testing weather: Access to 'Alarms list' modal"
+  permission_map_alarmsList:
+    <<: *permission
+    _id: map_alarmsList
+    crecord_name: <Current()._id>
+    desc: "Map: Access to 'Alarms list' modal"
+  permission_map_listFilters:
+    <<: *permission
+    _id: map_listFilters
+    crecord_name: <Current()._id>
+    desc: "Rights on map: List filters"
+  permission_map_editFilter:
+    <<: *permission
+    _id: map_editFilter
+    crecord_name: <Current()._id>
+    desc: "Rights on map: Edit filters"
+  permission_map_addFilter:
+    <<: *permission
+    _id: map_addFilter
+    crecord_name: <Current()._id>
+    desc: "Rights on map: Add filter"
+  permission_map_userFilter:
+    <<: *permission
+    _id: map_userFilter
+    crecord_name: <Current()._id>
+    desc: "Rights on map: User filter"
+  permission_map_category:
+    <<: *permission
+    _id: map_category
+    crecord_name: <Current()._id>
+    desc: "Rights on map: Access to 'Category' action"
   permission_api_alarm_read:
     <<: *permission
     _id: api_alarm_read
@@ -1228,6 +1258,18 @@ default_rights:
       "@permission_counter_alarmsList":
         checksum: 1
       "@permission_testingweather_alarmsList":
+        checksum: 1
+      "@permission_map_alarmsList":
+        checksum: 1
+      "@permission_map_listFilters":
+        checksum: 1
+      "@permission_map_editFilter":
+        checksum: 1
+      "@permission_map_addFilter":
+        checksum: 1
+      "@permission_map_userFilter":
+        checksum: 1
+      "@permission_map_category":
         checksum: 1
       "@permission_api_alarm_read":
         checksum: 1
