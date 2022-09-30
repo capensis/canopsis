@@ -242,6 +242,9 @@ type AlarmCounters struct {
 	NotAcknowledged int64 `bson:"unacked"`
 	// PbehaviorCounters contains counters for each pbehavior type.
 	PbehaviorCounters map[string]int64 `bson:"pbehavior"`
+
+	// Depends is used only for output_template.
+	Depends int64 `bson:"-"`
 }
 
 // Negate returns a new AlarmCounters, with all the counters negated.

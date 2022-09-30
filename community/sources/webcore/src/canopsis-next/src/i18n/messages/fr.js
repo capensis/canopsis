@@ -257,6 +257,8 @@ export default merge({
     checkPattern: 'Motif à carreaux',
     itemFound: '{count} article trouvé | {count} articles trouvés',
     canonicalType: 'Type canonique',
+    instructions: 'Des instructions',
+    playlist: 'Liste de lecture | Listes de lecture',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -278,7 +280,6 @@ export default merge({
     acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
     saveChanges: 'Sauvegarder',
     reportIncident: 'Signaler un incident',
-    instructions: 'Des instructions',
     times: {
       second: 'seconde | secondes',
       minute: 'minute | minutes',
@@ -458,6 +459,9 @@ export default merge({
       },
       [SCENARIO_TRIGGERS.instructionjobfail]: {
         text: 'Job de remédiation en erreur',
+      },
+      [SCENARIO_TRIGGERS.instructionjobcomplete]: {
+        text: 'Job de remédiation terminé',
       },
       [SCENARIO_TRIGGERS.instructioncomplete]: {
         text: 'Consigne manuelle terminée',
@@ -777,6 +781,7 @@ export default merge({
     exportAsCsv: 'Exporter le widget sous forme de fichier csv',
     criticityLevels: 'Niveaux de criticité',
     isPriorityEnabled: 'Afficher la priorité',
+    clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
     exportCsv: {
       title: 'Exporter CSV',
       fields: {

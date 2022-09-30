@@ -1,0 +1,442 @@
+Feature: modify event on event filter
+  I need to be able to modify event on event filter
+
+  Scenario: given check event and enrichment event filter should enrich from external mongo data
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "external_data": {
+        "component": {
+          "type": "mongo",
+          "select": {
+            "customer": "{{ `{{.Event.Component}}` }}"
+          },
+          "collection": "eventfilter_mongo_data"
+        }
+      },
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-mongo-data-1-customer"
+            }
+          }
+        ]
+      ],
+      "description": "test-event-filter-che-event-filters-mongo-1-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "status",
+            "value": "{{ `{{.ExternalData.component.status}}` }}",
+            "description": "status from external collection"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-che-event-filters-mongo-1",
+      "connector_name": "test-connector-name-che-event-filters-mongo-1",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-eventfilter-mongo-data-1-customer",
+      "resource": "test-resource-che-event-filters-mongo-1",
+      "state": 2,
+      "output": "test-output-che-event-filters-mongo-1"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-mongo-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-mongo-1/test-eventfilter-mongo-data-1-customer",
+          "category": null,
+          "component": "test-eventfilter-mongo-data-1-customer",
+          "depends": [
+            "test-connector-che-event-filters-mongo-1/test-connector-name-che-event-filters-mongo-1"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-eventfilter-mongo-data-1-customer"
+          ],
+          "impact_level": 1,
+          "infos": {
+            "status": {
+              "name": "status",
+              "description": "status from external collection",
+              "value": "test-eventfilter-mongo-data-1-status"
+            }
+          },
+          "measurements": null,
+          "name": "test-resource-che-event-filters-mongo-1",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given check event and enrichment event filter shouldn't drop event if enrich from external mongo data failed
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "external_data": {
+        "component": {
+          "type": "mongo",
+          "select": {
+            "customer": "{{ `{{.Event.Component}}` }}"
+          },
+          "collection": "eventfilter_mongo_data"
+        }
+      },
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-mongo-data-not-exist-customer"
+            }
+          }
+        ]
+      ],
+      "description": "test-event-filter-che-event-filters-mongo-2-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "status",
+            "value": "{{ `{{.ExternalData.component.status}}` }}",
+            "description": "status from external collection"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-che-event-filters-mongo-2",
+      "connector_name": "test-connector-name-che-event-filters-mongo-2",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-eventfilter-mongo-data-not-exist-customer",
+      "resource": "test-resource-che-event-filters-mongo-2",
+      "state": 2,
+      "output": "test-output-che-event-filters-mongo-2"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-mongo-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-mongo-2/test-eventfilter-mongo-data-not-exist-customer",
+          "category": null,
+          "component": "test-eventfilter-mongo-data-not-exist-customer",
+          "depends": [
+            "test-connector-che-event-filters-mongo-2/test-connector-name-che-event-filters-mongo-2"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-eventfilter-mongo-data-not-exist-customer"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-resource-che-event-filters-mongo-2",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=che-event-filters-mongo-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "entity": {
+            "_id": "test-resource-che-event-filters-mongo-2/test-eventfilter-mongo-data-not-exist-customer"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given check event and enrichment event filter should drop event if enrich from external mongo data failed
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "external_data": {
+        "component": {
+          "type": "mongo",
+          "select": {
+            "customer": "{{ `{{.Event.Component}}` }}"
+          },
+          "collection": "eventfilter_mongo_data"
+        }
+      },
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-mongo-data-not-exist-2-customer"
+            }
+          }
+        ]
+      ],
+      "description": "test-event-filter-che-event-filters-mongo-3-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "status",
+            "value": "{{ `{{.ExternalData.component.status}}` }}",
+            "description": "status from external collection"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "drop"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-che-event-filters-mongo-3",
+      "connector_name": "test-connector-name-che-event-filters-mongo-3",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-eventfilter-mongo-data-not-exist-2-customer",
+      "resource": "test-resource-che-event-filters-mongo-3",
+      "state": 2,
+      "output": "test-output-che-event-filters-mongo-3"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-mongo-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-mongo-3/test-eventfilter-mongo-data-not-exist-2-customer",
+          "category": null,
+          "component": "test-eventfilter-mongo-data-not-exist-2-customer",
+          "depends": [
+            "test-connector-che-event-filters-mongo-3/test-connector-name-che-event-filters-mongo-3"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-eventfilter-mongo-data-not-exist-2-customer"
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-resource-che-event-filters-mongo-3",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=che-event-filters-mongo-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+
+  Scenario: given check event and enrichment event filter should enrich from external mongo data by regexp
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "external_data": {
+        "component": {
+          "type": "mongo",
+          "select": {
+            "customer": "{{ `{{.Event.Component}}` }}"
+          },
+          "regexp": {
+            "message": "{{ `{{.Event.Output}}` }}"
+          },
+          "collection": "eventfilter_mongo_data_regexp"
+        }
+      },
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-mongo-data-regexp-1-customer"
+            }
+          }
+        ]
+      ],
+      "description": "test-event-filter-che-event-filters-mongo-4-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "status",
+            "value": "{{ `{{.ExternalData.component.status}}` }}",
+            "description": "status from external collection"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    [
+      {
+        "connector": "test-connector-che-event-filters-mongo-4",
+        "connector_name": "test-connector-name-che-event-filters-mongo-4",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-eventfilter-mongo-data-regexp-1-customer",
+        "resource": "test-resource-che-event-filters-mongo-4-1",
+        "state": 2,
+        "output": "test-eventfilter-mongo-data-regexp-1-message"
+      },
+      {
+        "connector": "test-connector-che-event-filters-mongo-4",
+        "connector_name": "test-connector-name-che-event-filters-mongo-4",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-eventfilter-mongo-data-regexp-1-customer",
+        "resource": "test-resource-che-event-filters-mongo-4-2",
+        "state": 2,
+        "output": "test-eventfilter-mongo-data-regexp-2-message"
+      }
+    ]
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-mongo-4&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-mongo-4-1/test-eventfilter-mongo-data-regexp-1-customer",
+          "category": null,
+          "component": "test-eventfilter-mongo-data-regexp-1-customer",
+          "enabled": true,
+          "impact_level": 1,
+          "infos": {
+            "status": {
+              "name": "status",
+              "description": "status from external collection",
+              "value": "test-eventfilter-mongo-data-regexp-1-status"
+            }
+          },
+          "measurements": null,
+          "name": "test-resource-che-event-filters-mongo-4-1",
+          "type": "resource"
+        },
+        {
+          "_id": "test-resource-che-event-filters-mongo-4-2/test-eventfilter-mongo-data-regexp-1-customer",
+          "category": null,
+          "component": "test-eventfilter-mongo-data-regexp-1-customer",
+          "enabled": true,
+          "impact_level": 1,
+          "infos": {
+            "status": {
+              "name": "status",
+              "description": "status from external collection",
+              "value": "test-eventfilter-mongo-data-regexp-2-status"
+            }
+          },
+          "measurements": null,
+          "name": "test-resource-che-event-filters-mongo-4-2",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """

@@ -6,7 +6,7 @@
     expand,
     hide-actions
   )
-    template(slot="items", slot-scope="{ item }")
+    template(#items="{ item }")
       permission-row(
         :permission="item",
         :roles="roles",
@@ -42,6 +42,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    sortBy: {
+      type: [Function, Array, String],
+      default: () => ['description'],
+    },
   },
   computed: {
     headers() {
@@ -53,7 +57,7 @@ export default {
     },
 
     sortedPermissions() {
-      return sortBy(this.permissions, ({ description }) => description);
+      return sortBy(this.permissions, this.sortBy);
     },
   },
 };
