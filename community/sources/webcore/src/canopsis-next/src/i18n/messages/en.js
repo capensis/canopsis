@@ -265,6 +265,7 @@ export default merge({
     map: 'Map | Maps',
     instructions: 'Instructions',
     playlist: 'Playlist | Playlists',
+    tag: 'Tag | Tags',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
