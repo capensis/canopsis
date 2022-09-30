@@ -27,6 +27,8 @@ all: tarball
 .PHONY: tarball
 tarball: $(CURRENT_BUILD_OUTPUT_DIR) $(CURRENT_ROOT_DIR)
 	echo $(CANOPSIS_EDITION)
+	sed -i 's/^CPS_EDITION=.*//g' "$(CURRENT_ROOT_DIR)/.env"
+	sed -i '1iCPS_EDITION=$(CANOPSIS_EDITION)' "$(CURRENT_ROOT_DIR)/.env"
 	tar -C $(dir $(CURRENT_ROOT_DIR)) \
 		--create \
 		--verbose \
