@@ -49,7 +49,7 @@ describe('c-alarm-tag-field', () => {
     },
   });
 
-  const alarmTagsGetter = jest.fn().mockReturnValue([]);
+  const alarmTagsGetter = jest.fn().mockReturnValue(items);
   const pendingGetter = jest.fn().mockReturnValue(false);
   const store = createMockedStoreModules([
     {
