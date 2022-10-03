@@ -33,6 +33,7 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
+  inject: ['$system'],
   components: { EventFilterForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
@@ -41,7 +42,7 @@ export default {
   ],
   data() {
     return {
-      form: eventFilterToForm(this.modal.config.rule),
+      form: eventFilterToForm(this.modal.config.rule, this.$system.timezone),
     };
   },
   computed: {
@@ -55,7 +56,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToEventFilter(this.form));
+          await this.config.action(formToEventFilter(this.form, this.$system.timezone));
         }
 
         this.$modals.hide();
