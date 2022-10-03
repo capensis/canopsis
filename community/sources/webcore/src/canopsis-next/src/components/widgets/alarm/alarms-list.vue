@@ -328,7 +328,10 @@ export default {
         const params = this.getQuery();
 
         this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
-        this.fetchAlarmTagsList();
+
+        if (!this.alarmTagsPending) {
+          this.fetchAlarmTagsList({ params: { paginate: false } });
+        }
 
         if (!this.alarmsPending) {
           await this.fetchAlarmsList({
