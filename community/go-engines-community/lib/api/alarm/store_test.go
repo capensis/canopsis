@@ -22,7 +22,11 @@ func BenchmarkStore_Find_GivenRequestWithIncludeInstructionsFilter(b *testing.B)
 		ListRequest: alarm.ListRequest{
 			FilterRequest: alarm.FilterRequest{
 				BaseFilterRequest: alarm.BaseFilterRequest{
-					IncludeInstructionTypes: []int{alarm.InstructionTypeManual},
+					Instructions: []alarm.InstructionFilterRequest{
+						{
+							IncludeTypes: []int{alarm.InstructionTypeManual},
+						},
+					},
 				},
 			},
 		},
@@ -39,7 +43,11 @@ func BenchmarkStore_Find_GivenRequestWithExcludeInstructionsFilter(b *testing.B)
 		ListRequest: alarm.ListRequest{
 			FilterRequest: alarm.FilterRequest{
 				BaseFilterRequest: alarm.BaseFilterRequest{
-					ExcludeInstructionTypes: []int{alarm.InstructionTypeManual},
+					Instructions: []alarm.InstructionFilterRequest{
+						{
+							ExcludeTypes: []int{alarm.InstructionTypeManual},
+						},
+					},
 				},
 			},
 		},

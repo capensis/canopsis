@@ -1491,7 +1491,7 @@ instruction:
       - - field: name
           cond:
             type: eq
-            value: test-resource-to-alarm-instruction-get-11
+            value: test-resource-to-alarm-instruction-get-11-1
     alarm_pattern:
     timeout_after_execution:
       value: 1
@@ -1507,7 +1507,7 @@ instruction:
       - - field: name
           cond:
             type: eq
-            value: test-resource-to-alarm-instruction-get-12
+            value: test-resource-to-alarm-instruction-get-12-1
     alarm_pattern:
     timeout_after_execution:
       value: 1
