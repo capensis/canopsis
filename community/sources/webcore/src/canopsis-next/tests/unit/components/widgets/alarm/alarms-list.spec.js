@@ -557,14 +557,6 @@ describe('alarms-list', () => {
       autoInstructionFilter,
       allAndWithInstructionFilter,
     ];
-    const excludeInstructionsIds = [
-      autoInstructionFilter.instructions[0]._id,
-      manualInstructionFilter.instructions[0]._id,
-    ];
-    const includeInstructionsIds = [
-      allAndWithInstructionFilter.instructions[0]._id,
-      allAndWithInstructionFilter.instructions[1]._id,
-    ];
 
     const instructionsFiltersField = selectInstructionsFiltersField(wrapper);
 
@@ -590,11 +582,25 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
-          include_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
-          exclude_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
-          exclude_instructions: excludeInstructionsIds,
-          include_instructions: includeInstructionsIds,
-          has_running_execution: false,
+          instructions: [
+            {
+              exclude: [manualInstructionFilter.instructions[0]._id],
+              exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual],
+            },
+            {
+              exclude: [autoInstructionFilter.instructions[0]._id],
+              exclude_types: [REMEDIATION_INSTRUCTION_TYPES.auto],
+              running: true,
+            },
+            {
+              include: [
+                allAndWithInstructionFilter.instructions[0]._id,
+                allAndWithInstructionFilter.instructions[1]._id,
+              ],
+              include_types: [REMEDIATION_INSTRUCTION_TYPES.auto, REMEDIATION_INSTRUCTION_TYPES.manual],
+              running: false,
+            },
+          ],
           page: 1,
         },
       },
@@ -635,9 +641,6 @@ describe('alarms-list', () => {
       manualInstructionFilter,
       autoInstructionFilter,
     ];
-    const excludeInstructionsIds = [
-      manualInstructionFilter.instructions[0]._id,
-    ];
 
     const instructionsFiltersField = selectInstructionsFiltersField(wrapper);
 
@@ -663,8 +666,12 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
-          exclude_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual],
-          exclude_instructions: excludeInstructionsIds,
+          instructions: [
+            {
+              exclude: [manualInstructionFilter.instructions[0]._id],
+              exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual],
+            },
+          ],
           page: 1,
         },
       },

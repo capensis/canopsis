@@ -3,127 +3,6 @@
 exports[`remediation-instructions-filter-form Renders \`remediation-instructions-filter-form\` with custom props 1`] = `
 <div>
   <div
-    class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-        style="height: auto;"
-      >
-        <div
-          class="v-input--radio-group__input"
-          role="radiogroup"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label theme--light"
-            style="left: 0px; position: relative;"
-          >
-            Alarms list display
-          </label>
-          <div
-            class="v-radio theme--light"
-          >
-            <div
-              class="v-input--selection-controls__input"
-            >
-              <input
-                aria-checked="false"
-                aria-label="Show all alarms"
-                name="with"
-                role="radio"
-                type="radio"
-                value=""
-              />
-              <div
-                class="v-input--selection-controls__ripple"
-              />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
-            </div>
-            <label
-              aria-hidden="true"
-              class="v-label theme--light"
-              style="left: 0px; position: relative;"
-            >
-              Show all alarms
-            </label>
-          </div>
-          <div
-            class="v-radio theme--light"
-          >
-            <div
-              class="v-input--selection-controls__input"
-            >
-              <input
-                aria-checked="false"
-                aria-label="Show alarms with instructions in progress"
-                name="with"
-                role="radio"
-                type="radio"
-                value="true"
-              />
-              <div
-                class="v-input--selection-controls__ripple"
-              />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
-            </div>
-            <label
-              aria-hidden="true"
-              class="v-label theme--light"
-              style="left: 0px; position: relative;"
-            >
-              Show alarms with instructions in progress
-            </label>
-          </div>
-          <div
-            class="v-radio theme--light"
-          >
-            <div
-              class="v-input--selection-controls__input"
-            >
-              <input
-                aria-checked="false"
-                aria-label="Hide alarms with instructions in progress"
-                name="with"
-                role="radio"
-                type="radio"
-                value="false"
-              />
-              <div
-                class="v-input--selection-controls__ripple"
-              />
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                radio_button_unchecked
-              </i>
-            </div>
-            <label
-              aria-hidden="true"
-              class="v-label theme--light"
-              style="left: 0px; position: relative;"
-            >
-              Hide alarms with instructions in progress
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
     class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
   >
     <div
@@ -458,11 +337,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
       />
     </div>
   </div>
-</div>
-`;
-
-exports[`remediation-instructions-filter-form Renders \`remediation-instructions-filter-form\` with default props 1`] = `
-<div>
   <div
     class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
   >
@@ -492,7 +366,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             >
               <input
                 aria-checked="false"
-                aria-label="Show all alarms"
+                aria-label="Show all filtered alarms"
                 name="with"
                 role="radio"
                 type="radio"
@@ -513,7 +387,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
-              Show all alarms
+              Show all filtered alarms
             </label>
           </div>
           <div
@@ -524,7 +398,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             >
               <input
                 aria-checked="false"
-                aria-label="Show alarms with instructions in progress"
+                aria-label="Show filtered alarms with instructions in progress"
                 name="with"
                 role="radio"
                 type="radio"
@@ -545,7 +419,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
-              Show alarms with instructions in progress
+              Show filtered alarms with instructions in progress
             </label>
           </div>
           <div
@@ -556,7 +430,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             >
               <input
                 aria-checked="false"
-                aria-label="Hide alarms with instructions in progress"
+                aria-label="Hide filtered alarms with instructions in progress"
                 name="with"
                 role="radio"
                 type="radio"
@@ -577,13 +451,18 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               class="v-label theme--light"
               style="left: 0px; position: relative;"
             >
-              Hide alarms with instructions in progress
+              Hide filtered alarms with instructions in progress
             </label>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
+`;
+
+exports[`remediation-instructions-filter-form Renders \`remediation-instructions-filter-form\` with default props 1`] = `
+<div>
   <div
     class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
   >
@@ -914,6 +793,127 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
         left="left"
         text="Instructions of selected type are excluded from the list"
       />
+    </div>
+  </div>
+  <div
+    class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+        style="height: auto;"
+      >
+        <div
+          class="v-input--radio-group__input"
+          role="radiogroup"
+        >
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Alarms list display
+          </label>
+          <div
+            class="v-radio theme--light"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="false"
+                aria-label="Show all filtered alarms"
+                name="with"
+                role="radio"
+                type="radio"
+                value=""
+              />
+              <div
+                class="v-input--selection-controls__ripple"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Show all filtered alarms
+            </label>
+          </div>
+          <div
+            class="v-radio theme--light"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="false"
+                aria-label="Show filtered alarms without instructions in progress"
+                name="with"
+                role="radio"
+                type="radio"
+                value="true"
+              />
+              <div
+                class="v-input--selection-controls__ripple"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Show filtered alarms without instructions in progress
+            </label>
+          </div>
+          <div
+            class="v-radio theme--light"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="false"
+                aria-label="Hide filtered alarms without instructions in progress"
+                name="with"
+                role="radio"
+                type="radio"
+                value="false"
+              />
+              <div
+                class="v-input--selection-controls__ripple"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Hide filtered alarms without instructions in progress
+            </label>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
