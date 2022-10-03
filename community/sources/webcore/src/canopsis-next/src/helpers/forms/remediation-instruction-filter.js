@@ -16,7 +16,7 @@ import { enabledToForm } from './shared/common';
  * @property {boolean} all
  * @property {boolean} auto
  * @property {boolean} manual
- * @property {boolean} [has_running]
+ * @property {boolean} [running]
  * @property {RemediationInstructionFilterInstruction[]} instructions
  */
 
@@ -37,7 +37,7 @@ export const remediationInstructionFilterToForm = (filter = {}) => ({
   all: !!filter.all,
   auto: !!filter.auto,
   manual: !!filter.manual,
-  has_running: filter.has_running,
+  running: filter.running,
   instructions: filter.instructions ? [...filter.instructions] : [],
 });
 

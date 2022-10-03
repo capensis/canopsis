@@ -526,7 +526,7 @@ describe('alarms-list', () => {
 
     const manualInstructionFilter = {
       manual: true,
-      has_running: null,
+      running: null,
       instructions: [{
         _id: 'manual-instruction-id',
       }],
@@ -534,7 +534,7 @@ describe('alarms-list', () => {
     };
     const autoInstructionFilter = {
       auto: true,
-      has_running: true,
+      running: true,
       instructions: [{
         _id: 'auto-instruction-id',
       }],
@@ -543,7 +543,7 @@ describe('alarms-list', () => {
     const allAndWithInstructionFilter = {
       all: true,
       with: true,
-      has_running: false,
+      running: false,
       instructions: [{
         _id: 'all-and-with-instruction-id',
       }, {

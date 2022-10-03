@@ -82,7 +82,7 @@ describe('remediation-instructions-filter-form', () => {
       store,
       propsData: {
         form: {
-          has_running: undefined,
+          running: undefined,
         },
       },
     });
@@ -90,7 +90,7 @@ describe('remediation-instructions-filter-form', () => {
     const runningField = selectRunningField(wrapper);
     runningField.vm.$emit('input', false);
 
-    expect(wrapper).toEmit('input', { has_running: false });
+    expect(wrapper).toEmit('input', { running: false });
   });
 
   test('With enabled after trigger with field', () => {
