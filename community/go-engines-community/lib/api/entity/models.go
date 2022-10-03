@@ -24,7 +24,7 @@ type ListRequest struct {
 
 type BaseFilterRequest struct {
 	Search   string   `form:"search" json:"search"`
-	Filter   string   `form:"filter" json:"filter"`
+	Filters  []string `form:"filters[]" json:"filters"`
 	Category string   `form:"category" json:"category"`
 	Type     []string `form:"type[]" json:"type"`
 	NoEvents bool     `form:"no_events" json:"no_events"`
