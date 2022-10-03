@@ -2,7 +2,6 @@ package exportconfiguration
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -34,7 +33,7 @@ func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 		collectionNames: map[string]string{
 			"configuration":       mongo.ConfigurationMongoCollection,
 			"auth_configuration":  mongo.ObjectMongoCollection,
-			"rights":              mongo.RightsMongoCollection,
+			"acl":                 mongo.RightsMongoCollection,
 			"pbehavior":           mongo.PbehaviorMongoCollection,
 			"pbehavior_type":      mongo.PbehaviorTypeMongoCollection,
 			"pbehavior_reason":    mongo.PbehaviorReasonMongoCollection,
@@ -82,7 +81,7 @@ func (a *api) Export(c *gin.Context) {
 		return
 	}
 
-	file, err := ioutil.TempFile("", exportFileName)
+	file, err := os.CreateTemp("", "cps_export_configurations_*.yml")
 	if err != nil {
 		panic(err)
 	}
