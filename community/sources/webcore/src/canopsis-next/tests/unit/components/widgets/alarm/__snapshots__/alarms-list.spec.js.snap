@@ -107,6 +107,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     pagination="[object Object]"
     refreshalarmslist="[Function]"
     selectable="true"
+    selectedtag=""
     totalitems="10"
     widget="[object Object]"
   >
