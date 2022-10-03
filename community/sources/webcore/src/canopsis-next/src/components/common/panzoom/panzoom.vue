@@ -94,6 +94,8 @@ export default {
         } else {
           this.translateX -= this.moveStep;
         }
+
+        event.preventDefault();
       }
 
       if (event.altKey) {
@@ -102,6 +104,8 @@ export default {
         } else {
           this.translateY -= this.moveStep;
         }
+
+        event.preventDefault();
       }
     },
   },

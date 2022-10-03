@@ -11,7 +11,7 @@
     )
       template(#prepend="")
         slot(name="sidebar-prepend")
-    div.flowchart__editor(:class="{ 'flowchart__editor--readonly': readonly }")
+    c-zoom-overlay.flowchart__editor(:class="{ 'flowchart__editor--readonly': readonly }", skip-alt, skip-shift)
       flowchart-editor(
         v-field="shapes",
         :view-box.sync="viewBox",
@@ -87,6 +87,7 @@ $sidebarWidth: 320px;
 
   &__editor {
     flex-grow: 1;
+    width: auto;
     height: 100%;
 
     position: absolute;

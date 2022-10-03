@@ -1,4 +1,4 @@
-export const mapInformationPopup = {
+export const mapInformationPopupMixin = {
   props: {
     iconSize: {
       type: Number,
