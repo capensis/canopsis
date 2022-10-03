@@ -14,7 +14,7 @@ const stubs = {
   'add-location-btn': true,
   'mermaid-theme-field': true,
   'mermaid-code-preview': true,
-  'mermaid-points': true,
+  'mermaid-points-editor': true,
 };
 
 const factory = (options = {}) => shallowMount(MermaidEditor, {
@@ -40,7 +40,7 @@ const snapshotFactory = (options = {}) => mount(MermaidEditor, {
 const selectMermaidCodeEditor = wrapper => wrapper.find('mermaid-code-editor-stub');
 const selectAddLocationBtn = wrapper => wrapper.find('add-location-btn-stub');
 const selectMermaidThemeField = wrapper => wrapper.find('mermaid-theme-field-stub');
-const selectMermaidPoints = wrapper => wrapper.find('mermaid-points-stub');
+const selectMermaidPoints = wrapper => wrapper.find('mermaid-points-editor-stub');
 
 describe('mermaid-editor', () => {
   const initialForm = {
