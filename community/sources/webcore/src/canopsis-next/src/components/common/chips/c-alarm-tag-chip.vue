@@ -43,5 +43,9 @@ export default {
   .v-datatable thead th.column.sortable & .v-icon {
     opacity: .6;
   }
+
+  .v-icon {
+    transform: unset !important;
+  }
 }
 </style>
