@@ -14,7 +14,7 @@
 <script>
 import { APP_HOST, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 
-import { MODALS } from '@/constants';
+import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { removeTrailingSlashes } from '@/helpers/url';
 import { writeTextToClipboard } from '@/helpers/clipboard';
@@ -30,13 +30,16 @@ export default {
         config: {
           action: async (data) => {
             const shareToken = await this.createShareToken({ data });
+            const { query, params } = this.$route;
 
             const { href } = this.$router.resolve(
               {
-                query: {
-                  ...this.$route.query,
-                  [ROUTER_ACCESS_TOKEN_KEY]: shareToken.value,
+                name: ROUTES_NAMES.viewKiosk,
+                params: {
+                  id: params.id,
+                  tabId: query.tabId,
                 },
+                query: { [ROUTER_ACCESS_TOKEN_KEY]: shareToken.value },
               },
               this.$route,
             );
