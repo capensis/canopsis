@@ -170,6 +170,7 @@ describe('alarms-list', () => {
   const fetchAlarmsDetailsList = jest.fn();
   const updateAlarmDetailsQuery = jest.fn();
   const removeAlarmDetailsQuery = jest.fn();
+  const fetchTagsList = jest.fn();
   const sideBarModule = {
     name: 'sideBar',
     actions: {
@@ -258,6 +259,13 @@ describe('alarms-list', () => {
     },
   };
 
+  const alarmTagModule = {
+    name: 'alarmTag',
+    actions: {
+      fetchList: fetchTagsList,
+    },
+  };
+
   const store = createMockedStoreModules([
     alarmModule,
     sideBarModule,
@@ -266,6 +274,7 @@ describe('alarms-list', () => {
     viewModule,
     userPreferenceModule,
     authModule,
+    alarmTagModule,
   ]);
 
   afterEach(() => {
@@ -274,6 +283,7 @@ describe('alarms-list', () => {
     updateView.mockClear();
     updateQuery.mockClear();
     hideSideBar.mockClear();
+    fetchTagsList.mockClear();
   });
 
   it('Query updated after mount', async () => {
