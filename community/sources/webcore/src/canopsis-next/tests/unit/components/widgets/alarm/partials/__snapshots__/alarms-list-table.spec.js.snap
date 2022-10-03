@@ -71,6 +71,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
+                  selectedtag="tag"
                 />
                 <i
                   aria-hidden="true"
@@ -89,6 +90,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
+                  selectedtag="tag"
                 />
               </th>
             </tr>
@@ -149,6 +151,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
+              selectedtag="tag"
               widget="[object Object]"
             />
             <tr
@@ -168,6 +171,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
+              selectedtag="tag"
               widget="[object Object]"
             />
             <tr
@@ -187,6 +191,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
+              selectedtag="tag"
               widget="[object Object]"
             />
             <tr
@@ -206,6 +211,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
+              selectedtag="tag"
               widget="[object Object]"
             />
             <tr
@@ -225,6 +231,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
+              selectedtag="tag"
               widget="[object Object]"
             />
             <tr
@@ -300,6 +307,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
+                  selectedtag=""
                 />
                 <i
                   aria-hidden="true"
@@ -318,6 +326,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
+                  selectedtag=""
                 />
               </th>
             </tr>
@@ -383,6 +392,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
+                  selectedtag=""
                 />
               </th>
               <th
@@ -395,6 +405,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
+                  selectedtag=""
                 />
                 <i
                   aria-hidden="true"
@@ -413,6 +424,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
+                  selectedtag=""
                 />
               </th>
             </tr>
@@ -432,6 +444,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              selectedtag=""
               widget="[object Object]"
             />
             <tr
@@ -449,6 +462,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              selectedtag=""
               widget="[object Object]"
             />
             <tr
@@ -466,6 +480,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              selectedtag=""
               widget="[object Object]"
             />
             <tr
@@ -483,6 +498,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              selectedtag=""
               widget="[object Object]"
             />
             <tr
@@ -500,6 +516,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              selectedtag=""
               widget="[object Object]"
             />
             <tr

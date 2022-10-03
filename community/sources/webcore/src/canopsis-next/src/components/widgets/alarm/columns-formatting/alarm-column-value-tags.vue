@@ -2,7 +2,7 @@
   v-layout(row, align-center)
     c-alarm-tag-chip(
       v-for="tag in inlineTags",
-      :key="tag._id",
+      :key="tag",
       :color="getTagColor(tag)",
       @click="selectTag(tag)"
     ) {{ tag }}
