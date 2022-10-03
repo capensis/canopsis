@@ -11,8 +11,7 @@
         editable,
         with-alarm,
         with-entity,
-        with-pbehavior,
-        @input="updateMainFilterUpdatedAt"
+        with-pbehavior
       )
       field-filters(
         :filters="value.filters",

@@ -1305,11 +1305,25 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/exdate.Request'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
         type: integer
       type:
         enum:
@@ -1352,11 +1366,25 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/exdate.Request'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
         type: integer
       type:
         enum:
@@ -1370,6 +1398,21 @@ definitions:
     required:
     - description
     - type
+    type: object
+  eventfilter.Exception:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      description:
+        type: string
+      exdates:
+        items:
+          $ref: '#/definitions/types.Exdate'
+        type: array
+      name:
+        type: string
     type: object
   eventfilter.ExternalDataParameters:
     properties:
@@ -1390,7 +1433,7 @@ definitions:
       type:
         type: string
     type: object
-  eventfilter.Rule:
+  eventfilter.Response:
     properties:
       _id:
         type: string
@@ -1403,7 +1446,6 @@ definitions:
       created:
         type: integer
       description:
-        maxLength: 255
         type: string
       enabled:
         type: boolean
@@ -1419,6 +1461,14 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          $ref: '#/definitions/eventfilter.Exception'
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/types.Exdate'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
@@ -1427,18 +1477,16 @@ definitions:
         $ref: '#/definitions/oldpattern.EventPatternList'
       priority:
         type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
+        type: integer
       type:
-        enum:
-        - break
-        - drop
-        - enrichment
-        - change_entity
         type: string
       updated:
         type: integer
-    required:
-    - description
-    - type
     type: object
   eventfilter.RuleConfig:
     properties:
@@ -1485,11 +1533,25 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/exdate.Request'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
         type: integer
       type:
         enum:
@@ -1503,6 +1565,16 @@ definitions:
     required:
     - description
     - type
+    type: object
+  exdate.Request:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
+    required:
+    - begin
+    - end
     type: object
   export.Field:
     properties:
@@ -3718,6 +3790,13 @@ definitions:
     required:
     - unit
     - value
+    type: object
+  types.Exdate:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
     type: object
   types.PbehaviorInfo:
     properties:

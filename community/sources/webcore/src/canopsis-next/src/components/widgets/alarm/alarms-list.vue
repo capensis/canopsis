@@ -17,13 +17,15 @@
           @change="updateCorrelation"
         )
       v-flex
-        v-layout(row, wrap, align-center)
+        v-layout(row, align-center)
           filter-selector(
             :label="$t('settings.selectAFilter')",
             :filters="userPreference.filters",
             :locked-filters="widget.filters",
+            :locked-value="lockedFilter",
             :value="mainFilter",
             :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
+            :clearable="!widget.parameters.clearFilterDisabled",
             @input="updateSelectedFilter"
           )
           filters-list-btn(
@@ -342,7 +344,7 @@ export default {
           ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
 
           fields: columns.map(({ label, value }) => ({ label, name: value })),
-          filter: JSON.stringify(query.filter),
+          filters: query.filters,
           separator: exportCsvSeparator,
           /**
            * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997

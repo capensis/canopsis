@@ -8,7 +8,8 @@
           v-if="!hideSelector",
           v-field="value",
           :label="$t('filterSelector.defaultFilter')",
-          :filters="filters"
+          :filters="filters",
+          hide-multiply
         )
         filters-list(
           :filters="filters",
