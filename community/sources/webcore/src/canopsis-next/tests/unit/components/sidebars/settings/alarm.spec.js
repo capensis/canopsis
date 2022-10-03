@@ -116,14 +116,15 @@ const selectFieldLiveReporting = wrapper => wrapper.find('input.field-live-repor
 const selectFieldInfoPopups = wrapper => wrapper.find('input.field-info-popup');
 const selectFieldTextEditor = wrapper => wrapper.find('input.field-text-editor');
 const selectFieldGridRangeSize = wrapper => wrapper.find('input.field-grid-range-size');
-const selectFieldHtmlEnabledSwitcher = wrapper => wrapper.findAll('input.field-switcher').at(0);
-const selectFieldAckNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(1);
-const selectFieldMultiAckEnabled = wrapper => wrapper.findAll('input.field-switcher').at(2);
+const selectFieldClearFilterDisabled = wrapper => wrapper.findAll('input.field-switcher').at(0);
+const selectFieldHtmlEnabledSwitcher = wrapper => wrapper.findAll('input.field-switcher').at(1);
+const selectFieldAckNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(2);
+const selectFieldMultiAckEnabled = wrapper => wrapper.findAll('input.field-switcher').at(3);
 const selectFieldFastAckOutput = wrapper => wrapper.find('input.field-fast-ack-output');
-const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(3);
+const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(4);
 const selectFieldLinksCategoriesAsList = wrapper => wrapper.find('input.field-enabled-limit');
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
-const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(5);
+const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(6);
 
 describe('alarm', () => {
   const nowTimestamp = 1386435600000;
@@ -137,9 +138,11 @@ describe('alarm', () => {
     updateWidget,
     copyWidget,
     fetchActiveView,
+    fetchUserPreference,
     activeViewModule,
     widgetModule,
     authModule,
+    userPreferenceModule,
   } = createSettingsMocks();
 
   const widget = {
@@ -160,7 +163,9 @@ describe('alarm', () => {
   const store = createMockedStoreModules([
     activeViewModule,
     widgetModule,
+    userPreferenceModule,
     authModule,
+    userPreferenceModule,
   ]);
 
   afterEach(() => {
@@ -168,6 +173,7 @@ describe('alarm', () => {
     updateWidget.mockReset();
     copyWidget.mockReset();
     fetchActiveView.mockReset();
+    fetchUserPreference.mockReset();
   });
 
   it('Create widget with default parameters', async () => {
@@ -510,6 +516,7 @@ describe('alarm', () => {
       store: createMockedStoreModules([
         activeViewModule,
         widgetModule,
+        userPreferenceModule,
         {
           ...authModule,
           getters: {
@@ -554,6 +561,7 @@ describe('alarm', () => {
       store: createMockedStoreModules([
         activeViewModule,
         widgetModule,
+        userPreferenceModule,
         {
           ...authModule,
           getters: {
@@ -590,8 +598,6 @@ describe('alarm', () => {
         id: widget._id,
         data: getWidgetRequestWithNewProperty(widget, 'parameters', {
           ...widget.parameters,
-
-          mainFilterUpdatedAt: nowTimestamp,
           mainFilter: filter,
         }),
       },
@@ -603,6 +609,7 @@ describe('alarm', () => {
       store: createMockedStoreModules([
         activeViewModule,
         widgetModule,
+        userPreferenceModule,
         {
           ...authModule,
           getters: {
@@ -769,6 +776,34 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'expandGridRangeSize', expandGridRangeSize),
+      },
+    });
+  });
+
+  it('Clear filter disabled changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldHtmlEnabledSwitcher = selectFieldClearFilterDisabled(wrapper);
+
+    const clearFilterDisabled = Faker.datatype.boolean();
+
+    fieldHtmlEnabledSwitcher.vm.$emit('input', clearFilterDisabled);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'clearFilterDisabled', clearFilterDisabled),
       },
     });
   });
@@ -1071,6 +1106,7 @@ describe('alarm', () => {
       store: createMockedStoreModules([
         activeViewModule,
         widgetModule,
+        userPreferenceModule,
         {
           ...authModule,
           getters: {
@@ -1132,7 +1168,6 @@ describe('alarm', () => {
                 periodic_refresh: { value: 30, unit: 's', enabled: true },
                 viewFilters: [],
                 mainFilter: null,
-                mainFilterUpdatedAt: 0,
                 liveReporting: {},
                 sort: { order: SORT_ORDERS.desc, column: 'connector' },
                 opened: true,

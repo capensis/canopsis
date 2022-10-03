@@ -61,7 +61,7 @@ export default {
       required: true,
     },
     deletable: {
-      type: Object,
+      type: Boolean,
       required: true,
     },
   },

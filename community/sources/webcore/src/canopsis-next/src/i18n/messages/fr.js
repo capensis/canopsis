@@ -777,9 +777,11 @@ export default merge({
     periodsNumber: 'Nombre d\'étapes',
     yesNoMode: 'Mode Oui/Non',
     selectAFilter: 'Sélectionner un filtre',
+    lockedFilter: 'Filtre verrouillé dans les paramètres du widget',
     exportAsCsv: 'Exporter le widget sous forme de fichier csv',
     criticityLevels: 'Niveaux de criticité',
     isPriorityEnabled: 'Afficher la priorité',
+    clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
     exportCsv: {
       title: 'Exporter CSV',
       fields: {
@@ -1896,6 +1898,8 @@ export default merge({
     component: 'ID de composant ou modèle',
     connector: 'ID ou modèle de connecteur',
     connectorName: 'Nom ou modèle de connecteur',
+    duringPeriod: 'Appliqué pendant cette période uniquement',
+    calendar: 'Calendrier',
     types: {
       [EVENT_FILTER_TYPES.drop]: 'Drop',
       [EVENT_FILTER_TYPES.break]: 'Break',

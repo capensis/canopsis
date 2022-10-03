@@ -129,6 +129,7 @@ describe('alarms-list', () => {
     _id: '880c5d0c-3f31-477c-8365-2f90389326cc',
   };
   const defaultQuery = {
+    filters: [],
     active_columns: widget.parameters.widgetColumns.map(v => v.value),
     correlation: userPreferences.content.isCorrelationEnabled,
     category: userPreferences.content.category,
@@ -297,7 +298,9 @@ describe('alarms-list', () => {
       {
         id: widget._id,
         query: {
-          ...omit(defaultQuery, ['search', 'tstart', 'tstop']),
+          ...omit(defaultQuery, ['search', 'tstart', 'tstop', 'filters']),
+          filter: undefined,
+          lockedFilter: null,
           multiSortBy: [],
           page: 1,
           with_instructions: true,
@@ -327,7 +330,9 @@ describe('alarms-list', () => {
       {
         id: widget._id,
         query: {
-          ...omit(defaultQuery, ['search', 'tstart', 'tstop']),
+          ...omit(defaultQuery, ['search', 'tstart', 'tstop', 'filters']),
+          filter: undefined,
+          lockedFilter: null,
           multiSortBy: [],
           page: 1,
           with_instructions: true,
@@ -445,7 +450,6 @@ describe('alarms-list', () => {
           content: {
             ...userPreferences.content,
             mainFilter: selectedFilter._id,
-            mainFilterUpdatedAt: nowTimestamp,
           },
         },
       },
@@ -934,6 +938,7 @@ describe('alarms-list', () => {
       expect.any(Object),
       {
         data: {
+          filters: defaultQuery.filters,
           search: defaultQuery.search,
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
@@ -1031,6 +1036,7 @@ describe('alarms-list', () => {
       expect.any(Object),
       {
         data: {
+          filters: defaultQuery.filters,
           search: defaultQuery.search,
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
@@ -1094,6 +1100,7 @@ describe('alarms-list', () => {
       expect.any(Object),
       {
         data: {
+          filters: defaultQuery.filters,
           search: defaultQuery.search,
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
@@ -1735,6 +1742,26 @@ describe('alarms-list', () => {
       store,
       propsData: {
         widget,
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `alarms-list` with clear filter disabled props', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        widget: {
+          ...widget,
+          parameters: {
+            ...widget.parameters,
+
+            clearFilterDisabled: true,
+          },
+        },
       },
     });
 
