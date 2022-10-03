@@ -18,5 +18,11 @@ export const entitiesAlarmTagMixin = {
       createAlarmTag: 'create',
       updateAlarmTag: 'update',
     }),
+
+    getTagColor(tag) {
+      const alarmTag = this.alarmTags.find(({ value }) => tag === value);
+
+      return alarmTag?.color;
+    },
   },
 };
