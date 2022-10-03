@@ -5,6 +5,8 @@
 <script>
 import Observer from '@/services/observer';
 
+import { toSeconds } from '@/helpers/date/duration';
+
 import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';
 
@@ -38,6 +40,33 @@ export default {
       const { tabId } = this.$route.params;
 
       return this.view?.tabs?.find(tab => tab._id === tabId);
+    },
+
+    periodicRefreshEnabled() {
+      return this.view?.periodic_refresh?.enabled;
+    },
+
+    periodicRefreshSeconds() {
+      const { value, unit } = this.view?.periodic_refresh ?? {};
+
+      return toSeconds(value, unit);
+    },
+  },
+  watch: {
+    periodicRefreshEnabled(enabled) {
+      if (enabled) {
+        this.startPeriodicRefresh();
+      } else {
+        this.stopPeriodicRefresh();
+      }
+    },
+
+    periodicRefreshSeconds() {
+      this.stopPeriodicRefresh();
+
+      if (this.periodicRefreshEnabled) {
+        this.startPeriodicRefresh();
+      }
     },
   },
 
@@ -75,6 +104,18 @@ export default {
       if (this.activeTab) {
         this.forceUpdateQuery({ id: this.activeTab._id });
       }
+    },
+
+    refresh() {
+      return this.$periodicRefresh.notify();
+    },
+
+    startPeriodicRefresh() {
+      this.periodicRefreshTimer = setInterval(this.refresh, this.periodicRefreshSeconds * 1000);
+    },
+
+    stopPeriodicRefresh() {
+      clearInterval(this.periodicRefreshTimer);
     },
   },
 };
