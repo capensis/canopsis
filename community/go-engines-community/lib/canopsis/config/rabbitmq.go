@@ -1,13 +1,13 @@
 package config
 
 type Exchange struct {
-	Name       string                 `toml:"name" mapstructure:"name"`
-	Kind       string                 `toml:"kind" mapstructure:"kind"`
-	Durable    bool                   `toml:"durable" mapstructure:"durable"`
-	AutoDelete bool                   `toml:"autodelete" mapstructure:"autodelete"`
-	Internal   bool                   `toml:"internal" mapstructure:"internal"`
-	NoWait     bool                   `toml:"noWait" mapstructure:"noWait"`
-	Args       map[string]interface{} `toml:"args" mapstructure:"args"`
+	Name       string                 `toml:"name"`
+	Kind       string                 `toml:"kind"`
+	Durable    bool                   `toml:"durable"`
+	AutoDelete bool                   `toml:"autodelete"`
+	Internal   bool                   `toml:"internal"`
+	NoWait     bool                   `toml:"noWait"`
+	Args       map[string]interface{} `toml:"args"`
 }
 
 type QueueBinding struct {
@@ -18,13 +18,13 @@ type QueueBinding struct {
 }
 
 type Queue struct {
-	Name       string                 `toml:"name" mapstructure:"name"`
-	Durable    bool                   `toml:"durable" mapstructure:"durable"`
-	AutoDelete bool                   `toml:"autoDelete" mapstructure:"autoDelete"`
-	Exclusive  bool                   `toml:"exclusive" mapstructure:"exclusive"`
-	NoWait     bool                   `toml:"noWait" mapstructure:"noWait"`
-	Bind       *QueueBinding          `toml:"bind" mapstructure:"bind"`
-	Args       map[string]interface{} `toml:"args" mapstructure:"args"`
+	Name       string                 `toml:"name"`
+	Durable    bool                   `toml:"durable"`
+	AutoDelete bool                   `toml:"autoDelete"`
+	Exclusive  bool                   `toml:"exclusive"`
+	NoWait     bool                   `toml:"noWait"`
+	Bind       *QueueBinding          `toml:"bind"`
+	Args       map[string]interface{} `toml:"args"`
 }
 
 type RabbitMQConf struct {
