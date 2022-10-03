@@ -1,0 +1,19 @@
+eventfilter:
+  eventfilter_{1..1000}:
+    _id: <UUID()>
+    priority: <RangeIndex()>
+    type: drop
+    description: <LoremIpsumSentence(3)>
+    enabled: true
+    author: root
+    rrule: "FREQ=DAILY"
+    start: <NowUnixAdd(-24h)>
+    stop: <NowUnixAdd(24h)>
+    resolved_start: <NowUnixAdd(-24h)>
+    resolved_stop: <NowUnixAdd(24h)>
+    resolved_exdates: <GenerateExdates(10)>
+    event_pattern:
+      - - field: source_type
+          cond:
+            type: eq
+            value: resource

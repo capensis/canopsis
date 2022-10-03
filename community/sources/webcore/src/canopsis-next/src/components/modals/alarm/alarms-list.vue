@@ -23,7 +23,7 @@ import { PAGINATION_LIMIT } from '@/config';
 import { MODALS } from '@/constants';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
-import { convertAlarmsListQueryToRequest } from '@/helpers/query';
+import { convertWidgetQueryToRequest } from '@/helpers/query';
 import { alarmsListColumnsToTableColumns } from '@/helpers/forms/widgets/alarm';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -76,7 +76,7 @@ export default {
         this.pending = true;
 
         if (this.config.fetchList) {
-          const { data, meta } = await this.config.fetchList(convertAlarmsListQueryToRequest(this.query));
+          const { data, meta } = await this.config.fetchList(convertWidgetQueryToRequest(this.query));
 
           this.alarms = data;
           this.meta = meta;

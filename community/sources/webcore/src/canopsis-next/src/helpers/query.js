@@ -1,4 +1,4 @@
-import { isUndefined, isEmpty, omit } from 'lodash';
+import { isUndefined, isEmpty, omit, isArray } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import {
@@ -10,7 +10,6 @@ import {
   DATETIME_FORMATS,
 } from '@/constants';
 
-import { getMainFilter } from './filter';
 import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
@@ -35,6 +34,22 @@ export function convertSortToQuery({ parameters }) {
   }
 
   return { sortKey: null, sortDir: null };
+}
+
+/**
+ * Convert widget filter to query
+ *
+ * @param parameters
+ * @returns {{ lockedFilter?: string }}
+ */
+export function convertWidgetFilterToQuery({ parameters }) {
+  if (parameters.mainFilter) {
+    return {
+      lockedFilter: parameters.mainFilter,
+    };
+  }
+
+  return {};
 }
 
 /**
@@ -66,6 +81,7 @@ export function convertAlarmWidgetToQuery(widget) {
     widgetColumns,
     itemsPerPage,
     sort,
+    mainFilter,
     opened = ALARMS_OPENED_VALUES.opened,
   } = widget.parameters;
 
@@ -76,6 +92,7 @@ export function convertAlarmWidgetToQuery(widget) {
     with_instructions: true,
     with_links: true,
     multiSortBy: [],
+    lockedFilter: mainFilter,
   };
 
   if (!isEmpty(liveReporting)) {
@@ -108,11 +125,13 @@ export function convertContextWidgetToQuery(widget) {
     itemsPerPage,
     selectedTypes,
     widgetColumns,
+    mainFilter,
   } = widget.parameters;
 
   const query = {
     page: 1,
     limit: itemsPerPage || PAGINATION_LIMIT,
+    lockedFilter: mainFilter,
   };
 
   if (widgetColumns) {
@@ -133,11 +152,12 @@ export function convertContextWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertWeatherWidgetToQuery(widget) {
-  const { limit } = widget.parameters;
+  const { limit, mainFilter } = widget.parameters;
 
   return {
     ...convertSortToQuery(widget),
     limit: limit || DEFAULT_WEATHER_LIMIT,
+    lockedFilter: mainFilter,
   };
 }
 
@@ -190,11 +210,13 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
   const {
     itemsPerPage,
     category,
+    mainFilter,
     isCorrelationEnabled = false,
   } = content;
 
   const query = {
     correlation: isCorrelationEnabled,
+    filter: mainFilter,
     category,
   };
 
@@ -212,9 +234,9 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
  * @returns {{ category: string }}
  */
 export function convertWeatherUserPreferenceToQuery({ content }) {
-  const { category } = content;
+  const { category, mainFilter } = content;
 
-  return { category };
+  return { category, filter: mainFilter };
 }
 
 /**
@@ -224,10 +246,11 @@ export function convertWeatherUserPreferenceToQuery({ content }) {
  * @returns {{ category: string }}
  */
 export function convertContextUserPreferenceToQuery({ content }) {
-  const { category, noEvents } = content;
+  const { category, noEvents, mainFilter } = content;
 
   return {
     category,
+    filter: mainFilter,
     no_events: noEvents,
   };
 }
@@ -295,12 +318,6 @@ export function prepareQuery(widget, userPreference) {
     ...userPreferenceQuery,
   };
 
-  const filter = getMainFilter(widget, userPreference);
-
-  if (filter) {
-    query.filter = filter;
-  }
-
   const remediationInstructionsFilters = getRemediationInstructionsFilters(widget, userPreference);
 
   if (remediationInstructionsFilters.length) {
@@ -338,12 +355,32 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => ({
 });
 
 /**
- * Convert alarms list query to request parameters
+ * Convert filter to query filters
+ *
+ * @param {string | string[]} filter
+ * @returns {string[]}
+ */
+const convertFilterToQuery = filter => (isArray(filter) ? filter : [filter]).filter(Boolean);
+
+/**
+ * Convert locked filter and main filter to query filters
+ *
+ * @param {string | string[]} filter
+ * @param {string | string[]} lockedFilter
+ * @returns {string[]}
+ */
+const convertFiltersToQuery = (filter, lockedFilter) => [
+  ...convertFilterToQuery(filter),
+  ...convertFilterToQuery(lockedFilter),
+];
+
+/**
+ * Convert widget query to request parameters
  *
  * @param {Object} query
  * @returns {Object}
  */
-export const convertAlarmsListQueryToRequest = (query) => {
+export const convertWidgetQueryToRequest = (query) => {
   const result = omit(query, [
     'tstart',
     'tstop',
@@ -352,6 +389,8 @@ export const convertAlarmsListQueryToRequest = (query) => {
     'category',
     'multiSortBy',
     'limit',
+    'filter',
+    'lockedFilter',
   ]);
 
   const {
@@ -360,9 +399,15 @@ export const convertAlarmsListQueryToRequest = (query) => {
     sortKey,
     sortDir,
     category,
+    filter,
+    lockedFilter,
     multiSortBy = [],
     limit = PAGINATION_LIMIT,
   } = query;
+
+  if (lockedFilter || filter) {
+    result.filters = convertFiltersToQuery(filter, lockedFilter);
+  }
 
   if (tstart) {
     result.tstart = convertStartDateIntervalToTimestamp(tstart, DATETIME_FORMATS.dateTimePicker);
