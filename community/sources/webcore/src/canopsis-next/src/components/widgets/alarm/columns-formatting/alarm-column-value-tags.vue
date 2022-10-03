@@ -38,6 +38,10 @@ export default {
       type: String,
       default: '',
     },
+    inlineCount: {
+      type: Number,
+      default: 2,
+    },
   },
   computed: {
     tags() {
@@ -63,11 +67,11 @@ export default {
     },
 
     inlineTags() {
-      return this.tags.slice(0, 2);
+      return this.tags.slice(0, this.inlineCount);
     },
 
     dropDownTags() {
-      return this.tags.slice(2);
+      return this.tags.slice(this.inlineCount);
     },
   },
   methods: {
