@@ -1,28 +1,6 @@
 <template lang="pug">
   div
     v-radio-group(
-      v-field="form.has_running",
-      :label="$t('remediationInstructionsFilters.alarmsListDisplay')",
-      name="with",
-      hide-details
-    )
-      v-radio(
-        :label="$t('remediationInstructionsFilters.allAlarms')",
-        :value="null",
-        color="primary"
-      )
-      v-radio(
-        :label="$t('remediationInstructionsFilters.showInProgress')",
-        :value="true",
-        color="primary"
-      )
-      v-radio(
-        :label="$t('remediationInstructionsFilters.hideInProgress')",
-        :value="false",
-        color="primary"
-      )
-
-    v-radio-group(
       v-field="form.with",
       :label="$t('remediationInstructionsFilters.filterByInstructions')",
       name="with",
@@ -84,6 +62,27 @@
           icon="help",
           left
         )
+    v-radio-group(
+      v-field="form.running",
+      :label="$t('remediationInstructionsFilters.alarmsListDisplay')",
+      name="with",
+      hide-details
+    )
+      v-radio(
+        :label="$t('remediationInstructionsFilters.allAlarms')",
+        :value="null",
+        color="primary"
+      )
+      v-radio(
+        :label="showInProgressLabel",
+        :value="true",
+        color="primary"
+      )
+      v-radio(
+        :label="hideInProgressLabel",
+        :value="false",
+        color="primary"
+      )
 </template>
 
 <script>
@@ -153,6 +152,22 @@ export default {
 
         return acc;
       }, []);
+    },
+
+    showInProgressLabel() {
+      const key = this.form.with
+        ? 'remediationInstructionsFilters.showWithInProgress'
+        : 'remediationInstructionsFilters.showWithoutInProgress';
+
+      return this.$t(key);
+    },
+
+    hideInProgressLabel() {
+      const key = this.form.with
+        ? 'remediationInstructionsFilters.hideWithInProgress'
+        : 'remediationInstructionsFilters.hideWithoutInProgress';
+
+      return this.$t(key);
     },
   },
   mounted() {

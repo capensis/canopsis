@@ -82,7 +82,7 @@ export default {
     },
 
     hasRunning() {
-      return isBoolean(this.filter.has_running);
+      return isBoolean(this.filter.running);
     },
 
     conditionalTypeMessagePrefix() {
@@ -90,7 +90,7 @@ export default {
         return '';
       }
 
-      const message = this.filter.has_running ? this.$t('common.show') : this.$t('common.hide');
+      const message = this.filter.running ? this.$t('common.show') : this.$t('common.hide');
 
       return `${message} `;
     },
@@ -141,7 +141,7 @@ export default {
 
 <style lang="scss">
 .instruction-filter {
-  & /deep/ .v-chip .v-chip__content {
+  & .v-chip .v-chip__content {
     min-height: 32px;
     height: auto;
   }
