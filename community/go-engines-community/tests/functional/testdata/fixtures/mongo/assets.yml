@@ -1,9 +1,0 @@
-assets:
-  assets_1:
-    _id: test-eventfilters-assets-1
-    component_customer: test-eventfilter-assets-customer-1
-    component_status: test-eventfilter-assets-status-1
-  assets_2:
-    _id: test-eventfilters-assets-2
-    component_customer: test-eventfilter-assets-customer-2
-    component_status: test-eventfilter-assets-status-2
