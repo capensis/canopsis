@@ -265,6 +265,7 @@ export default merge({
     map: 'Carte | Plans',
     instructions: 'Des instructions',
     playlist: 'Liste de lecture | Listes de lecture',
+    ctrlZoom: 'Utilisez ctrl + molette de la souris pour zoomer',
     tag: 'Étiquette | Mots clés',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
