@@ -273,8 +273,8 @@ table.v-datatable {
     color: rgba(0, 0, 0, .87);
   }
 
-  &--dense.v-datatable .service-dependencies {
-    .v-treeview-node__root {
+  &--dense.v-datatable {
+    .service-dependencies .v-treeview-node__root {
       min-height: $denseCellHeight;
       height: $denseCellHeight;
 

@@ -1,19 +1,20 @@
 <template lang="pug">
-  panzoom.mermaid-preview(
-    ref="panzoom",
-    :style="containerStyles",
-    :help-text="$t('mermaid.panzoom.helpText')"
-  )
-    mermaid-code-preview.mermaid-preview__preview(:value="map.parameters.code")
-    mermaid-points-preview.mermaid-preview__points(
-      :points="map.parameters.points",
-      :popup-template="popupTemplate",
-      :popup-actions="popupActions",
-      :color-indicator="colorIndicator",
-      :pbehavior-enabled="pbehaviorEnabled",
-      @show:map="$emit('show:map', $event)",
-      @show:alarms="$emit('show:alarms', $event)"
+  c-zoom-overlay(skip-alt, skip-shift)
+    panzoom.mermaid-preview(
+      ref="panzoom",
+      :style="containerStyles",
+      :help-text="$t('mermaid.panzoom.helpText')"
     )
+      mermaid-code-preview.mermaid-preview__preview(:value="map.parameters.code")
+      mermaid-points-preview.mermaid-preview__points(
+        :points="map.parameters.points",
+        :popup-template="popupTemplate",
+        :popup-actions="popupActions",
+        :color-indicator="colorIndicator",
+        :pbehavior-enabled="pbehaviorEnabled",
+        @show:map="$emit('show:map', $event)",
+        @show:alarms="$emit('show:alarms', $event)"
+      )
 </template>
 
 <script>
@@ -48,7 +49,8 @@ export default {
   },
   computed: {
     containerStyles() {
-      const minHeight = Math.max.apply(null, this.map.parameters.points.map(({ y }) => y));
+      const points = this.map.parameters.points ?? [];
+      const minHeight = Math.max.apply(null, points.map(({ y }) => y));
 
       return {
         minHeight: `${minHeight}px`,

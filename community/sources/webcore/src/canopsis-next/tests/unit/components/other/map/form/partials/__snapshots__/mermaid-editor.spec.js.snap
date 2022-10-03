@@ -39,7 +39,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with custom props 1`] = `
           theme="base"
           value=""
         />
-        <mermaid-points-stub
+        <mermaid-points-editor-stub
           class="mermaid-editor__points"
           value=""
         />
@@ -89,7 +89,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with form 1`] = `
           theme="base"
           value=""
         />
-        <mermaid-points-stub
+        <mermaid-points-editor-stub
           class="mermaid-editor__points"
           value=""
         />
@@ -139,7 +139,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with validation errors  1`] =
           theme="base"
           value=""
         />
-        <mermaid-points-stub
+        <mermaid-points-editor-stub
           class="mermaid-editor__points"
           value=""
         />
