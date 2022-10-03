@@ -35,7 +35,7 @@ export const ROUTES = {
   login: '/login',
   error: '/error',
   view: '/view/:id',
-  viewKiosk: '/view-kiosk/:id/:tabId',
+  viewKiosk: '/kiosk-views/:id/:tabId',
   alarms: '/alarms/:id',
   adminRights: '/admin/rights',
   adminUsers: '/admin/users',
