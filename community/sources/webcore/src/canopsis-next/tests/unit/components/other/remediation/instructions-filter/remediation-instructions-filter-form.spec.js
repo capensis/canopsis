@@ -2,8 +2,9 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createCheckboxInputStub, createInputStub, createSelectInputStub } from '@unit/stubs/input';
-import RemediationInstructionsFilterForm from '@/components/other/remediation/instructions-filter/remediation-instructions-filter-form.vue';
 import { MAX_LIMIT, REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
+
+import RemediationInstructionsFilterForm from '@/components/other/remediation/instructions-filter/remediation-instructions-filter-form.vue';
 
 const localVue = createVueInstance();
 
@@ -34,8 +35,8 @@ const snapshotFactory = (options = {}) => mount(RemediationInstructionsFilterFor
 });
 
 const selectRadioGroups = wrapper => wrapper.findAll('.v-radio-group');
-const selectRunningField = wrapper => selectRadioGroups(wrapper).at(0);
-const selectWithField = wrapper => selectRadioGroups(wrapper).at(1);
+const selectRunningField = wrapper => selectRadioGroups(wrapper).at(1);
+const selectWithField = wrapper => selectRadioGroups(wrapper).at(0);
 const selectAllField = wrapper => wrapper.find('.v-switch');
 const selectCheckboxFields = wrapper => wrapper.findAll('.v-checkbox');
 const selectAutoField = wrapper => selectCheckboxFields(wrapper).at(0);
