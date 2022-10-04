@@ -1,0 +1,363 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mermaid-theme-field Renders \`mermaid-theme-field\` with custom props 1`] = `
+<div
+  class="v-input my-0 v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+  role="combobox"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-select__slot"
+      >
+        <label
+          aria-hidden="true"
+          class="v-label v-label--active theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Color theme
+        </label>
+        <div
+          class="v-select__selections"
+        >
+          <div
+            class="v-select__selection v-select__selection--comma"
+          >
+            Dark
+          </div>
+          <input
+            aria-label="Color theme"
+            aria-readonly="false"
+            autocomplete="on"
+            name="custom_name"
+            readonly="readonly"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-menu"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`mermaid-theme-field Renders \`mermaid-theme-field\` with custom props 2`] = `
+<div
+  class="v-menu__content theme--light "
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+>
+  <div
+    class="v-select-list v-card theme--light"
+  >
+    <div
+      class="v-list theme--light"
+      role="list"
+    >
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Default
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Base
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Forest
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        class="primary--text"
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Dark
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Neutral
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Canopsis
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`mermaid-theme-field Renders \`mermaid-theme-field\` with default props 1`] = `
+<div
+  class="v-input my-0 v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+  role="combobox"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-select__slot"
+      >
+        <label
+          aria-hidden="true"
+          class="v-label v-label--active theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Color theme
+        </label>
+        <div
+          class="v-select__selections"
+        >
+          <div
+            class="v-select__selection v-select__selection--comma"
+          >
+            Canopsis
+          </div>
+          <input
+            aria-label="Color theme"
+            aria-readonly="false"
+            autocomplete="on"
+            name="type"
+            readonly="readonly"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-menu"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`mermaid-theme-field Renders \`mermaid-theme-field\` with default props 2`] = `
+<div
+  class="v-menu__content theme--light "
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+>
+  <div
+    class="v-select-list v-card theme--light"
+  >
+    <div
+      class="v-list theme--light"
+      role="list"
+    >
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Default
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Base
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Forest
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Dark
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Neutral
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        class="primary--text"
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Canopsis
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;

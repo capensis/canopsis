@@ -341,3 +341,17 @@ widgets:
     <<: *widget
     _id: test-widget-to-weather-get
     tab: test-tab-to-weather-get
+
+  widget_to_map_edit_1:
+    <<: *widget
+    _id: test-widget-to-map-edit-1
+    tab: test-tab-to-map-edit
+    parameters:
+      map: test-map-to-delete-2
+
+  widget_to_map_edit_2:
+    <<: *widget
+    _id: test-widget-to-map-edit-2
+    tab: test-tab-to-map-edit
+    parameters:
+      map: test-map-to-bulk-delete-2

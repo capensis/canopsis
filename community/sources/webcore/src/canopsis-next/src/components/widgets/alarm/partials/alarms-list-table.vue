@@ -30,7 +30,11 @@
           v-fade-transition
             v-progress-linear(color="primary", height="2", indeterminate)
         template(#headerCell="{ header }")
-          alarm-header-cell(:header="header")
+          alarm-header-cell(
+            :header="header",
+            :selected-tag="selectedTag",
+            @clear:tag="$emit('clear:tag')"
+          )
         template(#items="props")
           alarms-list-row(
             v-model="props.selected",
@@ -43,7 +47,9 @@
             :columns-filters="columnsFilters",
             :parent-alarm="parentAlarm",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
-            :refresh-alarms-list="refreshAlarmsList"
+            :refresh-alarms-list="refreshAlarmsList",
+            :selected-tag="selectedTag",
+            @select:tag="$emit('select:tag', $event)"
           )
         template(#expand="{ item, index }")
           alarms-expand-panel(
@@ -150,6 +156,10 @@ export default {
     refreshAlarmsList: {
       type: Function,
       default: () => {},
+    },
+    selectedTag: {
+      type: String,
+      default: '',
     },
   },
   data() {

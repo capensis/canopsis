@@ -1,4 +1,4 @@
-import { get, camelCase } from 'lodash';
+import { get, camelCase, isNumber } from 'lodash';
 import tinycolor from 'tinycolor2';
 
 import { COLORS } from '@/config';
@@ -33,7 +33,7 @@ export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYP
   }
 
   if (colorIndicator === COLOR_INDICATOR_TYPES.state) {
-    const state = get(entity, 'state.val');
+    const state = isNumber(entity.state) ? entity.state : entity.state?.val;
 
     return get(ENTITIES_STATES_STYLES, [state, 'color']);
   }
@@ -118,3 +118,13 @@ export const getMetricColor = metric => COLORS.metrics[camelCase(metric)] || COL
  * @param {string} type
  */
 export const getEntityEventColor = type => EVENT_ENTITY_COLORS_BY_TYPE[type];
+
+/**
+ * Get darken color
+ *
+ * @param {string} color
+ * @param {number} amount
+ */
+export const getDarkenColor = (color, amount) => tinycolor(color)
+  .darken(amount)
+  .toString();

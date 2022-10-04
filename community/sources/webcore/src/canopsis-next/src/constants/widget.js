@@ -10,6 +10,7 @@ export const WIDGET_TYPES = {
   text: 'Text',
   counter: 'Counter',
   testingWeather: 'Junit',
+  map: 'Map',
 };
 
 export const WIDGET_ICONS = {
@@ -20,6 +21,7 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.text]: 'view_headline',
   [WIDGET_TYPES.counter]: 'view_module',
   [WIDGET_TYPES.testingWeather]: 'view_module',
+  [WIDGET_TYPES.map]: 'location_on',
 };
 
 export const SIDE_BARS = {
@@ -30,6 +32,7 @@ export const SIDE_BARS = {
   textSettings: 'text-settings',
   counterSettings: 'counter-settings',
   testingWeatherSettings: 'testing-weather-settings',
+  mapSettings: 'map-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
@@ -40,11 +43,13 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.text]: SIDE_BARS.textSettings,
   [WIDGET_TYPES.counter]: SIDE_BARS.counterSettings,
   [WIDGET_TYPES.testingWeather]: SIDE_BARS.testingWeatherSettings,
+  [WIDGET_TYPES.map]: SIDE_BARS.mapSettings,
 };
 
 export const WIDGET_TYPES_RULES = {
   [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.pro },
   [WIDGET_TYPES.testingWeather]: { edition: CANOPSIS_EDITION.pro },
+  [WIDGET_TYPES.map]: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const WIDGET_GRID_SIZES_KEYS = {
