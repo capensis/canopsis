@@ -244,21 +244,37 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Method: http.MethodGet,
 			Body:   "test-job-execution-params-succeeded-output",
 		},
+		// External data
+		"/api/external_data": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"id\": 1,\"title\": \"test title\"}",
+		},
+		"/api/external_data_document_with_array": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"array\":[{\"id\":\"1\",\"title\":\"test title 1\"},{\"id\":\"2\",\"title\":\"test title 2\"}]}",
+		},
+		"/api/external_data_response_is_array": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "[{\"id\":\"1\",\"title\":\"test title 1\"},{\"id\":\"2\",\"title\":\"test title 2\"}]",
+		},
 		// Webhook
 		"/webhook/ticket": {
 			Code:   http.StatusOK,
 			Method: http.MethodPost,
 			Body:   "{\"ticket_id\":\"testticket\",\"ticket_data\":\"testdata\"}",
 		},
-		"/api/external_data": {
-			Code:   http.StatusOK,
-			Method: http.MethodGet,
-			Body:   "{\"id\": 1,\"title\": \"test title\"}",
-		},
-		"/webhook/arrays": {
+		"/webhook/document_with_array": {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
 			Body:   "{\"array\":[{\"elem1\":\"test1\",\"elem2\":\"test2\"},{\"elem1\":\"test3\",\"elem2\":\"test4\"}]}",
+		},
+		"/webhook/response_is_array": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "[{\"elem1\":\"test1\",\"elem2\":\"test2\"},{\"elem1\":\"test3\",\"elem2\":\"test4\"}]",
 		},
 	}
 }
