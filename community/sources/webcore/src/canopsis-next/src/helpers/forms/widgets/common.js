@@ -32,9 +32,19 @@ import {
 import {
   textWidgetParametersToForm,
 } from './text';
+import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
 
 /**
- * @typedef { 'AlarmsList' | 'Context' | 'ServiceWeather' | 'StatsCalendar' | 'Text' | 'Counter' | 'Junit' } WidgetType
+ * @typedef {
+ *   'AlarmsList' |
+ *   'Context' |
+ *   'ServiceWeather' |
+ *   'StatsCalendar' |
+ *   'Text' |
+ *   'Counter' |
+ *   'Junit' |
+ *   'Map'
+ * } WidgetType
  */
 
 /**
@@ -118,7 +128,8 @@ import {
  *   StatsCalendarWidgetParameters |
  *   CounterWidgetParameters |
  *   TestingWeatherWidgetParameters |
- *   TextWidgetParameters
+ *   TextWidgetParameters |
+ *   MapWidgetParameters
  * } WidgetParameters
  */
 
@@ -130,7 +141,8 @@ import {
  *   StatsCalendarWidgetParameters |
  *   CounterWidgetParameters |
  *   TestingWeatherWidgetParametersForm |
- *   TextWidgetParameters
+ *   TextWidgetParameters |
+ *   MapWidgetParameters
  * } WidgetParametersForm
  */
 
@@ -177,6 +189,8 @@ export const widgetParametersToForm = ({ type, parameters } = {}) => {
       return testingWeatherWidgetParametersToForm(parameters);
     case WIDGET_TYPES.text:
       return textWidgetParametersToForm(parameters);
+    case WIDGET_TYPES.map:
+      return mapWidgetParametersToForm(parameters);
     default:
       return parameters ? cloneDeep(parameters) : {};
   }
@@ -241,6 +255,8 @@ export const formToWidgetParameters = ({ type, parameters }) => {
       return formToCounterWidgetParameters(parameters);
     case WIDGET_TYPES.testingWeather:
       return formToTestingWeatherWidgetParameters(parameters);
+    case WIDGET_TYPES.map:
+      return formToMapWidgetParameters(parameters);
     default:
       return parameters;
   }

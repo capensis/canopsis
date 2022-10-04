@@ -233,55 +233,44 @@ Feature: run a job
     ]
     """
     Then the response code should be 207
-    Then the response body should contain:
+    Then the response array key "0.data.steps.data" should contain:
     """json
     [
       {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {},
-              {},
-              {
-                "_t": "instructionstart",
-                "a": "root",
-                "user_id": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-1-name."
-              },
-              {
-                "_t": "instructionjobstart",
-                "a": "root",
-                "user_id": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
-              },
-              {
-                "_t": "instructionjobcomplete",
-                "a": "root",
-                "user_id": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
-              },
-              {
-                "_t": "instructionjobstart",
-                "a": "root",
-                "user_id": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
-              },
-              {
-                "_t": "instructionjobcomplete",
-                "a": "root",
-                "user_id": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
-              },
-              {
-                "_t": "instructioncomplete",
-                "a": "root",
-                "user_id": "root",
-                "m": "Instruction test-instruction-to-job-execution-start-1-name."
-              }
-            ]
-          }
-        }
+        "_t": "instructionstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-1-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
+      },
+      {
+        "_t": "instructioncomplete",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-1-name."
       }
     ]
     """

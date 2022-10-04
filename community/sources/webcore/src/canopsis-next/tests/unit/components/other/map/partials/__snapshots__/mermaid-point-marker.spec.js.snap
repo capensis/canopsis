@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mermaid-point-marker Renders \`mermaid-point-marker\` with custom props 1`] = `
+<point-icon-stub
+  class="mermaid-point mermaid-point--centered"
+  colorindicator="state"
+  entity="[object Object]"
+  pbehaviorenabled="true"
+  size="15"
+  style="top: 21px; left: 1px;"
+/>
+`;
+
+exports[`mermaid-point-marker Renders \`mermaid-point-marker\` with required props 1`] = `
+<point-icon-stub
+  class="mermaid-point"
+  size="24"
+  style="top: 2px; left: 1px;"
+/>
+`;

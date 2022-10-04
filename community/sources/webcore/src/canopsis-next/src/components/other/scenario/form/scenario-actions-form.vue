@@ -82,7 +82,6 @@ export default {
         name: this.name,
         rules: 'min_value:1',
         getter: () => this.actions.length,
-        context: () => this,
         vm: this,
       });
     },

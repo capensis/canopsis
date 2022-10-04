@@ -89,8 +89,11 @@
       :sticky-header="widget.parameters.sticky_header",
       :dense="dense",
       :refresh-alarms-list="fetchList",
+      :selected-tag="query.tag",
       selectable,
-      expandable
+      expandable,
+      @select:tag="selectTag",
+      @clear:tag="clearTag"
     )
       c-table-pagination(
         :total-items="alarmsMeta.total_count",
@@ -117,6 +120,7 @@ import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
+import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
@@ -156,6 +160,7 @@ export default {
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,
     entitiesAlarmMixin,
+    entitiesAlarmTagMixin,
     entitiesAlarmDetailsMixin,
     permissionsWidgetsAlarmsListCategory,
     permissionsWidgetsAlarmsListCorrelation,
@@ -228,6 +233,18 @@ export default {
           }
         });
       }
+    },
+
+    selectTag(tag) {
+      this.query = {
+        ...this.query,
+
+        tag,
+      };
+    },
+
+    clearTag() {
+      this.query = omit(this.query, ['tag']);
     },
 
     updateCorrelation(correlation) {
@@ -313,6 +330,10 @@ export default {
         const params = this.getQuery();
 
         this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
+
+        if (!this.alarmTagsPending) {
+          this.fetchAlarmTagsList({ params: { paginate: false } });
+        }
 
         if (!this.alarmsPending) {
           await this.fetchAlarmsList({

@@ -72,6 +72,7 @@ export const USER_PERMISSIONS_PREFIXES = {
     serviceWeather: 'serviceweather',
     testingWeather: 'testingweather',
     counter: 'counter',
+    map: 'map',
   },
   api: 'api',
 };
@@ -100,6 +101,7 @@ export const USERS_PERMISSIONS = {
     kpi: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpi`,
     kpiFilters: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiFilters`,
     kpiRatingSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiRatingSettings`,
+    map: `${USER_PERMISSIONS_PREFIXES.technical.admin}_map`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -229,6 +231,18 @@ export const USERS_PERMISSIONS = {
         alarmsList: `${USER_PERMISSIONS_PREFIXES.business.testingWeather}_alarmsList`,
       },
     },
+    map: {
+      actions: {
+        alarmsList: `${USER_PERMISSIONS_PREFIXES.business.map}_alarmsList`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.map}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_userFilter`,
+
+        category: `${USER_PERMISSIONS_PREFIXES.business.map}_category`,
+      },
+    },
   },
   api: {
     general: {
@@ -257,6 +271,7 @@ export const USERS_PERMISSIONS = {
       ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
       filter: `${USER_PERMISSIONS_PREFIXES.api}_kpi_filter`,
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.api}_corporate_pattern`,
+      api: `${USER_PERMISSIONS_PREFIXES.api}_api`,
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,

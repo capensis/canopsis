@@ -114,7 +114,6 @@ export default {
           },
         },
         getter: () => this.value,
-        context: () => this,
         vm: this,
       });
     }

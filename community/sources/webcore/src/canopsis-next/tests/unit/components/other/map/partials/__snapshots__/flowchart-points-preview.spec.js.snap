@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`flowchart-points-preview Renders \`flowchart-points-preview\` with custom props 1`] = `
+<g
+  class="flowchart-points-preview"
+>
+  <foreignobject
+    class="flowchart-points-preview__point"
+    height="12"
+    width="12"
+    x="6"
+    y="26"
+  >
+    <point-icon-stub
+      colorindicator="impact_state"
+      pbehaviorenabled="true"
+      size="12"
+    />
+  </foreignobject>
+  <foreignobject
+    class="flowchart-points-preview__point"
+    height="12"
+    width="12"
+    x="59"
+    y="0"
+  >
+    <point-icon-stub
+      colorindicator="impact_state"
+      entity="[object Object]"
+      pbehaviorenabled="true"
+      size="12"
+    />
+  </foreignobject>
+  <foreignobject
+    style="overflow: visible;"
+  >
+    <point-popup-dialog-stub
+      colorindicator="impact_state"
+      point="[object Object]"
+      popupactions="true"
+      popuptemplate="{{ entity.name }}"
+      positionx="5.5"
+      positiony="1"
+    />
+  </foreignobject>
+</g>
+`;
+
+exports[`flowchart-points-preview Renders \`flowchart-points-preview\` with required props 1`] = `
+<g
+  class="flowchart-points-preview"
+>
+  <foreignobject
+    class="flowchart-points-preview__point"
+    height="24"
+    width="24"
+    x="0"
+    y="20"
+  >
+    <point-icon-stub
+      size="24"
+    />
+  </foreignobject>
+  <foreignobject
+    class="flowchart-points-preview__point"
+    height="24"
+    width="24"
+    x="53"
+    y="0"
+  >
+    <point-icon-stub
+      entity="[object Object]"
+      size="24"
+    />
+  </foreignobject>
+  <foreignobject
+    style="overflow: visible;"
+  >
+    <!---->
+  </foreignobject>
+</g>
+`;

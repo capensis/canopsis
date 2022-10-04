@@ -72,7 +72,6 @@ export default {
   created() {
     this.$validator.attach({
       name: this.name,
-      context: () => this,
       vm: this,
     });
   },

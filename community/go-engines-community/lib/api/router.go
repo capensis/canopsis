@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/appinfo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/associativetable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -146,6 +147,7 @@ func RegisterRoutes(
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	logger zerolog.Logger,
 ) {
+	linksFetcher := common.NewLinksFetcher(legacyUrl)
 	sessionStore := security.GetSessionStore()
 	authMiddleware := security.GetAuthMiddleware()
 	security.RegisterCallbackRoutes(router, dbClient)
@@ -259,7 +261,7 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, legacyUrl, logger)
+		alarmStore := alarm.NewStore(dbClient, linksFetcher, logger)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider, logger)
 		alarmRouter := protected.Group("/alarms")
 		{
@@ -298,6 +300,11 @@ func RegisterRoutes(
 			"/resolved-alarms",
 			middleware.Authorize(authPermAlarmRead, permCan, enforcer),
 			alarmAPI.ResolvedList,
+		)
+		protected.GET(
+			"/open-alarms",
+			middleware.Authorize(authPermAlarmRead, permCan, enforcer),
+			alarmAPI.GetOpen,
 		)
 		protected.GET(
 			"/alarm-counters",
@@ -477,6 +484,12 @@ func RegisterRoutes(
 			)
 
 			entityRouter.GET(
+				"/context-graph",
+				middleware.Authorize(authObjEntity, permRead, enforcer),
+				entityAPI.GetContextGraph,
+			)
+
+			entityRouter.GET(
 				"/pbehaviors",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
 				middleware.Authorize(authObjPbh, permRead, enforcer),
@@ -512,8 +525,8 @@ func RegisterRoutes(
 			)
 		}
 
-		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
-			common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
+		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient, linksFetcher, logger), entityPublChan,
+			metricsEntityMetaUpdater, common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
 		entityserviceRouter := protected.Group("/entityservices")
 		{
 			entityserviceRouter.POST(
@@ -638,7 +651,7 @@ func RegisterRoutes(
 		{
 			weatherAPI := serviceweather.NewApi(serviceweather.NewStore(
 				dbClient,
-				legacyUrl,
+				linksFetcher,
 				alarmStore,
 				timezoneConfigProvider,
 				logger,
@@ -1200,7 +1213,7 @@ func RegisterRoutes(
 			{
 				patternRouter.DELETE(
 					"",
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					patternAPI.BulkDelete,
 				)
 			}
@@ -1222,7 +1235,7 @@ func RegisterRoutes(
 				scenarioRouter.DELETE(
 					"",
 					middleware.Authorize(authObjAction, permDelete, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					scenarioAPI.BulkDelete,
 				)
 			}
@@ -1244,7 +1257,7 @@ func RegisterRoutes(
 				idleruleRouter.DELETE(
 					"",
 					middleware.Authorize(authObjIdleRule, permDelete, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					idleRuleAPI.BulkDelete,
 				)
 			}
@@ -1266,7 +1279,7 @@ func RegisterRoutes(
 				eventFilterRouter.DELETE(
 					"",
 					middleware.Authorize(authEventFilter, permDelete, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					eventFilterApi.BulkDelete,
 				)
 			}
@@ -1332,6 +1345,7 @@ func RegisterRoutes(
 				pbehaviorRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
 					pbehaviorApi.BulkDelete,
 				)
 			}
@@ -1341,13 +1355,13 @@ func RegisterRoutes(
 				entityRouter.PUT(
 					"/enable",
 					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					entityAPI.BulkEnable,
 				)
 				entityRouter.PUT(
 					"/disable",
 					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					entityAPI.BulkDisable,
 				)
 			}
@@ -1482,6 +1496,16 @@ func RegisterRoutes(
 			middleware.Authorize(authObjEntity, permRead, enforcer),
 			entityInfoDictionaryApi.ListValues,
 		)
+
+		alarmTagRouter := protected.Group("/alarm-tags")
+		{
+			alarmTagAPI := alarmtag.NewApi(alarmtag.NewStore(dbClient))
+			alarmTagRouter.GET(
+				"",
+				middleware.Authorize(authPermAlarmRead, permCan, enforcer),
+				alarmTagAPI.List,
+			)
+		}
 	}
 }
 
