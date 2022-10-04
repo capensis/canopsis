@@ -274,6 +274,9 @@ default_entities:
       test-entityservice-to-get-1-info-7:
         description: test-entityservice-to-get-1-info-7-description
         value: test-entityservice-to-get-1-info-7-value
+    coordinates:
+      lat: 64.52269494598361
+      lng: 54.037685420804365
   service_to_get_2:
     <<: *service
     _id: test-entityservice-to-get-2
@@ -315,6 +318,190 @@ default_entities:
     <<: *service
     _id: test-entityservice-to-category-delete
     category: test-category-to-delete-linked-to-entity
+
+  component_to_entitybasic_edit_impact_1:
+    <<: *component
+    _id: test-entitybasic-to-edit-impact-1
+    name: test-entitybasic-to-edit-impact-1-name
+    component: test-entitybasic-to-edit-impact-1-name
+    depends: [ ]
+    impact: [ ]
+  component_to_entitybasic_edit_impact_2:
+    <<: *component
+    _id: test-entitybasic-to-edit-impact-2
+    name: test-entitybasic-to-edit-impact-2-name
+    component: test-entitybasic-to-edit-impact-2-name
+    depends: [ ]
+    impact: [ ]
+  connector_to_entitybasic_get:
+    <<: *connector
+    _id: test-entitybasic-to-get-connector/test-entitybasic-to-get-connector-name
+    name: test-entitybasic-to-get-connector-name
+    depends:
+      - test-entitybasic-to-get-component
+    impact:
+      - test-entitybasic-to-get-resource
+  component_to_entitybasic_get:
+    <<: *component
+    _id: test-entitybasic-to-get-component
+    name: test-entitybasic-to-get-component
+    component: test-entitybasic-to-get-component
+    connector: test-entitybasic-to-get-connector/test-entitybasic-to-get-connector-name
+    depends:
+      - test-entitybasic-to-get-resource
+    impact:
+      - test-entitybasic-to-get-connector/test-entitybasic-to-get-connector-name
+  resource_to_entitybasic_get:
+    <<: *resource
+    _id: test-entitybasic-to-get-resource/test-entitybasic-to-get-component
+    name: test-entitybasic-to-get-resource
+    description: test-entitybasic-to-get-resource-description
+    category: test-category-to-entitybasic-edit
+    component: test-entitybasic-to-get-component
+    connector: test-entitybasic-to-get-connector/test-entitybasic-to-get-connector-name
+    depends:
+      - test-entitybasic-to-get-connector/test-entitybasic-to-get-connector-name
+    impact:
+      - test-entitybasic-to-get-component
+    impact_level: 3
+    infos:
+      test-entitybasic-to-get-info-1:
+        description: test-entitybasic-to-get-info-1-description
+        name: test-entitybasic-to-get-info-1-name
+        value: test-entitybasic-to-get-info-1-value
+      test-entitybasic-to-get-info-2:
+        description: test-entitybasic-to-get-info-2-description
+        name: test-entitybasic-to-get-info-2-name
+        value: false
+      test-entitybasic-to-get-info-3:
+        description: test-entitybasic-to-get-info-3-description
+        name: test-entitybasic-to-get-info-3-name
+        value: 1022
+      test-entitybasic-to-get-info-4:
+        description: test-entitybasic-to-get-info-4-description
+        name: test-entitybasic-to-get-info-4-name
+        value: 10.45
+      test-entitybasic-to-get-info-5:
+        description: test-entitybasic-to-get-info-5-description
+        name: test-entitybasic-to-get-info-5-name
+        value: null
+      test-entitybasic-to-get-info-6:
+        description: test-entitybasic-to-get-info-6-description
+        name: test-entitybasic-to-get-info-6-name
+        value:
+          - test-entitybasic-to-get-info-6-value
+          - false
+          - 1022
+          - 10.45
+          - null
+      test-entitybasic-to-get-info-7:
+        description: test-entitybasic-to-get-info-7-description
+        value: test-entitybasic-to-get-info-7-value
+    coordinates:
+      lat: 64.52269494598361
+      lng: 54.037685420804365
+  connector_to_entitybasic_update:
+    <<: *connector
+    _id: test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
+    name: test-entitybasic-to-update-connector-name
+    depends:
+      - test-entitybasic-to-update-component-1
+      - test-entitybasic-to-update-component-2
+    impact:
+      - test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1
+      - test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2
+  component_to_entitybasic_update_1:
+    <<: *component
+    _id: test-entitybasic-to-update-component-1
+    name: test-entitybasic-to-update-component-1
+    component: test-entitybasic-to-update-component-1
+    connector: test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
+    depends:
+      - test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1
+    impact:
+      - test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
+  resource_to_entitybasic_update_1:
+    <<: *resource
+    _id: test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1
+    name: test-entitybasic-to-update-resource-1
+    component: test-entitybasic-to-update-component-1
+    connector: test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
+    depends:
+      - test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
+    impact:
+      - test-entitybasic-to-update-component-1
+  component_to_entitybasic_update_2:
+    <<: *component
+    _id: test-entitybasic-to-update-component-2
+    name: test-entitybasic-to-update-component-2
+    component: test-entitybasic-to-update-component-2
+    connector: test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
+    depends:
+      - test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2
+    impact:
+      - test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
+  resource_to_entitybasic_update_2:
+    <<: *resource
+    _id: test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2
+    name: test-entitybasic-to-update-resource-2
+    component: test-entitybasic-to-update-component-2
+    connector: test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
+    depends:
+      - test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
+    impact:
+      - test-entitybasic-to-update-component-2
+  component_to_entitybasic_update_3:
+    <<: *component
+    _id: test-entitybasic-to-update-component-3
+    name: test-entitybasic-to-update-component-3
+    component: test-entitybasic-to-update-component-3
+    connector:
+    depends:
+      - test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3
+    impact: [ ]
+  resource_to_entitybasic_update_3:
+    <<: *resource
+    _id: test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3
+    name: test-entitybasic-to-update-resource-3
+    component: test-entitybasic-to-update-component-3
+    connector:
+    depends: [ ]
+    impact:
+      - test-entitybasic-to-update-component-3
+  resource_to_entitybasic_delete:
+    <<: *resource
+    _id: test-entitybasic-to-delete-resource/test-entitybasic-to-delete-component
+    name: test-entitybasic-to-delete-resource
+    depends: [ ]
+    impact: [ ]
+  connector_to_entitybasic_delete_linked_to_alarm:
+    <<: *connector
+    _id: test-entitybasic-to-delete-linked-to-alarm-connector/test-entitybasic-to-delete-linked-to-alarm-connector-name
+    name: test-entitybasic-to-delete-linked-to-alarm-connector-name
+    depends:
+      - test-entitybasic-to-delete-linked-to-alarm-component
+    impact:
+      - test-entitybasic-to-delete-linked-to-alarm-resource
+  component_to_entitybasic_delete_linked_to_alarm:
+    <<: *component
+    _id: test-entitybasic-to-delete-linked-to-alarm-component
+    name: test-entitybasic-to-delete-linked-to-alarm-component
+    component: test-entitybasic-to-delete-linked-to-alarm-component
+    connector: test-entitybasic-to-delete-linked-to-alarm-connector/test-entitybasic-to-delete-linked-to-alarm-connector-name
+    depends:
+      - test-entitybasic-to-delete-linked-to-alarm-resource
+    impact:
+      - test-entitybasic-to-delete-linked-to-alarm-connector/test-entitybasic-to-delete-linked-to-alarm-connector-name
+  resource_to_entitybasic_delete_linked_to_alarm:
+    <<: *resource
+    _id: test-entitybasic-to-delete-linked-to-alarm-resource/test-entitybasic-to-delete-linked-to-alarm-component
+    name: test-entitybasic-to-delete-linked-to-alarm-resource
+    component: test-entitybasic-to-delete-linked-to-alarm-component
+    connector: test-entitybasic-to-delete-linked-to-alarm-connector/test-entitybasic-to-delete-linked-to-alarm-connector-name
+    depends:
+      - test-entitybasic-to-delete-linked-to-alarm-connector/test-entitybasic-to-delete-linked-to-alarm-connector-name
+    impact:
+      - test-entitybasic-to-delete-linked-to-alarm-component
 
   component_service_weather_entity_5:
     <<: *component
@@ -469,6 +656,9 @@ default_entities:
       test-resource-to-entity-get-1-info-7:
         description: test-resource-to-entity-get-1-info-7-description
         value: test-resource-to-entity-get-1-info-7-value
+    coordinates:
+      lat: 64.52269494598361
+      lng: 54.037685420804365
 
   resource_to_entity_get_2:
     <<: *resource
@@ -760,6 +950,55 @@ default_entities:
       - test-complex-rule-rate-6-connector/test-complex-rule-rate-6-connectorname
     impact:
       - test-complex-rule-rate-6-component
+
+  entity_to_map_edit_1:
+    <<: *resource
+    _id: test-resource-to-map-edit-1/test-component-default
+    name: test-resource-to-map-edit-1
+    coordinates:
+      lat: 62.34960927573042
+      lng: 74.02834455685206
+  entity_to_map_edit_2:
+    <<: *resource
+    _id: test-resource-to-map-edit-2/test-component-default
+    name: test-resource-to-map-edit-2
+  entity_to_map_edit_3:
+    <<: *resource
+    _id: test-resource-to-map-edit-3/test-component-default
+    name: test-resource-to-map-edit-3
+  entity_to_map_edit_4:
+    <<: *resource
+    _id: test-resource-to-map-edit-4/test-component-default
+    name: test-resource-to-map-edit-4
+    enabled: false
+
+  entity_to_map_state_get_1:
+    <<: *resource
+    _id: test-resource-to-map-state-get-1/test-component-default
+    name: test-resource-to-map-state-get-1
+    category: test-category-to-map-state-get-1
+    last_event_date: 1605263992
+    infos:
+      test-resource-to-map-state-get-1-info-1-name:
+        name: test-resource-to-map-state-get-1-info-1-name
+        description: test-resource-to-map-state-get-1-info-1-description
+        value: test-resource-to-map-state-get-1-info-1-value
+    coordinates:
+      lat: 62.34960927573042
+      lng: 74.02834455685206
+  entity_to_map_state_get_2:
+    <<: *resource
+    _id: test-resource-to-map-state-get-2/test-component-default
+    name: test-resource-to-map-state-get-2
+  entity_to_map_state_get_3:
+    <<: *resource
+    _id: test-resource-to-map-state-get-3/test-component-default
+    name: test-resource-to-map-state-get-3
+  entity_to_map_state_get_4:
+    <<: *resource
+    _id: test-resource-to-map-state-get-4/test-component-default
+    name: test-resource-to-map-state-get-4
+    enabled: false
 
   default_entities_34:
     _id: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
@@ -1059,282 +1298,6 @@ default_entities:
     infos: { }
     measurements: null
     name: test-instruction-execution-get-resource-43
-    type: resource
-  default_entities_72:
-    _id: test-entitybasic-to-check-unique-name
-    category: ""
-    depends: [ ]
-    enable_history: [ ]
-    enabled: true
-    impact: [ ]
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-check-unique-name-name
-    type: resource
-  default_entities_73:
-    _id: test-entitybasic-to-edit-impact-1
-    category: ""
-    depends: [ ]
-    enable_history: [ ]
-    enabled: true
-    impact: [ ]
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-edit-impact-1-name
-    type: component
-  default_entities_74:
-    _id: test-entitybasic-to-edit-impact-2
-    category: ""
-    depends: [ ]
-    enable_history: [ ]
-    enabled: true
-    impact: [ ]
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-edit-impact-2-name
-    type: component
-  default_entities_75:
-    _id: test-entitybasic-to-get-connector/test-entitybasic-to-get-connector-name
-    category: test-category-to-entitybasic-edit
-    depends:
-      - test-entitybasic-to-get-component
-    description: test-entitybasic-to-get-connector-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entitybasic-to-get-resource
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-get-connector-name
-    type: connector
-  default_entities_76:
-    _id: test-entitybasic-to-get-component
-    category: test-category-to-entitybasic-edit
-    depends:
-      - test-entitybasic-to-get-resource
-    description: test-entitybasic-to-get-component-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entitybasic-to-get-connector/test-entitybasic-to-get-connector-name
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-get-component
-    type: component
-  default_entities_77:
-    _id: test-entitybasic-to-get-resource/test-entitybasic-to-get-component
-    category: test-category-to-entitybasic-edit
-    depends:
-      - test-entitybasic-to-get-connector/test-entitybasic-to-get-connector-name
-    description: test-entitybasic-to-get-resource-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entitybasic-to-get-component
-    impact_level: 3
-    infos:
-      test-entitybasic-to-get-info-1:
-        description: test-entitybasic-to-get-info-1-description
-        name: test-entitybasic-to-get-info-1-name
-        value: test-entitybasic-to-get-info-1-value
-      test-entitybasic-to-get-info-2:
-        description: test-entitybasic-to-get-info-2-description
-        name: test-entitybasic-to-get-info-2-name
-        value: false
-      test-entitybasic-to-get-info-3:
-        description: test-entitybasic-to-get-info-3-description
-        name: test-entitybasic-to-get-info-3-name
-        value: 1022
-      test-entitybasic-to-get-info-4:
-        description: test-entitybasic-to-get-info-4-description
-        name: test-entitybasic-to-get-info-4-name
-        value: 10.45
-      test-entitybasic-to-get-info-5:
-        description: test-entitybasic-to-get-info-5-description
-        name: test-entitybasic-to-get-info-5-name
-        value: null
-      test-entitybasic-to-get-info-6:
-        description: test-entitybasic-to-get-info-6-description
-        name: test-entitybasic-to-get-info-6-name
-        value:
-          - test-entitybasic-to-get-info-6-value
-          - false
-          - 1022
-          - 10.45
-          - null
-      test-entitybasic-to-get-info-7:
-        description: test-entitybasic-to-get-info-7-description
-        value: test-entitybasic-to-get-info-7-value
-    measurements: null
-    name: test-entitybasic-to-get-resource
-    type: resource
-  default_entities_78:
-    _id: test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
-    category: null
-    depends:
-      - test-entitybasic-to-update-component-1
-      - test-entitybasic-to-update-component-2
-    description: test-entitybasic-to-update-connector-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1
-      - test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-update-connector-name
-    type: connector
-  default_entities_79:
-    _id: test-entitybasic-to-update-component-1
-    category: test-category-to-entitybasic-edit
-    depends:
-      - test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1
-    description: test-entitybasic-to-update-component-1-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-update-component-1
-    type: component
-  default_entities_80:
-    _id: test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1
-    category: test-category-to-entitybasic-edit
-    depends:
-      - test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
-    description: test-entitybasic-to-update-resource-1-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entitybasic-to-update-component-1
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-update-resource-1
-    type: resource
-  default_entities_81:
-    _id: test-entitybasic-to-update-component-2
-    category: test-category-to-entitybasic-edit
-    depends:
-      - test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2
-    description: test-entitybasic-to-update-component-2-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-update-component-2
-    type: component
-  default_entities_82:
-    _id: test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2
-    category: test-category-to-entitybasic-edit
-    depends:
-      - test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
-    description: test-entitybasic-to-update-resource-2-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entitybasic-to-update-component-2
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-update-resource-2
-    type: resource
-  default_entities_83:
-    _id: test-entitybasic-to-update-component-3
-    category: test-category-to-entitybasic-edit
-    depends:
-      - test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3
-    description: test-entitybasic-to-update-component-3-description
-    enable_history: [ ]
-    enabled: true
-    impact: [ ]
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-update-component-3
-    type: component
-  default_entities_84:
-    _id: test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3
-    category: test-category-to-entitybasic-edit
-    depends: [ ]
-    description: test-entitybasic-to-update-resource-3-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entitybasic-to-update-component-3
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-update-resource-3
-    type: resource
-  default_entities_85:
-    _id: test-entitybasic-to-delete-resource/test-entitybasic-to-delete-component
-    category: test-category-to-entitybasic-edit
-    depends: [ ]
-    description: test-entitybasic-to-delete-resource-description
-    enable_history: [ ]
-    enabled: true
-    impact: [ ]
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-delete-resource
-    type: resource
-  default_entities_86:
-    _id: test-entitybasic-to-delete-linked-to-alarm-connector/test-entitybasic-to-delete-linked-to-alarm-connector-name
-    category: test-category-to-entitybasic-edit
-    depends:
-      - test-entitybasic-to-delete-linked-to-alarm-component
-    description: test-entitybasic-to-delete-linked-to-alarm-connector-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entitybasic-to-delete-linked-to-alarm-resource
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-delete-linked-to-alarm-connector-name
-    type: connector
-  default_entities_87:
-    _id: test-entitybasic-to-delete-linked-to-alarm-component
-    category: test-category-to-entitybasic-edit
-    depends:
-      - test-entitybasic-to-delete-linked-to-alarm-resource
-    description: test-entitybasic-to-delete-linked-to-alarm-component-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entitybasic-to-delete-linked-to-alarm-connector/test-entitybasic-to-delete-linked-to-alarm-connector-name
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-delete-linked-to-alarm-component
-    type: component
-  default_entities_88:
-    _id: test-entitybasic-to-delete-linked-to-alarm-resource/test-entitybasic-to-delete-linked-to-alarm-component
-    category: test-category-to-entitybasic-edit
-    depends:
-      - test-entitybasic-to-delete-linked-to-alarm-connector/test-entitybasic-to-delete-linked-to-alarm-connector-name
-    description: test-entitybasic-to-delete-linked-to-alarm-resource-description
-    enable_history: [ ]
-    enabled: true
-    impact:
-      - test-entitybasic-to-delete-linked-to-alarm-component
-    impact_level: 3
-    infos: { }
-    measurements: null
-    name: test-entitybasic-to-delete-linked-to-alarm-resource
     type: resource
   default_entities_114:
     _id: test-idle-since-integration-connector/test-idle-since-integration-connectorname

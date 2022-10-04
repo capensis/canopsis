@@ -7,11 +7,12 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -19,8 +20,8 @@ import (
 
 type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Response, error)
-	GetDependencies(ctx context.Context, id string, query pagination.Query) (*ContextGraphAggregationResult, error)
-	GetImpacts(ctx context.Context, id string, query pagination.Query) (*ContextGraphAggregationResult, error)
+	GetDependencies(ctx context.Context, apiKey string, r ContextGraphRequest) (*ContextGraphAggregationResult, error)
+	GetImpacts(ctx context.Context, apiKey string, r ContextGraphRequest) (*ContextGraphAggregationResult, error)
 	Create(ctx context.Context, request CreateRequest) (*Response, error)
 	Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error)
 	Delete(ctx context.Context, id string) (bool, *types.Alarm, error)
@@ -36,14 +37,26 @@ type store struct {
 	dbCollection              mongo.DbCollection
 	alarmDbCollection         mongo.DbCollection
 	resolvedAlarmDbCollection mongo.DbCollection
+
+	queryBuilder *entity.MongoQueryBuilder
+
+	linksFetcher common.LinksFetcher
+
+	logger zerolog.Logger
 }
 
-func NewStore(db mongo.DbClient) Store {
+func NewStore(db mongo.DbClient, linksFetcher common.LinksFetcher, logger zerolog.Logger) Store {
 	return &store{
 		dbClient:                  db,
 		dbCollection:              db.Collection(mongo.EntityMongoCollection),
 		alarmDbCollection:         db.Collection(mongo.AlarmMongoCollection),
 		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
+
+		queryBuilder: entity.NewMongoQueryBuilder(db),
+
+		linksFetcher: linksFetcher,
+
+		logger: logger,
 	}
 }
 
@@ -75,10 +88,10 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	return nil, nil
 }
 
-func (s *store) GetDependencies(ctx context.Context, id string, q pagination.Query) (*ContextGraphAggregationResult, error) {
+func (s *store) GetDependencies(ctx context.Context, apiKey string, r ContextGraphRequest) (*ContextGraphAggregationResult, error) {
 	service := types.Entity{}
 	err := s.dbCollection.
-		FindOne(ctx, bson.M{"_id": id, "type": types.EntityTypeService}).
+		FindOne(ctx, bson.M{"_id": r.ID, "type": types.EntityTypeService}).
 		Decode(&service)
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
@@ -86,56 +99,11 @@ func (s *store) GetDependencies(ctx context.Context, id string, q pagination.Que
 		}
 		return nil, err
 	}
-
-	pipeline := []bson.M{
-		{"$match": bson.M{"_id": bson.M{"$in": service.Depends}}},
-		// Find alarms
-		{"$project": bson.M{
-			"entity": "$$ROOT",
-		}},
-		{"$lookup": bson.M{
-			"from": mongo.AlarmMongoCollection,
-			"let":  bson.M{"eid": "$entity._id"},
-			"pipeline": []bson.M{
-				{"$match": bson.M{"$and": []bson.M{
-					{"$expr": bson.M{"$eq": bson.A{"$d", "$$eid"}}},
-					// Get only open alarm.
-					{"v.resolved": nil},
-				}}},
-				{"$limit": 1},
-			},
-			"as": "alarm",
-		}},
-		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"impact_state": bson.M{"$cond": bson.M{"if": "$alarm.v.state.val", "else": 0,
-				"then": bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$entity.impact_level"}},
-			}},
-		}},
-	}
-	projectPipeline := []bson.M{
-		// Find category
-		{"$lookup": bson.M{
-			"from":         mongo.EntityCategoryMongoCollection,
-			"localField":   "entity.category",
-			"foreignField": "_id",
-			"as":           "entity.category",
-		}},
-		{"$unwind": bson.M{"path": "$entity.category", "preserveNullAndEmptyArrays": true}},
-		// Find dependencies
-		{"$addFields": bson.M{
-			"has_dependencies": bson.M{"$and": []bson.M{
-				{"$eq": bson.A{"$entity.type", types.EntityTypeService}},
-				{"$gt": bson.A{bson.M{"$size": "$entity.depends"}, 0}},
-			}},
-		}},
-	}
-	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
-		q,
-		pipeline,
-		bson.M{"$sort": bson.D{{Key: "impact_state", Value: -1}, {Key: "entity._id", Value: 1}}},
-		projectPipeline,
-	))
+	now := types.NewCpsTime()
+	match := bson.M{"_id": bson.M{"$in": service.Depends}}
+	pipeline := s.queryBuilder.CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
+		r.WithFlags, now)
+	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -150,14 +118,19 @@ func (s *store) GetDependencies(ctx context.Context, id string, q pagination.Que
 		}
 	}
 
+	err = s.fillLinks(ctx, apiKey, result)
+	if err != nil {
+		s.logger.Err(err).Msg("cannot fetch links")
+	}
+
 	return result, nil
 }
 
-func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (*ContextGraphAggregationResult, error) {
-	entity := types.Entity{}
+func (s *store) GetImpacts(ctx context.Context, apiKey string, r ContextGraphRequest) (*ContextGraphAggregationResult, error) {
+	e := types.Entity{}
 	err := s.dbCollection.
-		FindOne(ctx, bson.M{"_id": id}).
-		Decode(&entity)
+		FindOne(ctx, bson.M{"_id": r.ID}, options.FindOne().SetProjection(bson.M{"impact": 1})).
+		Decode(&e)
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, nil
@@ -165,70 +138,14 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 		return nil, err
 	}
 
-	pipeline := []bson.M{
-		{"$match": bson.M{
-			"_id":  bson.M{"$in": entity.Impacts},
-			"type": types.EntityTypeService,
-		}},
-		// Find alarms
-		{"$project": bson.M{
-			"entity": "$$ROOT",
-		}},
-		{"$lookup": bson.M{
-			"from": mongo.AlarmMongoCollection,
-			"let":  bson.M{"eid": "$entity._id"},
-			"pipeline": []bson.M{
-				{"$match": bson.M{"$and": []bson.M{
-					{"$expr": bson.M{"$eq": bson.A{"$d", "$$eid"}}},
-					// Get only open alarm.
-					{"v.resolved": nil},
-				}}},
-				{"$limit": 1},
-			},
-			"as": "alarm",
-		}},
-		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"impact_state": bson.M{"$cond": bson.M{"if": "$alarm.v.state.val", "else": 0,
-				"then": bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$entity.impact_level"}},
-			}},
-		}},
+	match := bson.M{
+		"_id":  bson.M{"$in": e.Impacts},
+		"type": types.EntityTypeService,
 	}
-	const entitiesListLimit = 100
-	projectPipeline := []bson.M{
-		// Find category
-		{"$lookup": bson.M{
-			"from":         mongo.EntityCategoryMongoCollection,
-			"localField":   "entity.category",
-			"foreignField": "_id",
-			"as":           "entity.category",
-		}},
-		{"$unwind": bson.M{"path": "$entity.category", "preserveNullAndEmptyArrays": true}},
-		// Find impacts
-		{"$graphLookup": bson.M{
-			"from":                    mongo.EntityMongoCollection,
-			"startWith":               "$entity.impact",
-			"connectFromField":        "impact",
-			"connectToField":          "_id",
-			"as":                      "service_impacts",
-			"restrictSearchWithMatch": bson.M{"type": types.EntityTypeService},
-			"maxDepth":                0,
-		}},
-		{"$addFields": bson.M{
-			"has_impacts": bson.M{"$gt": bson.A{bson.M{"$size": "$service_impacts"}, 0}},
-			// entity.impact and entity.depends arrays of the output document are
-			// limited by 100 items each to prevent BSONObjectTooLarge error
-			"entity.impact":  bson.M{"$slice": bson.A{"$entity.impact", entitiesListLimit}},
-			"entity.depends": bson.M{"$slice": bson.A{"$entity.depends", entitiesListLimit}},
-		}},
-		{"$project": bson.M{"service_impacts": 0}},
-	}
-	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
-		q,
-		pipeline,
-		bson.M{"$sort": bson.D{{Key: "impact_state", Value: -1}, {Key: "entity._id", Value: 1}}},
-		projectPipeline,
-	))
+	now := types.NewCpsTime()
+	pipeline := s.queryBuilder.CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
+		r.WithFlags, now)
+	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -241,6 +158,11 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	err = s.fillLinks(ctx, apiKey, result)
+	if err != nil {
+		s.logger.Err(err).Msg("cannot fetch links")
 	}
 
 	return result, nil
@@ -255,7 +177,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 	if request.SliAvailState != nil {
 		sliAvailState = *request.SliAvailState
 	}
-	entity := entityservice.EntityService{
+	service := entityservice.EntityService{
 		Entity: types.Entity{
 			ID:            utils.NewID(),
 			Name:          request.Name,
@@ -273,20 +195,23 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 		EntityPatternFields: request.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection)),
 		OutputTemplate:      request.OutputTemplate,
 	}
+	if request.Coordinates != nil {
+		service.Coordinates = *request.Coordinates
+	}
 
 	if request.ID == "" {
 		request.ID = utils.NewID()
 	}
 
-	entity.ID = request.ID
+	service.ID = request.ID
 	var response *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		_, err := s.dbCollection.InsertOne(ctx, entity)
+		_, err := s.dbCollection.InsertOne(ctx, service)
 		if err != nil {
 			return err
 		}
-		response, err = s.GetOneBy(ctx, entity.ID)
+		response, err = s.GetOneBy(ctx, service.ID)
 		return err
 	})
 
@@ -294,29 +219,42 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 }
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error) {
+	pattern := request.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection))
+	set := bson.M{
+		"name":            request.Name,
+		"output_template": request.OutputTemplate,
+		"category":        request.Category,
+		"impact_level":    request.ImpactLevel,
+		"enabled":         request.Enabled,
+		"infos":           transformInfos(request.EditRequest),
+		"sli_avail_state": request.SliAvailState,
+
+		"entity_pattern":                 pattern.EntityPattern,
+		"corporate_entity_pattern":       pattern.CorporateEntityPattern,
+		"corporate_entity_pattern_title": pattern.CorporateEntityPatternTitle,
+	}
+	unset := bson.M{}
+
+	if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 {
+		unset["old_entity_patterns"] = ""
+	}
+	if request.Coordinates == nil {
+		unset["coordinates"] = ""
+	} else {
+		set["coordinates"] = request.Coordinates
+	}
+
+	update := bson.M{"$set": set}
+	if len(unset) > 0 {
+		update["$unset"] = unset
+	}
+
 	var service *Response
 	serviceChanges := ServiceChanges{}
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		service = nil
 		serviceChanges = ServiceChanges{}
 		oldValues := &entityservice.EntityService{}
-		pattern := request.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection))
-		update := bson.M{"$set": bson.M{
-			"name":            request.Name,
-			"output_template": request.OutputTemplate,
-			"category":        request.Category,
-			"impact_level":    request.ImpactLevel,
-			"enabled":         request.Enabled,
-			"infos":           transformInfos(request.EditRequest),
-			"sli_avail_state": request.SliAvailState,
-
-			"entity_pattern":                 pattern.EntityPattern,
-			"corporate_entity_pattern":       pattern.CorporateEntityPattern,
-			"corporate_entity_pattern_title": pattern.CorporateEntityPatternTitle,
-		}}
-		if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 {
-			update["$unset"] = bson.M{"old_entity_patterns": ""}
-		}
 		err := s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{
@@ -386,6 +324,40 @@ func (s *store) Delete(ctx context.Context, id string) (bool, *types.Alarm, erro
 	})
 
 	return res, alarm, err
+}
+
+func (s *store) fillLinks(ctx context.Context, apiKey string, response *ContextGraphAggregationResult) error {
+	if response == nil || len(response.Data) == 0 {
+		return nil
+	}
+
+	reqEntities := make([]common.FetchLinksRequestItem, len(response.Data))
+	for i, e := range response.Data {
+		reqEntities[i] = common.FetchLinksRequestItem{
+			EntityID: e.ID,
+		}
+	}
+	linksRes, err := s.linksFetcher.Fetch(ctx, apiKey, common.FetchLinksRequest{Entities: reqEntities})
+	if err != nil || linksRes == nil {
+		return err
+	}
+
+	linksByEntityID := make(map[string]map[string]interface{}, len(reqEntities))
+	for _, item := range linksRes.Data {
+		if len(item.Links) > 0 {
+			links := make(map[string]interface{}, len(item.Links))
+			for category, link := range item.Links {
+				links[category] = link
+			}
+			linksByEntityID[item.EntityID] = links
+		}
+	}
+
+	for i, e := range response.Data {
+		response.Data[i].Links = linksByEntityID[e.ID]
+	}
+
+	return nil
 }
 
 func transformInfos(request EditRequest) map[string]types.Info {
