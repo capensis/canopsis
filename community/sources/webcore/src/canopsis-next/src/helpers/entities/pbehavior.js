@@ -15,6 +15,18 @@ import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pb
 export const isPausedPbehavior = pbehavior => pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause;
 
 /**
+ * Check is not active pbehavior type
+ *
+ * @param {string} type
+ * @returns {boolean}
+ */
+export const isNotActivePbehaviorType = type => [
+  PBEHAVIOR_TYPE_TYPES.pause,
+  PBEHAVIOR_TYPE_TYPES.inactive,
+  PBEHAVIOR_TYPE_TYPES.maintenance,
+].includes(type);
+
+/**
  * Check if pbehaviors have a paused type
  *
  * @param {Pbehavior[]} pbehaviors

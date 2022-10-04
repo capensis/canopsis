@@ -59,7 +59,6 @@ export default {
           || this.form.component
           || this.form.connector
           || this.form.connector_name,
-        context: () => this,
       });
     },
 
