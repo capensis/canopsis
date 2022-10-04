@@ -12,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/configprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/httpprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/provider"
@@ -127,14 +126,15 @@ func (s *security) RegisterCallbackRoutes(router gin.IRouter, client mongo.DbCli
 	for _, v := range s.config.Security.AuthProviders {
 		switch v {
 		case libsecurity.AuthMethodCas:
+			casConfig := s.config.Security.Cas
 			p := httpprovider.NewCasProvider(
 				http.DefaultClient,
-				s.newConfigProvider(),
+				casConfig,
 				s.newUserProvider(),
 			)
-			router.GET("/cas/login", cas.SessionLoginHandler(s.newConfigProvider()))
+			router.GET("/cas/login", cas.SessionLoginHandler(casConfig))
 			router.GET("/cas/loggedin", cas.SessionCallbackHandler(p, s.enforcer, s.sessionStore))
-			router.GET("/api/v4/cas/login", cas.LoginHandler(s.newConfigProvider()))
+			router.GET("/api/v4/cas/login", cas.LoginHandler(casConfig))
 			router.GET("/api/v4/cas/loggedin", cas.CallbackHandler(p, s.enforcer, s.GetTokenService()))
 		case libsecurity.AuthMethodSaml:
 			sp, err := saml.NewServiceProvider(s.newUserProvider(), client.Collection(mongo.RightsMongoCollection), s.sessionStore,
@@ -209,17 +209,13 @@ func (s *security) newUserProvider() libsecurity.UserProvider {
 	return userprovider.NewMongoProvider(s.dbClient)
 }
 
-func (s *security) newConfigProvider() libsecurity.ConfigProvider {
-	return configprovider.NewMongoProvider(s.dbClient)
-}
-
 func (s *security) newBaseAuthProvider() libsecurity.Provider {
 	return provider.NewBaseProvider(s.newUserProvider(), s.GetPasswordEncoder())
 }
 
 func (s *security) newLdapAuthProvider() libsecurity.Provider {
 	return provider.NewLdapProvider(
-		s.newConfigProvider(),
+		s.config.Security.Ldap,
 		s.newUserProvider(),
 		provider.NewLdapDialer(),
 		s.enforcer,
