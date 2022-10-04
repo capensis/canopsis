@@ -2,7 +2,6 @@ package common
 
 import (
 	"errors"
-	"github.com/valyala/fastjson"
 	"math"
 	"net/http"
 	"reflect"
@@ -11,8 +10,10 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
 	"github.com/go-playground/validator/v10"
+	"github.com/valyala/fastjson"
 )
 
 type User struct {
@@ -248,4 +249,16 @@ func (v ValidationError) ValidationErrorResponse() ValidationErrorResponse {
 	return ValidationErrorResponse{
 		Errors: map[string]string{v.field: v.Error()},
 	}
+}
+
+type AlarmStep struct {
+	Type         string             `bson:"_t" json:"_t"`
+	Timestamp    *types.CpsTime     `bson:"t" json:"t" swaggertype:"integer"`
+	Author       string             `bson:"a" json:"a"`
+	UserID       string             `bson:"user_id,omitempty" json:"user_id"`
+	Message      string             `bson:"m" json:"m"`
+	Value        types.CpsNumber    `bson:"val" json:"val"`
+	Initiator    string             `bson:"initiator" json:"initiator"`
+	Execution    string             `bson:"exec,omitempty" json:"-"`
+	StateCounter *types.CropCounter `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
 }

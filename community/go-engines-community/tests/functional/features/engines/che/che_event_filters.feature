@@ -135,54 +135,13 @@ Feature: modify event on event filter
     {
       "data": [
         {
-          "_id": "test-component-che-event-filters-2",
-          "category": null,
-          "component": "test-component-che-event-filters-2",
-          "depends": [
-            "test-resource-che-event-filters-2/test-component-che-event-filters-2"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-event-filters-2/test-connector-name-che-event-filters-2"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-component-che-event-filters-2",
-          "type": "component"
+          "_id": "test-component-che-event-filters-2"
         },
         {
-          "_id": "test-connector-che-event-filters-2/test-connector-name-che-event-filters-2",
-          "category": null,
-          "depends": [
-            "test-component-che-event-filters-2"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-event-filters-2/test-component-che-event-filters-2"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-event-filters-2",
-          "type": "connector"
+          "_id": "test-connector-che-event-filters-2/test-connector-name-che-event-filters-2"
         },
         {
-          "_id": "test-resource-che-event-filters-2/test-component-che-event-filters-2",
-          "category": null,
-          "component": "test-component-che-event-filters-2",
-          "depends": [
-            "test-connector-che-event-filters-2/test-connector-name-che-event-filters-2"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-event-filters-2"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-event-filters-2",
-          "type": "resource"
+          "_id": "test-resource-che-event-filters-2/test-component-che-event-filters-2"
         }
       ],
       "meta": {
@@ -333,50 +292,13 @@ Feature: modify event on event filter
     {
       "data": [
         {
-          "_id": "test-component-che-event-filters-3",
-          "category": null,
-          "component": "test-component-che-event-filters-3",
-          "depends": [
-            "test-resource-che-event-filters-3/test-component-che-event-filters-3"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-event-filters-3/test-connector-name-che-event-filters-3"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-component-che-event-filters-3",
-          "type": "component"
+          "_id": "test-component-che-event-filters-3"
         },
         {
-          "_id": "test-connector-che-event-filters-3/test-connector-name-che-event-filters-3",
-          "category": null,
-          "depends": [
-            "test-component-che-event-filters-3"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-event-filters-3/test-component-che-event-filters-3"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-event-filters-3",
-          "type": "connector"
+          "_id": "test-connector-che-event-filters-3/test-connector-name-che-event-filters-3"
         },
         {
           "_id": "test-resource-che-event-filters-3/test-component-che-event-filters-3",
-          "category": null,
-          "component": "test-component-che-event-filters-3",
-          "depends": [
-            "test-connector-che-event-filters-3/test-connector-name-che-event-filters-3"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-event-filters-3"
-          ],
-          "impact_level": 1,
           "infos": {
             "customer": {
               "description": "Client",
@@ -393,10 +315,7 @@ Feature: modify event on event filter
               "name": "output",
               "value": "test-output-che-event-filters-3 (client: test-customer-che-event-filters-3)"
             }
-          },
-          "measurements": null,
-          "name": "test-resource-che-event-filters-3",
-          "type": "resource"
+          }
         }
       ],
       "meta": {
@@ -522,7 +441,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-4"
     }
     """
-    When I save response createComponentTimestamp={{ now }}
     When I wait the end of event processing
     When I send an event:
     """json
@@ -537,7 +455,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-4"
     }
     """
-    When I save response createResourceTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-4
     Then the response code should be 200
@@ -547,75 +464,26 @@ Feature: modify event on event filter
       "data": [
         {
           "_id": "test-component-che-event-filters-4",
-          "category": null,
-          "component": "test-component-che-event-filters-4",
-          "depends": [
-            "test-resource-che-event-filters-4/test-component-che-event-filters-4"
-          ],
-          "enable_history": [
-            {{ .createComponentTimestamp }}
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-event-filters-4/test-connector-name-che-event-filters-4"
-          ],
-          "impact_level": 1,
           "infos": {
             "customer": {
               "description": "Client",
               "name": "customer",
               "value": "test-customer-che-event-filters-4"
             }
-          },
-          "measurements": null,
-          "name": "test-component-che-event-filters-4",
-          "type": "component"
+          }
         },
         {
-          "_id": "test-connector-che-event-filters-4/test-connector-name-che-event-filters-4",
-          "category": null,
-          "depends": [
-            "test-component-che-event-filters-4"
-          ],
-          "enable_history": [
-            {{ .createComponentTimestamp }}
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-event-filters-4/test-component-che-event-filters-4"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-event-filters-4",
-          "type": "connector"
+          "_id": "test-connector-che-event-filters-4/test-connector-name-che-event-filters-4"
         },
         {
           "_id": "test-resource-che-event-filters-4/test-component-che-event-filters-4",
-          "category": null,
-          "component": "test-component-che-event-filters-4",
           "component_infos": {
             "customer": {
               "description": "Client",
               "name": "customer",
               "value": "test-customer-che-event-filters-4"
             }
-          },
-          "depends": [
-            "test-connector-che-event-filters-4/test-connector-name-che-event-filters-4"
-          ],
-          "enable_history": [
-            {{ .createResourceTimestamp }}
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-event-filters-4"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-event-filters-4",
-          "type": "resource"
+          }
         }
       ],
       "meta": {
@@ -723,66 +591,26 @@ Feature: modify event on event filter
       "data": [
         {
           "_id": "test-component-che-event-filters-5",
-          "category": null,
-          "component": "test-component-che-event-filters-5",
-          "depends": [
-            "test-resource-che-event-filters-5/test-component-che-event-filters-5"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-event-filters-5/test-connector-name-che-event-filters-5"
-          ],
-          "impact_level": 1,
           "infos": {
             "customer": {
               "description": "Client",
               "name": "customer",
               "value": "test-customer-che-event-filters-5"
             }
-          },
-          "measurements": null,
-          "name": "test-component-che-event-filters-5",
-          "type": "component"
+          }
         },
         {
-          "_id": "test-connector-che-event-filters-5/test-connector-name-che-event-filters-5",
-          "category": null,
-          "depends": [
-            "test-component-che-event-filters-5"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-event-filters-5/test-component-che-event-filters-5"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-event-filters-5",
-          "type": "connector"
+          "_id": "test-connector-che-event-filters-5/test-connector-name-che-event-filters-5"
         },
         {
           "_id": "test-resource-che-event-filters-5/test-component-che-event-filters-5",
-          "category": null,
-          "component": "test-component-che-event-filters-5",
           "component_infos": {
             "customer": {
               "description": "Client",
               "name": "customer",
               "value": "test-customer-che-event-filters-5"
             }
-          },
-          "depends": [
-            "test-connector-che-event-filters-5/test-connector-name-che-event-filters-5"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-event-filters-5"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-event-filters-5",
-          "type": "resource"
+          }
         }
       ],
       "meta": {
@@ -893,68 +721,35 @@ Feature: modify event on event filter
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/entities?search=che-event-filters-6
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-6
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
       "data": [
         {
-          "_id": "test-component-che-event-filters-6",
-          "category": null,
-          "component": "test-component-che-event-filters-6",
-          "depends": [
-            "test-resource-che-event-filters-6/test-component-che-event-filters-6"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-event-filters-6/test-connector-name-che-event-filters-6"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-component-che-event-filters-6",
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-che-event-filters-6/test-connector-name-che-event-filters-6",
-          "category": null,
-          "depends": [
-            "test-component-che-event-filters-6"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-event-filters-6/test-component-che-event-filters-6"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-event-filters-6",
-          "type": "connector"
-        },
-        {
           "_id": "test-resource-che-event-filters-6/test-component-che-event-filters-6",
+          "infos": {},
+          "name": "test-resource-che-event-filters-6",
+          "type": "resource",
           "category": null,
           "component": "test-component-che-event-filters-6",
-          "depends": [
-            "test-connector-che-event-filters-6/test-connector-name-che-event-filters-6"
-          ],
+          "connector": "test-connector-che-event-filters-6/test-connector-name-che-event-filters-6",
           "enabled": false,
-          "impact": [
-            "test-component-che-event-filters-6"
-          ],
           "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-event-filters-6",
-          "type": "resource"
+          "impact_state": 0,
+          "last_event_date": {{ (index .lastResponse.data 0).last_event_date }},
+          "ko_events": 1,
+          "ok_events": 0,
+          "state": 0,
+          "status": 0
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 1
       }
     }
     """
@@ -1035,60 +830,20 @@ Feature: modify event on event filter
     {
       "data": [
         {
-          "_id": "test-component-che-event-filters-7",
-          "category": null,
-          "component": "test-component-che-event-filters-7",
-          "depends": [
-            "test-resource-che-event-filters-7/test-component-che-event-filters-7"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-event-filters-7/test-connector-name-che-event-filters-7"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-component-che-event-filters-7",
-          "type": "component"
+          "_id": "test-component-che-event-filters-7"
         },
         {
-          "_id": "test-connector-che-event-filters-7/test-connector-name-che-event-filters-7",
-          "category": null,
-          "depends": [
-            "test-component-che-event-filters-7"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-event-filters-7/test-component-che-event-filters-7"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-event-filters-7",
-          "type": "connector"
+          "_id": "test-connector-che-event-filters-7/test-connector-name-che-event-filters-7"
         },
         {
           "_id": "test-resource-che-event-filters-7/test-component-che-event-filters-7",
-          "category": null,
-          "component": "test-component-che-event-filters-7",
-          "depends": [
-            "test-connector-che-event-filters-7/test-connector-name-che-event-filters-7"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-event-filters-7"
-          ],
-          "impact_level": 1,
           "infos": {
             "testdate": {
               "description": "Date",
               "name": "testdate",
               "value": 1592215337
             }
-          },
-          "measurements": null,
-          "name": "test-resource-che-event-filters-7",
-          "type": "resource"
+          }
         }
       ],
       "meta": {
@@ -1281,50 +1036,13 @@ Feature: modify event on event filter
     {
       "data": [
         {
-          "_id": "test-component-che-event-filters-8",
-          "category": null,
-          "component": "test-component-che-event-filters-8",
-          "depends": [
-            "test-resource-che-event-filters-8/test-component-che-event-filters-8"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-event-filters-8/test-connector-name-che-event-filters-8"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-component-che-event-filters-8",
-          "type": "component"
+          "_id": "test-component-che-event-filters-8"
         },
         {
-          "_id": "test-connector-che-event-filters-8/test-connector-name-che-event-filters-8",
-          "category": null,
-          "depends": [
-            "test-component-che-event-filters-8"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-event-filters-8/test-component-che-event-filters-8"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-event-filters-8",
-          "type": "connector"
+          "_id": "test-connector-che-event-filters-8/test-connector-name-che-event-filters-8"
         },
         {
           "_id": "test-resource-che-event-filters-8/test-component-che-event-filters-8",
-          "category": null,
-          "component": "test-component-che-event-filters-8",
-          "depends": [
-            "test-connector-che-event-filters-8/test-connector-name-che-event-filters-8"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-event-filters-8"
-          ],
-          "impact_level": 1,
           "infos": {
             "customer": {
               "description": "Client",
@@ -1341,10 +1059,7 @@ Feature: modify event on event filter
               "name": "output",
               "value": "test-output-che-event-filters-8 (client: test-customer-che-event-filters-8)"
             }
-          },
-          "measurements": null,
-          "name": "test-resource-che-event-filters-8",
-          "type": "resource"
+          }
         }
       ],
       "meta": {
@@ -1533,210 +1248,6 @@ Feature: modify event on event filter
     }
     """
 
-  Scenario: given check event and enrichment event filter should enrich from external api data where response is a document with an array
-    Given I am admin
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "external_data": {
-        "title": {
-          "type": "api",
-          "request": {
-            "url": "http://localhost:3000/api/external_data_document_with_array",
-            "method": "GET"
-          }
-        }
-      },
-      "event_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-eventfilter-assets-customer-3"
-            }
-          }
-        ]
-      ],
-      "description": "test-event-filter-che-event-filters-16-description",
-      "priority": 1,
-      "enabled": true,
-      "config": {
-        "actions": [
-          {
-            "type": "set_entity_info_from_template",
-            "name": "title",
-            "value": "{{ `{{ index .ExternalData.title \"array.1.title\" }}` }}",
-            "description": "title from external api"
-          }
-        ],
-        "on_success": "pass",
-        "on_failure": "pass"
-      }
-    }
-    """
-    Then the response code should be 201
-    When I wait the next periodical process
-    When I send an event:
-    """
-    {
-      "connector": "test-connector-che-event-filters-16",
-      "connector_name": "test-connector-name-che-event-filters-16",
-      "source_type": "resource",
-      "event_type": "check",
-      "component": "test-eventfilter-assets-customer-3",
-      "resource": "test-resource-che-event-filters-16",
-      "state": 2,
-      "output": "test-output-che-event-filters-16"
-    }
-    """
-    When I save response createTimestamp={{ now }}
-    When I wait the end of event processing
-    When I do GET /api/v4/entities?search=test-resource-che-event-filters-16
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "data": [
-        {
-          "_id": "test-resource-che-event-filters-16/test-eventfilter-assets-customer-3",
-          "category": null,
-          "component": "test-eventfilter-assets-customer-3",
-          "depends": [
-            "test-connector-che-event-filters-16/test-connector-name-che-event-filters-16"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-eventfilter-assets-customer-3"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
-          "impact_level": 1,
-          "infos": {
-            "title": {
-              "name": "title",
-              "description": "title from external api",
-              "value": "test title 2"
-            }
-          },
-          "measurements": null,
-          "name": "test-resource-che-event-filters-16",
-          "type": "resource"
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-
-  Scenario: given check event and enrichment event filter should enrich from external api data where response is an array
-    Given I am admin
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "external_data": {
-        "title": {
-          "type": "api",
-          "request": {
-            "url": "http://localhost:3000/api/external_data_response_is_array",
-            "method": "GET"
-          }
-        }
-      },
-      "event_pattern": [
-        [
-          {
-            "field": "component",
-            "cond": {
-              "type": "eq",
-              "value": "test-eventfilter-assets-customer-4"
-            }
-          }
-        ]
-      ],
-      "description": "test-event-filter-che-event-filters-17-description",
-      "priority": 1,
-      "enabled": true,
-      "config": {
-        "actions": [
-          {
-            "type": "set_entity_info_from_template",
-            "name": "title",
-            "value": "{{ `{{ index .ExternalData.title \"1.title\" }}` }}",
-            "description": "title from external api"
-          }
-        ],
-        "on_success": "pass",
-        "on_failure": "pass"
-      }
-    }
-    """
-    Then the response code should be 201
-    When I wait the next periodical process
-    When I send an event:
-    """
-    {
-      "connector": "test-connector-che-event-filters-17",
-      "connector_name": "test-connector-name-che-event-filters-17",
-      "source_type": "resource",
-      "event_type": "check",
-      "component": "test-eventfilter-assets-customer-4",
-      "resource": "test-resource-che-event-filters-17",
-      "state": 2,
-      "output": "test-output-che-event-filters-17"
-    }
-    """
-    When I save response createTimestamp={{ now }}
-    When I wait the end of event processing
-    When I do GET /api/v4/entities?search=test-resource-che-event-filters-17
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "data": [
-        {
-          "_id": "test-resource-che-event-filters-17/test-eventfilter-assets-customer-4",
-          "category": null,
-          "component": "test-eventfilter-assets-customer-4",
-          "depends": [
-            "test-connector-che-event-filters-17/test-connector-name-che-event-filters-17"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-eventfilter-assets-customer-4"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
-          "impact_level": 1,
-          "infos": {
-            "title": {
-              "name": "title",
-              "description": "title from external api",
-              "value": "test title 2"
-            }
-          },
-          "measurements": null,
-          "name": "test-resource-che-event-filters-17",
-          "type": "resource"
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-    
   Scenario: given check event and drop event filter with time interval should drop event in that interval
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -2517,4 +2028,4 @@ Feature: modify event on event filter
       }
     }
     """
-    
+

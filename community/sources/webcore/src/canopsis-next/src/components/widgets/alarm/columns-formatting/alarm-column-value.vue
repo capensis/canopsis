@@ -11,7 +11,9 @@
       :widget="widget",
       :column="column",
       :columns-filters="columnsFilters",
-      @activate="$emit('activate', $event)"
+      :selected-tag="selectedTag",
+      @activate="$emit('activate', $event)",
+      @select:tag="$emit('select:tag', $event)"
     )
 </template>
 
@@ -43,6 +45,10 @@ export default {
     column: {
       type: Object,
       required: true,
+    },
+    selectedTag: {
+      type: String,
+      default: '',
     },
     columnsFilters: {
       type: Array,
