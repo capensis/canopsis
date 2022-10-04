@@ -267,6 +267,7 @@ export default merge({
     instructions: 'Des instructions',
     playlist: 'Liste de lecture | Listes de lecture',
     ctrlZoom: 'Utilisez ctrl + molette de la souris pour zoomer',
+    calendar: 'Calendrier',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -1966,7 +1967,6 @@ export default merge({
     connector: 'ID ou modèle de connecteur',
     connectorName: 'Nom ou modèle de connecteur',
     duringPeriod: 'Appliqué pendant cette période uniquement',
-    calendar: 'Calendrier',
     types: {
       [EVENT_FILTER_TYPES.drop]: 'Drop',
       [EVENT_FILTER_TYPES.break]: 'Break',
