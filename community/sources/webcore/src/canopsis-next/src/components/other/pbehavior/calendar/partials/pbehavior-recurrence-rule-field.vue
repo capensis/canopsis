@@ -30,6 +30,10 @@ export default {
       type: Object,
       required: true,
     },
+    withExdateType: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     hasRecurrenceRule() {
@@ -53,6 +57,7 @@ export default {
           rrule: this.form.rrule,
           exdates: this.form.exdates,
           exceptions: this.form.exceptions,
+          withExdateType: this.withExdateType,
           action: ({ rrule, exdates, exceptions }) => this.updateModel({
             ...this.form,
             rrule,

@@ -39,9 +39,6 @@ const (
 	PermUserInterfaceUpdate = "api_user_interface_update"
 	PermUserInterfaceDelete = "api_user_interface_delete"
 
-	PermSecurityRead   = "api_security_read"
-	PermSecurityUpdate = "api_security_update"
-
 	PermEvent = "api_event"
 
 	ObjIdleRule = "api_idlerule"

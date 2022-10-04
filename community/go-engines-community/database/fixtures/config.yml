@@ -16,12 +16,6 @@ configuration:
     max_matched_items: 10000
     check_count_request_timeout: 30
     app_title: Canopsis
-  api_security:
-    _id: api_security
-    basic:
-      expiration_interval:
-        value: 1
-        unit: M
 
 state_settings:
   junit:
