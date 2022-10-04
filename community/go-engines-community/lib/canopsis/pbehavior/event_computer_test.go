@@ -1,11 +1,12 @@
 package pbehavior_test
 
 import (
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
-	"testing"
-	"time"
 )
 
 func BenchmarkEventComputer_Compute(b *testing.B) {
@@ -47,54 +48,74 @@ func BenchmarkEventComputer_Compute(b *testing.B) {
 		Type:  "test-active",
 		Exdates: []pbehavior.Exdate{
 			{
-				Begin: types.CpsTime{Time: now.Add(-3 * time.Hour)},
-				End:   types.CpsTime{Time: now.Add(-time.Hour)},
-				Type:  "test-maintenance",
+				Exdate: types.Exdate{
+					Begin: types.CpsTime{Time: now.Add(-3 * time.Hour)},
+					End:   types.CpsTime{Time: now.Add(-time.Hour)},
+				},
+				Type: "test-maintenance",
 			},
 			{
-				Begin: types.CpsTime{Time: now.Add(24 * time.Hour)},
-				End:   types.CpsTime{Time: now.Add(26 * time.Hour)},
-				Type:  "test-maintenance",
+				Exdate: types.Exdate{
+					Begin: types.CpsTime{Time: now.Add(24 * time.Hour)},
+					End:   types.CpsTime{Time: now.Add(26 * time.Hour)},
+				},
+				Type: "test-maintenance",
 			},
 			{
-				Begin: types.CpsTime{Time: now.Add(48 * time.Hour)},
-				End:   types.CpsTime{Time: now.Add(50 * time.Hour)},
-				Type:  "test-maintenance",
+				Exdate: types.Exdate{
+					Begin: types.CpsTime{Time: now.Add(48 * time.Hour)},
+					End:   types.CpsTime{Time: now.Add(50 * time.Hour)},
+				},
+				Type: "test-maintenance",
 			},
 			{
-				Begin: types.CpsTime{Time: now.Add(49 * time.Hour)},
-				End:   types.CpsTime{Time: now.Add(53 * time.Hour)},
-				Type:  "test-pause",
+				Exdate: types.Exdate{
+					Begin: types.CpsTime{Time: now.Add(49 * time.Hour)},
+					End:   types.CpsTime{Time: now.Add(53 * time.Hour)},
+				},
+				Type: "test-pause",
 			},
 			{
-				Begin: types.CpsTime{Time: now.Add(72 * time.Hour)},
-				End:   types.CpsTime{Time: now.Add(120 * time.Hour)},
-				Type:  "test-maintenance",
+				Exdate: types.Exdate{
+					Begin: types.CpsTime{Time: now.Add(72 * time.Hour)},
+					End:   types.CpsTime{Time: now.Add(120 * time.Hour)},
+				},
+				Type: "test-maintenance",
 			},
 			{
-				Begin: types.CpsTime{Time: now.Add(-3 * time.Hour)},
-				End:   types.CpsTime{Time: now.Add(-time.Hour)},
-				Type:  "test-maintenance",
+				Exdate: types.Exdate{
+					Begin: types.CpsTime{Time: now.Add(-3 * time.Hour)},
+					End:   types.CpsTime{Time: now.Add(-time.Hour)},
+				},
+				Type: "test-maintenance",
 			},
 			{
-				Begin: types.CpsTime{Time: now.Add(24 * time.Hour)},
-				End:   types.CpsTime{Time: now.Add(26 * time.Hour)},
-				Type:  "test-maintenance",
+				Exdate: types.Exdate{
+					Begin: types.CpsTime{Time: now.Add(24 * time.Hour)},
+					End:   types.CpsTime{Time: now.Add(26 * time.Hour)},
+				},
+				Type: "test-maintenance",
 			},
 			{
-				Begin: types.CpsTime{Time: now.Add(48 * time.Hour)},
-				End:   types.CpsTime{Time: now.Add(50 * time.Hour)},
-				Type:  "test-maintenance",
+				Exdate: types.Exdate{
+					Begin: types.CpsTime{Time: now.Add(48 * time.Hour)},
+					End:   types.CpsTime{Time: now.Add(50 * time.Hour)},
+				},
+				Type: "test-maintenance",
 			},
 			{
-				Begin: types.CpsTime{Time: now.Add(49 * time.Hour)},
-				End:   types.CpsTime{Time: now.Add(53 * time.Hour)},
-				Type:  "test-pause",
+				Exdate: types.Exdate{
+					Begin: types.CpsTime{Time: now.Add(49 * time.Hour)},
+					End:   types.CpsTime{Time: now.Add(53 * time.Hour)},
+				},
+				Type: "test-pause",
 			},
 			{
-				Begin: types.CpsTime{Time: now.Add(72 * time.Hour)},
-				End:   types.CpsTime{Time: now.Add(120 * time.Hour)},
-				Type:  "test-maintenance",
+				Exdate: types.Exdate{
+					Begin: types.CpsTime{Time: now.Add(72 * time.Hour)},
+					End:   types.CpsTime{Time: now.Add(120 * time.Hour)},
+				},
+				Type: "test-maintenance",
 			},
 		},
 	}

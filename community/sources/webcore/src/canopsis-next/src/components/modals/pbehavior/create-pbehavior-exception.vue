@@ -1,11 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createPbehaviorException.title') }}
-      template(slot="text")
-        pbehavior-exception-form(v-model="form")
-      template(slot="actions")
+      template(#text="")
+        pbehavior-exception-form(v-model="form", with-type)
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
 </template>

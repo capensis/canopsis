@@ -30,8 +30,6 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filt
  * @property {Duration} duration
  * @property {number} priority
  * @property {DisableDuringPeriods[]} disable_during_periods
- * @property {Object[]} entity_patterns
- * @property {Object[]} alarm_patterns
  * @property {IdleRuleAlarmCondition} alarm_condition
  * @property {Action} operation
  */

@@ -873,3 +873,766 @@ Feature: Update an eventfilter
       }
     }
     """
+
+  Scenario: given update request with start and stop should return success
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-10:
+    """
+    {
+      "description": "test update 10",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-10-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-update-10
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "author": "root",
+      "description": "test update 10",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-10-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+
+  Scenario: given update request with start but without stop should return error
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-11:
+    """
+    {
+      "description": "test update 11",
+      "type": "enrichment",
+      "start": 1663316803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-11-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "stop": "Stop is required when Start is present."
+      }
+    }
+    """
+
+  Scenario: given update request with stop but without start should return error
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-12:
+    """
+    {
+      "description": "test update 12",
+      "type": "enrichment",
+      "stop": 1663316803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-12-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "start": "Start is required when Stop is present."
+      }
+    }
+    """
+
+  Scenario: given update request with stop but without start should return error
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-13:
+    """
+    {
+      "description": "test update 13",
+      "type": "enrichment",
+      "start": 1663317803,
+      "stop": 1663316803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-13-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "stop": "Stop should be greater than Start."
+      }
+    }
+    """
+
+  Scenario: given update request with rrule should return success
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-14:
+    """
+    {
+      "description": "test update 14",
+      "type": "enrichment",
+      "start": 1463314803,
+      "stop": 1463326803,
+      "rrule": "FREQ=DAILY",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-14-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-update-14
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "author": "root",
+      "description": "test update 14",
+      "type": "enrichment",
+      "start": 1463314803,
+      "stop": 1463326803,
+      "rrule": "FREQ=DAILY",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-14-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+
+  Scenario: given update request with rrule but without interval should return error
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-15:
+    """
+    {
+      "description": "test update 15",
+      "type": "enrichment",
+      "rrule": "FREQ=DAILY",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-15-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "start": "Start is required when RRule is present.",
+        "stop": "Stop is required when RRule is present."
+      }
+    }
+    """
+
+  Scenario: given update request with invalid rrule should return error
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-16:
+    """
+    {
+      "description": "test update 16",
+      "type": "enrichment",
+      "rrule": "FREQ=DAILYYY",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-16-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "rrule": "RRule is invalid recurrence rule."
+      }
+    }
+    """
+
+  Scenario: given update request with exdates should return success
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-17:
+    """
+    {
+      "description": "test update 17",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-17-pattern"
+            }
+          }
+        ]
+      ],
+      "exdates": [
+        {
+          "begin": 1591164001,
+          "end": 1591167601
+        }
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-update-17
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "author": "root",
+      "description": "test update 17",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-17-pattern"
+            }
+          }
+        ]
+      ],
+      "exdates": [
+        {
+          "begin": 1591164001,
+          "end": 1591167601
+        }
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+
+  Scenario: given update request with invalid exdates should return error
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-18:
+    """
+    {
+      "description": "test update 18",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-18-pattern"
+            }
+          }
+        ]
+      ],
+      "exdates": [
+        {
+          "begin": 1691164001,
+          "end": 1591167601
+        },
+        {},
+        {
+          "begin": 1591167601
+        },
+        {
+          "end": 1591167601
+        }
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "exdates.0.end": "End should be greater than Begin.",
+        "exdates.1.begin": "Begin is missing.",
+        "exdates.1.end": "End is missing.",
+        "exdates.2.end": "End should be greater than Begin.",
+        "exdates.3.begin": "Begin is missing."
+      }
+    }
+    """
+
+  Scenario: given update request with exceptions should return success
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-19:
+    """
+    {
+      "description": "test update 19",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-19-pattern"
+            }
+          }
+        ]
+      ],
+      "exceptions":  ["test-exception-to-pbh-edit"],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-update-19
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "author": "root",
+      "description": "test update 19",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-19-pattern"
+            }
+          }
+        ]
+      ],
+      "exceptions": [
+        {
+          "_id": "test-exception-to-pbh-edit"
+        }
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+
+  Scenario: given update request with exceptions should return success
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-20:
+    """
+    {
+      "description": "test update 20",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-20-pattern"
+            }
+          }
+        ]
+      ],
+      "exceptions":  ["test-exception-not-exist"],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "exceptions": "Exceptions doesn't exist."
+      }
+    }
+    """
+
+  Scenario: given update request with start and stop should return success
+    When I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-update-21:
+    """
+    {
+      "description": "test update 21",
+      "type": "enrichment",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-update-21-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-update-21
+    Then the response code should be 200
+    Then the response key "start" should not exist
+    Then the response key "stop" should not exist

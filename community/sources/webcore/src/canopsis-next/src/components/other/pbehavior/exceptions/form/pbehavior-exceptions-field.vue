@@ -9,6 +9,7 @@
           v-field="exdates[index]",
           :key="exdate.key",
           :disabled="disabled",
+          with-type,
           @delete="removeItemFromArray(index)"
         )
     v-layout(v-if="!disabled", row)
