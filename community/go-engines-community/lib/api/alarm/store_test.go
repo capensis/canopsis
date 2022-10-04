@@ -81,7 +81,7 @@ func benchmarkStoreFind(b *testing.B, fixturesPath string, request alarm.ListReq
 		}
 	})
 
-	s := alarm.NewStore(dbClient, "", zerolog.Nop())
+	s := alarm.NewStore(dbClient, nil, zerolog.Nop())
 
 	b.ResetTimer()
 

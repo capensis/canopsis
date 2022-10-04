@@ -113,6 +113,7 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.lookups = []lookupWithKey{
 		{key: "entity", pipeline: getEntityLookup()},
 		{key: "entity.category", pipeline: getEntityCategoryLookup()},
+		{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup()},
 		{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()},
 		{key: "v.pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
@@ -123,7 +124,7 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.computedFieldsForAlarmMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields(now)
-	q.excludedFields = []string{"v.steps", "pbehavior.comments", "pbehavior_info_type"}
+	q.excludedFields = []string{"v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.depends", "entity.impact"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime) ([]bson.M, error) {
@@ -163,13 +164,13 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 }
 
 func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
-	id string,
+	match bson.M,
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
 
 	q.alarmMatch = append(q.alarmMatch,
-		bson.M{"$match": bson.M{"_id": id}},
+		bson.M{"$match": match},
 	)
 
 	query := pagination.Query{
@@ -180,14 +181,22 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 }
 
 func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
+	ctx context.Context,
 	match bson.M,
 	paginationQuery pagination.Query,
 	sortRequest SortRequest,
+	filterRequest FilterRequest,
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
-	err := q.handleSort(sortRequest)
+
+	err := q.handleFilter(ctx, filterRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	err = q.handleSort(sortRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -361,6 +370,7 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest) e
 	q.addStartFromFilter(r, &alarmMatch)
 	q.addStartToFilter(r, &alarmMatch)
 	q.addOnlyParentsFilter(r, &alarmMatch)
+	q.addTagFilter(r, &alarmMatch)
 	searchMarch, withLookups, err := q.addSearchFilter(r)
 	if err != nil {
 		return err
@@ -601,6 +611,14 @@ func (q *MongoQueryBuilder) addCategoryFilter(r FilterRequest, match *[]bson.M) 
 	}
 
 	*match = append(*match, bson.M{"entity.category": bson.M{"$eq": r.Category}})
+}
+
+func (q *MongoQueryBuilder) addTagFilter(r FilterRequest, match *[]bson.M) {
+	if r.Tag == "" {
+		return
+	}
+
+	*match = append(*match, bson.M{"tags": r.Tag})
 }
 
 func (q *MongoQueryBuilder) addOnlyParentsFilter(r FilterRequest, match *[]bson.M) {
@@ -1203,4 +1221,27 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 	}
 
 	return bson.M{"$and": and}, nil
+}
+
+func getImpactsCountPipeline() []bson.M {
+	return []bson.M{
+		{"$graphLookup": bson.M{
+			"from":                    mongo.EntityMongoCollection,
+			"startWith":               "$entity.impact",
+			"connectFromField":        "entity.impact",
+			"connectToField":          "_id",
+			"as":                      "service_impacts",
+			"restrictSearchWithMatch": bson.M{"type": types.EntityTypeService},
+			"maxDepth":                0,
+		}},
+		{"$addFields": bson.M{
+			"entity.depends_count": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$entity.type", types.EntityTypeService}},
+				"then": bson.M{"$size": "$entity.depends"},
+				"else": 0,
+			}},
+			"entity.impacts_count": bson.M{"$size": "$service_impacts"},
+		}},
+		{"$project": bson.M{"service_impacts": 0}},
+	}
 }

@@ -75,6 +75,10 @@ paths:
           in: query
           schema:
             type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
         - name: correlation
           in: query
           schema:
@@ -268,6 +272,39 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /alarm-tags:
+    get:
+      tags:
+        - alarms
+      summary: Get alarms' tags
+      description: Get paginated list of alarms' tags.
+      operationId: alarms-tags-get
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /alarms:
     get:
       tags:
@@ -293,6 +330,10 @@ paths:
             items:
               type: string
         - name: category
+          in: query
+          schema:
+            type: string
+        - name: tag
           in: query
           schema:
             type: string
@@ -2508,6 +2549,34 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entities/context-graph:
+    get:
+      tags:
+        - entities
+      summary: Get context graph by id
+      description: Get context graph by id
+      operationId: entities-get-context-graph
+      parameters:
+        - name: _id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/entity.ContextGraphResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /entities/pbehavior-calendar:
     get:
       tags:
@@ -3095,8 +3164,21 @@ paths:
           required: true
           schema:
             type: string
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/withFlags'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          description: sort query
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -3110,7 +3192,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/entityservice.AlarmWithEntity'
+                          $ref: 'schemas_swagger.yaml#/definitions/entity.Entity'
         404:
           description: Not Found
           content:
@@ -3131,8 +3213,21 @@ paths:
           required: true
           schema:
             type: string
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/withFlags'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          description: sort query
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -3146,7 +3241,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/entityservice.AlarmWithEntity'
+                          $ref: 'schemas_swagger.yaml#/definitions/entity.Entity'
         404:
           description: Not Found
           content:
@@ -3167,6 +3262,21 @@ paths:
           required: true
           schema:
             type: string
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: with_category
+          in: query
+          required: false
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
       responses:
@@ -4945,6 +5055,35 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /open-alarms:
+    get:
+      tags:
+        - alarms
+      summary: Get open alarm by entity
+      description: Get open alarm by entity
+      operationId: alarms-get-open-by-entity
+      parameters:
+        - name: _id
+          in: query
+          description: entity id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
+        204:
+          description: OK
         404:
           description: Not Found
           content:
@@ -10102,7 +10241,20 @@ components:
         enum:
           - asc
           - desc
-  
+    sort_by:
+      name: sort_by
+      in: query
+      description: sort query
+      schema:
+        type: string
+    withFlags:
+      name: with_flags
+      in: query
+      description: with flags
+      required: false
+      schema:
+        type: boolean
+
   schemas:
     event.Event:
       type: object
