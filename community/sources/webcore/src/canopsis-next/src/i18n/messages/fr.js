@@ -259,6 +259,7 @@ export default merge({
     canonicalType: 'Type canonique',
     instructions: 'Des instructions',
     playlist: 'Liste de lecture | Listes de lecture',
+    notAvailable: 'Indisponible',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',

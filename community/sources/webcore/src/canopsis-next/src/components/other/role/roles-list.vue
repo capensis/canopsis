@@ -13,7 +13,8 @@
   )
     template(#mass-actions="{ selected }")
       c-action-btn.ml-3(v-if="removable", type="delete", @click="$emit('remove-selected', selected)")
-
+    template(#auth_config.inactivity_interval="{ item }") {{ durationToString(item.auth_config.inactivity_interval) }}
+    template(#auth_config.expiration_interval="{ item }") {{ durationToString(item.auth_config.expiration_interval) }}
     template(#actions="{ item }")
       v-layout(row)
         c-action-btn(
@@ -77,6 +78,11 @@ export default {
           sortable: false,
         },
       ];
+    },
+  },
+  methods: {
+    durationToString(duration) {
+      return duration ? `${duration.value}${duration.unit}` : this.$t('common.notAvailable');
     },
   },
 };
