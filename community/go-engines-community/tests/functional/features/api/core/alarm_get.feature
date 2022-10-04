@@ -69,7 +69,6 @@ Feature: Get alarms
               "initiator": "external",
               "val": 0
             },
-            "tags": [],
             "total_state_changes": 1
           }
         },
@@ -137,7 +136,6 @@ Feature: Get alarms
               "initiator": "external",
               "val": 1
             },
-            "tags": [],
             "total_state_changes": 1
           }
         },
@@ -245,7 +243,6 @@ Feature: Get alarms
               "initiator": "external",
               "val": 1
             },
-            "tags": [],
             "total_state_changes": 1
           }
         }
@@ -402,6 +399,27 @@ Feature: Get alarms
   Scenario: given category get request should return alarms
     When I am admin
     When I do GET /api/v4/alarms?category=test-category-to-alarm-get-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-to-get-2"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given tags get request should return alarms
+    When I am admin
+    When I do GET /api/v4/alarms?tag=test-tag-to-alarm-get-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -806,7 +824,6 @@ Feature: Get alarms
           "initiator": "external",
           "val": 1
         },
-        "tags": [],
         "total_state_changes": 1
       }
     }
@@ -832,6 +849,7 @@ Feature: Get alarms
       },
       "impact_state": 0,
       "infos": {},
+      "tags": [],
       "t": 1597030121,
       "v": {
         "children": [],
@@ -877,7 +895,6 @@ Feature: Get alarms
           "initiator": "external",
           "val": 0
         },
-        "tags": [],
         "total_state_changes": 1
       }
     }
@@ -1483,7 +1500,6 @@ Feature: Get alarms
           "initiator": "external",
           "val": 1
         },
-        "tags": [],
         "total_state_changes": 1
       }
     }
