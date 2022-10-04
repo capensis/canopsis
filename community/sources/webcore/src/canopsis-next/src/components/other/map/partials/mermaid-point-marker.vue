@@ -58,6 +58,7 @@ export default {
   user-select: none;
   cursor: pointer;
   transition: none;
+  pointer-events: initial;
 
   &--centered {
     transform: translate(-50%, -50%);
