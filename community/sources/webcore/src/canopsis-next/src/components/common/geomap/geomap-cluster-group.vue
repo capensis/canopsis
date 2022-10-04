@@ -54,7 +54,6 @@ export default {
   mounted() {
     const options = optionsMerger(
       {
-        polygonOptions: this.polygonOptions,
         iconCreateFunction: this.createIcon,
         showCoverageOnHover: this.showCoverageOnHover,
       },
