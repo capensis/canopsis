@@ -5,7 +5,7 @@ type ExportDocuments map[int]map[string]interface{}
 type Request struct {
 	// Possible export values.
 	//   * `configuration` - export configuration collection
-	//   * `rights` - export default_rights collection
+	//   * `acl` - export default_rights collection
 	//   * `pbehavior` - export pbehavior collection
 	//   * `pbehavior_type` - export pbehavior_types collection
 	//   * `pbehavior_reason` - export pbehavior_reason collection
