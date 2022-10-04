@@ -104,7 +104,6 @@ export default {
       name: this.name,
       rules: 'min_value:1',
       getter: () => this.operations.length,
-      context: () => this,
       vm: this,
     });
   },

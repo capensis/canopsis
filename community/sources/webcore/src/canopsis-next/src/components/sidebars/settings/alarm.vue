@@ -51,8 +51,7 @@
               :editable="hasAccessToEditFilter",
               with-alarm,
               with-entity,
-              with-pbehavior,
-              @input="updateMainFilterUpdatedAt"
+              with-pbehavior
             )
             v-divider
           template(v-if="hasAccessToListRemediationInstructionsFilters")
@@ -62,6 +61,11 @@
               :editable="hasAccessToEditRemediationInstructionsFilter"
             )
             v-divider
+          field-switcher(
+            v-model="form.parameters.clearFilterDisabled",
+            :title="$t('settings.clearFilterDisabled')"
+          )
+          v-divider
           field-live-reporting(v-model="form.parameters.liveReporting")
           v-divider
           field-info-popup(

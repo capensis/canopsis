@@ -1,14 +1,14 @@
 <template lang="pug">
-  modal-wrapper(data-test="colorPickerModal", close)
-    template(slot="title")
+  modal-wrapper(close)
+    template(#title="")
       span {{ title }}
-    template(slot="text")
+    template(#text="")
       v-layout
         v-flex
-          chrome(v-model="color", data-test="colorPickerChrome")
+          chrome(v-model="color")
         v-flex
-          compact(v-model="color", data-test="colorPickerCompact")
-    template(slot="actions")
+          compact(v-model="color", :palette="config.palette")
+    template(#actions="")
       v-btn(
         data-test="colorPickerCancelButton",
         depressed,

@@ -67,7 +67,6 @@ export default {
           name: this.name,
           rules: 'required:true',
           getter: () => this.value.length > 0,
-          context: () => this,
           vm: this,
         });
       }

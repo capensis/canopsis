@@ -9,6 +9,7 @@
           v-field="exdates[index]",
           :key="exdate.key",
           :disabled="disabled",
+          with-type,
           @delete="removeItemFromArray(index)"
         )
     v-layout(v-if="!disabled", row)
@@ -49,7 +50,6 @@ export default {
       name: 'exdates',
       rules: 'required:true',
       getter: () => !!this.exdates.length,
-      context: () => this,
       vm: this,
     });
   },

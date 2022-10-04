@@ -99,6 +99,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -155,6 +156,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -211,6 +213,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -267,6 +270,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -323,6 +327,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -379,6 +384,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -435,6 +441,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -491,6 +498,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -547,6 +555,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -603,6 +612,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -659,6 +669,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -826,6 +837,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -882,6 +894,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -938,6 +951,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -994,6 +1008,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1050,6 +1065,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1106,6 +1122,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1162,6 +1179,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1218,6 +1236,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1274,6 +1293,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1330,6 +1350,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1386,6 +1407,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1621,6 +1643,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1677,6 +1700,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1733,6 +1757,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1789,6 +1814,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1845,6 +1871,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1901,6 +1928,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1957,6 +1985,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2013,6 +2042,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2069,6 +2099,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2125,6 +2156,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2181,6 +2213,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2314,6 +2347,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2370,6 +2404,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2426,6 +2461,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2482,6 +2518,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2538,6 +2575,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2594,6 +2632,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2650,6 +2689,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2706,6 +2746,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2762,6 +2803,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2818,6 +2860,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2874,6 +2917,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         

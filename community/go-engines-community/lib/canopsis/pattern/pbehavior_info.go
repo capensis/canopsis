@@ -1,6 +1,8 @@
 package pattern
 
 import (
+	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -30,7 +32,7 @@ func (p PbehaviorInfo) Match(pbhInfo types.PbehaviorInfo) (bool, error) {
 			}
 
 			if err != nil {
-				return false, err
+				return false, fmt.Errorf("invalid condition for %q field: %w", f, err)
 			}
 
 			if !matched {
@@ -46,12 +48,8 @@ func (p PbehaviorInfo) Match(pbhInfo types.PbehaviorInfo) (bool, error) {
 	return false, nil
 }
 
-func (p PbehaviorInfo) Validate(forbiddenFields []string) bool {
+func (p PbehaviorInfo) Validate() bool {
 	emptyPbhInfo := types.PbehaviorInfo{}
-	forbiddenFieldsMap := make(map[string]bool, len(forbiddenFields))
-	for _, field := range forbiddenFields {
-		forbiddenFieldsMap[field] = true
-	}
 
 	for _, group := range p {
 		if len(group) == 0 {
@@ -62,10 +60,6 @@ func (p PbehaviorInfo) Validate(forbiddenFields []string) bool {
 			f := v.Field
 			cond := v.Condition
 			var err error
-
-			if forbiddenFieldsMap[f] {
-				return false
-			}
 
 			if str, ok := getPbehaviorInfoStringField(emptyPbhInfo, f); ok {
 				_, _, err = cond.MatchString(str)
@@ -153,7 +147,7 @@ func (p PbehaviorInfo) ToMongoQuery(prefix string) (bson.M, error) {
 
 			condQueries[j], err = cond.ToMongoQuery(f)
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("invalid condition for %q field: %w", f, err)
 			}
 		}
 
