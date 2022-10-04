@@ -79,38 +79,14 @@ paths:
           in: query
           schema:
             type: boolean
-        - name: exclude_instruction_types[]
+        - name: instructions[]
           in: query
           style: form
           explode: true
           schema:
             type: array
             items:
-              type: integer
-        - name: exclude_instructions[]
-          in: query
-          style: form
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
-        - name: include_instruction_types[]
-          in: query
-          style: form
-          explode: true
-          schema:
-            type: array
-            items:
-              type: integer
-        - name: include_instructions[]
-          in: query
-          style: form
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
+              $ref: 'schemas_swagger.yaml#/definitions/alarm.InstructionFilterRequest'
         - name: opened
           in: query
           schema:
@@ -324,38 +300,14 @@ paths:
           in: query
           schema:
             type: boolean
-        - name: exclude_instruction_types[]
+        - name: instructions[]
           in: query
           style: form
           explode: true
           schema:
             type: array
             items:
-              type: integer
-        - name: exclude_instructions[]
-          in: query
-          style: form
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
-        - name: include_instruction_types[]
-          in: query
-          style: form
-          explode: true
-          schema:
-            type: array
-            items:
-              type: integer
-        - name: include_instructions[]
-          in: query
-          style: form
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
+              $ref: 'schemas_swagger.yaml#/definitions/alarm.InstructionFilterRequest'
         - name: opened
           in: query
           schema:

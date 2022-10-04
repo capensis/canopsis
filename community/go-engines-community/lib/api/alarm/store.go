@@ -20,15 +20,20 @@ import (
 )
 
 const (
-	InstructionExecutionStatusRunning    = 0
-	InstructionExecutionStatusPaused     = 1
-	InstructionExecutionStatusAborted    = 4
-	InstructionExecutionStatusFailed     = 4
-	InstructionExecutionStatusWaitResult = 5
-	InstructionTypeManual                = 0
-	InstructionTypeAuto                  = 1
-	InstructionStatusApproved            = 0
+	InstructionExecutionStatusRunning = iota
+	InstructionExecutionStatusPaused
+	InstructionExecutionStatusCompleted
+	InstructionExecutionStatusAborted
+	InstructionExecutionStatusFailed
+	InstructionExecutionStatusWaitResult
 )
+
+const (
+	InstructionTypeManual = iota
+	InstructionTypeAuto
+)
+
+const InstructionStatusApproved = 0
 
 const linkFetchTimeout = 30 * time.Second
 
