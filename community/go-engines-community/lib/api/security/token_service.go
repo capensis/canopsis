@@ -2,10 +2,8 @@ package security
 
 import (
 	"context"
-	"fmt"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -28,21 +26,23 @@ type AuthMethodConf struct {
 }
 
 func NewTokenService(
+	config security.Config,
 	client mongo.DbClient,
 	service token.Service,
 	store token.Store,
 ) TokenService {
 	return &tokenService{
-		dbConfigCollection: client.Collection(mongo.ConfigurationMongoCollection),
-		dbRoleCollection:   client.Collection(mongo.RightsMongoCollection),
-		tokenService:       service,
-		tokenStore:         store,
+		config:           config,
+		dbRoleCollection: client.Collection(mongo.RightsMongoCollection),
+		tokenService:     service,
+		tokenStore:       store,
 	}
 }
 
 type tokenService struct {
-	dbConfigCollection mongo.DbCollection
-	dbRoleCollection   mongo.DbCollection
+	config security.Config
+
+	dbRoleCollection mongo.DbCollection
 
 	tokenService token.Service
 	tokenStore   token.Store
@@ -165,38 +165,36 @@ func (s *tokenService) getIntervals(ctx context.Context, user security.User, pro
 	}
 
 	if expirationInterval.Value == 0 || inactivityInterval.Value == 0 {
-		conf := AuthMethodConf{}
 		if provider == "" {
 			provider = security.AuthMethodBasic
 		}
-		cursor, err := s.dbConfigCollection.Aggregate(ctx, []bson.M{
-			{"$match": bson.M{"_id": config.ApiSecurityKeyName}},
-			{"$project": bson.M{
-				"expiration_interval": fmt.Sprintf("$%s.expiration_interval", provider),
-				"inactivity_interval": fmt.Sprintf("$%s.inactivity_interval", provider),
-			}},
-		})
-		if err != nil {
-			return expirationInterval, inactivityInterval, err
-		}
-		defer cursor.Close(ctx)
-		if cursor.Next(ctx) {
-			err = cursor.Decode(&conf)
-			if err != nil {
-				return expirationInterval, inactivityInterval, err
-			}
+		var expirationIntervalStr, inactivityIntervalStr string
+		switch provider {
+		case security.AuthMethodBasic:
+			expirationIntervalStr = s.config.Security.Basic.ExpirationInterval
+			inactivityIntervalStr = s.config.Security.Basic.InactivityInterval
+		case security.AuthMethodLdap:
+			expirationIntervalStr = s.config.Security.Ldap.ExpirationInterval
+			inactivityIntervalStr = s.config.Security.Ldap.InactivityInterval
+		case security.AuthMethodCas:
+			expirationIntervalStr = s.config.Security.Cas.ExpirationInterval
+			inactivityIntervalStr = s.config.Security.Cas.InactivityInterval
+		case security.AuthMethodSaml:
+			expirationIntervalStr = s.config.Security.Saml.ExpirationInterval
+			inactivityIntervalStr = s.config.Security.Saml.InactivityInterval
+
 		}
 
-		if expirationInterval.Value == 0 && conf.ExpirationInterval != nil {
-			expirationInterval = *conf.ExpirationInterval
+		if expirationInterval.Value == 0 && expirationIntervalStr != "" {
+			expirationInterval, _ = types.ParseDurationWithUnit(expirationIntervalStr)
 		}
-		if inactivityInterval.Value == 0 && conf.InactivityInterval != nil {
-			inactivityInterval = *conf.InactivityInterval
+		if inactivityInterval.Value == 0 && inactivityIntervalStr != "" {
+			inactivityInterval, _ = types.ParseDurationWithUnit(inactivityIntervalStr)
 		}
 	}
 
 	if inactivityInterval.Value == 0 {
-		inactivityInterval.Value = config.ApiSecurityInactivityInterval
+		inactivityInterval.Value = security.DefaultInactivityInterval
 		inactivityInterval.Unit = "h"
 	}
 
