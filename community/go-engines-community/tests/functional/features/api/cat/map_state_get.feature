@@ -118,7 +118,7 @@ Feature: Get a map's state
 
   Scenario: given get filtered mermaid map request should return map
     When I am admin
-    When I do GET /api/v4/cat/map-state/test-map-to-state-get-1?filter=test-widgetfilter-to-map-state-get-1
+    When I do GET /api/v4/cat/map-state/test-map-to-state-get-1?filters[]=test-widgetfilter-to-map-state-get-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -144,7 +144,7 @@ Feature: Get a map's state
       }
     }
     """
-    When I do GET /api/v4/cat/map-state/test-map-to-state-get-2?filter=test-widgetfilter-to-map-state-get-1
+    When I do GET /api/v4/cat/map-state/test-map-to-state-get-2?filters[]=test-widgetfilter-to-map-state-get-1
     Then the response code should be 200
     Then the response body should be:
     """json
