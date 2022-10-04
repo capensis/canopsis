@@ -34,10 +34,13 @@ exports[`map Renders flowchart \`map\` with state 1`] = `
       class="flex xs4"
     >
       <div
-        class="layout row wrap align-center"
+        class="layout row align-center"
       >
         <filter-selector-stub
+          clearable="true"
           filters=""
+          itemtext="title"
+          itemvalue="_id"
           label="Select a filter"
           lockedfilters=""
         />
@@ -82,10 +85,13 @@ exports[`map Renders geo \`map\` with state 1`] = `
       class="flex xs4"
     >
       <div
-        class="layout row wrap align-center"
+        class="layout row align-center"
       >
         <filter-selector-stub
+          clearable="true"
           filters=""
+          itemtext="title"
+          itemvalue="_id"
           label="Select a filter"
           lockedfilters=""
         />
@@ -130,10 +136,13 @@ exports[`map Renders mermaid \`map\` with state 1`] = `
       class="flex xs4"
     >
       <div
-        class="layout row wrap align-center"
+        class="layout row align-center"
       >
         <filter-selector-stub
+          clearable="true"
           filters=""
+          itemtext="title"
+          itemvalue="_id"
           label="Select a filter"
           lockedfilters=""
         />
@@ -178,10 +187,13 @@ exports[`map Renders treeofdeps \`map\` with state 1`] = `
       class="flex xs4"
     >
       <div
-        class="layout row wrap align-center"
+        class="layout row align-center"
       >
         <filter-selector-stub
+          clearable="true"
           filters=""
+          itemtext="title"
+          itemvalue="_id"
           label="Select a filter"
           lockedfilters=""
         />

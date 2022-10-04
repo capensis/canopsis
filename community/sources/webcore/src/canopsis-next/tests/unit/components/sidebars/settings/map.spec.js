@@ -377,7 +377,6 @@ describe('map', () => {
         data: getWidgetRequestWithNewProperty(widget, 'parameters', {
           ...widget.parameters,
 
-          mainFilterUpdatedAt: nowTimestamp,
           mainFilter: filter,
         }),
       },

@@ -34,22 +34,6 @@ type FilterRequest struct {
 	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
 }
 
-type BaseFilterRequest struct {
-	Filters     []string       `form:"filters[]" json:"filters"`
-	Search      string         `form:"search" json:"search"`
-	TimeField   string         `form:"time_field" json:"time_field" binding:"oneoforempty=t v.creation_date v.resolved v.last_update_date v.last_event_date"`
-	StartFrom   *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
-	StartTo     *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
-	Opened      *bool          `form:"opened" json:"opened"`
-	OnlyParents bool           `form:"correlation" json:"correlation"`
-	Category    string         `form:"category" json:"category"`
-
-	IncludeInstructionTypes []int    `form:"include_instruction_types[]" json:"include_instruction_types"`
-	ExcludeInstructionTypes []int    `form:"exclude_instruction_types[]" json:"exclude_instruction_types"`
-	IncludeInstructions     []string `form:"include_instructions[]" json:"include_instructions"`
-	ExcludeInstructions     []string `form:"exclude_instructions[]" json:"exclude_instructions"`
-}
-
 func (r FilterRequest) GetOpenedFilter() int {
 	if r.Opened == nil {
 		return OpenedAndRecentResolved
@@ -60,6 +44,27 @@ func (r FilterRequest) GetOpenedFilter() int {
 	}
 
 	return OnlyResolved
+}
+
+type BaseFilterRequest struct {
+	Filters     []string       `form:"filters[]" json:"filters"`
+	Search      string         `form:"search" json:"search"`
+	TimeField   string         `form:"time_field" json:"time_field" binding:"oneoforempty=t v.creation_date v.resolved v.last_update_date v.last_event_date"`
+	StartFrom   *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
+	StartTo     *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
+	Opened      *bool          `form:"opened" json:"opened"`
+	OnlyParents bool           `form:"correlation" json:"correlation"`
+	Category    string         `form:"category" json:"category"`
+
+	Instructions []InstructionFilterRequest `form:"instructions[]" json:"instructions"`
+}
+
+type InstructionFilterRequest struct {
+	Running      *bool    `form:"running" json:"running"`
+	IncludeTypes []int    `form:"include_types[]" json:"include_types"`
+	ExcludeTypes []int    `form:"exclude_types[]" json:"exclude_types"`
+	Include      []string `form:"include[]" json:"include"`
+	Exclude      []string `form:"exclude[]" json:"exclude"`
 }
 
 type ListByServiceRequest struct {

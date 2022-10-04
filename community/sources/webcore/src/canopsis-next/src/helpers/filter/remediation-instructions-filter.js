@@ -1,14 +1,21 @@
-import { uniq } from 'lodash';
+import { isBoolean } from 'lodash';
 
 import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
+import { mapIds } from '@/helpers/entities';
+
+/**
+ * @typedef {Object} RemediationInstructionFilterQuery
+ * @property {boolean} [running]
+ * @property {string[]} [include]
+ * @property {string[]} [exclude]
+ * @property {string[]} [include_types]
+ * @property {string[]} [exclude_types]
+ */
+
 /**
  * @typedef {Object} RemediationInstructionFilterQueryParameters
- * @property {boolean} [with_instructions]
- * @property {string[]} [include_instructions]
- * @property {string[]} [exclude_instructions]
- * @property {string[]} [include_instructions_types]
- * @property {string[]} [exclude_instructions_types]
+ * @property {RemediationInstructionFilterQuery[]} [instructions]
  */
 
 const PARAMETERS_FILTERS_TYPES = {
@@ -29,48 +36,35 @@ export function prepareRemediationInstructionsFiltersToQuery(filters = []) {
     return query;
   }
 
-  const result = filters.reduce((acc, filter) => {
-    const key = filter.with
-      ? PARAMETERS_FILTERS_TYPES.include
-      : PARAMETERS_FILTERS_TYPES.exclude;
+  query.instructions = filters.map((filter) => {
+    const instructionQuery = {};
 
-    if (
-      acc[key].instruction_types.includes(REMEDIATION_INSTRUCTION_TYPES.auto)
-      && acc[key].instruction_types.includes(REMEDIATION_INSTRUCTION_TYPES.manual)
-    ) {
-      return acc;
-    }
+    const key = filter.with ? PARAMETERS_FILTERS_TYPES.include : PARAMETERS_FILTERS_TYPES.exclude;
+    const typesKey = `${key}_types`;
 
     if (filter.all) {
-      acc[key].instruction_types = [REMEDIATION_INSTRUCTION_TYPES.auto, REMEDIATION_INSTRUCTION_TYPES.manual];
-    }
+      instructionQuery[typesKey] = [REMEDIATION_INSTRUCTION_TYPES.auto, REMEDIATION_INSTRUCTION_TYPES.manual];
+    } else if (filter.auto || filter.manual) {
+      instructionQuery[typesKey] = [];
 
-    if (filter.auto) {
-      acc[key].instruction_types.push(REMEDIATION_INSTRUCTION_TYPES.auto);
-    }
-
-    if (filter.manual) {
-      acc[key].instruction_types.push(REMEDIATION_INSTRUCTION_TYPES.manual);
-    }
-
-    const instructionsIds = filter.instructions
-      ? filter.instructions.map(({ _id }) => _id)
-      : [];
-
-    acc[key].instructions.push(...instructionsIds);
-
-    return acc;
-  }, {
-    [PARAMETERS_FILTERS_TYPES.include]: { instruction_types: [], instructions: [] },
-    [PARAMETERS_FILTERS_TYPES.exclude]: { instruction_types: [], instructions: [] },
-  });
-
-  Object.entries(result).forEach(([filterTypeKey, filterTypeRules = {}]) => {
-    Object.entries(filterTypeRules).forEach(([filterTypeRuleKey, filterTypeRule = []]) => {
-      if (filterTypeRule.length) {
-        query[`${filterTypeKey}_${filterTypeRuleKey}`] = uniq(filterTypeRule).sort();
+      if (filter.auto) {
+        instructionQuery[typesKey].push(REMEDIATION_INSTRUCTION_TYPES.auto);
       }
-    });
+
+      if (filter.manual) {
+        instructionQuery[typesKey].push(REMEDIATION_INSTRUCTION_TYPES.manual);
+      }
+    }
+
+    if (filter.instructions?.length) {
+      instructionQuery[key] = mapIds(filter.instructions);
+    }
+
+    if (isBoolean(filter.running)) {
+      instructionQuery.running = filter.running;
+    }
+
+    return instructionQuery;
   });
 
   return query;
