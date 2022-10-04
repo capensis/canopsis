@@ -48,13 +48,33 @@ Feature: Get pbehavior exception
             }
           ],
           "created": 1592215037
+        },
+        {
+          "_id": "test-exception-to-get-3",
+          "name": "test-exception-to-get-3-name",
+          "description": "test-exception-to-get-3-description",
+          "exdates": [
+            {
+              "begin": 1591164001,
+              "end": 1591167601,
+              "type": {
+                "_id": "test-type-to-exception-edit-3",
+                "description": "Exception edit 3 State type",
+                "icon_name": "test-to-exception-edit-3-icon",
+                "name": "Exception edit 3 State",
+                "priority": 15,
+                "type": "active"
+              }
+            }
+          ],
+          "created": 1592215037
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """
@@ -74,13 +94,17 @@ Feature: Get pbehavior exception
         {
           "_id": "test-exception-to-get-2",
           "deletable": false
+        },
+        {
+          "_id": "test-exception-to-get-3",
+          "deletable": false
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """

@@ -2,6 +2,8 @@ package pbehaviorexception
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -11,7 +13,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 type Store interface {
@@ -25,7 +26,7 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
-		dbCollection:          dbClient.Collection(pbehavior.ExceptionCollectionName),
+		dbCollection:          dbClient.Collection(mongo.PbehaviorExceptionMongoCollection),
 		pbehaviorDbCollection: dbClient.Collection(pbehavior.PBehaviorCollectionName),
 		defaultSearchByFields: []string{"_id", "name", "description"},
 		defaultSortBy:         "created",
@@ -233,6 +234,18 @@ func getDeletablePipeline() []bson.M {
 		}},
 		{"$project": bson.M{
 			"pbh": 0,
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EventFilterRulesMongoCollection,
+			"localField":   "_id",
+			"foreignField": "exceptions",
+			"as":           "ef",
+		}},
+		{"$addFields": bson.M{
+			"deletable": bson.M{"$and": bson.A{bson.M{"$eq": bson.A{bson.M{"$size": "$ef"}, 0}}, "$deletable"}},
+		}},
+		{"$project": bson.M{
+			"ef": 0,
 		}},
 	}
 }

@@ -1,0 +1,19 @@
+pbehavior_exception:
+  pbehavior_exception_{1..10}:
+    _id: <UUID()>
+    name: <LoremIpsumSentence(3)>
+    exdates: <GenerateExdates(1)>
+
+eventfilter:
+  eventfilter_{1..1000}:
+    _id: <UUID()>
+    priority: <RangeIndex()>
+    type: drop
+    description: <LoremIpsumSentence(3)>
+    enabled: true
+    author: root
+    rrule: "FREQ=DAILY"
+    start: <NowUnixAdd(-24h)>
+    stop: <NowUnix()>
+    exdates: <GenerateExdates(10)>
+    exceptions: @pbehavior_exception_*

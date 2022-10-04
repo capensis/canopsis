@@ -13,6 +13,8 @@ export const createSettingsMocks = () => {
     meta: { total_count: 0 },
   });
   const fetchItem = jest.fn();
+  const getUserPreferenceByWidgetId = jest.fn()
+    .mockReturnValue({ content: {} });
 
   return {
     createWidget,
@@ -49,6 +51,9 @@ export const createSettingsMocks = () => {
       name: 'userPreference',
       actions: {
         fetchItem: fetchUserPreference,
+      },
+      getters: {
+        getItemByWidgetId: () => getUserPreferenceByWidgetId,
       },
     },
 

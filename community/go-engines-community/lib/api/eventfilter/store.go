@@ -11,20 +11,19 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type Store interface {
-	Insert(ctx context.Context, request CreateRequest) (*eventfilter.Rule, error)
-	GetById(ctx context.Context, id string) (*eventfilter.Rule, error)
+	Insert(ctx context.Context, request CreateRequest) (*Response, error)
+	GetById(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
-	Update(ctx context.Context, request UpdateRequest) (*eventfilter.Rule, error)
+	Update(ctx context.Context, request UpdateRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
 type AggregationResult struct {
-	Data       []*eventfilter.Rule `bson:"data" json:"data"`
-	TotalCount int64               `bson:"total_count" json:"total_count"`
+	Data       []*Response `bson:"data" json:"data"`
+	TotalCount int64       `bson:"total_count" json:"total_count"`
 }
 
 type store struct {
@@ -46,6 +45,12 @@ func NewStore(
 }
 
 func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
+	exdates := make([]types.Exdate, len(r.Exdates))
+	for i := range r.Exdates {
+		exdates[i].Begin = r.Exdates[i].Begin
+		exdates[i].End = r.Exdates[i].End
+	}
+
 	return eventfilter.Rule{
 		Author:              r.Author,
 		Description:         r.Description,
@@ -56,12 +61,18 @@ func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
 		ExternalData:        r.ExternalData,
 		EventPattern:        r.EventPattern,
 		EntityPatternFields: r.EntityPatternFieldsRequest.ToModel(),
+		RRule:               r.RRule,
+		Start:               r.Start,
+		Stop:                r.Stop,
+		ResolvedStart:       r.Start,
+		ResolvedStop:        r.Stop,
+		Exdates:             exdates,
+		Exceptions:          r.Exceptions,
 	}
 }
 
-func (s *store) Insert(ctx context.Context, request CreateRequest) (*eventfilter.Rule, error) {
+func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, error) {
 	model := s.transformRequestToDocument(request.EditRequest)
-
 	model.ID = request.ID
 	if model.ID == "" {
 		model.ID = utils.NewID()
@@ -71,7 +82,7 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*eventfilter
 	model.Created = &now
 	model.Updated = &now
 
-	var response *eventfilter.Rule
+	var response *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 		_, err := s.dbCollection.InsertOne(ctx, model)
@@ -86,22 +97,39 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*eventfilter
 	return response, err
 }
 
-func (s *store) GetById(ctx context.Context, id string) (*eventfilter.Rule, error) {
-	res := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
-	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return nil, nil
-		}
-		return nil, err
+func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{"_id": id},
+		},
+		{
+			"$lookup": bson.M{
+				"from":         mongo.PbehaviorExceptionMongoCollection,
+				"localField":   "exceptions",
+				"foreignField": "_id",
+				"as":           "exceptions",
+			},
+		},
 	}
 
-	rule := &eventfilter.Rule{}
-	err := res.Decode(rule)
+	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
 
-	return rule, nil
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		var rule Response
+		err = cursor.Decode(&rule)
+		if err != nil {
+			return nil, err
+		}
+
+		return &rule, nil
+	}
+
+	return nil, nil
 }
 
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
@@ -120,6 +148,16 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 		query.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, query.Sort),
+		[]bson.M{
+			{
+				"$lookup": bson.M{
+					"from":         mongo.PbehaviorExceptionMongoCollection,
+					"localField":   "exceptions",
+					"foreignField": "_id",
+					"as":           "exceptions",
+				},
+			},
+		},
 	))
 
 	if err != nil {
@@ -137,7 +175,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	return &result, nil
 }
 
-func (s *store) Update(ctx context.Context, request UpdateRequest) (*eventfilter.Rule, error) {
+func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, error) {
 	updated := types.NewCpsTime(time.Now().Unix())
 	model := s.transformRequestToDocument(request.EditRequest)
 	model.ID = request.ID
@@ -145,11 +183,26 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*eventfilter
 	model.Updated = &updated
 
 	update := bson.M{"$set": model}
+	unset := bson.M{}
+
 	if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 || len(request.EventPattern) > 0 {
-		update["$unset"] = bson.M{"old_patterns": 1}
+		unset["old_patterns"] = 1
 	}
 
-	var response *eventfilter.Rule
+	if model.Start == nil || model.Start.IsZero() || model.Stop == nil || model.Stop.IsZero() {
+		unset["start"] = ""
+		unset["stop"] = ""
+		unset["resolved_start"] = ""
+		unset["resolved_stop"] = ""
+		unset["next_resolved_start"] = ""
+		unset["next_resolved_stop"] = ""
+	}
+
+	if len(unset) != 0 {
+		update["$unset"] = unset
+	}
+
+	var response *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 		_, err := s.dbCollection.UpdateOne(

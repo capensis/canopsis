@@ -202,7 +202,7 @@ func (s *store) isLinkedToPbehavior(ctx context.Context, id string) (bool, error
 
 // isLinkedToException checks if there is execption with linked type.
 func (s *store) isLinkedToException(ctx context.Context, id string) (bool, error) {
-	exceptionCollection := s.db.Collection(pbehavior.ExceptionCollectionName)
+	exceptionCollection := s.db.Collection(mongo.PbehaviorExceptionMongoCollection)
 	res := exceptionCollection.FindOne(ctx, bson.M{"exdates.type": id})
 	if err := res.Err(); err == nil {
 		return true, nil
