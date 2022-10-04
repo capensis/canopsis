@@ -55,6 +55,7 @@ import CPatternOperatorInformation from '@/components/common/block/c-pattern-ope
  */
 import CAlertOverlay from '@/components/common/overlay/c-alert-overlay.vue';
 import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue';
+import CZoomOverlay from '@/components/common/overlay/c-zoom-overlay.vue';
 
 /**
  * Chips
@@ -156,6 +157,9 @@ import CSelectField from '@/components/forms/fields/c-select-field.vue';
 import CCollapsePanel from '@/components/common/block/c-collapse-panel.vue';
 import CServiceWeatherPatternsField from '@/components/forms/fields/service-weather/c-service-weather-patterns-field.vue';
 import CServiceWeatherIconField from '@/components/forms/fields/service-weather/c-service-weather-icon-field.vue';
+import CContextmenu from '@/components/common/contextmenu/c-contextmenu.vue';
+import CMapField from '@/components/forms/fields/map/c-map-field.vue';
+import CCoordinatesField from '@/components/forms/fields/map/c-coordinates-field.vue';
 
 /**
  * Patterns
@@ -330,6 +334,7 @@ Vue.component('c-pagination', CPagination);
 Vue.component('c-table-pagination', CTablePagination);
 Vue.component('c-alert-overlay', CAlertOverlay);
 Vue.component('c-progress-overlay', CProgressOverlay);
+Vue.component('c-zoom-overlay', CZoomOverlay);
 Vue.component('c-enabled-field', CEnabledField);
 Vue.component('c-duration-field', CDurationField);
 Vue.component('c-disable-during-periods-field', CDisableDuringPeriodsField);
@@ -400,6 +405,7 @@ Vue.component('c-entity-field', CEntityField);
 Vue.component('c-pbehavior-reason-field', CPbehaviorReasonField);
 Vue.component('c-pbehavior-type-field', CPbehaviorTypeField);
 Vue.component('c-collapse-panel', CCollapsePanel);
+Vue.component('c-contextmenu', CContextmenu);
 
 Vue.component('c-pattern-attribute-field', CPatternAttributeField);
 Vue.component('c-pattern-infos-attribute-field', CPatternInfosAttributeField);
@@ -421,7 +427,11 @@ Vue.component('c-entity-patterns-field', CEntityPatternsField);
 Vue.component('c-pbehavior-patterns-field', CPbehaviorPatternsField);
 Vue.component('c-event-filter-patterns-field', CEventFilterPatternsField);
 Vue.component('c-service-weather-patterns-field', CServiceWeatherPatternsField);
+
 Vue.component('c-service-weather-icon-field', CServiceWeatherIconField);
+
+Vue.component('c-map-field', CMapField);
+Vue.component('c-coordinates-field', CCoordinatesField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
@@ -476,6 +486,12 @@ Vue.use(ModalsPlugin, {
     [MODALS.createDynamicInfo]: { maxWidth: 1280 },
     [MODALS.createAlarmStatusRule]: { maxWidth: 1280 },
     [MODALS.createService]: { maxWidth: 1280 },
+    [MODALS.createMap]: { maxWidth: 500, lazy: true },
+    [MODALS.createMermaidMap]: { maxWidth: 1600 },
+    [MODALS.createTreeOfDependenciesMap]: { maxWidth: 1334 },
+    [MODALS.createGeoMap]: { maxWidth: 1280 },
+    [MODALS.createFlowchartMap]: { maxWidth: 1600 },
+    [MODALS.entityDependenciesList]: { maxWidth: 1600 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

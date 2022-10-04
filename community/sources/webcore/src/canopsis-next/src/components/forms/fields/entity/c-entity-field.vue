@@ -1,7 +1,7 @@
 <template lang="pug">
   c-select-field.c-entity-field(
     v-field="value",
-    v-validate="'required'",
+    v-validate="rules",
     :search-input="query.search",
     :label="selectLabel",
     :loading="entitiesPending",
@@ -14,16 +14,20 @@
     :small-chips="isMultiply",
     :error-messages="errors.collect(name)",
     :disabled="disabled",
-    :return-object="false",
+    :return-object="returnObject",
+    :item-disabled="itemDisabled",
     :menu-props="{ contentClass: 'c-entity-field__list' }",
-    dense,
+    :clearable="clearable",
+    no-filter,
     combobox,
+    dense,
     @focus="onFocus",
     @blur="onBlur",
     @update:searchInput="debouncedUpdateSearch"
   )
     template(#item="{ item, tile }")
       v-list-tile.c-entity-field--tile(v-bind="tile.props", v-on="tile.on")
+        slot(name="icon", :item="item")
         v-list-tile-content {{ getItemText(item) }}
         span.ml-4.grey--text {{ item.type }}
     template(#append-item="")
@@ -35,7 +39,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { debounce, isEqual, keyBy, isArray, isString } from 'lodash';
+import { debounce, isEqual, keyBy, isArray, isString, isFunction } from 'lodash';
 
 import { BASIC_ENTITY_TYPES } from '@/constants';
 
@@ -54,7 +58,7 @@ export default {
   },
   props: {
     value: {
-      type: [Array, String],
+      type: [Array, String, Object],
       default: '',
     },
     name: {
@@ -66,7 +70,7 @@ export default {
       required: false,
     },
     itemText: {
-      type: String,
+      type: [String, Function],
       default: '_id',
     },
     itemValue: {
@@ -85,6 +89,22 @@ export default {
       type: Boolean,
       default: false,
     },
+    returnObject: {
+      type: Boolean,
+      default: false,
+    },
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
+    itemDisabled: {
+      type: [String, Array, Function],
+      required: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -100,6 +120,12 @@ export default {
     };
   },
   computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+
     entities() {
       return Object.values(this.entitiesById);
     },
@@ -145,7 +171,11 @@ export default {
     ...entityMapActions({ fetchContextEntitiesListWithoutStore: 'fetchListWithoutStore' }),
 
     getItemText(item) {
-      return isString(item) ? item : item[this.itemText];
+      if (isString(item)) {
+        return item;
+      }
+
+      return isFunction(this.itemText) ? this.itemText(item) : item[this.itemText];
     },
 
     intersectionHandler(entries) {
@@ -189,19 +219,24 @@ export default {
     },
 
     async fetchEntities() {
-      this.entitiesPending = true;
+      try {
+        this.entitiesPending = true;
 
-      const { data: entities, meta } = await this.fetchContextEntitiesListWithoutStore({
-        params: this.getQuery(),
-      });
+        const { data: entities, meta } = await this.fetchContextEntitiesListWithoutStore({
+          params: this.getQuery(),
+        });
 
-      this.pageCount = meta.page_count;
+        this.pageCount = meta.page_count;
 
-      this.entitiesById = {
-        ...this.entitiesById,
-        ...keyBy(entities, this.itemValue),
-      };
-      this.entitiesPending = false;
+        this.entitiesById = {
+          // ...this.entitiesById,
+          ...keyBy(entities, this.itemValue),
+        };
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.entitiesPending = false;
+      }
     },
   },
 };

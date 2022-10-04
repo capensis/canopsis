@@ -12,15 +12,7 @@
           :disabled="disabledCommon",
           hide-details
         )
-    v-layout(row)
-      v-text-field(
-        v-field="form.name",
-        v-validate="'required'",
-        :label="$t('common.name')",
-        :error-messages="errors.collect('name')",
-        :disabled="disabledCommon",
-        name="name"
-      )
+    c-name-field(v-field="form.name", :disabled="disabledCommon")
     v-layout(row)
       v-text-field(
         v-field="form.description",

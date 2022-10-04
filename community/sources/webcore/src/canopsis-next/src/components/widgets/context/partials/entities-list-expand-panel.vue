@@ -6,7 +6,6 @@
         v-card-text
           pbehaviors-simple-list(
             :entity="item",
-            :tab-id="tabId",
             :deletable="hasDeleteAnyPbehaviorAccess",
             :editable="hasUpdateAnyPbehaviorAccess"
           )
@@ -14,7 +13,7 @@
     template(v-if="item.type !== $constants.ENTITY_TYPES.service")
       v-tab {{ $t('context.impactDepends') }}
       v-tab-item(lazy)
-        impact-depends-tab(:impact="item.impact", :depends="item.depends")
+        impact-depends-tab(:entity="item")
 
     v-tab {{ $t('common.infos') }}
     v-tab-item(lazy)
@@ -23,11 +22,11 @@
     template(v-if="item.type === $constants.ENTITY_TYPES.service")
       v-tab {{ $t('context.treeOfDependencies') }}
       v-tab-item(lazy)
-        tree-of-dependencies-tab(:item="item", :widget="widget")
+        tree-of-dependencies-tab(:item="item", :columns="serviceDependenciesColumns")
 
     v-tab {{ $t('context.impactChain') }}
     v-tab-item(lazy)
-      impact-chain-dependencies-tab(:item="item", :widget="widget")
+      impact-chain-dependencies-tab(:item="item", :columns="serviceDependenciesColumns")
 </template>
 
 <script>
@@ -54,15 +53,11 @@ export default {
       type: Object,
       required: true,
     },
-    widget: {
-      type: Object,
-      required: true,
-    },
-    tabId: {
-      type: String,
-      required: true,
-    },
     columnsFilters: {
+      type: Array,
+      default: () => [],
+    },
+    serviceDependenciesColumns: {
       type: Array,
       default: () => [],
     },
