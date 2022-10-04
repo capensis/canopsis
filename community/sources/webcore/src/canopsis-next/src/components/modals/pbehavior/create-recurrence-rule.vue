@@ -1,12 +1,16 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createRrule.title') }}
-      template(slot="text")
+      template(#text="")
         recurrence-rule-form(v-model="form.rrule")
-        pbehavior-exception-form(v-model="form.exdates", :exceptions.sync="form.exceptions")
-      template(slot="actions")
+        pbehavior-exception-form(
+          v-model="form.exdates",
+          :exceptions.sync="form.exceptions",
+          :with-exdate-type="config.withExdateType"
+        )
+      template(#actions="")
         v-btn(
           depressed,
           flat,
@@ -52,9 +56,9 @@ export default {
 
     return {
       form: {
-        rrule: rrule || '',
-        exdates: exdates || [],
-        exceptions: exceptions || [],
+        rrule: rrule ?? '',
+        exdates: exdates ?? [],
+        exceptions: exceptions ?? [],
       },
     };
   },

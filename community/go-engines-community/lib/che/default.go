@@ -86,20 +86,31 @@ func NewEngine(
 		logger,
 	)
 
+	eventfilterIntervalsWorker := NewEventfilterIntervalsWorker(mongoClient, timezoneConfigProvider, options.PeriodicalWaitTime, logger)
+	eventfilterIntervalsPeriodicalWorker := libengine.NewLockedPeriodicalWorker(
+		periodicalLockClient,
+		redis.CheEventFiltersIntervalsPeriodicalLockKey,
+		eventfilterIntervalsWorker,
+		logger,
+	)
+
 	engine := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
+			eventfilterIntervalsWorker.Work(ctx)
 
 			// run in goroutine because it may take some time to process heavy dbs, don't want to slow down the engine startup
 			go infosDictLockedPeriodicalWorker.Work(ctx)
 
-			logger.Debug().Msg("Loading event filter rules")
-			err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
-			if err != nil {
-				return fmt.Errorf("unable to load rules: %w", err)
+			if !mongoClient.IsDistributed() {
+				logger.Debug().Msg("Loading event filter rules")
+				err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
+				if err != nil {
+					return fmt.Errorf("unable to load rules: %w", err)
+				}
 			}
 
-			err = enrichmentCenter.LoadServices(ctx)
+			err := enrichmentCenter.LoadServices(ctx)
 			if err != nil {
 				return fmt.Errorf("unable to load services: %w", err)
 			}
@@ -160,7 +171,7 @@ func NewEngine(
 		canopsis.FIFOAckQueueName,
 		amqpConnection,
 		&messageProcessor{
-			FeaturePrintEventOnError: false,
+			FeaturePrintEventOnError: options.PrintEventOnError,
 			FeatureEventProcessing:   options.FeatureEventProcessing,
 			FeatureContextCreation:   options.FeatureContextCreation,
 			AlarmConfigProvider:      alarmConfigProvider,
@@ -179,7 +190,9 @@ func NewEngine(
 		EnrichmentCenter:   enrichmentCenter,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
+		LoadRules:          !mongoClient.IsDistributed(),
 	})
+	engine.AddPeriodicalWorker("eventfilter intervals", eventfilterIntervalsPeriodicalWorker)
 	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engine.AddPeriodicalWorker("alarm config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
@@ -204,6 +217,25 @@ func NewEngine(
 		logger,
 	))
 	engine.AddPeriodicalWorker("entity infos dictionary", infosDictLockedPeriodicalWorker)
+	if mongoClient.IsDistributed() {
+		engine.AddRoutine(func(ctx context.Context) error {
+			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventfilterService)
+
+			logger.Debug().Msg("Loading event filter rules")
+
+			for {
+				select {
+				case <-ctx.Done():
+					return nil
+				default:
+					err := w.Watch(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
+					if err != nil {
+						logger.Error().Err(err).Msg("failed to watch eventfilter collection")
+					}
+				}
+			}
+		})
+	}
 
 	return engine
 }
