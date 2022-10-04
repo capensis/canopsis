@@ -1,39 +1,35 @@
 <template lang="pug">
-  c-advanced-data-table.white(
+  c-advanced-data-table(
     :headers="headers",
     :items="roles",
     :loading="pending",
     :pagination="pagination",
     :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
     :total-items="totalItems",
+    :select-all="removable",
     advanced-pagination,
     search,
-    select-all,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(slot="toolbar", slot-scope="props")
-      v-flex(v-show="hasDeleteAnyRoleAccess && props.selected.length", xs4)
-        v-btn(icon, data-test="massDeleteButton", @click="$emit('remove-selected', props.selected)")
-          v-icon(color="error") delete
-    template(slot="actions", slot-scope="props")
+    template(#mass-actions="{ selected }")
+      c-action-btn.ml-3(v-if="removable", type="delete", @click="$emit('remove-selected', selected)")
+
+    template(#actions="{ item }")
       v-layout(row)
         c-action-btn(
-          v-if="hasUpdateAnyRoleAccess",
+          v-if="updatable",
           type="edit",
-          @click="$emit('edit', props.item)"
+          @click="$emit('edit', item)"
         )
         c-action-btn(
-          v-if="hasDeleteAnyRoleAccess",
+          v-if="removable",
           type="delete",
-          @click="$emit('remove', props.item._id)"
+          @click="$emit('remove', item._id)"
         )
 </template>
 
 <script>
-import { permissionsTechnicalRoleMixin } from '@/mixins/permissions/technical/role';
-
 export default {
-  mixins: [permissionsTechnicalRoleMixin],
   props: {
     roles: {
       type: Array,
@@ -51,6 +47,14 @@ export default {
       type: Number,
       required: false,
     },
+    removable: {
+      type: Boolean,
+      default: false,
+    },
+    updatable: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     headers() {
@@ -58,6 +62,14 @@ export default {
         {
           text: this.$t('common.name'),
           value: 'name',
+        },
+        {
+          text: this.$t('role.inactivityInterval'),
+          value: 'auth_config.inactivity_interval',
+        },
+        {
+          text: this.$t('role.expirationInterval'),
+          value: 'auth_config.expiration_interval',
         },
         {
           text: this.$t('common.actionsLabel'),
