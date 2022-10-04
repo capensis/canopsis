@@ -495,10 +495,8 @@ func (a *ApiClient) TheResponseArrayKeyShouldContainOnly(path string, doc string
 					return err
 				}
 
-				if len(expected) < len(received) {
-					return fmt.Errorf("too little expected items, receieved items:\n%s", receivedStr)
-				} else if len(expected) > len(received) {
-					return fmt.Errorf("too many expected items, receieved items:\n%s", receivedStr)
+				if len(expected) != len(received) {
+					return fmt.Errorf("expected %d items but receieved:\n%s", len(expected), receivedStr)
 				}
 
 				for _, ev := range expected {
@@ -522,10 +520,8 @@ func (a *ApiClient) TheResponseArrayKeyShouldContainOnly(path string, doc string
 				return fmt.Errorf("%s is empty", doc)
 			}
 
-			if len(expected) < len(received) {
-				return fmt.Errorf("too little expected items, receieved items:\n%s", receivedStr)
-			} else if len(expected) > len(received) {
-				return fmt.Errorf("too many expected items, receieved items:\n%s", receivedStr)
+			if len(expected) != len(received) {
+				return fmt.Errorf("expected %d items but receieved:\n%s", len(expected), receivedStr)
 			}
 
 			for _, ev := range expected {

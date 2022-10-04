@@ -2,7 +2,7 @@ package entity
 
 import (
 	"context"
-	"strings"
+	"errors"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -20,6 +20,7 @@ type Store interface {
 	ArchiveDisabledEntities(ctx context.Context, archiveDeps bool) (int64, error)
 	DeleteArchivedEntities(ctx context.Context) (int64, error)
 	Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error)
+	GetContextGraph(ctx context.Context, id string) (*ContextGraphResponse, error)
 }
 
 type store struct {
@@ -257,13 +258,24 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 	return isToggled, oldSimplifiedEntity, err
 }
 
+func (s *store) GetContextGraph(ctx context.Context, id string) (*ContextGraphResponse, error) {
+	res := ContextGraphResponse{}
+	err := s.mainCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&res)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 func (s *store) fillConnectorType(result *AggregationResult) {
 	if result == nil {
 		return
 	}
-	for i, v := range result.Data {
-		if v.Type == types.EntityTypeConnector {
-			result.Data[i].ConnectorType = strings.TrimSuffix(v.ID, "/"+v.Name)
-		}
+	for i := range result.Data {
+		result.Data[i].fillConnectorType()
 	}
 }

@@ -170,6 +170,9 @@ type Event struct {
 	ExtraInfos   map[string]interface{} `json:"extra"`
 	AlarmChange  *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
 
+	// Tags contains external tags for alarm.
+	Tags map[string]string `bson:"tags" json:"tags"`
+
 	MetaAlarmRuleID    string `bson:"metaalarm_rule_id" json:"metaalarm_rule_id"`
 	MetaAlarmValuePath string `bson:"metaalarm_value_path" json:"metaalarm_value_path"`
 
