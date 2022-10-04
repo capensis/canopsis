@@ -387,14 +387,6 @@ definitions:
         type: string
       correlation:
         type: boolean
-      exclude_instruction_types:
-        items:
-          type: integer
-        type: array
-      exclude_instructions:
-        items:
-          type: string
-        type: array
       fields:
         items:
           $ref: '#/definitions/export.Field'
@@ -403,13 +395,9 @@ definitions:
         items:
           type: string
         type: array
-      include_instruction_types:
+      instructions:
         items:
-          type: integer
-        type: array
-      include_instructions:
-        items:
-          type: string
+          $ref: '#/definitions/alarm.InstructionFilterRequest'
         type: array
       opened:
         type: boolean
@@ -432,6 +420,27 @@ definitions:
         type: string
       status:
         type: integer
+    type: object
+  alarm.InstructionFilterRequest:
+    properties:
+      exclude:
+        items:
+          type: string
+        type: array
+      exclude_types:
+        items:
+          type: integer
+        type: array
+      include:
+        items:
+          type: string
+        type: array
+      include_types:
+        items:
+          type: integer
+        type: array
+      running:
+        type: boolean
     type: object
   alarm.ManualResponse:
     properties:
@@ -1410,6 +1419,10 @@ definitions:
       collection:
         description: are used in mongo external data
         type: string
+      regexp:
+        additionalProperties:
+          type: string
+        type: object
       request:
         $ref: '#/definitions/request.Parameters'
         description: are used in api external data
