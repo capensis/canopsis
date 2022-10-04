@@ -6,7 +6,9 @@
           v-checkbox-functional(
             v-if="!isResolvedAlarm",
             v-field="selected",
-            hide-details
+            hide-details,
+            mousedown,
+            @mouseenter="checkboxMouseenter($event)"
           )
           v-checkbox-functional(
             v-else,
@@ -45,6 +47,8 @@ import featuresService from '@/services/features';
 
 import { isResolvedAlarm } from '@/helpers/entities';
 
+import { formBaseMixin } from '@/mixins/form';
+
 import ActionsPanel from '../actions/actions-panel.vue';
 import AlarmColumnValue from '../columns-formatting/alarm-column-value.vue';
 import AlarmsExpandPanelBtn from '../expand-panel/alarms-expand-panel-btn.vue';
@@ -59,6 +63,7 @@ export default {
     AlarmsExpandPanelBtn,
     AlarmsListRowIcon,
   },
+  mixins: [formBaseMixin],
   model: {
     prop: 'selected',
     event: 'input',
@@ -173,6 +178,15 @@ export default {
   methods: {
     activateRow(value) {
       this.active = value;
+    },
+
+    checkboxMouseenter(event) {
+      if (event.ctrlKey && event.buttons) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.updateModel(!this.selected);
+      }
     },
   },
 };

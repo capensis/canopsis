@@ -1,12 +1,13 @@
 <template lang="pug">
   v-flex.white(v-resize="changeHeaderPositionOnResize")
-    v-flex.px-3(v-show="selectedIds.length", xs12)
-      mass-actions-panel(
-        :items-ids="selectedIds",
-        :widget="widget",
-        :refresh-alarms-list="refreshAlarmsList",
-        @clear:items="clearSelected"
-      )
+    v-expand-transition
+      v-flex.px-3(v-show="selectedIds.length", xs12)
+        mass-actions-panel(
+          :items-ids="selectedIds",
+          :widget="widget",
+          :refresh-alarms-list="refreshAlarmsList",
+          @clear:items="clearSelected"
+        )
     c-empty-data-table-columns(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
