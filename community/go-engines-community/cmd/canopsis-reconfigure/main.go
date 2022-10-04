@@ -96,12 +96,6 @@ type Conf struct {
 	HealthCheck config.HealthCheckConf `toml:"HealthCheck"`
 }
 
-// Clone returns pointer to a new deep copy of current Config
-func (c *Conf) Clone() interface{} {
-	cloned := *c
-	return &cloned
-}
-
 func initRabbitMQ(conf Conf, logger zerolog.Logger) error {
 	amqpConn, err := amqp.NewConnection(logger, 0, 0)
 	if err != nil {
