@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -36,6 +37,7 @@ type Options struct {
 	ModeDebug                bool
 	PublishToQueue           string
 	PeriodicalWaitTime       time.Duration
+	TagsPeriodicalWaitTime   time.Duration
 	WithRemediation          bool
 }
 
@@ -46,6 +48,7 @@ func ParseOptions() Options {
 	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.StringVar(&opts.PublishToQueue, "publishQueue", canopsis.ServiceQueueName, "Publish event to this queue")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
+	flag.DurationVar(&opts.TagsPeriodicalWaitTime, "tagsPeriodicalWaitTime", 5*time.Second, "Duration to wait between two run of periodical process to update alarm tags")
 	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.Parse()
@@ -156,6 +159,8 @@ func NewEngine(
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
 		metricsSender, logger)
 
+	tagUpdater := alarmtag.NewUpdater(dbClient)
+
 	engineAxe := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
@@ -217,6 +222,7 @@ func NewEngine(
 			Decoder:                json.NewDecoder(),
 			Logger:                 logger,
 			PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
+			TagUpdater:             tagUpdater,
 		},
 		logger,
 	))
@@ -246,6 +252,11 @@ func NewEngine(
 	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		AlarmStatusService: alarmStatusService,
+		Logger:             logger,
+	})
+	engineAxe.AddPeriodicalWorker("tags", &tagPeriodicalWorker{
+		PeriodicalInterval: options.TagsPeriodicalWaitTime,
+		TagUpdater:         tagUpdater,
 		Logger:             logger,
 	})
 	engineAxe.AddPeriodicalWorker("alarms", libengine.NewLockedPeriodicalWorker(

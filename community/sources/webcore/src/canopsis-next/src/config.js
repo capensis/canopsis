@@ -5,6 +5,7 @@ export const {
   VUE_APP_API_HOST,
   VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY,
   VUE_APP_PAGINATION_LIMIT,
+  VUE_APP_OPEN_STREET_LAYER_URL,
 } = process.env;
 
 export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
@@ -16,6 +17,8 @@ export const SOCKET_HOST = API_HOST.replace(/^http(s?)/, 'wss');
 export const SOCKET_ROUTE = '/api/v4/ws';
 
 export const SOCKET_URL = removeTrailingSlashes(`${SOCKET_HOST}${SOCKET_ROUTE}`);
+
+export const OPEN_STREET_LAYER_URL = VUE_APP_OPEN_STREET_LAYER_URL;
 
 export const ROUTER_MODE = 'history';
 
@@ -44,6 +47,8 @@ export const LOCALE_PRIORITIES = {
 };
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
+
+export const ZOOM_OVERLAY_DELAY = 1500;
 
 export const VUETIFY_ANIMATION_DELAY = 300;
 
@@ -88,8 +93,10 @@ export const API_ROUTES = {
   componentAlarms: '/api/v4/component-alarms',
   resolvedAlarms: '/api/v4/resolved-alarms',
   alarmDetails: '/api/v4/alarm-details',
+  openAlarms: '/api/v4/open-alarms',
   manualMetaAlarm: '/api/v4/manual-meta-alarms',
   entity: '/api/v4/entities',
+  entityContextGraph: '/api/v4/entities/context-graph',
   bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
   bulkEntitiesDisable: '/api/v4/bulk/entities/disable',
   entityBasics: '/api/v4/entitybasics',
@@ -100,6 +107,7 @@ export const API_ROUTES = {
   entityInfosKeys: '/api/v4/entity-infos-dictionary/keys',
   weatherService: '/api/v4/weather-services',
   alarmListExport: '/api/v4/alarm-export',
+  alarmTags: '/api/v4/alarm-tags',
   contextExport: '/api/v4/entity-export',
   event: '/api/v4/event',
   userPreferences: '/api/v4/user-preferences',
@@ -228,11 +236,15 @@ export const API_ROUTES = {
     rating: '/api/v4/cat/metrics/rating',
     remediation: '/api/v4/cat/metrics/remediation',
   },
+  maps: '/api/v4/cat/maps',
+  bulkMaps: '/api/v4/cat/maps/bulk',
+  mapState: '/api/v4/cat/map-state',
 };
 
 export const COLORS = {
   primary: '#2fab63',
   secondary: '#2b3e4f',
+  error: '#ff5252',
   state: {
     ok: '#00a65a',
     minor: '#fcdc00',
@@ -336,6 +348,98 @@ export const COLORS = {
     remediationStatisticAssignedRemediations: '#FFA800',
     remediationStatisticExecutedRemediations: '#5B6E7F',
     remediationStatisticRatioRemediations: '#5B6E7F',
+  },
+  mermaid: {
+    primaryColor: '#bfe4ce',
+    primaryBorderColor: '#2faa62',
+    textColor: '#323232',
+    lineColor: '#323232',
+    noteBkgColor: '#75818c',
+    noteTextColor: '#fdfdfd',
+  },
+  flowchart: {
+    selection: '#5b6e7f',
+    shapes: [
+      '#fd897f',
+      '#fd7faa',
+      '#e87ffa',
+      '#b287fd',
+      '#8b9dfd',
+      '#7fd6fd',
+      '#83fdfd',
+      '#a6fde9',
+      '#b8f4c8',
+      '#cafd8f',
+      '#f2fd80',
+      '#fdfd8c',
+      '#fde37e',
+      '#fdcf7f',
+      '#fd9d7f',
+      '#d5cac6',
+      '#f3f3f3',
+      '#cdd6da',
+    ],
+    border: [
+      '#fd1743',
+      '#f30056',
+      '#d300f7',
+      '#641ffd',
+      '#2978fd',
+      '#00affd',
+      '#00b7d2',
+      '#1de7b5',
+      '#00e475',
+      '#75fd03',
+      '#c4fd00',
+      '#fde800',
+      '#fdc200',
+      '#fd9000',
+      '#fd3d00',
+      '#8c6d62',
+      '#9d9d9d',
+      '#5f7c8a',
+    ],
+    text: [
+      '#b61c1c',
+      '#870e4e',
+      '#49148b',
+      '#311b91',
+      '#0d46a0',
+      '#01569a',
+      '#005f63',
+      '#004c3f',
+      '#1b5d20',
+      '#33681e',
+      '#9d9c24',
+      '#f37e17',
+      '#fd6e00',
+      '#e45000',
+      '#be360c',
+      '#4d342e',
+      '#414141',
+      '#37464e',
+    ],
+    background: [
+      '#ffffff',
+      '#eceff1',
+      '#fafafa',
+      '#efebe9',
+      '#fbe9e7',
+      '#f9fbe7',
+      '#fff8e1',
+      '#fffde7',
+      '#fff3e0',
+      '#f1f8e9',
+      '#e0f2f1',
+      '#e0f7fa',
+      '#e8f5e9',
+      '#f3e5f5',
+      '#ede7f6',
+      '#e8eaf6',
+      '#e3f2fd',
+      '#fce4ec',
+      '#ffebee',
+    ],
   },
 };
 

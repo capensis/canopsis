@@ -50,7 +50,6 @@ export default {
       name: 'names',
       rules: 'required:true',
       getter: () => this.names.length > 0,
-      context: () => this,
       vm: this,
     });
   },

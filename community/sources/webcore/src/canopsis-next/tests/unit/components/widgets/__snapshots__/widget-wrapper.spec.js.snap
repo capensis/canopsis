@@ -16,7 +16,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with default props 1`] = `
 </div>
 `;
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode  1`] = `
+exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode 1`] = `
 <div
   style="min-height: 40px;"
 >
@@ -55,7 +55,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode  1`] = `
 </div>
 `;
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode  1`] = `
+exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode 1`] = `
 <div
   style="min-height: 40px;"
 >
@@ -230,6 +230,40 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and core edit
 </div>
 `;
 
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Map and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <map-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Map and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <c-alert-overlay-stub
+      message="Stats widgets are not available with 'community' edition"
+      tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
 exports[`widget-wrapper Renders \`widget-wrapper\` with type ServiceWeather and cat edition 1`] = `
 <div
   style="min-height: 40px;"
@@ -332,7 +366,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and core editi
 </div>
 `;
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with widget title  1`] = `
+exports[`widget-wrapper Renders \`widget-wrapper\` with widget title 1`] = `
 <div
   style="min-height: 40px;"
 >

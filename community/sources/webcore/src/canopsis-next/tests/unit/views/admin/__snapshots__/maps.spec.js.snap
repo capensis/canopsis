@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`maps Renders \`maps\` with permissions 1`] = `
+<div>
+  <c-page-header-stub />
+  <div
+    class="ma-4 mt-0 v-card v-sheet theme--light"
+  >
+    <maps-list-stub
+      duplicable="true"
+      maps=""
+      pagination="[object Object]"
+      removable="true"
+      totalitems="0"
+      updatable="true"
+    />
+  </div>
+  <c-fab-btn-stub
+    has-access="true"
+  >
+    <span>
+      Create a map
+    </span>
+  </c-fab-btn-stub>
+</div>
+`;
+
+exports[`maps Renders \`maps\` without permissions 1`] = `
+<div>
+  <c-page-header-stub />
+  <div
+    class="ma-4 mt-0 v-card v-sheet theme--light"
+  >
+    <maps-list-stub
+      maps=""
+      pagination="[object Object]"
+      totalitems="0"
+    />
+  </div>
+  <c-fab-btn-stub>
+    <span>
+      Create a map
+    </span>
+  </c-fab-btn-stub>
+</div>
+`;

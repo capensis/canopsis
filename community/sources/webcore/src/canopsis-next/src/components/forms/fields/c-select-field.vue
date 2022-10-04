@@ -51,7 +51,7 @@ export default {
       default: false,
     },
     itemText: {
-      type: String,
+      type: [String, Function],
       default: 'text',
     },
     itemValue: {

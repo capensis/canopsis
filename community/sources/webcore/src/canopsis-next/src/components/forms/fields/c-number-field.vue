@@ -6,10 +6,13 @@
     :label="label",
     :error-messages="errors.collect(name)",
     :disabled="disabled",
+    :hide-details="hideDetails",
     :name="name",
     :min="min",
     :max="max",
-    type="number"
+    :step="step",
+    type="number",
+    @paste="$emit('paste', $event)"
   )
     template(#append="")
       slot(name="append")
@@ -51,12 +54,21 @@ export default {
       type: Number,
       default: undefined,
     },
+    step: {
+      type: Number,
+      default: undefined,
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     rules() {
       return {
         required: this.required,
-        numeric: true,
+        numeric: !this.step,
+        decimal: !!this.step,
         min_value: this.min ?? false,
         max_value: this.max ?? false,
       };

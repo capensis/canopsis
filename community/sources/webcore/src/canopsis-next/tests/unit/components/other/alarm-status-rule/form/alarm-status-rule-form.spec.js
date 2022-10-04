@@ -9,6 +9,7 @@ import AlarmStatusRuleForm from '@/components/other/alarm-status-rule/form/alarm
 const localVue = createVueInstance();
 
 const stubs = {
+  'c-name-field': true,
   'c-duration-field': true,
   'c-priority-field': true,
   'c-number-field': true,
@@ -18,6 +19,7 @@ const stubs = {
 };
 
 const snapshotStubs = {
+  'c-name-field': true,
   'c-duration-field': true,
   'c-priority-field': true,
   'c-number-field': true,
@@ -39,7 +41,7 @@ const snapshotFactory = (options = {}) => mount(AlarmStatusRuleForm, {
   ...options,
 });
 
-const selectTextField = wrapper => wrapper.find('.v-text-field');
+const selectNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectDurationField = wrapper => wrapper.find('c-duration-field-stub');
 const selectPriorityField = wrapper => wrapper.find('c-priority-field-stub');
 const selectNumberField = wrapper => wrapper.find('c-number-field-stub');
@@ -54,11 +56,11 @@ describe('alarm-status-rule-form', () => {
       },
     });
 
-    const textField = selectTextField(wrapper);
+    const nameField = selectNameField(wrapper);
 
     const newValue = Faker.datatype.string();
 
-    textField.setValue(newValue);
+    nameField.vm.$emit('input', newValue);
 
     expect(wrapper).toEmit('input', { name: newValue });
   });

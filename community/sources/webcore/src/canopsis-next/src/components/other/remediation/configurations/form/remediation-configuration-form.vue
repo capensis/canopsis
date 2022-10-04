@@ -1,13 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    v-layout(row)
-      v-text-field(
-        v-field="form.name",
-        v-validate="'required'",
-        :label="$t('common.name')",
-        :error-messages="errors.collect('name')",
-        name="name"
-      )
+    c-name-field(v-field="form.name")
     v-layout(row)
       v-flex
         v-select(
@@ -29,23 +22,21 @@
           :error-messages="errors.collect('host')",
           name="host"
         )
-    v-layout(row)
-      v-text-field(
-        v-field="form.auth_token",
-        v-validate="'required'",
-        :label="$t('modals.createRemediationConfiguration.fields.token')",
-        :error-messages="errors.collect('token')",
-        name="token"
-      )
-    v-layout(row)
-      v-text-field(
-        v-if="isShownUserNameField",
-        v-field="form.auth_username",
-        v-validate="'required'",
-        :label="$t('users.username')",
-        :error-messages="errors.collect('username')",
-        name="username"
-      )
+    v-text-field(
+      v-field="form.auth_token",
+      v-validate="'required'",
+      :label="$t('modals.createRemediationConfiguration.fields.token')",
+      :error-messages="errors.collect('token')",
+      name="token"
+    )
+    v-text-field(
+      v-if="isShownUserNameField",
+      v-field="form.auth_username",
+      v-validate="'required'",
+      :label="$t('users.username')",
+      :error-messages="errors.collect('username')",
+      name="username"
+    )
 </template>
 
 <script>
