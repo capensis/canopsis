@@ -23,12 +23,13 @@
         v-flex(v-if="hasAccessToCategory")
           c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
         v-flex
-          v-layout(row, wrap, align-center)
+          v-layout(row, align-center)
             filter-selector(
               :label="$t('settings.selectAFilter')",
               :filters="userPreference.filters",
               :locked-filters="widget.filters",
               :value="mainFilter",
+              :locked-value="lockedFilter",
               :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
               @input="updateSelectedFilter"
             )
@@ -95,7 +96,7 @@
 </template>
 
 <script>
-import { omit, isObject } from 'lodash';
+import { isObject } from 'lodash';
 
 import { USERS_PERMISSIONS } from '@/constants';
 
@@ -218,20 +219,6 @@ export default {
       };
     },
 
-    getQuery() { // TODO: move this logic to helpers
-      const query = omit(this.query, [
-        'sortKey',
-        'sortDir',
-      ]);
-
-      if (this.query.sortKey) {
-        query.sort = this.query.sortDir.toLowerCase();
-        query.sort_by = this.query.sortKey;
-      }
-
-      return query;
-    },
-
     fetchList() {
       if (this.hasColumns) {
         const params = this.getQuery();
@@ -263,7 +250,7 @@ export default {
           fields: columns.map(({ label, value }) => ({ label, name: value })),
           search: query.search,
           category: query.category,
-          filter: JSON.stringify(query.filter),
+          filters: query.filters,
           separator: exportCsvSeparator,
           /**
            * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997

@@ -14,8 +14,7 @@
           :editable="hasAccessToEditFilter",
           :entity-types="[$constants.ENTITY_TYPES.service]",
           with-entity,
-          with-service-weather,
-          @input="updateMainFilterUpdatedAt"
+          with-service-weather
         )
         v-divider
       alarms-list-modal-form(v-model="form.parameters.alarmsList")
