@@ -1,4 +1,5 @@
 import { CRUD_ACTIONS, TIME_UNITS } from '@/constants';
+
 import { durationToForm } from '@/helpers/date/duration';
 
 /**
@@ -87,7 +88,7 @@ export const roleToForm = (role = {}) => ({
   _id: role._id ?? '',
   name: role.name ?? '',
   description: role.description ?? '',
-  defaultview: role.defaultview && role.defaultview._id,
+  defaultview: role.defaultview?._id,
   permissions: rolePermissionsToForm(role.permissions),
   auth_config: roleAuthConfigToForm(role.auth_config),
 });
