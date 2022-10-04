@@ -11,14 +11,11 @@ import {
 /**
  * Check user access for a permission
  *
- * @param {Object} permissionsById
- * @param {string} permissionId
+ * @param {Object} permission
  * @param {string} action
  * @returns {boolean}
  */
-export const checkUserAccess = (permissionsById, permissionId, action) => {
-  const permission = permissionsById[permissionId];
-
+export const checkUserAccess = (permission, action) => {
   if (permission && permission.actions) {
     const { actions } = permission;
 
@@ -137,6 +134,7 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
       [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: [],
       [USER_PERMISSIONS_PREFIXES.business.counter]: [],
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: [],
+      [USER_PERMISSIONS_PREFIXES.business.map]: [],
     },
     view: [],
     playlist: [],

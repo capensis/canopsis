@@ -17,13 +17,15 @@
           @change="updateCorrelation"
         )
       v-flex
-        v-layout(row, wrap, align-center)
+        v-layout(row, align-center)
           filter-selector(
             :label="$t('settings.selectAFilter')",
             :filters="userPreference.filters",
             :locked-filters="widget.filters",
+            :locked-value="lockedFilter",
             :value="mainFilter",
             :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
+            :clearable="!widget.parameters.clearFilterDisabled",
             @input="updateSelectedFilter"
           )
           filters-list-btn(
@@ -87,8 +89,11 @@
       :sticky-header="widget.parameters.sticky_header",
       :dense="dense",
       :refresh-alarms-list="fetchList",
+      :selected-tag="query.tag",
       selectable,
-      expandable
+      expandable,
+      @select:tag="selectTag",
+      @clear:tag="clearTag"
     )
       c-table-pagination(
         :total-items="alarmsMeta.total_count",
@@ -115,6 +120,7 @@ import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
+import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
@@ -154,6 +160,7 @@ export default {
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,
     entitiesAlarmMixin,
+    entitiesAlarmTagMixin,
     entitiesAlarmDetailsMixin,
     permissionsWidgetsAlarmsListCategory,
     permissionsWidgetsAlarmsListCorrelation,
@@ -226,6 +233,18 @@ export default {
           }
         });
       }
+    },
+
+    selectTag(tag) {
+      this.query = {
+        ...this.query,
+
+        tag,
+      };
+    },
+
+    clearTag() {
+      this.query = omit(this.query, ['tag']);
     },
 
     updateCorrelation(correlation) {
@@ -312,6 +331,10 @@ export default {
 
         this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
 
+        if (!this.alarmTagsPending) {
+          this.fetchAlarmTagsList({ params: { paginate: false } });
+        }
+
         if (!this.alarmsPending) {
           await this.fetchAlarmsList({
             widgetId: this.widget._id,
@@ -342,7 +365,7 @@ export default {
           ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
 
           fields: columns.map(({ label, value }) => ({ label, name: value })),
-          filter: JSON.stringify(query.filter),
+          filters: query.filters,
           separator: exportCsvSeparator,
           /**
            * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997

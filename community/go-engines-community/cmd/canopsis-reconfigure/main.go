@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/signal"
 
@@ -101,26 +100,6 @@ type Conf struct {
 func (c *Conf) Clone() interface{} {
 	cloned := *c
 	return &cloned
-}
-
-func parseConfig(f flags, logger zerolog.Logger) (Conf, error) {
-	var conf Conf
-	data, err := ioutil.ReadFile(f.confFile)
-	if err != nil {
-		return conf, err
-	}
-
-	if err := toml.Unmarshal(data, &conf); err != nil {
-		return conf, err
-	}
-
-	if f.overrideConfFile != "" {
-		if err := loadOverrideConfig(&conf, f.overrideConfFile); err != nil {
-			logger.Warn().Err(err).Msgf("skipped configuration overriding")
-		}
-	}
-
-	return conf, nil
 }
 
 func initRabbitMQ(conf Conf, logger zerolog.Logger) error {
@@ -350,22 +329,53 @@ func runPostgresMigrations(migrationDirectory, mode string, steps int, connStr s
 	return nil
 }
 
-func loadOverrideConfig(conf *Conf, overrideConfFile string) error {
-	data, err := ioutil.ReadFile(overrideConfFile)
+func parseConfig(f flags, logger zerolog.Logger) (Conf, error) {
+	data, err := os.ReadFile(f.confFile)
 	if err != nil {
-		return fmt.Errorf("no configuration file found")
+		return Conf{}, err
+	}
+	if f.overrideConfFile != "" {
+		overrideData, err := os.ReadFile(f.overrideConfFile)
+		if err == nil {
+			data, err = mergeConfigs(data, overrideData)
+		}
+
+		if err != nil {
+			logger.Warn().Err(err).Msgf("skip configuration override")
+		}
 	}
 
-	var overrideConf map[string]interface{}
-	if err = toml.Unmarshal(data, &overrideConf); err != nil {
-		return err
+	var conf Conf
+	err = toml.Unmarshal(data, &conf)
+	return conf, err
+}
+
+func mergeConfigs(configs ...[]byte) ([]byte, error) {
+	var res map[string]interface{}
+	for _, b := range configs {
+		v := make(map[string]interface{})
+		err := toml.Unmarshal(b, &v)
+		if err != nil {
+			return nil, err
+		}
+		if len(res) == 0 {
+			res = v
+		} else {
+			mergeMaps(res, v)
+		}
 	}
 
-	newPtr, err := config.Override(conf, overrideConf)
-	if err != nil {
-		return err
-	}
+	return toml.Marshal(res)
+}
 
-	*conf = *newPtr.(*Conf)
-	return nil
+func mergeMaps(l, r map[string]interface{}) {
+	for k, v := range r {
+		if rm, ok := v.(map[string]interface{}); ok {
+			if lm, ok := l[k].(map[string]interface{}); ok {
+				mergeMaps(lm, rm)
+				continue
+			}
+		}
+		l[k] = v
+	}
 }

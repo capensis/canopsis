@@ -10,6 +10,7 @@ export const MODALS = {
   variablesHelp: 'variables-help',
   createEntity: 'create-entity',
   createService: 'create-service',
+  entityDependenciesList: 'entity-dependencies-list',
   createEntityInfo: 'create-entity-info',
   serviceEntities: 'service-entities',
   serviceDependencies: 'service-dependencies',
@@ -82,4 +83,9 @@ export const MODALS = {
   healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
   info: 'info',
   createKpiFilter: 'create-kpi-filter',
+  createMap: 'create-map',
+  createGeoMap: 'create-geo-map',
+  createFlowchartMap: 'create-flowchart-map',
+  createMermaidMap: 'create-mermaid-map',
+  createTreeOfDependenciesMap: 'create-tree-of-dependencies-map',
 };

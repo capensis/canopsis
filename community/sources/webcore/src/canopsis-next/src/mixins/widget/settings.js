@@ -5,6 +5,7 @@ import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 export const widgetSettingsMixin = {
   $_veeValidate: {
@@ -22,11 +23,11 @@ export const widgetSettingsMixin = {
     entitiesWidgetMixin,
     entitiesUserPreferenceMixin,
     confirmableModalMixinCreator({ field: 'form', closeMethod: '$sidebar.hide' }),
+    submittableMixinCreator(),
   ],
   data() {
     return {
       form: widgetToForm(this.sidebar.config?.widget),
-      submitting: false,
     };
   },
   computed: {
@@ -43,13 +44,6 @@ export const widgetSettingsMixin = {
     },
   },
   methods: {
-    /**
-     * Update main filter updated at value. We are using this value for checking which filter was changed later
-     */
-    updateMainFilterUpdatedAt() {
-      this.form.parameters.mainFilterUpdatedAt = Date.now();
-    },
-
     /**
      * Submit settings form
      *
@@ -73,6 +67,10 @@ export const widgetSettingsMixin = {
             await this.updateWidget({ id: widgetId, data });
           } else {
             await this.createWidget({ data });
+          }
+
+          if (data.parameters.mainFilter && this.userPreference.content.mainFilter === data.parameters.mainFilter) {
+            await this.updateContentInUserPreference({ mainFilter: null });
           }
 
           if (widgetId) {

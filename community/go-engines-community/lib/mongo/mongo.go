@@ -89,6 +89,10 @@ const (
 
 	EntityInfosDictionaryCollection  = "entity_infos_dictionary"
 	DynamicInfosDictionaryCollection = "dynamic_infos_dictionary"
+
+	MapMongoCollection = "map"
+
+	AlarmTagCollection = "alarm_tag"
 )
 
 const (
@@ -130,6 +134,8 @@ type DbCollection interface {
 		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
 	UpdateOne(ctx context.Context, filter interface{}, update interface{},
 		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
+	Watch(ctx context.Context, pipeline interface{},
+		opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error)
 }
 
 // DbClient connected MongoDB client settings
@@ -140,6 +146,7 @@ type DbClient interface {
 	Ping(ctx context.Context, rp *readpref.ReadPref) error
 	WithTransaction(ctx context.Context, f func(context.Context) error) error
 	ListCollectionNames(ctx context.Context, filter interface{}, opts ...*options.ListCollectionsOptions) ([]string, error)
+	IsDistributed() bool
 }
 
 type dbClient struct {
@@ -148,7 +155,7 @@ type dbClient struct {
 	RetryCount      int
 	MinRetryTimeout time.Duration
 
-	TransactionEnabled bool
+	isDistributed bool
 }
 
 type dbCollection struct {
@@ -376,6 +383,11 @@ func (c *dbCollection) UpdateMany(ctx context.Context, filter interface{}, updat
 	return res, nil
 }
 
+func (c *dbCollection) Watch(ctx context.Context, pipeline interface{},
+	opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error) {
+	return c.mongoCollection.Watch(ctx, pipeline, opts...)
+}
+
 func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update interface{},
 	opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
@@ -528,7 +540,7 @@ func (c *dbClient) SetRetry(count int, timeout time.Duration) {
 }
 
 func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) error) error {
-	if !c.TransactionEnabled {
+	if !c.isDistributed {
 		return f(ctx)
 	}
 
@@ -581,7 +593,13 @@ func (c *dbClient) checkTransactionEnabled(pCtx context.Context, logger zerolog.
 	}
 
 	logger.Info().Msg("MongoDB version supports transactions, transactions are enabled")
-	c.TransactionEnabled = true
+	c.isDistributed = true
+}
+
+// IsDistributed returns true if MongoDB is Replica Set or Sharded Cluster.
+// Use to check feature availability : Transactions, Change Streams, etc.
+func (c *dbClient) IsDistributed() bool {
+	return c.isDistributed
 }
 
 // getURL parses URL value in EnvURL environment variable

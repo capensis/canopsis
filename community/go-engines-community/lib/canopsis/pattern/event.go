@@ -2,8 +2,9 @@ package pattern
 
 import (
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"strings"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type Event [][]FieldCondition
@@ -135,12 +136,8 @@ func (p Event) Match(event types.Event) (bool, EventRegexMatches, error) {
 	return false, eventRegexMatches, nil
 }
 
-func (p Event) Validate(forbiddenFields []string) bool {
+func (p Event) Validate() bool {
 	emptyEvent := types.Event{}
-	forbiddenFieldsMap := make(map[string]bool, len(forbiddenFields))
-	for _, field := range forbiddenFields {
-		forbiddenFieldsMap[field] = true
-	}
 
 	for _, group := range p {
 		if len(group) == 0 {
@@ -151,10 +148,6 @@ func (p Event) Validate(forbiddenFields []string) bool {
 			f := v.Field
 			cond := v.Condition
 			var err error
-
-			if forbiddenFieldsMap[f] {
-				return false
-			}
 
 			if infoName := getEventExtraInfoName(f); infoName != "" {
 				switch v.FieldType {

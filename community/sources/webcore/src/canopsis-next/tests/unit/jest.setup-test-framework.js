@@ -65,6 +65,12 @@ expect.extend({
     }
 
     try {
+      if (!data.length) {
+        expect(emittedEvents).toBeTruthy();
+
+        return { pass: true };
+      }
+
       expect(emittedEvents).toHaveLength(data.length);
     } catch (err) {
       return {

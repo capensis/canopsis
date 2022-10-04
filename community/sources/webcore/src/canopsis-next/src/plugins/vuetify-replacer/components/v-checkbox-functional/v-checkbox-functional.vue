@@ -17,7 +17,7 @@
           i.v-icon.material-icons.theme--light(
             :class="{ 'primary--text': inputValue }"
           ) {{ inputValue ? 'check_box' : 'check_box_outline_blank' }}
-        label(
+        label.v-label.theme--light(
           v-show="label !== ''",
           @click="$emit('change', !inputValue)"
         ) {{ label }}

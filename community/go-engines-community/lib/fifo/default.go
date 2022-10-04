@@ -30,7 +30,6 @@ type Options struct {
 	LockTtl                  int
 	EventsStatsFlushInterval time.Duration
 	PeriodicalWaitTime       time.Duration
-	DataSourceDirectory      string
 	ExternalDataApiTimeout   time.Duration
 }
 
@@ -44,9 +43,7 @@ func ParseOptions() Options {
 	flag.IntVar(&opts.LockTtl, "lockTtl", 10, "Redis lock ttl time in seconds")
 	flag.DurationVar(&opts.EventsStatsFlushInterval, "eventsStatsFlushInterval", 60*time.Second, "Interval between saving statistics from redis to mongo")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
-	flag.StringVar(&opts.DataSourceDirectory, "dataSourceDirectory", ".", "The path of the directory containing the event filter's data source plugins.")
 	flag.DurationVar(&opts.ExternalDataApiTimeout, "externalDataApiTimeout", 30*time.Second, "External API HTTP Request Timeout.")
-	flag.Bool("enableMetaAlarmProcessing", true, "Enable meta-alarm processing - deprecated")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 
 	flag.Parse()
@@ -93,7 +90,7 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 	ruleAdapter := eventfilter.NewRuleAdapter(mongoClient)
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(ExternalDataContainer))
-	eventFilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, config.NewTimezoneConfigProvider(cfg, logger), logger)
+	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, config.NewTimezoneConfigProvider(cfg, logger), logger)
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
@@ -112,9 +109,11 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 			runInfoPeriodicalWorker.Work(ctx)
 			scheduler.Start(ctx)
 
-			err := eventFilterService.LoadRules(ctx, []string{eventfilter.RuleTypeChangeEntity})
-			if err != nil {
-				return err
+			if !mongoClient.IsDistributed() {
+				err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeChangeEntity})
+				if err != nil {
+					return err
+				}
 			}
 
 			go statsListener.Listen(ctx, statsCh)
@@ -177,7 +176,7 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		&messageProcessor{
 			FeaturePrintEventOnError: options.PrintEventOnError,
 
-			EventFilterService: eventFilterService,
+			EventFilterService: eventfilterService,
 			TechMetricsSender:  techMetricsSender,
 			Scheduler:          scheduler,
 			StatsSender:        statsSender,
@@ -207,11 +206,6 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker("local cache", &periodicalWorker{
-		RuleService:        eventFilterService,
-		PeriodicalInterval: options.PeriodicalWaitTime,
-		Logger:             logger,
-	})
 	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engine.AddPeriodicalWorker("outdated rates", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(engineLockRedisClient),
@@ -233,6 +227,31 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
 	))
+	if mongoClient.IsDistributed() {
+		engine.AddRoutine(func(ctx context.Context) error {
+			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventfilterService)
+
+			logger.Debug().Msg("Loading event filter rules")
+
+			for {
+				select {
+				case <-ctx.Done():
+					return nil
+				default:
+					err := w.Watch(ctx, []string{eventfilter.RuleTypeChangeEntity})
+					if err != nil {
+						logger.Error().Err(err).Msg("failed to watch eventfilter collection")
+					}
+				}
+			}
+		})
+	} else {
+		engine.AddPeriodicalWorker("local cache", &periodicalWorker{
+			RuleService:        eventfilterService,
+			PeriodicalInterval: options.PeriodicalWaitTime,
+			Logger:             logger,
+		})
+	}
 
 	return engine
 }
