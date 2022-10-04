@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(row, wrap)
+  v-layout(row, wrap, justify-space-between)
     v-flex(xs6)
       date-time-splitted-range-picker-field(
         :start="value.begin",
@@ -14,7 +14,7 @@
         @update:start="updateField('begin', $event)",
         @update:end="updateField('end', $event)"
       )
-    v-flex.pl-2(:class="disabled ? 'xs6' : 'xs5'")
+    v-flex.pl-2(v-if="withType", :class="disabled ? 'xs6' : 'xs5'")
       c-pbehavior-type-field(
         v-field="value.type",
         :required="!disabled",
@@ -64,6 +64,10 @@ export default {
       required: true,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    withType: {
       type: Boolean,
       default: false,
     },

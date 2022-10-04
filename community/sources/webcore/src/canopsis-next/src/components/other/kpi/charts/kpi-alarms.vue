@@ -144,7 +144,6 @@ export default {
         this.pending = true;
 
         const params = this.getQuery();
-
         const {
           data: alarmsMetrics,
           meta: { min_date: minDate },
@@ -152,6 +151,7 @@ export default {
 
         this.alarmsMetrics = convertMetricsToTimezone(alarmsMetrics, this.$system.timezone);
         this.minDate = convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone);
+        this.fetchError = false;
 
         if (params.from < this.minDate) {
           this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });

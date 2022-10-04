@@ -374,7 +374,7 @@ func RegisterRoutes(
 
 		protected.POST(
 			"/pbehavior-timespans",
-			middleware.Authorize(authObjPbh, permCreate, enforcer),
+			middleware.Authorize(authObjPbh, permRead, enforcer),
 			pbehaviortimespan.GetTimeSpans(pbehaviortimespan.NewService(dbClient, timezoneConfigProvider)),
 		)
 		protected.GET(
@@ -736,20 +736,6 @@ func RegisterRoutes(
 				appInfoApi.DeleteUserInterface,
 			)
 		}
-		securityRouter := protected.Group("/security")
-		{
-			securityRouter.GET(
-				"",
-				middleware.Authorize(apisecurity.PermSecurityRead, model.PermissionCan, enforcer),
-				appInfoApi.GetApiSecurity,
-			)
-			securityRouter.POST(
-				"",
-				middleware.Authorize(apisecurity.PermSecurityUpdate, model.PermissionCan, enforcer),
-				appInfoApi.UpdateApiSecurity,
-			)
-		}
-
 		protected.GET(
 			"/engine-runinfo",
 			middleware.Authorize(apisecurity.PermHealthcheck, permCan, enforcer),

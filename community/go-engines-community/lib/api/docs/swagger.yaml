@@ -63,11 +63,14 @@ paths:
             type: array
             items:
               type: string
-        - name: filter
+        - name: filters[]
           in: query
-          description: Widget filter id.
+          style: form
+          explode: true
           schema:
-            type: string
+            type: array
+            items:
+              type: string
         - name: category
           in: query
           schema:
@@ -305,11 +308,14 @@ paths:
             type: array
             items:
               type: string
-        - name: filter
+        - name: filters[]
           in: query
-          description: Widget filter id.
+          style: form
+          explode: true
           schema:
-            type: string
+            type: array
+            items:
+              type: string
         - name: category
           in: query
           schema:
@@ -2468,10 +2474,14 @@ paths:
           in: query
           schema:
             type: string
-        - name: filter
+        - name: filters[]
           in: query
+          style: form
+          explode: true
           schema:
-            type: string
+            type: array
+            items:
+              type: string
         - name: no_events
           in: query
           schema:
@@ -3633,7 +3643,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
+                          $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Response'
         400:
           description: Bad Request
           content:
@@ -3651,7 +3661,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
+              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Response'
             examples:
               CreateDropRule:
                 summary: Create a drop rule
@@ -3878,6 +3888,126 @@ paths:
                   },
                   "enabled": true
                 }
+              CreateRuleWithInterval:
+                summary: Create a drop rule with interval
+                description: Create a drop rule with interval.
+                value: {
+                  "type": "drop",
+                  "start": 1663656515,
+                  "stop": 1663657515,
+                  "event_pattern":[[
+                    {
+                      "field": "event_type",
+                      "cond": {
+                        "type": "eq",
+                        "value": "check"
+                      }
+                    },
+                    {
+                      "field": "component",
+                      "cond": {
+                        "type": "eq",
+                        "value": "example-component"
+                      }
+                    }
+                  ]],
+                  "description": "drop rule example",
+                  "priority": 1,
+                  "enabled": true
+                }
+              CreateRuleWithRRule:
+                summary: Create a drop rule with rrule
+                description: Create a drop rule with rrule.
+                value: {
+                  "type": "drop",
+                  "start": 1663656515,
+                  "stop": 1663657515,
+                  "rrule": "FREQ=WEEKLY",
+                  "event_pattern":[[
+                    {
+                      "field": "event_type",
+                      "cond": {
+                        "type": "eq",
+                        "value": "check"
+                      }
+                    },
+                    {
+                      "field": "component",
+                      "cond": {
+                        "type": "eq",
+                        "value": "example-component"
+                      }
+                    }
+                  ]],
+                  "description": "drop rule example",
+                  "priority": 1,
+                  "enabled": true
+                }
+              CreateRuleWithExdate:
+                summary: Create a drop rule with exdate
+                description: Create a drop rule with exdate.
+                value: {
+                  "type": "drop",
+                  "start": 1663656515,
+                  "stop": 1663657515,
+                  "rrule": "FREQ=WEEKLY",
+                  "event_pattern":[[
+                    {
+                      "field": "event_type",
+                      "cond": {
+                        "type": "eq",
+                        "value": "check"
+                      }
+                    },
+                    {
+                      "field": "component",
+                      "cond": {
+                        "type": "eq",
+                        "value": "example-component"
+                      }
+                    }
+                  ]],
+                  "description": "drop rule example",
+                  "priority": 1,
+                  "enabled": true,
+                  "exdates": [
+                    {
+                      "begin": 1663656815,
+                      "end": 1663657515
+                    }
+                  ]
+                }
+              CreateRuleWithException:
+                summary: Create a drop rule with exception
+                description: Create a drop rule with exception.
+                value: {
+                  "type": "drop",
+                  "start": 1663656515,
+                  "stop": 1663657515,
+                  "rrule": "FREQ=WEEKLY",
+                  "event_pattern":[[
+                    {
+                      "field": "event_type",
+                      "cond": {
+                        "type": "eq",
+                        "value": "check"
+                      }
+                    },
+                    {
+                      "field": "component",
+                      "cond": {
+                        "type": "eq",
+                        "value": "example-component"
+                      }
+                    }
+                  ]],
+                  "description": "drop rule example",
+                  "priority": 1,
+                  "enabled": true,
+                  "exceptions": [
+                    "test-exception"
+                  ]
+                }
         required: true
       responses:
         201:
@@ -3885,7 +4015,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Response'
         400:
           description: Bad Request
           content:
@@ -3912,7 +4042,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Response'
         404:
           description: Not Found
           content:
@@ -3937,7 +4067,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
+              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Response'
             examples:
               Update:
                 summary: Update
@@ -3982,7 +4112,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Response'
         400:
           description: Bad Request
           content:
@@ -8013,73 +8143,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/scenario.GetMinimalPriorityResponse'
-  /security:
-    get:
-      tags:
-        - security
-      summary: Get security config
-      description: Get security config
-      operationId: security-get
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  basic:
-                    $ref: 'schemas_swagger.yaml#/definitions/security.AuthMethodConf'
-                  ldap:
-                    $ref: 'schemas_swagger.yaml#/definitions/security.AuthMethodConf'
-                  cas:
-                    $ref: 'schemas_swagger.yaml#/definitions/security.AuthMethodConf'
-                  saml:
-                    $ref: 'schemas_swagger.yaml#/definitions/security.AuthMethodConf'
-    post:
-      tags:
-        - security
-      summary: Update security config
-      description: Update security config
-      operationId: security-update
-      requestBody:
-        description: body
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                basic:
-                  $ref: 'schemas_swagger.yaml#/definitions/security.AuthMethodConf'
-                ldap:
-                  $ref: 'schemas_swagger.yaml#/definitions/security.AuthMethodConf'
-                cas:
-                  $ref: 'schemas_swagger.yaml#/definitions/security.AuthMethodConf'
-                saml:
-                  $ref: 'schemas_swagger.yaml#/definitions/security.AuthMethodConf'
-        required: true
-      responses:
-        201:
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  basic:
-                    $ref: 'schemas_swagger.yaml#/definitions/security.AuthMethodConf'
-                  ldap:
-                    $ref: 'schemas_swagger.yaml#/definitions/security.AuthMethodConf'
-                  cas:
-                    $ref: 'schemas_swagger.yaml#/definitions/security.AuthMethodConf'
-                  saml:
-                    $ref: 'schemas_swagger.yaml#/definitions/security.AuthMethodConf'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /share-tokens:
     get:
       tags:
@@ -9379,11 +9442,14 @@ paths:
       parameters:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
-        - name: filter
+        - name: filters[]
           in: query
-          description: filter query
+          style: form
+          explode: true
           schema:
-            type: string
+            type: array
+            items:
+              type: string
         - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query

@@ -11,7 +11,6 @@ const (
 	VersionKeyName       = "canopsis_version"
 	RemediationKeyName   = "remediation"
 	HealthCheckName      = "health_check"
-	ApiSecurityKeyName   = "api_security"
 )
 
 // SectionAlarm ...
