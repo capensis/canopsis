@@ -32,7 +32,6 @@ func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 		logger: logger,
 		collectionNames: map[string]string{
 			"configuration":       mongo.ConfigurationMongoCollection,
-			"auth_configuration":  mongo.ObjectMongoCollection,
 			"acl":                 mongo.RightsMongoCollection,
 			"pbehavior":           mongo.PbehaviorMongoCollection,
 			"pbehavior_type":      mongo.PbehaviorTypeMongoCollection,
