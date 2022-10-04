@@ -1,5 +1,6 @@
 <template lang="pug">
   v-card.secondary.lighten-2(flat)
+    v-progress-linear.ma-0(:active="pending", height="2", indeterminate)
     v-card-text.white--text
       v-layout
         v-flex(xs6)
@@ -8,36 +9,79 @@
             v-card
               v-card-text
                 v-data-iterator(:items="impact")
-                  v-flex(slot="item", slot-scope="props")
-                    v-card
-                      v-card-title {{ props.item }}
-                  v-flex(slot="no-data")
-                    v-card
-                      v-card-title {{ $t('tables.noData') }}
+                  template(#item="props")
+                    v-flex
+                      v-card
+                        v-card-title {{ props.item }}
+                  template(#no-data="")
+                    v-flex
+                      v-card
+                        v-card-title {{ $t('tables.noData') }}
         v-flex(xs6)
           h3.headline.text-xs-center.my-1 {{ $t('context.dependencies') }}
           v-container
             v-card
               v-card-text
                 v-data-iterator(:items="depends")
-                  v-flex(slot="item", slot-scope="props")
-                    v-card
-                      v-card-title {{ props.item }}
-                  v-flex(slot="no-data")
-                    v-card
-                      v-card-title {{ $t('tables.noData') }}
+                  template(#item="props")
+                    v-flex
+                      v-card
+                        v-card-title {{ props.item }}
+                  template(#no-data="")
+                    v-flex
+                      v-card
+                        v-card-title {{ $t('tables.noData') }}
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
+import Observer from '@/services/observer';
+
+const { mapActions } = createNamespacedHelpers('entity');
+
 export default {
+  inject: {
+    $periodicRefresh: {
+      default() {
+        return new Observer();
+      },
+    },
+  },
   props: {
-    impact: {
-      type: Array,
+    entity: {
+      type: Object,
       required: true,
     },
-    depends: {
-      type: Array,
-      required: true,
+  },
+  data() {
+    return {
+      pending: false,
+      impact: [],
+      depends: [],
+    };
+  },
+  mounted() {
+    this.fetchList();
+
+    this.$periodicRefresh.register(this.fetchList);
+  },
+  beforeDestroy() {
+    this.$periodicRefresh.unregister(this.fetchList);
+  },
+  methods: {
+    ...mapActions({
+      fetchContextEntityContextGraphWithoutStore: 'fetchContextGraphWithoutStore',
+    }),
+
+    async fetchList() {
+      this.pending = true;
+
+      const { impact, depends } = await this.fetchContextEntityContextGraphWithoutStore({ id: this.entity._id });
+
+      this.impact = impact;
+      this.depends = depends;
+      this.pending = false;
     },
   },
 };
