@@ -268,6 +268,7 @@ export default merge({
     playlist: 'Playlist | Playlists',
     ctrlZoom: 'Use ctrl + mouse wheel for zoom',
     calendar: 'Calendar',
+    tag: 'Tag | Tags',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -384,6 +385,9 @@ export default merge({
 
       [PATTERN_OPERATORS.isGrey]: 'Gray tiles',
       [PATTERN_OPERATORS.isNotGrey]: 'Not gray tiles',
+
+      [PATTERN_OPERATORS.with]: 'With',
+      [PATTERN_OPERATORS.without]: 'Without',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Ack',

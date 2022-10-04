@@ -46,6 +46,7 @@ import filterModule from './filter';
 import ratingSettingsModule from './rating-settings';
 import patternModule from './pattern';
 import mapModule from './map';
+import alarmTagModule from './alarm-tag';
 
 export default {
   alarm: alarmModule,
@@ -96,4 +97,5 @@ export default {
   ratingSettings: ratingSettingsModule,
   pattern: patternModule,
   map: mapModule,
+  alarmTag: alarmTagModule,
 };
