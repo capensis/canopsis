@@ -362,6 +362,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 </td>
                 <td>
                   <color-indicator-wrapper-stub
+                    alarm="[object Object]"
                     entity="[object Object]"
                     type=""
                   >
@@ -370,6 +371,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 </td>
                 <td>
                   <color-indicator-wrapper-stub
+                    alarm="[object Object]"
                     entity="[object Object]"
                     type=""
                   >
@@ -385,6 +387,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 </td>
                 <td>
                   <color-indicator-wrapper-stub
+                    alarm="[object Object]"
                     entity="[object Object]"
                     type=""
                   >
@@ -393,6 +396,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 </td>
                 <td>
                   <color-indicator-wrapper-stub
+                    alarm="[object Object]"
                     entity="[object Object]"
                     type=""
                   >
@@ -408,6 +412,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 </td>
                 <td>
                   <color-indicator-wrapper-stub
+                    alarm="[object Object]"
                     entity="[object Object]"
                     type=""
                   >
@@ -416,6 +421,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 </td>
                 <td>
                   <color-indicator-wrapper-stub
+                    alarm="[object Object]"
                     entity="[object Object]"
                     type=""
                   >
@@ -431,6 +437,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 </td>
                 <td>
                   <color-indicator-wrapper-stub
+                    alarm="[object Object]"
                     entity="[object Object]"
                     type=""
                   >
@@ -439,6 +446,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 </td>
                 <td>
                   <color-indicator-wrapper-stub
+                    alarm="[object Object]"
                     entity="[object Object]"
                     type=""
                   >
@@ -546,29 +554,27 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
               <div
                 class="v-treeview-node__label"
               >
+                <button
+                  class="v-btn v-btn--icon theme--light"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      more_horiz
+                    </i>
+                  </div>
+                </button>
                 <span
                   class="v-tooltip v-tooltip--right"
                 >
                   <transition-stub
                     name="slide-x-transition"
                   />
-                  <span>
-                    <button
-                      class="v-btn v-btn--icon theme--light"
-                      type="button"
-                    >
-                      <div
-                        class="v-btn__content"
-                      >
-                        <i
-                          aria-hidden="true"
-                          class="v-icon material-icons theme--light"
-                        >
-                          more_horiz
-                        </i>
-                      </div>
-                    </button>
-                  </span>
                 </span>
                 <!---->
               </div>
@@ -633,6 +639,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                 </td>
                 <td>
                   <color-indicator-wrapper-stub
+                    alarm="[object Object]"
                     entity="[object Object]"
                     type=""
                   >
@@ -641,6 +648,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                 </td>
                 <td>
                   <color-indicator-wrapper-stub
+                    alarm="[object Object]"
                     entity="[object Object]"
                     type=""
                   >
@@ -656,6 +664,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                 </td>
                 <td>
                   <color-indicator-wrapper-stub
+                    alarm="[object Object]"
                     entity="[object Object]"
                     type=""
                   >
@@ -664,6 +673,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                 </td>
                 <td>
                   <color-indicator-wrapper-stub
+                    alarm="[object Object]"
                     entity="[object Object]"
                     type=""
                   >

@@ -24,6 +24,7 @@ import SetSeveralPlugin from '@/plugins/set-several';
  * @property {Function} findTooltip
  * @property {Function} findAllMenus
  * @property {Function} findMenu
+ * @property {Function} clickOutside
  */
 
 document.body.setAttribute('data-app', true);
@@ -77,6 +78,24 @@ const enhanceWrapper = (wrapper) => {
   wrapper.findMenu = () => wrapper.find('.v-menu__content');
   wrapper.findAllTooltips = () => wrapper.findAll('.v-tooltip__content');
   wrapper.findTooltip = () => wrapper.find('.v-tooltip__content');
+  wrapper.clickOutside = () => {
+    const elementZIndex = +document.body.style.zIndex;
+
+    wrapper.element.style.zIndex = elementZIndex + 1;
+    // eslint-disable-next-line no-underscore-dangle
+    wrapper.element._outsideRegistredAt = -Infinity;
+
+    jest.useFakeTimers();
+    // eslint-disable-next-line no-underscore-dangle
+    wrapper.element._clickOutside({
+      target: document.body,
+      isTrusted: true,
+      pointerType: true,
+    });
+
+    jest.runAllTimers();
+    jest.useRealTimers();
+  };
 };
 
 /**
@@ -87,16 +106,16 @@ const enhanceWrapper = (wrapper) => {
  * @return {CustomWrapper}
  */
 export const mount = (component, options = {}) => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   const wrapper = testUtilsMount(
     component,
     merge({ mocks, stubs }, options, { i18n }),
   );
 
   enhanceWrapper(wrapper);
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   return wrapper;
 };

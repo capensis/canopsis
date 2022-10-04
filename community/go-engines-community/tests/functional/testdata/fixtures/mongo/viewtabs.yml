@@ -264,3 +264,8 @@ viewtabs:
     <<: *tab
     _id: test-tab-to-weather-get
     view: test-view-to-weather-get
+
+  tab_to_map_edit:
+    <<: *tab
+    _id: test-tab-to-map-edit
+    view: test-view-to-map-edit

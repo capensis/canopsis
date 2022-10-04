@@ -241,16 +241,16 @@ func Default(
 		logger,
 	)
 	legacyUrl := GetLegacyURL(logger)
+	legacyUrlStr := ""
+	if legacyUrl != nil {
+		legacyUrlStr = legacyUrl.String()
+	}
+
 	api.AddRouter(func(router gin.IRouter) {
 		router.Use(middleware.Cache())
 
 		if flags.Test {
 			router.Use(devmiddleware.ReloadEnforcerPolicy(enforcer))
-		}
-
-		legacyUrlStr := ""
-		if legacyUrl != nil {
-			legacyUrlStr = legacyUrl.String()
 		}
 		RegisterValidators(dbClient, flags.EnableSameServiceNames)
 		RegisterRoutes(

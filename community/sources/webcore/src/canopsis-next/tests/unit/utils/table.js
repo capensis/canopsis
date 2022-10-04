@@ -36,6 +36,16 @@ export const selectRowCheckboxByIndex = (wrapper, index) => selectTableRowByInde
   .find('td:first-child v-checkbox-functional-stub');
 
 /**
+ * Select an advanced table row select expand button by row index
+ *
+ * @param {Wrapper} wrapper
+ * @param {number} index
+ * @return {Wrapper}
+ */
+export const selectRowExpandButtonByIndex = (wrapper, index) => selectTableRowByIndex(wrapper, index)
+  .find('td:first-child c-expand-btn-stub');
+
+/**
  * Select an advanced table mass actions
  *
  * @param {Wrapper} wrapper
@@ -92,3 +102,13 @@ export const selectRowEditButtonByIndex = (wrapper, index) => selectRowActionsBy
  */
 export const selectRowRemoveButtonByIndex = (wrapper, index) => selectRowActionsByIndex(wrapper, index)
   .find('c-action-btn-stub[type="delete"]');
+
+/**
+ * Select an advanced table row remove duplicate by row index
+ *
+ * @param {Wrapper} wrapper
+ * @param {number} index
+ * @return {Wrapper}
+ */
+export const selectRowDuplicateButtonByIndex = (wrapper, index) => selectRowActionsByIndex(wrapper, index)
+  .find('c-action-btn-stub[type="duplicate"]');

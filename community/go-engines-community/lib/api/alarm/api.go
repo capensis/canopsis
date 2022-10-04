@@ -21,6 +21,7 @@ import (
 type API interface {
 	List(c *gin.Context)
 	Get(c *gin.Context)
+	GetOpen(c *gin.Context)
 	GetDetails(c *gin.Context)
 	ListManual(c *gin.Context)
 	ListByService(c *gin.Context)
@@ -112,6 +113,33 @@ func (a *api) Get(c *gin.Context) {
 
 	if alarm == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.JSON(http.StatusOK, alarm)
+}
+
+// GetOpen
+// @Success 200 {object} Alarm
+func (a *api) GetOpen(c *gin.Context) {
+	r := GetOpenRequest{}
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+	apiKey := c.MustGet(auth.ApiKey).(string)
+	alarm, ok, err := a.store.GetOpenByEntityID(c.Request.Context(), r.ID, apiKey)
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	if alarm == nil {
+		c.Status(http.StatusNoContent)
 		return
 	}
 

@@ -97,7 +97,6 @@ export default {
         name: this.name,
         rules: 'min_value:1',
         getter: () => this.groups.length,
-        context: () => this,
         vm: this,
       });
     },

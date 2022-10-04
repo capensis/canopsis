@@ -18,9 +18,9 @@ import {
   TIME_UNITS,
   USERS_PERMISSIONS,
 } from '@/constants';
+import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
-import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
 
 jest.mock('file-saver', () => ({
   saveAs: jest.fn(),
@@ -171,6 +171,7 @@ describe('alarms-list', () => {
   const fetchAlarmsDetailsList = jest.fn();
   const updateAlarmDetailsQuery = jest.fn();
   const removeAlarmDetailsQuery = jest.fn();
+  const fetchTagsList = jest.fn();
   const sideBarModule = {
     name: 'sideBar',
     actions: {
@@ -259,6 +260,13 @@ describe('alarms-list', () => {
     },
   };
 
+  const alarmTagModule = {
+    name: 'alarmTag',
+    actions: {
+      fetchList: fetchTagsList,
+    },
+  };
+
   const store = createMockedStoreModules([
     alarmModule,
     sideBarModule,
@@ -267,6 +275,7 @@ describe('alarms-list', () => {
     viewModule,
     userPreferenceModule,
     authModule,
+    alarmTagModule,
   ]);
 
   afterEach(() => {
@@ -275,6 +284,7 @@ describe('alarms-list', () => {
     updateView.mockClear();
     updateQuery.mockClear();
     hideSideBar.mockClear();
+    fetchTagsList.mockClear();
   });
 
   it('Query updated after mount', async () => {
@@ -530,6 +540,7 @@ describe('alarms-list', () => {
 
     const manualInstructionFilter = {
       manual: true,
+      running: null,
       instructions: [{
         _id: 'manual-instruction-id',
       }],
@@ -537,6 +548,7 @@ describe('alarms-list', () => {
     };
     const autoInstructionFilter = {
       auto: true,
+      running: true,
       instructions: [{
         _id: 'auto-instruction-id',
       }],
@@ -545,6 +557,7 @@ describe('alarms-list', () => {
     const allAndWithInstructionFilter = {
       all: true,
       with: true,
+      running: false,
       instructions: [{
         _id: 'all-and-with-instruction-id',
       }, {
@@ -557,14 +570,6 @@ describe('alarms-list', () => {
       manualInstructionFilter,
       autoInstructionFilter,
       allAndWithInstructionFilter,
-    ];
-    const excludeInstructionsIds = [
-      autoInstructionFilter.instructions[0]._id,
-      manualInstructionFilter.instructions[0]._id,
-    ];
-    const includeInstructionsIds = [
-      allAndWithInstructionFilter.instructions[0]._id,
-      allAndWithInstructionFilter.instructions[1]._id,
     ];
 
     const instructionsFiltersField = selectInstructionsFiltersField(wrapper);
@@ -591,10 +596,25 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
-          include_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
-          exclude_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
-          exclude_instructions: excludeInstructionsIds,
-          include_instructions: includeInstructionsIds,
+          instructions: [
+            {
+              exclude: [manualInstructionFilter.instructions[0]._id],
+              exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual],
+            },
+            {
+              exclude: [autoInstructionFilter.instructions[0]._id],
+              exclude_types: [REMEDIATION_INSTRUCTION_TYPES.auto],
+              running: true,
+            },
+            {
+              include: [
+                allAndWithInstructionFilter.instructions[0]._id,
+                allAndWithInstructionFilter.instructions[1]._id,
+              ],
+              include_types: [REMEDIATION_INSTRUCTION_TYPES.auto, REMEDIATION_INSTRUCTION_TYPES.manual],
+              running: false,
+            },
+          ],
           page: 1,
         },
       },
@@ -635,9 +655,6 @@ describe('alarms-list', () => {
       manualInstructionFilter,
       autoInstructionFilter,
     ];
-    const excludeInstructionsIds = [
-      manualInstructionFilter.instructions[0]._id,
-    ];
 
     const instructionsFiltersField = selectInstructionsFiltersField(wrapper);
 
@@ -663,8 +680,12 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
-          exclude_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual],
-          exclude_instructions: excludeInstructionsIds,
+          instructions: [
+            {
+              exclude: [manualInstructionFilter.instructions[0]._id],
+              exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual],
+            },
+          ],
           page: 1,
         },
       },
