@@ -1786,7 +1786,7 @@ Feature: Get a map's state and alarms
     Then the response code should be 201
     When I save response mapId={{ .lastResponse._id }}
     When I save response mapCreated={{ .lastResponse.created }}
-    When I do GET /api/v4/cat/map-state/{{ .mapId }}?filter=test-widgetfilter-entity-service-api-map-7-1&expanded_entities[]={{ .serviceId1 }}&expanded_entities[]={{ .serviceId3 }}
+    When I do GET /api/v4/cat/map-state/{{ .mapId }}?filters[]=test-widgetfilter-entity-service-api-map-7-1&expanded_entities[]={{ .serviceId1 }}&expanded_entities[]={{ .serviceId3 }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1837,7 +1837,7 @@ Feature: Get a map's state and alarms
       }
     }
     """
-    When I do GET /api/v4/cat/map-state/{{ .mapId }}?filter=test-widgetfilter-entity-service-api-map-7-2&expanded_entities[]={{ .serviceId1 }}&expanded_entities[]={{ .serviceId3 }}
+    When I do GET /api/v4/cat/map-state/{{ .mapId }}?filters[]=test-widgetfilter-entity-service-api-map-7-2&expanded_entities[]={{ .serviceId1 }}&expanded_entities[]={{ .serviceId3 }}
     Then the response code should be 200
     Then the response body should be:
     """json
@@ -2005,7 +2005,7 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response mapId={{ .lastResponse._id }}
-    When I do GET /api/v4/cat/map-state/{{ .mapId }}?filter=test-widgetfilter-entity-service-api-map-8&expanded_entities[]={{ .serviceId2 }}&expanded_entities[]=test-resource-service-api-map-8-2/test-component-service-api-map-8
+    When I do GET /api/v4/cat/map-state/{{ .mapId }}?filters[]=test-widgetfilter-entity-service-api-map-8&expanded_entities[]={{ .serviceId2 }}&expanded_entities[]=test-resource-service-api-map-8-2/test-component-service-api-map-8
     Then the response code should be 200
     Then the response body should contain:
     """json
