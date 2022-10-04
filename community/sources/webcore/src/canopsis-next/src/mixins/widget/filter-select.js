@@ -1,27 +1,27 @@
-import { getMainFilter } from '@/helpers/filter';
-
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 export const widgetFilterSelectMixin = {
   mixins: [entitiesWidgetMixin],
   computed: {
     mainFilter() {
-      return getMainFilter(this.widget, this.userPreference);
+      return this.userPreference.content.mainFilter;
+    },
+
+    lockedFilter() {
+      return this.widget.parameters.mainFilter;
     },
   },
   methods: {
     updateFieldsInWidgetPreferences(fields = {}) {
       if (this.hasAccessToUserFilter) {
-        return this.updateContentInUserPreference({
-          ...fields,
-        });
+        return this.updateContentInUserPreference(fields);
       }
 
       return Promise.resolve();
     },
 
     async updateSelectedFilter(mainFilter = null) {
-      await this.updateFieldsInWidgetPreferences({ mainFilter, mainFilterUpdatedAt: Date.now() });
+      await this.updateFieldsInWidgetPreferences({ mainFilter });
       this.updateQueryBySelectedFilter(mainFilter);
     },
 
