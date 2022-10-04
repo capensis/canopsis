@@ -8,7 +8,10 @@
     )
 
     c-information-block(:title="$t('role.expirationSettings')")
-      c-enabled-field(v-model="form.auth_config.intervals_enabled")
+      c-enabled-field(
+        v-field="form.auth_config.intervals_enabled",
+        :label="form.auth_config.intervals_enabled ? $t('common.enabled') : $t('common.disabled')"
+      )
 
       v-layout(v-if="form.auth_config.intervals_enabled", row)
         c-information-block(
