@@ -2,13 +2,14 @@ package provider
 
 import (
 	"context"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	mock_ldap "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-ldap/ldap"
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	mock_provider "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security/provider"
 	"github.com/go-ldap/ldap/v3"
 	"github.com/golang/mock/gomock"
-	"testing"
 )
 
 func TestLdapProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.T) {
@@ -22,7 +23,7 @@ func TestLdapProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.
 		ID:        "testid",
 		IsEnabled: true,
 	}
-	config := &security.LdapConfig{
+	config := security.LdapConfig{
 		Url:           "ldaps://test",
 		AdminUsername: "testadminname",
 		AdminPassword: "testadminpass",
@@ -31,11 +32,6 @@ func TestLdapProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.
 		DN:         username,
 		Attributes: []*ldap.EntryAttribute{ldap.NewEntryAttribute("cn", []string{username})},
 	}
-	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
-	mockConfigProvider.
-		EXPECT().
-		LoadLdapConfig(gomock.Any()).
-		Return(config, nil)
 	mockClient := mock_ldap.NewMockClient(ctrl)
 	mockClient.
 		EXPECT().
@@ -67,7 +63,7 @@ func TestLdapProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 	mockEnforcer.EXPECT().LoadPolicy().Return(nil)
 
-	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer, mockEnforcer)
+	p := NewLdapProvider(config, mockUserProvider, mockLdapDialer, mockEnforcer)
 	user, err := p.Auth(ctx, username, password)
 
 	if err != nil {
@@ -86,16 +82,11 @@ func TestLdapProvider_Auth_GivenInvalidAdminCredentials_ShouldReturnError(t *tes
 	defer cancel()
 	username := "testname"
 	password := "testpass"
-	config := &security.LdapConfig{
+	config := security.LdapConfig{
 		Url:           "ldaps://test",
 		AdminUsername: "testadminname",
 		AdminPassword: "testadminpass",
 	}
-	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
-	mockConfigProvider.
-		EXPECT().
-		LoadLdapConfig(gomock.Any()).
-		Return(config, nil)
 	mockClient := mock_ldap.NewMockClient(ctrl)
 	mockClient.
 		EXPECT().
@@ -118,7 +109,7 @@ func TestLdapProvider_Auth_GivenInvalidAdminCredentials_ShouldReturnError(t *tes
 
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 
-	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer, mockEnforcer)
+	p := NewLdapProvider(config, mockUserProvider, mockLdapDialer, mockEnforcer)
 	user, err := p.Auth(ctx, username, password)
 
 	if err == nil {
@@ -137,16 +128,11 @@ func TestLdapProvider_Auth_GivenInvalidUsername_ShouldReturnNil(t *testing.T) {
 	defer cancel()
 	username := "testname"
 	password := "testpass"
-	config := &security.LdapConfig{
+	config := security.LdapConfig{
 		Url:           "ldaps://test",
 		AdminUsername: "testadminname",
 		AdminPassword: "testadminpass",
 	}
-	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
-	mockConfigProvider.
-		EXPECT().
-		LoadLdapConfig(gomock.Any()).
-		Return(config, nil)
 	mockClient := mock_ldap.NewMockClient(ctrl)
 	mockClient.
 		EXPECT().
@@ -169,7 +155,7 @@ func TestLdapProvider_Auth_GivenInvalidUsername_ShouldReturnNil(t *testing.T) {
 
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 
-	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer, mockEnforcer)
+	p := NewLdapProvider(config, mockUserProvider, mockLdapDialer, mockEnforcer)
 	user, err := p.Auth(ctx, username, password)
 
 	if err != nil {
@@ -188,7 +174,7 @@ func TestLdapProvider_Auth_GivenInvalidPassword_ShouldReturnNil(t *testing.T) {
 	defer cancel()
 	username := "testname"
 	password := "testpass"
-	config := &security.LdapConfig{
+	config := security.LdapConfig{
 		Url:           "ldaps://test",
 		AdminUsername: "testadminname",
 		AdminPassword: "testadminpass",
@@ -196,11 +182,6 @@ func TestLdapProvider_Auth_GivenInvalidPassword_ShouldReturnNil(t *testing.T) {
 	entry := &ldap.Entry{
 		DN: username,
 	}
-	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
-	mockConfigProvider.
-		EXPECT().
-		LoadLdapConfig(ctx).
-		Return(config, nil)
 	mockClient := mock_ldap.NewMockClient(ctrl)
 	mockClient.
 		EXPECT().
@@ -227,7 +208,7 @@ func TestLdapProvider_Auth_GivenInvalidPassword_ShouldReturnNil(t *testing.T) {
 
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 
-	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer, mockEnforcer)
+	p := NewLdapProvider(config, mockUserProvider, mockLdapDialer, mockEnforcer)
 	user, err := p.Auth(ctx, username, password)
 
 	if err != nil {
@@ -246,7 +227,7 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndNoUserInStore_ShouldCreate
 	defer cancel()
 	username := "testname"
 	password := "testpass"
-	config := &security.LdapConfig{
+	config := security.LdapConfig{
 		Url:          "ldaps://test",
 		UsernameAttr: "testnameattr",
 		Attributes: map[string]string{
@@ -277,11 +258,6 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndNoUserInStore_ShouldCreate
 		Source:     security.SourceLdap,
 		IsEnabled:  true,
 	}
-	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
-	mockConfigProvider.
-		EXPECT().
-		LoadLdapConfig(gomock.Any()).
-		Return(config, nil)
 	mockClient := mock_ldap.NewMockClient(ctrl)
 	mockClient.
 		EXPECT().
@@ -311,7 +287,7 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndNoUserInStore_ShouldCreate
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 	mockEnforcer.EXPECT().LoadPolicy().Return(nil)
 
-	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer, mockEnforcer)
+	p := NewLdapProvider(config, mockUserProvider, mockLdapDialer, mockEnforcer)
 	_, _ = p.Auth(ctx, username, password)
 }
 
@@ -322,7 +298,7 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndUserInStore_ShouldUpdateUs
 	defer cancel()
 	username := "testname"
 	password := "testpass"
-	config := &security.LdapConfig{
+	config := security.LdapConfig{
 		Url:          "ldaps://test",
 		UsernameAttr: "testnameattr",
 		Attributes: map[string]string{
@@ -352,11 +328,6 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndUserInStore_ShouldUpdateUs
 		Source:     security.SourceLdap,
 		IsEnabled:  true,
 	}
-	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
-	mockConfigProvider.
-		EXPECT().
-		LoadLdapConfig(gomock.Any()).
-		Return(config, nil)
 	mockClient := mock_ldap.NewMockClient(ctrl)
 	mockClient.
 		EXPECT().
@@ -395,6 +366,6 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndUserInStore_ShouldUpdateUs
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 	mockEnforcer.EXPECT().LoadPolicy().Return(nil)
 
-	p := NewLdapProvider(mockConfigProvider, mockUserProvider, mockLdapDialer, mockEnforcer)
+	p := NewLdapProvider(config, mockUserProvider, mockLdapDialer, mockEnforcer)
 	_, _ = p.Auth(ctx, username, password)
 }
