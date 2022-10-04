@@ -43,6 +43,7 @@ type BaseFilterRequest struct {
 	Opened      *bool          `form:"opened" json:"opened"`
 	OnlyParents bool           `form:"correlation" json:"correlation"`
 	Category    string         `form:"category" json:"category"`
+	Tag         string         `form:"tag" json:"tag"`
 
 	IncludeInstructionTypes []int    `form:"include_instruction_types[]" json:"include_instruction_types"`
 	ExcludeInstructionTypes []int    `form:"exclude_instruction_types[]" json:"exclude_instruction_types"`
@@ -168,6 +169,7 @@ type Alarm struct {
 	Time   types.CpsTime                     `bson:"t" json:"t" swaggertype:"integer"`
 	Entity entity.Entity                     `bson:"entity" json:"entity"`
 	Value  AlarmValue                        `bson:"v" json:"v"`
+	Tags   []string                          `bson:"tags" json:"tags"`
 	Infos  map[string]map[string]interface{} `bson:"infos" json:"infos"`
 
 	Pbehavior *Pbehavior `bson:"pbehavior,omitempty" json:"pbehavior,omitempty"`
@@ -225,7 +227,6 @@ type AlarmValue struct {
 	Resource          string                `bson:"resource,omitempty" json:"resource,omitempty"`
 	Resolved          *types.CpsTime        `bson:"resolved,omitempty" json:"resolved,omitempty" swaggertype:"integer"`
 	PbehaviorInfo     *entity.PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	Tags              []string              `bson:"tags" json:"tags"`
 	Meta              string                `bson:"meta,omitempty" json:"meta,omitempty"`
 	Parents           []string              `bson:"parents" json:"parents"`
 	Children          []string              `bson:"children" json:"children"`
