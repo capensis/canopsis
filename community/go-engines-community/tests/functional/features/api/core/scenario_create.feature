@@ -294,7 +294,7 @@ Feature: Create a scenario
               "description": "test-type-to-edit-scenario-description",
               "icon_name": "test-type-to-edit-scenario-icon",
               "name": "test-type-to-edit-scenario-name",
-              "priority": 24,
+              "priority": 25,
               "type": "maintenance"
             }
           },
@@ -450,7 +450,7 @@ Feature: Create a scenario
               "description": "test-type-to-edit-scenario-description",
               "icon_name": "test-type-to-edit-scenario-icon",
               "name": "test-type-to-edit-scenario-name",
-              "priority": 24,
+              "priority": 25,
               "type": "maintenance"
             }
           },

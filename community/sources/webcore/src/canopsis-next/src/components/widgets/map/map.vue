@@ -4,12 +4,13 @@
       v-flex(v-if="hasAccessToCategory", xs3)
         c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
       v-flex(v-if="hasAccessToUserFilter", xs4)
-        v-layout(row, wrap, align-center)
+        v-layout(row, align-center)
           filter-selector(
             :label="$t('settings.selectAFilter')",
             :filters="userPreference.filters",
             :locked-filters="widget.filters",
             :value="mainFilter",
+            :locked-value="lockedFilter",
             :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
             @input="updateSelectedFilter"
           )
@@ -186,9 +187,11 @@ export default {
     async fetchList() {
       this.pending = true;
 
+      const params = this.getQuery();
+
       this.mapState = await this.fetchMapStateWithoutStore({
         id: this.activeMapId,
-        params: pick(this.query, ['filter', 'category']),
+        params: pick(params, ['filters', 'category']),
       });
 
       this.pending = false;

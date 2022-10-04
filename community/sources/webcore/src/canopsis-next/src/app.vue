@@ -62,7 +62,7 @@ export default {
     },
 
     shownNavigation() {
-      return ![ROUTES_NAMES.login, ROUTES_NAMES.error].includes(this.$route.name);
+      return !this.$route.meta.hideNavigation;
     },
   },
   beforeCreate() {
