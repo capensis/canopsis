@@ -234,6 +234,7 @@ describe('alarms-list-row', () => {
         columns: [{}, {}],
         columnsFilters: [{}, {}],
         isTourEnabled: true,
+        selectedTag: 'tag',
       },
     });
 
