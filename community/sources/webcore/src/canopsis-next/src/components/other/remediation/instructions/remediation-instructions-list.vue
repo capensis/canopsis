@@ -7,68 +7,62 @@
       :total-items="totalItems",
       :pagination="pagination",
       :is-disabled-item="isDisabledInstruction",
-      select-all,
+      :select-all="removable",
       search,
       advanced-pagination,
       @update:pagination="$emit('update:pagination', $event)"
     )
-      template(slot="toolbar", slot-scope="props")
-        v-flex(v-show="hasDeleteAnyRemediationInstructionAccess && props.selected.length", xs4)
-          v-btn(@click="$emit('remove-selected', props.selected)", icon)
-            v-icon delete
-      template(slot="headerCell", slot-scope="props")
-        span.c-table-header__text--multiline {{ props.header.text }}
-      template(slot="author", slot-scope="props")
-        span {{ props.item.author.name }}
-      template(slot="enabled", slot-scope="props")
-        c-enabled(:value="props.item.enabled")
-      template(slot="status", slot-scope="props")
-        v-tooltip(v-if="props.item.approval", bottom)
-          slot(slot="activator")
+      template(#mass-actions="{ selected }")
+        c-action-btn.ml-3(v-if="removable", type="delete", @click="$emit('remove-selected', selected)")
+      template(#headerCell="{ header }")
+        span.c-table-header__text--multiline {{ header.text }}
+      template(#author="{ item }")
+        span {{ item.author.name }}
+      template(#enabled="{ item }")
+        c-enabled(:value="item.enabled")
+      template(#status="{ item }")
+        v-tooltip(v-if="item.approval", bottom)
+          template(#activator="{ on }")
             v-icon(color="black") query_builder
           span {{ $t('remediationInstructions.approvalPending') }}
         v-icon(v-else, color="primary") check_circle
-      template(slot="type", slot-scope="props") {{ $t(`remediationInstructions.types.${props.item.type}`) }}
-      template(slot="last_modified", slot-scope="props") {{ props.item.last_modified | date }}
-      template(slot="last_executed_on", slot-scope="props") {{ props.item.last_executed_on | date }}
-      template(slot="actions", slot-scope="props")
+      template(#type="{ item }") {{ $t(`remediationInstructions.types.${item.type}`) }}
+      template(#last_modified="{ item }") {{ item.last_modified | date }}
+      template(#last_executed_on="{ item }") {{ item.last_executed_on | date }}
+      template(#actions="{ item, disabled }")
         v-layout(row, justify-end)
           c-action-btn(
-            v-if="props.item.approval && isApprovalForCurrentUser(props.item.approval)",
+            v-if="item.approval && isApprovalForCurrentUser(item.approval)",
             :tooltip="$t('remediationInstructions.needApprove')",
             icon="notification_important",
             color="error",
-            @click="$emit('approve', props.item)"
+            @click="$emit('approve', item)"
           )
           c-action-btn(
-            v-if="hasUpdateAnyRemediationInstructionAccess",
+            v-if="updatable",
             type="edit",
-            @click="$emit('edit', props.item)"
+            @click="$emit('edit', item)"
           )
           c-action-btn(
-            v-if="hasUpdateAnyRemediationInstructionAccess",
+            v-if="updatable",
             :tooltip="$t('modals.patterns.title')",
             icon="assignment",
-            @click="$emit('assign-patterns', props.item)"
+            @click="$emit('assign-patterns', item)"
           )
           c-action-btn(
-            v-if="hasDeleteAnyRemediationInstructionAccess",
-            :tooltip="props.disabled ? $t('remediationInstructions.usingInstruction') : $t('common.delete')",
-            :disabled="props.disabled",
+            v-if="removable",
+            :tooltip="disabled ? $t('remediationInstructions.usingInstruction') : $t('common.delete')",
+            :disabled="disabled",
             type="delete",
-            @click="$emit('remove', props.item)"
+            @click="$emit('remove', item)"
           )
 </template>
 
 <script>
-import { get } from 'lodash';
-
-import {
-  permissionsTechnicalRemediationInstructionMixin,
-} from '@/mixins/permissions/technical/remediation-instruction';
+import { authMixin } from '@/mixins/auth';
 
 export default {
-  mixins: [permissionsTechnicalRemediationInstructionMixin],
+  mixins: [authMixin],
   props: {
     remediationInstructions: {
       type: Array,
@@ -85,6 +79,14 @@ export default {
     pagination: {
       type: Object,
       required: true,
+    },
+    removable: {
+      type: Boolean,
+      default: false,
+    },
+    updatable: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -133,8 +135,8 @@ export default {
   },
   methods: {
     isApprovalForCurrentUser(remediationInstruction) {
-      return get(remediationInstruction, 'user._id') === this.currentUser._id
-        || get(remediationInstruction, 'role._id') === this.currentUser.role._id;
+      return remediationInstruction?.user?._id === this.currentUser._id
+        || remediationInstruction?.role?._id === this.currentUser.role._id;
     },
 
     isDisabledInstruction({ deletable }) {

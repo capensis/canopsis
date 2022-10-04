@@ -5,6 +5,8 @@
       :pending="remediationInstructionsPending",
       :total-items="remediationInstructionsMeta.total_count",
       :pagination.sync="pagination",
+      :updatable="hasUpdateAnyRemediationInstructionAccess",
+      :removable="hasDeleteAnyRemediationInstructionAccess",
       @remove-selected="showRemoveSelectedRemediationInstructionModal",
       @assign-patterns="showAssignPatternsModal",
       @remove="showRemoveRemediationInstructionModal",
@@ -24,6 +26,7 @@ import { isSeveralEqual } from '@/helpers/equal';
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
+import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
 
 import RemediationInstructionsList from './remediation-instructions-list.vue';
 
@@ -33,6 +36,7 @@ export default {
     authMixin,
     localQueryMixin,
     entitiesRemediationInstructionMixin,
+    permissionsTechnicalRemediationInstructionMixin,
   ],
   mounted() {
     this.fetchList();
