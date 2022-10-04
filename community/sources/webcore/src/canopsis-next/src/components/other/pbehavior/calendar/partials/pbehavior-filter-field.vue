@@ -70,7 +70,6 @@ export default {
         name: this.patternsFieldName,
         rules: 'required:true',
         getter: () => !!this.hasPattern,
-        context: () => this,
         vm: this,
       });
     },

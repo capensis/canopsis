@@ -40,6 +40,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -48,6 +49,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -127,6 +130,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -135,6 +139,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -221,6 +227,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -232,6 +239,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -311,6 +320,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -319,6 +329,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -416,6 +428,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -424,6 +437,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -495,6 +510,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -503,6 +519,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -573,6 +591,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -586,6 +605,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -660,6 +681,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -668,6 +690,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -772,12 +796,18 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		}
 	}).AnyTimes()
 
+	hasRunningExecution := false
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					IncludeInstructions: []string{instructionId},
+					Instructions: []InstructionFilterRequest{
+						{
+							Running: &hasRunningExecution,
+							Include: []string{instructionId},
+						},
+					},
 				},
 			},
 		},
@@ -790,6 +820,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -801,6 +832,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -814,28 +847,33 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
+	expected = append(expected, getInstructionExecutionLookup(false)...)
 	expected = append(expected,
 		bson.M{"$match": bson.M{"entity.enabled": true}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
-			{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"$or": []bson.M{{"$and": []bson.M{
-						{"v.duration": bson.M{"$gt": 600}},
-						{"$and": []bson.M{
-							{"v.infos_array.v.info_name": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
-							{"v.infos_array.v.info_name": bson.M{"$eq": 3}},
-						}},
-					}}}},
-					{"$or": []bson.M{{"$and": []bson.M{
-						{"entity.category": bson.M{"$eq": "test-category"}},
-					}}}},
-					{"v.pbehavior_info.type": bson.M{"$in": []string{"maintenance"}}},
-					{"v.pbehavior_info.type": bson.M{"$nin": []string{"pause"}}},
+			{"$and": []bson.M{
+				{"instruction_execution.instruction": bson.M{"$nin": []string{instructionId}}},
+				{"$or": []bson.M{
+					{"$and": []bson.M{
+						{"$or": []bson.M{{"$and": []bson.M{
+							{"v.duration": bson.M{"$gt": 600}},
+							{"$and": []bson.M{
+								{"v.infos_array.v.info_name": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
+								{"v.infos_array.v.info_name": bson.M{"$eq": 3}},
+							}},
+						}}}},
+						{"$or": []bson.M{{"$and": []bson.M{
+							{"entity.category": bson.M{"$eq": "test-category"}},
+						}}}},
+						{"v.pbehavior_info.type": bson.M{"$in": []string{"maintenance"}}},
+						{"v.pbehavior_info.type": bson.M{"$nin": []string{"pause"}}},
+					}},
 				}},
 			}},
 		}}},
 		bson.M{"$project": bson.M{
-			"entity": 0,
+			"entity":                0,
+			"instruction_execution": 0,
 		}},
 		bson.M{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -896,6 +934,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 		{"$skip": 0},
 		{"$limit": 10},
 	}
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -904,6 +943,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -999,6 +1040,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -1012,6 +1054,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -1078,6 +1122,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -1086,6 +1131,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -1164,6 +1211,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -1177,6 +1225,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -1246,6 +1296,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -1254,6 +1305,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -1316,6 +1369,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -1327,6 +1381,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -1390,6 +1446,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -1401,6 +1458,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.depends":      0,
+			"entity.impact":       0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -1527,6 +1586,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -1538,6 +1598,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
+			"entity.depends":      0,
+			"entity.impact":       0,
 		},
 	})
 	expected := []bson.M{

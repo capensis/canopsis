@@ -97,10 +97,12 @@ const (
 
 // Alarm represents an alarm document.
 type Alarm struct {
-	ID       string     `bson:"_id" json:"_id"`
-	Time     CpsTime    `bson:"t" json:"t"`
-	EntityID string     `bson:"d" json:"d"`
-	Value    AlarmValue `bson:"v" json:"v"`
+	ID       string   `bson:"_id" json:"_id"`
+	Time     CpsTime  `bson:"t" json:"t"`
+	EntityID string   `bson:"d" json:"d"`
+	Tags     []string `bson:"tags" json:"tags"`
+	// todo move all field from Value to Alarm
+	Value AlarmValue `bson:"v" json:"v"`
 	// update contains alarm changes after last mongo update. Use functions Update* to
 	// fill it.
 	update         bson.M
