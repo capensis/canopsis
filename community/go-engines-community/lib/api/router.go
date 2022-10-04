@@ -362,7 +362,7 @@ func RegisterRoutes(
 
 		protected.POST(
 			"/pbehavior-timespans",
-			middleware.Authorize(authObjPbh, permCreate, enforcer),
+			middleware.Authorize(authObjPbh, permRead, enforcer),
 			pbehaviortimespan.GetTimeSpans(pbehaviortimespan.NewService(dbClient, timezoneConfigProvider)),
 		)
 		protected.GET(

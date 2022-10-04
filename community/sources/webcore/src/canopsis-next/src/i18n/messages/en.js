@@ -108,6 +108,7 @@ export default merge({
     create: 'Create',
     delete: 'Delete',
     show: 'Show',
+    hide: 'Hide',
     edit: 'Edit',
     duplicate: 'Duplicate',
     play: 'Play',
@@ -259,6 +260,7 @@ export default merge({
     canonicalType: 'Canonical type',
     instructions: 'Instructions',
     playlist: 'Playlist | Playlists',
+    calendar: 'Calendar',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -777,9 +779,11 @@ export default merge({
     periodsNumber: 'Number of steps',
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
+    lockedFilter: 'Filter locked in widget settings',
     exportAsCsv: 'Export widget as csv file',
     criticityLevels: 'Criticity levels',
     isPriorityEnabled: 'Show priority',
+    clearFilterDisabled: 'Disable possibility to clear selected filter',
     exportCsv: {
       title: 'Export CSV',
       fields: {
@@ -1896,6 +1900,7 @@ export default merge({
     component: 'Component ID or template',
     connector: 'Connector ID or template',
     connectorName: 'Connector name or template',
+    duringPeriod: 'Applied during this period only',
     types: {
       [EVENT_FILTER_TYPES.drop]: 'Drop',
       [EVENT_FILTER_TYPES.break]: 'Break',
@@ -2405,11 +2410,19 @@ export default merge({
 
   remediationInstructionsFilters: {
     button: 'Create instructions filter',
-    with: 'With selected instructions',
-    without: 'Without selected instructions',
+    filterByInstructions: 'For alarms by instructions',
+    with: 'Show alarms with selected instructions',
+    without: 'Show alarms without selected instructions',
     selectAll: 'Select all',
+    alarmsListDisplay: 'Alarms list display',
+    allAlarms: 'Show all filtered alarms',
+    showWithInProgress: 'Show filtered alarms with instructions in progress',
+    showWithoutInProgress: 'Show filtered alarms without instructions in progress',
+    hideWithInProgress: 'Hide filtered alarms with instructions in progress',
+    hideWithoutInProgress: 'Hide filtered alarms without instructions in progress',
     selectedInstructions: 'Selected instructions',
     selectedInstructionsHelp: 'Instructions of selected type are excluded from the list',
+    inProgress: 'In progress',
     chip: {
       with: 'WITH',
       without: 'WITHOUT',

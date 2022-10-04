@@ -86,9 +86,11 @@ func (s *service) getExdates(ctx context.Context, r TimespansRequest) ([]pbehavi
 	exdates := make([]pbehavior.Exdate, len(r.Exdates))
 	for i, v := range r.Exdates {
 		exdates[i] = pbehavior.Exdate{
-			Begin: v.Begin,
-			End:   v.End,
-			Type:  v.Type,
+			Exdate: types.Exdate{
+				Begin: v.Begin,
+				End:   v.End,
+			},
+			Type: v.Type,
 		}
 	}
 
@@ -100,9 +102,11 @@ func (s *service) getExdates(ctx context.Context, r TimespansRequest) ([]pbehavi
 	for _, ex := range exceptions {
 		for _, v := range ex.Exdates {
 			exdates = append(exdates, pbehavior.Exdate{
-				Begin: v.Begin,
-				End:   v.End,
-				Type:  v.Type,
+				Exdate: types.Exdate{
+					Begin: v.Begin,
+					End:   v.End,
+				},
+				Type: v.Type,
 			})
 		}
 	}

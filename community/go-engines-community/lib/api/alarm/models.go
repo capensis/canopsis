@@ -34,6 +34,18 @@ type FilterRequest struct {
 	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
 }
 
+func (r FilterRequest) GetOpenedFilter() int {
+	if r.Opened == nil {
+		return OpenedAndRecentResolved
+	}
+
+	if *r.Opened {
+		return OnlyOpened
+	}
+
+	return OnlyResolved
+}
+
 type BaseFilterRequest struct {
 	Filters     []string       `form:"filters[]" json:"filters"`
 	Search      string         `form:"search" json:"search"`
@@ -45,22 +57,15 @@ type BaseFilterRequest struct {
 	Category    string         `form:"category" json:"category"`
 	Tag         string         `form:"tag" json:"tag"`
 
-	IncludeInstructionTypes []int    `form:"include_instruction_types[]" json:"include_instruction_types"`
-	ExcludeInstructionTypes []int    `form:"exclude_instruction_types[]" json:"exclude_instruction_types"`
-	IncludeInstructions     []string `form:"include_instructions[]" json:"include_instructions"`
-	ExcludeInstructions     []string `form:"exclude_instructions[]" json:"exclude_instructions"`
+	Instructions []InstructionFilterRequest `form:"instructions[]" json:"instructions"`
 }
 
-func (r FilterRequest) GetOpenedFilter() int {
-	if r.Opened == nil {
-		return OpenedAndRecentResolved
-	}
-
-	if *r.Opened {
-		return OnlyOpened
-	}
-
-	return OnlyResolved
+type InstructionFilterRequest struct {
+	Running      *bool    `form:"running" json:"running"`
+	IncludeTypes []int    `form:"include_types[]" json:"include_types"`
+	ExcludeTypes []int    `form:"exclude_types[]" json:"exclude_types"`
+	Include      []string `form:"include[]" json:"include"`
+	Exclude      []string `form:"exclude[]" json:"exclude"`
 }
 
 type ListByServiceRequest struct {

@@ -368,14 +368,6 @@ definitions:
         type: string
       correlation:
         type: boolean
-      exclude_instruction_types:
-        items:
-          type: integer
-        type: array
-      exclude_instructions:
-        items:
-          type: string
-        type: array
       fields:
         items:
           $ref: '#/definitions/export.Field'
@@ -384,13 +376,9 @@ definitions:
         items:
           type: string
         type: array
-      include_instruction_types:
+      instructions:
         items:
-          type: integer
-        type: array
-      include_instructions:
-        items:
-          type: string
+          $ref: '#/definitions/alarm.InstructionFilterRequest'
         type: array
       opened:
         type: boolean
@@ -415,6 +403,27 @@ definitions:
         type: string
       status:
         type: integer
+    type: object
+  alarm.InstructionFilterRequest:
+    properties:
+      exclude:
+        items:
+          type: string
+        type: array
+      exclude_types:
+        items:
+          type: integer
+        type: array
+      include:
+        items:
+          type: string
+        type: array
+      include_types:
+        items:
+          type: integer
+        type: array
+      running:
+        type: boolean
     type: object
   alarm.ManualResponse:
     properties:
@@ -1351,11 +1360,25 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/exdate.Request'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
         type: integer
       type:
         enum:
@@ -1398,11 +1421,25 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/exdate.Request'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
         type: integer
       type:
         enum:
@@ -1417,11 +1454,30 @@ definitions:
     - description
     - type
     type: object
+  eventfilter.Exception:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      description:
+        type: string
+      exdates:
+        items:
+          $ref: '#/definitions/types.Exdate'
+        type: array
+      name:
+        type: string
+    type: object
   eventfilter.ExternalDataParameters:
     properties:
       collection:
         description: are used in mongo external data
         type: string
+      regexp:
+        additionalProperties:
+          type: string
+        type: object
       request:
         $ref: '#/definitions/request.Parameters'
         description: are used in api external data
@@ -1432,7 +1488,7 @@ definitions:
       type:
         type: string
     type: object
-  eventfilter.Rule:
+  eventfilter.Response:
     properties:
       _id:
         type: string
@@ -1445,7 +1501,6 @@ definitions:
       created:
         type: integer
       description:
-        maxLength: 255
         type: string
       enabled:
         type: boolean
@@ -1461,6 +1516,14 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          $ref: '#/definitions/eventfilter.Exception'
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/types.Exdate'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
@@ -1469,18 +1532,16 @@ definitions:
         $ref: '#/definitions/oldpattern.EventPatternList'
       priority:
         type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
+        type: integer
       type:
-        enum:
-        - break
-        - drop
-        - enrichment
-        - change_entity
         type: string
       updated:
         type: integer
-    required:
-    - description
-    - type
     type: object
   eventfilter.RuleConfig:
     properties:
@@ -1527,11 +1588,25 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/exdate.Request'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
         type: integer
       type:
         enum:
@@ -1545,6 +1620,16 @@ definitions:
     required:
     - description
     - type
+    type: object
+  exdate.Request:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
+    required:
+    - begin
+    - end
     type: object
   export.Field:
     properties:
@@ -3590,6 +3675,13 @@ definitions:
     required:
     - unit
     - value
+    type: object
+  types.Exdate:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
     type: object
   types.WebhookBasicAuth:
     properties:

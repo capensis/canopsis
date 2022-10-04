@@ -42,7 +42,8 @@ type MongoQueryBuilder struct {
 	// additionalMatch is match after some lookups
 	additionalMatch []bson.M
 	// lookupsForAdditionalMatch is required for match and for result
-	lookupsForAdditionalMatch map[string]bool
+	lookupsForAdditionalMatch     map[string]bool
+	lookupsOnlyForAdditionalMatch map[string]bool
 	// lookupsForSort is required for sort and for result
 	lookupsForSort map[string]bool
 	// excludeLookupsBeforeSort is used to remove data from pipeline to decrease sorted data.
@@ -106,6 +107,7 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.additionalMatch = []bson.M{{"$match": bson.M{"entity.enabled": true}}}
 
 	q.lookupsForAdditionalMatch = map[string]bool{"entity": true}
+	q.lookupsOnlyForAdditionalMatch = make(map[string]bool)
 	q.lookupsForSort = make(map[string]bool)
 	q.excludeLookupsBeforeSort = make([]string, 0)
 	q.lookups = []lookupWithKey{
@@ -289,6 +291,7 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	beforeLimit = append(beforeLimit, q.alarmMatch...)
 
 	q.addLookupsToPipeline(q.lookupsForAdditionalMatch, addedLookups, &beforeLimit)
+	q.addLookupsToPipeline(q.lookupsOnlyForAdditionalMatch, addedLookups, &beforeLimit)
 	beforeLimit = append(beforeLimit, q.additionalMatch...)
 
 	if len(q.excludeLookupsBeforeSort) > 0 {
@@ -306,7 +309,7 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	afterLimit := make([]bson.M, 0)
 
 	for _, lookup := range q.lookups {
-		if !addedLookups[lookup.key] {
+		if !addedLookups[lookup.key] && !q.lookupsOnlyForAdditionalMatch[lookup.key] {
 			afterLimit = append(afterLimit, lookup.pipeline...)
 		}
 	}
@@ -637,60 +640,144 @@ func (q *MongoQueryBuilder) addOnlyParentsFilter(r FilterRequest, match *[]bson.
 }
 
 func (q *MongoQueryBuilder) addInstructionsFilter(ctx context.Context, r FilterRequest, match *[]bson.M) error {
-	added := false
+	withMatch := false
+	withExecution := false
+	withExecutionType := false
 
-	if len(r.ExcludeInstructions) > 0 {
-		filters, err := q.getInstructionsFilters(ctx, bson.M{"_id": bson.M{"$in": r.ExcludeInstructions}})
-		if err != nil {
-			return err
+	for _, instructionFilter := range r.Instructions {
+		if len(instructionFilter.Exclude) > 0 {
+			if instructionFilter.Running != nil && *instructionFilter.Running {
+				withExecution = true
+				*match = append(*match, bson.M{"instruction_execution.instruction": bson.M{"$nin": instructionFilter.Exclude}})
+				continue
+			}
+
+			filters, err := q.getInstructionsFilters(
+				ctx,
+				bson.M{"_id": bson.M{"$in": instructionFilter.Exclude}},
+			)
+			if err != nil {
+				return err
+			}
+			if len(filters) > 0 {
+				if instructionFilter.Running == nil {
+					withMatch = true
+					*match = append(*match, bson.M{"$nor": filters})
+				} else {
+					withExecution = true
+					withMatch = true
+					*match = append(*match, bson.M{"instruction_execution.instruction": bson.M{"$or": []bson.M{
+						{"$in": instructionFilter.Exclude},
+						{"$nor": filters},
+					}}})
+				}
+			}
+			continue
 		}
-		if len(filters) > 0 {
-			added = true
-			*match = append(*match, bson.M{"$nor": filters})
+
+		if len(instructionFilter.ExcludeTypes) > 0 {
+			if instructionFilter.Running != nil && *instructionFilter.Running {
+				withExecutionType = true
+				*match = append(*match, bson.M{"instruction_execution.type": bson.M{"$nin": instructionFilter.ExcludeTypes}})
+				continue
+			}
+
+			filters, err := q.getInstructionsFilters(
+				ctx,
+				bson.M{"type": bson.M{"$in": instructionFilter.ExcludeTypes}},
+			)
+			if err != nil {
+				return err
+			}
+			if len(filters) > 0 {
+				if instructionFilter.Running == nil {
+					withMatch = true
+					*match = append(*match, bson.M{"$nor": filters})
+				} else {
+					withExecutionType = true
+					withMatch = true
+					*match = append(*match, bson.M{"$or": []bson.M{
+						{"instruction_execution.type": bson.M{"$in": instructionFilter.ExcludeTypes}},
+						{"$nor": filters},
+					}})
+				}
+			}
+			continue
+		}
+
+		if len(instructionFilter.Include) > 0 {
+			if instructionFilter.Running != nil && *instructionFilter.Running {
+				withExecution = true
+				*match = append(*match, bson.M{"instruction_execution.instruction": bson.M{"$in": instructionFilter.Include}})
+				continue
+			}
+
+			filters, err := q.getInstructionsFilters(
+				ctx,
+				bson.M{"_id": bson.M{"$in": instructionFilter.Include}},
+			)
+			if err != nil {
+				return err
+			}
+			if len(filters) > 0 {
+				if instructionFilter.Running == nil {
+					withMatch = true
+					*match = append(*match, bson.M{"$or": filters})
+				} else {
+					withMatch = true
+					withExecution = true
+					*match = append(*match, bson.M{"$and": []bson.M{
+						{"instruction_execution.instruction": bson.M{"$nin": instructionFilter.Include}},
+						{"$or": filters},
+					}})
+				}
+			} else {
+				*match = append(*match, bson.M{"$nor": []bson.M{{}}})
+			}
+			continue
+		}
+
+		if len(instructionFilter.IncludeTypes) > 0 {
+			if instructionFilter.Running != nil && *instructionFilter.Running {
+				withExecutionType = true
+				*match = append(*match, bson.M{"instruction_execution.type": bson.M{"$in": instructionFilter.IncludeTypes}})
+				continue
+			}
+
+			filters, err := q.getInstructionsFilters(
+				ctx,
+				bson.M{"type": bson.M{"$in": instructionFilter.IncludeTypes}},
+			)
+			if err != nil {
+				return err
+			}
+			if len(filters) > 0 {
+				if instructionFilter.Running == nil {
+					withMatch = true
+					*match = append(*match, bson.M{"$or": filters})
+				} else {
+					withMatch = true
+					withExecutionType = true
+					*match = append(*match, bson.M{"$and": []bson.M{
+						{"instruction_execution.type": bson.M{"$nin": instructionFilter.IncludeTypes}},
+						{"$or": filters},
+					}})
+				}
+			} else {
+				*match = append(*match, bson.M{"$nor": []bson.M{{}}})
+			}
+			continue
 		}
 	}
 
-	if len(r.ExcludeInstructionTypes) > 0 {
-		filters, err := q.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$in": r.ExcludeInstructionTypes}})
-		if err != nil {
-			return err
-		}
-		if len(filters) > 0 {
-			added = true
-			*match = append(*match, bson.M{"$nor": filters})
-		}
-	}
-
-	if len(r.IncludeInstructions) > 0 {
-		filters, err := q.getInstructionsFilters(ctx, bson.M{"_id": bson.M{"$in": r.IncludeInstructions}})
-		if err != nil {
-			return err
-		}
-		if len(filters) > 0 {
-			added = true
-			*match = append(*match, bson.M{"$or": filters})
-		} else {
-			*match = append(*match, bson.M{"$nor": []bson.M{{}}})
-		}
-	}
-
-	if len(r.IncludeInstructionTypes) > 0 {
-		filters, err := q.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$in": r.IncludeInstructionTypes}})
-		if err != nil {
-			return err
-		}
-		if len(filters) > 0 {
-			added = true
-			*match = append(*match, bson.M{"$or": filters})
-		} else {
-			*match = append(*match, bson.M{"$nor": []bson.M{{}}})
-		}
-	}
-
-	if added {
+	if withMatch {
 		q.computedFieldsForAlarmMatch["v.duration"] = true
 		q.computedFieldsForAlarmMatch["v.infos_array"] = true
 		q.computedFields["v.infos_array"] = bson.M{"$objectToArray": "$v.infos"}
+	}
+	if withExecution || withExecutionType {
+		q.lookupsOnlyForAdditionalMatch["instruction_execution"] = true
+		q.lookups = append(q.lookups, lookupWithKey{key: "instruction_execution", pipeline: getInstructionExecutionLookup(withExecutionType)})
 	}
 
 	return nil
@@ -799,6 +886,10 @@ func (q *MongoQueryBuilder) adjustLookupsForSort(sortFields []string) {
 		if !found {
 			q.excludeLookupsBeforeSort = append(q.excludeLookupsBeforeSort, lookup)
 		}
+	}
+
+	for lookup := range q.lookupsOnlyForAdditionalMatch {
+		q.excludeLookupsBeforeSort = append(q.excludeLookupsBeforeSort, lookup)
 	}
 
 	for _, lookup := range q.lookups {
@@ -1016,6 +1107,38 @@ func getFilteredChildrenLookup(childrenCollection string, childrenMatch bson.M) 
 			"filtered_children": "$filtered_children._id",
 		}},
 	}
+}
+
+func getInstructionExecutionLookup(withType bool) []bson.M {
+	pipeline := []bson.M{
+		{"$lookup": bson.M{
+			"from": mongo.InstructionExecutionMongoCollection,
+			"let":  bson.M{"alarm": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$$alarm", "$alarm"}}},
+					{"status": bson.M{"$in": bson.A{InstructionExecutionStatusRunning, InstructionExecutionStatusWaitResult}}},
+				}}},
+			},
+			"as": "instruction_execution",
+		}},
+		{"$unwind": bson.M{"path": "$instruction_execution", "preserveNullAndEmptyArrays": true}},
+	}
+	if withType {
+		pipeline = append(pipeline, []bson.M{
+			{"$lookup": bson.M{
+				"from":         mongo.InstructionMongoCollection,
+				"localField":   "instruction_execution.instruction",
+				"foreignField": "_id",
+				"as":           "instruction_execution.type",
+			}},
+			{"$unwind": bson.M{"path": "$instruction_execution.type", "preserveNullAndEmptyArrays": true}},
+			{"$addFields": bson.M{
+				"instruction_execution.type": "$instruction_execution.type.type",
+			}},
+		}...)
+	}
+	return pipeline
 }
 
 func getComputedFields(now types.CpsTime) bson.M {
