@@ -15,8 +15,6 @@ const (
 	ApiTokenSigningMethod = "HS256"
 	ApiBulkMaxSize        = 10000
 
-	ApiSecurityInactivityInterval = 24 // hours
-
 	RemediationHttpTimeout                    = 30 * time.Second
 	RemediationLaunchJobRetriesAmount         = 3
 	RemediationLaunchJobRetriesInterval       = 5 * time.Second

@@ -62,7 +62,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -196,7 +196,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -295,7 +295,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -440,7 +440,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -539,7 +539,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -691,7 +691,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -743,7 +743,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json

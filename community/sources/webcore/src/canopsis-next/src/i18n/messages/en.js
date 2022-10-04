@@ -257,6 +257,9 @@ export default merge({
     checkPattern: 'Check pattern',
     itemFound: '{count} item found | {count} items found',
     canonicalType: 'Canonical type',
+    instructions: 'Instructions',
+    playlist: 'Playlist | Playlists',
+    calendar: 'Calendar',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -278,7 +281,6 @@ export default merge({
     acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
     saveChanges: 'Save changes',
     reportIncident: 'Report an incident',
-    instructions: 'Instructions',
     times: {
       second: 'second | seconds',
       minute: 'minute | minutes',
@@ -776,9 +778,11 @@ export default merge({
     periodsNumber: 'Number of steps',
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
+    lockedFilter: 'Filter locked in widget settings',
     exportAsCsv: 'Export widget as csv file',
     criticityLevels: 'Criticity levels',
     isPriorityEnabled: 'Show priority',
+    clearFilterDisabled: 'Disable possibility to clear selected filter',
     exportCsv: {
       title: 'Export CSV',
       fields: {
@@ -1895,6 +1899,7 @@ export default merge({
     component: 'Component ID or template',
     connector: 'Connector ID or template',
     connectorName: 'Connector name or template',
+    duringPeriod: 'Applied during this period only',
     types: {
       [EVENT_FILTER_TYPES.drop]: 'Drop',
       [EVENT_FILTER_TYPES.break]: 'Break',

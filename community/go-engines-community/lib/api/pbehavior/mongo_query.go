@@ -3,6 +3,8 @@ package pbehavior
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -11,7 +13,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"strings"
 )
 
 type MongoQuery struct {
@@ -279,7 +280,7 @@ func GetNestedExdatesPipeline() []bson.M {
 		}},
 		// Lookup exceptions
 		{"$lookup": bson.M{
-			"from":         pbehavior.ExceptionCollectionName,
+			"from":         mongo.PbehaviorExceptionMongoCollection,
 			"localField":   "exceptions",
 			"foreignField": "_id",
 			"as":           "exceptions",

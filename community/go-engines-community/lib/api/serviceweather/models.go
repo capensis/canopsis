@@ -12,10 +12,10 @@ import (
 
 type ListRequest struct {
 	pagination.Query
-	Filter   string `form:"filter" json:"filter"`
-	Category string `form:"category" json:"category"`
-	Sort     string `form:"sort" json:"sort"`
-	SortBy   string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
+	Filters  []string `form:"filters[]" json:"filters"`
+	Category string   `form:"category" json:"category"`
+	Sort     string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
+	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
 }
 
 type EntitiesListRequest struct {

@@ -97,26 +97,3 @@ func (a *api) DeleteUserInterface(c *gin.Context) {
 	}
 	c.JSON(http.StatusNoContent, nil)
 }
-
-func (a *api) GetApiSecurity(c *gin.Context) {
-	response, err := a.store.RetrieveApiSecurityConfig(c)
-	if err != nil {
-		panic(err)
-	}
-	c.JSON(http.StatusOK, response)
-}
-
-func (a *api) UpdateApiSecurity(c *gin.Context) {
-	var request map[string]apisecurity.AuthMethodConf
-
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-		return
-	}
-
-	response, err := a.store.UpdateApiSecurityConfig(c, request)
-	if err != nil {
-		panic(err)
-	}
-	c.JSON(http.StatusOK, response)
-}
