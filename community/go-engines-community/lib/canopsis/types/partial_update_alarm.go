@@ -398,6 +398,30 @@ func (a *Alarm) PartialUpdateAddStepWithStep(newStep AlarmStep) error {
 	return nil
 }
 
+func (a *Alarm) PartialUpdateTags(eventTags map[string]string) {
+	exists := make(map[string]struct{}, len(a.Tags))
+	for _, tag := range a.Tags {
+		exists[tag] = struct{}{}
+	}
+
+	tags := TransformEventTags(eventTags)
+	var k = 0
+	for _, tag := range tags {
+		if _, ok := exists[tag]; !ok {
+			tags[k] = tag
+			k++
+		}
+	}
+	if k == 0 {
+		return
+	}
+	tags = tags[:k]
+	a.Tags = append(a.Tags, tags...)
+	a.AddUpdate("$addToSet", bson.M{
+		"tags": bson.M{"$each": tags},
+	})
+}
+
 // AddUpdate adds new mongo updates.
 func (a *Alarm) AddUpdate(key string, update bson.M) {
 	if a.update == nil {

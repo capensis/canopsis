@@ -14,7 +14,7 @@ import (
 )
 
 // LoginHandler redirects to CAS login url and saves referer url to service url.
-func LoginHandler(configProvider libsecurity.ConfigProvider) gin.HandlerFunc {
+func LoginHandler(config libsecurity.CasConfig) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		request := casLoginRequest{}
 
@@ -23,12 +23,7 @@ func LoginHandler(configProvider libsecurity.ConfigProvider) gin.HandlerFunc {
 			return
 		}
 
-		casConfig, err := configProvider.LoadCasConfig(c.Request.Context())
-		if err != nil {
-			panic(err)
-		}
-
-		casUrl, err := url.Parse(casConfig.LoginUrl)
+		casUrl, err := url.Parse(config.LoginUrl)
 		if err != nil {
 			panic(err)
 		}
@@ -87,7 +82,7 @@ func CallbackHandler(p libsecurity.HttpProvider, enforcer libsecurity.Enforcer, 
 }
 
 // SessionLoginHandler redirects to CAS login url and saves referer url to service url.
-func SessionLoginHandler(configProvider libsecurity.ConfigProvider) gin.HandlerFunc {
+func SessionLoginHandler(config libsecurity.CasConfig) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		request := casLoginRequest{}
 
@@ -96,12 +91,7 @@ func SessionLoginHandler(configProvider libsecurity.ConfigProvider) gin.HandlerF
 			return
 		}
 
-		casConfig, err := configProvider.LoadCasConfig(c.Request.Context())
-		if err != nil {
-			panic(err)
-		}
-
-		casUrl, err := url.Parse(casConfig.LoginUrl)
+		casUrl, err := url.Parse(config.LoginUrl)
 		if err != nil {
 			panic(err)
 		}

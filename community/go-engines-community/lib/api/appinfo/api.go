@@ -41,10 +41,7 @@ func (a *api) GetAppInfo(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	response.Login, err = a.store.RetrieveLoginConfig(c)
-	if err != nil {
-		panic(err)
-	}
+	response.Login = a.store.RetrieveLoginConfig()
 
 	user, ok := c.Get(auth.UserKey)
 	if ok {
