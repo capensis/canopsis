@@ -53,7 +53,7 @@ type serviceProvider struct {
 	roleCollection mongo.DbCollection
 	sessionStore   libsession.Store
 	enforcer       security.Enforcer
-	config         *security.Config
+	config         security.Config
 	tokenService   apisecurity.TokenService
 	logger         zerolog.Logger
 }
@@ -63,7 +63,7 @@ func NewServiceProvider(
 	roleCollection mongo.DbCollection,
 	sessionStore libsession.Store,
 	enforcer security.Enforcer,
-	config *security.Config,
+	config security.Config,
 	tokenService apisecurity.TokenService,
 	logger zerolog.Logger,
 ) (ServiceProvider, error) {

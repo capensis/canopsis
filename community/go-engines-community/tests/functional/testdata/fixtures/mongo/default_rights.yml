@@ -262,16 +262,6 @@ default_rights:
     _id: api_corporate_pattern
     crecord_name: <Current()._id>
     desc: Corporate patterns
-  permission_api_security_read:
-    <<: *permission
-    _id: api_security_read
-    crecord_name: <Current()._id>
-    desc: API security read
-  permission_api_security_update:
-    <<: *permission
-    _id: api_security_update
-    crecord_name: <Current()._id>
-    desc: API security update
 
   role_noperms:
     <<: *role
@@ -1131,12 +1121,6 @@ default_rights:
         checksum: 15
         crecord_type: right
       "@permission_api_corporate_pattern":
-        checksum: 1
-        crecord_type: right
-      "@permission_api_security_read":
-        checksum: 1
-        crecord_type: right
-      "@permission_api_security_update":
         checksum: 1
         crecord_type: right
       "@permission_playlist_to_delete":

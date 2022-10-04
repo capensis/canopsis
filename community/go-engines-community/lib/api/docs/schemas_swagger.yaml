@@ -1410,6 +1410,10 @@ definitions:
       collection:
         description: are used in mongo external data
         type: string
+      regexp:
+        additionalProperties:
+          type: string
+        type: object
       request:
         $ref: '#/definitions/request.Parameters'
         description: are used in api external data

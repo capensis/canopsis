@@ -2,17 +2,32 @@ security:
   # auth_providers defines enabled authentication methods.
   # Possible values:
   # - basic Auth by username-password.
-  # - apikey Auth by token.
+  # - apikey Deprecated.
   # - ldap Auth using LDAP service. Define LDAP config in object collection by cservice.ldapconfig id.
   # - cas Auth using CAS service. Define CAS config in object collection by cservice.casconfig id.
-  # - saml Auth using SAML service. Define SAML config below(commented saml section)
+  # - saml Auth using SAML service. Define SAML config below (commented saml section).
   auth_providers:
     - basic
     - apikey
-    #- ldap
-    #- saml
+#    - ldap
+#    - cas
+#    - saml
 
+  basic:
+    inactivity_interval: 24h
+    expiration_interval: 1M
+#
+#  ldap:
+#    inactivity_interval: 24h
+#    expiration_interval: 1M
+#
+#  cas:
+#    inactivity_interval: 24h
+#    expiration_interval: 1M
+#
 #  saml:
+#    inactivity_interval: 24h
+#    expiration_interval: 1M
 #    x509_cert: /certs/saml.cert
 #    x509_key:  /certs/saml.key
 #    # sample with SimpleSamlPHP server
@@ -34,9 +49,3 @@ security:
 #    skip_signature_validation: true
 #    acs_index: 1
 #    auto_user_registration: true
-
-session:
-  # stats_frame uses for session stats. Session stats are accumulated during frame period.
-  # New stats row will be created if duration between stats requests are more then frame.
-  stats_frame: 5m
-

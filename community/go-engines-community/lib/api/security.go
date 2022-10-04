@@ -54,7 +54,7 @@ type CookieOptions struct {
 }
 
 type security struct {
-	config       *libsecurity.Config
+	config       libsecurity.Config
 	dbClient     mongo.DbClient
 	sessionStore libsession.Store
 	enforcer     libsecurity.Enforcer
@@ -67,7 +67,7 @@ type security struct {
 
 // NewSecurity creates new security.
 func NewSecurity(
-	config *libsecurity.Config,
+	config libsecurity.Config,
 	dbClient mongo.DbClient,
 	sessionStore libsession.Store,
 	enforcer libsecurity.Enforcer,
@@ -177,7 +177,7 @@ func (s *security) GetSessionStore() libsession.Store {
 }
 
 func (s *security) GetConfig() libsecurity.Config {
-	return *s.config
+	return s.config
 }
 
 func (s *security) GetPasswordEncoder() password.Encoder {
@@ -185,7 +185,7 @@ func (s *security) GetPasswordEncoder() password.Encoder {
 }
 
 func (s *security) GetTokenService() apisecurity.TokenService {
-	return apisecurity.NewTokenService(s.dbClient, s.getJwtTokenService(), s.GetTokenStore())
+	return apisecurity.NewTokenService(s.config, s.dbClient, s.getJwtTokenService(), s.GetTokenStore())
 }
 
 func (s *security) GetTokenStore() token.Store {
