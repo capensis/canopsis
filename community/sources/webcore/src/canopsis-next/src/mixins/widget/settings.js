@@ -5,6 +5,7 @@ import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 export const widgetSettingsMixin = {
   $_veeValidate: {
@@ -22,11 +23,11 @@ export const widgetSettingsMixin = {
     entitiesWidgetMixin,
     entitiesUserPreferenceMixin,
     confirmableModalMixinCreator({ field: 'form', closeMethod: '$sidebar.hide' }),
+    submittableMixinCreator(),
   ],
   data() {
     return {
       form: widgetToForm(this.sidebar.config?.widget),
-      submitting: false,
     };
   },
   computed: {
