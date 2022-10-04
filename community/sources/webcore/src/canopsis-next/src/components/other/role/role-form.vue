@@ -1,14 +1,6 @@
 <template lang="pug">
   div
-    v-layout
-      v-text-field(
-        v-field="form.name",
-        v-validate="'required'",
-        :label="$t('common.name')",
-        :error-messages="errors.collect('name')",
-        name="name",
-        data-test="name"
-      )
+    c-name-field(v-field="form.name")
     v-layout
       v-text-field(
         v-field="form.description",

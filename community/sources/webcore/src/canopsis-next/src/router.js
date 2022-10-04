@@ -32,6 +32,7 @@ const AdminRemediation = () => import(/* webpackChunkName: "Remediation" */ '@/v
 const AdminEngines = () => import(/* webpackChunkName: "Engines" */ '@/views/admin/engines.vue');
 const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/views/admin/healthcheck.vue');
 const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
+const AdminMaps = () => import(/* webpackChunkName: "Maps" */ '@/views/admin/maps.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
 const ExploitationEventFilters = () => import(/* webpackChunkName: "EventFilters" */ '@/views/exploitation/event-filters.vue');
 const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
@@ -223,6 +224,17 @@ const routes = [
       requiresPermission: {
         action: CRUD_ACTIONS.can,
         id: USERS_PERMISSIONS.technical.kpi,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminMaps,
+    name: ROUTES_NAMES.adminMaps,
+    component: AdminMaps,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.map,
       },
     },
   },

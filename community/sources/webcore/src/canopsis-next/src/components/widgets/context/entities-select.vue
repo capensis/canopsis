@@ -61,7 +61,6 @@ export default {
         },
       },
       getter: () => this.entitiesIds,
-      context: () => this,
       vm: this,
     });
   },
