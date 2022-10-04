@@ -150,6 +150,10 @@ definitions:
         $ref: '#/definitions/alarm.Pbehavior'
       t:
         type: integer
+      tags:
+        items:
+          type: string
+        type: array
       v:
         $ref: '#/definitions/alarm.AlarmValue'
     type: object
@@ -258,10 +262,6 @@ definitions:
       steps:
         items:
           $ref: '#/definitions/common.AlarmStep'
-        type: array
-      tags:
-        items:
-          type: string
         type: array
       ticket:
         $ref: '#/definitions/alarm.AlarmTicket'
@@ -398,6 +398,8 @@ definitions:
         type: string
       separator:
         type: string
+      tag:
+        type: string
       time_field:
         type: string
       time_format:
@@ -457,6 +459,17 @@ definitions:
         type: array
       meta:
         $ref: '#/definitions/common.PaginatedMeta'
+    type: object
+  alarmtag.Response:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      created:
+        type: integer
+      value:
+        type: string
     type: object
   appinfo.AppInfoResponse:
     properties:
