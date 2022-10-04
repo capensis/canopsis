@@ -1,6 +1,7 @@
 package pbehaviorexception
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -28,9 +29,8 @@ type UpdateRequest struct {
 }
 
 type ExdateRequest struct {
-	Begin types.CpsTime `json:"begin" binding:"required" swaggertype:"integer"`
-	End   types.CpsTime `json:"end" binding:"required" swaggertype:"integer"`
-	Type  string        `json:"type" binding:"required"`
+	exdate.Request
+	Type string `json:"type" binding:"required"`
 }
 
 type Exception struct {

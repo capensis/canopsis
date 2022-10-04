@@ -130,6 +130,12 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
             <hr
               class="v-divider theme--light"
             />
+            <field-switcher-stub
+              title="Disable possibility to clear selected filter"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
             <field-live-reporting-stub
               value="[object Object]"
             />
@@ -389,6 +395,12 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
             />
             <!---->
             <!---->
+            <field-switcher-stub
+              title="Disable possibility to clear selected filter"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
             <field-live-reporting-stub
               value="[object Object]"
             />
@@ -653,6 +665,12 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
             />
             <!---->
             <!---->
+            <field-switcher-stub
+              title="Disable possibility to clear selected filter"
+            />
+            <hr
+              class="v-divider theme--light"
+            />
             <field-live-reporting-stub
               value="[object Object]"
             />
