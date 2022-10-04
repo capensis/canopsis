@@ -1,13 +1,14 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(:close="close", minimize)
-      template(slot="title")
+      template(#title="")
         span {{ config.assignedInstruction.name }}
-      template(slot="text")
+      template(#text="")
         v-fade-transition
           remediation-instruction-execute(
             v-if="instructionExecution",
             :instruction-execution="instructionExecution",
+            :simple="isManualSimple",
             @next-step="nextStep",
             @next-operation="nextOperation",
             @previous-operation="previousOperation",

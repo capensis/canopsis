@@ -13,15 +13,14 @@
           hide-details
         )
     c-name-field(v-field="form.name", :disabled="disabledCommon")
-    v-layout(row)
-      v-text-field(
-        v-field="form.description",
-        v-validate="'required'",
-        :label="$t('common.description')",
-        :error-messages="errors.collect('description')",
-        :disabled="disabledCommon",
-        name="description"
-      )
+    v-text-field(
+      v-field="form.description",
+      v-validate="'required'",
+      :label="$t('common.description')",
+      :error-messages="errors.collect('description')",
+      :disabled="disabledCommon",
+      name="description"
+    )
     v-layout(row, justify-space-between, align-center)
       v-flex(xs7)
         c-duration-field(
@@ -33,12 +32,9 @@
         )
       v-flex.ml-2(v-if="!isManualType", xs3)
         c-priority-field(v-model="form.priority", :disabled="disabled", required)
-    v-layout(v-if="isManualType", row)
-      remediation-instruction-steps-form(v-field="form.steps", :disabled="disabled")
-    v-layout(v-else, row)
-      remediation-instruction-jobs-form(v-model="form.jobs", :disabled="disabled")
-    v-layout(v-if="!disabledCommon", row)
-      remediation-instruction-approval-form(v-field="form.approval", :disabled="disabled")
+    remediation-instruction-steps-form(v-if="isManualType", v-field="form.steps", :disabled="disabled")
+    remediation-instruction-jobs-form(v-else, v-model="form.jobs", :disabled="disabled")
+    remediation-instruction-approval-form(v-if="!disabledCommon", v-field="form.approval", :disabled="disabled")
 </template>
 
 <script>
