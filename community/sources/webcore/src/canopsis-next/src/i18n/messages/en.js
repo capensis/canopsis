@@ -266,6 +266,7 @@ export default merge({
     instructions: 'Instructions',
     playlist: 'Playlist | Playlists',
     ctrlZoom: 'Use ctrl + mouse wheel for zoom',
+    failed: 'Failed',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -2408,6 +2409,7 @@ export default merge({
     approvalPending: 'Approval pending',
     needApprove: 'Approval is needed',
     types: {
+      [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manual simplified',
       [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manual',
       [REMEDIATION_INSTRUCTION_TYPES.auto]: 'Automatic',
     },
@@ -2450,6 +2452,7 @@ export default merge({
     startedAt: 'Started at {time}',
     closeConfirmationText: 'Would you like to resume this instruction later?',
     queueNumber: '{number} {name} jobs are in the queue',
+    runJobs: 'Run jobs',
     popups: {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
