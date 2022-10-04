@@ -463,6 +463,7 @@ describe('alarms-list-table', () => {
         stickyHeader: true,
         parentAlarm: fakeAlarm(),
         refreshAlarmsList: jest.fn(),
+        selectedTag: 'tag',
       },
     });
 

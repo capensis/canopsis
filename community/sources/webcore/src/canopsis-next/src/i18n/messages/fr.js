@@ -268,6 +268,7 @@ export default merge({
     playlist: 'Liste de lecture | Listes de lecture',
     ctrlZoom: 'Utilisez ctrl + molette de la souris pour zoomer',
     calendar: 'Calendrier',
+    tag: 'Étiquette | Mots clés',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -384,6 +385,9 @@ export default merge({
 
       [PATTERN_OPERATORS.isGrey]: 'Carrelage gris',
       [PATTERN_OPERATORS.isNotGrey]: 'Pas de carreaux gris',
+
+      [PATTERN_OPERATORS.with]: 'Avec',
+      [PATTERN_OPERATORS.without]: 'Sans pour autant',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
