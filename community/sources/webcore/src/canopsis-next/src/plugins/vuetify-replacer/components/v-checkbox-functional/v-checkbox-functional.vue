@@ -4,7 +4,10 @@
   )
     div.v-input__control
       div.v-input__slot
-        div.v-input--selection-controls__input(@click="$emit('change', !inputValue)")
+        div.v-input--selection-controls__input(
+          v-on="listeners",
+          @mouseenter="$listeners.mouseenter"
+        )
           input(
             class="hidden",
             :aria-checked="String(inputValue)",
@@ -19,7 +22,8 @@
           ) {{ inputValue ? 'check_box' : 'check_box_outline_blank' }}
         label(
           v-show="label !== ''",
-          @click="$emit('change', !inputValue)"
+          v-on="listeners",
+          @mouseenter="$listeners.mouseenter"
         ) {{ label }}
 </template>
 
@@ -45,6 +49,22 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    mousedown: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    listeners() {
+      return this.mousedown
+        ? { mousedown: this.change }
+        : { click: this.change };
+    },
+  },
+  methods: {
+    change() {
+      this.$emit('change', !this.inputValue);
     },
   },
 };
