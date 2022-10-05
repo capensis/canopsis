@@ -262,6 +262,9 @@ describe('alarms-list', () => {
 
   const alarmTagModule = {
     name: 'alarmTag',
+    getters: {
+      pending: () => false,
+    },
     actions: {
       fetchList: fetchTagsList,
     },
@@ -363,6 +366,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...authModule,
           getters: {
@@ -422,6 +426,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...authModule,
           getters: {
@@ -489,6 +494,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         authModule,
+        alarmTagModule,
       ]),
       propsData: {
         widget,
@@ -784,6 +790,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...authModule,
           getters: {
@@ -932,6 +939,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...authModule,
           getters: {
@@ -1024,6 +1032,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...authModule,
           getters: {
@@ -1088,6 +1097,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...authModule,
           getters: {
@@ -1160,6 +1170,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...alarmModule,
           actions: {
@@ -1237,6 +1248,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...alarmModule,
           actions: {
@@ -1286,6 +1298,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...alarmModule,
           actions: {
@@ -1339,6 +1352,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...alarmModule,
           actions: {
