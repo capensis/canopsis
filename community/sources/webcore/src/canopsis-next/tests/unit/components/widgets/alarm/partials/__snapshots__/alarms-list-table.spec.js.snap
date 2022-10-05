@@ -4,16 +4,21 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
 <div
   class="flex white"
 >
-  <div
-    class="flex px-3 xs12"
-    style="display: none;"
+  <transition-stub
+    mode="in-out"
+    name="expand-transition"
   >
-    <mass-actions-panel-stub
-      itemsids=""
-      refreshalarmslist="[Function]"
-      widget="[object Object]"
-    />
-  </div>
+    <div
+      class="flex px-3 xs12"
+      style="display: none;"
+    >
+      <mass-actions-panel-stub
+        itemsids=""
+        refreshalarmslist="[Function]"
+        widget="[object Object]"
+      />
+    </div>
+  </transition-stub>
   <div>
     <div
       class="alarms-list-table columns-sm"
@@ -249,16 +254,21 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 <div
   class="flex white"
 >
-  <div
-    class="flex px-3 xs12"
-    style="display: none;"
+  <transition-stub
+    mode="in-out"
+    name="expand-transition"
   >
-    <mass-actions-panel-stub
-      itemsids=""
-      refreshalarmslist="[Function]"
-      widget="[object Object]"
-    />
-  </div>
+    <div
+      class="flex px-3 xs12"
+      style="display: none;"
+    >
+      <mass-actions-panel-stub
+        itemsids=""
+        refreshalarmslist="[Function]"
+        widget="[object Object]"
+      />
+    </div>
+  </transition-stub>
   <c-empty-data-table-columns-stub />
   <!---->
 </div>
@@ -268,16 +278,21 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 <div
   class="flex white"
 >
-  <div
-    class="flex px-3 xs12"
-    style="display: none;"
+  <transition-stub
+    mode="in-out"
+    name="expand-transition"
   >
-    <mass-actions-panel-stub
-      itemsids=""
-      refreshalarmslist="[Function]"
-      widget="[object Object]"
-    />
-  </div>
+    <div
+      class="flex px-3 xs12"
+      style="display: none;"
+    >
+      <mass-actions-panel-stub
+        itemsids=""
+        refreshalarmslist="[Function]"
+        widget="[object Object]"
+      />
+    </div>
+  </transition-stub>
   <div>
     <div
       class="alarms-list-table columns-sm"
@@ -352,16 +367,21 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
 <div
   class="flex white"
 >
-  <div
-    class="flex px-3 xs12"
-    style="display: none;"
+  <transition-stub
+    mode="in-out"
+    name="expand-transition"
   >
-    <mass-actions-panel-stub
-      itemsids=""
-      refreshalarmslist="[Function]"
-      widget="[object Object]"
-    />
-  </div>
+    <div
+      class="flex px-3 xs12"
+      style="display: none;"
+    >
+      <mass-actions-panel-stub
+        itemsids=""
+        refreshalarmslist="[Function]"
+        widget="[object Object]"
+      />
+    </div>
+  </transition-stub>
   <div>
     <div
       class="alarms-list-table columns-sm"
