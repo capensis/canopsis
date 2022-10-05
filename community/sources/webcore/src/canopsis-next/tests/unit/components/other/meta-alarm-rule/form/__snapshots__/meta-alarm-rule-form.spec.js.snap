@@ -6,45 +6,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`attribute\
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-  <div
-    class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-text-field__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Name
-          </label>
-          <input
-            aria-label="Name"
-            name="name"
-            type="text"
-          />
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <div
-            class="v-messages__wrapper"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <c-name-field-stub
+    value="event-filter-name"
+  />
   <c-description-field-stub
     help-text=<p>The accessible variables are:</p>
 <p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>
@@ -146,45 +110,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`complex\` 
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-  <div
-    class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-text-field__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Name
-          </label>
-          <input
-            aria-label="Name"
-            name="name"
-            type="text"
-          />
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <div
-            class="v-messages__wrapper"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <c-name-field-stub
+    value="event-filter-name"
+  />
   <c-description-field-stub
     help-text=<p>The accessible variables are:</p>
 <p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>
@@ -291,45 +219,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`corel\` ty
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-  <div
-    class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-text-field__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Name
-          </label>
-          <input
-            aria-label="Name"
-            name="name"
-            type="text"
-          />
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <div
-            class="v-messages__wrapper"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <c-name-field-stub
+    value="event-filter-name"
+  />
   <c-description-field-stub
     help-text=<p>The accessible variables are:</p>
 <p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>
@@ -435,45 +327,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`manualgrou
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-  <div
-    class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-text-field__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Name
-          </label>
-          <input
-            aria-label="Name"
-            name="name"
-            type="text"
-          />
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <div
-            class="v-messages__wrapper"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <c-name-field-stub
+    value="event-filter-name"
+  />
   <c-description-field-stub
     help-text=<p>The accessible variables are:</p>
 <p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>
@@ -567,45 +423,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`relation\`
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-  <div
-    class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-text-field__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Name
-          </label>
-          <input
-            aria-label="Name"
-            name="name"
-            type="text"
-          />
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <div
-            class="v-messages__wrapper"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <c-name-field-stub
+    value="event-filter-name"
+  />
   <c-description-field-stub
     help-text=<p>The accessible variables are:</p>
 <p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>
@@ -704,45 +524,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`timebased\
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-  <div
-    class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-text-field__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Name
-          </label>
-          <input
-            aria-label="Name"
-            name="name"
-            type="text"
-          />
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <div
-            class="v-messages__wrapper"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <c-name-field-stub
+    value="event-filter-name"
+  />
   <c-description-field-stub
     help-text=<p>The accessible variables are:</p>
 <p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>
@@ -843,45 +627,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`valuegroup
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-  <div
-    class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-text-field__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Name
-          </label>
-          <input
-            aria-label="Name"
-            name="name"
-            type="text"
-          />
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <div
-            class="v-messages__wrapper"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <c-name-field-stub
+    value="event-filter-name"
+  />
   <c-description-field-stub
     help-text=<p>The accessible variables are:</p>
 <p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>
@@ -990,45 +738,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-  <div
-    class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-text-field__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label v-label--active theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Name
-          </label>
-          <input
-            aria-label="Name"
-            name="name"
-            type="text"
-          />
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <div
-            class="v-messages__wrapper"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <c-name-field-stub
+    value="event-filter-name"
+  />
   <c-description-field-stub
     help-text=<p>The accessible variables are:</p>
 <p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>
@@ -1134,45 +846,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with default prop
   <c-id-field-stub
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
   />
-  <div
-    class="v-input v-text-field theme--light"
-  >
-    <div
-      class="v-input__control"
-    >
-      <div
-        class="v-input__slot"
-      >
-        <div
-          class="v-text-field__slot"
-        >
-          <label
-            aria-hidden="true"
-            class="v-label theme--light"
-            style="left: 0px; position: absolute;"
-          >
-            Name
-          </label>
-          <input
-            aria-label="Name"
-            name="name"
-            type="text"
-          />
-        </div>
-      </div>
-      <div
-        class="v-text-field__details"
-      >
-        <div
-          class="v-messages theme--light"
-        >
-          <div
-            class="v-messages__wrapper"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <c-name-field-stub />
   <c-description-field-stub
     help-text=<p>The accessible variables are:</p>
 <p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>

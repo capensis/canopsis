@@ -68,26 +68,13 @@ Feature: modify event on event filter
       "data": [
         {
           "_id": "test-resource-che-event-filters-mongo-1/test-eventfilter-mongo-data-1-customer",
-          "category": null,
-          "component": "test-eventfilter-mongo-data-1-customer",
-          "depends": [
-            "test-connector-che-event-filters-mongo-1/test-connector-name-che-event-filters-mongo-1"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-eventfilter-mongo-data-1-customer"
-          ],
-          "impact_level": 1,
           "infos": {
             "status": {
               "name": "status",
               "description": "status from external collection",
               "value": "test-eventfilter-mongo-data-1-status"
             }
-          },
-          "measurements": null,
-          "name": "test-resource-che-event-filters-mongo-1",
-          "type": "resource"
+          }
         }
       ],
       "meta": {
@@ -160,26 +147,27 @@ Feature: modify event on event filter
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-mongo-2
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
       "data": [
         {
           "_id": "test-resource-che-event-filters-mongo-2/test-eventfilter-mongo-data-not-exist-customer",
+          "infos": {},
+          "name": "test-resource-che-event-filters-mongo-2",
+          "type": "resource",
           "category": null,
           "component": "test-eventfilter-mongo-data-not-exist-customer",
-          "depends": [
-            "test-connector-che-event-filters-mongo-2/test-connector-name-che-event-filters-mongo-2"
-          ],
+          "connector": "test-connector-che-event-filters-mongo-2/test-connector-name-che-event-filters-mongo-2",
           "enabled": true,
-          "impact": [
-            "test-eventfilter-mongo-data-not-exist-customer"
-          ],
           "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-event-filters-mongo-2",
-          "type": "resource"
+          "impact_state": 2,
+          "last_event_date": {{ (index .lastResponse.data 0).last_event_date }},
+          "alarm_last_update_date": {{ (index .lastResponse.data 0).alarm_last_update_date }},
+          "ko_events": 1,
+          "ok_events": 0,
+          "state": 2,
+          "status": 1
         }
       ],
       "meta": {
@@ -272,26 +260,26 @@ Feature: modify event on event filter
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-mongo-3
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
       "data": [
         {
           "_id": "test-resource-che-event-filters-mongo-3/test-eventfilter-mongo-data-not-exist-2-customer",
+          "infos": {},
+          "name": "test-resource-che-event-filters-mongo-3",
+          "type": "resource",
           "category": null,
           "component": "test-eventfilter-mongo-data-not-exist-2-customer",
-          "depends": [
-            "test-connector-che-event-filters-mongo-3/test-connector-name-che-event-filters-mongo-3"
-          ],
+          "connector": "test-connector-che-event-filters-mongo-3/test-connector-name-che-event-filters-mongo-3",
           "enabled": true,
-          "impact": [
-            "test-eventfilter-mongo-data-not-exist-2-customer"
-          ],
           "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-event-filters-mongo-3",
-          "type": "resource"
+          "impact_state": 0,
+          "last_event_date": {{ (index .lastResponse.data 0).last_event_date }},
+          "ko_events": 0,
+          "ok_events": 0,
+          "state": 0,
+          "status": 0
         }
       ],
       "meta": {
@@ -399,37 +387,23 @@ Feature: modify event on event filter
       "data": [
         {
           "_id": "test-resource-che-event-filters-mongo-4-1/test-eventfilter-mongo-data-regexp-1-customer",
-          "category": null,
-          "component": "test-eventfilter-mongo-data-regexp-1-customer",
-          "enabled": true,
-          "impact_level": 1,
           "infos": {
             "status": {
               "name": "status",
               "description": "status from external collection",
               "value": "test-eventfilter-mongo-data-regexp-1-status"
             }
-          },
-          "measurements": null,
-          "name": "test-resource-che-event-filters-mongo-4-1",
-          "type": "resource"
+          }
         },
         {
           "_id": "test-resource-che-event-filters-mongo-4-2/test-eventfilter-mongo-data-regexp-1-customer",
-          "category": null,
-          "component": "test-eventfilter-mongo-data-regexp-1-customer",
-          "enabled": true,
-          "impact_level": 1,
           "infos": {
             "status": {
               "name": "status",
               "description": "status from external collection",
               "value": "test-eventfilter-mongo-data-regexp-2-status"
             }
-          },
-          "measurements": null,
-          "name": "test-resource-che-event-filters-mongo-4-2",
-          "type": "resource"
+          }
         }
       ],
       "meta": {

@@ -16,21 +16,16 @@ Feature: Get entity basic
         "name": "test-category-to-entitybasic-edit-name",
         "updated": 1592215337
       },
+      "component": "test-entitybasic-to-get-component",
+      "connector": "test-entitybasic-to-get-connector/test-entitybasic-to-get-connector-name",
       "changeable_depends": [
         "test-entitybasic-to-get-connector/test-entitybasic-to-get-connector-name"
       ],
       "changeable_impact": [
         "test-entitybasic-to-get-component"
       ],
-      "depends": [
-        "test-entitybasic-to-get-connector/test-entitybasic-to-get-connector-name"
-      ],
       "description": "test-entitybasic-to-get-resource-description",
-      "enable_history": [],
       "enabled": true,
-      "impact": [
-        "test-entitybasic-to-get-component"
-      ],
       "impact_level": 3,
       "infos": {
         "test-entitybasic-to-get-info-1": {
@@ -69,10 +64,13 @@ Feature: Get entity basic
           "value": "test-entitybasic-to-get-info-7-value"
         }
       },
-      "measurements": null,
       "name": "test-entitybasic-to-get-resource",
       "sli_avail_state": 0,
-      "type": "resource"
+      "type": "resource",
+      "coordinates": {
+        "lat": 64.52269494598361,
+        "lng": 54.037685420804365
+      }
     }
     """
 

@@ -35,6 +35,8 @@ import {
   PBEHAVIOR_TYPE_TYPES,
   SCENARIO_TRIGGERS,
   WEATHER_ACTIONS_TYPES,
+  MAP_TYPES,
+  MERMAID_THEMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -109,6 +111,7 @@ export default merge({
     create: 'Créer',
     delete: 'Supprimer',
     show: 'Afficher',
+    hide: 'Cacher',
     edit: 'Éditer',
     duplicate: 'Dupliquer',
     play: 'Lecture',
@@ -134,7 +137,7 @@ export default merge({
     emptyObject: 'Objet vide',
     startDate: 'Date de début',
     endDate: 'Date de fin',
-    links: 'Liens',
+    link: 'Lien | Liens',
     stack: 'Pile',
     edition: 'Édition',
     icon: 'Icône',
@@ -188,6 +191,7 @@ export default merge({
     category: 'Catégorie',
     infos: 'Infos',
     impactLevel: 'Niveau d\'impact',
+    impactState: 'État d\'impact',
     loadMore: 'Charger plus',
     initiator: 'Initiateur',
     download: 'Télécharger',
@@ -239,6 +243,7 @@ export default merge({
     template: 'Template',
     pbehaviorList: 'Lister les comportements périodiques',
     canceled: 'Annulé',
+    snooze: 'Snooze',
     snoozed: 'En attente',
     impact: 'Impact | Impacts',
     depend: 'Depend | Depends',
@@ -248,6 +253,7 @@ export default merge({
     component: 'Composant',
     resource: 'Ressource',
     extraDetails: 'Détails supplémentaires',
+    ack: 'Ack',
     acked: 'Acked',
     ackedAt: 'Acked at',
     ackedBy: 'Acked by',
@@ -260,8 +266,12 @@ export default merge({
     checkPattern: 'Motif à carreaux',
     itemFound: '{count} article trouvé | {count} articles trouvés',
     canonicalType: 'Type canonique',
+    map: 'Carte | Plans',
     instructions: 'Des instructions',
     playlist: 'Liste de lecture | Listes de lecture',
+    ctrlZoom: 'Utilisez ctrl + molette de la souris pour zoomer',
+    calendar: 'Calendrier',
+    tag: 'Étiquette | Mots clés',
     sharedTokens: 'Jetons partagés',
     notAvailable: 'Indisponible',
     actions: {
@@ -380,6 +390,9 @@ export default merge({
 
       [PATTERN_OPERATORS.isGrey]: 'Carrelage gris',
       [PATTERN_OPERATORS.isNotGrey]: 'Pas de carreaux gris',
+
+      [PATTERN_OPERATORS.with]: 'Avec',
+      [PATTERN_OPERATORS.without]: 'Sans pour autant',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
@@ -743,6 +756,7 @@ export default merge({
       [SIDE_BARS.textSettings]: 'Paramètres du widget de texte',
       [SIDE_BARS.counterSettings]: 'Paramètres du widget de compteur',
       [SIDE_BARS.testingWeatherSettings]: 'Paramètres du widget scénario des tests',
+      [SIDE_BARS.mapSettings]: 'Paramètres du widget de mappage',
     },
     openedTypes: {
       [ALARMS_OPENED_VALUES.opened]: 'Alarmes ouvertes',
@@ -750,6 +764,8 @@ export default merge({
       [ALARMS_OPENED_VALUES.all]: 'Alarmes ouvertes et récemment résolues',
     },
     advancedSettings: 'Paramètres avancés',
+    entityDisplaySettings: 'Paramètres d\'affichage des entités',
+    entitiesUnderPbehaviorEnabled: 'Entités sous type PBh inactives, Pause, Maintenance display',
     widgetTitle: 'Titre du widget',
     columnName: 'Nom de la colonne',
     defaultSortColumn: 'Colonne de tri par défaut',
@@ -787,6 +803,9 @@ export default merge({
     criticityLevels: 'Niveaux de criticité',
     isPriorityEnabled: 'Afficher la priorité',
     clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
+    alarmsColumns: 'Colonnes de la liste des alarmes',
+    entitiesColumns: 'Colonnes de l\'explorateur de contexte',
+    entityInfoPopup: 'Fenêtre contextuelle d\'informations sur l\'entité',
     exportCsv: {
       title: 'Exporter CSV',
       fields: {
@@ -1207,6 +1226,9 @@ export default merge({
         },
         [WIDGET_TYPES.testingWeather]: {
           title: 'Scénarios Junit',
+        },
+        [WIDGET_TYPES.map]: {
+          title: 'Cartographie',
         },
       },
     },
@@ -1730,6 +1752,55 @@ export default merge({
         title: 'Modifier le filtre de comportement partagé',
       },
     },
+    createMap: {
+      title: 'Créer une carte',
+    },
+    createGeoMap: {
+      create: {
+        title: 'Créer une carte géographique',
+      },
+      edit: {
+        title: 'Modifier une carte géographique',
+      },
+      duplicate: {
+        title: 'Dupliquer une carte géographique',
+      },
+    },
+    createFlowchartMap: {
+      create: {
+        title: 'Créer un flowchart',
+      },
+      edit: {
+        title: 'Modifier un flowchart',
+      },
+      duplicate: {
+        title: 'Dupliquer un flowchart',
+      },
+    },
+    createMermaidMap: {
+      create: {
+        title: 'Créer un diagramme de mermaid',
+      },
+      edit: {
+        title: 'Modifier un diagramme de mermaid',
+      },
+      duplicate: {
+        title: 'Dupliquer un diagramme de diagram',
+      },
+    },
+    createTreeOfDependenciesMap: {
+      create: {
+        title: 'Créer un arbre de diagramme de dépendances',
+      },
+      edit: {
+        title: 'Modifier un diagramme d\'arborescence de dépendances',
+      },
+      duplicate: {
+        title: 'Dupliquer un diagramme d\'arborescence de dépendances',
+      },
+      addEntity: 'Ajouter une entité',
+      pinnedEntities: 'Entités épinglées',
+    },
     createShareToken: {
       create: {
         title: 'Créer un jeton de partage',
@@ -1807,6 +1878,7 @@ export default merge({
     endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
     unknownWidgetType: 'Type de widget inconnu: {type}',
     unique: 'Le champ doit être unique',
+    codeEditorProblem: 'Problème avec l\'éditeur de code',
   },
   warnings: {
     authTokenExpired: 'Le jeton d\'authentification a expiré',
@@ -1909,7 +1981,6 @@ export default merge({
     connector: 'ID ou modèle de connecteur',
     connectorName: 'Nom ou modèle de connecteur',
     duringPeriod: 'Appliqué pendant cette période uniquement',
-    calendar: 'Calendrier',
     types: {
       [EVENT_FILTER_TYPES.drop]: 'Drop',
       [EVENT_FILTER_TYPES.break]: 'Break',
@@ -2157,6 +2228,7 @@ export default merge({
       [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: 'Droits pour le widget: Météo des services',
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Droits pour le widget : Compteur',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Droits pour le widget : Scénario des tests',
+      [USER_PERMISSIONS_PREFIXES.business.map]: 'Droits pour le widget : Cartographie',
     },
     api: {
       general: 'Général',
@@ -2419,11 +2491,19 @@ export default merge({
 
   remediationInstructionsFilters: {
     button: 'Créer un filtre sur les consignes de remédiation',
-    with: 'Avec les consignes sélectionnées',
-    without: 'Sans les consignes sélectionnées',
+    filterByInstructions: 'Pour les alarmes par instructions',
+    with: 'Afficher les alarmes avec les instructions sélectionnées',
+    without: 'Afficher les alarmes sans instructions sélectionnées',
     selectAll: 'Tout sélectionner',
+    alarmsListDisplay: 'Affichage de la liste des alarmes',
+    allAlarms: 'Afficher toutes les alarmes filtrées',
+    showWithInProgress: 'Afficher les alarmes filtrées avec les instructions en cours',
+    showWithoutInProgress: 'Afficher les alarmes filtrées sans instructions en cours',
+    hideWithInProgress: 'Masquer les alarmes filtrées avec les instructions en cours',
+    hideWithoutInProgress: 'Masquer les alarmes filtrées sans instructions en cours',
     selectedInstructions: 'Consignes sélectionnées',
     selectedInstructionsHelp: 'Les consignes du type sélectionné sont exclues de la liste',
+    inProgress: 'En cours',
     chip: {
       with: 'AVEC',
       without: 'SANS',
@@ -2852,6 +2932,10 @@ export default merge({
       title: 'KPI',
       message: '', // TODO: add correct message
     },
+    [USERS_PERMISSIONS.technical.map]: {
+      title: 'Plans',
+      message: '', // TODO: add correct message
+    },
 
     /**
      * Admin general
@@ -2985,6 +3069,118 @@ export default merge({
 
   filter: {
     oldPattern: 'Ancien format de motif',
+  },
+
+  map: {
+    defineEntity: 'Définir l\'entité',
+    addLink: 'Ajouter un lien',
+    addPoint: 'Ajouter un point',
+    editPoint: 'Modifier le point',
+    removePoint: 'Supprimer le point',
+    latitude: 'Latitude',
+    longitude: 'Longitude',
+    toggleAddingPointMode: 'Basculer le mode d\'ajout de point',
+    usingMap: 'La carte est liée',
+    showAll: 'Afficher tout ({count})',
+    types: {
+      [MAP_TYPES.geo]: 'Géo',
+      [MAP_TYPES.flowchart]: 'Flowchart',
+      [MAP_TYPES.mermaid]: 'Mermaid',
+      [MAP_TYPES.treeOfDependencies]: 'Arbre des dépendances',
+    },
+    layers: {
+      openStreetMap: 'Open street map',
+      points: 'Points',
+    },
+  },
+
+  mermaid: {
+    theme: 'Thème de couleur',
+    panzoom: {
+      helpText: 'Raccourcis utiles :\n'
+        + 'Ctrl + molette de la souris - zoom avant/arrière\n'
+        + 'Maj + molette de la souris - défilement horizontal\n'
+        + 'Alt + molette de la souris - défilement vertical\n'
+        + 'Ctrl + Clic gauche de la souris + glisser - déplacer la zone',
+    },
+    themes: {
+      [MERMAID_THEMES.default]: 'Défaut',
+      [MERMAID_THEMES.base]: 'Base',
+      [MERMAID_THEMES.dark]: 'Sombre',
+      [MERMAID_THEMES.forest]: 'Forêt',
+      [MERMAID_THEMES.neutral]: 'Neutre',
+      [MERMAID_THEMES.canopsis]: 'Canopsis',
+    },
+    errors: {
+      emptyMermaid: 'Le diagramme et les points doivent être ajoutés',
+    },
+  },
+
+  geomap: {
+    layers: 'Couches',
+    panzoom: {
+      helpText: 'Raccourcis utiles :\n'
+        + 'Ctrl + molette de la souris - zoom avant/arrière\n'
+        + 'Clic gauche de la souris + glisser - déplacer la zone',
+    },
+    errors: {
+      pointsRequired: 'The points must be added',
+    },
+  },
+
+  flowchart: {
+    shape: 'Forme | Formes',
+    icons: 'Icônes',
+    properties: 'Propriétés',
+    color: 'Couleur',
+    fill: 'Remplir',
+    stroke: 'Stroke',
+    strokeWidth: 'Stroke width',
+    strokeType: 'Stroke type',
+    fontColor: 'Couleur de la police',
+    fontSize: 'Taille de police',
+    fontBackgroundColor: 'Couleur de fond de la police',
+    lineType: 'Type de ligne',
+    backgroundColor: 'Couleur de l\'arrière plan',
+    shapes: {
+      rectangle: 'Rectangle',
+      roundedRectangle: 'Rounded rectangle',
+      square: 'Square',
+      rhombus: 'Rhombus',
+      circle: 'Circle',
+      ellipse: 'Ellipse',
+      parallelogram: 'Parallelogram',
+      process: 'Process',
+      document: 'Document',
+      storage: 'Storage',
+      curve: 'Curve',
+      curveArrow: 'Curve arrow',
+      bidirectionalCurve: 'Bidirectional curve',
+      line: 'Line',
+      arrowLine: 'Arrow line',
+      bidirectionalArrowLine: 'Bidirectional arrow line',
+      text: 'Text',
+      textbox: 'Textbox',
+      image: 'Image',
+    },
+    panzoom: {
+      helpText: 'Raccourcis utiles :\n'
+        + 'Ctrl + molette de la souris - zoom avant/arrière\n'
+        + 'Ctrl + Clic gauche de la souris + glisser - déplacer la zone\n'
+        + 'Clic du milieu de la souris + glisser - déplacer la zone\n'
+        + 'Maj + molette de la souris - défilement horizontal\n'
+        + 'Alt + molette de la souris - défilement vertical\n',
+    },
+    errors: {
+      pointsRequired: 'The points must be added',
+    },
+  },
+  treeOfDependencies: {
+    panzoom: {
+      helpText: 'Raccourcis utiles :\n'
+        + 'Ctrl + molette de la souris - zoom avant/arrière\n'
+        + 'Ctrl + Clic gauche de la souris + glisser - déplacer la zone\n',
+    },
   },
 
   shareToken: {

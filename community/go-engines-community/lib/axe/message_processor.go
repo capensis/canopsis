@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -24,6 +25,7 @@ type messageProcessor struct {
 	Decoder                  encoding.Decoder
 	Logger                   zerolog.Logger
 	PbehaviorAdapter         pbehavior.Adapter
+	TagUpdater               alarmtag.Updater
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
@@ -67,6 +69,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 
 	p.updatePbhLastAlarmDate(ctx, event)
+	p.updateTags(event)
 
 	// Encode and publish the event to the next engine
 	var bevent []byte
@@ -133,6 +136,12 @@ func (p *messageProcessor) handleRemediation(ctx context.Context, event types.Ev
 	}
 
 	return nil
+}
+
+func (p *messageProcessor) updateTags(event types.Event) {
+	if event.EventType == types.EventTypeCheck {
+		p.TagUpdater.Add(event.Tags)
+	}
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {
