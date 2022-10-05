@@ -158,6 +158,7 @@ export default merge({
     created: 'Date de création',
     updated: 'Date de dernière modification',
     expired: 'Date d\'expiration',
+    accessed: 'Consulté à',
     lastEventDate: 'Date du dernier événement',
     pattern: 'Modèle | Modèles',
     correlation: 'Corrélation',
@@ -261,6 +262,8 @@ export default merge({
     canonicalType: 'Type canonique',
     instructions: 'Des instructions',
     playlist: 'Liste de lecture | Listes de lecture',
+    sharedTokens: 'Jetons partagés',
+    notAvailable: 'Indisponible',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -2440,7 +2443,6 @@ export default merge({
     successfulExecutions: 'Exécutions réussies',
     alarmStates: 'Alarmes affectées par l\'état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
-    notAvailable: 'Indisponible',
     instructionChanged: 'La consigne a été modifiée',
     alarmResolvedDate: 'Date de résolution de l\'alarme',
     showFailedExecutions: 'Afficher les exécutions d\'instructions ayant échoué',
@@ -2850,10 +2852,6 @@ export default merge({
       title: 'KPI',
       message: '', // TODO: add correct message
     },
-    [USERS_PERMISSIONS.technical.shareToken]: {
-      title: 'Partager le jeton',
-      message: '', // TODO: add correct message
-    },
 
     /**
      * Admin general
@@ -2987,5 +2985,11 @@ export default merge({
 
   filter: {
     oldPattern: 'Ancien format de motif',
+  },
+
+  shareToken: {
+    revokeToken: 'Révoquer le jeton',
+    revokeSelectedTokens: 'Révoquer les jetons sélectionnés',
+    tokenExpiration: 'Expiration du jeton',
   },
 }, featureService.get('i18n.fr'));

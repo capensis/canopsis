@@ -28,6 +28,7 @@ export const MODALS = {
   textFieldEditor: 'text-field-editor',
   selectView: 'select-view',
   createView: 'create-view',
+  shareView: 'share-view',
   createGroup: 'create-group',
   createUser: 'create-user',
   createRole: 'create-role',
