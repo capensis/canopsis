@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"math"
 	"os"
 	"reflect"
@@ -33,7 +32,7 @@ func ExportCsv(
 		return "", fmt.Errorf("exportFields is empty")
 	}
 
-	file, err := ioutil.TempFile("", "export.*.csv")
+	file, err := os.CreateTemp("", "export.*.csv")
 	if err != nil {
 		return "", err
 	}
@@ -138,7 +137,7 @@ func ExportCsvByCursor(
 	dataCursor DataCursor,
 ) (resFileName string, resErr error) {
 	defer dataCursor.Close()
-	file, err := ioutil.TempFile("", "export.*.csv")
+	file, err := os.CreateTemp("", "export.*.csv")
 	if err != nil {
 		return "", err
 	}
