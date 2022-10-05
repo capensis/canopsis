@@ -31,7 +31,6 @@ const AdminPlanning = () => import(/* webpackChunkName: "Planning" */ '@/views/a
 const AdminRemediation = () => import(/* webpackChunkName: "Remediation" */ '@/views/admin/remediation.vue');
 const AdminEngines = () => import(/* webpackChunkName: "Engines" */ '@/views/admin/engines.vue');
 const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/views/admin/healthcheck.vue');
-const AdminShareTokens = () => import(/* webpackChunkName: "ShareTokens" */ '@/views/admin/share-tokens.vue');
 const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
 const ExploitationEventFilters = () => import(/* webpackChunkName: "EventFilters" */ '@/views/exploitation/event-filters.vue');
@@ -228,17 +227,6 @@ const routes = [
     },
   },
   {
-    path: ROUTES.adminShareTokens,
-    name: ROUTES_NAMES.adminShareTokens,
-    component: AdminShareTokens,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        id: USERS_PERMISSIONS.technical.shareToken,
-      },
-    },
-  },
-  {
     path: ROUTES.exploitationPbehaviors,
     name: ROUTES_NAMES.exploitationPbehaviors,
     component: ExploitationPbehaviors,
@@ -404,6 +392,7 @@ router.beforeEach(async (to, from, next) => {
     await store.dispatch('auth/applyAccessToken', accessToken);
 
     return router.replace({
+      ...to,
       query: restQuery,
     });
   }

@@ -2,12 +2,13 @@
   v-tooltip(left)
     v-btn(
       slot="activator",
+      color="secondary lighten-2",
       fab,
       dark,
       small,
       @click.stop="showCreateShareTokenModal"
     )
-      v-icon link
+      v-icon share
     span {{ $t('common.shareLink') }}
 </template>
 
@@ -17,12 +18,21 @@ import { APP_HOST, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { removeTrailingSlashes } from '@/helpers/url';
-import { writeTextToClipboard } from '@/helpers/clipboard';
 
 import { entitiesShareTokenMixin } from '@/mixins/entities/share-token';
 
 export default {
   mixins: [entitiesShareTokenMixin],
+  props: {
+    view: {
+      type: Object,
+      required: true,
+    },
+    tab: {
+      type: Object,
+      required: true,
+    },
+  },
   methods: {
     showCreateShareTokenModal() {
       this.$modals.show({
@@ -30,14 +40,13 @@ export default {
         config: {
           action: async (data) => {
             const shareToken = await this.createShareToken({ data });
-            const { query, params } = this.$route;
 
             const { href } = this.$router.resolve(
               {
                 name: ROUTES_NAMES.viewKiosk,
                 params: {
-                  id: params.id,
-                  tabId: query.tabId,
+                  id: this.view._id,
+                  tabId: this.tab._id,
                 },
                 query: { [ROUTER_ACCESS_TOKEN_KEY]: shareToken.value },
               },
@@ -46,13 +55,13 @@ export default {
 
             const url = removeTrailingSlashes(`${APP_HOST}${href}`);
 
-            try {
-              await writeTextToClipboard(url);
-
-              this.$popups.success({ text: this.$t('success.pathCopied') });
-            } catch (err) {
-              this.$popups.error({ text: this.$t('errors.default') });
-            }
+            this.$modals.show({
+              name: MODALS.shareView,
+              config: {
+                title: this.$t('view.shareView', { name: this.view.title }),
+                url,
+              },
+            });
           },
         },
       });

@@ -1,17 +1,13 @@
 <template lang="pug">
-  div
-    c-page-header
-    v-card-text
-      share-tokens-list(
-        :share-tokens="shareTokens",
-        :total-items="shareTokensMeta.total_count",
-        :pagination.sync="pagination",
-        :pending="shareTokensPending",
-        :removable="hasDeleteAnyShareTokenAccess",
-        @remove="showRemoveShareTokenModal",
-        @remove-selected="showRemoveSelectedShareTokensModal"
-      )
-    c-fab-btn(:has-access="false", @refresh="fetchList")
+  share-tokens-list(
+    :share-tokens="shareTokens",
+    :total-items="shareTokensMeta.total_count",
+    :pagination.sync="pagination",
+    :pending="shareTokensPending",
+    :removable="hasDeleteAnyShareTokenAccess",
+    @remove="showRemoveShareTokenModal",
+    @remove-selected="showRemoveSelectedShareTokensModal"
+  )
 </template>
 
 <script>
@@ -20,9 +16,8 @@ import { MODALS } from '@/constants';
 import { entitiesShareTokenMixin } from '@/mixins/entities/share-token';
 import { permissionsTechnicalShareTokenMixin } from '@/mixins/permissions/technical/share-token';
 import { localQueryMixin } from '@/mixins/query-local/query';
-import { authMixin } from '@/mixins/auth';
 
-import ShareTokensList from '@/components/other/share-token/exploitation/share-tokens-list.vue';
+import ShareTokensList from '@/components/other/share-token/share-tokens-list.vue';
 
 export default {
   components: {
@@ -32,7 +27,6 @@ export default {
     entitiesShareTokenMixin,
     localQueryMixin,
     permissionsTechnicalShareTokenMixin,
-    authMixin,
   ],
   mounted() {
     this.fetchList();

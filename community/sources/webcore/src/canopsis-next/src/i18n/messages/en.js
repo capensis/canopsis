@@ -158,6 +158,7 @@ export default merge({
     created: 'Creation date',
     updated: 'Last update date',
     expired: 'Expired date',
+    accessed: 'Accessed at',
     lastEventDate: 'Last event date',
     pattern: 'Pattern | Patterns',
     correlation: 'Correlation',
@@ -262,6 +263,8 @@ export default merge({
     instructions: 'Instructions',
     playlist: 'Playlist | Playlists',
     calendar: 'Calendar',
+    sharedTokens: 'Shared tokens',
+    notAvailable: 'N/a',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -2017,6 +2020,8 @@ export default merge({
     errors: {
       emptyTabs: 'You should create a tab',
     },
+    sharedViewUrl: 'Shared view url',
+    shareView: 'Share view {name}',
     deleteRow: 'Delete row',
     deleteWidget: 'Delete widget',
     fullScreen: 'Full screen',
@@ -2440,7 +2445,6 @@ export default merge({
     successfulExecutions: 'Successful executions',
     alarmStates: 'Alarms affected by state',
     okAlarmStates: 'Number of resulting\nOK states',
-    notAvailable: 'N/a',
     instructionChanged: 'The instruction has been changed',
     alarmResolvedDate: 'Alarm resolved date',
     showFailedExecutions: 'Show failed instruction executions',
@@ -2850,10 +2854,6 @@ export default merge({
       title: 'KPI',
       message: '', // TODO: add correct message
     },
-    [USERS_PERMISSIONS.technical.shareToken]: {
-      title: 'Share token',
-      message: '', // TODO: add correct message
-    },
 
     /**
      * Admin general
@@ -2987,5 +2987,11 @@ export default merge({
 
   filter: {
     oldPattern: 'Old pattern format',
+  },
+
+  shareToken: {
+    revokeToken: 'Revoke token',
+    revokeSelectedTokens: 'Revoke selected tokens',
+    tokenExpiration: 'Token expiration',
   },
 }, featureService.get('i18n.en'));

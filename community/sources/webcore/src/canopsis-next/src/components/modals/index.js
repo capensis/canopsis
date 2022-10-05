@@ -185,6 +185,10 @@ export const CreateView = () => ({
   component: import(/* webpackChunkName: "View" */ './view/create-view.vue'),
   loading: LoaderOverlay,
 });
+export const ShareView = () => ({
+  component: import(/* webpackChunkName: "View" */ './view/share-view.vue'),
+  loading: LoaderOverlay,
+});
 export const CreateGroup = () => ({
   component: import(/* webpackChunkName: "View" */ './view/create-group.vue'),
   loading: LoaderOverlay,
