@@ -1,6 +1,10 @@
 db.eventfilter.find({
     "type": "enrichment"
 }).forEach(function (doc) {
+    if (doc.actions === undefined) {
+        return
+    }
+
     doc.actions.forEach(function (action) {
         if (action.from !== undefined) {
             action.value = action.from
