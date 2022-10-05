@@ -44,7 +44,8 @@
             :columns-filters="columnsFilters",
             :parent-alarm="parentAlarm",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
-            :refresh-alarms-list="refreshAlarmsList"
+            :refresh-alarms-list="refreshAlarmsList",
+            :selecting="selecting"
           )
         template(#expand="{ item, index }")
           alarms-expand-panel(
@@ -159,6 +160,7 @@ export default {
       : {};
 
     return {
+      selecting: false,
       selected: [],
       columnsFilters: [],
       columnsFiltersPending: false,
@@ -210,6 +212,7 @@ export default {
 
       return {
         [`columns-${label}`]: true,
+        'alarms-list-table__selecting': this.selecting,
       };
     },
 
@@ -266,6 +269,9 @@ export default {
       window.addEventListener('scroll', this.changeHeaderPosition);
     }
 
+    window.addEventListener('keydown', this.enableSelecting);
+    window.addEventListener('keyup', this.disableSelecting);
+
     if (featuresService.has('components.alarmListTable.mounted')) {
       featuresService.call('components.alarmListTable.mounted', this, {});
     }
@@ -276,6 +282,8 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.changeHeaderPosition);
+    window.removeEventListener('keydown', this.enableSelecting);
+    window.removeEventListener('keyup', this.disableSelecting);
 
     if (featuresService.has('components.alarmListTable.beforeDestroy')) {
       featuresService.call('components.alarmListTable.beforeDestroy', this, {});
@@ -284,6 +292,18 @@ export default {
 
   methods: {
     ...featuresService.get('components.alarmListTable.methods', {}),
+
+    enableSelecting({ key }) {
+      if (key === 'Control') {
+        this.selecting = true;
+      }
+    },
+
+    disableSelecting({ key }) {
+      if (key === 'Control') {
+        this.selecting = false;
+      }
+    },
 
     startScrolling() {
       if (this.translateY !== this.previousTranslateY) {
@@ -382,6 +402,32 @@ export default {
 
 <style lang="scss">
   .alarms-list-table {
+    .alarm-list-row {
+      position: relative;
+
+      &:after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        pointer-events: none;
+        background: rgba(200, 220, 200, .3);
+        transition: opacity linear .3s;
+      }
+    }
+
+    &__selecting .alarm-list-row {
+      user-select: none;
+
+      &:after{
+        pointer-events: auto;
+        opacity: 1;
+      }
+    }
+
     tbody {
       position: relative;
     }

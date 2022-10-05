@@ -1,14 +1,12 @@
 <template lang="pug">
-  tr(v-on="listeners", :class="classes")
+  tr.alarm-list-row(v-on="listeners", :class="classes")
     td.pr-0(v-if="hasRowActions")
       v-layout(row, align-center, justify-space-between)
         template(v-if="selectable")
           v-checkbox-functional(
             v-if="!isResolvedAlarm",
             v-field="selected",
-            hide-details,
-            mousedown,
-            @mouseenter="checkboxMouseenter($event)"
+            hide-details
           )
           v-checkbox-functional(
             v-else,
@@ -43,6 +41,8 @@
 </template>
 
 <script>
+import { flow } from 'lodash';
+
 import featuresService from '@/services/features';
 
 import { isResolvedAlarm } from '@/helpers/entities';
@@ -109,6 +109,10 @@ export default {
       type: Function,
       default: () => {},
     },
+    selecting: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -158,11 +162,18 @@ export default {
     },
 
     listeners() {
+      let listeners = {};
+
       if (featuresService.has('components.alarmListRow.computed.listeners')) {
-        return featuresService.call('components.alarmListRow.computed.listeners', this, {});
+        listeners = featuresService.call('components.alarmListRow.computed.listeners', this, {});
       }
 
-      return {};
+      if (this.selecting) {
+        listeners.mouseenter = flow([this.mouseSelecting, listeners.mouseenter].filter(Boolean));
+        listeners.mousedown = flow([this.mouseSelecting, listeners.mousedown].filter(Boolean));
+      }
+
+      return listeners;
     },
 
     classes() {
@@ -176,17 +187,19 @@ export default {
     },
   },
   methods: {
-    activateRow(value) {
-      this.active = value;
-    },
-
-    checkboxMouseenter(event) {
+    mouseSelecting(event) {
       if (event.ctrlKey && event.buttons) {
         event.preventDefault();
         event.stopPropagation();
 
         this.updateModel(!this.selected);
       }
+
+      return event;
+    },
+
+    activateRow(value) {
+      this.active = value;
     },
   },
 };
