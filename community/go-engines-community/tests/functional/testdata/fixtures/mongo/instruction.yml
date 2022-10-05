@@ -945,6 +945,70 @@ instruction:
       seconds: 2
       unit: s
 
+  instruction_to_run_auto_instruction_9:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-9
+    created: 1596712203
+    description: test-instruction-to-run-auto-instruction-9-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-9
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
+        stop_on_fail: true
+      - job: test-job-to-run-auto-instruction-2
+        stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-run-auto-instruction-9-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_run_auto_instruction_10_1:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-10-1
+    created: 1596712203
+    description: test-instruction-to-run-auto-instruction-10-1-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-10
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
+        stop_on_fail: true
+      - job: test-job-to-run-auto-instruction-2
+        stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-run-auto-instruction-10-1-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_run_auto_instruction_10_2:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-10-2
+    created: 1596712203
+    description: test-instruction-to-run-auto-instruction-10-2-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-10
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-run-auto-instruction-10-2-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
   instruction_without_patterns:
     <<: *instruction_auto
     _id: test-instruction-without-patterns
