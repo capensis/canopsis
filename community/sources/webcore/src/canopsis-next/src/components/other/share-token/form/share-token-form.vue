@@ -1,7 +1,9 @@
 <template lang="pug">
   v-layout(column)
-    c-description-field(v-field="form.description")
-    c-duration-field(v-field="form.duration", long)
+    c-name-field(v-field="form.description")
+    c-information-block(:title="$t('shareToken.tokenExpiration')")
+      c-enabled-field(v-field="form.duration_enabled")
+      c-duration-field(v-if="form.duration_enabled", v-field="form.duration", long)
 </template>
 
 <script>

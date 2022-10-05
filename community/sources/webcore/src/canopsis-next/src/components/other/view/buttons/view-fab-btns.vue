@@ -17,7 +17,7 @@
         )
           v-icon menu
           v-icon close
-        view-share-link-btn(v-if="hasCreateAnyShareTokenAccess")
+        view-share-link-btn(v-if="hasCreateAnyShareTokenAccess", :view="view", :tab="activeTab")
         view-fullscreen-btn(
           :value="fullscreen",
           :toggle-full-screen="toggleFullScreen",

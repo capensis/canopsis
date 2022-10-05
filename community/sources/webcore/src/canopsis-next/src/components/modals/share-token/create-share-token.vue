@@ -17,7 +17,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { shareTokenToForm } from '@/helpers/forms/share-token';
+import { formToShareToken, shareTokenToForm } from '@/helpers/forms/share-token';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -54,7 +54,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          await this.config.action(formToShareToken(this.form));
         }
 
         this.$modals.hide();

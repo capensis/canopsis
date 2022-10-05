@@ -1,5 +1,6 @@
-import { durationToForm } from '@/helpers/date/duration';
 import { TIME_UNITS } from '@/constants';
+
+import { durationToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} ShareToken
@@ -9,6 +10,7 @@ import { TIME_UNITS } from '@/constants';
 
 /**
  * @typedef {ShareToken} ShareTokenForm
+ * @property {boolean} duration_enabled
  */
 
 /**
@@ -19,5 +21,22 @@ import { TIME_UNITS } from '@/constants';
  */
 export const shareTokenToForm = (shareToken = {}) => ({
   description: '',
+  duration_enabled: !!shareToken.duration,
   duration: durationToForm(shareToken.duration ?? { value: 1, unit: TIME_UNITS.hour }),
 });
+
+/**
+ * Convert share token to form
+ *
+ * @param {ShareTokenForm} [form = {}]
+ * @returns {ShareToken}
+ */
+export const formToShareToken = (form) => {
+  const { duration_enabled: durationEnabled, duration, ...shareToken } = form;
+
+  if (durationEnabled) {
+    shareToken.duration = duration;
+  }
+
+  return shareToken;
+};
