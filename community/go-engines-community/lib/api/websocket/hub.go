@@ -309,13 +309,17 @@ func (h *hub) GetUsers() map[string][]string {
 	h.connsMx.RLock()
 	defer h.connsMx.RUnlock()
 
-	users := make(map[string][]string, 0)
+	users := make(map[string][]string)
+	uniqueTokens := make(map[string]struct{}, len(h.conns))
 	for _, conn := range h.conns {
 		if conn.userId != "" {
 			if _, ok := users[conn.userId]; !ok {
 				users[conn.userId] = make([]string, 0, 1)
 			}
-			users[conn.userId] = append(users[conn.userId], conn.token)
+			if _, ok := uniqueTokens[conn.token]; !ok {
+				users[conn.userId] = append(users[conn.userId], conn.token)
+				uniqueTokens[conn.token] = struct{}{}
+			}
 		}
 	}
 
@@ -326,14 +330,16 @@ func (h *hub) GetAuthConnectionsCount() int {
 	h.connsMx.RLock()
 	defer h.connsMx.RUnlock()
 
-	count := 0
+	uniqueTokens := make(map[string]struct{})
 	for _, conn := range h.conns {
-		if conn.userId != "" {
-			count++
+		if conn.token != "" {
+			if _, ok := uniqueTokens[conn.token]; !ok {
+				uniqueTokens[conn.token] = struct{}{}
+			}
 		}
 	}
 
-	return count
+	return len(uniqueTokens)
 }
 
 func (h *hub) join(connId, room string) (closed bool) {
@@ -718,8 +724,8 @@ func (h *hub) listen(connId string, conn Connection) {
 }
 
 func (h *hub) setConnAuth(connId, userId, token string) {
-	h.connsMx.RLock()
-	defer h.connsMx.RUnlock()
+	h.connsMx.Lock()
+	defer h.connsMx.Unlock()
 
 	h.conns[connId] = userConn{
 		userId: userId,
