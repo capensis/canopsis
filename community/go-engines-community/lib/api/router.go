@@ -69,7 +69,6 @@ import (
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -157,7 +156,6 @@ func RegisterRoutes(
 		security.GetTokenService(),
 		security.GetTokenProviders(),
 		security.GetAuthProviders(),
-		security.GetSessionStore(),
 		websocketHub,
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
@@ -167,8 +165,6 @@ func RegisterRoutes(
 	sessionauthApi := sessionauth.NewApi(
 		sessionStore,
 		security.GetAuthProviders(),
-		websocketHub,
-		token.NewMongoStore(dbClient, logger),
 		logger,
 	)
 	router.POST("/auth", sessionauthApi.LoginHandler())
@@ -203,7 +199,7 @@ func RegisterRoutes(
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
-		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger, logger,
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketHub), actionLogger, logger,
 			metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{

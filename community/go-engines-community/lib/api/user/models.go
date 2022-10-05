@@ -83,11 +83,13 @@ type User struct {
 	UILanguage             string          `bson:"ui_language" json:"ui_language"`
 	UITours                map[string]bool `bson:"ui_tours" json:"ui_tours"`
 	UIGroupsNavigationType string          `bson:"ui_groups_navigation_type" json:"ui_groups_navigation_type"`
-	IsEnabled              bool            `bson:"enable" json:"enable"`
+	Enabled                bool            `bson:"enable" json:"enable"`
 	DefaultView            *View           `bson:"defaultview" json:"defaultview"`
 	ExternalID             string          `bson:"external_id" json:"external_id"`
 	Source                 string          `bson:"source" json:"source"`
 	AuthApiKey             string          `bson:"authkey" json:"authkey"`
+
+	ActiveConnects *int `bson:"-" json:"active_connects,omitempty"`
 }
 
 type Role struct {
