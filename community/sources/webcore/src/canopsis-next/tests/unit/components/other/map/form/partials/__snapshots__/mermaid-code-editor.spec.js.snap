@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mermaid-code-editor Renders \`mermaid-code-editor\` with custom props 1`] = `
+<code-editor-stub
+  errormarkers=""
+  language="mermaid"
+  options="[object Object]"
+  value="custom_value"
+/>
+`;
+
+exports[`mermaid-code-editor Renders \`mermaid-code-editor\` with default props 1`] = `
+<code-editor-stub
+  errormarkers=""
+  language="mermaid"
+  options="[object Object]"
+  value=""
+/>
+`;

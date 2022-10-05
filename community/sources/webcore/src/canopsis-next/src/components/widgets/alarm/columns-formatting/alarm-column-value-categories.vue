@@ -7,7 +7,7 @@
       @input="$emit('activate', $event)",
       @click.native.stop=""
     )
-      v-btn(slot="activator", :disabled="isDisabled", depressed, small) {{ $t('common.links') }}
+      v-btn(slot="activator", :disabled="isDisabled", depressed, small) {{ $tc('common.link', 2) }}
       v-list(dark, dense)
         categories-list(:categories="filteredCategories")
 </template>

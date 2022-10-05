@@ -325,6 +325,30 @@ export const CreateKpiFilter = () => ({
   component: import(/* webpackChunkName: "KPI" */ './kpi/create-kpi-filter.vue'),
   loading: LoaderOverlay,
 });
+export const CreateMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-map.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateGeoMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-geo-map.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateFlowchartMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-flowchart-map.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateMermaidMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-mermaid-map.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateTreeOfDependenciesMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-tree-of-dependencies-map.vue'),
+  loading: LoaderOverlay,
+});
+export const EntityDependenciesList = () => ({
+  component: import(/* webpackChunkName: "Map" */ './entity/entity-dependencies-list.vue'),
+  loading: LoaderOverlay,
+});
 export const CreateShareToken = () => ({
   component: import(/* webpackChunkName: "ShareToken" */ './share-token/create-share-token.vue'),
   loading: LoaderOverlay,

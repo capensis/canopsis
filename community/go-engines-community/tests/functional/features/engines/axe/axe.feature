@@ -33,6 +33,7 @@ Feature: create and update alarm by main event stream
             "_id": "test-resource-axe-1/test-component-axe-1"
           },
           "infos": {},
+          "tags": [],
           "v": {
             "children": [],
             "component": "test-component-axe-1",
@@ -62,7 +63,6 @@ Feature: create and update alarm by main event stream
               "t": {{ .eventTimestamp }},
               "val": 1
             },
-            "tags": [],
             "total_state_changes": 1
           }
         }
@@ -207,7 +207,6 @@ Feature: create and update alarm by main event stream
               "t": {{ .firstEventTimestamp }},
               "val": 1
             },
-            "tags": [],
             "state_changes_since_status_update": 1,
             "total_state_changes": 2
           }

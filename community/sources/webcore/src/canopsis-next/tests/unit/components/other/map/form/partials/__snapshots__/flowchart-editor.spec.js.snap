@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="flowchart flowchart-map-editor mb-2"
+    shapes="[object Object]"
+  >
+    <add-location-btn-stub />
+    <hr
+      class="v-divider theme--light"
+    />
+     
+    <flowchart-points-editor-stub
+      iconsize="24"
+      points=""
+      shapes="[object Object]"
+    />
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`flowchart-editor Renders \`flowchart-editor\` with form 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="flowchart flowchart-map-editor mb-2"
+    shapes="[object Object]"
+  >
+    <add-location-btn-stub />
+    <hr
+      class="v-divider theme--light"
+    />
+     
+    <flowchart-points-editor-stub
+      iconsize="24"
+      points=""
+      shapes="[object Object]"
+    />
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`flowchart-editor Renders \`flowchart-editor\` with validation errors  1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="flowchart flowchart-map-editor mb-2"
+    shapes="[object Object]"
+    style="border-color: #ff5252;"
+  >
+    <add-location-btn-stub />
+    <hr
+      class="v-divider theme--light"
+    />
+     
+    <flowchart-points-editor-stub
+      iconsize="24"
+      points=""
+      shapes="[object Object]"
+    />
+  </div>
+  <div
+    class="v-messages theme--light error--text"
+  >
+    <transition-group-stub
+      class="v-messages__wrapper"
+      name="message-transition"
+      tag="div"
+    >
+      <div
+        class="v-messages__message"
+      >
+        The points must be added
+      </div>
+    </transition-group-stub>
+  </div>
+</div>
+`;

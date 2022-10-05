@@ -28,7 +28,9 @@
         :widget="widget",
         :column="column",
         :columns-filters="columnsFilters",
-        @activate="activateRow"
+        :selected-tag="selectedTag",
+        @activate="activateRow",
+        @select:tag="$emit('select:tag', $event)"
       )
     td
       actions-panel(
@@ -103,6 +105,10 @@ export default {
     refreshAlarmsList: {
       type: Function,
       default: () => {},
+    },
+    selectedTag: {
+      type: String,
+      default: '',
     },
   },
   data() {

@@ -80,6 +80,10 @@ export default {
       return request.get(API_ROUTES.manualMetaAlarm, { params });
     },
 
+    fetchOpenAlarmsListWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.openAlarms, { params });
+    },
+
     fetchListWithoutStore(context, { params }) {
       return request.get(API_ROUTES.alarmList, { params });
     },

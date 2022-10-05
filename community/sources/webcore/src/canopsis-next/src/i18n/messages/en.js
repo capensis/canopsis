@@ -35,6 +35,8 @@ import {
   PBEHAVIOR_TYPE_TYPES,
   SCENARIO_TRIGGERS,
   WEATHER_ACTIONS_TYPES,
+  MAP_TYPES,
+  MERMAID_THEMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -109,6 +111,7 @@ export default merge({
     create: 'Create',
     delete: 'Delete',
     show: 'Show',
+    hide: 'Hide',
     edit: 'Edit',
     duplicate: 'Duplicate',
     play: 'Play',
@@ -134,7 +137,7 @@ export default merge({
     emptyObject: 'Empty object',
     startDate: 'Start date',
     endDate: 'End date',
-    links: 'Links',
+    link: 'Link | Links',
     stack: 'Stack',
     edition: 'Edition',
     icon: 'Icon',
@@ -188,6 +191,7 @@ export default merge({
     category: 'Category',
     infos: 'Infos',
     impactLevel: 'Impact level',
+    impactState: 'Impact state',
     loadMore: 'Load more',
     download: 'Download',
     initiator: 'Initiator',
@@ -239,6 +243,7 @@ export default merge({
     template: 'Template',
     pbehaviorList: 'List periodic behaviors',
     canceled: 'Canceled',
+    snooze: 'Snooze',
     snoozed: 'Snoozed',
     impact: 'Impact | Impacts',
     depend: 'Depend | Depends',
@@ -248,6 +253,7 @@ export default merge({
     component: 'Component',
     resource: 'Resource',
     extraDetail: 'Extra detail | Extra details',
+    ack: 'Ack',
     acked: 'Acked',
     ackedAt: 'Acked at',
     ackedBy: 'Acked by',
@@ -260,9 +266,12 @@ export default merge({
     checkPattern: 'Check pattern',
     itemFound: '{count} item found | {count} items found',
     canonicalType: 'Canonical type',
+    map: 'Map | Maps',
     instructions: 'Instructions',
     playlist: 'Playlist | Playlists',
+    ctrlZoom: 'Use ctrl + mouse wheel for zoom',
     calendar: 'Calendar',
+    tag: 'Tag | Tags',
     sharedTokens: 'Shared tokens',
     notAvailable: 'N/a',
     actions: {
@@ -381,6 +390,9 @@ export default merge({
 
       [PATTERN_OPERATORS.isGrey]: 'Gray tiles',
       [PATTERN_OPERATORS.isNotGrey]: 'Not gray tiles',
+
+      [PATTERN_OPERATORS.with]: 'With',
+      [PATTERN_OPERATORS.without]: 'Without',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Ack',
@@ -744,6 +756,7 @@ export default merge({
       [SIDE_BARS.textSettings]: 'Text settings',
       [SIDE_BARS.counterSettings]: 'Counter settings',
       [SIDE_BARS.testingWeatherSettings]: 'Testing weather',
+      [SIDE_BARS.mapSettings]: 'Mapping widget settings',
     },
     openedTypes: {
       [ALARMS_OPENED_VALUES.opened]: 'Opened alarms',
@@ -751,6 +764,8 @@ export default merge({
       [ALARMS_OPENED_VALUES.all]: 'Opened and recent resolved alarms',
     },
     advancedSettings: 'Advanced settings',
+    entityDisplaySettings: 'Entity display settings',
+    entitiesUnderPbehaviorEnabled: 'Entities under PBh type inactive, Pause, Maintenance display',
     widgetTitle: 'Widget title',
     columnName: 'Column name',
     defaultSortColumn: 'Default sort column',
@@ -788,6 +803,9 @@ export default merge({
     criticityLevels: 'Criticity levels',
     isPriorityEnabled: 'Show priority',
     clearFilterDisabled: 'Disable possibility to clear selected filter',
+    alarmsColumns: 'Alarm list columns',
+    entitiesColumns: 'Context explorer columns',
+    entityInfoPopup: 'Entity info popup',
     exportCsv: {
       title: 'Export CSV',
       fields: {
@@ -1208,6 +1226,9 @@ export default merge({
         },
         [WIDGET_TYPES.testingWeather]: {
           title: 'Junit scenarios',
+        },
+        [WIDGET_TYPES.map]: {
+          title: 'Mapping',
         },
       },
     },
@@ -1731,6 +1752,55 @@ export default merge({
         title: 'Edit shared pbehavior filter',
       },
     },
+    createMap: {
+      title: 'Create a map',
+    },
+    createGeoMap: {
+      create: {
+        title: 'Create a geomap',
+      },
+      edit: {
+        title: 'Edit a geomap',
+      },
+      duplicate: {
+        title: 'Duplicate a geomap',
+      },
+    },
+    createFlowchartMap: {
+      create: {
+        title: 'Create a flowchart',
+      },
+      edit: {
+        title: 'Edit a flowchart',
+      },
+      duplicate: {
+        title: 'Duplicate a flowchart',
+      },
+    },
+    createMermaidMap: {
+      create: {
+        title: 'Create a mermaid diagram',
+      },
+      edit: {
+        title: 'Edit a mermaid diagram',
+      },
+      duplicate: {
+        title: 'Duplicate a mermaid diagram',
+      },
+    },
+    createTreeOfDependenciesMap: {
+      create: {
+        title: 'Create a tree of dependencies diagram',
+      },
+      edit: {
+        title: 'Edit a tree of dependencies diagram',
+      },
+      duplicate: {
+        title: 'Duplicate a tree of dependencies diagram',
+      },
+      addEntity: 'Add entity',
+      pinnedEntities: 'Pinned entities',
+    },
     createShareToken: {
       create: {
         title: 'Create share token',
@@ -1808,6 +1878,7 @@ export default merge({
     endDateLessOrEqualStartDate: 'End date should be after start date',
     unknownWidgetType: 'Unknown widget type: {type}',
     unique: 'Field must be unique',
+    codeEditorProblem: 'Problem with code-editor',
   },
   warnings: {
     authTokenExpired: 'Authentication token was expired',
@@ -2159,6 +2230,7 @@ export default merge({
       [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: 'Rights for Service Weather',
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Rights for Counter',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Rights for Testing Weather',
+      [USER_PERMISSIONS_PREFIXES.business.map]: 'Rights for Mapping',
     },
     api: {
       general: 'General',
@@ -2421,11 +2493,19 @@ export default merge({
 
   remediationInstructionsFilters: {
     button: 'Create instructions filter',
-    with: 'With selected instructions',
-    without: 'Without selected instructions',
+    filterByInstructions: 'For alarms by instructions',
+    with: 'Show alarms with selected instructions',
+    without: 'Show alarms without selected instructions',
     selectAll: 'Select all',
+    alarmsListDisplay: 'Alarms list display',
+    allAlarms: 'Show all filtered alarms',
+    showWithInProgress: 'Show filtered alarms with instructions in progress',
+    showWithoutInProgress: 'Show filtered alarms without instructions in progress',
+    hideWithInProgress: 'Hide filtered alarms with instructions in progress',
+    hideWithoutInProgress: 'Hide filtered alarms without instructions in progress',
     selectedInstructions: 'Selected instructions',
     selectedInstructionsHelp: 'Instructions of selected type are excluded from the list',
+    inProgress: 'In progress',
     chip: {
       with: 'WITH',
       without: 'WITHOUT',
@@ -2854,6 +2934,10 @@ export default merge({
       title: 'KPI',
       message: '', // TODO: add correct message
     },
+    [USERS_PERMISSIONS.technical.map]: {
+      title: 'Maps',
+      message: '', // TODO: add correct message
+    },
 
     /**
      * Admin general
@@ -2987,6 +3071,118 @@ export default merge({
 
   filter: {
     oldPattern: 'Old pattern format',
+  },
+
+  map: {
+    defineEntity: 'Define entity',
+    addLink: 'Add link',
+    addPoint: 'Add point',
+    editPoint: 'Edit point',
+    removePoint: 'Remove point',
+    latitude: 'Latitude',
+    longitude: 'Longitude',
+    toggleAddingPointMode: 'Toggle adding point mode',
+    usingMap: 'Map is linked',
+    showAll: 'Show all ({count})',
+    types: {
+      [MAP_TYPES.geo]: 'Geo',
+      [MAP_TYPES.flowchart]: 'Flowchart',
+      [MAP_TYPES.mermaid]: 'Mermaid',
+      [MAP_TYPES.treeOfDependencies]: 'Tree of dependencies',
+    },
+    layers: {
+      openStreetMap: 'Open street map',
+      points: 'Points',
+    },
+  },
+
+  mermaid: {
+    theme: 'Color theme',
+    panzoom: {
+      helpText: 'Useful shortcuts:\n'
+        + 'Ctrl + mouse wheel - zoom in/out\n'
+        + 'Shift + mouse wheel - horizontal scroll\n'
+        + 'Alt + mouse wheel - vertical scroll\n'
+        + 'Ctrl + Left mouse click + drag - pan the area',
+    },
+    themes: {
+      [MERMAID_THEMES.default]: 'Default',
+      [MERMAID_THEMES.base]: 'Base',
+      [MERMAID_THEMES.dark]: 'Dark',
+      [MERMAID_THEMES.forest]: 'Forest',
+      [MERMAID_THEMES.neutral]: 'Neutral',
+      [MERMAID_THEMES.canopsis]: 'Canopsis',
+    },
+    errors: {
+      emptyMermaid: 'The diagram and points must be added',
+    },
+  },
+
+  geomap: {
+    layers: 'Layers',
+    panzoom: {
+      helpText: 'Useful shortcuts:\n'
+        + 'Ctrl + mouse wheel - zoom in/out\n'
+        + 'Left mouse click + drag - pan the area',
+    },
+    errors: {
+      pointsRequired: 'The points must be added',
+    },
+  },
+
+  flowchart: {
+    shape: 'Shape | Shapes',
+    icons: 'Icons',
+    properties: 'Properties',
+    color: 'Color',
+    fill: 'Fill',
+    stroke: 'Stroke',
+    strokeWidth: 'Stroke width',
+    strokeType: 'Stroke type',
+    fontColor: 'Font color',
+    fontSize: 'Font size',
+    fontBackgroundColor: 'Font background color',
+    lineType: 'Line type',
+    backgroundColor: 'Background color',
+    shapes: {
+      rectangle: 'Rectangle',
+      roundedRectangle: 'Rounded rectangle',
+      square: 'Square',
+      rhombus: 'Rhombus',
+      circle: 'Circle',
+      ellipse: 'Ellipse',
+      parallelogram: 'Parallelogram',
+      process: 'Process',
+      document: 'Document',
+      storage: 'Storage',
+      curve: 'Curve',
+      curveArrow: 'Curve arrow',
+      bidirectionalCurve: 'Bidirectional curve',
+      line: 'Line',
+      arrowLine: 'Arrow line',
+      bidirectionalArrowLine: 'Bidirectional arrow line',
+      text: 'Text',
+      textbox: 'Textbox',
+      image: 'Image',
+    },
+    panzoom: {
+      helpText: 'Useful shortcuts:\n'
+        + 'Ctrl + mouse wheel - zoom in/out\n'
+        + 'Ctrl + Left mouse click + drag - pan the area\n'
+        + 'Middle mouse click + drag - pan the area\n'
+        + 'Shift + mouse wheel - horizontal scroll\n'
+        + 'Alt + mouse wheel - vertical scroll\n',
+    },
+    errors: {
+      pointsRequired: 'The points must be added',
+    },
+  },
+  treeOfDependencies: {
+    panzoom: {
+      helpText: 'Useful shortcuts:\n'
+        + 'Ctrl + mouse wheel - zoom in/out\n'
+        + 'Ctrl + Left mouse click + drag - pan the area\n',
+    },
   },
 
   shareToken: {
