@@ -93,7 +93,7 @@ export async function checkUserAccessForRoute(to = {}) {
 
   const currentUserPermissionsById = store.getters['auth/currentUserPermissionsById'];
 
-  if (checkUserAccess(currentUserPermissionsById, permissionId, permissionAction)) {
+  if (checkUserAccess(currentUserPermissionsById[permissionId], permissionAction)) {
     return true;
   }
 

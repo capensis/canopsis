@@ -3,17 +3,8 @@
     v-tab {{ $t('entity.form') }}
     v-tab-item
       v-layout.mt-3(column)
-        v-layout(row)
-          v-text-field(
-            v-field="form.name",
-            v-validate="'required'",
-            :label="$t('common.name')",
-            :error-messages="errors.collect('name')",
-            name="name",
-            disabled
-          )
-        v-layout(row)
-          c-description-field(v-field="form.description")
+        c-name-field(v-field="form.name", disabled)
+        c-description-field(v-field="form.description")
         v-layout(row, justify-space-between)
           v-flex(xs3)
             c-enabled-field(v-field="form.enabled")
@@ -29,22 +20,21 @@
                 )
               v-flex(xs6)
                 c-entity-type-field(v-field="form.type", required, disabled)
-        v-layout(wrap)
-          v-flex(xs12)
-            entities-select(
-              v-field="form.impact",
-              :label="$t('entity.impact')",
-              :disabled-entities-ids="form.disabled_impact",
-              name="impact"
-            )
-          v-flex(xs12)
-            entities-select(
-              v-field="form.depends",
-              :label="$t('entity.depends')",
-              :disabled-entities-ids="form.disabled_depends",
-              :existing-entities-ids="form.impact",
-              name="depends"
-            )
+        c-coordinates-field(v-field="form.coordinates", row)
+        v-layout(column)
+          entities-select(
+            v-field="form.impact",
+            :label="$t('entity.impact')",
+            :disabled-entities-ids="form.disabled_impact",
+            name="impact"
+          )
+          entities-select(
+            v-field="form.depends",
+            :label="$t('entity.depends')",
+            :disabled-entities-ids="form.disabled_depends",
+            :existing-entities-ids="form.impact",
+            name="depends"
+          )
     v-tab {{ $t('entity.manageInfos') }}
     v-tab-item
       manage-infos(v-field="form.infos")
