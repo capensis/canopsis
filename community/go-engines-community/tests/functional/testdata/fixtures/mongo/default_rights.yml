@@ -459,6 +459,13 @@ default_rights:
         checksum: 15
       "@permission_to_edit_role_3":
         checksum: 7
+    auth_config:
+      expiration_interval:
+        value: 1
+        unit: m
+      inactivity_interval:
+        value: 8
+        unit: h
 
   role_to_get_2:
     <<: *role
