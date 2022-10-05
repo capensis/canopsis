@@ -24,6 +24,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exportconfiguration"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
@@ -329,6 +330,13 @@ func RegisterRoutes(
 				alarmAPI.GetExport,
 			)
 		}
+
+		exportConfigurationAPI := exportconfiguration.NewApi(dbClient, logger)
+		protected.POST(
+			"/export-configuration",
+			middleware.Authorize(apisecurity.PermExportConfigurations, permCan, enforcer),
+			exportConfigurationAPI.Export,
+		)
 
 		entityAPI := entity.NewApi(
 			entity.NewStore(dbClient, timezoneConfigProvider),
