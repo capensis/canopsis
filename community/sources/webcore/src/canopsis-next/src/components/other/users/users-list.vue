@@ -15,6 +15,8 @@
       c-action-btn.ml-3(v-if="removable", type="delete", @click="$emit('remove-selected', selected)")
     template(#enable="{ item }")
       c-enabled(:value="item.enable")
+    template(#active="{ item }")
+      c-enabled(:value="item.active_connects > 0")
     template(#source="{ item }") {{ item.source || $constants.AUTH_METHODS.local }}
     template(#actions="{ item }")
       v-layout(row)
@@ -62,7 +64,7 @@ export default {
     headers() {
       return [
         {
-          text: this.$t('users.username'),
+          text: this.$t('common.username'),
           value: 'name',
         },
         {
@@ -76,16 +78,24 @@ export default {
           sortable: false,
         },
         {
-          text: this.$t('users.role'),
+          text: this.$tc('common.role'),
           value: 'role.name',
         },
         {
-          text: this.$t('users.enabled'),
+          text: this.$t('users.active'),
+          value: 'active',
+        },
+        {
+          text: this.$t('common.enabled'),
           value: 'enable',
         },
         {
           text: this.$t('users.auth'),
           value: 'source',
+        },
+        {
+          text: this.$t('users.activeConnects'),
+          value: 'active_connects',
         },
         {
           text: this.$t('common.actionsLabel'),
