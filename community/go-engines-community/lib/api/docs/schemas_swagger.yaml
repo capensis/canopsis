@@ -2937,6 +2937,8 @@ definitions:
     type: object
   role.CreateRequest:
     properties:
+      auth_config:
+        $ref: '#/definitions/security.AuthMethodConf'
       defaultview:
         type: string
       description:
@@ -2956,6 +2958,8 @@ definitions:
     type: object
   role.EditRequest:
     properties:
+      auth_config:
+        $ref: '#/definitions/security.AuthMethodConf'
       defaultview:
         type: string
       description:
@@ -2987,13 +2991,10 @@ definitions:
     properties:
       _id:
         type: string
+      auth_config:
+        $ref: '#/definitions/security.AuthMethodConf'
       defaultview:
-        properties:
-          _id:
-            type: string
-          title:
-            type: string
-        type: object
+        $ref: '#/definitions/role.View'
       description:
         type: string
       name:
@@ -3002,6 +3003,13 @@ definitions:
         items:
           $ref: '#/definitions/role.Permission'
         type: array
+    type: object
+  role.View:
+    properties:
+      _id:
+        type: string
+      title:
+        type: string
     type: object
   scenario.Action:
     properties:
@@ -3372,6 +3380,13 @@ definitions:
         type: array
       updated:
         type: integer
+    type: object
+  security.AuthMethodConf:
+    properties:
+      expiration_interval:
+        $ref: '#/definitions/types.DurationWithUnit'
+      inactivity_interval:
+        $ref: '#/definitions/types.DurationWithUnit'
     type: object
   serviceweather.AlarmCounter:
     properties:

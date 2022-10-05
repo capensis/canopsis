@@ -33,18 +33,15 @@ func (a *api) GetAppInfo(c *gin.Context) {
 	response := AppInfoResponse{}
 	var err error
 
-	response.UserInterfaceConf, err = a.store.RetrieveUserInterfaceConfig(c.Request.Context())
+	response.UserInterfaceConf, err = a.store.RetrieveUserInterfaceConfig(c)
 	if err != nil {
 		panic(err)
 	}
-	response.VersionConf, err = a.store.RetrieveVersionConfig(c.Request.Context())
+	response.VersionConf, err = a.store.RetrieveVersionConfig(c)
 	if err != nil {
 		panic(err)
 	}
-	response.Login, err = a.store.RetrieveLoginConfig(c.Request.Context())
-	if err != nil {
-		panic(err)
-	}
+	response.Login = a.store.RetrieveLoginConfig()
 
 	user, ok := c.Get(auth.UserKey)
 	if ok {
@@ -54,12 +51,12 @@ func (a *api) GetAppInfo(c *gin.Context) {
 		}
 
 		if ok {
-			response.GlobalConf, err = a.store.RetrieveGlobalConfig(c.Request.Context())
+			response.GlobalConf, err = a.store.RetrieveGlobalConfig(c)
 			if err != nil {
 				panic(err)
 			}
 
-			remediation, err := a.store.RetrieveRemediationConfig(c.Request.Context())
+			remediation, err := a.store.RetrieveRemediationConfig(c)
 			if err != nil {
 				panic(err)
 			}
@@ -83,7 +80,7 @@ func (a *api) UpdateUserInterface(c *gin.Context) {
 		return
 	}
 
-	err := a.store.UpdateUserInterfaceConfig(c.Request.Context(), &request)
+	err := a.store.UpdateUserInterfaceConfig(c, &request)
 	if err != nil {
 		panic(err)
 	}
@@ -91,7 +88,7 @@ func (a *api) UpdateUserInterface(c *gin.Context) {
 }
 
 func (a *api) DeleteUserInterface(c *gin.Context) {
-	err := a.store.DeleteUserInterfaceConfig(c.Request.Context())
+	err := a.store.DeleteUserInterfaceConfig(c)
 	if err != nil {
 		panic(err)
 	}

@@ -291,8 +291,6 @@ FilePattern = "/tmp/import_%s.json"
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.api]
-# Auth token expiration ttl. It's used also used for session ttl (deprected).
-TokenExpiration = "24h"
 TokenSigningMethod = "HS256"
 BulkMaxSize = 10000
 
