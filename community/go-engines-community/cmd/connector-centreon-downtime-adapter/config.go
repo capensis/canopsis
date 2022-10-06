@@ -140,7 +140,7 @@ func (c ApiConfig) CreateRequest(ctx context.Context, method, path string, b []b
 }
 
 // ParseHours transaltes Hours rules. Each rule can be as "19:30-5;TU,TH-MO" with local start-end times range
-// and weekdays separaed by comma as list or range(s)
+// and weekdays separated by comma as list or range(s)
 func (inactive *InactiveConfig) ParseHours() {
 	const weekLength = 7
 	weekdayNames := [weekLength]string{"MO", "TU", "WE", "TH", "FR", "SA", "SU"}
