@@ -514,6 +514,8 @@ definitions:
         type: string
       version:
         type: string
+      version_updated:
+        type: integer
     type: object
   appinfo.JobConfigType:
     properties:
