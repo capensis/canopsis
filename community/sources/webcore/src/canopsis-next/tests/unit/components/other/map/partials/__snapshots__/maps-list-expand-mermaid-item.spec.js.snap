@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`maps-list-expand-mermaid-item Renders \`maps-list-expand-mermaid-item\` with map 1`] = `
+<mermaid-preview-stub
+  class="mermaid-expand-panel"
+  map="[object Object]"
+/>
+`;

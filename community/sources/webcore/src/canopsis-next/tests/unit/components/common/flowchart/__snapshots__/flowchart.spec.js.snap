@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`flowchart Renders \`flowchart\` with custom props 1`] = `
+<div
+  class="flowchart fill-height"
+>
+  <flowchart-sidebar-stub
+    backgroundcolor="#000"
+    class="flowchart__sidebar"
+    pointdistance="150"
+    selected=""
+    shapes="[object Object]"
+    viewbox="[object Object]"
+  />
+  <c-zoom-overlay-stub
+    class="flowchart__editor"
+    skip-alt="skip-alt"
+    skip-shift="skip-shift"
+  >
+    <flowchart-editor-stub
+      backgroundcolor="#000"
+      cursorstyle="pointer"
+      fitpaddingpercent="0.1"
+      gridsize="5"
+      pointsize="24"
+      selected=""
+      selectioncolor="#5b6e7f"
+      selectionpadding="5"
+      shapes="[object Object]"
+      viewbox="[object Object]"
+    />
+  </c-zoom-overlay-stub>
+  <!---->
+</div>
+`;
+
+exports[`flowchart Renders \`flowchart\` with form 1`] = `
+<div
+  class="flowchart fill-height"
+>
+  <flowchart-sidebar-stub
+    class="flowchart__sidebar"
+    pointdistance="150"
+    selected=""
+    shapes="[object Object]"
+    viewbox="[object Object]"
+  />
+  <c-zoom-overlay-stub
+    class="flowchart__editor"
+    skip-alt="skip-alt"
+    skip-shift="skip-shift"
+  >
+    <flowchart-editor-stub
+      fitpaddingpercent="0.1"
+      gridsize="5"
+      pointsize="24"
+      selected=""
+      selectioncolor="#5b6e7f"
+      selectionpadding="5"
+      shapes="[object Object]"
+      viewbox="[object Object]"
+    />
+  </c-zoom-overlay-stub>
+  <!---->
+</div>
+`;
+
+exports[`flowchart Renders \`flowchart\` with readonly 1`] = `
+<div
+  class="flowchart fill-height"
+>
+  <!---->
+  <c-zoom-overlay-stub
+    class="flowchart__editor flowchart__editor--readonly"
+    skip-alt="skip-alt"
+    skip-shift="skip-shift"
+  >
+    <flowchart-editor-stub
+      fitpaddingpercent="0.1"
+      gridsize="5"
+      pointsize="24"
+      readonly="true"
+      selected=""
+      selectioncolor="#5b6e7f"
+      selectionpadding="5"
+      shapes="[object Object]"
+      viewbox="[object Object]"
+    />
+  </c-zoom-overlay-stub>
+  <!---->
+</div>
+`;

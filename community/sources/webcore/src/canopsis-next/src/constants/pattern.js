@@ -48,6 +48,9 @@ export const PATTERN_OPERATORS = {
 
   isGrey: 'is_grey',
   isNotGrey: 'is_not_grey',
+
+  with: 'with',
+  without: 'without',
 };
 
 export const PATTERN_CONDITIONS = {

@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`map-breadcrumbs Renders \`map-breadcrumbs\` with custom props 1`] = `
+<ul
+  class="v-breadcrumbs pa-0 theme--light"
+>
+  <button
+    class="ma-0 v-btn v-btn--flat v-btn--small theme--light"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      <span
+        class="text-none"
+      >
+        First map
+      </span>
+    </div>
+  </button>
+  <li
+    class="v-breadcrumbs__divider"
+  >
+    /
+  </li>
+  <button
+    class="ma-0 v-btn v-btn--flat v-btn--small theme--light"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      <span
+        class="text-none"
+      >
+        Second map
+      </span>
+    </div>
+  </button>
+  <li
+    class="v-breadcrumbs__divider"
+  >
+    /
+  </li>
+  <button
+    class="ma-0 v-btn v-btn--disabled v-btn--flat v-btn--loader v-btn--small theme--light"
+    disabled="disabled"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      <span
+        class="text-none"
+      >
+        Active map
+      </span>
+    </div>
+    <span
+      class="v-btn__loading"
+    >
+      <div
+        aria-valuemax="100"
+        aria-valuemin="0"
+        class="v-progress-circular v-progress-circular--indeterminate"
+        role="progressbar"
+        style="height: 23px; width: 23px;"
+      >
+        <svg
+          style="transform: rotate(0deg);"
+          viewBox="21.904761904761905 21.904761904761905 43.80952380952381 43.80952380952381"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            class="v-progress-circular__overlay"
+            cx="43.80952380952381"
+            cy="43.80952380952381"
+            fill="transparent"
+            r="20"
+            stroke-dasharray="125.664"
+            stroke-dashoffset="125.66370614359172px"
+            stroke-width="3.8095238095238093"
+          />
+        </svg>
+        <div
+          class="v-progress-circular__info"
+        />
+      </div>
+    </span>
+  </button>
+</ul>
+`;
+
+exports[`map-breadcrumbs Renders \`map-breadcrumbs\` with default props 1`] = `
+<ul
+  class="v-breadcrumbs pa-0 theme--light"
+/>
+`;

@@ -10,8 +10,7 @@ import (
 )
 
 type Service interface {
-	GenerateToken(id string) (string, time.Time, error)
-	GenerateTokenWithExpiration(id string, t time.Time) (string, error)
+	GenerateToken(id string, t time.Time) (string, error)
 	ValidateToken(token string) (id string, err error)
 }
 
@@ -38,24 +37,19 @@ type tokenClaims struct {
 	jwt.RegisteredClaims
 }
 
-func (s *jwtService) GenerateToken(id string) (string, time.Time, error) {
+func (s *jwtService) GenerateToken(id string, expiresAt time.Time) (string, error) {
 	cfg := s.apiConfigProvider.Get()
-	expiredAt := time.Now().Add(cfg.TokenExpiration)
-
-	token, err := s.GenerateTokenWithExpiration(id, expiredAt)
-	return token, expiredAt, err
-}
-
-func (s *jwtService) GenerateTokenWithExpiration(id string, expiresAt time.Time) (string, error) {
-	cfg := s.apiConfigProvider.Get()
+	registeredClaims := jwt.RegisteredClaims{
+		ID:       utils.NewID(),
+		IssuedAt: jwt.NewNumericDate(time.Now()),
+		Issuer:   s.issuer,
+	}
+	if !expiresAt.IsZero() {
+		registeredClaims.ExpiresAt = jwt.NewNumericDate(expiresAt)
+	}
 	claims := tokenClaims{
-		ID: id,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(expiresAt),
-			ID:        utils.NewID(),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			Issuer:    s.issuer,
-		},
+		ID:               id,
+		RegisteredClaims: registeredClaims,
 	}
 	token := jwt.NewWithClaims(cfg.TokenSigningMethod, claims)
 

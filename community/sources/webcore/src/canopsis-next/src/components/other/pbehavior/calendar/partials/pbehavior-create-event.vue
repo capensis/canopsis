@@ -78,6 +78,7 @@ export default {
   },
   beforeDestroy() {
     if (this.manualClose) {
+      // eslint-disable-next-line vue/no-mutating-props
       delete this.calendarEvent.data.cachedForm;
     } else {
       this.cacheForm();
@@ -85,6 +86,7 @@ export default {
   },
   methods: {
     cacheForm() {
+      // eslint-disable-next-line vue/no-mutating-props
       this.calendarEvent.data.cachedForm = cloneDeep(this.form);
     },
 
