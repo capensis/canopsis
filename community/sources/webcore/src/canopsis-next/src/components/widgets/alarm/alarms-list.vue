@@ -67,24 +67,26 @@
           @click="exportAlarmsList"
         )
     v-layout.alarms-list__top-pagination.white.px-4.position-relative(row, align-center)
-      v-layout.ml-4.alarms-list__top-pagination--left-absolute(row, align-center)
-        c-density-btn-toggle(:value="userPreference.content.dense", @change="updateDense")
-        v-fade-transition
-          v-flex.px-1(v-show="selectedIds.length", xs5)
-            mass-actions-panel(
-              :items-ids="selectedIds",
-              :widget="widget",
-              :refresh-alarms-list="fetchList",
-              @clear:items="clearSelected"
-            )
-      c-pagination(
-        v-if="hasColumns",
-        :page="query.page",
-        :limit="query.limit",
-        :total="alarmsMeta.total_count",
-        type="top",
-        @input="updateQueryPage"
-      )
+      v-flex.alarms-list__top-pagination--left(xs6)
+        v-layout(row, align-center, justify-start)
+          c-density-btn-toggle(:value="userPreference.content.dense", @change="updateDense")
+          v-fade-transition
+            v-flex.px-1(v-show="selectedIds.length")
+              mass-actions-panel(
+                :items-ids="selectedIds",
+                :widget="widget",
+                :refresh-alarms-list="fetchList",
+                @clear:items="clearSelected"
+              )
+      v-flex.alarms-list__top-pagination--center-absolute(xs4)
+        c-pagination(
+          v-if="hasColumns",
+          :page="query.page",
+          :limit="query.limit",
+          :total="alarmsMeta.total_count",
+          type="top",
+          @input="updateQueryPage"
+        )
     alarms-list-table(
       ref="alarmsTable",
       v-model="selected",
@@ -406,14 +408,16 @@ export default {
 <style lang="scss" scoped>
 .alarms-list__top-pagination {
   position: relative;
-  min-height: 46px;
+  min-height: 48px;
 
-  &--left-absolute {
+  &--left {
+    padding-right: 80px;
+  }
+
+  &--center-absolute {
     position: absolute;
-    width: 100%;
-    min-height: 48px;
-    top: 0;
-    left: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
   }
 }
 </style>
