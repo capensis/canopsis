@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"gopkg.in/yaml.v2"
@@ -21,7 +22,9 @@ type Config struct {
 		Type   string `yaml:"type"`
 		Reason string `yaml:"reason"`
 	}
-	Inactive InactiveConfig
+	Timezone string
+	Inactive []InactiveConfig
+	location *time.Location
 }
 
 type ApiConfig struct {
@@ -32,10 +35,13 @@ type ApiConfig struct {
 	Password string `yaml:"-"`
 }
 
-type HourRange [2]int
+type HourRange struct {
+	hhmm     [2]int
+	weekdays [7]bool
+}
 
 type InactiveConfig struct {
-	UTCHours   []string `yaml:"utc_hours"`
+	Hours      []string `yaml:"hours"`
 	Hostgroups []string
 	hourRanges []HourRange
 }
@@ -52,20 +58,22 @@ func LoadConfig(configPath string) (Config, error) {
 	if err != nil {
 		return config, err
 	}
-	for _, r := range config.Inactive.UTCHours {
-		sStart, sEnd, ok := strCut(r, "-")
-		if !ok {
-			continue
-		}
-		start, err := strconv.Atoi(sStart)
+
+	if config.Timezone != "" {
+		config.location, err = time.LoadLocation(config.Timezone)
 		if err != nil {
-			continue
+			return config, err
 		}
-		end, err := strconv.Atoi(sEnd)
+	}
+	if config.location == nil {
+		config.location, err = time.LoadLocation(defaultLocation)
 		if err != nil {
-			continue
+			return config, err
 		}
-		config.Inactive.hourRanges = append(config.Inactive.hourRanges, HourRange{start, end})
+	}
+	for i, c := range config.Inactive {
+		c.ParseHours()
+		config.Inactive[i] = c
 	}
 
 	return config, err
@@ -77,6 +85,31 @@ func strCut(s, sep string) (before, after string, ok bool) {
 		return s[:i], s[i+len(sep):], true
 	}
 	return s, "", false
+}
+
+func hhmm2i(s string) (int, error) {
+	sh, sm, _ := strCut(s, ":")
+	h, err := strconv.Atoi(sh)
+	if err != nil {
+		return 0, err
+	}
+	m := 0
+	if sm != "" {
+		m, err = strconv.Atoi(sm)
+		if err != nil {
+			return 0, err
+		}
+	}
+	return h*100 + m, nil
+}
+
+func idx(s string, sl []string) int {
+	for i := 0; i < len(sl); i++ {
+		if s == sl[i] {
+			return i
+		}
+	}
+	return -1
 }
 
 func (c ApiConfig) CreateRequest(ctx context.Context, method, path string, b []byte, q url.Values) (*http.Request, error) {
@@ -104,4 +137,62 @@ func (c ApiConfig) CreateRequest(ctx context.Context, method, path string, b []b
 	request.SetBasicAuth(c.Username, c.Password)
 
 	return request, nil
+}
+
+// ParseHours transaltes Hours rules. Each rule can be as "19:30-5;TU,TH-MO" with local start-end times range
+// and weekdays separaed by comma as list or range(s)
+func (inactive *InactiveConfig) ParseHours() {
+	const weekLength = 7
+	weekdayNames := [weekLength]string{"MO", "TU", "WE", "TH", "FR", "SA", "SU"}
+
+	for _, h := range inactive.Hours {
+		hours, sWeekdays, _ := strCut(h, ";")
+		sStart, sEnd, ok := strCut(hours, "-")
+		if !ok {
+			continue
+		}
+		start, err := hhmm2i(sStart)
+		if err != nil {
+			continue
+		}
+		end, err := hhmm2i(sEnd)
+		if err != nil {
+			continue
+		}
+		weekdays := [7]bool{}
+		if sWeekdays != "" {
+			weekIntervals := strings.Split(sWeekdays, ",")
+			for _, interval := range weekIntervals {
+				sStart, sEnd, ok := strCut(interval, "-")
+				idxStart := idx(sStart, weekdayNames[:])
+				if idxStart == -1 {
+					continue
+				}
+				if !ok {
+					weekdays[idxStart] = true
+					continue
+				}
+				idxEnd := idx(sEnd, weekdayNames[:])
+				if idxEnd < idxStart {
+					idxEnd += weekLength
+				}
+				for i := idxStart; i <= idxEnd; i++ {
+					if i+1 > weekLength {
+						weekdays[i-weekLength] = true
+					} else {
+						weekdays[i] = true
+					}
+				}
+			}
+		} else {
+			for i := 0; i < 7; i++ {
+				weekdays[i] = true
+			}
+		}
+
+		inactive.hourRanges = append(inactive.hourRanges, HourRange{
+			hhmm:     [2]int{start, end},
+			weekdays: weekdays,
+		})
+	}
 }
