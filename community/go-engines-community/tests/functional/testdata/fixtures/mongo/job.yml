@@ -232,3 +232,21 @@ job:
     _id: test-job-action-remediation-triggers-3
     name: test-job-action-remediation-triggers-3-name
     payload: '{"test-job-action-remediation-triggers-3-key": "test-job-action-remediation-triggers-3-val"}'
+
+  job_to_run_manual-simplified_instruction_1:
+    <<: *job_dummy_succeeded
+    _id: test-job-to-run-manual-simplified-instruction-1
+    name: test-job-to-run-manual-simplified-instruction-1-name
+    payload: '{"test-job-to-run-manual-simplified-instruction-1-key": "test-job-to-run-manual-simplified-instruction-1-val"}'
+
+  job_to_run_manual-simplified_instruction_2:
+    <<: *job_dummy_succeeded
+    _id: test-job-to-run-manual-simplified-instruction-2
+    name: test-job-to-run-manual-simplified-instruction-2-name
+    payload: '{"test-job-to-run-manual-simplified-instruction-2-key": "test-job-to-run-manual-simplified-instruction-2-val"}'
+
+  job_to_run_manual-simplified_instruction_3:
+    <<: *job_dummy_failed
+    _id: test-job-to-run-manual-simplified-instruction-3
+    name: test-job-to-run-manual-simplified-instruction-3-name
+    payload: '{"test-job-to-run-manual-simplified-instruction-3-key": "test-job-to-run-manual-simplified-instruction-3-val"}'

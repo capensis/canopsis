@@ -27,6 +27,7 @@ const (
 	InstructionExecutionStatusWaitResult = 5
 	InstructionTypeManual                = 0
 	InstructionTypeAuto                  = 1
+	InstructionTypeSimplifiedManual      = 2
 	InstructionStatusApproved            = 0
 )
 
@@ -599,7 +600,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		ctx,
 		[]bson.M{
 			{"$match": bson.M{
-				"type":   InstructionTypeManual,
+				"type":   bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
 				"status": bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
 			}},
 			{"$lookup": bson.M{
