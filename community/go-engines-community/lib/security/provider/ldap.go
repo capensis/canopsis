@@ -15,7 +15,7 @@ import (
 
 // LdapDialer interface is used to implement creation of LDAP connection.
 type LdapDialer interface {
-	DialURL(config *security.LdapConfig) (ldap.Client, error)
+	DialURL(config security.LdapConfig) (ldap.Client, error)
 }
 
 // baseDialer wraps ldap lib function.
@@ -26,7 +26,7 @@ func NewLdapDialer() LdapDialer {
 	return &baseDialer{}
 }
 
-func (baseDialer) DialURL(config *security.LdapConfig) (ldap.Client, error) {
+func (baseDialer) DialURL(config security.LdapConfig) (ldap.Client, error) {
 	tc := &tls.Config{
 		InsecureSkipVerify: config.InsecureSkipVerify,
 	}
@@ -45,24 +45,24 @@ func (baseDialer) DialURL(config *security.LdapConfig) (ldap.Client, error) {
 
 // ldapProvider implements LDAP authentication.
 type ldapProvider struct {
-	configProvider security.ConfigProvider
-	userProvider   security.UserProvider
-	ldapDialer     LdapDialer
-	enforcer       security.Enforcer
+	config       security.LdapConfig
+	userProvider security.UserProvider
+	ldapDialer   LdapDialer
+	enforcer     security.Enforcer
 }
 
 // NewLdapProvider creates new provider.
 func NewLdapProvider(
-	cp security.ConfigProvider,
-	up security.UserProvider,
-	d LdapDialer,
+	config security.LdapConfig,
+	userProvider security.UserProvider,
+	ldapDialer LdapDialer,
 	enforcer security.Enforcer,
 ) security.Provider {
 	return &ldapProvider{
-		ldapDialer:     d,
-		configProvider: cp,
-		userProvider:   up,
-		enforcer:       enforcer,
+		ldapDialer:   ldapDialer,
+		config:       config,
+		userProvider: userProvider,
+		enforcer:     enforcer,
 	}
 }
 
@@ -71,22 +71,13 @@ func (p *ldapProvider) GetName() string {
 }
 
 func (p *ldapProvider) Auth(ctx context.Context, username, password string) (*security.User, error) {
-	config, err := p.configProvider.LoadLdapConfig(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("cannot find ldap config: %w", err)
-	}
-
-	if config == nil {
-		return nil, errors.New("ldap config not found")
-	}
-
-	entry, err := p.validateUser(ctx, username, password, config)
+	entry, err := p.validateUser(ctx, username, password)
 	if err != nil {
 		return nil, err
 	}
 
 	if entry != nil {
-		return p.saveUser(ctx, username, config, entry)
+		return p.saveUser(ctx, username, entry)
 	}
 
 	return nil, nil
@@ -96,9 +87,8 @@ func (p *ldapProvider) Auth(ctx context.Context, username, password string) (*se
 func (p *ldapProvider) validateUser(
 	ctx context.Context,
 	username, password string,
-	config *security.LdapConfig,
 ) (*ldap.Entry, error) {
-	l, err := p.ldapDialer.DialURL(config)
+	l, err := p.ldapDialer.DialURL(p.config)
 	if err != nil {
 		return nil, fmt.Errorf("cannot connect to ldap server: %w", err)
 	}
@@ -111,7 +101,7 @@ func (p *ldapProvider) validateUser(
 	}
 
 	// First bind with a admin
-	err = l.Bind(config.AdminUsername, config.AdminPassword)
+	err = l.Bind(p.config.AdminUsername, p.config.AdminPassword)
 	if err != nil {
 		return nil, fmt.Errorf("cannot verify admin: %w", err)
 	}
@@ -123,7 +113,7 @@ func (p *ldapProvider) validateUser(
 	}
 
 	// Search for the given username
-	searchRequest := genSearchRequest(config, username)
+	searchRequest := genSearchRequest(p.config, username)
 	sr, err := l.Search(searchRequest)
 	if err != nil {
 		return nil, fmt.Errorf("cannot search user: %w", err)
@@ -162,7 +152,7 @@ func (p *ldapProvider) validateUser(
 }
 
 // genSearchRequest creates a new search request by config.
-func genSearchRequest(config *security.LdapConfig, username string) *ldap.SearchRequest {
+func genSearchRequest(config security.LdapConfig, username string) *ldap.SearchRequest {
 	// Create attributes.
 	attributes := make([]string, len(config.Attributes))
 	i := 0
@@ -197,11 +187,10 @@ func genSearchRequest(config *security.LdapConfig, username string) *ldap.Search
 func (p *ldapProvider) saveUser(
 	ctx context.Context,
 	username string,
-	config *security.LdapConfig,
 	entry *ldap.Entry,
 ) (*security.User, error) {
-	if config.UsernameAttr != "" {
-		name := entry.GetAttributeValue(config.UsernameAttr)
+	if p.config.UsernameAttr != "" {
+		name := entry.GetAttributeValue(p.config.UsernameAttr)
 		if name != "" {
 			username = name
 		}
@@ -216,7 +205,7 @@ func (p *ldapProvider) saveUser(
 	if user == nil {
 		user = &security.User{
 			Name:       username,
-			Role:       config.DefaultRole,
+			Role:       p.config.DefaultRole,
 			IsEnabled:  true,
 			ExternalID: ldapID,
 			Source:     security.SourceLdap,
@@ -225,7 +214,7 @@ func (p *ldapProvider) saveUser(
 		return nil, nil
 	}
 
-	for field, attr := range config.Attributes {
+	for field, attr := range p.config.Attributes {
 		v := entry.GetAttributeValue(attr)
 		switch field {
 		case "mail":

@@ -34,22 +34,6 @@ type FilterRequest struct {
 	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
 }
 
-type BaseFilterRequest struct {
-	Filters     []string       `form:"filters[]" json:"filters"`
-	Search      string         `form:"search" json:"search"`
-	TimeField   string         `form:"time_field" json:"time_field" binding:"oneoforempty=t v.creation_date v.resolved v.last_update_date v.last_event_date"`
-	StartFrom   *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
-	StartTo     *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
-	Opened      *bool          `form:"opened" json:"opened"`
-	OnlyParents bool           `form:"correlation" json:"correlation"`
-	Category    string         `form:"category" json:"category"`
-
-	IncludeInstructionTypes []int    `form:"include_instruction_types[]" json:"include_instruction_types"`
-	ExcludeInstructionTypes []int    `form:"exclude_instruction_types[]" json:"exclude_instruction_types"`
-	IncludeInstructions     []string `form:"include_instructions[]" json:"include_instructions"`
-	ExcludeInstructions     []string `form:"exclude_instructions[]" json:"exclude_instructions"`
-}
-
 func (r FilterRequest) GetOpenedFilter() int {
 	if r.Opened == nil {
 		return OpenedAndRecentResolved
@@ -62,9 +46,34 @@ func (r FilterRequest) GetOpenedFilter() int {
 	return OnlyResolved
 }
 
+type BaseFilterRequest struct {
+	Filters     []string       `form:"filters[]" json:"filters"`
+	Search      string         `form:"search" json:"search"`
+	TimeField   string         `form:"time_field" json:"time_field" binding:"oneoforempty=t v.creation_date v.resolved v.last_update_date v.last_event_date"`
+	StartFrom   *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
+	StartTo     *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
+	Opened      *bool          `form:"opened" json:"opened"`
+	OnlyParents bool           `form:"correlation" json:"correlation"`
+	Category    string         `form:"category" json:"category"`
+	Tag         string         `form:"tag" json:"tag"`
+
+	Instructions []InstructionFilterRequest `form:"instructions[]" json:"instructions"`
+}
+
+type InstructionFilterRequest struct {
+	Running      *bool    `form:"running" json:"running"`
+	IncludeTypes []int    `form:"include_types[]" json:"include_types"`
+	ExcludeTypes []int    `form:"exclude_types[]" json:"exclude_types"`
+	Include      []string `form:"include[]" json:"include"`
+	Exclude      []string `form:"exclude[]" json:"exclude"`
+}
+
 type ListByServiceRequest struct {
 	pagination.Query
 	SortRequest
+	Search      string `form:"search" json:"search"`
+	Category    string `form:"category" json:"category"`
+	WithService bool   `form:"with_service" json:"with_service"`
 }
 
 type ListByComponentRequest struct {
@@ -139,7 +148,7 @@ type Details struct {
 }
 
 type StepDetails struct {
-	Data []AlarmStep          `json:"data"`
+	Data []common.AlarmStep   `json:"data"`
 	Meta common.PaginatedMeta `json:"meta"`
 }
 
@@ -165,6 +174,7 @@ type Alarm struct {
 	Time   types.CpsTime                     `bson:"t" json:"t" swaggertype:"integer"`
 	Entity entity.Entity                     `bson:"entity" json:"entity"`
 	Value  AlarmValue                        `bson:"v" json:"v"`
+	Tags   []string                          `bson:"tags" json:"tags"`
 	Infos  map[string]map[string]interface{} `bson:"infos" json:"infos"`
 
 	Pbehavior *Pbehavior `bson:"pbehavior,omitempty" json:"pbehavior,omitempty"`
@@ -196,15 +206,15 @@ type MetaAlarmRule struct {
 }
 
 type AlarmValue struct {
-	ACK         *AlarmStep   `bson:"ack,omitempty" json:"ack,omitempty"`
-	Canceled    *AlarmStep   `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done        *AlarmStep   `bson:"done,omitempty" json:"done,omitempty"`
-	Snooze      *AlarmStep   `bson:"snooze,omitempty" json:"snooze,omitempty"`
-	State       *AlarmStep   `bson:"state,omitempty" json:"state,omitempty"`
-	Status      *AlarmStep   `bson:"status,omitempty" json:"status,omitempty"`
-	Ticket      *AlarmTicket `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	LastComment *AlarmStep   `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
-	Steps       []AlarmStep  `bson:"steps,omitempty" json:"steps,omitempty"`
+	ACK         *common.AlarmStep  `bson:"ack,omitempty" json:"ack,omitempty"`
+	Canceled    *common.AlarmStep  `bson:"canceled,omitempty" json:"canceled,omitempty"`
+	Done        *common.AlarmStep  `bson:"done,omitempty" json:"done,omitempty"`
+	Snooze      *common.AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	State       *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
+	Status      *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
+	Ticket      *AlarmTicket       `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	LastComment *common.AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+	Steps       []common.AlarmStep `bson:"steps,omitempty" json:"steps,omitempty"`
 
 	Component         string                `bson:"component" json:"component"`
 	Connector         string                `bson:"connector" json:"connector"`
@@ -222,7 +232,6 @@ type AlarmValue struct {
 	Resource          string                `bson:"resource,omitempty" json:"resource,omitempty"`
 	Resolved          *types.CpsTime        `bson:"resolved,omitempty" json:"resolved,omitempty" swaggertype:"integer"`
 	PbehaviorInfo     *entity.PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	Tags              []string              `bson:"tags" json:"tags"`
 	Meta              string                `bson:"meta,omitempty" json:"meta,omitempty"`
 	Parents           []string              `bson:"parents" json:"parents"`
 	Children          []string              `bson:"children" json:"children"`
@@ -240,18 +249,6 @@ type AlarmValue struct {
 
 	RuleVersion map[string]string                 `bson:"infos_rule_version" json:"infos_rule_version"`
 	Infos       map[string]map[string]interface{} `bson:"infos" json:"infos"`
-}
-
-type AlarmStep struct {
-	Type         string             `bson:"_t" json:"_t"`
-	Timestamp    *types.CpsTime     `bson:"t" json:"t" swaggertype:"integer"`
-	Author       string             `bson:"a" json:"a"`
-	UserID       string             `bson:"user_id,omitempty" json:"user_id"`
-	Message      string             `bson:"m" json:"m"`
-	Value        types.CpsNumber    `bson:"val" json:"val"`
-	Initiator    string             `bson:"initiator" json:"initiator"`
-	Execution    string             `bson:"exec,omitempty" json:"-"`
-	StateCounter *types.CropCounter `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
 }
 
 type AlarmTicket struct {
@@ -349,4 +346,8 @@ type Count struct {
 	TotalAck       int `bson:"total_ack" json:"ack"`
 	TotalTicket    int `bson:"total_ticket" json:"ticket"`
 	TotalPbehavior int `bson:"total_pbehavior" json:"pbehavior_active"`
+}
+
+type GetOpenRequest struct {
+	ID string `form:"_id" json:"_id" binding:"required"`
 }

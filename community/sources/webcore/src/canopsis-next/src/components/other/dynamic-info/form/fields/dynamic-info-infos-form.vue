@@ -80,7 +80,6 @@ export default {
         name: this.name,
         rules: 'required:true',
         getter: () => !!this.form.length,
-        context: () => this,
         vm: this,
       });
     },

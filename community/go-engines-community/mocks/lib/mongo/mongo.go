@@ -455,7 +455,7 @@ func (mr *MockDbClientMockRecorder) Disconnect(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Disconnect", reflect.TypeOf((*MockDbClient)(nil).Disconnect), arg0)
 }
 
-// IsReplicaSet mocks base method.
+// IsDistributed mocks base method.
 func (m *MockDbClient) IsDistributed() bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsDistributed")
@@ -463,8 +463,8 @@ func (m *MockDbClient) IsDistributed() bool {
 	return ret0
 }
 
-// IsReplicaSet indicates an expected call of IsReplicaSet.
-func (mr *MockDbClientMockRecorder) IsReplicaSet() *gomock.Call {
+// IsDistributed indicates an expected call of IsDistributed.
+func (mr *MockDbClientMockRecorder) IsDistributed() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsDistributed", reflect.TypeOf((*MockDbClient)(nil).IsDistributed))
 }

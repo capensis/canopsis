@@ -2,7 +2,7 @@
 
 exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
 <tr
-  class=""
+  class="alarm-list-row"
 >
   <td
     class="pr-0"
@@ -32,6 +32,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
       alarm="[object Object]"
       column="[object Object]"
       columnsfilters="[object Object],[object Object]"
+      selectedtag="tag"
       widget="[object Object]"
     />
   </td>
@@ -40,6 +41,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
       alarm="[object Object]"
       column="[object Object]"
       columnsfilters="[object Object],[object Object]"
+      selectedtag="tag"
       widget="[object Object]"
     />
   </td>
@@ -55,7 +57,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
 
 exports[`alarms-list-row Renders \`alarms-list-row\` with default and required props 1`] = `
 <tr
-  class=""
+  class="alarm-list-row"
 >
   <!---->
   <td>
@@ -63,6 +65,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
       alarm="[object Object]"
       column="[object Object]"
       columnsfilters=""
+      selectedtag=""
       widget="[object Object]"
     />
   </td>
@@ -71,6 +74,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
       alarm="[object Object]"
       column="[object Object]"
       columnsfilters=""
+      selectedtag=""
       widget="[object Object]"
     />
   </td>
@@ -86,7 +90,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
 
 exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
 <tr
-  class=""
+  class="alarm-list-row"
 >
   <td
     class="pr-0"
@@ -118,7 +122,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
 
 exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = `
 <tr
-  class="class-2"
+  class="alarm-list-row class-2"
 >
   <!---->
   <td>
@@ -133,7 +137,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = 
 
 exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in parent alarm 1`] = `
 <tr
-  class=""
+  class="alarm-list-row"
 >
   <td
     class="pr-0"
@@ -165,7 +169,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
 
 exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
 <tr
-  class=""
+  class="alarm-list-row"
 >
   <td
     class="pr-0"
@@ -197,7 +201,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
 
 exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
 <tr
-  class=""
+  class="alarm-list-row"
 >
   <td
     class="pr-0"
