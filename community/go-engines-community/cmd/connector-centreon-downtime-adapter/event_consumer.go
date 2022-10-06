@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -388,24 +389,39 @@ func (c *eventConsumer) getLockOnUnlock(pbhName, action string, skip bool) *pbhL
 }
 
 func (c *eventConsumer) inactiveMatch(eventTs float64, eventHostgroups []string) (match bool) {
-	if eventTs == 0 || len(eventHostgroups) == 0 || len(c.config.Inactive.Hostgroups) == 0 || len(c.config.Inactive.UTCHours) == 0 {
+	if eventTs == 0 || len(eventHostgroups) == 0 {
 		return match
 	}
-	timeMatches := false
-	h := time.Unix(int64(eventTs), 0).UTC().Hour()
-	for _, r := range c.config.Inactive.hourRanges {
-		if timeMatches = r[0] <= h && h < r[1] && r[0] < r[1] || r[0] > r[1] && (r[0] <= h || h < r[1]); timeMatches {
-			break
+	eventTime := time.Unix(int64(eventTs), 0).In(c.config.location)
+	weekdayIndex := int(eventTime.Weekday()) - 1
+	if weekdayIndex < 0 {
+		weekdayIndex = 6
+	}
+	h, err := strconv.Atoi(eventTime.Format("1504"))
+	if err != nil {
+		return match
+	}
+	for _, inactive := range c.config.Inactive {
+		timeMatches := false
+		for _, hr := range inactive.hourRanges {
+			if !hr.weekdays[weekdayIndex] {
+				break
+			}
+			timeMatches = hr.hhmm[0] <= h && h < hr.hhmm[1] && hr.hhmm[0] < hr.hhmm[1] ||
+				hr.hhmm[0] > hr.hhmm[1] && (hr.hhmm[0] <= h || h < hr.hhmm[1])
+			if timeMatches {
+				break
+			}
 		}
-	}
-	if !timeMatches {
-		return match
-	}
-	// check hostgroups
-	for _, v := range c.config.Inactive.Hostgroups {
-		for _, ehg := range eventHostgroups {
-			if match = v == ehg; match {
-				return match
+		if !timeMatches {
+			continue
+		}
+		// check hostgroups
+		for _, v := range inactive.Hostgroups {
+			for _, ehg := range eventHostgroups {
+				if match = v == ehg; match {
+					return match
+				}
 			}
 		}
 	}

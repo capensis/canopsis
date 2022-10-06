@@ -15,12 +15,20 @@ pbehavior:
   type: default_maintenance
   # reason specifies corresponding pbehavior reason.
   reason: default_reason
+timezone: Europe/Paris
 # inactive attributes to skip events with specific hostgroups during inactivity interval
 inactive:
-  # hours interval in UTC
-  utc_hours:
-    - "21-5"
+  # hours interval in local time zone, week day according to local time
+  - hours:
+    - "21:15-5:30;MO-SA"
+    - "19:30-8:30;SU"
   # any of hostgroups below should match ones in event's hostgroups attribute to drop an event
-  hostgroups:
+    hostgroups:
     - "HG_A"
     - "HG_FRANCE"
+  - hours:
+    - "21:30-6:30;MO-FR"
+    - "0:00-0:00;SA,SU"
+  # any of hostgroups below should match ones in event's hostgroups attribute to drop an event
+    hostgroups:
+      - "XZY_AB_DC-10-NHQL1"
