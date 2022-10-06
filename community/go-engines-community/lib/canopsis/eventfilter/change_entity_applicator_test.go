@@ -2,17 +2,24 @@ package eventfilter_test
 
 import (
 	"context"
+	"reflect"
+	"testing"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	"github.com/golang/mock/gomock"
-	"reflect"
-	"testing"
 )
 
 func TestChangeEntityApply(t *testing.T) {
-	applicator := eventfilter.NewChangeEntityApplicator(eventfilter.NewExternalDataGetterContainer())
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
+	mockTimezoneConfigProvider.EXPECT().Get().Return(config.TimezoneConfig{}).AnyTimes()
+	applicator := eventfilter.NewChangeEntityApplicator(eventfilter.NewExternalDataGetterContainer(), mockTimezoneConfigProvider)
 
 	var dataSets = []struct {
 		testName      string
@@ -312,7 +319,7 @@ func TestChangeEntityApply(t *testing.T) {
 			outcome, resultEvent, err := applicator.Apply(context.Background(), dataSet.rule, dataSet.event, eventfilter.RegexMatchWrapper{
 				BackwardCompatibility: false,
 				RegexMatch:            dataSet.regexMatches,
-			}, nil)
+			})
 
 			if err != nil {
 				t.Errorf("expected not error but got %v", err)
@@ -333,13 +340,16 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	getter := mock_eventfilter.NewMockExternalDataGetter(ctrl)
-	getter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(types.Entity{ID: "test_value"}, nil)
+	mockGetter := mock_eventfilter.NewMockExternalDataGetter(ctrl)
+	mockGetter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any()).Return(types.Entity{ID: "test_value"}, nil)
 
 	externalDataContainer := eventfilter.NewExternalDataGetterContainer()
-	externalDataContainer.Set("test", getter)
+	externalDataContainer.Set("test", mockGetter)
 
-	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer)
+	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
+	mockTimezoneConfigProvider.EXPECT().Get().Return(config.TimezoneConfig{}).AnyTimes()
+
+	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer, mockTimezoneConfigProvider)
 
 	externalData := make(map[string]eventfilter.ExternalDataParameters)
 	externalData["test"] = eventfilter.ExternalDataParameters{
@@ -370,7 +380,6 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 		},
 		event,
 		eventfilter.RegexMatchWrapper{},
-		nil,
 	)
 
 	if err != nil {
