@@ -356,3 +356,19 @@ export const testsEntityModule = ({
     axiosMockAdapter,
   };
 };
+
+export const createAuthModule = () => {
+  const currentUserPermissionsById = jest.fn()
+    .mockReturnValue({});
+  const authModule = {
+    name: 'auth',
+    getters: {
+      currentUserPermissionsById,
+    },
+  };
+
+  return {
+    authModule,
+    currentUserPermissionsById,
+  };
+};

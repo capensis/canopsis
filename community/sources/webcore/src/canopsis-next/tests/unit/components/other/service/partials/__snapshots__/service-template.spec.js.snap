@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-template Renders \`service-template\` with custom props 1`] = `
+<div
+  class="position-relative"
+>
+  <c-progress-overlay-stub />
+  <!---->
+  <div>
+    <service-entities-wrapper-stub
+      entitynamefield="entity._id"
+      service="[object Object]"
+      serviceentities="[object Object],[object Object]"
+      widgetparameters="[object Object]"
+    />
+  </div>
+  <div
+    class="float-clear"
+  />
+  <!---->
+</div>
+`;
+
+exports[`service-template Renders \`service-template\` with required props 1`] = `
+<div
+  class="position-relative"
+>
+  <c-progress-overlay-stub />
+  <!---->
+  <div />
+  <div
+    class="float-clear"
+  />
+  <!---->
+</div>
+`;

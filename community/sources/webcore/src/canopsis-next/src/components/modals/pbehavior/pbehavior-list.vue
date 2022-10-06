@@ -87,7 +87,7 @@ export default {
       ];
     },
     availableActions() {
-      return this.modal.config.availableActions || [];
+      return this.modal.config.availableActions ?? [];
     },
 
     hasAccessToEditPbehavior() {
