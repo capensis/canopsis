@@ -1,4 +1,4 @@
-package types_test
+package template_test
 
 import (
 	"bytes"
@@ -7,9 +7,8 @@ import (
 	"text/template"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -26,7 +25,7 @@ func TestTemplate_Split(t *testing.T) {
 	Convey("template use function should be good", t, func() {
 		Convey("split function", func() {
 			templateText := `{{ split .Sep .Index .Input }}`
-			tmpl, err := template.New("func-split-test").Funcs(types.GetTemplateFunc(nil)).Parse(templateText)
+			tmpl, err := template.New("func-split-test").Funcs(libtemplate.GetFunctions(nil)).Parse(templateText)
 			if err != nil {
 				t.Fatalf("parsing: %s", err)
 			}
@@ -56,7 +55,7 @@ func TestTemplate_Split(t *testing.T) {
 
 		Convey("trim function", func() {
 			templateText := `{{ trim . }}`
-			tmpl, err := template.New("func-trim-test").Funcs(types.GetTemplateFunc(nil)).Parse(templateText)
+			tmpl, err := template.New("func-trim-test").Funcs(libtemplate.GetFunctions(nil)).Parse(templateText)
 			if err != nil {
 				t.Fatalf("parsing: %s", err)
 			}
@@ -76,7 +75,7 @@ func TestTemplate_Split(t *testing.T) {
 
 		Convey("upper function", func() {
 			templateText := `{{ uppercase . }}`
-			tmpl, err := template.New("func-upper-test").Funcs(types.GetTemplateFunc(nil)).Parse(templateText)
+			tmpl, err := template.New("func-upper-test").Funcs(libtemplate.GetFunctions(nil)).Parse(templateText)
 			if err != nil {
 				t.Fatalf("parsing: %s", err)
 			}
@@ -96,7 +95,7 @@ func TestTemplate_Split(t *testing.T) {
 
 		Convey("lowercase function", func() {
 			templateText := `{{ lowercase . }}`
-			tmpl, err := template.New("func-lower-test").Funcs(types.GetTemplateFunc(nil)).Parse(templateText)
+			tmpl, err := template.New("func-lower-test").Funcs(libtemplate.GetFunctions(nil)).Parse(templateText)
 			if err != nil {
 				t.Fatalf("parsing: %s", err)
 			}
@@ -124,7 +123,7 @@ func TestTemplate_localtime(t *testing.T) {
 	Convey("template use function should be good", t, func() {
 		Convey("localtime function", func() {
 			templateText := `{{ .TestDate | localtime "Mon, 02 Jan 2006 15:04:05 MST" "Australia/Queensland" }}`
-			tmpl, err := template.New("func-localtime-test").Funcs(types.GetTemplateFunc(nil)).Parse(templateText)
+			tmpl, err := template.New("func-localtime-test").Funcs(libtemplate.GetFunctions(nil)).Parse(templateText)
 			if err != nil {
 				t.Fatalf("parsing: %s", err)
 			}
@@ -132,7 +131,7 @@ func TestTemplate_localtime(t *testing.T) {
 				TestDate types.CpsTime
 			}{
 				TestDate: types.CpsTime{
-					time.Date(2021, time.October, 28, 7, 5, 0, 0, time.UTC),
+					Time: time.Date(2021, time.October, 28, 7, 5, 0, 0, time.UTC),
 				},
 			}
 			output, err := executeTemplate(tmpl, testCase)
@@ -142,12 +141,8 @@ func TestTemplate_localtime(t *testing.T) {
 
 		Convey("localtime function with no timezone provided", func() {
 			loc, _ := time.LoadLocation("Australia/Queensland")
-			cfg := &config.TimezoneConfig{
-				Location: loc,
-			}
-
 			templateText := `{{ .TestDate | localtime "Mon, 02 Jan 2006 15:04:05 MST" }}`
-			tmpl, err := template.New("func-localtime-test").Funcs(types.GetTemplateFunc(cfg)).Parse(templateText)
+			tmpl, err := template.New("func-localtime-test").Funcs(libtemplate.GetFunctions(loc)).Parse(templateText)
 			if err != nil {
 				t.Fatalf("parsing: %s", err)
 			}
@@ -155,7 +150,7 @@ func TestTemplate_localtime(t *testing.T) {
 				TestDate types.CpsTime
 			}{
 				TestDate: types.CpsTime{
-					time.Date(2021, time.October, 28, 7, 5, 0, 0, time.UTC),
+					Time: time.Date(2021, time.October, 28, 7, 5, 0, 0, time.UTC),
 				},
 			}
 			output, err := executeTemplate(tmpl, testCase)
