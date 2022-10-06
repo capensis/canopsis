@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(data-test="massActionsPanel")
+  div
     mq-layout(mq="l+")
       actions-panel-item(
         v-for="(action, index) in actions",
