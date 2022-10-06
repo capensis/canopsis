@@ -181,6 +181,23 @@ func (c *eventConsumer) processMsg(ctx context.Context, msg amqp.Delivery) error
 		return nil
 	}
 
+	hgValues := event.GetArray("hostgroups")
+	if hgValues != nil {
+		hostgroups := make([]string, 0, len(hgValues))
+		for _, v := range hgValues {
+			if s := v.GetStringBytes(); s != nil {
+				hostgroups = append(hostgroups, string(s))
+			}
+		}
+
+		skip = c.inactiveMatch(event.GetFloat64("timestamp"), hostgroups)
+
+		if skip {
+			c.logger.Debug().Str("event", string(msg.Body)).Msg("inactive matches: skip event")
+			return nil
+		}
+	}
+
 	entityID := ""
 	if resource == "" {
 		entityID = resource
@@ -368,4 +385,30 @@ func (c *eventConsumer) getLockOnUnlock(pbhName, action string, skip bool) *pbhL
 	}
 
 	return nil
+}
+
+func (c *eventConsumer) inactiveMatch(eventTs float64, eventHostgroups []string) (match bool) {
+	if eventTs == 0 || len(eventHostgroups) == 0 || len(c.config.Inactive.Hostgroups) == 0 || len(c.config.Inactive.UTCHours) == 0 {
+		return match
+	}
+	timeMatches := false
+	h := time.Unix(int64(eventTs), 0).UTC().Hour()
+	for _, r := range c.config.Inactive.hourRanges {
+		if timeMatches = r[0] <= h && h < r[1] && r[0] < r[1] || r[0] > r[1] && (r[0] <= h || h < r[1]); timeMatches {
+			break
+		}
+	}
+	if !timeMatches {
+		return match
+	}
+	// check hostgroups
+	for _, v := range c.config.Inactive.Hostgroups {
+		for _, ehg := range eventHostgroups {
+			if match = v == ehg; match {
+				return match
+			}
+		}
+	}
+
+	return match
 }

@@ -4,12 +4,15 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"gopkg.in/yaml.v2"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
+	"strings"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
@@ -18,6 +21,7 @@ type Config struct {
 		Type   string `yaml:"type"`
 		Reason string `yaml:"reason"`
 	}
+	Inactive InactiveConfig
 }
 
 type ApiConfig struct {
@@ -26,6 +30,14 @@ type ApiConfig struct {
 
 	Username string `yaml:"-"`
 	Password string `yaml:"-"`
+}
+
+type HourRange [2]int
+
+type InactiveConfig struct {
+	UTCHours   []string `yaml:"utc_hours"`
+	Hostgroups []string
+	hourRanges []HourRange
 }
 
 // LoadConfig reads a file in configPath path and parses its YAML content.
@@ -37,6 +49,25 @@ func LoadConfig(configPath string) (Config, error) {
 	}
 
 	err = yaml.Unmarshal(buf, &config)
+	if err != nil {
+		return config, err
+	}
+	for _, r := range config.Inactive.UTCHours {
+		sStart, sEnd, ok := strings.Cut(r, "-")
+		if !ok {
+			continue
+		}
+		start, err := strconv.Atoi(sStart)
+		if err != nil {
+			continue
+		}
+		end, err := strconv.Atoi(sEnd)
+		if err != nil {
+			continue
+		}
+		config.Inactive.hourRanges = append(config.Inactive.hourRanges, HourRange{start, end})
+	}
+
 	return config, err
 }
 
