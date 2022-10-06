@@ -122,6 +122,7 @@ import { omit, pick, isObject } from 'lodash';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
+import { isResolvedAlarm, mapIds } from '@/helpers/entities';
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
 import { authMixin } from '@/mixins/auth';
@@ -147,7 +148,6 @@ import AlarmsListTable from './partials/alarms-list-table.vue';
 import MassActionsPanel from './actions/mass-actions-panel.vue';
 import AlarmsExpandPanelTour from './expand-panel/alarms-expand-panel-tour.vue';
 import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
-import { isResolvedAlarm } from '@/helpers/entities';
 
 /**
  * Alarm-list component
@@ -204,9 +204,7 @@ export default {
   },
   computed: {
     selectedIds() {
-      return this.selected
-        .filter(item => !isResolvedAlarm(item))
-        .map(item => item._id);
+      return mapIds(this.selected.filter(item => !isResolvedAlarm(item)));
     },
 
     tourCallbacks() {
