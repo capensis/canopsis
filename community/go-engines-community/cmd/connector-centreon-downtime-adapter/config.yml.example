@@ -15,3 +15,11 @@ pbehavior:
   type: default_maintenance
   # reason specifies corresponding pbehavior reason.
   reason: default_reason
+# inactive attributes to skip events with specific hostgroups during inactivity interval
+inactive:
+  # interval
+  utc_hours:
+    - "21-5"
+  hostgroups:
+    - "HG_KFR"
+    - "KFR_FRANCE"
