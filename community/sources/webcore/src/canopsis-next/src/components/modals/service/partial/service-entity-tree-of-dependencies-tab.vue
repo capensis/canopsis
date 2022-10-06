@@ -1,6 +1,6 @@
 <template lang="pug">
   service-dependencies.pa-2(
-    :root="dependency",
+    :root="entity",
     :columns="columns",
     light,
     openable-root
@@ -8,8 +8,6 @@
 </template>
 
 <script>
-import { serviceToServiceDependency } from '@/helpers/treeview/service-dependencies';
-
 import ServiceDependencies from '@/components/other/service/table/service-dependencies.vue';
 
 export default {
@@ -22,11 +20,6 @@ export default {
     columns: {
       type: Array,
       required: false,
-    },
-  },
-  computed: {
-    dependency() {
-      return serviceToServiceDependency(this.entity);
     },
   },
 };

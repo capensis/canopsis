@@ -10,6 +10,7 @@ const localVue = createVueInstance();
 
 const stubs = {
   'c-id-field': true,
+  'c-name-field': true,
   'c-description-field': true,
   'c-enabled-field': true,
   'meta-alarm-rule-corel-form': true,
@@ -23,6 +24,7 @@ const stubs = {
 
 const snapshotStubs = {
   'c-id-field': true,
+  'c-name-field': true,
   'c-description-field': true,
   'c-enabled-field': true,
   'meta-alarm-rule-corel-form': true,
@@ -48,7 +50,7 @@ const snapshotFactory = (options = {}) => mount(MetaAlarmRuleForm, {
 
 const selectIdField = wrapper => wrapper.find('c-id-field-stub');
 const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub');
-const selectNameField = wrapper => wrapper.find('.v-text-field');
+const selectNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 const selectMetaAlarmRuleCorelForm = wrapper => wrapper.find('meta-alarm-rule-corel-form-stub');
 const selectMetaAlarmRuleThresholdForm = wrapper => wrapper.find('meta-alarm-rule-threshold-form-stub');

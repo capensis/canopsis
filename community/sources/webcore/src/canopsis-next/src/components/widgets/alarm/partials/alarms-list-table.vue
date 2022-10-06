@@ -1,18 +1,10 @@
 <template lang="pug">
   v-flex.white(v-resize="changeHeaderPositionOnResize")
-    v-expand-transition
-      v-flex.px-3(v-show="selectedIds.length", xs12)
-        mass-actions-panel(
-          :items-ids="selectedIds",
-          :widget="widget",
-          :refresh-alarms-list="refreshAlarmsList",
-          @clear:items="clearSelected"
-        )
     c-empty-data-table-columns(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
         ref="dataTable",
-        v-model="selected",
+        v-field="selected",
         :class="vDataTableClass",
         :items="alarms",
         :headers="headers",
@@ -31,7 +23,11 @@
           v-fade-transition
             v-progress-linear(color="primary", height="2", indeterminate)
         template(#headerCell="{ header }")
-          alarm-header-cell(:header="header")
+          alarm-header-cell(
+            :header="header",
+            :selected-tag="selectedTag",
+            @clear:tag="$emit('clear:tag')"
+          )
         template(#items="props")
           alarms-list-row(
             v-model="props.selected",
@@ -45,7 +41,9 @@
             :parent-alarm="parentAlarm",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
             :refresh-alarms-list="refreshAlarmsList",
-            :selecting="selecting"
+            :selecting="selecting",
+            :selected-tag="selectedTag",
+            @select:tag="$emit('select:tag', $event)"
           )
         template(#expand="{ item, index }")
           alarms-expand-panel(
@@ -66,14 +64,11 @@
 import { TOP_BAR_HEIGHT } from '@/config';
 import { ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
-import { isResolvedAlarm } from '@/helpers/entities';
-
 import featuresService from '@/services/features';
 
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
-import MassActionsPanel from '../actions/mass-actions-panel.vue';
 import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
 import AlarmsListRow from './alarms-list-row.vue';
 
@@ -85,7 +80,6 @@ import AlarmsListRow from './alarms-list-row.vue';
 export default {
   components: {
     AlarmHeaderCell,
-    MassActionsPanel,
     AlarmsExpandPanel,
     AlarmsListRow,
 
@@ -96,7 +90,15 @@ export default {
 
     ...featuresService.get('components.alarmListTable.mixins', []),
   ],
+  model: {
+    prop: 'selected',
+    event: 'input',
+  },
   props: {
+    selected: {
+      type: Array,
+      default: () => [],
+    },
     widget: {
       type: Object,
       required: true,
@@ -153,6 +155,10 @@ export default {
       type: Function,
       default: () => {},
     },
+    selectedTag: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     const data = featuresService.has('components.alarmListTable.data')
@@ -161,7 +167,6 @@ export default {
 
     return {
       selecting: false,
-      selected: [],
       columnsFilters: [],
       columnsFiltersPending: false,
 
@@ -176,12 +181,6 @@ export default {
 
     expanded() {
       return this.$refs.dataTable.expanded;
-    },
-
-    selectedIds() {
-      return this.selected
-        .filter(item => !isResolvedAlarm(item))
-        .map(item => item._id);
     },
 
     hasInstructionsAlarms() {
@@ -391,10 +390,6 @@ export default {
 
     updatePaginationHandler(data) {
       this.$emit('update:pagination', data);
-    },
-
-    clearSelected() {
-      this.selected = [];
     },
   },
 };

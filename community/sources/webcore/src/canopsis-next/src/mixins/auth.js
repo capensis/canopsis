@@ -53,7 +53,7 @@ export const authMixin = {
     },
 
     checkAccess(permissionId, action = CRUD_ACTIONS.can) {
-      return checkUserAccess(this.currentUserPermissionsById, permissionId, action);
+      return checkUserAccess(this.currentUserPermissionsById[permissionId], action);
     },
 
     checkCreateAccess(permissionId) {

@@ -1,12 +1,6 @@
 <template lang="pug">
   div
-    v-text-field(
-      v-field="form.name",
-      v-validate="'required'",
-      :label="$t('modals.createPbehaviorType.fields.name')",
-      :error-messages="errors.collect('name')",
-      name="name"
-    )
+    c-name-field(v-field="form.name")
     v-text-field(
       v-field="form.description",
       v-validate="'required'",

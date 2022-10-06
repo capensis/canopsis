@@ -4,21 +4,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
 <div
   class="flex white"
 >
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
-    <div
-      class="flex px-3 xs12"
-      style="display: none;"
-    >
-      <mass-actions-panel-stub
-        itemsids=""
-        refreshalarmslist="[Function]"
-        widget="[object Object]"
-      />
-    </div>
-  </transition-stub>
   <div>
     <div
       class="alarms-list-table columns-sm"
@@ -76,6 +61,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
+                  selectedtag="tag"
                 />
                 <i
                   aria-hidden="true"
@@ -94,6 +80,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
+                  selectedtag="tag"
                 />
               </th>
             </tr>
@@ -154,6 +141,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
+              selectedtag="tag"
               widget="[object Object]"
             />
             <tr
@@ -173,6 +161,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
+              selectedtag="tag"
               widget="[object Object]"
             />
             <tr
@@ -192,6 +181,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
+              selectedtag="tag"
               widget="[object Object]"
             />
             <tr
@@ -211,6 +201,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
+              selectedtag="tag"
               widget="[object Object]"
             />
             <tr
@@ -230,6 +221,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               refreshalarmslist="[Function]"
               row="[object Object]"
               selectable="true"
+              selectedtag="tag"
               widget="[object Object]"
             />
             <tr
@@ -254,21 +246,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 <div
   class="flex white"
 >
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
-    <div
-      class="flex px-3 xs12"
-      style="display: none;"
-    >
-      <mass-actions-panel-stub
-        itemsids=""
-        refreshalarmslist="[Function]"
-        widget="[object Object]"
-      />
-    </div>
-  </transition-stub>
   <c-empty-data-table-columns-stub />
   <!---->
 </div>
@@ -278,21 +255,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 <div
   class="flex white"
 >
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
-    <div
-      class="flex px-3 xs12"
-      style="display: none;"
-    >
-      <mass-actions-panel-stub
-        itemsids=""
-        refreshalarmslist="[Function]"
-        widget="[object Object]"
-      />
-    </div>
-  </transition-stub>
   <div>
     <div
       class="alarms-list-table columns-sm"
@@ -315,6 +277,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
+                  selectedtag=""
                 />
                 <i
                   aria-hidden="true"
@@ -333,6 +296,83 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
+                  selectedtag=""
+                />
+              </th>
+            </tr>
+            <tr
+              class="v-datatable__progress"
+            >
+              <th
+                class="column"
+                colspan="2"
+              />
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="text-xs-center"
+                colspan="2"
+              >
+                No data available
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with simulate ctrl keydown 1`] = `
+<div
+  class="flex white"
+>
+  <div>
+    <div
+      class="alarms-list-table columns-sm alarms-list-table__selecting"
+    >
+      <div
+        class="v-table__overflow"
+      >
+        <table
+          class="v-datatable v-table theme--light"
+        >
+          <thead>
+            <tr>
+              <th
+                aria-label=""
+                aria-sort="none"
+                class="column sortable text-xs-left"
+                role="columnheader"
+                scope="col"
+                tabindex="0"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                  selectedtag=""
+                />
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  arrow_upward
+                </i>
+              </th>
+              <th
+                aria-label="Actions: Not sorted."
+                aria-sort="none"
+                class="column text-xs-left"
+                role="columnheader"
+                scope="col"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                  selectedtag=""
                 />
               </th>
             </tr>
@@ -367,21 +407,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
 <div
   class="flex white"
 >
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
-    <div
-      class="flex px-3 xs12"
-      style="display: none;"
-    >
-      <mass-actions-panel-stub
-        itemsids=""
-        refreshalarmslist="[Function]"
-        widget="[object Object]"
-      />
-    </div>
-  </transition-stub>
   <div>
     <div
       class="alarms-list-table columns-sm"
@@ -403,6 +428,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
+                  selectedtag=""
                 />
               </th>
               <th
@@ -415,6 +441,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
+                  selectedtag=""
                 />
                 <i
                   aria-hidden="true"
@@ -433,6 +460,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
+                  selectedtag=""
                 />
               </th>
             </tr>
@@ -452,6 +480,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              selectedtag=""
               widget="[object Object]"
             />
             <tr
@@ -469,6 +498,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              selectedtag=""
               widget="[object Object]"
             />
             <tr
@@ -486,6 +516,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              selectedtag=""
               widget="[object Object]"
             />
             <tr
@@ -503,6 +534,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              selectedtag=""
               widget="[object Object]"
             />
             <tr
@@ -520,6 +552,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              selectedtag=""
               widget="[object Object]"
             />
             <tr

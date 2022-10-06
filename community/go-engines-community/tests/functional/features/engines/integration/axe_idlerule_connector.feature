@@ -334,8 +334,7 @@ Feature: update connector alarm
       "data": [
         {
           "entity": {
-            "type": "connector",
-            "impact": ["{{ .serviceID }}"]
+            "type": "connector"
           },
           "v": {
             "connector": "test-connector-axe-idlerule-connector-3",
@@ -359,9 +358,6 @@ Feature: update connector alarm
     {
       "data": [
         {
-          "entity": {
-            "depends": ["test-connector-axe-idlerule-connector-3/test-connector-name-axe-idlerule-connector-3"]
-          },
           "v": {
             "component": "{{ .serviceID }}",
             "connector": "service",

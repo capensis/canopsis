@@ -29,8 +29,11 @@ type baseValidator struct {
 func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(EditRequest)
 
-	if r.Type == view.WidgetTypeJunit {
+	switch r.Type {
+	case view.WidgetTypeJunit:
 		validateJunitParametersRequest(sl, r.Parameters)
+	case view.WidgetTypeMap:
+		validateMapParametersRequest(sl, r.Parameters)
 	}
 }
 
@@ -77,5 +80,11 @@ func validateJunitParametersRequest(sl validator.StructLevel, r view.Parameters)
 		if err != nil || re.SubexpIndex(view.JunitReportFileRegexpSubexpName) < 0 {
 			sl.ReportError(r.ReportFileRegexp, "parameters.report_fileregexp", "ReportFileRegexp", "regexp", "")
 		}
+	}
+}
+
+func validateMapParametersRequest(sl validator.StructLevel, r view.Parameters) {
+	if r.Map == "" {
+		sl.ReportError(r.Map, "parameters.map", "Map", "required", "")
 	}
 }

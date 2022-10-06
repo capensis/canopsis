@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`add-location-btn Renders \`add-location-btn\` with custom props 1`] = `
+<div
+  class="v-item-group theme--light v-btn-toggle"
+>
+  <button
+    class="ma-0 v-btn v-btn--block v-btn--flat v-btn--large theme--light"
+    type="button"
+    value="true"
+  >
+    <div
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon v-icon--left material-icons theme--light"
+      >
+        add_location
+      </i>
+      <span>
+        Add point
+      </span>
+    </div>
+  </button>
+</div>
+`;

@@ -17,6 +17,19 @@ Feature: update an instruction statistics
     }
     """
     When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-1&with_instructions=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_auto_instruction_running": true,
+          "is_all_auto_instructions_completed": false,
+          "is_auto_instruction_failed": false
+        }
+      ]
+    }
+    """
+    When I wait the end of 4 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-1&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
@@ -31,19 +44,6 @@ Feature: update an instruction statistics
       ]
     }
     """
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-1&with_instructions=true until response code is 200 and body contains:
-    """json
-    {
-      "data": [
-        {
-          "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false,
-          "is_auto_instruction_failed": false
-        }
-      ]
-    }
-    """
-    When I wait the end of 4 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-1&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -375,7 +375,7 @@ Feature: update an instruction statistics
     ]
     """
     When I wait the end of 10 events processing
-    When I do GET /api/v4/alarms?include_instruction_types[]=0&include_instruction_types[]=1&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[0,1]}&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -410,7 +410,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?include_instruction_types[]=0&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[0]}&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -435,7 +435,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?include_instruction_types[]=1&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[1]}&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -460,7 +460,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?exclude_instruction_types[]=0&exclude_instruction_types[]=1&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"exclude_types":[0,1]}&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -474,7 +474,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?exclude_instruction_types[]=0&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"exclude_types":[0]}&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -499,7 +499,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?exclude_instruction_types[]=1&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"exclude_types":[1]}&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -524,7 +524,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-alarm-instruction-get-6-1&include_instructions[]=test-instruction-to-alarm-instruction-get-6-2&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"include":["test-instruction-to-alarm-instruction-get-6-1","test-instruction-to-alarm-instruction-get-6-2"]}&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -559,7 +559,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-alarm-instruction-get-6-1&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"include":["test-instruction-to-alarm-instruction-get-6-1"]}&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -584,7 +584,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?include_instruction_types[]=0&include_instruction_types[]=1&exclude_instructions[]=test-instruction-to-alarm-instruction-get-6-1&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[0,1],"exclude":["test-instruction-to-alarm-instruction-get-6-1"]}&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -609,7 +609,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?include_instruction_types[]=0&include_instruction_types[]=1&exclude_instructions[]=test-instruction-to-alarm-instruction-get-6-1&exclude_instructions[]=test-instruction-to-alarm-instruction-get-6-2&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[0],"include_types":[1],"exclude":["test-instruction-to-alarm-instruction-get-6-1","test-instruction-to-alarm-instruction-get-6-2"]}&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -758,7 +758,7 @@ Feature: update an instruction statistics
     ]
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-alarm-instruction-get-9-1&include_instructions[]=test-instruction-to-alarm-instruction-get-9-2&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"include":["test-instruction-to-alarm-instruction-get-9-1","test-instruction-to-alarm-instruction-get-9-2"]}&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -783,7 +783,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-alarm-instruction-get-9-1&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"include":["test-instruction-to-alarm-instruction-get-9-1"]}&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -803,7 +803,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-alarm-instruction-get-9-2&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"include":["test-instruction-to-alarm-instruction-get-9-2"]}&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -823,7 +823,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?exclude_instructions[]=test-instruction-to-alarm-instruction-get-9-2&search=test-resource-to-alarm-instruction-get-9&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"exclude":["test-instruction-to-alarm-instruction-get-9-2"]}&search=test-resource-to-alarm-instruction-get-9&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -843,7 +843,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?exclude_instructions[]=test-instruction-to-alarm-instruction-get-9-1&search=test-resource-to-alarm-instruction-get-9&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"exclude":["test-instruction-to-alarm-instruction-get-9-1"]}&search=test-resource-to-alarm-instruction-get-9&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -882,7 +882,7 @@ Feature: update an instruction statistics
     ]
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-without-patterns&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"include":["test-instruction-without-patterns"]}&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should be:
     """json
@@ -896,7 +896,7 @@ Feature: update an instruction statistics
       }
     }
     """
-    When I do GET /api/v4/alarms?exclude_instructions[]=test-instruction-without-patterns&search=test-resource-to-alarm-instruction-get-10&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"exclude":["test-instruction-without-patterns"]}&search=test-resource-to-alarm-instruction-get-10&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -905,6 +905,459 @@ Feature: update an instruction statistics
         {
           "v": {
             "resource": "test-resource-to-alarm-instruction-get-10"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given auto instruction execution should return alarm
+    When I am admin
+    When I send an event:
+    """json
+    [
+      {
+        "connector": "test-connector-to-alarm-instruction-get-11",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-11",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-instruction-get-11",
+        "resource": "test-resource-to-alarm-instruction-get-11-1",
+        "state": 1,
+        "output": "test-output-to-alarm-instruction-get-11"
+      },
+      {
+        "connector": "test-connector-to-alarm-instruction-get-11",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-11",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-instruction-get-11",
+        "resource": "test-resource-to-alarm-instruction-get-11-2",
+        "state": 1,
+        "output": "test-output-to-alarm-instruction-get-11"
+      }
+    ]
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[1],"running":true}&search=test-resource-to-alarm-instruction-get-11 until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-11-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[1],"running":false}&search=test-resource-to-alarm-instruction-get-11
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"exclude_types":[1],"running":true}&search=test-resource-to-alarm-instruction-get-11
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-11-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"exclude_types":[1],"running":false}&search=test-resource-to-alarm-instruction-get-11&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-11-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-11-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[1],"running":true}&search=test-resource-to-alarm-instruction-get-11
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-11-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[1],"running":false}&search=test-resource-to-alarm-instruction-get-11
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[1],"running":true}&search=test-resource-to-alarm-instruction-get-11 until response code is 200 and body is:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[1],"running":false}&search=test-resource-to-alarm-instruction-get-11
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-11-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"exclude_types":[1],"running":true}&search=test-resource-to-alarm-instruction-get-11&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-11-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-11-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"exclude_types":[1],"running":false}&search=test-resource-to-alarm-instruction-get-11
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-11-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given manual instruction execution should return flags in alarm API
+    When I am admin
+    When I send an event:
+    """json
+    [
+      {
+        "connector": "test-connector-to-alarm-instruction-get-12",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-12",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-instruction-get-12",
+        "resource": "test-resource-to-alarm-instruction-get-12-1",
+        "state": 1,
+        "output": "test-output-to-alarm-instruction-get-12"
+      },
+      {
+        "connector": "test-connector-to-alarm-instruction-get-12",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-12",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-instruction-get-12",
+        "resource": "test-resource-to-alarm-instruction-get-12-2",
+        "state": 1,
+        "output": "test-output-to-alarm-instruction-get-12"
+      }
+    ]
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-12-1
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-12"
+    }
+    """
+    Then the response code should be 200
+    When I save response executionID={{ .lastResponse._id }}
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[0],"running":true}&search=test-resource-to-alarm-instruction-get-12
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-12-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[0],"running":false}&search=test-resource-to-alarm-instruction-get-12
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"exclude_types":[0],"running":true}&search=test-resource-to-alarm-instruction-get-12
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-12-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"exclude_types":[0],"running":false}&search=test-resource-to-alarm-instruction-get-12&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-12-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-12-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[0],"running":true}&search=test-resource-to-alarm-instruction-get-12
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-12-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[0],"running":false}&search=test-resource-to-alarm-instruction-get-12
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[0],"running":true}&search=test-resource-to-alarm-instruction-get-12 until response code is 200 and body is:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"include_types":[0],"running":false}&search=test-resource-to-alarm-instruction-get-12
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-12-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"exclude_types":[0],"running":true}&search=test-resource-to-alarm-instruction-get-12&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-12-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-12-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?instructions[]={"exclude_types":[0],"running":false}&search=test-resource-to-alarm-instruction-get-12
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-12-2"
           }
         }
       ],
