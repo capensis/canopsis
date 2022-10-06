@@ -17,6 +17,7 @@
 
 <script>
 import { omit } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
