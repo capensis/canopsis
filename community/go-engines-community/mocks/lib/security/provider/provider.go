@@ -36,7 +36,7 @@ func (m *MockLdapDialer) EXPECT() *MockLdapDialerMockRecorder {
 }
 
 // DialURL mocks base method.
-func (m *MockLdapDialer) DialURL(arg0 *security.LdapConfig) (ldap.Client, error) {
+func (m *MockLdapDialer) DialURL(arg0 security.LdapConfig) (ldap.Client, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DialURL", arg0)
 	ret0, _ := ret[0].(ldap.Client)

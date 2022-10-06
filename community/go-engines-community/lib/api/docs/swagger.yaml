@@ -4209,6 +4209,54 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /export-configuration:
+    post:
+      tags:
+        - exportconfiguration
+      summary: Export configurations
+      description: Export configurations
+      operationId: export-configurations
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/exportconfiguration.Request'
+            examples:
+              Export:
+                summary: Export example
+                description: Export example.
+                value: {
+                  "export": [
+                    "resolve_rule",
+                    "configuration",
+                    "state_settings",
+                    "notification",
+                    "pbehavior_type",
+                    "pbehavior_reason",
+                    "view_group",
+                    "view",
+                    "view_tab",
+                    "widget",
+                    "widget_filter",
+                    "rights"
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/x-yaml:
+              schema:
+                type: string
+                format: binary
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /file:
     get:
       tags:

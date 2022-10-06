@@ -51,5 +51,10 @@ func (p *tokenProvider) Auth(ctx context.Context, token string) (*security.User,
 		return nil, nil
 	}
 
+	err = p.tokenStore.Access(ctx, token)
+	if err != nil {
+		return nil, err
+	}
+
 	return user, nil
 }

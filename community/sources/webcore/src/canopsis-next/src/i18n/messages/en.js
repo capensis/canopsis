@@ -2504,7 +2504,7 @@ export default merge({
   remediationInstructionStats: {
     alarmsTimeline: 'Alarms timeline',
     alarmId: 'Alarm ID',
-    executedOn: 'Executed on',
+    executedAt: 'Executed at',
     lastExecutedOn: 'Last executed on',
     modifiedOn: 'Modified on',
     averageCompletionTime: 'Average time\nof completion',
@@ -2517,6 +2517,7 @@ export default merge({
     instructionChanged: 'The instruction has been changed',
     alarmResolvedDate: 'Alarm resolved date',
     showFailedExecutions: 'Show failed instruction executions',
+    remediationDuration: 'Remediation duration',
     actions: {
       needRate: 'Rate it!',
       rate: 'Rate',
