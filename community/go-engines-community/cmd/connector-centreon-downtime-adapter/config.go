@@ -53,7 +53,7 @@ func LoadConfig(configPath string) (Config, error) {
 		return config, err
 	}
 	for _, r := range config.Inactive.UTCHours {
-		sStart, sEnd, ok := strings.Cut(r, "-")
+		sStart, sEnd, ok := strCut(r, "-")
 		if !ok {
 			continue
 		}
@@ -69,6 +69,14 @@ func LoadConfig(configPath string) (Config, error) {
 	}
 
 	return config, err
+}
+
+// backported from 1.18
+func strCut(s, sep string) (before, after string, ok bool) {
+	if i := strings.Index(s, sep); i >= 0 {
+		return s[:i], s[i+len(sep):], true
+	}
+	return s, "", false
 }
 
 func (c ApiConfig) CreateRequest(ctx context.Context, method, path string, b []byte, q url.Values) (*http.Request, error) {
