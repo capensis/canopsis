@@ -5,17 +5,23 @@
       :pending="remediationJobsPending",
       :total-items="remediationJobsMeta.total_count",
       :pagination.sync="pagination",
+      :removable="hasDeleteAnyRemediationJobAccess",
+      :updatable="hasUpdateAnyRemediationJobAccess",
+      :duplicable="hasCreateAnyRemediationJobAccess",
       @remove-selected="showRemoveSelectedRemediationJobsModal",
       @remove="showRemoveRemediationJobModal",
+      @duplicate="showDuplicateRemediationJobModal",
       @edit="showEditRemediationJobModal"
     )
 </template>
 
 <script>
+import { omit } from 'lodash';
 import { MODALS } from '@/constants';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';
+import { permissionsTechnicalRemediationJobMixin } from '@/mixins/permissions/technical/remediation-job';
 
 import RemediationJobsList from './remediation-jobs-list.vue';
 
@@ -24,6 +30,7 @@ export default {
   mixins: [
     localQueryMixin,
     entitiesRemediationJobMixin,
+    permissionsTechnicalRemediationJobMixin,
   ],
   mounted() {
     this.fetchList();
@@ -48,6 +55,27 @@ export default {
             this.$popups.success({
               text: this.$t('modals.createRemediationJob.edit.popups.success', {
                 jobName: job.name,
+              }),
+            });
+
+            await this.fetchList();
+          },
+        },
+      });
+    },
+
+    showDuplicateRemediationJobModal(remediationJob) {
+      this.$modals.show({
+        name: MODALS.createRemediationJob,
+        config: {
+          remediationJob: omit(remediationJob, ['_id']),
+          title: this.$t('modals.createRemediationJob.duplicate.title'),
+          action: async (job) => {
+            await this.createRemediationJob({ data: job });
+
+            this.$popups.success({
+              text: this.$t('modals.createRemediationJob.duplicate.popups.success', {
+                jobName: remediationJob.name,
               }),
             });
 
