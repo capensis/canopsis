@@ -4,30 +4,31 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
-	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+
+	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 )
 
 // casProvider implements CAS authentication.
 type casProvider struct {
-	client         libhttp.Doer
-	configProvider security.ConfigProvider
-	userProvider   security.UserProvider
+	client       libhttp.Doer
+	config       security.CasConfig
+	userProvider security.UserProvider
 }
 
 // NewCasProvider creates new provider.
 func NewCasProvider(
 	client libhttp.Doer,
-	configProvider security.ConfigProvider,
+	config security.CasConfig,
 	userProvider security.UserProvider,
 ) security.HttpProvider {
 	return &casProvider{
-		client:         client,
-		configProvider: configProvider,
-		userProvider:   userProvider,
+		client:       client,
+		config:       config,
+		userProvider: userProvider,
 	}
 }
 
@@ -72,27 +73,21 @@ func (p *casProvider) Auth(request *http.Request) (*security.User, error, bool) 
 	serviceUrl.RawQuery = serviceQuery.Encode()
 	service = serviceUrl.String()
 
-	config, err := p.configProvider.LoadCasConfig(request.Context())
-	if err != nil {
-		return nil, fmt.Errorf("cannot find cas config: %v", err), true
-	}
-
-	username, err := p.validateTicket(request.Context(), config, ticket, service)
+	username, err := p.validateTicket(request.Context(), ticket, service)
 	if err != nil || username == "" {
 		return nil, err, true
 	}
 
-	user, err := p.saveUser(request.Context(), username, config)
+	user, err := p.saveUser(request.Context(), username)
 	return user, err, true
 }
 
 // validateTicket calls CAS server to validate ticket.
 func (p *casProvider) validateTicket(
 	ctx context.Context,
-	config *security.CasConfig,
 	ticket, service string,
 ) (string, error) {
-	req, err := http.NewRequestWithContext(ctx, "GET", config.ValidateUrl, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", p.config.ValidateUrl, nil)
 	if err != nil {
 		return "", err
 	}
@@ -129,7 +124,7 @@ func (p *casProvider) validateTicket(
 }
 
 // saveUser adds user data to storage.
-func (p *casProvider) saveUser(ctx context.Context, username string, config *security.CasConfig) (*security.User, error) {
+func (p *casProvider) saveUser(ctx context.Context, username string) (*security.User, error) {
 	user, err := p.userProvider.FindByExternalSource(ctx, username, security.SourceCas)
 	if err != nil {
 		return nil, fmt.Errorf("cannot find user: %v", err)
@@ -138,7 +133,7 @@ func (p *casProvider) saveUser(ctx context.Context, username string, config *sec
 	if user == nil {
 		user = &security.User{
 			Name:       username,
-			Role:       config.DefaultRole,
+			Role:       p.config.DefaultRole,
 			IsEnabled:  true,
 			ExternalID: username,
 			Source:     security.SourceCas,
