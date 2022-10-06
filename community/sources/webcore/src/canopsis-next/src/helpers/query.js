@@ -240,6 +240,14 @@ export function convertWeatherUserPreferenceToQuery({ content }) {
 }
 
 /**
+ * This function converts userPreference with widget type 'Map' to query Object
+ *
+ * @param {Object} userPreference
+ * @returns {{ category: string }}
+ */
+export const convertMapUserPreferenceToQuery = ({ content: { category } }) => ({ category });
+
+/**
  * This function converts userPreference with widgetXtype 'Context' to query Object
  *
  * @param {Object} userPreference
@@ -274,6 +282,8 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
       return convertContextUserPreferenceToQuery(userPreference);
     case WIDGET_TYPES.serviceWeather:
       return convertWeatherUserPreferenceToQuery(userPreference);
+    case WIDGET_TYPES.map:
+      return convertMapUserPreferenceToQuery(userPreference);
     default:
       return {};
   }

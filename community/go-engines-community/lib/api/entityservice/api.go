@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -15,7 +17,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
 	"github.com/valyala/fastjson"
-	"net/http"
 )
 
 type API interface {
@@ -61,7 +62,7 @@ func NewApi(
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	service, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
+	service, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -74,7 +75,7 @@ func (a *api) Get(c *gin.Context) {
 }
 
 // GetDependencies
-// @Success 200 {object} common.PaginatedListResponse{data=[]AlarmWithEntity}
+// @Success 200 {object} common.PaginatedListResponse{data=[]entity.Entity}
 func (a *api) GetDependencies(c *gin.Context) {
 	var r ContextGraphRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -84,7 +85,7 @@ func (a *api) GetDependencies(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.GetDependencies(c.Request.Context(), r.ID, r.Query)
+	aggregationResult, err := a.store.GetDependencies(c, c.MustGet(auth.ApiKey).(string), r)
 	if err != nil {
 		panic(err)
 	}
@@ -104,7 +105,7 @@ func (a *api) GetDependencies(c *gin.Context) {
 }
 
 // GetImpacts
-// @Success 200 {object} common.PaginatedListResponse{data=[]AlarmWithEntity}
+// @Success 200 {object} common.PaginatedListResponse{data=[]entity.Entity}
 func (a *api) GetImpacts(c *gin.Context) {
 	var r ContextGraphRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -114,7 +115,7 @@ func (a *api) GetImpacts(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.GetImpacts(c.Request.Context(), r.ID, r.Query)
+	aggregationResult, err := a.store.GetImpacts(c, c.MustGet(auth.ApiKey).(string), r)
 	if err != nil {
 		panic(err)
 	}
@@ -143,7 +144,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+	err := a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -153,7 +154,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	service, err := a.store.Create(c.Request.Context(), request)
+	service, err := a.store.Create(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -175,7 +176,7 @@ func (a *api) Create(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.metricMetaUpdater.UpdateById(c.Request.Context(), service.ID)
+	a.metricMetaUpdater.UpdateById(c, service.ID)
 
 	c.JSON(http.StatusCreated, service)
 }
@@ -192,7 +193,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+	err := a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -202,7 +203,7 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	service, serviceChanges, err := a.store.Update(c.Request.Context(), request)
+	service, serviceChanges, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -230,14 +231,14 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.metricMetaUpdater.UpdateById(c.Request.Context(), service.ID)
+	a.metricMetaUpdater.UpdateById(c, service.ID)
 
 	c.JSON(http.StatusOK, service)
 }
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, alarm, err := a.store.Delete(c.Request.Context(), id)
+	ok, alarm, err := a.store.Delete(c, id)
 
 	if err != nil {
 		panic(err)
@@ -264,7 +265,7 @@ func (a *api) Delete(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.metricMetaUpdater.DeleteById(c.Request.Context(), id)
+	a.metricMetaUpdater.DeleteById(c, id)
 
 	c.Status(http.StatusNoContent)
 }
@@ -293,7 +294,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
 	response := ar.NewArray()
 	serviceIDs := make([]string, 0, len(rawObjects))
 
@@ -317,7 +317,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
-		err = a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+		err = a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
 			valErr := common.ValidationError{}
 			if errors.As(err, &valErr) {
@@ -330,7 +330,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
-		service, err := a.store.Create(ctx, request)
+		service, err := a.store.Create(c, request)
 		if err != nil {
 			a.logger.Err(err).Msg("cannot create entity service")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
@@ -359,7 +359,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		serviceIDs = append(serviceIDs, service.ID)
 	}
 
-	a.metricMetaUpdater.UpdateById(ctx, serviceIDs...)
+	a.metricMetaUpdater.UpdateById(c, serviceIDs...)
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
@@ -388,7 +388,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
 	response := ar.NewArray()
 	serviceIDs := make([]string, 0, len(rawObjects))
 
@@ -412,7 +411,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
-		err = a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+		err = a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
 			valErr := common.ValidationError{}
 			if errors.As(err, &valErr) {
@@ -425,7 +424,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
-		service, serviceChanges, err := a.store.Update(ctx, UpdateRequest(request))
+		service, serviceChanges, err := a.store.Update(c, UpdateRequest(request))
 		if err != nil {
 			a.logger.Err(err).Msg("cannot update entity service")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
@@ -460,7 +459,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		serviceIDs = append(serviceIDs, service.ID)
 	}
 
-	a.metricMetaUpdater.UpdateById(ctx, serviceIDs...)
+	a.metricMetaUpdater.UpdateById(c, serviceIDs...)
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
@@ -489,7 +488,6 @@ func (a *api) BulkDelete(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
 	response := ar.NewArray()
 	serviceIDs := make([]string, 0, len(rawObjects))
 
@@ -513,7 +511,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 			continue
 		}
 
-		ok, alarm, err := a.store.Delete(ctx, request.ID)
+		ok, alarm, err := a.store.Delete(c, request.ID)
 		if err != nil {
 			a.logger.Err(err).Msg("cannot delete entity service")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
@@ -546,7 +544,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		serviceIDs = append(serviceIDs, request.ID)
 	}
 
-	a.metricMetaUpdater.DeleteById(ctx, serviceIDs...)
+	a.metricMetaUpdater.DeleteById(c, serviceIDs...)
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
@@ -561,9 +559,9 @@ func (a *api) sendChangeMsg(msg entityservice.ChangeEntityMessage) {
 	}
 }
 
-func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
+func (a *api) transformEditRequest(c context.Context, request *EditRequest) error {
 	var err error
-	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(c, request.EntityPatternFieldsRequest)
 	if err != nil {
 		return err
 	}

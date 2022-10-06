@@ -100,7 +100,7 @@ export const mapIds = (entities, idKey = '_id') => map(entities, idKey);
 export const pickIds = (entities = [], idKey = '_id') => entities.map(entity => pick(entity, [idKey]));
 
 /**
- * Return entities ids
+ * Filter entities by ids
  *
  * @param {Object[]} items
  * @param {Object} item
@@ -123,6 +123,17 @@ export const generateDefaultAlarmListWidgetForm = () => widgetToForm({ type: WID
  */
 export const generateDefaultAlarmListWidget = () => ({
   ...formToWidget(generateDefaultAlarmListWidgetForm()),
+
+  _id: uuid(),
+});
+
+/**
+ * Generate context widget with default parameters.
+ *
+ * @return {Widget}
+ */
+export const generateDefaultContextWidget = () => ({
+  ...formToWidget(widgetToForm({ type: WIDGET_TYPES.context })),
 
   _id: uuid(),
 });

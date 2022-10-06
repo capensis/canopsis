@@ -5,6 +5,7 @@ import Faker from 'faker';
 import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
+import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 
@@ -37,16 +38,9 @@ const snapshotFactory = (options = {}) => mount(AlarmsListTable, {
 });
 
 const selectTable = wrapper => wrapper.find('v-data-table-stub');
-const selectMassActionsPanel = wrapper => wrapper.find('mass-actions-panel-stub');
 const selectAlarmsListRow = wrapper => wrapper.findAll('alarms-list-row-stub');
 const selectTableHead = wrapper => wrapper.find('thead');
 const selectTableBody = wrapper => wrapper.find('tbody');
-
-const dispatchScrollEvent = (detail) => {
-  window.dispatchEvent(
-    new CustomEvent('scroll', { detail }),
-  );
-};
 
 describe('alarms-list-table', () => {
   const timestamp = 1386435600;
@@ -146,27 +140,7 @@ describe('alarms-list-table', () => {
 
     table.vm.$emit('input', selectedAlarms);
 
-    expect(wrapper.vm.selected).toEqual(selectedAlarms);
-  });
-
-  it('Selected alarms cleared after trigger mass actions', () => {
-    const selectedAlarms = alarms.slice(0, -1);
-    const wrapper = factory({
-      store,
-      propsData: {
-        alarms,
-        columns,
-        widget: defaultWidget,
-      },
-    });
-
-    const table = selectTable(wrapper);
-    table.vm.$emit('input', selectedAlarms);
-
-    const massActionsPanel = selectMassActionsPanel(wrapper);
-    massActionsPanel.vm.$emit('clear:items');
-
-    expect(wrapper.vm.selected).toEqual([]);
+    expect(wrapper).toEmit('input', selectedAlarms);
   });
 
   it('Pagination update event emitted after trigger update pagination', () => {
@@ -295,7 +269,7 @@ describe('alarms-list-table', () => {
       stickyHeader: true,
     });
 
-    dispatchScrollEvent(200);
+    triggerWindowScrollEvent(200);
 
     await wrapper.setProps({
       stickyHeader: false,
@@ -388,7 +362,7 @@ describe('alarms-list-table', () => {
     const bodyGetBoundingClientRect = jest.spyOn(body.element, 'getBoundingClientRect')
       .mockReturnValue({ height: 400 });
 
-    dispatchScrollEvent(200);
+    triggerWindowScrollEvent(200);
 
     await flushPromises();
 
@@ -420,7 +394,7 @@ describe('alarms-list-table', () => {
     const bodyGetBoundingClientRect = jest.spyOn(body.element, 'getBoundingClientRect')
       .mockReturnValue({ height: 400 });
 
-    dispatchScrollEvent(200);
+    triggerWindowScrollEvent(200);
 
     expect(+header.element.style.opacity).toBe(0);
 
@@ -495,6 +469,7 @@ describe('alarms-list-table', () => {
         stickyHeader: true,
         parentAlarm: fakeAlarm(),
         refreshAlarmsList: jest.fn(),
+        selectedTag: 'tag',
       },
     });
 
@@ -538,6 +513,23 @@ describe('alarms-list-table', () => {
         columns,
       },
     });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `alarms-list-table` with default and required props with simulate ctrl keydown', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        widget: defaultWidget,
+        alarms: [],
+        columns,
+      },
+    });
+
+    triggerWindowKeyboardEvent('keydown', { key: 'Control' });
+
+    await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
   });

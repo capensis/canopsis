@@ -97,8 +97,8 @@ import { enabledToForm } from './shared/common';
  * @property {boolean} enabled
  * @property {string} description
  * @property {Duration} timeout_after_execution
- * @property {Array} [alarm_patterns]
- * @property {Array} [entity_patterns]
+ * @property {Array} [alarm_pattern]
+ * @property {Array} [entity_pattern]
  * @property {string[]} active_on_pbh
  * @property {string[]} disabled_on_pbh
  * @property {RemediationInstructionApproval} approval
@@ -217,12 +217,8 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
   disabled_on_pbh: remediationInstruction.disabled_on_pbh
     ? cloneDeep(remediationInstruction.disabled_on_pbh)
     : [],
-  alarm_patterns: remediationInstruction.alarm_patterns
-    ? cloneDeep(remediationInstruction.alarm_patterns)
-    : [],
-  entity_patterns: remediationInstruction.entity_patterns
-    ? cloneDeep(remediationInstruction.entity_patterns)
-    : [],
+  alarm_pattern: remediationInstruction.alarm_pattern,
+  entity_pattern: remediationInstruction.entity_pattern,
   description: remediationInstruction.description || '',
   steps: remediationInstructionStepsToForm(remediationInstruction.steps),
   approval: remediationInstructionApprovalToForm(remediationInstruction.approval),
@@ -307,8 +303,8 @@ export const formToRemediationInstruction = (form) => {
 
   return {
     ...instruction,
-    alarm_patterns: form.alarm_patterns.length ? form.alarm_patterns : undefined,
-    entity_patterns: form.entity_patterns.length ? form.entity_patterns : undefined,
+    alarm_pattern: form.alarm_pattern,
+    entity_pattern: form.entity_pattern,
     approval: formApprovalToRemediationInstructionApproval(form.approval),
   };
 };

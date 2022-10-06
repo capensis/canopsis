@@ -40,4 +40,6 @@ export const ENTITIES_TYPES = {
   filter: 'filter',
   ratingSettings: 'ratingSettings',
   pattern: 'pattern',
+  map: 'map',
+  alarmTag: 'alarmTag',
 };

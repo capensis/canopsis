@@ -28,7 +28,9 @@
         :widget="widget",
         :column="column",
         :columns-filters="columnsFilters",
-        @activate="activateRow"
+        :selected-tag="selectedTag",
+        @activate="activateRow",
+        @select:tag="$emit('select:tag', $event)"
       )
     td
       actions-panel(
@@ -112,6 +114,10 @@ export default {
     selecting: {
       type: Boolean,
       default: false,
+    },
+    selectedTag: {
+      type: String,
+      default: '',
     },
   },
   data() {
