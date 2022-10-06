@@ -1,24 +1,47 @@
 <template lang="pug">
-  component(:is="component.is") {{ component.text }}
+  component(
+    v-on="component.on",
+    v-bind="component.bind",
+    :is="component.is"
+  ) {{ component.text }}
 </template>
 
 <script>
 import { ALARM_ENTITY_FIELDS } from '@/constants';
 
 import AlarmHeaderPriority from './alarm-header-priority.vue';
+import AlarmHeaderTag from './alarm-header-tag.vue';
 
 export default {
   components: {
     AlarmHeaderPriority,
+    AlarmHeaderTag,
   },
   props: {
     header: {
       type: Object,
       required: true,
     },
+    selectedTag: {
+      type: String,
+      default: '',
+    },
   },
   computed: {
     component() {
+      if (this.header.value === ALARM_ENTITY_FIELDS.tags) {
+        return {
+          is: 'alarm-header-tag',
+          text: this.header.text,
+          bind: {
+            selectedTag: this.selectedTag,
+          },
+          on: {
+            clear: () => this.$emit('clear:tag'),
+          },
+        };
+      }
+
       const PROPERTIES_COMPONENTS_MAP = {
         [ALARM_ENTITY_FIELDS.priority]: 'alarm-header-priority',
       };

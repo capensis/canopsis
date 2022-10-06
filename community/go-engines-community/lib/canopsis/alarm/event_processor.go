@@ -319,6 +319,7 @@ func (s *eventProcessor) updateAlarm(ctx context.Context, event *types.Event) (t
 	alarm.UpdateOutput(event.Output)
 	alarm.UpdateLongOutput(event.LongOutput)
 	alarm.PartialUpdateEventsCount()
+	alarm.PartialUpdateTags(event.Tags)
 
 	if alarmConfig.EnableLastEventDate {
 		alarm.PartialUpdateLastEventDate(event.Timestamp)
@@ -689,6 +690,7 @@ func newAlarm(event types.Event, alarmConfig config.AlarmConfig) types.Alarm {
 		EntityID: event.GetEID(),
 		ID:       utils.NewID(),
 		Time:     now,
+		Tags:     types.TransformEventTags(event.Tags),
 		Value: types.AlarmValue{
 			Component:         event.Component,
 			Connector:         event.Connector,
@@ -703,7 +705,6 @@ func newAlarm(event types.Event, alarmConfig config.AlarmConfig) types.Alarm {
 			LastUpdateDate:    event.Timestamp,
 			LastEventDate:     now,
 			Resource:          event.Resource,
-			Tags:              []string{},
 			Parents:           []string{},
 			Children:          []string{},
 			Infos:             map[string]map[string]interface{}{},

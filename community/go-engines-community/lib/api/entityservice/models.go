@@ -19,14 +19,6 @@ type Response struct {
 	OldEntityPatterns                oldpattern.EntityPatternList `bson:"old_entity_patterns" json:"old_entity_patterns"`
 }
 
-type AlarmWithEntity struct {
-	Entity          entity.Entity `bson:"entity" json:"entity"`
-	Alarm           *types.Alarm  `bson:"alarm" json:"alarm"`
-	ImpactState     int64         `bson:"impact_state" json:"impact_state"`
-	HasDependencies *bool         `bson:"has_dependencies,omitempty" json:"has_dependencies,omitempty"`
-	HasImpacts      *bool         `bson:"has_impacts,omitempty" json:"has_impacts,omitempty"`
-}
-
 type CreateRequest struct {
 	EditRequest
 	ID string `json:"_id" binding:"id"`
@@ -48,7 +40,11 @@ type BulkDeleteRequestItem struct {
 
 type ContextGraphRequest struct {
 	pagination.Query
-	ID string `form:"_id"`
+	entity.SortRequest
+	ID        string `form:"_id" json:"_id"`
+	Search    string `form:"search" json:"search"`
+	Category  string `form:"category" json:"category"`
+	WithFlags bool   `form:"with_flags" json:"with_flags"`
 }
 
 type EditRequest struct {
@@ -61,12 +57,14 @@ type EditRequest struct {
 	Infos          []entitybasic.InfoRequest `json:"infos" binding:"dive"`
 	SliAvailState  *int64                    `json:"sli_avail_state" binding:"required,min=0,max=3"`
 
+	Coordinates *types.Coordinates `json:"coordinates"`
+
 	common.EntityPatternFieldsRequest
 }
 
 type ContextGraphAggregationResult struct {
-	Data       []AlarmWithEntity `bson:"data"`
-	TotalCount int64             `bson:"total_count" json:"total_count"`
+	Data       []entity.Entity `bson:"data"`
+	TotalCount int64           `bson:"total_count" json:"total_count"`
 }
 
 func (r *ContextGraphAggregationResult) GetData() interface{} {

@@ -455,6 +455,11 @@ default_rights:
     _id: models_profile_corporatePattern
     crecord_name: <Current()._id>
     desc: "Profile: Corporate patterns"
+  permission_models_map:
+    <<: *permission_crud
+    _id: models_map
+    crecord_name: <Current()._id>
+    desc: Map
   permission_listalarm_ack:
     <<: *permission
     _id: listalarm_ack
@@ -775,6 +780,36 @@ default_rights:
     _id: testingweather_alarmsList
     crecord_name: <Current()._id>
     desc: "Testing weather: Access to 'Alarms list' modal"
+  permission_map_alarmsList:
+    <<: *permission
+    _id: map_alarmsList
+    crecord_name: <Current()._id>
+    desc: "Map: Access to 'Alarms list' modal"
+  permission_map_listFilters:
+    <<: *permission
+    _id: map_listFilters
+    crecord_name: <Current()._id>
+    desc: "Rights on map: List filters"
+  permission_map_editFilter:
+    <<: *permission
+    _id: map_editFilter
+    crecord_name: <Current()._id>
+    desc: "Rights on map: Edit filters"
+  permission_map_addFilter:
+    <<: *permission
+    _id: map_addFilter
+    crecord_name: <Current()._id>
+    desc: "Rights on map: Add filter"
+  permission_map_userFilter:
+    <<: *permission
+    _id: map_userFilter
+    crecord_name: <Current()._id>
+    desc: "Rights on map: User filter"
+  permission_map_category:
+    <<: *permission
+    _id: map_category
+    crecord_name: <Current()._id>
+    desc: "Rights on map: Access to 'Category' action"
   permission_api_alarm_read:
     <<: *permission
     _id: api_alarm_read
@@ -1000,6 +1035,11 @@ default_rights:
     _id: api_corporate_pattern
     crecord_name: <Current()._id>
     desc: Corporate patterns
+  permission_api_map:
+    <<: *permission_crud
+    _id: api_map
+    crecord_name: <Current()._id>
+    desc: Map
   permission_view_open_alarms:
     <<: *permission_rw
     _id: "@view_open_alarms"
@@ -1090,6 +1130,8 @@ default_rights:
       "@permission_models_notification_instructionStats":
         checksum: 15
       "@permission_models_profile_corporatePattern":
+        checksum: 15
+      "@permission_models_map":
         checksum: 15
       "@permission_listalarm_ack":
         checksum: 1
@@ -1216,6 +1258,18 @@ default_rights:
       "@permission_counter_alarmsList":
         checksum: 1
       "@permission_testingweather_alarmsList":
+        checksum: 1
+      "@permission_map_alarmsList":
+        checksum: 1
+      "@permission_map_listFilters":
+        checksum: 1
+      "@permission_map_editFilter":
+        checksum: 1
+      "@permission_map_addFilter":
+        checksum: 1
+      "@permission_map_userFilter":
+        checksum: 1
+      "@permission_map_category":
         checksum: 1
       "@permission_api_alarm_read":
         checksum: 1
@@ -1353,6 +1407,9 @@ default_rights:
         crecord_type: right
       "@permission_api_corporate_pattern":
         checksum: 1
+        crecord_type: right
+      "@permission_api_map":
+        checksum: 15
         crecord_type: right
       "@permission_view_open_alarms":
         checksum: 15

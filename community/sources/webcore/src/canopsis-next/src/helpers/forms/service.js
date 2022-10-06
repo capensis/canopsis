@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { isNumber, omit } from 'lodash';
 
 import { ENTITIES_STATES, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
@@ -16,10 +16,11 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filt
  * @property {Object|Array} infos
  * @property {Object} entity_patterns
  * @property {string} output_template
+ * @property {Object} [coordinates]
  */
 
 /**
- * @typedef {ServiceForm} ServiceForm
+ * @typedef {Service} ServiceForm
  * @property {FilterPatternsForm} patterns
  * @property {Object} category
  */
@@ -43,6 +44,10 @@ export const serviceToForm = (service = {}) => ({
     [PATTERNS_FIELDS.entity],
     [OLD_PATTERNS_FIELDS.entity],
   ),
+  coordinates: service.coordinates ?? {
+    lat: undefined,
+    lng: undefined,
+  },
 });
 
 /**
@@ -51,8 +56,16 @@ export const serviceToForm = (service = {}) => ({
  * @param {ServiceForm} [form = {}]
  * @returns {Service}
  */
-export const formToService = (form = {}) => ({
-  ...omit(form, ['patterns']),
-  ...formFilterToPatterns(form.patterns, [PATTERNS_FIELDS.entity]),
-  category: form.category._id,
-});
+export const formToService = (form = {}) => {
+  const service = {
+    ...omit(form, ['patterns', 'coordinates']),
+    ...formFilterToPatterns(form.patterns, [PATTERNS_FIELDS.entity]),
+    category: form.category._id,
+  };
+
+  if (isNumber(form.coordinates.lat) && isNumber(form.coordinates.lng)) {
+    service.coordinates = form.coordinates;
+  }
+
+  return service;
+};

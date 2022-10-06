@@ -86,6 +86,7 @@ export const ALARM_ENTITY_FIELDS = {
   impactState: 'impact_state',
   state: 'v.state.val',
   status: 'v.status.val',
+  tags: 'tags',
 };
 
 export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
@@ -226,4 +227,5 @@ export const ALARM_PATTERN_FIELDS = {
   canceled: 'v.canceled',
   snooze: 'v.snooze',
   lastComment: 'v.last_comment.m',
+  tags: 'tags',
 };

@@ -1,12 +1,12 @@
 <template lang="pug">
-  div(data-test="massActionsPanel")
+  div
     mq-layout(mq="l+")
       actions-panel-item(
         v-for="(action, index) in actions",
         v-bind="action",
         :key="`multiple-${index}`"
       )
-    mq-layout(:mq="['m', 't']")
+    mq-layout(:mq="['m', 't', 'lt']")
       v-menu(bottom, left, @click.native.stop="")
         template(#activator="{ on, attrs }")
           v-btn(v-bind="attrs", v-on="on", icon)
