@@ -31,7 +31,8 @@ type RPCAxeParameters struct {
 	Tstop          *CpsTime `json:"tstop"`
 	StartOnTrigger *bool    `json:"start_on_trigger"`
 	// Instruction
-	Execution string `json:"execution"`
+	Execution   string `json:"execution"`
+	Instruction string `json:"instruction"`
 }
 
 type RPCAxeResultEvent struct {
