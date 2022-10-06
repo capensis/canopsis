@@ -1531,6 +1531,12 @@ export default merge({
           success: '{jobName} has been successfully modified',
         },
       },
+      duplicate: {
+        title: 'Duplicate Job',
+        popups: {
+          success: '{jobName} has been successfully duplicated',
+        },
+      },
     },
     clickOutsideConfirmation: {
       title: 'Are you sure?',
