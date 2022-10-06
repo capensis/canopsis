@@ -7,7 +7,7 @@ Feature: Get a role
     When I do GET /api/v4/roles?search=test-role-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -46,7 +46,17 @@ Feature: Get a role
               "name": "test-permission-to-edit-role-3",
               "type": "RW"
             }
-          ]
+          ],
+          "auth_config": {
+            "expiration_interval": {
+              "value": 1,
+              "unit": "m"
+            },
+            "inactivity_interval": {
+              "value": 8,
+              "unit": "h"
+            }
+          }
         },
         {
           "_id": "test-role-to-get-2",
@@ -78,7 +88,11 @@ Feature: Get a role
               "name": "test-permission-to-edit-role-3",
               "type": "RW"
             }
-          ]
+          ],
+          "auth_config": {
+            "expiration_interval": null,
+            "inactivity_interval": null
+          }
         }
       ],
       "meta": {
@@ -95,7 +109,7 @@ Feature: Get a role
     When I do GET /api/v4/roles?permission=api_instruction_approve&search=ap
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -119,7 +133,7 @@ Feature: Get a role
     When I do GET /api/v4/roles/test-role-to-get-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-role-to-get-1",
       "defaultview": null,
@@ -156,7 +170,17 @@ Feature: Get a role
           "name": "test-permission-to-edit-role-3",
           "type": "RW"
         }
-      ]
+      ],
+      "auth_config": {
+        "expiration_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "inactivity_interval": {
+          "value": 8,
+          "unit": "h"
+        }
+      }
     }
     """
 
@@ -165,7 +189,7 @@ Feature: Get a role
     When I do GET /api/v4/roles?search=test-role-to-get&sort=desc&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -197,7 +221,7 @@ Feature: Get a role
     When I do GET /api/v4/roles/test-role-to-get-1
     Then the response code should be 401
 
-  Scenario: given get request and auth user by api key without permissions should not allow access
+  Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/roles/test-role-to-get-1
     Then the response code should be 403
@@ -207,7 +231,7 @@ Feature: Get a role
     When I do GET /api/v4/roles/test-role-not-found
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }

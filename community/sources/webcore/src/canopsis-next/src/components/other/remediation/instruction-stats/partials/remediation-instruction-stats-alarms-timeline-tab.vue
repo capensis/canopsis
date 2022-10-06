@@ -59,7 +59,7 @@ export default {
     headers() {
       return [
         {
-          text: this.$t('remediationInstructionStats.executedOn'),
+          text: this.$t('remediationInstructionStats.executedAt'),
           value: 'executed_on',
           sortable: false,
         },
@@ -74,7 +74,7 @@ export default {
           sortable: false,
         },
         {
-          text: this.$t('common.duration'),
+          text: this.$t('remediationInstructionStats.remediationDuration'),
           value: 'duration',
           sortable: false,
         },

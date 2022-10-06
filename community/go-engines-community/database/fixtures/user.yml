@@ -1060,6 +1060,11 @@ default_rights:
     _id: models_remediationStatistic
     crecord_name: <Current()._id>
     desc: Remediation statistics
+  permission_api_export_configurations:
+    <<: *permission
+    _id: api_export_configurations
+    crecord_name: <Current()._id>
+    desc: Export configurations
 
   role_admin:
     <<: *role
@@ -1421,6 +1426,9 @@ default_rights:
         checksum: 15
         crecord_type: right
       "@permission_models_remediation_statistics":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_export_configurations":
         checksum: 1
         crecord_type: right
 

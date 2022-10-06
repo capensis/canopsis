@@ -5,19 +5,29 @@ Feature: Update a role
   Scenario: given update request should update role
     When I am admin
     Then I do PUT /api/v4/roles/test-role-to-update:
-    """
+    """json
     {
       "description": "test-role-to-update-description-updated",
       "defaultview": "test-view-to-edit-role",
       "permissions": {
         "test-permission-to-edit-role-2": ["read"],
         "test-permission-to-edit-role-3": ["read"]
+      },
+      "auth_config": {
+        "expiration_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "inactivity_interval": {
+          "value": 8,
+          "unit": "h"
+        }
       }
     }
     """
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-role-to-update",
       "defaultview": {
@@ -45,7 +55,17 @@ Feature: Update a role
           "name": "test-permission-to-edit-role-3",
           "type": "RW"
         }
-      ]
+      ],
+      "auth_config": {
+        "expiration_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "inactivity_interval": {
+          "value": 8,
+          "unit": "h"
+        }
+      }
     }
     """
 
@@ -53,7 +73,7 @@ Feature: Update a role
     When I do PUT /api/v4/roles/test-role-to-update
     Then the response code should be 401
 
-  Scenario: given get request and auth user by api key without permissions should not allow access
+  Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
     When I do PUT /api/v4/roles/test-role-to-update
     Then the response code should be 403
@@ -61,7 +81,7 @@ Feature: Update a role
   Scenario: given invalid update request should return errors
     When I am admin
     When I do PUT /api/v4/roles/test-role-to-update:
-    """
+    """json
     {
       "permissions": {
         "not-exist": ["create"],
@@ -73,7 +93,7 @@ Feature: Update a role
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "permissions.not-exist": "Permissions.not-exist doesn't exist.",
@@ -86,7 +106,7 @@ Feature: Update a role
   Scenario: given update request with not exist id should return not found error
     When I am admin
     When I do PUT /api/v4/roles/test-role-not-found:
-    """
+    """json
     {
       "description": "test-role-to-update-description-updated",
       "defaultview": "test-view-to-edit-role",
@@ -98,7 +118,7 @@ Feature: Update a role
     """
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }

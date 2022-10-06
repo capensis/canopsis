@@ -289,11 +289,9 @@ export default {
     },
 
     callHandlers(event, data) {
-      const cursor = this.normalizeCursor({ x: event.clientX, y: event.clientY });
-
       this.handlers[event.type]?.forEach(func => func({
         event,
-        cursor,
+        cursor: this.cursor,
         ...data,
       }));
     },
