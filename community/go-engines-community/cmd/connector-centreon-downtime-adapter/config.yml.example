@@ -17,9 +17,10 @@ pbehavior:
   reason: default_reason
 # inactive attributes to skip events with specific hostgroups during inactivity interval
 inactive:
-  # interval
+  # hours interval in UTC
   utc_hours:
     - "21-5"
+  # any of hostgroups below should match ones in event's hostgroups attribute to drop an event
   hostgroups:
-    - "HG_KFR"
-    - "KFR_FRANCE"
+    - "HG_A"
+    - "HG_FRANCE"
