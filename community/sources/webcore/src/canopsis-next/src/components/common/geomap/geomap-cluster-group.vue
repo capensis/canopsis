@@ -25,11 +25,9 @@ const CustomDivIcon = DivIcon.extend({
 export default {
   mixins: [LayerGroupMixin],
   props: {
-    polygonOptions: {
-      type: Object,
-      default: () => ({
-        color: '#5a6D80',
-      }),
+    showCoverageOnHover: {
+      type: Boolean,
+      default: false,
     },
     clusterClassName: {
       type: String,
@@ -56,8 +54,8 @@ export default {
   mounted() {
     const options = optionsMerger(
       {
-        polygonOptions: this.polygonOptions,
         iconCreateFunction: this.createIcon,
+        showCoverageOnHover: this.showCoverageOnHover,
       },
       this,
     );

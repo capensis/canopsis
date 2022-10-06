@@ -131,6 +131,8 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Role, error) {
 			"description":  r.Description,
 			"defaultview":  r.DefaultView,
 			"rights":       transformPermissionsToDoc(r.Permissions, types),
+
+			"auth_config": r.AuthConfig,
 		})
 		if err != nil {
 			return err
@@ -160,6 +162,8 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Role, er
 				"description": r.Description,
 				"defaultview": r.DefaultView,
 				"rights":      transformPermissionsToDoc(r.Permissions, types),
+
+				"auth_config": r.AuthConfig,
 			}},
 		)
 		if err != nil || res.MatchedCount == 0 {
@@ -257,6 +261,7 @@ func getNestedObjectsPipeline() []bson.M {
 			"description": bson.M{"$first": "$description"},
 			"defaultview": bson.M{"$first": "$defaultview"},
 			"permissions": bson.M{"$push": "$permissions"},
+			"auth_config": bson.M{"$first": "$auth_config"},
 		}},
 		{"$lookup": bson.M{
 			"from":         mongo.ViewMongoCollection,

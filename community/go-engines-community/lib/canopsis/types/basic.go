@@ -20,6 +20,16 @@ import (
 	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 )
 
+const (
+	DurationUnitSecond = "s"
+	DurationUnitMinute = "m"
+	DurationUnitHour   = "h"
+	DurationUnitDay    = "d"
+	DurationUnitWeek   = "w"
+	DurationUnitMonth  = "M"
+	DurationUnitYear   = "y"
+)
+
 // CpsNumber is here for compatibility with old python engines.
 // It will force an int64 from a float64.
 type CpsNumber int64
@@ -190,23 +200,30 @@ type DurationWithUnit struct {
 	Unit  string `bson:"unit" json:"unit" binding:"required,oneof=s m h d w M y"`
 }
 
+func NewDurationWithUnit(value int64, unit string) DurationWithUnit {
+	return DurationWithUnit{
+		Value: value,
+		Unit:  unit,
+	}
+}
+
 func (d DurationWithUnit) AddTo(t CpsTime) CpsTime {
 	var r time.Time
 
 	switch d.Unit {
-	case "s":
+	case DurationUnitSecond:
 		r = t.Add(time.Duration(d.Value) * time.Second)
-	case "m":
+	case DurationUnitMinute:
 		r = t.Add(time.Duration(d.Value) * time.Minute)
-	case "h":
+	case DurationUnitHour:
 		r = t.Add(time.Duration(d.Value) * time.Hour)
-	case "d":
+	case DurationUnitDay:
 		r = t.AddDate(0, 0, int(d.Value))
-	case "w":
+	case DurationUnitWeek:
 		r = t.AddDate(0, 0, 7*int(d.Value))
-	case "M":
+	case DurationUnitMonth:
 		r = t.AddDate(0, int(d.Value), 0)
-	case "y":
+	case DurationUnitYear:
 		r = t.AddDate(int(d.Value), 0, 0)
 	default:
 		r = t.Add(time.Duration(d.Value) * time.Second)
@@ -219,19 +236,19 @@ func (d DurationWithUnit) SubFrom(t CpsTime) CpsTime {
 	var r time.Time
 
 	switch d.Unit {
-	case "s":
+	case DurationUnitSecond:
 		r = t.Add(-time.Duration(d.Value) * time.Second)
-	case "m":
+	case DurationUnitMinute:
 		r = t.Add(-time.Duration(d.Value) * time.Minute)
-	case "h":
+	case DurationUnitHour:
 		r = t.Add(-time.Duration(d.Value) * time.Hour)
-	case "d":
+	case DurationUnitDay:
 		r = t.AddDate(0, 0, -int(d.Value))
-	case "w":
+	case DurationUnitWeek:
 		r = t.AddDate(0, 0, -7*int(d.Value))
-	case "M":
+	case DurationUnitMonth:
 		r = t.AddDate(0, -int(d.Value), 0)
-	case "y":
+	case DurationUnitYear:
 		r = t.AddDate(-int(d.Value), 0, 0)
 	default:
 		r = t.Add(-time.Duration(d.Value) * time.Second)
@@ -253,35 +270,35 @@ func (d DurationWithUnit) To(unit string) (DurationWithUnit, error) {
 	in := int64(0)
 
 	switch d.Unit {
-	case "m":
-		if unit == "s" {
+	case DurationUnitMinute:
+		if unit == DurationUnitSecond {
 			in = 60
 		}
-	case "h":
+	case DurationUnitHour:
 		switch unit {
-		case "m":
+		case DurationUnitMinute:
 			in = 60
-		case "s":
+		case DurationUnitSecond:
 			in = 60 * 60
 		}
-	case "d":
+	case DurationUnitDay:
 		switch unit {
-		case "h":
+		case DurationUnitHour:
 			in = 24
-		case "m":
+		case DurationUnitMinute:
 			in = 24 * 60
-		case "s":
+		case DurationUnitSecond:
 			in = 24 * 60 * 60
 		}
-	case "w":
+	case DurationUnitWeek:
 		switch unit {
-		case "d":
+		case DurationUnitDay:
 			in = 7
-		case "h":
+		case DurationUnitHour:
 			in = 7 * 24
-		case "m":
+		case DurationUnitMinute:
 			in = 7 * 24 * 60
-		case "s":
+		case DurationUnitSecond:
 			in = 7 * 24 * 60 * 60
 		}
 	}
@@ -332,6 +349,16 @@ func ParseDurationWithUnit(str string) (DurationWithUnit, error) {
 type DurationWithEnabled struct {
 	DurationWithUnit `bson:",inline"`
 	Enabled          *bool `bson:"enabled" json:"enabled" binding:"required"`
+}
+
+func NewDurationWithEnabled(value int64, unit string, enabled *bool) DurationWithEnabled {
+	return DurationWithEnabled{
+		DurationWithUnit: DurationWithUnit{
+			Value: value,
+			Unit:  unit,
+		},
+		Enabled: enabled,
+	}
 }
 
 func listOfInterfaceToString(v []interface{}) (string, error) {
