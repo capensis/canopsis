@@ -66,18 +66,30 @@
           color="black",
           @click="exportAlarmsList"
         )
-    v-layout.alarms-list__top-pagination.white.px-4(row, wrap, align-center)
-      c-density-btn-toggle(:value="userPreference.content.dense", @change="updateDense")
-      c-pagination(
-        v-if="hasColumns",
-        :page="query.page",
-        :limit="query.limit",
-        :total="alarmsMeta.total_count",
-        type="top",
-        @input="updateQueryPage"
-      )
+    v-layout.alarms-list__top-pagination.white.px-4.position-relative(row, align-center)
+      v-flex.alarms-list__top-pagination--left(xs6)
+        v-layout(row, align-center, justify-start)
+          c-density-btn-toggle(:value="userPreference.content.dense", @change="updateDense")
+          v-fade-transition
+            v-flex.px-1(v-show="selectedIds.length")
+              mass-actions-panel(
+                :items-ids="selectedIds",
+                :widget="widget",
+                :refresh-alarms-list="fetchList",
+                @clear:items="clearSelected"
+              )
+      v-flex.alarms-list__top-pagination--center-absolute(xs4)
+        c-pagination(
+          v-if="hasColumns",
+          :page="query.page",
+          :limit="query.limit",
+          :total="alarmsMeta.total_count",
+          type="top",
+          @input="updateQueryPage"
+        )
     alarms-list-table(
       ref="alarmsTable",
+      v-model="selected",
       :widget="widget",
       :alarms="alarms",
       :total-items="alarmsMeta.total_count",
@@ -89,8 +101,11 @@
       :sticky-header="widget.parameters.sticky_header",
       :dense="dense",
       :refresh-alarms-list="fetchList",
+      :selected-tag="query.tag",
       selectable,
-      expandable
+      expandable,
+      @select:tag="selectTag",
+      @clear:tag="clearTag"
     )
       c-table-pagination(
         :total-items="alarmsMeta.total_count",
@@ -107,6 +122,7 @@ import { omit, pick, isObject } from 'lodash';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
+import { isResolvedAlarm, mapIds } from '@/helpers/entities';
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
 import { authMixin } from '@/mixins/auth';
@@ -117,6 +133,7 @@ import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
+import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
@@ -128,6 +145,7 @@ import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
+import MassActionsPanel from './actions/mass-actions-panel.vue';
 import AlarmsExpandPanelTour from './expand-panel/alarms-expand-panel-tour.vue';
 import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
 
@@ -145,6 +163,7 @@ export default {
     FilterSelector,
     FiltersListBtn,
     AlarmsListTable,
+    MassActionsPanel,
     AlarmsExpandPanelTour,
     AlarmsListRemediationInstructionsFilters,
   },
@@ -156,6 +175,7 @@ export default {
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,
     entitiesAlarmMixin,
+    entitiesAlarmTagMixin,
     entitiesAlarmDetailsMixin,
     permissionsWidgetsAlarmsListCategory,
     permissionsWidgetsAlarmsListCorrelation,
@@ -183,6 +203,10 @@ export default {
     };
   },
   computed: {
+    selectedIds() {
+      return mapIds(this.selected.filter(item => !isResolvedAlarm(item)));
+    },
+
     tourCallbacks() {
       return {
         onPreviousStep: this.onTourPreviousStep,
@@ -228,6 +252,22 @@ export default {
           }
         });
       }
+    },
+
+    selectTag(tag) {
+      this.query = {
+        ...this.query,
+
+        tag,
+      };
+    },
+
+    clearTag() {
+      this.query = omit(this.query, ['tag']);
+    },
+
+    clearSelected() {
+      this.selected = [];
     },
 
     updateCorrelation(correlation) {
@@ -314,6 +354,10 @@ export default {
 
         this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
 
+        if (!this.alarmTagsPending) {
+          this.fetchAlarmTagsList({ params: { paginate: false } });
+        }
+
         if (!this.alarmsPending) {
           await this.fetchAlarmsList({
             widgetId: this.widget._id,
@@ -361,6 +405,17 @@ export default {
 
 <style lang="scss" scoped>
 .alarms-list__top-pagination {
-  min-height: 46px;
+  position: relative;
+  min-height: 48px;
+
+  &--left {
+    padding-right: 80px;
+  }
+
+  &--center-absolute {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+  }
 }
 </style>

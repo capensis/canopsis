@@ -91,14 +91,40 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
     <!---->
   </div>
   <div
-    class="layout alarms-list__top-pagination white px-4 row wrap align-center"
+    class="layout alarms-list__top-pagination white px-4 position-relative row align-center"
   >
-    <c-density-btn-toggle-stub />
-    <c-pagination-stub
-      limit="13"
-      total="10"
-      type="top"
-    />
+    <div
+      class="flex alarms-list__top-pagination--left xs6"
+    >
+      <div
+        class="layout row align-center justify-start"
+      >
+        <c-density-btn-toggle-stub />
+        <transition-stub
+          name="fade-transition"
+        >
+          <div
+            class="flex px-1"
+            style="display: none;"
+          >
+            <mass-actions-panel-stub
+              itemsids=""
+              refreshalarmslist="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </transition-stub>
+      </div>
+    </div>
+    <div
+      class="flex alarms-list__top-pagination--center-absolute xs4"
+    >
+      <c-pagination-stub
+        limit="13"
+        total="10"
+        type="top"
+      />
+    </div>
   </div>
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -109,6 +135,8 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
     pagination="[object Object]"
     refreshalarmslist="[Function]"
     selectable="true"
+    selected=""
+    selectedtag=""
     totalitems="10"
     widget="[object Object]"
   >
@@ -215,14 +243,40 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     <!---->
   </div>
   <div
-    class="layout alarms-list__top-pagination white px-4 row wrap align-center"
+    class="layout alarms-list__top-pagination white px-4 position-relative row align-center"
   >
-    <c-density-btn-toggle-stub />
-    <c-pagination-stub
-      limit="13"
-      total="10"
-      type="top"
-    />
+    <div
+      class="flex alarms-list__top-pagination--left xs6"
+    >
+      <div
+        class="layout row align-center justify-start"
+      >
+        <c-density-btn-toggle-stub />
+        <transition-stub
+          name="fade-transition"
+        >
+          <div
+            class="flex px-1"
+            style="display: none;"
+          >
+            <mass-actions-panel-stub
+              itemsids=""
+              refreshalarmslist="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </transition-stub>
+      </div>
+    </div>
+    <div
+      class="flex alarms-list__top-pagination--center-absolute xs4"
+    >
+      <c-pagination-stub
+        limit="13"
+        total="10"
+        type="top"
+      />
+    </div>
   </div>
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -233,6 +287,8 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     pagination="[object Object]"
     refreshalarmslist="[Function]"
     selectable="true"
+    selected=""
+    selectedtag=""
     totalitems="10"
     widget="[object Object]"
   >

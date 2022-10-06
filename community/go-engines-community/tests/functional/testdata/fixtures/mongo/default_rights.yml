@@ -262,6 +262,11 @@ default_rights:
     _id: api_corporate_pattern
     crecord_name: <Current()._id>
     desc: Corporate patterns
+  permission_api_map:
+    <<: *permission_crud
+    _id: api_map
+    crecord_name: <Current()._id>
+    desc: Map
 
   role_noperms:
     <<: *role
@@ -454,6 +459,13 @@ default_rights:
         checksum: 15
       "@permission_to_edit_role_3":
         checksum: 7
+    auth_config:
+      expiration_interval:
+        value: 1
+        unit: m
+      inactivity_interval:
+        value: 8
+        unit: h
 
   role_to_get_2:
     <<: *role
@@ -1115,6 +1127,9 @@ default_rights:
         crecord_type: right
       "@permission_api_corporate_pattern":
         checksum: 1
+        crecord_type: right
+      "@permission_api_map":
+        checksum: 15
         crecord_type: right
       "@permission_playlist_to_delete":
         checksum: 1

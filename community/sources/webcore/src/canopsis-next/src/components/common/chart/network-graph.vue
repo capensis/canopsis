@@ -31,11 +31,17 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    ctrlWheelZoom: {
+      type: Boolean,
+      default: false,
+    },
   },
   watch: {
     nodeHtmlLabelOptions(newOptions, oldOptions) {
       if (!isEqual(newOptions, oldOptions)) {
-        this.$cy.nodeHtmlLabel(newOptions);
+        this.$cy.nodeHtmlLabel(newOptions, {
+          enablePointerEvents: true,
+        });
       }
     },
   },
@@ -53,6 +59,84 @@ export default {
     window.removeEventListener('resize', this.debouncedResizeHandler);
   },
   methods: {
+    /**
+     * Custom handler for ctrl + wheel zooming
+     *
+     * @param {WheelEvent} e
+     */
+    wheelHandler(e) {
+      const r = this.$cy.renderer();
+
+      const inBoxSelection = () => r.selection[4] !== 0;
+
+      if (r.scrollingPage) {
+        return;
+      } // while scrolling, ignore wheel-to-zoom
+
+      if (!e.ctrlKey) {
+        return;
+      }
+
+      const { cy } = r;
+      const zoom = cy.zoom();
+      const pan = cy.pan();
+      const pos = r.projectIntoViewport(e.clientX, e.clientY);
+      const rpos = [pos[0] * zoom + pan.x, pos[1] * zoom + pan.y];
+
+      if (r.hoverData.draggingEles || r.hoverData.dragging || r.hoverData.cxtStarted || inBoxSelection()) {
+        // if pan dragging or cxt dragging, wheel movements make no zoom
+        e.preventDefault();
+        return;
+      }
+
+      if (cy.panningEnabled() && cy.userPanningEnabled() && cy.zoomingEnabled()) {
+        e.preventDefault();
+        r.data.wheelZooming = true;
+
+        clearTimeout(r.data.wheelTimeout);
+
+        r.data.wheelTimeout = setTimeout(() => {
+          r.data.wheelZooming = false;
+          r.redrawHint('eles', true);
+          r.redraw();
+        }, 150);
+
+        let diff;
+
+        if (e.deltaY != null) {
+          diff = e.deltaY / -250;
+        } else if (e.wheelDeltaY != null) {
+          diff = e.wheelDeltaY / 1000;
+        } else {
+          diff = e.wheelDelta / 1000;
+        }
+
+        diff *= r.wheelSensitivity;
+        const needsWheelFix = e.deltaMode === 1;
+
+        if (needsWheelFix) {
+          // fixes slow wheel events on ff/linux and ff/windows
+          diff *= 33;
+        }
+
+        let newZoom = cy.zoom() * (10 ** diff);
+
+        if (e.type === 'gesturechange') {
+          newZoom = r.gestureStartZoom * e.scale;
+        }
+
+        cy.zoom({
+          level: newZoom,
+          renderedPosition: {
+            x: rpos[0],
+            y: rpos[1],
+          },
+        });
+
+        cy.emit(e.type === 'gesturechange' ? 'pinchzoom' : 'scrollzoom');
+      }
+    },
+
     resizeHandler() {
       this.$cy.invalidateSize();
       this.$cy.fit(this.$cy.nodes(), HEALTHCHECK_NETWORK_GRAPH_OPTIONS.fitPadding);
@@ -61,6 +145,7 @@ export default {
     mountCytoscape(options = this.options) {
       this.$cy = cytoscape({
         container: this.$refs.canvasWrapper,
+        userZoomingEnabled: !this.ctrlWheelZoom,
 
         ...options,
       });
@@ -69,12 +154,20 @@ export default {
       this.$cy.bind('mouseover', 'node', this.nodeMouseoverHandler);
       this.$cy.bind('mouseout', 'node', this.nodeMouseoutHandler);
       this.$cy.bind('tap', 'node', this.nodeTapHandler);
+
+      if (this.ctrlWheelZoom) {
+        this.$el.addEventListener('wheel', this.wheelHandler);
+      }
     },
 
     destroyCytoscape() {
       if (this.$cy) {
         this.$cy.destroy();
         this.$cy = null;
+      }
+
+      if (this.ctrlWheelZoom) {
+        this.$el.removeEventListener('wheel', this.wheelHandler);
       }
     },
 

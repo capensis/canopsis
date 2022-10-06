@@ -4,7 +4,7 @@
   )
     div.v-input__control
       div.v-input__slot
-        div.v-input--selection-controls__input(@click="$emit('change', !inputValue)")
+        div.v-input--selection-controls__input(@click="change")
           input(
             class="hidden",
             :aria-checked="String(inputValue)",
@@ -17,9 +17,9 @@
           i.v-icon.material-icons.theme--light(
             :class="{ 'primary--text': inputValue }"
           ) {{ inputValue ? 'check_box' : 'check_box_outline_blank' }}
-        label(
+        label.v-label.theme--light(
           v-show="label !== ''",
-          @click="$emit('change', !inputValue)"
+          @click="change"
         ) {{ label }}
 </template>
 
@@ -45,6 +45,11 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+  },
+  methods: {
+    change() {
+      this.$emit('change', !this.inputValue);
     },
   },
 };

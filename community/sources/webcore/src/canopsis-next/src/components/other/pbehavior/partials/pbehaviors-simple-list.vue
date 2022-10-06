@@ -34,23 +34,23 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
 
-import { queryMixin } from '@/mixins/query';
+import Observer from '@/services/observer';
 
 const { mapActions } = createNamespacedHelpers('pbehavior');
 
 export default {
-  inject: ['$system'],
-  mixins: [
-    queryMixin,
-  ],
+  inject: {
+    $system: {},
+    $periodicRefresh: {
+      default() {
+        return new Observer();
+      },
+    },
+  },
   props: {
     entity: {
       type: Object,
       required: true,
-    },
-    tabId: {
-      type: String,
-      required: false,
     },
     deletable: {
       type: Boolean,
@@ -82,20 +82,14 @@ export default {
         { text: this.$t('common.actionsLabel'), value: 'actionsLabel', sortable: false },
       ];
     },
-
-    queryNonce() {
-      return this.getQueryNonceById(this.tabId);
-    },
-  },
-  watch: {
-    queryNonce(value, oldValue) {
-      if (value > oldValue) {
-        this.fetchList();
-      }
-    },
   },
   mounted() {
     this.fetchList();
+
+    this.$periodicRefresh.register(this.fetchList);
+  },
+  beforeDestroy() {
+    this.$periodicRefresh.unregister(this.fetchList);
   },
   methods: {
     ...mapActions({

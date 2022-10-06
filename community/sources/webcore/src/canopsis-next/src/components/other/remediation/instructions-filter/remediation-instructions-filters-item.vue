@@ -10,11 +10,14 @@
       span.instruction-filter__text
         v-icon(color="white", small) assignment
         v-icon.pl-1(v-if="filter.locked", color="white", small) lock
-        strong.pl-2 {{ conditionTypeMessage }}
+        strong.pl-2.text-uppercase {{ conditionTypeMessage }}
         span.pl-1(v-if="!isAll") {{ typesAndInstructionsMessage }}
+        strong.pl-1.text-uppercase(v-if="hasRunning") {{ $t('remediationInstructionsFilters.inProgress') }}
 </template>
 
 <script>
+import { isBoolean } from 'lodash';
+
 import { MODALS, REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
@@ -78,11 +81,25 @@ export default {
       return this.filter.instructions?.map(({ name }) => name) ?? [];
     },
 
+    hasRunning() {
+      return isBoolean(this.filter.running);
+    },
+
+    conditionalTypeMessagePrefix() {
+      if (!this.hasRunning) {
+        return '';
+      }
+
+      const message = this.filter.running ? this.$t('common.show') : this.$t('common.hide');
+
+      return `${message} `;
+    },
+
     conditionTypeMessage() {
       const allMessage = this.isAll ? ` ${this.$t('remediationInstructionsFilters.chip.all')}` : ':';
       const conditionMessage = this.$t(`remediationInstructionsFilters.chip.${this.filter.with ? 'with' : 'without'}`);
 
-      return `${conditionMessage}${allMessage}`;
+      return `${this.conditionalTypeMessagePrefix}${conditionMessage}${allMessage}`;
     },
 
     typesAndInstructionsMessage() {
@@ -124,7 +141,7 @@ export default {
 
 <style lang="scss">
 .instruction-filter {
-  & /deep/ .v-chip .v-chip__content {
+  & .v-chip .v-chip__content {
     min-height: 32px;
     height: auto;
   }

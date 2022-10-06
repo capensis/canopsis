@@ -28,6 +28,7 @@ import TestingWeatherWidget from './testing-weather/testing-weather.vue';
 import StatsCalendarWidget from './stats/calendar/stats-calendar.vue';
 import TextWidget from './text/text.vue';
 import CounterWidget from './counter/counter.vue';
+import MapWidget from './map/map.vue';
 
 const { mapGetters } = createNamespacedHelpers('info');
 
@@ -40,6 +41,7 @@ export default {
     StatsCalendarWidget,
     TextWidget,
     CounterWidget,
+    MapWidget,
   },
   props: {
     widget: {
@@ -77,6 +79,7 @@ export default {
         [WIDGET_TYPES.text]: 'text-widget',
         [WIDGET_TYPES.counter]: 'counter-widget',
         [WIDGET_TYPES.testingWeather]: 'testing-weather-widget',
+        [WIDGET_TYPES.map]: 'map-widget',
       };
       let widgetSpecificsProp = {};
 

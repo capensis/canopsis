@@ -205,10 +205,6 @@ security:
     skip_signature_validation: true
     acs_index: 1
     auto_user_registration: true
-session:
-  # stats_frame uses for session stats. Session stats are accumulated during frame period.
-  # New stats row will be created if duration between stats requests are more then frame.
-  stats_frame: 5m
 ```
 
 

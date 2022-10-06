@@ -229,7 +229,7 @@ Feature: Get alarms
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?include_instructions[]={{ .instructionID1 }}&with_instructions=true&sort_by=d&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"include":["{{ .instructionID1 }}"]}&with_instructions=true&sort_by=d&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -289,7 +289,7 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?include_instructions[]={{ .instructionID2 }}&with_instructions=true&sort_by=d&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"include":["{{ .instructionID2 }}"]}&with_instructions=true&sort_by=d&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -319,7 +319,7 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?include_instructions[]={{ .instructionID3 }}&with_instructions=true&sort_by=d&sort=asc
+    When I do GET /api/v4/alarms?instructions[]={"include":["{{ .instructionID3 }}"]}&with_instructions=true&sort_by=d&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json

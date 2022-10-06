@@ -47,6 +47,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"depends":             0,
+			"impact":              0,
 			"alarm":               0,
 			"event_stats":         0,
 			"pbehavior_info_type": 0,
@@ -125,6 +127,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"depends":             0,
+			"impact":              0,
 			"alarm":               0,
 			"event_stats":         0,
 			"pbehavior_info_type": 0,
@@ -219,6 +223,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"depends":             0,
+			"impact":              0,
 			"alarm":               0,
 			"event_stats":         0,
 			"pbehavior_info_type": 0,
@@ -311,6 +317,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"depends":             0,
+			"impact":              0,
 			"alarm":               0,
 			"event_stats":         0,
 			"pbehavior_info_type": 0,
@@ -391,6 +399,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"depends":             0,
+			"impact":              0,
 			"alarm":               0,
 			"event_stats":         0,
 			"pbehavior_info_type": 0,
@@ -463,6 +473,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"depends":             0,
+			"impact":              0,
 			"alarm":               0,
 			"event_stats":         0,
 			"pbehavior_info_type": 0,
@@ -518,13 +530,15 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 			BaseFilterRequest: BaseFilterRequest{
 				Filters: []string{filter.ID},
 			},
-			SortBy: "alarm.v.resource",
+			SortRequest: SortRequest{
+				SortBy: "state",
+			},
 		},
 	}
 	now := types.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{
-			{Key: "alarm.v.resource", Value: 1},
+			{Key: "state", Value: 1},
 			{Key: "_id", Value: 1},
 		}},
 		{"$skip": 0},
@@ -533,11 +547,16 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
+	computedFields := getComputedFields()
+	stateField := computedFields["state"]
+	delete(computedFields, "state")
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
-		"$addFields": getComputedFields(),
+		"$addFields": computedFields,
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"depends":             0,
+			"impact":              0,
 			"alarm":               0,
 			"event_stats":         0,
 			"pbehavior_info_type": 0,
@@ -548,6 +567,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"alarm.v.component": bson.M{"$eq": "test-component"}},
 		}}}}},
+		{"$addFields": bson.M{"state": stateField}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
@@ -602,6 +622,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"depends":             0,
+			"impact":              0,
 			"alarm":               0,
 			"event_stats":         0,
 			"pbehavior_info_type": 0,
@@ -664,6 +686,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"depends":             0,
+			"impact":              0,
 			"alarm":               0,
 			"event_stats":         0,
 			"pbehavior_info_type": 0,
@@ -789,6 +813,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			"alarm":               0,
 			"event_stats":         0,
 			"pbehavior_info_type": 0,
+			"depends":             0,
+			"impact":              0,
 		},
 	})
 	expected := []bson.M{
