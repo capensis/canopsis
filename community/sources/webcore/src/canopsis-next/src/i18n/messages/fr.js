@@ -2504,7 +2504,7 @@ export default merge({
   remediationInstructionStats: {
     alarmsTimeline: 'Chronologie des alarmes',
     alarmId: 'Identifiant de l\'alarme',
-    executedOn: 'Exécuté sur',
+    executedAt: 'Exécuté à',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
     averageCompletionTime: 'Temps moyen\nd\'achèvement',
@@ -2517,6 +2517,7 @@ export default merge({
     instructionChanged: 'La consigne a été modifiée',
     alarmResolvedDate: 'Date de résolution de l\'alarme',
     showFailedExecutions: 'Afficher les exécutions d\'instructions ayant échoué',
+    remediationDuration: 'Durée de la remédiation',
     actions: {
       needRate: 'Notez-le!',
       rate: 'Évaluer',
