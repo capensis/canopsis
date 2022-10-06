@@ -1532,7 +1532,7 @@ export default merge({
         },
       },
       duplicate: {
-        title: 'Travail en double',
+        title: 'Double une tâche',
         popups: {
           success: '{jobName} a été dupliqué avec succès',
         },
