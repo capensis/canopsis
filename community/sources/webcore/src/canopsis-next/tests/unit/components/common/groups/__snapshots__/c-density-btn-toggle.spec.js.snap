@@ -2,7 +2,7 @@
 
 exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props 1`] = `
 <div
-  class="v-item-group position-absolute density-btn-toggle theme--light v-btn-toggle"
+  class="v-item-group density-btn-toggle theme--light v-btn-toggle"
 >
   <span
     class="v-tooltip v-tooltip--top"
@@ -57,7 +57,7 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props
 
 exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with default props 1`] = `
 <div
-  class="v-item-group position-absolute density-btn-toggle theme--light v-btn-toggle"
+  class="v-item-group density-btn-toggle theme--light v-btn-toggle"
 >
   <span
     class="v-tooltip v-tooltip--top"
