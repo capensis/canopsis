@@ -21,21 +21,10 @@ Feature: Durations of an alarm
     When I do GET /api/v4/alarms?search=test-resource-axe-duration-1
     Then the response code should be 200
     When I save response duration={{ ( index .lastResponse.data 0 ).v.duration }}
+    When I save response currentStateDuration={{ ( index .lastResponse.data 0 ).v.current_state_duration }}
     When I save response expectedDuration=2
     Then "duration" >= "expectedDuration"
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "active_duration": {{ .duration }},
-            "current_state_duration": {{ .duration }}
-          }
-        }
-      ]
-    }
-    """
+    Then "currentStateDuration" >= "expectedDuration"
     When I send an event:
     """json
     {
