@@ -1,43 +1,87 @@
 <template lang="pug">
   div
     c-page-header
-    v-card-text
-      users-list(
-        :users="users",
-        :total-items="usersMeta.total_count",
-        :pagination.sync="pagination",
-        :pending="usersPending",
-        @edit="showEditUserModal",
-        @remove="showRemoveUserModal",
-        @remove-selected="showRemoveSelectedUsersModal"
-      )
+    v-card.ma-4.mt-0
+      v-tabs(v-model="activeTab", slider-color="primary", centered)
+        v-tab(
+          v-if="hasReadAnyUserAccess",
+          :href="`#${$constants.USERS_TABS.users}`"
+        ) {{ $tc('common.user', 2) }}
+        v-tab(
+          v-if="hasReadAnyShareTokenAccess",
+          :href="`#${$constants.USERS_TABS.shareTokens}`"
+        ) {{ $t('common.sharedTokens') }}
+
+      v-tabs-items(v-model="activeTab")
+        v-card-text
+          v-tab-item(:value="$constants.USERS_TABS.users")
+            users
+          v-tab-item(:value="$constants.USERS_TABS.shareTokens", lazy)
+            share-tokens
+
     c-fab-btn(
-      :has-access="hasCreateAnyUserAccess",
-      @refresh="fetchList",
-      @create="showCreateUserModal"
+      :has-access="hasCreateAccess",
+      @refresh="refresh",
+      @create="create"
     )
       span {{ $t('modals.createUser.create.title') }}
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, USERS_TABS } from '@/constants';
 
 import { entitiesUserMixin } from '@/mixins/entities/user';
+import { entitiesShareTokenMixin } from '@/mixins/entities/share-token';
 import { permissionsTechnicalUserMixin } from '@/mixins/permissions/technical/user';
-import { localQueryMixin } from '@/mixins/query-local/query';
-import { authMixin } from '@/mixins/auth';
+import { permissionsTechnicalShareTokenMixin } from '@/mixins/permissions/technical/share-token';
 
-import UsersList from '@/components/other/users/users-list.vue';
+import Users from '@/components/other/users/users.vue';
+import ShareTokens from '@/components/other/share-token/share-tokens.vue';
 
 export default {
   components: {
-    UsersList,
+    Users,
+    ShareTokens,
   },
-  mixins: [entitiesUserMixin, localQueryMixin, permissionsTechnicalUserMixin, authMixin],
-  mounted() {
-    this.fetchList();
+  mixins: [
+    entitiesUserMixin,
+    entitiesShareTokenMixin,
+    permissionsTechnicalUserMixin,
+    permissionsTechnicalShareTokenMixin,
+  ],
+  data() {
+    return {
+      activeTab: USERS_TABS.users,
+    };
+  },
+  computed: {
+    hasCreateAccess() {
+      return {
+        [USERS_TABS.users]: this.hasCreateAnyUserAccess,
+        [USERS_TABS.shareTokens]: false,
+      }[this.activeTab];
+    },
   },
   methods: {
+    refresh() {
+      switch (this.activeTab) {
+        case USERS_TABS.users:
+          this.fetchUsersListWithPreviousParams();
+          break;
+        case USERS_TABS.shareTokens:
+          this.fetchShareTokensListWithPreviousParams();
+          break;
+      }
+    },
+
+    create() {
+      switch (this.activeTab) {
+        case USERS_TABS.users:
+          this.showCreateUserModal();
+          break;
+      }
+    },
+
     showCreateUserModal() {
       this.$modals.show({
         name: MODALS.createUser,
@@ -45,63 +89,10 @@ export default {
           action: async (data) => {
             await this.createUserWithPopup({ data });
 
-            await this.fetchList();
+            await this.fetchUsersListWithPreviousParams();
           },
         },
       });
-    },
-
-    showRemoveUserModal(user) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await this.removeUserWithPopup({ id: user._id });
-
-            await this.fetchList();
-          },
-        },
-      });
-    },
-
-    showRemoveSelectedUsersModal(selected) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await Promise.all(selected.map(({ _id }) => this.removeUser({ id: _id })));
-
-            this.$popups.success({ text: this.$t('success.default') });
-
-            await this.fetchList();
-          },
-        },
-      });
-    },
-
-    showEditUserModal(user) {
-      this.$modals.show({
-        name: MODALS.createUser,
-        config: {
-          title: this.$t('modals.createUser.edit.title'),
-          user,
-          action: async (data) => {
-            await this.updateUserWithPopup({ data, id: user._id });
-
-            const requests = [this.fetchList()];
-
-            if (user._id === this.currentUser._id) {
-              requests.push(this.fetchCurrentUser());
-            }
-
-            await Promise.all(requests);
-          },
-        },
-      });
-    },
-
-    fetchList() {
-      return this.fetchUsersList({ params: this.getQuery() });
     },
   },
 };
