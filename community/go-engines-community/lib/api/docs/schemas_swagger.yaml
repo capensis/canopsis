@@ -3,6 +3,8 @@ definitions:
     properties:
       _id:
         type: string
+      active_connects:
+        type: integer
       authkey:
         type: string
       defaultview:
@@ -585,7 +587,12 @@ definitions:
     type: object
   associativetable.Content:
     type: object
-  auth.loginRequest:
+  auth.LoggedUserCountResponse:
+    properties:
+      count:
+        type: integer
+    type: object
+  auth.LoginRequest:
     properties:
       password:
         type: string
@@ -595,7 +602,7 @@ definitions:
     - password
     - username
     type: object
-  auth.loginResponse:
+  auth.LoginResponse:
     properties:
       access_token:
         type: string
@@ -3900,6 +3907,8 @@ definitions:
     properties:
       _id:
         type: string
+      active_connects:
+        type: integer
       authkey:
         type: string
       defaultview:
