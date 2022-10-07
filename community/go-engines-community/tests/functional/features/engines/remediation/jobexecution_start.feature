@@ -139,7 +139,6 @@ Feature: run a job
                   "name": "test-job-to-job-execution-start-1-1-name",
                   "status": null,
                   "fail_reason": "",
-                  "payload": "",
                   "started_at": 0,
                   "launched_at": 0,
                   "completed_at": 0
@@ -1263,8 +1262,6 @@ Feature: run a job
       "status": 0,
       "fail_reason": "",
       "output": "",
-      "payload": "",
-      "query": null,
       "started_at": 0,
       "launched_at": 0,
       "completed_at": 0
@@ -1282,9 +1279,7 @@ Feature: run a job
                   "name": "test-job-to-job-execution-start-8-name",
                   "status": 1,
                   "fail_reason": "",
-                  "output": "test-job-execution-succeeded-output",
-                  "payload": "",
-                  "query": null
+                  "output": "test-job-execution-succeeded-output"
                 }
               ]
             }
@@ -1398,7 +1393,6 @@ Feature: run a job
       "status": 0,
       "fail_reason": "",
       "output": "",
-      "payload": "",
       "query": {
         "resource1": "test-resource-to-job-execution-start-9",
         "entity1": "test-resource-to-job-execution-start-9/test-component-to-job-execution-start-9"
@@ -1421,7 +1415,6 @@ Feature: run a job
                   "status": 1,
                   "fail_reason": "",
                   "output": "test-job-execution-params-succeeded-output",
-                  "payload": "",
                   "query": {
                     "resource1": "test-resource-to-job-execution-start-9",
                     "entity1": "test-resource-to-job-execution-start-9/test-component-to-job-execution-start-9"
@@ -1537,7 +1530,6 @@ Feature: run a job
       "fail_reason": "",
       "output": "",
       "payload": "{\"resource1\": \"test-resource-to-job-execution-start-10\", \"entity1\": \"test-resource-to-job-execution-start-10/test-component-to-job-execution-start-10\"}",
-      "query": null,
       "started_at": 0,
       "launched_at": 0,
       "completed_at": 0
@@ -1556,8 +1548,7 @@ Feature: run a job
                   "status": 1,
                   "fail_reason": "",
                   "output": "test-job-execution-succeeded-output",
-                  "payload": "{\"resource1\": \"test-resource-to-job-execution-start-10\", \"entity1\": \"test-resource-to-job-execution-start-10/test-component-to-job-execution-start-10\"}",
-                  "query": null
+                  "payload": "{\"resource1\": \"test-resource-to-job-execution-start-10\", \"entity1\": \"test-resource-to-job-execution-start-10/test-component-to-job-execution-start-10\"}"
                 }
               ]
             }
