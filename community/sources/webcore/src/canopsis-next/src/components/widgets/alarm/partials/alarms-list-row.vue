@@ -1,5 +1,5 @@
 <template lang="pug">
-  tr(v-on="listeners", :class="classes")
+  tr.alarm-list-row(v-on="listeners", :class="classes")
     td.pr-0(v-if="hasRowActions")
       v-layout(row, align-center, justify-space-between)
         template(v-if="selectable")
@@ -43,9 +43,13 @@
 </template>
 
 <script>
+import { flow } from 'lodash';
+
 import featuresService from '@/services/features';
 
 import { isResolvedAlarm } from '@/helpers/entities';
+
+import { formBaseMixin } from '@/mixins/form';
 
 import ActionsPanel from '../actions/actions-panel.vue';
 import AlarmColumnValue from '../columns-formatting/alarm-column-value.vue';
@@ -61,6 +65,7 @@ export default {
     AlarmsExpandPanelBtn,
     AlarmsListRowIcon,
   },
+  mixins: [formBaseMixin],
   model: {
     prop: 'selected',
     event: 'input',
@@ -105,6 +110,10 @@ export default {
     refreshAlarmsList: {
       type: Function,
       default: () => {},
+    },
+    selecting: {
+      type: Boolean,
+      default: false,
     },
     selectedTag: {
       type: String,
@@ -159,11 +168,18 @@ export default {
     },
 
     listeners() {
+      let listeners = {};
+
       if (featuresService.has('components.alarmListRow.computed.listeners')) {
-        return featuresService.call('components.alarmListRow.computed.listeners', this, {});
+        listeners = featuresService.call('components.alarmListRow.computed.listeners', this, {});
       }
 
-      return {};
+      if (this.selecting) {
+        listeners.mouseenter = flow([this.mouseSelecting, listeners.mouseenter].filter(Boolean));
+        listeners.mousedown = flow([this.mouseSelecting, listeners.mousedown].filter(Boolean));
+      }
+
+      return listeners;
     },
 
     classes() {
@@ -177,6 +193,17 @@ export default {
     },
   },
   methods: {
+    mouseSelecting(event) {
+      if (event.ctrlKey && event.buttons) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.updateModel(!this.selected);
+      }
+
+      return event;
+    },
+
     activateRow(value) {
       this.active = value;
     },

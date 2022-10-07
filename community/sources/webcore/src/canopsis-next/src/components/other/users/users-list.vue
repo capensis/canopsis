@@ -6,37 +6,34 @@
     :total-items="totalItems",
     :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
     :pagination="pagination",
+    :select-all="removable",
     advanced-pagination,
     search,
-    select-all,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(slot="toolbar", slot-scope="props")
-      v-flex(v-show="hasDeleteAnyUserAccess && props.selected.length", xs4)
-        v-btn(@click="$emit('remove-selected', props.selected)", icon)
-          v-icon delete
-    template(slot="enable", slot-scope="props")
-      c-enabled(:value="props.item.enable")
-    template(slot="source", slot-scope="props") {{ props.item.source || $constants.AUTH_METHODS.local }}
-    template(slot="actions", slot-scope="props")
+    template(#mass-actions="{ selected }")
+      c-action-btn.ml-3(v-if="removable", type="delete", @click="$emit('remove-selected', selected)")
+    template(#enable="{ item }")
+      c-enabled(:value="item.enable")
+    template(#active="{ item }")
+      c-enabled(:value="item.active_connects > 0")
+    template(#source="{ item }") {{ item.source || $constants.AUTH_METHODS.local }}
+    template(#actions="{ item }")
       v-layout(row)
         c-action-btn(
-          v-if="hasUpdateAnyUserAccess",
+          v-if="updatable",
           type="edit",
-          @click.stop="$emit('edit', props.item)"
+          @click.stop="$emit('edit', item)"
         )
         c-action-btn(
-          v-if="hasDeleteAnyUserAccess",
+          v-if="removable",
           type="delete",
-          @click.stop="$emit('remove', props.item)"
+          @click.stop="$emit('remove', item)"
         )
 </template>
 
 <script>
-import { permissionsTechnicalUserMixin } from '@/mixins/permissions/technical/user';
-
 export default {
-  mixins: [permissionsTechnicalUserMixin],
   props: {
     users: {
       type: Array,
@@ -54,12 +51,20 @@ export default {
       type: Object,
       required: true,
     },
+    removable: {
+      type: Boolean,
+      default: false,
+    },
+    updatable: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     headers() {
       return [
         {
-          text: this.$t('users.username'),
+          text: this.$t('common.username'),
           value: 'name',
         },
         {
@@ -73,16 +78,24 @@ export default {
           sortable: false,
         },
         {
-          text: this.$t('users.role'),
+          text: this.$tc('common.role'),
           value: 'role.name',
         },
         {
-          text: this.$t('users.enabled'),
+          text: this.$t('users.active'),
+          value: 'active',
+        },
+        {
+          text: this.$t('common.enabled'),
           value: 'enable',
         },
         {
           text: this.$t('users.auth'),
           value: 'source',
+        },
+        {
+          text: this.$t('users.activeConnects'),
+          value: 'active_connects',
         },
         {
           text: this.$t('common.actionsLabel'),

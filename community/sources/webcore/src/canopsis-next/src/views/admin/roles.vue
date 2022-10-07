@@ -6,6 +6,8 @@
       :pending="rolesPending",
       :pagination.sync="pagination",
       :total-items="rolesMeta.total_count",
+      :removable="hasDeleteAnyRoleAccess",
+      :updatable="hasUpdateAnyRoleAccess",
       @edit="showEditRoleModal",
       @remove="showRemoveRoleModal",
       @remove-selected="showRemoveSelectedRolesModal"
@@ -25,7 +27,7 @@ import { entitiesRoleMixin } from '@/mixins/entities/role';
 import { permissionsTechnicalRoleMixin } from '@/mixins/permissions/technical/role';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
-import RolesList from '@/components/other/roles/roles-list.vue';
+import RolesList from '@/components/other/role/roles-list.vue';
 
 export default {
   components: {

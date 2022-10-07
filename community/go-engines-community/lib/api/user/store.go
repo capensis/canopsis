@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -27,7 +28,7 @@ type Store interface {
 	BulkDelete(ctx context.Context, ids []string) error
 }
 
-func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
+func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder, websocketHub websocket.Hub) Store {
 	return &store{
 		client:                 dbClient,
 		collection:             dbClient.Collection(mongo.RightsMongoCollection),
@@ -35,7 +36,9 @@ func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
 		patternCollection:      dbClient.Collection(mongo.PatternMongoCollection),
 		widgetFilterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 
-		passwordEncoder:       passwordEncoder,
+		passwordEncoder: passwordEncoder,
+		websocketHub:    websocketHub,
+
 		defaultSearchByFields: []string{"_id", "crecord_name", "firstname", "lastname", "role.name"},
 		defaultSortBy:         "name",
 	}
@@ -48,7 +51,9 @@ type store struct {
 	patternCollection      mongo.DbCollection
 	widgetFilterCollection mongo.DbCollection
 
-	passwordEncoder       password.Encoder
+	passwordEncoder password.Encoder
+	websocketHub    websocket.Hub
+
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
@@ -102,6 +107,12 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	activeUsers := s.websocketHub.GetUsers()
+	for i := range res.Data {
+		activeConnects := len(activeUsers[res.Data[i].ID])
+		res.Data[i].ActiveConnects = &activeConnects
 	}
 
 	return &res, nil
