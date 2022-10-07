@@ -2675,16 +2675,14 @@ export default merge({
   users: {
     seeProfile: 'Voir le profil',
     selectDefaultView: 'Sélectionner une vue par défaut',
-    username: 'Identifiant utilisateur',
     firstName: 'Prénom',
     lastName: 'Nom',
     email: 'Email',
-    role: 'Rôle',
-    enabled: 'Actif',
-    password: 'Mot de passe',
     language: 'Langue par défaut',
     auth: 'Type d\'auth.',
     navigationType: 'Type d\'affichage de la barre de vues',
+    active: 'Séance active',
+    activeConnects: 'Connections count',
     navigationTypes: {
       [GROUPS_NAVIGATION_TYPES.sideBar]: 'Barre latérale',
       [GROUPS_NAVIGATION_TYPES.topBar]: 'Barre d\'entête',
