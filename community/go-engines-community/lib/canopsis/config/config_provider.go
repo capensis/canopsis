@@ -89,7 +89,8 @@ type RemediationConfig struct {
 }
 
 type TechMetricsConfig struct {
-	Enabled bool
+	Enabled          bool
+	DumpKeepInterval time.Duration
 }
 
 type DataStorageConfig struct {
@@ -119,7 +120,8 @@ type BaseTechMetricsConfigProvider struct {
 func NewTechMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseTechMetricsConfigProvider {
 	sectionName := "tech_metrics"
 	conf := TechMetricsConfig{
-		Enabled: parseBool(cfg.TechMetrics.Enabled, "Enabled", sectionName, logger),
+		Enabled:          parseBool(cfg.TechMetrics.Enabled, "Enabled", sectionName, logger),
+		DumpKeepInterval: parseTimeDurationByStr(cfg.TechMetrics.DumpKeepInterval, TechMetricsDumpKeepInterval, "DumpKeepInterval", sectionName, logger),
 	}
 
 	return &BaseTechMetricsConfigProvider{
@@ -138,6 +140,11 @@ func (p *BaseTechMetricsConfigProvider) Update(cfg CanopsisConf) {
 	b, ok := parseUpdatedBool(cfg.TechMetrics.Enabled, p.conf.Enabled, "Enabled", sectionName, p.logger)
 	if ok {
 		p.conf.Enabled = b
+	}
+
+	d, ok := parseUpdatedTimeDurationByStr(cfg.TechMetrics.DumpKeepInterval, p.conf.DumpKeepInterval, "DumpKeepInterval", sectionName, p.logger)
+	if ok {
+		p.conf.DumpKeepInterval = d
 	}
 }
 

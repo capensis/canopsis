@@ -85,7 +85,8 @@ type SectionMetrics struct {
 }
 
 type SectionTechMetrics struct {
-	Enabled bool `toml:"Enabled"`
+	Enabled          bool   `toml:"Enabled"`
+	DumpKeepInterval string `toml:"DumpKeepInterval"`
 }
 
 // CanopsisConf represents a generic configuration object.
