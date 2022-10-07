@@ -2097,6 +2097,8 @@ export default merge({
     errors: {
       emptyTabs: 'Merci de créer un onglet',
     },
+    sharedViewUrl: 'URL de vue partagée',
+    shareView: 'Partager la vue {name}',
     deleteRow: 'Supprimer la ligne',
     deleteWidget: 'Supprimer le widget',
     fullScreen: 'Plein écran',
