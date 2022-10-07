@@ -17,10 +17,10 @@ import (
 )
 
 type Config struct {
-	Api       ApiConfig `yaml:"api"`
+	Api       ApiConfig
 	Pbehavior struct {
-		Type   string `yaml:"type"`
-		Reason string `yaml:"reason"`
+		Type   string
+		Reason string
 	}
 	Timezone string
 	Inactive []InactiveConfig
@@ -28,8 +28,8 @@ type Config struct {
 }
 
 type ApiConfig struct {
-	Host               string `yaml:"host"`
-	InsecureSkipverify bool   `yaml:"insecure_skip_verify"`
+	Host               string
+	InsecureSkipverify bool `yaml:"insecure_skip_verify"`
 
 	Username string `yaml:"-"`
 	Password string `yaml:"-"`
@@ -41,7 +41,7 @@ type HourRange struct {
 }
 
 type InactiveConfig struct {
-	Hours      []string `yaml:"hours"`
+	Hours      []string
 	Hostgroups []string
 	hourRanges []HourRange
 }
@@ -72,7 +72,9 @@ func LoadConfig(configPath string) (Config, error) {
 		}
 	}
 	for i, c := range config.Inactive {
-		c.ParseHours()
+		if err = c.ParseHours(); err != nil {
+			return config, err
+		}
 		config.Inactive[i] = c
 	}
 
@@ -141,7 +143,7 @@ func (c ApiConfig) CreateRequest(ctx context.Context, method, path string, b []b
 
 // ParseHours transaltes Hours rules. Each rule can be as "19:30-5;TU,TH-MO" with local start-end times range
 // and weekdays separated by comma as list or range(s)
-func (inactive *InactiveConfig) ParseHours() {
+func (inactive *InactiveConfig) ParseHours() error {
 	const weekLength = 7
 	weekdayNames := [weekLength]string{"MO", "TU", "WE", "TH", "FR", "SA", "SU"}
 
@@ -149,15 +151,15 @@ func (inactive *InactiveConfig) ParseHours() {
 		hours, sWeekdays, _ := strCut(h, ";")
 		sStart, sEnd, ok := strCut(hours, "-")
 		if !ok {
-			continue
+			return fmt.Errorf("invalid value of time range %q", h)
 		}
 		start, err := hhmm2i(sStart)
 		if err != nil {
-			continue
+			return err
 		}
 		end, err := hhmm2i(sEnd)
 		if err != nil {
-			continue
+			return err
 		}
 		weekdays := [7]bool{}
 		if sWeekdays != "" {
@@ -195,4 +197,5 @@ func (inactive *InactiveConfig) ParseHours() {
 			weekdays: weekdays,
 		})
 	}
+	return nil
 }
