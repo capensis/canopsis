@@ -1638,6 +1638,44 @@ definitions:
       name:
         type: string
     type: object
+  exportconfiguration.Request:
+    properties:
+      export:
+        description: |-
+          Possible export values.
+            * `configuration` - export configuration collection
+            * `acl` - export default_rights collection
+            * `pbehavior` - export pbehavior collection
+            * `pbehavior_type` - export pbehavior_types collection
+            * `pbehavior_reason` - export pbehavior_reason collection
+            * `pbehavior_exception` - export pbehavior_exception collection
+            * `scenario` - export action_scenario collection
+            * `metaalarm` - export meta_alarm_rules collection
+            * `idle_rule` - export idle_rules collection
+            * `eventfilter` - export eventfilter collection
+            * `dynamic_infos` - export dynamic_infos collection
+            * `playlist` - export view_playlist collection
+            * `state_settings` - export state_settings collection
+            * `broadcast` - export broadcast_message collection
+            * `associative_table` - export default_associativetable collection
+            * `notification` - export notification collection
+            * `view` - export views collection
+            * `view_tab` - export viewtabs collection
+            * `widget` - export widgets collection
+            * `widget_filter` - export widget_filters collection
+            * `view_group` - export viewgroups collection
+            * `instruction` - export instruction collection
+            * `job_config` - export job_config collection
+            * `job` - export job collection
+            * `resolve_rule` - export resolve_rule collection
+            * `flapping_rule` - export flapping rule collection
+            * `user_preferences` - export userpreferences collection
+            * `kpi_filter` - export kpi_filter collection
+            * `pattern` - export pattern collection
+        items:
+          type: string
+        type: array
+    type: object
   file.File:
     properties:
       _id:
@@ -2937,6 +2975,8 @@ definitions:
     type: object
   role.CreateRequest:
     properties:
+      auth_config:
+        $ref: '#/definitions/security.AuthMethodConf'
       defaultview:
         type: string
       description:
@@ -2956,6 +2996,8 @@ definitions:
     type: object
   role.EditRequest:
     properties:
+      auth_config:
+        $ref: '#/definitions/security.AuthMethodConf'
       defaultview:
         type: string
       description:
@@ -2987,13 +3029,10 @@ definitions:
     properties:
       _id:
         type: string
+      auth_config:
+        $ref: '#/definitions/security.AuthMethodConf'
       defaultview:
-        properties:
-          _id:
-            type: string
-          title:
-            type: string
-        type: object
+        $ref: '#/definitions/role.View'
       description:
         type: string
       name:
@@ -3002,6 +3041,13 @@ definitions:
         items:
           $ref: '#/definitions/role.Permission'
         type: array
+    type: object
+  role.View:
+    properties:
+      _id:
+        type: string
+      title:
+        type: string
     type: object
   scenario.Action:
     properties:
@@ -3372,6 +3418,13 @@ definitions:
         type: array
       updated:
         type: integer
+    type: object
+  security.AuthMethodConf:
+    properties:
+      expiration_interval:
+        $ref: '#/definitions/types.DurationWithUnit'
+      inactivity_interval:
+        $ref: '#/definitions/types.DurationWithUnit'
     type: object
   serviceweather.AlarmCounter:
     properties:

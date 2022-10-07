@@ -54,7 +54,7 @@ export default merge({
     addPbehavior: 'Ajouter un comportement périodique',
     refresh: 'Rafraîchir',
     toggleEditView: 'Activer/Désactiver le mode édition',
-    toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode d\'édition pour cela',
+    toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode édition pour cela',
     name: 'Nom',
     description: 'Description',
     author: 'Auteur',
@@ -64,7 +64,7 @@ export default merge({
     stop: 'Arrêter',
     options: 'Options',
     type: 'Type',
-    quitEditing: 'Quitter le mode d\'édition',
+    quitEditing: 'Quitter le mode édition',
     enabled: 'Activé(e)',
     disabled: 'Désactivé(e)',
     login: 'Connexion',
@@ -145,7 +145,7 @@ export default merge({
     interval: 'Période',
     status: 'Statut',
     unit: 'Unité',
-    delay: 'Intervalle',
+    delay: 'Délai',
     begin: 'Début',
     timezone: 'Fuseau horaire',
     reason: 'Raison',
@@ -157,7 +157,7 @@ export default merge({
     payload: 'Payload',
     note: 'Note',
     output: 'Output',
-    displayName: 'Afficher un nom',
+    displayName: 'Nom simplifié (DisplayName)',
     created: 'Date de création',
     updated: 'Date de dernière modification',
     expired: 'Date d\'expiration',
@@ -173,16 +173,16 @@ export default merge({
     eventPatterns: 'Modèles des événements',
     alarmPatterns: 'Modèles des alarmes',
     entityPatterns: 'Modèles des entités',
-    pbehaviorPatterns: 'Modèles de comportement',
-    totalEntityPatterns: 'Total des modèles d\'entité',
-    serviceWeatherPatterns: 'Modèles météorologiques de service',
+    pbehaviorPatterns: 'Modèles des comportements',
+    totalEntityPatterns: 'Modèles des entités (Total)',
+    serviceWeatherPatterns: 'Modèles des météos de service',
     addFilter: 'Ajouter un filtre',
     id: 'Identifiant',
     reset: 'Réinitialiser',
     selectColor: 'Sélectionner la couleur',
     triggers: 'Déclencheurs',
     disableDuringPeriods: 'Désactiver pendant les pauses',
-    retryDelay: 'Intervalle de tentatives',
+    retryDelay: 'Délai entre les tentatives',
     retryUnit: 'Unité d\'essai',
     retryCount: 'Nombre de tentatives après échec',
     ticket: 'Ticket',
@@ -195,7 +195,7 @@ export default merge({
     loadMore: 'Charger plus',
     initiator: 'Initiateur',
     download: 'Télécharger',
-    percent: 'Pourcent | Pourcentages',
+    percent: 'Pourcentage | Pourcentages',
     tests: 'Tests',
     total: 'Total',
     error: 'Erreur | Erreurs',
@@ -229,11 +229,11 @@ export default merge({
     uptime: 'Uptime',
     maintenance: 'Maintenance',
     downtime: 'Downtime',
-    toTheTop: 'Jusqu\'au sommet',
+    toTheTop: 'Vers le haut',
     time: 'Temps',
     lastModifiedOn: 'Dernière modification le',
     lastModifiedBy: 'Dernière modification par',
-    exportAsCsv: 'Export as csv',
+    exportAsCsv: 'Exporter en csv',
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
@@ -247,31 +247,31 @@ export default merge({
     snoozed: 'En attente',
     impact: 'Impact | Impacts',
     depend: 'Depend | Depends',
-    componentInfo: 'Component info | Component infos',
+    componentInfo: 'Information du composant | Informations du composant',
     connector: 'Type de connecteur',
     connectorName: 'Nom du connecteur',
     component: 'Composant',
     resource: 'Ressource',
     extraDetails: 'Détails supplémentaires',
-    ack: 'Ack',
-    acked: 'Acked',
-    ackedAt: 'Acked at',
-    ackedBy: 'Acked by',
-    resolvedAt: 'Resolved at',
+    ack: 'Acquittement',
+    acked: 'Acquitté',
+    ackedAt: 'Acquitté à',
+    ackedBy: 'Acquitté par',
+    resolvedAt: 'Résolue à',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Personnalisé',
     eventType: 'Type d\'événement',
     sourceType: 'Type de Source',
     cycleDependency: 'Dépendance au cycle',
-    checkPattern: 'Motif à carreaux',
-    itemFound: '{count} article trouvé | {count} articles trouvés',
+    checkPattern: 'Vérification du modèle',
+    itemFound: '{count} élément trouvé | {count} éléments trouvés',
     canonicalType: 'Type canonique',
-    map: 'Carte | Plans',
-    instructions: 'Des instructions',
+    map: 'Cartographie | Cartographies',
+    instructions: 'Consignes',
     playlist: 'Liste de lecture | Listes de lecture',
     ctrlZoom: 'Utilisez ctrl + molette de la souris pour zoomer',
     calendar: 'Calendrier',
-    tag: 'Étiquette | Mots clés',
+    tag: 'Étiquette | Étiquettes',
     sharedTokens: 'Jetons partagés',
     notAvailable: 'Indisponible',
     actions: {
@@ -353,7 +353,7 @@ export default merge({
     operators: {
       [PATTERN_OPERATORS.equal]: 'Égal',
       [PATTERN_OPERATORS.contains]: 'Contient',
-      [PATTERN_OPERATORS.notEqual]: 'Inégal',
+      [PATTERN_OPERATORS.notEqual]: 'n\'est pas égal',
       [PATTERN_OPERATORS.notContains]: 'Ne contient pas',
       [PATTERN_OPERATORS.beginsWith]: 'Commence par',
       [PATTERN_OPERATORS.notBeginWith]: 'Ne commence pas par',
@@ -364,7 +364,7 @@ export default merge({
 
       [PATTERN_OPERATORS.hasEvery]: 'A chaque',
       [PATTERN_OPERATORS.hasOneOf]: 'A l\'un des',
-      [PATTERN_OPERATORS.isOneOf]: 'Fait partie de',
+      [PATTERN_OPERATORS.isOneOf]: 'Est l\'un de',
       [PATTERN_OPERATORS.hasNot]: 'N\'a pas',
       [PATTERN_OPERATORS.isNotOneOf]: 'N\'est pas l\'un des',
       [PATTERN_OPERATORS.isEmpty]: 'Est vide',
@@ -373,11 +373,11 @@ export default merge({
       [PATTERN_OPERATORS.higher]: 'Plus haut que',
       [PATTERN_OPERATORS.lower]: 'Plus bas que',
 
-      [PATTERN_OPERATORS.longer]: 'Plus long',
-      [PATTERN_OPERATORS.shorter]: 'Plus court',
+      [PATTERN_OPERATORS.longer]: 'Supérieure à',
+      [PATTERN_OPERATORS.shorter]: 'Inférieure à',
 
-      [PATTERN_OPERATORS.ticketAssociated]: 'Le billet est associé',
-      [PATTERN_OPERATORS.ticketNotAssociated]: 'Le billet n\'est pas associé',
+      [PATTERN_OPERATORS.ticketAssociated]: 'Un ticket est associé',
+      [PATTERN_OPERATORS.ticketNotAssociated]: 'Un ticket n\'est pas associé',
 
       [PATTERN_OPERATORS.canceled]: 'Annulé',
       [PATTERN_OPERATORS.notCanceled]: 'Non annulé',
@@ -385,14 +385,14 @@ export default merge({
       [PATTERN_OPERATORS.snoozed]: 'En attente',
       [PATTERN_OPERATORS.notSnoozed]: 'Non mis en attente',
 
-      [PATTERN_OPERATORS.acked]: 'Acquis',
-      [PATTERN_OPERATORS.notAcked]: 'Non confirmé',
+      [PATTERN_OPERATORS.acked]: 'Acquitté',
+      [PATTERN_OPERATORS.notAcked]: 'Non acquitté',
 
-      [PATTERN_OPERATORS.isGrey]: 'Carrelage gris',
-      [PATTERN_OPERATORS.isNotGrey]: 'Pas de carreaux gris',
+      [PATTERN_OPERATORS.isGrey]: 'Tuile grise',
+      [PATTERN_OPERATORS.isNotGrey]: 'Tuile non grise',
 
       [PATTERN_OPERATORS.with]: 'Avec',
-      [PATTERN_OPERATORS.without]: 'Sans pour autant',
+      [PATTERN_OPERATORS.without]: 'Sans',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
@@ -502,7 +502,7 @@ export default merge({
     noEventsFilter: 'Aucun filtre d\'événements',
     impactChain: 'Chaîne d\'impact',
     impactDepends: 'Impacts/Dépendances',
-    treeOfDependencies: 'Arbre des dépendances',
+    treeOfDependencies: 'Arbre de dépendances',
     infosSearchLabel: 'Rechercher une info',
     eventStatisticsMessage: '{ok} OK événements\n{ko} KO événements',
     eventStatistics: 'Statistiques d\'événement',
@@ -799,7 +799,7 @@ export default merge({
     yesNoMode: 'Mode Oui/Non',
     selectAFilter: 'Sélectionner un filtre',
     lockedFilter: 'Filtre verrouillé dans les paramètres du widget',
-    exportAsCsv: 'Exporter le widget sous forme de fichier csv',
+    exportAsCsv: 'Exporter les données du widget en csv',
     criticityLevels: 'Niveaux de criticité',
     isPriorityEnabled: 'Afficher la priorité',
     clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
@@ -1445,7 +1445,7 @@ export default merge({
       title: 'Choisissez la liste des exceptions',
     },
     createRrule: {
-      title: 'Créer une récurrence',
+      title: 'Créer une règle de récurrence',
     },
     createPbehaviorType: {
       title: 'Créer un type',
@@ -1509,13 +1509,13 @@ export default merge({
       create: {
         title: 'Créer une configuration',
         popups: {
-          success: '{configurationName} a été créé avec succès',
+          success: '{configurationName} a été créée avec succès',
         },
       },
       edit: {
         title: 'Modifier la configuration',
         popups: {
-          success: '{configurationName} a été modifié avec succès',
+          success: '{configurationName} a été modifiée avec succès',
         },
       },
       fields: {
@@ -1534,6 +1534,12 @@ export default merge({
         title: 'Éditer une tâche',
         popups: {
           success: '{jobName} a été modifiée avec succès',
+        },
+      },
+      duplicate: {
+        title: 'Double une tâche',
+        popups: {
+          success: '{jobName} a été dupliqué avec succès',
         },
       },
     },
@@ -1709,7 +1715,7 @@ export default merge({
         title: 'Créer un filtre d\'alarme',
       },
       edit: {
-        title: 'Modifier le modèle d\'alarme',
+        title: 'Modifier le filtre d\'alarme',
       },
     },
     createCorporateAlarmPattern: {
@@ -1725,7 +1731,7 @@ export default merge({
         title: 'Créer un filtre d\'entité',
       },
       edit: {
-        title: 'Modifier le modèle d\'entité',
+        title: 'Modifier le filtre d\'entité',
       },
     },
     createCorporateEntityPattern: {
@@ -1738,10 +1744,10 @@ export default merge({
     },
     createPbehaviorPattern: {
       create: {
-        title: 'Créer un filtre de comportement',
+        title: 'Créer un filtre de comportement périodique',
       },
       edit: {
-        title: 'Modifier le modèle de comportement',
+        title: 'Modifier le filtre de comportement périodique',
       },
     },
     createCorporatePbehaviorPattern: {
@@ -1768,13 +1774,13 @@ export default merge({
     },
     createFlowchartMap: {
       create: {
-        title: 'Créer un flowchart',
+        title: 'Créer une carte flowchart',
       },
       edit: {
-        title: 'Modifier un flowchart',
+        title: 'Modifier une carte flowchart',
       },
       duplicate: {
-        title: 'Dupliquer un flowchart',
+        title: 'Dupliquer une carte flowchart',
       },
     },
     createMermaidMap: {
@@ -1785,18 +1791,18 @@ export default merge({
         title: 'Modifier un diagramme de mermaid',
       },
       duplicate: {
-        title: 'Dupliquer un diagramme de diagram',
+        title: 'Dupliquer un diagramme de mermaid',
       },
     },
     createTreeOfDependenciesMap: {
       create: {
-        title: 'Créer un arbre de diagramme de dépendances',
+        title: 'Créer une carte d\'arbre de dépendances',
       },
       edit: {
-        title: 'Modifier un diagramme d\'arborescence de dépendances',
+        title: 'Modifier une carte d\'arbre de dépendances',
       },
       duplicate: {
-        title: 'Dupliquer un diagramme d\'arborescence de dépendances',
+        title: 'Dupliquer une carte d\'arbre de dépendances',
       },
       addEntity: 'Ajouter une entité',
       pinnedEntities: 'Entités épinglées',
@@ -1932,7 +1938,7 @@ export default merge({
   filterSelector: {
     defaultFilter: 'Filtre par défaut',
     fields: {
-      mixFilters: 'Mélanger les filtres',
+      mixFilters: 'Combiner les filtres (ET)',
     },
     buttons: {
       list: 'Gérer les filtres',
@@ -2063,7 +2069,7 @@ export default merge({
   layout: {
     sideBar: {
       buttons: {
-        edit: 'Activer/Désactiver le mode d\'édition',
+        edit: 'Activer/Désactiver le mode édition',
         create: 'Créer une vue',
         settings: 'Paramètres',
       },
@@ -2172,13 +2178,13 @@ export default merge({
       [WEATHER_ACTIONS_TYPES.entityCancel]: 'Annuler',
       [WEATHER_ACTIONS_TYPES.entityAssocTicket]: 'Associer un ticket',
       [WEATHER_ACTIONS_TYPES.entityComment]: 'Commenter l\'alarme',
-      [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Exécuter l\'instruction',
+      [WEATHER_ACTIONS_TYPES.executeInstruction]: 'Exécuter la consigne',
       [WEATHER_ACTIONS_TYPES.declareTicket]: 'Déclarer un incident',
     },
     iconTypes: {
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
-      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
     },
   },
   contextGeneralTable: {
@@ -2283,17 +2289,17 @@ export default merge({
     metricsUnavailable: 'Les métriques ne sont pas collectées',
     notRunning: '{name} n\'est pas disponible',
     queueOverflow: 'Débordement de file d\'attente',
-    lackOfInstances: 'Manque d\'instances',
+    lackOfInstances: 'Nombre d\'instances insuffisant',
     diffInstancesConfig: 'Configuration des instances non valide',
     queueLength: 'Longueur de la file d\'attente {queueLength}/{maxQueueLength}',
     instancesCount: 'Instances {instances}/{minInstances}',
     activeInstances: 'Seules {instances} sont actives sur {minInstances}. Le nombre optimal d\'instances est de {optimalInstances}.',
-    queueOverflowed: 'La file d\'attente est débordée : {queueLength} messages sur {maxQueueLength}.\nVeuillez vérifier les instances.',
+    queueOverflowed: 'La file d\'attente est saturée : {queueLength} messages sur {maxQueueLength}.\nVeuillez vérifier les instances.',
     engineDown: '{name} est en panne, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer le service.',
     engineDownOrSlow: '{name} est en panne ou répond trop lentement, le système n\'est pas opérationnel.\nVeuillez vérifier le journal ou redémarrer l\'instance.',
     timescaleDown: '{name} est en panne, les métriques et les KPI ne sont pas collectés.\nVeuillez vérifier le journal ou redémarrer l\'instance.',
     invalidEnginesOrder: 'Configuration des moteurs non valide',
-    invalidInstancesConfiguration: 'Configuration des instances non valide : les instances du moteur lisent ou écrivent dans différentes files d\'attente.\nVeuillez vérifier les instances.',
+    invalidInstancesConfiguration: 'Configuration des instances non valide : les instances du moteur consomment ou publient dans différentes files d\'attente.\nVeuillez vérifier les instances.',
     chainConfigurationInvalid: 'La configuration de la chaîne des moteurs n\'est pas valide.\nReportez-vous ci-dessous pour la séquence correcte des moteurs :',
     queueLimit: 'Limite de longueur de file d\'attente',
     defineQueueLimit: 'Définir la limite de longueur de file d\'attente des moteurs',
@@ -2514,18 +2520,19 @@ export default merge({
   remediationInstructionStats: {
     alarmsTimeline: 'Chronologie des alarmes',
     alarmId: 'Identifiant de l\'alarme',
-    executedOn: 'Exécuté sur',
+    executedAt: 'Exécuté à',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
     averageCompletionTime: 'Temps moyen\nd\'achèvement',
     executionCount: 'Nombre\nd\'exécutions',
     totalExecutions: 'Total des exécutions',
     successfulExecutions: 'Exécutions réussies',
-    alarmStates: 'Alarmes affectées par l\'état',
+    alarmStates: 'Alarmes affectées par état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
     instructionChanged: 'La consigne a été modifiée',
     alarmResolvedDate: 'Date de résolution de l\'alarme',
     showFailedExecutions: 'Afficher les exécutions d\'instructions ayant échoué',
+    remediationDuration: 'Durée de la remédiation',
     actions: {
       needRate: 'Notez-le!',
       rate: 'Évaluer',
@@ -2567,12 +2574,12 @@ export default merge({
       all: 'Tout',
     },
     labels: {
-      remediated: 'Corrigé',
-      notRemediated: 'Non corrigé',
+      remediated: 'Remédié',
+      notRemediated: 'Non remédié',
     },
     tooltips: {
-      remediated: '{value} alarmes corrigées',
-      assigned: '{value} alarmes avec instructions',
+      remediated: '{value} alarmes remédiées',
+      assigned: '{value} alarmes avec consigne',
     },
   },
 
@@ -2647,7 +2654,7 @@ export default merge({
     depends: 'Dépendances',
     addInformation: 'Ajouter une information',
     emptyInfos: 'Aucune information',
-    availabilityState: 'État de haute disponibilité',
+    availabilityState: 'État de disponibilité',
     types: {
       [ENTITY_TYPES.component]: 'Composant',
       [ENTITY_TYPES.connector]: 'Connecteur',
@@ -3055,7 +3062,7 @@ export default merge({
     types: {
       [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
       [PATTERN_TYPES.entity]: 'Modèle d\'entité',
-      [PATTERN_TYPES.pbehavior]: 'Modèle de comportement',
+      [PATTERN_TYPES.pbehavior]: 'Modèle de comportements périodiques',
     },
     errors: {
       ruleRequired: 'Veuillez ajouter au moins une règle',
@@ -3124,7 +3131,7 @@ export default merge({
         + 'Clic gauche de la souris + glisser - déplacer la zone',
     },
     errors: {
-      pointsRequired: 'The points must be added',
+      pointsRequired: 'Un point doit être ajouté',
     },
   },
 
@@ -3144,7 +3151,7 @@ export default merge({
     backgroundColor: 'Couleur de l\'arrière plan',
     shapes: {
       rectangle: 'Rectangle',
-      roundedRectangle: 'Rounded rectangle',
+      roundedRectangle: 'Rectangle arrondi',
       square: 'Square',
       rhombus: 'Rhombus',
       circle: 'Circle',
@@ -3172,7 +3179,7 @@ export default merge({
         + 'Alt + molette de la souris - défilement vertical\n',
     },
     errors: {
-      pointsRequired: 'The points must be added',
+      pointsRequired: 'Un point doit être ajouté',
     },
   },
   treeOfDependencies: {

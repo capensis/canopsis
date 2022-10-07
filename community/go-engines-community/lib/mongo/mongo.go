@@ -20,7 +20,6 @@ import (
 const (
 	DB                                = "canopsis"
 	ConfigurationMongoCollection      = "configuration"
-	ObjectMongoCollection             = "object"
 	RightsMongoCollection             = "default_rights"
 	SessionMongoCollection            = "session"
 	AlarmMongoCollection              = "periodical_alarm"

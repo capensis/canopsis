@@ -30,7 +30,6 @@ configuration:
       timetokeepresolvedalarms: 0h
     api:
       bulkmaxsize: 10000
-      tokenexpiration: 24h
       tokensigningmethod: HS256
     data_storage:
       timetoexecute: ""
