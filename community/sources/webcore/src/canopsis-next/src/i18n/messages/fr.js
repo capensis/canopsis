@@ -2520,7 +2520,6 @@ export default merge({
     successfulExecutions: 'Exécutions réussies',
     alarmStates: 'Alarmes affectées par état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
-    notAvailable: 'Indisponible',
     instructionChanged: 'La consigne a été modifiée',
     alarmResolvedDate: 'Date de résolution de l\'alarme',
     showFailedExecutions: 'Afficher les exécutions d\'instructions ayant échoué',
