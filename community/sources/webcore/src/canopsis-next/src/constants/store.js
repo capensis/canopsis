@@ -42,4 +42,5 @@ export const ENTITIES_TYPES = {
   pattern: 'pattern',
   map: 'map',
   alarmTag: 'alarmTag',
+  shareToken: 'shareToken',
 };

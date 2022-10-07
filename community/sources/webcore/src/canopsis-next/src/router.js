@@ -404,6 +404,7 @@ router.beforeEach(async (to, from, next) => {
     await store.dispatch('auth/applyAccessToken', accessToken);
 
     return router.replace({
+      ...to,
       query: restQuery,
     });
   }
