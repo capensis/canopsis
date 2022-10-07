@@ -460,6 +460,11 @@ default_rights:
     _id: models_map
     crecord_name: <Current()._id>
     desc: Map
+  permission_models_shareToken:
+    <<: *permission_crud
+    _id: models_shareToken
+    crecord_name: <Current()._id>
+    desc: "Share token"
   permission_listalarm_ack:
     <<: *permission
     _id: listalarm_ack
@@ -1040,6 +1045,11 @@ default_rights:
     _id: api_map
     crecord_name: <Current()._id>
     desc: Map
+  permission_api_share_token:
+    <<: *permission_crud
+    _id: api_share_token
+    crecord_name: <Current()._id>
+    desc: Share token
   permission_view_open_alarms:
     <<: *permission_rw
     _id: "@view_open_alarms"
@@ -1137,6 +1147,8 @@ default_rights:
       "@permission_models_profile_corporatePattern":
         checksum: 15
       "@permission_models_map":
+        checksum: 15
+      "@permission_models_shareToken":
         checksum: 15
       "@permission_listalarm_ack":
         checksum: 1
@@ -1415,6 +1427,9 @@ default_rights:
         crecord_type: right
       "@permission_api_map":
         checksum: 15
+        crecord_type: right
+      "@permission_api_share_token":
+        checksum: 5
         crecord_type: right
       "@permission_view_open_alarms":
         checksum: 15

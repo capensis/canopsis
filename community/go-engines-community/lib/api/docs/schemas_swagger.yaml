@@ -3,6 +3,8 @@ definitions:
     properties:
       _id:
         type: string
+      active_connects:
+        type: integer
       authkey:
         type: string
       defaultview:
@@ -585,7 +587,12 @@ definitions:
     type: object
   associativetable.Content:
     type: object
-  auth.loginRequest:
+  auth.LoggedUserCountResponse:
+    properties:
+      count:
+        type: integer
+    type: object
+  auth.LoginRequest:
     properties:
       password:
         type: string
@@ -595,7 +602,7 @@ definitions:
     - password
     - username
     type: object
-  auth.loginResponse:
+  auth.LoginResponse:
     properties:
       access_token:
         type: string
@@ -682,6 +689,13 @@ definitions:
         type: integer
       total_count:
         type: integer
+    type: object
+  common.Role:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
     type: object
   common.User:
     properties:
@@ -3587,6 +3601,33 @@ definitions:
         type: string
       links: {}
     type: object
+  sharetoken.EditRequest:
+    properties:
+      description:
+        maxLength: 500
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+    type: object
+  sharetoken.Response:
+    properties:
+      _id:
+        type: string
+      accessed:
+        type: integer
+      created:
+        type: integer
+      description:
+        type: string
+      expired:
+        type: integer
+      role:
+        $ref: '#/definitions/common.Role'
+      user:
+        $ref: '#/definitions/common.User'
+      value:
+        type: string
+    type: object
   statesettings.JUnitThresholds:
     properties:
       errors:
@@ -3904,6 +3945,8 @@ definitions:
     properties:
       _id:
         type: string
+      active_connects:
+        type: integer
       authkey:
         type: string
       defaultview:
