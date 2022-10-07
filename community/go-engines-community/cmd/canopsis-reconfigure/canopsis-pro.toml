@@ -319,6 +319,8 @@ SliInterval = "1h"
 
 [Canopsis.tech_metrics]
 Enabled = true
+# DumpKeepInterval defines how long dump with tech metrics should be kept before delete.
+DumpKeepInterval = "1h"
 
 # Remediation parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Remediation]

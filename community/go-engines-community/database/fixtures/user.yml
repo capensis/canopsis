@@ -1040,6 +1040,11 @@ default_rights:
     _id: api_map
     crecord_name: <Current()._id>
     desc: Map
+  permission_api_techmetrics:
+    <<: *permission
+    _id: api_techmetrics
+    crecord_name: <Current()._id>
+    desc: Tech Metrics
   permission_view_open_alarms:
     <<: *permission_rw
     _id: "@view_open_alarms"
@@ -1415,6 +1420,9 @@ default_rights:
         crecord_type: right
       "@permission_api_map":
         checksum: 15
+        crecord_type: right
+      "@permission_api_techmetrics":
+        checksum: 1
         crecord_type: right
       "@permission_view_open_alarms":
         checksum: 15

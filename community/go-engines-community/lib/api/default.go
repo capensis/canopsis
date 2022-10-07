@@ -19,6 +19,7 @@ import (
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	devmiddleware "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware/dev"
+	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
@@ -34,6 +35,7 @@ import (
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
@@ -202,6 +204,10 @@ func Default(
 	if exportExecutor == nil {
 		exportExecutor = export.NewTaskExecutor(dbClient, logger)
 	}
+	techConnStr, err := postgres.GetTechConnStr()
+	if err != nil {
+		return nil, nil, err
+	}
 
 	websocketHub := newWebsocketHub(enforcer, security.GetTokenProvider(), logger)
 
@@ -210,6 +216,7 @@ func Default(
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(techConnStr, techMetricsConfigProvider, logger)
 
 	// Create api.
 	api := New(
@@ -285,6 +292,7 @@ func Default(
 			entityCleanerTaskChan,
 			engine.NewRunInfoManager(engineRedisSession),
 			exportExecutor,
+			techMetricsTaskExecutor,
 			apilogger.NewActionLogger(dbClient, logger),
 			amqpChannel,
 			jobQueue,
@@ -365,6 +373,9 @@ func Default(
 		configAdapter, p.UserInterfaceConfigProvider, userInterfaceAdapter, configUpdateInterval, logger))
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
+	})
+	api.AddWorker("tech metrics export", func(ctx context.Context) {
+		techMetricsTaskExecutor.Run(ctx)
 	})
 	api.AddWorker("auth token activity", func(ctx context.Context) {
 		ticker := time.NewTicker(canopsis.PeriodicalWaitTime)
