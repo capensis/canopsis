@@ -1,11 +1,11 @@
 <template lang="pug">
   v-form(data-test="createRoleModal", @submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
+      template(#text="")
         role-form(v-model="form")
-      template(slot="actions")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary.white--text(
           :disabled="isDisabled",
@@ -22,7 +22,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import RoleForm from '@/components/other/role/role-form.vue';
+import RoleForm from '@/components/other/role/form/role-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
