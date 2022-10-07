@@ -3,6 +3,8 @@ import { omit, pick } from 'lodash';
 import Faker from 'faker';
 
 import { mount, createVueInstance } from '@unit/utils/vue';
+import { triggerDocumentMouseEvent, triggerDocumentKeyboardEvent } from '@unit/utils/events';
+
 import { CONNECTOR_SIDES, FLOWCHART_KEY_CODES, SHAPES } from '@/constants';
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 import { readTextFromClipboard, writeTextToClipboard } from '@/helpers/clipboard';
@@ -72,18 +74,6 @@ const selectTextShapeEditorFieldByType = (wrapper, type) => {
   return wrapper
     .findComponent(Component)
     .find('.text-shape-editor__field');
-};
-
-const triggerDocumentEvent = (event) => {
-  document.dispatchEvent(event);
-};
-
-const triggerDocumentMouseEvent = (type, data) => {
-  triggerDocumentEvent(new MouseEvent(type, data));
-};
-
-const triggerDocumentKeyboardEvent = (type, data) => {
-  triggerDocumentEvent(new KeyboardEvent(type, data));
 };
 
 describe('flowchart-editor', () => {

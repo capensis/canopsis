@@ -267,6 +267,11 @@ default_rights:
     _id: api_map
     crecord_name: <Current()._id>
     desc: Map
+  permission_api_share_token:
+    <<: *permission_crud
+    _id: api_share_token
+    crecord_name: <Current()._id>
+    desc: Share token
 
   role_noperms:
     <<: *role
@@ -1129,6 +1134,9 @@ default_rights:
         checksum: 1
         crecord_type: right
       "@permission_api_map":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_share_token":
         checksum: 15
         crecord_type: right
       "@permission_playlist_to_delete":

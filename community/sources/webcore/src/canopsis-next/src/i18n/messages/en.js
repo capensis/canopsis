@@ -50,6 +50,7 @@ export default merge({
     widget: 'Widget',
     addWidget: 'Add widget',
     addTab: 'Add tab',
+    shareLink: 'Create share link',
     addPbehavior: 'Add pbehavior',
     refresh: 'Refresh',
     toggleEditView: 'Toggle view edition mode',
@@ -159,6 +160,8 @@ export default merge({
     displayName: 'Display name',
     created: 'Creation date',
     updated: 'Last update date',
+    expired: 'Expired date',
+    accessed: 'Accessed at',
     lastEventDate: 'Last event date',
     pattern: 'Pattern | Patterns',
     correlation: 'Correlation',
@@ -269,6 +272,8 @@ export default merge({
     ctrlZoom: 'Use ctrl + mouse wheel for zoom',
     calendar: 'Calendar',
     tag: 'Tag | Tags',
+    sharedTokens: 'Shared tokens',
+    notAvailable: 'N/a',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -1531,6 +1536,12 @@ export default merge({
           success: '{jobName} has been successfully modified',
         },
       },
+      duplicate: {
+        title: 'Duplicate Job',
+        popups: {
+          success: '{jobName} has been successfully duplicated',
+        },
+      },
     },
     clickOutsideConfirmation: {
       title: 'Are you sure?',
@@ -1795,6 +1806,11 @@ export default merge({
       },
       addEntity: 'Add entity',
       pinnedEntities: 'Pinned entities',
+    },
+    createShareToken: {
+      create: {
+        title: 'Create share token',
+      },
     },
   },
   tables: {
@@ -2081,6 +2097,8 @@ export default merge({
     errors: {
       emptyTabs: 'You should create a tab',
     },
+    sharedViewUrl: 'Shared view url',
+    shareView: 'Share view {name}',
     deleteRow: 'Delete row',
     deleteWidget: 'Delete widget',
     fullScreen: 'Full screen',
@@ -2513,7 +2531,6 @@ export default merge({
     successfulExecutions: 'Successful executions',
     alarmStates: 'Alarms affected by state',
     okAlarmStates: 'Number of resulting\nOK states',
-    notAvailable: 'N/a',
     instructionChanged: 'The instruction has been changed',
     alarmResolvedDate: 'Alarm resolved date',
     showFailedExecutions: 'Show failed instruction executions',
@@ -2658,16 +2675,14 @@ export default merge({
   users: {
     seeProfile: 'See profile',
     selectDefaultView: 'Select default view',
-    username: 'Username',
     firstName: 'First name',
     lastName: 'Last name',
     email: 'Email',
-    role: 'Role',
-    enabled: 'Enabled',
-    password: 'Password',
     language: 'User interface language',
     auth: 'Auth',
     navigationType: 'Groups navigation type',
+    active: 'Session active',
+    activeConnects: 'Connections count',
     navigationTypes: {
       [GROUPS_NAVIGATION_TYPES.sideBar]: 'Side bar',
       [GROUPS_NAVIGATION_TYPES.topBar]: 'Top bar',
@@ -2675,6 +2690,14 @@ export default merge({
     metrics: {
       [USER_METRIC_PARAMETERS.totalUserActivity]: 'Total activity time',
     },
+  },
+
+  role: {
+    expirationSettings: 'Expiration settings',
+    inactivityInterval: 'Inactivity interval',
+    expirationInterval: 'Expiration interval',
+    inactivityIntervalHelpText: 'Defines when the user is counted as inactive',
+    expirationIntervalHelpText: 'Defines the inactivity time period after which the auth token is expired',
   },
 
   testSuite: {
@@ -3173,5 +3196,11 @@ export default merge({
         + 'Ctrl + mouse wheel - zoom in/out\n'
         + 'Ctrl + Left mouse click + drag - pan the area\n',
     },
+  },
+
+  shareToken: {
+    revokeToken: 'Revoke token',
+    revokeSelectedTokens: 'Revoke selected tokens',
+    tokenExpiration: 'Token expiration',
   },
 }, featureService.get('i18n.en'));
