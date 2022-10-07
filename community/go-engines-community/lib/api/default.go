@@ -82,14 +82,12 @@ func Default(
 	// Retrieve config.
 	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
 	if err != nil {
-		logger.Err(err).Msg("cannot connect to mongodb")
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("cannot connect to mongodb: %w", err)
 	}
 	configAdapter := config.NewAdapter(dbClient)
 	cfg, err := configAdapter.GetConfig(ctx)
 	if err != nil {
-		logger.Err(err).Msg("cannot load config")
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("cannot load config: %w", err)
 	}
 	if p.TimezoneConfigProvider == nil {
 		p.TimezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
@@ -99,31 +97,26 @@ func Default(
 	// Connect to rmq.
 	amqpConn, err := amqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
 	if err != nil {
-		logger.Err(err).Msg("cannot connect to rmq")
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
 	amqpChannel, err := amqpConn.Channel()
 	if err != nil {
-		logger.Err(err).Msg("cannot connect to rmq")
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
 	// Connect to redis.
 	pbhRedisSession, err := libredis.NewSession(ctx, libredis.PBehaviorLockStorage, logger,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	if err != nil {
-		logger.Err(err).Msg("cannot connect to redis")
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("cannot connect to redis: %w", err)
 	}
 	engineRedisSession, err := libredis.NewSession(ctx, libredis.EngineRunInfo, logger,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	if err != nil {
-		logger.Err(err).Msg("cannot connect to redis")
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("cannot connect to redis: %w", err)
 	}
 	securityConfig, err := libsecurity.LoadConfig(flags.ConfigDir)
 	if err != nil {
-		logger.Err(err).Msg("cannot load security config")
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("cannot load security config: %w", err)
 	}
 
 	cookieOptions := CookieOptions{
@@ -145,8 +138,7 @@ func Default(
 
 	proxyAccessConfig, err := proxy.LoadAccessConfig(flags.ConfigDir)
 	if err != nil {
-		logger.Err(err).Msg("cannot load access config")
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("cannot load access config: %w", err)
 	}
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
@@ -187,7 +179,7 @@ func Default(
 	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
 	userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 	if err != nil && err != mongodriver.ErrNoDocuments {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("cannot load user interface config: %w", err)
 	}
 	if p.UserInterfaceConfigProvider == nil {
 		p.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
@@ -197,7 +189,7 @@ func Default(
 	scenarioPriorityIntervals := action.NewPriorityIntervals()
 	err = scenarioPriorityIntervals.Recalculate(ctx, dbClient.Collection(mongo.ScenarioMongoCollection))
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("cannot recalculate scenario preority: %w", err)
 	}
 
 	// Create csv exporter.
@@ -206,10 +198,13 @@ func Default(
 	}
 	techConnStr, err := postgres.GetTechConnStr()
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("cannot connect to postgres: %w", err)
 	}
 
-	websocketHub := newWebsocketHub(enforcer, security.GetTokenProvider(), logger)
+	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProvider(), logger)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot create websocket hub: %w", err)
+	}
 
 	broadcastMessageChan := make(chan bool)
 
@@ -315,11 +310,11 @@ func Default(
 		if !overrideDocs {
 			content, err := docsFile.ReadFile("docs/swagger.yaml")
 			if err != nil {
-				return nil, nil, err
+				return nil, nil, fmt.Errorf("cannot read swagger: %w", err)
 			}
 			schemasContent, err := docsFile.ReadFile("docs/schemas_swagger.yaml")
 			if err != nil {
-				return nil, nil, err
+				return nil, nil, fmt.Errorf("cannot read swagger: %w", err)
 			}
 			api.AddRouter(func(router gin.IRouter) {
 				router.GET("/swagger.yaml", docs.GetHandler(schemasContent, content))
@@ -412,7 +407,7 @@ func Default(
 	return api, docsFile, nil
 }
 
-func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.TokenProvider, logger zerolog.Logger) websocket.Hub {
+func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.TokenProvider, logger zerolog.Logger) (websocket.Hub, error) {
 	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 2048,
@@ -424,12 +419,12 @@ func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.To
 	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer,
 		canopsis.PeriodicalWaitTime, logger)
 	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {
-		logger.Err(err).Msg("Register BroadcastMessages room")
+		return nil, err
 	}
 	if err := websocketHub.RegisterRoom(websocket.RoomLoggedUserCount); err != nil {
-		logger.Err(err).Msg("Register LoggedUserCount room")
+		return nil, err
 	}
-	return websocketHub
+	return websocketHub, nil
 }
 
 func updateConfig(
