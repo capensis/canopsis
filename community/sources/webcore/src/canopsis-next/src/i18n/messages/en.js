@@ -269,6 +269,7 @@ export default merge({
     ctrlZoom: 'Use ctrl + mouse wheel for zoom',
     calendar: 'Calendar',
     tag: 'Tag | Tags',
+    notAvailable: 'N/a',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -2519,7 +2520,6 @@ export default merge({
     successfulExecutions: 'Successful executions',
     alarmStates: 'Alarms affected by state',
     okAlarmStates: 'Number of resulting\nOK states',
-    notAvailable: 'N/a',
     instructionChanged: 'The instruction has been changed',
     alarmResolvedDate: 'Alarm resolved date',
     showFailedExecutions: 'Show failed instruction executions',
@@ -2681,6 +2681,14 @@ export default merge({
     metrics: {
       [USER_METRIC_PARAMETERS.totalUserActivity]: 'Total activity time',
     },
+  },
+
+  role: {
+    expirationSettings: 'Expiration settings',
+    inactivityInterval: 'Inactivity interval',
+    expirationInterval: 'Expiration interval',
+    inactivityIntervalHelpText: 'Defines when the user is counted as inactive',
+    expirationIntervalHelpText: 'Defines the inactivity time period after which the auth token is expired',
   },
 
   testSuite: {
