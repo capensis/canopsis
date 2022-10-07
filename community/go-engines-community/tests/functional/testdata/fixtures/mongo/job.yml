@@ -250,3 +250,15 @@ job:
     _id: test-job-to-run-manual-simplified-instruction-3
     name: test-job-to-run-manual-simplified-instruction-3-name
     payload: '{"test-job-to-run-manual-simplified-instruction-3-key": "test-job-to-run-manual-simplified-instruction-3-val"}'
+
+  job_to_run_manual-simplified_instruction_4:
+    <<: *job_dummy_long_succeeded
+    _id: test-job-to-run-manual-simplified-instruction-4
+    name: test-job-to-run-manual-simplified-instruction-4-name
+    payload: '{"test-job-to-run-manual-simplified-instruction-4-key": "test-job-to-run-manual-simplified-instruction-4-val"}'
+
+  job_to_run_manual-simplified_instruction_5:
+    <<: *job_dummy_long_failed
+    _id: test-job-to-run-manual-simplified-instruction-5
+    name: test-job-to-run-manual-simplified-instruction-5-name
+    payload: '{"test-job-to-run-manual-simplified-instruction-5-key": "test-job-to-run-manual-simplified-instruction-5-val"}'
