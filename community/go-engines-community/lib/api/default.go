@@ -35,7 +35,6 @@ import (
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
@@ -196,10 +195,6 @@ func Default(
 	if exportExecutor == nil {
 		exportExecutor = export.NewTaskExecutor(dbClient, logger)
 	}
-	techConnStr, err := postgres.GetTechConnStr()
-	if err != nil {
-		return nil, nil, fmt.Errorf("cannot connect to postgres: %w", err)
-	}
 
 	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProvider(), logger)
 	if err != nil {
@@ -211,7 +206,7 @@ func Default(
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(techConnStr, techMetricsConfigProvider, logger)
+	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(techMetricsConfigProvider, logger)
 
 	// Create api.
 	api := New(

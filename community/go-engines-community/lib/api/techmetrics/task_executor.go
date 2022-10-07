@@ -43,21 +43,18 @@ type Task struct {
 }
 
 func NewTaskExecutor(
-	pgConnStr string,
 	configProvider config.TechMetricsConfigProvider,
 	logger zerolog.Logger,
 ) TaskExecutor {
 	return &taskExecutor{
-		pgConnStr:      pgConnStr,
 		configProvider: configProvider,
 		logger:         logger,
 	}
 }
 
 type taskExecutor struct {
-	pgConnStr      string
-	logger         zerolog.Logger
 	configProvider config.TechMetricsConfigProvider
+	logger         zerolog.Logger
 
 	pgPoolMx     sync.Mutex
 	pgPool       postgres.Pool
@@ -256,7 +253,7 @@ func (e *taskExecutor) getPgPool(ctx context.Context) (postgres.Pool, error) {
 
 	if e.pgPool == nil {
 		var err error
-		e.pgPool, err = postgres.NewPoolByConnStr(ctx, e.pgConnStr, 0, 0)
+		e.pgPool, err = postgres.NewTechMetricsPool(ctx, 0, 0)
 		if err != nil {
 			return nil, err
 		}
@@ -283,6 +280,12 @@ func (e *taskExecutor) dumpDb(ctx context.Context) (string, error) {
 	go func() {
 		defer close(done)
 
+		var pgConnStr string
+		pgConnStr, err = postgres.GetTechConnStr()
+		if err != nil {
+			return
+		}
+
 		var f *os.File
 		f, err = os.CreateTemp("", filenameDumpPattern)
 		if err != nil {
@@ -294,7 +297,7 @@ func (e *taskExecutor) dumpDb(ctx context.Context) (string, error) {
 			return
 		}
 
-		err = postgres.Dump(e.pgConnStr, dumpFilepath)
+		err = postgres.Dump(pgConnStr, dumpFilepath)
 		if err != nil {
 			return
 		}
