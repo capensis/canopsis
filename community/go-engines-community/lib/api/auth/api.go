@@ -4,14 +4,12 @@ import (
 	"context"
 	"net/http"
 	"strings"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -29,8 +27,7 @@ type API interface {
 }
 
 func NewApi(
-	tokenService token.Service,
-	tokenStore token.Store,
+	tokenService apisecurity.TokenService,
 	providers []security.Provider,
 	sessionStore session.Store,
 	websocketHub websocket.Hub,
@@ -41,7 +38,6 @@ func NewApi(
 ) API {
 	return &api{
 		tokenService: tokenService,
-		tokenStore:   tokenStore,
 		providers:    providers,
 		websocketHub: websocketHub,
 		sessionStore: sessionStore,
@@ -55,8 +51,7 @@ func NewApi(
 }
 
 type api struct {
-	tokenService token.Service
-	tokenStore   token.Store
+	tokenService apisecurity.TokenService
 	providers    []security.Provider
 	websocketHub websocket.Hub
 	logger       zerolog.Logger
@@ -84,7 +79,7 @@ func (a *api) Login(c *gin.Context) {
 	var err error
 	var provider string
 	for _, p := range a.providers {
-		user, err = p.Auth(c.Request.Context(), request.Username, request.Password)
+		user, err = p.Auth(c, request.Username, request.Password)
 		if err != nil {
 			a.logger.Err(err).Msg("Auth provider error")
 		}
@@ -100,19 +95,7 @@ func (a *api) Login(c *gin.Context) {
 		return
 	}
 
-	accessToken, expiresAt, err := a.tokenService.GenerateToken(user.ID)
-	if err != nil {
-		panic(err)
-	}
-
-	now := time.Now()
-	err = a.tokenStore.Save(c.Request.Context(), token.Token{
-		ID:       accessToken,
-		User:     user.ID,
-		Provider: provider,
-		Created:  types.CpsTime{Time: now},
-		Expired:  types.CpsTime{Time: expiresAt},
-	})
+	accessToken, err := a.tokenService.Create(c, *user, provider)
 	if err != nil {
 		panic(err)
 	}
@@ -130,7 +113,7 @@ func (a *api) Logout(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 		return
 	}
-	ok, err := a.tokenStore.Delete(c.Request.Context(), tokenString)
+	ok, err := a.tokenService.Delete(c, tokenString)
 	if err != nil {
 		panic(err)
 	}
@@ -140,7 +123,7 @@ func (a *api) Logout(c *gin.Context) {
 		return
 	}
 
-	a.sendWebsocketMessage(c.Request.Context())
+	a.sendWebsocketMessage(c)
 
 	c.SetSameSite(a.cookieSameSite)
 	c.SetCookie(a.cookieName, tokenString, -1, "", "", a.cookieSecure, false)
@@ -148,7 +131,7 @@ func (a *api) Logout(c *gin.Context) {
 }
 
 func (a *api) GetLoggedUserCount(c *gin.Context) {
-	count, err := a.fetchLoggedUserCount(c.Request.Context())
+	count, err := a.fetchLoggedUserCount(c)
 	if err != nil {
 		panic(err)
 	}
@@ -165,7 +148,7 @@ func (a *api) GetFileAccess(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.tokenStore.Exists(c.Request.Context(), tokenString)
+	ok, err := a.tokenService.Exists(c, tokenString)
 	if err != nil {
 		panic(err)
 	}
@@ -189,7 +172,7 @@ func (a *api) sendWebsocketMessage(ctx context.Context) {
 }
 
 func (a *api) fetchLoggedUserCount(ctx context.Context) (int64, error) {
-	count, err := a.tokenStore.Count(ctx)
+	count, err := a.tokenService.Count(ctx)
 	if err != nil {
 		return 0, err
 	}
