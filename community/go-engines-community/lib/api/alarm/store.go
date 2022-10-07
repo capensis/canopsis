@@ -805,6 +805,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 				assignedInstructionsMap[alarmId] = append(assignedInstructionsMap[alarmId], AssignedInstruction{
 					ID:        instructionId,
 					Name:      instructionMap[instructionId].Name,
+					Type:      instructionMap[instructionId].Type,
 					Execution: execution,
 				})
 			}

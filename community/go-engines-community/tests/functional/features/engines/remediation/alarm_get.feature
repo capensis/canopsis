@@ -213,6 +213,7 @@ Feature: update an instruction statistics
             {
               "_id": "test-instruction-to-alarm-instruction-get-4-1",
               "name": "test-instruction-to-alarm-instruction-get-4-1-name",
+              "type": 0,
               "execution": null
             }
           ]
@@ -270,6 +271,7 @@ Feature: update an instruction statistics
             {
               "_id": "test-instruction-to-alarm-instruction-get-5-1",
               "name": "test-instruction-to-alarm-instruction-get-5-1-name",
+              "type": 0,
               "execution": {
                 "_id": "{{ .executionID }}",
                 "status": 0
@@ -308,11 +310,13 @@ Feature: update an instruction statistics
             {
               "_id": "test-instruction-to-alarm-instruction-get-5-1",
               "name": "test-instruction-to-alarm-instruction-get-5-1-name",
+              "type": 0,
               "execution": null
             },
             {
               "_id": "test-instruction-to-alarm-instruction-get-5-2",
               "name": "test-instruction-to-alarm-instruction-get-5-2-name",
+              "type": 0,
               "execution": null
             }
           ]
@@ -666,6 +670,7 @@ Feature: update an instruction statistics
             {
               "_id": "test-instruction-to-alarm-instruction-get-7-1",
               "name": "test-instruction-to-alarm-instruction-get-7-1-name",
+              "type": 0,
               "execution": null
             }
           ]
@@ -678,6 +683,7 @@ Feature: update an instruction statistics
             {
               "_id": "test-instruction-to-alarm-instruction-get-7-2",
               "name": "test-instruction-to-alarm-instruction-get-7-2-name",
+              "type": 0,
               "execution": null
             }
           ]
@@ -1400,11 +1406,13 @@ Feature: update an instruction statistics
             {
               "_id": "test-instruction-to-alarm-instruction-get-13-1",
               "name": "test-instruction-to-alarm-instruction-get-13-1-name",
+              "type": 2,
               "execution": null
             },
             {
               "_id": "test-instruction-to-alarm-instruction-get-13-2",
               "name": "test-instruction-to-alarm-instruction-get-13-2-name",
+              "type": 2,
               "execution": null
             }
           ]
