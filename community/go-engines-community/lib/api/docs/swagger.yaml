@@ -4914,8 +4914,12 @@ paths:
       description: Get logged user count
       operationId: auth-logged-user-count
       responses:
-        204:
+        200:
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/auth.LoggedUserCountResponse'
   /login:
     post:
       tags:
@@ -4928,7 +4932,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/auth.loginRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/auth.LoginRequest'
         required: true
       responses:
         200:
@@ -4936,7 +4940,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/auth.loginResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/auth.LoginResponse'
       security:
         - { }
   /logout:
