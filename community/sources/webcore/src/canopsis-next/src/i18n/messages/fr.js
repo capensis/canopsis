@@ -269,6 +269,7 @@ export default merge({
     ctrlZoom: 'Utilisez ctrl + molette de la souris pour zoomer',
     calendar: 'Calendrier',
     tag: 'Étiquette | Étiquettes',
+    notAvailable: 'Indisponible',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -2519,7 +2520,6 @@ export default merge({
     successfulExecutions: 'Exécutions réussies',
     alarmStates: 'Alarmes affectées par état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
-    notAvailable: 'Indisponible',
     instructionChanged: 'La consigne a été modifiée',
     alarmResolvedDate: 'Date de résolution de l\'alarme',
     showFailedExecutions: 'Afficher les exécutions d\'instructions ayant échoué',
@@ -2681,6 +2681,14 @@ export default merge({
     metrics: {
       [USER_METRIC_PARAMETERS.totalUserActivity]: 'Durée totale de l\'activité',
     },
+  },
+
+  role: {
+    expirationSettings: 'Paramètres d\'expiration',
+    inactivityInterval: 'Intervalle d\'inactivité',
+    expirationInterval: 'Intervalle d\'expiration',
+    inactivityIntervalHelpText: 'Définit quand l\'utilisateur est compté comme inactif',
+    expirationIntervalHelpText: 'Définit la période d\'inactivité après laquelle le jeton d\'authentification expire',
   },
 
   testSuite: {
