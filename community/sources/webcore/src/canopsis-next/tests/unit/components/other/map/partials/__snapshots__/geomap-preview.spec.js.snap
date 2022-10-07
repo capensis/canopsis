@@ -56,7 +56,6 @@ Left mouse click + drag - pan the area
       layertype="overlay"
       name="Impact level: 1"
       pane="overlayPane"
-      polygonoptions="[object Object]"
       visible="true"
     >
       <geomap-marker-stub
@@ -89,7 +88,6 @@ Left mouse click + drag - pan the area
       layertype="overlay"
       name="Impact level: 2"
       pane="overlayPane"
-      polygonoptions="[object Object]"
       visible="true"
     >
       <geomap-marker-stub
@@ -145,7 +143,6 @@ Left mouse click + drag - pan the area
       layertype="overlay"
       name="Map"
       pane="overlayPane"
-      polygonoptions="[object Object]"
       visible="true"
     >
       <geomap-marker-stub
@@ -233,7 +230,6 @@ Left mouse click + drag - pan the area
       layertype="overlay"
       name="Ok"
       pane="overlayPane"
-      polygonoptions="[object Object]"
       visible="true"
     >
       <geomap-marker-stub
@@ -266,7 +262,6 @@ Left mouse click + drag - pan the area
       layertype="overlay"
       name="Minor"
       pane="overlayPane"
-      polygonoptions="[object Object]"
       visible="true"
     >
       <geomap-marker-stub
@@ -299,7 +294,6 @@ Left mouse click + drag - pan the area
       layertype="overlay"
       name="Critical"
       pane="overlayPane"
-      polygonoptions="[object Object]"
       visible="true"
     >
       <geomap-marker-stub
@@ -331,7 +325,6 @@ Left mouse click + drag - pan the area
       layertype="overlay"
       name="Map"
       pane="overlayPane"
-      polygonoptions="[object Object]"
       visible="true"
     >
       <geomap-marker-stub
@@ -419,7 +412,6 @@ Left mouse click + drag - pan the area
       layertype="overlay"
       name="Impact level: 1"
       pane="overlayPane"
-      polygonoptions="[object Object]"
       visible="true"
     >
       <geomap-marker-stub
@@ -452,7 +444,6 @@ Left mouse click + drag - pan the area
       layertype="overlay"
       name="Impact level: 2"
       pane="overlayPane"
-      polygonoptions="[object Object]"
       visible="true"
     >
       <geomap-marker-stub
@@ -484,7 +475,6 @@ Left mouse click + drag - pan the area
       layertype="overlay"
       name="Map"
       pane="overlayPane"
-      polygonoptions="[object Object]"
       visible="true"
     >
       <geomap-marker-stub
@@ -515,7 +505,6 @@ Left mouse click + drag - pan the area
       layertype="overlay"
       name="Pbehavior"
       pane="overlayPane"
-      polygonoptions="[object Object]"
       visible="true"
     >
       <geomap-marker-stub
@@ -606,7 +595,6 @@ Left mouse click + drag - pan the area
       layertype="overlay"
       name="Map"
       pane="overlayPane"
-      polygonoptions="[object Object]"
       visible="true"
     >
       <geomap-marker-stub
@@ -702,7 +690,6 @@ Left mouse click + drag - pan the area
       layertype="overlay"
       name="Points"
       pane="overlayPane"
-      polygonoptions="[object Object]"
       visible="true"
     />
     <!---->

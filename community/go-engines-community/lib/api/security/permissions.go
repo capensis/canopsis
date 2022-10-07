@@ -53,4 +53,6 @@ const (
 	ObjResolveRule  = "api_resolve_rule"
 
 	PermCorporatePattern = "api_corporate_pattern"
+
+	PermExportConfigurations = "api_export_configurations"
 )

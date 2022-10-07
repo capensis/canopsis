@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-btn-toggle.position-absolute.density-btn-toggle(v-field="value", mandatory)
+  v-btn-toggle.density-btn-toggle(v-field="value", mandatory)
     v-tooltip(top)
       template(#activator="{ on }")
         v-btn(v-on="on", :value="false", small, flat)

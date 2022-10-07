@@ -68,7 +68,10 @@ func NewPaginatedMeta(q pagination.Query, total int64) (PaginatedMeta, error) {
 		q.Limit = total
 	}
 
-	pageCount := int64(math.Ceil(float64(total) / float64(q.Limit)))
+	var pageCount int64
+	if q.Limit > 0 {
+		pageCount = int64(math.Ceil(float64(total) / float64(q.Limit)))
+	}
 	if pageCount == 0 {
 		pageCount = 1
 	}
