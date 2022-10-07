@@ -11,15 +11,15 @@ const bearerPrefix = "Bearer"
 
 // bearerProvider implements a Bearer Token Authentication provider.
 type bearerProvider struct {
-	provider security.TokenProvider
+	providers []security.TokenProvider
 }
 
 // NewBearerProvider creates new provider.
 func NewBearerProvider(
-	provider security.TokenProvider,
+	providers []security.TokenProvider,
 ) security.HttpProvider {
 	return &bearerProvider{
-		provider: provider,
+		providers: providers,
 	}
 }
 
@@ -30,10 +30,12 @@ func (p *bearerProvider) Auth(r *http.Request) (*security.User, error, bool) {
 	}
 
 	tokenString := strings.TrimSpace(header[len(bearerPrefix):])
-	user, err := p.provider.Auth(r.Context(), tokenString)
-	if err != nil {
-		return nil, err, true
+	for _, provider := range p.providers {
+		user, err := provider.Auth(r.Context(), tokenString)
+		if err != nil || user != nil {
+			return user, err, true
+		}
 	}
 
-	return user, nil, true
+	return nil, nil, true
 }

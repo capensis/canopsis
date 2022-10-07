@@ -22,29 +22,35 @@ type Authorizer interface {
 
 func NewAuthorizer(
 	enforcer security.Enforcer,
-	tokenProvider security.TokenProvider,
+	tokenProviders []security.TokenProvider,
 ) Authorizer {
 	return &authorizer{
-		enforcer:      enforcer,
-		tokenProvider: tokenProvider,
-		roomPerms:     make(map[string][]string),
+		enforcer:       enforcer,
+		tokenProviders: tokenProviders,
+		roomPerms:      make(map[string][]string),
 	}
 }
 
 type authorizer struct {
-	enforcer      security.Enforcer
-	tokenProvider security.TokenProvider
-	roomPermsMx   sync.RWMutex
-	roomPerms     map[string][]string
+	enforcer       security.Enforcer
+	tokenProviders []security.TokenProvider
+	roomPermsMx    sync.RWMutex
+	roomPerms      map[string][]string
 }
 
 func (a *authorizer) Authenticate(ctx context.Context, token string) (string, error) {
-	user, err := a.tokenProvider.Auth(ctx, token)
-	if err != nil || user == nil {
-		return "", err
+	for _, provider := range a.tokenProviders {
+		user, err := provider.Auth(ctx, token)
+		if err != nil {
+			return "", err
+		}
+
+		if user != nil {
+			return user.ID, nil
+		}
 	}
 
-	return user.ID, nil
+	return "", nil
 }
 
 func (a *authorizer) Authorize(userId, room string) (bool, error) {
