@@ -6,7 +6,7 @@
     v-layout(row)
       c-name-field(
         v-field="form.name",
-        :label="$t('users.username')",
+        :label="$t('common.username')",
         :disabled="onlyUserPrefs",
         browser-autocomplete="new-password"
       )
@@ -39,7 +39,7 @@
       v-text-field(
         v-field="form.password",
         v-validate="passwordRules",
-        :label="$t('users.password')",
+        :label="$t('common.password')",
         :error-messages="errors.collect('password')",
         type="password",
         name="password",
@@ -50,7 +50,7 @@
       v-select(
         v-field="form.role",
         v-validate="'required'",
-        :label="$t('users.role')",
+        :label="$tc('common.role')",
         :items="roles",
         :disabled="onlyUserPrefs",
         :error-messages="errors.collect('role')",

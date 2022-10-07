@@ -33,7 +33,7 @@
       v-if="isShownUserNameField",
       v-field="form.auth_username",
       v-validate="'required'",
-      :label="$t('users.username')",
+      :label="$t('common.username')",
       :error-messages="errors.collect('username')",
       name="username"
     )
