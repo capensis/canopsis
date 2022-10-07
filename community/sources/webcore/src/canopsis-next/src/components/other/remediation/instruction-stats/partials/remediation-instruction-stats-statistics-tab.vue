@@ -15,7 +15,7 @@
       span {{ item.execution_count }}
     template(#avg_complete_time="{ item }")
       span(v-if="item.execution_count") {{ item.avg_complete_time | duration }}
-      span(v-else) {{ $t('remediationInstructionStats.notAvailable') }}
+      span(v-else) {{ $t('common.notAvailable') }}
     template(#alarm_states="{ item }")
       affect-alarm-states(v-if="item.execution_count", :alarm-states="item.alarm_states")
       template(v-else) -

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { get } from 'lodash';
 
-import { API_HOST, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
+import { API_HOST, LOCAL_STORAGE_ACCESS_TOKEN_KEY, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 
 import localStorageService from '@/services/local-storage';
 
@@ -84,7 +84,15 @@ function errorResponseHandler(responseWithError) {
      */
     if ([502, 401].includes(response.status)) {
       localStorageService.remove(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
-      window.location.reload();
+
+      const queryParams = new URLSearchParams(window.location.search);
+      queryParams.delete(ROUTER_ACCESS_TOKEN_KEY);
+
+      const { origin, pathname } = window.location;
+
+      const params = queryParams.toString();
+
+      window.location.replace(`${origin}${pathname}${params ? `?${params}` : ''}`);
     }
 
     if (config.fullResponse) {

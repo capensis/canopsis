@@ -4962,8 +4962,12 @@ paths:
       description: Get logged user count
       operationId: auth-logged-user-count
       responses:
-        204:
+        200:
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/auth.LoggedUserCountResponse'
   /login:
     post:
       tags:
@@ -4976,7 +4980,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/auth.loginRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/auth.LoginRequest'
         required: true
       responses:
         200:
@@ -4984,7 +4988,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/auth.loginResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/auth.LoginResponse'
       security:
         - { }
   /logout:
@@ -8282,6 +8286,103 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/scenario.GetMinimalPriorityResponse'
+  /share-tokens:
+    get:
+      tags:
+        - share-tokens
+      summary: Find share tokens
+      description: Get paginated list of share tokens
+      operationId: share-tokens-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          description: sort query
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/sharetoken.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    post:
+      tags:
+        - share-tokens
+      summary: Create share token
+      description: Create share token
+      operationId: share-tokens-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/sharetoken.EditRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create a share token.
+                value: {
+                  "description": "Share token",
+                  "duration": {
+                    "value": 1,
+                    "unit": "d"
+                  }
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/sharetoken.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /share-tokens/{id}:
+    delete:
+      tags:
+        - share-tokens
+      summary: Delete share token by id
+      description: Delete share token by id
+      operationId: share-tokens-delete-by-id
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /state-settings:
     get:
       tags:
