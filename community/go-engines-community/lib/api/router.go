@@ -24,6 +24,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exportconfiguration"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
@@ -153,7 +154,6 @@ func RegisterRoutes(
 	security.RegisterCallbackRoutes(router, dbClient)
 	authApi := auth.NewApi(
 		security.GetTokenService(),
-		security.GetTokenStore(),
 		security.GetAuthProviders(),
 		security.GetSessionStore(),
 		websocketHub,
@@ -330,6 +330,13 @@ func RegisterRoutes(
 				alarmAPI.GetExport,
 			)
 		}
+
+		exportConfigurationAPI := exportconfiguration.NewApi(dbClient, logger)
+		protected.POST(
+			"/export-configuration",
+			middleware.Authorize(apisecurity.PermExportConfigurations, permCan, enforcer),
+			exportConfigurationAPI.Export,
+		)
 
 		entityAPI := entity.NewApi(
 			entity.NewStore(dbClient, timezoneConfigProvider),
@@ -710,7 +717,9 @@ func RegisterRoutes(
 				eventApi.Send)
 		}
 
-		appInfoApi := appinfo.NewApi(enforcer, appinfo.NewStore(dbClient, security.GetConfig().Security.AuthProviders))
+		securityConfig := security.GetConfig().Security
+		appInfoApi := appinfo.NewApi(enforcer, appinfo.NewStore(dbClient, securityConfig.AuthProviders,
+			securityConfig.Cas.Title, securityConfig.Saml.Title))
 		protected.GET("app-info", appInfoApi.GetAppInfo)
 		appInfoRouter := protected.Group("/internal")
 		{
