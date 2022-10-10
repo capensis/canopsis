@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -25,15 +24,14 @@ func (a *enrichmentApplicator) Apply(
 	rule Rule,
 	event types.Event,
 	regexMatchWrapper RegexMatchWrapper,
-	cfgTimezone *config.TimezoneConfig,
 ) (string, types.Event, error) {
-	externalData, err := a.getExternalData(ctx, rule, event, regexMatchWrapper, cfgTimezone)
+	externalData, err := a.getExternalData(ctx, rule, event, regexMatchWrapper)
 	if err != nil {
 		return rule.Config.OnFailure, event, err
 	}
 
 	for _, action := range rule.Config.Actions {
-		event, err = a.actionProcessor.Process(action, event, regexMatchWrapper, externalData, cfgTimezone)
+		event, err = a.actionProcessor.Process(action, event, regexMatchWrapper, externalData)
 		if err != nil {
 			return rule.Config.OnFailure, event, fmt.Errorf("invalid action name=%q type=%q: %w", action.Name, action.Type, err)
 		}
@@ -42,7 +40,7 @@ func (a *enrichmentApplicator) Apply(
 	return rule.Config.OnSuccess, event, nil
 }
 
-func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatchWrapper RegexMatchWrapper, cfgTimezone *config.TimezoneConfig) (map[string]interface{}, error) {
+func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatchWrapper RegexMatchWrapper) (map[string]interface{}, error) {
 	externalData := make(map[string]interface{})
 
 	for name, parameters := range rule.ExternalData {
@@ -54,7 +52,7 @@ func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule Rule, e
 		data, err := getter.Get(ctx, parameters, Template{
 			Event:             event,
 			RegexMatchWrapper: regexMatchWrapper,
-		}, cfgTimezone)
+		})
 		if err != nil {
 			return externalData, err
 		}
