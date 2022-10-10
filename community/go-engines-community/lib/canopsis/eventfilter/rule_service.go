@@ -5,7 +5,6 @@ import (
 	"sync"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -17,7 +16,6 @@ type ruleService struct {
 	ruleApplicatorContainer RuleApplicatorContainer
 	rules                   []Rule
 	rulesMutex              sync.RWMutex
-	timezoneConfigProvider  config.TimezoneConfigProvider
 	logger                  zerolog.Logger
 }
 
@@ -47,7 +45,6 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 	defer s.rulesMutex.RUnlock()
 
 	outcome := OutcomePass
-	tz := s.timezoneConfigProvider.Get()
 	now := time.Now()
 
 	for _, rule := range s.rules {
@@ -161,7 +158,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 				EventRegexMatches: eventRegexMatches,
 				Entity:            entityRegexMatches,
 			},
-		}, &tz)
+		})
 
 		if err != nil {
 			s.logger.Err(err).Str("rule_id", rule.ID).Str("rule_type", rule.Type).Msg("Event filter rule service: failed to apply")
@@ -175,12 +172,11 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 	return event, nil
 }
 
-func NewRuleService(ruleAdapter RuleAdapter, container RuleApplicatorContainer, timezoneConfigProvider config.TimezoneConfigProvider, logger zerolog.Logger) Service {
+func NewRuleService(ruleAdapter RuleAdapter, container RuleApplicatorContainer, logger zerolog.Logger) Service {
 	return &ruleService{
 		rulesMutex:              sync.RWMutex{},
 		rulesAdapter:            ruleAdapter,
 		ruleApplicatorContainer: container,
-		timezoneConfigProvider:  timezoneConfigProvider,
 		logger:                  logger,
 	}
 }
