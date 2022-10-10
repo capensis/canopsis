@@ -302,7 +302,10 @@ export const formToRemediationInstruction = (form) => {
     instruction.steps = formStepsToRemediationInstructionSteps(steps);
   } else {
     instruction.jobs = formJobsToRemediationInstructionJobs(jobs);
-    instruction.priority = priority;
+
+    if (form.type === REMEDIATION_INSTRUCTION_TYPES.auto) {
+      instruction.priority = priority;
+    }
   }
 
   return {

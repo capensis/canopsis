@@ -11,7 +11,7 @@ import {
   ENTITIES_STATUSES,
   EVENT_ENTITY_TYPES,
   EVENT_ENTITY_STYLE,
-  ALARM_LIST_ACTIONS_TYPES,
+  ALARM_LIST_ACTIONS_TYPES, REMEDIATION_INSTRUCTION_TYPES,
 } from '@/constants';
 
 import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule';
@@ -273,13 +273,15 @@ export default {
 
       this.$modals.show({
         id: `${this.item._id}${assignedInstruction._id}`,
-        name: MODALS.executeRemediationInstruction,
+        name: assignedInstruction.type === REMEDIATION_INSTRUCTION_TYPES.manual
+          ? MODALS.executeRemediationInstruction
+          : MODALS.executeRemediationSimpleInstruction,
         config: {
           assignedInstruction,
           alarmId: this.item._id,
-          onOpen: refreshAlarm,
           onClose: refreshAlarm,
           onComplete: refreshAlarm,
+          onExecute: refreshAlarm,
         },
       });
     },
