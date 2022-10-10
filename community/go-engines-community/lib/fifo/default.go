@@ -51,12 +51,21 @@ func ParseOptions() Options {
 	return opts
 }
 
-func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, ExternalDataContainer *eventfilter.ExternalDataContainer, logger zerolog.Logger) libengine.Engine {
+func Default(
+	ctx context.Context,
+	options Options,
+	mongoClient mongo.DbClient,
+	externalDataContainer *eventfilter.ExternalDataContainer,
+	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
+	logger zerolog.Logger,
+) libengine.Engine {
 	var m depmake.DependencyMaker
 
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
-	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
+	if timezoneConfigProvider == nil {
+		timezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
+	}
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
@@ -89,8 +98,8 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 
 	ruleAdapter := eventfilter.NewRuleAdapter(mongoClient)
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(ExternalDataContainer))
-	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, config.NewTimezoneConfigProvider(cfg, logger), logger)
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer, timezoneConfigProvider))
+	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, logger)
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)

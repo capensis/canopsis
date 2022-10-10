@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/migration/cli"
@@ -191,12 +192,22 @@ func applyMongoFixtures(ctx context.Context, f flags, dbClient mongo.DbClient, l
 }
 
 func updateMongoConfig(ctx context.Context, f flags, conf Conf, dbClient mongo.DbClient) error {
+	versionConfAdapter := config.NewVersionAdapter(dbClient)
+	prevVersionConf, err := versionConfAdapter.GetConfig(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to fetch version config: %w", err)
+	}
 	buildInfo := canopsis.GetBuildInfo()
-	err := config.NewVersionAdapter(dbClient).UpsertConfig(ctx, config.VersionConf{
+	versionConf := config.VersionConf{
 		Version: buildInfo.Version,
 		Edition: f.edition,
 		Stack:   "go",
-	})
+	}
+	if prevVersionConf.Version != versionConf.Version {
+		versionUpdated := types.NewCpsTime()
+		versionConf.VersionUpdated = &versionUpdated
+	}
+	err = versionConfAdapter.UpsertConfig(ctx, versionConf)
 	if err != nil {
 		return fmt.Errorf("failed to update version config: %w", err)
 	}

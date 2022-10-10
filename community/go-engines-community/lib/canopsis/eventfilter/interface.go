@@ -5,7 +5,6 @@ package eventfilter
 import (
 	"context"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -17,12 +16,12 @@ const (
 )
 
 type ActionProcessor interface {
-	Process(ctx context.Context, action Action, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}, cfgTimezone *config.TimezoneConfig) (types.Event, error)
+	Process(ctx context.Context, action Action, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}) (types.Event, error)
 }
 
 type RuleApplicator interface {
 	// Apply eventfilter rule, the first return value(string) should be one of the outcome constant values
-	Apply(context.Context, Rule, types.Event, RegexMatchWrapper, *config.TimezoneConfig) (string, types.Event, error)
+	Apply(context.Context, Rule, types.Event, RegexMatchWrapper) (string, types.Event, error)
 }
 
 type RuleAdapter interface {
@@ -41,7 +40,7 @@ type RuleApplicatorContainer interface {
 }
 
 type ExternalDataGetter interface {
-	Get(ctx context.Context, parameters ExternalDataParameters, templateParameters TemplateGetter, cfgTimezone *config.TimezoneConfig) (interface{}, error)
+	Get(ctx context.Context, parameters ExternalDataParameters, templateParameters TemplateGetter) (interface{}, error)
 }
 
 type TemplateGetter interface {

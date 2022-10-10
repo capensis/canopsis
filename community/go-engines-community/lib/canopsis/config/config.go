@@ -2,6 +2,8 @@ package config
 
 import (
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 // Some default values related to configuration
@@ -114,5 +116,7 @@ type UserInterfaceConf struct {
 type VersionConf struct {
 	Edition string `bson:"edition"`
 	Stack   string `bson:"stack"`
-	Version string `bson:"version"`
+
+	Version        string         `bson:"version"`
+	VersionUpdated *types.CpsTime `bson:"version_updated,omitempty"`
 }
