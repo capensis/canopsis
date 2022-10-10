@@ -1499,6 +1499,12 @@ export default merge({
           success: '{instructionName} has been successfully modified',
         },
       },
+      duplicate: {
+        title: 'Duplicate instruction',
+        popups: {
+          success: '{instructionName} has been successfully duplicated',
+        },
+      },
     },
     createRemediationConfiguration: {
       create: {
@@ -1511,6 +1517,12 @@ export default merge({
         title: 'Modify configuration',
         popups: {
           success: '{configurationName} has been successfully modified',
+        },
+      },
+      duplicate: {
+        title: 'Duplicate configuration',
+        popups: {
+          success: '{configurationName} has been successfully duplicated',
         },
       },
       fields: {
