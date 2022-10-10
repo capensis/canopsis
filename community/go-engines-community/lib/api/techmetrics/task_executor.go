@@ -69,19 +69,26 @@ func (e *taskExecutor) Run(ctx context.Context) {
 	e.pgPoolClosed = false
 	e.pgPoolMx.Unlock()
 	ch := make(chan struct{}, 1)
-	defer close(ch)
 	e.executeChMx.Lock()
 	e.executeCh = ch
 	e.executeChMx.Unlock()
+
+	defer func() {
+		e.executeChMx.Lock()
+		e.executeCh = nil
+		close(ch)
+		e.executeChMx.Unlock()
+	}()
 
 	defer e.closePgPool()
 
 	e.executeLastTask(ctx)
 
 	wg := sync.WaitGroup{}
-	wg.Add(1)
 
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		for {
 			select {
 			case <-ctx.Done():
@@ -96,6 +103,7 @@ func (e *taskExecutor) Run(ctx context.Context) {
 		}
 	}()
 
+	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		ticker := time.NewTicker(time.Minute)
@@ -120,7 +128,7 @@ func (e *taskExecutor) StartExecute(ctx context.Context) (Task, error) {
 		return Task{}, err
 	}
 
-	now := time.Now().In(time.UTC)
+	now := time.Now().UTC()
 	var task Task
 	err = pgPool.WithTransaction(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		task = Task{}
@@ -174,7 +182,7 @@ func (e *taskExecutor) executeLastTask(ctx context.Context) {
 		return
 	}
 
-	now := time.Now().In(time.UTC)
+	now := time.Now().UTC()
 	var lastTaskId int
 	res := pgPool.QueryRow(ctx, "UPDATE export SET started = $2 WHERE status = $1 RETURNING id", TaskStatusRunning, now)
 	err = res.Scan(&lastTaskId)
@@ -206,7 +214,7 @@ func (e *taskExecutor) deleteTasks(ctx context.Context) {
 		return
 	}
 
-	now := time.Now().In(time.UTC)
+	now := time.Now().UTC()
 	date := now.Add(-e.configProvider.Get().DumpKeepInterval)
 	rows, err := pgPool.Query(ctx, "SELECT id, filepath FROM export WHERE status != $1 AND completed < $2", TaskStatusRunning, date)
 	if err != nil {
