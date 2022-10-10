@@ -40,9 +40,6 @@ func NewEngine(
 
 	m := DependencyMaker{}
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
-	if timezoneConfigProvider != nil {
-		timezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
-	}
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	entityAdapter := entity.NewAdapter(mongoClient)
