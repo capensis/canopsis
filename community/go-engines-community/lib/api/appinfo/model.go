@@ -5,7 +5,9 @@ import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-commun
 type VersionConf struct {
 	Edition string `json:"edition" bson:"edition"`
 	Stack   string `json:"stack" bson:"stack"`
-	Version string `json:"version" bson:"version"`
+
+	Version        string         `json:"version" bson:"version"`
+	VersionUpdated *types.CpsTime `json:"version_updated" bson:"version_updated" swaggertype:"integer"`
 }
 
 type PopupTimeout struct {
