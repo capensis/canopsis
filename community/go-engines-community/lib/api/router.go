@@ -1535,7 +1535,7 @@ func RegisterRoutes(
 
 		techMetricsRouter := protected.Group("/tech-metrics-export")
 		{
-			techMetricsAPI := techmetrics.NewApi(techMetricsTaskExecutor)
+			techMetricsAPI := techmetrics.NewApi(techMetricsTaskExecutor, timezoneConfigProvider)
 			techMetricsRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.PermTechMetrics, model.PermissionCan, enforcer),
