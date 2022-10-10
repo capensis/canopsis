@@ -1,11 +1,11 @@
 package types_test
 
 import (
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
-	"strings"
-	"testing"
 )
 
 type intWrapper struct {
@@ -348,78 +348,6 @@ func TestOptionalRegexpMongoDriver(t *testing.T) {
 
 		Convey("The document should be decoded without error", func() {
 			var w regexpWrapper
-			So(bson.Unmarshal(bsonDocument, &w), ShouldBeNil)
-
-			Convey("The value should not be set", func() {
-				So(w.Value.Set, ShouldBeFalse)
-			})
-		})
-	})
-}
-
-type templateWrapper struct {
-	Value types.OptionalTemplate `bson:"value"`
-}
-
-func TestOptionalTemplateMongoDriver(t *testing.T) {
-	Convey("Given a BSON document containing a valid template", t, func() {
-		document := bson.M{
-			"value": "my name is {{.name}}",
-		}
-		bsonDocument, err := bson.Marshal(document)
-		So(err, ShouldBeNil)
-
-		Convey("The document should be decoded without error", func() {
-			var w templateWrapper
-			So(bson.Unmarshal(bsonDocument, &w), ShouldBeNil)
-
-			Convey("The value should be set correctly", func() {
-				So(w.Value.Set, ShouldBeTrue)
-
-				builder := strings.Builder{}
-				So(w.Value.Value.Execute(&builder, map[string]string{"name": "Mary"}), ShouldBeNil)
-				So(builder.String(), ShouldEqual, "my name is Mary")
-
-				builder.Reset()
-				So(w.Value.Value.Execute(&builder, map[string]string{"name": "Henry"}), ShouldBeNil)
-				So(builder.String(), ShouldEqual, "my name is Henry")
-			})
-		})
-	})
-
-	Convey("Given a BSON document containing an invalid template", t, func() {
-		document := bson.M{
-			"value": "my name is {{.name}",
-		}
-		bsonDocument, err := bson.Marshal(document)
-		So(err, ShouldBeNil)
-
-		Convey("Decoding the document should return an error", func() {
-			var w templateWrapper
-			So(bson.Unmarshal(bsonDocument, &w), ShouldNotBeNil)
-		})
-	})
-
-	Convey("Given a BSON document containing an integer", t, func() {
-		document := bson.M{
-			"value": 12,
-		}
-		bsonDocument, err := bson.Marshal(document)
-		So(err, ShouldBeNil)
-
-		Convey("Decoding the document should return an error", func() {
-			var w templateWrapper
-			So(bson.Unmarshal(bsonDocument, &w), ShouldNotBeNil)
-		})
-	})
-
-	Convey("Given an empty BSON document", t, func() {
-		document := bson.M{}
-		bsonDocument, err := bson.Marshal(document)
-		So(err, ShouldBeNil)
-
-		Convey("The document should be decoded without error", func() {
-			var w templateWrapper
 			So(bson.Unmarshal(bsonDocument, &w), ShouldBeNil)
 
 			Convey("The value should not be set", func() {

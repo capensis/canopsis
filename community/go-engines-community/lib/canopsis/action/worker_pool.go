@@ -4,15 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 	"sync"
-	"text/template"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
@@ -56,13 +55,13 @@ type WorkerPool interface {
 }
 
 type pool struct {
-	size                   int
-	axeRpcClient           engine.RPCClient
-	webhookRpcClient       engine.RPCClient
-	alarmAdapter           alarm.Adapter
-	encoder                encoding.Encoder
-	logger                 zerolog.Logger
-	timezoneConfigProvider *config.BaseTimezoneConfigProvider
+	size             int
+	axeRpcClient     engine.RPCClient
+	webhookRpcClient engine.RPCClient
+	alarmAdapter     alarm.Adapter
+	encoder          encoding.Encoder
+	logger           zerolog.Logger
+	templateExecutor *template.Executor
 }
 
 func NewWorkerPool(
@@ -72,16 +71,16 @@ func NewWorkerPool(
 	alarmAdapter alarm.Adapter,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
-	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
+	timezoneConfigProvider config.TimezoneConfigProvider,
 ) WorkerPool {
 	return &pool{
-		size:                   size,
-		axeRpcClient:           axeRpcClient,
-		webhookRpcClient:       webhookRpcClient,
-		alarmAdapter:           alarmAdapter,
-		encoder:                encoder,
-		logger:                 logger,
-		timezoneConfigProvider: timezoneConfigProvider,
+		size:             size,
+		axeRpcClient:     axeRpcClient,
+		webhookRpcClient: webhookRpcClient,
+		alarmAdapter:     alarmAdapter,
+		encoder:          encoder,
+		logger:           logger,
+		templateExecutor: template.NewExecutor(timezoneConfigProvider),
 	}
 }
 
@@ -217,7 +216,7 @@ func (s *pool) getRPCAxeEvent(task Task) (*types.RPCAxeEvent, error) {
 		Entity: task.Entity,
 	}
 	var err error
-	params.Output, err = s.renderTemplate(params.Output, tplData)
+	params.Output, err = s.templateExecutor.Execute(params.Output, tplData)
 	if err != nil {
 		return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
 	}
@@ -276,18 +275,18 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 	}
 
 	request := *task.Action.Parameters.Request
-	request.URL, err = s.renderTemplate(request.URL, tplData)
+	request.URL, err = s.templateExecutor.Execute(request.URL, tplData)
 	if err != nil {
 		return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
 	}
-	request.Payload, err = s.renderTemplate(request.Payload, tplData)
+	request.Payload, err = s.templateExecutor.Execute(request.Payload, tplData)
 	if err != nil {
 		return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
 	}
 
 	headers := make(map[string]string, len(request.Headers))
 	for k, v := range request.Headers {
-		headers[k], err = s.renderTemplate(v, tplData)
+		headers[k], err = s.templateExecutor.Execute(v, tplData)
 		if err != nil {
 			return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
 		}
@@ -314,27 +313,6 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 	}, nil
 }
 
-func (s *pool) renderTemplate(templateStr string, data interface{}) (string, error) {
-	var f template.FuncMap
-	if s.timezoneConfigProvider != nil {
-		timezone := s.timezoneConfigProvider.Get()
-		f = types.GetTemplateFunc(&timezone)
-	} else {
-		f = types.GetTemplateFunc(nil)
-	}
-
-	t, err := template.New("template").Funcs(f).Parse(templateStr)
-	if err != nil {
-		return "", err
-	}
-	b := strings.Builder{}
-	err = t.Execute(&b, data)
-	if err != nil {
-		return "", err
-	}
-	return b.String(), nil
-}
-
 func (s *pool) resolveAuthor(task Task) (AdditionalData, error) {
 	additionalData := task.AdditionalData
 	if task.Action.Parameters.ForwardAuthor != nil && *task.Action.Parameters.ForwardAuthor {
@@ -349,7 +327,7 @@ func (s *pool) resolveAuthor(task Task) (AdditionalData, error) {
 	}
 
 	var err error
-	additionalData.Author, err = s.renderTemplate(task.Action.Parameters.Author, types.AlarmWithEntity{
+	additionalData.Author, err = s.templateExecutor.Execute(task.Action.Parameters.Author, types.AlarmWithEntity{
 		Alarm:  task.Alarm,
 		Entity: task.Entity,
 	})

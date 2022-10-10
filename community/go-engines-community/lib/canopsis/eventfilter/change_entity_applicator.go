@@ -1,25 +1,31 @@
 package eventfilter
 
 import (
-	"bytes"
 	"context"
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"text/template"
 )
 
 type changeEntityApplicator struct {
 	externalDataContainer *ExternalDataContainer
-	buf                   bytes.Buffer
+	templateExecutor      *template.Executor
 }
 
-func NewChangeEntityApplicator(externalDataContainer *ExternalDataContainer) RuleApplicator {
-	return &changeEntityApplicator{externalDataContainer: externalDataContainer, buf: bytes.Buffer{}}
+func NewChangeEntityApplicator(
+	externalDataContainer *ExternalDataContainer,
+	timezoneConfigProvider config.TimezoneConfigProvider,
+) RuleApplicator {
+	return &changeEntityApplicator{
+		externalDataContainer: externalDataContainer,
+		templateExecutor:      template.NewExecutor(timezoneConfigProvider),
+	}
 }
 
-func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatchWrapper RegexMatchWrapper, cfgTimezone *config.TimezoneConfig) (string, types.Event, error) {
-	externalData, err := a.getExternalData(ctx, rule, event, regexMatchWrapper, cfgTimezone)
+func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatchWrapper RegexMatchWrapper) (string, types.Event, error) {
+	externalData, err := a.getExternalData(ctx, rule, event, regexMatchWrapper)
 	if err != nil {
 		return OutcomeDrop, event, err
 	}
@@ -31,28 +37,28 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event typ
 	}
 
 	if rule.Config.Resource != "" {
-		event.Resource, err = a.executeTpl(rule.Config.Resource, templateParams, cfgTimezone)
+		event.Resource, err = a.templateExecutor.Execute(rule.Config.Resource, templateParams.GetTemplate())
 		if err != nil {
 			return OutcomeDrop, event, err
 		}
 	}
 
 	if rule.Config.Component != "" {
-		event.Component, err = a.executeTpl(rule.Config.Component, templateParams, cfgTimezone)
+		event.Component, err = a.templateExecutor.Execute(rule.Config.Component, templateParams.GetTemplate())
 		if err != nil {
 			return OutcomeDrop, event, err
 		}
 	}
 
 	if rule.Config.Connector != "" {
-		event.Connector, err = a.executeTpl(rule.Config.Connector, templateParams, cfgTimezone)
+		event.Connector, err = a.templateExecutor.Execute(rule.Config.Connector, templateParams.GetTemplate())
 		if err != nil {
 			return OutcomeDrop, event, err
 		}
 	}
 
 	if rule.Config.ConnectorName != "" {
-		event.ConnectorName, err = a.executeTpl(rule.Config.ConnectorName, templateParams, cfgTimezone)
+		event.ConnectorName, err = a.templateExecutor.Execute(rule.Config.ConnectorName, templateParams.GetTemplate())
 		if err != nil {
 			return OutcomeDrop, event, err
 		}
@@ -61,7 +67,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event typ
 	return OutcomePass, event, nil
 }
 
-func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatchWrapper RegexMatchWrapper, cfgTimezone *config.TimezoneConfig) (map[string]interface{}, error) {
+func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatchWrapper RegexMatchWrapper) (map[string]interface{}, error) {
 	externalData := make(map[string]interface{})
 
 	for name, parameters := range rule.ExternalData {
@@ -73,7 +79,7 @@ func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule,
 		data, err := getter.Get(ctx, parameters, Template{
 			Event:             event,
 			RegexMatchWrapper: regexMatchWrapper,
-		}, cfgTimezone)
+		})
 		if err != nil {
 			return externalData, err
 		}
@@ -82,20 +88,4 @@ func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule,
 	}
 
 	return externalData, nil
-}
-
-func (a *changeEntityApplicator) executeTpl(tplText string, params TemplateGetter, cfgTimezone *config.TimezoneConfig) (string, error) {
-	tpl, err := template.New("tpl").Option("missingkey=error").Funcs(types.GetTemplateFunc(cfgTimezone)).Parse(tplText)
-	if err != nil {
-		return "", err
-	}
-
-	a.buf.Reset()
-
-	err = tpl.Execute(&a.buf, params.GetTemplate())
-	if err != nil {
-		return "", err
-	}
-
-	return a.buf.String(), nil
 }

@@ -1,24 +1,23 @@
 package eventfilter
 
 import (
-	"bytes"
 	"fmt"
-	"text/template"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 type actionProcessor struct {
-	buf bytes.Buffer
+	templateExecutor *template.Executor
 }
 
-func NewActionProcessor() ActionProcessor {
-	return &actionProcessor{buf: bytes.Buffer{}}
+func NewActionProcessor(timezoneConfigProvider config.TimezoneConfigProvider) ActionProcessor {
+	return &actionProcessor{templateExecutor: template.NewExecutor(timezoneConfigProvider)}
 }
 
-func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}, cfgTimezone *config.TimezoneConfig) (types.Event, error) {
+func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}) (types.Event, error) {
 	switch action.Type {
 	case ActionSetField:
 		err := event.SetField(action.Name, action.Value)
@@ -29,14 +28,13 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 			return event, ErrShouldBeAString
 		}
 
-		value, err := p.executeTpl(
+		value, err := p.templateExecutor.Execute(
 			templateStr,
 			Template{
 				Event:             event,
 				RegexMatchWrapper: regexMatchWrapper,
 				ExternalData:      externalData,
-			},
-			cfgTimezone,
+			}.GetTemplate(),
 		)
 		if err != nil {
 			return event, err
@@ -63,14 +61,13 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 			return event, ErrShouldBeAString
 		}
 
-		value, err := p.executeTpl(
+		value, err := p.templateExecutor.Execute(
 			templateStr,
 			Template{
 				Event:             event,
 				RegexMatchWrapper: regexMatchWrapper,
 				ExternalData:      externalData,
-			},
-			cfgTimezone,
+			}.GetTemplate(),
 		)
 		if err != nil {
 			return event, err
@@ -141,22 +138,6 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 	}
 
 	return event, fmt.Errorf("action type = %s is invalid", action.Type)
-}
-
-func (p *actionProcessor) executeTpl(tplText string, params TemplateGetter, cfgTimezone *config.TimezoneConfig) (string, error) {
-	tpl, err := template.New("tpl").Option("missingkey=error").Funcs(types.GetTemplateFunc(cfgTimezone)).Parse(tplText)
-	if err != nil {
-		return "", err
-	}
-
-	p.buf.Reset()
-
-	err = tpl.Execute(&p.buf, params.GetTemplate())
-	if err != nil {
-		return "", err
-	}
-
-	return p.buf.String(), nil
 }
 
 func setEntityInfo(entity types.Entity, value interface{}, name, description string) (types.Entity, bool) {
