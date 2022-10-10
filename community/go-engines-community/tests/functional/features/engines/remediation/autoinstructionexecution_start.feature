@@ -498,9 +498,7 @@ Feature: run an auto instruction
       "output": "test-output-to-run-auto-instruction-9"
     }
     """
-    When I wait the end of event processing
-    When I wait the next periodical process
-    When I wait the next periodical process
+    When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-9&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
@@ -554,9 +552,7 @@ Feature: run an auto instruction
       "output": "test-output-to-run-auto-instruction-10"
     }
     """
-    When I wait the end of event processing
-    When I wait the next periodical process
-    When I wait the next periodical process
+    When I wait the end of 4 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-10&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
@@ -630,9 +626,7 @@ Feature: run an auto instruction
       "output": "test-output-to-run-auto-instruction-11"
     }
     """
-    When I wait the end of event processing
-    When I wait the next periodical process
-    When I wait the next periodical process
+    When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-11&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
