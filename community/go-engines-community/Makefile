@@ -178,18 +178,75 @@ docker-cmd-import-context-graph: TARGET=import-context-graph
 # You can modify the content of the CMDS and PLUGINS variables to change what will be built/installed
 # Example : make install DESTDIR=/tmp/installroot PLUGINS=datasource/mongo.so CMDS="engine-che connector-junit"
 # will only install the mongo datasource plugin, engine-che and connector-junit
-install: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
-	@echo "==> Installing files for $(CANOPSIS_EDITION)"
+install-common: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
+	# This targets install files that are common between Pro and Community editions
+	@echo "==> Installing commons files for $(CANOPSIS_EDITION)"
+	
+	@echo "==> Installing Canopsis cmds"
 	# Install cmds
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/bin"
 	install -c -m 755 -p -- $(foreach cmd,$(CMDS),"$(CURRENT_BUILD_OUTPUT_DIR)/cmd/$(cmd)") "$(DESTDIR)/opt/canopsis/bin/"
 	( cd -- "$(DESTDIR)/opt/canopsis/bin" && ln -sf "canopsis-api-$(CANOPSIS_EDITION)" canopsis-api )
+	@echo "==> Installing Canopsis plugins"
 	# Install plugins
 	$(foreach plugin,$(PLUGINS),install -d -m 755 -- "$(DESTDIR)/opt/canopsis/lib/go/plugins/$(dir $(plugin))" && install -c -m 644 -- "$(CURRENT_BUILD_OUTPUT_DIR)/plugins/$(plugin)" "$(DESTDIR)/opt/canopsis/lib/go/plugins/$(dir $(plugin))")
-	# Install configuration files
+	
+	# Create configuration directories
+	@echo "==> Creating configuration directories"
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/etc"
+	install -d -m 755 -- "$(DESTDIR)/usr/lib/systemd/system"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/config/api/security"
+	
+	@echo "==> Installing configuration files"
+	# Install canopsis configuration
 	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml" "$(DESTDIR)/opt/canopsis/etc/"
 	( cd -- "$(DESTDIR)/opt/canopsis/etc" && ln -sf "canopsis-$(CANOPSIS_EDITION).toml" canopsis.toml )
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/systemd/go-engines-vars.conf" "$(DESTDIR)/opt/canopsis/etc/"
+	install $(COMMUNITY_ROOT_DIR)/config/api/security/* -t "$(DESTDIR)/opt/canopsis/share/config/api/security"
+	
+	@echo "==> Installing systemd configurations"
+	# Install systemd configuration
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/systemd/canopsis-engine-go@.service" "$(DESTDIR)/usr/lib/systemd/system/canopsis-engine-go@.service"
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/systemd/canopsis-service@canopsis-api.service" "$(DESTDIR)/usr/lib/systemd/system/canopsis-service@canopsis-api.service"
+
+install: install-common
+	# Create configuration directories
+	@echo "==> Creating Canopsis $(CANOPSIS_EDITION) specific configuration directories"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/config/connector-centreon-downtime-adapter"
+	# Database migration script and fixtures
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/database/migrations"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/database/postgres_migrations"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/database/fixtures"
+	
+	@echo "==> Installing Canopsis $(CANOPSIS_EDITION) specific files"
+	# Install canopsis-reconfigure fixtures and migrations scripts
+	# MongoDB Migrations scripts
+	install -c -m 644 -p $(wildcard $(COMMUNITY_ROOT_DIR)/database/migrations/*) -t "$(DESTDIR)/opt/canopsis/share/database/migrations"
+	# PostgreSQL Migration scripts
+	install -c -m 644 -p $(wildcard $(COMMUNITY_ROOT_DIR)/database/postgres_migrations/*) -t "$(DESTDIR)/opt/canopsis/share/database/postgres_migrations"
+	# Mongodb fixtures
+	install -c -m 644 -p $(wildcard $(COMMUNITY_ROOT_DIR)/database/fixtures/*) -t "$(DESTDIR)/opt/canopsis/share/database/fixtures"
+	
+	#Install other configuration files
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/cmd/connector-centreon-downtime-adapter/config.yml.example" "$(DESTDIR)/opt/canopsis/share/config/connector-centreon-downtime-adapter/config.yml"
+
+systemd_install-common:
+	@echo "==> installing Canopsis $(CANOPSIS_EDITION) systemd unit"
+	install -d -m 755 -- "$(DESTDIR)/usr/lib/systemd/system"
+	install -c -m 644 -p -- $(foreach systemd_units,$(SYSTEMD_UNITS),"$(COMMUNITY_ROOT_DIR)/systemd/canopsis-engine-go@$(systemd_units).service") "$(DESTDIR)/usr/lib/systemd/system/"
+	install -c -m 644 -p -- $(foreach services,$(SERVICES),"$(COMMUNITY_ROOT_DIR)/systemd/canopsis-service@$(services).service") "$(DESTDIR)/usr/lib/systemd/system/"
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/systemd/canopsis.service" "$(DESTDIR)/usr/lib/systemd/system/"
+
+systemd_install: systemd_install-common
+	install -d -m 755 -- "$(DESTDIR)/usr/lib/systemd/system"
+	install -c -m 755 -p -- $(foreach systemd_units,$(SYSTEMD_UNITS),"$(COMMUNITY_ROOT_DIR)/systemd/canopsis-engine-go@$(systemd_units).service") "$(DESTDIR)/usr/lib/systemd/system/"
+	install -c -m 755 -p -- $(foreach services,$(SERVICES),"$(COMMUNITY_ROOT_DIR)/systemd/canopsis-service@$(services).service") "$(DESTDIR)/usr/lib/systemd/system/"
+
+nginx_config:
+	@echo "==> installing Nginx default config"
+	install -d -m 755 -- "$(DESTDIR)/etc/nginx/conf.d"
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/config/nginx/default.conf" "$(DESTDIR)/etc/nginx/conf.d/"
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/config/nginx/resolvers.inc" "$(DESTDIR)/etc/nginx/"
 
 #
 # TESTS
