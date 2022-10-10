@@ -16,6 +16,7 @@ export const entitiesRemediationInstructionMixin = {
   methods: {
     ...mapActions({
       fetchRemediationInstructionsList: 'fetchList',
+      fetchRemediationInstructionWithoutStore: 'fetchItemWithoutStore',
       fetchRemediationInstructionsListWithPreviousParams: 'fetchListWithPreviousParams',
       fetchRemediationInstructionsListWithoutStore: 'fetchListWithoutStore',
       createRemediationInstruction: 'create',

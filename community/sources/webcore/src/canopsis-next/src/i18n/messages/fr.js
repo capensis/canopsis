@@ -2470,6 +2470,9 @@ export default merge({
       await: 'Attendre',
       failedReason: 'Raison de l\'échec',
       output: 'Retour',
+      instructionFailed: 'Échec de l\'instruction',
+      instructionComplete: 'Instructions terminées',
+      stopped: 'Arrêté',
     },
   },
 
