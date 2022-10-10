@@ -1,4 +1,4 @@
-import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
+import { isInstructionAuto } from '@/helpers/forms/remediation-instruction';
 
 import { enabledToForm } from './shared/common';
 
@@ -47,7 +47,7 @@ export const remediationInstructionFilterToForm = (filter = {}) => ({
  * @returns {boolean}
  */
 export const isRemediationInstructionIntersectsWithFilterByType = (filter = {}, instruction = {}) => {
-  const isAuto = instruction.type === REMEDIATION_INSTRUCTION_TYPES.auto;
+  const isAuto = isInstructionAuto(instruction);
 
   return (filter.auto && isAuto) || (filter.manual && !isAuto);
 };

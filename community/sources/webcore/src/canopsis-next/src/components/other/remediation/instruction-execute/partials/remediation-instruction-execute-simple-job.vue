@@ -5,14 +5,14 @@
       div.error--text.text-xs-center {{ rowMessage }}
     template(v-else)
       td.text-xs-center
-        span {{ job.started_at | date('long') }}
+        span {{ job.started_at | date('long', '-') }}
       progress-cell.text-xs-center(:pending="shownLaunchedPendingJob")
-        span {{ job.launched_at | date('long') }}
+        span {{ job.launched_at | date('long', '-') }}
       progress-cell.text-xs-center(:pending="shownCompletedPendingJob")
         v-layout(v-if="isFailedJob", row, align-center, justify-center)
           span.error--text {{ $t('common.failed') }}
           c-help-icon.ml-1.cursor-pointer(:text="job.fail_reason", color="error", size="20", top)
-        span(v-else) {{ job.completed_at | date('long') }}
+        span(v-else) {{ job.completed_at | date('long', '-') }}
 </template>
 
 <script>
