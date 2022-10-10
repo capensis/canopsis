@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
+import { isInstructionAuto, isInstructionSimpleManual } from '@/helpers/forms/remediation-instruction';
 
 import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
 import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';
@@ -75,11 +75,11 @@ export default {
   },
   computed: {
     isAutoType() {
-      return this.form.type === REMEDIATION_INSTRUCTION_TYPES.auto;
+      return isInstructionAuto(this.form);
     },
 
     isManualSimplified() {
-      return this.form.type === REMEDIATION_INSTRUCTION_TYPES.simpleManual;
+      return isInstructionSimpleManual(this.form);
     },
   },
 };

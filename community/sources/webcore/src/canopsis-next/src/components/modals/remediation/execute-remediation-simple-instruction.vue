@@ -4,14 +4,14 @@
       span {{ config.assignedInstruction.name }}
     template(#text="")
       v-fade-transition
+        v-layout(v-if="pending", justify-center)
+          v-progress-circular(color="primary", indeterminate)
         remediation-instruction-simple-execute(
-          v-if="jobs",
+          v-else,
           :executed="executed",
           :jobs="jobs",
           @run:jobs="runJobs"
         )
-        v-layout(v-else, justify-center)
-          v-progress-circular(color="primary", indeterminate)
     template(#actions="")
       v-btn(
         depressed,
@@ -62,18 +62,18 @@ export default {
       return this.config.assignedInstruction?._id;
     },
 
+    instructionExecutionId() {
+      const { execution } = this.config.assignedInstruction;
+
+      return execution?._id ?? this.instructionExecution?._id;
+    },
+
     instructionJobs() {
       return this.instruction?.jobs?.map(({ job }) => job);
     },
 
     jobs() {
       return this.instructionExecution?.jobs ?? this.instructionJobs;
-    },
-
-    instructionExecutionId() {
-      const { execution } = this.config.assignedInstruction;
-
-      return execution?._id ?? this.instructionExecution?._id;
     },
 
     socketRoomName() {

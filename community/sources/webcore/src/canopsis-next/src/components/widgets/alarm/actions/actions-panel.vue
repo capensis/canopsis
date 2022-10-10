@@ -11,7 +11,7 @@ import {
   ENTITIES_STATUSES,
   EVENT_ENTITY_TYPES,
   EVENT_ENTITY_STYLE,
-  ALARM_LIST_ACTIONS_TYPES, REMEDIATION_INSTRUCTION_TYPES,
+  ALARM_LIST_ACTIONS_TYPES,
 } from '@/constants';
 
 import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule';
@@ -22,6 +22,7 @@ import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alar
 import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
 import featuresService from '@/services/features';
+import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
 
 /**
  * Component to regroup actions (actions-panel-item) for each alarm on the alarms list
@@ -273,7 +274,7 @@ export default {
 
       this.$modals.show({
         id: `${this.item._id}${assignedInstruction._id}`,
-        name: assignedInstruction.type === REMEDIATION_INSTRUCTION_TYPES.manual
+        name: isInstructionManual(assignedInstruction)
           ? MODALS.executeRemediationInstruction
           : MODALS.executeRemediationSimpleInstruction,
         config: {
