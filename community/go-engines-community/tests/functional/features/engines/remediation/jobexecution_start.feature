@@ -524,56 +524,67 @@ Feature: run a job
       {
         "_t": "instructionstart",
         "a": "root",
+        "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "root",
+        "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-1-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "root",
+        "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-1-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "root",
+        "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-2-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "root",
+        "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-2-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "root",
+        "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-3-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "root",
+        "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-3-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "root",
+        "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-4-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "root",
+        "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-4-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "root",
+        "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-5-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "root",
+        "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-5-name."
       }
     ]
