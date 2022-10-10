@@ -221,3 +221,70 @@ Feature: run an manual simplified instruction
       }
     ]
     """
+
+  Scenario: given new alarm should run manual instruction with failed jobs, instruction jobs should be stopped because of stopOnFail flag
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-run-manual-simplified-instruction-4",
+      "connector_name": "test-connector-name-to-run-manual-simplified-instruction-4",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-run-manual-simplified-instruction-4",
+      "resource": "test-resource-to-run-manual-simplified-instruction-4",
+      "state": 1,
+      "output": "test-output-to-run-manual-simplified-instruction-4"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-run-manual-simplified-instruction-4
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-run-manual-simplified-instruction-4"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .alarmID }}",
+        "steps": {
+          "page": 1,
+          "limit": 20
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain:
+    """json
+    [
+      {
+        "_t": "instructionstart",
+        "a": "root",
+        "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name. Job test-job-to-instruction-edit-1-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "root",
+        "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name. Job test-job-to-instruction-edit-1-name."
+      },
+      {
+        "_t": "instructionfail",
+        "a": "root",
+        "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name."
+      }
+    ]
+    """
