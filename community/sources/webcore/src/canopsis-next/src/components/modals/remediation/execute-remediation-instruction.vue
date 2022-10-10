@@ -8,7 +8,6 @@
           remediation-instruction-execute(
             v-if="instructionExecution",
             :instruction-execution="instructionExecution",
-            :simple="isManualSimple",
             @next-step="nextStep",
             @next-operation="nextOperation",
             @previous-operation="previousOperation",
@@ -312,8 +311,8 @@ export default {
           });
         }
 
-        if (this.config.onOpen) {
-          await this.config.onOpen();
+        if (this.config.onExecute) {
+          await this.config.onExecute();
         }
       } catch (err) {
         this.$popups.error({ text: err.error || this.$t('errors.default') });

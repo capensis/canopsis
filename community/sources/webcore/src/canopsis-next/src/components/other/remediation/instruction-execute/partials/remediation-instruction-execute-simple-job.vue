@@ -1,21 +1,22 @@
 <template lang="pug">
   tr
     td.pa-0 {{ job.name }}
-    td.text-xs-center
-      span(v-if="!isCancelledJob") {{ job.started_at | date('long', '-') }}
-      span(v-else) -
-    progress-cell.text-xs-center(:pending="shownLaunchedPendingJob")
-      span.error--text(v-if="hasJobsInQueue") {{ queueNumberText }}
-      span(v-else) {{ job.launched_at | date('long', '-') }}
-    progress-cell.text-xs-center(:pending="shownCompletedPendingJob")
-      v-layout(v-if="isFailedJob", row, align-center, justify-center)
-        span.error--text {{ $t('common.failed') }}
-        c-help-icon.ml-1.cursor-pointer(:text="job.fail_reason", color="error", size="20", top)
-      span(v-else) {{ job.completed_at | date('long', '-') }}
+    td(v-if="rowMessage", colspan="3")
+      div.error--text.text-xs-center {{ rowMessage }}
+    template(v-else)
+      td.text-xs-center
+        span {{ job.started_at | date('long') }}
+      progress-cell.text-xs-center(:pending="shownLaunchedPendingJob")
+        span {{ job.launched_at | date('long') }}
+      progress-cell.text-xs-center(:pending="shownCompletedPendingJob")
+        v-layout(v-if="isFailedJob", row, align-center, justify-center)
+          span.error--text {{ $t('common.failed') }}
+          c-help-icon.ml-1.cursor-pointer(:text="job.fail_reason", color="error", size="20", top)
+        span(v-else) {{ job.completed_at | date('long') }}
 </template>
 
 <script>
-import { REMEDIATION_JOB_EXECUTION_STATUSES } from '@/constants';
+import { isJobExecutionCancelled } from '@/helpers/forms/remediation-job';
 
 import ProgressCell from '@/components/common/table/progress-cell.vue';
 
@@ -29,7 +30,7 @@ export default {
   },
   computed: {
     isCancelledJob() {
-      return this.job.status === REMEDIATION_JOB_EXECUTION_STATUSES.canceled;
+      return isJobExecutionCancelled(this.job);
     },
 
     isStartedJob() {
@@ -38,10 +39,6 @@ export default {
 
     isLaunchedJob() {
       return !!this.job.launched_at;
-    },
-
-    isCompletedJob() {
-      return !!this.job.completed_at;
     },
 
     isFailedJob() {
@@ -58,24 +55,24 @@ export default {
     shownCompletedPendingJob() {
       return !this.isCancelledJob
         && !this.isFailedJob
-        && !this.isCompletedJob
+        && !this.job.completed_at
         && this.isStartedJob
         && this.isLaunchedJob;
     },
 
-    hasStatusMessage() {
-      return this.job.output || this.job.fail_reason;
-    },
+    rowMessage() {
+      if (this.job.queue_number > 0) {
+        return this.$t('remediationInstructionExecute.queueNumber', {
+          number: this.job.queue_number,
+          name: this.job.name,
+        });
+      }
 
-    hasJobsInQueue() {
-      return this.job.queue_number > 0;
-    },
+      if (this.isCancelledJob) {
+        return this.$t('remediationInstructionExecute.jobs.stopped');
+      }
 
-    queueNumberText() {
-      return this.$t('remediationInstructionExecute.queueNumber', {
-        number: this.job.queue_number,
-        name: this.job.name,
-      });
+      return '';
     },
   },
 };

@@ -1,10 +1,4 @@
 <template lang="pug">
-  v-layout(column)
-    v-layout.mb-4(row, align-center)
-      span.subheading.mr-5 {{ $t('remediationInstructionExecute.jobs.title') }}
-      v-btn.primary.ma-0(:loading="!jobsStarted")
-        span {{ $t('remediationInstructionExecute.runJobs') }}
-        v-icon(right) arrow_right
     table.instruction-execute-jobs-table
       thead
         tr
@@ -26,11 +20,6 @@ export default {
       type: Array,
       default: () => [],
     },
-  },
-  data() {
-    return {
-      jobsStarted: false,
-    };
   },
 };
 </script>

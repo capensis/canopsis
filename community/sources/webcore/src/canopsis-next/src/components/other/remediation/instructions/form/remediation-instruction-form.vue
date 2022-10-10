@@ -30,10 +30,14 @@
           name="timeout_after_execution",
           required
         )
-      v-flex.ml-2(v-if="!isManualType", xs3)
+      v-flex.ml-2(v-if="isAutoType", xs3)
         c-priority-field(v-model="form.priority", :disabled="disabled", required)
-    remediation-instruction-steps-form(v-if="isManualType", v-field="form.steps", :disabled="disabled")
-    remediation-instruction-jobs-form(v-else, v-model="form.jobs", :disabled="disabled")
+    remediation-instruction-jobs-form(
+      v-if="isAutoType || isManualSimplified",
+      v-model="form.jobs",
+      :disabled="disabled"
+    )
+    remediation-instruction-steps-form(v-else, v-field="form.steps", :disabled="disabled")
     remediation-instruction-approval-form(v-if="!disabledCommon", v-field="form.approval", :disabled="disabled")
 </template>
 
@@ -70,8 +74,12 @@ export default {
     },
   },
   computed: {
-    isManualType() {
-      return this.form.type === REMEDIATION_INSTRUCTION_TYPES.manual;
+    isAutoType() {
+      return this.form.type === REMEDIATION_INSTRUCTION_TYPES.auto;
+    },
+
+    isManualSimplified() {
+      return this.form.type === REMEDIATION_INSTRUCTION_TYPES.simpleManual;
     },
   },
 };
