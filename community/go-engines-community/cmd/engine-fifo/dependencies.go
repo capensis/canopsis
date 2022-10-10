@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
@@ -14,5 +15,5 @@ func NewEngine(ctx context.Context, options fifo.Options, logger zerolog.Logger)
 
 	var m depmake.DependencyMaker
 
-	return fifo.Default(ctx, options, m.DepMongoClient(ctx, logger), eventfilter.NewExternalDataGetterContainer(), logger)
+	return fifo.Default(ctx, options, m.DepMongoClient(ctx, logger), eventfilter.NewExternalDataGetterContainer(), nil, logger)
 }
