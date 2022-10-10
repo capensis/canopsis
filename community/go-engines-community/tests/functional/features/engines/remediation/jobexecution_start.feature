@@ -1404,10 +1404,6 @@ Feature: run a job
       "status": 0,
       "fail_reason": "",
       "output": "",
-      "query": {
-        "resource1": "test-resource-to-job-execution-start-9",
-        "entity1": "test-resource-to-job-execution-start-9/test-component-to-job-execution-start-9"
-      },
       "started_at": 0,
       "launched_at": 0,
       "completed_at": 0
@@ -1425,11 +1421,7 @@ Feature: run a job
                   "name": "test-job-to-job-execution-start-9-name",
                   "status": 1,
                   "fail_reason": "",
-                  "output": "test-job-execution-params-succeeded-output",
-                  "query": {
-                    "resource1": "test-resource-to-job-execution-start-9",
-                    "entity1": "test-resource-to-job-execution-start-9/test-component-to-job-execution-start-9"
-                  }
+                  "output": "test-job-execution-params-succeeded-output"
                 }
               ]
             }
