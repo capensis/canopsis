@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -22,7 +23,7 @@ const (
 	TaskStatusFailed
 )
 
-const fileNameTimeLayout = "2006-01-02T15-04-05"
+const fileNameTimeLayout = "2006-01-02T15-04-05-MST"
 
 // TaskExecutor is used to implement export task executor.
 type TaskExecutor interface {
@@ -88,6 +89,7 @@ type TaskStatus struct {
 
 func NewTaskExecutor(
 	client mongo.DbClient,
+	timezoneConfigProvider config.TimezoneConfigProvider,
 	logger zerolog.Logger,
 ) TaskExecutor {
 	return &taskExecutor{
@@ -96,6 +98,8 @@ func NewTaskExecutor(
 		logger:         logger,
 		workerCount:    10,
 		removeInterval: 5 * time.Minute,
+
+		timezoneConfigProvider: timezoneConfigProvider,
 	}
 }
 
@@ -107,6 +111,8 @@ type taskExecutor struct {
 	removeInterval time.Duration
 	taskCh         chan<- taskWithID
 	taskChMx       sync.Mutex
+
+	timezoneConfigProvider config.TimezoneConfigProvider
 }
 
 func (e *taskExecutor) Execute(parentCtx context.Context) {
@@ -119,9 +125,9 @@ func (e *taskExecutor) Execute(parentCtx context.Context) {
 	e.taskChMx.Unlock()
 
 	defer func() {
-		close(ch)
 		e.taskChMx.Lock()
 		e.taskCh = nil
+		close(ch)
 		e.taskChMx.Unlock()
 	}()
 
@@ -178,11 +184,13 @@ func (e *taskExecutor) StartExecute(ctx context.Context, t Task) (string, error)
 
 	id := utils.NewID()
 	now := time.Now().UTC()
+	location := e.timezoneConfigProvider.Get().Location
+	filename := fmt.Sprintf("%s-%s.csv", t.Filename, now.In(location).Format(fileNameTimeLayout))
 	_, err := e.collection.InsertOne(ctx, bson.M{
 		"_id":      id,
 		"status":   TaskStatusRunning,
 		"created":  types.CpsTime{Time: now},
-		"filename": fmt.Sprintf("%s-%s.csv", t.Filename, now.Format(fileNameTimeLayout)),
+		"filename": filename,
 	})
 	if err != nil {
 		e.logger.Err(err).Msg("cannot save export task")

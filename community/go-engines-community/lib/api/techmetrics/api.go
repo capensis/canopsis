@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/gin-gonic/gin"
 )
@@ -16,13 +17,18 @@ type API interface {
 
 type api struct {
 	taskExecutor TaskExecutor
+
+	timezoneConfigProvider config.TimezoneConfigProvider
 }
 
 func NewApi(
 	taskExecutor TaskExecutor,
+	timezoneConfigProvider config.TimezoneConfigProvider,
 ) API {
 	return &api{
 		taskExecutor: taskExecutor,
+
+		timezoneConfigProvider: timezoneConfigProvider,
 	}
 }
 
@@ -79,5 +85,7 @@ func (a *api) DownloadExport(c *gin.Context) {
 		return
 	}
 
-	c.FileAttachment(task.Filepath, "cps_tech_metrics_"+task.Started.Format("2006-01-02T15-04-05")+".bak")
+	location := a.timezoneConfigProvider.Get().Location
+	filename := "cps_tech_metrics_" + task.Started.In(location).Format("2006-01-02T15-04-05-MST") + ".bak"
+	c.FileAttachment(task.Filepath, filename)
 }
