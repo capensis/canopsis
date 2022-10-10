@@ -198,7 +198,7 @@ Feature: update an instruction statistics
       "output": "test-output-to-alarm-instruction-get-4"
     }
     """
-    When I wait the end of 4 events processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-4&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
@@ -378,7 +378,7 @@ Feature: update an instruction statistics
       }
     ]
     """
-    When I wait the end of 10 events processing
+    When I wait the end of 8 events processing
     When I do GET /api/v4/alarms?instructions[]={"include_types":[0,1]}&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:

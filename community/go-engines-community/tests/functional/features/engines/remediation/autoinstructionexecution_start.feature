@@ -993,3 +993,68 @@ Feature: run an auto instruction
       }
     ]
     """
+
+  Scenario: given new alarm should run auto instructions, auto instruction with failed jobs should be stopped because of stopOnFail flag
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-run-auto-instruction-11",
+      "connector_name": "test-connector-name-to-run-auto-instruction-11",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-run-auto-instruction-11",
+      "resource": "test-resource-to-run-auto-instruction-11",
+      "state": 1,
+      "output": "test-output-to-run-auto-instruction-11"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-11&with_instructions=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_all_auto_instructions_completed": true
+        }
+      ]
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1,
+          "limit": 20
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain:
+    """json
+    [
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-11-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-11-name. Job test-job-to-instruction-edit-1-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-11-name. Job test-job-to-instruction-edit-1-name."
+      },
+      {
+        "_t": "autoinstructionfail",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-11-name."
+      }
+    ]
+    """
