@@ -42,7 +42,8 @@ type MongoQueryBuilder struct {
 	// additionalMatch is match after some lookups
 	additionalMatch []bson.M
 	// lookupsForAdditionalMatch is required for match and for result
-	lookupsForAdditionalMatch map[string]bool
+	lookupsForAdditionalMatch     map[string]bool
+	lookupsOnlyForAdditionalMatch map[string]bool
 	// lookupsForSort is required for sort and for result
 	lookupsForSort map[string]bool
 	// excludeLookupsBeforeSort is used to remove data from pipeline to decrease sorted data.
@@ -106,11 +107,13 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.additionalMatch = []bson.M{{"$match": bson.M{"entity.enabled": true}}}
 
 	q.lookupsForAdditionalMatch = map[string]bool{"entity": true}
+	q.lookupsOnlyForAdditionalMatch = make(map[string]bool)
 	q.lookupsForSort = make(map[string]bool)
 	q.excludeLookupsBeforeSort = make([]string, 0)
 	q.lookups = []lookupWithKey{
 		{key: "entity", pipeline: getEntityLookup()},
 		{key: "entity.category", pipeline: getEntityCategoryLookup()},
+		{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup()},
 		{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()},
 		{key: "v.pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
@@ -121,7 +124,7 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.computedFieldsForAlarmMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields(now)
-	q.excludedFields = []string{"v.steps", "pbehavior.comments", "pbehavior_info_type"}
+	q.excludedFields = []string{"v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.depends", "entity.impact"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime) ([]bson.M, error) {
@@ -161,13 +164,13 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 }
 
 func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
-	id string,
+	match bson.M,
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
 
 	q.alarmMatch = append(q.alarmMatch,
-		bson.M{"$match": bson.M{"_id": id}},
+		bson.M{"$match": match},
 	)
 
 	query := pagination.Query{
@@ -178,14 +181,22 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 }
 
 func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
+	ctx context.Context,
 	match bson.M,
 	paginationQuery pagination.Query,
 	sortRequest SortRequest,
+	filterRequest FilterRequest,
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
-	err := q.handleSort(sortRequest)
+
+	err := q.handleFilter(ctx, filterRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	err = q.handleSort(sortRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -280,6 +291,7 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	beforeLimit = append(beforeLimit, q.alarmMatch...)
 
 	q.addLookupsToPipeline(q.lookupsForAdditionalMatch, addedLookups, &beforeLimit)
+	q.addLookupsToPipeline(q.lookupsOnlyForAdditionalMatch, addedLookups, &beforeLimit)
 	beforeLimit = append(beforeLimit, q.additionalMatch...)
 
 	if len(q.excludeLookupsBeforeSort) > 0 {
@@ -297,7 +309,7 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	afterLimit := make([]bson.M, 0)
 
 	for _, lookup := range q.lookups {
-		if !addedLookups[lookup.key] {
+		if !addedLookups[lookup.key] && !q.lookupsOnlyForAdditionalMatch[lookup.key] {
 			afterLimit = append(afterLimit, lookup.pipeline...)
 		}
 	}
@@ -358,6 +370,7 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest) e
 	q.addStartFromFilter(r, &alarmMatch)
 	q.addStartToFilter(r, &alarmMatch)
 	q.addOnlyParentsFilter(r, &alarmMatch)
+	q.addTagFilter(r, &alarmMatch)
 	searchMarch, withLookups, err := q.addSearchFilter(r)
 	if err != nil {
 		return err
@@ -600,6 +613,14 @@ func (q *MongoQueryBuilder) addCategoryFilter(r FilterRequest, match *[]bson.M) 
 	*match = append(*match, bson.M{"entity.category": bson.M{"$eq": r.Category}})
 }
 
+func (q *MongoQueryBuilder) addTagFilter(r FilterRequest, match *[]bson.M) {
+	if r.Tag == "" {
+		return
+	}
+
+	*match = append(*match, bson.M{"tags": r.Tag})
+}
+
 func (q *MongoQueryBuilder) addOnlyParentsFilter(r FilterRequest, match *[]bson.M) {
 	if !r.OnlyParents {
 		*match = append(*match, bson.M{"v.meta": nil})
@@ -619,60 +640,144 @@ func (q *MongoQueryBuilder) addOnlyParentsFilter(r FilterRequest, match *[]bson.
 }
 
 func (q *MongoQueryBuilder) addInstructionsFilter(ctx context.Context, r FilterRequest, match *[]bson.M) error {
-	added := false
+	withMatch := false
+	withExecution := false
+	withExecutionType := false
 
-	if len(r.ExcludeInstructions) > 0 {
-		filters, err := q.getInstructionsFilters(ctx, bson.M{"_id": bson.M{"$in": r.ExcludeInstructions}})
-		if err != nil {
-			return err
+	for _, instructionFilter := range r.Instructions {
+		if len(instructionFilter.Exclude) > 0 {
+			if instructionFilter.Running != nil && *instructionFilter.Running {
+				withExecution = true
+				*match = append(*match, bson.M{"instruction_execution.instruction": bson.M{"$nin": instructionFilter.Exclude}})
+				continue
+			}
+
+			filters, err := q.getInstructionsFilters(
+				ctx,
+				bson.M{"_id": bson.M{"$in": instructionFilter.Exclude}},
+			)
+			if err != nil {
+				return err
+			}
+			if len(filters) > 0 {
+				if instructionFilter.Running == nil {
+					withMatch = true
+					*match = append(*match, bson.M{"$nor": filters})
+				} else {
+					withExecution = true
+					withMatch = true
+					*match = append(*match, bson.M{"instruction_execution.instruction": bson.M{"$or": []bson.M{
+						{"$in": instructionFilter.Exclude},
+						{"$nor": filters},
+					}}})
+				}
+			}
+			continue
 		}
-		if len(filters) > 0 {
-			added = true
-			*match = append(*match, bson.M{"$nor": filters})
+
+		if len(instructionFilter.ExcludeTypes) > 0 {
+			if instructionFilter.Running != nil && *instructionFilter.Running {
+				withExecutionType = true
+				*match = append(*match, bson.M{"instruction_execution.type": bson.M{"$nin": instructionFilter.ExcludeTypes}})
+				continue
+			}
+
+			filters, err := q.getInstructionsFilters(
+				ctx,
+				bson.M{"type": bson.M{"$in": instructionFilter.ExcludeTypes}},
+			)
+			if err != nil {
+				return err
+			}
+			if len(filters) > 0 {
+				if instructionFilter.Running == nil {
+					withMatch = true
+					*match = append(*match, bson.M{"$nor": filters})
+				} else {
+					withExecutionType = true
+					withMatch = true
+					*match = append(*match, bson.M{"$or": []bson.M{
+						{"instruction_execution.type": bson.M{"$in": instructionFilter.ExcludeTypes}},
+						{"$nor": filters},
+					}})
+				}
+			}
+			continue
+		}
+
+		if len(instructionFilter.Include) > 0 {
+			if instructionFilter.Running != nil && *instructionFilter.Running {
+				withExecution = true
+				*match = append(*match, bson.M{"instruction_execution.instruction": bson.M{"$in": instructionFilter.Include}})
+				continue
+			}
+
+			filters, err := q.getInstructionsFilters(
+				ctx,
+				bson.M{"_id": bson.M{"$in": instructionFilter.Include}},
+			)
+			if err != nil {
+				return err
+			}
+			if len(filters) > 0 {
+				if instructionFilter.Running == nil {
+					withMatch = true
+					*match = append(*match, bson.M{"$or": filters})
+				} else {
+					withMatch = true
+					withExecution = true
+					*match = append(*match, bson.M{"$and": []bson.M{
+						{"instruction_execution.instruction": bson.M{"$nin": instructionFilter.Include}},
+						{"$or": filters},
+					}})
+				}
+			} else {
+				*match = append(*match, bson.M{"$nor": []bson.M{{}}})
+			}
+			continue
+		}
+
+		if len(instructionFilter.IncludeTypes) > 0 {
+			if instructionFilter.Running != nil && *instructionFilter.Running {
+				withExecutionType = true
+				*match = append(*match, bson.M{"instruction_execution.type": bson.M{"$in": instructionFilter.IncludeTypes}})
+				continue
+			}
+
+			filters, err := q.getInstructionsFilters(
+				ctx,
+				bson.M{"type": bson.M{"$in": instructionFilter.IncludeTypes}},
+			)
+			if err != nil {
+				return err
+			}
+			if len(filters) > 0 {
+				if instructionFilter.Running == nil {
+					withMatch = true
+					*match = append(*match, bson.M{"$or": filters})
+				} else {
+					withMatch = true
+					withExecutionType = true
+					*match = append(*match, bson.M{"$and": []bson.M{
+						{"instruction_execution.type": bson.M{"$nin": instructionFilter.IncludeTypes}},
+						{"$or": filters},
+					}})
+				}
+			} else {
+				*match = append(*match, bson.M{"$nor": []bson.M{{}}})
+			}
+			continue
 		}
 	}
 
-	if len(r.ExcludeInstructionTypes) > 0 {
-		filters, err := q.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$in": r.ExcludeInstructionTypes}})
-		if err != nil {
-			return err
-		}
-		if len(filters) > 0 {
-			added = true
-			*match = append(*match, bson.M{"$nor": filters})
-		}
-	}
-
-	if len(r.IncludeInstructions) > 0 {
-		filters, err := q.getInstructionsFilters(ctx, bson.M{"_id": bson.M{"$in": r.IncludeInstructions}})
-		if err != nil {
-			return err
-		}
-		if len(filters) > 0 {
-			added = true
-			*match = append(*match, bson.M{"$or": filters})
-		} else {
-			*match = append(*match, bson.M{"$nor": []bson.M{{}}})
-		}
-	}
-
-	if len(r.IncludeInstructionTypes) > 0 {
-		filters, err := q.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$in": r.IncludeInstructionTypes}})
-		if err != nil {
-			return err
-		}
-		if len(filters) > 0 {
-			added = true
-			*match = append(*match, bson.M{"$or": filters})
-		} else {
-			*match = append(*match, bson.M{"$nor": []bson.M{{}}})
-		}
-	}
-
-	if added {
+	if withMatch {
 		q.computedFieldsForAlarmMatch["v.duration"] = true
 		q.computedFieldsForAlarmMatch["v.infos_array"] = true
 		q.computedFields["v.infos_array"] = bson.M{"$objectToArray": "$v.infos"}
+	}
+	if withExecution || withExecutionType {
+		q.lookupsOnlyForAdditionalMatch["instruction_execution"] = true
+		q.lookups = append(q.lookups, lookupWithKey{key: "instruction_execution", pipeline: getInstructionExecutionLookup(withExecutionType)})
 	}
 
 	return nil
@@ -781,6 +886,10 @@ func (q *MongoQueryBuilder) adjustLookupsForSort(sortFields []string) {
 		if !found {
 			q.excludeLookupsBeforeSort = append(q.excludeLookupsBeforeSort, lookup)
 		}
+	}
+
+	for lookup := range q.lookupsOnlyForAdditionalMatch {
+		q.excludeLookupsBeforeSort = append(q.excludeLookupsBeforeSort, lookup)
 	}
 
 	for _, lookup := range q.lookups {
@@ -1000,6 +1109,38 @@ func getFilteredChildrenLookup(childrenCollection string, childrenMatch bson.M) 
 	}
 }
 
+func getInstructionExecutionLookup(withType bool) []bson.M {
+	pipeline := []bson.M{
+		{"$lookup": bson.M{
+			"from": mongo.InstructionExecutionMongoCollection,
+			"let":  bson.M{"alarm": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$$alarm", "$alarm"}}},
+					{"status": bson.M{"$in": bson.A{InstructionExecutionStatusRunning, InstructionExecutionStatusWaitResult}}},
+				}}},
+			},
+			"as": "instruction_execution",
+		}},
+		{"$unwind": bson.M{"path": "$instruction_execution", "preserveNullAndEmptyArrays": true}},
+	}
+	if withType {
+		pipeline = append(pipeline, []bson.M{
+			{"$lookup": bson.M{
+				"from":         mongo.InstructionMongoCollection,
+				"localField":   "instruction_execution.instruction",
+				"foreignField": "_id",
+				"as":           "instruction_execution.type",
+			}},
+			{"$unwind": bson.M{"path": "$instruction_execution.type", "preserveNullAndEmptyArrays": true}},
+			{"$addFields": bson.M{
+				"instruction_execution.type": "$instruction_execution.type.type",
+			}},
+		}...)
+	}
+	return pipeline
+}
+
 func getComputedFields(now types.CpsTime) bson.M {
 	return bson.M{
 		"infos":        "$v.infos",
@@ -1080,4 +1221,27 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 	}
 
 	return bson.M{"$and": and}, nil
+}
+
+func getImpactsCountPipeline() []bson.M {
+	return []bson.M{
+		{"$graphLookup": bson.M{
+			"from":                    mongo.EntityMongoCollection,
+			"startWith":               "$entity.impact",
+			"connectFromField":        "entity.impact",
+			"connectToField":          "_id",
+			"as":                      "service_impacts",
+			"restrictSearchWithMatch": bson.M{"type": types.EntityTypeService},
+			"maxDepth":                0,
+		}},
+		{"$addFields": bson.M{
+			"entity.depends_count": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$entity.type", types.EntityTypeService}},
+				"then": bson.M{"$size": "$entity.depends"},
+				"else": 0,
+			}},
+			"entity.impacts_count": bson.M{"$size": "$service_impacts"},
+		}},
+		{"$project": bson.M{"service_impacts": 0}},
+	}
 }

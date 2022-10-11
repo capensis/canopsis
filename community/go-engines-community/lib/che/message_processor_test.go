@@ -183,6 +183,32 @@ func BenchmarkMessageProcessor_Process_GivenNewEntityAndMatchedEnrichmentEntityE
 	})
 }
 
+func BenchmarkMessageProcessor_Process_GivenNewEntityAndMatchedDropEventfilterWith10ResolvedExdates(b *testing.B) {
+	benchmarkMessageProcessor(b, "./testdata/fixtures/eventfilters_with_rrule_10_resolved_exdates.yml", func(i int) types.Event {
+		return types.Event{
+			EventType:     types.EventTypeCheck,
+			Connector:     fmt.Sprintf("test-connector-%d", i),
+			ConnectorName: fmt.Sprintf("test-connector-name-%d", i),
+			Component:     fmt.Sprintf("test-component-%d", i),
+			Resource:      fmt.Sprintf("test-resource-%d", i),
+			SourceType:    types.SourceTypeResource,
+		}
+	})
+}
+
+func BenchmarkMessageProcessor_Process_GivenNewEntityAndMatchedDropEventfilterWith100ResolvedExdates(b *testing.B) {
+	benchmarkMessageProcessor(b, "./testdata/fixtures/eventfilters_with_rrule_100_resolved_exdates.yml", func(i int) types.Event {
+		return types.Event{
+			EventType:     types.EventTypeCheck,
+			Connector:     fmt.Sprintf("test-connector-%d", i),
+			ConnectorName: fmt.Sprintf("test-connector-name-%d", i),
+			Component:     fmt.Sprintf("test-component-%d", i),
+			Resource:      fmt.Sprintf("test-resource-%d", i),
+			SourceType:    types.SourceTypeResource,
+		}
+	})
+}
+
 func benchmarkMessageProcessor(
 	b *testing.B,
 	fixturesPath string,
@@ -226,11 +252,11 @@ func benchmarkMessageProcessor(
 
 	cfg := config.CanopsisConf{}
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(eventfilter.NewExternalDataGetterContainer()))
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), eventfilter.NewActionProcessor()))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(eventfilter.NewExternalDataGetterContainer(), config.NewTimezoneConfigProvider(cfg, zerolog.Nop())))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), eventfilter.NewActionProcessor(config.NewTimezoneConfigProvider(cfg, zerolog.Nop()))))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
-	ruleService := eventfilter.NewRuleService(eventfilter.NewRuleAdapter(dbClient), ruleApplicatorContainer, config.NewTimezoneConfigProvider(cfg, zerolog.Nop()), zerolog.Nop())
+	ruleService := eventfilter.NewRuleService(eventfilter.NewRuleAdapter(dbClient), ruleApplicatorContainer, zerolog.Nop())
 	err = ruleService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)

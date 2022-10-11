@@ -2,6 +2,8 @@ package config
 
 import (
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 // Some default values related to configuration
@@ -11,6 +13,7 @@ const (
 	VersionKeyName       = "canopsis_version"
 	RemediationKeyName   = "remediation"
 	HealthCheckName      = "health_check"
+	AlarmTagColorKeyName = "alarm_tag_color"
 )
 
 // SectionAlarm ...
@@ -62,7 +65,6 @@ type SectionDataStorage struct {
 }
 
 type SectionApi struct {
-	TokenExpiration    string `toml:"TokenExpiration"`
 	TokenSigningMethod string `toml:"TokenSigningMethod"`
 	BulkMaxSize        int    `toml:"BulkMaxSize"`
 }
@@ -109,5 +111,7 @@ type UserInterfaceConf struct {
 type VersionConf struct {
 	Edition string `bson:"edition"`
 	Stack   string `bson:"stack"`
-	Version string `bson:"version"`
+
+	Version        string         `bson:"version"`
+	VersionUpdated *types.CpsTime `bson:"version_updated,omitempty"`
 }

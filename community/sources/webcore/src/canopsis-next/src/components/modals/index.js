@@ -185,6 +185,10 @@ export const CreateView = () => ({
   component: import(/* webpackChunkName: "View" */ './view/create-view.vue'),
   loading: LoaderOverlay,
 });
+export const ShareView = () => ({
+  component: import(/* webpackChunkName: "View" */ './view/share-view.vue'),
+  loading: LoaderOverlay,
+});
 export const CreateGroup = () => ({
   component: import(/* webpackChunkName: "View" */ './view/create-group.vue'),
   loading: LoaderOverlay,
@@ -347,5 +351,9 @@ export const CreateTreeOfDependenciesMap = () => ({
 });
 export const EntityDependenciesList = () => ({
   component: import(/* webpackChunkName: "Map" */ './entity/entity-dependencies-list.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateShareToken = () => ({
+  component: import(/* webpackChunkName: "ShareToken" */ './share-token/create-share-token.vue'),
   loading: LoaderOverlay,
 });

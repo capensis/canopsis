@@ -19,6 +19,7 @@ import Error from '@/views/error.vue';
 
 const Home = () => import(/* webpackChunkName: "Home" */ '@/views/home.vue');
 const View = () => import(/* webpackChunkName: "View" */ '@/views/view.vue');
+const ViewKiosk = () => import(/* webpackChunkName: "View" */ '@/views/view-kiosk.vue');
 const Alarm = () => import(/* webpackChunkName: "Alarm" */ '@/views/alarm.vue');
 const AdminPermissions = () => import(/* webpackChunkName: "Permission" */ '@/views/admin/permissions.vue');
 const AdminUsers = () => import(/* webpackChunkName: "User" */ '@/views/admin/users.vue');
@@ -53,6 +54,7 @@ const routes = [
     name: ROUTES_NAMES.login,
     component: Login,
     meta: {
+      hideNavigation: true,
       requiresLogin: false,
     },
   },
@@ -75,6 +77,19 @@ const routes = [
       },
     },
     props: route => ({ id: route.params.id }),
+  },
+  {
+    path: ROUTES.viewKiosk,
+    name: ROUTES_NAMES.viewKiosk,
+    component: ViewKiosk,
+    meta: {
+      hideNavigation: true,
+      requiresLogin: true,
+      requiresPermission: {
+        id: route => route.params.id,
+      },
+    },
+    props: route => ({ id: route.params.id, tabId: route.params.tabId }),
   },
   {
     path: ROUTES.alarms,
@@ -358,6 +373,9 @@ const routes = [
     path: ROUTES.error,
     name: ROUTES_NAMES.error,
     component: Error,
+    meta: {
+      hideNavigation: true,
+    },
     props: route => ({ message: route.query.message, redirect: route.query.redirect }),
   },
   {
@@ -386,6 +404,7 @@ router.beforeEach(async (to, from, next) => {
     await store.dispatch('auth/applyAccessToken', accessToken);
 
     return router.replace({
+      ...to,
       query: restQuery,
     });
   }

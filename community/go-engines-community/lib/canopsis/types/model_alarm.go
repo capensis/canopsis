@@ -1,14 +1,11 @@
 package types
 
 import (
-	"errors"
-	"fmt"
 	"log"
 	"regexp"
 	"sort"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -97,10 +94,12 @@ const (
 
 // Alarm represents an alarm document.
 type Alarm struct {
-	ID       string     `bson:"_id" json:"_id"`
-	Time     CpsTime    `bson:"t" json:"t"`
-	EntityID string     `bson:"d" json:"d"`
-	Value    AlarmValue `bson:"v" json:"v"`
+	ID       string   `bson:"_id" json:"_id"`
+	Time     CpsTime  `bson:"t" json:"t"`
+	EntityID string   `bson:"d" json:"d"`
+	Tags     []string `bson:"tags" json:"tags"`
+	// todo move all field from Value to Alarm
+	Value AlarmValue `bson:"v" json:"v"`
 	// update contains alarm changes after last mongo update. Use functions Update* to
 	// fill it.
 	update         bson.M
@@ -118,90 +117,6 @@ type Alarm struct {
 type AlarmWithEntity struct {
 	Alarm  Alarm  `bson:"alarm" json:"alarm"`
 	Entity Entity `bson:"entity" json:"entity"`
-}
-
-// NewAlarm creates en new Alarm from an Event
-func NewAlarm(event Event, alarmConfig config.AlarmConfig) (Alarm, error) {
-	now := CpsTime{time.Now().Truncate(time.Second)}
-
-	if event.Timestamp.IsZero() {
-		return Alarm{}, errors.New("field Timestamp is not set")
-	}
-
-	alarm := Alarm{
-		EntityID: event.GetEID(),
-		ID:       utils.NewID(),
-		Time:     now,
-		Value: AlarmValue{
-			Connector:         event.Connector,
-			ConnectorName:     event.ConnectorName,
-			Component:         event.Component,
-			Resource:          event.Resource,
-			Output:            event.Output,
-			InitialOutput:     event.Output,
-			InitialLongOutput: event.LongOutput,
-			LongOutput:        event.LongOutput,
-			CreationDate:      now,
-			LastUpdateDate:    event.Timestamp,
-			LastEventDate:     now,
-			DisplayName:       GenDisplayName(alarmConfig.DisplayNameScheme),
-			Infos:             make(map[string]map[string]interface{}),
-			RuleVersion:       make(map[string]string),
-			State: &AlarmStep{
-				Type:      AlarmStepStateIncrease,
-				Timestamp: event.Timestamp,
-				Author:    event.Connector + "." + event.ConnectorName,
-				Message:   event.Output,
-				Value:     event.State,
-			},
-			Status: &AlarmStep{
-				Type:      AlarmStepStatusIncrease,
-				Timestamp: event.Timestamp,
-				Author:    event.Connector + "." + event.ConnectorName,
-				Message:   event.Output,
-				Value:     AlarmStatusOngoing,
-			},
-			TotalStateChanges: 1,
-		},
-	}
-	alarm.Value.LongOutputHistory = append(alarm.Value.LongOutputHistory, event.LongOutput)
-	alarm.Value.Steps = AlarmSteps{*alarm.Value.State, *alarm.Value.Status}
-
-	return alarm, nil
-}
-
-// AlarmID build an alarmid from given parameters. Used by Alarm.AlarmID()
-func AlarmID(connector, connectorName, entityID string) string {
-	return fmt.Sprintf(
-		"%s/%s/%s",
-		connector,
-		connectorName,
-		entityID,
-	)
-}
-
-// AlarmID returns current alarm's alarmid.
-func (a Alarm) AlarmID() string {
-	return AlarmID(
-		a.Value.Connector,
-		a.Value.ConnectorName,
-		a.EntityID,
-	)
-}
-
-// AlarmComponentID is like Alarm.AlarmID() but uses Alarm.Value.Component
-// instead of Alarm.EntityID
-func (a Alarm) AlarmComponentID() string {
-	return AlarmID(
-		a.Value.Connector,
-		a.Value.ConnectorName,
-		a.Value.Component,
-	)
-}
-
-// CacheID implements cache.Cache interface
-func (a Alarm) CacheID() string {
-	return a.AlarmID()
 }
 
 // CropSteps calls Crop() on Alarm.Value.Steps with alarm parameters.
@@ -287,7 +202,7 @@ func (a *Alarm) Resolve(timestamp *CpsTime) {
 
 // Closable checks the last step for it's state to be OK for at least d interval.
 // Reference time is time.Now() when this function is called.
-func (a Alarm) Closable(d time.Duration) bool {
+func (a *Alarm) Closable(d time.Duration) bool {
 	// prevent some silly crash
 	if a.Value.State == nil {
 		return false
@@ -307,17 +222,17 @@ func (a Alarm) Closable(d time.Duration) bool {
 }
 
 // IsAck check if an Alarm is acked
-func (a Alarm) IsAck() bool {
+func (a *Alarm) IsAck() bool {
 	return a.Value.ACK != nil // && !a.IsResolved()
 }
 
 // IsCanceled check if an Alarm is canceled
-func (a Alarm) IsCanceled() bool {
+func (a *Alarm) IsCanceled() bool {
 	return a.Value.Canceled != nil && !a.IsResolved()
 }
 
 // IsMatched tell if an alarm is catched by a regex
-func (a Alarm) IsMatched(regex string, fields []string) bool {
+func (a *Alarm) IsMatched(regex string, fields []string) bool {
 	for _, fieldName := range fields {
 		field := utils.GetStringField(a.Value, fieldName)
 		matched, _ := regexp.MatchString(regex, field)
@@ -334,7 +249,7 @@ func (a *Alarm) IsResolved() bool {
 }
 
 // IsSnoozed check if an Alarm is snoozed
-func (a Alarm) IsSnoozed() bool {
+func (a *Alarm) IsSnoozed() bool {
 	if a.Value.Snooze == nil {
 		return false
 	}
@@ -349,7 +264,7 @@ func (a *Alarm) IsStateLocked() bool {
 }
 
 // IsMalfunctioning...
-func (a Alarm) IsMalfunctioning() bool {
+func (a *Alarm) IsMalfunctioning() bool {
 	return a.Value.Status.Value != AlarmStateOK
 }
 
@@ -357,7 +272,7 @@ func (a Alarm) IsMalfunctioning() bool {
 // Note that this method will return false if the alarm has received a first
 // ack, an ackremove, and a second ack.
 // It should be used to run actions on the first acknowledgement only.
-func (a Alarm) HasSingleAck() bool {
+func (a *Alarm) HasSingleAck() bool {
 	hasAck := false
 	for _, step := range a.Value.Steps {
 		if step.Type == AlarmStepAck {
@@ -371,15 +286,15 @@ func (a Alarm) HasSingleAck() bool {
 	return hasAck
 }
 
-func (a Alarm) IsMetaAlarm() bool {
+func (a *Alarm) IsMetaAlarm() bool {
 	return a.Value.Meta != ""
 }
 
-func (a Alarm) IsMetaChildren() bool {
+func (a *Alarm) IsMetaChildren() bool {
 	return len(a.Value.Parents) > 0
 }
 
-func (a Alarm) HasChildByEID(childEID string) bool {
+func (a *Alarm) HasChildByEID(childEID string) bool {
 	for _, child := range a.Value.Children {
 		if child == childEID {
 			return true
@@ -389,7 +304,7 @@ func (a Alarm) HasChildByEID(childEID string) bool {
 	return false
 }
 
-func (a Alarm) HasParentByEID(parentEID string) bool {
+func (a *Alarm) HasParentByEID(parentEID string) bool {
 	for _, parent := range a.Value.Parents {
 		if parent == parentEID {
 			return true
@@ -468,10 +383,10 @@ func (a *Alarm) Activate() {
 	a.Value.ActivationDate = &CpsTime{time.Now()}
 }
 
-func (a Alarm) IsActivated() bool {
+func (a *Alarm) IsActivated() bool {
 	return a.Value.ActivationDate != nil
 }
 
-func (a Alarm) IsInActivePeriod() bool {
+func (a *Alarm) IsInActivePeriod() bool {
 	return a.Value.PbehaviorInfo.IsActive()
 }

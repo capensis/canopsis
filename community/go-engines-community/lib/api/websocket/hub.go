@@ -54,8 +54,9 @@ type Hub interface {
 	CloseRoomAndNotify(room string) error
 	// RoomHasConnection returns true if room listens at least one connection.
 	RoomHasConnection(room string) bool
-	// GetUniqueUsers returns slice of unique users from all connections.
-	GetUniqueUsers() []string
+	// GetUsers returns users from all connections with their tokens.
+	GetUsers() map[string][]string
+	GetAuthConnectionsCount() int
 }
 
 func NewHub(
@@ -119,12 +120,23 @@ loop:
 		case <-ctx.Done():
 			break loop
 		case <-ticker.C:
+			updated := false
 			closedConns := h.pingConnections()
 			h.closeConnections(closedConns...)
+			if len(closedConns) > 0 {
+				updated = true
+			}
 
 			closedConns, connsToDisconnect := h.checkAuth(ctx)
 			h.closeConnections(closedConns...)
 			h.disconnectConnections(connsToDisconnect...)
+			if len(closedConns) > 0 || len(connsToDisconnect) > 0 {
+				updated = true
+			}
+
+			if updated {
+				h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
+			}
 		}
 	}
 
@@ -170,7 +182,10 @@ func (h *hub) Connect(w http.ResponseWriter, r *http.Request) error {
 
 func (h *hub) Send(room string, b interface{}) {
 	closedConns := h.sendAndCheckConn(room, b)
-	h.closeConnections(closedConns...)
+	if len(closedConns) > 0 {
+		h.closeConnections(closedConns...)
+		h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
+	}
 }
 
 func (h *hub) sendAndCheckConn(room string, b interface{}) []string {
@@ -234,7 +249,10 @@ func (h *hub) CloseRoomAndNotify(room string) error {
 		return err
 	}
 
-	h.closeConnections(closedConns...)
+	if len(closedConns) > 0 {
+		h.closeConnections(closedConns...)
+		h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
+	}
 
 	return nil
 }
@@ -285,6 +303,43 @@ func (h *hub) RoomHasConnection(room string) bool {
 	}()
 
 	return len(h.rooms[room]) > 0
+}
+
+func (h *hub) GetUsers() map[string][]string {
+	h.connsMx.RLock()
+	defer h.connsMx.RUnlock()
+
+	users := make(map[string][]string)
+	uniqueTokens := make(map[string]struct{}, len(h.conns))
+	for _, conn := range h.conns {
+		if conn.userId != "" {
+			if _, ok := users[conn.userId]; !ok {
+				users[conn.userId] = make([]string, 0, 1)
+			}
+			if _, ok := uniqueTokens[conn.token]; !ok {
+				users[conn.userId] = append(users[conn.userId], conn.token)
+				uniqueTokens[conn.token] = struct{}{}
+			}
+		}
+	}
+
+	return users
+}
+
+func (h *hub) GetAuthConnectionsCount() int {
+	h.connsMx.RLock()
+	defer h.connsMx.RUnlock()
+
+	uniqueTokens := make(map[string]struct{})
+	for _, conn := range h.conns {
+		if conn.token != "" {
+			if _, ok := uniqueTokens[conn.token]; !ok {
+				uniqueTokens[conn.token] = struct{}{}
+			}
+		}
+	}
+
+	return len(uniqueTokens)
 }
 
 func (h *hub) join(connId, room string) (closed bool) {
@@ -588,6 +643,7 @@ func (h *hub) listen(connId string, conn Connection) {
 	for {
 		if closed {
 			h.closeConnections(connId)
+			h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 			return
 		}
 
@@ -619,6 +675,7 @@ func (h *hub) listen(connId string, conn Connection) {
 				h.disconnectConnections(connId)
 			}
 
+			h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 			return
 		}
 
@@ -642,6 +699,7 @@ func (h *hub) listen(connId string, conn Connection) {
 				})
 			} else {
 				h.setConnAuth(connId, userId, msg.Token)
+				h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 			}
 		case RMessageJoin:
 			if msg.Room == "" {
@@ -666,8 +724,8 @@ func (h *hub) listen(connId string, conn Connection) {
 }
 
 func (h *hub) setConnAuth(connId, userId, token string) {
-	h.connsMx.RLock()
-	defer h.connsMx.RUnlock()
+	h.connsMx.Lock()
+	defer h.connsMx.Unlock()
 
 	h.conns[connId] = userConn{
 		userId: userId,
@@ -723,20 +781,4 @@ func (h *hub) removeConnsFromRoom(room string, connIds []string) {
 	}
 
 	h.rooms[room] = filteredConns
-}
-
-func (h *hub) GetUniqueUsers() []string {
-	h.connsMx.RLock()
-	defer h.connsMx.RUnlock()
-
-	users := make([]string, 0)
-	usersMap := make(map[string]bool)
-	for _, conn := range h.conns {
-		if conn.userId != "" && !usersMap[conn.userId] {
-			usersMap[conn.userId] = true
-			users = append(users, conn.userId)
-		}
-	}
-
-	return users
 }

@@ -4,16 +4,17 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	libwebsocket "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
-	mock_websocket "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/websocket"
-	"github.com/golang/mock/gomock"
-	"github.com/gorilla/websocket"
-	"github.com/rs/zerolog"
 	"net"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	libwebsocket "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	mock_websocket "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/websocket"
+	"github.com/golang/mock/gomock"
+	"github.com/gorilla/websocket"
+	"github.com/rs/zerolog"
 )
 
 const waitTimeout = time.Second
@@ -408,6 +409,62 @@ func TestHub_Connect_GivenInvalidRMessage_ShouldSendError(t *testing.T) {
 		Error: "invalid message",
 	})).Return(nil)
 	mockConnection.EXPECT().WriteControl(gomock.Eq(websocket.CloseMessage), gomock.Any(), gomock.Any()).MaxTimes(1)
+
+	go func() {
+		hub.Start(ctx)
+		close(done)
+	}()
+
+	err := hub.Connect(w, r)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+
+	waitDone(t, done)
+}
+
+func TestHub_Connect_GivenAuthUser_ShouldSendLoggedUserCountMessage(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	token := "test-token"
+	user := "test-user"
+	done := make(chan struct{})
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
+	mockConnection := mock_websocket.NewMockConnection(ctrl)
+	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
+	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
+	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
+	mockAuthorizer.EXPECT().Authorize(gomock.Eq(""), gomock.Eq(libwebsocket.RoomLoggedUserCount)).Return(true, nil)
+	mockAuthorizer.EXPECT().Authenticate(gomock.Any(), gomock.Eq(token)).Return(user, nil)
+	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
+	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
+	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
+	readTime := 0
+	mockConnection.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *libwebsocket.RMessage) error {
+		readTime++
+		switch readTime {
+		case 1:
+			msg.Type = libwebsocket.RMessageJoin
+			msg.Room = libwebsocket.RoomLoggedUserCount
+			return nil
+		case 2:
+			msg.Type = libwebsocket.RMessageAuth
+			msg.Token = token
+			return nil
+		default:
+			cancel()
+			return &websocket.CloseError{Code: websocket.CloseNormalClosure}
+		}
+	}).Times(3)
+	mockConnection.EXPECT().WriteJSON(gomock.Eq(libwebsocket.WMessage{
+		Type: libwebsocket.WMessageSuccess,
+		Room: libwebsocket.RoomLoggedUserCount,
+		Msg:  1,
+	}))
 
 	go func() {
 		hub.Start(ctx)

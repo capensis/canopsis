@@ -1,30 +1,27 @@
 package api
 
 import (
-	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"net/http"
+	"os"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/cas"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/saml"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/configprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/httpprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/provider"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/sharetoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tokenprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"
-	"net/http"
-	"net/url"
-	"os"
-	"time"
 )
 
 const JwtSecretEnv = "CPS_JWT_SECRET"
@@ -44,9 +41,9 @@ type Security interface {
 	GetSessionStore() libsession.Store
 	GetConfig() libsecurity.Config
 	GetPasswordEncoder() password.Encoder
-	GetTokenService() token.Service
-	GetTokenStore() token.Store
-	GetTokenProvider() libsecurity.TokenProvider
+	GetTokenService() apisecurity.TokenService
+	GetTokenGenerator() token.Generator
+	GetTokenProviders() []libsecurity.TokenProvider
 	GetCookieOptions() CookieOptions
 }
 
@@ -57,11 +54,11 @@ type CookieOptions struct {
 }
 
 type security struct {
-	Config       *libsecurity.Config
-	DbClient     mongo.DbClient
-	SessionStore libsession.Store
+	config       libsecurity.Config
+	dbClient     mongo.DbClient
+	sessionStore libsession.Store
 	enforcer     libsecurity.Enforcer
-	Logger       zerolog.Logger
+	logger       zerolog.Logger
 
 	apiConfigProvider config.ApiConfigProvider
 
@@ -70,7 +67,7 @@ type security struct {
 
 // NewSecurity creates new security.
 func NewSecurity(
-	config *libsecurity.Config,
+	config libsecurity.Config,
 	dbClient mongo.DbClient,
 	sessionStore libsession.Store,
 	enforcer libsecurity.Enforcer,
@@ -79,11 +76,11 @@ func NewSecurity(
 	logger zerolog.Logger,
 ) Security {
 	return &security{
-		Config:       config,
-		DbClient:     dbClient,
-		SessionStore: sessionStore,
+		config:       config,
+		dbClient:     dbClient,
+		sessionStore: sessionStore,
 		enforcer:     enforcer,
-		Logger:       logger,
+		logger:       logger,
 
 		cookieOptions: cookieOptions,
 
@@ -94,12 +91,12 @@ func NewSecurity(
 func (s *security) GetHttpAuthProviders() []libsecurity.HttpProvider {
 	res := make([]libsecurity.HttpProvider, 0)
 
-	for _, v := range s.Config.Security.AuthProviders {
+	for _, v := range s.config.Security.AuthProviders {
 		switch v {
 		case libsecurity.AuthMethodBasic:
 			baseProvider := s.newBaseAuthProvider()
 			res = append(res, httpprovider.NewBasicProvider(baseProvider))
-			res = append(res, httpprovider.NewBearerProvider(s.GetTokenProvider()))
+			res = append(res, httpprovider.NewBearerProvider(s.GetTokenProviders()))
 		case libsecurity.AuthMethodApiKey:
 			res = append(res, httpprovider.NewApikeyProvider(s.newUserProvider()))
 		case libsecurity.AuthMethodLdap:
@@ -114,7 +111,7 @@ func (s *security) GetHttpAuthProviders() []libsecurity.HttpProvider {
 func (s *security) GetAuthProviders() []libsecurity.Provider {
 	res := make([]libsecurity.Provider, 0)
 
-	for _, v := range s.Config.Security.AuthProviders {
+	for _, v := range s.config.Security.AuthProviders {
 		switch v {
 		case libsecurity.AuthMethodBasic:
 			res = append(res, s.newBaseAuthProvider())
@@ -127,23 +124,24 @@ func (s *security) GetAuthProviders() []libsecurity.Provider {
 }
 
 func (s *security) RegisterCallbackRoutes(router gin.IRouter, client mongo.DbClient) {
-	for _, v := range s.Config.Security.AuthProviders {
+	for _, v := range s.config.Security.AuthProviders {
 		switch v {
 		case libsecurity.AuthMethodCas:
+			casConfig := s.config.Security.Cas
 			p := httpprovider.NewCasProvider(
 				http.DefaultClient,
-				s.newConfigProvider(),
+				casConfig,
 				s.newUserProvider(),
 			)
-			router.GET("/cas/login", s.casSessionLoginHandler())
-			router.GET("/cas/loggedin", s.casSessionCallbackHandler(p))
-			router.GET("/api/v4/cas/login", s.casLoginHandler())
-			router.GET("/api/v4/cas/loggedin", s.casCallbackHandler(p))
+			router.GET("/cas/login", cas.SessionLoginHandler(casConfig))
+			router.GET("/cas/loggedin", cas.SessionCallbackHandler(p, s.enforcer, s.sessionStore))
+			router.GET("/api/v4/cas/login", cas.LoginHandler(casConfig))
+			router.GET("/api/v4/cas/loggedin", cas.CallbackHandler(p, s.enforcer, s.GetTokenService()))
 		case libsecurity.AuthMethodSaml:
-			sp, err := saml.NewServiceProvider(s.newUserProvider(), client.Collection(mongo.RightsMongoCollection), s.SessionStore,
-				s.enforcer, s.Config, s.GetTokenService(), s.GetTokenStore(), s.Logger)
+			sp, err := saml.NewServiceProvider(s.newUserProvider(), client.Collection(mongo.RightsMongoCollection), s.sessionStore,
+				s.enforcer, s.config, s.GetTokenService(), s.logger)
 			if err != nil {
-				s.Logger.Err(err).Msg("RegisterCallbackRoutes: NewServiceProvider error")
+				s.logger.Err(err).Msg("RegisterCallbackRoutes: NewServiceProvider error")
 				panic(err)
 			}
 
@@ -162,211 +160,52 @@ func (s *security) RegisterCallbackRoutes(router gin.IRouter, client mongo.DbCli
 func (s *security) GetAuthMiddleware() []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		middleware.Auth(s.GetHttpAuthProviders()),
-		middleware.SessionAuth(s.DbClient, s.SessionStore),
+		middleware.SessionAuth(s.dbClient, s.sessionStore),
 	}
 }
 
 func (s *security) GetFileAuthMiddleware() []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		middleware.Auth([]libsecurity.HttpProvider{
-			httpprovider.NewCookieProvider(s.GetTokenService(), s.GetTokenStore(),
-				s.newUserProvider(), s.cookieOptions.FileAccessName, s.Logger),
+			httpprovider.NewCookieProvider(s.GetTokenProviders(), s.cookieOptions.FileAccessName, s.logger),
 		}),
 	}
 }
 
 func (s *security) GetSessionStore() libsession.Store {
-	return s.SessionStore
+	return s.sessionStore
 }
 
 func (s *security) GetConfig() libsecurity.Config {
-	return *s.Config
+	return s.config
 }
 
 func (s *security) GetPasswordEncoder() password.Encoder {
 	return password.NewSha1Encoder()
 }
 
-func (s *security) GetTokenService() token.Service {
-	secretKey := os.Getenv(JwtSecretEnv)
+func (s *security) GetTokenService() apisecurity.TokenService {
+	return apisecurity.NewTokenService(s.config, s.dbClient, s.GetTokenGenerator(), token.NewMongoStore(s.dbClient, s.logger))
+}
 
-	return token.NewJwtService([]byte(secretKey), canopsis.AppName, s.apiConfigProvider)
-}
-func (s *security) GetTokenStore() token.Store {
-	return token.NewMongoStore(s.DbClient, s.Logger)
-}
-func (s *security) GetTokenProvider() libsecurity.TokenProvider {
-	return tokenprovider.NewTokenProvider(s.GetTokenService(), s.GetTokenStore(), s.newUserProvider(), s.Logger)
+func (s *security) GetTokenProviders() []libsecurity.TokenProvider {
+	return []libsecurity.TokenProvider{
+		tokenprovider.NewTokenProvider(s.GetTokenGenerator(), token.NewMongoStore(s.dbClient, s.logger), s.newUserProvider(), s.logger),
+		tokenprovider.NewTokenProvider(s.GetTokenGenerator(), sharetoken.NewMongoStore(s.dbClient, s.logger), s.newUserProvider(), s.logger),
+	}
 }
 
 func (s *security) GetCookieOptions() CookieOptions {
 	return s.cookieOptions
 }
 
-type casLoginRequest struct {
-	// Redirect is front-end url to redirect back after authentication.
-	Redirect string `form:"redirect"`
-	// Service is proxy url to callback handler to set cookie for front-end app.
-	Service string `form:"service"`
-}
-
-// casSessionLoginHandler redirects to CAS login url and saves referer url to service url.
-func (s *security) casSessionLoginHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		request := casLoginRequest{}
-
-		if err := c.ShouldBind(&request); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-			return
-		}
-
-		casConfig, err := s.newConfigProvider().LoadCasConfig(c.Request.Context())
-		if err != nil {
-			panic(err)
-		}
-
-		casUrl, err := url.Parse(casConfig.LoginUrl)
-		if err != nil {
-			panic(err)
-		}
-
-		service := fmt.Sprintf("%s?redirect=%s&service=%s",
-			request.Service, request.Redirect, request.Service)
-		q := casUrl.Query()
-		q.Set("service", service)
-		casUrl.RawQuery = q.Encode()
-
-		c.Redirect(http.StatusPermanentRedirect, casUrl.String())
-	}
-}
-
-// casSessionCallbackHandler validates CAS ticket, inits session and redirects to referer url.
-func (s *security) casSessionCallbackHandler(p libsecurity.HttpProvider) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		request := casLoginRequest{}
-
-		if err := c.ShouldBind(&request); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-			return
-		}
-
-		user, err, ok := p.Auth(c.Request)
-		if err != nil {
-			panic(err)
-		}
-
-		if !ok || user == nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
-			return
-		}
-
-		session := s.getSession(c)
-		session.Values["user"] = user.ID
-		err = session.Save(c.Request, c.Writer)
-		if err != nil {
-			panic(err)
-		}
-
-		err = s.enforcer.LoadPolicy()
-		if err != nil {
-			panic(fmt.Errorf("reload enforcer error: %w", err))
-		}
-
-		c.Redirect(http.StatusPermanentRedirect, request.Redirect)
-	}
-}
-
-// casLoginHandler redirects to CAS login url and saves referer url to service url.
-func (s *security) casLoginHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		request := casLoginRequest{}
-
-		if err := c.ShouldBind(&request); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-			return
-		}
-
-		casConfig, err := s.newConfigProvider().LoadCasConfig(c.Request.Context())
-		if err != nil {
-			panic(err)
-		}
-
-		casUrl, err := url.Parse(casConfig.LoginUrl)
-		if err != nil {
-			panic(err)
-		}
-
-		service := fmt.Sprintf("%s?redirect=%s&service=%s",
-			request.Service, request.Redirect, request.Service)
-		q := casUrl.Query()
-		q.Set("service", service)
-		casUrl.RawQuery = q.Encode()
-
-		c.Redirect(http.StatusPermanentRedirect, casUrl.String())
-	}
-}
-
-// casCallbackHandler validates CAS ticket, creates access token and redirects to referer url.
-func (s *security) casCallbackHandler(p libsecurity.HttpProvider) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		request := casLoginRequest{}
-
-		if err := c.ShouldBind(&request); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-			return
-		}
-
-		user, err, ok := p.Auth(c.Request)
-		if err != nil {
-			panic(err)
-		}
-
-		if !ok || user == nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
-			return
-		}
-
-		err = s.enforcer.LoadPolicy()
-		if err != nil {
-			panic(fmt.Errorf("reload enforcer error: %w", err))
-		}
-
-		accessToken, expiresAt, err := s.GetTokenService().GenerateToken(user.ID)
-		if err != nil {
-			panic(err)
-		}
-
-		now := time.Now()
-		err = s.GetTokenStore().Save(c.Request.Context(), token.Token{
-			ID:       accessToken,
-			User:     user.ID,
-			Provider: libsecurity.AuthMethodCas,
-			Created:  types.CpsTime{Time: now},
-			Expired:  types.CpsTime{Time: expiresAt},
-		})
-		if err != nil {
-			panic(err)
-		}
-
-		redirectUrl, err := url.Parse(request.Redirect)
-		if err != nil {
-			panic(fmt.Errorf("parse redirect url error: %w", err))
-		}
-
-		q := redirectUrl.Query()
-		q.Set("access_token", accessToken)
-		redirectUrl.RawQuery = q.Encode()
-
-		c.Redirect(http.StatusPermanentRedirect, redirectUrl.String())
-	}
+func (s *security) GetTokenGenerator() token.Generator {
+	secretKey := os.Getenv(JwtSecretEnv)
+	return token.NewJwtGenerator([]byte(secretKey), canopsis.AppName, s.apiConfigProvider)
 }
 
 func (s *security) newUserProvider() libsecurity.UserProvider {
-	return userprovider.NewMongoProvider(s.DbClient)
-}
-
-func (s *security) newConfigProvider() libsecurity.ConfigProvider {
-	return configprovider.NewMongoProvider(s.DbClient)
+	return userprovider.NewMongoProvider(s.dbClient)
 }
 
 func (s *security) newBaseAuthProvider() libsecurity.Provider {
@@ -375,18 +214,9 @@ func (s *security) newBaseAuthProvider() libsecurity.Provider {
 
 func (s *security) newLdapAuthProvider() libsecurity.Provider {
 	return provider.NewLdapProvider(
-		s.newConfigProvider(),
+		s.config.Security.Ldap,
 		s.newUserProvider(),
 		provider.NewLdapDialer(),
 		s.enforcer,
 	)
-}
-
-func (s *security) getSession(c *gin.Context) *sessions.Session {
-	session, err := s.SessionStore.Get(c.Request, libsecurity.SessionKey)
-	if err != nil {
-		panic(err)
-	}
-
-	return session
 }

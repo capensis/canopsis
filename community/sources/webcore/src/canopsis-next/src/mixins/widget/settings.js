@@ -45,13 +45,6 @@ export const widgetSettingsMixin = {
   },
   methods: {
     /**
-     * Update main filter updated at value. We are using this value for checking which filter was changed later
-     */
-    updateMainFilterUpdatedAt() {
-      this.form.parameters.mainFilterUpdatedAt = Date.now();
-    },
-
-    /**
      * Submit settings form
      *
      * @returns {Promise<void>}
@@ -74,6 +67,10 @@ export const widgetSettingsMixin = {
             await this.updateWidget({ id: widgetId, data });
           } else {
             await this.createWidget({ data });
+          }
+
+          if (data.parameters.mainFilter && this.userPreference.content.mainFilter === data.parameters.mainFilter) {
+            await this.updateContentInUserPreference({ mainFilter: null });
           }
 
           if (widgetId) {
