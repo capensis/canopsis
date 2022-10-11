@@ -21,6 +21,8 @@ const stubs = {
   'c-information-block': true,
   'event-filter-change-entity-form': true,
   'event-filter-enrichment-form': true,
+  'pbehavior-recurrence-rule-field': true,
+  'event-filter-drop-intervals-field': true,
 };
 
 const factory = (options = {}) => shallowMount(EventFilterForm, {
@@ -45,6 +47,7 @@ const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 const selectPatternsField = wrapper => wrapper.find('c-patterns-field-stub');
 const selectEventFilterChangeEntityForm = wrapper => wrapper.find('event-filter-change-entity-form-stub');
 const selectEventFilterEnrichmentForm = wrapper => wrapper.find('event-filter-enrichment-form-stub');
+const selectEventFilterDropIntervalsField = wrapper => wrapper.find('event-filter-drop-intervals-field-stub');
 
 describe('event-filter-form', () => {
   const form = {
@@ -236,6 +239,26 @@ describe('event-filter-form', () => {
       ...enrichmentForm,
       config: newConfig,
     });
+  });
+
+  test('Enrichment config changed after trigger enrichment form', () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    const eventFilterDropIntervalsField = selectEventFilterDropIntervalsField(wrapper);
+
+    const newData = {
+      ...form,
+      exdates: [{}],
+      exceptions: [],
+    };
+
+    eventFilterDropIntervalsField.vm.$emit('input', newData);
+
+    expect(wrapper).toEmit('input', newData);
   });
 
   test('Renders `event-filter-form` with default props', () => {

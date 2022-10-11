@@ -318,18 +318,32 @@ func (mr *MockHubMockRecorder) Connect(arg0, arg1 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockHub)(nil).Connect), arg0, arg1)
 }
 
-// GetUniqueUsers mocks base method.
-func (m *MockHub) GetUniqueUsers() []string {
+// GetAuthConnectionsCount mocks base method.
+func (m *MockHub) GetAuthConnectionsCount() int {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUniqueUsers")
-	ret0, _ := ret[0].([]string)
+	ret := m.ctrl.Call(m, "GetAuthConnectionsCount")
+	ret0, _ := ret[0].(int)
 	return ret0
 }
 
-// GetUniqueUsers indicates an expected call of GetUniqueUsers.
-func (mr *MockHubMockRecorder) GetUniqueUsers() *gomock.Call {
+// GetAuthConnectionsCount indicates an expected call of GetAuthConnectionsCount.
+func (mr *MockHubMockRecorder) GetAuthConnectionsCount() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUniqueUsers", reflect.TypeOf((*MockHub)(nil).GetUniqueUsers))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAuthConnectionsCount", reflect.TypeOf((*MockHub)(nil).GetAuthConnectionsCount))
+}
+
+// GetUsers mocks base method.
+func (m *MockHub) GetUsers() map[string][]string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUsers")
+	ret0, _ := ret[0].(map[string][]string)
+	return ret0
+}
+
+// GetUsers indicates an expected call of GetUsers.
+func (mr *MockHubMockRecorder) GetUsers() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockHub)(nil).GetUsers))
 }
 
 // RegisterRoom mocks base method.

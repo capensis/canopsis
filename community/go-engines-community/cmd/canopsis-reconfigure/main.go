@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/migration/cli"
@@ -21,6 +21,7 @@ import (
 	"github.com/golang-migrate/migrate/v4/database/pgx"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/pelletier/go-toml/v2"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -49,23 +50,8 @@ func main() {
 	}
 
 	logger := log.NewLogger(f.modeDebug)
-	data, err := ioutil.ReadFile(f.confFile)
-	if err != nil {
-		logger.Error().Err(err).Int("exit status", 1).Msg("")
-		os.Exit(1)
-	}
-
-	var conf Conf
-	if err := toml.Unmarshal(data, &conf); err != nil {
-		logger.Error().Err(err).Int("exit status", 2).Msg("")
-		os.Exit(2)
-	}
-
-	if f.overrideConfFile != "" {
-		if err := loadOverrideConfig(&conf, f.overrideConfFile); err != nil {
-			logger.Warn().Err(err).Msgf("skipped configuration overriding")
-		}
-	}
+	conf, err := parseConfig(f, logger)
+	utils.FailOnError(err, "Failed to parse config")
 
 	err = GracefullStart(ctx, logger)
 	utils.FailOnError(err, "Failed to open one of required sessions")
@@ -172,18 +158,7 @@ func main() {
 		logger.Info().Msg("Finish fixtures")
 	}
 
-	buildInfo := canopsis.GetBuildInfo()
-	err = config.NewVersionAdapter(client).UpsertConfig(ctx, config.VersionConf{
-		Version: buildInfo.Version,
-		Edition: f.edition,
-		Stack:   "go",
-	})
-	utils.FailOnError(err, "Failed to save config into mongo")
-	err = config.NewAdapter(client).UpsertConfig(ctx, conf.Canopsis)
-	utils.FailOnError(err, "Failed to save config into mongo")
-	err = config.NewRemediationAdapter(client).UpsertConfig(ctx, conf.Remediation)
-	utils.FailOnError(err, "Failed to save config into mongo")
-	err = config.NewHealthCheckAdapter(client).UpsertConfig(ctx, conf.HealthCheck)
+	err = updateMongoConfig(ctx, f, conf, client)
 	utils.FailOnError(err, "Failed to save config into mongo")
 
 	if f.modeMigrateMongo {
@@ -198,6 +173,42 @@ func main() {
 		utils.FailOnError(err, "Failed to migrate")
 		logger.Info().Msg("Finish migrations")
 	}
+}
+
+func updateMongoConfig(ctx context.Context, f flags, conf Conf, dbClient mongo.DbClient) error {
+	versionConfAdapter := config.NewVersionAdapter(dbClient)
+	prevVersionConf, err := versionConfAdapter.GetConfig(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to fetch version config: %w", err)
+	}
+	buildInfo := canopsis.GetBuildInfo()
+	versionConf := config.VersionConf{
+		Version: buildInfo.Version,
+		Edition: f.edition,
+		Stack:   "go",
+	}
+	if prevVersionConf.Version != versionConf.Version {
+		versionUpdated := types.NewCpsTime()
+		versionConf.VersionUpdated = &versionUpdated
+	}
+	err = versionConfAdapter.UpsertConfig(ctx, versionConf)
+	if err != nil {
+		return fmt.Errorf("failed to update version config: %w", err)
+	}
+	err = config.NewAdapter(dbClient).UpsertConfig(ctx, conf.Canopsis)
+	if err != nil {
+		return fmt.Errorf("failed to update global config: %w", err)
+	}
+	err = config.NewRemediationAdapter(dbClient).UpsertConfig(ctx, conf.Remediation)
+	if err != nil {
+		return fmt.Errorf("failed to update remediation config: %w", err)
+	}
+	err = config.NewHealthCheckAdapter(dbClient).UpsertConfig(ctx, conf.HealthCheck)
+	if err != nil {
+		return fmt.Errorf("failed to update healthcheck config: %w", err)
+	}
+
+	return nil
 }
 
 func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
@@ -245,28 +256,53 @@ func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
 	return nil
 }
 
-// Clone returns pointer to a new deep copy of current Config
-func (c *Conf) Clone() interface{} {
-	cloned := *c
-	return &cloned
+func parseConfig(f flags, logger zerolog.Logger) (Conf, error) {
+	data, err := os.ReadFile(f.confFile)
+	if err != nil {
+		return Conf{}, err
+	}
+	if f.overrideConfFile != "" {
+		overrideData, err := os.ReadFile(f.overrideConfFile)
+		if err == nil {
+			data, err = mergeConfigs(data, overrideData)
+		}
+
+		if err != nil {
+			logger.Warn().Err(err).Msgf("skip configuration override")
+		}
+	}
+
+	var conf Conf
+	err = toml.Unmarshal(data, &conf)
+	return conf, err
 }
 
-func loadOverrideConfig(conf *Conf, overrideConfFile string) error {
-	data, err := ioutil.ReadFile(overrideConfFile)
-	if err != nil {
-		return fmt.Errorf("no configuration file found")
+func mergeConfigs(configs ...[]byte) ([]byte, error) {
+	var res map[string]interface{}
+	for _, b := range configs {
+		v := make(map[string]interface{})
+		err := toml.Unmarshal(b, &v)
+		if err != nil {
+			return nil, err
+		}
+		if len(res) == 0 {
+			res = v
+		} else {
+			mergeMaps(res, v)
+		}
 	}
 
-	var overrideConf map[string]interface{}
-	if err = toml.Unmarshal(data, &overrideConf); err != nil {
-		return err
-	}
+	return toml.Marshal(res)
+}
 
-	newPtr, err := config.Override(conf, overrideConf)
-	if err != nil {
-		return err
+func mergeMaps(l, r map[string]interface{}) {
+	for k, v := range r {
+		if rm, ok := v.(map[string]interface{}); ok {
+			if lm, ok := l[k].(map[string]interface{}); ok {
+				mergeMaps(lm, rm)
+				continue
+			}
+		}
+		l[k] = v
 	}
-
-	*conf = *newPtr.(*Conf)
-	return nil
 }

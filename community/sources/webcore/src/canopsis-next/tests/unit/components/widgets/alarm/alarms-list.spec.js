@@ -18,9 +18,9 @@ import {
   TIME_UNITS,
   USERS_PERMISSIONS,
 } from '@/constants';
+import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
-import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
 
 jest.mock('file-saver', () => ({
   saveAs: jest.fn(),
@@ -40,6 +40,7 @@ const stubs = {
   'c-density-btn-toggle': true,
   'c-table-pagination': true,
   'alarms-expand-panel-tour': true,
+  'mass-actions-panel': true,
   'alarms-list-table': {
     template: `
       <div class="alarms-list-table">
@@ -62,6 +63,7 @@ const snapshotStubs = {
   'c-table-pagination': true,
   'c-density-btn-toggle': true,
   'alarms-expand-panel-tour': true,
+  'mass-actions-panel': true,
 };
 
 const factory = (options = {}) => shallowMount(AlarmsList, {
@@ -87,7 +89,9 @@ const selectLiveReportingButton = wrapper => wrapper.findAll('c-action-btn-stub'
 const selectInstructionsFiltersField = wrapper => wrapper.find('alarms-list-remediation-instructions-filters-stub');
 const selectRemoveHistoryButton = wrapper => wrapper.find('v-chip-stub');
 const selectPagination = wrapper => wrapper.find('c-pagination-stub');
+const selectAlarmsListTable = wrapper => wrapper.find('.alarms-list-table');
 const selectAlarmsExpandPanelTour = wrapper => wrapper.find('alarms-expand-panel-tour-stub');
+const selectMassActionsPanel = wrapper => wrapper.find('mass-actions-panel-stub');
 
 describe('alarms-list', () => {
   const $popups = mockPopups();
@@ -129,6 +133,7 @@ describe('alarms-list', () => {
     _id: '880c5d0c-3f31-477c-8365-2f90389326cc',
   };
   const defaultQuery = {
+    filters: [],
     active_columns: widget.parameters.widgetColumns.map(v => v.value),
     correlation: userPreferences.content.isCorrelationEnabled,
     category: userPreferences.content.category,
@@ -170,6 +175,7 @@ describe('alarms-list', () => {
   const fetchAlarmsDetailsList = jest.fn();
   const updateAlarmDetailsQuery = jest.fn();
   const removeAlarmDetailsQuery = jest.fn();
+  const fetchTagsList = jest.fn();
   const sideBarModule = {
     name: 'sideBar',
     actions: {
@@ -258,6 +264,16 @@ describe('alarms-list', () => {
     },
   };
 
+  const alarmTagModule = {
+    name: 'alarmTag',
+    getters: {
+      pending: () => false,
+    },
+    actions: {
+      fetchList: fetchTagsList,
+    },
+  };
+
   const store = createMockedStoreModules([
     alarmModule,
     sideBarModule,
@@ -266,6 +282,7 @@ describe('alarms-list', () => {
     viewModule,
     userPreferenceModule,
     authModule,
+    alarmTagModule,
   ]);
 
   afterEach(() => {
@@ -274,6 +291,7 @@ describe('alarms-list', () => {
     updateView.mockClear();
     updateQuery.mockClear();
     hideSideBar.mockClear();
+    fetchTagsList.mockClear();
   });
 
   it('Query updated after mount', async () => {
@@ -297,7 +315,9 @@ describe('alarms-list', () => {
       {
         id: widget._id,
         query: {
-          ...omit(defaultQuery, ['search', 'tstart', 'tstop']),
+          ...omit(defaultQuery, ['search', 'tstart', 'tstop', 'filters']),
+          filter: undefined,
+          lockedFilter: null,
           multiSortBy: [],
           page: 1,
           with_instructions: true,
@@ -327,7 +347,9 @@ describe('alarms-list', () => {
       {
         id: widget._id,
         query: {
-          ...omit(defaultQuery, ['search', 'tstart', 'tstop']),
+          ...omit(defaultQuery, ['search', 'tstart', 'tstop', 'filters']),
+          filter: undefined,
+          lockedFilter: null,
           multiSortBy: [],
           page: 1,
           with_instructions: true,
@@ -348,6 +370,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...authModule,
           getters: {
@@ -407,6 +430,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...authModule,
           getters: {
@@ -445,7 +469,6 @@ describe('alarms-list', () => {
           content: {
             ...userPreferences.content,
             mainFilter: selectedFilter._id,
-            mainFilterUpdatedAt: nowTimestamp,
           },
         },
       },
@@ -475,6 +498,7 @@ describe('alarms-list', () => {
         viewModule,
         userPreferenceModule,
         authModule,
+        alarmTagModule,
       ]),
       propsData: {
         widget,
@@ -526,6 +550,7 @@ describe('alarms-list', () => {
 
     const manualInstructionFilter = {
       manual: true,
+      running: null,
       instructions: [{
         _id: 'manual-instruction-id',
       }],
@@ -533,6 +558,7 @@ describe('alarms-list', () => {
     };
     const autoInstructionFilter = {
       auto: true,
+      running: true,
       instructions: [{
         _id: 'auto-instruction-id',
       }],
@@ -541,6 +567,7 @@ describe('alarms-list', () => {
     const allAndWithInstructionFilter = {
       all: true,
       with: true,
+      running: false,
       instructions: [{
         _id: 'all-and-with-instruction-id',
       }, {
@@ -553,14 +580,6 @@ describe('alarms-list', () => {
       manualInstructionFilter,
       autoInstructionFilter,
       allAndWithInstructionFilter,
-    ];
-    const excludeInstructionsIds = [
-      autoInstructionFilter.instructions[0]._id,
-      manualInstructionFilter.instructions[0]._id,
-    ];
-    const includeInstructionsIds = [
-      allAndWithInstructionFilter.instructions[0]._id,
-      allAndWithInstructionFilter.instructions[1]._id,
     ];
 
     const instructionsFiltersField = selectInstructionsFiltersField(wrapper);
@@ -587,10 +606,25 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
-          include_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
-          exclude_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
-          exclude_instructions: excludeInstructionsIds,
-          include_instructions: includeInstructionsIds,
+          instructions: [
+            {
+              exclude: [manualInstructionFilter.instructions[0]._id],
+              exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual],
+            },
+            {
+              exclude: [autoInstructionFilter.instructions[0]._id],
+              exclude_types: [REMEDIATION_INSTRUCTION_TYPES.auto],
+              running: true,
+            },
+            {
+              include: [
+                allAndWithInstructionFilter.instructions[0]._id,
+                allAndWithInstructionFilter.instructions[1]._id,
+              ],
+              include_types: [REMEDIATION_INSTRUCTION_TYPES.auto, REMEDIATION_INSTRUCTION_TYPES.manual],
+              running: false,
+            },
+          ],
           page: 1,
         },
       },
@@ -631,9 +665,6 @@ describe('alarms-list', () => {
       manualInstructionFilter,
       autoInstructionFilter,
     ];
-    const excludeInstructionsIds = [
-      manualInstructionFilter.instructions[0]._id,
-    ];
 
     const instructionsFiltersField = selectInstructionsFiltersField(wrapper);
 
@@ -659,8 +690,12 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
-          exclude_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual],
-          exclude_instructions: excludeInstructionsIds,
+          instructions: [
+            {
+              exclude: [manualInstructionFilter.instructions[0]._id],
+              exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual],
+            },
+          ],
           page: 1,
         },
       },
@@ -759,6 +794,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...authModule,
           getters: {
@@ -907,6 +943,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...authModule,
           getters: {
@@ -934,6 +971,7 @@ describe('alarms-list', () => {
       expect.any(Object),
       {
         data: {
+          filters: defaultQuery.filters,
           search: defaultQuery.search,
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
@@ -998,6 +1036,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...authModule,
           getters: {
@@ -1031,6 +1070,7 @@ describe('alarms-list', () => {
       expect.any(Object),
       {
         data: {
+          filters: defaultQuery.filters,
           search: defaultQuery.search,
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
@@ -1061,6 +1101,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...authModule,
           getters: {
@@ -1094,6 +1135,7 @@ describe('alarms-list', () => {
       expect.any(Object),
       {
         data: {
+          filters: defaultQuery.filters,
           search: defaultQuery.search,
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
@@ -1132,6 +1174,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...alarmModule,
           actions: {
@@ -1209,6 +1252,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...alarmModule,
           actions: {
@@ -1258,6 +1302,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...alarmModule,
           actions: {
@@ -1311,6 +1356,7 @@ describe('alarms-list', () => {
         queryModule,
         viewModule,
         userPreferenceModule,
+        alarmTagModule,
         {
           ...alarmModule,
           actions: {
@@ -1730,11 +1776,49 @@ describe('alarms-list', () => {
     jest.useRealTimers();
   });
 
+  it('Selected alarms cleared after trigger mass actions', () => {
+    const selectedAlarms = alarms.slice(0, -1);
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget,
+      },
+    });
+
+    const table = selectAlarmsListTable(wrapper);
+    table.vm.$emit('input', selectedAlarms);
+
+    const massActionsPanel = selectMassActionsPanel(wrapper);
+    massActionsPanel.vm.$emit('clear:items');
+
+    expect(wrapper.vm.selected).toEqual([]);
+  });
+
   it('Renders `alarms-list` with default props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
         widget,
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `alarms-list` with clear filter disabled props', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        widget: {
+          ...widget,
+          parameters: {
+            ...widget.parameters,
+
+            clearFilterDisabled: true,
+          },
+        },
       },
     });
 

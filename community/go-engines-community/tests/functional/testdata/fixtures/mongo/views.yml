@@ -302,3 +302,7 @@ views:
   view_to_weather_get:
     <<: *view
     _id: test-view-to-weather-get
+
+  view_to_map_edit:
+    <<: *view
+    _id: test-view-to-map-edit

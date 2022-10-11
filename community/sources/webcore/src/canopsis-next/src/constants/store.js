@@ -41,4 +41,6 @@ export const ENTITIES_TYPES = {
   ratingSettings: 'ratingSettings',
   pattern: 'pattern',
   map: 'map',
+  alarmTag: 'alarmTag',
+  shareToken: 'shareToken',
 };

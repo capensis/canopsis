@@ -1,10 +1,11 @@
 configuration:
-  configuration_1:
+  configuration_version:
     _id: canopsis_version
-    edition: cat
+    edition: pro
     stack: go
-    version: 3.42.0
-  configuration_2:
+    version: development
+
+  configuration_user_interface:
     _id: user_interface
     app_title: Canopsis Test
     check_count_request_timeout: 30
@@ -13,7 +14,8 @@ configuration:
     loader_no_update: true
     login_page_description: Test login
     max_matched_items: 4
-  configuration_3:
+
+  configuration_global:
     _id: global_config
     alarm:
       allowdoubleack: true
@@ -28,7 +30,6 @@ configuration:
       timetokeepresolvedalarms: 0h
     api:
       bulkmaxsize: 10000
-      tokenexpiration: 24h
       tokensigningmethod: HS256
     data_storage:
       timetoexecute: ""
@@ -51,7 +52,8 @@ configuration:
       sliinterval: 1h
     timezone:
       timezone: Europe/Paris
-  configuration_4:
+
+  configuration_remediation:
     _id: remediation
     external_api:
       awx:
@@ -153,7 +155,8 @@ configuration:
     pause_manual_instruction_interval: 30m
     wait_job_complete_retries_amount: 1
     wait_job_complete_retries_interval: 1s
-  configuration_5:
+
+  configuration_healthcheck:
     _id: health_check
     engine_order:
     - from: engine-fifo
@@ -174,3 +177,22 @@ configuration:
       to: engine-action
     - from: engine-action
       to: engine-webhook
+
+  configuration_alarm_tag_color:
+    _id: alarm_tag_color
+    colors:
+      - "#B71C1C"
+      - "#880E4F"
+      - "#4A148C"
+      - "#0D47A1"
+      - "#01579B"
+      - "#006064"
+      - "#004D40"
+      - "#33691E"
+      - "#9E9D24"
+      - "#F57F17"
+      - "#E65100"
+      - "#BF360C"
+      - "#8D6E63"
+      - "#607D8B"
+      - "#9E9E9E"
