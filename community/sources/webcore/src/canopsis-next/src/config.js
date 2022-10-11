@@ -193,6 +193,7 @@ export const API_ROUTES = {
   patterns: '/api/v4/patterns',
   bulkPatterns: '/api/v4/bulk/patterns',
   patternsCount: '/api/v4/patterns-count',
+  shareTokens: '/api/v4/share-tokens',
 
   /**
    * Cat routes
