@@ -1156,7 +1156,7 @@ Feature: Get a map's state and alarms
       }
     ]
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -1435,7 +1435,7 @@ Feature: Get a map's state and alarms
       }
     ]
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I do POST /api/v4/entityservices:
     """json
     {

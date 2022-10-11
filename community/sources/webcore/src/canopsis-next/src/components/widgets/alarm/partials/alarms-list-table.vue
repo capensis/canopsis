@@ -1,17 +1,10 @@
 <template lang="pug">
   v-flex.white(v-resize="changeHeaderPositionOnResize")
-    v-flex.px-3(v-show="selectedIds.length", xs12)
-      mass-actions-panel(
-        :items-ids="selectedIds",
-        :widget="widget",
-        :refresh-alarms-list="refreshAlarmsList",
-        @clear:items="clearSelected"
-      )
     c-empty-data-table-columns(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
         ref="dataTable",
-        v-model="selected",
+        v-field="selected",
         :class="vDataTableClass",
         :items="alarms",
         :headers="headers",
@@ -48,6 +41,7 @@
             :parent-alarm="parentAlarm",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
             :refresh-alarms-list="refreshAlarmsList",
+            :selecting="selecting",
             :selected-tag="selectedTag",
             @select:tag="$emit('select:tag', $event)"
           )
@@ -70,14 +64,11 @@
 import { TOP_BAR_HEIGHT } from '@/config';
 import { ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
-import { isResolvedAlarm } from '@/helpers/entities';
-
 import featuresService from '@/services/features';
 
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
-import MassActionsPanel from '../actions/mass-actions-panel.vue';
 import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
 import AlarmsListRow from './alarms-list-row.vue';
 
@@ -89,7 +80,6 @@ import AlarmsListRow from './alarms-list-row.vue';
 export default {
   components: {
     AlarmHeaderCell,
-    MassActionsPanel,
     AlarmsExpandPanel,
     AlarmsListRow,
 
@@ -100,7 +90,15 @@ export default {
 
     ...featuresService.get('components.alarmListTable.mixins', []),
   ],
+  model: {
+    prop: 'selected',
+    event: 'input',
+  },
   props: {
+    selected: {
+      type: Array,
+      default: () => [],
+    },
     widget: {
       type: Object,
       required: true,
@@ -168,7 +166,7 @@ export default {
       : {};
 
     return {
-      selected: [],
+      selecting: false,
       columnsFilters: [],
       columnsFiltersPending: false,
 
@@ -183,12 +181,6 @@ export default {
 
     expanded() {
       return this.$refs.dataTable.expanded;
-    },
-
-    selectedIds() {
-      return this.selected
-        .filter(item => !isResolvedAlarm(item))
-        .map(item => item._id);
     },
 
     hasInstructionsAlarms() {
@@ -219,6 +211,7 @@ export default {
 
       return {
         [`columns-${label}`]: true,
+        'alarms-list-table__selecting': this.selecting,
       };
     },
 
@@ -275,6 +268,9 @@ export default {
       window.addEventListener('scroll', this.changeHeaderPosition);
     }
 
+    window.addEventListener('keydown', this.enableSelecting);
+    window.addEventListener('keyup', this.disableSelecting);
+
     if (featuresService.has('components.alarmListTable.mounted')) {
       featuresService.call('components.alarmListTable.mounted', this, {});
     }
@@ -285,6 +281,8 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.changeHeaderPosition);
+    window.removeEventListener('keydown', this.enableSelecting);
+    window.removeEventListener('keyup', this.disableSelecting);
 
     if (featuresService.has('components.alarmListTable.beforeDestroy')) {
       featuresService.call('components.alarmListTable.beforeDestroy', this, {});
@@ -293,6 +291,18 @@ export default {
 
   methods: {
     ...featuresService.get('components.alarmListTable.methods', {}),
+
+    enableSelecting({ key }) {
+      if (key === 'Control') {
+        this.selecting = true;
+      }
+    },
+
+    disableSelecting({ key }) {
+      if (key === 'Control') {
+        this.selecting = false;
+      }
+    },
 
     startScrolling() {
       if (this.translateY !== this.previousTranslateY) {
@@ -381,16 +391,38 @@ export default {
     updatePaginationHandler(data) {
       this.$emit('update:pagination', data);
     },
-
-    clearSelected() {
-      this.selected = [];
-    },
   },
 };
 </script>
 
 <style lang="scss">
   .alarms-list-table {
+    .alarm-list-row {
+      position: relative;
+
+      &:after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        pointer-events: none;
+        background: rgba(200, 220, 200, .3);
+        transition: opacity linear .3s;
+      }
+    }
+
+    &__selecting .alarm-list-row {
+      user-select: none;
+
+      &:after{
+        pointer-events: auto;
+        opacity: 1;
+      }
+    }
+
     tbody {
       position: relative;
     }

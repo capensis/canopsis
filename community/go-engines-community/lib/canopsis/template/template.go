@@ -1,17 +1,55 @@
-package types
+package template
 
 import (
+	"bytes"
 	"encoding/json"
 	"log"
 	"regexp"
 	"strings"
+	"sync"
 	"text/template"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-func GetTemplateFunc(cfgTimezone *config.TimezoneConfig) template.FuncMap {
+type Executor struct {
+	timezoneConfigProvider config.TimezoneConfigProvider
+	bufPool                sync.Pool
+}
+
+func NewExecutor(timezoneConfigProvider config.TimezoneConfigProvider) *Executor {
+	return &Executor{
+		timezoneConfigProvider: timezoneConfigProvider,
+		bufPool: sync.Pool{
+			New: func() any {
+				return new(bytes.Buffer)
+			},
+		},
+	}
+}
+
+func (e *Executor) Execute(tplStr string, data interface{}) (string, error) {
+	location := e.timezoneConfigProvider.Get().Location
+	tpl, err := template.New("tpl").Funcs(GetFunctions(location)).Parse(tplStr)
+	if err != nil {
+		return "", err
+	}
+
+	tpl.Option("missingkey=error")
+	buf := e.bufPool.Get().(*bytes.Buffer)
+	defer e.bufPool.Put(buf)
+	buf.Reset()
+	err = tpl.Execute(buf, data)
+	if err != nil {
+		return "", err
+	}
+
+	return buf.String(), nil
+}
+
+func GetFunctions(appLocation *time.Location) template.FuncMap {
 	return template.FuncMap{
 		// json will convert an item to an JSON-compatible element,
 		// ie ints will be returned as integers and strings returned as strings with quotes
@@ -131,8 +169,8 @@ func GetTemplateFunc(cfgTimezone *config.TimezoneConfig) template.FuncMap {
 					log.Print("localtime : invalid timezone")
 					return ""
 				}
-			} else if cfgTimezone != nil {
-				loc = cfgTimezone.Location
+			} else if appLocation != nil {
+				loc = appLocation
 			}
 
 			if loc == nil {
@@ -146,9 +184,9 @@ func GetTemplateFunc(cfgTimezone *config.TimezoneConfig) template.FuncMap {
 
 func castTime(v interface{}) (time.Time, bool) {
 	switch t := v.(type) {
-	case CpsTime:
+	case types.CpsTime:
 		return t.Time, true
-	case *CpsTime:
+	case *types.CpsTime:
 		if t == nil {
 			return time.Time{}, false
 		}

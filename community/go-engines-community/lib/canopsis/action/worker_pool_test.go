@@ -7,17 +7,18 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rs/zerolog"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
+	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
 	"github.com/golang/mock/gomock"
+	"github.com/rs/zerolog"
 )
 
 func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
@@ -65,7 +66,10 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 	taskChannel := make(chan action.Task)
 	defer close(taskChannel)
 
-	pool := action.NewWorkerPool(5, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), zerolog.Nop(), nil)
+	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
+	mockTimezoneConfigProvider.EXPECT().Get().Return(config.TimezoneConfig{}).AnyTimes()
+
+	pool := action.NewWorkerPool(5, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), zerolog.Nop(), mockTimezoneConfigProvider)
 	resultChannel, err := pool.RunWorkers(ctx, taskChannel)
 	if err != nil {
 		t.Fatal("error shouldn't be raised")

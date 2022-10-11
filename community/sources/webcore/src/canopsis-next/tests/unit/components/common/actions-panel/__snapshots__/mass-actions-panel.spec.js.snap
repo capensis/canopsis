@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 1`] = `
-<div
-  data-test="massActionsPanel"
->
+<div>
   <!---->
   <div>
     <div
@@ -98,9 +96,7 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
 `;
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 1`] = `
-<div
-  data-test="massActionsPanel"
->
+<div>
   <!---->
   <div>
     <div
@@ -195,9 +191,7 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
 `;
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions on the large size 1`] = `
-<div
-  data-test="massActionsPanel"
->
+<div>
   <div>
     <span>
       <c-action-btn-stub
