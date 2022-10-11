@@ -159,6 +159,7 @@ import CCollapsePanel from '@/components/common/block/c-collapse-panel.vue';
 import CServiceWeatherPatternsField from '@/components/forms/fields/service-weather/c-service-weather-patterns-field.vue';
 import CServiceWeatherIconField from '@/components/forms/fields/service-weather/c-service-weather-icon-field.vue';
 import CContextmenu from '@/components/common/contextmenu/c-contextmenu.vue';
+import CColumnSizeField from '@/components/forms/fields/c-column-size-field.vue';
 import CMapField from '@/components/forms/fields/map/c-map-field.vue';
 import CCoordinatesField from '@/components/forms/fields/map/c-coordinates-field.vue';
 
@@ -409,6 +410,7 @@ Vue.component('c-pbehavior-reason-field', CPbehaviorReasonField);
 Vue.component('c-pbehavior-type-field', CPbehaviorTypeField);
 Vue.component('c-collapse-panel', CCollapsePanel);
 Vue.component('c-contextmenu', CContextmenu);
+Vue.component('c-column-size-field', CColumnSizeField);
 
 Vue.component('c-pattern-attribute-field', CPatternAttributeField);
 Vue.component('c-pattern-infos-attribute-field', CPatternInfosAttributeField);
