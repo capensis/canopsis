@@ -7,8 +7,10 @@
       :pagination.sync="pagination",
       :updatable="hasUpdateAnyRemediationInstructionAccess",
       :removable="hasDeleteAnyRemediationInstructionAccess",
+      :duplicable="hasCreateAnyRemediationInstructionAccess",
       @remove-selected="showRemoveSelectedRemediationInstructionModal",
       @assign-patterns="showAssignPatternsModal",
+      @duplicate="showDuplicateRemediationInstructionModal",
       @remove="showRemoveRemediationInstructionModal",
       @approve="showApproveRemediationInstructionModal",
       @edit="showEditRemediationInstructionModal"
@@ -16,7 +18,7 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
+import { isEqual, omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -163,6 +165,27 @@ export default {
             : undefined,
           action: async () => {
             await this.removeRemediationInstruction({ id: remediationInstruction._id });
+            await this.fetchList();
+          },
+        },
+      });
+    },
+
+    showDuplicateRemediationInstructionModal(remediationInstruction) {
+      this.$modals.show({
+        name: MODALS.createRemediationInstruction,
+        config: {
+          remediationInstruction: omit(remediationInstruction, ['_id']),
+          title: this.$t('modals.createRemediationInstruction.duplicate.title'),
+          action: async (instruction) => {
+            await this.createRemediationInstruction({ data: instruction });
+
+            this.$popups.success({
+              text: this.$t('modals.createRemediationInstruction.duplicate.popups.success', {
+                instructionName: remediationInstruction.name,
+              }),
+            });
+
             await this.fetchList();
           },
         },

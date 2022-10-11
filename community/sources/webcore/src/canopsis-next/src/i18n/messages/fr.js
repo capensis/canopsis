@@ -1505,6 +1505,12 @@ export default merge({
           success: '{instructionName} a été modifiée avec succès',
         },
       },
+      duplicate: {
+        title: 'Double une consigne',
+        popups: {
+          success: '{instructionName} a été dupliqué avec succès',
+        },
+      },
     },
     createRemediationConfiguration: {
       create: {
@@ -1517,6 +1523,12 @@ export default merge({
         title: 'Modifier la configuration',
         popups: {
           success: '{configurationName} a été modifiée avec succès',
+        },
+      },
+      duplicate: {
+        title: 'Double la configuration',
+        popups: {
+          success: '{configurationName} a été dupliqué avec succès',
         },
       },
       fields: {

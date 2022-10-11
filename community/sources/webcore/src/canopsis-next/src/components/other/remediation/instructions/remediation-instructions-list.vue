@@ -50,6 +50,11 @@
             @click="$emit('assign-patterns', item)"
           )
           c-action-btn(
+            v-if="duplicable",
+            type="duplicate",
+            @click="$emit('duplicate', item)"
+          )
+          c-action-btn(
             v-if="removable",
             :tooltip="disabled ? $t('remediationInstructions.usingInstruction') : $t('common.delete')",
             :disabled="disabled",
@@ -85,6 +90,10 @@ export default {
       default: false,
     },
     updatable: {
+      type: Boolean,
+      default: false,
+    },
+    duplicable: {
       type: Boolean,
       default: false,
     },
