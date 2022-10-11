@@ -136,6 +136,17 @@ export const exdateToForm = (exdate, timezone = getLocaleTimezone()) => ({
 });
 
 /**
+ * Convert exdates array to exdates form array
+ *
+ * @param {PbehaviorExdate[]} exdates
+ * @param {string} timezone
+ * @returns {PbehaviorExdateForm[]}
+ */
+export const exdatesToForm = (exdates, timezone) => (
+  exdates ? exdates.map(exdate => exdateToForm(exdate, timezone)) : []
+);
+
+/**
  * Convert exdate form to exdate
  *
  * @param {PbehaviorExdateForm} formExdate
@@ -155,6 +166,14 @@ export const formToExdate = (formExdate, timezone = getLocaleTimezone()) => ({
  * @return {string[]}
  */
 export const exceptionsToRequest = (exceptions = []) => exceptions.map(exception => getIdFromEntity(exception));
+
+/**
+ * Convert exceptions array to exceptions form array
+ *
+ * @param {PbehaviorException[]} exceptions
+ * @returns {PbehaviorExceptionForm[]}
+ */
+export const exceptionsToForm = (exceptions = []) => addKeyInEntities(cloneDeep(exceptions));
 
 /**
  * Convert pbehavior entity to form data.
@@ -193,9 +212,9 @@ export const pbehaviorToForm = (
     reason: cloneDeep(pbehavior.reason),
     tstart: pbehavior.tstart ? convertDateToDateObjectByTimezone(pbehavior.tstart, timezone) : null,
     tstop: pbehavior.tstop ? convertDateToDateObjectByTimezone(pbehavior.tstop, timezone) : null,
-    exceptions: pbehavior.exceptions ? addKeyInEntities(cloneDeep(pbehavior.exceptions)) : [],
     comments: pbehavior.comments ? addKeyInEntities(cloneDeep(pbehavior.comments)) : [],
-    exdates: pbehavior.exdates ? pbehavior.exdates.map(exdate => exdateToForm(exdate, timezone)) : [],
+    exceptions: exceptionsToForm(pbehavior.exceptions),
+    exdates: exdatesToForm(pbehavior.exdates, timezone),
   };
 };
 
@@ -207,6 +226,25 @@ export const pbehaviorToDuplicateForm = pbehavior => ({
   ...pbehavior,
   comments: pbehavior.comments.map(({ message, author }) => ({ message, author })),
 });
+
+/**
+ * Convert form exceptions to exceptions object
+ *
+ * @param {PbehaviorExceptionForm[]} exceptions
+ * @returns {PbehaviorException[]}
+ */
+export const formExceptionsToExceptions = exceptions => removeKeyFromEntities(exceptions);
+
+/**
+ * Convert form exdates to exdates object
+ *
+ * @param {PbehaviorExdateForm[]} exdates
+ * @param {string} timezone
+ * @returns {PbehaviorExdate[]}
+ */
+export const formExdatesToExdates = (exdates = [], timezone) => exdates.map(
+  exdateForm => formToExdate(exdateForm, timezone),
+);
 
 /**
  * Convert form to pbehavior entity.
@@ -222,8 +260,8 @@ export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
   reason: form.reason,
   type: form.type,
   comments: removeKeyFromEntities(form.comments),
-  exdates: form.exdates ? form.exdates.map(exdateForm => formToExdate(exdateForm, timezone)) : [],
-  exceptions: removeKeyFromEntities(form.exceptions),
+  exdates: formExdatesToExdates(form.exdates, timezone),
+  exceptions: formExceptionsToExceptions(form.exceptions),
   tstart: form.tstart ? convertDateToTimestampByTimezone(form.tstart, timezone) : null,
   tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
   ...formFilterToPatterns(form.patterns),

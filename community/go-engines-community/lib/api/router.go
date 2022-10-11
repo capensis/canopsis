@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/appinfo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/associativetable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -23,6 +24,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exportconfiguration"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
@@ -46,6 +48,7 @@ import (
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionauth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sharetoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/userpreferences"
@@ -146,14 +149,14 @@ func RegisterRoutes(
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	logger zerolog.Logger,
 ) {
+	linksFetcher := common.NewLinksFetcher(legacyUrl)
 	sessionStore := security.GetSessionStore()
 	authMiddleware := security.GetAuthMiddleware()
 	security.RegisterCallbackRoutes(router, dbClient)
 	authApi := auth.NewApi(
 		security.GetTokenService(),
-		security.GetTokenStore(),
+		security.GetTokenProviders(),
 		security.GetAuthProviders(),
-		security.GetSessionStore(),
 		websocketHub,
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
@@ -163,8 +166,6 @@ func RegisterRoutes(
 	sessionauthApi := sessionauth.NewApi(
 		sessionStore,
 		security.GetAuthProviders(),
-		websocketHub,
-		security.GetTokenStore(),
 		logger,
 	)
 	router.POST("/auth", sessionauthApi.LoginHandler())
@@ -199,7 +200,7 @@ func RegisterRoutes(
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
-		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger, logger,
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketHub), actionLogger, logger,
 			metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{
@@ -260,7 +261,24 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, legacyUrl, logger)
+		sharetokenApi := sharetoken.NewApi(sharetoken.NewStore(dbClient, security.GetTokenGenerator()), actionLogger)
+		sharetokenRouter := protected.Group("/share-tokens")
+		{
+			sharetokenRouter.POST("",
+				middleware.Authorize(apisecurity.PermShareToken, model.PermissionCreate, enforcer),
+				sharetokenApi.Create,
+			)
+			sharetokenRouter.GET("",
+				middleware.Authorize(apisecurity.PermShareToken, model.PermissionRead, enforcer),
+				sharetokenApi.List,
+			)
+			sharetokenRouter.DELETE("/:id",
+				middleware.Authorize(apisecurity.PermShareToken, model.PermissionDelete, enforcer),
+				sharetokenApi.Delete,
+			)
+		}
+
+		alarmStore := alarm.NewStore(dbClient, linksFetcher, logger)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider, logger)
 		alarmRouter := protected.Group("/alarms")
 		{
@@ -301,6 +319,11 @@ func RegisterRoutes(
 			alarmAPI.ResolvedList,
 		)
 		protected.GET(
+			"/open-alarms",
+			middleware.Authorize(authPermAlarmRead, permCan, enforcer),
+			alarmAPI.GetOpen,
+		)
+		protected.GET(
 			"/alarm-counters",
 			middleware.Authorize(authPermAlarmRead, permCan, enforcer),
 			alarmAPI.Count,
@@ -323,6 +346,13 @@ func RegisterRoutes(
 				alarmAPI.GetExport,
 			)
 		}
+
+		exportConfigurationAPI := exportconfiguration.NewApi(dbClient, logger)
+		protected.POST(
+			"/export-configuration",
+			middleware.Authorize(apisecurity.PermExportConfigurations, permCan, enforcer),
+			exportConfigurationAPI.Export,
+		)
 
 		entityAPI := entity.NewApi(
 			entity.NewStore(dbClient, timezoneConfigProvider),
@@ -355,7 +385,7 @@ func RegisterRoutes(
 
 		protected.POST(
 			"/pbehavior-timespans",
-			middleware.Authorize(authObjPbh, permCreate, enforcer),
+			middleware.Authorize(authObjPbh, permRead, enforcer),
 			pbehaviortimespan.GetTimeSpans(pbehaviortimespan.NewService(dbClient, timezoneConfigProvider)),
 		)
 		protected.GET(
@@ -478,6 +508,12 @@ func RegisterRoutes(
 			)
 
 			entityRouter.GET(
+				"/context-graph",
+				middleware.Authorize(authObjEntity, permRead, enforcer),
+				entityAPI.GetContextGraph,
+			)
+
+			entityRouter.GET(
 				"/pbehaviors",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
 				middleware.Authorize(authObjPbh, permRead, enforcer),
@@ -513,8 +549,8 @@ func RegisterRoutes(
 			)
 		}
 
-		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
-			common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
+		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient, linksFetcher, logger), entityPublChan,
+			metricsEntityMetaUpdater, common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
 		entityserviceRouter := protected.Group("/entityservices")
 		{
 			entityserviceRouter.POST(
@@ -639,7 +675,7 @@ func RegisterRoutes(
 		{
 			weatherAPI := serviceweather.NewApi(serviceweather.NewStore(
 				dbClient,
-				legacyUrl,
+				linksFetcher,
 				alarmStore,
 				timezoneConfigProvider,
 				logger,
@@ -697,7 +733,9 @@ func RegisterRoutes(
 				eventApi.Send)
 		}
 
-		appInfoApi := appinfo.NewApi(enforcer, appinfo.NewStore(dbClient, security.GetConfig().Security.AuthProviders))
+		securityConfig := security.GetConfig().Security
+		appInfoApi := appinfo.NewApi(enforcer, appinfo.NewStore(dbClient, securityConfig.AuthProviders,
+			securityConfig.Cas.Title, securityConfig.Saml.Title))
 		protected.GET("app-info", appInfoApi.GetAppInfo)
 		appInfoRouter := protected.Group("/internal")
 		{
@@ -1199,7 +1237,7 @@ func RegisterRoutes(
 			{
 				patternRouter.DELETE(
 					"",
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					patternAPI.BulkDelete,
 				)
 			}
@@ -1221,7 +1259,7 @@ func RegisterRoutes(
 				scenarioRouter.DELETE(
 					"",
 					middleware.Authorize(authObjAction, permDelete, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					scenarioAPI.BulkDelete,
 				)
 			}
@@ -1243,7 +1281,7 @@ func RegisterRoutes(
 				idleruleRouter.DELETE(
 					"",
 					middleware.Authorize(authObjIdleRule, permDelete, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					idleRuleAPI.BulkDelete,
 				)
 			}
@@ -1265,7 +1303,7 @@ func RegisterRoutes(
 				eventFilterRouter.DELETE(
 					"",
 					middleware.Authorize(authEventFilter, permDelete, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					eventFilterApi.BulkDelete,
 				)
 			}
@@ -1331,6 +1369,7 @@ func RegisterRoutes(
 				pbehaviorRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
 					pbehaviorApi.BulkDelete,
 				)
 			}
@@ -1340,13 +1379,13 @@ func RegisterRoutes(
 				entityRouter.PUT(
 					"/enable",
 					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					entityAPI.BulkEnable,
 				)
 				entityRouter.PUT(
 					"/disable",
 					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(conf, false),
 					entityAPI.BulkDisable,
 				)
 			}
@@ -1481,6 +1520,16 @@ func RegisterRoutes(
 			middleware.Authorize(authObjEntity, permRead, enforcer),
 			entityInfoDictionaryApi.ListValues,
 		)
+
+		alarmTagRouter := protected.Group("/alarm-tags")
+		{
+			alarmTagAPI := alarmtag.NewApi(alarmtag.NewStore(dbClient))
+			alarmTagRouter.GET(
+				"",
+				middleware.Authorize(authPermAlarmRead, permCan, enforcer),
+				alarmTagAPI.List,
+			)
+		}
 	}
 }
 

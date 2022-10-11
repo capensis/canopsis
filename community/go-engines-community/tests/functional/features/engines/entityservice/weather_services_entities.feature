@@ -68,7 +68,8 @@ Feature: get service entities
           "ticket": null,
           "infos": {},
           "pbehavior_info": null,
-          "pbehaviors": []
+          "pbehaviors": [],
+          "depends_count": 0
         }
       ],
       "meta": {
@@ -177,7 +178,8 @@ Feature: get service entities
           "ticket": null,
           "infos": {},
           "pbehavior_info": null,
-          "pbehaviors": []
+          "pbehaviors": [],
+          "depends_count": 0
         },
         {
           "_id": "test-resource-service-weather-entity-2-2/test-component-service-weather-entity-2",
@@ -197,7 +199,8 @@ Feature: get service entities
           "ticket": null,
           "infos": {},
           "pbehavior_info": null,
-          "pbehaviors": []
+          "pbehaviors": [],
+          "depends_count": 0
         },
         {
           "_id": "test-resource-service-weather-entity-2-1/test-component-service-weather-entity-2",
@@ -217,7 +220,8 @@ Feature: get service entities
           "ticket": null,
           "infos": {},
           "pbehavior_info": null,
-          "pbehaviors": []
+          "pbehaviors": [],
+          "depends_count": 0
         }
       ],
       "meta": {

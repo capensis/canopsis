@@ -2,9 +2,11 @@ package config
 
 import (
 	"context"
+	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -141,8 +143,14 @@ func NewVersionAdapter(client mongo.DbClient) VersionAdapter {
 func (a *versionAdapter) GetConfig(ctx context.Context) (VersionConf, error) {
 	conf := VersionConf{}
 	err := a.collection.FindOne(ctx, bson.M{"_id": VersionKeyName}).Decode(&conf)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return VersionConf{}, nil
+		}
+		return VersionConf{}, err
+	}
 
-	return conf, err
+	return conf, nil
 }
 
 func (a *versionAdapter) UpsertConfig(ctx context.Context, conf VersionConf) error {

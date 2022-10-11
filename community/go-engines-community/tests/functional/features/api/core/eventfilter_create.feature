@@ -1017,3 +1017,722 @@ Feature: Create an eventfilter
       }
     }
     """
+
+  Scenario: given create request with start and stop should return success
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 12",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-12-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/eventfilter/rules/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "author": "root",
+      "description": "test create 12",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-12-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+
+  Scenario: given create request with start but without stop should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 13",
+      "type": "enrichment",
+      "start": 1663316803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-13-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "stop": "Stop is required when Start is present."
+      }
+    }
+    """
+
+  Scenario: given create request with stop but without start should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 14",
+      "type": "enrichment",
+      "stop": 1663316803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-14-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "start": "Start is required when Stop is present."
+      }
+    }
+    """
+
+  Scenario: given create request with stop but without start should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 15",
+      "type": "enrichment",
+      "start": 1663317803,
+      "stop": 1663316803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-15-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "stop": "Stop should be greater than Start."
+      }
+    }
+    """
+
+  Scenario: given create request with rrule should return success
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 16",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "rrule": "FREQ=DAILY",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-16-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/eventfilter/rules/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "author": "root",
+      "description": "test create 16",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "rrule": "FREQ=DAILY",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-16-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+
+  Scenario: given create request with rrule but without interval should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 17",
+      "type": "enrichment",
+      "rrule": "FREQ=DAILY",
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-17-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "start": "Start is required when RRule is present.",
+        "stop": "Stop is required when RRule is present."
+      }
+    }
+    """
+
+  Scenario: given create request with invalid rrule should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 18",
+      "type": "enrichment",
+      "rrule": "FREQ=DAILYYY",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-18-pattern"
+            }
+          }
+        ]
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "rrule": "RRule is invalid recurrence rule."
+      }
+    }
+    """
+
+  Scenario: given create request with exdates should return success
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 19",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-19-pattern"
+            }
+          }
+        ]
+      ],
+      "exdates": [
+        {
+          "begin": 1591164001,
+          "end": 1591167601
+        }
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/eventfilter/rules/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "author": "root",
+      "description": "test create 19",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-19-pattern"
+            }
+          }
+        ]
+      ],
+      "exdates": [
+        {
+          "begin": 1591164001,
+          "end": 1591167601
+        }
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+
+  Scenario: given create request with invalid exdates should return error
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 20",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-20-pattern"
+            }
+          }
+        ]
+      ],
+      "exdates": [
+        {
+          "begin": 1691164001,
+          "end": 1591167601
+        },
+        {},
+        {
+          "begin": 1591167601
+        },
+        {
+          "end": 1591167601
+        }
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "exdates.0.end": "End should be greater than Begin.",
+        "exdates.1.begin": "Begin is missing.",
+        "exdates.1.end": "End is missing.",
+        "exdates.2.end": "End should be greater than Begin.",
+        "exdates.3.begin": "Begin is missing."
+      }
+    }
+    """
+
+  Scenario: given create request with exceptions should return success
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 20",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-20-pattern"
+            }
+          }
+        ]
+      ],
+      "exceptions":  ["test-exception-to-pbh-edit"],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/eventfilter/rules/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "author": "root",
+      "description": "test create 20",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-20-pattern"
+            }
+          }
+        ]
+      ],
+      "exceptions": [
+        {
+          "_id": "test-exception-to-pbh-edit"
+        }
+      ],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+
+  Scenario: given create request with exceptions should return success
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "description": "test create 21",
+      "type": "enrichment",
+      "start": 1663316803,
+      "stop": 1663326803,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-create-21-pattern"
+            }
+          }
+        ]
+      ],
+      "exceptions":  ["test-exception-not-exist"],
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "external_data": {
+        "test": {
+          "type": "mongo"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "exceptions": "Exceptions doesn't exist."
+      }
+    }
+    """

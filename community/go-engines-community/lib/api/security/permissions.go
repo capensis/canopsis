@@ -21,6 +21,8 @@ const (
 
 	PermAcl = "api_acl"
 
+	PermShareToken = "api_share_token"
+
 	PermStateSettings = "api_state_settings"
 
 	PermDataStorageRead   = "api_datastorage_read"
@@ -53,4 +55,6 @@ const (
 	ObjResolveRule  = "api_resolve_rule"
 
 	PermCorporatePattern = "api_corporate_pattern"
+
+	PermExportConfigurations = "api_export_configurations"
 )

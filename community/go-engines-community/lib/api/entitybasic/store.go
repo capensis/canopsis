@@ -116,20 +116,27 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 		return nil, false, err
 	}
 
+	set := bson.M{
+		"description":     r.Description,
+		"enabled":         *r.Enabled,
+		"category":        r.Category,
+		"impact_level":    r.ImpactLevel,
+		"infos":           transformInfos(r),
+		"sli_avail_state": r.SliAvailState,
+	}
+	update := bson.M{}
+	if r.Coordinates == nil {
+		update["$unset"] = bson.M{"coordinates": ""}
+	} else {
+		set["coordinates"] = r.Coordinates
+	}
+	update["$set"] = set
+
 	var updatedEntity *Entity
 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedEntity = nil
-		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID},
-			bson.M{"$set": bson.M{
-				"description":     r.Description,
-				"enabled":         *r.Enabled,
-				"category":        r.Category,
-				"impact_level":    r.ImpactLevel,
-				"infos":           transformInfos(r),
-				"sli_avail_state": r.SliAvailState,
-			}},
-		)
+		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil || res.MatchedCount == 0 {
 			return err
 		}
