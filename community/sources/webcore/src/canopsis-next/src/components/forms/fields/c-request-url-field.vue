@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(justify-space-between, align-center)
-    v-flex.pa-1(xs6)
+    v-flex.pr-2(xs6)
       v-select(
         v-field="request.method",
         v-validate="'required'",
@@ -9,7 +9,7 @@
         :error-messages="errors.collect(methodFieldName)",
         :name="methodFieldName"
       )
-    v-flex.pa-1(xs6)
+    v-flex.pl-2(xs6)
       v-text-field(
         v-field="request.url",
         v-validate="'required|url'",
@@ -17,7 +17,7 @@
         :error-messages="errors.collect(urlFieldName)",
         :name="urlFieldName"
       )
-        v-tooltip(v-if="helpText", slot="append", left)
+        v-tooltip(v-if="helpText", #append="", left)
           v-icon(slot="activator") help
           div(v-html="helpText")
 </template>
