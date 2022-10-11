@@ -1,16 +1,11 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") {{ title }}
+    template(#activator="")
+      v-list-tile
+        span {{ title }}
+        v-icon.ml-2 {{ sizeIcon }}
     v-container
-      v-slider(
-        :value="value",
-        :max="max",
-        :min="min",
-        ticks="always",
-        @input="$emit('input', $event)",
-        always-dirty,
-        thumb-label
-      )
+      c-column-size-field(v-field="value", :mobile="mobile", :tablet="tablet")
 </template>
 
 <script>
@@ -18,18 +13,32 @@ export default {
   props: {
     value: {
       type: Number,
+      required: false,
     },
     title: {
       type: String,
       required: true,
     },
-    max: {
-      type: Number,
-      default: 12,
+    mobile: {
+      type: Boolean,
+      default: false,
     },
-    min: {
-      type: Number,
-      default: 0,
+    tablet: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    sizeIcon() {
+      if (this.mobile) {
+        return 'phone_android';
+      }
+
+      if (this.tablet) {
+        return 'tablet';
+      }
+
+      return 'laptop';
     },
   },
 };
