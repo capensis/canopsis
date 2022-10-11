@@ -2,19 +2,20 @@
   v-layout(column)
     c-name-field(v-field="form.name")
     v-layout(row)
-      v-flex
+      v-flex.pr-3(xs6)
         v-select(
-          v-field="form.type",
           v-validate="'required'",
+          :value="form.type",
           :items="remediationJobConfigTypes",
           :label="$t('common.type')",
           :error-messages="errors.collect('type')",
           name="type",
           item-text="name",
           item-value="name",
-          return-object
+          return-object,
+          @input="updateType"
         )
-      v-flex
+      v-flex(xs6)
         v-text-field(
           v-field="form.host",
           v-validate="'required|url'",
@@ -29,21 +30,18 @@
       :error-messages="errors.collect('token')",
       name="token"
     )
-    v-text-field(
+    c-name-field(
       v-if="isShownUserNameField",
       v-field="form.auth_username",
-      v-validate="'required'",
-      :label="$t('users.username')",
-      :error-messages="errors.collect('username')",
+      :label="$t('common.username')",
       name="username"
     )
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { get, isString } from 'lodash';
 
-import { REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME } from '@/constants';
+import { isJobTypeIncludesUserName } from '@/helpers/forms/remediation-configuration';
 
 import { formMixin } from '@/mixins/form';
 
@@ -65,19 +63,25 @@ export default {
   computed: {
     ...mapGetters(['remediationJobConfigTypes']),
 
+    typeObject() {
+      return this.remediationJobConfigTypes.find(({ name }) => name === this.form.type);
+    },
+
     isShownUserNameField() {
-      return REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME.includes(get(this.form.type, 'auth_type'));
+      return isJobTypeIncludesUserName(this.typeObject);
     },
   },
 
-  mounted() {
-    if (isString(this.form.type)) {
-      const typeObject = this.remediationJobConfigTypes.find(({ name }) => name === this.form.type);
+  methods: {
+    updateType(type) {
+      const hasUserName = isJobTypeIncludesUserName(type);
 
-      if (typeObject) {
-        this.updateField('type', typeObject);
-      }
-    }
+      this.updateModel({
+        ...this.form,
+        type: type.name,
+        auth_username: hasUserName ? this.form.auth_username : '',
+      });
+    },
   },
 };
 </script>
