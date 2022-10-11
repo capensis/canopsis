@@ -6,8 +6,10 @@ import (
 	"reflect"
 	"testing"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	"github.com/golang/mock/gomock"
 )
@@ -20,10 +22,10 @@ func TestEnrichmentApplyOnSuccess(t *testing.T) {
 	expectedEvent := types.Event{Resource: "updated"}
 
 	actionProcessor := mock_eventfilter.NewMockActionProcessor(ctrl)
-	actionProcessor.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(expectedEvent, nil)
+	actionProcessor.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(expectedEvent, nil)
 
 	applicator := eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), actionProcessor)
-	resOutcome, resEvent, resError := applicator.Apply(context.Background(), eventfilter.Rule{Config: eventfilter.RuleConfig{Actions: []eventfilter.Action{{}}, OnSuccess: expectedOutcome}}, types.Event{}, eventfilter.RegexMatchWrapper{}, nil)
+	resOutcome, resEvent, resError := applicator.Apply(context.Background(), eventfilter.Rule{Config: eventfilter.RuleConfig{Actions: []eventfilter.Action{{}}, OnSuccess: expectedOutcome}}, types.Event{}, eventfilter.RegexMatchWrapper{})
 	if resError != nil {
 		t.Errorf("expected not error but got %v", resError)
 	}
@@ -45,10 +47,10 @@ func TestEnrichmentApplyOnFailed(t *testing.T) {
 	expectedEvent := types.Event{}
 
 	actionProcessor := mock_eventfilter.NewMockActionProcessor(ctrl)
-	actionProcessor.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(expectedEvent, fmt.Errorf("error"))
+	actionProcessor.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(expectedEvent, fmt.Errorf("error"))
 
 	applicator := eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), actionProcessor)
-	resOutcome, resEvent, resError := applicator.Apply(context.Background(), eventfilter.Rule{Config: eventfilter.RuleConfig{Actions: []eventfilter.Action{{}}, OnFailure: expectedOutcome}}, types.Event{}, eventfilter.RegexMatchWrapper{}, nil)
+	resOutcome, resEvent, resError := applicator.Apply(context.Background(), eventfilter.Rule{Config: eventfilter.RuleConfig{Actions: []eventfilter.Action{{}}, OnFailure: expectedOutcome}}, types.Event{}, eventfilter.RegexMatchWrapper{})
 	if resError == nil {
 		t.Errorf("expected error but nothing")
 	}
@@ -67,12 +69,15 @@ func TestApplyWithExternalData(t *testing.T) {
 	defer ctrl.Finish()
 
 	getter := mock_eventfilter.NewMockExternalDataGetter(ctrl)
-	getter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(types.Entity{ID: "test_value"}, nil)
+	getter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any()).Return(types.Entity{ID: "test_value"}, nil)
 
 	externalDataContainer := eventfilter.NewExternalDataGetterContainer()
 	externalDataContainer.Set("test", getter)
 
-	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer)
+	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
+	mockTimezoneConfigProvider.EXPECT().Get().Return(config.TimezoneConfig{}).AnyTimes()
+
+	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer, mockTimezoneConfigProvider)
 
 	externalData := make(map[string]eventfilter.ExternalDataParameters)
 	externalData["test"] = eventfilter.ExternalDataParameters{
@@ -103,7 +108,6 @@ func TestApplyWithExternalData(t *testing.T) {
 		},
 		event,
 		eventfilter.RegexMatchWrapper{},
-		nil,
 	)
 
 	if err != nil {
