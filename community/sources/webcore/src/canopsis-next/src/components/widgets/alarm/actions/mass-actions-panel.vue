@@ -18,6 +18,7 @@ import { createEntityIdPatternByValue } from '@/helpers/pattern';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
+import featuresService from '@/services/features';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
@@ -113,6 +114,10 @@ export default {
         );
       }
 
+      if (featuresService.has('components.alarmListMassActionsPanel.computed.actions')) {
+        actions.push(...featuresService.call('components.alarmListMassActionsPanel.computed.actions', this, []));
+      }
+
       return actions;
     },
 
@@ -138,6 +143,8 @@ export default {
   },
 
   methods: {
+    ...featuresService.get('components.alarmListMassActionsPanel.methods', {}),
+
     clearItems() {
       this.$emit('clear:items');
     },
