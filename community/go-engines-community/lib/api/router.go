@@ -50,6 +50,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionauth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sharetoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/userpreferences"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
@@ -137,6 +138,7 @@ func RegisterRoutes(
 	entityCleanerTaskChan chan<- entity.CleanTask,
 	runInfoManager engine.RunInfoManager,
 	exportExecutor export.TaskExecutor,
+	techMetricsTaskExecutor techmetrics.TaskExecutor,
 	actionLogger logger.ActionLogger,
 	publisher amqp.Publisher,
 	jobQueue contextgraph.JobQueue,
@@ -1528,6 +1530,26 @@ func RegisterRoutes(
 				"",
 				middleware.Authorize(authPermAlarmRead, permCan, enforcer),
 				alarmTagAPI.List,
+			)
+		}
+
+		techMetricsRouter := protected.Group("/tech-metrics-export")
+		{
+			techMetricsAPI := techmetrics.NewApi(techMetricsTaskExecutor, timezoneConfigProvider)
+			techMetricsRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.PermTechMetrics, model.PermissionCan, enforcer),
+				techMetricsAPI.StartExport,
+			)
+			techMetricsRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.PermTechMetrics, model.PermissionCan, enforcer),
+				techMetricsAPI.GetExport,
+			)
+			techMetricsRouter.GET(
+				"/download",
+				middleware.Authorize(apisecurity.PermTechMetrics, model.PermissionCan, enforcer),
+				techMetricsAPI.DownloadExport,
 			)
 		}
 	}

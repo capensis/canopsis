@@ -69,7 +69,7 @@ func NewPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration)
 	if err != nil {
 		return nil, err
 	}
-	return newPool(ctx, retryCount, minRetryTimeout, connStr)
+	return newPool(ctx, connStr, retryCount, minRetryTimeout)
 }
 
 func NewTechMetricsPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration) (Pool, error) {
@@ -77,10 +77,10 @@ func NewTechMetricsPool(ctx context.Context, retryCount int, minRetryTimeout tim
 	if err != nil {
 		return nil, err
 	}
-	return newPool(ctx, retryCount, minRetryTimeout, connStr)
+	return newPool(ctx, connStr, retryCount, minRetryTimeout)
 }
 
-func newPool(ctx context.Context, retryCount int, minRetryTimeout time.Duration, connStr string) (Pool, error) {
+func newPool(ctx context.Context, connStr string, retryCount int, minRetryTimeout time.Duration) (Pool, error) {
 	pgxPool, err := pgxpool.Connect(ctx, connStr)
 	if err != nil {
 		return nil, err
