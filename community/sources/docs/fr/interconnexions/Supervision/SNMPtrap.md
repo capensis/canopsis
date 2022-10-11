@@ -89,24 +89,7 @@ Une fois réceptionnés, les traps sont décodés puis transformés en JSON.
 Exemple de JSON en sortie du connecteur :
 
 ```json
-{
-  "component": "127.0.0.1",
-  "connector": "snmp",
-  "connector_name": "snmp2canopsis",
-  "event_type": "trap",
-  "snmp_timeticks": "2350066",
-  "snmp_trap_oid": "1.3.6.1.6.3.1.1.5.3",
-  "snmp_vars": {
-    "1.3.6.1.2.1.2.2.1.1": "1",
-    "1.3.6.1.2.1.2.2.1.7": "2",
-    "1.3.6.1.2.1.2.2.1.8": "2"
-  },
-  "snmp_version": "1",
-  "source_type": "component",
-  "state": 3,
-  "state_type": 1,
-  "timestamp": 1440075343.725282
-}
+{"component": "127.0.0.1", "connector": "snmp", "connector_name": "snmp2canopsis", "event_type": "trap", "snmp_timeticks": "2350066", "snmp_trap_oid": "1.3.6.1.6.3.1.1.5.3",i "snmp_vars": { "1.3.6.1.2.1.2.2.1.1": "1", "1.3.6.1.2.1.2.2.1.7": "2", "1.3.6.1.2.1.2.2.1.8": "2"}, "snmp_version": "1", "source_type": "component", "state": 3, "state_type": 1, "timestamp": 1440075343.725282}
 ```
 
 Le connecteur ne possédant aucune MIB, `snmp_trap_oid` et le tableau `snmp_vars`
@@ -215,27 +198,7 @@ ou conteneur `snmp2canopsis`. Exemple de log :
 [2019-06-20 08:27:44.791476] INFO: amqp: Connecting to cpsrabbit@rabbitmq, on canopsis
 [2019-06-20 08:27:44.919838] DEBUG: amqp: Read the snmp queue
 [2019-06-20 08:27:44.920357] INFO: snmp: Start SNMP listener on 0.0.0.0:162
-{'component': '172.18.0.1',
-[2019-06-20 08:30:12.654219] DEBUG: snmp: {
-  "component": "172.18.0.1",
-  "connector": "snmp",
-  "connector_name": "snmp2canopsis",
-  "event_type": "trap",
-  "snmp_trap_oid": "1.3.6.1.4.1.20006.1.7",
-  "snmp_vars": {
-    "1.3.6.1.2.1.1.3.0": "19463",
-    "1.3.6.1.4.1.20006.1.1.1.2": "Equipement Impacte",
-    "1.3.6.1.4.1.20006.1.3.1.17": "Message de sortie du trap SNMP",
-    "1.3.6.1.4.1.20006.1.3.1.6": "Ressource Impactee",
-    "1.3.6.1.4.1.20006.1.3.1.7": "2",
-    "1.3.6.1.6.3.1.1.4.1.0": "1.3.6.1.4.1.20006.1.7"
-  },
-  "snmp_version": "2c",
-  "source_type": "component",
-  "state": 3,
-  "state_type": 1,
-  "timestamp": 1561019412.652676
-}
+[2022-10-11 12:08:17.110603] DEBUG: snmp: {"snmp_version": "2c", "event_type": "trap", "timestamp": 1665490097.110236, "component": "172.20.0.1", "state_type": 1, "source_type": "component", "snmp_trap_oid": "1.3.6.1.4.1.20006.1.7", "snmp_vars": {"1.3.6.1.2.1.1.3.0": "278844995", "1.3.6.1.4.1.20006.1.3.1.17": "Message de sortie du trap SNMP", "1.3.6.1.6.3.1.1.4.1.0": "1.3.6.1.4.1.20006.1.7", "1.3.6.1.4.1.20006.1.1.1.2": "Equipement Impacte", "1.3.6.1.4.1.20006.1.3.1.6": "Ressource Impactee", "1.3.6.1.4.1.20006.1.3.1.7": "2"}, "connector": "snmp", "state": 3, "connector_name": "snmp2canopsis"}
 ```
 
 ## Suite
