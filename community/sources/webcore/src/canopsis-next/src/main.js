@@ -158,6 +158,7 @@ import CSelectField from '@/components/forms/fields/c-select-field.vue';
 import CCollapsePanel from '@/components/common/block/c-collapse-panel.vue';
 import CServiceWeatherPatternsField from '@/components/forms/fields/service-weather/c-service-weather-patterns-field.vue';
 import CServiceWeatherIconField from '@/components/forms/fields/service-weather/c-service-weather-icon-field.vue';
+import CServiceWeatherStateCounterField from '@/components/forms/fields/service-weather/c-service-weather-state-counter-field.vue';
 import CContextmenu from '@/components/common/contextmenu/c-contextmenu.vue';
 import CMapField from '@/components/forms/fields/map/c-map-field.vue';
 import CCoordinatesField from '@/components/forms/fields/map/c-coordinates-field.vue';
@@ -433,6 +434,7 @@ Vue.component('c-event-filter-patterns-field', CEventFilterPatternsField);
 Vue.component('c-service-weather-patterns-field', CServiceWeatherPatternsField);
 
 Vue.component('c-service-weather-icon-field', CServiceWeatherIconField);
+Vue.component('c-service-weather-state-counter-field', CServiceWeatherStateCounterField);
 
 Vue.component('c-map-field', CMapField);
 Vue.component('c-coordinates-field', CCoordinatesField);
