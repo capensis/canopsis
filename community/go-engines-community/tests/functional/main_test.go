@@ -180,6 +180,7 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 		ctx.Step(`^the response key \"([\w\.]+)\" should be greater or equal than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterOrEqualThan)
 		ctx.Step(`^the response array key \"([\w\.]+)\" should contain:$`, apiClient.TheResponseArrayKeyShouldContain)
 		ctx.Step(`^the response array key \"([\w\.]+)\" should contain only one:$`, apiClient.TheResponseArrayKeyShouldContainOnlyOne)
+		ctx.Step(`^the response array key \"([\w\.]+)\" should contain only:$`, apiClient.TheResponseArrayKeyShouldContainOnly)
 		ctx.Step(`^I save response ([\w]+)=(.+)$`, apiClient.ISaveResponse)
 		ctx.Step(`^\"([\w]+)\" (>|<|>=|<=) \"([\w]+)\"$`, apiClient.ValueShouldBeGteLteThan)
 		ctx.Step(`^an alarm (.+) should be in the db$`, mongoClient.AlarmShouldBeInTheDb)
