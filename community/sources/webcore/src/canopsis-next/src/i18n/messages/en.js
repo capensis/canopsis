@@ -841,9 +841,9 @@ export default merge({
     modalTemplate: 'Template - Modal',
     entityTemplate: 'Template - Entities',
     blockTemplate: 'Template - Tile',
-    columnSM: 'Columns - Small',
-    columnMD: 'Columns - Medium',
-    columnLG: 'Columns - Large',
+    columnMobile: 'Columns - Mobile',
+    columnTablet: 'Columns - Tablet',
+    columnDesktop: 'Columns - Desktop',
     limit: 'Limit',
     height: 'Height',
     margin: {
