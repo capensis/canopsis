@@ -13,12 +13,13 @@ import {
   ALARM_LIST_ACTIONS_TYPES,
 } from '@/constants';
 
+import featuresService from '@/services/features';
+
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
-import featuresService from '@/services/features';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
