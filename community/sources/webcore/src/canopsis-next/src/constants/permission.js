@@ -294,6 +294,7 @@ export const USERS_PERMISSIONS = {
       execution: `${USER_PERMISSIONS_PREFIXES.api}_execution`,
       instructionApprove: `${USER_PERMISSIONS_PREFIXES.api}_instruction_approve`,
       messageRateStatsRead: `${USER_PERMISSIONS_PREFIXES.api}_message_rate_stats_read`,
+      exportConfigurations: `${USER_PERMISSIONS_PREFIXES.api}_export_configurations`,
     },
     pbehavior: {
       pbehavior: `${USER_PERMISSIONS_PREFIXES.api}_pbehavior`,
