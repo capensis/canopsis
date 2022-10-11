@@ -40,6 +40,7 @@ const stubs = {
   'c-density-btn-toggle': true,
   'c-table-pagination': true,
   'alarms-expand-panel-tour': true,
+  'mass-actions-panel': true,
   'alarms-list-table': {
     template: `
       <div class="alarms-list-table">
@@ -62,6 +63,7 @@ const snapshotStubs = {
   'c-table-pagination': true,
   'c-density-btn-toggle': true,
   'alarms-expand-panel-tour': true,
+  'mass-actions-panel': true,
 };
 
 const factory = (options = {}) => shallowMount(AlarmsList, {
@@ -87,7 +89,9 @@ const selectLiveReportingButton = wrapper => wrapper.findAll('c-action-btn-stub'
 const selectInstructionsFiltersField = wrapper => wrapper.find('alarms-list-remediation-instructions-filters-stub');
 const selectRemoveHistoryButton = wrapper => wrapper.find('v-chip-stub');
 const selectPagination = wrapper => wrapper.find('c-pagination-stub');
+const selectAlarmsListTable = wrapper => wrapper.find('.alarms-list-table');
 const selectAlarmsExpandPanelTour = wrapper => wrapper.find('alarms-expand-panel-tour-stub');
+const selectMassActionsPanel = wrapper => wrapper.find('mass-actions-panel-stub');
 
 describe('alarms-list', () => {
   const $popups = mockPopups();
@@ -1770,6 +1774,24 @@ describe('alarms-list', () => {
     expect(clearInterval).toHaveBeenCalledTimes(1);
 
     jest.useRealTimers();
+  });
+
+  it('Selected alarms cleared after trigger mass actions', () => {
+    const selectedAlarms = alarms.slice(0, -1);
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget,
+      },
+    });
+
+    const table = selectAlarmsListTable(wrapper);
+    table.vm.$emit('input', selectedAlarms);
+
+    const massActionsPanel = selectMassActionsPanel(wrapper);
+    massActionsPanel.vm.$emit('clear:items');
+
+    expect(wrapper.vm.selected).toEqual([]);
   });
 
   it('Renders `alarms-list` with default props', async () => {

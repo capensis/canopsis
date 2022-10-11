@@ -252,11 +252,11 @@ func benchmarkMessageProcessor(
 
 	cfg := config.CanopsisConf{}
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(eventfilter.NewExternalDataGetterContainer()))
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), eventfilter.NewActionProcessor()))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(eventfilter.NewExternalDataGetterContainer(), config.NewTimezoneConfigProvider(cfg, zerolog.Nop())))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), eventfilter.NewActionProcessor(config.NewTimezoneConfigProvider(cfg, zerolog.Nop()))))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
-	ruleService := eventfilter.NewRuleService(eventfilter.NewRuleAdapter(dbClient), ruleApplicatorContainer, config.NewTimezoneConfigProvider(cfg, zerolog.Nop()), zerolog.Nop())
+	ruleService := eventfilter.NewRuleService(eventfilter.NewRuleAdapter(dbClient), ruleApplicatorContainer, zerolog.Nop())
 	err = ruleService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
