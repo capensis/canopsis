@@ -5,17 +5,24 @@
       :pending="remediationConfigurationsPending",
       :total-items="remediationConfigurationsMeta.total_count",
       :pagination.sync="pagination",
+      :removable="hasDeleteAnyRemediationConfigurationAccess",
+      :duplicable="hasCreateAnyRemediationConfigurationAccess",
+      :updatable="hasUpdateAnyRemediationConfigurationAccess",
       @remove-selected="showRemoveSelectedRemediationConfigurationsModal",
       @remove="showRemoveRemediationConfigurationModal",
+      @duplicate="showDuplicateRemediationConfigurationModal",
       @edit="showEditRemediationConfigurationModal"
     )
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import { MODALS } from '@/constants';
 
-import { entitiesRemediationConfigurationMixin } from '@/mixins/entities/remediation/configuration';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { entitiesRemediationConfigurationMixin } from '@/mixins/entities/remediation/configuration';
+import { permissionsTechnicalRemediationConfigurationMixin } from '@/mixins/permissions/technical/remediation-configuration';
 
 import RemediationConfigurationsList from './remediation-configurations-list.vue';
 
@@ -24,6 +31,7 @@ export default {
   mixins: [
     localQueryMixin,
     entitiesRemediationConfigurationMixin,
+    permissionsTechnicalRemediationConfigurationMixin,
   ],
   mounted() {
     this.fetchList();
@@ -63,6 +71,27 @@ export default {
         config: {
           action: async () => {
             await this.removeRemediationConfiguration({ id: remediationConfiguration._id });
+            await this.fetchList();
+          },
+        },
+      });
+    },
+
+    showDuplicateRemediationConfigurationModal(remediationConfiguration) {
+      this.$modals.show({
+        name: MODALS.createRemediationConfiguration,
+        config: {
+          title: this.$t('modals.createRemediationConfiguration.duplicate.title'),
+          remediationConfiguration: omit(remediationConfiguration, ['_id']),
+          action: async (configuration) => {
+            await this.createRemediationConfiguration({ data: configuration });
+
+            this.$popups.success({
+              text: this.$t('modals.createRemediationConfiguration.duplicate.popups.success', {
+                configurationName: remediationConfiguration.name,
+              }),
+            });
+
             await this.fetchList();
           },
         },
