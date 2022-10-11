@@ -54,6 +54,16 @@ export const formArrayMixin = {
     removeItemFromArray(index) {
       return this.updateModel(this[this[modelPropKeyComputed]].filter((v, i) => i !== index));
     },
+
+    /**
+     * Emit event to parent with new array without array item
+     *
+     * @param {Function} comparator
+     * @return {Array}
+     */
+    removeItemFromArrayWith(comparator) {
+      return this.updateModel(this[this[modelPropKeyComputed]].filter(comparator));
+    },
   },
 };
 
