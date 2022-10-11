@@ -36,7 +36,8 @@ import {
   SCENARIO_TRIGGERS,
   WEATHER_ACTIONS_TYPES,
   MAP_TYPES,
-  MERMAID_THEMES, SERVICE_WEATHER_STATE_COUNTERS,
+  MERMAID_THEMES,
+  SERVICE_WEATHER_STATE_COUNTERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
