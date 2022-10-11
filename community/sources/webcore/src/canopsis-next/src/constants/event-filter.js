@@ -37,3 +37,13 @@ export const EVENT_FILTER_SOURCE_TYPES = {
   connectorName: 'connector_name',
   resource: 'resource',
 };
+
+export const EVENT_FILTER_EXTERNAL_DATA_TYPES = {
+  mongo: 'mongo',
+  api: 'api',
+};
+
+export const EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES = {
+  select: 'select',
+  regexp: 'regexp',
+};

@@ -1,26 +1,29 @@
 <template lang="pug">
   div
-    c-id-field(
-      v-field="form._id",
-      :disabled="isDisabledIdField",
-      :help-text="$t('eventFilter.idHelp')"
-    )
-    c-event-filter-type-field(v-field="form.type")
+    v-layout(row)
+      v-flex(xs8)
+        c-id-field.mr-3(
+          v-field="form._id",
+          :disabled="isDisabledIdField",
+          :help-text="$t('eventFilter.idHelp')"
+        )
+      v-flex(xs4)
+        c-event-filter-type-field.ml-3(v-field="form.type")
     c-description-field(v-field="form.description", required)
-    c-priority-field(v-field="form.priority")
-    c-enabled-field(v-field="form.enabled")
+    v-layout(row, justify-space-between)
+      c-enabled-field(v-field="form.enabled")
+      c-priority-field(v-field="form.priority")
     c-information-block(:title="$t('eventFilter.duringPeriod')")
       event-filter-drop-intervals-field(v-field="form")
-    pbehavior-recurrence-rule-field.mb-1(v-field="form")
+    pbehavior-recurrence-rule-field.mb-3(v-field="form")
     c-patterns-field(v-field="form.patterns", with-entity, with-event, some-required)
 
-    template(v-if="isChangeEntityType || isEnrichmentType")
+    template(v-if="hasAdditionalOptions")
       v-divider.my-3
-      c-information-block(:title="$t('eventFilter.configuration')")
-        template(v-if="isChangeEntityType")
-          event-filter-change-entity-form(v-field="form.config")
-        template(v-if="isEnrichmentType")
-          event-filter-enrichment-form(v-field="form.config")
+      c-information-block(v-if="isEnrichmentType", :title="$t('eventFilter.enrichmentOptions')")
+        event-filter-enrichment-form(v-field="form")
+      c-information-block(v-else-if="isChangeEntityType", :title="$t('eventFilter.changeEntityOptions')")
+        event-filter-change-entity-form(v-field="form.config")
 </template>
 
 <script>
@@ -63,6 +66,10 @@ export default {
 
     isChangeEntityType() {
       return this.form.type === EVENT_FILTER_TYPES.changeEntity;
+    },
+
+    hasAdditionalOptions() {
+      return this.isEnrichmentType || this.isEnrichmentType;
     },
   },
 };
