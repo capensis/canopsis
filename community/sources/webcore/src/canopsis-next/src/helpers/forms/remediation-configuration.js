@@ -6,7 +6,7 @@ import { REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME } from '@/const
  * @typedef {Object} RemediationConfiguration
  * @property {string} name
  * @property {string} host
- * @property {Object} type
+ * @property {string} type
  * @property {string} auth_token
  * @property {string} auth_username
  */
