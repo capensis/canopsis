@@ -17,7 +17,7 @@
         :error-messages="errors.collect(urlFieldName)",
         :name="urlFieldName"
       )
-        v-tooltip(v-if="helpText", #append="", left)
+        v-tooltip(v-if="helpText", slot="append", left)
           v-icon(slot="activator") help
           div(v-html="helpText")
 </template>

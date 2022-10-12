@@ -69,7 +69,7 @@ export default {
     },
 
     hasAdditionalOptions() {
-      return this.isEnrichmentType || this.isEnrichmentType;
+      return this.isEnrichmentType || this.isChangeEntityType;
     },
   },
 };
