@@ -806,6 +806,7 @@ export default merge({
     alarmsColumns: 'Alarm list columns',
     entitiesColumns: 'Context explorer columns',
     entityInfoPopup: 'Entity info popup',
+    modal: '(Modal)',
     exportCsv: {
       title: 'Export CSV',
       fields: {

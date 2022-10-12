@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-title(v-model="form.title", :title="$t('common.title')")
+      field-title(v-model="form.title")
       v-divider
       field-filters(
         :filters.sync="form.filters",
@@ -27,19 +27,19 @@
           )
           v-divider
           field-grid-size(
-            v-model="form.parameters.columnSM",
+            v-model="form.parameters.columnMobile",
             :title="$t('settings.columnMobile')",
             mobile
           )
           v-divider
           field-grid-size(
-            v-model="form.parameters.columnMD",
+            v-model="form.parameters.columnTablet",
             :title="$t('settings.columnTablet')",
             tablet
           )
           v-divider
           field-grid-size(
-            v-model="form.parameters.columnLG",
+            v-model="form.parameters.columnDesktop",
             :title="$t('settings.columnDesktop')"
           )
           v-divider

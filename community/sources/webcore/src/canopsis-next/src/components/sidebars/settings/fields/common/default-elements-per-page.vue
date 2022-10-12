@@ -1,8 +1,5 @@
 <template lang="pug">
-  widget-settings-item
-    template(#title="")
-      slot(name="title")
-        span {{ $t('settings.defaultNumberOfElementsPerPage') }}
+  widget-settings-item(:title="$t('settings.defaultNumberOfElementsPerPage')", :sub-title="subTitle")
     v-select.select(
       v-field="value",
       :label="$t('settings.elementsPerPage')",
@@ -25,7 +22,7 @@ export default {
       type: Number,
       default: PAGINATION_LIMIT,
     },
-    title: {
+    subTitle: {
       type: String,
       required: false,
     },

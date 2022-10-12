@@ -4,7 +4,9 @@
       v-list-tile.widget-settings-item-title
         div(:class="validationHeaderClass")
           slot(name="title") {{ title }}
-        div.font-italic.caption.ml-1(v-if="optional") ({{ $t('common.optional') }})
+        div.font-italic.caption.ml-1(v-if="optional || subTitle")
+          span(v-if="optional") ({{ $t('common.optional') }})
+          span(v-if="subTitle") {{ subTitle }}
     v-container
       slot
 </template>
@@ -20,6 +22,10 @@ export default {
       type: String,
       required: false,
     },
+    subTitle: {
+      type: String,
+      required: false,
+    },
     optional: {
       type: Boolean,
       default: false,
@@ -27,11 +33,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.widget-settings-item {
-  & .v-list__tile.theme--light {
-    padding-right: 4px !important;
-  }
-}
-</style>
