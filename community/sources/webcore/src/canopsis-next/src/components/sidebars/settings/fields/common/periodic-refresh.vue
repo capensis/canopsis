@@ -6,7 +6,7 @@
 <script>
 import { TIME_UNITS } from '@/constants';
 
-import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
 import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
@@ -14,7 +14,7 @@ import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-s
 export default {
   inject: ['$validator'],
   components: { WidgetSettingsItem, PeriodicRefreshField },
-  mixins: [formMixin, formValidationHeaderMixin],
+  mixins: [formMixin],
   model: {
     prop: 'value',
     event: 'input',

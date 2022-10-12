@@ -1,5 +1,5 @@
 <template lang="pug">
-  widget-settings-item(:title="title", optional)
+  widget-settings-item(:title="$t('common.title')", optional)
     v-text-field(
       v-field="value",
       :placeholder="$t('settings.widgetTitle')"
@@ -17,10 +17,6 @@ export default {
   components: { WidgetSettingsItem },
   props: {
     value: {
-      type: String,
-      required: false,
-    },
-    title: {
       type: String,
       required: false,
     },

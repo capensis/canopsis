@@ -2,18 +2,29 @@
   widget-settings-item(:title="$t('settings.counters')")
     v-layout(align-center)
       v-switch(
-        v-field="value.enabled",
+        v-field="value.pbehavior_enabled",
         color="primary",
         hide-details
       )
       c-pbehavior-type-field(
-        v-field="value.types",
-        :required="!value.enabled",
-        :disabled="!value.enabled",
+        v-field="value.pbehavior_types",
+        :required="value.pbehavior_enabled",
+        :disabled="!value.pbehavior_enabled",
         :is-item-disabled="isItemDisabled",
         with-icon,
         chips,
         multiple
+      )
+    v-layout(align-center)
+      v-switch(
+        v-field="value.state_enabled",
+        color="primary",
+        hide-details
+      )
+      c-service-weather-state-counter-field(
+        v-field="value.state_types",
+        :required="value.state_enabled",
+        :disabled="!value.state_enabled"
       )
 </template>
 
@@ -27,12 +38,12 @@ export default {
   props: {
     value: {
       type: Object,
-      default: () => ({ enabled: false, types: [] }),
+      required: false,
     },
   },
   methods: {
     isItemDisabled(item) {
-      const { types } = this.value;
+      const { pbehavior_types: types } = this.value;
 
       return types.length === COUNTERS_LIMIT && !types.includes(item._id);
     },
