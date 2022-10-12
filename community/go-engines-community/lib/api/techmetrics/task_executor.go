@@ -201,6 +201,7 @@ func (e *taskExecutor) executeLastTask(ctx context.Context) {
 		status = TaskStatusFailed
 	}
 
+	now = time.Now().UTC()
 	_, err = pgPool.Exec(ctx, "UPDATE export SET status = $2, completed = $3, filepath = $4 WHERE id = $1", lastTaskId, status, now, filepath)
 	if err != nil {
 		e.logger.Err(err).Msg("cannot update status")
