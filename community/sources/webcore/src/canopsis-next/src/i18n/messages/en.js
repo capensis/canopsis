@@ -890,6 +890,8 @@ export default merge({
       },
     },
     counters: 'Counters',
+    pbehaviorCounters: 'Pbehavior counters',
+    entityStateCounters: 'Entity states counters',
     remediationInstructionsFilters: 'Instructions filters',
     colorIndicator: {
       title: 'Color indicator',

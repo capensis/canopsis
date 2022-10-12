@@ -22,6 +22,8 @@
 <script>
 import { MAX_LIMIT } from '@/constants';
 
+import { mapIds } from '@/helpers/entities';
+
 import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
 
 export default {
@@ -68,8 +70,8 @@ export default {
       type: Boolean,
       default: false,
     },
-    isItemDisabled: {
-      type: Function,
+    max: {
+      type: Number,
       required: false,
     },
   },
@@ -103,6 +105,18 @@ export default {
 
       this.items = reasons;
       this.pending = false;
+    },
+
+    isItemDisabled(item) {
+      if (this.max) {
+        const types = this.returnObject
+          ? mapIds(this.value)
+          : this.value;
+
+        return this.value.length === this.max && !types.includes(item._id);
+      }
+
+      return false;
     },
   },
 };
