@@ -1,24 +1,23 @@
 <template lang="pug">
   widget-settings-item(:title="$t('settings.counters')")
-    v-layout(align-center)
-      v-switch(
+    v-layout(column)
+      c-enabled-field(
         v-field="value.pbehavior_enabled",
-        color="primary",
+        :label="$t('settings.pbehaviorCounters')",
         hide-details
       )
       c-pbehavior-type-field(
         v-field="value.pbehavior_types",
         :required="value.pbehavior_enabled",
         :disabled="!value.pbehavior_enabled",
-        :is-item-disabled="isItemDisabled",
+        :max="$constants.PBEHAVIOR_COUNTERS_LIMIT",
         with-icon,
         chips,
         multiple
       )
-    v-layout(align-center)
-      v-switch(
+      c-enabled-field(
         v-field="value.state_enabled",
-        color="primary",
+        :label="$t('settings.entityStateCounters')",
         hide-details
       )
       c-service-weather-state-counter-field(
@@ -29,8 +28,6 @@
 </template>
 
 <script>
-import { COUNTERS_LIMIT } from '@/constants';
-
 import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
 
 export default {
@@ -39,13 +36,6 @@ export default {
     value: {
       type: Object,
       required: false,
-    },
-  },
-  methods: {
-    isItemDisabled(item) {
-      const { pbehavior_types: types } = this.value;
-
-      return types.length === COUNTERS_LIMIT && !types.includes(item._id);
     },
   },
 };
