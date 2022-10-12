@@ -21,8 +21,8 @@ tar -C /usr/local -xzf go1.18.6.linux-amd64.tar.gz
 
 %build
 export PATH=$PATH:/usr/local/go/bin
-make -C community/go-engines-community
-make -C community/sources/webcore/src/canopsis-next
+make -C community/go-engines-community VERSION=%{version}
+make -C community/sources/webcore/src/canopsis-next VERSION=%{version}
 
 %install
 make -C community/go-engines-community DESTDIR=%{buildroot} install
