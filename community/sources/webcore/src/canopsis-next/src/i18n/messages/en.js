@@ -36,7 +36,7 @@ import {
   SCENARIO_TRIGGERS,
   WEATHER_ACTIONS_TYPES,
   MAP_TYPES,
-  MERMAID_THEMES,
+  MERMAID_THEMES, EVENT_FILTER_EXTERNAL_DATA_TYPES, EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -274,6 +274,8 @@ export default merge({
     tag: 'Tag | Tags',
     sharedTokens: 'Shared tokens',
     notAvailable: 'N/a',
+    addMore: 'Add more',
+    attribute: 'Attribute',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -1987,6 +1989,20 @@ export default merge({
     connector: 'Connector ID or template',
     connectorName: 'Connector name or template',
     duringPeriod: 'Applied during this period only',
+    enrichmentOptions: 'Enrichment options',
+    changeEntityOptions: 'Change entity options',
+    noExternalData: 'No external data added yet',
+    addExternalData: 'Add external data',
+    reference: 'Reference',
+    collection: 'Collection',
+    externalDataTypes: {
+      [EVENT_FILTER_EXTERNAL_DATA_TYPES.mongo]: 'MongoDB collection',
+      [EVENT_FILTER_EXTERNAL_DATA_TYPES.api]: 'API',
+    },
+    externalDataConditionTypes: {
+      [EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES.select]: 'Select',
+      [EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES.regexp]: 'Regexp',
+    },
     types: {
       [EVENT_FILTER_TYPES.drop]: 'Drop',
       [EVENT_FILTER_TYPES.break]: 'Break',

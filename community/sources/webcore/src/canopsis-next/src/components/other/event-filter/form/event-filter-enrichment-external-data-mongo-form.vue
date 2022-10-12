@@ -3,33 +3,40 @@
     v-layout(row)
       v-text-field(
         v-field="form.collection",
-        :label="$t('eventFilter.collection')"
+        v-validate="'required'",
+        :label="$t('eventFilter.collection')",
+        :name="collectionFieldName",
+        :error-messages="errors.collect(collectionFieldName)"
       )
     v-layout(v-for="(condition, index) in form.conditions", :key="condition.key", row)
       v-flex.pr-2(xs3)
-        c-select-field(
+        v-select(
           v-field="form.conditions[index].type",
           :items="conditionTypes"
         )
       v-flex.px-2(xs4)
         v-text-field(
           v-field="form.conditions[index].attribute",
-          :label="$t('common.attribute')"
+          v-validate="'required'",
+          :label="$t('common.attribute')",
+          :name="getConditionFieldName(condition, 'attribute')",
+          :error-messages="errors.collect(getConditionFieldName(condition, 'attribute'))"
         )
       v-flex.pl-2(xs5)
         v-layout(row, align-center)
-          v-text-field(
+          v-combobox(
             v-field="form.conditions[index].value",
-            :label="$t('common.value')"
+            :label="$t('common.value')",
+            clearable
           )
           v-btn(:disabled="hasOneCondition", icon, small, @click="removeCondition(condition.key)")
-            v-icon(small) close
+            v-icon(color="red", small) delete
     v-flex
-      v-btn.ml-0.mb-0(color="primary", outline, @click="addCondition") {{ $t('eventFilter.addMore') }}
+      v-btn.ml-0.mb-0(color="primary", outline, @click="addCondition") {{ $t('common.addMore') }}
 </template>
 
 <script>
-import { EVENT_FILTER_EXTERNAL_DATA_TYPES, EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES } from '@/constants';
+import { EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES } from '@/constants';
 
 import { eventFilterExternalDataConditionItemToForm } from '@/helpers/forms/event-filter';
 
@@ -57,17 +64,20 @@ export default {
       return this.form.conditions.length === 1;
     },
 
-    types() {
-      return Object.values(EVENT_FILTER_EXTERNAL_DATA_TYPES)
-        .map(type => ({ text: this.$t(`eventFilter.externalData.types.${type}`), value: type }));
-    },
-
     conditionTypes() {
       return Object.values(EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES)
-        .map(type => ({ text: this.$t(`eventFilter.externalData.conditionTypes.${type}`), value: type }));
+        .map(type => ({ text: this.$t(`eventFilter.externalDataConditionTypes.${type}`), value: type }));
+    },
+
+    collectionFieldName() {
+      return `${this.name}.collection`;
     },
   },
   methods: {
+    getConditionFieldName(condition, suffix) {
+      return `${this.name}.${condition.key}.${suffix}`;
+    },
+
     addCondition() {
       this.updateField('conditions', [
         ...this.form.conditions,
