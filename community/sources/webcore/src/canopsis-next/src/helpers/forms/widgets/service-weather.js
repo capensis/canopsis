@@ -44,9 +44,9 @@ import {
  * @property {string} blockTemplate
  * @property {string} modalTemplate
  * @property {string} entityTemplate
- * @property {number} columnSM
- * @property {number} columnMD
- * @property {number} columnLG
+ * @property {number} columnMobile
+ * @property {number} columnTablet
+ * @property {number} columnDesktop
  * @property {number} limit
  * @property {ServiceWeatherWidgetColorIndicator} colorIndicator
  * @property {ServiceWeatherWidgetModalType} modalType
@@ -72,9 +72,9 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   blockTemplate: parameters.blockTemplate ?? DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE,
   modalTemplate: parameters.modalTemplate ?? DEFAULT_SERVICE_WEATHER_MODAL_TEMPLATE,
   entityTemplate: parameters.entityTemplate ?? DEFAULT_SERVICE_WEATHER_ENTITY_TEMPLATE,
-  columnSM: parameters.columnSM ?? 6,
-  columnMD: parameters.columnMD ?? 4,
-  columnLG: parameters.columnLG ?? 3,
+  columnMobile: parameters.columnMobile ?? 2,
+  columnTablet: parameters.columnTablet ?? 4,
+  columnDesktop: parameters.columnDesktop ?? 4,
   limit: parameters.limit ?? DEFAULT_WEATHER_LIMIT,
   colorIndicator: parameters.colorIndicator ?? COLOR_INDICATOR_TYPES.state,
   serviceDependenciesColumns: parameters.serviceDependenciesColumns
@@ -89,7 +89,12 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   alarmsList: alarmListBaseParametersToForm(parameters.alarmsList),
   counters: parameters.counters
     ? cloneDeep(parameters.counters)
-    : { enabled: false, types: [] },
+    : {
+      pbehavior_enabled: false,
+      pbehavior_types: [],
+      state_enabled: false,
+      state_types: [],
+    },
   isPriorityEnabled: parameters.isPriorityEnabled ?? true,
 });
 

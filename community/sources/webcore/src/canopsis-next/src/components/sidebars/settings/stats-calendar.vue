@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-title(v-model="form.title", :title="$t('common.title')")
+      field-title(v-model="form.title")
       v-divider
       alarms-list-modal-form(v-model="form.parameters.alarmsList")
       v-divider

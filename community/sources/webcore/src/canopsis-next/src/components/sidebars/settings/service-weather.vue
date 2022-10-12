@@ -1,27 +1,25 @@
 <template lang="pug">
   widget-settings(:submitting="submitting", @submit="submit")
-    field-title(v-model="form.title", :title="$t('common.title')")
+    field-title(v-model="form.title")
     v-divider
     field-periodic-refresh(v-model="form.parameters.periodic_refresh")
     v-divider
-    field-filters(
-      v-if="hasAccessToListFilters",
-      v-model="form.parameters.mainFilter",
-      :filters.sync="form.filters",
-      :widget-id="widget._id",
-      :addable="hasAccessToAddFilter",
-      :editable="hasAccessToEditFilter",
-      :entity-types="[$constants.ENTITY_TYPES.service]",
-      with-entity,
-      with-service-weather
-    )
-    v-divider
+    template(v-if="hasAccessToListFilters",)
+      field-filters(
+        v-model="form.parameters.mainFilter",
+        :filters.sync="form.filters",
+        :widget-id="widget._id",
+        :addable="hasAccessToAddFilter",
+        :editable="hasAccessToEditFilter",
+        :entity-types="[$constants.ENTITY_TYPES.service]",
+        with-entity,
+        with-service-weather
+      )
+      v-divider
     alarms-list-modal-form(v-model="form.parameters.alarmsList")
     v-divider
-    field-number(
-      v-model="form.parameters.limit",
-      :title="$t('settings.limit')"
-    )
+    field-number(v-model="form.parameters.limit", :title="$t('settings.limit')")
+    v-divider
     field-color-indicator(v-model="form.parameters.colorIndicator")
     v-divider
     field-columns(
@@ -36,42 +34,20 @@
         :columns="sortColumns",
         :columns-label="$t('settings.orderBy')"
       )
-      field-default-elements-per-page(v-model="form.parameters.modalItemsPerPage")
-        template(#title="")
-          span {{ $t('settings.defaultNumberOfElementsPerPage') }}
-            span.font-italic.caption.ml-1 (Modal)
       v-divider
-      field-template(
-        v-model="form.parameters.blockTemplate",
-        :title="$t('settings.weatherTemplate')"
-      )
+      field-default-elements-per-page(v-model="form.parameters.modalItemsPerPage", :sub-title="$t('settings.modal')")
       v-divider
-      field-template(
-        v-model="form.parameters.modalTemplate",
-        :title="$t('settings.modalTemplate')"
-      )
+      field-template(v-model="form.parameters.blockTemplate", :title="$t('settings.weatherTemplate')")
       v-divider
-      field-template(
-        v-model="form.parameters.entityTemplate",
-        :title="$t('settings.entityTemplate')"
-      )
+      field-template(v-model="form.parameters.modalTemplate", :title="$t('settings.modalTemplate')")
       v-divider
-      field-grid-size(
-        v-model="form.parameters.columnSM",
-        :title="$t('settings.columnMobile')",
-        mobile
-      )
+      field-template(v-model="form.parameters.entityTemplate", :title="$t('settings.entityTemplate')")
       v-divider
-      field-grid-size(
-        v-model="form.parameters.columnMD",
-        :title="$t('settings.columnTablet')",
-        tablet
-      )
+      field-grid-size(v-model="form.parameters.columnMobile", :title="$t('settings.columnMobile')", mobile)
       v-divider
-      field-grid-size(
-        v-model="form.parameters.columnLG",
-        :title="$t('settings.columnDesktop')"
-      )
+      field-grid-size(v-model="form.parameters.columnTablet", :title="$t('settings.columnTablet')", tablet)
+      v-divider
+      field-grid-size(v-model="form.parameters.columnDesktop", :title="$t('settings.columnDesktop')")
       v-divider
       margins-form(v-model="form.parameters.margin")
       v-divider
@@ -82,15 +58,9 @@
         :max="20"
       )
       v-divider
-      field-counters-selector(
-        v-model="form.parameters.counters",
-        :title="$t('settings.counters')"
-      )
+      field-counters-selector(v-model="form.parameters.counters", :title="$t('settings.counters')")
       v-divider
-      field-switcher(
-        v-model="form.parameters.isPriorityEnabled",
-        :title="$t('settings.isPriorityEnabled')"
-      )
+      field-switcher(v-model="form.parameters.isPriorityEnabled", :title="$t('settings.isPriorityEnabled')")
       v-divider
       field-modal-type(v-model="form.parameters.modalType")
     v-divider
