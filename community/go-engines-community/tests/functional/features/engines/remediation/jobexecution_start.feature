@@ -113,7 +113,6 @@ Feature: run a job
       "status": 0,
       "fail_reason": "",
       "output": "",
-      "payload": "{\"resource2\": \"test-resource-to-job-execution-start-1\",\"entity2\": \"test-resource-to-job-execution-start-1/test-component-to-job-execution-start-1\"}",
       "started_at": 0,
       "launched_at": 0,
       "completed_at": 0,
@@ -147,8 +146,7 @@ Feature: run a job
                   "name": "test-job-to-job-execution-start-1-2-name",
                   "status": 1,
                   "fail_reason": "",
-                  "output": "test-job-execution-succeeded-output",
-                  "payload": "{\"resource2\": \"test-resource-to-job-execution-start-1\",\"entity2\": \"test-resource-to-job-execution-start-1/test-component-to-job-execution-start-1\"}"
+                  "output": "test-job-execution-succeeded-output"
                 }
               ]
             }
@@ -173,7 +171,6 @@ Feature: run a job
       "status": 0,
       "fail_reason": "",
       "output": "",
-      "payload": "{\"resource1\": \"test-resource-to-job-execution-start-1\",\"entity1\": \"test-resource-to-job-execution-start-1/test-component-to-job-execution-start-1\"}",
       "started_at": 0,
       "launched_at": 0,
       "completed_at": 0,
@@ -198,15 +195,13 @@ Feature: run a job
                   "name": "test-job-to-job-execution-start-1-1-name",
                   "status": 1,
                   "fail_reason": "",
-                  "output": "test-job-execution-succeeded-output",
-                  "payload": "{\"resource1\": \"test-resource-to-job-execution-start-1\",\"entity1\": \"test-resource-to-job-execution-start-1/test-component-to-job-execution-start-1\"}"
+                  "output": "test-job-execution-succeeded-output"
                 },
                 {
                   "name": "test-job-to-job-execution-start-1-2-name",
                   "status": 1,
                   "fail_reason": "",
-                  "output": "test-job-execution-succeeded-output",
-                  "payload": "{\"resource2\": \"test-resource-to-job-execution-start-1\",\"entity2\": \"test-resource-to-job-execution-start-1/test-component-to-job-execution-start-1\"}"
+                  "output": "test-job-execution-succeeded-output"
                 }
               ]
             }
@@ -1532,7 +1527,6 @@ Feature: run a job
       "status": 0,
       "fail_reason": "",
       "output": "",
-      "payload": "{\"resource1\": \"test-resource-to-job-execution-start-10\", \"entity1\": \"test-resource-to-job-execution-start-10/test-component-to-job-execution-start-10\"}",
       "started_at": 0,
       "launched_at": 0,
       "completed_at": 0
@@ -1550,8 +1544,7 @@ Feature: run a job
                   "name": "test-job-to-job-execution-start-10-name",
                   "status": 1,
                   "fail_reason": "",
-                  "output": "test-job-execution-succeeded-output",
-                  "payload": "{\"resource1\": \"test-resource-to-job-execution-start-10\", \"entity1\": \"test-resource-to-job-execution-start-10/test-component-to-job-execution-start-10\"}"
+                  "output": "test-job-execution-succeeded-output"
                 }
               ]
             }
