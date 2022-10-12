@@ -48,6 +48,7 @@ describe('c-service-weather-state-counter-field', () => {
       propsData: {
         value: [SERVICE_WEATHER_STATE_COUNTERS.acknowledged, SERVICE_WEATHER_STATE_COUNTERS.alarms],
         name: 'customName',
+        disabled: true,
         required: true,
         max: 2,
       },
