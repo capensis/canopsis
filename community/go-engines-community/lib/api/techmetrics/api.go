@@ -68,10 +68,15 @@ func (a *api) GetExport(c *gin.Context) {
 	}
 
 	created := types.NewCpsTime(task.Created.Unix())
-	c.JSON(http.StatusOK, ExportResponse{
+	response := ExportResponse{
 		Status:  task.Status,
 		Created: &created,
-	})
+	}
+	if task.Status == TaskStatusSucceeded && task.Completed != nil {
+		d := int(task.Completed.Sub(task.Created).Seconds())
+		response.Duration = &d
+	}
+	c.JSON(http.StatusOK, response)
 }
 
 func (a *api) DownloadExport(c *gin.Context) {
