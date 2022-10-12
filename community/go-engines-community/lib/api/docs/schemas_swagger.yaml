@@ -3703,6 +3703,8 @@ definitions:
     properties:
       created:
         type: integer
+      duration:
+        type: integer
       status:
         type: integer
     type: object
