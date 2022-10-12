@@ -7,6 +7,7 @@
     :name="name",
     :error-messages="errors.collect(name)",
     :item-disabled="isItemDisabled",
+    :disabled="disabled",
     chips,
     deletable-chips,
     small-chips,
@@ -31,6 +32,10 @@ export default {
     name: {
       type: String,
       default: 'counter',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     required: {
       type: Boolean,

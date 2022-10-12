@@ -2,7 +2,7 @@
 
 exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state-counter-field\` with custom props 1`] = `
 <div
-  class="v-input v-text-field v-select v-select--chips v-select--chips--small v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input v-text-field v-select v-select--chips v-select--chips--small v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
   role="combobox"
 >
   <div
@@ -16,7 +16,7 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
       >
         <label
           aria-hidden="true"
-          class="v-label v-label--active theme--light"
+          class="v-label v-label--active v-label--is-disabled theme--light"
           style="left: 0px; position: absolute;"
         >
           Severity
@@ -25,49 +25,30 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
           class="v-select__selections"
         >
           <span
-            class="v-chip v-chip--select-multi v-chip--small v-chip--removable theme--light"
+            class="v-chip v-chip--select-multi v-chip--disabled v-chip--small theme--light"
             tabindex="-1"
           >
             <span
               class="v-chip__content"
             >
               Acknowledged
-              <div
-                class="v-chip__close"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                >
-                  cancel
-                </i>
-              </div>
             </span>
           </span>
           <span
-            class="v-chip v-chip--select-multi v-chip--small v-chip--removable theme--light"
+            class="v-chip v-chip--select-multi v-chip--disabled v-chip--small theme--light"
             tabindex="-1"
           >
             <span
               class="v-chip__content"
             >
               Number of alarms
-              <div
-                class="v-chip__close"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                >
-                  cancel
-                </i>
-              </div>
             </span>
           </span>
           <input
             aria-label="Severity"
             aria-readonly="false"
             autocomplete="on"
+            disabled="disabled"
             name="customName"
             readonly="readonly"
             type="text"
@@ -81,7 +62,7 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon v-icon--disabled material-icons theme--light"
             >
               arrow_drop_down
             </i>
