@@ -1,11 +1,6 @@
 <template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile
-        div(:class="validationHeaderClass") {{ $t('settings.periodicRefresh') }}
-          span.font-italic.caption.ml-1 ({{ $t('common.optional') }})
-    v-container
-      periodic-refresh-field(v-field="value", :name="name")
+  widget-settings-item(:title="$t('settings.periodicRefresh')", optional)
+    periodic-refresh-field(v-field="value", :name="name")
 </template>
 
 <script>
@@ -14,10 +9,11 @@ import { TIME_UNITS } from '@/constants';
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
 import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
 
 export default {
   inject: ['$validator'],
-  components: { PeriodicRefreshField },
+  components: { WidgetSettingsItem, PeriodicRefreshField },
   mixins: [formMixin, formValidationHeaderMixin],
   model: {
     prop: 'value',

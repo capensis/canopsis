@@ -1,15 +1,16 @@
 <template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile
-        span {{ title }}
-        v-icon.ml-2 {{ sizeIcon }}
-    v-container
-      c-column-size-field(v-field="value", :mobile="mobile", :tablet="tablet")
+  widget-settings-item
+    template(#title="")
+      span {{ title }}
+      v-icon.ml-2 {{ sizeIcon }}
+    c-column-size-field(v-field="value", :mobile="mobile", :tablet="tablet")
 </template>
 
 <script>
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
+
 export default {
+  components: { WidgetSettingsItem },
   props: {
     value: {
       type: Number,
