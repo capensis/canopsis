@@ -42,7 +42,7 @@ DOCKER_CMD_TARGETS = $(addprefix docker-cmd-,$(CMDS))
 
 SOURCE_DATE_EPOCH:=$(shell date -u +%s)
 LINKPKG=git.canopsis.net/canopsis/canopsis-$(CANOPSIS_EDITION)/$(CANOPSIS_EDITION)/go-engines-$(CANOPSIS_EDITION)/lib/canopsis
-VERSION:=$(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-taggerdate --format='%(refname:short)' --count=1 2>/dev/null || echo "0.0.0")
+VERSION ?= $(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-taggerdate --format='%(refname:short)' --count=1 2>/dev/null || echo "0.0.0")
 # Metadata for the binaries
 CUSTOM_LDFLAGS=
 # TODO: simplify this after Go 1.18 with https://utcc.utoronto.ca/~cks/space/blog/programming/GoVersionOfYourSource
@@ -118,7 +118,9 @@ define DOCKER_BUILD_ARGS
 --build-arg "ALPINE_VERSION=$(DOCKER_ALPINE_VERSION)" \
 --build-arg "ALPINE_BUILD_VERSION=$(DOCKER_ALPINE_BUILD_VERSION)" \
 --build-arg "GOLANG_VERSION=$(GOLANG_VERSION)" \
---build-arg "CANOPSIS_EDITION=$(CANOPSIS_EDITION)"
+--build-arg "CANOPSIS_EDITION=$(CANOPSIS_EDITION)" \
+--build-arg "VERSION=$(VERSION)" \
+$(if $(DOCKER_NO_CACHE),--no-cache,)
 endef
 
 # Build a recursive .dockerignore from the monorepo (https://github.com/moby/moby/issues/20944)
