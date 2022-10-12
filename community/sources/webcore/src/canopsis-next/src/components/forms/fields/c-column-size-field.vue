@@ -57,27 +57,27 @@ export default {
   computed: {
     mobileItems() {
       return [
-        { value: 12, src: oneColumnMobileSrc },
-        { value: 6, src: twoColumnMobileSrc },
+        { value: 1, src: oneColumnMobileSrc },
+        { value: 2, src: twoColumnMobileSrc },
       ];
     },
 
     tabletItems() {
       return [
-        { value: 12, src: oneColumnTabletSrc },
-        { value: 6, src: twoColumnTabletSrc },
-        { value: 4, src: threeColumnTabletSrc },
-        { value: 3, src: fourColumnTabletSrc },
+        { value: 1, src: oneColumnTabletSrc },
+        { value: 2, src: twoColumnTabletSrc },
+        { value: 3, src: threeColumnTabletSrc },
+        { value: 4, src: fourColumnTabletSrc },
       ];
     },
 
     desktopItems() {
       return [
-        { value: 12, src: oneColumnDesktopSrc },
-        { value: 6, src: twoColumnDesktopSrc },
-        { value: 4, src: threeColumnDesktopSrc },
-        { value: 3, src: fourColumnDesktopSrc },
-        { value: 2, src: sixColumnDesktopSrc },
+        { value: 1, src: oneColumnDesktopSrc },
+        { value: 2, src: twoColumnDesktopSrc },
+        { value: 3, src: threeColumnDesktopSrc },
+        { value: 4, src: fourColumnDesktopSrc },
+        { value: 6, src: sixColumnDesktopSrc },
       ];
     },
 
