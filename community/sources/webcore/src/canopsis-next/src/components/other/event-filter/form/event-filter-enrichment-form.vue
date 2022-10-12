@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { EVENT_FILTER_ENRICHMENT_AFTER_TYPES, MODALS } from '@/constants';
+import { EVENT_FILTER_ENRICHMENT_AFTER_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -59,19 +59,6 @@ export default {
     this.detachActionsRequiredRule();
   },
   methods: {
-    showEditActionsModal() {
-      this.$modals.show({
-        name: MODALS.eventFilterActions,
-        config: {
-          actions: this.form.config.actions,
-          action: (updatedActions) => {
-            this.updateField('actions', updatedActions);
-            this.$nextTick(() => this.$validator.validate('actions'));
-          },
-        },
-      });
-    },
-
     attachActionsRequiredRule() {
       this.$validator.attach({
         name: this.name,

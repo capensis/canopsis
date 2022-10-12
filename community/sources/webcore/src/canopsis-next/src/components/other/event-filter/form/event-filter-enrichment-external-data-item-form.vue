@@ -15,8 +15,8 @@
           v-field="form.reference",
           v-validate="'required'",
           :label="$t('eventFilter.reference')",
-          :error-messages="errors.collect(getName('reference'))",
-          :name="getName('reference')"
+          :error-messages="errors.collect(referenceFieldName)",
+          :name="referenceFieldName"
         )
         event-filter-enrichment-external-data-mongo-form(v-if="isMongoType", v-field="form", :name="form.key")
         request-form(v-else, v-field="form", :name="form.key")
@@ -60,18 +60,18 @@ export default {
 
     types() {
       return Object.values(EVENT_FILTER_EXTERNAL_DATA_TYPES)
-        .map(type => ({ text: this.$t(`eventFilter.externalData.types.${type}`), value: type }));
+        .map(type => ({ text: this.$t(`eventFilter.externalDataTypes.${type}`), value: type }));
     },
 
     isMongoType() {
       return this.form.type === EVENT_FILTER_EXTERNAL_DATA_TYPES.mongo;
     },
+
+    referenceFieldName() {
+      return `${this.name}.reference`;
+    },
   },
   methods: {
-    getName(suffix) {
-      return `${this.name}.${suffix}`;
-    },
-
     updateType(type) {
       const { reference } = this.form;
 
