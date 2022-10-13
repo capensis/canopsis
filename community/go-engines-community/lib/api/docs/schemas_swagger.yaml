@@ -278,6 +278,8 @@ definitions:
         $ref: '#/definitions/alarm.Execution'
       name:
         type: string
+      type:
+        type: integer
     type: object
   alarm.ChildDetailsRequest:
     properties:
