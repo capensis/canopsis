@@ -39,6 +39,7 @@ template:
         _id: <UUID()>,
         name: <LoremIpsumWord()>,
         endpoint: <LoremIpsumSentence(3)>,
+        stop_on_fail: true,
         operations: [
           {
             _id: <UUID()>,
@@ -47,8 +48,7 @@ template:
             time_to_complete: {
               value: 1,
               unit: s
-            },
-            stop_on_fail: true
+            }
           }
         ]
       }
@@ -2000,3 +2000,383 @@ instruction:
     timeout_after_execution:
       unit: s
       value: 2
+
+  instruction_alarm_instruction_get_icons_1:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-icons-1
+    name: test-instruction-to-alarm-instruction-get-icons-1-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-icons-1
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_2:
+    <<: *instruction_auto
+    _id: test-instruction-to-alarm-instruction-get-icons-2
+    name: test-instruction-to-alarm-instruction-get-icons-2-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-icons-2
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_3:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-3-name
+    _id: test-instruction-to-alarm-instruction-get-icons-3
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-icons-3
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_4_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-4-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-4-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-4
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_4_2:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-4-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-4-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-4
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+      
+  instruction_alarm_instruction_get_icons_5_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-5-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-5-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-5
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_5_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-5-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-5-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-5
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s      
+
+  instruction_alarm_instruction_get_icons_6:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-6-name
+    _id: test-instruction-to-alarm-instruction-get-icons-6
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-6
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_7_1:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-7-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-7-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-7
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_7_2:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-7-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-7-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-7
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_8_1:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-8-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-8-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-8
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_8_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-8-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-8-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-8
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_9_1:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-9-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-9-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-9
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_9_2:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-9-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-9-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-9
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_9_3:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-9-3-name
+    _id: test-instruction-to-alarm-instruction-get-icons-9-3
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-9
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_10_1:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-10-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-10-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-10
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_10_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-10-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-10-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-10
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+      
+  instruction_alarm_instruction_get_icons_11_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-11-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-11-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-11
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_11_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-11-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-11-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-11
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s 
+
+  instruction_alarm_instruction_get_icons_12_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-12-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-12-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-12
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_12_2:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-12-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-12-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-12
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+      
+  instruction_alarm_instruction_get_icons_13_1:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-13-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-13-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-13
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_13_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-13-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-13-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-13
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s      
+
+  instruction_alarm_instruction_get_icons_14_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-14-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-14-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-14
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_14_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-14-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-14-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-14
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+
+  instruction_alarm_instruction_get_icons_15:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-15-name
+    _id: test-instruction-to-alarm-instruction-get-icons-15
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-15
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
