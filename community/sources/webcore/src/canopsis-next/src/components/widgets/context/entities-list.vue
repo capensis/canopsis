@@ -58,6 +58,8 @@
 <script>
 import { isObject } from 'lodash';
 
+import { API_HOST, API_ROUTES } from '@/config';
+
 import { USERS_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
@@ -74,7 +76,6 @@ import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 
 import ContextFab from './actions/context-fab.vue';
 import EntitiesListTableWithPagination from './partials/entities-list-table-with-pagination.vue';
-import { API_HOST, API_ROUTES } from '@/config';
 
 export default {
   components: {
