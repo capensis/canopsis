@@ -58,7 +58,7 @@ export const matchPayloadVariableBySelection = (text, selection) => {
   const { anchorOffset, focusOffset } = selection;
   const [selectionStart, selectionEnd] = [anchorOffset, focusOffset].sort();
 
-  const match = text?.matchAll(/({{\s?([\w.]{2,})\s?}})/g);
+  const match = text?.matchAll(/({{\s?(.+)\s?}})/g);
 
   return match && Array.from(match).find((group) => {
     const value = group[0];
