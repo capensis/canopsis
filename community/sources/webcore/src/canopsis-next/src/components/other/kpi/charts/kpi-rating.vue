@@ -17,7 +17,7 @@
 <script>
 import { isUndefined } from 'lodash';
 
-import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
+import { API_HOST, API_ROUTES, KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
 
 import {
   QUICK_RANGES,
@@ -40,7 +40,7 @@ import { convertMetricsToTimezone, isMetricsQueryChanged } from '@/helpers/metri
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
-import { exportCsvMixinCreator } from '@/mixins/widget/export';
+import { exportMixinCreator } from '@/mixins/widget/export';
 
 import KpiRatingFilters from './partials/kpi-rating-filters.vue';
 import KpiErrorOverlay from './partials/kpi-error-overlay.vue';
@@ -53,10 +53,9 @@ export default {
   mixins: [
     entitiesMetricsMixin,
     localQueryMixin,
-    exportCsvMixinCreator({
+    exportMixinCreator({
       createExport: 'createKpiRatingExport',
       fetchExport: 'fetchMetricExport',
-      fetchExportFile: 'fetchMetricCsvFile',
     }),
   ],
   props: {
@@ -173,12 +172,17 @@ export default {
     async exportRatingMetricsAsCsv() {
       this.downloading = true;
 
-      await this.exportAsCsv({
-        name: this.getFileName(),
-        data: this.getQuery(),
-      });
+      try {
+        const fileData = await this.generateFile({
+          data: this.getQuery(),
+        });
 
-      this.downloading = false;
+        this.downloadFile(`${API_HOST}${API_ROUTES.metrics.exportMetric}/${fileData._id}/download`);
+      } catch (err) {
+        this.$popups.error({ text: err?.error ?? this.$t('errors.default') });
+      } finally {
+        this.downloading = false;
+      }
     },
   },
 };

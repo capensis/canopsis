@@ -47,7 +47,7 @@
         context-fab
       v-flex(v-if="hasAccessToExportAsCsv")
         c-action-btn(
-          :loading="!!contextExportPending",
+          :loading="downloading",
           :tooltip="$t('settings.exportAsCsv')",
           icon="cloud_download",
           color="black",
@@ -63,7 +63,7 @@ import { USERS_PERMISSIONS } from '@/constants';
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetColumnsContextMixin } from '@/mixins/widget/columns';
-import { exportCsvMixinCreator } from '@/mixins/widget/export';
+import { exportMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
@@ -74,6 +74,7 @@ import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 
 import ContextFab from './actions/context-fab.vue';
 import EntitiesListTableWithPagination from './partials/entities-list-table-with-pagination.vue';
+import { API_HOST, API_ROUTES } from '@/config';
 
 export default {
   components: {
@@ -90,10 +91,9 @@ export default {
     entitiesContextEntityMixin,
     permissionsWidgetsContextFilters,
     permissionsWidgetsContextCategory,
-    exportCsvMixinCreator({
+    exportMixinCreator({
       createExport: 'createContextExport',
       fetchExport: 'fetchContextExport',
-      fetchExportFile: 'fetchContextCsvFile',
     }),
   ],
   props: {
@@ -101,6 +101,11 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      downloading: false,
+    };
   },
   computed: {
     headers() {
@@ -161,7 +166,7 @@ export default {
       }
     },
 
-    exportContextList() {
+    getExportQuery() {
       const query = this.getQuery();
       const {
         widgetExportColumns,
@@ -169,25 +174,36 @@ export default {
         exportCsvSeparator,
         exportCsvDatetimeFormat,
       } = this.widget.parameters;
-      const columns = widgetExportColumns && widgetExportColumns.length
-        ? widgetExportColumns
-        : widgetColumns;
+      const columns = widgetExportColumns?.length ? widgetExportColumns : widgetColumns;
 
-      this.exportAsCsv({
-        name: `${this.widget._id}-${new Date().toLocaleString()}`,
-        widgetId: this.widget._id,
-        data: {
-          fields: columns.map(({ label, value }) => ({ label, name: value })),
-          search: query.search,
-          category: query.category,
-          filters: query.filters,
-          separator: exportCsvSeparator,
-          /**
-           * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
-           */
-          time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
-        },
-      });
+      return {
+        fields: columns.map(({ label, value }) => ({ label, name: value })),
+        search: query.search,
+        category: query.category,
+        filters: query.filters,
+        separator: exportCsvSeparator,
+        /**
+         * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
+         */
+        time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
+      };
+    },
+
+    async exportContextList() {
+      this.downloading = true;
+
+      try {
+        const fileData = await this.generateFile({
+          widgetId: this.widget._id,
+          data: this.getExportQuery(),
+        });
+
+        this.downloadFile(`${API_HOST}${API_ROUTES.contextExport}/${fileData._id}/download`);
+      } catch (err) {
+        this.$popups.error({ text: err?.error ?? this.$t('errors.default') });
+      } finally {
+        this.downloading = false;
+      }
     },
   },
 };

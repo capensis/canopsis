@@ -14,10 +14,6 @@ export const types = {
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
 
-  EXPORT_LIST: 'EXPORT_LIST',
-  EXPORT_LIST_COMPLETED: 'EXPORT_LIST_COMPLETED',
-  EXPORT_LIST_FAILED: 'EXPORT_LIST_FAILED',
-
   DOWNLOAD_LIST_COMPLETED: 'DOWNLOAD_LIST_COMPLETED',
 };
 
@@ -37,7 +33,6 @@ export default {
 
     getMetaByWidgetId: state => widgetId => get(state.widgets[widgetId], 'meta', {}),
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending', false),
-    getExportByWidgetId: state => widgetId => get(state.widgets[widgetId], 'exportData'),
 
     getItem: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](
       ENTITIES_TYPES.alarm,
@@ -59,12 +54,6 @@ export default {
     },
     [types.FETCH_LIST_FAILED](state, { widgetId }) {
       Vue.setSeveral(state.widgets, widgetId, { pending: false });
-    },
-    [types.EXPORT_LIST_COMPLETED](state, { widgetId, exportData }) {
-      Vue.setSeveral(state.widgets, widgetId, { exportData });
-    },
-    [types.DOWNLOAD_LIST_COMPLETED](state, { widgetId }) {
-      Vue.delete(state.widgets[widgetId], 'exportData');
     },
   },
   actions: {
@@ -124,34 +113,12 @@ export default {
       }, { root: true });
     },
 
-    async createAlarmsListExport({ commit }, { widgetId, data = {} }) {
-      const exportData = await request.post(API_ROUTES.alarmListExport, data);
-
-      commit(types.EXPORT_LIST_COMPLETED, {
-        widgetId,
-        exportData,
-      });
-
-      return exportData;
+    async createAlarmsListExport(context, { data = {} }) {
+      return request.post(API_ROUTES.alarmListExport, data);
     },
 
-    async fetchAlarmsListExport({ commit }, { params, id, widgetId }) {
-      const exportData = await request.get(`${API_ROUTES.alarmListExport}/${id}`, { params });
-
-      commit(types.EXPORT_LIST_COMPLETED, {
-        widgetId,
-        exportData,
-      });
-
-      return exportData;
-    },
-
-    async fetchAlarmsListCsvFile({ commit }, { params, id, widgetId }) {
-      const csvData = await request.get(`${API_ROUTES.alarmListExport}/${id}/download`, { params });
-
-      commit(types.DOWNLOAD_LIST_COMPLETED, { widgetId });
-
-      return csvData;
+    fetchAlarmsListExport(context, { params, id }) {
+      return request.get(`${API_ROUTES.alarmListExport}/${id}`, { params });
     },
   },
 };
