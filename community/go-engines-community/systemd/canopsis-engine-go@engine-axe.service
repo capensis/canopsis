@@ -1,10 +1,10 @@
 [Unit]
-Description=Canopsis API daemon
+Description=Canopsis Go Engine Axe
 PartOf=canopsis.service
 After=canopsis.service
 ReloadPropagatedFrom=canopsis.service
 After=network.target
-Documentation=https://doc.canopsis.net/guide-developpement/swagger/
+Documentation=https://doc.canopsis.net/guide-administration/moteurs/moteur-axe/
 
 [Service]
 User=canopsis
@@ -12,11 +12,11 @@ Group=canopsis
 WorkingDirectory=/opt/canopsis
 Environment=HOME=/opt/canopsis
 EnvironmentFile=/opt/canopsis/etc/go-engines-vars.conf
+ExecStart=/usr/bin/env /opt/canopsis/bin/engine-axe -publishQueue Engine_correlation -withRemediation=true
+PIDFile=/run/canopsis-engine-go-engine-axe.pid
 Restart=always
-Type=simple
 RestartSec=1
 StartLimitBurst=300
-ExecStart=/opt/canopsis/bin/canopsis-api -port 8082
 
 [Install]
 WantedBy=canopsis.service
