@@ -274,6 +274,7 @@ export default merge({
     tag: 'Tag | Tags',
     sharedTokens: 'Shared tokens',
     notAvailable: 'N/a',
+    timestamp: 'Timestamp',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',

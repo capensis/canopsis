@@ -37,11 +37,23 @@
       v-divider
       field-default-elements-per-page(v-model="form.parameters.modalItemsPerPage", :sub-title="$t('settings.modal')")
       v-divider
-      field-template(v-model="form.parameters.blockTemplate", :title="$t('settings.weatherTemplate')")
+      field-template(
+        v-model="form.parameters.blockTemplate",
+        :variables="variables",
+        :title="$t('settings.weatherTemplate')"
+      )
       v-divider
-      field-template(v-model="form.parameters.modalTemplate", :title="$t('settings.modalTemplate')")
+      field-template(
+        v-model="form.parameters.modalTemplate",
+        :variables="variables",
+        :title="$t('settings.modalTemplate')"
+      )
       v-divider
-      field-template(v-model="form.parameters.entityTemplate", :title="$t('settings.entityTemplate')")
+      field-template(
+        v-model="form.parameters.entityTemplate",
+        :variables="variables",
+        :title="$t('settings.entityTemplate')"
+      )
       v-divider
       field-grid-size(v-model="form.parameters.columnMobile", :title="$t('settings.columnMobile')", mobile)
       v-divider
@@ -91,6 +103,7 @@ import AlarmsListModalForm from '@/components/sidebars/settings/forms/alarms-lis
 import MarginsForm from '@/components/sidebars/settings/forms/margins.vue';
 import WidgetSettings from '@/components/sidebars/settings/partials/widget-settings.vue';
 import WidgetSettingsGroup from '@/components/sidebars/settings/partials/widget-settings-group.vue';
+import { entityVariablesMixin } from '@/mixins/widget/entity-variables';
 
 export default {
   name: SIDE_BARS.serviceWeatherSettings,
@@ -118,6 +131,7 @@ export default {
   mixins: [
     widgetSettingsMixin,
     permissionsWidgetsServiceWeatherFilters,
+    entityVariablesMixin,
   ],
   computed: {
     sortColumns() {

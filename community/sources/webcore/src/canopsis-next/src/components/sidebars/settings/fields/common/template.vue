@@ -21,6 +21,10 @@ export default {
       type: String,
       required: true,
     },
+    variables: {
+      type: Array,
+      required: false,
+    },
   },
   methods: {
     showTextEditorModal() {
@@ -28,6 +32,7 @@ export default {
         name: MODALS.textEditor,
         config: {
           text: this.value,
+          variables: this.variables,
           action: value => this.$emit('input', value),
         },
       });
