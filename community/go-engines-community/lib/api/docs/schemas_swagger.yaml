@@ -1497,6 +1497,10 @@ definitions:
       request:
         $ref: '#/definitions/request.Parameters'
         description: are used in api external data
+      retry_count:
+        type: integer
+      retry_delay:
+        $ref: '#/definitions/types.DurationWithUnit'
       select:
         additionalProperties:
           type: string
@@ -2869,10 +2873,6 @@ definitions:
         type: string
       payload:
         type: string
-      retry_count:
-        type: integer
-      retry_delay:
-        $ref: '#/definitions/types.DurationWithUnit'
       skip_verify:
         type: boolean
       url:
