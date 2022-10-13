@@ -2,23 +2,41 @@
 
 exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`] = `
 <div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value="event-filter-id"
-  />
-  <c-event-filter-type-field-stub
-    value="break"
-  />
+  <div
+    class="layout row"
+  >
+    <div
+      class="flex xs8"
+    >
+      <c-id-field-stub
+        class="mr-3"
+        help-text="If no id is specified, a unique id will be generated automatically on rule creation"
+        value="event-filter-id"
+      />
+    </div>
+    <div
+      class="flex xs4"
+    >
+      <c-event-filter-type-field-stub
+        class="ml-3"
+        value="break"
+      />
+    </div>
+  </div>
   <c-description-field-stub
     required="required"
     value="event-filter-description"
   />
-  <c-priority-field-stub
-    value="2"
-  />
-  <c-enabled-field-stub
-    value="true"
-  />
+  <div
+    class="layout row justify-space-between"
+  >
+    <c-enabled-field-stub
+      value="true"
+    />
+    <c-priority-field-stub
+      value="2"
+    />
+  </div>
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -27,7 +45,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
     />
   </c-information-block-stub>
   <pbehavior-recurrence-rule-field-stub
-    class="mb-1"
+    class="mb-3"
     form="[object Object]"
   />
   <c-patterns-field-stub
@@ -42,23 +60,41 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
 
 exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` type 1`] = `
 <div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value="event-filter-id"
-  />
-  <c-event-filter-type-field-stub
-    value="change_entity"
-  />
+  <div
+    class="layout row"
+  >
+    <div
+      class="flex xs8"
+    >
+      <c-id-field-stub
+        class="mr-3"
+        help-text="If no id is specified, a unique id will be generated automatically on rule creation"
+        value="event-filter-id"
+      />
+    </div>
+    <div
+      class="flex xs4"
+    >
+      <c-event-filter-type-field-stub
+        class="ml-3"
+        value="change_entity"
+      />
+    </div>
+  </div>
   <c-description-field-stub
     required="required"
     value="event-filter-description"
   />
-  <c-priority-field-stub
-    value="2"
-  />
-  <c-enabled-field-stub
-    value="true"
-  />
+  <div
+    class="layout row justify-space-between"
+  >
+    <c-enabled-field-stub
+      value="true"
+    />
+    <c-priority-field-stub
+      value="2"
+    />
+  </div>
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -67,7 +103,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
     />
   </c-information-block-stub>
   <pbehavior-recurrence-rule-field-stub
-    class="mb-1"
+    class="mb-3"
     form="[object Object]"
   />
   <c-patterns-field-stub
@@ -80,36 +116,53 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
     class="my-3 v-divider theme--light"
   />
   <c-information-block-stub
-    title="Configuration"
+    title="Change entity options"
   >
     <event-filter-change-entity-form-stub
       form="[object Object]"
       name="config"
     />
-    <!---->
   </c-information-block-stub>
 </div>
 `;
 
 exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] = `
 <div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value="event-filter-id"
-  />
-  <c-event-filter-type-field-stub
-    value="drop"
-  />
+  <div
+    class="layout row"
+  >
+    <div
+      class="flex xs8"
+    >
+      <c-id-field-stub
+        class="mr-3"
+        help-text="If no id is specified, a unique id will be generated automatically on rule creation"
+        value="event-filter-id"
+      />
+    </div>
+    <div
+      class="flex xs4"
+    >
+      <c-event-filter-type-field-stub
+        class="ml-3"
+        value="drop"
+      />
+    </div>
+  </div>
   <c-description-field-stub
     required="required"
     value="event-filter-description"
   />
-  <c-priority-field-stub
-    value="2"
-  />
-  <c-enabled-field-stub
-    value="true"
-  />
+  <div
+    class="layout row justify-space-between"
+  >
+    <c-enabled-field-stub
+      value="true"
+    />
+    <c-priority-field-stub
+      value="2"
+    />
+  </div>
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -118,7 +171,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
     />
   </c-information-block-stub>
   <pbehavior-recurrence-rule-field-stub
-    class="mb-1"
+    class="mb-3"
     form="[object Object]"
   />
   <c-patterns-field-stub
@@ -133,23 +186,41 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
 
 exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` type 1`] = `
 <div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value="event-filter-id"
-  />
-  <c-event-filter-type-field-stub
-    value="enrichment"
-  />
+  <div
+    class="layout row"
+  >
+    <div
+      class="flex xs8"
+    >
+      <c-id-field-stub
+        class="mr-3"
+        help-text="If no id is specified, a unique id will be generated automatically on rule creation"
+        value="event-filter-id"
+      />
+    </div>
+    <div
+      class="flex xs4"
+    >
+      <c-event-filter-type-field-stub
+        class="ml-3"
+        value="enrichment"
+      />
+    </div>
+  </div>
   <c-description-field-stub
     required="required"
     value="event-filter-description"
   />
-  <c-priority-field-stub
-    value="2"
-  />
-  <c-enabled-field-stub
-    value="true"
-  />
+  <div
+    class="layout row justify-space-between"
+  >
+    <c-enabled-field-stub
+      value="true"
+    />
+    <c-priority-field-stub
+      value="2"
+    />
+  </div>
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -158,7 +229,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
     />
   </c-information-block-stub>
   <pbehavior-recurrence-rule-field-stub
-    class="mb-1"
+    class="mb-3"
     form="[object Object]"
   />
   <c-patterns-field-stub
@@ -171,9 +242,8 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
     class="my-3 v-divider theme--light"
   />
   <c-information-block-stub
-    title="Configuration"
+    title="Enrichment options"
   >
-    <!---->
     <event-filter-enrichment-form-stub
       form="[object Object]"
       name="actions"
@@ -182,76 +252,43 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
 </div>
 `;
 
-exports[`event-filter-form Renders \`event-filter-form\` with change entity type 1`] = `
-<div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value="event-filter-id"
-  />
-  <c-event-filter-type-field-stub
-    value="change_entity"
-  />
-  <c-description-field-stub
-    required="required"
-    value="event-filter-description"
-  />
-  <c-priority-field-stub
-    value="2"
-  />
-  <c-enabled-field-stub
-    value="true"
-  />
-  <c-information-block-stub
-    title="Applied during this period only"
-  >
-    <event-filter-drop-intervals-field-stub
-      form="[object Object]"
-    />
-  </c-information-block-stub>
-  <pbehavior-recurrence-rule-field-stub
-    class="mb-1"
-    form="[object Object]"
-  />
-  <c-patterns-field-stub
-    some-required="some-required"
-    value="[object Object]"
-    with-entity="with-entity"
-    with-event="with-event"
-  />
-  <hr
-    class="my-3 v-divider theme--light"
-  />
-  <c-information-block-stub
-    title="Configuration"
-  >
-    <event-filter-change-entity-form-stub
-      form="[object Object]"
-      name="config"
-    />
-    <!---->
-  </c-information-block-stub>
-</div>
-`;
-
 exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] = `
 <div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-    value="event-filter-id"
-  />
-  <c-event-filter-type-field-stub
-    value="drop"
-  />
+  <div
+    class="layout row"
+  >
+    <div
+      class="flex xs8"
+    >
+      <c-id-field-stub
+        class="mr-3"
+        help-text="If no id is specified, a unique id will be generated automatically on rule creation"
+        value="event-filter-id"
+      />
+    </div>
+    <div
+      class="flex xs4"
+    >
+      <c-event-filter-type-field-stub
+        class="ml-3"
+        value="drop"
+      />
+    </div>
+  </div>
   <c-description-field-stub
     required="required"
     value="event-filter-description"
   />
-  <c-priority-field-stub
-    value="2"
-  />
-  <c-enabled-field-stub
-    value="true"
-  />
+  <div
+    class="layout row justify-space-between"
+  >
+    <c-enabled-field-stub
+      value="true"
+    />
+    <c-priority-field-stub
+      value="2"
+    />
+  </div>
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -260,7 +297,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
     />
   </c-information-block-stub>
   <pbehavior-recurrence-rule-field-stub
-    class="mb-1"
+    class="mb-3"
     form="[object Object]"
   />
   <c-patterns-field-stub
@@ -275,15 +312,34 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
 
 exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] = `
 <div>
-  <c-id-field-stub
-    help-text="If no id is specified, a unique id will be generated automatically on rule creation"
-  />
-  <c-event-filter-type-field-stub />
+  <div
+    class="layout row"
+  >
+    <div
+      class="flex xs8"
+    >
+      <c-id-field-stub
+        class="mr-3"
+        help-text="If no id is specified, a unique id will be generated automatically on rule creation"
+      />
+    </div>
+    <div
+      class="flex xs4"
+    >
+      <c-event-filter-type-field-stub
+        class="ml-3"
+      />
+    </div>
+  </div>
   <c-description-field-stub
     required="required"
   />
-  <c-priority-field-stub />
-  <c-enabled-field-stub />
+  <div
+    class="layout row justify-space-between"
+  >
+    <c-enabled-field-stub />
+    <c-priority-field-stub />
+  </div>
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -292,7 +348,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] 
     />
   </c-information-block-stub>
   <pbehavior-recurrence-rule-field-stub
-    class="mb-1"
+    class="mb-3"
     form="[object Object]"
   />
   <c-patterns-field-stub

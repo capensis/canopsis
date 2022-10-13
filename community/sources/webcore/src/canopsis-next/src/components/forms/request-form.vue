@@ -32,9 +32,11 @@
       v-field="form.request.payload",
       :label="$t('common.payload')"
     )
-      v-tooltip(slot="append", left)
-        v-icon(slot="activator") help
-        div(v-html="$t('scenario.payloadHelp')")
+      template(#append="")
+        v-tooltip(left)
+          template(#activator="{ bind, on }")
+            v-icon(v-bind="bind", v-on="on") help
+          div(v-html="$t('scenario.payloadHelp')")
 </template>
 
 <script>

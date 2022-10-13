@@ -18,6 +18,11 @@
           :error-messages="errors.collect(referenceFieldName)",
           :name="referenceFieldName"
         )
+          template(#append="")
+            v-tooltip(left)
+              template(#activator="{ bind, on }")
+                v-icon(v-bind="bind", v-on="on") help
+              span(v-html="$t('eventFilter.tooltips.reference')")
         event-filter-enrichment-external-data-mongo-form(v-if="isMongoType", v-field="form", :name="form.key")
         request-form(v-else, v-field="form", :name="form.key")
 </template>
@@ -54,10 +59,6 @@ export default {
     },
   },
   computed: {
-    hasOneCondition() {
-      return this.form.conditions.length === 1;
-    },
-
     types() {
       return Object.values(EVENT_FILTER_EXTERNAL_DATA_TYPES)
         .map(type => ({ text: this.$t(`eventFilter.externalDataTypes.${type}`), value: type }));
