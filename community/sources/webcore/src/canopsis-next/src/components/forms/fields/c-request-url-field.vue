@@ -20,10 +20,12 @@
         :disabled="disabled"
       )
         template(v-if="helpText", #append="")
-          v-tooltip(left)
-            template(#activator="{ bind, on }")
-              v-icon(v-bind="bind", v-on="on") help
-            div(v-html="helpText")
+          c-help-icon(
+            :text="helpText",
+            icon="help",
+            color="grey darken-1",
+            left
+          )
 </template>
 
 <script>
