@@ -47,6 +47,7 @@ import ratingSettingsModule from './rating-settings';
 import patternModule from './pattern';
 import mapModule from './map';
 import alarmTagModule from './alarm-tag';
+import shareTokenModule from './share-token';
 
 export default {
   alarm: alarmModule,
@@ -98,4 +99,5 @@ export default {
   pattern: patternModule,
   map: mapModule,
   alarmTag: alarmTagModule,
+  shareToken: shareTokenModule,
 };

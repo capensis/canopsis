@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/keymutex"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/gorilla/websocket"
 	"github.com/rs/zerolog"
@@ -56,6 +55,7 @@ type Hub interface {
 	RoomHasConnection(room string) bool
 	// GetUsers returns users from all connections with their tokens.
 	GetUsers() map[string][]string
+	GetAuthConnectionsCount() int
 }
 
 func NewHub(
@@ -66,7 +66,6 @@ func NewHub(
 ) Hub {
 	return &hub{
 		upgrader:     upgrader,
-		roomsMx:      keymutex.New(),
 		rooms:        make(map[string][]string),
 		conns:        make(map[string]userConn),
 		authorizer:   authorizer,
@@ -91,7 +90,7 @@ type WMessage struct {
 
 type hub struct {
 	upgrader   Upgrader
-	roomsMx    keymutex.KeyMutex
+	roomsMx    sync.RWMutex
 	rooms      map[string][]string
 	connsMx    sync.RWMutex
 	conns      map[string]userConn
@@ -119,12 +118,23 @@ loop:
 		case <-ctx.Done():
 			break loop
 		case <-ticker.C:
+			updated := false
 			closedConns := h.pingConnections()
 			h.closeConnections(closedConns...)
+			if len(closedConns) > 0 {
+				updated = true
+			}
 
 			closedConns, connsToDisconnect := h.checkAuth(ctx)
 			h.closeConnections(closedConns...)
 			h.disconnectConnections(connsToDisconnect...)
+			if len(closedConns) > 0 || len(connsToDisconnect) > 0 {
+				updated = true
+			}
+
+			if updated {
+				h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
+			}
 		}
 	}
 
@@ -132,9 +142,6 @@ loop:
 }
 
 func (h *hub) Connect(w http.ResponseWriter, r *http.Request) error {
-	h.connsMx.Lock()
-	defer h.connsMx.Unlock()
-
 	conn, err := h.upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		return err
@@ -157,6 +164,9 @@ func (h *hub) Connect(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	})
 
+	h.connsMx.Lock()
+	defer h.connsMx.Unlock()
+
 	connId := utils.NewID()
 	h.conns[connId] = userConn{
 		conn: conn,
@@ -169,40 +179,15 @@ func (h *hub) Connect(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (h *hub) Send(room string, b interface{}) {
-	closedConns := h.sendAndCheckConn(room, b)
-	h.closeConnections(closedConns...)
-}
-
-func (h *hub) sendAndCheckConn(room string, b interface{}) []string {
-	h.connsMx.RLock()
-	h.roomsMx.Lock(room)
-	defer func() {
-		if err := h.roomsMx.Unlock(room); err != nil {
-			h.logger.Err(err).Msg("roomsMx unlock")
-		}
-		h.connsMx.RUnlock()
-	}()
-
-	msg := WMessage{
+	closedConns := h.sendToRoom(room, WMessage{
 		Type: WMessageSuccess,
 		Room: room,
 		Msg:  b,
+	})
+	if len(closedConns) > 0 {
+		h.closeConnections(closedConns...)
+		h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 	}
-	closedConns := make([]string, 0)
-
-	for _, connId := range h.rooms[room] {
-		conn := h.conns[connId].conn
-		err := conn.WriteJSON(msg)
-		if err != nil {
-			closedConns = append(closedConns, connId)
-			h.logger.Err(err).
-				Str("room", room).
-				Str("addr", conn.RemoteAddr().String()).
-				Msg("cannot write message to connection, connection will be closed")
-		}
-	}
-
-	return closedConns
 }
 
 func (h *hub) RegisterRoom(room string, perms ...string) error {
@@ -210,102 +195,83 @@ func (h *hub) RegisterRoom(room string, perms ...string) error {
 }
 
 func (h *hub) CloseRoom(room string) error {
-	h.connsMx.RLock()
-	h.roomsMx.Lock(room)
-	defer func() {
-		if err := h.roomsMx.Unlock(room); err != nil {
-			h.logger.Err(err).Msg("roomsMx unlock")
-		}
-		h.connsMx.RUnlock()
-	}()
-
 	err := h.authorizer.RemoveRoom(room)
 	if err != nil {
 		return err
 	}
+
+	h.roomsMx.Lock()
+	defer h.roomsMx.Unlock()
+
 	delete(h.rooms, room)
 
 	return nil
 }
 
 func (h *hub) CloseRoomAndNotify(room string) error {
-	closedConns, err := h.closeRoomAndCheckConn(room)
-	if err != nil {
-		return err
-	}
-
-	h.closeConnections(closedConns...)
-
-	return nil
-}
-
-func (h *hub) closeRoomAndCheckConn(room string) ([]string, error) {
-	h.connsMx.RLock()
-	h.roomsMx.Lock(room)
-	defer func() {
-		if err := h.roomsMx.Unlock(room); err != nil {
-			h.logger.Err(err).Msg("roomsMx unlock")
-		}
-		h.connsMx.RUnlock()
-	}()
-
-	msg := WMessage{
+	closedConns := h.sendToRoom(room, WMessage{
 		Type: WMessageCloseRoom,
 		Room: room,
+	})
+	if len(closedConns) > 0 {
+		h.closeConnections(closedConns...)
+		h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 	}
 
-	closedConns := make([]string, 0)
-	for _, connId := range h.rooms[room] {
-		conn := h.conns[connId].conn
-		err := conn.WriteJSON(msg)
-		if err != nil {
-			closedConns = append(closedConns, connId)
-			h.logger.Err(err).
-				Str("room", room).
-				Str("addr", conn.RemoteAddr().String()).
-				Msg("cannot write message to connection, connection will be closed")
-		}
-	}
-
-	err := h.authorizer.RemoveRoom(room)
-	if err != nil {
-		return nil, err
-	}
-	delete(h.rooms, room)
-
-	return closedConns, nil
+	return h.CloseRoom(room)
 }
 
 func (h *hub) RoomHasConnection(room string) bool {
-	h.roomsMx.Lock(room)
-	defer func() {
-		if err := h.roomsMx.Unlock(room); err != nil {
-			h.logger.Err(err).Msg("roomsMx unlock")
-		}
-	}()
+	h.roomsMx.RLock()
+	defer h.roomsMx.RUnlock()
 
 	return len(h.rooms[room]) > 0
 }
 
+func (h *hub) GetUsers() map[string][]string {
+	h.connsMx.RLock()
+	defer h.connsMx.RUnlock()
+
+	users := make(map[string][]string)
+	uniqueTokens := make(map[string]struct{}, len(h.conns))
+	for _, conn := range h.conns {
+		if conn.userId != "" {
+			if _, ok := users[conn.userId]; !ok {
+				users[conn.userId] = make([]string, 0, 1)
+			}
+			if _, ok := uniqueTokens[conn.token]; !ok {
+				users[conn.userId] = append(users[conn.userId], conn.token)
+				uniqueTokens[conn.token] = struct{}{}
+			}
+		}
+	}
+
+	return users
+}
+
+func (h *hub) GetAuthConnectionsCount() int {
+	h.connsMx.RLock()
+	defer h.connsMx.RUnlock()
+
+	uniqueTokens := make(map[string]struct{})
+	for _, conn := range h.conns {
+		if conn.token != "" {
+			if _, ok := uniqueTokens[conn.token]; !ok {
+				uniqueTokens[conn.token] = struct{}{}
+			}
+		}
+	}
+
+	return len(uniqueTokens)
+}
+
 func (h *hub) join(connId, room string) (closed bool) {
 	h.connsMx.RLock()
-	h.roomsMx.Lock(room)
-	defer func() {
-		if err := h.roomsMx.Unlock(room); err != nil {
-			h.logger.Err(err).Msg("roomsMx unlock")
-		}
-		h.connsMx.RUnlock()
-	}()
+	defer h.connsMx.RUnlock()
 
 	c := h.conns[connId]
 	userId := c.userId
 	conn := c.conn
-
-	for _, v := range h.rooms[room] {
-		if v == connId {
-			return
-		}
-	}
 
 	ok, err := h.authorizer.Authorize(userId, room)
 	if err != nil {
@@ -328,8 +294,17 @@ func (h *hub) join(connId, room string) (closed bool) {
 		return
 	}
 
+	h.roomsMx.Lock()
+	defer h.roomsMx.Unlock()
+
+	for _, v := range h.rooms[room] {
+		if v == connId {
+			return
+		}
+	}
+
 	if len(h.rooms[room]) == 0 {
-		h.rooms[room] = make([]string, 0)
+		h.rooms[room] = make([]string, 0, 1)
 	}
 
 	h.rooms[room] = append(h.rooms[room], connId)
@@ -337,14 +312,8 @@ func (h *hub) join(connId, room string) (closed bool) {
 }
 
 func (h *hub) leave(connId, room string) (closed bool) {
-	h.connsMx.RLock()
-	h.roomsMx.Lock(room)
-	defer func() {
-		if err := h.roomsMx.Unlock(room); err != nil {
-			h.logger.Err(err).Msg("roomsMx unlock")
-		}
-		h.connsMx.RUnlock()
-	}()
+	h.roomsMx.Lock()
+	defer h.roomsMx.Unlock()
 
 	index := -1
 	for i, v := range h.rooms[room] {
@@ -364,11 +333,13 @@ func (h *hub) leave(connId, room string) (closed bool) {
 
 func (h *hub) stop() {
 	h.connsMx.Lock()
-	defer h.connsMx.Unlock()
+	h.roomsMx.Lock()
+	defer func() {
+		h.roomsMx.Unlock()
+		h.connsMx.Unlock()
+	}()
 
-	for room := range h.rooms {
-		h.cleanRoom(room)
-	}
+	h.rooms = make(map[string][]string)
 
 	for _, c := range h.conns {
 		conn := c.conn
@@ -380,17 +351,7 @@ func (h *hub) stop() {
 		}
 	}
 
-	h.conns = nil
-}
-
-func (h *hub) cleanRoom(room string) {
-	h.roomsMx.Lock(room)
-	defer func() {
-		if err := h.roomsMx.Unlock(room); err != nil {
-			h.logger.Err(err).Msg("roomsMx unlock")
-		}
-	}()
-	h.rooms[room] = nil
+	h.conns = make(map[string]userConn)
 }
 
 func (h *hub) removeConnections(connIds ...string) {
@@ -521,6 +482,8 @@ func (h *hub) checkAuth(ctx context.Context) ([]string, []string) {
 		}
 	}
 
+	h.roomsMx.Lock()
+	defer h.roomsMx.Unlock()
 	for room := range h.rooms {
 		closed := h.checkRoomAuth(room, checked)
 		if len(closed) > 0 {
@@ -532,13 +495,6 @@ func (h *hub) checkAuth(ctx context.Context) ([]string, []string) {
 }
 
 func (h *hub) checkRoomAuth(room string, checked map[string]bool) []string {
-	h.roomsMx.Lock(room)
-	defer func() {
-		if err := h.roomsMx.Unlock(room); err != nil {
-			h.logger.Err(err).Msg("roomsMx unlock")
-		}
-	}()
-
 	roomConns := h.rooms[room]
 	authRoomConns := make([]string, 0, len(roomConns))
 	closedConns := make([]string, 0)
@@ -588,6 +544,7 @@ func (h *hub) listen(connId string, conn Connection) {
 	for {
 		if closed {
 			h.closeConnections(connId)
+			h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 			return
 		}
 
@@ -619,6 +576,7 @@ func (h *hub) listen(connId string, conn Connection) {
 				h.disconnectConnections(connId)
 			}
 
+			h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 			return
 		}
 
@@ -642,6 +600,7 @@ func (h *hub) listen(connId string, conn Connection) {
 				})
 			} else {
 				h.setConnAuth(connId, userId, msg.Token)
+				h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 			}
 		case RMessageJoin:
 			if msg.Room == "" {
@@ -666,8 +625,8 @@ func (h *hub) listen(connId string, conn Connection) {
 }
 
 func (h *hub) setConnAuth(connId, userId, token string) {
-	h.connsMx.RLock()
-	defer h.connsMx.RUnlock()
+	h.connsMx.Lock()
+	defer h.connsMx.Unlock()
 
 	h.conns[connId] = userConn{
 		userId: userId,
@@ -676,7 +635,7 @@ func (h *hub) setConnAuth(connId, userId, token string) {
 	}
 }
 
-func (h *hub) sendToConn(connId string, msg interface{}) (closed bool) {
+func (h *hub) sendToConn(connId string, msg WMessage) (closed bool) {
 	h.connsMx.RLock()
 	defer h.connsMx.RUnlock()
 
@@ -692,52 +651,50 @@ func (h *hub) sendToConn(connId string, msg interface{}) (closed bool) {
 	return
 }
 
-func (h *hub) removeConnsFromRooms(connIds []string) {
-	for room := range h.rooms {
-		h.removeConnsFromRoom(room, connIds)
-	}
-}
-
-func (h *hub) removeConnsFromRoom(room string, connIds []string) {
-	h.roomsMx.Lock(room)
+func (h *hub) sendToRoom(room string, msg WMessage) []string {
+	h.connsMx.RLock()
+	h.roomsMx.RLock()
 	defer func() {
-		if err := h.roomsMx.Unlock(room); err != nil {
-			h.logger.Err(err).Msg("roomsMx unlock")
-		}
+		h.roomsMx.RUnlock()
+		h.connsMx.RUnlock()
 	}()
 
-	conns := h.rooms[room]
-	filteredConns := make([]string, 0, len(conns))
-
-	for _, v := range conns {
-		found := false
-		for _, connId := range connIds {
-			if v == connId {
-				found = true
-				break
-			}
-		}
-		if !found {
-			filteredConns = append(filteredConns, v)
+	closedConns := make([]string, 0)
+	for _, connId := range h.rooms[room] {
+		conn := h.conns[connId].conn
+		err := conn.WriteJSON(msg)
+		if err != nil {
+			closedConns = append(closedConns, connId)
+			h.logger.Err(err).
+				Str("room", room).
+				Str("addr", conn.RemoteAddr().String()).
+				Msg("cannot write message to connection, connection will be closed")
 		}
 	}
 
-	h.rooms[room] = filteredConns
+	return closedConns
 }
 
-func (h *hub) GetUsers() map[string][]string {
-	h.connsMx.RLock()
-	defer h.connsMx.RUnlock()
+func (h *hub) removeConnsFromRooms(connIds []string) {
+	h.roomsMx.Lock()
+	defer h.roomsMx.Unlock()
 
-	users := make(map[string][]string, 0)
-	for _, conn := range h.conns {
-		if conn.userId != "" {
-			if _, ok := users[conn.userId]; !ok {
-				users[conn.userId] = make([]string, 0, 1)
+	for room, conns := range h.rooms {
+		filteredConns := make([]string, 0, len(conns))
+
+		for _, v := range conns {
+			found := false
+			for _, connId := range connIds {
+				if v == connId {
+					found = true
+					break
+				}
 			}
-			users[conn.userId] = append(users[conn.userId], conn.token)
+			if !found {
+				filteredConns = append(filteredConns, v)
+			}
 		}
-	}
 
-	return users
+		h.rooms[room] = filteredConns
+	}
 }

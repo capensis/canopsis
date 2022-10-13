@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/migration/cli"
@@ -157,18 +158,7 @@ func main() {
 		logger.Info().Msg("Finish fixtures")
 	}
 
-	buildInfo := canopsis.GetBuildInfo()
-	err = config.NewVersionAdapter(client).UpsertConfig(ctx, config.VersionConf{
-		Version: buildInfo.Version,
-		Edition: f.edition,
-		Stack:   "go",
-	})
-	utils.FailOnError(err, "Failed to save config into mongo")
-	err = config.NewAdapter(client).UpsertConfig(ctx, conf.Canopsis)
-	utils.FailOnError(err, "Failed to save config into mongo")
-	err = config.NewRemediationAdapter(client).UpsertConfig(ctx, conf.Remediation)
-	utils.FailOnError(err, "Failed to save config into mongo")
-	err = config.NewHealthCheckAdapter(client).UpsertConfig(ctx, conf.HealthCheck)
+	err = updateMongoConfig(ctx, f, conf, client)
 	utils.FailOnError(err, "Failed to save config into mongo")
 
 	if f.modeMigrateMongo {
@@ -183,6 +173,42 @@ func main() {
 		utils.FailOnError(err, "Failed to migrate")
 		logger.Info().Msg("Finish migrations")
 	}
+}
+
+func updateMongoConfig(ctx context.Context, f flags, conf Conf, dbClient mongo.DbClient) error {
+	versionConfAdapter := config.NewVersionAdapter(dbClient)
+	prevVersionConf, err := versionConfAdapter.GetConfig(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to fetch version config: %w", err)
+	}
+	buildInfo := canopsis.GetBuildInfo()
+	versionConf := config.VersionConf{
+		Version: buildInfo.Version,
+		Edition: f.edition,
+		Stack:   "go",
+	}
+	if prevVersionConf.Version != versionConf.Version {
+		versionUpdated := types.NewCpsTime()
+		versionConf.VersionUpdated = &versionUpdated
+	}
+	err = versionConfAdapter.UpsertConfig(ctx, versionConf)
+	if err != nil {
+		return fmt.Errorf("failed to update version config: %w", err)
+	}
+	err = config.NewAdapter(dbClient).UpsertConfig(ctx, conf.Canopsis)
+	if err != nil {
+		return fmt.Errorf("failed to update global config: %w", err)
+	}
+	err = config.NewRemediationAdapter(dbClient).UpsertConfig(ctx, conf.Remediation)
+	if err != nil {
+		return fmt.Errorf("failed to update remediation config: %w", err)
+	}
+	err = config.NewHealthCheckAdapter(dbClient).UpsertConfig(ctx, conf.HealthCheck)
+	if err != nil {
+		return fmt.Errorf("failed to update healthcheck config: %w", err)
+	}
+
+	return nil
 }
 
 func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
