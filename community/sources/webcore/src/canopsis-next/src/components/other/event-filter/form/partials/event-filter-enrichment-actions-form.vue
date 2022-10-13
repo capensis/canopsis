@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    draggable(v-field="actions", :options="draggableOptions")
+    c-draggable-list-field(v-field="actions", :options="draggableOptions")
       event-filter-enrichment-action-form.mb-3(
         v-for="(action, index) in actions",
         v-field="actions[index]",
@@ -12,8 +12,6 @@
 </template>
 
 <script>
-import Draggable from 'vuedraggable';
-
 import { eventFilterActionToForm } from '@/helpers/forms/event-filter';
 
 import { formArrayMixin } from '@/mixins/form';
@@ -22,7 +20,7 @@ import EventFilterEnrichmentActionForm from './event-filter-enrichment-action-fo
 
 export default {
   inject: ['$validator'],
-  components: { Draggable, EventFilterEnrichmentActionForm },
+  components: { EventFilterEnrichmentActionForm },
   mixins: [formArrayMixin],
   model: {
     prop: 'actions',
