@@ -9,24 +9,24 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-type Service interface {
-	GenerateToken(id string, t time.Time) (string, error)
-	ValidateToken(token string) (id string, err error)
+type Generator interface {
+	Generate(id string, t time.Time) (string, error)
+	Validate(token string) (id string, err error)
 }
 
-func NewJwtService(
+func NewJwtGenerator(
 	secretKey []byte,
 	issuer string,
 	apiConfigProvider config.ApiConfigProvider,
-) Service {
-	return &jwtService{
+) Generator {
+	return &jwtGenerator{
 		secretKey:         secretKey,
 		issuer:            issuer,
 		apiConfigProvider: apiConfigProvider,
 	}
 }
 
-type jwtService struct {
+type jwtGenerator struct {
 	secretKey         []byte
 	issuer            string
 	apiConfigProvider config.ApiConfigProvider
@@ -37,7 +37,7 @@ type tokenClaims struct {
 	jwt.RegisteredClaims
 }
 
-func (s *jwtService) GenerateToken(id string, expiresAt time.Time) (string, error) {
+func (s *jwtGenerator) Generate(userId string, expiresAt time.Time) (string, error) {
 	cfg := s.apiConfigProvider.Get()
 	registeredClaims := jwt.RegisteredClaims{
 		ID:       utils.NewID(),
@@ -48,7 +48,7 @@ func (s *jwtService) GenerateToken(id string, expiresAt time.Time) (string, erro
 		registeredClaims.ExpiresAt = jwt.NewNumericDate(expiresAt)
 	}
 	claims := tokenClaims{
-		ID:               id,
+		ID:               userId,
 		RegisteredClaims: registeredClaims,
 	}
 	token := jwt.NewWithClaims(cfg.TokenSigningMethod, claims)
@@ -61,7 +61,7 @@ func (s *jwtService) GenerateToken(id string, expiresAt time.Time) (string, erro
 	return t, nil
 }
 
-func (s *jwtService) ValidateToken(tokenString string) (string, error) {
+func (s *jwtGenerator) Validate(tokenString string) (string, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		cfg := s.apiConfigProvider.Get()
 

@@ -50,6 +50,7 @@ export default merge({
     widget: 'Widget',
     addWidget: 'Ajouter un widget',
     addTab: 'Ajouter un onglet',
+    shareLink: 'Créer un lien de partage',
     addPbehavior: 'Ajouter un comportement périodique',
     refresh: 'Rafraîchir',
     toggleEditView: 'Activer/Désactiver le mode édition',
@@ -159,6 +160,8 @@ export default merge({
     displayName: 'Nom simplifié (DisplayName)',
     created: 'Date de création',
     updated: 'Date de dernière modification',
+    expired: 'Date d\'expiration',
+    accessed: 'Consulté à',
     lastEventDate: 'Date du dernier événement',
     pattern: 'Modèle | Modèles',
     correlation: 'Corrélation',
@@ -269,6 +272,8 @@ export default merge({
     ctrlZoom: 'Utilisez ctrl + molette de la souris pour zoomer',
     calendar: 'Calendrier',
     tag: 'Étiquette | Étiquettes',
+    sharedTokens: 'Jetons partagés',
+    notAvailable: 'Indisponible',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -1499,6 +1504,12 @@ export default merge({
           success: '{instructionName} a été modifiée avec succès',
         },
       },
+      duplicate: {
+        title: 'Double une consigne',
+        popups: {
+          success: '{instructionName} a été dupliqué avec succès',
+        },
+      },
     },
     createRemediationConfiguration: {
       create: {
@@ -1511,6 +1522,12 @@ export default merge({
         title: 'Modifier la configuration',
         popups: {
           success: '{configurationName} a été modifiée avec succès',
+        },
+      },
+      duplicate: {
+        title: 'Double la configuration',
+        popups: {
+          success: '{configurationName} a été dupliqué avec succès',
         },
       },
       fields: {
@@ -1802,6 +1819,11 @@ export default merge({
       addEntity: 'Ajouter une entité',
       pinnedEntities: 'Entités épinglées',
     },
+    createShareToken: {
+      create: {
+        title: 'Créer un jeton de partage',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -2087,6 +2109,8 @@ export default merge({
     errors: {
       emptyTabs: 'Merci de créer un onglet',
     },
+    sharedViewUrl: 'URL de vue partagée',
+    shareView: 'Partager la vue {name}',
     deleteRow: 'Supprimer la ligne',
     deleteWidget: 'Supprimer le widget',
     fullScreen: 'Plein écran',
@@ -2519,7 +2543,6 @@ export default merge({
     successfulExecutions: 'Exécutions réussies',
     alarmStates: 'Alarmes affectées par état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
-    notAvailable: 'Indisponible',
     instructionChanged: 'La consigne a été modifiée',
     alarmResolvedDate: 'Date de résolution de l\'alarme',
     showFailedExecutions: 'Afficher les exécutions d\'instructions ayant échoué',
@@ -2664,16 +2687,14 @@ export default merge({
   users: {
     seeProfile: 'Voir le profil',
     selectDefaultView: 'Sélectionner une vue par défaut',
-    username: 'Identifiant utilisateur',
     firstName: 'Prénom',
     lastName: 'Nom',
     email: 'Email',
-    role: 'Rôle',
-    enabled: 'Actif',
-    password: 'Mot de passe',
     language: 'Langue par défaut',
     auth: 'Type d\'auth.',
     navigationType: 'Type d\'affichage de la barre de vues',
+    active: 'Séance active',
+    activeConnects: 'Connections count',
     navigationTypes: {
       [GROUPS_NAVIGATION_TYPES.sideBar]: 'Barre latérale',
       [GROUPS_NAVIGATION_TYPES.topBar]: 'Barre d\'entête',
@@ -2681,6 +2702,14 @@ export default merge({
     metrics: {
       [USER_METRIC_PARAMETERS.totalUserActivity]: 'Durée totale de l\'activité',
     },
+  },
+
+  role: {
+    expirationSettings: 'Paramètres d\'expiration',
+    inactivityInterval: 'Intervalle d\'inactivité',
+    expirationInterval: 'Intervalle d\'expiration',
+    inactivityIntervalHelpText: 'Définit quand l\'utilisateur est compté comme inactif',
+    expirationIntervalHelpText: 'Définit la période d\'inactivité après laquelle le jeton d\'authentification expire',
   },
 
   testSuite: {
@@ -3179,5 +3208,11 @@ export default merge({
         + 'Ctrl + molette de la souris - zoom avant/arrière\n'
         + 'Ctrl + Clic gauche de la souris + glisser - déplacer la zone\n',
     },
+  },
+
+  shareToken: {
+    revokeToken: 'Révoquer le jeton',
+    revokeSelectedTokens: 'Révoquer les jetons sélectionnés',
+    tokenExpiration: 'Expiration du jeton',
   },
 }, featureService.get('i18n.fr'));

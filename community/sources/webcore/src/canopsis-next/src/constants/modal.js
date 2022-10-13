@@ -29,6 +29,7 @@ export const MODALS = {
   textFieldEditor: 'text-field-editor',
   selectView: 'select-view',
   createView: 'create-view',
+  shareView: 'share-view',
   createGroup: 'create-group',
   createUser: 'create-user',
   createRole: 'create-role',
@@ -88,4 +89,5 @@ export const MODALS = {
   createFlowchartMap: 'create-flowchart-map',
   createMermaidMap: 'create-mermaid-map',
   createTreeOfDependenciesMap: 'create-tree-of-dependencies-map',
+  createShareToken: 'create-share-token',
 };

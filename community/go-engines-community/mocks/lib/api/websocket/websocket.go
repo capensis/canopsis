@@ -318,6 +318,20 @@ func (mr *MockHubMockRecorder) Connect(arg0, arg1 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockHub)(nil).Connect), arg0, arg1)
 }
 
+// GetAuthConnectionsCount mocks base method.
+func (m *MockHub) GetAuthConnectionsCount() int {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAuthConnectionsCount")
+	ret0, _ := ret[0].(int)
+	return ret0
+}
+
+// GetAuthConnectionsCount indicates an expected call of GetAuthConnectionsCount.
+func (mr *MockHubMockRecorder) GetAuthConnectionsCount() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAuthConnectionsCount", reflect.TypeOf((*MockHub)(nil).GetAuthConnectionsCount))
+}
+
 // GetUsers mocks base method.
 func (m *MockHub) GetUsers() map[string][]string {
 	m.ctrl.T.Helper()

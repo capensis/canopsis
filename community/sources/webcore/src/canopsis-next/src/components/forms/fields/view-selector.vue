@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(align-center)
-    v-btn(
+    v-btn.ml-0(
       color="secondary",
       small,
       @click="showViewSelectModal"

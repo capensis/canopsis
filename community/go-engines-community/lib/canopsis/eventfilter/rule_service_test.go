@@ -6,11 +6,9 @@ import (
 	"reflect"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
@@ -35,15 +33,15 @@ func TestProcessEventSuccess(t *testing.T) {
 	}, nil)
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
-	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper, _ *config.TimezoneConfig) (string, types.Event, error) {
+	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
 			event.Resource = "apply 1"
 
 			return eventfilter.OutcomePass, event, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
-	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper, _ *config.TimezoneConfig) (string, types.Event, error) {
+	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
 			event.Component = "apply 2"
 
 			return eventfilter.OutcomePass, event, nil
@@ -61,10 +59,7 @@ func TestProcessEventSuccess(t *testing.T) {
 		return nil, false
 	})
 
-	timezoneConfigProviderMock := mock_config.NewMockTimezoneConfigProvider(ctrl)
-	timezoneConfigProviderMock.EXPECT().Get().AnyTimes().Return(config.TimezoneConfig{})
-
-	ruleService := eventfilter.NewRuleService(adapter, container, timezoneConfigProviderMock, zerolog.Logger{})
+	ruleService := eventfilter.NewRuleService(adapter, container, zerolog.Logger{})
 	err := ruleService.LoadRules(ctx, []string{"rule-1", "rule-2"})
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
@@ -104,15 +99,15 @@ func TestProcessEventBreakOutcome(t *testing.T) {
 	}, nil)
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
-	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper, _ *config.TimezoneConfig) (string, types.Event, error) {
+	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
 			event.Resource = "apply 1"
 
 			return eventfilter.OutcomeBreak, event, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
-	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper, _ *config.TimezoneConfig) (string, types.Event, error) {
+	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
 			event.Component = "apply 2"
 
 			return eventfilter.OutcomePass, event, nil
@@ -130,10 +125,7 @@ func TestProcessEventBreakOutcome(t *testing.T) {
 		return nil, false
 	})
 
-	timezoneConfigProviderMock := mock_config.NewMockTimezoneConfigProvider(ctrl)
-	timezoneConfigProviderMock.EXPECT().Get().AnyTimes().Return(config.TimezoneConfig{})
-
-	ruleService := eventfilter.NewRuleService(adapter, container, timezoneConfigProviderMock, zerolog.Logger{})
+	ruleService := eventfilter.NewRuleService(adapter, container, zerolog.Logger{})
 	err := ruleService.LoadRules(ctx, []string{"rule-1", "rule-2"})
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
@@ -174,15 +166,15 @@ func TestProcessEventDropOutcome(t *testing.T) {
 	}, nil)
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
-	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper, _ *config.TimezoneConfig) (string, types.Event, error) {
+	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
 			event.Resource = "apply 1"
 
 			return eventfilter.OutcomeDrop, event, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
-	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper, _ *config.TimezoneConfig) (string, types.Event, error) {
+	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+		DoAndReturn(func(_ context.Context, _ eventfilter.Rule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
 			event.Component = "apply 2"
 
 			return eventfilter.OutcomePass, event, nil
@@ -200,10 +192,7 @@ func TestProcessEventDropOutcome(t *testing.T) {
 		return nil, false
 	})
 
-	timezoneConfigProviderMock := mock_config.NewMockTimezoneConfigProvider(ctrl)
-	timezoneConfigProviderMock.EXPECT().Get().AnyTimes().Return(config.TimezoneConfig{})
-
-	ruleService := eventfilter.NewRuleService(adapter, container, timezoneConfigProviderMock, zerolog.Logger{})
+	ruleService := eventfilter.NewRuleService(adapter, container, zerolog.Logger{})
 	err := ruleService.LoadRules(ctx, []string{"rule-1", "rule-2"})
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
