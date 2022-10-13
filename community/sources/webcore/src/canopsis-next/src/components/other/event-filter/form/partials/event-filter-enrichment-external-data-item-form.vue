@@ -12,10 +12,12 @@
             :disabled="disabled"
           )
             template(#append="")
-              v-tooltip(left)
-                template(#activator="{ bind, on }")
-                  v-icon(v-bind="bind", v-on="on") help
-                span(v-html="$t('eventFilter.tooltips.reference')")
+              c-help-icon(
+                :text="$t('eventFilter.tooltips.reference')",
+                icon="help",
+                color="grey darken-1",
+                left
+              )
           v-select.ml-2(
             :value="form.type",
             :items="types",
@@ -44,10 +46,11 @@ import { EVENT_FILTER_EXTERNAL_DATA_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
+import { eventFilterExternalDataItemToForm } from '@/helpers/forms/event-filter';
+
 import RequestForm from '@/components/forms/request-form.vue';
 
 import EventFilterEnrichmentExternalDataMongoForm from './event-filter-enrichment-external-data-mongo-form.vue';
-import { eventFilterExternalDataItemToForm } from '@/helpers/forms/event-filter';
 
 export default {
   inject: ['$validator'],
