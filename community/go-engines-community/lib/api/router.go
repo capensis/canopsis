@@ -339,6 +339,7 @@ func RegisterRoutes(
 			)
 			alarmExportRouter.GET(
 				"/:id/download",
+				security.GetFileAuthMiddleware(),
 				middleware.Authorize(authPermAlarmRead, permCan, enforcer),
 				alarmAPI.DownloadExport,
 			)
@@ -375,6 +376,7 @@ func RegisterRoutes(
 			)
 			entityExportRouter.GET(
 				"/:id/download",
+				security.GetFileAuthMiddleware(),
 				middleware.Authorize(authObjEntity, permRead, enforcer),
 				entityAPI.DownloadExport,
 			)
@@ -1429,13 +1431,13 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjFile, permCreate, enforcer),
 				fileAPI.Create,
 			)
-			getFileRouter := fileRouter.Group("", security.GetFileAuthMiddleware()...)
-			getFileRouter.GET(
+			fileRouter.GET(
 				"",
 				fileAPI.List,
 			)
-			getFileRouter.GET(
+			fileRouter.GET(
 				"/:id",
+				security.GetFileAuthMiddleware(),
 				fileAPI.Get,
 			)
 			fileRouter.DELETE(
@@ -1548,6 +1550,7 @@ func RegisterRoutes(
 			)
 			techMetricsRouter.GET(
 				"/download",
+				security.GetFileAuthMiddleware(),
 				middleware.Authorize(apisecurity.PermTechMetrics, model.PermissionCan, enforcer),
 				techMetricsAPI.DownloadExport,
 			)
