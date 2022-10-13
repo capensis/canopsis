@@ -104,13 +104,14 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	op := types.Operation{
 		Type: operationType,
 		Parameters: types.OperationParameters{
-			Output:    event.Parameters.Output,
-			Author:    event.Parameters.Author,
-			User:      event.Parameters.User,
-			Ticket:    event.Parameters.Ticket,
-			Duration:  event.Parameters.Duration,
-			State:     event.Parameters.State,
-			Execution: event.Parameters.Execution,
+			Output:      event.Parameters.Output,
+			Author:      event.Parameters.Author,
+			User:        event.Parameters.User,
+			Ticket:      event.Parameters.Ticket,
+			Duration:    event.Parameters.Duration,
+			State:       event.Parameters.State,
+			Execution:   event.Parameters.Execution,
+			Instruction: event.Parameters.Instruction,
 		},
 	}
 	alarmChangeType, err := p.Executor.Exec(ctx, op, alarm, event.Entity,
