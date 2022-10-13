@@ -13,7 +13,7 @@
             v-btn.mr-0(icon, @click="removeAction")
               v-icon(color="error") delete
           v-expand-transition
-            event-filter-action-form-type-info(v-if="form.type", :type="form.type")
+            event-filter-enrichment-action-form-type-info(v-if="form.type", :type="form.type")
           v-layout
             v-flex(xs5)
               c-name-field(v-field="form.name", key="name")
@@ -41,11 +41,11 @@
 <script>
 import { EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 
-import EventFilterActionFormTypeInfo from './event-filter-action-form-type-info.vue';
+import EventFilterEnrichmentActionFormTypeInfo from './event-filter-enrichment-action-form-type-info.vue';
 
 export default {
   inject: ['$validator'],
-  components: { EventFilterActionFormTypeInfo },
+  components: { EventFilterEnrichmentActionFormTypeInfo },
   model: {
     prop: 'form',
     event: 'input',
