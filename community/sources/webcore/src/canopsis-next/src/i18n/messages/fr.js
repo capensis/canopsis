@@ -274,6 +274,8 @@ export default merge({
     tag: 'Étiquette | Étiquettes',
     sharedTokens: 'Jetons partagés',
     notAvailable: 'Indisponible',
+    timeTaken: 'Temps passé',
+    enginesMetrics: 'Métriques des moteurs',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -2716,7 +2718,6 @@ export default merge({
     xmlFeed: 'Flux XML',
     hostname: 'Nom d\'hôte',
     lastUpdate: 'Dernière mise à jour',
-    timeTaken: 'Temps passé',
     totalTests: 'Total des tests',
     disabledTests: 'Tests désactivés',
     copyMessage: 'Copier le message système',
@@ -3214,5 +3215,9 @@ export default merge({
     revokeToken: 'Révoquer le jeton',
     revokeSelectedTokens: 'Révoquer les jetons sélectionnés',
     tokenExpiration: 'Expiration du jeton',
+  },
+
+  techMetric: {
+    noDumps: 'Aucun vidage disponible. Générer un nouveau vidage ?',
   },
 }, featureService.get('i18n.fr'));

@@ -274,6 +274,8 @@ export default merge({
     tag: 'Tag | Tags',
     sharedTokens: 'Shared tokens',
     notAvailable: 'N/a',
+    timeTaken: 'Time taken',
+    enginesMetrics: 'Engines` metrics',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -2716,7 +2718,6 @@ export default merge({
     xmlFeed: 'XML feed',
     hostname: 'Host name',
     lastUpdate: 'Last update',
-    timeTaken: 'Time taken',
     totalTests: 'Total tests',
     disabledTests: 'Tests disabled',
     copyMessage: 'Copy system message',
@@ -3214,5 +3215,9 @@ export default merge({
     revokeToken: 'Revoke token',
     revokeSelectedTokens: 'Revoke selected tokens',
     tokenExpiration: 'Token expiration',
+  },
+
+  techMetric: {
+    noDumps: 'No dumps available. Generate a new dump?',
   },
 }, featureService.get('i18n.en'));
