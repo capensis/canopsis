@@ -6,6 +6,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
+import { API_HOST, API_ROUTES } from '@/config';
 import {
   CANOPSIS_EDITION,
   EXPORT_CSV_DATETIME_FORMATS,
@@ -16,7 +17,6 @@ import {
   TIME_UNITS,
   USERS_PERMISSIONS,
 } from '@/constants';
-import { API_HOST, API_ROUTES } from '@/config';
 
 import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
 
