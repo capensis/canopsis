@@ -179,6 +179,7 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 
 			return value.In(loc).Format(format)
 		},
+		// regex_map_key return map value if key match the regexp
 		"regex_map_key": func(m map[string]interface{}, regexpString string) interface{} {
 			re, err := regexp.Compile(regexpString)
 			if err != nil {
@@ -187,7 +188,7 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 			}
 
 			for k, v := range m {
-				if re.Match([]byte(k)) {
+				if re.MatchString(k) {
 					return v
 				}
 			}
