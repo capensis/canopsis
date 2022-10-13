@@ -11,12 +11,8 @@
           with-alarm,
           with-entity
         )
-        c-collapse-panel(color="grey")
-          template(#header="")
-            span.white--text {{ $t('remediationPatterns.tabs.pbehaviorTypes.title') }}
-          v-card
-            v-card-text
-              remediation-patterns-pbehavior-types-form(v-model="form")
+        c-collapse-panel(:title="$t('remediationPatterns.tabs.pbehaviorTypes.title')")
+          remediation-patterns-pbehavior-types-form(v-model="form")
       template(#actions="")
         v-btn(
           :disabled="submitting",

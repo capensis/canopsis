@@ -1,6 +1,5 @@
 <template lang="pug">
-  c-collapse-panel(:color="color", lazy)
-    span.white--text(slot="header") {{ title }}
+  c-collapse-panel(:title="title", :color="color", lazy)
     test-suite-tabs(:test-suite-id="testSuite._id")
 </template>
 

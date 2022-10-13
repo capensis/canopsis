@@ -1,8 +1,8 @@
 <template lang="pug">
   div
-    c-pattern-panel.mb-2(:title="$t('eventFilter.externalData')")
+    c-collapse-panel.mb-2(:title="$t('eventFilter.externalData')")
       event-filter-enrichment-external-data-form(v-field="form.external_data")
-    c-pattern-panel.mb-2(:title="$t('eventFilter.editActions')")
+    c-collapse-panel.mb-2(:title="$t('eventFilter.editActions')")
       event-filter-enrichment-actions-form(v-field="form.config.actions")
     v-layout(row)
       v-select.mr-3(
@@ -50,6 +50,11 @@ export default {
   computed: {
     eventFilterAfterTypes() {
       return Object.values(EVENT_FILTER_ENRICHMENT_AFTER_TYPES);
+    },
+  },
+  watch: {
+    'form.config.actions': function validateActions() {
+      this.$validator.validate(this.name);
     },
   },
   created() {

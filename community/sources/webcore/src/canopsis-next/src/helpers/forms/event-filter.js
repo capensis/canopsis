@@ -1,4 +1,4 @@
-import { cloneDeep, pick } from 'lodash';
+import { cloneDeep, pick, isEmpty } from 'lodash';
 
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
@@ -297,7 +297,9 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
   exceptions: exceptionsToForm(eventFilter.exceptions),
   exdates: exdatesToForm(eventFilter.exdates, timezone),
   config: eventFilterConfigToForm(eventFilter.config),
-  external_data: eventFilterEnrichmentExternalDataToForm(eventFilter.external_data),
+  external_data: !isEmpty(eventFilter.external_data)
+    ? eventFilterEnrichmentExternalDataToForm(eventFilter.external_data)
+    : [],
   patterns: filterPatternsToForm(
     eventFilter,
     [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
@@ -345,11 +347,14 @@ export const formToEventFilter = (eventFilterForm, timezone) => {
       break;
   }
 
+  if (!isEmpty(externalData)) {
+    eventFilter.external_data = formToEventFilterEnrichmentExternalData(externalData);
+  }
+
   return {
     ...eventFilter,
     exdates: exdatesToRequest(formExdatesToExdates(exdates, timezone)),
     exceptions: exceptionsToRequest(formExceptionsToExceptions(exceptions)),
-    external_data: formToEventFilterEnrichmentExternalData(externalData),
     ...formFilterToPatterns(patterns, [PATTERNS_FIELDS.event, PATTERNS_FIELDS.entity]),
   };
 };

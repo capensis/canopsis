@@ -7,10 +7,15 @@
       v-field="form[index]",
       :name="item.key",
       :key="item.key",
+      :disabled="disabled",
       @remove="removeItem"
     )
-    v-flex
-      v-btn.ml-0.my-0(color="primary", outline, @click="addItem") {{ $t('eventFilter.addExternalData') }}
+    v-flex(v-if="!disabled")
+      v-btn.ml-0.my-0(
+        color="primary",
+        outline,
+        @click="addItem"
+      ) {{ $t('eventFilter.addExternalData') }}
 </template>
 
 <script>
@@ -32,6 +37,10 @@ export default {
     form: {
       type: Array,
       required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {

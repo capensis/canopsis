@@ -7,7 +7,8 @@
         :items="availableMethods",
         :label="methodLabel || $t('common.method')",
         :error-messages="errors.collect(methodFieldName)",
-        :name="methodFieldName"
+        :name="methodFieldName",
+        :disabled="disabled"
       )
     v-flex.pl-2(xs6)
       v-text-field(
@@ -15,7 +16,8 @@
         v-validate="'required|url'",
         :label="urlLabel || $t('common.url')",
         :error-messages="errors.collect(urlFieldName)",
-        :name="urlFieldName"
+        :name="urlFieldName",
+        :disabled="disabled"
       )
         template(v-if="helpText", #append="")
           v-tooltip(left)
@@ -53,6 +55,10 @@ export default {
     name: {
       type: String,
       default: 'request',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

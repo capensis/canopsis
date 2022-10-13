@@ -3,34 +3,47 @@
     c-request-url-field(
       v-field="form.request",
       :help-text="$t('scenario.urlHelp')",
-      :name="`${name}.request`"
+      :name="`${name}.request`",
+      :disabled="disabled"
     )
-    c-retry-field(v-field="form.retry")
-    c-enabled-field(v-model="form.request.skip_verify", :label="$t('scenario.skipVerify')")
-    c-enabled-field(v-model="withAuth", :label="$t('scenario.withAuth')")
+    c-retry-field(v-field="form.retry", :disabled="disabled")
+    c-enabled-field(
+      v-field="form.request.skip_verify",
+      :label="$t('scenario.skipVerify')",
+      :disabled="disabled"
+    )
+    c-enabled-field(
+      v-model="withAuth",
+      :label="$t('scenario.withAuth')",
+      :disabled="disabled"
+    )
     v-layout(v-if="withAuth", row)
       v-flex.pa-1(xs6)
         v-text-field(
           v-field="form.request.auth.username",
           :label="$t('common.username')",
-          :name="`${name}.username`"
+          :name="`${name}.username`",
+          :disabled="disabled"
         )
       v-flex.pa-1(xs6)
         v-text-field(
           v-field="form.request.auth.password",
           :label="$t('common.password')",
-          :name="`${name}.password`"
+          :name="`${name}.password`",
+          :disabled="disabled"
         )
     c-text-pairs-field(
       v-field="form.request.headers",
       :title="$t('scenario.headers')",
       :text-label="$t('scenario.headerKey')",
       :value-label="$t('scenario.headerValue')",
-      :name="name"
+      :name="name",
+      :disabled="disabled"
     )
     v-textarea(
       v-field="form.request.payload",
-      :label="$t('common.payload')"
+      :label="$t('common.payload')",
+      :disabled="disabled"
     )
       template(#append="")
         v-tooltip(left)
@@ -57,6 +70,10 @@ export default {
     name: {
       type: String,
       required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

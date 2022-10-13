@@ -6,7 +6,8 @@
         v-validate="'required'",
         :label="$t('eventFilter.collection')",
         :name="collectionFieldName",
-        :error-messages="errors.collect(collectionFieldName)"
+        :error-messages="errors.collect(collectionFieldName)",
+        :disabled="disabled"
       )
     event-filter-enrichment-external-data-mongo-condition-form(
       v-for="(condition, index) in form.conditions",
@@ -14,9 +15,10 @@
       :key="condition.key",
       :name="`${name}.${condition.key}`",
       :disabled-remove="hasOnlyOneCondition",
+      :disabled="disabled",
       @remove="removeCondition"
     )
-    v-flex
+    v-flex(v-if="!disabled")
       v-btn.ml-0.mb-0(color="primary", outline, @click="addCondition") {{ $t('common.addMore') }}
 </template>
 
@@ -44,6 +46,10 @@ export default {
     name: {
       type: String,
       required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
