@@ -221,10 +221,6 @@ export const CreateEventFilter = () => ({
   component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter.vue'),
   loading: LoaderOverlay,
 });
-export const CreateEventFilterAction = () => ({
-  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter-action.vue'),
-  loading: LoaderOverlay,
-});
 export const CreatePattern = () => ({
   component: import(/* webpackChunkName: "Pattern" */ './pattern/create-pattern.vue'),
   loading: LoaderOverlay,

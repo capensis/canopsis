@@ -30,11 +30,11 @@
 import { EVENT_FILTER_TYPES } from '@/constants';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
-import EventFilterEnrichmentForm from '@/components/other/event-filter/form/event-filter-enrichment-form.vue';
-import EventFilterChangeEntityForm from '@/components/other/event-filter/form/event-filter-change-entity-form.vue';
 import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/calendar/partials/pbehavior-recurrence-rule-field.vue';
 
-import EventFilterDropIntervalsField from './fields/event-filter-drop-intervals-field.vue';
+import EventFilterEnrichmentForm from './partials/event-filter-enrichment-form.vue';
+import EventFilterChangeEntityForm from './partials/event-filter-change-entity-form.vue';
+import EventFilterDropIntervalsField from './partials/fields/event-filter-drop-intervals-field.vue';
 
 export default {
   inject: ['$validator'],

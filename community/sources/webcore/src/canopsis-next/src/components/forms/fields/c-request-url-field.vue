@@ -17,9 +17,11 @@
         :error-messages="errors.collect(urlFieldName)",
         :name="urlFieldName"
       )
-        v-tooltip(v-if="helpText", slot="append", left)
-          v-icon(slot="activator") help
-          div(v-html="helpText")
+        template(v-if="helpText", #append="")
+          v-tooltip(left)
+            template(#activator="{ bind, on }")
+              v-icon(v-bind="bind", v-on="on") help
+            div(v-html="helpText")
 </template>
 
 <script>
