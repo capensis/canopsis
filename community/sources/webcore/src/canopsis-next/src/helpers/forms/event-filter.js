@@ -17,7 +17,7 @@ import {
   formExceptionsToExceptions,
   formExdatesToExdates,
 } from './planning-pbehavior';
-import { requestToForm, retryToForm } from './shared/request';
+import { formToRequest, formToRetry, requestToForm, retryToForm } from './shared/request';
 
 /**
  * @typedef { 'enrichment' | 'drop' | 'break' | 'change_entity' } EventFilterType
@@ -258,12 +258,20 @@ export const formToEventFilterEnrichmentExternalDataConditions = (form = []) => 
  * @returns {EventFilterEnrichmentExternalData}
  */
 export const formToEventFilterEnrichmentExternalData = (form = []) => (
-  form.reduce((acc, { type, reference, collection, conditions }) => {
+  form.reduce((acc, { type, reference, collection, conditions, request, retry }) => {
+    const additionalFields = type === EVENT_FILTER_EXTERNAL_DATA_TYPES.api
+      ? {
+        request: formToRequest(request),
+        ...formToRetry(retry),
+      } : {
+        collection,
+        ...formToEventFilterEnrichmentExternalDataConditions(conditions),
+      };
+
     acc[reference] = {
       type,
-      collection,
 
-      ...formToEventFilterEnrichmentExternalDataConditions(conditions),
+      ...additionalFields,
     };
 
     return acc;

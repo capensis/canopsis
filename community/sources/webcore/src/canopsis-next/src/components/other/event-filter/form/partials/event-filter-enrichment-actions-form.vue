@@ -46,8 +46,8 @@ export default {
       this.addItemIntoArray(eventFilterActionToForm());
     },
 
-    removeAction(action) {
-      this.removeItemFromArrayWith(({ key }) => key !== action.key);
+    removeAction(key) {
+      this.removeItemFromArrayWith(action => key !== action.key);
     },
   },
 };

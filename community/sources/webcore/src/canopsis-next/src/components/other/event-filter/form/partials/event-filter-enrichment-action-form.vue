@@ -5,8 +5,8 @@
         v-icon.draggable.ml-0.mr-3.mt-3.action-drag-handler drag_indicator
         v-layout(column)
           v-layout(row)
-            c-select-field(
-              v-model="form.type",
+            v-select(
+              v-field="form.type",
               :items="eventFilterActionTypes",
               :label="$t('common.type')"
             )
@@ -41,7 +41,7 @@
 <script>
 import { EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 
-import EventFilterActionFormTypeInfo from './partials/event-filter-action-form-type-info.vue';
+import EventFilterActionFormTypeInfo from './event-filter-action-form-type-info.vue';
 
 export default {
   inject: ['$validator'],
@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     removeAction() {
-      this.$emit('remove', this.form);
+      this.$emit('remove', this.form.key);
     },
   },
 };
