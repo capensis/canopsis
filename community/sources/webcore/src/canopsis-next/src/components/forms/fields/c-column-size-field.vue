@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import oneColumnMobileSrc from '@/assets/images/column-mobile-1.svg';
 import twoColumnMobileSrc from '@/assets/images/column-mobile-2.svg';
 import oneColumnTabletSrc from '@/assets/images/column-tablet-1.svg';
@@ -32,10 +34,6 @@ import fourColumnDesktopSrc from '@/assets/images/column-desktop-4.svg';
 import sixColumnDesktopSrc from '@/assets/images/column-desktop-6.svg';
 
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
       type: Number,
@@ -54,44 +52,42 @@ export default {
       default: false,
     },
   },
-  computed: {
-    mobileItems() {
-      return [
-        { value: 1, src: oneColumnMobileSrc },
-        { value: 2, src: twoColumnMobileSrc },
-      ];
-    },
+  setup(props) {
+    const mobileItems = computed(() => [
+      { value: 1, src: oneColumnMobileSrc },
+      { value: 2, src: twoColumnMobileSrc },
+    ]);
 
-    tabletItems() {
-      return [
-        { value: 1, src: oneColumnTabletSrc },
-        { value: 2, src: twoColumnTabletSrc },
-        { value: 3, src: threeColumnTabletSrc },
-        { value: 4, src: fourColumnTabletSrc },
-      ];
-    },
+    const tabletItems = computed(() => [
+      { value: 1, src: oneColumnTabletSrc },
+      { value: 2, src: twoColumnTabletSrc },
+      { value: 3, src: threeColumnTabletSrc },
+      { value: 4, src: fourColumnTabletSrc },
+    ]);
 
-    desktopItems() {
-      return [
-        { value: 1, src: oneColumnDesktopSrc },
-        { value: 2, src: twoColumnDesktopSrc },
-        { value: 3, src: threeColumnDesktopSrc },
-        { value: 4, src: fourColumnDesktopSrc },
-        { value: 6, src: sixColumnDesktopSrc },
-      ];
-    },
+    const desktopItems = computed(() => [
+      { value: 1, src: oneColumnDesktopSrc },
+      { value: 2, src: twoColumnDesktopSrc },
+      { value: 3, src: threeColumnDesktopSrc },
+      { value: 4, src: fourColumnDesktopSrc },
+      { value: 6, src: sixColumnDesktopSrc },
+    ]);
 
-    availableItems() {
-      if (this.mobile) {
-        return this.mobileItems;
+    const availableItems = computed(() => {
+      if (props.mobile) {
+        return mobileItems.value;
       }
 
-      if (this.tablet) {
-        return this.tabletItems;
+      if (props.tablet) {
+        return tabletItems.value;
       }
 
-      return this.desktopItems;
-    },
+      return desktopItems.value;
+    });
+
+    return {
+      availableItems,
+    };
   },
 };
 </script>
