@@ -4,7 +4,8 @@
       v-select(
         v-field="condition.type",
         :items="conditionTypes",
-        :label="$t('common.type')"
+        :label="$t('common.type')",
+        :disabled="disabled"
       )
     v-flex.px-2(xs4)
       v-text-field(
@@ -12,7 +13,8 @@
         v-validate="'required'",
         :label="$t('common.attribute')",
         :name="conditionFieldName",
-        :error-messages="errors.collect(conditionFieldName)"
+        :error-messages="errors.collect(conditionFieldName)",
+        :disabled="disabled"
       )
     v-flex.pl-2(xs5)
       v-layout(row, align-center)
@@ -22,6 +24,7 @@
           :search-input.sync="searchInput",
           :label="$t('common.value')",
           :items="values",
+          :disabled="disabled",
           no-filter,
           clearable,
           @change="selectValue",
@@ -31,7 +34,13 @@
             v-list-tile(:value="item.value === activeValue", @click="selectValue(item.value)")
               v-list-tile-content {{ item.text }}
               span.ml-4.grey--text {{ item.value }}
-        v-btn(:disabled="disabledRemove", icon, small, @click="removeCondition(condition.key)")
+        v-btn(
+          v-if="!disabled",
+          :disabled="disabledRemove",
+          icon,
+          small,
+          @click="removeCondition(condition.key)"
+        )
           v-icon(color="red", small) delete
 </template>
 
@@ -61,6 +70,10 @@ export default {
     name: {
       type: String,
       required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     disabledRemove: {
       type: Boolean,
