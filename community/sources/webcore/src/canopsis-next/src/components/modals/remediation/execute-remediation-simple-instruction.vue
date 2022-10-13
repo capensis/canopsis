@@ -17,14 +17,12 @@
         depressed,
         flat,
         @click="$modals.hide"
-      ) {{ $t('common.cancel') }}
+      ) {{ $t('common.close') }}
 </template>
 
 <script>
 import { SOCKET_ROOMS } from '@/config';
 import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
-
-import { isJobFinished } from '@/helpers/forms/remediation-job';
 
 import Socket from '@/plugins/socket/services/socket';
 
@@ -214,47 +212,12 @@ export default {
       }
     },
 
-    /**
-     * Confirmation modal hide method
-     *
-     * @return {Promise<void>}
-     */
-    async confirmationHide() {
+    close() {
       if (this.config.onClose) {
-        await this.config.onClose();
+        this.config.onClose();
       }
 
       this.$modals.hide();
-    },
-
-    /**
-     * Close handler
-     */
-    close() {
-      if (this.jobs.every(isJobFinished)) {
-        this.confirmationHide();
-        return;
-      }
-
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          hideTitle: true,
-          text: this.$t('remediationInstructionExecute.closeConfirmationText'),
-          action: async () => {
-            await this.pauseRemediationInstructionExecution({ id: this.instructionExecutionId });
-            await this.confirmationHide();
-          },
-          cancel: async (cancelled) => {
-            if (!cancelled) {
-              return;
-            }
-
-            await this.cancelRemediationInstructionExecution({ id: this.instructionExecutionId });
-            await this.confirmationHide();
-          },
-        },
-      });
     },
   },
 };

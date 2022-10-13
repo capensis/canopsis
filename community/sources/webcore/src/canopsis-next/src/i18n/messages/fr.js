@@ -275,6 +275,7 @@ export default merge({
     sharedTokens: 'Jetons partagés',
     notAvailable: 'Indisponible',
     failed: 'Échoué',
+    close: 'Proche',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
