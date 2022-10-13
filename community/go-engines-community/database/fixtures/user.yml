@@ -295,6 +295,7 @@ widget_filters:
             value: service
 
 default_rights:
+  # UI permissions
   permission_models_userview:
     <<: *permission_crud
     _id: models_userview
@@ -465,6 +466,11 @@ default_rights:
     _id: models_shareToken
     crecord_name: <Current()._id>
     desc: "Share token"
+  permission_models_techmetrics:
+    <<: *permission
+    _id: models_techmetrics
+    crecord_name: <Current()._id>
+    desc: "Tech metrics"
   permission_listalarm_ack:
     <<: *permission
     _id: listalarm_ack
@@ -815,6 +821,8 @@ default_rights:
     _id: map_category
     crecord_name: <Current()._id>
     desc: "Rights on map: Access to 'Category' action"
+
+  # API permissions
   permission_api_alarm_read:
     <<: *permission
     _id: api_alarm_read
@@ -1055,6 +1063,13 @@ default_rights:
     _id: api_techmetrics
     crecord_name: <Current()._id>
     desc: Tech Metrics
+  permission_api_export_configurations:
+    <<: *permission
+    _id: api_export_configurations
+    crecord_name: <Current()._id>
+    desc: Export configurations
+
+  # Views permissions
   permission_view_open_alarms:
     <<: *permission_rw
     _id: "@view_open_alarms"
@@ -1075,11 +1090,6 @@ default_rights:
     _id: models_remediationStatistic
     crecord_name: <Current()._id>
     desc: Remediation statistics
-  permission_api_export_configurations:
-    <<: *permission
-    _id: api_export_configurations
-    crecord_name: <Current()._id>
-    desc: Export configurations
 
   role_admin:
     <<: *role
@@ -1087,6 +1097,7 @@ default_rights:
     crecord_name: <Current()._id>
     defaultview: "@view_open_alarms"
     rights:
+      # UI permissions
       "@permission_models_userview":
         checksum: 15
       "@permission_models_role":
@@ -1155,6 +1166,8 @@ default_rights:
         checksum: 15
       "@permission_models_shareToken":
         checksum: 15
+      "@permission_models_techmetrics":
+        checksum: 1
       "@permission_listalarm_ack":
         checksum: 1
       "@permission_listalarm_fastAck":
@@ -1293,6 +1306,7 @@ default_rights:
         checksum: 1
       "@permission_map_category":
         checksum: 1
+      # API permissions
       "@permission_api_alarm_read":
         checksum: 1
         crecord_type: right
@@ -1439,6 +1453,10 @@ default_rights:
       "@permission_api_techmetrics":
         checksum: 1
         crecord_type: right
+      "@permission_api_export_configurations":
+        checksum: 1
+        crecord_type: right
+      # Views permissions
       "@permission_view_open_alarms":
         checksum: 15
         crecord_type: right
@@ -1449,9 +1467,6 @@ default_rights:
         checksum: 15
         crecord_type: right
       "@permission_models_remediation_statistics":
-        checksum: 1
-        crecord_type: right
-      "@permission_api_export_configurations":
         checksum: 1
         crecord_type: right
 
