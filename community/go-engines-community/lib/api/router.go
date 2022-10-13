@@ -48,6 +48,7 @@ import (
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionauth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sharetoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/userpreferences"
@@ -154,8 +155,8 @@ func RegisterRoutes(
 	security.RegisterCallbackRoutes(router, dbClient)
 	authApi := auth.NewApi(
 		security.GetTokenService(),
+		security.GetTokenProviders(),
 		security.GetAuthProviders(),
-		security.GetSessionStore(),
 		websocketHub,
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
@@ -165,8 +166,6 @@ func RegisterRoutes(
 	sessionauthApi := sessionauth.NewApi(
 		sessionStore,
 		security.GetAuthProviders(),
-		websocketHub,
-		security.GetTokenStore(),
 		logger,
 	)
 	router.POST("/auth", sessionauthApi.LoginHandler())
@@ -201,7 +200,7 @@ func RegisterRoutes(
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
-		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger, logger,
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketHub), actionLogger, logger,
 			metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{
@@ -259,6 +258,23 @@ func RegisterRoutes(
 			permissionRouter.GET("",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
 				permissionApi.List,
+			)
+		}
+
+		sharetokenApi := sharetoken.NewApi(sharetoken.NewStore(dbClient, security.GetTokenGenerator()), actionLogger)
+		sharetokenRouter := protected.Group("/share-tokens")
+		{
+			sharetokenRouter.POST("",
+				middleware.Authorize(apisecurity.PermShareToken, model.PermissionCreate, enforcer),
+				sharetokenApi.Create,
+			)
+			sharetokenRouter.GET("",
+				middleware.Authorize(apisecurity.PermShareToken, model.PermissionRead, enforcer),
+				sharetokenApi.List,
+			)
+			sharetokenRouter.DELETE("/:id",
+				middleware.Authorize(apisecurity.PermShareToken, model.PermissionDelete, enforcer),
+				sharetokenApi.Delete,
 			)
 		}
 

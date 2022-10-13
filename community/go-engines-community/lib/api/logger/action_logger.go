@@ -61,6 +61,8 @@ const (
 	ValueTypePattern = "pattern"
 
 	ValueTypeMap = "map"
+
+	ValueTypeShareToken = "sharetoken"
 )
 
 type ActionLogger interface {
