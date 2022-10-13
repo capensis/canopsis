@@ -275,6 +275,7 @@ export default merge({
     sharedTokens: 'Shared tokens',
     notAvailable: 'N/a',
     failed: 'Failed',
+    close: 'Close',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
