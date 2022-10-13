@@ -274,6 +274,7 @@ export default merge({
     tag: 'Étiquette | Étiquettes',
     sharedTokens: 'Jetons partagés',
     notAvailable: 'Indisponible',
+    timestamp: 'Horodatage',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',

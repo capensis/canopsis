@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
 
 export default {
@@ -30,18 +32,22 @@ export default {
       default: false,
     },
   },
-  computed: {
-    sizeIcon() {
-      if (this.mobile) {
+  setup(props) {
+    const sizeIcon = computed(() => {
+      if (props.mobile) {
         return 'phone_android';
       }
 
-      if (this.tablet) {
+      if (props.tablet) {
         return 'tablet';
       }
 
       return 'laptop';
-    },
+    });
+
+    return {
+      sizeIcon,
+    };
   },
 };
 </script>
