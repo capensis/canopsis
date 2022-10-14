@@ -318,7 +318,7 @@ FlushInterval = "10s"
 SliInterval = "1h"
 
 [Canopsis.tech_metrics]
-Enabled = true
+Enabled = false
 # DumpKeepInterval defines how long dump with tech metrics should be kept before delete.
 DumpKeepInterval = "1h"
 
