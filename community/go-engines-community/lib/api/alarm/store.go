@@ -857,6 +857,7 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 				"instruction_name": bson.M{"$first": "$instruction.name"},
 				"instruction_type": bson.M{"$first": "$instruction.type"},
 				"status":           bson.M{"$first": "$status"},
+				"started_at":       bson.M{"$first": "$started_at"},
 			},
 		},
 		{
@@ -871,11 +872,7 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 					"$push": bson.M{
 						"$cond": bson.M{
 							"if": bson.M{
-								"$and": bson.A{
-									bson.M{
-										"$in": bson.A{"$status", []int{InstructionExecutionStatusFailed}},
-									},
-								},
+								"$eq": bson.A{"$status", InstructionExecutionStatusFailed},
 							},
 							"then": "$instruction_type",
 							"else": "$$REMOVE",
@@ -886,11 +883,7 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 					"$push": bson.M{
 						"$cond": bson.M{
 							"if": bson.M{
-								"$and": bson.A{
-									bson.M{
-										"$in": bson.A{"$status", []int{InstructionExecutionStatusCompleted}},
-									},
-								},
+								"$eq": bson.A{"$status", InstructionExecutionStatusCompleted},
 							},
 							"then": "$instruction_type",
 							"else": "$$REMOVE",
@@ -924,7 +917,7 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 										"$in": bson.A{"$status", []int{InstructionExecutionStatusRunning, InstructionExecutionStatusWaitResult}},
 									},
 									bson.M{
-										"$in": bson.A{"$instruction_type", bson.A{InstructionTypeAuto}},
+										"$eq": bson.A{"$instruction_type", InstructionTypeAuto},
 									},
 								},
 							},
@@ -939,7 +932,7 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 							"if": bson.M{
 								"$and": bson.A{
 									bson.M{
-										"$in": bson.A{"$status", []int{InstructionExecutionStatusFailed}},
+										"$eq": bson.A{"$status", InstructionExecutionStatusFailed},
 									},
 									bson.M{
 										"$in": bson.A{"$instruction_type", bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
@@ -957,10 +950,10 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 							"if": bson.M{
 								"$and": bson.A{
 									bson.M{
-										"$in": bson.A{"$status", []int{InstructionExecutionStatusFailed}},
+										"$eq": bson.A{"$status", InstructionExecutionStatusFailed},
 									},
 									bson.M{
-										"$in": bson.A{"$instruction_type", bson.A{InstructionTypeAuto}},
+										"$eq": bson.A{"$instruction_type", InstructionTypeAuto},
 									},
 								},
 							},
@@ -975,7 +968,7 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 							"if": bson.M{
 								"$and": bson.A{
 									bson.M{
-										"$in": bson.A{"$status", []int{InstructionExecutionStatusCompleted}},
+										"$eq": bson.A{"$status", InstructionExecutionStatusCompleted},
 									},
 									bson.M{
 										"$in": bson.A{"$instruction_type", bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
@@ -993,10 +986,10 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 							"if": bson.M{
 								"$and": bson.A{
 									bson.M{
-										"$in": bson.A{"$status", []int{InstructionExecutionStatusCompleted}},
+										"$eq": bson.A{"$status", InstructionExecutionStatusCompleted},
 									},
 									bson.M{
-										"$in": bson.A{"$instruction_type", bson.A{InstructionTypeAuto}},
+										"$eq": bson.A{"$instruction_type", InstructionTypeAuto},
 									},
 								},
 							},
