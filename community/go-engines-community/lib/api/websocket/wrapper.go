@@ -3,10 +3,12 @@ package websocket
 //go:generate mockgen -destination=../../../mocks/lib/api/websocket/websocket.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket Upgrader,Connection,Authorizer,Hub
 
 import (
-	"github.com/gorilla/websocket"
 	"net"
 	"net/http"
+	"sync"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 type Upgrader interface {
@@ -37,9 +39,52 @@ func (u *upgrader) Upgrade(w http.ResponseWriter, r *http.Request, responseHeade
 		return nil, err
 	}
 
-	return &connection{Conn: conn}, nil
+	return &connection{conn: conn}, nil
 }
 
 type connection struct {
-	*websocket.Conn
+	conn *websocket.Conn
+
+	readMx  sync.Mutex
+	writeMx sync.Mutex
+}
+
+func (c *connection) WriteControl(messageType int, data []byte, deadline time.Time) error {
+	return c.conn.WriteControl(messageType, data, deadline)
+}
+
+func (c *connection) WriteJSON(v interface{}) error {
+	c.writeMx.Lock()
+	defer c.writeMx.Unlock()
+
+	return c.conn.WriteJSON(v)
+}
+
+func (c *connection) ReadJSON(v interface{}) error {
+	c.readMx.Lock()
+	defer c.readMx.Unlock()
+
+	return c.conn.ReadJSON(v)
+}
+
+func (c *connection) Close() error {
+	return c.conn.Close()
+}
+
+func (c *connection) SetReadDeadline(t time.Time) error {
+	c.readMx.Lock()
+	defer c.readMx.Unlock()
+
+	return c.conn.SetReadDeadline(t)
+}
+
+func (c *connection) SetPongHandler(h func(string) error) {
+	c.readMx.Lock()
+	defer c.readMx.Unlock()
+
+	c.conn.SetPongHandler(h)
+}
+
+func (c *connection) RemoteAddr() net.Addr {
+	return c.conn.RemoteAddr()
 }
