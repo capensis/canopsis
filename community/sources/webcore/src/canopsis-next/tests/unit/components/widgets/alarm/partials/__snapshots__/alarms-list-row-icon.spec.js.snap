@@ -24,9 +24,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with all auto ins
 >
   <span
     class="pre-wrap"
-  >
-    
-  </span>
+  />
 </div>
 `;
 
@@ -54,9 +52,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruc
 >
   <span
     class="pre-wrap"
-  >
-    
-  </span>
+  />
 </div>
 `;
 
@@ -84,9 +80,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruc
 >
   <span
     class="pre-wrap"
-  >
-    
-  </span>
+  />
 </div>
 `;
 
@@ -114,9 +108,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with instruction 
 >
   <span
     class="pre-wrap"
-  >
-    
-  </span>
+  />
 </div>
 `;
 
@@ -144,9 +136,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instr
 >
   <span
     class="pre-wrap"
-  >
-    
-  </span>
+  />
 </div>
 `;
 
@@ -174,8 +164,6 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instr
 >
   <span
     class="pre-wrap"
-  >
-    
-  </span>
+  />
 </div>
 `;
