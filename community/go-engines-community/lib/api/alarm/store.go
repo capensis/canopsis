@@ -820,6 +820,11 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 		return nil, nil
 	}
 
+	leftAlarms := make(map[string]struct{}, len(alarmIDs))
+	for _, id := range alarmIDs {
+		leftAlarms[id] = struct{}{}
+	}
+
 	cursor, err := s.dbInstructionExecutionCollection.Aggregate(ctx, []bson.M{
 		{
 			"$match": bson.M{
@@ -980,6 +985,8 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 	}
 	statusesByAlarm := make(map[string]ExecutionStatus, len(executionStatuses))
 	for _, v := range executionStatuses {
+		delete(leftAlarms, v.ID)
+
 		availableInstructionsMap := make(map[string]struct{}, len(assignedInstructionsMap[v.ID]))
 		for _, instr := range assignedInstructionsMap[v.ID] {
 			availableInstructionsMap[instr.Name] = struct{}{}
@@ -1049,6 +1056,14 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 
 		v.Icon = icon
 		statusesByAlarm[v.ID] = v
+	}
+
+	for alarmID := range leftAlarms {
+		if _, ok := assignedInstructionsMap[alarmID]; ok {
+			statusesByAlarm[alarmID] = ExecutionStatus{
+				Icon: IconManualAvailable,
+			}
+		}
 	}
 
 	return statusesByAlarm, nil
