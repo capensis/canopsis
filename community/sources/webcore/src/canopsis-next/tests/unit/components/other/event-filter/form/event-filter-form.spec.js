@@ -227,21 +227,22 @@ describe('event-filter-form', () => {
 
     const eventFilterEnrichmentForm = selectEventFilterEnrichmentForm(wrapper);
 
-    const newConfig = {
-      on_success: EVENT_FILTER_ENRICHMENT_AFTER_TYPES.break,
-      on_failure: EVENT_FILTER_ENRICHMENT_AFTER_TYPES.drop,
-      actions: [],
+    const updatedForm = {
+      ...form,
+      config: {
+        on_success: EVENT_FILTER_ENRICHMENT_AFTER_TYPES.break,
+        on_failure: EVENT_FILTER_ENRICHMENT_AFTER_TYPES.drop,
+        actions: [],
+      },
+      external_data: [],
     };
 
-    eventFilterEnrichmentForm.vm.$emit('input', newConfig);
+    eventFilterEnrichmentForm.vm.$emit('input', updatedForm);
 
-    expect(wrapper).toEmit('input', {
-      ...enrichmentForm,
-      config: newConfig,
-    });
+    expect(wrapper).toEmit('input', updatedForm);
   });
 
-  test('Enrichment config changed after trigger enrichment form', () => {
+  test('Drop intervals fields changed after trigger', () => {
     const wrapper = factory({
       propsData: {
         form,
@@ -271,19 +272,6 @@ describe('event-filter-form', () => {
     const wrapper = snapshotFactory({
       propsData: {
         form,
-      },
-    });
-
-    expect(wrapper.element).toMatchSnapshot();
-  });
-
-  test('Renders `event-filter-form` with change entity type', () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        form: {
-          ...form,
-          type: EVENT_FILTER_TYPES.changeEntity,
-        },
       },
     });
 

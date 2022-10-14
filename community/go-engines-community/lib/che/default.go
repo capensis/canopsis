@@ -15,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -61,9 +62,13 @@ func NewEngine(
 		metricsEntityMetaUpdater,
 	)
 
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer, timezoneConfigProvider))
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externalDataContainer, eventfilter.NewActionProcessor(timezoneConfigProvider)))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externalDataContainer, eventfilter.NewActionProcessor(timezoneConfigProvider, techMetricsSender)))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
 
@@ -159,6 +164,12 @@ func NewEngine(
 		},
 		logger,
 	)
+
+	engine.AddRoutine(func(ctx context.Context) error {
+		techMetricsSender.Run(ctx)
+		return nil
+	})
+
 	engine.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.CheConsumerName,
 		options.ConsumeFromQueue,
@@ -174,14 +185,16 @@ func NewEngine(
 			FeaturePrintEventOnError: options.PrintEventOnError,
 			FeatureEventProcessing:   options.FeatureEventProcessing,
 			FeatureContextCreation:   options.FeatureContextCreation,
-			AlarmConfigProvider:      alarmConfigProvider,
-			EventFilterService:       eventfilterService,
-			EnrichmentCenter:         enrichmentCenter,
-			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
-			AlarmAdapter:             alarm.NewAdapter(mongoClient),
-			Encoder:                  json.NewEncoder(),
-			Decoder:                  json.NewDecoder(),
-			Logger:                   logger,
+
+			AlarmConfigProvider: alarmConfigProvider,
+			EventFilterService:  eventfilterService,
+			EnrichmentCenter:    enrichmentCenter,
+			TechMetricsSender:   techMetricsSender,
+			AmqpPublisher:       m.DepAMQPChannelPub(amqpConnection),
+			AlarmAdapter:        alarm.NewAdapter(mongoClient),
+			Encoder:             json.NewEncoder(),
+			Decoder:             json.NewDecoder(),
+			Logger:              logger,
 		},
 		logger,
 	))
@@ -194,17 +207,13 @@ func NewEngine(
 	})
 	engine.AddPeriodicalWorker("eventfilter intervals", eventfilterIntervalsPeriodicalWorker)
 	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
-	engine.AddPeriodicalWorker("alarm config", libengine.NewLoadConfigPeriodicalWorker(
+	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
+		logger,
 		alarmConfigProvider,
-		logger,
-	))
-	engine.AddPeriodicalWorker("tz config", libengine.NewLoadConfigPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		config.NewAdapter(mongoClient),
 		timezoneConfigProvider,
-		logger,
+		techMetricsConfigProvider,
 	))
 	engine.AddPeriodicalWorker("impacted services", libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,

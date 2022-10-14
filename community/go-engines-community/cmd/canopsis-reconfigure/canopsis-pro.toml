@@ -306,6 +306,7 @@ Enabled = true
 NoColor = false
 TimeFormat = "2006-01-02T15:04:05Z07:00"
 PartsOrder = ["time", "level", "caller", "message"]
+
 [Canopsis.metrics]
 # FlushInterval defines how often metrics are flushed from memory to TimescaleDB.
 FlushInterval = "10s"
@@ -315,6 +316,11 @@ FlushInterval = "10s"
 # 1h is recommended value since Canopsis UI lowest time sampling 1 hour.
 # Change value for external tools if more accurate metrics are required.
 SliInterval = "1h"
+
+[Canopsis.tech_metrics]
+Enabled = true
+# DumpKeepInterval defines how long dump with tech metrics should be kept before delete.
+DumpKeepInterval = "1h"
 
 # Remediation parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Remediation]

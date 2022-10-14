@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -18,17 +19,22 @@ import (
 
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
-	EventProcessor           alarm.EventProcessor
-	RemediationRpcClient     engine.RPCClient
-	TimezoneConfigProvider   config.TimezoneConfigProvider
-	Encoder                  encoding.Encoder
-	Decoder                  encoding.Decoder
-	Logger                   zerolog.Logger
-	PbehaviorAdapter         pbehavior.Adapter
-	TagUpdater               alarmtag.Updater
+
+	EventProcessor         alarm.EventProcessor
+	TechMetricsSender      techmetrics.Sender
+	RemediationRpcClient   engine.RPCClient
+	TimezoneConfigProvider config.TimezoneConfigProvider
+	Encoder                encoding.Encoder
+	Decoder                encoding.Decoder
+	Logger                 zerolog.Logger
+	PbehaviorAdapter       pbehavior.Adapter
+	TagUpdater             alarmtag.Updater
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
+	eventMetric := techmetrics.AxeEventMetric{}
+	eventMetric.Timestamp = time.Now()
+
 	ctx, task := trace.NewTask(parentCtx, "axe.WorkerProcess")
 	defer task.End()
 
@@ -51,6 +57,17 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	trace.Log(ctx, "event.connector_name", event.ConnectorName)
 	trace.Log(ctx, "event.component", event.Component)
 	trace.Log(ctx, "event.resource", event.Resource)
+
+	defer func() {
+		eventMetric.EventType = event.EventType
+		eventMetric.AlarmChangeType = string(event.AlarmChange.Type)
+		if event.Entity != nil {
+			eventMetric.EntityType = event.Entity.Type
+		}
+
+		eventMetric.Interval = time.Since(eventMetric.Timestamp)
+		p.TechMetricsSender.SendAxeEvent(eventMetric)
+	}()
 
 	alarmChange, err := p.EventProcessor.Process(ctx, &event)
 	if err != nil {
