@@ -216,18 +216,21 @@ install: install-common
 	@echo "==> Creating Canopsis $(CANOPSIS_EDITION) specific configuration directories"
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/config/connector-centreon-downtime-adapter"
 	# Database migration script and fixtures
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/database/fixtures"
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/database/migrations"
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/database/postgres_migrations"
-	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/database/fixtures"
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/share/database/tech_postgres_migrations"
 	
 	@echo "==> Installing Canopsis $(CANOPSIS_EDITION) specific files"
 	# Install canopsis-reconfigure fixtures and migrations scripts
+	# Mongodb fixtures
+	install -c -m 644 -p $(wildcard $(COMMUNITY_ROOT_DIR)/database/fixtures/*) -t "$(DESTDIR)/opt/canopsis/share/database/fixtures"
 	# MongoDB Migrations scripts
 	install -c -m 644 -p $(wildcard $(COMMUNITY_ROOT_DIR)/database/migrations/*) -t "$(DESTDIR)/opt/canopsis/share/database/migrations"
 	# PostgreSQL Migration scripts
 	install -c -m 644 -p $(wildcard $(COMMUNITY_ROOT_DIR)/database/postgres_migrations/*) -t "$(DESTDIR)/opt/canopsis/share/database/postgres_migrations"
-	# Mongodb fixtures
-	install -c -m 644 -p $(wildcard $(COMMUNITY_ROOT_DIR)/database/fixtures/*) -t "$(DESTDIR)/opt/canopsis/share/database/fixtures"
+	# PostgreSQL Debug Engine Migration scripts
+	install -c -m 644 -p $(wildcard $(COMMUNITY_ROOT_DIR)/database/tech_postgres_migrations/*) -t "$(DESTDIR)/opt/canopsis/share/database/tech_postgres_migrations"
 	
 	#Install other configuration files
 	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/cmd/connector-centreon-downtime-adapter/config.yml.example" "$(DESTDIR)/opt/canopsis/share/config/connector-centreon-downtime-adapter/config.yml"
