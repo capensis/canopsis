@@ -12,6 +12,7 @@ import {
   EVENT_DEFAULT_ORIGIN,
   EVENT_ENTITY_TYPES,
   EVENT_INITIATORS,
+  INSTRUCTION_EXECUTION_ICONS,
   META_ALARMS_RULE_TYPES,
   MODALS,
   PATTERN_CONDITIONS,
@@ -965,7 +966,7 @@ describe('actions-panel', () => {
         item: {
           ...alarm,
 
-          is_manual_instruction_running: true,
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.manualInProgress,
         },
         widget,
       },
@@ -983,7 +984,7 @@ describe('actions-panel', () => {
         item: {
           ...alarm,
 
-          is_manual_instruction_waiting_result: true,
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.manualInProgress,
         },
         widget,
       },
@@ -1001,7 +1002,7 @@ describe('actions-panel', () => {
         item: {
           ...alarm,
 
-          is_auto_instruction_running: true,
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.autoInProgress,
         },
         widget,
       },
