@@ -8,7 +8,7 @@
       :name="item.key",
       :key="item.key",
       :disabled="disabled",
-      @remove="removeItem"
+      @remove="removeItemFromArray(index)"
     )
     v-flex(v-if="!disabled")
       v-btn.ml-0.my-0(
@@ -46,10 +46,6 @@ export default {
   methods: {
     addItem() {
       this.addItemIntoArray(eventFilterExternalDataItemToForm());
-    },
-
-    removeItem(key) {
-      this.removeItemFromArrayWith(item => key !== item.key);
     },
   },
 };

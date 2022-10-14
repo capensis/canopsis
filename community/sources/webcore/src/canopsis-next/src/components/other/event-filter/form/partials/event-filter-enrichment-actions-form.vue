@@ -5,7 +5,7 @@
         v-for="(action, index) in actions",
         v-field="actions[index]",
         :key="action.key",
-        @remove="removeAction"
+        @remove="removeItemFromArray(index)"
       )
       v-flex
         v-btn.ml-0.my-0(color="primary", outline, @click="addAction") {{ $t('eventFilter.addAction') }}
@@ -42,10 +42,6 @@ export default {
   methods: {
     addAction() {
       this.addItemIntoArray(eventFilterActionToForm());
-    },
-
-    removeAction(key) {
-      this.removeItemFromArrayWith(action => key !== action.key);
     },
   },
 };

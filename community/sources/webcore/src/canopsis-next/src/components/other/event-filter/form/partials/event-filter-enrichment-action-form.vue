@@ -10,7 +10,7 @@
               :items="eventFilterActionTypes",
               :label="$t('common.type')"
             )
-            v-btn.mr-0(icon, @click="removeAction")
+            v-btn.mr-0(icon, @click="remove")
               v-icon(color="error") delete
           v-expand-transition
             event-filter-enrichment-action-form-type-info(v-if="form.type", :type="form.type")
@@ -75,8 +75,8 @@ export default {
     },
   },
   methods: {
-    removeAction() {
-      this.$emit('remove', this.form.key);
+    remove() {
+      this.$emit('remove', this.form);
     },
   },
 };
