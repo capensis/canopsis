@@ -1,25 +1,31 @@
 <template lang="pug">
   v-layout(justify-space-between, align-center)
-    v-flex.pa-1(xs6)
+    v-flex.pr-2(xs6)
       v-select(
         v-field="request.method",
         v-validate="'required'",
         :items="availableMethods",
         :label="methodLabel || $t('common.method')",
         :error-messages="errors.collect(methodFieldName)",
-        :name="methodFieldName"
+        :name="methodFieldName",
+        :disabled="disabled"
       )
-    v-flex.pa-1(xs6)
+    v-flex.pl-2(xs6)
       v-text-field(
         v-field="request.url",
         v-validate="'required|url'",
         :label="urlLabel || $t('common.url')",
         :error-messages="errors.collect(urlFieldName)",
-        :name="urlFieldName"
+        :name="urlFieldName",
+        :disabled="disabled"
       )
-        v-tooltip(v-if="helpText", slot="append", left)
-          v-icon(slot="activator") help
-          div(v-html="helpText")
+        template(v-if="helpText", #append="")
+          c-help-icon(
+            :text="helpText",
+            icon="help",
+            color="grey darken-1",
+            left
+          )
 </template>
 
 <script>
@@ -51,6 +57,10 @@ export default {
     name: {
       type: String,
       default: 'request',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

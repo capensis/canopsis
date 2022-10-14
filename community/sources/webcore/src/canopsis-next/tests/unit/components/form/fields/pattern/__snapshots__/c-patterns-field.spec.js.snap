@@ -4,7 +4,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
 <div
   class="layout column"
 >
-  <c-pattern-panel-stub
+  <c-collapse-panel-stub
     class="mb-2"
     title="Alarm patterns"
   >
@@ -17,8 +17,8 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       value="[object Object]"
       with-type="with-type"
     />
-  </c-pattern-panel-stub>
-  <c-pattern-panel-stub
+  </c-collapse-panel-stub>
+  <c-collapse-panel-stub
     class="mb-2"
     title="Entity patterns"
   >
@@ -31,8 +31,8 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       value="[object Object]"
       with-type="with-type"
     />
-  </c-pattern-panel-stub>
-  <c-pattern-panel-stub
+  </c-collapse-panel-stub>
+  <c-collapse-panel-stub
     class="mb-2"
     title="Pbehavior patterns"
   >
@@ -45,8 +45,8 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       value="[object Object]"
       with-type="with-type"
     />
-  </c-pattern-panel-stub>
-  <c-pattern-panel-stub
+  </c-collapse-panel-stub>
+  <c-collapse-panel-stub
     class="mb-2"
     title="Event patterns"
   >
@@ -56,8 +56,8 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       readonly="true"
       required="true"
     />
-  </c-pattern-panel-stub>
-  <c-pattern-panel-stub
+  </c-collapse-panel-stub>
+  <c-collapse-panel-stub
     class="mb-2"
     title="Total entity patterns"
   >
@@ -68,8 +68,8 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       required="true"
       with-type="with-type"
     />
-  </c-pattern-panel-stub>
-  <c-pattern-panel-stub
+  </c-collapse-panel-stub>
+  <c-collapse-panel-stub
     class="mb-2"
     title="Service weather patterns"
   >
@@ -78,7 +78,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       name="name.weather_service_pattern"
       required="true"
     />
-  </c-pattern-panel-stub>
+  </c-collapse-panel-stub>
 </div>
 `;
 
