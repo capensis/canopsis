@@ -40,7 +40,7 @@ const manualMetaAlarmsLimit = 100
 type Store interface {
 	Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error)
 	GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error)
-	FillInstructionStatusIconAndInfos(ctx context.Context, result *AggregationResult) error
+	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error)
 	Count(ctx context.Context, r FilterRequest) (*Count, error)
 	GetByID(ctx context.Context, id, apiKey string) (*Alarm, error)
 	GetOpenByEntityID(ctx context.Context, id, apiKey string) (*Alarm, bool, error)
@@ -110,11 +110,11 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 	}
 
 	if r.WithInstructions {
-		anyInstructionMatch, err := s.fillAssignedInstructions(ctx, &result, now)
+		assignedInstructionMap, anyInstructionMatch, err := s.fillAssignedInstructions(ctx, &result, now)
 		if err != nil {
 			return nil, err
 		}
-		err = s.FillInstructionStatusIconAndInfos(ctx, &result)
+		err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionMap)
 		if err != nil {
 			return nil, err
 		}
@@ -175,11 +175,11 @@ func (s *store) GetByID(ctx context.Context, id, apiKey string) (*Alarm, error) 
 		return nil, nil
 	}
 
-	_, err = s.fillAssignedInstructions(ctx, &result, types.NewCpsTime())
+	assignedInstructionMap, _, err := s.fillAssignedInstructions(ctx, &result, types.NewCpsTime())
 	if err != nil {
 		return nil, err
 	}
-	err = s.FillInstructionStatusIconAndInfos(ctx, &result)
+	err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionMap)
 	if err != nil {
 		return nil, err
 	}
@@ -230,11 +230,11 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, apiKey string) 
 		return nil, true, nil
 	}
 
-	_, err = s.fillAssignedInstructions(ctx, &result, types.NewCpsTime())
+	assignedInstructionsMap, _, err := s.fillAssignedInstructions(ctx, &result, types.NewCpsTime())
 	if err != nil {
 		return nil, false, err
 	}
-	err = s.FillInstructionStatusIconAndInfos(ctx, &result)
+	err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionsMap)
 	if err != nil {
 		return nil, false, err
 	}
@@ -336,11 +336,11 @@ func (s *store) FindByService(ctx context.Context, id, apiKey string, r ListBySe
 		}
 	}
 
-	_, err = s.fillAssignedInstructions(ctx, &result, now)
+	assignedInstructionsMap, _, err := s.fillAssignedInstructions(ctx, &result, now)
 	if err != nil {
 		return nil, err
 	}
-	err = s.FillInstructionStatusIconAndInfos(ctx, &result)
+	err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionsMap)
 	if err != nil {
 		return nil, err
 	}
@@ -390,11 +390,11 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, a
 		}
 	}
 
-	_, err = s.fillAssignedInstructions(ctx, &result, now)
+	assignedInstructionsMap, _, err := s.fillAssignedInstructions(ctx, &result, now)
 	if err != nil {
 		return nil, err
 	}
-	err = s.FillInstructionStatusIconAndInfos(ctx, &result)
+	err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionsMap)
 	if err != nil {
 		return nil, err
 	}
@@ -530,11 +530,11 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 			}
 
 			if r.WithInstructions {
-				_, err = s.fillAssignedInstructions(ctx, &children, now)
+				assignedInstructionsMap, _, err := s.fillAssignedInstructions(ctx, &children, now)
 				if err != nil {
 					return nil, err
 				}
-				err = s.FillInstructionStatusIconAndInfos(ctx, &children)
+				err = s.fillInstructionExecutionStatusesAndIcon(ctx, &children, assignedInstructionsMap)
 				if err != nil {
 					return nil, err
 				}
@@ -815,7 +815,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 	return assignedInstructionsMap, anyInstructionMatch, nil
 }
 
-func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string) (map[string]ExecutionStatus, error) {
+func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error) {
 	if len(alarmIDs) == 0 {
 		return nil, nil
 	}
@@ -971,92 +971,39 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 		},
 	})
 
+	if err != nil {
+		return nil, err
+	}
+
 	err = cursor.All(ctx, &executionStatuses)
 	if err != nil {
 		return nil, err
 	}
 	statusesByAlarm := make(map[string]ExecutionStatus, len(executionStatuses))
 	for _, v := range executionStatuses {
-		statusesByAlarm[v.ID] = v
-	}
-
-	return statusesByAlarm, nil
-}
-
-func (s *store) fillAssignedInstructions(ctx context.Context, result *AggregationResult, now types.CpsTime) (bson.M, error) {
-	var alarmIds []string
-	for _, item := range result.Data {
-		if item.Value.Resolved == nil {
-			alarmIds = append(alarmIds, item.ID)
-		}
-	}
-
-	if len(alarmIds) == 0 {
-		return nil, nil
-	}
-
-	assignedInstructionsMap, anyInstructionMatch, err := s.getAssignedInstructionsMap(ctx, alarmIds, now)
-	if err != nil {
-		return nil, err
-	}
-
-	for i, alarmDocument := range result.Data {
-		sort.Slice(assignedInstructionsMap[alarmDocument.ID], func(i, j int) bool {
-			return assignedInstructionsMap[alarmDocument.ID][i].Name < assignedInstructionsMap[alarmDocument.ID][j].Name
-		})
-
-		assignedInstructions := assignedInstructionsMap[alarmDocument.ID]
-		if len(assignedInstructions) == 0 {
-			assignedInstructions = make([]AssignedInstruction, 0)
-		}
-		result.Data[i].AssignedInstructions = &assignedInstructions
-	}
-
-	return anyInstructionMatch, nil
-}
-
-func (s *store) FillInstructionStatusIconAndInfos(ctx context.Context, result *AggregationResult) error {
-	alarmIDs := make([]string, len(result.Data))
-	for i, item := range result.Data {
-		if item.Value.Resolved == nil {
-			alarmIDs[i] = item.ID
-		}
-	}
-	if len(alarmIDs) == 0 {
-		return nil
-	}
-
-	executionStatuses, err := s.GetInstructionExecutionStatuses(ctx, alarmIDs)
-	if err != nil {
-		return err
-	}
-
-	for i, v := range result.Data {
-		executionStatus := executionStatuses[v.ID]
-
-		availableInstructionsMap := make(map[string]struct{})
-		for _, instr := range *result.Data[i].AssignedInstructions {
+		availableInstructionsMap := make(map[string]struct{}, len(assignedInstructionsMap[v.ID]))
+		for _, instr := range assignedInstructionsMap[v.ID] {
 			availableInstructionsMap[instr.Name] = struct{}{}
 		}
 
-		for _, name := range executionStatus.RunningManualInstructions {
+		for _, name := range v.RunningManualInstructions {
 			delete(availableInstructionsMap, name)
 		}
 
-		for _, name := range executionStatus.FailedManualInstructions {
+		for _, name := range v.FailedManualInstructions {
 			delete(availableInstructionsMap, name)
 		}
 
-		for _, name := range executionStatus.SuccessfulManualInstructions {
+		for _, name := range v.SuccessfulManualInstructions {
 			delete(availableInstructionsMap, name)
 		}
 
-		runningManualInstruction := len(executionStatus.RunningManualInstructions) != 0
-		runningAutoInstruction := len(executionStatus.RunningAutoInstructions) != 0
-		failedManualInstruction := len(executionStatus.FailedManualInstructions) != 0
-		failedAutoInstruction := len(executionStatus.FailedAutoInstructions) != 0
-		successfulManualInstruction := len(executionStatus.SuccessfulManualInstructions) != 0
-		successfulAutoInstruction := len(executionStatus.SuccessfulAutoInstructions) != 0
+		runningManualInstruction := len(v.RunningManualInstructions) != 0
+		runningAutoInstruction := len(v.RunningAutoInstructions) != 0
+		failedManualInstruction := len(v.FailedManualInstructions) != 0
+		failedAutoInstruction := len(v.FailedAutoInstructions) != 0
+		successfulManualInstruction := len(v.SuccessfulManualInstructions) != 0
+		successfulAutoInstruction := len(v.SuccessfulAutoInstructions) != 0
 		availableInstructions := len(availableInstructionsMap) != 0
 
 		icon := NoIcon
@@ -1101,13 +1048,69 @@ func (s *store) FillInstructionStatusIconAndInfos(ctx context.Context, result *A
 			icon = IconManualAvailable
 		}
 
-		result.Data[i].InstructionExecutionIcon = icon
-		result.Data[i].RunningManualInstructions = executionStatus.RunningManualInstructions
-		result.Data[i].RunningAutoInstructions = executionStatus.RunningAutoInstructions
-		result.Data[i].FailedManualInstructions = executionStatus.FailedManualInstructions
-		result.Data[i].FailedAutoInstructions = executionStatus.FailedAutoInstructions
-		result.Data[i].SuccessfulManualInstructions = executionStatus.SuccessfulManualInstructions
-		result.Data[i].SuccessfulAutoInstructions = executionStatus.SuccessfulAutoInstructions
+		v.Icon = icon
+		statusesByAlarm[v.ID] = v
+	}
+
+	return statusesByAlarm, nil
+}
+
+func (s *store) fillAssignedInstructions(ctx context.Context, result *AggregationResult, now types.CpsTime) (map[string][]AssignedInstruction, bson.M, error) {
+	var alarmIds []string
+	for _, item := range result.Data {
+		if item.Value.Resolved == nil {
+			alarmIds = append(alarmIds, item.ID)
+		}
+	}
+
+	if len(alarmIds) == 0 {
+		return nil, nil, nil
+	}
+
+	assignedInstructionsMap, anyInstructionMatch, err := s.getAssignedInstructionsMap(ctx, alarmIds, now)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	for i, alarmDocument := range result.Data {
+		sort.Slice(assignedInstructionsMap[alarmDocument.ID], func(i, j int) bool {
+			return assignedInstructionsMap[alarmDocument.ID][i].Name < assignedInstructionsMap[alarmDocument.ID][j].Name
+		})
+
+		assignedInstructions := assignedInstructionsMap[alarmDocument.ID]
+		if len(assignedInstructions) == 0 {
+			assignedInstructions = make([]AssignedInstruction, 0)
+		}
+		result.Data[i].AssignedInstructions = &assignedInstructions
+	}
+
+	return assignedInstructionsMap, anyInstructionMatch, nil
+}
+
+func (s *store) fillInstructionExecutionStatusesAndIcon(ctx context.Context, result *AggregationResult, assignedInstructions map[string][]AssignedInstruction) error {
+	alarmIDs := make([]string, len(result.Data))
+	for i, item := range result.Data {
+		if item.Value.Resolved == nil {
+			alarmIDs[i] = item.ID
+		}
+	}
+	if len(alarmIDs) == 0 {
+		return nil
+	}
+
+	executionStatuses, err := s.GetInstructionExecutionStatuses(ctx, alarmIDs, assignedInstructions)
+	if err != nil {
+		return err
+	}
+
+	for i, v := range result.Data {
+		result.Data[i].InstructionExecutionIcon = executionStatuses[v.ID].Icon
+		result.Data[i].RunningManualInstructions = executionStatuses[v.ID].RunningManualInstructions
+		result.Data[i].RunningAutoInstructions = executionStatuses[v.ID].RunningAutoInstructions
+		result.Data[i].FailedManualInstructions = executionStatuses[v.ID].FailedManualInstructions
+		result.Data[i].FailedAutoInstructions = executionStatuses[v.ID].FailedAutoInstructions
+		result.Data[i].SuccessfulManualInstructions = executionStatuses[v.ID].SuccessfulManualInstructions
+		result.Data[i].SuccessfulAutoInstructions = executionStatuses[v.ID].SuccessfulAutoInstructions
 	}
 
 	return nil

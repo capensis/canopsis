@@ -100,26 +100,20 @@ Feature: Metrics should be added on alarm changes
     ]
     """
     When I wait the end of 4 events processing
-    When I do GET /api/v4/alarms?search=test-resource-metrics-axe-2-1&with_instructions=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-metrics-axe-2-1&with_instructions=true until response code is 200 and response array key "data.0.successful_auto_instructions" contains:
     """json
-    {
-      "data": [
-        {
-          "is_all_auto_instructions_completed": true
-        }
-      ]
-    }
+    [
+      "test-instruction-metrics-axe-2-1-name",
+      "test-instruction-metrics-axe-2-2-name"
+    ]
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-resource-metrics-axe-2-2&with_instructions=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-metrics-axe-2-2&with_instructions=true until response code is 200 and response array key "data.0.successful_auto_instructions" contains:
     """json
-    {
-      "data": [
-        {
-          "is_all_auto_instructions_completed": true
-        }
-      ]
-    }
+    [
+      "test-instruction-metrics-axe-2-1-name",
+      "test-instruction-metrics-axe-2-2-name"
+    ]
     """
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
