@@ -680,12 +680,12 @@ export default merge({
     infoPopup: 'Info popup',
     tooltips: {
       priority: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
-      runningManualInstructions: 'Manual instruction {title} in progress',
-      runningAutoInstructions: 'Automatic instruction {title} in progress',
-      successfulManualInstructions: 'Manual instruction {title} in successfull',
-      successfulAutoInstructions: 'Automatic instruction {title} in successfull',
-      failedManualInstructions: 'Manual instruction {title} in failed',
-      failedAutoInstructions: 'Automatic instruction {title} in failed',
+      runningManualInstructions: 'Manual instruction <strong>{title}</strong> in progress',
+      runningAutoInstructions: 'Automatic instruction <strong>{title}</strong> in progress',
+      successfulManualInstructions: 'Manual instruction <strong>{title}</strong> in successful',
+      successfulAutoInstructions: 'Automatic instruction <strong>{title}</strong> in successful',
+      failedManualInstructions: 'Manual instruction <strong>{title}</strong> in failed',
+      failedAutoInstructions: 'Automatic instruction <strong>{title}</strong> in failed',
       hasManualInstruction: 'There is a manual instruction for this type of an incident',
     },
     metrics: {

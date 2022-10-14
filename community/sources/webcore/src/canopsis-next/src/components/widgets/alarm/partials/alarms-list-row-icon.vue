@@ -7,7 +7,7 @@
         size="24",
         color="black"
       ) {{ iconName }}
-    span.pre-wrap {{ iconTooltip }}
+    span.pre-wrap(v-html="iconTooltip")
 </template>
 
 <script>
