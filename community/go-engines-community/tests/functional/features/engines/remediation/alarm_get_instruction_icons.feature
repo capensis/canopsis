@@ -1563,3 +1563,47 @@ Feature: update an instruction statistics
       ]
     }
     """
+
+  Scenario: given alarm and failed auto and running manual instruction execution should return failed auto and running instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-37",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-37",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-37",
+      "resource": "test-resource-to-alarm-instruction-get-icons-37",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-37"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I wait 2s
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-37
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-37-2"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-37&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 4,
+          "failed_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-37-2-name"],
+          "failed_auto_instructions": ["test-instruction-to-alarm-instruction-get-icons-37-1-name"]
+        }
+      ]
+    }
+    """

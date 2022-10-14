@@ -860,8 +860,43 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 			},
 		},
 		{
+			"$sort": bson.M{
+				"started_at": -1,
+			},
+		},
+		{
 			"$group": bson.M{
 				"_id": "$_id.alarm_id",
+				"all_failed": bson.M{
+					"$push": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$and": bson.A{
+									bson.M{
+										"$in": bson.A{"$status", []int{InstructionExecutionStatusFailed}},
+									},
+								},
+							},
+							"then": "$instruction_type",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"all_successful": bson.M{
+					"$push": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$and": bson.A{
+									bson.M{
+										"$in": bson.A{"$status", []int{InstructionExecutionStatusCompleted}},
+									},
+								},
+							},
+							"then": "$instruction_type",
+							"else": "$$REMOVE",
+						},
+					},
+				},
 				"running_manual_instructions": bson.M{
 					"$push": bson.M{
 						"$cond": bson.M{
@@ -972,6 +1007,12 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 				},
 			},
 		},
+		{
+			"$addFields": bson.M{
+				"last_failed":     bson.M{"$arrayElemAt": bson.A{"$all_failed", 0}},
+				"last_successful": bson.M{"$arrayElemAt": bson.A{"$all_successful", 0}},
+			},
+		},
 	})
 
 	if err != nil {
@@ -987,74 +1028,7 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 	for _, v := range executionStatuses {
 		delete(leftAlarms, v.ID)
 
-		availableInstructionsMap := make(map[string]struct{}, len(assignedInstructionsMap[v.ID]))
-		for _, instr := range assignedInstructionsMap[v.ID] {
-			availableInstructionsMap[instr.Name] = struct{}{}
-		}
-
-		for _, name := range v.RunningManualInstructions {
-			delete(availableInstructionsMap, name)
-		}
-
-		for _, name := range v.FailedManualInstructions {
-			delete(availableInstructionsMap, name)
-		}
-
-		for _, name := range v.SuccessfulManualInstructions {
-			delete(availableInstructionsMap, name)
-		}
-
-		runningManualInstruction := len(v.RunningManualInstructions) != 0
-		runningAutoInstruction := len(v.RunningAutoInstructions) != 0
-		failedManualInstruction := len(v.FailedManualInstructions) != 0
-		failedAutoInstruction := len(v.FailedAutoInstructions) != 0
-		successfulManualInstruction := len(v.SuccessfulManualInstructions) != 0
-		successfulAutoInstruction := len(v.SuccessfulAutoInstructions) != 0
-		availableInstructions := len(availableInstructionsMap) != 0
-
-		icon := NoIcon
-
-		if failedManualInstruction {
-			if runningManualInstruction || runningAutoInstruction {
-				icon = IconManualFailedOtherInProgress
-			} else if availableInstructions {
-				icon = IconManualFailedManualAvailable
-			} else {
-				icon = IconManualFailed
-			}
-		} else if failedAutoInstruction {
-			if runningManualInstruction || runningAutoInstruction {
-				icon = IconAutoFailedOtherInProgress
-			} else if availableInstructions {
-				icon = IconAutoFailedManualAvailable
-			} else {
-				icon = IconAutoFailed
-			}
-		} else if successfulManualInstruction {
-			if runningManualInstruction || runningAutoInstruction {
-				icon = IconManualSuccessfulOtherInProgress
-			} else if availableInstructions {
-				icon = IconManualSuccessfulManualAvailable
-			} else {
-				icon = IconManualSuccessful
-			}
-		} else if successfulAutoInstruction {
-			if runningManualInstruction || runningAutoInstruction {
-				icon = IconAutoSuccessfulOtherInProgress
-			} else if availableInstructions {
-				icon = IconAutoSuccessfulManualAvailable
-			} else {
-				icon = IconAutoSuccessful
-			}
-		} else if runningManualInstruction {
-			icon = IconManualInProgress
-		} else if runningAutoInstruction {
-			icon = IconAutoInProgress
-		} else if availableInstructions {
-			icon = IconManualAvailable
-		}
-
-		v.Icon = icon
+		v.Icon = getInstructionExecutionIcon(v, assignedInstructionsMap)
 		statusesByAlarm[v.ID] = v
 	}
 
@@ -1067,6 +1041,89 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 	}
 
 	return statusesByAlarm, nil
+}
+
+func getInstructionExecutionIcon(status ExecutionStatus, assignedInstructionsMap map[string][]AssignedInstruction) int {
+	availableInstructionsMap := make(map[string]struct{}, len(assignedInstructionsMap[status.ID]))
+	for _, instr := range assignedInstructionsMap[status.ID] {
+		availableInstructionsMap[instr.Name] = struct{}{}
+	}
+
+	for _, name := range status.RunningManualInstructions {
+		delete(availableInstructionsMap, name)
+	}
+
+	for _, name := range status.FailedManualInstructions {
+		delete(availableInstructionsMap, name)
+	}
+
+	for _, name := range status.SuccessfulManualInstructions {
+		delete(availableInstructionsMap, name)
+	}
+
+	runningManualInstruction := len(status.RunningManualInstructions) != 0
+	runningAutoInstruction := len(status.RunningAutoInstructions) != 0
+	failedManualInstruction := len(status.FailedManualInstructions) != 0
+	failedAutoInstruction := len(status.FailedAutoInstructions) != 0
+	successfulManualInstruction := len(status.SuccessfulManualInstructions) != 0
+	successfulAutoInstruction := len(status.SuccessfulAutoInstructions) != 0
+	availableInstructions := len(availableInstructionsMap) != 0
+	lastFailed := status.LastFailed
+	lastSuccessful := status.LastSuccessful
+
+	if (failedManualInstruction || failedAutoInstruction) && lastFailed != nil {
+		if *lastFailed == InstructionTypeAuto {
+			if runningManualInstruction || runningAutoInstruction {
+				return IconAutoFailedOtherInProgress
+			} else if availableInstructions {
+				return IconAutoFailedManualAvailable
+			} else {
+				return IconAutoFailed
+			}
+		} else {
+			if runningManualInstruction || runningAutoInstruction {
+				return IconManualFailedOtherInProgress
+			} else if availableInstructions {
+				return IconManualFailedManualAvailable
+			} else {
+				return IconManualFailed
+			}
+		}
+	}
+
+	if (successfulManualInstruction || successfulAutoInstruction) && lastSuccessful != nil {
+		if *lastSuccessful == InstructionTypeAuto {
+			if runningManualInstruction || runningAutoInstruction {
+				return IconAutoSuccessfulOtherInProgress
+			} else if availableInstructions {
+				return IconAutoSuccessfulManualAvailable
+			} else {
+				return IconAutoSuccessful
+			}
+		} else {
+			if runningManualInstruction || runningAutoInstruction {
+				return IconManualSuccessfulOtherInProgress
+			} else if availableInstructions {
+				return IconManualSuccessfulManualAvailable
+			} else {
+				return IconManualSuccessful
+			}
+		}
+	}
+
+	if runningManualInstruction {
+		return IconManualInProgress
+	}
+
+	if runningAutoInstruction {
+		return IconAutoInProgress
+	}
+
+	if availableInstructions {
+		return IconManualAvailable
+	}
+
+	return NoIcon
 }
 
 func (s *store) fillAssignedInstructions(ctx context.Context, result *AggregationResult, now types.CpsTime) (map[string][]AssignedInstruction, bson.M, error) {

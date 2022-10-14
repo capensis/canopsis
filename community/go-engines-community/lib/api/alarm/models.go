@@ -344,6 +344,9 @@ type ExecutionStatus struct {
 	FailedAutoInstructions       []string `bson:"failed_auto_instructions"`
 	SuccessfulManualInstructions []string `bson:"successful_manual_instructions"`
 	SuccessfulAutoInstructions   []string `bson:"successful_auto_instructions"`
+	AllFailed                    []int    `bson:"all_failed"`
+	LastFailed                   *int     `bson:"last_failed"`
+	LastSuccessful               *int     `bson:"last_successful"`
 }
 
 type Execution struct {
