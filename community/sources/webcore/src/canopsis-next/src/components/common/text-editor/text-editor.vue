@@ -230,7 +230,8 @@ export default {
         return;
       }
 
-      const variableGroup = matchPayloadVariableBySelection(anchorNode.nodeValue, selection);
+      const [selectionStart, selectionEnd] = [anchorOffset, focusOffset].sort();
+      const variableGroup = matchPayloadVariableBySelection(anchorNode.nodeValue, selectionStart, selectionEnd);
 
       if (!variableGroup) {
         this.variablesMenuValue = undefined;
