@@ -22,7 +22,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 10
         }
       ]
     }
@@ -131,7 +131,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 10
         }
       ]
     }
@@ -212,7 +212,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 3
         }
       ]
     }
@@ -309,7 +309,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 10
         }
       ]
     }
@@ -378,7 +378,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 10
         }
       ]
     }
@@ -458,7 +458,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 3
         }
       ]
     }
@@ -535,7 +535,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 3
         }
       ]
     }
@@ -604,7 +604,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 3
         }
       ]
     }
@@ -689,7 +689,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 10
         }
       ]
     }
@@ -751,7 +751,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 10
         }
       ]
     }
@@ -865,7 +865,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 3
         }
       ]
     }
@@ -930,7 +930,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 3
         }
       ]
     }
@@ -1015,7 +1015,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 3
         }
       ]
     }
