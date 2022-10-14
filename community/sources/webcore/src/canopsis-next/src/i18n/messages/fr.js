@@ -3219,5 +3219,7 @@ export default merge({
 
   techMetric: {
     noDumps: 'Aucun vidage disponible. Générer un nouveau vidage ?',
+    generateDump: 'Générer un nouveau vidage',
+    downloadDump: 'Télécharger le vidage',
   },
 }, featureService.get('i18n.fr'));
