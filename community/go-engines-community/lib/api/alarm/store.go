@@ -820,8 +820,6 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 		return nil, nil
 	}
 
-	var executionStatuses []ExecutionStatus
-
 	cursor, err := s.dbInstructionExecutionCollection.Aggregate(ctx, []bson.M{
 		{
 			"$match": bson.M{
@@ -975,6 +973,7 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 		return nil, err
 	}
 
+	var executionStatuses []ExecutionStatus
 	err = cursor.All(ctx, &executionStatuses)
 	if err != nil {
 		return nil, err
