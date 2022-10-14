@@ -196,6 +196,7 @@ import MiscellaneousServicesIcon from '@/components/icons/miscellaneous_services
 import PublishedWithChangesIcon from '@/components/icons/published_with_changes.vue';
 import DensityMediumIcon from '@/components/icons/density_medium.vue';
 import DensitySmallIcon from '@/components/icons/density_small.vue';
+import ManualInstruction from '@/components/icons/manual_instruction.vue';
 
 /**
  * Groups
@@ -244,6 +245,9 @@ Vue.use(Vuetify, {
     },
     density_small: {
       component: DensitySmallIcon,
+    },
+    manual_instruction: {
+      component: ManualInstruction,
     },
   },
 });
