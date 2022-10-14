@@ -83,6 +83,7 @@ import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
+import { entityVariablesMixin } from '@/mixins/widget/entity-variables';
 
 import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
 import FieldSortColumn from '@/components/sidebars/settings/fields/service-weather/sort-column.vue';
@@ -103,7 +104,6 @@ import AlarmsListModalForm from '@/components/sidebars/settings/forms/alarms-lis
 import MarginsForm from '@/components/sidebars/settings/forms/margins.vue';
 import WidgetSettings from '@/components/sidebars/settings/partials/widget-settings.vue';
 import WidgetSettingsGroup from '@/components/sidebars/settings/partials/widget-settings-group.vue';
-import { entityVariablesMixin } from '@/mixins/widget/entity-variables';
 
 export default {
   name: SIDE_BARS.serviceWeatherSettings,
