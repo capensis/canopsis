@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.pa-3(column)
+  v-layout(column)
     c-information-block-row(:label="$t('testSuite.xmlFeed')", :value="testSuite.xml_feed")
     c-information-block-row(:label="$t('common.name')", :value="testSuite.name")
     c-information-block-row(:label="$t('testSuite.hostname')", :value="testSuite.hostname")
