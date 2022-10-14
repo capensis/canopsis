@@ -1,6 +1,6 @@
 package config
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/config/config.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/config/config.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider,TechMetricsConfigProvider
 
 import (
 	"fmt"
@@ -51,6 +51,10 @@ type UserInterfaceConfigProvider interface {
 	Get() UserInterfaceConf
 }
 
+type TechMetricsConfigProvider interface {
+	Get() TechMetricsConfig
+}
+
 type AlarmConfig struct {
 	StealthyInterval      time.Duration
 	EnableLastEventDate   bool
@@ -84,6 +88,11 @@ type RemediationConfig struct {
 	ExternalAPI                    map[string]ExternalApiConfig
 }
 
+type TechMetricsConfig struct {
+	Enabled          bool
+	DumpKeepInterval time.Duration
+}
+
 type DataStorageConfig struct {
 	TimeToExecute *ScheduledTime
 }
@@ -100,6 +109,50 @@ type ScheduledTime struct {
 
 func (t ScheduledTime) String() string {
 	return fmt.Sprintf("%v,%v", t.Weekday, t.Hour)
+}
+
+type BaseTechMetricsConfigProvider struct {
+	conf   TechMetricsConfig
+	mx     sync.RWMutex
+	logger zerolog.Logger
+}
+
+func NewTechMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseTechMetricsConfigProvider {
+	sectionName := "tech_metrics"
+	conf := TechMetricsConfig{
+		Enabled:          parseBool(cfg.TechMetrics.Enabled, "Enabled", sectionName, logger),
+		DumpKeepInterval: parseTimeDurationByStr(cfg.TechMetrics.DumpKeepInterval, TechMetricsDumpKeepInterval, "DumpKeepInterval", sectionName, logger),
+	}
+
+	return &BaseTechMetricsConfigProvider{
+		conf:   conf,
+		mx:     sync.RWMutex{},
+		logger: logger,
+	}
+}
+
+func (p *BaseTechMetricsConfigProvider) Update(cfg CanopsisConf) {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
+	sectionName := "tech_metrics"
+
+	b, ok := parseUpdatedBool(cfg.TechMetrics.Enabled, p.conf.Enabled, "Enabled", sectionName, p.logger)
+	if ok {
+		p.conf.Enabled = b
+	}
+
+	d, ok := parseUpdatedTimeDurationByStr(cfg.TechMetrics.DumpKeepInterval, p.conf.DumpKeepInterval, "DumpKeepInterval", sectionName, p.logger)
+	if ok {
+		p.conf.DumpKeepInterval = d
+	}
+}
+
+func (p *BaseTechMetricsConfigProvider) Get() TechMetricsConfig {
+	p.mx.RLock()
+	defer p.mx.RUnlock()
+
+	return p.conf
 }
 
 func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmConfigProvider {

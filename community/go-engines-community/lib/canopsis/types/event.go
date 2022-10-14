@@ -144,7 +144,6 @@ type Event struct {
 	PerfData      *string    `bson:"perf_data" json:"perf_data"`
 	PerfDataArray []PerfData `bson:"perf_data_array" json:"perf_data_array"`
 	Status        *CpsNumber `bson:"status" json:"status"`
-	Timestamp     CpsTime    `bson:"timestamp" json:"timestamp"`
 	StateType     *CpsNumber `bson:"state_type" json:"state_type"`
 	SourceType    string     `bson:"source_type" json:"source_type"`
 	LongOutput    string     `bson:"long_output" json:"long_output"`
@@ -155,6 +154,9 @@ type Event struct {
 
 	Author string `bson:"author" json:"author"`
 	UserID string `bson:"user_id" json:"user_id"`
+
+	Timestamp         CpsTime   `bson:"timestamp" json:"timestamp"`
+	ReceivedTimestamp MicroTime `bson:"rt" json:"rt"`
 
 	RK string `bson:"routing_key" json:"routing_key"`
 	// AckResources is used to ack all resource alarms on ack component alarm.
@@ -256,6 +258,7 @@ func (e *Event) Format() {
 	if e.Timestamp.IsZero() || e.Timestamp.Time.Before(now.Add(-MaxEventTimestampVariation)) || e.Timestamp.Time.After(now.Add(MaxEventTimestampVariation)) {
 		e.Timestamp = now
 	}
+	e.ReceivedTimestamp = NewMicroTime()
 	if e.EventType == "" {
 		e.EventType = EventTypeCheck
 	}
