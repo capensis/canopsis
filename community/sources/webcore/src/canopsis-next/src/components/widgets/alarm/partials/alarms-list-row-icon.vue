@@ -1,12 +1,7 @@
 <template lang="pug">
   v-tooltip(top)
     template(#activator="{ on }")
-      v-icon.instruction-icon(
-        v-on="on",
-        :class="iconClass",
-        size="24",
-        color="black"
-      ) {{ iconName }}
+      v-icon.instruction-icon(v-on="on", :class="iconClass", size="24") {{ iconName }}
     span.pre-wrap(v-html="iconTooltip")
 </template>
 
@@ -67,15 +62,15 @@ export default {
       }
 
       if (this.someOneInstructionIsFailed) {
-        classNames.push('error--text');
+        classNames.push('instruction-icon--failed');
       }
 
       if (this.someOneInstructionIsSuccessful) {
-        classNames.push('primary--text');
+        classNames.push('instruction-icon--completed');
       }
 
       if (this.instructionExecutedAndOtherAvailable) {
-        classNames.push('instruction-icon--dashed');
+        classNames.push('instruction-icon--with-manual-available');
       }
 
       return classNames.join(' ');
@@ -117,21 +112,43 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+@keyframes blink-with-available {
+  0% {
+    opacity: 1.0;
+  }
+  25% {
+    color: black;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
 .instruction-icon {
   box-sizing: content-box;
   border-width: 1px;
   border-color: transparent;
   border-style: solid;
+  color: black;
 
-  &--dashed {
-    border-style: dashed;
-    border-color: currentColor;
+  &--completed.theme--light.v-icon {
+    color: #2fab63;
+  }
+
+  &--failed.theme--light.v-icon {
+    color: #ff5252;
   }
 
   &--dotted {
     border-style: dotted;
     border-color: currentColor;
+  }
+
+  &--with-manual-available {
+    border-style: dashed;
+    border-color: currentColor;
+    animation: blink-with-available 2s linear infinite;
   }
 }
 </style>
