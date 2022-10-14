@@ -924,3 +924,642 @@ Feature: update an instruction statistics
       ]
     }
     """
+
+  Scenario: given alarm and running simplified manual instruction execution should return manual instruction running icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-22",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-22",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-22",
+      "resource": "test-resource-to-alarm-instruction-get-icons-22",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-22"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-22
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-22"
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-22&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 1,
+          "running_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-22-name"]
+        }
+      ]
+    }
+    """
+    When I wait the end of 2 events processing
+
+  Scenario: given alarm and completed simplified manual and failed auto instruction execution should return failed auto instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-23",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-23",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-23",
+      "resource": "test-resource-to-alarm-instruction-get-icons-23",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-23"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-23
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-23-2"
+    }
+    """
+    Then the response code should be 200
+    When I save response executionID={{ .lastResponse._id }}
+    When I wait the end of 2 events processing
+    When I wait 3s
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-23&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 3,
+          "failed_auto_instructions": ["test-instruction-to-alarm-instruction-get-icons-23-1-name"],
+          "successful_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-23-2-name"]
+        }
+      ]
+    }
+    """
+
+  Scenario: given alarm and failed simplified manual instruction execution should return failed manual instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-24",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-24",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-24",
+      "resource": "test-resource-to-alarm-instruction-get-icons-24",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-24"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-24
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-24"
+    }
+    """
+    Then the response code should be 200
+    When I save response executionID={{ .lastResponse._id }}
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-24&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 4,
+          "failed_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-24-name"]
+        }
+      ]
+    }
+    """
+
+  Scenario: given alarm and completed automatic and failed simplified manual instruction execution should return failed manual instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-25",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-25",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-25",
+      "resource": "test-resource-to-alarm-instruction-get-icons-25",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-25"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I wait 3s
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-25
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-25-2"
+    }
+    """
+    Then the response code should be 200
+    When I save response executionID={{ .lastResponse._id }}
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-25&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 4,
+          "failed_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-25-2-name"],
+          "successful_auto_instructions": ["test-instruction-to-alarm-instruction-get-icons-25-1-name"]
+        }
+      ]
+    }
+    """
+
+  Scenario: given alarm and completed simplified manual and failed simplified manual instruction execution should return failed manual instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-26",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-26",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-26",
+      "resource": "test-resource-to-alarm-instruction-get-icons-26",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-26"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-26
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-26-1"
+    }
+    """
+    Then the response code should be 200
+    When I save response executionID={{ .lastResponse._id }}
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-26-2"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 2 events processing
+    When I wait 3s
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-26&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 4,
+          "failed_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-26-1-name"],
+          "successful_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-26-2-name"]
+        }
+      ]
+    }
+    """
+
+  Scenario: given alarm and failed manual and running manual instruction execution should return failed manual and running instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-27",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-27",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-27",
+      "resource": "test-resource-to-alarm-instruction-get-icons-27",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-27"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-27
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-27-1"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-27-2"
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-27&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 5,
+          "running_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-27-2-name"],
+          "failed_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-27-1-name"]
+        }
+      ]
+    }
+    """
+    When I wait the end of 2 events processing
+
+  Scenario: given alarm and failed auto and running simplified manual instruction execution should return failed auto and running instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-28",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-28",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-28",
+      "resource": "test-resource-to-alarm-instruction-get-icons-28",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-28"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-28
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-28-2"
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-28&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 6,
+          "running_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-28-2-name"],
+          "failed_auto_instructions": ["test-instruction-to-alarm-instruction-get-icons-28-1-name"]
+        }
+      ]
+    }
+    """
+    When I wait the end of 2 events processing
+
+  Scenario: given alarm and failed simplified manual and available simplified manual instruction should return failed manual and available instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-29",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-29",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-29",
+      "resource": "test-resource-to-alarm-instruction-get-icons-29",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-29"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-29
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-29-1"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-29&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 7,
+          "failed_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-29-1-name"]
+        }
+      ]
+    }
+    """
+
+  Scenario: given alarm and failed auto and available simplified manual instruction should return failed auto and available instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-30",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-30",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-30",
+      "resource": "test-resource-to-alarm-instruction-get-icons-30",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-30"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-30&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 8,
+          "failed_auto_instructions": ["test-instruction-to-alarm-instruction-get-icons-30-1-name"]
+        }
+      ]
+    }
+    """
+
+  Scenario: given alarm and available simplified manual instruction should return available manual instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-31",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-31",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-31",
+      "resource": "test-resource-to-alarm-instruction-get-icons-31",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-31"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-31&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 9
+        }
+      ]
+    }
+    """
+
+  Scenario: given alarm and successful simplified manual instruction execution should return successful manual instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-32",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-32",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-32",
+      "resource": "test-resource-to-alarm-instruction-get-icons-32",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-32"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-32
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-32"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 2 events processing
+    When I wait 3s
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-32&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 11,
+          "successful_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-32-name"]
+        }
+      ]
+    }
+    """
+
+  Scenario: given alarm and successful auto and running simplified manual instruction execution should return successful auto and running instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-33",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-33",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-33",
+      "resource": "test-resource-to-alarm-instruction-get-icons-33",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-33"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I wait 3s
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-33
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-33-2"
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-33&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 12,
+          "running_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-33-2-name"],
+          "successful_auto_instructions": ["test-instruction-to-alarm-instruction-get-icons-33-1-name"]
+        }
+      ]
+    }
+    """
+    When I wait the end of 2 events processing
+
+  Scenario: given alarm and successful simplified manual and running simplified manual instruction execution should return successful manual and running instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-34",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-34",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-34",
+      "resource": "test-resource-to-alarm-instruction-get-icons-34",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-34"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-34
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-34-1"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 2 events processing
+    When I wait 3s
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-34-2"
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-34&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 13,
+          "running_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-34-2-name"],
+          "successful_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-34-1-name"]
+        }
+      ]
+    }
+    """
+    When I wait the end of 2 events processing
+
+  Scenario: given alarm and successful auto and available simplified manual instruction execution should return successful auto and available instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-35",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-35",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-35",
+      "resource": "test-resource-to-alarm-instruction-get-icons-35",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-35"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I wait 3s
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-35&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 14,
+          "successful_auto_instructions": ["test-instruction-to-alarm-instruction-get-icons-35-1-name"]
+        }
+      ]
+    }
+    """
+
+  Scenario: given alarm and successful simplified manual and available simplified manual instruction execution should return successful manual and available instruction icon
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-icons-36",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-icons-36",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-icons-36",
+      "resource": "test-resource-to-alarm-instruction-get-icons-36",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-icons-36"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-36
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "test-instruction-to-alarm-instruction-get-icons-36-1"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 2 events processing
+    When I wait 3s
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-36&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "instruction_execution_icon": 15,
+          "successful_manual_instructions": ["test-instruction-to-alarm-instruction-get-icons-36-1-name"]
+        }
+      ]
+    }
+    """
