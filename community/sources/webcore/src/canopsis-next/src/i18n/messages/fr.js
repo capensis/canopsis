@@ -3246,8 +3246,8 @@ export default merge({
   },
 
   techMetric: {
-    noDumps: 'Aucun vidage disponible. Générer un nouveau vidage ?',
-    generateDump: 'Générer un nouveau vidage',
-    downloadDump: 'Télécharger le vidage',
+    noDumps: 'Aucun dump disponible. Générer un nouveau dump ?',
+    generateDump: 'Générer un nouveau dump',
+    downloadDump: 'Télécharger le dump',
   },
 }, featureService.get('i18n.fr'));
