@@ -32,9 +32,5 @@ export default {
     fetchMetricExport(context, { id }) {
       return request.get(`${API_ROUTES.metrics.exportMetric}/${id}`);
     },
-
-    fetchMetricCsvFile(context, { id }) {
-      return request.get(`${API_ROUTES.metrics.exportMetric}/${id}/download`);
-    },
   },
 };
