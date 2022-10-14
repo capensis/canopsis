@@ -209,7 +209,7 @@ type Alarm struct {
 	MetaAlarmRules []MetaAlarmRule `bson:"meta_alarm_rules" json:"meta_alarm_rules,omitempty"`
 
 	AssignedInstructions         *[]AssignedInstruction `bson:"assigned_instructions,omitempty" json:"assigned_instructions,omitempty"`
-	InstructionExecutionIcon     int                    `bson:"-" json:"instruction_execution_icon"`
+	InstructionExecutionIcon     int                    `bson:"-" json:"instruction_execution_icon,omitempty"`
 	RunningManualInstructions    []string               `bson:"-" json:"running_manual_instructions,omitempty"`
 	RunningAutoInstructions      []string               `bson:"-" json:"running_auto_instructions,omitempty"`
 	FailedManualInstructions     []string               `bson:"-" json:"failed_manual_instructions,omitempty"`
