@@ -9,6 +9,7 @@
       v-tab {{ $t('common.systemStatus') }}
       v-tab {{ $tc('common.graph', 2) }}
       v-tab {{ $tc('common.parameter', 2) }}
+      v-tab(v-if="hasAccessToTechMetrics") {{ $t('common.enginesMetrics') }}
     v-tabs-items.white.healthcheck__tabs(v-model="activeTab")
       v-tab-item.healthcheck__graph-tab
         healthcheck-network-graph.healthcheck__graph(
@@ -25,6 +26,8 @@
         healthcheck-graphs(:max-queue-length="maxQueueLength")
       v-tab-item(lazy)
         healthcheck-parameters
+      v-tab-item(lazy)
+        healthcheck-engines-metrics
 </template>
 
 <script>
@@ -33,14 +36,25 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_ROOMS } from '@/config';
 
+import { USERS_PERMISSIONS } from '@/constants';
+
+import { authMixin } from '@/mixins/auth';
+
 import HealthcheckNetworkGraph from '@/components/other/healthcheck/exploitation/healthcheck-network-graph.vue';
 import HealthcheckGraphs from '@/components/other/healthcheck/exploitation/healthcheck-graphs.vue';
 import HealthcheckParameters from '@/components/other/healthcheck/healthcheck-parameters.vue';
+import HealthcheckEnginesMetrics from '@/components/other/healthcheck/healthcheck-engines-metrics.vue';
 
 const { mapActions } = createNamespacedHelpers('healthcheck');
 
 export default {
-  components: { HealthcheckParameters, HealthcheckNetworkGraph, HealthcheckGraphs },
+  components: {
+    HealthcheckParameters,
+    HealthcheckNetworkGraph,
+    HealthcheckGraphs,
+    HealthcheckEnginesMetrics,
+  },
+  mixins: [authMixin],
   data() {
     return {
       activeTab: 0,
@@ -56,6 +70,10 @@ export default {
   computed: {
     hasAnyError() {
       return this.hasServerError || this.hasInvalidEnginesOrder;
+    },
+
+    hasAccessToTechMetrics() {
+      return this.checkAccess(USERS_PERMISSIONS.technical.techmetrics);
     },
   },
   mounted() {

@@ -29,7 +29,7 @@
                   :value="testSuiteDetail.line"
                 )
                 c-information-block-row(
-                  :label="$t('testSuite.timeTaken')"
+                  :label="$t('common.timeTaken')"
                 ) {{ testSuiteDetail.time | fixed }}{{ $constants.TIME_UNITS.second }}
                 system-message(
                   v-if="testSuiteDetail.message",

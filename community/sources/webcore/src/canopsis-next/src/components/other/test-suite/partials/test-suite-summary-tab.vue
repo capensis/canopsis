@@ -7,7 +7,7 @@
       :label="$t('testSuite.lastUpdate')"
     ) {{ testSuite.last_update | date('testSuiteFormat') }}
     c-information-block-row(
-      :label="$t('testSuite.timeTaken')"
+      :label="$t('common.timeTaken')"
     )
       span(v-if="testSuite.time") {{ testSuite.time | fixed }}{{ $constants.TIME_UNITS.second }}
     v-layout.mt-4(row)

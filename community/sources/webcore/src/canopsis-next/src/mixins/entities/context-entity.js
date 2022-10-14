@@ -1,7 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import { EXPORT_STATUSES } from '@/constants';
-
 const { mapGetters, mapActions } = createNamespacedHelpers('entity');
 
 /**
@@ -14,7 +12,6 @@ export const entitiesContextEntityMixin = {
       getContextEntitiesMetaByWidgetId: 'getMetaByWidgetId',
       getContextEntitiesPendingByWidgetId: 'getPendingByWidgetId',
       getContextEntitiesFetchingParamsByWidgetId: 'getFetchingParamsByWidgetId',
-      getContextExportByWidgetId: 'getExportByWidgetId',
     }),
 
     contextEntities() {
@@ -25,11 +22,6 @@ export const entitiesContextEntityMixin = {
     },
     contextEntitiesPending() {
       return this.getContextEntitiesPendingByWidgetId(this.widget._id);
-    },
-    contextExportPending() {
-      const exportData = this.getContextExportByWidgetId(this.widget._id);
-
-      return exportData && exportData.status === EXPORT_STATUSES.running;
     },
   },
   methods: {
@@ -44,7 +36,6 @@ export const entitiesContextEntityMixin = {
       fetchContextEntityContextGraphWithoutStore: 'fetchContextGraphWithoutStore',
       createContextExport: 'createContextExport',
       fetchContextExport: 'fetchContextExport',
-      fetchContextCsvFile: 'fetchContextCsvFile',
       cleanEntitiesData: 'cleanEntitiesData',
       bulkEnableEntities: 'bulkEnable',
       bulkDisableEntities: 'bulkDisable',
