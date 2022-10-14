@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    c-draggable-list-field(v-field="actions", :options="draggableOptions")
+    c-draggable-list-field(v-field="actions", handle=".action-drag-handler")
       event-filter-enrichment-action-form.mb-3(
         v-for="(action, index) in actions",
         v-field="actions[index]",
@@ -30,13 +30,6 @@ export default {
     actions: {
       type: Array,
       required: true,
-    },
-  },
-  computed: {
-    draggableOptions() {
-      return {
-        handle: '.action-drag-handler',
-      };
     },
   },
   methods: {
