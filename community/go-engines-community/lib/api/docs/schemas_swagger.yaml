@@ -3701,6 +3701,15 @@ definitions:
       ok:
         type: integer
     type: object
+  techmetrics.ExportResponse:
+    properties:
+      created:
+        type: integer
+      duration:
+        type: integer
+      status:
+        type: integer
+    type: object
   types.Coordinates:
     properties:
       lat:
