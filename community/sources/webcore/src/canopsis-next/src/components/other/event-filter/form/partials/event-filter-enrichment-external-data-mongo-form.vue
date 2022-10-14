@@ -16,7 +16,7 @@
       :name="`${name}.${condition.key}`",
       :disabled-remove="hasOnlyOneCondition",
       :disabled="disabled",
-      @remove="removeCondition"
+      @remove="removeCondition(index)"
     )
     v-flex(v-if="!disabled")
       v-btn.ml-0.mb-0(color="primary", outline, @click="addCondition") {{ $t('common.addMore') }}
@@ -70,8 +70,11 @@ export default {
       ]);
     },
 
-    removeCondition(key) {
-      this.updateField('conditions', this.form.conditions.filter(condition => condition.key !== key));
+    removeCondition(index) {
+      this.updateField(
+        'conditions',
+        this.form.conditions.filter((condition, conditionIndex) => index !== conditionIndex),
+      );
     },
   },
 };

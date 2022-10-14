@@ -99,7 +99,7 @@ export default {
     },
 
     remove() {
-      this.$emit('remove', this.form.key);
+      this.$emit('remove', this.form);
     },
   },
 };

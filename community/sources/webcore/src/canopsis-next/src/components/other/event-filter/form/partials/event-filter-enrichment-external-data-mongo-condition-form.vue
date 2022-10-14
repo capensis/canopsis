@@ -39,7 +39,7 @@
           :disabled="disabledRemove",
           icon,
           small,
-          @click="removeCondition(condition.key)"
+          @click="removeCondition"
         )
           v-icon(color="red", small) delete
 </template>
@@ -175,8 +175,8 @@ export default {
       this.selectionEnd = this.selectionStart + value.length;
     },
 
-    removeCondition(key) {
-      this.$emit('remove', key);
+    removeCondition() {
+      this.$emit('remove', this.condition);
     },
   },
 };
