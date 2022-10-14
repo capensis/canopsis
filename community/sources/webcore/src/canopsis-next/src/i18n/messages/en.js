@@ -3219,5 +3219,7 @@ export default merge({
 
   techMetric: {
     noDumps: 'No dumps available. Generate a new dump?',
+    generateDump: 'Generate a new dump',
+    downloadDump: 'Download dump',
   },
 }, featureService.get('i18n.en'));
