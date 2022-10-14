@@ -4,7 +4,13 @@
       td.text-xs-center(colspan="2")
         div {{ $t('techMetric.noDumps') }}
       td
-        c-action-btn(:disabled="exporting", icon="play_circle_filled", color="secondary", @click="exportTechMetrics")
+        c-action-btn(
+          :disabled="exporting",
+          :tooltip="$t('techMetric.generateDump')",
+          icon="play_circle_filled",
+          color="secondary",
+          @click="exportTechMetrics"
+        )
     template(#items="{ item }")
       td.text-xs-center(v-if="!exporting && isMetricNotCreated(item)", colspan="2")
         div {{ $t('techMetric.noDumps') }}
@@ -14,10 +20,17 @@
           v-progress-circular(v-if="exporting", color="primary", indeterminate)
           span(v-else) {{ item.duration | duration }}
       td
-        c-action-btn(:disabled="exporting", icon="play_circle_filled", color="secondary", @click="exportTechMetrics")
+        c-action-btn(
+          :disabled="exporting",
+          :tooltip="$t('techMetric.generateDump')",
+          icon="play_circle_filled",
+          color="secondary",
+          @click="exportTechMetrics"
+        )
         c-action-btn(
           v-if="isMetricReadyToDownload(item)",
           :disabled="exporting",
+          :tooltip="$t('techMetric.downloadDump')",
           icon="save_alt",
           color="secondary",
           @click="downloadTechMetrics"
