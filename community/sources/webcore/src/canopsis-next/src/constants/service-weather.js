@@ -22,3 +22,19 @@ export const SERVICE_WEATHER_PATTERN_FIELDS = {
   secondaryIcon: 'secondary_icon',
   state: 'state.val',
 };
+
+/* TODO: Should be fixed after backend integration */
+export const SERVICE_WEATHER_STATE_COUNTERS = {
+  alarms: 'alarms',
+  dependencies: 'depends',
+  ok: 'state.info',
+  underPbehavior: 'pbehavior_counters',
+  minor: 'state.minor',
+  major: 'state.major',
+  critical: 'state.critical',
+  acknowledged: 'acknowledged',
+  notAcknowledged: 'not_acknowledged',
+  acknowledgedUnderPbehavior: 'acknowledged_under_pbehavior',
+};
+
+export const SERVICE_WEATHER_MAX_STATE_COUNTERS = 5;
