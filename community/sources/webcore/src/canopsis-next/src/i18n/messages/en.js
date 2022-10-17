@@ -686,7 +686,7 @@ export default merge({
       successfulAutoInstructions: 'Automatic instruction <strong>{title}</strong> is successful | Automatic instructions <strong>{title}</strong> is successful',
       failedManualInstructions: 'Manual instruction <strong>{title}</strong> is failed | Manual instructions <strong>{title}</strong> is failed',
       failedAutoInstructions: 'Automatic instruction <strong>{title}</strong> is failed | Automatic instructions <strong>{title}</strong> is failed',
-      hasManualInstruction: 'There is a manual instruction for this type of an incident',
+      hasManualInstruction: 'There is a manual instruction for this type of an incident | There are a manual instructions for this type of an incident',
     },
     metrics: {
       [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',

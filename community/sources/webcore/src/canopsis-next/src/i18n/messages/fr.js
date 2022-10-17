@@ -686,7 +686,7 @@ export default merge({
       successfulAutoInstructions: 'Consigne automatique <strong>{title}</strong> réussies | Consignes automatiques <strong>{title}</strong> réussies',
       failedManualInstructions: 'Consigne manuelle <strong>{title}</strong> en échec | Consignes manuelles <strong>{title}</strong> en échec',
       failedAutoInstructions: 'Consigne automatique <strong>{title}</strong> en échec | Consignes automatiques <strong>{title}</strong> en échec',
-      hasManualInstruction: 'There is a manual instruction for this type of an incident',
+      hasManualInstruction: 'Il y a une consigne manuelle associée | Il y a des consignes manuelles associées',
     },
     metrics: {
       [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Nombre d\'alarmes créées',
