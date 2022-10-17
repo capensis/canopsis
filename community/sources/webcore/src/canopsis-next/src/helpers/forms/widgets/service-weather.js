@@ -73,7 +73,7 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   modalTemplate: parameters.modalTemplate ?? DEFAULT_SERVICE_WEATHER_MODAL_TEMPLATE,
   entityTemplate: parameters.entityTemplate ?? DEFAULT_SERVICE_WEATHER_ENTITY_TEMPLATE,
   columnMobile: parameters.columnMobile ?? 2,
-  columnTablet: parameters.columnTablet ?? 4,
+  columnTablet: parameters.columnTablet ?? 3,
   columnDesktop: parameters.columnDesktop ?? 4,
   limit: parameters.limit ?? DEFAULT_WEATHER_LIMIT,
   colorIndicator: parameters.colorIndicator ?? COLOR_INDICATOR_TYPES.state,
