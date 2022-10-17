@@ -18,6 +18,7 @@ import featuresService from '@/services/features';
 
 import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule';
 import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
+import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
@@ -272,13 +273,15 @@ export default {
 
       this.$modals.show({
         id: `${this.item._id}${assignedInstruction._id}`,
-        name: MODALS.executeRemediationInstruction,
+        name: isInstructionManual(assignedInstruction)
+          ? MODALS.executeRemediationInstruction
+          : MODALS.executeRemediationSimpleInstruction,
         config: {
           assignedInstruction,
           alarmId: this.item._id,
-          onOpen: refreshAlarm,
           onClose: refreshAlarm,
           onComplete: refreshAlarm,
+          onExecute: refreshAlarm,
         },
       });
     },

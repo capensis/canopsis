@@ -4,16 +4,16 @@
       span.subheading {{ $t('remediationInstructionExecute.jobs.title') }}
     v-layout(column)
       v-data-table(:items="jobs", hide-actions)
-        template(slot="headers", slot-scope="props")
+        template(#headers="")
           tr
             th
             th.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.startedAt') }}
             th.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.launchedAt') }}
             th.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.completedAt') }}
-        template(slot="items", slot-scope="props")
+        template(#items="{ item }")
           remediation-instruction-assigned-job(
-            :job="props.item",
-            :key="props.item.job_id",
+            :job="item",
+            :key="item.job_id",
             @execute-job="$listeners['execute-job']",
             @cancel-job-execution="$listeners['cancel-job-execution']"
           )
