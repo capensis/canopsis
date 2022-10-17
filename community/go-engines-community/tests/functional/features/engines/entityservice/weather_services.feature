@@ -88,8 +88,22 @@ Feature: update service weather on event
           },
           "is_grey": false,
           "is_action_required": true,
-          "alarm_counters": [],
-          "depends_count": 1,
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 1,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 1,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 1,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          },
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -219,8 +233,22 @@ Feature: update service weather on event
           "secondary_icon": "",
           "is_grey": false,
           "is_action_required": true,
-          "alarm_counters": [],
-          "depends_count": 3,
+          "counters": {
+            "depends": 3,
+            "all": 3,
+            "active": 3,
+            "state": {
+              "ok": 0,
+              "minor": 1,
+              "major": 1,
+              "critical": 1
+            },
+            "acked": 0,
+            "unacked": 3,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          },
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -320,8 +348,22 @@ Feature: update service weather on event
           "secondary_icon": "",
           "is_grey": false,
           "is_action_required": false,
-          "alarm_counters": [],
-          "depends_count": 1,
+          "counters": {
+            "depends": 1,
+            "all": 0,
+            "active": 0,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          },
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -463,8 +505,22 @@ Feature: update service weather on event
           "secondary_icon": "",
           "is_grey": false,
           "is_action_required": false,
-          "alarm_counters": [],
-          "depends_count": 2,
+          "counters": {
+            "depends": 2,
+            "all": 2,
+            "active": 2,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 1,
+              "critical": 1
+            },
+            "acked": 2,
+            "unacked": 0,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          },
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -564,8 +620,22 @@ Feature: update service weather on event
             "_id": "test-category-service-weather"
           },
           "is_action_required": true,
-          "alarm_counters": [],
-          "depends_count": 1,
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 1,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 1,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 1,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          },
           "pbehavior_info": null,
           "pbehaviors": []
         }

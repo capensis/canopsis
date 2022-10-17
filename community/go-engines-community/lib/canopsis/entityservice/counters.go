@@ -45,14 +45,28 @@ func GetAlarmCountersFromEvent(event types.Event) (*AlarmCounters, *AlarmCounter
 		currentCounters, oldCounters = &AlarmCounters{}, &AlarmCounters{}
 		*currentCounters = alarmCounters
 		*oldCounters = alarmCounters
-		oldCounters.Acknowledged = 0
-		oldCounters.NotAcknowledged = 1
+		if event.Alarm.Value.PbehaviorInfo.IsActive() {
+			oldCounters.Acknowledged = 0
+			oldCounters.NotAcknowledged = 1
+			oldCounters.NotAcknowledgedUnderPbh = 0
+		} else {
+			oldCounters.Acknowledged = 0
+			oldCounters.NotAcknowledged = 0
+			oldCounters.NotAcknowledgedUnderPbh = 1
+		}
 	case types.AlarmChangeTypeAckremove:
 		currentCounters, oldCounters = &AlarmCounters{}, &AlarmCounters{}
 		*currentCounters = alarmCounters
 		*oldCounters = alarmCounters
-		oldCounters.Acknowledged = 1
-		oldCounters.NotAcknowledged = 0
+		if event.Alarm.Value.PbehaviorInfo.IsActive() {
+			oldCounters.Acknowledged = 1
+			oldCounters.NotAcknowledged = 0
+			oldCounters.NotAcknowledgedUnderPbh = 0
+		} else {
+			oldCounters.Acknowledged = 0
+			oldCounters.NotAcknowledged = 0
+			oldCounters.NotAcknowledgedUnderPbh = 0
+		}
 	case types.AlarmChangeTypeCreate:
 		currentCounters = &AlarmCounters{}
 		*currentCounters = alarmCounters
@@ -110,7 +124,7 @@ func getAlarmCounters(
 	}
 
 	if pbhCanonicalType == "" || pbhCanonicalType == pbehavior.TypeActive {
-		counters.Alarms = 1
+		counters.Active = 1
 		counters.State = newStateCounters(state)
 
 		if acked {
@@ -122,6 +136,9 @@ func getAlarmCounters(
 		counters.State = newStateCounters(types.AlarmStateOK)
 		counters.PbehaviorCounters = map[string]int64{
 			pbhType: 1,
+		}
+		if !acked {
+			counters.NotAcknowledgedUnderPbh = 1
 		}
 	}
 
@@ -185,7 +202,7 @@ func newStateCounters(state types.CpsNumber) StateCounters {
 	case types.AlarmStateMinor:
 		stateCounters.Minor = 1
 	default:
-		stateCounters.Info = 1
+		stateCounters.Ok = 1
 	}
 
 	return stateCounters
@@ -197,7 +214,7 @@ type StateCounters struct {
 	Critical int64 `bson:"critical"`
 	Major    int64 `bson:"major"`
 	Minor    int64 `bson:"minor"`
-	Info     int64 `bson:"info"`
+	Ok       int64 `bson:"ok"`
 }
 
 // Negate returns a new StateCounters, with all the counters negated.
@@ -206,7 +223,7 @@ func (c StateCounters) Negate() StateCounters {
 		Critical: -c.Critical,
 		Major:    -c.Major,
 		Minor:    -c.Minor,
-		Info:     -c.Info,
+		Ok:       -c.Ok,
 	}
 }
 
@@ -216,7 +233,7 @@ func (c StateCounters) Add(other StateCounters) StateCounters {
 		Critical: c.Critical + other.Critical,
 		Major:    c.Major + other.Major,
 		Minor:    c.Minor + other.Minor,
-		Info:     c.Info + other.Info,
+		Ok:       c.Ok + other.Ok,
 	}
 }
 
@@ -225,26 +242,28 @@ func (c StateCounters) IsZero() bool {
 	return c.Critical == 0 &&
 		c.Major == 0 &&
 		c.Minor == 0 &&
-		c.Info == 0
+		c.Ok == 0
 }
 
 // AlarmCounters is a struct containing various counters that are used to
 // determine a service's state and output.
 type AlarmCounters struct {
 	// All is count of unresolved
-	All int64 `bson:"all"`
-	// Alarms is count of unresolved and active (by pbehavior)
-	Alarms int64         `bson:"active"`
-	State  StateCounters `bson:"state"`
+	All int64 `bson:"all" json:"all"`
+	// Active is count of unresolved and active (by pbehavior)
+	Active int64         `bson:"active" json:"active"`
+	State  StateCounters `bson:"state" json:"state"`
 	// Acknowledged is count of unresolved and acked and active (by pbehavior)
-	Acknowledged int64 `bson:"acked"`
+	Acknowledged int64 `bson:"acked" json:"acked"`
 	// NotAcknowledged is count of unresolved and unacked and active (by pbehavior)
-	NotAcknowledged int64 `bson:"unacked"`
+	NotAcknowledged int64 `bson:"unacked" json:"unacked"`
+	// NotAcknowledgedUnderPbh is count of unresolved and unacked and under pbehavior.
+	NotAcknowledgedUnderPbh int64 `bson:"unacked_under_pbh" json:"unacked_under_pbh"`
 	// PbehaviorCounters contains counters for each pbehavior type.
-	PbehaviorCounters map[string]int64 `bson:"pbehavior"`
-
+	PbehaviorCounters map[string]int64 `bson:"pbehavior" json:"pbehavior"`
+	UnderPbehavior    int64            `bson:"-" json:"under_pbh"`
 	// Depends is used only for output_template.
-	Depends int64 `bson:"-"`
+	Depends int64 `bson:"-" json:"depends"`
 }
 
 // Negate returns a new AlarmCounters, with all the counters negated.
@@ -255,12 +274,13 @@ func (c AlarmCounters) Negate() AlarmCounters {
 	}
 
 	return AlarmCounters{
-		All:               -c.All,
-		Alarms:            -c.Alarms,
-		State:             c.State.Negate(),
-		Acknowledged:      -c.Acknowledged,
-		NotAcknowledged:   -c.NotAcknowledged,
-		PbehaviorCounters: pbehaviorCounters,
+		All:                     -c.All,
+		Active:                  -c.Active,
+		State:                   c.State.Negate(),
+		Acknowledged:            -c.Acknowledged,
+		NotAcknowledged:         -c.NotAcknowledged,
+		NotAcknowledgedUnderPbh: -c.NotAcknowledgedUnderPbh,
+		PbehaviorCounters:       pbehaviorCounters,
 	}
 }
 
@@ -279,12 +299,13 @@ func (c AlarmCounters) Add(other AlarmCounters) AlarmCounters {
 	}
 
 	return AlarmCounters{
-		All:               c.All + other.All,
-		Alarms:            c.Alarms + other.Alarms,
-		State:             c.State.Add(other.State),
-		Acknowledged:      c.Acknowledged + other.Acknowledged,
-		NotAcknowledged:   c.NotAcknowledged + other.NotAcknowledged,
-		PbehaviorCounters: pbehaviorCounters,
+		All:                     c.All + other.All,
+		Active:                  c.Active + other.Active,
+		State:                   c.State.Add(other.State),
+		Acknowledged:            c.Acknowledged + other.Acknowledged,
+		NotAcknowledged:         c.NotAcknowledged + other.NotAcknowledged,
+		NotAcknowledgedUnderPbh: c.NotAcknowledgedUnderPbh + other.NotAcknowledgedUnderPbh,
+		PbehaviorCounters:       pbehaviorCounters,
 	}
 }
 
@@ -298,9 +319,10 @@ func (c AlarmCounters) IsZero() bool {
 		}
 	}
 
-	return c.Alarms == 0 &&
+	return c.Active == 0 &&
 		c.State.IsZero() &&
 		c.Acknowledged == 0 &&
 		c.NotAcknowledged == 0 &&
+		c.NotAcknowledgedUnderPbh == 0 &&
 		ifPbhCountersZero
 }
