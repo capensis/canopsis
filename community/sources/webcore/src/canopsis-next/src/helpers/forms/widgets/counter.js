@@ -44,7 +44,7 @@ export const counterWidgetParametersToForm = (parameters = {}) => ({
   opened: parameters.opened ?? true,
   blockTemplate: parameters.blockTemplate ?? DEFAULT_COUNTER_BLOCK_TEMPLATE,
   columnMobile: parameters.columnMobile ?? 2,
-  columnTablet: parameters.columnTablet ?? 4,
+  columnTablet: parameters.columnTablet ?? 3,
   columnDesktop: parameters.columnDesktop ?? 4,
   heightFactor: parameters.heightFactor ?? 6,
   margin: parameters.margin
