@@ -7,7 +7,6 @@ exports[`text Renders \`text\` widget settings with custom props 1`] = `
     role="list"
   >
     <field-title-stub
-      title="Title"
       value="Text widget"
     />
     <hr
@@ -43,7 +42,6 @@ exports[`text Renders \`text\` widget settings with default props 1`] = `
     role="list"
   >
     <field-title-stub
-      title="Title"
       value=""
     />
     <hr

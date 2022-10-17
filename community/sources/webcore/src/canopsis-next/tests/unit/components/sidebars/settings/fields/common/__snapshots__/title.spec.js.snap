@@ -3,21 +3,30 @@
 exports[`title Renders \`title\` with custom props 1`] = `
 <div
   class="v-list__group"
+  title="Custom title"
 >
   <div
     class="v-list__group__header"
   >
     <div
+      class="widget-settings-item-title"
       role="listitem"
     >
       <div
         class="v-list__tile theme--light"
       >
-        Custom title
+        <div
+          class="validation-header"
+        >
+          Title
+        </div>
         <div
           class="font-italic caption ml-1"
         >
-          (optional)
+          <span>
+            (common.optional)
+          </span>
+          <!---->
         </div>
       </div>
     </div>
@@ -88,16 +97,24 @@ exports[`title Renders \`title\` with default props 1`] = `
     class="v-list__group__header"
   >
     <div
+      class="widget-settings-item-title"
       role="listitem"
     >
       <div
         class="v-list__tile theme--light"
       >
-        
+        <div
+          class="validation-header"
+        >
+          Title
+        </div>
         <div
           class="font-italic caption ml-1"
         >
-          (optional)
+          <span>
+            (common.optional)
+          </span>
+          <!---->
         </div>
       </div>
     </div>

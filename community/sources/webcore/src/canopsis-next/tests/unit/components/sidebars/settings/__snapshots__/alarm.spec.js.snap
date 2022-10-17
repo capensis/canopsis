@@ -7,7 +7,6 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     role="list"
   >
     <field-title-stub
-      title="Title"
       value=""
     />
     <hr
@@ -290,7 +289,6 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     role="list"
   >
     <field-title-stub
-      title="Title"
       value="Alarms list"
     />
     <hr
@@ -560,7 +558,6 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     role="list"
   >
     <field-title-stub
-      title="Title"
       value=""
     />
     <hr
