@@ -14,15 +14,16 @@ import {
   ALARM_LIST_ACTIONS_TYPES,
 } from '@/constants';
 
+import featuresService from '@/services/features';
+
 import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule';
+import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
+import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 
 import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
-
-import featuresService from '@/services/features';
-import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
 
 /**
  * Component to regroup actions (actions-panel-item) for each alarm on the alarms list
@@ -222,9 +223,7 @@ export default {
        */
       if (assignedInstructions.length && filteredActionsMap.executeInstruction) {
         const pausedInstruction = this.item.assigned_instructions.find(instruction => instruction.execution);
-        const hasRunningInstruction = this.item.is_auto_instruction_running
-          || this.item.is_manual_instruction_running
-          || this.item.is_manual_instruction_waiting_result;
+        const hasRunningInstruction = isInstructionExecutionIconInProgress(this.item.instruction_execution_icon);
 
         assignedInstructions.forEach((instruction) => {
           const { execution } = instruction;

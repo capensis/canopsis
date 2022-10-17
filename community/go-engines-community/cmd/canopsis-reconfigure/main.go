@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/signal"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -16,7 +17,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/pgx"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -25,21 +25,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-const (
-	ErrGeneral    = 1
-	ErrRabbitInit = 2
-)
-
-type Conf struct {
-	RabbitMQ    config.RabbitMQConf    `toml:"RabbitMQ"`
-	Canopsis    config.CanopsisConf    `toml:"Canopsis"`
-	Remediation config.RemediationConf `toml:"Remediation"`
-	HealthCheck config.HealthCheckConf `toml:"HealthCheck"`
-}
-
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 
 	f := flags{}
 	f.Parse()
@@ -51,128 +39,156 @@ func main() {
 
 	logger := log.NewLogger(f.modeDebug)
 	conf, err := parseConfig(f, logger)
-	utils.FailOnError(err, "Failed to parse config")
-
-	err = GracefullStart(ctx, logger)
-	utils.FailOnError(err, "Failed to open one of required sessions")
-
-	if f.modeMigratePostgres {
-		if f.postgresMigrationDirectory == "" {
-			logger.Error().Msg("-postgres-migration-directory is not set")
-			os.Exit(ErrGeneral)
-		}
-
-		logger.Info().Msg("Start postgres migrations")
-
-		err = runPostgresMigrations(f.postgresMigrationDirectory, f.postgresMigrationMode, f.postgresMigrationSteps)
-		if err != nil {
-			utils.FailOnError(err, "Failed to migrate")
-		}
-
-		logger.Info().Msg("Finish postgres migrations")
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to parse config")
 	}
 
+	err = GracefulStart(ctx, f.modeMigratePostgres, f.modeMigrateTechPostgres, logger)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to open one of required sessions")
+	}
+
+	err = initRabbitMQ(conf, logger)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to initialize rabbitmq")
+	}
+
+	client, err := mongo.NewClient(ctx, 0, 0, logger)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to connect to mongo")
+	}
+	defer func() {
+		err = client.Disconnect(context.Background())
+		if err != nil {
+			logger.Err(err).Msg("failed to close mongo")
+		}
+	}()
+
+	err = applyMongoFixtures(ctx, f, client, logger)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to run mongo fixtures")
+	}
+
+	err = updateMongoConfig(ctx, f, conf, client)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to update config in mongo")
+	}
+
+	err = migrateMongo(ctx, f, client, logger)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to run mongo migrations")
+	}
+
+	err = migratePostgres(f, logger)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to run postgres migrations")
+	}
+
+	err = migrateTechPostgres(f, logger)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to run tech postgres migrations")
+	}
+}
+
+type Conf struct {
+	RabbitMQ    config.RabbitMQConf    `toml:"RabbitMQ"`
+	Canopsis    config.CanopsisConf    `toml:"Canopsis"`
+	Remediation config.RemediationConf `toml:"Remediation"`
+	HealthCheck config.HealthCheckConf `toml:"HealthCheck"`
+}
+
+func initRabbitMQ(conf Conf, logger zerolog.Logger) error {
 	amqpConn, err := amqp.NewConnection(logger, 0, 0)
-	utils.FailOnError(err, "Failed to open amqp")
+	if err != nil {
+		return fmt.Errorf("failed to open amqp: %w", err)
+	}
+
 	defer func() {
 		err = amqpConn.Close()
 		if err != nil {
-			logger.Err(err).Msg("cannot close rmq session")
+			logger.Err(err).Msg("cannot close amqp session")
 		}
 	}()
 
 	ch, err := amqpConn.Channel()
-	utils.FailOnError(err, "Failed to open amqp channel")
+	if err != nil {
+		return fmt.Errorf("failed to open amqp channel: %w", err)
+	}
 
-	logger.Info().Msg("Initialising RabbitMQ exchanges")
+	logger.Info().Msg("initialising rabbitmq exchanges")
+
 	for _, exchange := range conf.RabbitMQ.Exchanges {
-
-		err := ch.ExchangeDeclare(exchange.Name,
+		err := ch.ExchangeDeclare(
+			exchange.Name,
 			exchange.Kind,
 			exchange.Durable,
 			exchange.AutoDelete,
 			exchange.Internal,
 			exchange.NoWait,
-			exchange.Args)
+			exchange.Args,
+		)
 		if err != nil {
-			logger.Error().Err(err).Int("exit status", 2).Msgf("Can not initialise exchange %s", exchange.Name)
-			os.Exit(ErrRabbitInit)
+			return fmt.Errorf("cannot initialise exchange %q: %w", exchange.Name, err)
 		}
-		logger.Info().Msgf("Exchange \"%s\" created.", exchange.Name)
+		logger.Info().Msgf("exchange %q created", exchange.Name)
 	}
 
-	logger.Info().Msg("Initialising RabbitMQ queues")
+	logger.Info().Msg("initialising rabbitmq queues")
 	for _, queue := range conf.RabbitMQ.Queues {
-
-		_, err := ch.QueueDeclare(queue.Name,
+		_, err := ch.QueueDeclare(
+			queue.Name,
 			queue.Durable,
 			queue.AutoDelete,
 			queue.Exclusive,
 			queue.NoWait,
-			queue.Args)
-
+			queue.Args,
+		)
 		if err != nil {
-			logger.Error().Err(err).Int("exit status", 2).Msgf("Can not initialise queue %s", queue.Name)
-			os.Exit(ErrRabbitInit)
+			return fmt.Errorf("cannot initialise queue %q: %w", queue.Name, err)
 		}
-
-		logger.Info().Msgf("Queue \"%s\" created.", queue.Name)
+		logger.Info().Msgf("queue %q created", queue.Name)
 
 		if queue.Bind != nil {
-
-			err := ch.QueueBind(queue.Name,
+			err := ch.QueueBind(
+				queue.Name,
 				queue.Bind.Key,
 				queue.Bind.Exchange,
 				queue.Bind.NoWait,
-				queue.Bind.Args)
-
+				queue.Bind.Args,
+			)
 			if err != nil {
-				logger.Error().Err(err).Int("exit status", 2).Msgf("Can not bind queue %s to exchange %s %v", queue.Name, queue.Bind.Exchange, err)
-				os.Exit(ErrRabbitInit)
+				return fmt.Errorf("cannot bind queue %q to exchange %q: %w", queue.Name, queue.Bind.Exchange, err)
 			}
-			logger.Info().Msgf("\"%s\" bind to \"%s\" exchange with \"%s\" routing key.\n",
-				queue.Name,
-				queue.Bind.Exchange,
-				queue.Bind.Key)
+			logger.Info().Msgf("%q bind to %q exchange with %q routing key", queue.Name, queue.Bind.Exchange, queue.Bind.Key)
 		}
-
 	}
 
-	client, err := mongo.NewClient(ctx, 0, 0, logger)
-	utils.FailOnError(err, "Failed to create mongo session")
-	defer func() {
-		err = client.Disconnect(context.Background())
-		if err != nil {
-			logger.Err(err).Msg("cannot close mongo session")
-		}
-	}()
+	return nil
+}
 
-	collections, err := client.ListCollectionNames(ctx, bson.M{})
-	utils.FailOnError(err, "Failed to apply fixtures")
-	if len(collections) == 0 {
-		logger.Info().Msg("Start fixtures")
-		loader := fixtures.NewLoader(client, []string{f.mongoFixtureDirectory},
-			fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), logger)
-		err = loader.Load(ctx)
-		utils.FailOnError(err, "Failed to apply fixtures")
-		logger.Info().Msg("Finish fixtures")
+func applyMongoFixtures(ctx context.Context, f flags, dbClient mongo.DbClient, logger zerolog.Logger) error {
+	if f.mongoFixtureDirectory == "" {
+		return fmt.Errorf("-mongo-fixture-directory is not set")
 	}
 
-	err = updateMongoConfig(ctx, f, conf, client)
-	utils.FailOnError(err, "Failed to save config into mongo")
-
-	if f.modeMigrateMongo {
-		if f.mongoMigrationDirectory == "" {
-			logger.Error().Msg("-mongo-migration-directory is not set")
-			os.Exit(ErrGeneral)
-		}
-
-		logger.Info().Msg("Start migrations")
-		cmd := cli.NewUpCmd(f.mongoMigrationDirectory, "", client, mongo.NewScriptExecutor(), logger)
-		err = cmd.Exec(ctx)
-		utils.FailOnError(err, "Failed to migrate")
-		logger.Info().Msg("Finish migrations")
+	collections, err := dbClient.ListCollectionNames(ctx, bson.M{})
+	if err != nil {
+		return err
 	}
+	if len(collections) > 0 {
+		return nil
+	}
+
+	logger.Info().Msg("start mongo fixtures")
+	loader := fixtures.NewLoader(dbClient, []string{f.mongoFixtureDirectory},
+		fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), logger)
+	err = loader.Load(ctx)
+	if err != nil {
+		return err
+	}
+
+	logger.Info().Msg("finish mongo fixtures")
+	return nil
 }
 
 func updateMongoConfig(ctx context.Context, f flags, conf Conf, dbClient mongo.DbClient) error {
@@ -211,12 +227,74 @@ func updateMongoConfig(ctx context.Context, f flags, conf Conf, dbClient mongo.D
 	return nil
 }
 
-func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
+func migrateMongo(ctx context.Context, f flags, dbClient mongo.DbClient, logger zerolog.Logger) error {
+	if !f.modeMigrateMongo {
+		return nil
+	}
+
+	if f.mongoMigrationDirectory == "" {
+		return fmt.Errorf("-mongo-migration-directory is not set")
+	}
+
+	logger.Info().Msg("start mongo migrations")
+	cmd := cli.NewUpCmd(f.mongoMigrationDirectory, "", dbClient, mongo.NewScriptExecutor(), logger)
+	err := cmd.Exec(ctx)
+	if err != nil {
+		return err
+	}
+	logger.Info().Msg("finish mongo migrations")
+	return nil
+}
+
+func migratePostgres(f flags, logger zerolog.Logger) error {
+	if !f.modeMigratePostgres {
+		return nil
+	}
+	if f.postgresMigrationDirectory == "" {
+		return fmt.Errorf("-postgres-migration-directory is not set")
+	}
+
+	logger.Info().Msg("start postgres migrations")
+
 	connStr, err := postgres.GetConnStr()
 	if err != nil {
 		return err
 	}
 
+	err = runPostgresMigrations(f.postgresMigrationDirectory, f.postgresMigrationMode, f.postgresMigrationSteps, connStr)
+	if err != nil {
+		return err
+	}
+
+	logger.Info().Msg("finish postgres migrations")
+	return nil
+}
+
+func migrateTechPostgres(f flags, logger zerolog.Logger) error {
+	if !f.modeMigrateTechPostgres {
+		return nil
+	}
+	if f.techPostgresMigrationDirectory == "" {
+		return fmt.Errorf("-tech-postgres-migration-directory is not set")
+	}
+
+	logger.Info().Msg("start tech postgres migrations")
+
+	connStr, err := postgres.GetTechConnStr()
+	if err != nil {
+		return err
+	}
+
+	err = runPostgresMigrations(f.techPostgresMigrationDirectory, f.techPostgresMigrationMode, f.techPostgresMigrationSteps, connStr)
+	if err != nil {
+		return err
+	}
+
+	logger.Info().Msg("finish tech postgres migrations")
+	return nil
+}
+
+func runPostgresMigrations(migrationDirectory, mode string, steps int, connStr string) error {
 	p := &pgx.Postgres{}
 	driver, err := p.Open(connStr)
 	if err != nil {

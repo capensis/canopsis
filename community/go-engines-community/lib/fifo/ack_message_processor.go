@@ -2,9 +2,11 @@ package fifo
 
 import (
 	"context"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -12,9 +14,12 @@ import (
 
 type ackMessageProcessor struct {
 	FeaturePrintEventOnError bool
-	Scheduler                scheduler.Scheduler
-	Decoder                  encoding.Decoder
-	Logger                   zerolog.Logger
+
+	Scheduler scheduler.Scheduler
+	Decoder   encoding.Decoder
+	Logger    zerolog.Logger
+
+	TechMetricsSender techmetrics.Sender
 }
 
 func (p *ackMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte, error) {
@@ -25,6 +30,16 @@ func (p *ackMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		p.logError(err, "cannot decode event", msg)
 		return nil, nil
 	}
+
+	defer func() {
+		if event.ReceivedTimestamp.Time.Unix() > 0 {
+			p.TechMetricsSender.SendSimpleEvent(techmetrics.CanopsisEvent, techmetrics.EventMetric{
+				Timestamp: event.ReceivedTimestamp.Time,
+				EventType: event.EventType,
+				Interval:  time.Since(event.ReceivedTimestamp.Time),
+			})
+		}
+	}()
 
 	p.Logger.Debug().Msgf("valid input event: %v", string(msg))
 	err = p.Scheduler.AckEvent(ctx, event)

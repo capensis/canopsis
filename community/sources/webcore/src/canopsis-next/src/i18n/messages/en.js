@@ -37,6 +37,9 @@ import {
   WEATHER_ACTIONS_TYPES,
   MAP_TYPES,
   MERMAID_THEMES,
+  EVENT_FILTER_EXTERNAL_DATA_TYPES,
+  EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
+  EVENT_FILTER_PATTERN_FIELDS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -274,6 +277,10 @@ export default merge({
     tag: 'Tag | Tags',
     sharedTokens: 'Shared tokens',
     notAvailable: 'N/a',
+    addMore: 'Add more',
+    attribute: 'Attribute',
+    timeTaken: 'Time taken',
+    enginesMetrics: 'Engines` metrics',
     failed: 'Failed',
     close: 'Close',
     actions: {
@@ -677,12 +684,13 @@ export default merge({
     infoPopup: 'Info popup',
     tooltips: {
       priority: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
-      hasInstruction: 'There is an instruction for this type of incidents',
-      hasManualInstructionInRunning: 'Manual instruction in progress',
-      hasAutoInstructionInRunning: 'Automatic instruction in progress',
-      allAutoInstructionExecuted: 'All automatic instructions has been executed',
-      awaitingInstructionComplete: 'Awaiting for the instruction to complete',
-      autoInstructionsFailed: 'Automatic instructions failed',
+      runningManualInstructions: 'Manual instruction <strong>{title}</strong> in progress | Manual instructions <strong>{title}</strong> in progress',
+      runningAutoInstructions: 'Automatic instruction <strong>{title}</strong> in progress | Automatic instructions <strong>{title}</strong> in progress',
+      successfulManualInstructions: 'Manual instruction <strong>{title}</strong> is successful | Manual instructions <strong>{title}</strong> is successful',
+      successfulAutoInstructions: 'Automatic instruction <strong>{title}</strong> is successful | Automatic instructions <strong>{title}</strong> is successful',
+      failedManualInstructions: 'Manual instruction <strong>{title}</strong> is failed | Manual instructions <strong>{title}</strong> is failed',
+      failedAutoInstructions: 'Automatic instruction <strong>{title}</strong> is failed | Automatic instructions <strong>{title}</strong> is failed',
+      hasManualInstruction: 'There is a manual instruction for this type of an incident | There are a manual instructions for this type of an incident',
     },
     metrics: {
       [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',
@@ -2001,6 +2009,20 @@ export default merge({
     connector: 'Connector ID or template',
     connectorName: 'Connector name or template',
     duringPeriod: 'Applied during this period only',
+    enrichmentOptions: 'Enrichment options',
+    changeEntityOptions: 'Change entity options',
+    noExternalData: 'No external data added yet',
+    addExternalData: 'Add external data',
+    reference: 'Reference',
+    collection: 'Collection',
+    externalDataTypes: {
+      [EVENT_FILTER_EXTERNAL_DATA_TYPES.mongo]: 'MongoDB collection',
+      [EVENT_FILTER_EXTERNAL_DATA_TYPES.api]: 'API',
+    },
+    externalDataConditionTypes: {
+      [EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES.select]: 'Select',
+      [EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES.regexp]: 'Regexp',
+    },
     types: {
       [EVENT_FILTER_TYPES.drop]: 'Drop',
       [EVENT_FILTER_TYPES.break]: 'Break',
@@ -2015,6 +2037,7 @@ export default merge({
       removeRuleField: 'Remove rule field',
       copyFromHelp: '<p>The accessible variables are: <strong>Event</strong></p>'
         + '<i>For example:</i> <span>"Event.ExtraInfos.datecustom"</span>',
+      reference: 'Will be used in actions as <strong>.ExternalData.&lt;Reference&gt;</strong>',
     },
     actionsTypes: {
       [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
@@ -2047,6 +2070,14 @@ export default merge({
         message: 'This action allows you to modify an event field from a template.',
         description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the template used to determine the value of the field.\n Templates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
       },
+    },
+    externalDataValues: {
+      [EVENT_FILTER_PATTERN_FIELDS.component]: 'Component',
+      [EVENT_FILTER_PATTERN_FIELDS.connector]: 'Connector',
+      [EVENT_FILTER_PATTERN_FIELDS.connectorName]: 'Connector name',
+      [EVENT_FILTER_PATTERN_FIELDS.resource]: 'Resource',
+      [EVENT_FILTER_PATTERN_FIELDS.output]: 'Output',
+      [EVENT_FILTER_PATTERN_FIELDS.extraInfos]: 'Extra infos',
     },
   },
   metaAlarmRule: {
@@ -2723,7 +2754,6 @@ export default merge({
     xmlFeed: 'XML feed',
     hostname: 'Host name',
     lastUpdate: 'Last update',
-    timeTaken: 'Time taken',
     totalTests: 'Total tests',
     disabledTests: 'Tests disabled',
     copyMessage: 'Copy system message',
@@ -3221,5 +3251,11 @@ export default merge({
     revokeToken: 'Revoke token',
     revokeSelectedTokens: 'Revoke selected tokens',
     tokenExpiration: 'Token expiration',
+  },
+
+  techMetric: {
+    noDumps: 'No dumps available. Generate a new dump?',
+    generateDump: 'Generate a new dump',
+    downloadDump: 'Download dump',
   },
 }, featureService.get('i18n.en'));
