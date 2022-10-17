@@ -37,6 +37,7 @@ import {
   WEATHER_ACTIONS_TYPES,
   MAP_TYPES,
   MERMAID_THEMES,
+  SERVICE_WEATHER_STATE_COUNTERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2187,6 +2188,18 @@ export default merge({
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+    },
+    stateCounters: {
+      [SERVICE_WEATHER_STATE_COUNTERS.alarms]: 'Nombre d\'alarmes',
+      [SERVICE_WEATHER_STATE_COUNTERS.dependencies]: 'Nombre de dépendances',
+      [SERVICE_WEATHER_STATE_COUNTERS.ok]: 'Ok',
+      [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'Sous PBehavior',
+      [SERVICE_WEATHER_STATE_COUNTERS.minor]: 'Mineur',
+      [SERVICE_WEATHER_STATE_COUNTERS.major]: 'Majeur',
+      [SERVICE_WEATHER_STATE_COUNTERS.critical]: 'Critique',
+      [SERVICE_WEATHER_STATE_COUNTERS.acknowledged]: 'Acquitter',
+      [SERVICE_WEATHER_STATE_COUNTERS.notAcknowledged]: 'Non Acquitter',
+      [SERVICE_WEATHER_STATE_COUNTERS.acknowledgedUnderPbehavior]: 'Acquitter sous PBehavior',
     },
   },
   contextGeneralTable: {
