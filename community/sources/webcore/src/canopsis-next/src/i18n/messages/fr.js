@@ -680,9 +680,9 @@ export default merge({
     infoPopup: 'Info popup',
     tooltips: {
       priority: 'Le paramètre de priorité est dérivé de la gravité de l\'alarme multipliée par le niveau d\'impact de l\'entité sur laquelle l\'alarme est déclenchée',
-      runningManualInstructions: 'Consignes manuelle {titre} en cours',
-      runningAutoInstructions: 'Consignes automatique {title} en cours',
-      successfulManualInstructions: 'Consignes manuelle {title} réussie',
+      runningManualInstructions: 'Consignes manuelle <strong>{title}</strong> en cours',
+      runningAutoInstructions: 'Consignes automatique <strong>{title}</strong> en cours',
+      successfulManualInstructions: 'Consignes manuelle <strong>{title}</strong> réussie',
       successfulAutoInstructions: 'Consignes automatiques <strong>{title}</strong> réussies',
       failedManualInstructions: 'Consignes manuelles <strong>{title}</strong> en échec',
       failedAutoInstructions: 'Consignes automatiques <strong>{title}</strong> en échec',
