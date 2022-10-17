@@ -10,21 +10,21 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
     <div
       class="layout row align-center justify-space-between"
     >
-      <v-checkbox-functional-stub
-        hidedetails="true"
-        inputvalue="true"
-        label=""
-      />
-      <!---->
       <div
-        class="layout align-center ml-3"
+        class="layout alarm-list-row__checkbox"
       >
-        <alarms-expand-panel-btn-stub
-          alarm="[object Object]"
-          istourenabled="true"
-          widget="[object Object]"
+        <v-checkbox-functional-stub
+          hidedetails="true"
+          inputvalue="true"
+          label=""
         />
       </div>
+      <!---->
+      <alarms-expand-panel-btn-stub
+        alarm="[object Object]"
+        istourenabled="true"
+        widget="[object Object]"
+      />
     </div>
   </td>
   <td>
@@ -98,16 +98,16 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
     <div
       class="layout row align-center justify-space-between"
     >
-      <!---->
-      <!---->
       <div
-        class="layout align-center ml-3"
+        class="layout alarm-list-row__checkbox"
       >
-        <alarms-expand-panel-btn-stub
-          alarm="[object Object]"
-          widget="[object Object]"
-        />
+        <!---->
       </div>
+      <!---->
+      <alarms-expand-panel-btn-stub
+        alarm="[object Object]"
+        widget="[object Object]"
+      />
     </div>
   </td>
   <td>
@@ -145,9 +145,13 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
     <div
       class="layout row align-center justify-space-between"
     >
-      <!---->
       <div
-        class="layout align-center"
+        class="layout alarm-list-row__checkbox"
+      >
+        <!---->
+      </div>
+      <div
+        class="layout align-center justify-center"
       >
         <alarms-list-row-icon-stub
           alarm="[object Object]"
@@ -177,9 +181,13 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
     <div
       class="layout row align-center justify-space-between"
     >
-      <!---->
       <div
-        class="layout align-center"
+        class="layout alarm-list-row__checkbox"
+      >
+        <!---->
+      </div>
+      <div
+        class="layout align-center justify-center"
       >
         <alarms-list-row-icon-stub
           alarm="[object Object]"
@@ -209,11 +217,15 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
     <div
       class="layout row align-center justify-space-between"
     >
-      <v-checkbox-functional-stub
-        disabled="true"
-        hidedetails="true"
-        label=""
-      />
+      <div
+        class="layout alarm-list-row__checkbox"
+      >
+        <v-checkbox-functional-stub
+          disabled="true"
+          hidedetails="true"
+          label=""
+        />
+      </div>
       <!---->
       <!---->
     </div>
