@@ -39,8 +39,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"depends": 0,
 		"impact":  0,
@@ -101,8 +101,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"depends": 0,
 		"impact":  0,
@@ -163,8 +163,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"depends": 0,
 		"impact":  0,
@@ -228,7 +228,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"depends": 0,
 		"impact":  0,
@@ -240,6 +239,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	}
 	expected = append(expected, getAlarmLookup()...)
+	expected = append(expected, getPbehaviorInfoTypeLookup()...)
 	expected = append(expected, getPbehaviorAlarmCountersLookup()...)
 	expected = append(expected, []bson.M{
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
@@ -300,8 +300,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expected = append(expected, getCategoryLookup()...)
 	expected = append(expected, getAlarmLookup()...)
 	expected = append(expected, getPbehaviorLookup()...)
-	expected = append(expected, getPbehaviorAlarmCountersLookup()...)
 	expected = append(expected, getPbehaviorInfoTypeLookup()...)
+	expected = append(expected, getPbehaviorAlarmCountersLookup()...)
 	expected = append(expected, []bson.M{
 		{"$match": bson.M{"$and": []bson.M{
 			{"type": "resource"},
@@ -345,8 +345,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSortByS
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorAlarmCountersLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"depends": 0,
 		"impact":  0,
@@ -428,7 +428,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
 		"depends": 0,
 		"impact":  0,
@@ -443,6 +442,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 		}}}}},
 	}
 	expected = append(expected, getAlarmLookup()...)
+	expected = append(expected, getPbehaviorInfoTypeLookup()...)
 	expected = append(expected, getPbehaviorAlarmCountersLookup()...)
 	expected = append(expected, []bson.M{
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
