@@ -28,17 +28,19 @@
           v-divider
           field-grid-size(
             v-model="form.parameters.columnSM",
-            :title="$t('settings.columnSM')"
+            :title="$t('settings.columnMobile')",
+            mobile
           )
           v-divider
           field-grid-size(
             v-model="form.parameters.columnMD",
-            :title="$t('settings.columnMD')"
+            :title="$t('settings.columnTablet')",
+            tablet
           )
           v-divider
           field-grid-size(
             v-model="form.parameters.columnLG",
-            :title="$t('settings.columnLG')"
+            :title="$t('settings.columnDesktop')"
           )
           v-divider
           margins-form(v-model="form.parameters.margin")
