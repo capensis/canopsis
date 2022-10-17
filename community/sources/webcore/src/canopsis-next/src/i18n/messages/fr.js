@@ -680,12 +680,12 @@ export default merge({
     infoPopup: 'Info popup',
     tooltips: {
       priority: 'Le paramètre de priorité est dérivé de la gravité de l\'alarme multipliée par le niveau d\'impact de l\'entité sur laquelle l\'alarme est déclenchée',
-      runningManualInstructions: 'Consignes manuelle <strong>{title}</strong> en cours',
-      runningAutoInstructions: 'Consignes automatique <strong>{title}</strong> en cours',
-      successfulManualInstructions: 'Consignes manuelle <strong>{title}</strong> réussie',
-      successfulAutoInstructions: 'Consignes automatiques <strong>{title}</strong> réussies',
-      failedManualInstructions: 'Consignes manuelles <strong>{title}</strong> en échec',
-      failedAutoInstructions: 'Consignes automatiques <strong>{title}</strong> en échec',
+      runningManualInstructions: 'Consigne manuelle <strong>{title}</strong> en cours | Consignes manuelles <strong>{title}</strong> en cours',
+      runningAutoInstructions: 'Consigne automatique <strong>{title}</strong> en cours | Consignes automatiques <strong>{title}</strong> en cours',
+      successfulManualInstructions: 'Consigne manuelle <strong>{title}</strong> réussie | Consignes manuelles <strong>{title}</strong> réussie',
+      successfulAutoInstructions: 'Consigne automatique <strong>{title}</strong> réussies | Consignes automatiques <strong>{title}</strong> réussies',
+      failedManualInstructions: 'Consigne manuelle <strong>{title}</strong> en échec | Consignes manuelles <strong>{title}</strong> en échec',
+      failedAutoInstructions: 'Consigne automatique <strong>{title}</strong> en échec | Consignes automatiques <strong>{title}</strong> en échec',
       hasManualInstruction: 'There is a manual instruction for this type of an incident',
     },
     metrics: {

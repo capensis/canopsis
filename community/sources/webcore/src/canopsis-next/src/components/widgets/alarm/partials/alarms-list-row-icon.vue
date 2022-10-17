@@ -98,7 +98,11 @@ export default {
         successfulAutoInstructions,
       }).reduce((acc, [key, instructions]) => {
         if (instructions?.length) {
-          acc.push(this.$t(`alarmList.tooltips.${key}`, { title: instructions.join(', ') }));
+          acc.push(this.$tc(
+            `alarmList.tooltips.${key}`,
+            instructions.length,
+            { title: instructions.join(', ') },
+          ));
         }
 
         return acc;
