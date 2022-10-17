@@ -76,7 +76,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 		{key: "category", pipeline: getCategoryLookup()},
 		{key: "alarm", pipeline: getAlarmLookup()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup()},
-		{key: "alarm_counters", pipeline: getPbehaviorAlarmCountersLookup()},
+		{key: "counters", pipeline: getPbehaviorAlarmCountersLookup()},
 		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
 	}
 	err := q.handleWidgetFilter(ctx, r)
@@ -216,7 +216,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 			if filter.WeatherServicePattern.HasField("is_grey") ||
 				filter.WeatherServicePattern.HasField("icon") ||
 				filter.WeatherServicePattern.HasField("secondary_icon") {
-				q.lookupsForAdditionalMatch["alarm_counters"] = true
+				q.lookupsForAdditionalMatch["counters"] = true
 			}
 			q.additionalMatch = append(q.additionalMatch, bson.M{"$match": weatherPatternQuery})
 		}
@@ -407,19 +407,21 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 	}
 
 	return []bson.M{
-		{"$addFields": bson.M{"pbh_types": bson.M{"$ifNull": bson.A{
-			bson.M{"$map": bson.M{
-				"input": bson.M{"$objectToArray": "$alarms_cumulative_data.watched_pbehavior_count"},
-				"in":    "$$this.k",
+		{"$addFields": bson.M{
+			"pbh_types": bson.M{"$ifNull": bson.A{
+				bson.M{"$map": bson.M{
+					"input": bson.M{"$objectToArray": "$counters.pbehavior"},
+					"in":    "$$this.k",
+				}},
+				[]int{-1},
 			}},
-			[]int{-1},
-		}}}},
+		}},
 		{"$lookup": bson.M{
 			"from": mongo.PbehaviorTypeMongoCollection,
-			"as":   "alarm_counters",
+			"as":   "pbh_types_counters",
 			"let": bson.M{
 				"pbh_types":  "$pbh_types",
-				"cumulative": bson.M{"$objectToArray": "$alarms_cumulative_data.watched_pbehavior_count"},
+				"cumulative": bson.M{"$objectToArray": "$counters.pbehavior"},
 			},
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$expr": bson.M{"$in": []string{"$_id", "$$pbh_types"}}}},
@@ -441,35 +443,33 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 		}},
 		{"$project": bson.M{"pbh_types": 0}},
 		{"$project": bson.M{
-			"_id":            "$_id",
-			"alarm_counters": "$alarm_counters",
-			"data":           "$$ROOT",
+			"_id":                "$_id",
+			"pbh_types_counters": "$pbh_types_counters",
+			"data":               "$$ROOT",
 		}},
 		{"$replaceRoot": bson.M{
 			"newRoot": bson.M{"$mergeObjects": bson.A{
 				"$data",
-				bson.M{"alarm_counters": bson.M{"$filter": bson.M{
-					"input": "$alarm_counters",
-					"cond":  bson.M{"$gt": bson.A{"$$this.count", 0}},
+				bson.M{"counters": bson.M{"$mergeObjects": bson.A{
+					"$data.counters",
+					bson.M{"pbh_types": bson.M{"$filter": bson.M{
+						"input": "$pbh_types_counters",
+						"cond":  bson.M{"$gt": bson.A{"$$this.count", 0}},
+					}}},
 				}}},
 			}},
 		}},
 		{"$addFields": bson.M{
-			"depends_count": bson.M{"$size": "$depends"},
+			"counters.depends": bson.M{"$size": "$depends"},
 			"has_open_alarm": bson.M{"$cond": bson.M{
-				"if":   bson.M{"$gt": bson.A{"$alarms_cumulative_data.watched_not_acked_count", 0}},
+				"if":   bson.M{"$gt": bson.A{"$counters.unacked", 0}},
 				"then": true,
 				"else": false,
 			}},
-			"watched_inactive_count": bson.M{"$sum": bson.M{
+			"counters.under_pbh": bson.M{"$sum": bson.M{
 				"$map": bson.M{
-					"input": bson.M{
-						"$filter": bson.M{
-							"input": "$alarm_counters",
-							"cond":  bson.M{"$in": bson.A{"$$this.type.type", bson.A{pbehaviorlib.TypeMaintenance, pbehaviorlib.TypePause, pbehaviorlib.TypeInactive}}},
-						},
-					},
-					"in": "$$this.count",
+					"input": "$counters.pbh_types",
+					"in":    "$$this.count",
 				},
 			}},
 			"watched_pbehavior_type": bson.M{"$switch": bson.M{
@@ -477,7 +477,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 					{
 						"case": bson.M{"$ne": bson.A{bson.A{}, bson.M{
 							"$filter": bson.M{
-								"input": "$alarm_counters",
+								"input": "$counters.pbh_types",
 								"cond":  bson.M{"$eq": bson.A{"$$this.type.type", pbehaviorlib.TypeMaintenance}},
 							},
 						}}},
@@ -486,7 +486,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 					{
 						"case": bson.M{"$ne": bson.A{bson.A{}, bson.M{
 							"$filter": bson.M{
-								"input": "$alarm_counters",
+								"input": "$counters.pbh_types",
 								"cond":  bson.M{"$eq": bson.A{"$$this.type.type", pbehaviorlib.TypePause}},
 							},
 						}}},
@@ -495,7 +495,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 					{
 						"case": bson.M{"$ne": bson.A{bson.A{}, bson.M{
 							"$filter": bson.M{
-								"input": "$alarm_counters",
+								"input": "$counters.pbh_types",
 								"cond":  bson.M{"$eq": bson.A{"$$this.type.type", pbehaviorlib.TypeInactive}},
 							},
 						}}},
@@ -520,8 +520,8 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 						// If all watched alarms are not active return most priority pbehavior type of watched alarms.
 						{
 							"case": bson.M{"$and": []bson.M{
-								{"$gt": bson.A{"$watched_inactive_count", 0}},
-								{"$eq": bson.A{"$watched_inactive_count", "$depends_count"}},
+								{"$gt": bson.A{"$counters.under_pbh", 0}},
+								{"$eq": bson.A{"$counters.under_pbh", "$counters.depends"}},
 							}},
 							"then": "$watched_pbehavior_type",
 						},
@@ -542,8 +542,8 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 					},
 					{
 						"case": bson.M{"$and": []bson.M{
-							{"$gt": bson.A{"$watched_inactive_count", 0}},
-							{"$eq": bson.A{"$watched_inactive_count", "$depends_count"}},
+							{"$gt": bson.A{"$counters.under_pbh", 0}},
+							{"$eq": bson.A{"$counters.under_pbh", "$counters.depends"}},
 						}},
 						"then": true,
 					},
@@ -555,8 +555,8 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 					{
 						// If only some watched alarms are not active return most priority pbehavior type of watched alarms.
 						"case": bson.M{"$and": []bson.M{
-							{"$gt": bson.A{"$watched_inactive_count", 0}},
-							{"$lt": bson.A{"$watched_inactive_count", "$depends_count"}},
+							{"$gt": bson.A{"$counters.under_pbh", 0}},
+							{"$lt": bson.A{"$counters.under_pbh", "$counters.depends"}},
 						}},
 						"then": "$watched_pbehavior_type",
 					},
@@ -565,9 +565,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 			}},
 		}},
 		{"$project": bson.M{
-			"watched_inactive_count": 0,
 			"watched_pbehavior_type": 0,
-			"alarms_cumulative_data": 0,
 		}},
 	}
 }
