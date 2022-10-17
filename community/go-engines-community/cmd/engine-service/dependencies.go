@@ -39,6 +39,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 	mongoClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
+	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	redisSession := m.DepRedisSession(ctx, redis.CacheService, logger, cfg)
@@ -61,6 +62,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		entityservice.NewStorage(entityservice.NewAdapter(mongoClient), redisSession, json.NewEncoder(), json.NewDecoder(), logger),
 		serviceLockClient,
 		redisSession,
+		timezoneConfigProvider,
 		logger,
 	)
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
@@ -232,6 +234,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		config.NewAdapter(mongoClient),
 		logger,
 		techMetricsConfigProvider,
+		timezoneConfigProvider,
 	))
 
 	return engineService

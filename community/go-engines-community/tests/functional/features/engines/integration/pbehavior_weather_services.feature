@@ -6,14 +6,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-1",
+      "connector": "test-connector-pbehavior-weather-service-1",
       "connector_name": "test-connector-name-pbehavior-weather-service-1",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-1",
-      "resource" : "test-resource-pbehavior-weather-service-1",
-      "state" : 2,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-1",
+      "resource": "test-resource-pbehavior-weather-service-1",
+      "state": 2,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of event processing
@@ -99,18 +99,33 @@ Feature: get service weather
           "icon": "maintenance",
           "secondary_icon": "",
           "is_grey": true,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "type": "maintenance"
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 0,
+            "state": {
+              "ok": 1,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 1,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -127,14 +142,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-2",
+      "connector": "test-connector-pbehavior-weather-service-2",
       "connector_name": "test-connector-name-pbehavior-weather-service-2",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-2",
-      "resource" : "test-resource-pbehavior-weather-service-2",
-      "state" : 2,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-2",
+      "resource": "test-resource-pbehavior-weather-service-2",
+      "state": 2,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of event processing
@@ -220,7 +235,22 @@ Feature: get service weather
           "icon": "major",
           "secondary_icon": "",
           "is_grey": false,
-          "alarm_counters": []
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 1,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 1,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 1,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          }
         }
       ],
       "meta": {
@@ -233,32 +263,32 @@ Feature: get service weather
     """
 
   Scenario: given dependency with maintenance pbehavior
-    and dependency without pbehavior should get secondary maintenance icon
+  and dependency without pbehavior should get secondary maintenance icon
     Given I am admin
     When I send an event:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-3",
+      "connector":  "test-connector-pbehavior-weather-service-3",
       "connector_name": "test-connector-name-pbehavior-weather-service-3",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-3",
-      "resource" : "test-resource-pbehavior-weather-service-3-1",
-      "state" : 3,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-3",
+      "resource": "test-resource-pbehavior-weather-service-3-1",
+      "state": 3,
+      "output": "noveo alarm"
     }
     """
     When I send an event:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-3",
+      "connector":  "test-connector-pbehavior-weather-service-3",
       "connector_name": "test-connector-name-pbehavior-weather-service-3",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-3",
-      "resource" : "test-resource-pbehavior-weather-service-3-2",
-      "state" : 2,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-3",
+      "resource": "test-resource-pbehavior-weather-service-3-2",
+      "state": 2,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of 2 events processing
@@ -347,18 +377,33 @@ Feature: get service weather
           "icon": "major",
           "secondary_icon": "maintenance",
           "is_grey": false,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "type": "maintenance"
+          "counters": {
+            "depends": 2,
+            "all": 2,
+            "active": 1,
+            "state": {
+              "ok": 1,
+              "minor": 0,
+              "major": 1,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 1,
+            "unacked_under_pbh": 1,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -441,14 +486,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-4",
+      "connector":  "test-connector-pbehavior-weather-service-4",
       "connector_name": "test-connector-name-pbehavior-weather-service-4",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-4",
-      "resource" : "test-resource-pbehavior-weather-service-4",
-      "state" : 3,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-4",
+      "resource": "test-resource-pbehavior-weather-service-4",
+      "state": 3,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of 2 events processing
@@ -485,7 +530,22 @@ Feature: get service weather
           "icon": "maintenance",
           "secondary_icon": "",
           "is_grey": true,
-          "alarm_counters": [],
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 1,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 0,
+              "critical": 1
+            },
+            "acked": 0,
+            "unacked": 1,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          },
           "pbehavior_info": {
             "canonical_type": "maintenance",
             "name": "test-pbehavior-weather-service-4",
@@ -579,14 +639,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-5",
+      "connector":  "test-connector-pbehavior-weather-service-5",
       "connector_name": "test-connector-name-pbehavior-weather-service-5",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-5",
-      "resource" : "test-resource-pbehavior-weather-service-5",
-      "state" : 3,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-5",
+      "resource": "test-resource-pbehavior-weather-service-5",
+      "state": 3,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of 2 events processing
@@ -623,7 +683,22 @@ Feature: get service weather
           "icon": "critical",
           "secondary_icon": "",
           "is_grey": false,
-          "alarm_counters": [],
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 1,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 0,
+              "critical": 1
+            },
+            "acked": 0,
+            "unacked": 1,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          },
           "pbehavior_info": {
             "canonical_type": "active",
             "name": "test-pbehavior-weather-service-5",
@@ -661,19 +736,19 @@ Feature: get service weather
     """
 
   Scenario: given service with maintenance pbehavior and one dependency with maintenance pbehavior
-    should get maintenance icon and not get secondary icon
+  should get maintenance icon and not get secondary icon
     Given I am admin
     When I send an event:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-6",
+      "connector":  "test-connector-pbehavior-weather-service-6",
       "connector_name": "test-connector-name-pbehavior-weather-service-6",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-6",
-      "resource" : "test-resource-pbehavior-weather-service-6",
-      "state" : 3,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-6",
+      "resource": "test-resource-pbehavior-weather-service-6",
+      "state": 3,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of event processing
@@ -784,18 +859,33 @@ Feature: get service weather
           "icon": "maintenance",
           "secondary_icon": "",
           "is_grey": true,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "type": "maintenance"
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 0,
+            "state": {
+              "ok": 1,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 1,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "type": "maintenance"
+                }
               }
-            }
-          ],
+            ]
+          },
           "pbehavior_info": {
             "canonical_type": "maintenance",
             "name": "test-pbehavior-weather-service-6-1",
@@ -833,32 +923,32 @@ Feature: get service weather
     """
 
   Scenario: given service with maintenance pbehavior and dependency with maintenance pbehavior
-    and another dependency without pbehavior should get maintenance icon and maintenance secondary icon
+  and another dependency without pbehavior should get maintenance icon and maintenance secondary icon
     Given I am admin
     When I send an event:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-7",
+      "connector":  "test-connector-pbehavior-weather-service-7",
       "connector_name": "test-connector-name-pbehavior-weather-service-7",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-7",
-      "resource" : "test-resource-pbehavior-weather-service-7-1",
-      "state" : 3,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-7",
+      "resource": "test-resource-pbehavior-weather-service-7-1",
+      "state": 3,
+      "output": "noveo alarm"
     }
     """
     When I send an event:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-7",
+      "connector":  "test-connector-pbehavior-weather-service-7",
       "connector_name": "test-connector-name-pbehavior-weather-service-7",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-7",
-      "resource" : "test-resource-pbehavior-weather-service-7-2",
-      "state" : 2,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-7",
+      "resource": "test-resource-pbehavior-weather-service-7-2",
+      "state": 2,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of 2 events processing
@@ -972,18 +1062,33 @@ Feature: get service weather
           "icon": "maintenance",
           "secondary_icon": "maintenance",
           "is_grey": true,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "type": "maintenance"
+          "counters": {
+            "depends": 2,
+            "all": 2,
+            "active": 1,
+            "state": {
+              "ok": 1,
+              "minor": 0,
+              "major": 1,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 1,
+            "unacked_under_pbh": 1,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "type": "maintenance"
+                }
               }
-            }
-          ],
+            ]
+          },
           "pbehavior_info": {
             "canonical_type": "maintenance",
             "name": "test-pbehavior-weather-service-7-1",
@@ -1097,14 +1202,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-11",
+      "connector":  "test-connector-pbehavior-weather-service-11",
       "connector_name": "test-connector-name-pbehavior-weather-service-11",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-11",
-      "resource" : "test-resource-pbehavior-weather-service-11",
-      "state" : 3,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-11",
+      "resource": "test-resource-pbehavior-weather-service-11",
+      "state": 3,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of 2 events processing
@@ -1218,14 +1323,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-12",
+      "connector": "test-connector-pbehavior-weather-service-12",
       "connector_name": "test-connector-name-pbehavior-weather-service-12",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-12",
-      "resource" : "test-resource-pbehavior-weather-service-12",
-      "state" : 2,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-12",
+      "resource": "test-resource-pbehavior-weather-service-12",
+      "state": 2,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of event processing
@@ -1435,14 +1540,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-13",
+      "connector":  "test-connector-pbehavior-weather-service-13",
       "connector_name": "test-connector-name-pbehavior-weather-service-13",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-13",
-      "resource" : "test-resource-pbehavior-weather-service-13-1",
-      "state" : 3,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-13",
+      "resource": "test-resource-pbehavior-weather-service-13-1",
+      "state": 3,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of 2 events processing
@@ -1493,32 +1598,32 @@ Feature: get service weather
     """
 
   Scenario: given dependency with maintenance pbehavior
-    and another dependency without pbehavior should get service by filter secondary_icon=maintenance
+  and another dependency without pbehavior should get service by filter secondary_icon=maintenance
     Given I am admin
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-14",
+      "connector": "test-connector-pbehavior-weather-service-14",
       "connector_name": "test-connector-name-pbehavior-weather-service-14",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-14",
-      "resource" : "test-resource-pbehavior-weather-service-14-1",
-      "state" : 2,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-14",
+      "resource": "test-resource-pbehavior-weather-service-14-1",
+      "state": 2,
+      "output": "noveo alarm"
     }
     """
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-14",
+      "connector": "test-connector-pbehavior-weather-service-14",
       "connector_name": "test-connector-name-pbehavior-weather-service-14",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-14",
-      "resource" : "test-resource-pbehavior-weather-service-14-2",
-      "state" : 3,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-14",
+      "resource": "test-resource-pbehavior-weather-service-14-2",
+      "state": 3,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of 2 events processing
@@ -1733,14 +1838,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-15",
+      "connector":  "test-connector-pbehavior-weather-service-15",
       "connector_name": "test-connector-name-pbehavior-weather-service-15",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-15",
-      "resource" : "test-resource-pbehavior-weather-service-15-1",
-      "state" : 3,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-15",
+      "resource": "test-resource-pbehavior-weather-service-15-1",
+      "state": 3,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of 2 events processing
@@ -1795,14 +1900,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-16",
+      "connector": "test-connector-pbehavior-weather-service-16",
       "connector_name": "test-connector-name-pbehavior-weather-service-16",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-16",
-      "resource" : "test-resource-pbehavior-weather-service-16",
-      "state" : 0,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-16",
+      "resource": "test-resource-pbehavior-weather-service-16",
+      "state": 0,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of event processing
@@ -1889,7 +1994,22 @@ Feature: get service weather
           "icon": "maintenance",
           "secondary_icon": "",
           "is_grey": true,
-          "alarm_counters": [],
+          "counters": {
+            "depends": 1,
+            "all": 0,
+            "active": 0,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          },
           "pbehavior_info": {
             "canonical_type": "maintenance",
             "name": "test-pbehavior-weather-service-16",
@@ -1931,14 +2051,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-17",
+      "connector": "test-connector-pbehavior-weather-service-17",
       "connector_name": "test-connector-name-pbehavior-weather-service-17",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-17",
-      "resource" : "test-resource-pbehavior-weather-service-17",
-      "state" : 0,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-17",
+      "resource": "test-resource-pbehavior-weather-service-17",
+      "state": 0,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of event processing
@@ -2025,18 +2145,33 @@ Feature: get service weather
           "icon": "maintenance",
           "secondary_icon": "",
           "is_grey": true,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "type": "maintenance"
+          "counters": {
+            "depends": 1,
+            "all": 0,
+            "active": 0,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 0,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -2088,24 +2223,24 @@ Feature: get service weather
     """json
     [
       {
-        "connector" : "test-connector-pbehavior-weather-service-18",
+        "connector": "test-connector-pbehavior-weather-service-18",
         "connector_name": "test-connector-name-pbehavior-weather-service-18",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-18",
-        "resource" : "test-resource-pbehavior-weather-service-18-1",
-        "state" : 1,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-18",
+        "resource": "test-resource-pbehavior-weather-service-18-1",
+        "state": 1,
+        "output": "noveo alarm"
       },
       {
-        "connector" : "test-connector-pbehavior-weather-service-18",
+        "connector": "test-connector-pbehavior-weather-service-18",
         "connector_name": "test-connector-name-pbehavior-weather-service-18",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-18",
-        "resource" : "test-resource-pbehavior-weather-service-18-2",
-        "state" : 0,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-18",
+        "resource": "test-resource-pbehavior-weather-service-18-2",
+        "state": 0,
+        "output": "noveo alarm"
       }
     ]
     """
@@ -2200,18 +2335,33 @@ Feature: get service weather
           "icon": "maintenance",
           "secondary_icon": "",
           "is_grey": true,
-          "alarm_counters": [
-            {
-              "count": 2,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "type": "maintenance"
+          "counters": {
+            "depends": 2,
+            "all": 1,
+            "active": 0,
+            "state": {
+              "ok": 1,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 1,
+            "under_pbh": 2,
+            "pbh_types": [
+              {
+                "count": 2,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -2225,14 +2375,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-18",
+      "connector": "test-connector-pbehavior-weather-service-18",
       "connector_name": "test-connector-name-pbehavior-weather-service-18",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-18",
-      "resource" : "test-resource-pbehavior-weather-service-18-2",
-      "state" : 2,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-18",
+      "resource": "test-resource-pbehavior-weather-service-18-2",
+      "state": 2,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of 2 events processing
@@ -2249,18 +2399,33 @@ Feature: get service weather
           "icon": "maintenance",
           "secondary_icon": "",
           "is_grey": true,
-          "alarm_counters": [
-            {
-              "count": 2,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "type": "maintenance"
+          "counters": {
+            "depends": 2,
+            "all": 2,
+            "active": 0,
+            "state": {
+              "ok": 2,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 2,
+            "under_pbh": 2,
+            "pbh_types": [
+              {
+                "count": 2,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -2274,14 +2439,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-18",
+      "connector": "test-connector-pbehavior-weather-service-18",
       "connector_name": "test-connector-name-pbehavior-weather-service-18",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-18",
-      "resource" : "test-resource-pbehavior-weather-service-18-1",
-      "state" : 0,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-18",
+      "resource": "test-resource-pbehavior-weather-service-18-1",
+      "state": 0,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of 3 events processing
@@ -2298,18 +2463,33 @@ Feature: get service weather
           "icon": "maintenance",
           "secondary_icon": "",
           "is_grey": true,
-          "alarm_counters": [
-            {
-              "count": 2,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "type": "maintenance"
+          "counters": {
+            "depends": 2,
+            "all": 1,
+            "active": 0,
+            "state": {
+              "ok": 1,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 1,
+            "under_pbh": 2,
+            "pbh_types": [
+              {
+                "count": 2,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -2323,14 +2503,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-18",
+      "connector": "test-connector-pbehavior-weather-service-18",
       "connector_name": "test-connector-name-pbehavior-weather-service-18",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-18",
-      "resource" : "test-resource-pbehavior-weather-service-18-2",
-      "state" : 0,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-18",
+      "resource": "test-resource-pbehavior-weather-service-18-2",
+      "state": 0,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of 3 events processing
@@ -2347,18 +2527,33 @@ Feature: get service weather
           "icon": "maintenance",
           "secondary_icon": "",
           "is_grey": true,
-          "alarm_counters": [
-            {
-              "count": 2,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "type": "maintenance"
+          "counters": {
+            "depends": 2,
+            "all": 0,
+            "active": 0,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 0,
+            "under_pbh": 2,
+            "pbh_types": [
+              {
+                "count": 2,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -2375,14 +2570,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-19",
+      "connector": "test-connector-pbehavior-weather-service-19",
       "connector_name": "test-connector-name-pbehavior-weather-service-19",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-19",
-      "resource" : "test-resource-pbehavior-weather-service-19",
-      "state" : 2,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-19",
+      "resource": "test-resource-pbehavior-weather-service-19",
+      "state": 2,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of event processing
@@ -2471,18 +2666,33 @@ Feature: get service weather
           "icon": "maintenance",
           "secondary_icon": "",
           "is_grey": true,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "type": "maintenance"
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 0,
+            "state": {
+              "ok": 1,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 1,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -2496,14 +2706,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-19",
+      "connector": "test-connector-pbehavior-weather-service-19",
       "connector_name": "test-connector-name-pbehavior-weather-service-19",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-19",
-      "resource" : "test-resource-pbehavior-weather-service-19",
-      "state" : 0,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-19",
+      "resource": "test-resource-pbehavior-weather-service-19",
+      "state": 0,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of event processing
@@ -2520,18 +2730,33 @@ Feature: get service weather
           "icon": "maintenance",
           "secondary_icon": "",
           "is_grey": true,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "type": "maintenance"
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 0,
+            "state": {
+              "ok": 1,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 1,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -2558,7 +2783,22 @@ Feature: get service weather
           "icon": "ok",
           "secondary_icon": "",
           "is_grey": false,
-          "alarm_counters": []
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 1,
+            "state": {
+              "ok": 1,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 1,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          }
         }
       ],
       "meta": {
@@ -2572,14 +2812,14 @@ Feature: get service weather
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-19",
+      "connector": "test-connector-pbehavior-weather-service-19",
       "connector_name": "test-connector-name-pbehavior-weather-service-19",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-19",
-      "resource" : "test-resource-pbehavior-weather-service-19",
-      "state" : 2,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-19",
+      "resource": "test-resource-pbehavior-weather-service-19",
+      "state": 2,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of 2 events processing
@@ -2596,7 +2836,22 @@ Feature: get service weather
           "icon": "major",
           "secondary_icon": "",
           "is_grey": false,
-          "alarm_counters": []
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 1,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 1,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 1,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          }
         }
       ],
       "meta": {
@@ -2793,24 +3048,24 @@ Feature: get service weather
     """json
     [
       {
-        "connector" : "test-connector-pbehavior-weather-service-21",
+        "connector": "test-connector-pbehavior-weather-service-21",
         "connector_name": "test-connector-name-pbehavior-weather-service-21",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-21",
-        "resource" : "test-resource-pbehavior-weather-service-21-1",
-        "state" : 2,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-21",
+        "resource": "test-resource-pbehavior-weather-service-21-1",
+        "state": 2,
+        "output": "noveo alarm"
       },
       {
-        "connector" : "test-connector-pbehavior-weather-service-21",
+        "connector": "test-connector-pbehavior-weather-service-21",
         "connector_name": "test-connector-name-pbehavior-weather-service-21",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-21",
-        "resource" : "test-resource-pbehavior-weather-service-21-2",
-        "state" : 2,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-21",
+        "resource": "test-resource-pbehavior-weather-service-21-2",
+        "state": 2,
+        "output": "noveo alarm"
       }
     ]
     """
@@ -3001,34 +3256,34 @@ Feature: get service weather
     """json
     [
       {
-        "connector" : "test-connector-pbehavior-weather-service-22",
+        "connector": "test-connector-pbehavior-weather-service-22",
         "connector_name": "test-connector-name-pbehavior-weather-service-22",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-22",
-        "resource" : "test-resource-pbehavior-weather-service-22-1",
-        "state" : 2,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-22",
+        "resource": "test-resource-pbehavior-weather-service-22-1",
+        "state": 2,
+        "output": "noveo alarm"
       },
       {
-        "connector" : "test-connector-pbehavior-weather-service-22",
+        "connector": "test-connector-pbehavior-weather-service-22",
         "connector_name": "test-connector-name-pbehavior-weather-service-22",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-22",
-        "resource" : "test-resource-pbehavior-weather-service-22-2",
-        "state" : 2,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-22",
+        "resource": "test-resource-pbehavior-weather-service-22-2",
+        "state": 2,
+        "output": "noveo alarm"
       },
       {
-        "connector" : "test-connector-pbehavior-weather-service-22",
+        "connector": "test-connector-pbehavior-weather-service-22",
         "connector_name": "test-connector-name-pbehavior-weather-service-22",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-22",
-        "resource" : "test-resource-pbehavior-weather-service-22-3",
-        "state" : 2,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-22",
+        "resource": "test-resource-pbehavior-weather-service-22-3",
+        "state": 2,
+        "output": "noveo alarm"
       }
     ]
     """
@@ -3117,19 +3372,34 @@ Feature: get service weather
           "icon": "major",
           "secondary_icon": "maintenance",
           "is_grey": false,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "priority": 19,
-                "type": "maintenance"
+          "counters": {
+            "depends": 3,
+            "all": 3,
+            "active": 2,
+            "state": {
+              "ok": 1,
+              "minor": 0,
+              "major": 2,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 2,
+            "unacked_under_pbh": 1,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "priority": 19,
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -3169,7 +3439,22 @@ Feature: get service weather
           "icon": "major",
           "secondary_icon": "",
           "is_grey": false,
-          "alarm_counters": []
+          "counters": {
+            "depends": 2,
+            "all": 2,
+            "active": 2,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 2,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 2,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          }
         }
       ],
       "meta": {
@@ -3209,19 +3494,34 @@ Feature: get service weather
           "icon": "major",
           "secondary_icon": "maintenance",
           "is_grey": false,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "priority": 19,
-                "type": "maintenance"
+          "counters": {
+            "depends": 3,
+            "all": 2,
+            "active": 2,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 2,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 2,
+            "unacked_under_pbh": 0,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "priority": 19,
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -3261,7 +3561,22 @@ Feature: get service weather
           "icon": "major",
           "secondary_icon": "",
           "is_grey": false,
-          "alarm_counters": []
+          "counters": {
+            "depends": 2,
+            "all": 2,
+            "active": 2,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 2,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 2,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          }
         }
       ],
       "meta": {
@@ -3301,19 +3616,34 @@ Feature: get service weather
           "icon": "major",
           "secondary_icon": "maintenance",
           "is_grey": false,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "priority": 19,
-                "type": "maintenance"
+          "counters": {
+            "depends": 3,
+            "all": 2,
+            "active": 2,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 2,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 2,
+            "unacked_under_pbh": 0,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "priority": 19,
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -3326,45 +3656,45 @@ Feature: get service weather
     """
 
   Scenario: given entity service entity should be grey if active entity is disabled, while other entities are in pbh state,
-    if disabled entity is enabled again, the entity service should be returned to the ok state.
+  if disabled entity is enabled again, the entity service should be returned to the ok state.
     Given I am admin
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-23",
+      "connector": "test-connector-pbehavior-weather-service-23",
       "connector_name": "test-connector-name-pbehavior-weather-service-23",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-23",
-      "resource" : "test-resource-pbehavior-weather-service-23-1",
-      "state" : 0,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-23",
+      "resource": "test-resource-pbehavior-weather-service-23-1",
+      "state": 0,
+      "output": "noveo alarm"
     }
     """
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-23",
+      "connector": "test-connector-pbehavior-weather-service-23",
       "connector_name": "test-connector-name-pbehavior-weather-service-23",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-23",
-      "resource" : "test-resource-pbehavior-weather-service-23-2",
-      "state" : 0,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-23",
+      "resource": "test-resource-pbehavior-weather-service-23-2",
+      "state": 0,
+      "output": "noveo alarm"
     }
     """
     When I send an event:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-23",
+      "connector": "test-connector-pbehavior-weather-service-23",
       "connector_name": "test-connector-name-pbehavior-weather-service-23",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-23",
-      "resource" : "test-resource-pbehavior-weather-service-23-3",
-      "state" : 0,
-      "output" : "noveo alarm"
+      "component":  "test-component-pbehavior-weather-service-23",
+      "resource": "test-resource-pbehavior-weather-service-23-3",
+      "state": 0,
+      "output": "noveo alarm"
     }
     """
     When I wait the end of 3 events processing
@@ -3477,19 +3807,34 @@ Feature: get service weather
           "icon": "ok",
           "secondary_icon": "maintenance",
           "is_grey": false,
-          "alarm_counters": [
-            {
-              "count": 2,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "priority": 19,
-                "type": "maintenance"
+          "counters": {
+            "depends": 3,
+            "all": 0,
+            "active": 0,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 0,
+            "under_pbh": 2,
+            "pbh_types": [
+              {
+                "count": 2,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "priority": 19,
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -3529,19 +3874,34 @@ Feature: get service weather
           "icon": "maintenance",
           "secondary_icon": "",
           "is_grey": true,
-          "alarm_counters": [
-            {
-              "count": 2,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "priority": 19,
-                "type": "maintenance"
+          "counters": {
+            "depends": 2,
+            "all": 0,
+            "active": 0,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 0,
+            "under_pbh": 2,
+            "pbh_types": [
+              {
+                "count": 2,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "priority": 19,
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -3581,19 +3941,34 @@ Feature: get service weather
           "icon": "ok",
           "secondary_icon": "maintenance",
           "is_grey": false,
-          "alarm_counters": [
-            {
-              "count": 2,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "priority": 19,
-                "type": "maintenance"
+          "counters": {
+            "depends": 3,
+            "all": 0,
+            "active": 0,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 0,
+            "under_pbh": 2,
+            "pbh_types": [
+              {
+                "count": 2,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "priority": 19,
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -3611,34 +3986,34 @@ Feature: get service weather
     """json
     [
       {
-        "connector" : "test-connector-pbehavior-weather-service-24",
+        "connector": "test-connector-pbehavior-weather-service-24",
         "connector_name": "test-connector-name-pbehavior-weather-service-24",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-24",
-        "resource" : "test-resource-pbehavior-weather-service-24-1",
-        "state" : 2,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-24",
+        "resource": "test-resource-pbehavior-weather-service-24-1",
+        "state": 2,
+        "output": "noveo alarm"
       },
       {
-        "connector" : "test-connector-pbehavior-weather-service-24",
+        "connector": "test-connector-pbehavior-weather-service-24",
         "connector_name": "test-connector-name-pbehavior-weather-service-24",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-24",
-        "resource" : "test-resource-pbehavior-weather-service-24-2",
-        "state" : 2,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-24",
+        "resource": "test-resource-pbehavior-weather-service-24-2",
+        "state": 2,
+        "output": "noveo alarm"
       },
       {
-        "connector" : "test-connector-pbehavior-weather-service-24",
+        "connector": "test-connector-pbehavior-weather-service-24",
         "connector_name": "test-connector-name-pbehavior-weather-service-24",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-24",
-        "resource" : "test-resource-pbehavior-weather-service-24-3",
-        "state" : 2,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-24",
+        "resource": "test-resource-pbehavior-weather-service-24-3",
+        "state": 2,
+        "output": "noveo alarm"
       }
     ]
     """
@@ -3752,19 +4127,34 @@ Feature: get service weather
           "icon": "major",
           "secondary_icon": "maintenance",
           "is_grey": false,
-          "alarm_counters": [
-            {
-              "count": 2,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "priority": 19,
-                "type": "maintenance"
+          "counters": {
+            "depends": 3,
+            "all": 3,
+            "active": 1,
+            "state": {
+              "ok": 2,
+              "minor": 0,
+              "major": 1,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 1,
+            "unacked_under_pbh": 2,
+            "under_pbh": 2,
+            "pbh_types": [
+              {
+                "count": 2,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "priority": 19,
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -3801,7 +4191,22 @@ Feature: get service weather
           "icon": "major",
           "secondary_icon": "",
           "is_grey": false,
-          "alarm_counters": []
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 1,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 1,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 1,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          }
         }
       ],
       "meta": {
@@ -3838,19 +4243,34 @@ Feature: get service weather
           "icon": "major",
           "secondary_icon": "maintenance",
           "is_grey": false,
-          "alarm_counters": [
-            {
-              "count": 2,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "priority": 19,
-                "type": "maintenance"
+          "counters": {
+            "depends": 3,
+            "all": 1,
+            "active": 1,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 1,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 1,
+            "unacked_under_pbh": 0,
+            "under_pbh": 2,
+            "pbh_types": [
+              {
+                "count": 2,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "priority": 19,
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -3863,40 +4283,40 @@ Feature: get service weather
     """
 
   Scenario: given entity service entity should be grey if active entities are disabled by bulk disable action, while other entities are in pbh state,
-    if disabled entities are enabled again, the entity service should be returned to the ok state.
+  if disabled entities are enabled again, the entity service should be returned to the ok state.
     Given I am admin
     When I send an event:
     """json
     [
       {
-        "connector" : "test-connector-pbehavior-weather-service-25",
+        "connector": "test-connector-pbehavior-weather-service-25",
         "connector_name": "test-connector-name-pbehavior-weather-service-25",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-25",
-        "resource" : "test-resource-pbehavior-weather-service-25-1",
-        "state" : 0,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-25",
+        "resource": "test-resource-pbehavior-weather-service-25-1",
+        "state": 0,
+        "output": "noveo alarm"
       },
       {
-        "connector" : "test-connector-pbehavior-weather-service-25",
+        "connector": "test-connector-pbehavior-weather-service-25",
         "connector_name": "test-connector-name-pbehavior-weather-service-25",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-25",
-        "resource" : "test-resource-pbehavior-weather-service-25-2",
-        "state" : 0,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-25",
+        "resource": "test-resource-pbehavior-weather-service-25-2",
+        "state": 0,
+        "output": "noveo alarm"
       },
       {
-        "connector" : "test-connector-pbehavior-weather-service-25",
+        "connector": "test-connector-pbehavior-weather-service-25",
         "connector_name": "test-connector-name-pbehavior-weather-service-25",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-25",
-        "resource" : "test-resource-pbehavior-weather-service-25-3",
-        "state" : 0,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-25",
+        "resource": "test-resource-pbehavior-weather-service-25-3",
+        "state": 0,
+        "output": "noveo alarm"
       }
     ]
     """
@@ -3985,19 +4405,34 @@ Feature: get service weather
           "icon": "ok",
           "secondary_icon": "maintenance",
           "is_grey": false,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "priority": 19,
-                "type": "maintenance"
+          "counters": {
+            "depends": 3,
+            "all": 0,
+            "active": 0,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 0,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "priority": 19,
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -4034,19 +4469,34 @@ Feature: get service weather
           "icon": "maintenance",
           "secondary_icon": "",
           "is_grey": true,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "priority": 19,
-                "type": "maintenance"
+          "counters": {
+            "depends": 1,
+            "all": 0,
+            "active": 0,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 0,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "priority": 19,
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -4083,19 +4533,34 @@ Feature: get service weather
           "icon": "ok",
           "secondary_icon": "maintenance",
           "is_grey": false,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "priority": 19,
-                "type": "maintenance"
+          "counters": {
+            "depends": 3,
+            "all": 0,
+            "active": 0,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 0,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "priority": 19,
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -4113,34 +4578,34 @@ Feature: get service weather
     """json
     [
       {
-        "connector" : "test-connector-pbehavior-weather-service-26",
+        "connector": "test-connector-pbehavior-weather-service-26",
         "connector_name": "test-connector-name-pbehavior-weather-service-26",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-26",
-        "resource" : "test-resource-pbehavior-weather-service-26-1",
-        "state" : 2,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-26",
+        "resource": "test-resource-pbehavior-weather-service-26-1",
+        "state": 2,
+        "output": "noveo alarm"
       },
       {
-        "connector" : "test-connector-pbehavior-weather-service-26",
+        "connector": "test-connector-pbehavior-weather-service-26",
         "connector_name": "test-connector-name-pbehavior-weather-service-26",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-26",
-        "resource" : "test-resource-pbehavior-weather-service-26-2",
-        "state" : 2,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-26",
+        "resource": "test-resource-pbehavior-weather-service-26-2",
+        "state": 2,
+        "output": "noveo alarm"
       },
       {
-        "connector" : "test-connector-pbehavior-weather-service-26",
+        "connector": "test-connector-pbehavior-weather-service-26",
         "connector_name": "test-connector-name-pbehavior-weather-service-26",
         "source_type": "resource",
         "event_type": "check",
-        "component" :  "test-component-pbehavior-weather-service-26",
-        "resource" : "test-resource-pbehavior-weather-service-26-3",
-        "state" : 3,
-        "output" : "noveo alarm"
+        "component":  "test-component-pbehavior-weather-service-26",
+        "resource": "test-resource-pbehavior-weather-service-26-3",
+        "state": 3,
+        "output": "noveo alarm"
       }
     ]
     """
@@ -4229,19 +4694,34 @@ Feature: get service weather
           "icon": "critical",
           "secondary_icon": "maintenance",
           "is_grey": false,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "priority": 19,
-                "type": "maintenance"
+          "counters": {
+            "depends": 3,
+            "all": 3,
+            "active": 2,
+            "state": {
+              "ok": 1,
+              "minor": 0,
+              "major": 1,
+              "critical": 1
+            },
+            "acked": 0,
+            "unacked": 2,
+            "unacked_under_pbh": 1,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "priority": 19,
+                  "type": "maintenance"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "meta": {
@@ -4305,19 +4785,353 @@ Feature: get service weather
           "icon": "critical",
           "secondary_icon": "maintenance",
           "is_grey": false,
-          "alarm_counters": [
-            {
-              "count": 1,
-              "type": {
-                "_id": "test-maintenance-type-to-engine",
-                "description": "Engine maintenance",
-                "icon_name": "build",
-                "name": "Engine maintenance",
-                "priority": 19,
-                "type": "maintenance"
+          "counters": {
+            "depends": 3,
+            "all": 2,
+            "active": 2,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 1,
+              "critical": 1
+            },
+            "acked": 0,
+            "unacked": 2,
+            "unacked_under_pbh": 0,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "priority": 19,
+                  "type": "maintenance"
+                }
               }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given one acked dependency with maintenance pbehavior should not update ack counter
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-pbehavior-weather-service-27",
+      "connector_name": "test-connector-name-pbehavior-weather-service-27",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-pbehavior-weather-service-27",
+      "resource": "test-resource-pbehavior-weather-service-27",
+      "state": 2,
+      "output": "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-pbehavior-weather-service-27",
+      "connector_name": "test-connector-name-pbehavior-weather-service-27",
+      "source_type": "resource",
+      "event_type": "ack",
+      "component":  "test-component-pbehavior-weather-service-27",
+      "resource": "test-resource-pbehavior-weather-service-27",
+      "output": "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "name": "test-pbehavior-weather-service-27",
+      "output_template": "Test service weather 1",
+      "category": "test-category-pbehavior-weather-service",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-27"
             }
-          ]
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-weather-service-27",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-27"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response pbhID={{ .lastResponse._id }}
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-pbehavior-weather-service-27",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-weather-service-27"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-27",
+          "state": {"val": 0},
+          "status": {"val": 0},
+          "icon": "maintenance",
+          "secondary_icon": "",
+          "is_grey": true,
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 0,
+            "state": {
+              "ok": 1,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 0,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "type": "maintenance"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-pbehavior-weather-service-27",
+      "connector_name": "test-connector-name-pbehavior-weather-service-27",
+      "source_type": "resource",
+      "event_type": "ackremove",
+      "component":  "test-component-pbehavior-weather-service-27",
+      "resource": "test-resource-pbehavior-weather-service-27",
+      "output": "noveo alarm"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/weather-services?filters[]={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-27",
+          "state": {"val": 0},
+          "status": {"val": 0},
+          "icon": "maintenance",
+          "secondary_icon": "",
+          "is_grey": true,
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 0,
+            "state": {
+              "ok": 1,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 1,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "type": "maintenance"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-pbehavior-weather-service-27",
+      "connector_name": "test-connector-name-pbehavior-weather-service-27",
+      "source_type": "resource",
+      "event_type": "ack",
+      "component":  "test-component-pbehavior-weather-service-27",
+      "resource": "test-resource-pbehavior-weather-service-27",
+      "output": "noveo alarm"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/weather-services?filters[]={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-27",
+          "state": {"val": 0},
+          "status": {"val": 0},
+          "icon": "maintenance",
+          "secondary_icon": "",
+          "is_grey": true,
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 0,
+            "state": {
+              "ok": 1,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "unacked_under_pbh": 0,
+            "under_pbh": 1,
+            "pbh_types": [
+              {
+                "count": 1,
+                "type": {
+                  "_id": "test-maintenance-type-to-engine",
+                  "description": "Engine maintenance",
+                  "icon_name": "build",
+                  "name": "Engine maintenance",
+                  "type": "maintenance"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do DELETE /api/v4/pbehaviors/{{ .pbhID }}
+    Then the response code should be 204
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/weather-services?filters[]={{ .filterID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-pbehavior-weather-service-27",
+          "state": {"val": 2},
+          "status": {"val": 1},
+          "icon": "major",
+          "secondary_icon": "",
+          "is_grey": false,
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 1,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 1,
+              "critical": 0
+            },
+            "acked": 1,
+            "unacked": 0,
+            "unacked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          }
         }
       ],
       "meta": {

@@ -1,16 +1,12 @@
 package utils
 
 import (
-	"bytes"
 	crand "crypto/rand"
 	"fmt"
-	"io/ioutil"
 	"math/big"
 	"reflect"
 	"regexp"
 	"strconv"
-	"text/template"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -18,31 +14,6 @@ import (
 const NamingCharacterSet = "abcdefghijklmnopqrstuvwxyz1234567890"
 
 var NumberOfCharacter = int64(len(NamingCharacterSet))
-
-// ApplyTranslation translate a templated string using informations in an Event
-func ApplyTranslation(element interface{}, key, formatString string) (string, error) {
-	t, err := template.New(key).Parse(formatString)
-	if err != nil {
-		return "", err
-	}
-
-	buf := new(bytes.Buffer)
-	err = t.Execute(buf, element)
-	if err != nil {
-		return "", err
-	}
-
-	return buf.String(), nil
-}
-
-// ReadFile handles opening and reading file at given path
-func ReadFile(path string) ([]byte, error) {
-	source, err := ioutil.ReadFile(path)
-	if err != nil {
-		return []byte{}, fmt.Errorf("read file: %v", err)
-	}
-	return source, nil
-}
 
 // StringInSlice checks if a string is present in a list of strings
 func StringInSlice(a string, list []string) bool {
@@ -152,10 +123,6 @@ func TruncateString(s string, chars int) string {
 	format := fmt.Sprintf("%%.%ds", chars)
 
 	return fmt.Sprintf(format, s)
-}
-
-func TimeTrack(start time.Time, name string) {
-	fmt.Printf("%s took %s\n", name, time.Since(start))
 }
 
 // RandString generate a random string

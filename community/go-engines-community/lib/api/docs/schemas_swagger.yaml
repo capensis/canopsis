@@ -3444,12 +3444,37 @@ definitions:
       inactivity_interval:
         $ref: '#/definitions/types.DurationWithUnit'
     type: object
-  serviceweather.AlarmCounter:
+  serviceweather.Counters:
     properties:
-      count:
+      acked:
         type: integer
-      type:
-        $ref: '#/definitions/pbehaviortype.Type'
+      active:
+        type: integer
+      all:
+        type: integer
+      depends:
+        type: integer
+      pbh_types:
+        items:
+          $ref: '#/definitions/serviceweather.PbhTypeCounter'
+        type: array
+      state:
+        properties:
+          critical:
+            type: integer
+          major:
+            type: integer
+          minor:
+            type: integer
+          ok:
+            type: integer
+        type: object
+      unacked:
+        type: integer
+      unacked_under_pbh:
+        type: integer
+      under_pbh:
+        type: integer
     type: object
   serviceweather.Entity:
     properties:
@@ -3536,16 +3561,19 @@ definitions:
         type: string
       value: {}
     type: object
+  serviceweather.PbhTypeCounter:
+    properties:
+      count:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehaviortype.Type'
+    type: object
   serviceweather.Service:
     properties:
       _id:
         type: string
       ack:
         $ref: '#/definitions/common.AlarmStep'
-      alarm_counters:
-        items:
-          $ref: '#/definitions/serviceweather.AlarmCounter'
-        type: array
       category:
         $ref: '#/definitions/entitycategory.Category'
       component:
@@ -3554,8 +3582,8 @@ definitions:
         type: string
       connector_name:
         type: string
-      depends_count:
-        type: integer
+      counters:
+        $ref: '#/definitions/serviceweather.Counters'
       icon:
         type: string
       idle_since:
