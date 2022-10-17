@@ -76,7 +76,14 @@ export default {
     },
     buttons: {
       type: Array,
-      default: () => [],
+      default: () => [
+        'source', '|',
+        'bold', 'italic', 'strikethrough', 'underline', '|',
+        'ul', 'ol', '|',
+        'font', 'fontsize', 'brush', 'paragraph', '|',
+        'image', 'table', 'link', '|',
+        'align', 'undo', 'redo', '|',
+      ],
     },
     public: {
       type: Boolean,
