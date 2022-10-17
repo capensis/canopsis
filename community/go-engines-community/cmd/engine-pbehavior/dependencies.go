@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
@@ -54,6 +55,10 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		amqpChannel,
 		logger,
 	)
+
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 
 	enginePbehavior := engine.New(
 		func(ctx context.Context) error {
@@ -106,6 +111,10 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	)
+	enginePbehavior.AddRoutine(func(ctx context.Context) error {
+		techMetricsSender.Run(ctx)
+		return nil
+	})
 	enginePbehavior.AddConsumer(engine.NewRPCServer(
 		canopsis.PBehaviorRPCConsumerName,
 		canopsis.PBehaviorRPCQueueServerName,
@@ -129,6 +138,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		redis.NewLockClient(lockRedisSession),
 		redis.PbehaviorPeriodicalLockKey,
 		&periodicalWorker{
+			TechMetricsSender:      techMetricsSender,
 			ChannelPub:             amqpChannel,
 			PeriodicalInterval:     options.PeriodicalWaitTime,
 			PbhService:             pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
@@ -155,17 +165,13 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker("tz config", engine.NewLoadConfigPeriodicalWorker(
+	enginePbehavior.AddPeriodicalWorker("config", engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
+		logger,
 		timezoneConfigProvider,
-		logger,
-	))
-	enginePbehavior.AddPeriodicalWorker("data storage config", engine.NewLoadConfigPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		config.NewAdapter(dbClient),
 		dataStorageConfigProvider,
-		logger,
+		techMetricsConfigProvider,
 	))
 
 	return enginePbehavior

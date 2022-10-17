@@ -26,6 +26,8 @@ const (
 	MetricsSliInterval    = time.Hour
 	MetricsMaxSliInterval = time.Hour
 
+	TechMetricsDumpKeepInterval = time.Hour
+
 	UserInterfaceMaxMatchedItems          = 10000
 	UserInterfaceCheckCountRequestTimeout = 30
 )

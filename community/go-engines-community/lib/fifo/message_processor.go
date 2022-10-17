@@ -4,28 +4,37 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"runtime/trace"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"runtime/trace"
 )
 
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
-	EventFilterService       eventfilter.Service
-	Scheduler                scheduler.Scheduler
-	StatsSender              ratelimit.StatsSender
-	Decoder                  encoding.Decoder
-	Logger                   zerolog.Logger
+
+	EventFilterService eventfilter.Service
+	Scheduler          scheduler.Scheduler
+	StatsSender        ratelimit.StatsSender
+	Decoder            encoding.Decoder
+	Logger             zerolog.Logger
+
+	TechMetricsSender techmetrics.Sender
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
+	eventMetric := techmetrics.EventMetric{
+		Timestamp: time.Now(),
+	}
+
 	ctx, task := trace.NewTask(parentCtx, "fifo.WorkerProcess")
 	defer task.End()
 
@@ -53,6 +62,12 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		p.logError(err, "invalid event", msg)
 		return nil, nil
 	}
+
+	defer func() {
+		eventMetric.EventType = event.EventType
+		eventMetric.Interval = time.Since(eventMetric.Timestamp)
+		p.TechMetricsSender.SendSimpleEvent(techmetrics.FIFOEvent, eventMetric)
+	}()
 
 	event.Format()
 	p.StatsSender.Add(event.Timestamp.Unix(), true)
