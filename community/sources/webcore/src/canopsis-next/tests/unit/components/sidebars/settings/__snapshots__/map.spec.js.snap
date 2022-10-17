@@ -7,7 +7,6 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
     role="list"
   >
     <field-title-stub
-      title="Title"
       value="Map widget"
     />
     <hr
@@ -171,7 +170,6 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
     role="list"
   >
     <field-title-stub
-      title="Title"
       value=""
     />
     <hr
