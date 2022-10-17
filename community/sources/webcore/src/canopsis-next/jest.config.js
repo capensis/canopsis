@@ -10,6 +10,7 @@ module.exports = {
   transform: {
     '^.+\\.vue$': '<rootDir>/tests/unit/jest.vue',
     '^.+\\.jsx?$': '<rootDir>/tests/unit/jest.transform',
+    '^.+\\.svg$': '<rootDir>/tests/unit/jest.svg',
   },
   transformIgnorePatterns: [
     '<rootDir>/node_modules/(?!(vue-tour|monaco-editor)/.*)',
@@ -17,7 +18,6 @@ module.exports = {
   moduleNameMapper: {
     '^.+\\.styl(us)?$': '<rootDir>/tests/unit/mocks/styleMock.js',
     '^.+\\.css$': '<rootDir>/tests/unit/mocks/styleMock.js',
-    '^.+\\.svg$': '<rootDir>/tests/unit/mocks/imageMock.js',
     '^@unit/(.*)$': '<rootDir>/tests/unit/$1',
     '^@/(.*)$': '<rootDir>/src/$1',
     '^vue$': 'vue/dist/vue.common.dev.js',
