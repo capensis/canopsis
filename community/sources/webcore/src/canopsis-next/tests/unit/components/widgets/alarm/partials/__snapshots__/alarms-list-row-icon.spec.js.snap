@@ -96,7 +96,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with instruction 
     class="v-icon instruction-icon material-icons theme--light"
     style="font-size: 24px;"
   >
-    assignment
+    $vuetify.icons.manual_instruction
   </i>
 </span>
 `;

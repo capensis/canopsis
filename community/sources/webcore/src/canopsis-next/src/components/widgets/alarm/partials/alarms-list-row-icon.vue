@@ -6,6 +6,8 @@
 </template>
 
 <script>
+import { INSTRUCTION_EXECUTION_ICONS } from '@/constants';
+
 import {
   isInstructionExecutionExecutedAndOtherAvailable,
   isInstructionExecutionIconFailed,
@@ -23,7 +25,7 @@ export default {
   },
   computed: {
     alarmInstructionExecutionIcon() {
-      return this.alarm.instruction_execution_icon;
+      return this.alarm.instruction_execution_icon ?? INSTRUCTION_EXECUTION_ICONS.manualAvailable;
     },
 
     hasRunningInstruction() {
