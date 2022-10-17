@@ -1,69 +1,39 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`text Renders \`text\` widget settings with custom props 1`] = `
-<div>
-  <div
-    class="v-list pt-0 theme--light"
-    role="list"
-  >
-    <field-title-stub
-      value="Text widget"
-    />
-    <hr
-      class="v-divider theme--light"
-    />
-    <field-text-editor-stub
-      title="Template"
-      value=<p>1</p>
+<widget-settings-stub>
+  <field-title-stub
+    value="Text widget"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-text-editor-stub
+    title="Template"
+    value=<p>1</p>
 <p>2</p>
 <p>3<br></p>
-    />
-    <hr
-      class="v-divider theme--light"
-    />
-  </div>
-  <button
-    class="primary v-btn theme--light"
-    type="button"
-  >
-    <div
-      class="v-btn__content"
-    >
-      Save
-    </div>
-  </button>
-</div>
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+</widget-settings-stub>
 `;
 
 exports[`text Renders \`text\` widget settings with default props 1`] = `
-<div>
-  <div
-    class="v-list pt-0 theme--light"
-    role="list"
-  >
-    <field-title-stub
-      value=""
-    />
-    <hr
-      class="v-divider theme--light"
-    />
-    <field-text-editor-stub
-      title="Template"
-      value=""
-    />
-    <hr
-      class="v-divider theme--light"
-    />
-  </div>
-  <button
-    class="primary v-btn theme--light"
-    type="button"
-  >
-    <div
-      class="v-btn__content"
-    >
-      Save
-    </div>
-  </button>
-</div>
+<widget-settings-stub>
+  <field-title-stub
+    value=""
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-text-editor-stub
+    title="Template"
+    value=""
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+</widget-settings-stub>
 `;

@@ -1,66 +1,54 @@
 <template lang="pug">
-  div
-    v-list.pt-0(expand)
-      field-title(v-model="form.title")
+  widget-settings(:submitting="submitting", @submit="submit")
+    field-title(v-model="form.title")
+    v-divider
+    field-periodic-refresh(v-model="form.parameters.periodic_refresh")
+    v-divider
+    field-map(v-model="form.parameters.map")
+    v-divider
+    widget-settings-group(:title="$t('settings.entityDisplaySettings')")
+      field-color-indicator(v-model="form.parameters.color_indicator")
       v-divider
-      field-periodic-refresh(v-model="form.parameters.periodic_refresh")
+      field-switcher(
+        v-model="form.parameters.entities_under_pbehavior_enabled",
+        :title="$t('settings.entitiesUnderPbehaviorEnabled')"
+      )
+    v-divider
+    widget-settings-group(:title="$t('settings.advancedSettings')")
+      template(v-if="hasAccessToListFilters")
+        field-filters(
+          v-model="form.parameters.mainFilter",
+          :filters.sync="form.filters",
+          :widget-id="widget._id",
+          :addable="hasAccessToAddFilter",
+          :editable="hasAccessToEditFilter",
+          with-alarm,
+          with-entity,
+          with-pbehavior
+        )
+        v-divider
+      field-text-editor(
+        v-model="form.parameters.entity_info_template",
+        :title="$t('settings.entityInfoPopup')",
+        :variables="variables"
+      )
       v-divider
-      field-map(v-model="form.parameters.map")
-      v-divider
-      v-list-group
-        template(#activator="")
-          v-list-tile {{ $t('settings.entityDisplaySettings') }}
-        v-list.grey.lighten-4.px-2.py-0(expand)
-          field-color-indicator(v-model="form.parameters.color_indicator")
-          v-divider
-          field-switcher(
-            v-model="form.parameters.entities_under_pbehavior_enabled",
-            :title="$t('settings.entitiesUnderPbehaviorEnabled')"
-          )
-      v-divider
-      v-list-group
-        template(#activator="")
-          v-list-tile {{ $t('settings.advancedSettings') }}
-        v-list.grey.lighten-4.px-2.py-0(expand)
-          template(v-if="hasAccessToListFilters")
-            field-filters(
-              v-model="form.parameters.mainFilter",
-              :filters.sync="form.filters",
-              :widget-id="widget._id",
-              :addable="hasAccessToAddFilter",
-              :editable="hasAccessToEditFilter",
-              with-alarm,
-              with-entity,
-              with-pbehavior
-            )
-            v-divider
-          field-text-editor(
-            v-model="form.parameters.entity_info_template",
-            :title="$t('settings.entityInfoPopup')",
-            :variables="variables"
-          )
-          v-divider
 
-          field-columns(
-            v-model="form.parameters.alarms_columns",
-            :label="$t('settings.alarmsColumns')",
-            with-template,
-            with-html,
-            with-color-indicator
-          )
-          v-divider
-          field-columns(
-            v-model="form.parameters.entities_columns",
-            :label="$t('settings.entitiesColumns')",
-            with-html,
-            with-color-indicator
-          )
+      field-columns(
+        v-model="form.parameters.alarms_columns",
+        :label="$t('settings.alarmsColumns')",
+        with-template,
+        with-html,
+        with-color-indicator
+      )
       v-divider
-    v-btn.primary(
-      :loading="submitting",
-      :disabled="submitting",
-      @click="submit"
-    ) {{ $t('common.save') }}
+      field-columns(
+        v-model="form.parameters.entities_columns",
+        :label="$t('settings.entitiesColumns')",
+        with-html,
+        with-color-indicator
+      )
+    v-divider
 </template>
 
 <script>
@@ -78,6 +66,8 @@ import FieldSwitcher from './fields/common/switcher.vue';
 import FieldFilters from './fields/common/filters.vue';
 import FieldTextEditor from './fields/common/text-editor.vue';
 import FieldColumns from './fields/common/columns.vue';
+import WidgetSettings from './partials/widget-settings.vue';
+import WidgetSettingsGroup from './partials/widget-settings-group.vue';
 
 /**
  * Component to regroup the map settings fields
@@ -93,6 +83,8 @@ export default {
     FieldFilters,
     FieldTextEditor,
     FieldColumns,
+    WidgetSettings,
+    WidgetSettingsGroup,
   },
   mixins: [
     widgetSettingsMixin,

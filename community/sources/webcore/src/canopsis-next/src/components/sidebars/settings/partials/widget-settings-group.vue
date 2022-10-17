@@ -1,7 +1,8 @@
 <template lang="pug">
   v-list-group
     template(#activator="")
-      v-list-tile {{ title }}
+      v-list-tile
+        div(:class="validationHeaderClass") {{ title }}
     v-list.grey.lighten-4.px-2.py-0(expand)
       slot
 </template>

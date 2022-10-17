@@ -83,9 +83,9 @@ export const getWidgetRequestWithNewParametersProperty = (widget, key, value) =>
 });
 
 export const submitWithExpects = async (wrapper, { fetchActiveView, hideSidebar, widgetMethod, expectData }) => {
-  const submitButton = wrapper.find('button.v-btn');
+  const widgetSettings = wrapper.vm.$children[0];
 
-  submitButton.trigger('click');
+  widgetSettings.$emit('submit');
 
   await flushPromises();
 

@@ -38,6 +38,9 @@ import AlarmSettings from '@/components/sidebars/settings/alarm.vue';
 const localVue = createVueInstance();
 
 const stubs = {
+  'widget-settings': true,
+  'widget-settings-item': true,
+  'widget-settings-group': true,
   'field-title': createInputStub('field-title'),
   'field-periodic-refresh': createInputStub('field-periodic-refresh'),
   'field-default-sort-column': createInputStub('field-default-sort-column'),
@@ -59,6 +62,9 @@ const stubs = {
 };
 
 const snapshotStubs = {
+  'widget-settings': true,
+  'widget-settings-item': true,
+  'widget-settings-group': true,
   'field-title': true,
   'field-periodic-refresh': true,
   'field-default-sort-column': true,
