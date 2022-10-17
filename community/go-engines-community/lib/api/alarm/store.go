@@ -30,6 +30,7 @@ const (
 const (
 	InstructionTypeManual = iota
 	InstructionTypeAuto
+	InstructionTypeSimplifiedManual
 )
 
 const InstructionStatusApproved = 0
@@ -664,7 +665,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		ctx,
 		[]bson.M{
 			{"$match": bson.M{
-				"type":   InstructionTypeManual,
+				"type":   bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
 				"status": bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
 			}},
 			{"$lookup": bson.M{
@@ -804,6 +805,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 				assignedInstructionsMap[alarmId] = append(assignedInstructionsMap[alarmId], AssignedInstruction{
 					ID:        instructionId,
 					Name:      instructionMap[instructionId].Name,
+					Type:      instructionMap[instructionId].Type,
 					Execution: execution,
 				})
 			}

@@ -13,6 +13,7 @@ import (
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
@@ -21,6 +22,7 @@ import (
 )
 
 type periodicalWorker struct {
+	TechMetricsSender      techmetrics.Sender
 	ChannelPub             libamqp.Channel
 	PeriodicalInterval     time.Duration
 	PbhService             pbehavior.Service
@@ -38,42 +40,63 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *periodicalWorker) Work(ctx context.Context) {
+	metric := techmetrics.PbehaviorPeriodicalMetric{}
+	metric.Timestamp = time.Now()
+	eventsCount := 0
+	entitiesCount := 0
+	pbehaviorsCount := 0
+	defer func() {
+		metric.Interval = time.Since(metric.Timestamp)
+		metric.Events = int64(eventsCount)
+		metric.Entities = int64(entitiesCount)
+		metric.Pbehaviors = int64(pbehaviorsCount)
+		w.TechMetricsSender.SendPBehaviorPeriodical(metric)
+	}()
+
 	now := time.Now().In(w.TimezoneConfigProvider.Get().Location)
 	newSpan := timespan.New(now, now.Add(w.FrameDuration))
 
-	resolver, count, err := w.PbhService.Compute(ctx, newSpan)
+	resolver, recomputedCount, err := w.PbhService.Compute(ctx, newSpan)
 	if err != nil {
 		w.Logger.Err(err).Msg("compute pbehavior's frames failed")
 		return
 	}
 
-	if count >= 0 {
+	if recomputedCount >= 0 {
 		w.Logger.Info().
 			Time("interval from", newSpan.From()).
 			Time("interval to", newSpan.To()).
-			Int("count", count).
+			Int("count", recomputedCount).
 			Msg("pbehaviors are recomputed")
 	}
 
 	computedEntityIDs, err := resolver.GetComputedEntityIDs()
+	entitiesCount = len(computedEntityIDs)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot get entities which have pbehavior")
 		return
 	}
 
-	processedEntityIds := w.processAlarms(ctx, now, computedEntityIDs, resolver)
-	w.processEntities(ctx, now, computedEntityIDs, processedEntityIds, resolver)
+	var processedEntityIds []string
+	processedEntityIds, eventsCount = w.processAlarms(ctx, now, computedEntityIDs, resolver)
+	eventsCount += w.processEntities(ctx, now, computedEntityIDs, processedEntityIds, resolver)
+
+	pbehaviorsCount, err = resolver.GetPbehaviorsCount(ctx, now)
+	if err != nil {
+		w.Logger.Err(err).Msg("cannot get pbehaviors count")
+	}
 }
 
 func (w *periodicalWorker) processAlarms(
 	ctx context.Context, computedAt time.Time,
 	computedEntityIDs []string,
 	resolver pbehavior.ComputedEntityTypeResolver,
-) []string {
+) ([]string, int) {
+	eventsCount := 0
 	cursor, err := w.AlarmAdapter.FindToCheckPbehaviorInfo(ctx, types.CpsTime{Time: computedAt}, computedEntityIDs)
 	if err != nil {
 		w.Logger.Err(err).Msg("get alarms from mongo failed")
-		return nil
+		return nil, eventsCount
 	}
 
 	defer cursor.Close(ctx)
@@ -107,11 +130,12 @@ func (w *periodicalWorker) processAlarms(
 		resolveResult, err := resolver.Resolve(ctx, entity, now)
 		if err != nil {
 			w.Logger.Err(err).Str("entity_id", entity.ID).Msg("resolve an entity failed")
-			return processedEntityIds
+			return processedEntityIds, eventsCount
 		}
 
 		event := w.EventManager.GetEvent(resolveResult, alarm, now)
 		if event.EventType != "" {
+			eventsCount++
 			ech <- PublishEventMsg{
 				event:   event,
 				id:      alarm.ID,
@@ -121,7 +145,7 @@ func (w *periodicalWorker) processAlarms(
 		}
 	}
 
-	return processedEntityIds
+	return processedEntityIds, eventsCount
 }
 
 func (w *periodicalWorker) processEntities(
@@ -130,11 +154,12 @@ func (w *periodicalWorker) processEntities(
 	computedEntityIDs,
 	processedEntityIds []string,
 	resolver pbehavior.ComputedEntityTypeResolver,
-) {
+) int {
+	eventsCount := 0
 	cursor, err := w.EntityAdapter.FindToCheckPbehaviorInfo(ctx, computedEntityIDs, processedEntityIds)
 	if err != nil {
 		w.Logger.Err(err).Msg("get alarms from mongo failed")
-		return
+		return eventsCount
 	}
 
 	defer cursor.Close(ctx)
@@ -163,7 +188,7 @@ func (w *periodicalWorker) processEntities(
 		resolveResult, err := resolver.Resolve(ctx, entity, now)
 		if err != nil {
 			w.Logger.Err(err).Str("entity_id", entity.ID).Msg("resolve an entity failed")
-			return
+			return eventsCount
 		}
 
 		eventType, output := w.EventManager.GetEventType(resolveResult, entity.PbehaviorInfo)
@@ -177,14 +202,14 @@ func (w *periodicalWorker) processEntities(
 		lastAlarm, err := w.AlarmAdapter.GetLastAlarmByEntityID(ctx, entity.ID)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot fetch last alarm")
-			return
+			return eventsCount
 		}
 
 		if lastAlarm == nil {
 			event, err = eventGenerator.Generate(ctx, entity)
 			if err != nil {
 				w.Logger.Err(err).Msg("cannot generate event")
-				return
+				return eventsCount
 			}
 		} else {
 			event.Connector = lastAlarm.Value.Connector
@@ -199,6 +224,7 @@ func (w *periodicalWorker) processEntities(
 		event.Timestamp = types.CpsTime{Time: now}
 		event.PbehaviorInfo = pbehavior.NewPBehaviorInfo(event.Timestamp, resolveResult)
 
+		eventsCount++
 		ech <- PublishEventMsg{
 			event:   event,
 			id:      entity.ID,
@@ -206,6 +232,8 @@ func (w *periodicalWorker) processEntities(
 			pbhType: resolveResult.ResolvedType,
 		}
 	}
+
+	return eventsCount
 }
 
 type PublishEventMsg struct {
