@@ -682,7 +682,7 @@ export default merge({
       priority: 'Le paramètre de priorité est dérivé de la gravité de l\'alarme multipliée par le niveau d\'impact de l\'entité sur laquelle l\'alarme est déclenchée',
       runningManualInstructions: 'Consigne manuelle <strong>{title}</strong> en cours | Consignes manuelles <strong>{title}</strong> en cours',
       runningAutoInstructions: 'Consigne automatique <strong>{title}</strong> en cours | Consignes automatiques <strong>{title}</strong> en cours',
-      successfulManualInstructions: 'Consigne manuelle <strong>{title}</strong> réussie | Consignes manuelles <strong>{title}</strong> réussie',
+      successfulManualInstructions: 'Consigne manuelle <strong>{title}</strong> réussie | Consignes manuelles <strong>{title}</strong> réussies',
       successfulAutoInstructions: 'Consigne automatique <strong>{title}</strong> réussies | Consignes automatiques <strong>{title}</strong> réussies',
       failedManualInstructions: 'Consigne manuelle <strong>{title}</strong> en échec | Consignes manuelles <strong>{title}</strong> en échec',
       failedAutoInstructions: 'Consigne automatique <strong>{title}</strong> en échec | Consignes automatiques <strong>{title}</strong> en échec',
