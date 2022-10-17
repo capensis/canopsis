@@ -198,7 +198,7 @@ Feature: update an instruction statistics
       "output": "test-output-to-alarm-instruction-get-4"
     }
     """
-    When I wait the end of 4 events processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-4&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
@@ -213,6 +213,7 @@ Feature: update an instruction statistics
             {
               "_id": "test-instruction-to-alarm-instruction-get-4-1",
               "name": "test-instruction-to-alarm-instruction-get-4-1-name",
+              "type": 0,
               "execution": null
             }
           ]
@@ -270,6 +271,7 @@ Feature: update an instruction statistics
             {
               "_id": "test-instruction-to-alarm-instruction-get-5-1",
               "name": "test-instruction-to-alarm-instruction-get-5-1-name",
+              "type": 0,
               "execution": {
                 "_id": "{{ .executionID }}",
                 "status": 0
@@ -308,11 +310,13 @@ Feature: update an instruction statistics
             {
               "_id": "test-instruction-to-alarm-instruction-get-5-1",
               "name": "test-instruction-to-alarm-instruction-get-5-1-name",
+              "type": 0,
               "execution": null
             },
             {
               "_id": "test-instruction-to-alarm-instruction-get-5-2",
               "name": "test-instruction-to-alarm-instruction-get-5-2-name",
+              "type": 0,
               "execution": null
             }
           ]
@@ -374,7 +378,7 @@ Feature: update an instruction statistics
       }
     ]
     """
-    When I wait the end of 10 events processing
+    When I wait the end of 8 events processing
     When I do GET /api/v4/alarms?instructions[]={"include_types":[0,1]}&search=test-resource-to-alarm-instruction-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -666,6 +670,7 @@ Feature: update an instruction statistics
             {
               "_id": "test-instruction-to-alarm-instruction-get-7-1",
               "name": "test-instruction-to-alarm-instruction-get-7-1-name",
+              "type": 0,
               "execution": null
             }
           ]
@@ -678,6 +683,7 @@ Feature: update an instruction statistics
             {
               "_id": "test-instruction-to-alarm-instruction-get-7-2",
               "name": "test-instruction-to-alarm-instruction-get-7-2-name",
+              "type": 0,
               "execution": null
             }
           ]
@@ -1359,6 +1365,57 @@ Feature: update an instruction statistics
           "v": {
             "resource": "test-resource-to-alarm-instruction-get-12-2"
           }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given get request should return assigned simplified manual instructions for the alarm
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-13",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-13",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-13",
+      "resource": "test-resource-to-alarm-instruction-get-13",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-13"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-13&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-13"
+          },
+          "assigned_instructions": [
+            {
+              "_id": "test-instruction-to-alarm-instruction-get-13-1",
+              "name": "test-instruction-to-alarm-instruction-get-13-1-name",
+              "type": 2,
+              "execution": null
+            },
+            {
+              "_id": "test-instruction-to-alarm-instruction-get-13-2",
+              "name": "test-instruction-to-alarm-instruction-get-13-2-name",
+              "type": 2,
+              "execution": null
+            }
+          ]
         }
       ],
       "meta": {

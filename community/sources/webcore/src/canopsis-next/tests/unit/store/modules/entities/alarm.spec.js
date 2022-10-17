@@ -106,44 +106,6 @@ describe('Entities alarm module', () => {
     });
   });
 
-  it('Mutate state after commit EXPORT_LIST_COMPLETED', () => {
-    const { meta, params, widgetId, exportData } = mockData;
-    const state = {
-      widgets: {
-        [widgetId]: { pending: true, meta, fetchingParams: params },
-      },
-    };
-
-    const exportListCompleted = mutations[types.EXPORT_LIST_COMPLETED];
-
-    exportListCompleted(state, { widgetId, exportData });
-
-    expect(state).toEqual({
-      widgets: {
-        [widgetId]: { pending: true, meta, fetchingParams: params, exportData },
-      },
-    });
-  });
-
-  it('Mutate state after commit DOWNLOAD_LIST_COMPLETED', () => {
-    const { widgetId, exportData } = mockData;
-    const state = {
-      widgets: {
-        [widgetId]: { exportData },
-      },
-    };
-
-    const downloadListCompleted = mutations[types.DOWNLOAD_LIST_COMPLETED];
-
-    downloadListCompleted(state, { widgetId, exportData });
-
-    expect(state).toEqual({
-      widgets: {
-        [widgetId]: {},
-      },
-    });
-  });
-
   it('Get alarms data by widget id. Getter: getListByWidgetId', () => {
     const { alarms, widgetId, allIds } = mockData;
     const getList = jest.fn(() => alarms);
@@ -224,19 +186,6 @@ describe('Entities alarm module', () => {
     expect(data).toEqual(pending);
   });
 
-  it('Get export data by widget id. Getter: getExportByWidgetId', () => {
-    const { widgetId, exportData } = mockData;
-    const state = {
-      widgets: {
-        [widgetId]: { exportData },
-      },
-    };
-
-    const data = getters.getExportByWidgetId(state)(widgetId);
-
-    expect(data).toEqual(exportData);
-  });
-
   it('Fetch alarms without saving in store and without params. Action: fetchListWithoutStore', async () => {
     axiosMockAdapter
       .onGet(API_ROUTES.alarmList)
@@ -270,58 +219,5 @@ describe('Entities alarm module', () => {
 
     expect(data).toBeUndefined();
     expect(dispatch).toHaveBeenCalled();
-  });
-
-  it('Create export alarms session. Action: createAlarmsListExport', async () => {
-    const commit = jest.fn();
-    const { alarm, widgetId, exportData } = mockData;
-
-    axiosMockAdapter
-      .onPost(API_ROUTES.alarmListExport, alarm)
-      .reply(200, exportData);
-
-    const data = await actions.createAlarmsListExport(
-      { commit },
-      { widgetId, data: alarm },
-    );
-
-    expect(data).toEqual(exportData);
-    expect(commit).toHaveBeenCalledWith(types.EXPORT_LIST_COMPLETED, { widgetId, exportData });
-  });
-
-  it('Fetch actual alarms list export session. Action: fetchAlarmsListExport', async () => {
-    const commit = jest.fn();
-    const { params, alarmId, widgetId, exportData } = mockData;
-
-    axiosMockAdapter
-      .onGet(`${API_ROUTES.alarmListExport}/${alarmId}`, { params })
-      .reply(200, exportData);
-
-    const data = await actions.fetchAlarmsListExport(
-      { commit },
-      { widgetId, id: alarmId, params },
-    );
-
-    expect(data).toEqual(exportData);
-    expect(commit).toHaveBeenCalledWith(types.EXPORT_LIST_COMPLETED, { widgetId, exportData });
-  });
-
-  it('Fetch export csv file. Action: fetchAlarmsListCsvFile', async () => {
-    const dispatch = jest.fn();
-    const commit = jest.fn();
-    const { params, alarmId, widgetId, csvData } = mockData;
-
-    axiosMockAdapter
-      .onGet(`${API_ROUTES.alarmListExport}/${alarmId}/download`, { params })
-      .reply(200, csvData);
-
-    const data = await actions.fetchAlarmsListCsvFile(
-      { commit, dispatch },
-      { widgetId, id: alarmId, params },
-    );
-
-    expect(data).toEqual(csvData);
-    expect(dispatch).not.toHaveBeenCalled();
-    expect(commit).toHaveBeenCalledWith(types.DOWNLOAD_LIST_COMPLETED, { widgetId });
   });
 });

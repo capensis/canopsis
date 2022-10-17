@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.pa-3.position-relative
+  div.position-relative
     c-progress-overlay(:pending="pending")
     test-suite-historical-data-months-field(v-model="query.months")
     junit-gantt-chart(

@@ -2,15 +2,16 @@ package action_test
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	redislib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
-	"reflect"
-	"testing"
-	"time"
 )
 
 func TestRedisScenarioExecutionStorage_GetAbandoned_GivenTooLongNotUpdatedExecutions_ShouldReturnThem(t *testing.T) {
@@ -79,9 +80,12 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenTooLongNotUpdatedExecut
 
 	for _, exec := range abandonedExecutions {
 		exec.Entity.Created = zeroTime
-		if !reflect.DeepEqual(exec, firstExecution) && !reflect.DeepEqual(exec, secondExecution) {
-			t.Errorf("GetAbandoned should return %+v or %+v but got %v",
-				firstExecution, secondExecution, exec)
+		exec.FifoAckEvent = types.Event{}
+		diff1 := pretty.Compare(exec, firstExecution)
+		diff2 := pretty.Compare(exec, secondExecution)
+
+		if diff1 != "" && diff2 != "" {
+			t.Errorf("GetAbandoned should return\n%s\nor\b%s", diff1, diff2)
 		}
 
 		if exec.Tries != 1 {

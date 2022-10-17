@@ -13,6 +13,8 @@ import {
   ALARM_LIST_ACTIONS_TYPES,
 } from '@/constants';
 
+import featuresService from '@/services/features';
+
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
@@ -113,6 +115,10 @@ export default {
         );
       }
 
+      if (featuresService.has('components.alarmListMassActionsPanel.computed.actions')) {
+        actions.push(...featuresService.call('components.alarmListMassActionsPanel.computed.actions', this, []));
+      }
+
       return actions;
     },
 
@@ -138,6 +144,8 @@ export default {
   },
 
   methods: {
+    ...featuresService.get('components.alarmListMassActionsPanel.methods', {}),
+
     clearItems() {
       this.$emit('clear:items');
     },

@@ -60,7 +60,7 @@ func (e *redisBasedManager) Run(
 
 	go func() {
 		defer func() {
-			defer cancel()
+			cancel()
 			close(e.outputChannel)
 			close(e.taskChannel)
 		}()
@@ -99,8 +99,9 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					if scenario == nil {
 						e.logger.Error().Str("scenario", task.DelayedScenarioID).Msg("cannot find scenario")
 						e.outputChannel <- ScenarioResult{
-							Alarm: task.Alarm,
-							Err:   errors.New("scenario doesn't exist"),
+							Alarm:        task.Alarm,
+							FifoAckEvent: task.FifoAckEvent,
+							Err:          errors.New("scenario doesn't exist"),
 						}
 						return
 					}
@@ -108,23 +109,25 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					if err != nil {
 						e.logger.Err(err).Msg("cannot run scenario")
 						e.outputChannel <- ScenarioResult{
-							Alarm: task.Alarm,
-							Err:   err,
+							Alarm:        task.Alarm,
+							FifoAckEvent: task.FifoAckEvent,
+							Err:          err,
 						}
 						return
 					}
 
-					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData)
+					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData, task.FifoAckEvent)
 					return
 				}
 
 				if task.AbandonedExecutionID != "" {
 					execution, err := e.executionStorage.Get(ctx, task.AbandonedExecutionID)
 					if err != nil {
-						e.logger.Err(err).Msg("cannot find abadoned scenario")
+						e.logger.Err(err).Msg("cannot find abandoned scenario")
 						e.outputChannel <- ScenarioResult{
-							Alarm: task.Alarm,
-							Err:   err,
+							Alarm:        task.Alarm,
+							FifoAckEvent: task.FifoAckEvent,
+							Err:          err,
 						}
 						return
 					}
@@ -160,15 +163,17 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 				if err != nil {
 					e.logger.Err(err).Msg("cannot run scenarios")
 					e.outputChannel <- ScenarioResult{
-						Alarm: task.Alarm,
-						Err:   err,
+						Alarm:        task.Alarm,
+						FifoAckEvent: task.FifoAckEvent,
+						Err:          err,
 					}
 					return
 				}
 
 				if !ok {
 					e.outputChannel <- ScenarioResult{
-						Alarm: task.Alarm,
+						Alarm:        task.Alarm,
+						FifoAckEvent: task.FifoAckEvent,
 					}
 				}
 			}(ctx, scenariosTask)
@@ -216,6 +221,7 @@ func (e *redisBasedManager) finishExecution(
 			Alarm:            alarm,
 			Err:              executionErr,
 			ActionExecutions: execution.ActionExecutions,
+			FifoAckEvent:     execution.FifoAckEvent,
 		}
 	}
 }
@@ -377,8 +383,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 
 	if scenarioExecution.ActionExecutions[taskRes.Step].Action.EmitTrigger &&
 		taskRes.AlarmChangeType != types.AlarmChangeTypeNone {
-		err := e.processEmittedTrigger(ctx, string(taskRes.AlarmChangeType), taskRes.Alarm,
-			scenarioExecution.Entity, scenarioExecution.AckResources, scenarioExecution.AdditionalData)
+		err := e.processEmittedTrigger(ctx, taskRes, *scenarioExecution)
 		if err != nil {
 			e.logger.Err(err).Msg("cannot process emitted trigger")
 			e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, err)
@@ -438,7 +443,7 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 	}
 
 	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData)
+		e.startExecution(ctx, scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData, task.FifoAckEvent)
 	}
 
 	return true, nil
@@ -446,19 +451,21 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 
 func (e *redisBasedManager) processEmittedTrigger(
 	ctx context.Context,
-	trigger string,
-	alarm types.Alarm,
-	entity types.Entity,
-	ackResource bool,
-	additionalData AdditionalData,
+	prevTaskRes TaskResult,
+	prevScenarioExecution ScenarioExecution,
 ) error {
-	additionalData.AlarmChangeType = types.AlarmChangeType(trigger)
-	err := e.scenarioStorage.RunDelayedScenarios(ctx, []string{trigger}, alarm, entity, additionalData)
+	additionalData := prevScenarioExecution.AdditionalData
+	additionalData.AlarmChangeType = prevTaskRes.AlarmChangeType
+	triggers := types.GetTriggers(prevTaskRes.AlarmChangeType)
+	if len(triggers) == 0 {
+		return nil
+	}
+	err := e.scenarioStorage.RunDelayedScenarios(ctx, triggers, prevTaskRes.Alarm, prevScenarioExecution.Entity, additionalData)
 	if err != nil {
 		return err
 	}
 
-	scenarios, err := e.scenarioStorage.GetTriggeredScenarios([]string{trigger}, alarm)
+	scenarios, err := e.scenarioStorage.GetTriggeredScenarios(triggers, prevTaskRes.Alarm)
 	if err != nil {
 		return err
 	}
@@ -467,20 +474,28 @@ func (e *redisBasedManager) processEmittedTrigger(
 		return nil
 	}
 
-	_, err = e.executionStorage.Inc(ctx, alarm.ID, int64(len(scenarios)), false)
+	_, err = e.executionStorage.Inc(ctx, prevTaskRes.Alarm.ID, int64(len(scenarios)), false)
 	if err != nil {
 		return err
 	}
 
 	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, alarm, entity, ackResource, additionalData)
+		e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, prevScenarioExecution.AckResources,
+			additionalData, prevScenarioExecution.FifoAckEvent)
 	}
 
 	return nil
 }
 
-func (e *redisBasedManager) startExecution(ctx context.Context, scenario Scenario,
-	alarm types.Alarm, entity types.Entity, ackResources bool, data AdditionalData) {
+func (e *redisBasedManager) startExecution(
+	ctx context.Context,
+	scenario Scenario,
+	alarm types.Alarm,
+	entity types.Entity,
+	ackResources bool,
+	data AdditionalData,
+	fifoAckEvent types.Event,
+) {
 	e.logger.Debug().Msgf("Execute scenario = %s for alarm = %s", scenario.ID, alarm.ID)
 	var executions []Execution
 	for _, action := range scenario.Actions {
@@ -501,6 +516,7 @@ func (e *redisBasedManager) startExecution(ctx context.Context, scenario Scenari
 		LastUpdate:       time.Now().Unix(),
 		AckResources:     ackResources,
 		AdditionalData:   data,
+		FifoAckEvent:     fifoAckEvent,
 	})
 	if err != nil {
 		e.logger.Err(err).Msg("cannot save execution")

@@ -179,6 +179,22 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 
 			return value.In(loc).Format(format)
 		},
+		// regex_map_key return map value if key match the regexp
+		"regex_map_key": func(m map[string]interface{}, regexpString string) interface{} {
+			re, err := regexp.Compile(regexpString)
+			if err != nil {
+				log.Printf("regex_map_key : failed to compile regexp %s, %v", regexpString, err)
+				return ""
+			}
+
+			for k, v := range m {
+				if re.MatchString(k) {
+					return v
+				}
+			}
+
+			return ""
+		},
 	}
 }
 

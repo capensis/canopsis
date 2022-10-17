@@ -1,0 +1,13 @@
+[Unit]
+Description=Cannopsis Meta-Service
+After=network.target
+Documentation=https://doc.canopsis.net
+
+[Service]
+Type=oneshot
+ExecStart=/bin/true
+ExecReload=/bin/true
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

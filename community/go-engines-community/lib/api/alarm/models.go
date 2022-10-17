@@ -277,6 +277,7 @@ type Pbehavior struct {
 type Instruction struct {
 	ID            string   `bson:"_id"`
 	Name          string   `bson:"name"`
+	Type          int      `bson:"type"`
 	ActiveOnPbh   []string `bson:"active_on_pbh"`
 	DisabledOnPbh []string `bson:"disabled_on_pbh"`
 
@@ -290,6 +291,7 @@ type Instruction struct {
 type AssignedInstruction struct {
 	ID        string     `json:"_id"`
 	Name      string     `json:"name"`
+	Type      int        `json:"type"`
 	Execution *Execution `json:"execution"`
 }
 

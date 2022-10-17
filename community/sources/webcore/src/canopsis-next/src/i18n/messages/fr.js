@@ -37,6 +37,9 @@ import {
   WEATHER_ACTIONS_TYPES,
   MAP_TYPES,
   MERMAID_THEMES,
+  EVENT_FILTER_EXTERNAL_DATA_TYPES,
+  EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
+  EVENT_FILTER_PATTERN_FIELDS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -274,6 +277,10 @@ export default merge({
     tag: 'Étiquette | Étiquettes',
     sharedTokens: 'Jetons partagés',
     notAvailable: 'Indisponible',
+    addMore: 'Ajouter plus',
+    attribute: 'Attribut',
+    timeTaken: 'Temps passé',
+    enginesMetrics: 'Métriques des moteurs',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -1999,6 +2006,20 @@ export default merge({
     connector: 'ID ou modèle de connecteur',
     connectorName: 'Nom ou modèle de connecteur',
     duringPeriod: 'Appliqué pendant cette période uniquement',
+    enrichmentOptions: 'Options d\'enrichissement',
+    changeEntityOptions: 'Modifier les options d\'entité',
+    noExternalData: 'Aucune donnée externe n\'a encore été ajoutée',
+    addExternalData: 'Ajouter des données externes',
+    reference: 'Référence',
+    collection: 'Le recueil',
+    externalDataTypes: {
+      [EVENT_FILTER_EXTERNAL_DATA_TYPES.mongo]: 'MongoDB collection',
+      [EVENT_FILTER_EXTERNAL_DATA_TYPES.api]: 'API',
+    },
+    externalDataConditionTypes: {
+      [EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES.select]: 'Select',
+      [EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES.regexp]: 'Regexp',
+    },
     types: {
       [EVENT_FILTER_TYPES.drop]: 'Drop',
       [EVENT_FILTER_TYPES.break]: 'Break',
@@ -2013,6 +2034,7 @@ export default merge({
       removeRuleField: 'Supprimer le groupe/la règle',
       copyFromHelp: '<p>Les variables accessibles sont: <strong>Event</strong></p>'
         + '<i>Quelques exemples:</i> <span>"Event.ExtraInfos.datecustom"</span>',
+      reference: 'Sera utilisé dans les actions via <strong>.ExternalData.&lt;Reference&gt;</strong>',
     },
     actionsTypes: {
       [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
@@ -2045,6 +2067,14 @@ export default merge({
         message: 'Cette action vous permet de modifier un champ d\'événement à partir d\'un modèle.',
         description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description\n- nom : le nom du champ.\n- valeur : le modèle utilisé pour déterminer la valeur du champ.\n  Des modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
       },
+    },
+    externalDataValues: {
+      [EVENT_FILTER_PATTERN_FIELDS.component]: 'Composant',
+      [EVENT_FILTER_PATTERN_FIELDS.connector]: 'Connecteur',
+      [EVENT_FILTER_PATTERN_FIELDS.connectorName]: 'Nom du connecteur',
+      [EVENT_FILTER_PATTERN_FIELDS.resource]: 'Ressource',
+      [EVENT_FILTER_PATTERN_FIELDS.output]: 'Output',
+      [EVENT_FILTER_PATTERN_FIELDS.extraInfos]: 'Extra infos',
     },
   },
   metaAlarmRule: {
@@ -2716,7 +2746,6 @@ export default merge({
     xmlFeed: 'Flux XML',
     hostname: 'Nom d\'hôte',
     lastUpdate: 'Dernière mise à jour',
-    timeTaken: 'Temps passé',
     totalTests: 'Total des tests',
     disabledTests: 'Tests désactivés',
     copyMessage: 'Copier le message système',
@@ -3214,5 +3243,11 @@ export default merge({
     revokeToken: 'Révoquer le jeton',
     revokeSelectedTokens: 'Révoquer les jetons sélectionnés',
     tokenExpiration: 'Expiration du jeton',
+  },
+
+  techMetric: {
+    noDumps: 'Aucun dump disponible. Générer un nouveau dump ?',
+    generateDump: 'Générer un nouveau dump',
+    downloadDump: 'Télécharger le dump',
   },
 }, featureService.get('i18n.fr'));

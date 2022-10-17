@@ -27,7 +27,7 @@
         :disabled="disabled",
         :error-messages="errors.collect(valueFieldName)"
       )
-    c-action-btn(type="delete", @click="$emit('remove')")
+    c-action-btn(v-if="!disabled", type="delete", @click="$emit('remove')")
 </template>
 
 <script>

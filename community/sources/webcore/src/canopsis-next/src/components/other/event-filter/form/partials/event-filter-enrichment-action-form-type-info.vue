@@ -3,7 +3,7 @@
     v-layout(row, align-center)
       span {{ message }}
       v-btn(icon, small, @click="toggleDescriptionOpened")
-        v-icon(color="info") help_outline
+        v-icon(color="secondary") help
     v-expand-transition(v-if="opened")
       v-layout(column)
         div.pre-wrap {{ description }}
