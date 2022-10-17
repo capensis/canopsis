@@ -1,7 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import { EXPORT_STATUSES } from '@/constants';
-
 const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
 /**
@@ -15,7 +13,6 @@ export const entitiesAlarmMixin = {
       getAlarmsListByWidgetId: 'getListByWidgetId',
       getAlarmsMetaByWidgetId: 'getMetaByWidgetId',
       getAlarmsPendingByWidgetId: 'getPendingByWidgetId',
-      getAlarmsExportByWidgetId: 'getExportByWidgetId',
     }),
 
     alarms() {
@@ -29,12 +26,6 @@ export const entitiesAlarmMixin = {
     alarmsPending() {
       return this.getAlarmsPendingByWidgetId(this.widget._id);
     },
-
-    alarmsExportPending() {
-      const exportData = this.getAlarmsExportByWidgetId(this.widget._id);
-
-      return exportData && exportData.status === EXPORT_STATUSES.running;
-    },
   },
   methods: {
     ...mapActions({
@@ -42,7 +33,6 @@ export const entitiesAlarmMixin = {
       fetchAlarmsList: 'fetchList',
       createAlarmsListExport: 'createAlarmsListExport',
       fetchAlarmsListExport: 'fetchAlarmsListExport',
-      fetchAlarmsListCsvFile: 'fetchAlarmsListCsvFile',
     }),
   },
 };
