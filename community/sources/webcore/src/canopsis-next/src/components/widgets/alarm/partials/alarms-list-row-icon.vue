@@ -109,7 +109,7 @@ export default {
       }, []);
 
       if (assignedInstructions?.length) {
-        tooltips.push(this.$t('alarmList.tooltips.hasManualInstruction'));
+        tooltips.push(this.$tc('alarmList.tooltips.hasManualInstruction', assignedInstructions.length));
       }
 
       return tooltips.join('\n');
