@@ -96,6 +96,7 @@ export const USERS_PERMISSIONS = {
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
     remediationStatistic: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationStatistic`,
     healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
+    techmetrics: `${USER_PERMISSIONS_PREFIXES.technical.admin}_techmetrics`,
     engine: `${USER_PERMISSIONS_PREFIXES.technical.admin}_engine`,
     healthcheckStatus: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheckStatus`,
     kpi: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpi`,
@@ -264,6 +265,7 @@ export const USERS_PERMISSIONS = {
       stateSettings: `${USER_PERMISSIONS_PREFIXES.api}_state_settings`,
       files: `${USER_PERMISSIONS_PREFIXES.api}_file`,
       healthcheck: `${USER_PERMISSIONS_PREFIXES.api}_healthcheck`,
+      techmetrics: `${USER_PERMISSIONS_PREFIXES.api}_techmetrics`,
       contextgraph: `${USER_PERMISSIONS_PREFIXES.api}_contextgraph`,
       broadcastMessage: `${USER_PERMISSIONS_PREFIXES.api}_broadcast_message`,
       junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
@@ -273,6 +275,7 @@ export const USERS_PERMISSIONS = {
       filter: `${USER_PERMISSIONS_PREFIXES.api}_kpi_filter`,
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.api}_corporate_pattern`,
       api: `${USER_PERMISSIONS_PREFIXES.api}_api`,
+      exportConfigurations: `${USER_PERMISSIONS_PREFIXES.api}_export_configurations`,
       map: `${USER_PERMISSIONS_PREFIXES.api}_map`,
     },
     rules: {

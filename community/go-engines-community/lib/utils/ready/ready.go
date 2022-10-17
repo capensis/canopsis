@@ -6,65 +6,128 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"github.com/rs/zerolog"
 )
 
-var logger = log.NewLogger(false)
+func CheckAll(
+	ctx context.Context,
+	retryDelay time.Duration,
+	retries int,
+	withPostgres, withTechPostgres bool,
+	logger zerolog.Logger,
+) error {
+	logger.Info().Msg("checking")
+	err := Check(ctx, CheckRedis, "redis", retryDelay, retries, logger)
+	if err != nil {
+		return err
+	}
+	err = Check(ctx, CheckMongo, "mongo", retryDelay, retries, logger)
+	if err != nil {
+		return err
+	}
+	err = Check(ctx, CheckAMQP, "amqp", retryDelay, retries, logger)
+	if err != nil {
+		return err
+	}
 
-// Timeout is to be ran by a go routine, so when the duration goes out,
-// timeout will call log.Fatal
-func Timeout(t time.Duration) {
-	time.Sleep(t)
-	logger.Fatal().Msgf("timeout expired after %s", t.String())
+	if withPostgres {
+		err = Check(ctx, CheckPostgres, "postgres", retryDelay, retries, logger)
+		if err != nil {
+			return err
+		}
+	}
+	if withTechPostgres {
+		err = Check(ctx, CheckTechPostgres, "tech postgres", retryDelay, retries, logger)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // Check calls checker function for a job to do.
-// name is a dispaly string
+// name is a display string
 // retryDelay is the time to sleep before doing another attempt
 // retries is the max number of tries to attempt
-func Check(ctx context.Context, checker func(ctx context.Context) error, name string, retryDelay time.Duration, retries int) error {
-	infinite := false
-
-	if retries == 0 {
-		infinite = true
-	}
-
+func Check(
+	ctx context.Context,
+	checker func(ctx context.Context, logger zerolog.Logger) error,
+	name string,
+	retryDelay time.Duration,
+	retries int,
+	logger zerolog.Logger,
+) error {
+	infinite := retries == 0
 	for retry := 0; retry < retries || infinite; retry++ {
-		err := checker(ctx)
-		if err != nil {
-			logger.Info().Err(err).Msgf("%v: %v/%v", name, retry+1, retries)
-			time.Sleep(retryDelay)
-		} else {
+		err := checker(ctx, logger)
+		if err == nil {
 			return nil
+		}
+
+		logger.Info().Err(err).Msgf("%v: %v/%v", name, retry+1, retries)
+
+		t := time.NewTimer(retryDelay)
+		select {
+		case <-ctx.Done():
+			t.Stop()
+			return ctx.Err()
+		case <-t.C:
 		}
 	}
 
 	return fmt.Errorf("check %v failed after %v tries", name, retries)
 }
 
-// Abort log.Fatalf() when err != nil
-func Abort(err error) {
+func CheckRedis(ctx context.Context, logger zerolog.Logger) error {
+	r, err := redis.NewSession(ctx, 0, logger, 0, 0)
 	if err != nil {
-		logger.Fatal().Err(err).Msg("hard failure")
+		return err
 	}
+
+	_ = r.Close()
+	return nil
 }
 
-// CheckRedis ...
-func CheckRedis(ctx context.Context) error {
-	_, err := redis.NewSession(ctx, 0, logger, 0, 0)
-	return err
+func CheckMongo(ctx context.Context, logger zerolog.Logger) error {
+	c, err := mongo.NewClient(ctx, 0, 0, logger)
+	if err != nil {
+		return err
+	}
+
+	_ = c.Disconnect(ctx)
+	return nil
 }
 
-// CheckMongo connects to mongo with mongo.Timeout
-func CheckMongo(ctx context.Context) error {
-	_, err := mongo.NewClient(ctx, 0, 0, log.NewLogger(false))
-	return err
+func CheckAMQP(_ context.Context, logger zerolog.Logger) error {
+	q, err := amqp.NewConnection(logger, 0, 0)
+	if err != nil {
+		return err
+	}
+
+	_ = q.Close()
+	return nil
 }
 
-// CheckAMQP ...
-func CheckAMQP(_ context.Context) error {
-	_, err := amqp.NewConnection(log.NewLogger(false), 0, 0)
-	return err
+func CheckPostgres(ctx context.Context, _ zerolog.Logger) error {
+	p, err := postgres.NewPool(ctx, 0, 0)
+	if err != nil {
+		return err
+	}
+
+	p.Close()
+	return nil
+}
+
+func CheckTechPostgres(ctx context.Context, _ zerolog.Logger) error {
+	p, err := postgres.NewTechMetricsPool(ctx, 0, 0)
+	if err != nil {
+		return err
+	}
+
+	p.Close()
+	return nil
 }

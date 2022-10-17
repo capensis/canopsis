@@ -127,7 +127,20 @@ func (e *engine) Run(ctx context.Context) error {
 
 	for _, r := range e.routines {
 		routine := r
-		g.Go(func() error {
+		g.Go(func() (resErr error) {
+			defer func() {
+				if r := recover(); r != nil {
+					var err error
+					var ok bool
+					if err, ok = r.(error); !ok {
+						err = fmt.Errorf("%v", r)
+					}
+
+					e.logger.Err(err).Msgf("routine is recovered from panic\n%s\n", debug.Stack())
+					resErr = fmt.Errorf("routine is recovered from panic: %w", err)
+				}
+			}()
+
 			return routine(ctx)
 		})
 	}

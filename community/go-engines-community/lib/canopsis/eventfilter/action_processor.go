@@ -1,23 +1,33 @@
 package eventfilter
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 type actionProcessor struct {
-	templateExecutor *template.Executor
+	templateExecutor  *template.Executor
+	techMetricsSender techmetrics.Sender
 }
 
-func NewActionProcessor(timezoneConfigProvider config.TimezoneConfigProvider) ActionProcessor {
-	return &actionProcessor{templateExecutor: template.NewExecutor(timezoneConfigProvider)}
+func NewActionProcessor(
+	timezoneConfigProvider config.TimezoneConfigProvider,
+	sender techmetrics.Sender,
+) ActionProcessor {
+	return &actionProcessor{
+		templateExecutor:  template.NewExecutor(timezoneConfigProvider),
+		techMetricsSender: sender,
+	}
 }
 
-func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}) (types.Event, error) {
+func (p *actionProcessor) Process(ctx context.Context, action Action, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}) (types.Event, error) {
 	switch action.Type {
 	case ActionSetField:
 		err := event.SetField(action.Name, action.Value)
@@ -50,7 +60,7 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 			return event, types.ErrInvalidInfoType
 		}
 
-		*event.Entity, entityUpdated = setEntityInfo(*event.Entity, action.Value, action.Name, action.Description)
+		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, action.Value, action.Name, action.Description)
 
 		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
 
@@ -74,7 +84,7 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 		}
 
 		entityUpdated := false
-		*event.Entity, entityUpdated = setEntityInfo(*event.Entity, value, action.Name, action.Description)
+		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
 
 		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
 
@@ -130,7 +140,7 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 		}
 
 		entityUpdated := false
-		*event.Entity, entityUpdated = setEntityInfo(*event.Entity, value, action.Name, action.Description)
+		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
 
 		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
 
@@ -140,13 +150,14 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 	return event, fmt.Errorf("action type = %s is invalid", action.Type)
 }
 
-func setEntityInfo(entity types.Entity, value interface{}, name, description string) (types.Entity, bool) {
+func (p *actionProcessor) setEntityInfo(entity types.Entity, value interface{}, name, description string) (types.Entity, bool) {
 	info, ok := entity.Infos[name]
 
 	entityUpdated := false
 	valueChanged := !ok || info.Value != value
 	if valueChanged {
 		entityUpdated = true
+		p.techMetricsSender.SendCheEntityInfo(time.Now(), name)
 	}
 
 	info.Name = name

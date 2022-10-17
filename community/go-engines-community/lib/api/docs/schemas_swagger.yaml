@@ -278,6 +278,8 @@ definitions:
         $ref: '#/definitions/alarm.Execution'
       name:
         type: string
+      type:
+        type: integer
     type: object
   alarm.ChildDetailsRequest:
     properties:
@@ -1497,6 +1499,10 @@ definitions:
       request:
         $ref: '#/definitions/request.Parameters'
         description: are used in api external data
+      retry_count:
+        type: integer
+      retry_delay:
+        $ref: '#/definitions/types.DurationWithUnit'
       select:
         additionalProperties:
           type: string
@@ -2869,10 +2875,6 @@ definitions:
         type: string
       payload:
         type: string
-      retry_count:
-        type: integer
-      retry_delay:
-        $ref: '#/definitions/types.DurationWithUnit'
       skip_verify:
         type: boolean
       url:
@@ -3697,6 +3699,15 @@ definitions:
       last_ko:
         type: integer
       ok:
+        type: integer
+    type: object
+  techmetrics.ExportResponse:
+    properties:
+      created:
+        type: integer
+      duration:
+        type: integer
+      status:
         type: integer
     type: object
   types.Coordinates:
