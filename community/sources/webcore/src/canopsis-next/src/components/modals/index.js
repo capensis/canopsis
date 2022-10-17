@@ -269,6 +269,10 @@ export const ExecuteRemediationInstruction = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './remediation/execute-remediation-instruction.vue'),
   loading: LoaderOverlay,
 });
+export const ExecuteRemediationSimpleInstruction = () => ({
+  component: import(/* webpackChunkName: "Remediation" */ './remediation/execute-remediation-simple-instruction.vue'),
+  loading: LoaderOverlay,
+});
 export const RemediationPatterns = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './remediation/remediation-patterns.vue'),
   loading: LoaderOverlay,
