@@ -13,7 +13,7 @@ Architecture   | x86-64     |
 Docker CE      | ≥ 20.10    |
 Docker-compose | ≥ 1.24     |
 Noyau Linux    | ≥ 4.4 (Docker uniquement) |
-OS             | = CentOS 7 (paquets uniquement) |
+OS             | = RHEL 8 ou compatible (paquets uniquement) |
 Python         | 2.7 et 3   |
 
 Pour rappel, SELinux n'est pas supporté. 
@@ -22,12 +22,12 @@ Pour rappel, SELinux n'est pas supporté.
 
 Composant   | Version          |
 ------------|------------------|
-MongoDB     | 4.2              |
+MongoDB     | 4.4              |
 Nginx       | stable           |
 PostgreSQL  | 13               |
-RabbitMQ    | 3.7 (recommandé) |
-Redis       | ≥ 5.0            |
-TimescaleDB | 2.5              |
+TimescaleDB | 2.7.2            |
+RabbitMQ    | 3.10             |
+Redis       | ≥ 6.2            |
 
 ## Prérequis composants externes
 
