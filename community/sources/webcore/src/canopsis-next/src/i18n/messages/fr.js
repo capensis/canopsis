@@ -281,6 +281,8 @@ export default merge({
     attribute: 'Attribut',
     timeTaken: 'Temps passé',
     enginesMetrics: 'Métriques des moteurs',
+    failed: 'Échoué',
+    close: 'Fermer',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -2478,6 +2480,7 @@ export default merge({
     approvalPending: 'En attente d\'approbation',
     needApprove: 'Une approbation est nécessaire',
     types: {
+      [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manuel simplifié',
       [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manuel',
       [REMEDIATION_INSTRUCTION_TYPES.auto]: 'Automatique',
     },
@@ -2520,6 +2523,7 @@ export default merge({
     startedAt: 'Commencé à {time}\n(Date de lancement Canopsis)',
     closeConfirmationText: 'Souhaitez-vous reprendre cette consigne plus tard ?',
     queueNumber: '{number} {name} travaux sont dans la file d\'attente',
+    runJobs: 'Exécuter des tâches',
     popups: {
       success: '{instructionName} a été exécutée avec succès',
       failed: '{instructionName} a échoué. Veuillez faire remonter ce problème',
@@ -2537,6 +2541,9 @@ export default merge({
       await: 'Attendre',
       failedReason: 'Raison de l\'échec',
       output: 'Retour',
+      instructionFailed: 'Échec de d\'une consigne',
+      instructionComplete: 'Exécution des consignes terminée',
+      stopped: 'Arrêté',
     },
   },
 

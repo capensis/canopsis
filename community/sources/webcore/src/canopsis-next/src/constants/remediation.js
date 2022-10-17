@@ -8,6 +8,7 @@ export const REMEDIATION_TABS = {
 export const REMEDIATION_INSTRUCTION_TYPES = {
   manual: 0,
   auto: 1,
+  simpleManual: 2,
 };
 
 export const REMEDIATION_INSTRUCTION_APPROVAL_TYPES = {
