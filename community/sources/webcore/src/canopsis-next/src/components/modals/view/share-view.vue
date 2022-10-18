@@ -14,7 +14,7 @@
               @error="showCopyErrorPopup"
             )
     template(#actions="")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.close') }}
 </template>
 
 <script>
