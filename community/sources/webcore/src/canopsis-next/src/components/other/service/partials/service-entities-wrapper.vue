@@ -14,7 +14,7 @@
         :selected="isEntitySelected(serviceEntity)",
         @select="updateSelected(serviceEntity, $event)",
         @remove-unavailable="removeEntityFromUnavailable(serviceEntity)",
-        @add:action="$listeners['add:action']",
+        @apply:action="$listeners['apply:action']",
         @refresh="$listeners.refresh"
       )
     c-table-pagination(
@@ -37,7 +37,6 @@ import ServiceEntityActions from './service-entity-actions.vue';
 import ServiceEntity from './service-entity.vue';
 
 export default {
-  inject: ['$actionsQueue'],
   components: {
     ServiceEntityActions,
     ServiceEntity,
@@ -98,44 +97,19 @@ export default {
     selectedEntitiesIds() {
       return mapIds(this.selectedEntities);
     },
-
-    pendingEntitiesIdsByActionType() {
-      return this.$actionsQueue.queue
-        .reduce((acc, { actionType, entities }) => {
-          const entitiesIds = mapIds(entities);
-
-          if (acc[actionType]) {
-            acc[actionType].push(...entitiesIds);
-          } else {
-            acc[actionType] = entitiesIds;
-          }
-
-          return acc;
-        }, {});
-    },
   },
   methods: {
     hasActionError(entity) {
       return this.unavailableEntitiesAction[entity._id];
     },
 
-    isEntityActionPending(type, id) {
-      const pendingEntitiesIds = this.pendingEntitiesIdsByActionType[type] || [];
-
-      return pendingEntitiesIds.includes(id);
-    },
-
     hasEntityWithoutAction(type) {
       return this.selectedEntities
-        .filter(entity => isActionTypeAvailableForEntity(type, entity))
-        .some(({ _id: id }) => !this.isEntityActionPending(type, id));
+        .filter(entity => isActionTypeAvailableForEntity(type, entity));
     },
 
     applyActionForSelected({ type }) {
-      const availableEntities = this.selectedEntities
-        .filter(entity => !this.isEntityActionPending(type, entity._id));
-
-      this.addEntityAction(type, availableEntities);
+      this.applyEntityAction(type, this.selectedEntities);
     },
 
     updateSelected(entity, checked) {
