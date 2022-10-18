@@ -14,6 +14,11 @@
               v-icon(color="error") delete
           v-expand-transition
             event-filter-enrichment-action-form-type-info(v-if="form.type", :type="form.type")
+          v-text-field(
+            v-field="form.description",
+            :label="$t('common.description')",
+            key="description"
+          )
           v-layout
             v-flex(xs5)
               c-name-field(v-field="form.name", key="name")
