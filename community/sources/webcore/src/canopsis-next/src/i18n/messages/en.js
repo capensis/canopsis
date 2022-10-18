@@ -2047,17 +2047,17 @@ export default merge({
       },
       [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
         text: 'Copy a value from a field of an event to an info of an entity',
-        message: 'This action is used to copy the field value of an event to the field of an entity. Note, that the entity should be added to the event first.',
+        message: 'This action is used to copy the field value of an event to the field of an entity.',
         description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field of an entity.\n- value: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.',
       },
       [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
         text: 'Set an info of an entity to a constant',
-        message: 'This action is used to set the dynamic information from an entity corresponding to the event. Note, that the entity should be added to the event first.',
+        message: 'This action is used to set the dynamic information from an entity corresponding to the event.',
         description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the value of a field.',
       },
       [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
         text: 'Set a string info of an entity using a template',
-        message: 'This action is used to modify the dynamic information from an entity corresponding to the event. Note, that the entity should be added to the event.',
+        message: 'This action is used to modify the dynamic information from an entity corresponding to the event.',
         description: 'The parameters of the action are:\n- description (optional): the description\n- name: the name of the field.\n- value: the template used to determine the value of the data item.\nTemplates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
       },
       [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
