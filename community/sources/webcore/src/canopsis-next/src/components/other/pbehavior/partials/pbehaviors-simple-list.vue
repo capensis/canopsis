@@ -35,8 +35,9 @@
         td(v-if="withActiveStatus")
           v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
         td
-          c-action-btn(v-if="updatable", type="edit", @click="showEditPbehaviorModal(item)")
-          c-action-btn(v-if="removable", type="delete", @click="showDeletePbehaviorModal(item._id)")
+          v-layout(row)
+            c-action-btn(v-if="updatable", type="edit", @click="showEditPbehaviorModal(item)")
+            c-action-btn(v-if="removable", type="delete", @click="showDeletePbehaviorModal(item._id)")
 </template>
 
 <script>
@@ -127,6 +128,7 @@ export default {
   methods: {
     ...mapActions({
       fetchPbehaviorsByEntityIdWithoutStore: 'fetchListByEntityIdWithoutStore',
+      removePbehavior: 'remove',
     }),
 
     showEditPbehaviorModal(pbehavior) {
