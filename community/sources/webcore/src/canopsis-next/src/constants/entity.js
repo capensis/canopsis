@@ -452,7 +452,7 @@ export const DEFAULT_COUNTER_BLOCK_TEMPLATE = `<h2 style="text-align: justify;">
   <br>Seuil mineur à {{ levels.values.minor }}, seuil critique à {{ levels.values.critical }}
   <p style="text-align: justify;">{{ counter.ack }} acquittées, {{ counter.ticket}} avec ticket</p>`;
 
-export const COUNTERS_LIMIT = 3;
+export const PBEHAVIOR_COUNTERS_LIMIT = 3;
 
 export const BASIC_ENTITY_TYPES = {
   connector: 'connector',

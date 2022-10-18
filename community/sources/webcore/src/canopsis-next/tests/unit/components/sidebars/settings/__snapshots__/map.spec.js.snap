@@ -1,331 +1,147 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`map Renders \`map\` widget settings with custom props 1`] = `
-<div>
-  <div
-    class="v-list pt-0 theme--light"
-    role="list"
+<widget-settings-stub>
+  <field-title-stub
+    value="Map widget"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-periodic-refresh-stub
+    value="[object Object]"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-map-stub
+    value="map_id"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <widget-settings-group-stub
+    title="Entity display settings"
   >
-    <field-title-stub
-      title="Title"
-      value="Map widget"
+    <field-color-indicator-stub
+      value="state"
     />
     <hr
       class="v-divider theme--light"
     />
-    <field-periodic-refresh-stub
-      value="[object Object]"
+    <field-switcher-stub
+      title="Entities under PBh type inactive, Pause, Maintenance display"
+      value="true"
     />
-    <hr
-      class="v-divider theme--light"
-    />
-    <field-map-stub
-      value="map_id"
-    />
-    <hr
-      class="v-divider theme--light"
-    />
-    <div
-      class="v-list__group"
-    >
-      <div
-        class="v-list__group__header"
-      >
-        <div
-          role="listitem"
-        >
-          <div
-            class="v-list__tile theme--light"
-          >
-            Entity display settings
-          </div>
-        </div>
-        <div
-          class="v-list__group__header__append-icon"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            keyboard_arrow_down
-          </i>
-        </div>
-      </div>
-      <transition-stub
-        mode="in-out"
-        name="expand-transition"
-      >
-        <div
-          class="v-list__group__items"
-          style="display: none;"
-        >
-          <div
-            class="v-list grey lighten-4 px-2 py-0 theme--light"
-            role="list"
-          >
-            <field-color-indicator-stub
-              value="state"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="Entities under PBh type inactive, Pause, Maintenance display"
-              value="true"
-            />
-          </div>
-        </div>
-      </transition-stub>
-    </div>
-    <hr
-      class="v-divider theme--light"
-    />
-    <div
-      class="v-list__group"
-    >
-      <div
-        class="v-list__group__header"
-      >
-        <div
-          role="listitem"
-        >
-          <div
-            class="v-list__tile theme--light"
-          >
-            Advanced settings
-          </div>
-        </div>
-        <div
-          class="v-list__group__header__append-icon"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            keyboard_arrow_down
-          </i>
-        </div>
-      </div>
-      <transition-stub
-        mode="in-out"
-        name="expand-transition"
-      >
-        <div
-          class="v-list__group__items"
-          style="display: none;"
-        >
-          <div
-            class="v-list grey lighten-4 px-2 py-0 theme--light"
-            role="list"
-          >
-            <!---->
-            <field-text-editor-stub
-              title="Entity info popup"
-              value=<div>TEMPLATE</div>
-              variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-columns-stub
-              columns="[object Object]"
-              label="Alarm list columns"
-              withcolorindicator="true"
-              withhtml="true"
-              withtemplate="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-columns-stub
-              columns="[object Object]"
-              label="Context explorer columns"
-              withcolorindicator="true"
-              withhtml="true"
-            />
-          </div>
-        </div>
-      </transition-stub>
-    </div>
-    <hr
-      class="v-divider theme--light"
-    />
-  </div>
-  <button
-    class="primary v-btn theme--light"
-    type="button"
+  </widget-settings-group-stub>
+  <hr
+    class="v-divider theme--light"
+  />
+  <widget-settings-group-stub
+    title="Advanced settings"
   >
-    <div
-      class="v-btn__content"
-    >
-      Save
-    </div>
-  </button>
-</div>
+    <!---->
+    <field-text-editor-stub
+      title="Entity info popup"
+      value=<div>TEMPLATE</div>
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-columns-stub
+      columns="[object Object]"
+      label="Alarm list columns"
+      withcolorindicator="true"
+      withhtml="true"
+      withtemplate="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-columns-stub
+      columns="[object Object]"
+      label="Context explorer columns"
+      withcolorindicator="true"
+      withhtml="true"
+    />
+  </widget-settings-group-stub>
+  <hr
+    class="v-divider theme--light"
+  />
+</widget-settings-stub>
 `;
 
 exports[`map Renders \`map\` widget settings with default props 1`] = `
-<div>
-  <div
-    class="v-list pt-0 theme--light"
-    role="list"
+<widget-settings-stub>
+  <field-title-stub
+    value=""
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-periodic-refresh-stub
+    value="[object Object]"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-map-stub
+    value=""
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <widget-settings-group-stub
+    title="Entity display settings"
   >
-    <field-title-stub
-      title="Title"
-      value=""
+    <field-color-indicator-stub
+      value="state"
     />
     <hr
       class="v-divider theme--light"
     />
-    <field-periodic-refresh-stub
-      value="[object Object]"
+    <field-switcher-stub
+      title="Entities under PBh type inactive, Pause, Maintenance display"
+      value="true"
     />
-    <hr
-      class="v-divider theme--light"
-    />
-    <field-map-stub
-      value=""
-    />
-    <hr
-      class="v-divider theme--light"
-    />
-    <div
-      class="v-list__group"
-    >
-      <div
-        class="v-list__group__header"
-      >
-        <div
-          role="listitem"
-        >
-          <div
-            class="v-list__tile theme--light"
-          >
-            Entity display settings
-          </div>
-        </div>
-        <div
-          class="v-list__group__header__append-icon"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            keyboard_arrow_down
-          </i>
-        </div>
-      </div>
-      <transition-stub
-        mode="in-out"
-        name="expand-transition"
-      >
-        <div
-          class="v-list__group__items"
-          style="display: none;"
-        >
-          <div
-            class="v-list grey lighten-4 px-2 py-0 theme--light"
-            role="list"
-          >
-            <field-color-indicator-stub
-              value="state"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="Entities under PBh type inactive, Pause, Maintenance display"
-              value="true"
-            />
-          </div>
-        </div>
-      </transition-stub>
-    </div>
-    <hr
-      class="v-divider theme--light"
-    />
-    <div
-      class="v-list__group"
-    >
-      <div
-        class="v-list__group__header"
-      >
-        <div
-          role="listitem"
-        >
-          <div
-            class="v-list__tile theme--light"
-          >
-            Advanced settings
-          </div>
-        </div>
-        <div
-          class="v-list__group__header__append-icon"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            keyboard_arrow_down
-          </i>
-        </div>
-      </div>
-      <transition-stub
-        mode="in-out"
-        name="expand-transition"
-      >
-        <div
-          class="v-list__group__items"
-          style="display: none;"
-        >
-          <div
-            class="v-list grey lighten-4 px-2 py-0 theme--light"
-            role="list"
-          >
-            <!---->
-            <field-text-editor-stub
-              title="Entity info popup"
-              value=<ul>
+  </widget-settings-group-stub>
+  <hr
+    class="v-divider theme--light"
+  />
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <!---->
+    <field-text-editor-stub
+      title="Entity info popup"
+      value=<ul>
   <li><strong>Libellé</strong> : {{entity.name}}</li>
 </ul>
-              variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-columns-stub
-              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              label="Alarm list columns"
-              withcolorindicator="true"
-              withhtml="true"
-              withtemplate="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-columns-stub
-              columns="[object Object],[object Object]"
-              label="Context explorer columns"
-              withcolorindicator="true"
-              withhtml="true"
-            />
-          </div>
-        </div>
-      </transition-stub>
-    </div>
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    />
     <hr
       class="v-divider theme--light"
     />
-  </div>
-  <button
-    class="primary v-btn theme--light"
-    type="button"
-  >
-    <div
-      class="v-btn__content"
-    >
-      Save
-    </div>
-  </button>
-</div>
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      label="Alarm list columns"
+      withcolorindicator="true"
+      withhtml="true"
+      withtemplate="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object]"
+      label="Context explorer columns"
+      withcolorindicator="true"
+      withhtml="true"
+    />
+  </widget-settings-group-stub>
+  <hr
+    class="v-divider theme--light"
+  />
+</widget-settings-stub>
 `;
