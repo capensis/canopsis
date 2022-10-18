@@ -26,9 +26,9 @@
             pbehaviors-simple-list(
               :entity="service",
               with-active-status,
-              creatable,
-              editable,
-              deletable,
+              addable,
+              updatable,
+              removable,
               dense
             )
       template(#actions="")

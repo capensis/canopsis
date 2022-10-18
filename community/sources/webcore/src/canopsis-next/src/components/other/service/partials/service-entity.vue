@@ -46,7 +46,7 @@
               template(v-if="hasAccessToPbehaviors")
                 v-tab {{ $tc('common.activePbehavior') }}
                 v-tab-item(lazy)
-                  pbehaviors-simple-list(:entity="entity", editable, deletable, dense, with-active-status)
+                  pbehaviors-simple-list(:entity="entity", updatable, removable, dense, with-active-status)
 </template>
 
 <script>
