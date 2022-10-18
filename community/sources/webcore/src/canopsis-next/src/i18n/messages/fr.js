@@ -275,6 +275,7 @@ export default merge({
     tag: 'Étiquette | Étiquettes',
     sharedTokens: 'Jetons partagés',
     notAvailable: 'Indisponible',
+    timestamp: 'Horodatage',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -807,6 +808,7 @@ export default merge({
     alarmsColumns: 'Colonnes de la liste des alarmes',
     entitiesColumns: 'Colonnes de l\'explorateur de contexte',
     entityInfoPopup: 'Fenêtre contextuelle d\'informations sur l\'entité',
+    modal: '(Modal)',
     exportCsv: {
       title: 'Exporter CSV',
       fields: {
@@ -890,6 +892,8 @@ export default merge({
       },
     },
     counters: 'Compteurs',
+    pbehaviorCounters: 'Compteurs de pbehavior',
+    entityStateCounters: 'Compteurs d\'états d\'entité',
     remediationInstructionsFilters: 'Filtres de consignes',
     colorIndicator: {
       title: 'Indicateur de couleur',

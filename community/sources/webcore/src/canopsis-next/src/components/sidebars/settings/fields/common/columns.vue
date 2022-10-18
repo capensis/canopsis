@@ -1,8 +1,5 @@
 <template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile
-        div(:class="validationHeaderClass") {{ label }}
+  widget-settings-item(:title="label")
     c-columns-field(
       v-field="columns",
       :with-template="withTemplate",
@@ -12,13 +9,10 @@
 </template>
 
 <script>
-import { formValidationHeaderMixin } from '@/mixins/form';
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
 
 export default {
-  inject: ['$validator'],
-  mixins: [
-    formValidationHeaderMixin,
-  ],
+  components: { WidgetSettingsItem },
   model: {
     prop: 'columns',
     event: 'input',

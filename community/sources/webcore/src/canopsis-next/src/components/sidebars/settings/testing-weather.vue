@@ -1,53 +1,44 @@
 <template lang="pug">
-  div
-    v-list.pt-0(expand)
-      field-title(v-model="form.title", :title="$t('common.title')")
-      v-divider
-      field-periodic-refresh(v-model="form.parameters.periodic_refresh")
-      v-divider
-      field-storage(
-        v-model="form.parameters.directory",
-        :title="$t('settings.resultDirectory')",
-        :disabled="form.parameters.is_api",
-        @add="editResultDirectory",
-        @edit="editResultDirectory",
-        @remove="removeResultDirectory"
+  widget-settings(:submitting="submitting", @submit="submit")
+    field-title(v-model="form.title")
+    v-divider
+    field-periodic-refresh(v-model="form.parameters.periodic_refresh")
+    v-divider
+    field-storage(
+      v-model="form.parameters.directory",
+      :title="$t('settings.resultDirectory')",
+      :disabled="form.parameters.is_api",
+      @add="editResultDirectory",
+      @edit="editResultDirectory",
+      @remove="removeResultDirectory"
+    )
+    v-divider
+    widget-settings-group(:title="$t('settings.advancedSettings')")
+      field-switcher(
+        v-model="form.parameters.is_api",
+        :title="$t('settings.receiveByApi')"
       )
       v-divider
-      v-list-group
-        template(#activator="")
-          v-list-tile {{ $t('settings.advancedSettings') }}
-        v-list.grey.lighten-4.px-2.py-0(expand)
-          field-switcher(
-            v-model="form.parameters.is_api",
-            :title="$t('settings.receiveByApi')"
-          )
-          v-divider
-          field-storages(
-            v-model="form.parameters.screenshot_directories",
-            :disabled="form.parameters.is_api",
-            :help-text="$t('settings.screenshotDirectories.helpText')",
-            :title="$t('settings.screenshotDirectories.title')",
-            @add="editScreenshotStorage",
-            @edit="editScreenshotStorage"
-          )
-          v-divider
-          field-storages(
-            v-model="form.parameters.video_directories",
-            :disabled="form.parameters.is_api",
-            :help-text="$t('settings.videoDirectories.helpText')",
-            :title="$t('settings.videoDirectories.title')",
-            @add="editVideoStorage",
-            @edit="editVideoStorage"
-          )
-          v-divider
-          field-file-name-masks(v-model="form.parameters")
-          v-divider
-    v-btn.primary(
-      :loading="submitting",
-      :disabled="submitting",
-      @click="submit"
-    ) {{ $t('common.save') }}
+      field-storages(
+        v-model="form.parameters.screenshot_directories",
+        :disabled="form.parameters.is_api",
+        :help-text="$t('settings.screenshotDirectories.helpText')",
+        :title="$t('settings.screenshotDirectories.title')",
+        @add="editScreenshotStorage",
+        @edit="editScreenshotStorage"
+      )
+      v-divider
+      field-storages(
+        v-model="form.parameters.video_directories",
+        :disabled="form.parameters.is_api",
+        :help-text="$t('settings.videoDirectories.helpText')",
+        :title="$t('settings.videoDirectories.title')",
+        @add="editVideoStorage",
+        @edit="editVideoStorage"
+      )
+      v-divider
+      field-file-name-masks(v-model="form.parameters")
+    v-divider
 </template>
 
 <script>
@@ -58,13 +49,15 @@ import uid from '@/helpers/uid';
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entitiesTestSuitesMixin } from '@/mixins/entities/test-suite';
 
-import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
-import FieldDuration from '@/components/sidebars/settings/fields/common/duration.vue';
-import FieldPeriodicRefresh from '@/components/sidebars/settings/fields/common/periodic-refresh.vue';
-import FieldSwitcher from '@/components/sidebars/settings/fields/common/switcher.vue';
-import FieldStorages from '@/components/sidebars/settings/fields/testing-weather/storages.vue';
-import FieldStorage from '@/components/sidebars/settings/fields/testing-weather/storage.vue';
-import FieldFileNameMasks from '@/components/sidebars/settings/fields/testing-weather/file-name-masks.vue';
+import FieldTitle from './fields/common/title.vue';
+import FieldDuration from './fields/common/duration.vue';
+import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
+import FieldSwitcher from './fields/common/switcher.vue';
+import FieldStorages from './fields/testing-weather/storages.vue';
+import FieldStorage from './fields/testing-weather/storage.vue';
+import FieldFileNameMasks from './fields/testing-weather/file-name-masks.vue';
+import WidgetSettings from './partials/widget-settings.vue';
+import WidgetSettingsGroup from './partials/widget-settings-group.vue';
 
 export default {
   name: SIDE_BARS.testingWeatherSettings,
@@ -76,6 +69,8 @@ export default {
     FieldStorages,
     FieldStorage,
     FieldFileNameMasks,
+    WidgetSettings,
+    WidgetSettingsGroup,
   },
   mixins: [
     widgetSettingsMixin,

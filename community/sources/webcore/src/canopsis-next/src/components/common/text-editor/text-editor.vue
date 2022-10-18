@@ -76,7 +76,14 @@ export default {
     },
     buttons: {
       type: Array,
-      default: () => [],
+      default: () => [
+        'source', '|',
+        'bold', 'italic', 'strikethrough', 'underline', '|',
+        'ul', 'ol', '|',
+        'font', 'fontsize', 'brush', 'paragraph', '|',
+        'image', 'table', 'link', '|',
+        'align', 'undo', 'redo', '|',
+      ],
     },
     public: {
       type: Boolean,
@@ -237,9 +244,8 @@ export default {
         return;
       }
 
-      const [variable,, value] = variableGroup;
-
-      this.variablesMenuValue = value;
+      const [variable] = variableGroup;
+      this.variablesMenuValue = this.getVariableValueFromGroup(variableGroup);
 
       const [currentStart, currentEnd] = [anchorOffset, focusOffset].sort();
       const start = variableGroup.index;
@@ -276,10 +282,30 @@ export default {
       document.removeEventListener('selectionchange', this.selectVariableValueByCursor);
     },
 
+    getVariableValueFromGroup(group) {
+      const [,, content] = group;
+
+      const parts = content.trim().split(' ');
+
+      return parts.length > 1 ? parts[1] : parts[0];
+    },
+
     pasteVariable(variable) {
       this.selectVariableValueByCursor();
 
-      this.$editor.selection.insertHTML(`{{ ${variable} }}`);
+      const selection = this.$editor.selection.sel;
+      const { anchorNode } = selection;
+
+      const variableGroup = matchPayloadVariableBySelection(anchorNode.nodeValue, selection);
+
+      if (variableGroup) {
+        const [oldVariable] = variableGroup;
+        const oldValue = this.getVariableValueFromGroup(variableGroup);
+
+        this.$editor.selection.insertHTML(oldVariable.replace(oldValue, variable));
+      } else {
+        this.$editor.selection.insertHTML(`{{ ${variable} }}`);
+      }
 
       this.closeVariablesMenu();
     },

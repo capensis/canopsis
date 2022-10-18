@@ -275,6 +275,7 @@ export default merge({
     tag: 'Tag | Tags',
     sharedTokens: 'Shared tokens',
     notAvailable: 'N/a',
+    timestamp: 'Timestamp',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -807,6 +808,7 @@ export default merge({
     alarmsColumns: 'Alarm list columns',
     entitiesColumns: 'Context explorer columns',
     entityInfoPopup: 'Entity info popup',
+    modal: '(Modal)',
     exportCsv: {
       title: 'Export CSV',
       fields: {
@@ -890,6 +892,8 @@ export default merge({
       },
     },
     counters: 'Counters',
+    pbehaviorCounters: 'Pbehavior counters',
+    entityStateCounters: 'Entity states counters',
     remediationInstructionsFilters: 'Instructions filters',
     colorIndicator: {
       title: 'Color indicator',

@@ -1,5 +1,3 @@
-import flushPromises from 'flush-promises';
-
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import Columns from '@/components/sidebars/settings/fields/common/columns.vue';
@@ -82,39 +80,6 @@ describe('columns', () => {
         withColorIndicator: true,
       },
     });
-
-    expect(wrapper.element).toMatchSnapshot();
-  });
-
-  it('Renders `columns` with errors', async () => {
-    const name = 'custom-name';
-    const wrapper = snapshotFactory({
-      propsData: {
-        label: 'Custom label',
-        columns: [],
-        withHtml: true,
-        withColorIndicator: true,
-      },
-    });
-
-    const validator = wrapper.getValidator();
-
-    const columnsField = selectColumnsField(wrapper);
-
-    validator.attach({
-      name,
-      rules: 'required:true',
-      getter: () => true,
-      context: () => columnsField.vm,
-      vm: columnsField.vm,
-    });
-
-    validator.errors.add({
-      field: name,
-      msg: 'error-message',
-    });
-
-    await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
   });

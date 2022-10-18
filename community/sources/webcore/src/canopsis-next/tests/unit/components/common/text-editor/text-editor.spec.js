@@ -91,8 +91,10 @@ describe('text-editor', () => {
 
   test('Value changed after trigger variables', async () => {
     const focusSpy = jest.spyOn(window, 'focus').mockImplementation();
+    const initialValue = 'Text';
     const wrapper = snapshotFactory({
       propsData: {
+        value: initialValue,
         variables: [{ value: 'variable' }],
       },
     });
@@ -100,6 +102,14 @@ describe('text-editor', () => {
     await flushPromises();
 
     const variable = Faker.lorem.word();
+    const editor = selectEditor(wrapper);
+    const range = document.createRange();
+    const selection = window.getSelection();
+
+    range.setStart(editor.element.firstChild, 0);
+    range.setEnd(editor.element.firstChild, initialValue.length);
+    selection.removeAllRanges();
+    selection.addRange(range);
 
     const variablesMenu = selectVariablesMenu(wrapper);
 

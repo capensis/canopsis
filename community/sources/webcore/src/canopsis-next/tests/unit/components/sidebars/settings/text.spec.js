@@ -24,6 +24,9 @@ import TextSettings from '@/components/sidebars/settings/text.vue';
 const localVue = createVueInstance();
 
 const stubs = {
+  'widget-settings': true,
+  'widget-settings-item': true,
+  'widget-settings-group': true,
   'field-title': createInputStub('field-title'),
   'field-text-editor': createInputStub('field-text-editor'),
   'field-stats-selector': createInputStub('field-stats-selector'),
@@ -32,6 +35,9 @@ const stubs = {
 };
 
 const snapshotStubs = {
+  'widget-settings': true,
+  'widget-settings-item': true,
+  'widget-settings-group': true,
   'field-title': true,
   'field-text-editor': true,
   'field-stats-selector': true,
