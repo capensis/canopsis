@@ -200,32 +200,6 @@ export const convertActionToEvents = ({ actionType, entity, payload }) => {
 };
 
 /**
- * Convert entity actions to entity events
- *
- * @param {EntityAction[]} actions
- * @return {Event[]}
- */
-export const convertActionsToEvents = actions => actions.reduce((
-  acc,
-  {
-    actionType,
-
-    entities,
-    payload = {},
-  },
-) => {
-  entities.forEach((entity) => {
-    acc.push(...convertActionToEvents({
-      actionType,
-      entity,
-      payload,
-    }));
-  });
-
-  return acc;
-}, []);
-
-/**
  * Get icon by entity type
  *
  * @param {EntityType} type
