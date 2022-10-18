@@ -4,27 +4,35 @@
       template(#title="")
         span {{ service.name }}
       template(#text="")
-        v-fade-transition(mode="out-in")
-          service-template(
-            v-if="!pending",
-            :service="service",
-            :service-entities="serviceEntitiesWithKey",
-            :widget-parameters="widgetParameters",
-            :pagination.sync="pagination",
-            :total-items="serviceEntitiesMeta.total_count",
-            :pending="serviceEntitiesPending",
-            @add:action="addActionToQueue",
-            @refresh="fetchList"
-          )
-          v-layout(v-else, column)
-            v-flex(xs12)
-              v-layout(justify-center)
+        v-tabs(slider-color="primary", fixed-tabs, light)
+          v-tab {{ $t('common.service') }}
+          v-tab-item
+            v-fade-transition(mode="out-in")
+              service-template(
+                v-if="!pending",
+                :service="service",
+                :service-entities="serviceEntitiesWithKey",
+                :widget-parameters="widgetParameters",
+                :pagination.sync="pagination",
+                :total-items="serviceEntitiesMeta.total_count",
+                :pending="serviceEntitiesPending",
+                @refresh="fetchList",
+                @add:action="addActionToQueue"
+              )
+              v-layout.pa-4(v-else, justify-center)
                 v-progress-circular(color="primary", indeterminate)
+          v-tab(:disabled="!hasPbehaviorListAccess") {{ $tc('common.activePbehavior') }}
+          v-tab-item(lazy)
+            pbehaviors-simple-list(
+              :entity="service",
+              with-active-status,
+              creatable,
+              editable,
+              deletable,
+              dense
+            )
       template(#actions="")
-        v-alert.ma-0.pa-1.pr-2(
-          :value="!!actionsCount",
-          color="info"
-        )
+        v-alert.ma-0.pa-1.pr-2(:value="!!actionsCount", color="info")
           v-layout(row, align-center)
             v-btn.mr-2(icon, small, @click="clearActions")
               v-icon(color="white", small) close
@@ -47,12 +55,13 @@ import { pick, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import { MODALS, SORT_ORDERS, WEATHER_ACTIONS_TYPES } from '@/constants';
+import { MODALS, SORT_ORDERS, USERS_PERMISSIONS, WEATHER_ACTIONS_TYPES } from '@/constants';
 
 import { addKeyInEntities } from '@/helpers/entities';
 import { createDowntimePbehavior } from '@/helpers/entities/pbehavior';
 import { convertActionsToEvents } from '@/helpers/entities/entity';
 
+import { authMixin } from '@/mixins/auth';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
@@ -62,9 +71,10 @@ import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
-import ModalWrapper from '../modal-wrapper.vue';
+import ServiceTemplate from '@/components/other/service/partials/service-template.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/partials/pbehaviors-simple-list.vue';
 
-import ServiceTemplate from './partial/service-template.vue';
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.serviceEntities,
@@ -74,8 +84,9 @@ export default {
       $actionsQueue: this.actions,
     };
   },
-  components: { ServiceTemplate, ModalWrapper },
+  components: { PbehaviorsSimpleList, ServiceTemplate, ModalWrapper },
   mixins: [
+    authMixin,
     localQueryMixin,
     modalInnerMixin,
     eventActionsAlarmMixin,
@@ -117,6 +128,10 @@ export default {
 
     actionsCount() {
       return this.actions.queue.reduce((count, { entities }) => count + entities.length, 0);
+    },
+
+    hasPbehaviorListAccess() {
+      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.pbehaviorList);
     },
   },
   async mounted() {

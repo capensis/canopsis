@@ -238,6 +238,7 @@ export default merge({
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
+    activePbehavior: 'Activer le comportement périodique | Activer les comportements périodiques',
     searchBy: 'Recherché par',
     dictionary: 'Dictionnaire',
     condition: 'Condition | Conditions',

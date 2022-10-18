@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import ServiceDependencies from '@/components/other/service/table/service-dependencies.vue';
+import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
 
 export default {
   components: {

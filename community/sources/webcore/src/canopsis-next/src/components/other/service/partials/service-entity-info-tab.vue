@@ -11,10 +11,6 @@
               @apply="applyActionForEntity",
               @execute="executeAlarmInstruction"
             )
-      v-tooltip(v-if="hasPbehaviors && hasAccessToManagePbehaviors", top)
-        v-btn(slot="activator", small, @click="showPbehaviorsListModal")
-          v-icon(small) list
-        span {{ $t('modals.service.editPbehaviors') }}
     service-entity-template(:entity="entity", :template="template")
 </template>
 
@@ -23,7 +19,6 @@ import {
   CRUD_ACTIONS,
   MODALS,
   PBEHAVIOR_TYPE_TYPES,
-  USERS_PERMISSIONS,
 } from '@/constants';
 
 import { getAvailableActionsByEntity } from '@/helpers/entities/entity';
@@ -32,8 +27,8 @@ import { mapIds } from '@/helpers/entities';
 import { authMixin } from '@/mixins/auth';
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 
-import ServiceEntityTemplate from '@/components/modals/service/partial/service-entity-template.vue';
-import ServiceEntityActions from '@/components/modals/service/partial/service-entity-actions.vue';
+import ServiceEntityTemplate from './service-entity-template.vue';
+import ServiceEntityActions from './service-entity-actions.vue';
 
 export default {
   inject: ['$actionsQueue'],
@@ -60,14 +55,6 @@ export default {
       return this.entity.pbehavior_info?.canonical_type === PBEHAVIOR_TYPE_TYPES.pause;
     },
 
-    hasPbehaviors() {
-      return !!this.entity.pbehaviors.length;
-    },
-
-    hasAccessToManagePbehaviors() {
-      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors);
-    },
-
     clickedActions() {
       return this.$actionsQueue.queue
         .filter(({ entities }) => mapIds(entities).includes(this.entity._id))
@@ -90,18 +77,6 @@ export default {
 
     applyActionForEntity({ type }) {
       this.addEntityAction(type, [this.entity]);
-    },
-
-    showPbehaviorsListModal() {
-      this.$modals.show({
-        name: MODALS.pbehaviorList,
-        config: {
-          pbehaviors: this.entity.pbehaviors,
-          entityId: this.entity._id,
-          onlyActive: true,
-          availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
-        },
-      });
     },
 
     executeAlarmInstruction(assignedInstruction) {
