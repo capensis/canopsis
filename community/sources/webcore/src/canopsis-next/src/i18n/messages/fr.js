@@ -2047,17 +2047,17 @@ export default merge({
       },
       [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
         text: 'Copier une valeur d\'un champ d\'un événement vers une information d\'une entité',
-        message: 'Cette action est utilisée pour copier la valeur du champ d\'un événement dans le champ d\'une entité. Notez que l\'entité doit être ajoutée à l\'événement en premier.',
+        message: 'Cette action est utilisée pour copier la valeur du champ d\'un événement dans le champ d\'une entité.',
         description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description.\n- nom : le nom du champ d\'une entité.\n- valeur : le nom du champ dont la valeur doit être copiée. Il peut s\'agir d\'un champ d\'événement, d\'un sous-groupe d\'une expression régulière ou d\'une donnée externe.',
       },
       [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
         text: 'Définir une information d\'une entité sur une constante',
-        message: 'Cette action permet de définir les informations dynamiques d\'une entité correspondant à l\'événement. Notez que l\'entité doit être ajoutée à l\'événement en premier.',
+        message: 'Cette action permet de définir les informations dynamiques d\'une entité correspondant à l\'événement.',
         description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description.\n- nom : le nom du champ.\n- valeur : la valeur d\'un champ.',
       },
       [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
         text: 'Définir une chaîne d\'informations sur une entité à l\'aide d\'un modèle',
-        message: 'Cette action permet de modifier les informations dynamiques d\'une entité correspondant à l\'événement. Notez que l\'entité doit être ajoutée à l\'événement.',
+        message: 'Cette action permet de modifier les informations dynamiques d\'une entité correspondant à l\'événement.',
         description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description\n- nom : le nom du champ.\n- valeur : le modèle utilisé pour déterminer la valeur de la donnée.\nDes modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
       },
       [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
