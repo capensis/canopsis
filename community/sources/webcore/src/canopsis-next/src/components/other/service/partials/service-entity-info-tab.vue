@@ -1,25 +1,18 @@
 <template lang="pug">
   div
-    v-layout.pa-2(justify-space-between)
-      v-flex(xs11)
-        v-layout(justify-space-between)
-          v-layout(v-if="availableActions.length", row, align-center, wrap)
-            div {{ $t('common.actionsLabel') }}:
-            service-entity-actions(
-              :actions="availableActions",
-              :assigned-instructions="entity.assigned_instructions",
-              @apply="applyActionForEntity",
-              @execute="executeAlarmInstruction"
-            )
+    v-layout.pa-2(v-if="availableActions.length", align-center, wrap)
+      div {{ $t('common.actionsLabel') }}:
+      service-entity-actions(
+        :actions="availableActions",
+        :assigned-instructions="entity.assigned_instructions",
+        @apply="applyActionForEntity",
+        @execute="executeAlarmInstruction"
+      )
     service-entity-template(:entity="entity", :template="template")
 </template>
 
 <script>
-import {
-  CRUD_ACTIONS,
-  MODALS,
-  PBEHAVIOR_TYPE_TYPES,
-} from '@/constants';
+import { MODALS, PBEHAVIOR_TYPE_TYPES, WEATHER_ACTIONS_TYPES } from '@/constants';
 
 import { getAvailableActionsByEntity } from '@/helpers/entities/entity';
 import { mapIds } from '@/helpers/entities';
@@ -72,6 +65,10 @@ export default {
   },
   methods: {
     isActionDisabled(action) {
+      if ([WEATHER_ACTIONS_TYPES.entityComment, WEATHER_ACTIONS_TYPES.entityAssocTicket].includes(action)) {
+        return false;
+      }
+
       return this.clickedActions.includes(action);
     },
 
