@@ -23,8 +23,8 @@
             v-flex(xs5)
               c-name-field(v-field="form.name", key="name")
             v-flex(xs7)
-              v-text-field(
-                v-if="isCopyActionType",
+              v-text-field.ml-2(
+                v-if="isStringValueType",
                 v-field="form.value",
                 v-validate="'required'",
                 :label="$t('common.value')",
@@ -70,8 +70,13 @@ export default {
       }));
     },
 
-    isCopyActionType() {
-      return this.form.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy;
+    isStringValueType() {
+      return [
+        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy,
+        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo,
+        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate,
+        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate,
+      ].includes(this.form.type);
     },
   },
   watch: {
