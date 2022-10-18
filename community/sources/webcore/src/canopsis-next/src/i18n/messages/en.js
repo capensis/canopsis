@@ -238,6 +238,7 @@ export default merge({
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
+    activePbehavior: 'Active pbehavior | Active pbehaviors',
     searchBy: 'Search by',
     dictionary: 'Dictionary',
     condition: 'Condition | Conditions',

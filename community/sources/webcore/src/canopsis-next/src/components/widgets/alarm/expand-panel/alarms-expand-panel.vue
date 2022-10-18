@@ -114,7 +114,7 @@ import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
-import ServiceDependencies from '@/components/other/service/table/service-dependencies.vue';
+import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
 import PbehaviorsSimpleList from '@/components/other/pbehavior/partials/pbehaviors-simple-list.vue';
 
 import TimeLine from '../time-line/time-line.vue';

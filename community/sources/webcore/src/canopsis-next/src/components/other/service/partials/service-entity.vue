@@ -14,7 +14,7 @@
         v-card(color="white black--text")
           v-card-text
             entity-info-tab(
-              v-if="!isService",
+              v-if="!isService && !hasAccessToPbehaviors",
               :entity="entity",
               :template="template",
               @add:action="$listeners['add:action']",
@@ -36,22 +36,30 @@
                   @add:action="$listeners['add:action']",
                   @refresh="$listeners.refresh"
                 )
-              v-tab {{ $t('modals.service.entity.tabs.treeOfDependencies') }}
-              v-tab-item(lazy)
-                entity-tree-of-dependencies-tab(
-                  :entity="entity",
-                  :columns="serviceDependenciesColumns"
-                )
+              template(v-if="isService")
+                v-tab {{ $t('modals.service.entity.tabs.treeOfDependencies') }}
+                v-tab-item(lazy)
+                  entity-tree-of-dependencies-tab(
+                    :entity="entity",
+                    :columns="serviceDependenciesColumns"
+                  )
+              template(v-if="hasAccessToPbehaviors")
+                v-tab {{ $tc('common.activePbehavior') }}
+                v-tab-item(lazy)
+                  pbehaviors-simple-list(:entity="entity", editable, deletable, dense, with-active-status)
 </template>
 
 <script>
 import { isNull } from 'lodash';
 
-import { ENTITY_TYPES } from '@/constants';
+import { ENTITY_TYPES, USERS_PERMISSIONS } from '@/constants';
 
 import { getEntityColor } from '@/helpers/color';
 
+import { authMixin } from '@/mixins/auth';
 import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
+
+import PbehaviorsSimpleList from '@/components/other/pbehavior/partials/pbehaviors-simple-list.vue';
 
 import EntityHeader from './service-entity-header.vue';
 import EntityInfoTab from './service-entity-info-tab.vue';
@@ -60,11 +68,12 @@ import EntityTreeOfDependenciesTab from './service-entity-tree-of-dependencies-t
 export default {
   inject: ['$actionsQueue'],
   components: {
+    PbehaviorsSimpleList,
     EntityHeader,
     EntityInfoTab,
     EntityTreeOfDependenciesTab,
   },
-  mixins: [vuetifyTabsMixin],
+  mixins: [authMixin, vuetifyTabsMixin],
   props: {
     entity: {
       type: Object,
@@ -112,6 +121,15 @@ export default {
 
     color() {
       return getEntityColor(this.entity, this.colorIndicator);
+    },
+
+    hasPbehaviors() {
+      return !!this.entity.pbehaviors.length;
+    },
+
+    hasAccessToPbehaviors() {
+      return this.hasPbehaviors
+        && this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors);
     },
   },
   watch: {
