@@ -3255,6 +3255,7 @@ export default merge({
 
   techMetric: {
     noDumps: 'Aucun dump disponible. Générer un nouveau dump ?',
+    metricsDisabled: 'Les métriques du moteur sont désactivées',
     generateDump: 'Générer un nouveau dump',
     downloadDump: 'Télécharger le dump',
   },
