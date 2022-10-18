@@ -9,7 +9,7 @@
             :entity-name-field="entityNameField",
             :last-action-unavailable="lastActionUnavailable",
             @select="$listeners.select",
-            @remove-unavailable="$listeners['remove-unavailable']"
+            @remove:unavailable="$listeners['remove:unavailable']"
           )
         v-card(color="white black--text")
           v-card-text
