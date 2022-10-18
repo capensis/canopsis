@@ -1,18 +1,12 @@
 <template lang="pug">
-  div
-    v-list.pt-0(expand)
-      field-title(v-model="form.title", :title="$t('common.title')")
-      v-divider
-      field-text-editor(
-        v-model="form.parameters.template",
-        :title="$t('settings.templateEditor')"
-      )
-      v-divider
-    v-btn.primary(
-      :loading="submitting",
-      :disabled="submitting",
-      @click="submit"
-    ) {{ $t('common.save') }}
+  widget-settings(:submitting="submitting", @submit="submit")
+    field-title(v-model="form.title")
+    v-divider
+    field-text-editor(
+      v-model="form.parameters.template",
+      :title="$t('settings.templateEditor')"
+    )
+    v-divider
 </template>
 
 <script>
@@ -23,9 +17,12 @@ import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
 import FieldTextEditor from '@/components/sidebars/settings/fields/common/text-editor.vue';
 
+import WidgetSettings from './partials/widget-settings.vue';
+
 export default {
   name: SIDE_BARS.textSettings,
   components: {
+    WidgetSettings,
     FieldTitle,
     FieldTextEditor,
   },
