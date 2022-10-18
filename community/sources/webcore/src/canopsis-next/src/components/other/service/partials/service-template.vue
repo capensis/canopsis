@@ -79,7 +79,7 @@ export default {
           :pagination="pagination"
           :total-items="totalItems"
           entity-name-field="${entityNameField}"
-          @add:action="addActionToQueue"
+          @apply:action="applyAction"
           @refresh="refreshEntities"
           @update:pagination="updatePagination"
         ></service-entities-wrapper>
@@ -90,8 +90,8 @@ export default {
     unregisterHelper('entities');
   },
   methods: {
-    addActionToQueue(event) {
-      this.$emit('add:action', event);
+    applyAction(event) {
+      this.$emit('apply:action', event);
     },
 
     updatePagination(pagination) {

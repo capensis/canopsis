@@ -1174,7 +1174,6 @@ export default merge({
       copyToClipboard: 'Copy to clipboard',
     },
     service: {
-      actionPending: 'action pending | actions pending',
       refreshEntities: 'Refresh entities list',
       editPbehaviors: 'Edit pbehaviors',
       entity: {

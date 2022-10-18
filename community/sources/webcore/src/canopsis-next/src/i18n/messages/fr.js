@@ -1174,7 +1174,6 @@ export default merge({
       copyToClipboard: 'Copier dans le presse-papier',
     },
     service: {
-      actionPending: 'action en attente | actions en attente',
       refreshEntities: 'Rafraîchir la liste des entités',
       editPbehaviors: 'Éditer les comportements périodiques',
       entity: {

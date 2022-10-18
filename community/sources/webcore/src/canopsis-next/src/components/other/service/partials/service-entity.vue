@@ -17,7 +17,7 @@
               v-if="!isService && !hasAccessToPbehaviors",
               :entity="entity",
               :template="template",
-              @add:action="$listeners['add:action']",
+              @apply:action="$listeners['apply:action']",
               @refresh="$listeners.refresh"
             )
             v-tabs(
@@ -33,7 +33,7 @@
                 entity-info-tab(
                   :entity="entity",
                   :template="template",
-                  @add:action="$listeners['add:action']",
+                  @apply:action="$listeners['apply:action']",
                   @refresh="$listeners.refresh"
                 )
               template(v-if="isService")
@@ -66,7 +66,6 @@ import EntityInfoTab from './service-entity-info-tab.vue';
 import EntityTreeOfDependenciesTab from './service-entity-tree-of-dependencies-tab.vue';
 
 export default {
-  inject: ['$actionsQueue'],
   components: {
     PbehaviorsSimpleList,
     EntityHeader,
