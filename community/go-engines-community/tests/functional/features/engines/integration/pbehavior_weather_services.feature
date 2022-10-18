@@ -96,7 +96,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-1",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -232,7 +232,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-2",
           "state": {"val": 2},
           "status": {"val": 1},
-          "icon": "major",
+          "icon": "person",
           "secondary_icon": "",
           "is_grey": false,
           "counters": {
@@ -374,8 +374,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-3",
           "state": {"val": 2},
           "status": {"val": 1},
-          "icon": "major",
-          "secondary_icon": "maintenance",
+          "icon": "person",
+          "secondary_icon": "build",
           "is_grey": false,
           "counters": {
             "depends": 2,
@@ -527,7 +527,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-4",
           "state": {"val": 3},
           "status": {"val": 1},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -680,7 +680,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-5",
           "state": {"val": 3},
           "status": {"val": 1},
-          "icon": "critical",
+          "icon": "wb_cloudy",
           "secondary_icon": "",
           "is_grey": false,
           "counters": {
@@ -856,7 +856,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-6",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -1059,8 +1059,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-7",
           "state": {"val": 2},
           "status": {"val": 1},
-          "icon": "maintenance",
-          "secondary_icon": "maintenance",
+          "icon": "build",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 2,
@@ -1239,7 +1239,7 @@ Feature: get service weather
             "field": "icon",
             "cond": {
               "type": "eq",
-              "value": "maintenance"
+              "value": "build"
             }
           }
         ]
@@ -1291,7 +1291,7 @@ Feature: get service weather
             "field": "icon",
             "cond": {
               "type": "neq",
-              "value": "maintenance"
+              "value": "build"
             }
           }
         ]
@@ -1432,7 +1432,7 @@ Feature: get service weather
             "field": "icon",
             "cond": {
               "type": "eq",
-              "value": "maintenance"
+              "value": "build"
             }
           }
         ]
@@ -1484,7 +1484,7 @@ Feature: get service weather
             "field": "icon",
             "cond": {
               "type": "neq",
-              "value": "maintenance"
+              "value": "build"
             }
           }
         ]
@@ -1574,7 +1574,7 @@ Feature: get service weather
             "field": "icon",
             "cond": {
               "type": "eq",
-              "value": "maintenance"
+              "value": "build"
             }
           }
         ]
@@ -1730,7 +1730,7 @@ Feature: get service weather
             "field": "secondary_icon",
             "cond": {
               "type": "eq",
-              "value": "maintenance"
+              "value": "build"
             }
           }
         ]
@@ -1782,7 +1782,7 @@ Feature: get service weather
             "field": "secondary_icon",
             "cond": {
               "type": "neq",
-              "value": "maintenance"
+              "value": "build"
             }
           }
         ]
@@ -1872,7 +1872,7 @@ Feature: get service weather
             "field": "secondary_icon",
             "cond": {
               "type": "eq",
-              "value": "maintenance"
+              "value": "build"
             }
           }
         ]
@@ -1991,7 +1991,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-16",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -2142,7 +2142,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-17",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -2332,7 +2332,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-18",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -2396,7 +2396,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-18",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -2460,7 +2460,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-18",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -2524,7 +2524,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-18",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -2663,7 +2663,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-19",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -2727,7 +2727,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-19",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -2780,7 +2780,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-19",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "ok",
+          "icon": "wb_sunny",
           "secondary_icon": "",
           "is_grey": false,
           "counters": {
@@ -2833,7 +2833,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-19",
           "state": {"val": 2},
           "status": {"val": 1},
-          "icon": "major",
+          "icon": "person",
           "secondary_icon": "",
           "is_grey": false,
           "counters": {
@@ -3369,8 +3369,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-22",
           "state": {"val": 2},
           "status": {"val": 1},
-          "icon": "major",
-          "secondary_icon": "maintenance",
+          "icon": "person",
+          "secondary_icon": "build",
           "is_grey": false,
           "counters": {
             "depends": 3,
@@ -3436,7 +3436,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-22",
           "state": {"val": 2},
           "status": {"val": 1},
-          "icon": "major",
+          "icon": "person",
           "secondary_icon": "",
           "is_grey": false,
           "counters": {
@@ -3491,8 +3491,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-22",
           "state": {"val": 2},
           "status": {"val": 1},
-          "icon": "major",
-          "secondary_icon": "maintenance",
+          "icon": "person",
+          "secondary_icon": "build",
           "is_grey": false,
           "counters": {
             "depends": 3,
@@ -3558,7 +3558,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-22",
           "state": {"val": 2},
           "status": {"val": 1},
-          "icon": "major",
+          "icon": "person",
           "secondary_icon": "",
           "is_grey": false,
           "counters": {
@@ -3613,8 +3613,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-22",
           "state": {"val": 2},
           "status": {"val": 1},
-          "icon": "major",
-          "secondary_icon": "maintenance",
+          "icon": "person",
+          "secondary_icon": "build",
           "is_grey": false,
           "counters": {
             "depends": 3,
@@ -3804,8 +3804,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-23",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "ok",
-          "secondary_icon": "maintenance",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": false,
           "counters": {
             "depends": 3,
@@ -3871,7 +3871,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-23",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -3938,8 +3938,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-23",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "ok",
-          "secondary_icon": "maintenance",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": false,
           "counters": {
             "depends": 3,
@@ -4124,8 +4124,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-24",
           "state": {"val": 2},
           "status": {"val": 1},
-          "icon": "major",
-          "secondary_icon": "maintenance",
+          "icon": "person",
+          "secondary_icon": "build",
           "is_grey": false,
           "counters": {
             "depends": 3,
@@ -4188,7 +4188,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-24",
           "state": {"val": 2},
           "status": {"val": 1},
-          "icon": "major",
+          "icon": "person",
           "secondary_icon": "",
           "is_grey": false,
           "counters": {
@@ -4240,8 +4240,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-24",
           "state": {"val": 2},
           "status": {"val": 1},
-          "icon": "major",
-          "secondary_icon": "maintenance",
+          "icon": "person",
+          "secondary_icon": "build",
           "is_grey": false,
           "counters": {
             "depends": 3,
@@ -4402,8 +4402,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-25",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "ok",
-          "secondary_icon": "maintenance",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": false,
           "counters": {
             "depends": 3,
@@ -4466,7 +4466,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-25",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -4530,8 +4530,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-25",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "ok",
-          "secondary_icon": "maintenance",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": false,
           "counters": {
             "depends": 3,
@@ -4691,8 +4691,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-26",
           "state": {"val": 3},
           "status": {"val": 1},
-          "icon": "critical",
-          "secondary_icon": "maintenance",
+          "icon": "wb_cloudy",
+          "secondary_icon": "build",
           "is_grey": false,
           "counters": {
             "depends": 3,
@@ -4782,8 +4782,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-26",
           "state": {"val": 3},
           "status": {"val": 1},
-          "icon": "critical",
-          "secondary_icon": "maintenance",
+          "icon": "wb_cloudy",
+          "secondary_icon": "build",
           "is_grey": false,
           "counters": {
             "depends": 3,
@@ -4934,7 +4934,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-27",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -4997,7 +4997,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-27",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -5060,7 +5060,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-27",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "maintenance",
+          "icon": "build",
           "secondary_icon": "",
           "is_grey": true,
           "counters": {
@@ -5113,7 +5113,7 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-27",
           "state": {"val": 2},
           "status": {"val": 1},
-          "icon": "major",
+          "icon": "person",
           "secondary_icon": "",
           "is_grey": false,
           "counters": {
