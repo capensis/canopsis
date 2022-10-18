@@ -81,7 +81,7 @@ Feature: update service weather on event
           "snooze": null,
           "output": "test-service-weather-1-output",
           "infos": {},
-          "icon": "major",
+          "icon": "person",
           "secondary_icon": "",
           "category": {
             "_id": "test-category-service-weather"
@@ -226,7 +226,7 @@ Feature: update service weather on event
           "ack": null,
           "snooze": null,
           "infos": {},
-          "icon": "critical",
+          "icon": "wb_cloudy",
           "category": {
             "_id": "test-category-service-weather"
           },
@@ -344,7 +344,7 @@ Feature: update service weather on event
           "category": {
             "_id": "test-category-service-weather"
           },
-          "icon": "ok",
+          "icon": "wb_sunny",
           "secondary_icon": "",
           "is_grey": false,
           "is_action_required": false,
@@ -501,7 +501,7 @@ Feature: update service weather on event
           "category": {
             "_id": "test-category-service-weather"
           },
-          "icon": "critical",
+          "icon": "wb_cloudy",
           "secondary_icon": "",
           "is_grey": false,
           "is_action_required": false,
@@ -611,7 +611,7 @@ Feature: update service weather on event
           "ack": null,
           "snooze": null,
           "infos": {},
-          "icon": "major",
+          "icon": "person",
           "impact_level": 5,
           "impact_state": 10,
           "secondary_icon": "",

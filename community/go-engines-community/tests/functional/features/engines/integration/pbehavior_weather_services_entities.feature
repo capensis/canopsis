@@ -78,7 +78,7 @@ Feature: get service entities
           "state": {"val": 2},
           "status": {"val": 1},
           "is_grey": true,
-          "icon": "maintenance",
+          "icon": "build",
           "pbehavior_info": {
             "canonical_type": "maintenance",
             "name": "test-pbehavior-weather-service-entity-1",
@@ -192,7 +192,7 @@ Feature: get service entities
           "state": {"val": 2},
           "status": {"val": 1},
           "is_grey": false,
-          "icon": "major",
+          "icon": "person",
           "pbehavior_info": {
             "canonical_type": "active",
             "name": "test-pbehavior-weather-service-entity-2",
@@ -323,7 +323,7 @@ Feature: get service entities
           "state": {"val": 3},
           "status": {"val": 1},
           "is_grey": true,
-          "icon": "maintenance",
+          "icon": "build",
           "pbehavior_info": {
             "canonical_type": "maintenance",
             "name": "test-pbehavior-weather-service-entity-3-1",
@@ -355,7 +355,7 @@ Feature: get service entities
           "state": {"val": 2},
           "status": {"val": 1},
           "is_grey": false,
-          "icon": "major",
+          "icon": "person",
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -446,7 +446,7 @@ Feature: get service entities
           "state": {"val": 3},
           "status": {"val": 1},
           "is_grey": true,
-          "icon": "critical",
+          "icon": "wb_cloudy",
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -537,7 +537,7 @@ Feature: get service entities
           "state": {"val": 0},
           "status": {"val": 0},
           "is_grey": true,
-          "icon": "ok",
+          "icon": "wb_sunny",
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -628,7 +628,7 @@ Feature: get service entities
           "state": {"val": 0},
           "status": {"val": 0},
           "is_grey": true,
-          "icon": "maintenance",
+          "icon": "build",
           "pbehavior_info": {
             "canonical_type": "maintenance",
             "name": "test-pbehavior-weather-service-entity-6",

@@ -17,6 +17,13 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
+const (
+	StateIconOk       = "wb_sunny"
+	StateIconMinor    = "person"
+	StateIconMajor    = "person"
+	StateIconCritical = "wb_cloudy"
+)
+
 type MongoQueryBuilder struct {
 	filterCollection mongo.DbCollection
 
@@ -76,8 +83,8 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 		{key: "category", pipeline: getCategoryLookup()},
 		{key: "alarm", pipeline: getAlarmLookup()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup()},
-		{key: "counters", pipeline: getPbehaviorAlarmCountersLookup()},
 		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
+		{key: "counters", pipeline: getPbehaviorAlarmCountersLookup()},
 	}
 	err := q.handleWidgetFilter(ctx, r)
 	if err != nil {
@@ -216,6 +223,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 			if filter.WeatherServicePattern.HasField("is_grey") ||
 				filter.WeatherServicePattern.HasField("icon") ||
 				filter.WeatherServicePattern.HasField("secondary_icon") {
+				q.lookupsForAdditionalMatch["pbehavior_info.icon_name"] = true
 				q.lookupsForAdditionalMatch["counters"] = true
 			}
 			q.additionalMatch = append(q.additionalMatch, bson.M{"$match": weatherPatternQuery})
@@ -390,19 +398,19 @@ func getPbehaviorInfoTypeLookup() []bson.M {
 }
 
 func getPbehaviorAlarmCountersLookup() []bson.M {
-	defaultVal := types.AlarmStateTitleOK
+	defaultVal := StateIconOk
 	stateVals := []bson.M{
 		{
 			"case": bson.M{"$eq": bson.A{types.AlarmStateMinor, "$state.val"}},
-			"then": types.AlarmStateTitleMinor,
+			"then": StateIconMinor,
 		},
 		{
 			"case": bson.M{"$eq": bson.A{types.AlarmStateMajor, "$state.val"}},
-			"then": types.AlarmStateTitleMajor,
+			"then": StateIconMajor,
 		},
 		{
 			"case": bson.M{"$eq": bson.A{types.AlarmStateCritical, "$state.val"}},
-			"then": types.AlarmStateTitleCritical,
+			"then": StateIconCritical,
 		},
 	}
 
@@ -442,10 +450,12 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 			},
 		}},
 		{"$project": bson.M{"pbh_types": 0}},
-		{"$project": bson.M{
+		{"$unwind": bson.M{"path": "$pbh_types_counters", "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{"pbh_types_counters.priority": -1}},
+		{"$group": bson.M{
 			"_id":                "$_id",
-			"pbh_types_counters": "$pbh_types_counters",
-			"data":               "$$ROOT",
+			"pbh_types_counters": bson.M{"$push": "$pbh_types_counters"},
+			"data":               bson.M{"$first": "$$ROOT"},
 		}},
 		{"$replaceRoot": bson.M{
 			"newRoot": bson.M{"$mergeObjects": bson.A{
@@ -472,38 +482,6 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 					"in":    "$$this.count",
 				},
 			}},
-			"watched_pbehavior_type": bson.M{"$switch": bson.M{
-				"branches": []bson.M{
-					{
-						"case": bson.M{"$ne": bson.A{bson.A{}, bson.M{
-							"$filter": bson.M{
-								"input": "$counters.pbh_types",
-								"cond":  bson.M{"$eq": bson.A{"$$this.type.type", pbehaviorlib.TypeMaintenance}},
-							},
-						}}},
-						"then": pbehaviorlib.TypeMaintenance,
-					},
-					{
-						"case": bson.M{"$ne": bson.A{bson.A{}, bson.M{
-							"$filter": bson.M{
-								"input": "$counters.pbh_types",
-								"cond":  bson.M{"$eq": bson.A{"$$this.type.type", pbehaviorlib.TypePause}},
-							},
-						}}},
-						"then": pbehaviorlib.TypePause,
-					},
-					{
-						"case": bson.M{"$ne": bson.A{bson.A{}, bson.M{
-							"$filter": bson.M{
-								"input": "$counters.pbh_types",
-								"cond":  bson.M{"$eq": bson.A{"$$this.type.type", pbehaviorlib.TypeInactive}},
-							},
-						}}},
-						"then": pbehaviorlib.TypeInactive,
-					},
-				},
-				"default": "",
-			}},
 		}},
 		{"$addFields": bson.M{
 			"icon": bson.M{"$switch": bson.M{
@@ -515,7 +493,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 								{"$ifNull": bson.A{"$pbehavior_info", false}},
 								{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
 							}},
-							"then": "$pbehavior_info.canonical_type",
+							"then": "$pbehavior_info.icon_name",
 						},
 						// If all watched alarms are not active return most priority pbehavior type of watched alarms.
 						{
@@ -523,7 +501,13 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 								{"$gt": bson.A{"$counters.under_pbh", 0}},
 								{"$eq": bson.A{"$counters.under_pbh", "$counters.depends"}},
 							}},
-							"then": "$watched_pbehavior_type",
+							"then": bson.M{"$arrayElemAt": bson.A{
+								bson.M{"$map": bson.M{
+									"input": "$counters.pbh_types",
+									"in":    "$$this.type.icon_name",
+								}},
+								0,
+							}},
 						},
 					},
 					// Else return state icon.
@@ -558,14 +542,17 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 							{"$gt": bson.A{"$counters.under_pbh", 0}},
 							{"$lt": bson.A{"$counters.under_pbh", "$counters.depends"}},
 						}},
-						"then": "$watched_pbehavior_type",
+						"then": bson.M{"$arrayElemAt": bson.A{
+							bson.M{"$map": bson.M{
+								"input": "$counters.pbh_types",
+								"in":    "$$this.type.icon_name",
+							}},
+							0,
+						}},
 					},
 				},
 				"default": "",
 			}},
-		}},
-		{"$project": bson.M{
-			"watched_pbehavior_type": 0,
 		}},
 	}
 }
@@ -599,19 +586,19 @@ func getEventStatsLookup(now types.CpsTime) []bson.M {
 }
 
 func getListDependenciesComputedFields() bson.M {
-	defaultVal := types.AlarmStateTitleOK
+	defaultVal := StateIconOk
 	stateVals := []bson.M{
 		{
 			"case": bson.M{"$eq": bson.A{types.AlarmStateMinor, "$state.val"}},
-			"then": types.AlarmStateTitleMinor,
+			"then": StateIconMinor,
 		},
 		{
 			"case": bson.M{"$eq": bson.A{types.AlarmStateMajor, "$state.val"}},
-			"then": types.AlarmStateTitleMajor,
+			"then": StateIconMajor,
 		},
 		{
 			"case": bson.M{"$eq": bson.A{types.AlarmStateCritical, "$state.val"}},
-			"then": types.AlarmStateTitleCritical,
+			"then": StateIconCritical,
 		},
 	}
 
@@ -628,7 +615,7 @@ func getListDependenciesComputedFields() bson.M {
 						{"$ifNull": bson.A{"$pbehavior_info", false}},
 						{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
 					}},
-					"then": "$pbehavior_info.canonical_type",
+					"then": "$pbehavior_info.icon_name",
 				}},
 				// Else return state icon.
 				stateVals...,
