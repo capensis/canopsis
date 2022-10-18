@@ -2,7 +2,7 @@
   v-layout.white(column)
     v-layout(row, justify-end)
       c-action-fab-btn.ma-0(
-        v-if="creatable",
+        v-if="addable",
         :tooltip="$t('modals.createPbehavior.create.title')",
         icon="add",
         color="primary",
@@ -35,9 +35,8 @@
         td(v-if="withActiveStatus")
           v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
         td
-          v-layout(row)
-            c-action-btn(v-if="editable", type="edit", @click="showEditPbehaviorModal(item)")
-            c-action-btn(v-if="deletable", type="delete", @click="showDeletePbehaviorModal(item._id)")
+          c-action-btn(v-if="updatable", type="edit", @click="showEditPbehaviorModal(item)")
+          c-action-btn(v-if="removable", type="delete", @click="showDeletePbehaviorModal(item._id)")
 </template>
 
 <script>
@@ -65,11 +64,11 @@ export default {
       type: Object,
       required: true,
     },
-    deletable: {
+    removable: {
       type: Boolean,
       default: false,
     },
-    editable: {
+    updatable: {
       type: Boolean,
       default: false,
     },
@@ -77,7 +76,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    creatable: {
+    addable: {
       type: Boolean,
       default: false,
     },
@@ -94,7 +93,7 @@ export default {
   },
   computed: {
     headers() {
-      return [
+      const headers = [
         { text: this.$t('common.name'), value: 'name' },
         { text: this.$t('common.author'), value: 'author' },
         { text: this.$t('pbehaviors.isEnabled'), value: 'enabled' },
@@ -104,9 +103,17 @@ export default {
         { text: this.$t('pbehaviors.reason'), value: 'reason.name' },
         { text: this.$t('pbehaviors.rrule'), value: 'rrule' },
         { text: this.$t('common.icon'), value: 'type.icon_name' },
-        this.withActiveStatus && { text: this.$t('common.status'), value: 'is_active_status', sortable: false },
-        { text: this.$t('common.actionsLabel'), value: 'actionsLabel', sortable: false },
-      ].filter(Boolean);
+      ];
+
+      if (this.withActiveStatus) {
+        headers.push({ text: this.$t('common.status'), value: 'is_active_status', sortable: false });
+      }
+
+      if (this.updatable || this.removable) {
+        headers.push({ text: this.$t('common.actionsLabel'), value: 'actionsLabel', sortable: false });
+      }
+
+      return headers;
     },
   },
   mounted() {

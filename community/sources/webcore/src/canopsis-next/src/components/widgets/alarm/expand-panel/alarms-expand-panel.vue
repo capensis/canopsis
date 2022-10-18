@@ -41,8 +41,8 @@
             v-card-text
               pbehaviors-simple-list(
                 :entity="alarm.entity",
-                :deletable="hasDeleteAnyPbehaviorAccess",
-                :editable="hasUpdateAnyPbehaviorAccess"
+                :removable="hasDeleteAnyPbehaviorAccess",
+                :updatable="hasUpdateAnyPbehaviorAccess"
               )
     template(v-if="hasChildren")
       v-tab {{ $t('alarmList.tabs.alarmsChildren') }}
