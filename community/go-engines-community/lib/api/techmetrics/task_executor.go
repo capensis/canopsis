@@ -3,6 +3,7 @@ package techmetrics
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"sync"
 	"time"
@@ -18,6 +19,7 @@ const (
 	TaskStatusRunning
 	TaskStatusSucceeded
 	TaskStatusFailed
+	TaskStatusDisabled
 )
 
 const (
@@ -123,6 +125,10 @@ func (e *taskExecutor) Run(ctx context.Context) {
 }
 
 func (e *taskExecutor) StartExecute(ctx context.Context) (Task, error) {
+	if !e.configProvider.Get().Enabled {
+		return Task{}, fmt.Errorf("tech metrics are disabled")
+	}
+
 	pgPool, err := e.getPgPool(ctx)
 	if err != nil {
 		return Task{}, err
@@ -162,6 +168,12 @@ func (e *taskExecutor) StartExecute(ctx context.Context) (Task, error) {
 }
 
 func (e *taskExecutor) GetStatus(ctx context.Context) (Task, error) {
+	if !e.configProvider.Get().Enabled {
+		return Task{
+			Status: TaskStatusDisabled,
+		}, nil
+	}
+
 	pgPool, err := e.getPgPool(ctx)
 	if err != nil {
 		return Task{}, err
@@ -169,13 +181,22 @@ func (e *taskExecutor) GetStatus(ctx context.Context) (Task, error) {
 	res := pgPool.QueryRow(ctx, "SELECT id, filepath, status, created, started, completed FROM export ORDER BY created DESC LIMIT 1")
 	task := Task{}
 	err = res.Scan(&task.ID, &task.Filepath, &task.Status, &task.Created, &task.Started, &task.Completed)
-	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return Task{
+				Status: TaskStatusNone,
+			}, nil
+		}
 		return task, err
 	}
 	return task, nil
 }
 
 func (e *taskExecutor) executeLastTask(ctx context.Context) {
+	if !e.configProvider.Get().Enabled {
+		return
+	}
+
 	pgPool, err := e.getPgPool(ctx)
 	if err != nil {
 		e.logger.Err(err).Msg("cannot connect to postgres")
@@ -209,6 +230,11 @@ func (e *taskExecutor) executeLastTask(ctx context.Context) {
 }
 
 func (e *taskExecutor) deleteTasks(ctx context.Context) {
+	conf := e.configProvider.Get()
+	if !conf.Enabled {
+		return
+	}
+
 	pgPool, err := e.getPgPool(ctx)
 	if err != nil {
 		e.logger.Err(err).Msg("cannot connect to postgres")
@@ -216,7 +242,7 @@ func (e *taskExecutor) deleteTasks(ctx context.Context) {
 	}
 
 	now := time.Now().UTC()
-	date := now.Add(-e.configProvider.Get().DumpKeepInterval)
+	date := now.Add(-conf.DumpKeepInterval)
 	rows, err := pgPool.Query(ctx, "SELECT id, filepath FROM export WHERE status != $1 AND completed < $2", TaskStatusRunning, date)
 	if err != nil {
 		e.logger.Err(err).Msg("cannot get tasks")
