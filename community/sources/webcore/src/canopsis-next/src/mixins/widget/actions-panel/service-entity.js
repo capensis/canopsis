@@ -6,8 +6,6 @@ import {
   PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
 
-import { isActionTypeAvailableForEntity } from '@/helpers/entities/entity';
-
 import { authMixin } from '@/mixins/auth';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
@@ -19,18 +17,14 @@ export const widgetActionPanelServiceEntityMixin = {
     entitiesPbehaviorMixin,
     entitiesPbehaviorTypeMixin,
   ],
-  data() {
-    return {
-      unavailableEntitiesAction: {},
-    };
-  },
   computed: {
     /**
      * @return {Object.<string, Function>}
      */
     actionsMethodsMap() {
       return {
-        [WEATHER_ACTIONS_TYPES.entityAck]: this.addAckActionToQueue,
+        [WEATHER_ACTIONS_TYPES.entityAck]: this.applyAckAction,
+        [WEATHER_ACTIONS_TYPES.entityAckRemove]: this.showAckRemoveModal,
         [WEATHER_ACTIONS_TYPES.entityAssocTicket]: this.showCreateAssociateTicketModal,
         [WEATHER_ACTIONS_TYPES.entityValidate]: this.addValidateActionToQueue,
         [WEATHER_ACTIONS_TYPES.entityInvalidate]: this.addInvalidateActionToQueue,
@@ -43,37 +37,8 @@ export const widgetActionPanelServiceEntityMixin = {
     },
   },
   methods: {
-    removeEntityFromUnavailable(entity) {
-      this.unavailableEntitiesAction[entity._id] = false;
-    },
-
     applyAction(action) {
-      const {
-        availableEntities,
-        unavailableEntities,
-      } = action.entities.reduce((acc, entity) => {
-        if (isActionTypeAvailableForEntity(action.actionType, entity)) {
-          acc.availableEntities.push(entity);
-        } else {
-          acc.unavailableEntities.push(entity);
-        }
-
-        return acc;
-      }, {
-        availableEntities: [],
-        unavailableEntities: [],
-      });
-
-      this.unavailableEntitiesAction = unavailableEntities.reduce((acc, { _id: id }) => {
-        acc[id] = true;
-
-        return acc;
-      }, {});
-
-      this.$emit('apply:action', {
-        ...action,
-        entities: availableEntities,
-      });
+      this.$emit('apply:action', action);
     },
 
     applyEntityAction(actionType, entities) {
@@ -98,10 +63,31 @@ export const widgetActionPanelServiceEntityMixin = {
         : true;
     },
 
-    addAckActionToQueue(entities) {
+    applyAckAction(entities) {
       this.applyAction({
         entities,
         actionType: WEATHER_ACTIONS_TYPES.entityAck,
+      });
+    },
+
+    showAckRemoveModal(entities) {
+      this.$modals.show({
+        name: MODALS.textFieldEditor,
+        config: {
+          title: this.$t('modals.createAckRemove.title'),
+          field: {
+            name: 'output',
+            label: this.$t('common.note'),
+            validationRules: 'required',
+          },
+          action: ({ output }) => {
+            this.applyAction({
+              entities,
+              payload: { output },
+              actionType: WEATHER_ACTIONS_TYPES.entityAckRemove,
+            });
+          },
+        },
       });
     },
 

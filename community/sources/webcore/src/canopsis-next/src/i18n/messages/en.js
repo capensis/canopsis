@@ -2174,6 +2174,7 @@ export default merge({
     cannotBeApplied: 'This action cannot be applied',
     actions: {
       [WEATHER_ACTIONS_TYPES.entityAck]: 'Acknowledge',
+      [WEATHER_ACTIONS_TYPES.entityAckRemove]: 'Cancel acknowledge',
       [WEATHER_ACTIONS_TYPES.entityValidate]: 'Validate',
       [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalidate',
       [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',

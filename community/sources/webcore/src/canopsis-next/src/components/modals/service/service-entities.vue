@@ -14,8 +14,10 @@
               :widget-parameters="widgetParameters",
               :pagination.sync="pagination",
               :total-items="serviceEntitiesMeta.total_count",
+              :unavailable-entities-action="unavailableEntitiesAction",
               :pending="serviceEntitiesPending",
               @refresh="fetchList",
+              @remove:unavailable="removeEntityFromUnavailable",
               @apply:action="applyAction"
             )
             v-layout.pa-4(v-else, justify-center)
@@ -48,7 +50,7 @@ import { MODALS, SORT_ORDERS, USERS_PERMISSIONS, WEATHER_ACTIONS_TYPES } from '@
 
 import { addKeyInEntities } from '@/helpers/entities';
 import { createDowntimePbehavior } from '@/helpers/entities/pbehavior';
-import { convertActionToEvents } from '@/helpers/entities/entity';
+import { convertActionToEvents, isActionTypeAvailableForEntity } from '@/helpers/entities/entity';
 
 import { authMixin } from '@/mixins/auth';
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -79,6 +81,7 @@ export default {
   data() {
     return {
       pending: true,
+      unavailableEntitiesAction: {},
       query: {
         rowsPerPage: this.modal.config.widgetParameters.modalItemsPerPage ?? PAGINATION_LIMIT,
         sortKey: 'state',
@@ -126,32 +129,6 @@ export default {
       });
     },
 
-    async applyAction({ actionType, entities, payload }) {
-      if (actionType === WEATHER_ACTIONS_TYPES.entityPause) {
-        await this.createPbehaviorsWithPopups(
-          this.getCreatedPbehaviorsByEntitites(entities, payload),
-        );
-      } else if (actionType === WEATHER_ACTIONS_TYPES.entityPlay) {
-        await this.removePbehaviorsWithPopups(
-          this.getPausedPbehaviorsByEntitites(entities),
-        );
-      } else {
-        const events = entities.reduce((acc, entity) => {
-          acc.push(...convertActionToEvents({
-            actionType,
-            entity,
-            payload,
-          }));
-
-          return acc;
-        });
-
-        await this.createEventAction(events);
-      }
-
-      await this.fetchList();
-    },
-
     getCreatedPbehaviorsByEntitites(entities, data) {
       return entities.reduce((acc, entity) => {
         acc.push(createDowntimePbehavior({
@@ -187,6 +164,64 @@ export default {
           }
         });
       }
+    },
+
+    getAvailableEntities(action) {
+      const {
+        availableEntities,
+        unavailableEntities,
+      } = action.entities.reduce((acc, entity) => {
+        if (isActionTypeAvailableForEntity(action.actionType, entity)) {
+          acc.availableEntities.push(entity);
+        } else {
+          acc.unavailableEntities.push(entity);
+        }
+
+        return acc;
+      }, {
+        availableEntities: [],
+        unavailableEntities: [],
+      });
+
+      this.unavailableEntitiesAction = unavailableEntities.reduce((acc, { _id: id }) => {
+        acc[id] = true;
+
+        return acc;
+      }, {});
+
+      return availableEntities;
+    },
+
+    removeEntityFromUnavailable(entity) {
+      this.unavailableEntitiesAction[entity._id] = false;
+    },
+
+    async applyAction(action) {
+      const availableEntities = this.getAvailableEntities(action);
+
+      if (action.actionType === WEATHER_ACTIONS_TYPES.entityPause) {
+        await this.createPbehaviorsWithPopups(
+          this.getCreatedPbehaviorsByEntitites(availableEntities, action.payload),
+        );
+      } else if (action.actionType === WEATHER_ACTIONS_TYPES.entityPlay) {
+        await this.removePbehaviorsWithPopups(
+          this.getPausedPbehaviorsByEntitites(availableEntities),
+        );
+      } else {
+        const events = availableEntities.reduce((acc, entity) => {
+          acc.push(...convertActionToEvents({
+            entity,
+            actionType: action.actionType,
+            payload: action.payload,
+          }));
+
+          return acc;
+        }, []);
+
+        await this.createEventAction({ data: events });
+      }
+
+      await this.fetchList();
     },
   },
 };

@@ -24,10 +24,11 @@
         c-no-events-icon(:value="entity.idle_since", color="white", top)
         v-alert.entity-alert.ma-0.px-2.py-1(
           v-if="alertIsVisible",
-          v-model="alertIsVisible",
+          :value="alertIsVisible",
           color="black",
           dismissible,
-          @click.stop=""
+          @click.stop="",
+          @input="hideAlert"
         ) {{ $t('serviceWeather.cannotBeApplied') }}
 </template>
 
@@ -58,13 +59,8 @@ export default {
     },
   },
   computed: {
-    alertIsVisible: {
-      get() {
-        return this.lastActionUnavailable;
-      },
-      set(value) {
-        this.$emit('remove-unavailable', value);
-      },
+    alertIsVisible() {
+      return this.lastActionUnavailable;
     },
 
     entityName() {
@@ -100,6 +96,11 @@ export default {
       }
 
       return extraIcons;
+    },
+  },
+  methods: {
+    hideAlert() {
+      this.$emit('remove:unavailable');
     },
   },
 };

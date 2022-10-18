@@ -2174,6 +2174,7 @@ export default merge({
     cannotBeApplied: 'Cette action ne peut pas être appliquée',
     actions: {
       [WEATHER_ACTIONS_TYPES.entityAck]: 'Acquitter',
+      [WEATHER_ACTIONS_TYPES.entityAckRemove]: 'Annuler l\'accusé de acquitter',
       [WEATHER_ACTIONS_TYPES.entityValidate]: 'Valider',
       [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalider',
       [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',

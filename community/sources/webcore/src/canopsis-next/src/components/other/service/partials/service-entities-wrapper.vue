@@ -13,7 +13,7 @@
         :widget-parameters="widgetParameters",
         :selected="isEntitySelected(serviceEntity)",
         @select="updateSelected(serviceEntity, $event)",
-        @remove-unavailable="removeEntityFromUnavailable(serviceEntity)",
+        @remove:unavailable="$emit('remove:unavailable', serviceEntity)",
         @apply:action="$listeners['apply:action']",
         @refresh="$listeners.refresh"
       )
@@ -66,6 +66,10 @@ export default {
     totalItems: {
       type: Number,
       required: false,
+    },
+    unavailableEntitiesAction: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {
