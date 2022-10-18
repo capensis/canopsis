@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-menu(offset-y, @click.prevent.stop)
+  v-menu(offset-y, @click.prevent.stop="")
     v-btn(slot="activator", v-on="$listeners", depressed, small, light)
       v-icon {{ icon }}
     v-list

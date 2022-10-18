@@ -17,6 +17,14 @@
         @add:action="$listeners['add:action']",
         @refresh="$listeners.refresh"
       )
+    c-table-pagination(
+      v-if="totalItems > pagination.rowsPerPage",
+      :total-items="totalItems",
+      :rows-per-page="pagination.rowsPerPage",
+      :page="pagination.page",
+      @update:page="updatePage",
+      @update:rows-per-page="updateRecordsPerPage"
+    )
 </template>
 
 <script>
@@ -25,8 +33,7 @@ import { filterById, mapIds } from '@/helpers/entities';
 
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 
-import ServiceEntityActions from '@/components/modals/service/partial/service-entity-actions.vue';
-
+import ServiceEntityActions from './service-entity-actions.vue';
 import ServiceEntity from './service-entity.vue';
 
 export default {
@@ -41,6 +48,10 @@ export default {
       type: Object,
       required: true,
     },
+    pagination: {
+      type: Object,
+      required: true,
+    },
     serviceEntities: {
       type: Array,
       default: () => [],
@@ -52,6 +63,10 @@ export default {
     widgetParameters: {
       type: Object,
       default: () => ({}),
+    },
+    totalItems: {
+      type: Number,
+      required: false,
     },
   },
   data() {
@@ -133,6 +148,14 @@ export default {
 
     isEntitySelected(entity) {
       return this.selectedEntitiesIds.includes(entity._id);
+    },
+
+    updatePage(page) {
+      this.$emit('update:pagination', { ...this.pagination, page });
+    },
+
+    updateRecordsPerPage(rowsPerPage) {
+      this.$emit('update:pagination', { ...this.pagination, rowsPerPage, page: 1 });
     },
   },
 };
