@@ -89,10 +89,6 @@ class Socket {
 
     this.connect(this.url, this.protocols);
 
-    if (this.token) {
-      this.authenticate();
-    }
-
     Object.keys(this.rooms).forEach(name => this.join(name));
 
     return this;
@@ -332,8 +328,13 @@ class Socket {
   baseOpenHandler() {
     this.stopReconnecting();
 
+    if (this.token) {
+      this.authenticate();
+    }
+
     if (this.sendQueue.length) {
-      this.sendQueue.forEach(data => this.send(data));
+      this.sendQueue.filter(({ type }) => type !== REQUEST_MESSAGES_TYPES.leave)
+        .forEach(data => this.send(data));
     }
 
     this.sendQueue = [];
