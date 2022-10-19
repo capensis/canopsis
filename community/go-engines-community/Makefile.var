@@ -7,7 +7,7 @@ GITBRANCH:=${VERSION}
 LDFLAGS:=-ldflags "-X '${LINKPKG}.BuildGitCommit=${GITCOMMIT}' -X '${LINKPKG}.BuildGitBranch=${GITBRANCH}' -X '${LINKPKG}.BuildDate=${BUILDDATE}'"
 TAG:=${VERSION}
 
-GOLANG_IMAGE_TAG:="1.16.10-alpine"
+GOLANG_IMAGE_TAG:="1.16.15-alpine"
 
 ROOT_DIR:=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 OUTPUT_DIR:=${ROOT_DIR}/build
