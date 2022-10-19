@@ -8,20 +8,30 @@ exports[`field-grid-size Renders \`field-grid-size\` with custom props 1`] = `
     class="v-list__group__header"
   >
     <div
+      class="widget-settings-item-title"
       role="listitem"
     >
       <div
         class="v-list__tile theme--light"
       >
-        <span>
-          Custom title
-        </span>
-        <i
-          aria-hidden="true"
-          class="v-icon ml-2 material-icons theme--light"
+        <div
+          class="validation-header"
         >
-          phone_android
-        </i>
+          <div
+            class="layout align-center"
+          >
+            <span>
+              Custom title
+            </span>
+            <i
+              aria-hidden="true"
+              class="v-icon ml-2 material-icons theme--light"
+            >
+              phone_android
+            </i>
+          </div>
+        </div>
+        <!---->
       </div>
     </div>
     <div
@@ -65,20 +75,30 @@ exports[`field-grid-size Renders \`field-grid-size\` with default props 1`] = `
     class="v-list__group__header"
   >
     <div
+      class="widget-settings-item-title"
       role="listitem"
     >
       <div
         class="v-list__tile theme--light"
       >
-        <span>
-          Custom title
-        </span>
-        <i
-          aria-hidden="true"
-          class="v-icon ml-2 material-icons theme--light"
+        <div
+          class="validation-header"
         >
-          laptop
-        </i>
+          <div
+            class="layout align-center"
+          >
+            <span>
+              Custom title
+            </span>
+            <i
+              aria-hidden="true"
+              class="v-icon ml-2 material-icons theme--light"
+            >
+              laptop
+            </i>
+          </div>
+        </div>
+        <!---->
       </div>
     </div>
     <div

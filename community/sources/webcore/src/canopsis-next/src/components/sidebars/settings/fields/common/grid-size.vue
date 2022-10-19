@@ -1,15 +1,19 @@
 <template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile
+  widget-settings-item
+    template(#title="")
+      v-layout(align-center)
         span {{ title }}
         v-icon.ml-2 {{ sizeIcon }}
-    v-container
-      c-column-size-field(v-field="value", :mobile="mobile", :tablet="tablet")
+    c-column-size-field(v-field="value", :mobile="mobile", :tablet="tablet")
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
+
 export default {
+  components: { WidgetSettingsItem },
   props: {
     value: {
       type: Number,
@@ -28,18 +32,22 @@ export default {
       default: false,
     },
   },
-  computed: {
-    sizeIcon() {
-      if (this.mobile) {
+  setup(props) {
+    const sizeIcon = computed(() => {
+      if (props.mobile) {
         return 'phone_android';
       }
 
-      if (this.tablet) {
+      if (props.tablet) {
         return 'tablet';
       }
 
       return 'laptop';
-    },
+    });
+
+    return {
+      sizeIcon,
+    };
   },
 };
 </script>

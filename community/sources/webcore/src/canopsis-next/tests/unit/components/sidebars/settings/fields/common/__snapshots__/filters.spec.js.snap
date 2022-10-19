@@ -8,12 +8,18 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
     class="v-list__group__header"
   >
     <div
+      class="widget-settings-item-title"
       role="listitem"
     >
       <div
         class="v-list__tile theme--light"
       >
-        Filters
+        <div
+          class="validation-header"
+        >
+          Filters
+        </div>
+        <!---->
       </div>
     </div>
     <div
@@ -69,12 +75,18 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
     class="v-list__group__header"
   >
     <div
+      class="widget-settings-item-title"
       role="listitem"
     >
       <div
         class="v-list__tile theme--light"
       >
-        Filters
+        <div
+          class="validation-header"
+        >
+          Filters
+        </div>
+        <!---->
       </div>
     </div>
     <div
