@@ -47,7 +47,9 @@ type ExternalDataParameters struct {
 	Regexp     map[string]string `json:"regexp,omitempty" bson:"regexp,omitempty"`
 
 	// are used in api external data
-	RequestParameters *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
+	RequestParameters *request.Parameters     `bson:"request,omitempty" json:"request,omitempty"`
+	RetryCount        int                     `bson:"retry_count,omitempty" json:"retry_count,omitempty"`
+	RetryDelay        *types.DurationWithUnit `bson:"retry_delay" json:"retry_delay,omitempty"`
 }
 
 type Rule struct {

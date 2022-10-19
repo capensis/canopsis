@@ -16,7 +16,7 @@ const (
 )
 
 type ActionProcessor interface {
-	Process(action Action, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}) (types.Event, error)
+	Process(ctx context.Context, action Action, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}) (types.Event, error)
 }
 
 type RuleApplicator interface {

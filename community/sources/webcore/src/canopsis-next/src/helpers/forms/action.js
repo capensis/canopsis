@@ -10,11 +10,7 @@ import { durationToForm } from '../date/duration';
 import { getLocaleTimezone } from '../date/date';
 
 import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning-pbehavior';
-
-/**
- * @typedef {Duration} RetryDuration
- * @property {number} count
- */
+import { requestToForm, retryToForm, formToRequest, formToRetry } from './shared/request';
 
 /**
  * @typedef {
@@ -52,23 +48,8 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 
 /**
- * @typedef {Object} ActionWebhookRequestParameter
- * @property {string} method
- * @property {string} url
- * @property {{ username: string, password: string }} auth
- * @property {Object} headers
- * @property {string} payload
- * @property {boolean} skip_verify
- */
-
-/**
- * @typedef {ActionWebhookRequestParameter} ActionWebhookRequestFormParameter
- * @property {TextPairObject[]} headers
- */
-
-/**
  * @typedef {Object} ActionWebhookParameters
- * @property {ActionWebhookRequestParameter} request
+ * @property {RequestParameter} request
  * @property {?Object} [declare_ticket]
  * @property {boolean} declare_ticket.empty_response
  * @property {boolean} declare_ticket.is_regexp
@@ -80,7 +61,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
 
 /**
  * @typedef {ActionWebhookParameters} ActionWebhookFormParameters
- * @property {ActionWebhookRequestFormParameter} request
+ * @property {RequestFormParameter} request
  * @property {RetryDuration} retry
  * @property {boolean} empty_response
  * @property {boolean} is_regexp
@@ -145,21 +126,6 @@ const defaultActionParametersToForm = (parameters = {}) => ({
 });
 
 /**
- * Convert webhook request field to form object
- *
- * @param {ActionWebhookRequestParameter} [request]
- * @return {ActionWebhookRequestFormParameter}
- */
-const webhookActionRequestParametersToForm = (request = {}) => ({
-  method: request.method ?? '',
-  url: request.url ?? '',
-  auth: request.auth,
-  headers: request.headers ? objectToTextPairs(request.headers) : [],
-  payload: request.payload ?? '{}',
-  skip_verify: !!request.skip_verify,
-});
-
-/**
  * Convert action webhook parameters to form
  *
  * @param {ActionWebhookParameters} [parameters = {}]
@@ -174,10 +140,8 @@ const webhookActionParametersToForm = (parameters = {}) => {
     declare_ticket: objectToTextPairs(variables),
     empty_response: !!emptyResponse,
     is_regexp: !!isRegexp,
-    retry: parameters.retry_delay
-      ? { count: parameters.retry_count, ...durationToForm(parameters.retry_delay) }
-      : { count: '', unit: '', value: '' },
-    request: webhookActionRequestParametersToForm(parameters.request),
+    retry: retryToForm(parameters),
+    request: requestToForm(parameters.request),
   };
 };
 
@@ -305,17 +269,10 @@ export const actionToForm = (action = {}, timezone = getLocaleTimezone()) => ({
 export const formToWebhookActionParameters = (parameters = {}) => {
   const webhook = {
     declare_ticket: null,
-    request: {
-      ...parameters.request,
-      payload: parameters.request.payload,
-      headers: textPairsToObject(parameters.request.headers),
-    },
-  };
+    request: formToRequest(parameters.request),
 
-  if (parameters.retry.value) {
-    webhook.retry_count = parameters.retry.count;
-    webhook.retry_delay = parameters.retry;
-  }
+    ...formToRetry(parameters.retry),
+  };
 
   if (parameters.empty_response || parameters.is_regexp || !isEmpty(parameters.declare_ticket)) {
     webhook.declare_ticket = {

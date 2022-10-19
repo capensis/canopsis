@@ -1,7 +1,10 @@
 [Unit]
 Description=Canopsis API daemon
+PartOf=canopsis.service
+After=canopsis.service
+ReloadPropagatedFrom=canopsis.service
 After=network.target
-Documentation=https://doc.canopsis.net
+Documentation=https://doc.canopsis.net/guide-developpement/swagger/
 
 [Service]
 User=canopsis
@@ -16,4 +19,4 @@ StartLimitBurst=300
 ExecStart=/opt/canopsis/bin/canopsis-api -port 8082
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=canopsis.service

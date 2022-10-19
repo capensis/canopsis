@@ -171,12 +171,29 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | TimeFormat          | "2006-01-02T15:04:05Z07:00"                 | Format des dates des messages de logs au format [GO](../../architecture-interne/templates-golang#formatteddate) |
 | PartsOrder          | ["time", "level", "caller", "message"]      | Ordre des parties des messages de logs parmi "time", "level", "message", "caller", "error" |
 
-
 ### Section [Canopsis.metrics]
 
 | Attribut            | Exemple de valeur  | Description                           |
 | :------------------ | :------------------| :------------------------------------ |
 | SliInterval         | "1h"               | Les longs intervalles de SLI sont découpés en plus petits intervalles définis par cet attribut. <br />Une valeur faible augmente la précision des métriques mais nécessite plus d'espace disque. <br />Une valeur élevée diminue la précision des métriques mais nécessaite moins d'espace disque. <br /> "1h" est la valeur recommandée dans la mesure où l'intervalle le plus petit gérée par l'interface graphique correspond à 1 heure |
+
+### Section [Remediation]
+
+| Attribute | Example | Description
+| ------ | ------ | ------ |
+| http_timeout | "1m" | Timeout de connexion au serveur distant |
+| launch_job_retries_amount | 3 | Nombre de tentatives d'exécution du job sur le serveur distant |
+| launch_job_retries_interval | "5s" | Intervalle de temps entre 2 tentative d'exécution d'un job |
+| wait_job_complete_retries_amount | 12 | Nombre par défaut de tentatives de récupération du statut d'un job |
+| wait_job_complete_retries_interval | 5s | Intervalle par défaut entre 2 tentatives de récupération du statut d'un job |
+| pause_manual_instruction_interval | 15s | Délai d'inactivité de l'utilisateur après lequel une consigne manuelle est mise en pause |
+
+**Exemples**
+
+1. Rundeck est défaillant. Le moteur `remediation` essaie de se connecter à Rundeck. Après le délai `http_timeout`, la requête est considérée en échec.
+1. Le moteur `remédiation` émet une requête vers Rundeck pour déclencher un job. Rundeck renvoie une erreur 500. Le moteur tente de déclencher le job `launch_job_retries_amount` fois toutes les `launch_job_retries_interval`.  
+1. Le moteur `remediation` récupère le statut d'un job Rundeck. Rundeck renvoie un statut **running**. Le moteur répète cette requête `wait_job_complete_retries_amount` fois toutes les `wait_job_complete_retries_interval`.
+1. Un utilisateur exécute une consigne manuelle, il ferme son navigateur. Après `pause_manual_instruction_interval`, la consigne est mise en pause
 
 ### Section [HealthCheck]
 
