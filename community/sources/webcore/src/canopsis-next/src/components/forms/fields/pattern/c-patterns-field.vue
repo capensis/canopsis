@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    c-pattern-panel.mb-2(v-if="withAlarm", :title="$t('common.alarmPatterns')")
+    c-collapse-panel.mb-2(v-if="withAlarm", :title="$t('common.alarmPatterns')")
       c-alarm-patterns-field(
         v-field="value.alarm_pattern",
         :required="isPatternRequired",
@@ -13,7 +13,7 @@
         @input="errors.remove(alarmFieldName)"
       )
 
-    c-pattern-panel.mb-2(v-if="withEntity", :title="$t('common.entityPatterns')")
+    c-collapse-panel.mb-2(v-if="withEntity", :title="$t('common.entityPatterns')")
       c-entity-patterns-field(
         v-field="value.entity_pattern",
         :required="isPatternRequired",
@@ -27,7 +27,7 @@
         @input="errors.remove(entityFieldName)"
       )
 
-    c-pattern-panel.mb-2(v-if="withPbehavior", :title="$t('common.pbehaviorPatterns')")
+    c-collapse-panel.mb-2(v-if="withPbehavior", :title="$t('common.pbehaviorPatterns')")
       c-pbehavior-patterns-field(
         v-field="value.pbehavior_pattern",
         :required="isPatternRequired",
@@ -39,7 +39,7 @@
         @input="errors.remove(pbehaviorFieldName)"
       )
 
-    c-pattern-panel.mb-2(v-if="withEvent", :title="$t('common.eventPatterns')")
+    c-collapse-panel.mb-2(v-if="withEvent", :title="$t('common.eventPatterns')")
       c-event-filter-patterns-field(
         v-field="value.event_pattern",
         :required="isPatternRequired",
@@ -49,7 +49,7 @@
         @input="errors.remove(eventFieldName)"
       )
 
-    c-pattern-panel.mb-2(v-if="withTotalEntity", :title="$t('common.totalEntityPatterns')")
+    c-collapse-panel.mb-2(v-if="withTotalEntity", :title="$t('common.totalEntityPatterns')")
       c-entity-patterns-field(
         v-field="value.total_entity_pattern",
         :required="isPatternRequired",
@@ -60,7 +60,7 @@
         @input="errors.remove(totalEntityFieldName)"
       )
 
-    c-pattern-panel.mb-2(v-if="withServiceWeather", :title="$t('common.serviceWeatherPatterns')")
+    c-collapse-panel.mb-2(v-if="withServiceWeather", :title="$t('common.serviceWeatherPatterns')")
       c-service-weather-patterns-field(
         v-field="value.weather_service_pattern",
         :required="isPatternRequired",

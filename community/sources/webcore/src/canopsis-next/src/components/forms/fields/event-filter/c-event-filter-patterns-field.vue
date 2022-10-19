@@ -65,8 +65,8 @@ export default {
           props: {
             required: true,
             entityTypes: [BASIC_ENTITY_TYPES.connector],
-            itemText: 'name',
-            itemValue: 'name',
+            itemText: 'connector_type',
+            itemValue: 'connector_type',
           },
         },
       };
@@ -81,8 +81,8 @@ export default {
           props: {
             required: true,
             entityTypes: [BASIC_ENTITY_TYPES.connector],
-            itemText: 'connector_type',
-            itemValue: 'connector_type',
+            itemText: 'name',
+            itemValue: 'name',
           },
         },
       };

@@ -8,15 +8,18 @@ exports[`default-elements-per-page Renders \`default-sort-column\` with custom p
     class="v-list__group__header"
   >
     <div
-      class="items-per-page-title"
+      class="widget-settings-item-title"
       role="listitem"
     >
       <div
         class="v-list__tile theme--light"
       >
-        <span>
+        <div
+          class="validation-header"
+        >
           Default number of elements/page
-        </span>
+        </div>
+        <!---->
       </div>
     </div>
     <div
@@ -208,15 +211,18 @@ exports[`default-elements-per-page Renders \`default-sort-column\` with default 
     class="v-list__group__header"
   >
     <div
-      class="items-per-page-title"
+      class="widget-settings-item-title"
       role="listitem"
     >
       <div
         class="v-list__tile theme--light"
       >
-        <span>
+        <div
+          class="validation-header"
+        >
           Default number of elements/page
-        </span>
+        </div>
+        <!---->
       </div>
     </div>
     <div

@@ -1,27 +1,27 @@
 <template lang="pug">
-  div
-    v-layout(column)
-      c-name-field(v-field="form.name")
-      v-layout
-        v-flex.pr-3(xs6)
-          c-entity-category-field(v-field="form.category", addable, required)
-        v-flex.pr-3(xs4)
-          c-entity-state-field(
-            v-field="form.sli_avail_state",
-            :label="$t('service.availabilityState')",
-            required
-          )
-        v-flex(xs2)
-          c-impact-level-field(v-field="form.impact_level", required)
-      c-coordinates-field(v-field="form.coordinates", row)
-      v-textarea(
-        v-field="form.output_template",
-        v-validate="'required'",
-        :label="$t('service.outputTemplate')",
-        :error-messages="errors.collect('output_template')",
-        name="output_template"
-      )
-      c-enabled-field(v-field="form.enabled")
+  v-layout(column)
+    c-name-field(v-field="form.name")
+    v-layout
+      v-flex.pr-3(xs6)
+        c-entity-category-field(v-field="form.category", addable, required)
+      v-flex.pr-3(xs4)
+        c-entity-state-field(
+          v-field="form.sli_avail_state",
+          :label="$t('service.availabilityState')",
+          required
+        )
+      v-flex(xs2)
+        c-impact-level-field(v-field="form.impact_level", required)
+    c-coordinates-field(v-field="form.coordinates", row)
+    text-editor-field(
+      v-validate="'required'",
+      v-field="form.output_template",
+      :label="$t('service.outputTemplate')",
+      :error-messages="errors.collect('output_template')",
+      :variables="outputVariables",
+      name="output_template"
+    )
+    c-enabled-field(v-field="form.enabled")
     v-tabs(slider-color="primary", centered)
       v-tab(:class="{ 'error--text': errors.has('entity_patterns') }") {{ $t('common.entityPatterns') }}
       v-tab-item
@@ -34,13 +34,15 @@
 <script>
 import { get } from 'lodash';
 
-import { ENTITY_PATTERN_FIELDS } from '@/constants';
+import { ENTITY_PATTERN_FIELDS, SERVICE_WEATHER_STATE_COUNTERS } from '@/constants';
 
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    TextEditorField,
     ManageInfos,
   },
   model: {
@@ -54,8 +56,13 @@ export default {
     },
   },
   computed: {
-    hasFilterEditorAnyError() {
-      return this.errors.has('advancedJson') || this.errors.has('filter');
+    outputVariables() {
+      const messages = this.$t('serviceWeather.stateCounters');
+
+      return Object.values(SERVICE_WEATHER_STATE_COUNTERS).map(field => ({
+        text: messages[field],
+        value: field,
+      }));
     },
 
     advancedJsonWasChanged() {
