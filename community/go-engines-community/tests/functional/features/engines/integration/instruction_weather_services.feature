@@ -311,9 +311,7 @@ Feature: get service entities with assigned instructions
     {
       "data": [
         {
-          "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false,
-          "is_auto_instruction_failed": false
+          "instruction_execution_icon": 2
         }
       ]
     }
@@ -351,9 +349,7 @@ Feature: get service entities with assigned instructions
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-5/test-alarm-weather-widget-instructions-component-1",
-          "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false,
-          "is_auto_instruction_failed": false
+          "instruction_execution_icon": 2
         }
       ],
       "meta": {
@@ -373,9 +369,7 @@ Feature: get service entities with assigned instructions
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-5/test-alarm-weather-widget-instructions-component-1",
-          "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false,
-          "is_auto_instruction_failed": false
+          "instruction_execution_icon": 12
         }
       ],
       "meta": {
@@ -393,9 +387,7 @@ Feature: get service entities with assigned instructions
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-5/test-alarm-weather-widget-instructions-component-1",
-          "is_auto_instruction_running": false,
-          "is_all_auto_instructions_completed": true,
-          "is_auto_instruction_failed": false
+          "instruction_execution_icon": 10
         }
       ],
       "meta": {
@@ -510,8 +502,7 @@ Feature: get service entities with assigned instructions
     {
       "data": [
         {
-          "is_manual_instruction_running": true,
-          "is_manual_instruction_waiting_result": false
+          "instruction_execution_icon": 1
         }
       ]
     }
@@ -526,8 +517,7 @@ Feature: get service entities with assigned instructions
     {
       "data": [
         {
-          "is_manual_instruction_running": false,
-          "is_manual_instruction_waiting_result": true
+          "instruction_execution_icon": 1
         }
       ]
     }
@@ -537,8 +527,7 @@ Feature: get service entities with assigned instructions
     {
       "data": [
         {
-          "is_manual_instruction_running": false,
-          "is_manual_instruction_waiting_result": false
+          "instruction_execution_icon": 11
         }
       ]
     }
@@ -630,9 +619,7 @@ Feature: get service entities with assigned instructions
     {
       "data": [
         {
-          "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false,
-          "is_auto_instruction_failed": false
+          "instruction_execution_icon": 2
         }
       ]
     }
@@ -670,9 +657,7 @@ Feature: get service entities with assigned instructions
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-7/test-alarm-weather-widget-instructions-component-1",
-          "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false,
-          "is_auto_instruction_failed": false
+          "instruction_execution_icon": 2
         }
       ],
       "meta": {
@@ -690,9 +675,7 @@ Feature: get service entities with assigned instructions
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-7/test-alarm-weather-widget-instructions-component-1",
-          "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false,
-          "is_auto_instruction_failed": true
+          "instruction_execution_icon": 6
         }
       ],
       "meta": {
@@ -709,9 +692,7 @@ Feature: get service entities with assigned instructions
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-7/test-alarm-weather-widget-instructions-component-1",
-          "is_auto_instruction_running": false,
-          "is_all_auto_instructions_completed": true,
-          "is_auto_instruction_failed": true
+          "instruction_execution_icon": 3
         }
       ],
       "meta": {

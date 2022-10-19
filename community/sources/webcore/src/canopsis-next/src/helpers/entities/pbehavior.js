@@ -53,5 +53,5 @@ export const createDowntimePbehavior = ({ entity, reason, comment, type }) => pb
   comments: [{
     message: comment,
   }],
-  entityPattern: createEntityIdPatternByValue(entity._id),
+  entity_pattern: createEntityIdPatternByValue(entity._id),
 }));

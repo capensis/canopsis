@@ -30,6 +30,7 @@ const (
 const (
 	InstructionTypeManual = iota
 	InstructionTypeAuto
+	InstructionTypeSimplifiedManual
 )
 
 const InstructionStatusApproved = 0
@@ -39,7 +40,7 @@ const manualMetaAlarmsLimit = 100
 type Store interface {
 	Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error)
 	GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error)
-	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string) (map[string]ExecutionStatus, error)
+	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error)
 	Count(ctx context.Context, r FilterRequest) (*Count, error)
 	GetByID(ctx context.Context, id, apiKey string) (*Alarm, error)
 	GetOpenByEntityID(ctx context.Context, id, apiKey string) (*Alarm, bool, error)
@@ -109,11 +110,11 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 	}
 
 	if r.WithInstructions {
-		anyInstructionMatch, err := s.fillAssignedInstructions(ctx, &result, now)
+		assignedInstructionMap, anyInstructionMatch, err := s.fillAssignedInstructions(ctx, &result, now)
 		if err != nil {
 			return nil, err
 		}
-		err = s.fillInstructionFlags(ctx, &result)
+		err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionMap)
 		if err != nil {
 			return nil, err
 		}
@@ -174,11 +175,11 @@ func (s *store) GetByID(ctx context.Context, id, apiKey string) (*Alarm, error) 
 		return nil, nil
 	}
 
-	_, err = s.fillAssignedInstructions(ctx, &result, types.NewCpsTime())
+	assignedInstructionMap, _, err := s.fillAssignedInstructions(ctx, &result, types.NewCpsTime())
 	if err != nil {
 		return nil, err
 	}
-	err = s.fillInstructionFlags(ctx, &result)
+	err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionMap)
 	if err != nil {
 		return nil, err
 	}
@@ -229,11 +230,11 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, apiKey string) 
 		return nil, true, nil
 	}
 
-	_, err = s.fillAssignedInstructions(ctx, &result, types.NewCpsTime())
+	assignedInstructionsMap, _, err := s.fillAssignedInstructions(ctx, &result, types.NewCpsTime())
 	if err != nil {
 		return nil, false, err
 	}
-	err = s.fillInstructionFlags(ctx, &result)
+	err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionsMap)
 	if err != nil {
 		return nil, false, err
 	}
@@ -335,11 +336,11 @@ func (s *store) FindByService(ctx context.Context, id, apiKey string, r ListBySe
 		}
 	}
 
-	_, err = s.fillAssignedInstructions(ctx, &result, now)
+	assignedInstructionsMap, _, err := s.fillAssignedInstructions(ctx, &result, now)
 	if err != nil {
 		return nil, err
 	}
-	err = s.fillInstructionFlags(ctx, &result)
+	err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionsMap)
 	if err != nil {
 		return nil, err
 	}
@@ -389,11 +390,11 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, a
 		}
 	}
 
-	_, err = s.fillAssignedInstructions(ctx, &result, now)
+	assignedInstructionsMap, _, err := s.fillAssignedInstructions(ctx, &result, now)
 	if err != nil {
 		return nil, err
 	}
-	err = s.fillInstructionFlags(ctx, &result)
+	err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionsMap)
 	if err != nil {
 		return nil, err
 	}
@@ -529,11 +530,11 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 			}
 
 			if r.WithInstructions {
-				_, err = s.fillAssignedInstructions(ctx, &children, now)
+				assignedInstructionsMap, _, err := s.fillAssignedInstructions(ctx, &children, now)
 				if err != nil {
 					return nil, err
 				}
-				err = s.fillInstructionFlags(ctx, &children)
+				err = s.fillInstructionExecutionStatusesAndIcon(ctx, &children, assignedInstructionsMap)
 				if err != nil {
 					return nil, err
 				}
@@ -664,7 +665,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		ctx,
 		[]bson.M{
 			{"$match": bson.M{
-				"type":   InstructionTypeManual,
+				"type":   bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
 				"status": bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
 			}},
 			{"$lookup": bson.M{
@@ -804,6 +805,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 				assignedInstructionsMap[alarmId] = append(assignedInstructionsMap[alarmId], AssignedInstruction{
 					ID:        instructionId,
 					Name:      instructionMap[instructionId].Name,
+					Type:      instructionMap[instructionId].Type,
 					Execution: execution,
 				})
 			}
@@ -813,89 +815,311 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 	return assignedInstructionsMap, anyInstructionMatch, nil
 }
 
-func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string) (map[string]ExecutionStatus, error) {
+func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error) {
 	if len(alarmIDs) == 0 {
 		return nil, nil
 	}
+
+	leftAlarms := make(map[string]struct{}, len(alarmIDs))
+	for _, id := range alarmIDs {
+		leftAlarms[id] = struct{}{}
+	}
+
 	cursor, err := s.dbInstructionExecutionCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{
-			"alarm": bson.M{"$in": alarmIDs},
-		}},
-		{"$lookup": bson.M{
-			"from":         mongo.InstructionMongoCollection,
-			"localField":   "instruction",
-			"foreignField": "_id",
-			"as":           "instruction",
-		}},
-		{"$unwind": "$instruction"},
-		{"$group": bson.M{
-			"_id": "$alarm",
-			"auto_statuses": bson.M{"$addToSet": bson.M{"$cond": bson.M{
-				"if":   bson.M{"$eq": bson.A{"$instruction.type", InstructionTypeAuto}},
-				"then": "$status",
-				"else": "$$REMOVE",
-			}}},
-			"manual_statuses": bson.M{"$addToSet": bson.M{"$cond": bson.M{
-				"if":   bson.M{"$eq": bson.A{"$instruction.type", InstructionTypeManual}},
-				"then": "$status",
-				"else": "$$REMOVE",
-			}}},
-		}},
-		{"$addFields": bson.M{
-			"auto_running": bson.M{"$gt": bson.A{
-				bson.M{"$size": bson.M{"$filter": bson.M{
-					"input": "$auto_statuses",
-					"cond":  bson.M{"$in": bson.A{"$$this", []int{InstructionExecutionStatusRunning, InstructionExecutionStatusWaitResult}}},
-				}}},
-				0,
-			}},
-			"auto_failed": bson.M{"$gt": bson.A{
-				bson.M{"$size": bson.M{"$filter": bson.M{
-					"input": "$auto_statuses",
-					"cond":  bson.M{"$in": bson.A{"$$this", []int{InstructionExecutionStatusAborted, InstructionExecutionStatusFailed}}},
-				}}},
-				0,
-			}},
-			"manual_running": bson.M{"$gt": bson.A{
-				bson.M{"$size": bson.M{"$filter": bson.M{
-					"input": "$manual_statuses",
-					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusRunning}},
-				}}},
-				0,
-			}},
-			"manual_waiting_result": bson.M{"$gt": bson.A{
-				bson.M{"$size": bson.M{"$filter": bson.M{
-					"input": "$manual_statuses",
-					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusWaitResult}},
-				}}},
-				0,
-			}},
-		}},
-		{"$addFields": bson.M{
-			"auto_all_completed": bson.M{"$and": bson.A{
-				bson.M{"$not": "$auto_running"},
-				bson.M{"$gt": bson.A{bson.M{"$size": "$auto_statuses"}, 0}},
-			}},
-		}},
+		{
+			"$match": bson.M{
+				"alarm": bson.M{"$in": alarmIDs},
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from":         mongo.InstructionMongoCollection,
+				"localField":   "instruction",
+				"foreignField": "_id",
+				"as":           "instruction",
+			},
+		},
+		{
+			"$unwind": "$instruction",
+		},
+		{
+			"$sort": bson.M{
+				"started_at": -1,
+			},
+		},
+		{
+			"$group": bson.M{
+				"_id": bson.M{
+					"alarm_id":    "$alarm",
+					"instruction": "$instruction._id",
+				},
+				"instruction_id":   bson.M{"$first": "$instruction._id"},
+				"instruction_name": bson.M{"$first": "$instruction.name"},
+				"instruction_type": bson.M{"$first": "$instruction.type"},
+				"status":           bson.M{"$first": "$status"},
+				"started_at":       bson.M{"$first": "$started_at"},
+			},
+		},
+		{
+			"$sort": bson.M{
+				"started_at": -1,
+			},
+		},
+		{
+			"$group": bson.M{
+				"_id": "$_id.alarm_id",
+				"all_failed": bson.M{
+					"$push": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$eq": bson.A{"$status", InstructionExecutionStatusFailed},
+							},
+							"then": "$instruction_type",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"all_successful": bson.M{
+					"$push": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$eq": bson.A{"$status", InstructionExecutionStatusCompleted},
+							},
+							"then": "$instruction_type",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"running_manual_instructions": bson.M{
+					"$push": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$and": bson.A{
+									bson.M{
+										"$in": bson.A{"$status", bson.A{InstructionExecutionStatusRunning, InstructionExecutionStatusWaitResult}},
+									},
+									bson.M{
+										"$in": bson.A{"$instruction_type", bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
+									},
+								},
+							},
+							"then": "$instruction_name",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"running_auto_instructions": bson.M{
+					"$push": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$and": bson.A{
+									bson.M{
+										"$in": bson.A{"$status", bson.A{InstructionExecutionStatusRunning, InstructionExecutionStatusWaitResult}},
+									},
+									bson.M{
+										"$eq": bson.A{"$instruction_type", InstructionTypeAuto},
+									},
+								},
+							},
+							"then": "$instruction_name",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"failed_manual_instructions": bson.M{
+					"$push": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$and": bson.A{
+									bson.M{
+										"$eq": bson.A{"$status", InstructionExecutionStatusFailed},
+									},
+									bson.M{
+										"$in": bson.A{"$instruction_type", bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
+									},
+								},
+							},
+							"then": "$instruction_name",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"failed_auto_instructions": bson.M{
+					"$push": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$and": bson.A{
+									bson.M{
+										"$eq": bson.A{"$status", InstructionExecutionStatusFailed},
+									},
+									bson.M{
+										"$eq": bson.A{"$instruction_type", InstructionTypeAuto},
+									},
+								},
+							},
+							"then": "$instruction_name",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"successful_manual_instructions": bson.M{
+					"$addToSet": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$and": bson.A{
+									bson.M{
+										"$eq": bson.A{"$status", InstructionExecutionStatusCompleted},
+									},
+									bson.M{
+										"$in": bson.A{"$instruction_type", bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
+									},
+								},
+							},
+							"then": "$instruction_name",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"successful_auto_instructions": bson.M{
+					"$addToSet": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$and": bson.A{
+									bson.M{
+										"$eq": bson.A{"$status", InstructionExecutionStatusCompleted},
+									},
+									bson.M{
+										"$eq": bson.A{"$instruction_type", InstructionTypeAuto},
+									},
+								},
+							},
+							"then": "$instruction_name",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+			},
+		},
+		{
+			"$addFields": bson.M{
+				"last_failed":     bson.M{"$arrayElemAt": bson.A{"$all_failed", 0}},
+				"last_successful": bson.M{"$arrayElemAt": bson.A{"$all_successful", 0}},
+			},
+		},
 	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	executionStatuses := make([]ExecutionStatus, 0)
+	var executionStatuses []ExecutionStatus
 	err = cursor.All(ctx, &executionStatuses)
 	if err != nil {
 		return nil, err
 	}
 	statusesByAlarm := make(map[string]ExecutionStatus, len(executionStatuses))
 	for _, v := range executionStatuses {
+		delete(leftAlarms, v.ID)
+
+		v.Icon = getInstructionExecutionIcon(v, assignedInstructionsMap)
 		statusesByAlarm[v.ID] = v
+	}
+
+	for alarmID := range leftAlarms {
+		if _, ok := assignedInstructionsMap[alarmID]; ok {
+			statusesByAlarm[alarmID] = ExecutionStatus{
+				Icon: IconManualAvailable,
+			}
+		}
 	}
 
 	return statusesByAlarm, nil
 }
 
-func (s *store) fillAssignedInstructions(ctx context.Context, result *AggregationResult, now types.CpsTime) (bson.M, error) {
+func getInstructionExecutionIcon(status ExecutionStatus, assignedInstructionsMap map[string][]AssignedInstruction) int {
+	availableInstructionsMap := make(map[string]struct{}, len(assignedInstructionsMap[status.ID]))
+	for _, instr := range assignedInstructionsMap[status.ID] {
+		availableInstructionsMap[instr.Name] = struct{}{}
+	}
+
+	for _, name := range status.RunningManualInstructions {
+		delete(availableInstructionsMap, name)
+	}
+
+	for _, name := range status.FailedManualInstructions {
+		delete(availableInstructionsMap, name)
+	}
+
+	for _, name := range status.SuccessfulManualInstructions {
+		delete(availableInstructionsMap, name)
+	}
+
+	runningManualInstruction := len(status.RunningManualInstructions) != 0
+	runningAutoInstruction := len(status.RunningAutoInstructions) != 0
+	failedManualInstruction := len(status.FailedManualInstructions) != 0
+	failedAutoInstruction := len(status.FailedAutoInstructions) != 0
+	successfulManualInstruction := len(status.SuccessfulManualInstructions) != 0
+	successfulAutoInstruction := len(status.SuccessfulAutoInstructions) != 0
+	availableInstructions := len(availableInstructionsMap) != 0
+	lastFailed := status.LastFailed
+	lastSuccessful := status.LastSuccessful
+
+	if (failedManualInstruction || failedAutoInstruction) && lastFailed != nil {
+		if *lastFailed == InstructionTypeAuto {
+			if runningManualInstruction || runningAutoInstruction {
+				return IconAutoFailedOtherInProgress
+			} else if availableInstructions {
+				return IconAutoFailedManualAvailable
+			} else {
+				return IconAutoFailed
+			}
+		} else {
+			if runningManualInstruction || runningAutoInstruction {
+				return IconManualFailedOtherInProgress
+			} else if availableInstructions {
+				return IconManualFailedManualAvailable
+			} else {
+				return IconManualFailed
+			}
+		}
+	}
+
+	if (successfulManualInstruction || successfulAutoInstruction) && lastSuccessful != nil {
+		if *lastSuccessful == InstructionTypeAuto {
+			if runningManualInstruction || runningAutoInstruction {
+				return IconAutoSuccessfulOtherInProgress
+			} else if availableInstructions {
+				return IconAutoSuccessfulManualAvailable
+			} else {
+				return IconAutoSuccessful
+			}
+		} else {
+			if runningManualInstruction || runningAutoInstruction {
+				return IconManualSuccessfulOtherInProgress
+			} else if availableInstructions {
+				return IconManualSuccessfulManualAvailable
+			} else {
+				return IconManualSuccessful
+			}
+		}
+	}
+
+	if runningManualInstruction {
+		return IconManualInProgress
+	}
+
+	if runningAutoInstruction {
+		return IconAutoInProgress
+	}
+
+	if availableInstructions {
+		return IconManualAvailable
+	}
+
+	return NoIcon
+}
+
+func (s *store) fillAssignedInstructions(ctx context.Context, result *AggregationResult, now types.CpsTime) (map[string][]AssignedInstruction, bson.M, error) {
 	var alarmIds []string
 	for _, item := range result.Data {
 		if item.Value.Resolved == nil {
@@ -904,12 +1128,12 @@ func (s *store) fillAssignedInstructions(ctx context.Context, result *Aggregatio
 	}
 
 	if len(alarmIds) == 0 {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	assignedInstructionsMap, anyInstructionMatch, err := s.getAssignedInstructionsMap(ctx, alarmIds, now)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	for i, alarmDocument := range result.Data {
@@ -924,10 +1148,10 @@ func (s *store) fillAssignedInstructions(ctx context.Context, result *Aggregatio
 		result.Data[i].AssignedInstructions = &assignedInstructions
 	}
 
-	return anyInstructionMatch, nil
+	return assignedInstructionsMap, anyInstructionMatch, nil
 }
 
-func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationResult) error {
+func (s *store) fillInstructionExecutionStatusesAndIcon(ctx context.Context, result *AggregationResult, assignedInstructions map[string][]AssignedInstruction) error {
 	alarmIDs := make([]string, len(result.Data))
 	for i, item := range result.Data {
 		if item.Value.Resolved == nil {
@@ -938,17 +1162,19 @@ func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationRes
 		return nil
 	}
 
-	statusesByAlarm, err := s.GetInstructionExecutionStatuses(ctx, alarmIDs)
+	executionStatuses, err := s.GetInstructionExecutionStatuses(ctx, alarmIDs, assignedInstructions)
 	if err != nil {
 		return err
 	}
 
 	for i, v := range result.Data {
-		result.Data[i].IsAutoInstructionRunning = statusesByAlarm[v.ID].AutoRunning
-		result.Data[i].IsAllAutoInstructionsCompleted = statusesByAlarm[v.ID].AutoAllCompleted
-		result.Data[i].IsAutoInstructionFailed = statusesByAlarm[v.ID].AutoFailed
-		result.Data[i].IsManualInstructionRunning = statusesByAlarm[v.ID].ManualRunning
-		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualWaitingResult
+		result.Data[i].InstructionExecutionIcon = executionStatuses[v.ID].Icon
+		result.Data[i].RunningManualInstructions = executionStatuses[v.ID].RunningManualInstructions
+		result.Data[i].RunningAutoInstructions = executionStatuses[v.ID].RunningAutoInstructions
+		result.Data[i].FailedManualInstructions = executionStatuses[v.ID].FailedManualInstructions
+		result.Data[i].FailedAutoInstructions = executionStatuses[v.ID].FailedAutoInstructions
+		result.Data[i].SuccessfulManualInstructions = executionStatuses[v.ID].SuccessfulManualInstructions
+		result.Data[i].SuccessfulAutoInstructions = executionStatuses[v.ID].SuccessfulAutoInstructions
 	}
 
 	return nil

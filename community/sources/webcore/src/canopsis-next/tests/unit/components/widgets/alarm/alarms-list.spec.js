@@ -1,13 +1,12 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
-import { saveAs } from 'file-saver';
 import { omit } from 'lodash';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
-
+import { API_HOST, API_ROUTES } from '@/config';
 import {
   CANOPSIS_EDITION,
   EXPORT_CSV_DATETIME_FORMATS,
@@ -18,13 +17,10 @@ import {
   TIME_UNITS,
   USERS_PERMISSIONS,
 } from '@/constants';
+
 import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
-
-jest.mock('file-saver', () => ({
-  saveAs: jest.fn(),
-}));
 
 const localVue = createVueInstance();
 
@@ -126,7 +122,6 @@ describe('alarms-list', () => {
     _id: 'export-alarm-id',
     status: EXPORT_STATUSES.failed,
   };
-  const exportAlarmFile = 'exportAlarmFile';
   const widget = {
     ...generateDefaultAlarmListWidgetForm(),
 
@@ -170,7 +165,6 @@ describe('alarms-list', () => {
   const fetchAlarmsList = jest.fn();
   const createAlarmsListExport = jest.fn().mockReturnValue(exportAlarmData);
   const fetchAlarmsListExport = jest.fn().mockReturnValue(exportAlarmData);
-  const fetchAlarmsListCsvFile = jest.fn().mockReturnValue(exportAlarmFile);
   const fetchAlarmDetails = jest.fn();
   const fetchAlarmsDetailsList = jest.fn();
   const updateAlarmDetailsQuery = jest.fn();
@@ -254,13 +248,11 @@ describe('alarms-list', () => {
       }),
       getListByWidgetId: () => () => alarms,
       getPendingByWidgetId: () => () => false,
-      getExportByWidgetId: () => () => ({}),
     },
     actions: {
       fetchList: fetchAlarmsList,
       createAlarmsListExport,
       fetchAlarmsListExport,
-      fetchAlarmsListCsvFile,
     },
   };
 
@@ -928,11 +920,9 @@ describe('alarms-list', () => {
   });
 
   it('Widget exported after trigger export button', async () => {
-    const nowDate = new Date(nowTimestamp);
-    const OriginalDate = Date;
-    const dateSpy = jest
-      .spyOn(global, 'Date')
-      .mockImplementation(() => new OriginalDate(nowTimestamp));
+    const originalWindowOpen = window.open;
+    window.open = jest.fn();
+
     jest.useFakeTimers('legacy');
 
     const wrapper = factory({
@@ -1005,22 +995,13 @@ describe('alarms-list', () => {
 
     await flushPromises();
 
-    expect(fetchAlarmsListCsvFile).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        id: exportAlarmData._id,
-        widgetId: widget._id,
-      },
-      undefined,
-    );
-
-    expect(saveAs).toHaveBeenCalledWith(
-      expect.any(Blob),
-      `${widget._id}-${nowDate.toLocaleString()}.csv`,
+    expect(window.open).toHaveBeenCalledWith(
+      `${API_HOST}${API_ROUTES.alarmListExport}/${exportAlarmData._id}/download`,
+      '_blank',
     );
 
     jest.useRealTimers();
-    dateSpy.mockClear();
+    window.open = originalWindowOpen;
   });
 
   /**
@@ -1158,6 +1139,8 @@ describe('alarms-list', () => {
   });
 
   it('Widget exported after trigger export button with long request time', async () => {
+    const originalWindowOpen = window.open;
+    window.open = jest.fn();
     jest.useFakeTimers('legacy');
 
     const longFetchAlarmsListExport = jest.fn()
@@ -1180,7 +1163,6 @@ describe('alarms-list', () => {
           actions: {
             createAlarmsListExport,
             fetchAlarmsListExport: longFetchAlarmsListExport,
-            fetchAlarmsListCsvFile,
           },
         },
         {
@@ -1234,9 +1216,10 @@ describe('alarms-list', () => {
 
     await flushPromises();
 
-    expect(saveAs).toHaveBeenCalled();
+    expect(window.open).toHaveBeenCalled();
 
     jest.useRealTimers();
+    window.open = originalWindowOpen;
   });
 
   it('Error popup showed exported after trigger export button with failed create export', async () => {
@@ -1258,7 +1241,6 @@ describe('alarms-list', () => {
           actions: {
             createAlarmsListExport: jest.fn().mockRejectedValue(rejectValue),
             fetchAlarmsListExport,
-            fetchAlarmsListCsvFile,
           },
         },
         {
@@ -1308,7 +1290,6 @@ describe('alarms-list', () => {
           actions: {
             createAlarmsListExport,
             fetchAlarmsListExport: jest.fn().mockRejectedValue(rejectValue),
-            fetchAlarmsListCsvFile,
           },
         },
         {
@@ -1362,7 +1343,6 @@ describe('alarms-list', () => {
           actions: {
             createAlarmsListExport,
             fetchAlarmsListExport: jest.fn().mockReturnValue(exportFailedAlarmData),
-            fetchAlarmsListCsvFile,
           },
         },
         {

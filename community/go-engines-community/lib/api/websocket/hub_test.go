@@ -465,6 +465,7 @@ func TestHub_Connect_GivenAuthUser_ShouldSendLoggedUserCountMessage(t *testing.T
 		Room: libwebsocket.RoomLoggedUserCount,
 		Msg:  1,
 	}))
+	mockConnection.EXPECT().WriteControl(gomock.Eq(websocket.CloseMessage), gomock.Any(), gomock.Any()).MaxTimes(1)
 
 	go func() {
 		hub.Start(ctx)

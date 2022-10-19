@@ -87,9 +87,13 @@ func NewAlarmChange() AlarmChange {
 }
 
 func (ac *AlarmChange) GetTriggers() []string {
+	return GetTriggers(ac.Type)
+}
+
+func GetTriggers(t AlarmChangeType) []string {
 	var triggers []string
 
-	switch ac.Type {
+	switch t {
 	case AlarmChangeTypeCreateAndPbhEnter:
 		triggers = append(triggers, string(AlarmChangeTypeCreate), string(AlarmChangeTypePbhEnter))
 	case AlarmChangeTypePbhLeaveAndEnter:
@@ -97,9 +101,9 @@ func (ac *AlarmChange) GetTriggers() []string {
 	case AlarmChangeTypeDoubleAck:
 		triggers = append(triggers, string(AlarmChangeTypeAck))
 	default:
-		t := string(ac.Type)
-		if t != "" {
-			triggers = append(triggers, t)
+		trigger := string(t)
+		if trigger != "" {
+			triggers = append(triggers, trigger)
 		}
 	}
 
