@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"testing"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -13,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -22,6 +24,7 @@ import (
 	mock_context "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/context"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
+	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
 	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -57,15 +60,20 @@ func TestMessageProcessor_Process_GivenRecomputeEntityServiceEvent_ShouldPassItT
 			t.Errorf("expected event %s but got %s", types.EventTypeRecomputeEntityService, event.EventType)
 		}
 	}).Return(expectedBody, nil)
+	mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
+	mockTechMetricsSender.EXPECT().SendCheEvent(gomock.Any()).AnyTimes()
+
 	processor := &messageProcessor{
 		FeatureEventProcessing: true,
 		FeatureContextCreation: true,
-		AlarmConfigProvider:    mockAlarmConfigProvider,
-		EventFilterService:     mockEventFilterService,
-		EnrichmentCenter:       mockEnrichmentCenter,
-		Encoder:                mockEncoder,
-		Decoder:                mockDecoder,
-		Logger:                 zerolog.Logger{},
+
+		AlarmConfigProvider: mockAlarmConfigProvider,
+		EventFilterService:  mockEventFilterService,
+		EnrichmentCenter:    mockEnrichmentCenter,
+		TechMetricsSender:   mockTechMetricsSender,
+		Encoder:             mockEncoder,
+		Decoder:             mockDecoder,
+		Logger:              zerolog.Logger{},
 	}
 
 	resBody, err := processor.Process(context.Background(), amqp.Delivery{
@@ -251,9 +259,12 @@ func benchmarkMessageProcessor(
 	})
 
 	cfg := config.CanopsisConf{}
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, zerolog.Nop())
+	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), zerolog.Nop())
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(eventfilter.NewExternalDataGetterContainer(), config.NewTimezoneConfigProvider(cfg, zerolog.Nop())))
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), eventfilter.NewActionProcessor(config.NewTimezoneConfigProvider(cfg, zerolog.Nop()))))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), eventfilter.NewActionProcessor(config.NewTimezoneConfigProvider(cfg, zerolog.Nop()), techMetricsSender)))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
 	ruleService := eventfilter.NewRuleService(eventfilter.NewRuleAdapter(dbClient), ruleApplicatorContainer, zerolog.Nop())

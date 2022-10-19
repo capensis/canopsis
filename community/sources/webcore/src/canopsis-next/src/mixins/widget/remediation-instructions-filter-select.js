@@ -49,12 +49,7 @@ export const widgetRemediationInstructionsFilterMixin = {
   },
   methods: {
     updateRemediationInstructionsFiltersInQuery(filters) {
-      const queryWithoutRemediationInstructionsFields = omit(this.query, [
-        'include_instructions',
-        'exclude_instructions',
-        'include_instruction_types',
-        'exclude_instruction_types',
-      ]);
+      const queryWithoutRemediationInstructionsFields = omit(this.query, ['instructions']);
 
       this.query = {
         ...queryWithoutRemediationInstructionsFields,

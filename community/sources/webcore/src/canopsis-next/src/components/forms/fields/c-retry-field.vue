@@ -6,7 +6,8 @@
         :label="$t('common.retryCount')",
         :min="1",
         :name="countFieldName",
-        :required="isRequired"
+        :required="isRequired",
+        :disabled="disabled"
       )
     v-flex(xs8)
       c-duration-field(
@@ -14,6 +15,7 @@
         :units-label="$t('common.unit')",
         :required="isRequired",
         :name="name",
+        :disabled="disabled",
         clearable
       )
 </template>
@@ -39,6 +41,10 @@ export default {
     name: {
       type: String,
       default: 'retry',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

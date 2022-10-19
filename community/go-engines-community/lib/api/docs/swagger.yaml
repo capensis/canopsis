@@ -8447,6 +8447,66 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /tech-metrics-export:
+    post:
+      tags:
+        - tech-metrics
+      summary: Start export tech metrics
+      description: Start export tech metrics
+      operationId: tech-metrics-export-start
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/techmetrics.ExportResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    get:
+      tags:
+        - tech-metrics
+      summary: Get status of export tech metrics
+      description: Get status of export tech metrics
+      operationId: tech-metrics-export-get
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/techmetrics.ExportResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /tech-metrics-export/download:
+    get:
+      tags:
+        - tech-metrics
+      summary: Get result of export tech metrics
+      description: Get result of export tech metrics
+      operationId: tech-metrics-export-download
+      responses:
+        200:
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /user-preferences:
     put:
       tags:

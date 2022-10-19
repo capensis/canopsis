@@ -1,20 +1,37 @@
 <template lang="pug">
   v-expansion-panel.c-collapse-panel
-    v-expansion-panel-content(:class="{ error }", :style="{ backgroundColor: color }", :lazy="lazy")
+    v-expansion-panel-content(:class="{ error: hasError }", :style="{ backgroundColor: color }", :lazy="lazy")
       template(#actions="")
         v-icon(color="white") {{ icon }}
       template(#header="")
         slot(name="header")
+          span.white--text {{ title }}
       div.white
-        slot
+        v-card
+          v-card-text
+            slot
 </template>
 
 <script>
+import { Validator } from 'vee-validate';
+
+import { validationChildrenMixin } from '@/mixins/form';
+
 export default {
+  inject: {
+    $validator: {
+      default: new Validator(),
+    },
+  },
+  mixins: [validationChildrenMixin],
   props: {
-    color: {
+    title: {
       type: String,
       default: '',
+    },
+    color: {
+      type: String,
+      default: 'grey',
     },
     icon: {
       type: String,
@@ -27,6 +44,11 @@ export default {
     error: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    hasError() {
+      return this.error || this.hasChildrenError;
     },
   },
 };

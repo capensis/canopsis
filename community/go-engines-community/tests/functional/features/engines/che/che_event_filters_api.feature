@@ -358,3 +358,186 @@ Feature: modify event on event filter
       }
     }
     """
+
+  Scenario: given check event and enrichment event filter should enrich by regexp from external api data
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "external_data": {
+        "name": {
+          "type": "api",
+          "request": {
+            "url": "http://localhost:3000/api/external_data_response_is_nested_documents",
+            "method": "GET"
+          }
+        }
+      },
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-assets-customer-5"
+            }
+          }
+        ]
+      ],
+      "description": "test-resource-che-event-filters-api-5-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "name",
+            "value": "{{ `{{ regex_map_key .ExternalData.name \"object.*.fields.name\" }}` }}",
+            "description": "name from external api"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-che-event-filters-api-5",
+      "connector_name": "test-connector-name-che-event-filters-api-5",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-eventfilter-assets-customer-5",
+      "resource": "test-resource-che-event-filters-api-5",
+      "state": 2,
+      "output": "test-output-che-event-filters-api-5"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-api-5
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-api-5/test-eventfilter-assets-customer-5",
+          "infos": {
+            "name": {
+              "name": "name",
+              "description": "name from external api",
+              "value": "test name"
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given check event and enrichment event filter should execute templates in payload
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "external_data": {
+        "name": {
+          "type": "api",
+          "request": {
+            "url": "{{ .apiURL }}/api/v4/scenarios",
+            "method": "POST",
+            "auth": {
+              "username": "root",
+              "password": "test"
+            },
+            "headers": {"Content-Type": "application/json"},
+            "payload": "{\"name\":\"{{ `{{ .Event.Component }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-eventfilter-assets-customer-6-pattern\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+          }
+        }
+      },
+      "event_pattern": [
+        [
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          },
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-assets-customer-6"
+            }
+          }
+        ]
+      ],
+      "description": "test-resource-che-event-filters-api-6-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "name",
+            "value": "{{ `{{ index .ExternalData.name \"name\" }}` }}",
+            "description": "name from external api"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-che-event-filters-api-6",
+      "connector_name": "test-connector-name-che-event-filters-api-6",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-eventfilter-assets-customer-6",
+      "resource": "test-resource-che-event-filters-api-6",
+      "state": 2,
+      "output": "test-output-che-event-filters-api-6"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-api-6
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-api-6/test-eventfilter-assets-customer-6",
+          "infos": {
+            "name": {
+              "name": "name",
+              "description": "name from external api",
+              "value": "test-eventfilter-assets-customer-6"
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """

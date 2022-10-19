@@ -112,6 +112,14 @@ definitions:
         type: boolean
       entity:
         $ref: '#/definitions/entity.Entity'
+      failed_auto_instructions:
+        items:
+          type: string
+        type: array
+      failed_manual_instructions:
+        items:
+          type: string
+        type: array
       filtered_children:
         items:
           type: string
@@ -123,16 +131,8 @@ definitions:
           additionalProperties: true
           type: object
         type: object
-      is_all_auto_instructions_completed:
-        type: boolean
-      is_auto_instruction_failed:
-        type: boolean
-      is_auto_instruction_running:
-        type: boolean
-      is_manual_instruction_running:
-        type: boolean
-      is_manual_instruction_waiting_result:
-        type: boolean
+      instruction_execution_icon:
+        type: integer
       is_meta_alarm:
         type: boolean
       links:
@@ -150,6 +150,22 @@ definitions:
         type: integer
       pbehavior:
         $ref: '#/definitions/alarm.Pbehavior'
+      running_auto_instructions:
+        items:
+          type: string
+        type: array
+      running_manual_instructions:
+        items:
+          type: string
+        type: array
+      successful_auto_instructions:
+        items:
+          type: string
+        type: array
+      successful_manual_instructions:
+        items:
+          type: string
+        type: array
       t:
         type: integer
       tags:
@@ -278,6 +294,8 @@ definitions:
         $ref: '#/definitions/alarm.Execution'
       name:
         type: string
+      type:
+        type: integer
     type: object
   alarm.ChildDetailsRequest:
     properties:
@@ -1497,6 +1515,10 @@ definitions:
       request:
         $ref: '#/definitions/request.Parameters'
         description: are used in api external data
+      retry_count:
+        type: integer
+      retry_delay:
+        $ref: '#/definitions/types.DurationWithUnit'
       select:
         additionalProperties:
           type: string
@@ -2869,10 +2891,6 @@ definitions:
         type: string
       payload:
         type: string
-      retry_count:
-        type: integer
-      retry_delay:
-        $ref: '#/definitions/types.DurationWithUnit'
       skip_verify:
         type: boolean
       url:
@@ -3475,6 +3493,14 @@ definitions:
         type: string
       depends_count:
         type: integer
+      failed_auto_instructions:
+        items:
+          type: string
+        type: array
+      failed_manual_instructions:
+        items:
+          type: string
+        type: array
       icon:
         type: string
       idle_since:
@@ -3487,17 +3513,9 @@ definitions:
         additionalProperties:
           $ref: '#/definitions/serviceweather.Info'
         type: object
-      is_all_auto_instructions_completed:
-        type: boolean
-      is_auto_instruction_failed:
-        type: boolean
-      is_auto_instruction_running:
-        type: boolean
+      instruction_execution_icon:
+        type: integer
       is_grey:
-        type: boolean
-      is_manual_instruction_running:
-        type: boolean
-      is_manual_instruction_waiting_result:
         type: boolean
       last_update_date:
         type: integer
@@ -3515,6 +3533,14 @@ definitions:
         type: array
       resource:
         type: string
+      running_auto_instructions:
+        items:
+          type: string
+        type: array
+      running_manual_instructions:
+        items:
+          type: string
+        type: array
       snooze:
         $ref: '#/definitions/common.AlarmStep'
       source_type:
@@ -3525,6 +3551,14 @@ definitions:
         $ref: '#/definitions/statistics.EventStatistics'
       status:
         $ref: '#/definitions/common.AlarmStep'
+      successful_auto_instructions:
+        items:
+          type: string
+        type: array
+      successful_manual_instructions:
+        items:
+          type: string
+        type: array
       ticket:
         $ref: '#/definitions/alarm.AlarmTicket'
     type: object
@@ -3697,6 +3731,15 @@ definitions:
       last_ko:
         type: integer
       ok:
+        type: integer
+    type: object
+  techmetrics.ExportResponse:
+    properties:
+      created:
+        type: integer
+      duration:
+        type: integer
+      status:
         type: integer
     type: object
   types.Coordinates:

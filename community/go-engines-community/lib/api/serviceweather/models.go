@@ -83,12 +83,14 @@ type Entity struct {
 	ID      string `json:"_id" bson:"_id"`
 	AlarmID string `json:"alarm_id" bson:"alarm_id"`
 
-	AssignedInstructions             *[]alarm.AssignedInstruction `bson:"-" json:"assigned_instructions,omitempty"`
-	IsAutoInstructionRunning         *bool                        `bson:"-" json:"is_auto_instruction_running,omitempty"`
-	IsAllAutoInstructionsCompleted   *bool                        `bson:"-" json:"is_all_auto_instructions_completed,omitempty"`
-	IsAutoInstructionFailed          *bool                        `bson:"-" json:"is_auto_instruction_failed,omitempty"`
-	IsManualInstructionRunning       *bool                        `bson:"-" json:"is_manual_instruction_running,omitempty"`
-	IsManualInstructionWaitingResult *bool                        `bson:"-" json:"is_manual_instruction_waiting_result,omitempty"`
+	AssignedInstructions         *[]alarm.AssignedInstruction `bson:"-" json:"assigned_instructions,omitempty"`
+	InstructionExecutionIcon     int                          `bson:"-" json:"instruction_execution_icon,omitempty"`
+	RunningManualInstructions    []string                     `bson:"-" json:"running_manual_instructions,omitempty"`
+	RunningAutoInstructions      []string                     `bson:"-" json:"running_auto_instructions,omitempty"`
+	FailedManualInstructions     []string                     `bson:"-" json:"failed_manual_instructions,omitempty"`
+	FailedAutoInstructions       []string                     `bson:"-" json:"failed_auto_instructions,omitempty"`
+	SuccessfulManualInstructions []string                     `bson:"-" json:"successful_manual_instructions,omitempty"`
+	SuccessfulAutoInstructions   []string                     `bson:"-" json:"successful_auto_instructions,omitempty"`
 
 	Name           string                     `json:"name" bson:"name"`
 	Infos          map[string]Info            `json:"infos" bson:"infos"`
