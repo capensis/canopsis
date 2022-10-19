@@ -4,14 +4,15 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
-	"github.com/rs/zerolog"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -23,6 +24,8 @@ const (
 
 	prefetchCount = 10000
 	prefetchSize  = 0
+
+	defaultLocation = "Europe/Paris"
 )
 
 func main() {

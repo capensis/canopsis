@@ -22,7 +22,7 @@ func TestEngine_Run_GivenPeriodicalProcess_ShouldRunIt(t *testing.T) {
 	defer ctrl.Finish()
 	mockPeriodicalWorker := mock_engine.NewMockPeriodicalWorker(ctrl)
 	finish := (timesToRun+1)*interval - time.Millisecond
-	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval)
+	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval).AnyTimes()
 	mockPeriodicalWorker.EXPECT().Work(gomock.Any()).Times(timesToRun)
 
 	engine := libengine.New(nil, nil, zerolog.Logger{})
@@ -64,7 +64,7 @@ func TestEngine_Run_GivenErrorOnPeriodicalProcess_ShouldStopEngine(t *testing.T)
 	mockPeriodicalWorker := mock_engine.NewMockPeriodicalWorker(ctrl)
 	interval := 500 * time.Millisecond
 	expectedErr := errors.New("test err")
-	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval)
+	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval).AnyTimes()
 	mockPeriodicalWorker.EXPECT().Work(gomock.Any()).Return(expectedErr)
 
 	engine := libengine.New(nil, nil, zerolog.Logger{})

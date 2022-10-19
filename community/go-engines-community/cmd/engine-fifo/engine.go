@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"runtime/trace"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/streadway/amqp"
-	"runtime/trace"
 )
 
 type EngineFIFO struct {
@@ -101,7 +103,7 @@ func (e *EngineFIFO) WorkerProcess(parentCtx context.Context, msg amqp.Delivery)
 	}
 
 	event.Format()
-	e.References.StatsSender.Add(event.Timestamp.Unix(), true)
+	e.References.StatsSender.Add(time.Now().Unix(), true)
 
 	err = event.InjectExtraInfos(msg.Body)
 	if err != nil {
