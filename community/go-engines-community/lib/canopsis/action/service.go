@@ -85,12 +85,15 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					break
 				}
 
-				event := types.Event{
-					Connector:     alarm.Value.Connector,
-					ConnectorName: alarm.Value.ConnectorName,
-					Component:     alarm.Value.Component,
-					Resource:      alarm.Value.Resource,
-					Alarm:         &alarm,
+				event := result.FifoAckEvent
+				if event.EventType == "" {
+					event = types.Event{
+						Connector:     alarm.Value.Connector,
+						ConnectorName: alarm.Value.ConnectorName,
+						Component:     alarm.Value.Component,
+						Resource:      alarm.Value.Resource,
+						Alarm:         &alarm,
+					}
 				}
 
 				activationSent := false
@@ -98,7 +101,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					(result.Err != nil && len(result.ActionExecutions) > 0 &&
 						result.ActionExecutions[len(result.ActionExecutions)-1].Action.Type == types.ActionTypeWebhook)) {
 					// Send activation event
-					ok, err = s.activationService.Process(ctx, alarm)
+					ok, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp)
 					if err != nil {
 						s.logger.Error().Err(err).Msg("failed to send activation")
 						break
@@ -120,8 +123,21 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 func (s *service) Process(ctx context.Context, event *types.Event) error {
 	if event.Alarm == nil || event.Entity == nil {
 		s.sendEventToFifoAck(ctx, *event)
-
 		return nil
+	}
+
+	fifoAckEvent := types.Event{
+		EventType:         event.EventType,
+		Connector:         event.Connector,
+		ConnectorName:     event.ConnectorName,
+		Component:         event.Component,
+		Resource:          event.Resource,
+		SourceType:        event.SourceType,
+		Timestamp:         event.Timestamp,
+		ReceivedTimestamp: event.ReceivedTimestamp,
+		Author:            event.Author,
+		UserID:            event.UserID,
+		Initiator:         event.Initiator,
 	}
 
 	alarm := *event.Alarm
@@ -152,13 +168,20 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 			Entity:            entity,
 			DelayedScenarioID: event.DelayedScenarioID,
 			AdditionalData:    additionalData,
+			FifoAckEvent:      fifoAckEvent,
 		}
 
 		return nil
 	}
 
+	triggers := event.AlarmChange.GetTriggers()
+	if len(triggers) == 0 {
+		s.sendEventToFifoAck(ctx, *event)
+		return nil
+	}
+
 	s.scenarioInputChannel <- ExecuteScenariosTask{
-		Triggers:     event.AlarmChange.GetTriggers(),
+		Triggers:     triggers,
 		Alarm:        alarm,
 		Entity:       entity,
 		AckResources: event.AckResources,
@@ -169,6 +192,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 			Initiator:       event.Initiator,
 			Output:          event.Output,
 		},
+		FifoAckEvent: fifoAckEvent,
 	}
 
 	return nil
@@ -211,6 +235,7 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 			Entity:               execution.Entity,
 			AbandonedExecutionID: execution.ID,
 			AdditionalData:       execution.AdditionalData,
+			FifoAckEvent:         execution.FifoAckEvent,
 		}
 	}
 

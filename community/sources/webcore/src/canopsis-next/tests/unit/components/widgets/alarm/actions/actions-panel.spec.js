@@ -12,10 +12,12 @@ import {
   EVENT_DEFAULT_ORIGIN,
   EVENT_ENTITY_TYPES,
   EVENT_INITIATORS,
+  INSTRUCTION_EXECUTION_ICONS,
   META_ALARMS_RULE_TYPES,
   MODALS,
   PATTERN_CONDITIONS,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
+  REMEDIATION_INSTRUCTION_TYPES,
 } from '@/constants';
 
 import featuresService from '@/services/features';
@@ -125,11 +127,13 @@ describe('actions-panel', () => {
     {
       _id: 1,
       name: 'New instruction',
+      type: REMEDIATION_INSTRUCTION_TYPES.manual,
       execution: null,
     },
     {
       _id: 2,
       name: 'Paused instruction',
+      type: REMEDIATION_INSTRUCTION_TYPES.manual,
       execution: {
         status: REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused,
       },
@@ -901,7 +905,7 @@ describe('actions-panel', () => {
         config: {
           alarmId: alarmData._id,
           assignedInstruction,
-          onOpen: expect.any(Function),
+          onExecute: expect.any(Function),
           onClose: expect.any(Function),
           onComplete: expect.any(Function),
         },
@@ -910,7 +914,7 @@ describe('actions-panel', () => {
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.onOpen();
+    config.onExecute();
     config.onClose();
     config.onComplete();
 
@@ -965,7 +969,7 @@ describe('actions-panel', () => {
         item: {
           ...alarm,
 
-          is_manual_instruction_running: true,
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.manualInProgress,
         },
         widget,
       },
@@ -983,7 +987,7 @@ describe('actions-panel', () => {
         item: {
           ...alarm,
 
-          is_manual_instruction_waiting_result: true,
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.manualInProgress,
         },
         widget,
       },
@@ -1001,7 +1005,7 @@ describe('actions-panel', () => {
         item: {
           ...alarm,
 
-          is_auto_instruction_running: true,
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.autoInProgress,
         },
         widget,
       },

@@ -1,20 +1,25 @@
-import { cloneDeep, pick } from 'lodash';
+import { cloneDeep, pick, isEmpty } from 'lodash';
 
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
   EVENT_FILTER_ENRICHMENT_AFTER_TYPES,
+  EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
+  EVENT_FILTER_EXTERNAL_DATA_TYPES,
   EVENT_FILTER_TYPES,
   OLD_PATTERNS_FIELDS,
   PATTERNS_FIELDS,
 } from '@/constants';
 
-import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
+import uid from '@/helpers/uid';
+
+import { filterPatternsToForm, formFilterToPatterns } from './filter';
 import {
   exceptionsToForm, exceptionsToRequest,
   exdatesToForm, exdatesToRequest,
   formExceptionsToExceptions,
   formExdatesToExdates,
-} from '@/helpers/forms/planning-pbehavior';
+} from './planning-pbehavior';
+import { formToRequest, formToRetry, requestToForm, retryToForm } from './shared/request';
 
 /**
  * @typedef { 'enrichment' | 'drop' | 'break' | 'change_entity' } EventFilterType
@@ -32,6 +37,14 @@ import {
  */
 
 /**
+ * @typedef {'mongo' | 'api'} EventFilterEnrichmentExternalDataType
+ */
+
+/**
+ * @typedef {'select' | 'regexp'} EventFilterEnrichmentExternalDataConditionType
+ */
+
+/**
  * @typedef {Object} EventFilterAction
  * @property {string} type
  * @property {string} name
@@ -41,6 +54,39 @@ import {
 
 /**
  * @typedef {EventFilterAction} EventFilterActionForm
+ */
+
+/**
+ * @typedef {
+ *   Object<EventFilterEnrichmentExternalDataConditionType, Object<string, string>>
+ * } EventFilterEnrichmentExternalDataCondition
+ */
+
+/**
+ * @typedef {EventFilterEnrichmentExternalDataCondition} EventFilterEnrichmentExternalData
+ * @property {EventFilterEnrichmentExternalDataType} type
+ * @property {string} collection
+ */
+
+/**
+ * @typedef {Object} EventFilterEnrichmentExternalDataConditionForm
+ * @property {string} key
+ * @property {EventFilterEnrichmentExternalDataConditionType} type
+ * @property {string} attribute
+ * @property {string} value
+ */
+
+/**
+ * @typedef {Object} EventFilterEnrichmentExternalDataFormItem
+ * @property {string} key
+ * @property {string} reference
+ * @property {EventFilterEnrichmentExternalDataType} type
+ * @property {string} collection
+ * @property {EventFilterEnrichmentExternalDataConditionForm[]} conditions
+ */
+
+/**
+ * @typedef {EventFilterEnrichmentExternalDataFormItem[]} EventFilterEnrichmentExternalDataForm
  */
 
 /**
@@ -75,12 +121,14 @@ import {
  * @property {string} rrule
  * @property {PbehaviorException[]} exceptions
  * @property {PbehaviorExdate[]} exdates
+ * @property {EventFilterEnrichmentExternalData} external_data
  */
 
 /**
  * @typedef {PatternsForm & EventFilter} EventFilterForm
  * @property {PbehaviorExceptionForm[]} exceptions
  * @property {PbehaviorExdateForm[]} exdates
+ * @property {EventFilterEnrichmentExternalDataForm} external_data
  */
 
 /**
@@ -103,10 +151,139 @@ export const eventFilterConfigToForm = (eventFilterConfig = {}) => ({
   connector_name: eventFilterConfig.connector_name ?? '',
 });
 
+export const eventFilterExternalDataConditionItemToForm = (
+  conditionType = EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES.select,
+  attribute = '',
+  value = '',
+) => ({
+  key: uid(),
+  type: conditionType,
+  attribute,
+  value,
+});
+
+/**
+ * Convert event filter enrichment external data condition to form
+ *
+ * @param {EventFilterEnrichmentExternalDataConditionType} conditionType
+ * @param {EventFilterEnrichmentExternalDataCondition} condition
+ * @returns {EventFilterEnrichmentExternalDataConditionForm[]}
+ */
+export const eventFilterExternalDataConditionToForm = (conditionType, condition) => (
+  Object.entries(condition)
+    .map(([attribute, value]) => eventFilterExternalDataConditionItemToForm(conditionType, attribute, value))
+);
+
+/**
+ * Convert event filter enrichment external data conditions to form
+ *
+ * @param {EventFilterEnrichmentExternalDataConditionType[]} [conditionTypes = []]
+ * @param {EventFilterEnrichmentExternalDataCondition} [item = {}]
+ * @returns {EventFilterEnrichmentExternalDataConditionForm[]}
+ */
+export const eventFilterExternalDataConditionsToForm = (conditionTypes = [], item = {}) => {
+  const conditions = conditionTypes
+    .reduce((acc, conditionType) => {
+      const condition = item[conditionType];
+
+      if (condition) {
+        acc.push(...eventFilterExternalDataConditionToForm(conditionType, condition));
+      }
+
+      return acc;
+    }, []);
+
+  if (!conditions.length) {
+    conditions.push(eventFilterExternalDataConditionItemToForm());
+  }
+
+  return conditions;
+};
+
+export const eventFilterExternalDataItemToForm = (
+  reference = '',
+  item = { type: EVENT_FILTER_EXTERNAL_DATA_TYPES.mongo },
+) => {
+  const additionalFields = item.type === EVENT_FILTER_EXTERNAL_DATA_TYPES.api
+    ? {
+      request: requestToForm(item.request),
+      retry: retryToForm(item),
+    } : {
+      collection: item.collection ?? '',
+      conditions: eventFilterExternalDataConditionsToForm(
+        Object.values(EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES),
+        item,
+      ),
+    };
+
+  return {
+    key: uid(),
+    reference,
+    type: item.type,
+
+    ...additionalFields,
+  };
+};
+
+/**
+ * Convert event filter enrichment external data to form
+ *
+ * @param {EventFilterEnrichmentExternalData} [externalData = {}]
+ * @returns {EventFilterEnrichmentExternalDataForm}
+ */
+export const eventFilterEnrichmentExternalDataToForm = (externalData = {}) => (
+  Object.entries(externalData).map(([reference, item]) => eventFilterExternalDataItemToForm(reference, item))
+);
+
+/**
+ * Convert form to event filter enrichment external data conditions
+ *
+ * @param {EventFilterEnrichmentExternalDataConditionForm[]} form
+ * @returns {EventFilterEnrichmentExternalDataCondition}
+ */
+export const formToEventFilterEnrichmentExternalDataConditions = (form = []) => (
+  form.reduce((acc, { type, attribute, value }) => {
+    if (!acc[type]) {
+      acc[type] = {};
+    }
+
+    acc[type][attribute] = value;
+
+    return acc;
+  }, {})
+);
+
+/**
+ * Convert form to event filter enrichment external data
+ *
+ * @param {EventFilterEnrichmentExternalDataForm} form
+ * @returns {EventFilterEnrichmentExternalData}
+ */
+export const formToEventFilterEnrichmentExternalData = (form = []) => (
+  form.reduce((acc, { type, reference, collection, conditions, request, retry }) => {
+    const additionalFields = type === EVENT_FILTER_EXTERNAL_DATA_TYPES.api
+      ? {
+        request: formToRequest(request),
+        ...formToRetry(retry),
+      } : {
+        collection,
+        ...formToEventFilterEnrichmentExternalDataConditions(conditions),
+      };
+
+    acc[reference] = {
+      type,
+
+      ...additionalFields,
+    };
+
+    return acc;
+  }, {})
+);
+
 /**
  * Convert event filter to form
  *
- * @param {EventFilter | {}} [eventFilter = {}]
+ * @param {EventFilter} [eventFilter = {}]
  * @param {string} [timezone]
  * @returns {EventFilterForm}
  */
@@ -122,6 +299,9 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
   exceptions: exceptionsToForm(eventFilter.exceptions),
   exdates: exdatesToForm(eventFilter.exdates, timezone),
   config: eventFilterConfigToForm(eventFilter.config),
+  external_data: !isEmpty(eventFilter.external_data)
+    ? eventFilterEnrichmentExternalDataToForm(eventFilter.external_data)
+    : [],
   patterns: filterPatternsToForm(
     eventFilter,
     [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
@@ -136,6 +316,7 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
  * @return {EventFilterActionForm}
  */
 export const eventFilterActionToForm = (eventFilterAction = {}) => ({
+  key: uid(),
   type: eventFilterAction.type ?? EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
   name: eventFilterAction.name ?? '',
   value: eventFilterAction.value ?? '',
@@ -150,7 +331,14 @@ export const eventFilterActionToForm = (eventFilterAction = {}) => ({
  * @returns {EventFilter}
  */
 export const formToEventFilter = (eventFilterForm, timezone) => {
-  const { config, patterns, exdates, exceptions, ...eventFilter } = eventFilterForm;
+  const {
+    config,
+    patterns,
+    exdates,
+    exceptions,
+    external_data: externalData,
+    ...eventFilter
+  } = eventFilterForm;
 
   switch (eventFilterForm.type) {
     case EVENT_FILTER_TYPES.changeEntity:
@@ -159,6 +347,10 @@ export const formToEventFilter = (eventFilterForm, timezone) => {
     case EVENT_FILTER_TYPES.enrichment:
       eventFilter.config = pick(config, ['actions', 'on_success', 'on_failure']);
       break;
+  }
+
+  if (!isEmpty(externalData)) {
+    eventFilter.external_data = formToEventFilterEnrichmentExternalData(externalData);
   }
 
   return {

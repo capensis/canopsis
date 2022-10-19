@@ -78,12 +78,16 @@ export default {
   },
   computed: {
     flexSize() {
-      return [
-        `xs${this.widget.parameters.columnSM}`,
-        `md${this.widget.parameters.columnMD}`,
-        `lg${this.widget.parameters.columnLG}`,
-      ];
+      const columnsCount = {
+        m: this.widget.parameters.columnMobile,
+        t: this.widget.parameters.columnTablet,
+        l: this.widget.parameters.columnDesktop,
+        xl: this.widget.parameters.columnDesktop,
+      }[this.$mq];
+
+      return `xs${12 / columnsCount}`;
     },
+
     hasNoData() {
       return this.services.length === 0;
     },

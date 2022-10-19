@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.pa-3(column)
+  v-layout(column)
     c-information-block-row(:label="$t('testSuite.xmlFeed')", :value="testSuite.xml_feed")
     c-information-block-row(:label="$t('common.name')", :value="testSuite.name")
     c-information-block-row(:label="$t('testSuite.hostname')", :value="testSuite.hostname")
@@ -7,7 +7,7 @@
       :label="$t('testSuite.lastUpdate')"
     ) {{ testSuite.last_update | date('testSuiteFormat') }}
     c-information-block-row(
-      :label="$t('testSuite.timeTaken')"
+      :label="$t('common.timeTaken')"
     )
       span(v-if="testSuite.time") {{ testSuite.time | fixed }}{{ $constants.TIME_UNITS.second }}
     v-layout.mt-4(row)

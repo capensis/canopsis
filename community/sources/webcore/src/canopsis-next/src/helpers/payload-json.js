@@ -51,14 +51,12 @@ export const convertPayloadToJson = (payload, indents = 4) => {
  * Match variable by selection
  *
  * @param {string} text
- * @param {Selection} selection
+ * @param {number} selectionStart
+ * @param {number} selectionEnd
  * @returns {Object}
  */
-export const matchPayloadVariableBySelection = (text, selection) => {
-  const { anchorOffset, focusOffset } = selection;
-  const [selectionStart, selectionEnd] = [anchorOffset, focusOffset].sort();
-
-  const match = text?.matchAll(/({{\s?([\w.]{2,})\s?}})/g);
+export const matchPayloadVariableBySelection = (text, selectionStart, selectionEnd) => {
+  const match = text?.matchAll(/({{([^{}]*)}})/g);
 
   return match && Array.from(match).find((group) => {
     const value = group[0];

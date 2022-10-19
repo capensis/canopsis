@@ -24,9 +24,9 @@ import {
  * @typedef {Object} CounterWidgetParameters
  * @property {boolean} opened
  * @property {string} blockTemplate
- * @property {number} columnSM
- * @property {number} columnMD
- * @property {number} columnLG
+ * @property {number} columnMobile
+ * @property {number} columnTablet
+ * @property {number} columnDesktop
  * @property {WidgetMargin} margin
  * @property {number} heightFactor
  * @property {boolean} isCorrelationEnabled
@@ -43,9 +43,9 @@ import {
 export const counterWidgetParametersToForm = (parameters = {}) => ({
   opened: parameters.opened ?? true,
   blockTemplate: parameters.blockTemplate ?? DEFAULT_COUNTER_BLOCK_TEMPLATE,
-  columnSM: parameters.columnSM ?? 6,
-  columnMD: parameters.columnMD ?? 4,
-  columnLG: parameters.columnLG ?? 3,
+  columnMobile: parameters.columnMobile ?? 2,
+  columnTablet: parameters.columnTablet ?? 3,
+  columnDesktop: parameters.columnDesktop ?? 4,
   heightFactor: parameters.heightFactor ?? 6,
   margin: parameters.margin
     ? { ...parameters.margin }

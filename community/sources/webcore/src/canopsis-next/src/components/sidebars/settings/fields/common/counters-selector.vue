@@ -1,44 +1,41 @@
 <template lang="pug">
-  v-list-group
-    v-list-tile(slot="activator")
-      div(:class="validationHeaderClass") {{ $t('settings.counters') }}
-    v-container
-      v-layout(align-center)
-        v-switch(
-          v-field="value.enabled",
-          color="primary",
-          hide-details
-        )
-        c-pbehavior-type-field(
-          v-field="value.types",
-          :required="!value.enabled",
-          :disabled="!value.enabled",
-          :is-item-disabled="isItemDisabled",
-          with-icon,
-          chips,
-          multiple
-        )
+  widget-settings-item(:title="$t('settings.counters')")
+    v-layout(column)
+      c-enabled-field(
+        v-field="value.pbehavior_enabled",
+        :label="$t('settings.pbehaviorCounters')",
+        hide-details
+      )
+      c-pbehavior-type-field(
+        v-field="value.pbehavior_types",
+        :required="value.pbehavior_enabled",
+        :disabled="!value.pbehavior_enabled",
+        :max="$constants.PBEHAVIOR_COUNTERS_LIMIT",
+        with-icon,
+        chips,
+        multiple
+      )
+      c-enabled-field(
+        v-field="value.state_enabled",
+        :label="$t('settings.entityStateCounters')",
+        hide-details
+      )
+      c-service-weather-state-counter-field(
+        v-field="value.state_types",
+        :required="value.state_enabled",
+        :disabled="!value.state_enabled"
+      )
 </template>
 
 <script>
-import { COUNTERS_LIMIT } from '@/constants';
-
-import { formValidationHeaderMixin } from '@/mixins/form';
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
 
 export default {
-  inject: ['$validator'],
-  mixins: [formValidationHeaderMixin],
+  components: { WidgetSettingsItem },
   props: {
     value: {
       type: Object,
-      default: () => ({ enabled: false, types: [] }),
-    },
-  },
-  methods: {
-    isItemDisabled(item) {
-      const { types } = this.value;
-
-      return types.length === COUNTERS_LIMIT && !types.includes(item._id);
+      required: false,
     },
   },
 };

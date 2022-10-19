@@ -1,819 +1,543 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
-<div>
-  <div
-    class="v-list pt-0 theme--light"
-    role="list"
+<widget-settings-stub>
+  <field-title-stub
+    value=""
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-periodic-refresh-stub
+    value="[object Object]"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <widget-settings-group-stub
+    title="Advanced settings"
   >
-    <field-title-stub
-      title="Title"
-      value=""
-    />
-    <hr
-      class="v-divider theme--light"
-    />
-    <field-periodic-refresh-stub
+    <field-default-sort-column-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      columnslabel="Column name"
       value="[object Object]"
     />
     <hr
       class="v-divider theme--light"
     />
-    <div
-      class="v-list__group"
-    >
-      <div
-        class="v-list__group__header"
-      >
-        <div
-          role="listitem"
-        >
-          <div
-            class="v-list__tile theme--light"
-          >
-            Advanced settings
-          </div>
-        </div>
-        <div
-          class="v-list__group__header__append-icon"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            keyboard_arrow_down
-          </i>
-        </div>
-      </div>
-      <transition-stub
-        mode="in-out"
-        name="expand-transition"
-      >
-        <div
-          class="v-list__group__items"
-          style="display: none;"
-        >
-          <div
-            class="v-list grey lighten-4 px-2 py-0 theme--light"
-            role="list"
-          >
-            <field-default-sort-column-stub
-              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              columnslabel="Column name"
-              value="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-columns-stub
-              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              label="Column names"
-              withcolorindicator="true"
-              withhtml="true"
-              withtemplate="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-columns-stub
-              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              label="Column names for meta alarms"
-              withcolorindicator="true"
-              withhtml="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-columns-stub
-              columns="[object Object],[object Object]"
-              label="Track alarm source columns"
-              withcolorindicator="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-default-elements-per-page-stub
-              value="10"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-density-stub
-              name="dense"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-opened-resolved-filter-stub
-              value="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-filters-stub
-              addable="true"
-              editable="true"
-              filters=""
-              widgetid="3f8dba7c-f39e-42ae-912c-e78cb39669c5"
-              withalarm="true"
-              withentity="true"
-              withpbehavior="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-remediation-instructions-filters-stub
-              addable="true"
-              editable="true"
-              filters=""
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="Disable possibility to clear selected filter"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-live-reporting-stub
-              value="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-info-popup-stub
-              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              popups=""
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-text-editor-stub
-              title="\\"More Infos\\" Popup"
-              value=""
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-grid-range-size-stub
-              max="12"
-              min="0"
-              step="1"
-              title="Expand card (more infos / timeline) width"
-              value="0,12"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="HTML enabled on timeline?"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <div
-              class="v-list__group"
-            >
-              <div
-                class="v-list__group__header"
-              >
-                <div
-                  role="listitem"
-                >
-                  <div
-                    class="v-list__tile theme--light"
-                  >
-                    Ack
-                  </div>
-                </div>
-                <div
-                  class="v-list__group__header__append-icon"
-                >
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                  >
-                    keyboard_arrow_down
-                  </i>
-                </div>
-              </div>
-              <transition-stub
-                mode="in-out"
-                name="expand-transition"
-              >
-                <div
-                  class="v-list__group__items"
-                  style="display: none;"
-                >
-                  <div
-                    class="v-list grey lighten-4 px-2 py-0 theme--light"
-                    role="list"
-                  >
-                    <field-switcher-stub
-                      title="Note field required when ack?"
-                    />
-                    <hr
-                      class="v-divider theme--light"
-                    />
-                    <field-switcher-stub
-                      title="Multiple ack"
-                    />
-                    <hr
-                      class="v-divider theme--light"
-                    />
-                    <field-fast-ack-output-stub
-                      value="[object Object]"
-                    />
-                  </div>
-                </div>
-              </transition-stub>
-            </div>
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="Note field required when snooze?"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="Multiple declare ticket"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-enabled-limit-stub
-              label="Number of category items"
-              title="Display links as a list?"
-              value="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <export-csv-form-stub
-              datetimeformat="true"
-              form="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="Sticky header"
-            />
-          </div>
-        </div>
-      </transition-stub>
-    </div>
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      label="Column names"
+      withcolorindicator="true"
+      withhtml="true"
+      withtemplate="true"
+    />
     <hr
       class="v-divider theme--light"
     />
-  </div>
-  <button
-    class="primary v-btn theme--light"
-    type="button"
-  >
-    <div
-      class="v-btn__content"
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      label="Column names for meta alarms"
+      withcolorindicator="true"
+      withhtml="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object]"
+      label="Track alarm source columns"
+      withcolorindicator="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-default-elements-per-page-stub
+      value="10"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-density-stub
+      name="dense"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-opened-resolved-filter-stub
+      value="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-filters-stub
+      addable="true"
+      editable="true"
+      filters=""
+      widgetid="3f8dba7c-f39e-42ae-912c-e78cb39669c5"
+      withalarm="true"
+      withentity="true"
+      withpbehavior="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-remediation-instructions-filters-stub
+      addable="true"
+      editable="true"
+      filters=""
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Disable possibility to clear selected filter"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-live-reporting-stub
+      value="[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-info-popup-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      popups=""
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-text-editor-stub
+      title="\\"More Infos\\" Popup"
+      value=""
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-grid-range-size-stub
+      max="12"
+      min="0"
+      step="1"
+      title="Expand card (more infos / timeline) width"
+      value="0,12"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="HTML enabled on timeline?"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <widget-settings-group-stub
+      title="Ack"
     >
-      Save
-    </div>
-  </button>
-</div>
+      <field-switcher-stub
+        title="Note field required when ack?"
+      />
+      <hr
+        class="v-divider theme--light"
+      />
+      <field-switcher-stub
+        title="Multiple ack"
+      />
+      <hr
+        class="v-divider theme--light"
+      />
+      <field-fast-ack-output-stub
+        value="[object Object]"
+      />
+    </widget-settings-group-stub>
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Note field required when snooze?"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Multiple declare ticket"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-enabled-limit-stub
+      label="Number of category items"
+      title="Display links as a list?"
+      value="[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <export-csv-form-stub
+      datetimeformat="true"
+      form="[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Sticky header"
+    />
+  </widget-settings-group-stub>
+  <hr
+    class="v-divider theme--light"
+  />
+</widget-settings-stub>
 `;
 
 exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
-<div>
-  <div
-    class="v-list pt-0 theme--light"
-    role="list"
+<widget-settings-stub>
+  <field-title-stub
+    value="Alarms list"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-periodic-refresh-stub
+    value="[object Object]"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <widget-settings-group-stub
+    title="Advanced settings"
   >
-    <field-title-stub
-      title="Title"
-      value="Alarms list"
-    />
-    <hr
-      class="v-divider theme--light"
-    />
-    <field-periodic-refresh-stub
+    <field-default-sort-column-stub
+      columns="[object Object]"
+      columnslabel="Column name"
       value="[object Object]"
     />
     <hr
       class="v-divider theme--light"
     />
-    <div
-      class="v-list__group"
-    >
-      <div
-        class="v-list__group__header"
-      >
-        <div
-          role="listitem"
-        >
-          <div
-            class="v-list__tile theme--light"
-          >
-            Advanced settings
-          </div>
-        </div>
-        <div
-          class="v-list__group__header__append-icon"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            keyboard_arrow_down
-          </i>
-        </div>
-      </div>
-      <transition-stub
-        mode="in-out"
-        name="expand-transition"
-      >
-        <div
-          class="v-list__group__items"
-          style="display: none;"
-        >
-          <div
-            class="v-list grey lighten-4 px-2 py-0 theme--light"
-            role="list"
-          >
-            <field-default-sort-column-stub
-              columns="[object Object]"
-              columnslabel="Column name"
-              value="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-columns-stub
-              columns="[object Object]"
-              label="Column names"
-              withcolorindicator="true"
-              withhtml="true"
-              withtemplate="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-columns-stub
-              columns="[object Object]"
-              label="Column names for meta alarms"
-              withcolorindicator="true"
-              withhtml="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-columns-stub
-              columns="[object Object]"
-              label="Track alarm source columns"
-              withcolorindicator="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-default-elements-per-page-stub
-              value="12"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-density-stub
-              name="dense"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-opened-resolved-filter-stub
-              value="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <!---->
-            <!---->
-            <field-switcher-stub
-              title="Disable possibility to clear selected filter"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-live-reporting-stub
-              value="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-info-popup-stub
-              columns="[object Object]"
-              popups=""
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-text-editor-stub
-              title="\\"More Infos\\" Popup"
-              value="More info template"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-grid-range-size-stub
-              max="12"
-              min="0"
-              step="1"
-              title="Expand card (more infos / timeline) width"
-              value="1,11"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="HTML enabled on timeline?"
-              value="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <div
-              class="v-list__group"
-            >
-              <div
-                class="v-list__group__header"
-              >
-                <div
-                  role="listitem"
-                >
-                  <div
-                    class="v-list__tile theme--light"
-                  >
-                    Ack
-                  </div>
-                </div>
-                <div
-                  class="v-list__group__header__append-icon"
-                >
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                  >
-                    keyboard_arrow_down
-                  </i>
-                </div>
-              </div>
-              <transition-stub
-                mode="in-out"
-                name="expand-transition"
-              >
-                <div
-                  class="v-list__group__items"
-                  style="display: none;"
-                >
-                  <div
-                    class="v-list grey lighten-4 px-2 py-0 theme--light"
-                    role="list"
-                  >
-                    <field-switcher-stub
-                      title="Note field required when ack?"
-                      value="true"
-                    />
-                    <hr
-                      class="v-divider theme--light"
-                    />
-                    <field-switcher-stub
-                      title="Multiple ack"
-                      value="true"
-                    />
-                    <hr
-                      class="v-divider theme--light"
-                    />
-                    <field-fast-ack-output-stub
-                      value="[object Object]"
-                    />
-                  </div>
-                </div>
-              </transition-stub>
-            </div>
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="Note field required when snooze?"
-              value="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="Multiple declare ticket"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-enabled-limit-stub
-              label="Number of category items"
-              title="Display links as a list?"
-              value="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <export-csv-form-stub
-              datetimeformat="true"
-              form="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="Sticky header"
-              value="true"
-            />
-          </div>
-        </div>
-      </transition-stub>
-    </div>
+    <field-columns-stub
+      columns="[object Object]"
+      label="Column names"
+      withcolorindicator="true"
+      withhtml="true"
+      withtemplate="true"
+    />
     <hr
       class="v-divider theme--light"
     />
-  </div>
-  <button
-    class="primary v-btn theme--light"
-    type="button"
-  >
-    <div
-      class="v-btn__content"
+    <field-columns-stub
+      columns="[object Object]"
+      label="Column names for meta alarms"
+      withcolorindicator="true"
+      withhtml="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-columns-stub
+      columns="[object Object]"
+      label="Track alarm source columns"
+      withcolorindicator="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-default-elements-per-page-stub
+      value="12"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-density-stub
+      name="dense"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-opened-resolved-filter-stub
+      value="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <!---->
+    <!---->
+    <field-switcher-stub
+      title="Disable possibility to clear selected filter"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-live-reporting-stub
+      value="[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-info-popup-stub
+      columns="[object Object]"
+      popups=""
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-text-editor-stub
+      title="\\"More Infos\\" Popup"
+      value="More info template"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-grid-range-size-stub
+      max="12"
+      min="0"
+      step="1"
+      title="Expand card (more infos / timeline) width"
+      value="1,11"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="HTML enabled on timeline?"
+      value="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <widget-settings-group-stub
+      title="Ack"
     >
-      Save
-    </div>
-  </button>
-</div>
+      <field-switcher-stub
+        title="Note field required when ack?"
+        value="true"
+      />
+      <hr
+        class="v-divider theme--light"
+      />
+      <field-switcher-stub
+        title="Multiple ack"
+        value="true"
+      />
+      <hr
+        class="v-divider theme--light"
+      />
+      <field-fast-ack-output-stub
+        value="[object Object]"
+      />
+    </widget-settings-group-stub>
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Note field required when snooze?"
+      value="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Multiple declare ticket"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-enabled-limit-stub
+      label="Number of category items"
+      title="Display links as a list?"
+      value="[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <export-csv-form-stub
+      datetimeformat="true"
+      form="[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Sticky header"
+      value="true"
+    />
+  </widget-settings-group-stub>
+  <hr
+    class="v-divider theme--light"
+  />
+</widget-settings-stub>
 `;
 
 exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
-<div>
-  <div
-    class="v-list pt-0 theme--light"
-    role="list"
+<widget-settings-stub>
+  <field-title-stub
+    value=""
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-periodic-refresh-stub
+    value="[object Object]"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <widget-settings-group-stub
+    title="Advanced settings"
   >
-    <field-title-stub
-      title="Title"
+    <field-default-sort-column-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      columnslabel="Column name"
+      value="[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      label="Column names"
+      withcolorindicator="true"
+      withhtml="true"
+      withtemplate="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      label="Column names for meta alarms"
+      withcolorindicator="true"
+      withhtml="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object]"
+      label="Track alarm source columns"
+      withcolorindicator="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-default-elements-per-page-stub
+      value="10"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-density-stub
+      name="dense"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-opened-resolved-filter-stub
+      value="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <!---->
+    <!---->
+    <field-switcher-stub
+      title="Disable possibility to clear selected filter"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-live-reporting-stub
+      value="[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-info-popup-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      popups=""
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-text-editor-stub
+      title="\\"More Infos\\" Popup"
       value=""
     />
     <hr
       class="v-divider theme--light"
     />
-    <field-periodic-refresh-stub
+    <field-grid-range-size-stub
+      max="12"
+      min="0"
+      step="1"
+      title="Expand card (more infos / timeline) width"
+      value="0,12"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="HTML enabled on timeline?"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <widget-settings-group-stub
+      title="Ack"
+    >
+      <field-switcher-stub
+        title="Note field required when ack?"
+      />
+      <hr
+        class="v-divider theme--light"
+      />
+      <field-switcher-stub
+        title="Multiple ack"
+      />
+      <hr
+        class="v-divider theme--light"
+      />
+      <field-fast-ack-output-stub
+        value="[object Object]"
+      />
+    </widget-settings-group-stub>
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Note field required when snooze?"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Multiple declare ticket"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-enabled-limit-stub
+      label="Number of category items"
+      title="Display links as a list?"
       value="[object Object]"
     />
     <hr
       class="v-divider theme--light"
     />
-    <div
-      class="v-list__group"
-    >
-      <div
-        class="v-list__group__header"
-      >
-        <div
-          role="listitem"
-        >
-          <div
-            class="v-list__tile theme--light"
-          >
-            Advanced settings
-          </div>
-        </div>
-        <div
-          class="v-list__group__header__append-icon"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            keyboard_arrow_down
-          </i>
-        </div>
-      </div>
-      <transition-stub
-        mode="in-out"
-        name="expand-transition"
-      >
-        <div
-          class="v-list__group__items"
-          style="display: none;"
-        >
-          <div
-            class="v-list grey lighten-4 px-2 py-0 theme--light"
-            role="list"
-          >
-            <field-default-sort-column-stub
-              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              columnslabel="Column name"
-              value="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-columns-stub
-              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              label="Column names"
-              withcolorindicator="true"
-              withhtml="true"
-              withtemplate="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-columns-stub
-              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              label="Column names for meta alarms"
-              withcolorindicator="true"
-              withhtml="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-columns-stub
-              columns="[object Object],[object Object]"
-              label="Track alarm source columns"
-              withcolorindicator="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-default-elements-per-page-stub
-              value="10"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-density-stub
-              name="dense"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-opened-resolved-filter-stub
-              value="true"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <!---->
-            <!---->
-            <field-switcher-stub
-              title="Disable possibility to clear selected filter"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-live-reporting-stub
-              value="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-info-popup-stub
-              columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              popups=""
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-text-editor-stub
-              title="\\"More Infos\\" Popup"
-              value=""
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-grid-range-size-stub
-              max="12"
-              min="0"
-              step="1"
-              title="Expand card (more infos / timeline) width"
-              value="0,12"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="HTML enabled on timeline?"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <div
-              class="v-list__group"
-            >
-              <div
-                class="v-list__group__header"
-              >
-                <div
-                  role="listitem"
-                >
-                  <div
-                    class="v-list__tile theme--light"
-                  >
-                    Ack
-                  </div>
-                </div>
-                <div
-                  class="v-list__group__header__append-icon"
-                >
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                  >
-                    keyboard_arrow_down
-                  </i>
-                </div>
-              </div>
-              <transition-stub
-                mode="in-out"
-                name="expand-transition"
-              >
-                <div
-                  class="v-list__group__items"
-                  style="display: none;"
-                >
-                  <div
-                    class="v-list grey lighten-4 px-2 py-0 theme--light"
-                    role="list"
-                  >
-                    <field-switcher-stub
-                      title="Note field required when ack?"
-                    />
-                    <hr
-                      class="v-divider theme--light"
-                    />
-                    <field-switcher-stub
-                      title="Multiple ack"
-                    />
-                    <hr
-                      class="v-divider theme--light"
-                    />
-                    <field-fast-ack-output-stub
-                      value="[object Object]"
-                    />
-                  </div>
-                </div>
-              </transition-stub>
-            </div>
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="Note field required when snooze?"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="Multiple declare ticket"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-enabled-limit-stub
-              label="Number of category items"
-              title="Display links as a list?"
-              value="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <export-csv-form-stub
-              datetimeformat="true"
-              form="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-switcher-stub
-              title="Sticky header"
-            />
-          </div>
-        </div>
-      </transition-stub>
-    </div>
+    <export-csv-form-stub
+      datetimeformat="true"
+      form="[object Object]"
+    />
     <hr
       class="v-divider theme--light"
     />
-  </div>
-  <button
-    class="primary v-btn theme--light"
-    type="button"
-  >
-    <div
-      class="v-btn__content"
-    >
-      Save
-    </div>
-  </button>
-</div>
+    <field-switcher-stub
+      title="Sticky header"
+    />
+  </widget-settings-group-stub>
+  <hr
+    class="v-divider theme--light"
+  />
+</widget-settings-stub>
 `;

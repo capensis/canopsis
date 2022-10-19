@@ -12,7 +12,6 @@ export const entitiesMetricsMixin = {
       createKpiRatingExport: 'createKpiRatingExport',
       createKpiSliExport: 'createKpiSliExport',
       fetchMetricExport: 'fetchMetricExport',
-      fetchMetricCsvFile: 'fetchMetricCsvFile',
     }),
   },
 };

@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { KPI_SLI_METRICS_FILENAME_PREFIX } from '@/config';
+import { API_HOST, API_ROUTES, KPI_SLI_METRICS_FILENAME_PREFIX } from '@/config';
 import {
   QUICK_RANGES,
   SAMPLINGS,
@@ -37,7 +37,7 @@ import { convertMetricsToTimezone, isMetricsQueryChanged } from '@/helpers/metri
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
-import { exportCsvMixinCreator } from '@/mixins/widget/export';
+import { exportMixinCreator } from '@/mixins/widget/export';
 
 import KpiSliFilters from './partials/kpi-sli-filters.vue';
 import KpiErrorOverlay from './partials/kpi-error-overlay.vue';
@@ -50,10 +50,9 @@ export default {
   mixins: [
     entitiesMetricsMixin,
     localQueryMixin,
-    exportCsvMixinCreator({
+    exportMixinCreator({
       createExport: 'createKpiSliExport',
       fetchExport: 'fetchMetricExport',
-      fetchExportFile: 'fetchMetricCsvFile',
     }),
   ],
   props: {
@@ -166,12 +165,17 @@ export default {
     async exportSliMetricsAsCsv() {
       this.downloading = true;
 
-      await this.exportAsCsv({
-        name: this.getFileName(),
-        data: this.getQuery(),
-      });
+      try {
+        const fileData = await this.generateFile({
+          data: this.getQuery(),
+        });
 
-      this.downloading = false;
+        this.downloadFile(`${API_HOST}${API_ROUTES.metrics.exportMetric}/${fileData._id}/download`);
+      } catch (err) {
+        this.$popups.error({ text: err?.error ?? this.$t('errors.default') });
+      } finally {
+        this.downloading = false;
+      }
     },
   },
 };

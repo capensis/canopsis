@@ -24,6 +24,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -164,6 +165,7 @@ func NewEngine(
 	engineAxe := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
+
 			return alarmStatusService.Load(ctx)
 		},
 		func(ctx context.Context) {
@@ -189,6 +191,16 @@ func NewEngine(
 		},
 		logger,
 	)
+
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+
+	engineAxe.AddRoutine(func(ctx context.Context) error {
+		techMetricsSender.Run(ctx)
+		return nil
+	})
+
 	engineAxe.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.AxeConsumerName,
 		canopsis.AxeQueueName,
@@ -202,6 +214,8 @@ func NewEngine(
 		amqpConnection,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+
+			TechMetricsSender: techMetricsSender,
 			EventProcessor: alarm.NewEventProcessor(
 				dbClient,
 				alarm.NewAdapter(dbClient),
@@ -263,6 +277,7 @@ func NewEngine(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxePeriodicalLockKey,
 		&periodicalWorker{
+			TechMetricsSender:  techMetricsSender,
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			ChannelPub:         amqpChannel,
 			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, logger),
@@ -294,17 +309,13 @@ func NewEngine(
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker("alarm config", libengine.NewLoadConfigPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
+		logger,
 		alarmConfigProvider,
-		logger,
-	))
-	engineAxe.AddPeriodicalWorker("tz config", libengine.NewLoadConfigPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		config.NewAdapter(dbClient),
 		timezoneConfigProvider,
-		logger,
+		techMetricsConfigProvider,
 	))
 
 	return engineAxe
