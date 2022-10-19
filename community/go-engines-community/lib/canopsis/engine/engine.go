@@ -3,10 +3,11 @@ package engine
 import (
 	"context"
 	"fmt"
-	"github.com/rs/zerolog"
 	"runtime/debug"
 	"sync"
 	"time"
+
+	"github.com/rs/zerolog"
 )
 
 func New(
@@ -125,7 +126,15 @@ func (e *engine) runPeriodicalWorker(
 	for {
 		select {
 		case <-ticker.C:
+			start := time.Now()
 			err := worker.Work(ctx)
+			d := time.Since(start)
+			if d > worker.GetInterval() {
+				e.logger.Error().
+					Time("start", start).
+					Str("spent time", d.String()).
+					Msgf("periodical worker %T run too long", worker)
+			}
 			if err != nil {
 				e.logger.Err(err).Msg("periodical process has been failed")
 				exitCh <- err
