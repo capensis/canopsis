@@ -108,8 +108,7 @@ export default {
     },
 
     hasEntityWithoutAction(type) {
-      return this.selectedEntities
-        .filter(entity => isActionTypeAvailableForEntity(type, entity));
+      return this.selectedEntities.filter(entity => isActionTypeAvailableForEntity(type, entity));
     },
 
     applyActionForSelected({ type }) {

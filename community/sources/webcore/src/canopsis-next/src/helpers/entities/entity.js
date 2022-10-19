@@ -47,20 +47,25 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
   } = entity;
 
   const paused = hasPausedPbehavior(pbehaviors);
+  const stateIsOk = state?.val === ENTITIES_STATES.ok;
+  const statusIsCancelled = status?.val === ENTITIES_STATUSES.cancelled;
+
+  if (stateIsOk || statusIsCancelled) {
+    return false;
+  }
 
   switch (actionType) {
     case WEATHER_ACTIONS_TYPES.entityAck:
-      return state.val !== ENTITIES_STATES.ok && isNull(ack);
+      return !stateIsOk && isNull(ack);
     case WEATHER_ACTIONS_TYPES.entityAckRemove:
-      return !isNull(ack);
+      return !stateIsOk && !isNull(ack);
 
     case WEATHER_ACTIONS_TYPES.entityValidate:
     case WEATHER_ACTIONS_TYPES.entityInvalidate:
       return state.val === ENTITIES_STATES.major;
 
     case WEATHER_ACTIONS_TYPES.entityCancel:
-      return alarmDisplayName
-        && (!status || status.val !== ENTITIES_STATUSES.cancelled);
+      return alarmDisplayName && (!status || !statusIsCancelled);
 
     case WEATHER_ACTIONS_TYPES.entityPlay:
       return paused;
@@ -100,13 +105,7 @@ export const getAvailableEntityActionsTypes = (
     WEATHER_ACTIONS_TYPES.entityPause,
     WEATHER_ACTIONS_TYPES.entityCancel,
   ],
-) => {
-  if (entity.status?.val === ENTITIES_STATUSES.cancelled && entity.state?.val === ENTITIES_STATES.ok) {
-    return [];
-  }
-
-  return actionTypes.filter(actionType => isActionTypeAvailableForEntity(actionType, entity));
-};
+) => actionTypes.filter(actionType => isActionTypeAvailableForEntity(actionType, entity));
 
 /**
  * Convert entity action type to action object
