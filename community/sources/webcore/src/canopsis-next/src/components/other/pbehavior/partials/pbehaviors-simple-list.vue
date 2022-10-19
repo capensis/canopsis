@@ -128,7 +128,7 @@ export default {
   methods: {
     ...mapActions({
       fetchPbehaviorsByEntityIdWithoutStore: 'fetchListByEntityIdWithoutStore',
-      removePbehavior: 'remove',
+      removePbehavior: 'removeWithoutStore',
     }),
 
     showEditPbehaviorModal(pbehavior) {
