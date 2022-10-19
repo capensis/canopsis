@@ -1,16 +1,14 @@
 <template lang="pug">
   div.position-relative
     c-progress-overlay(:pending="pending")
-    v-runtime-template(:key="templateKey", :template="compiledTemplate")
+    c-runtime-template(:template="compiledTemplate")
 </template>
 
 <script>
 import Handlebars from 'handlebars';
-import VRuntimeTemplate from 'v-runtime-template';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import uid from '@/helpers/uid';
 import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/partials/pbehaviors-simple-list.vue';
@@ -20,7 +18,6 @@ import ServiceEntitiesWrapper from './service-entities-wrapper.vue';
 export default {
   components: {
     PbehaviorsSimpleList,
-    VRuntimeTemplate,
     ServiceEntitiesWrapper,
   },
   props: {
@@ -57,16 +54,7 @@ export default {
       default: () => ({}),
     },
   },
-  data() {
-    return {
-      templateKey: uid(),
-    };
-  },
   asyncComputed: {
-    modalTemplate() {
-      return this.widgetParameters.modalTemplate || '';
-    },
-
     compiledTemplate: {
       async get() {
         const compiledTemplate = await compile(this.modalTemplate, { entity: this.service });
@@ -76,9 +64,10 @@ export default {
       default: '',
     },
   },
-  watch: {
-    service: 'generateTemplateKey',
-    serviceEntities: 'generateTemplateKey',
+  computed: {
+    modalTemplate() {
+      return this.widgetParameters.modalTemplate || '';
+    },
   },
   beforeCreate() {
     registerHelper('entities', ({ hash }) => {
@@ -105,10 +94,6 @@ export default {
     unregisterHelper('entities');
   },
   methods: {
-    generateTemplateKey() {
-      this.templateKey = uid();
-    },
-
     applyAction(event) {
       this.$emit('apply:action', event);
     },
