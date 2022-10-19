@@ -1,7 +1,7 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
-import AlarmColumnValueTags from '@/components/widgets/alarm/columns-formatting/alarm-column-value-tags.vue';
+import AlarmColumnValueTags from '@/components/common/chips/c-alarm-tags-chips.vue';
 
 const localVue = createVueInstance();
 
@@ -27,7 +27,7 @@ const snapshotFactory = (options = {}) => mount(AlarmColumnValueTags, {
 
 const selectChip = wrapper => wrapper.find('.c-alarm-tag-chip');
 
-describe('alarm-column-value-tag', () => {
+describe('c-alarm-tags-chips', () => {
   const tags = [
     { value: 'tag1', color: 'color1' },
     { value: 'tag2', color: 'color2' },
