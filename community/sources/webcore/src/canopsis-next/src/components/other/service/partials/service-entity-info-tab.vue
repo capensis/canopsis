@@ -21,6 +21,7 @@ import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-pan
 
 import ServiceEntityTemplate from './service-entity-template.vue';
 import ServiceEntityActions from './service-entity-actions.vue';
+import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
 
 export default {
   components: {
@@ -60,7 +61,9 @@ export default {
       const refreshEntities = () => this.$emit('refresh');
 
       this.$modals.show({
-        name: MODALS.executeRemediationInstruction,
+        name: isInstructionManual(assignedInstruction)
+          ? MODALS.executeRemediationInstruction
+          : MODALS.executeRemediationSimpleInstruction,
         config: {
           assignedInstruction,
           alarmId: this.entity.alarm_id,
