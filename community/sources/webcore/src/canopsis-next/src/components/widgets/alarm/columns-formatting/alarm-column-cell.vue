@@ -42,7 +42,6 @@ import AlarmColumnValueStatus from './alarm-column-value-status.vue';
 import AlarmColumnValueCategories from './alarm-column-value-categories.vue';
 import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue';
 import AlarmColumnValueLinks from './alarm-column-value-links.vue';
-import AlarmColumnValueTags from './alarm-column-value-tags.vue';
 
 /**
  * Component to format alarms list columns
@@ -61,7 +60,6 @@ export default {
     AlarmColumnValueCategories,
     AlarmColumnValueExtraDetails,
     AlarmColumnValueLinks,
-    AlarmColumnValueTags,
     ColorIndicatorWrapper,
   },
   mixins: [widgetColumnsFiltersMixin],
@@ -191,7 +189,7 @@ export default {
         },
         [ALARM_ENTITY_FIELDS.tags]: {
           bind: {
-            is: 'alarm-column-value-tags',
+            is: 'c-alarm-tags-chips',
             alarm: this.alarm,
             selectedTag: this.selectedTag,
           },
