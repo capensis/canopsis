@@ -6,22 +6,17 @@
       v-tabs(slider-color="primary", fixed-tabs, light)
         v-tab {{ $t('common.service') }}
         v-tab-item
-          v-fade-transition(mode="out-in")
+          div.position-relative
+            c-progress-overlay(:pending="pending")
             service-template(
-              v-if="!pending",
               :service="service",
               :service-entities="serviceEntitiesWithKey",
               :widget-parameters="widgetParameters",
               :pagination.sync="pagination",
               :total-items="serviceEntitiesMeta.total_count",
-              :unavailable-entities-action="unavailableEntitiesAction",
-              :pending="serviceEntitiesPending",
               @refresh="fetchList",
-              @remove:unavailable="removeEntityFromUnavailable",
               @apply:action="applyAction"
             )
-            v-layout.pa-4(v-else, justify-center)
-              v-progress-circular(color="primary", indeterminate)
         v-tab(:disabled="!hasPbehaviorListAccess") {{ $tc('common.activePbehavior') }}
         v-tab-item(lazy)
           pbehaviors-simple-list(
@@ -35,7 +30,7 @@
     template(#actions="")
       v-tooltip.mx-2(top)
         template(#activator="{ on }")
-          v-btn.secondary(v-on="on", @click="fetchList")
+          v-btn.secondary(v-on="on", @click="refresh")
             v-icon refresh
         span {{ $t('modals.service.refreshEntities') }}
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.close') }}
@@ -48,9 +43,10 @@ import { PAGINATION_LIMIT } from '@/config';
 
 import { MODALS, SORT_ORDERS, USERS_PERMISSIONS, WEATHER_ACTIONS_TYPES } from '@/constants';
 
-import { addKeyInEntities } from '@/helpers/entities';
+import Observer from '@/services/observer';
+
 import { createDowntimePbehavior } from '@/helpers/entities/pbehavior';
-import { convertActionToEvents, isActionTypeAvailableForEntity } from '@/helpers/entities/entity';
+import { convertActionToEvents } from '@/helpers/entities/entity';
 
 import { authMixin } from '@/mixins/auth';
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -67,6 +63,11 @@ import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.serviceEntities,
+  provide() {
+    return {
+      $periodicRefresh: this.$periodicRefresh,
+    };
+  },
   inject: ['$system'],
   components: { PbehaviorsSimpleList, ServiceTemplate, ModalWrapper },
   mixins: [
@@ -103,30 +104,47 @@ export default {
     },
 
     serviceEntitiesWithKey() {
-      return addKeyInEntities(this.serviceEntities);
+      return this.serviceEntities.map(entity => ({
+        ...entity,
+        key: `${entity._id}_${entity.alarm_id}`,
+      }));
     },
 
     hasPbehaviorListAccess() {
       return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.pbehaviorList);
     },
   },
-  async mounted() {
-    this.pending = true;
 
-    await this.fetchList();
-
-    this.pending = false;
+  beforeCreate() {
+    this.$periodicRefresh = new Observer();
   },
-  methods: {
-    fetchList() {
-      const params = this.getQuery();
 
+  created() {
+    this.$periodicRefresh.register(this.fetchList);
+  },
+
+  beforeDestroy() {
+    this.$periodicRefresh.unregister(this.fetchList);
+  },
+
+  async mounted() {
+    await this.fetchList();
+  },
+
+  methods: {
+    refresh() {
+      return this.$periodicRefresh.notify();
+    },
+
+    async fetchList() {
+      this.pending = true;
+
+      const params = this.getQuery();
       params.with_instructions = true;
 
-      return this.fetchServiceEntitiesList({
-        id: this.service._id,
-        params,
-      });
+      await this.fetchServiceEntitiesList({ id: this.service._id, params });
+
+      this.pending = false;
     },
 
     getCreatedPbehaviorsByEntitites(entities, data) {
@@ -166,53 +184,21 @@ export default {
       }
     },
 
-    getAvailableEntities(action) {
-      const {
-        availableEntities,
-        unavailableEntities,
-      } = action.entities.reduce((acc, entity) => {
-        if (isActionTypeAvailableForEntity(action.actionType, entity)) {
-          acc.availableEntities.push(entity);
-        } else {
-          acc.unavailableEntities.push(entity);
-        }
-
-        return acc;
-      }, {
-        availableEntities: [],
-        unavailableEntities: [],
-      });
-
-      this.unavailableEntitiesAction = unavailableEntities.reduce((acc, { _id: id }) => {
-        acc[id] = true;
-
-        return acc;
-      }, {});
-
-      return availableEntities;
-    },
-
-    removeEntityFromUnavailable(entity) {
-      this.unavailableEntitiesAction[entity._id] = false;
-    },
-
-    async applyAction(action) {
-      const availableEntities = this.getAvailableEntities(action);
-
-      if (action.actionType === WEATHER_ACTIONS_TYPES.entityPause) {
+    async applyAction({ entities, actionType, payload }) {
+      if (actionType === WEATHER_ACTIONS_TYPES.entityPause) {
         await this.createPbehaviorsWithPopups(
-          this.getCreatedPbehaviorsByEntitites(availableEntities, action.payload),
+          this.getCreatedPbehaviorsByEntitites(entities, payload),
         );
-      } else if (action.actionType === WEATHER_ACTIONS_TYPES.entityPlay) {
+      } else if (actionType === WEATHER_ACTIONS_TYPES.entityPlay) {
         await this.removePbehaviorsWithPopups(
-          this.getPausedPbehaviorsByEntitites(availableEntities),
+          this.getPausedPbehaviorsByEntitites(entities),
         );
       } else {
-        const events = availableEntities.reduce((acc, entity) => {
+        const events = entities.reduce((acc, entity) => {
           acc.push(...convertActionToEvents({
             entity,
-            actionType: action.actionType,
-            payload: action.payload,
+            actionType,
+            payload,
           }));
 
           return acc;
