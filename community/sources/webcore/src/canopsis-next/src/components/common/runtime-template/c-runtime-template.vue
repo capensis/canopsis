@@ -9,19 +9,27 @@ export default {
       type: String,
       required: false,
     },
+    parent: {
+      type: Object,
+      required: false,
+    },
+    templateProps: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   computed: {
-    parent() {
-      return this.$parent;
+    parentNode() {
+      return this.parent || this.$parent;
     },
 
     parentOptions() {
-      return this.parent.$options;
+      return this.parentNode.$options;
     },
 
     methodProps() {
       return Object.entries(this.parentOptions.methods).reduce((acc, [key]) => {
-        Object.defineProperty(acc, key, Object.getOwnPropertyDescriptor(this.$parent, key));
+        acc[key] = this.parentNode[key];
 
         return acc;
       }, {});
@@ -29,9 +37,10 @@ export default {
 
     props() {
       return Object.entries({
-        ...this.parent.$data,
-        ...this.parent.$props,
+        ...this.parentNode.$data,
+        ...this.parentNode.$props,
         ...this.methodProps,
+        ...this.templateProps,
       }).reduce((acc, [key, value]) => {
         if (!this.isDeclaredByMixin(key)) {
           acc[key] = value;
@@ -42,11 +51,12 @@ export default {
     },
 
     propsTypes() {
-      return [
-        ...Object.keys(this.parent.$data),
-        ...Object.keys(this.parentOptions.props),
-        ...Object.keys(this.parentOptions.methods),
-      ].filter(key => !this.isDeclaredByMixin(key));
+      return Object.keys({
+        ...this.parentNode.$data,
+        ...this.parentOptions.props,
+        ...this.parentOptions.methods,
+        ...this.templateProps,
+      }).filter(key => !this.isDeclaredByMixin(key));
     },
 
     component() {
@@ -56,7 +66,7 @@ export default {
         computed: this.parentOptions.computed,
         props: this.propsTypes,
         // eslint-disable-next-line no-underscore-dangle
-        provide: this.parent._provided,
+        provide: this.parentNode._provided,
       };
     },
   },
