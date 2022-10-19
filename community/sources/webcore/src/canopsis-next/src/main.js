@@ -49,6 +49,7 @@ import CInformationBlock from '@/components/common/block/c-information-block.vue
 import CInformationBlockRow from '@/components/common/block/c-information-block-row.vue';
 import CResponsiveList from '@/components/common/responsive-list/c-responsive-list.vue';
 import CPatternOperatorInformation from '@/components/common/block/c-pattern-operator-information.vue';
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 
 /**
  * Overlays
@@ -429,6 +430,7 @@ Vue.component('c-pattern-advanced-editor-field', CPatternAdvancedEditorField);
 Vue.component('c-pattern-field', CPatternField);
 Vue.component('c-patterns-field', CPatternsField);
 Vue.component('c-pattern-operator-information', CPatternOperatorInformation);
+Vue.component('c-runtime-template', CRuntimeTemplate);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
 Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
 Vue.component('c-alarm-tag-field', CAlarmTagField);

@@ -22,14 +22,14 @@
         )
           v-icon(small) {{ icon.icon }}
         c-no-events-icon(:value="entity.idle_since", color="white", top)
-        v-alert.entity-alert.ma-0.px-2.py-1(
-          v-if="alertIsVisible",
-          :value="alertIsVisible",
-          color="black",
-          dismissible,
-          @click.stop="",
-          @input="hideAlert"
-        ) {{ $t('serviceWeather.cannotBeApplied') }}
+        div(@click.stop="")
+          v-alert.entity-alert.ma-0.px-2.py-1(
+            v-if="alertIsVisible",
+            :value="alertIsVisible",
+            color="black",
+            dismissible,
+            @input="hideAlert"
+          ) {{ $t('serviceWeather.cannotBeApplied') }}
 </template>
 
 <script>
