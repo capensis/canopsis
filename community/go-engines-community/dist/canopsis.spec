@@ -1,7 +1,7 @@
 %define debug_package %{nil} 
 Name: canopsis
 Version: %{version}
-Release: 3%{?dist}
+Release: 1%{?dist}
 Summary: Canopsis
 License: ASL 2.0
 Source0: https://git.canopsis.net/canopsis/canopsis-pro/-/archive/%{version}/canopsis.tar.gz
