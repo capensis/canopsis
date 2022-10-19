@@ -13,11 +13,11 @@
         :widget-parameters="widgetParameters",
         :selected="isEntitySelected(serviceEntity)",
         @select="updateSelected(serviceEntity, $event)",
-        @remove:unavailable="$emit('remove:unavailable', serviceEntity)",
+        @remove:unavailable="removeEntityFromUnavailable(serviceEntity)",
         @apply:action="$listeners['apply:action']",
         @refresh="$listeners.refresh"
       )
-    c-table-pagination(
+    c-table-pagination.mt-1(
       v-if="totalItems > pagination.rowsPerPage",
       :total-items="totalItems",
       :rows-per-page="pagination.rowsPerPage",
@@ -67,10 +67,6 @@ export default {
       type: Number,
       required: false,
     },
-    unavailableEntitiesAction: {
-      type: Object,
-      default: () => ({}),
-    },
   },
   data() {
     return {
@@ -100,6 +96,11 @@ export default {
 
     selectedEntitiesIds() {
       return mapIds(this.selectedEntities);
+    },
+  },
+  watch: {
+    serviceEntities() {
+      this.selectedEntities = [];
     },
   },
   methods: {

@@ -6,6 +6,8 @@ import {
   PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
 
+import { isActionTypeAvailableForEntity } from '@/helpers/entities/entity';
+
 import { authMixin } from '@/mixins/auth';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
@@ -17,6 +19,11 @@ export const widgetActionPanelServiceEntityMixin = {
     entitiesPbehaviorMixin,
     entitiesPbehaviorTypeMixin,
   ],
+  data() {
+    return {
+      unavailableEntitiesAction: {},
+    };
+  },
   computed: {
     /**
      * @return {Object.<string, Function>}
@@ -37,8 +44,37 @@ export const widgetActionPanelServiceEntityMixin = {
     },
   },
   methods: {
+    removeEntityFromUnavailable(entity) {
+      this.unavailableEntitiesAction[entity._id] = false;
+    },
+
     applyAction(action) {
-      this.$emit('apply:action', action);
+      const {
+        availableEntities,
+        unavailableEntities,
+      } = action.entities.reduce((acc, entity) => {
+        if (isActionTypeAvailableForEntity(action.actionType, entity)) {
+          acc.availableEntities.push(entity);
+        } else {
+          acc.unavailableEntities.push(entity);
+        }
+
+        return acc;
+      }, {
+        availableEntities: [],
+        unavailableEntities: [],
+      });
+
+      this.unavailableEntitiesAction = unavailableEntities.reduce((acc, { _id: id }) => {
+        acc[id] = true;
+
+        return acc;
+      }, {});
+
+      this.$emit('apply:action', {
+        ...action,
+        entities: availableEntities,
+      });
     },
 
     applyEntityAction(actionType, entities) {
